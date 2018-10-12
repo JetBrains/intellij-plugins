@@ -12,7 +12,9 @@ import training.editor.actions.LearnActions
 import training.learn.ActionsRecorder
 import training.learn.CourseManager
 import training.learn.LearnBundle
-import training.ui.*
+import training.learn.interfaces.Lesson
+import training.ui.Message
+import training.ui.UiManager
 import training.util.createBalloon
 import training.util.editorPointForBalloon
 import java.util.*

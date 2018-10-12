@@ -1,49 +1,30 @@
-buildscript {
-    ext.kotlin_version = '1.1.4-3'
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven { url "http://repository.jetbrains.com/repo/"}
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_version}"
-    }
-}
-
-
 plugins {
-    id "org.jetbrains.intellij" version "0.3.4"
+    id "org.jetbrains.intellij" version "0.3.11"
+    id 'org.jetbrains.kotlin.jvm' version '1.2.61'
 }
 
 repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven { url "http://repository.jetbrains.com/repo/"}
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-reflect"
 }
 
 group 'org.sk'
 version "$version.$buildNumber"
 
-apply plugin: 'java'
-apply plugin: "kotlin"
-
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 intellij {
-    version 'IU-182.3458.5'
+    version 'IU-182.5107.41'
     //to check compatibility for Python and Go
-    plugins = ['Pythonid:2018.2.182.3341.29', 'org.jetbrains.plugins.go:182.3458.6.790']
-//    publish {
-//        username repoUser
-//        password repoPassword
-//    }
+    plugins = ['Pythonid:2018.2.182.5107.16', 'org.jetbrains.plugins.go:182.4505.32.913']
     intellij.updateSinceUntilBuild = false
 }
 
@@ -58,7 +39,8 @@ sourceSets {
         java.srcDir 'testsData'
     }
 }
-
-task printVersion << {
-    println version
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

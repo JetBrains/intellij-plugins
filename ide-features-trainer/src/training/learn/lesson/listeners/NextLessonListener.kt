@@ -5,7 +5,7 @@ import training.learn.CourseManager
 import training.learn.exceptons.BadLessonException
 import training.learn.exceptons.BadModuleException
 import training.learn.exceptons.LessonIsOpenedException
-import training.learn.lesson.Lesson
+import training.learn.interfaces.Lesson
 import training.learn.lesson.LessonListenerAdapter
 import java.awt.FontFormatException
 import java.io.IOException

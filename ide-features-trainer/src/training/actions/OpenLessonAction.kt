@@ -24,13 +24,17 @@ import training.lang.LangManager
 import training.lang.LangSupport
 import training.learn.CourseManager
 import training.learn.LearnBundle
-import training.learn.Module
 import training.learn.NewLearnProjectUtil
 import training.learn.dialogs.AskToSwitchToLearnProjectBackDialog
 import training.learn.dialogs.SdkModuleProblemDialog
 import training.learn.exceptons.*
-import training.learn.lesson.Lesson
+import training.learn.interfaces.Lesson
+import training.learn.interfaces.ModuleType
+import training.learn.lesson.LessonManager
 import training.learn.lesson.LessonProcessor
+import training.learn.lesson.XmlLesson
+import training.learn.lesson.kimpl.KLesson
+import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.listeners.NextLessonListener
 import training.learn.lesson.listeners.StatisticLessonListener
 import training.ui.LearnToolWindowFactory
@@ -39,6 +43,7 @@ import training.util.findLanguageByID
 import java.awt.FontFormatException
 import java.io.IOException
 import java.util.concurrent.ExecutionException
+import kotlin.concurrent.thread
 
 /**
  * @author Sergey Karashevich
@@ -85,7 +90,7 @@ class OpenLessonAction : AnAction() {
       LOG.debug("${projectWhereToStartLesson.name}: trying to find LearnProject in opened projects ${learnProject != null}")
       if (learnProject != null) CourseManager.instance.learnProject = learnProject
 
-      if (lesson.module == null || lesson.module!!.moduleType == Module.ModuleType.SCRATCH) {
+      if (lesson.module == null || lesson.module.moduleType == ModuleType.SCRATCH) {
         LOG.debug("${projectWhereToStartLesson.name}: scratch based lesson")
         CourseManager.instance.checkEnvironment(projectWhereToStartLesson)
         vf = getScratchFile(projectWhereToStartLesson, lesson, scratchFileName)
@@ -129,7 +134,7 @@ class OpenLessonAction : AnAction() {
       }
 
       LOG.debug("${projectWhereToStartLesson.name}: VirtualFile for lesson has been created/found")
-      val currentProject = if (lesson.module != null && lesson.module!!.moduleType != Module.ModuleType.SCRATCH) CourseManager.instance.learnProject!! else projectWhereToStartLesson
+      val currentProject = if (lesson.module != null && lesson.module.moduleType != ModuleType.SCRATCH) CourseManager.instance.learnProject!! else projectWhereToStartLesson
       if (vf == null) return  //if user aborts opening lesson in LearnProject or Virtual File couldn't be computed
 
       LOG.debug("${projectWhereToStartLesson.name}: Add listeners to lesson")
@@ -139,7 +144,7 @@ class OpenLessonAction : AnAction() {
       //open next lesson if current is passed
       LOG.debug("${projectWhereToStartLesson.name}: Set lesson view")
       UiManager.setLessonView()
-      LOG.debug("${projectWhereToStartLesson.name}: Lesson onStart()")
+      LOG.debug("${projectWhereToStartLesson.name}: XmlLesson onStart()")
       lesson.onStart()
 
       //to start any lesson we need to do 4 steps:
@@ -176,7 +181,15 @@ class OpenLessonAction : AnAction() {
 
       //4. Process lesson
       LOG.debug("${projectWhereToStartLesson.name}: 4. Process lesson")
-      LessonProcessor.process(projectWhereToStartLesson, lesson, textEditor.editor)
+      when (lesson) {
+        is XmlLesson -> LessonProcessor.process(projectWhereToStartLesson, lesson, textEditor.editor)
+        is KLesson -> {
+          LessonManager.getInstance(lesson).initLesson(textEditor.editor)
+          thread(name = "IdeFeaturesTrainer") {
+            lesson.lessonContent(LessonContext(lesson, textEditor!!.editor, project))
+          }
+        }
+      }
 
     } catch (noSdkException: NoSdkException) {
       Messages.showMessageDialog(projectWhereToStartLesson, LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()), LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
@@ -307,7 +320,7 @@ class OpenLessonAction : AnAction() {
         val languageByID = findLanguageByID(myLanguage)
         val extensionFile = languageByID!!.associatedFileType!!.defaultExtension
 
-        var fileName = "Test." + extensionFile
+        var fileName = "Test.$extensionFile"
         if (lesson.module != null) {
           fileName = lesson.module!!.sanitizedName + "." + extensionFile
         }
@@ -333,7 +346,7 @@ class OpenLessonAction : AnAction() {
 
         }
 
-        if (lesson.module != null) CourseManager.instance.registerVirtualFile(lesson.module!!, lessonVirtualFile!!)
+        CourseManager.instance.registerVirtualFile(lesson.module, lessonVirtualFile!!)
         return lessonVirtualFile!!
       }
     }

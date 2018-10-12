@@ -2,11 +2,12 @@ package training.learn.lesson
 
 import com.intellij.openapi.project.Project
 import training.learn.CourseManager
-import training.learn.Module
 import training.learn.exceptons.BadLessonException
 import training.learn.exceptons.BadModuleException
 import training.learn.exceptons.LessonIsOpenedException
 import training.learn.exceptons.NoProjectException
+import training.learn.interfaces.Lesson
+import training.learn.interfaces.Module
 import training.learn.log.LessonLog
 import java.awt.Dimension
 import java.awt.FontFormatException
@@ -17,28 +18,26 @@ import java.util.concurrent.ExecutionException
 /**
  * Created by karashevich on 29/01/15.
  */
-data class Lesson(val scenario: Scenario, val lang: String, var module: Module?) {
+data class XmlLesson(val scenario: Scenario, override val lang: String, override var module: Module): Lesson {
 
-  var lessonListeners: ArrayList<LessonListener> = ArrayList<LessonListener>()
+  override var lessonListeners: MutableList<LessonListener> = ArrayList()
     private set
-  var passed: Boolean = false
-  var isOpen: Boolean = false
-    private set
-  val name: String = scenario.name
-  val id: String = scenario.id
+  override var passed: Boolean = false
+  override var isOpen: Boolean = false
+  override val name: String = scenario.name
+  override val id: String = scenario.id
 
   /*Log lesson metrics*/
-  val lessonLog: LessonLog = LessonLog(this)
+  private val lessonLog: LessonLog = LessonLog(this)
 
   init {
-    lessonListeners = ArrayList<LessonListener>()
     passed = LessonStateManager.getStateFromBase(id) == LessonState.PASSED
   }
 
   @Deprecated("")
   @Throws(IOException::class, FontFormatException::class, LessonIsOpenedException::class)
   fun open(infoPanelDimension: Dimension) {
-    //init infoPanel, check that Lesson has not opened yet
+    //init infoPanel, check that XmlLesson has not opened yet
     if (isOpen) throw LessonIsOpenedException(this.name + "is opened")
     onStart()
     isOpen = true
@@ -60,51 +59,24 @@ data class Lesson(val scenario: Scenario, val lang: String, var module: Module?)
     CourseManager.instance.openLesson(projectWhereToOpenLesson, this)
   }
 
-  fun close() {
-    isOpen = false
-    onClose()
-  }
-
-  //Listeners
-  fun addLessonListener(lessonListener: LessonListener) {
-    lessonListeners.add(lessonListener)
-  }
-
-  fun removeLessonListener(lessonListener: LessonListener) {
-    if (lessonListeners.contains(lessonListener)) lessonListeners.remove(lessonListener)
-
-  }
-
-  fun onStart() {
-    lessonLog.log("Lesson started")
+  override fun onStart() {
+    super.onStart()
+    lessonLog.log("XmlLesson started")
     lessonLog.resetCounter()
-    lessonListeners.forEach { it.lessonStarted(this) }
   }
 
   private fun onItemPassed() {
   }
 
-  private fun onClose() {
-    lessonListeners.clear()
-
-  }
-
   //call onPass handlers in lessonListeners
-  private fun onPass() {
-    lessonLog.log("Lesson passed")
-    lessonListeners.forEach { it.lessonPassed(this) }
-
+  override fun onPass() {
+    super.onPass()
+    lessonLog.log("XmlLesson passed")
   }
 
   @Throws(BadLessonException::class, ExecutionException::class, IOException::class, FontFormatException::class, InterruptedException::class, BadModuleException::class, LessonIsOpenedException::class)
   fun onNextLesson() {
     lessonListeners.forEach { it.lessonNext(this) }
-  }
-
-  fun pass() {
-    passed = true
-    LessonStateManager.setPassed(this)
-    onPass()
   }
 
   fun passItem() {
@@ -116,7 +88,7 @@ data class Lesson(val scenario: Scenario, val lang: String, var module: Module?)
   }
 
   override fun equals(other: Any?): Boolean {
-    return other != null && other is Lesson && other.name == this.name
+    return other != null && other is XmlLesson && other.name == this.name
   }
 
   override fun hashCode(): Int {

@@ -3,7 +3,7 @@ package training.ui
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindowManager
-import training.learn.lesson.Lesson
+import training.learn.interfaces.Lesson
 import training.ui.views.LearnPanel
 import training.ui.views.ModulesPanel
 

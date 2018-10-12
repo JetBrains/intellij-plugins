@@ -1,10 +1,13 @@
 package training.commands
 
+import com.intellij.openapi.application.ApplicationManager
 import training.check.Check
 import training.keymap.KeymapUtil
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.ui.Message
+import java.util.concurrent.CompletableFuture
+import kotlin.concurrent.thread
 
 /**
  * Created by karashevich on 30/01/15.
@@ -21,7 +24,10 @@ class TryCommand : Command(Command.CommandType.TRY) {
     val lesson = executionList.lesson
     val editor = executionList.editor
 
-    LessonManager.getInstance(lesson)?.addMessages(Message.convert(element))
+    var checkFuture: CompletableFuture<Boolean>? = null
+    var triggerFuture: CompletableFuture<Boolean>? = null
+
+    LessonManager.getInstance(lesson).addMessages(Message.convert(element))
 
     val recorder = ActionsRecorder(editor.project!!, editor.document)
     LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
@@ -33,54 +39,30 @@ class TryCommand : Command(Command.CommandType.TRY) {
         check = myCheck.newInstance() as Check
         check.set(executionList.project, editor)
         check.before()
-      }
-      catch (e: Exception) {
+        checkFuture = recorder.futureCheck { check.check() }
+      } catch (e: Exception) {
         e.printStackTrace()
       }
 
     }
-    if (element.getAttribute("trigger") != null) {
-      val actionId = element.getAttribute("trigger")!!.value
-      startRecord(executionList, recorder, actionId, check)
+    when {
+      element.getAttribute("trigger") != null -> {
+        val actionId = element.getAttribute("trigger")!!.value
+        triggerFuture = recorder.futureAction(actionId)
+      }
+      element.getAttribute("triggers") != null -> {
+        val actionIds = element.getAttribute("triggers")!!.value
+        val listOfActionIds = actionIds.split(";".toRegex()).dropLastWhile { it.isEmpty() }
+        triggerFuture = recorder.futureListActions(listOfActionIds)
+      }
     }
-    else if (element.getAttribute("triggers") != null) {
-      val actionIds = element.getAttribute("triggers")!!.value
-      val actionIdArray = actionIds.split(";".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-      startRecord(executionList, recorder, actionIdArray, check)
+    thread(name = "IdeFeaturesTrainer Result") {
+      checkFuture?.get()
+      triggerFuture?.get()
+      LessonManager.getInstance(lesson).passExercise()
+      ApplicationManager.getApplication().invokeLater { startNextCommand(executionList) }
     }
-    else {
-      startRecord(executionList, recorder, check)
-    }
-
   }
-
-  @Throws(Exception::class)
-  private fun startRecord(executionList: ExecutionList, recorder: ActionsRecorder, check: Check?) {
-    recorder.startRecording(getDoWhenDone(executionList), null as Array<String>?, check)
-  }
-
-  @Throws(Exception::class)
-  private fun startRecord(executionList: ExecutionList, recorder: ActionsRecorder, actionId: String, check: Check?) {
-    recorder.startRecording(getDoWhenDone(executionList), actionId, check)
-  }
-
-  @Throws(Exception::class)
-  private fun startRecord(executionList: ExecutionList, recorder: ActionsRecorder, actionIdArray: Array<String>, check: Check?) {
-    recorder.startRecording(getDoWhenDone(executionList), actionIdArray, check)
-
-  }
-
-  private fun getDoWhenDone(executionList: ExecutionList): Runnable
-    = Runnable { pass(executionList) }
-
-  private fun pass(executionList: ExecutionList) {
-    val lesson = executionList.lesson
-    LessonManager.getInstance(lesson).passExercise()
-    val lessonLog = lesson.lessonLog
-    lesson.passItem()
-    startNextCommand(executionList)
-  }
-
 
   private fun resolveShortcut(text: String, actionId: String): String {
     val shortcutByActionId = KeymapUtil.getShortcutByActionId(actionId)
@@ -91,11 +73,10 @@ class TryCommand : Command(Command.CommandType.TRY) {
   companion object {
 
     fun substitution(text: String, shortcutString: String): String {
-      if (text.contains(ActionCommand.SHORTCUT)) {
-        return text.replace(ActionCommand.SHORTCUT, shortcutString)
-      }
-      else {
-        return text
+      return if (text.contains(ActionCommand.SHORTCUT)) {
+        text.replace(ActionCommand.SHORTCUT, shortcutString)
+      } else {
+        text
       }
     }
   }

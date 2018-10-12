@@ -11,35 +11,26 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.messages.MessageBusConnection
-import training.check.Check
 import java.awt.event.KeyEvent
-import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by karashevich on 18/12/14.
  */
 class ActionsRecorder(private val project: Project,
                       private val document: Document) : Disposable {
-  private var triggerActivated: Boolean = false
-  private var triggerQueue: Queue<String>? = null
 
-  private var myDocumentListener: DocumentListener? = null
-  private var myAnActionListener: AnActionListener? = null
+  private val documentListeners: MutableList<DocumentListener> = mutableListOf()
+  private val actionListeners: MutableList<AnActionListener> = mutableListOf()
+  private val eventDispatchers: MutableList<IdeEventQueue.EventDispatcher> = mutableListOf()
 
   private var disposed = false
-  private var doWhenDone: Runnable? = null
-  private var check: Check? = null
 
   init {
-    this.doWhenDone = null
-
     Disposer.register(project, this)
   }
 
@@ -49,62 +40,104 @@ class ActionsRecorder(private val project: Project,
     Disposer.dispose(this)
   }
 
-  fun startRecording(doWhenDone: Runnable) {
-    if (disposed) return
-    this.doWhenDone = doWhenDone
-
+  fun futureAction(actionId: String): CompletableFuture<Boolean> {
+    val future: CompletableFuture<Boolean> = CompletableFuture()
+    val listener = createActionListener { caughtActionId, _ -> if (actionId == caughtActionId) future.complete(true) }
+    ActionManager.getInstance().addAnActionListener(listener, this)
+    return future
   }
 
-  fun startRecording(doWhenDone: Runnable, actionId: String?, check: Check?) {
-    val stringArray = arrayOf<String>(actionId!!)
-    startRecording(doWhenDone, stringArray, check)
-  }
-
-  fun startRecording(doWhenDone: Runnable, actionIdArray: Array<String>?, check: Check?) {
-    if (check != null) this.check = check
-    if (disposed) return
-    this.doWhenDone = doWhenDone
-
-    //        triggerMap = new HashMap<String, Boolean>(actionIdArray.length);
-    triggerQueue = LinkedList<String>()
-    //set triggerMap
-    if (actionIdArray != null) {
-      Collections.addAll(triggerQueue!!, *actionIdArray)
+  fun futureListActions(listOfActions: List<String>): CompletableFuture<Boolean> {
+    val future: CompletableFuture<Boolean> = CompletableFuture()
+    val mutableListOfActions = listOfActions.toMutableList()
+    val listener = createActionListener { caughtActionId, _ ->
+      if (mutableListOfActions.isNotEmpty() && mutableListOfActions.first() == caughtActionId) mutableListOfActions.removeAt(0)
+      if (mutableListOfActions.isEmpty()) future.complete(true)
     }
-    addActionAndDocumentListeners()
+    ActionManager.getInstance().addAnActionListener(listener, this)
+    return future
   }
 
-  private fun isTaskSolved(current: Document): Boolean {
-    if (disposed) return false
-    return if (triggerQueue != null)
-      (triggerQueue!!.size == 1 || triggerQueue!!.size == 0) && (check == null || check!!.check())
-    else
-      triggerActivated && (check == null || check!!.check())
-  }
-
-  private fun computeTrimmedLines(s: String): List<String> {
-    val ls = ArrayList<String>()
-
-    for (it in StringUtil.splitByLines(s)) {
-      val splitted = it.split("[ ]+".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-      for (element in splitted)
-        if (element != "") {
-          ls.add(element)
-        }
+  fun futureCheck(checkFunction: () -> Boolean): CompletableFuture<Boolean> {
+    val future: CompletableFuture<Boolean> = CompletableFuture()
+    val listener = createDocumentListener {
+      if (!future.isDone && !future.isCancelled && checkFunction())
+        future.complete(true)
     }
-    return ls
+    addKeyEventListener {
+      if (!future.isDone && !future.isCancelled && checkFunction()) {
+        future.complete(true)
+      }
+    }
+    document.addDocumentListener(listener)
+    return future
   }
 
   private val myMessageBusConnection: MessageBusConnection
-    get() { return project.messageBus.connect() }
+    get() {
+      return project.messageBus.connect()
+    }
 
   /**
    * method adds action and document listeners to monitor user activity and check task
    */
   private fun addActionAndDocumentListeners() {
-    val actionManager = ActionManager.getInstance() ?: throw Exception("Unable to get instance for ActionManager")
+//    myAnActionListener = createActionListener {
+//      actionId, _ -> doProcessAction(actionId, true)
+//    }
+//    myDocumentListener = createDocumentListener {
+//      doWhenTriggerIsEmptyAndTaskSolved(ActionManager.getInstance(), completableFuture)
+//    }
+//
+//    val myEventDispatcher = IdeEventQueue.EventDispatcher { e ->
+//      if (e is KeyEvent) {
+//        doWhenTriggerIsEmptyAndTaskSolved(ActionManager.getInstance(), completableFuture)
+//      }
+//      false
+//    }
+//
+//    myMessageBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+//      override fun selectionChanged(event: FileEditorManagerEvent) {
+//        event.newFile?.name?.let { doProcessAction(it, true, completableFuture) }
+//      }
+//    })
+//
+//    if (check != null && check!!.listenAllKeys()) IdeEventQueue.getInstance().addDispatcher(myEventDispatcher, this)
+//    document.addDocumentListener(myDocumentListener!!)
+//    ActionManager.getInstance().addAnActionListener(myAnActionListener)
+  }
 
-    myAnActionListener = object : AnActionListener {
+  private fun addKeyEventListener(onKeyEvent: () -> Unit) {
+    val myEventDispatcher: IdeEventQueue.EventDispatcher = IdeEventQueue.EventDispatcher { e ->
+      if (e is KeyEvent) onKeyEvent()
+      false
+    }
+    eventDispatchers.add(myEventDispatcher)
+    IdeEventQueue.getInstance().addDispatcher(myEventDispatcher, this)
+  }
+
+  private fun createDocumentListener(onDocumentChange: () -> Unit): DocumentListener {
+    val documentListener = object : DocumentListener {
+
+      override fun beforeDocumentChange(event: DocumentEvent) {}
+
+      override fun documentChanged(event: DocumentEvent) {
+        if (PsiDocumentManager.getInstance(project).isUncommited(document)) {
+          ApplicationManager.getApplication().invokeLater {
+
+            if (!disposed && !project.isDisposed) {
+              PsiDocumentManager.getInstance(project).commitAndRunReadAction { onDocumentChange() }
+            }
+          }
+        }
+      }
+    }
+    documentListeners.add(documentListener)
+    return documentListener
+  }
+
+  private fun createActionListener(processAction: (actionId: String, project: Project) -> Unit): AnActionListener {
+    val actionListener = object : AnActionListener {
 
       private var projectAvailable: Boolean = false
 
@@ -116,106 +149,25 @@ class ActionsRecorder(private val project: Project,
         val actionId = ActionManager.getInstance().getId(action)
         val actionClassName = action.javaClass.name
         val resultId = actionId ?: actionClassName
-        doProcessAction(resultId, projectAvailable)
+        processAction(resultId, project)
       }
 
       override fun beforeEditorTyping(c: Char, dataContext: DataContext) {}
     }
-    myDocumentListener = object : DocumentListener {
-
-
-      override fun beforeDocumentChange(event: DocumentEvent) {}
-
-      override fun documentChanged(event: DocumentEvent) {
-        if (PsiDocumentManager.getInstance(project).isUncommited(document)) {
-          ApplicationManager.getApplication().invokeLater {
-
-            if (!disposed && !project.isDisposed) {
-              PsiDocumentManager.getInstance(project).commitAndRunReadAction { doWhenTriggerIsEmptyAndTaskSolved(actionManager) }
-            }
-          }
-        }
-      }
-    }
-
-    val myEventDispatcher = IdeEventQueue.EventDispatcher { e ->
-      if (e is KeyEvent) {
-        doWhenTriggerIsEmptyAndTaskSolved(actionManager)
-      }
-      false
-    }
-
-    myMessageBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
-      override fun selectionChanged(event: FileEditorManagerEvent) {
-        event.newFile?.name?.let { doProcessAction(it, true) }
-      }
-    })
-
-
-    if (check != null && check!!.listenAllKeys()) IdeEventQueue.getInstance().addDispatcher(myEventDispatcher, this)
-    document.addDocumentListener(myDocumentListener!!)
-    actionManager.addAnActionListener(myAnActionListener)
-  }
-  /**
-   * @param action - caught action by AnActionListener (see [.addActionAndDocumentListeners] addActionAndDocumentListeners()} method.) or by the project
-   * message bus - see FileEditorManagerListener
-   * @param actionString - could be an actionId, action class name or the file name opened after some action
-   */
-
-  private fun doProcessAction(action: String, projectAvailable: Boolean){
-    //if action called not from project or current editor is different from editor
-    if (!projectAvailable) return
-
-    if (triggerQueue!!.size == 0) {
-      if (isTaskSolved(document)) {
-        //                        actionManager.removeAnActionListener(this);
-        removeListeners(document, ActionManager.getInstance())
-        if (doWhenDone != null) {
-          dispose()
-          doWhenDone!!.run()
-        }
-      }
-    }
-    if (equalStr(action, triggerQueue!!.peek())) {
-      if (triggerQueue!!.size > 1) {
-        triggerQueue!!.poll()
-      } else if (triggerQueue!!.size == 1) {
-        if (isTaskSolved(document)) {
-          //                            actionManager.removeAnActionListener(this);
-          removeListeners(document, ActionManager.getInstance())
-          if (doWhenDone != null) {
-            dispose()
-            doWhenDone!!.run()
-          }
-        } else {
-          triggerQueue!!.poll()
-        }
-      }
-    }
+    actionListeners.add(actionListener)
+    return actionListener
   }
 
-  private fun doWhenTriggerIsEmptyAndTaskSolved(actionManager: ActionManager) {
-    if (triggerQueue!!.isEmpty()) {
-      if (isTaskSolved(document)) {
-        removeListeners(document, actionManager)
-        if (doWhenDone != null)
-          dispose()
-        assert(doWhenDone != null)
-        doWhenDone!!.run()
-      }
-    }
-  }
 
   private fun removeListeners(document: Document, actionManager: ActionManager) {
-    if (myAnActionListener != null) actionManager.removeAnActionListener(myAnActionListener)
-    if (myDocumentListener != null) document.removeDocumentListener(myDocumentListener!!)
+    if (actionListeners.isNotEmpty()) actionListeners.forEach { actionManager.removeAnActionListener(it) }
+    if (documentListeners.isNotEmpty()) documentListeners.forEach { document.removeDocumentListener(it) }
+    if (eventDispatchers.isNotEmpty()) eventDispatchers.forEach { IdeEventQueue.getInstance().removeDispatcher(it) }
     myMessageBusConnection.disconnect()
-    myAnActionListener = null
-    myDocumentListener = null
+    actionListeners.clear()
+    documentListeners.clear()
+    eventDispatchers.clear()
   }
 
-  private fun equalStr(str1: String?, str2: String?): Boolean {
-    return !(str1 == null || str2 == null) && str1.toUpperCase() == str2.toUpperCase()
-  }
 }
 

@@ -1,7 +1,7 @@
 package training.learn.lesson.listeners
 
 import com.intellij.openapi.project.Project
-import training.learn.lesson.Lesson
+import training.learn.interfaces.Lesson
 import training.learn.lesson.LessonListenerAdapter
 import training.statistic.StatisticBase
 

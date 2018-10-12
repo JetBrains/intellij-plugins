@@ -12,7 +12,6 @@ import javax.swing.JLabel
 import javax.swing.border.Border
 import javax.swing.border.EmptyBorder
 import kotlin.reflect.KProperty
-import kotlin.reflect.jvm.javaField
 
 /**
  * Created by jetbrains on 12/08/16.

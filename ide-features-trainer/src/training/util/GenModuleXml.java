@@ -4,7 +4,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import training.learn.Module;
+import training.learn.XmlModule;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -105,9 +105,9 @@ public class GenModuleXml {
         genModules();
     }
 
-    public static Module.ModuleSdkType getSdkTypeFromString(String string) {
+    public static XmlModule.ModuleSdkType getSdkTypeFromString(String string) {
         if (string == null) return null;
-        for (Module.ModuleSdkType moduleSdkType : Module.ModuleSdkType.values()) {
+        for (XmlModule.ModuleSdkType moduleSdkType : XmlModule.ModuleSdkType.values()) {
             if(moduleSdkType.toString().equals(string)) return moduleSdkType;
         }
         return null;

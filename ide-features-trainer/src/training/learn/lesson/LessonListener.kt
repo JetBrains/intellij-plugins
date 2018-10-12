@@ -3,6 +3,7 @@ package training.learn.lesson
 import training.learn.exceptons.BadLessonException
 import training.learn.exceptons.BadModuleException
 import training.learn.exceptons.LessonIsOpenedException
+import training.learn.interfaces.Lesson
 import java.awt.FontFormatException
 import java.io.IOException
 import java.util.*

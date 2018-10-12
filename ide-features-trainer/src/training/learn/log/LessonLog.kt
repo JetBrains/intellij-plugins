@@ -1,6 +1,6 @@
 package training.learn.log
 
-import training.learn.lesson.Lesson
+import training.learn.interfaces.Lesson
 import java.util.*
 
 /**
@@ -38,7 +38,7 @@ class LessonLog(lesson: Lesson) {
   }
 
   init {
-    log("Log is created. Lesson:" + lesson.name)
+    log("Log is created. XmlLesson:" + lesson.name)
   }
 
 }

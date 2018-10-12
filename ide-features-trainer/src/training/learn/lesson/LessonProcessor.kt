@@ -26,7 +26,7 @@ object LessonProcessor {
   var currentExecutionList: training.commands.ExecutionList? = null
     private set
 
-  fun process(project: Project, lesson: Lesson, editor: Editor) {
+  fun process(project: Project, lesson: XmlLesson, editor: Editor) {
 
     val myEditorParameters = LessonProcessor.getEditorParameters(lesson.scenario.root)
     val myQueueOfElements = LessonProcessor.createQueueOfCommands(lesson.scenario.root)
@@ -81,14 +81,14 @@ object LessonProcessor {
 
   private fun getEditorParameters(root: Element): HashMap<String, String> {
     val editorParameters = HashMap<String, String>()
-    if (root.getAttribute(Lesson.EditorParameters.PROJECT_TREE) != null) {
-      editorParameters.put(Lesson.EditorParameters.PROJECT_TREE, root.getAttributeValue(Lesson.EditorParameters.PROJECT_TREE))
+    if (root.getAttribute(XmlLesson.EditorParameters.PROJECT_TREE) != null) {
+      editorParameters.put(XmlLesson.EditorParameters.PROJECT_TREE, root.getAttributeValue(XmlLesson.EditorParameters.PROJECT_TREE))
     }
     return editorParameters
   }
 
   private fun prepareEnvironment(editor: Editor, project: Project, editorParameters: HashMap<String, String>) {
-    if (editorParameters.containsKey(Lesson.EditorParameters.PROJECT_TREE)) {
+    if (editorParameters.containsKey(XmlLesson.EditorParameters.PROJECT_TREE)) {
       if (ActionManager.getInstance().getAction(HideProjectTreeAction.Companion.myActionId) == null) {
         val hideAction = HideProjectTreeAction()
         ActionManager.getInstance().registerAction(hideAction.actionId, hideAction)

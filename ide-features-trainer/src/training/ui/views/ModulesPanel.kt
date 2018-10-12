@@ -2,7 +2,6 @@ package training.ui.views
 
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.guessCurrentProject
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
@@ -11,7 +10,7 @@ import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.UIUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
-import training.learn.Module
+import training.learn.interfaces.Module
 import training.ui.LearnIcons
 import training.ui.UISettings
 import training.util.DataLoader
@@ -86,7 +85,7 @@ class ModulesPanel : JPanel() {
         val modules = CourseManager.instance.modules
         if(DataLoader.liveMode) {
             CourseManager.instance.clearModules()
-            CourseManager.instance.initModules()
+            CourseManager.instance.initXmlModules()
             module2linklabel!!.clear()
         }
         for (module in modules) {

@@ -18,7 +18,9 @@ import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoJavaModuleException
 import training.learn.exceptons.NoSdkException
 import training.learn.exceptons.OldJdkException
-import training.learn.lesson.Lesson
+import training.learn.interfaces.Lesson
+import training.learn.interfaces.Module
+import training.lessons.java.EditorBasicsModule
 import training.util.GenModuleXml
 import java.util.*
 import kotlin.collections.HashMap
@@ -28,17 +30,18 @@ class CourseManager internal constructor() {
   var learnProject: Project? = null
   var learnProjectPath: String? = null
   var mapModuleVirtualFile = HashMap<Module, VirtualFile>()
-  var modules: MutableList<Module> = ArrayList<Module>()
-  val modulesId2modules: MutableMap<String, Module> = mutableMapOf()
+  var modules: MutableList<Module> = ArrayList()
   val currentProject: Project?
     get() {
       val lastFocusedFrame = IdeFocusManager.getGlobalInstance().lastFocusedFrame ?: return null
       return lastFocusedFrame.project
     }
 
+  private val modulesId2modules: MutableMap<String, Module> = mutableMapOf()
 
   init {
-    initModules()
+    initXmlModules()
+    initKotlinModules()
   }
 
   fun clearModules() {
@@ -46,20 +49,24 @@ class CourseManager internal constructor() {
     modules.clear()
   }
 
-  fun initModules() {
-    val modulesRoot = Module.getRootFromPath(GenModuleXml.MODULE_ALLMODULE_FILENAME)
+  fun initXmlModules() {
+    val modulesRoot = XmlModule.getRootFromPath(GenModuleXml.MODULE_ALLMODULE_FILENAME)
     for (element in modulesRoot.children) {
       if (element.name == GenModuleXml.MODULE_TYPE_ATTR) {
         val moduleFilename = element.getAttribute(GenModuleXml.MODULE_NAME_ATTR).value
-        val module = Module.initModule(moduleFilename) ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
+        val module = XmlModule.initModule(moduleFilename) ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
         modules.add(module)
       }
     }
     mergeModules()
   }
 
+  private fun initKotlinModules() {
+    modules.add(EditorBasicsModule())
+  }
+
   private fun mergeModules() {
-    // leave only uniques Module id
+    // leave only uniques XmlModule id
     modules.forEach { if (it.id != null && !modulesId2modules.keys.contains(it.id!!)) modulesId2modules.put(it.id!!, it) }
     modules.forEach {
       val mergedModule = modulesId2modules.get(it.id)
@@ -74,6 +81,8 @@ class CourseManager internal constructor() {
     return modules.firstOrNull { it.id?.toUpperCase() == id.toUpperCase() }
   }
 
+
+  //TODO: remove this method or convert XmlModule to a Module
   fun registerVirtualFile(module: Module, virtualFile: VirtualFile) {
     mapModuleVirtualFile.put(module, virtualFile)
   }
@@ -92,7 +101,7 @@ class CourseManager internal constructor() {
     }
   }
 
-  fun unregisterModule(module: Module) {
+  fun unregisterModule(module: XmlModule) {
     mapModuleVirtualFile.remove(module)
   }
 
@@ -177,7 +186,7 @@ class CourseManager internal constructor() {
     val size = modules.size
     if (size == 1) return null
 
-    for (i in 0..size - 1) {
+    for (i in 0 until size) {
       if (modules[i] == module) {
         if (i + 1 < size) nextModule = modules[i + 1]
         break
