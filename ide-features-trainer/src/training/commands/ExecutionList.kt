@@ -4,7 +4,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import org.jdom.Element
-import training.learn.lesson.Lesson
+import training.learn.interfaces.Lesson
 import java.util.*
 
 /**
