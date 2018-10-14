@@ -23,9 +23,7 @@ import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.ObjectUtils;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl;
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile;
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeaderImpl;
+import org.intellij.plugins.markdown.lang.psi.impl.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -100,6 +98,12 @@ public class MarkdownPsiElementFactory {
 
     PsiElement linkReferenceElement = createFile(project, linkReference).getFirstChild();
 
-    return Pair.create(linkReferenceElement.getFirstChild(), linkReferenceElement.getLastChild());
+    PsiElement ref = linkReferenceElement.getFirstChild();
+    assert ref instanceof MarkdownParagraphImpl;
+
+    PsiElement declaration = linkReferenceElement.getLastChild();
+    assert declaration instanceof MarkdownParagraphImpl || declaration instanceof MarkdownLinkDefinitionImpl;
+
+    return Pair.create(ref, declaration);
   }
 }

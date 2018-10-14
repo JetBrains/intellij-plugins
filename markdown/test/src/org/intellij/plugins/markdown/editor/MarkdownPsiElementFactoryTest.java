@@ -13,6 +13,8 @@
 // limitations under the License.
 package org.intellij.plugins.markdown.editor;
 
+import com.intellij.openapi.util.Pair;
+import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElementFactory;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl;
@@ -34,6 +36,22 @@ public class MarkdownPsiElementFactoryTest extends LightPlatformCodeInsightFixtu
 
   public void testTicks() {
     doTest("ruby", "```", "```ruby\n```");
+  }
+
+  public void testReference() {
+    Pair<PsiElement, PsiElement> codeFence =
+      MarkdownPsiElementFactory.createLinkDeclarationAndReference(myFixture.getProject(), "https://jetbrains.com", "link", "title", "reference");
+
+    assertNotNull(codeFence.getFirst());
+    assertNotNull(codeFence.getSecond());
+  }
+
+  public void testReferenceWithoutTitle() {
+    Pair<PsiElement, PsiElement> codeFence =
+      MarkdownPsiElementFactory.createLinkDeclarationAndReference(myFixture.getProject(), "https://jetbrains.com", "link", null, "reference");
+
+    assertNotNull(codeFence.getFirst());
+    assertNotNull(codeFence.getSecond());
   }
 
   private void doTest(@Nullable String language, @NotNull String text, @NotNull String expectedText) {
