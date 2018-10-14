@@ -21,7 +21,6 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.NettyKt;
@@ -152,7 +151,7 @@ class SafeOpener {
     if (editor == null) {
       return;
     }
-    MarkdownSplitEditor splitEditor = Objects.requireNonNull(ObjectUtils.tryCast(editor, MarkdownSplitEditor.class));
+    MarkdownSplitEditor splitEditor = (MarkdownSplitEditor)editor;
 
     boolean oldAutoScrollPreview = splitEditor.isAutoScrollPreview();
 
