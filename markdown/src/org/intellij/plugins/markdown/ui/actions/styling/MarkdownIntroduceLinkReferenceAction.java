@@ -2,37 +2,50 @@
 package org.intellij.plugins.markdown.ui.actions.styling;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.EmptyExpression;
+import com.intellij.codeInsight.highlighting.HighlightManager;
 import com.intellij.codeInsight.template.*;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.codeInsight.template.impl.TextExpression;
+import com.intellij.find.FindManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiElementFilter;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.ui.ReplacePromptDialog;
 import com.intellij.util.containers.ContainerUtil;
+import org.intellij.plugins.markdown.MarkdownBundle;
 import org.intellij.plugins.markdown.lang.MarkdownTokenTypeSets;
+import org.intellij.plugins.markdown.lang.MarkdownTokenTypes;
 import org.intellij.plugins.markdown.lang.psi.MarkdownPsiElementFactory;
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestinationImpl;
 import org.intellij.plugins.markdown.ui.actions.MarkdownActionUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-import static org.intellij.plugins.markdown.lang.MarkdownElementTypes.FULL_REFERENCE_LINK;
-import static org.intellij.plugins.markdown.lang.MarkdownElementTypes.INLINE_LINK;
+import static org.intellij.plugins.markdown.lang.MarkdownElementTypes.*;
 
 public class MarkdownIntroduceLinkReferenceAction extends AnAction implements DumbAware {
   private static final String VAR_NAME = "reference";
@@ -93,7 +106,7 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
         return;
       }
 
-      Pair<PsiElement, PsiElement> referencePair = MarkdownActionUtil.createLinkDeclarationAndReference(project, link, "reference");
+      Pair<PsiElement, PsiElement> referencePair = createLinkDeclarationAndReference(project, link, "reference");
 
       insertLastNewLine(file);
       insertLastNewLine(file);
@@ -123,6 +136,147 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
 
   private static void insertLastNewLine(@NotNull PsiFile psiFile) {
     psiFile.addAfter(MarkdownPsiElementFactory.createNewLine(psiFile.getProject()), psiFile.getLastChild());
+  }
+
+  public static void replaceDuplicate(@NotNull PsiElement match, @NotNull String referenceText) {
+    WriteCommandAction.runWriteCommandAction(match.getProject(), () -> {
+      PsiFile file = match.getContainingFile();
+      if (!file.isValid()) {
+        return;
+      }
+
+      match.replace(createLinkDeclarationAndReference(match.getProject(), match, referenceText).getFirst());
+    });
+  }
+
+  @NotNull
+  public static Pair<PsiElement, PsiElement> createLinkDeclarationAndReference(Project project, PsiElement link, String referenceText) {
+    String text = null;
+    String title = null;
+    String url = getUrl(link);
+
+    if (PsiUtilCore.getElementType(link) == INLINE_LINK) {
+      SyntaxTraverser<PsiElement> syntaxTraverser = SyntaxTraverser.psiTraverser();
+
+      PsiElement textElement = syntaxTraverser.children(link).find(child -> PsiUtilCore.getElementType(child) == LINK_TEXT);
+      if (textElement != null) {
+        text = textElement.getText();
+        assert text.startsWith("[") && text.endsWith("]");
+        text = text.substring(1, text.length() - 1);
+      }
+
+      PsiElement titleElement =
+        syntaxTraverser.children(link).find(child -> PsiUtilCore.getElementType(child) == LINK_TITLE);
+      if (titleElement != null) {
+        title = titleElement.getText();
+      }
+    }
+
+    assert url != null;
+
+    if (text == null) {
+      text = url;
+    }
+
+    return MarkdownPsiElementFactory.createLinkDeclarationAndReference(project, url, text, title, referenceText);
+  }
+
+  @Nullable
+  public static String getUrl(@NotNull PsiElement link) {
+    String url = null;
+    IElementType type = PsiUtilCore.getElementType(link);
+    if (type == AUTOLINK) {
+      url = link.getFirstChild().getNextSibling().getText();
+    }
+    else if (type == MarkdownTokenTypes.GFM_AUTOLINK) {
+      url = link.getText();
+    }
+    else if (type == MarkdownTokenTypes.EMAIL_AUTOLINK) {
+      url = link.getText();
+    }
+    else if (type == INLINE_LINK) {
+      SyntaxTraverser<PsiElement> syntaxTraverser = SyntaxTraverser.psiTraverser();
+
+      url = syntaxTraverser.children(link).find(child -> PsiUtilCore.getElementType(child) == LINK_DESTINATION).getText();
+    }
+
+    return url;
+  }
+
+  @SuppressWarnings("Duplicates")
+  public static void replaceDuplicates(@NotNull PsiElement file,
+                                       @NotNull Editor editor,
+                                       @NotNull List<SmartPsiElementPointer<PsiElement>> duplicates,
+                                       @NotNull String referenceText) {
+    final String message =
+      MarkdownBundle.message("markdown.extract.link.extract.duplicates.description", ApplicationNamesInfo.getInstance().getProductName(),
+                             duplicates.size());
+    final boolean isUnittest = ApplicationManager.getApplication().isUnitTestMode();
+    final Project project = file.getProject();
+    final int exitCode =
+      !isUnittest ? Messages.showYesNoDialog(project, message, MarkdownBundle.message("markdown.extract.link.refactoring.dialog.title"),
+                                             Messages.getInformationIcon()) : Messages.YES;
+
+    if (exitCode == Messages.YES) {
+      boolean replaceAll = false;
+      final Map<PsiElement, RangeHighlighter> highlighterMap = new HashMap<>();
+      for (SmartPsiElementPointer<PsiElement> smartPsiElementPointer : duplicates) {
+        PsiElement match = smartPsiElementPointer.getElement();
+        if (match == null) {
+          continue;
+        }
+
+        if (!match.isValid()) continue;
+
+        if (!replaceAll) {
+          highlightInEditor(project, editor, highlighterMap, match);
+
+          int promptResult = FindManager.PromptResult.ALL;
+          if (!isUnittest) {
+            ReplacePromptDialog promptDialog = new ReplacePromptDialog(false, MarkdownBundle.message(
+              "markdown.extract.link.extract.link.replace"), project);
+            promptDialog.show();
+            promptResult = promptDialog.getExitCode();
+          }
+          if (promptResult == FindManager.PromptResult.SKIP) {
+            final HighlightManager highlightManager = HighlightManager.getInstance(project);
+            final RangeHighlighter highlighter = highlighterMap.get(match);
+            if (highlighter != null) highlightManager.removeSegmentHighlighter(editor, highlighter);
+            continue;
+          }
+
+          if (promptResult == FindManager.PromptResult.CANCEL) break;
+
+          if (promptResult == FindManager.PromptResult.OK) {
+            replaceDuplicate(match, referenceText);
+          }
+          else if (promptResult == FindManager.PromptResult.ALL) {
+            replaceDuplicate(match, referenceText);
+            replaceAll = true;
+          }
+        }
+        else {
+          replaceDuplicate(match, referenceText);
+        }
+      }
+    }
+  }
+
+  @SuppressWarnings("Duplicates")
+  private static void highlightInEditor(@NotNull final Project project,
+                                        @NotNull final Editor editor,
+                                        @NotNull Map<PsiElement, RangeHighlighter> highlighterMap,
+                                        @NotNull PsiElement element) {
+    final List<RangeHighlighter> highlighters = new ArrayList<>();
+    final HighlightManager highlightManager = HighlightManager.getInstance(project);
+    final EditorColorsManager colorsManager = EditorColorsManager.getInstance();
+    final TextAttributes attributes = colorsManager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
+    final int startOffset = element.getTextRange().getStartOffset();
+    final int endOffset = element.getTextRange().getEndOffset();
+    highlightManager.addRangeHighlight(editor, startOffset, endOffset, attributes, true, highlighters);
+    highlighterMap.put(element, highlighters.get(0));
+    final LogicalPosition logicalPosition = editor.offsetToLogicalPosition(startOffset);
+    editor.getScrollingModel().scrollTo(logicalPosition, ScrollType.MAKE_VISIBLE);
   }
 
   private static class DuplicatesFinder extends TemplateEditingAdapter {
@@ -156,7 +310,7 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
           @Override
           public boolean isAccepted(PsiElement element) {
             return MarkdownTokenTypeSets.LINKS.contains(PsiUtilCore.getElementType(element))
-                   && myUrl.equals(MarkdownActionUtil.getUrl(element))
+                   && myUrl.equals(getUrl(element))
                    //inside inline links
                    && PsiTreeUtil.findFirstParent(element, true, element1 ->  PsiUtilCore.getElementType(element1) == INLINE_LINK) == null
                    //generated link
@@ -169,11 +323,11 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
           ContainerUtil.map(duplicatedLinks, link -> SmartPointerManager.createPointer(link));
 
         if (ApplicationManager.getApplication().isUnitTestMode()) {
-          MarkdownActionUtil.replaceDuplicates(myFile, myEditor, duplicates, referenceText);
+          replaceDuplicates(myFile, myEditor, duplicates, referenceText);
         }
         else {
           ApplicationManager.getApplication().invokeLater(
-            () -> MarkdownActionUtil.replaceDuplicates(myFile, myEditor, duplicates, referenceText));
+            () -> replaceDuplicates(myFile, myEditor, duplicates, referenceText));
         }
       }
     }
