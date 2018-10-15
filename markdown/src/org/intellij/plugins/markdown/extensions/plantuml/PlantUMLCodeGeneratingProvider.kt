@@ -1,5 +1,6 @@
 package org.intellij.plugins.markdown.extensions.plantuml
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
 import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheableProvider
 import org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable
@@ -43,18 +44,41 @@ internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePlu
                                                          && MarkdownSettingsConfigurable.isPlantUMLAvailable()
 
   companion object {
+    private val LOG = Logger.getInstance(PlantUMLCodeFenceLanguageProvider::class.java)
+
     private val sourceStringReader by lazy {
-      Class.forName("net.sourceforge.plantuml.SourceStringReader", false, URLClassLoader(
-        arrayOf(MarkdownSettingsConfigurable.getDownloadedJarPath()?.toURI()?.toURL()), this::class.java.classLoader))
+      try {
+        Class.forName("net.sourceforge.plantuml.SourceStringReader", false, URLClassLoader(
+          arrayOf(MarkdownSettingsConfigurable.getDownloadedJarPath()?.toURI()?.toURL()), this::class.java.classLoader))
+      }
+      catch (e: Exception) {
+        LOG.warn(
+          "net.sourceforge.plantuml.SourceStringReader class isn't found in downloaded PlantUML jar. " +
+          "Please try to download another PlantUML library version.", e)
+        null
+      }
     }
 
     private val generateImageMethod by lazy {
-      sourceStringReader.getDeclaredMethod("generateImage", Class.forName("java.io.File"))
+      try {
+        sourceStringReader?.getDeclaredMethod("generateImage", Class.forName("java.io.File"))
+      }
+      catch (e: Exception) {
+        LOG.warn(
+          "'generateImage' method isn't found in the class 'net.sourceforge.plantuml.SourceStringReader'. " +
+          "Please try to download another PlantUML library version.", e)
+        null
+      }
     }
+  }
 
-    @Throws(IOException::class)
-    private fun storeDiagram(source: String, fileName: String) {
-      generateImageMethod.invoke(sourceStringReader.getConstructor(String::class.java).newInstance(source), File(fileName))
+  @Throws(IOException::class)
+  private fun storeDiagram(source: String, fileName: String) {
+    try {
+      generateImageMethod?.invoke(sourceStringReader?.getConstructor(String::class.java)?.newInstance(source), File(fileName))
+    }
+    catch (e: Exception) {
+      LOG.warn("Cannot save diagram PlantUML diagram. ", e)
     }
   }
 }
