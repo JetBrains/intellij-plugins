@@ -154,7 +154,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
 
         @Override
         protected JSChangeSignatureDialog createDialog(PsiElement context, final List<JSParameterInfo> paramInfos) {
-          JSMethodDescriptor descriptor = new JSMethodDescriptor(myFunction.getElement(), true) {
+          JSMethodDescriptor descriptor = new JSMethodDescriptor(getFunction(), true) {
             @Override
             public List<JSParameterInfo> getParameters() {
               return paramInfos;
