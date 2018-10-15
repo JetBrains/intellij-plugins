@@ -114,7 +114,7 @@ class VueCliGeneratorSettingsPeer : NpmPackageGeneratorPeerExtensible(Arrays.asL
     return panel
   }
 
-  private fun isOldPackage() = myPackageField.selected.name != "cli"
+  private fun isOldPackage() = !myPackageField.selected.name.contains("@vue")
 
   @Suppress("OverridingDeprecatedMember", "DEPRECATION")
   override fun addSettingsStateListener(listener: WebProjectGenerator.SettingsStateListener) {
