@@ -28,7 +28,7 @@ class DebugExample: UIViewController {
     <Try triggers="RunToCursor">Now, set the caret to line 21 and execute <strong>Run to cursor</strong> - <action>RunToCursor</action>.</Try>
     <Try triggers="StepOver">Step over to the next line.</Try>
     <SetSelection start-string="controllers[" end-string="count-1]" />
-    <Try triggers="EditorSelectWord;EditorSelectWord;EvaluateExpression">Select <code>controllers[controllers.count-1]</code> and use <strong>Evaluate Expression</strong> (<action>EvaluateExpression</action> → <action>EditorEnter</action>).</Try>
+    <Try triggers="EditorSelectWord;EditorSelectWord;EvaluateExpression">Select <code>controllers[controllers.count-1]</code> using <action>EditorSelectWord</action> and use <strong>Evaluate Expression</strong> (<action>EvaluateExpression</action> → <action>EditorEnter</action>).</Try>
     <Try triggers="EditorChooseLookupItem">Enter the dot symbol, select some property, and then press <action>EditorEnter</action> to evaluate it without switching to LLDB console.</Try>
     <Try triggers="Stop">Press <action>Stop</action> to stop debugging the application.</Try>
     <Win/>
