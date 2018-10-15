@@ -58,7 +58,7 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     try {
       addComponentToProject("Count");
       initByComponent();
-      PsiElement ref = resolveReferenceAtCaretPosition(PsiElement.class);
+      PsiElement ref = resolveReferenceAtCaretPosition(PsiElement.class).getNavigationElement();
       assertEquals(RncElementTypes.NAME_CLASS, ref.getNode().getElementType());
       assertEquals("body", ref.getText());
     }
