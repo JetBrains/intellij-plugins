@@ -27,8 +27,8 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2Module;
-import org.angular2.entities.impl.Angular2SourceComponent;
-import org.angular2.entities.impl.Angular2SourceDirective;
+import org.angular2.entities.source.Angular2SourceComponent;
+import org.angular2.entities.source.Angular2SourceDirective;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

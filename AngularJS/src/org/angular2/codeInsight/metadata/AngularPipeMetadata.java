@@ -27,7 +27,7 @@ import com.intellij.util.ObjectUtils;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.Angular2Pipe;
-import org.angular2.entities.impl.Angular2SourcePipe;
+import org.angular2.entities.source.Angular2SourcePipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

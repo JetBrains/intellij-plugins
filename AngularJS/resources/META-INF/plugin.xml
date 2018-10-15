@@ -151,6 +151,14 @@
     <annotator language="Angular2" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <implicitUsageProvider implementation="org.angular2.codeInsight.refs.Angular2ImplicitUsageProvider"/>
     <renamePsiElementProcessor implementation="org.angular2.refactoring.Angular2PipeRenameProcessor" order="first"/>
+
+    <!-- TypeScript metadata JSON contributions -->
+    <filetype.stubBuilder filetype="Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonStubBuilder"/>
+    <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes"/>
+    <lang.parserDefinition language="Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonParserDefinition"/>
+    <stubIndex implementation="org.angular2.index.Angular2MetadataPipeIndex"/>
+    <fileTypeFactory implementation="org.angular2.lang.metadata.MetadataJsonFileTypeFactory"/>
+    <lang.fileViewProviderFactory language="JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
