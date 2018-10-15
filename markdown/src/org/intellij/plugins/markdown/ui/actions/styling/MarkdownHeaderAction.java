@@ -79,7 +79,7 @@ public abstract class MarkdownHeaderAction extends AnAction implements DumbAware
         PsiElement parent = ObjectUtils.assertNotNull(findParent(psiFile, caret));
         MarkdownHeaderImpl header = PsiTreeUtil.getParentOfType(parent, MarkdownHeaderImpl.class, false);
 
-        if (header != null) {
+        if (header != null && header.isValid()) {
           header.replace(createNewLevelHeader(header));
         }
         else {
