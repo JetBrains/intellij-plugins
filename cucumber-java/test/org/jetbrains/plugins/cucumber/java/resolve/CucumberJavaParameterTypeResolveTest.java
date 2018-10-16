@@ -20,9 +20,8 @@ public class CucumberJavaParameterTypeResolveTest extends BaseCucumberJavaResolv
   public void testNoReferenceInStringLiteralOutsideAnnotations() {
     init("stepResolve_ParameterType", "ParameterTypeSteps.java");
     final PsiReference reference = findReferenceBySignature("System.out.println(\"te<caret>xt\")");
-    if (reference instanceof CucumberJavaParameterTypeReference) {
-      fail("CucumberJavaParameterTypeReference not expected inside method body");
-    }
+    assertFalse("CucumberJavaParameterTypeReference not expected inside method body",
+                reference instanceof CucumberJavaParameterTypeReference);
   }
 
   @Override
