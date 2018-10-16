@@ -7,10 +7,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
+import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Pipe;
 import org.angularjs.codeInsight.refs.AngularJSReferenceBase;
-import org.angularjs.index.AngularFilterIndex;
-import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,11 @@ public class Angular2PipeNameReferencesProvider extends PsiReferenceProvider {
     @Nullable
     @Override
     public PsiElement resolveInner() {
-      return AngularIndexUtil.resolve(getElement().getProject(), AngularFilterIndex.KEY, getElement().getStringValue());
+      String pipeName = getElement().getStringValue();
+      return pipeName != null ?
+             ObjectUtils.doIfNotNull(Angular2EntitiesProvider.findPipe(getElement().getProject(), pipeName),
+                                     Angular2Pipe::getSourceElement)
+                              : null;
     }
 
     @NotNull

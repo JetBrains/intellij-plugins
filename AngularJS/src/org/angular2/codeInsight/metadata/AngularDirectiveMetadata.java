@@ -37,6 +37,7 @@ import java.util.Collection;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.unmodifiableCollection;
+import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_DIRECTIVES_INDEX_USER_STRING;
 
 public abstract class AngularDirectiveMetadata implements Angular2Directive {
 
@@ -57,20 +58,37 @@ public abstract class AngularDirectiveMetadata implements Angular2Directive {
 
   @Nullable
   public static Angular2Directive create(@NotNull TypeScriptClass context) {
-    JSCallExpression call = Angular2DecoratorUtil.getDecorator(context, "Component");
+    JSCallExpression call = Angular2DecoratorUtil.getDecoratorCall(context, "Component");
     if (call != null) {
       ES6Decorator dec = PsiTreeUtil.getParentOfType(call, ES6Decorator.class);
       if (dec != null) {
-        return CachedValuesManager.getCachedValue(dec, () ->
-          CachedValueProvider.Result.create(new Angular2SourceComponent(dec), dec));
+        return CachedValuesManager.getCachedValue(dec, () -> {
+          JSImplicitElement declaration = locateDeclaration(dec);
+          return CachedValueProvider.Result.create(declaration != null ? new Angular2SourceComponent(dec, declaration) : null, dec);
+        });
       }
     }
     else {
-      ES6Decorator dec = PsiTreeUtil.getParentOfType(Angular2DecoratorUtil.getDecorator(context, "Directive"), ES6Decorator.class);
+      ES6Decorator dec = PsiTreeUtil.getParentOfType(Angular2DecoratorUtil.getDecoratorCall(context, "Directive"), ES6Decorator.class);
       if (dec != null) {
-        return CachedValuesManager.getCachedValue(dec, () ->
-          CachedValueProvider.Result.create(new Angular2SourceDirective(dec), dec));
+        return CachedValuesManager.getCachedValue(dec, () -> {
+          JSImplicitElement declaration = locateDeclaration(dec);
+          return CachedValueProvider.Result.create(declaration != null ? new Angular2SourceDirective(dec, declaration) : null, dec);
+        });
       }
+    }
+    return null;
+  }
+
+  private static JSImplicitElement locateDeclaration(@NotNull ES6Decorator dec) {
+    JSCallExpression call = ObjectUtils.tryCast(dec.getExpression(), JSCallExpression.class);
+    if (call != null && call.getIndexingData() != null && call.getIndexingData().getImplicitElements() != null) {
+      return call.getIndexingData()
+        .getImplicitElements()
+        .stream()
+        .filter(a -> ANGULAR_DIRECTIVES_INDEX_USER_STRING.equals(a.getUserString()))
+        .findFirst()
+        .orElse(null);
     }
     return null;
   }
@@ -161,7 +179,7 @@ public abstract class AngularDirectiveMetadata implements Angular2Directive {
 
     @NotNull
     @Override
-    public PsiElement getNavigableElement() {
+    public PsiElement getSourceElement() {
       return source;
     }
   }
@@ -187,9 +205,10 @@ public abstract class AngularDirectiveMetadata implements Angular2Directive {
 
     @NotNull
     @Override
-    public PsiElement getNavigableElement() {
+    public PsiElement getSourceElement() {
       return myDeclaration;
     }
+
   }
 
   private static class CompiledDirectiveMetadata extends AngularDirectiveMetadata {
@@ -214,6 +233,12 @@ public abstract class AngularDirectiveMetadata implements Angular2Directive {
     @Override
     public PsiElement getNavigableElement() {
       return myDirectiveClass != null ? myDirectiveClass : myDeclaration;
+    }
+
+    @NotNull
+    @Override
+    public PsiElement getSourceElement() {
+      return myDeclaration;
     }
 
     @Override

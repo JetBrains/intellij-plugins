@@ -22,6 +22,9 @@ public interface Angular2MetadataElementTypes {
   MetadataElementType<Angular2MetadataReferenceStub> REFERENCE =
     new Angular2MetadataElementType<>("REFERENCE", Angular2MetadataReferenceStub::new, Angular2MetadataReference::new);
 
+  MetadataElementType<Angular2MetadataPipeStub> PIPE =
+    new Angular2MetadataElementType<>("PIPE", Angular2MetadataPipeStub::new, Angular2MetadataPipe::new);
+
   IStubFileElementType<MetadataFileStubImpl> FILE = new MetadataStubFileElementType(Angular2MetadataLanguage.INSTANCE);
 
   final class Angular2MetadataElementType<Stub extends Angular2MetadataElementStub> extends MetadataElementType<Stub> {

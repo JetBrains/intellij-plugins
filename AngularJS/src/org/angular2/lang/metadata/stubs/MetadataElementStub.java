@@ -18,7 +18,7 @@ import java.util.Map;
 
 public abstract class MetadataElementStub<Psi extends MetadataElement> extends StubBase<Psi> {
 
-  private static final String __SYMBOLIC = "__symbolic";
+  protected static final String __SYMBOLIC = "__symbolic";
 
   protected static final String ARRAY_TYPE = "#array";
   protected static final String OBJECT_TYPE = "#object";
