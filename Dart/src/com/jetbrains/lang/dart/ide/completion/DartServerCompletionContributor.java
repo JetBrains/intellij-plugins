@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.AutoPopupController;
@@ -80,6 +68,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final PsiFile originalFile = parameters.getOriginalFile();
                final Project project = originalFile.getProject();
 
+               if (originalResultSet.getPrefixMatcher().getPrefix().isEmpty() &&
+                   isRightAfterBadIdentifier(parameters.getOriginalFile().getText(), parameters.getOffset())) {
+                 return;
+               }
+
                final CompletionSorter sorter = createSorter(parameters, originalResultSet.getPrefixMatcher());
                final String uriPrefix = getPrefixIfCompletingUri(parameters);
                final CompletionResultSet resultSet = uriPrefix != null
@@ -132,7 +125,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                  LookupElementBuilder lookupElement = null;
 
-                 for (DartCompletionExtension extension: DartCompletionExtension.getExtensions()) {
+                 for (DartCompletionExtension extension : DartCompletionExtension.getExtensions()) {
                    lookupElement = extension.createLookupElement(project, suggestion);
                    if (lookupElement != null) break;
                  }
@@ -145,6 +138,19 @@ public class DartServerCompletionContributor extends CompletionContributor {
                });
              }
            });
+  }
+
+  private static boolean isRightAfterBadIdentifier(@NotNull String text, int offset) {
+    if (offset == 0) return false;
+
+    int currentOffset = offset - 1;
+    if (!Character.isJavaIdentifierPart(text.charAt(currentOffset))) return false;
+
+    while (currentOffset > 0 && Character.isJavaIdentifierPart(text.charAt(currentOffset - 1))) {
+      currentOffset--;
+    }
+
+    return !Character.isJavaIdentifierStart(text.charAt(currentOffset));
   }
 
   private static void appendRuntimeCompletion(@NotNull final CompletionParameters parameters,
@@ -173,7 +179,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                                    contextFile, contextOffset,
                                    Collections.emptyList(), Collections.emptyList());
     if (completionResult != null && completionResult.suggestions != null) {
-      for (CompletionSuggestion suggestion: completionResult.suggestions) {
+      for (CompletionSuggestion suggestion : completionResult.suggestions) {
         LookupElementBuilder lookupElement = createLookupElement(project, suggestion);
         resultSet.addElement(lookupElement);
       }
