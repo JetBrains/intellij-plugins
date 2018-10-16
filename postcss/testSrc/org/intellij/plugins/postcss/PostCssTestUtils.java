@@ -3,6 +3,7 @@ package org.intellij.plugins.postcss;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.testFramework.fixtures.IdeaTestExecutionPolicy;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -20,7 +21,7 @@ public final class PostCssTestUtils {
 
   @NotNull
   public static String getRootTestDataPath() {
-    return FileUtil.join(PathManager.getHomePath(), "contrib", "postcss", "testData");
+    return FileUtil.join(IdeaTestExecutionPolicy.getHomePathWithPolicy(), "contrib", "postcss", "testData");
   }
 
   /**
@@ -31,7 +32,7 @@ public final class PostCssTestUtils {
    */
   @NotNull
   public static String getTestDataBasePath(@NotNull final Class clazz) {
-    return "/" + StringUtil.notNullize(FileUtil.getRelativePath(PathManager.getHomePath(), getFullTestDataPath(clazz), File.separatorChar));
+    return "/" + StringUtil.notNullize(FileUtil.getRelativePath(IdeaTestExecutionPolicy.getHomePathWithPolicy(), getFullTestDataPath(clazz), File.separatorChar));
   }
 
   @NotNull
