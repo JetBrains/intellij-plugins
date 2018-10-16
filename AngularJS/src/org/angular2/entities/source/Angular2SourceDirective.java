@@ -4,6 +4,7 @@ package org.angular2.entities.source;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -28,8 +29,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   private static final String OUTPUT = "Output";
   private static final String OUTPUTS = "outputs";
 
-  public Angular2SourceDirective(@NotNull ES6Decorator source) {
-    super(source);
+  public Angular2SourceDirective(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
+    super(decorator, implicitElement);
   }
 
   @Nullable

@@ -8,10 +8,9 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.PsiElement;
-import org.angular2.codeInsight.Angular2PipeUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
@@ -20,18 +19,19 @@ public class AngularJSFindUsagesHandlerFactory extends JavaScriptFindUsagesHandl
 
   @Override
   public boolean canFindUsages(@NotNull PsiElement element) {
-    return DirectiveUtil.getDirective(element) != null
-           || element instanceof JSClass
-           || Angular2PipeUtil.getPipe(element) != null;
+    return element instanceof JSClass
+           || DirectiveUtil.getDirective(element) != null
+           || Angular2EntitiesProvider.getPipe(element) != null;
   }
 
   @Override
   public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
-    final JSImplicitElement pipe;
-    if (!forHighlightUsages && (pipe = Angular2PipeUtil.getPipe(element)) != null) {
-      JSClass cls = Angular2EntitiesProvider.getPipe(pipe).getTypeScriptClass();
+    final Angular2Pipe pipe;
+    if (!forHighlightUsages && (pipe = Angular2EntitiesProvider.getPipe(element)) != null) {
+      JSClass cls = pipe.getTypeScriptClass();
       return new JavaScriptFindUsagesHandlerFactory.JavaScriptFindUsagesHandler(
-        element != cls ? pipe : cls, element == cls ? new PsiElement[]{pipe} : PsiElement.EMPTY_ARRAY);
+        element != cls ? pipe.getSourceElement() : cls,
+        element == cls ? new PsiElement[]{pipe.getSourceElement()} : PsiElement.EMPTY_ARRAY);
     }
 
     if (!forHighlightUsages && element instanceof JSClass && Angular2LangUtil.isAngular2Context(element)) {

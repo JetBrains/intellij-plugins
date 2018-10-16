@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.psi.util.CachedValueProvider;
@@ -18,25 +19,33 @@ import java.util.HashSet;
 
 public abstract class Angular2SourceEntity extends UserDataHolderBase implements Angular2Entity {
 
-  private final ES6Decorator mySource;
+  private final ES6Decorator myDecorator;
+  private final JSImplicitElement myImplicitElement;
   private final TypeScriptClass myClass;
 
-  public Angular2SourceEntity(@NotNull ES6Decorator source) {
-    this.mySource = source;
-    myClass = PsiTreeUtil.getContextOfType(mySource, TypeScriptClass.class);
+  public Angular2SourceEntity(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
+    this.myDecorator = decorator;
+    myImplicitElement = implicitElement;
+    myClass = PsiTreeUtil.getContextOfType(myDecorator, TypeScriptClass.class);
     assert myClass != null;
   }
 
   @NotNull
   @Override
   public JSElement getNavigableElement() {
-    return mySource;
+    return myDecorator;
+  }
+
+  @Override
+  @NotNull
+  public JSElement getSourceElement() {
+    return myImplicitElement;
   }
 
   @NotNull
   @Override
   public ES6Decorator getDecorator() {
-    return mySource;
+    return myDecorator;
   }
 
   @NotNull
@@ -46,14 +55,14 @@ public abstract class Angular2SourceEntity extends UserDataHolderBase implements
   }
 
   protected <T> T getCachedValue(@NotNull CachedValueProvider<T> provider) {
-    return CachedValuesManager.getManager(mySource.getProject()).getCachedValue(this, provider);
+    return CachedValuesManager.getManager(myDecorator.getProject()).getCachedValue(this, provider);
   }
 
   @NotNull
   protected Collection<Object> getClassModificationDependencies() {
     return getCachedValue(() -> {
       Collection<Object> dependencies = new HashSet<>();
-      JSClass cls = PsiTreeUtil.getParentOfType(mySource, JSClass.class);
+      JSClass cls = PsiTreeUtil.getContextOfType(myDecorator, JSClass.class);
       assert cls != null;
       JSClassUtils.processClassesInHierarchy(cls, true, (aClass, typeSubstitutor, fromImplements) -> {
         dependencies.add(aClass.getContainingFile());

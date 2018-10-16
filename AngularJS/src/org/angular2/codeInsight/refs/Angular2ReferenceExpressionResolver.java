@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
@@ -22,8 +21,6 @@ import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
-import org.angularjs.index.AngularFilterIndex;
-import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -56,16 +53,16 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
       //expected type evaluator uses incomplete = true results so we have to cache it and reuse inside incomplete = false
       return new TypeScriptCallExpressionResolver((JSCallExpression)expression.getParent()).chooseSignatures(results);
     }
-    final JSImplicitElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
-    if (resolve != null) {
-      Angular2Pipe pipeMetadata = Angular2EntitiesProvider.getPipe(resolve);
-      if (pipeMetadata.getTransformMethods() != null) {
-        return pipeMetadata.getTransformMethods()
+    assert myReferencedName != null;
+    final Angular2Pipe pipe = Angular2EntitiesProvider.findPipe(myParent.getProject(), myReferencedName);
+    if (pipe != null) {
+      if (pipe.getTransformMethods() != null) {
+        return pipe.getTransformMethods()
           .stream()
           .map(JSResolveResult::new)
           .toArray(ResolveResult[]::new);
       }
-      return new ResolveResult[]{new JSResolveResult(ObjectUtils.notNull(pipeMetadata.getTypeScriptClass(), resolve))};
+      return new ResolveResult[]{new JSResolveResult(ObjectUtils.notNull(pipe.getTypeScriptClass(), pipe.getSourceElement()))};
     }
     return ResolveResult.EMPTY_ARRAY;
   }

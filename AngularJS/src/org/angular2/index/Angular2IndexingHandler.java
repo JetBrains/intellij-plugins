@@ -2,7 +2,9 @@
 package org.angular2.index;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.json.psi.*;
+import com.intellij.json.psi.JsonProperty;
+import com.intellij.json.psi.JsonStringLiteral;
+import com.intellij.json.psi.JsonValue;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSElementTypes;
@@ -13,12 +15,14 @@ import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
 import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.resolve.JSTypeInfo;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
@@ -62,6 +66,21 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   public static final String ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING = "atui";
 
+  @Nullable
+  @Override
+  public JSElementIndexingDataImpl processDecorator(@NotNull ES6Decorator decorator, @Nullable JSElementIndexingDataImpl data) {
+    if (isPipe(decorator.getDecoratorName())) {
+      TypeScriptClass pipeClass = PsiTreeUtil.getContextOfType(decorator, TypeScriptClass.class);
+      if (pipeClass != null) {
+        if (data == null) {
+          data = new JSElementIndexingDataImpl();
+        }
+        addPipe(pipeClass, data::addImplicitElement, getPropertyName(decorator, Angular2PipeUtil.NAME_PROP));
+      }
+    }
+    return super.processDecorator(decorator, data);
+  }
+
   @Override
   public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
     final JSExpression expression = callExpression.getMethodExpression();
@@ -70,12 +89,6 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       if (isDirective(name)) {
         addDirective(callExpression, outData::addImplicitElement, getPropertyName(callExpression, SELECTOR));
         addDirectiveTemplateRef(callExpression, outData::addImplicitElement, getPropertyName(callExpression, TEMPLATE_URL));
-      }
-      if (isPipe(name)) {
-        JSClass pipeClass = PsiTreeUtil.getParentOfType(callExpression, JSClass.class);
-        if (pipeClass != null) {
-          addPipe(pipeClass, outData::addImplicitElement, getPropertyName(callExpression, Angular2PipeUtil.NAME_PROP), null);
-        }
       }
       if (isModule(name)) {
         addImplicitElementToModules(callExpression, outData::addImplicitElement, determineModuleName(callExpression));
@@ -93,7 +106,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       final ASTNode name = ref.getLastChildNode();
       if (name != null && name.getElementType() == JSTokenTypes.IDENTIFIER) {
         final String referencedName = name.getText();
-        return isDirective(referencedName) || isPipe(referencedName) || isModule(referencedName);
+        return isDirective(referencedName) || isModule(referencedName);
       }
     }
     return false;
@@ -200,21 +213,14 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   private static void addPipe(PsiElement expression,
                               @NotNull Consumer<JSImplicitElement> processor,
-                              String pipe,
-                              @Nullable String pipeClassName) {
+                              String pipe) {
     if (pipe == null) return;
     JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(pipe, expression)
       .setUserString(ANGULAR_FILTER_INDEX_USER_STRING)
       .setType(JSImplicitElement.Type.Class)
-      .setTypeString(Angular2PipeUtil.createTypeString(pipeClassName))
+      .setTypeString(Angular2PipeUtil.createTypeString(null))
       .toImplicitElement();
     processor.consume(pipeElement);
-    if (pipeClassName != null) {
-      processor.consume(new JSImplicitElementImpl.Builder(pipeClassName, expression)
-                          .setType(JSImplicitElement.Type.Class)
-                          .setTypeString(Angular2PipeUtil.createClassTypeString(pipe))
-                          .toImplicitElement());
-    }
   }
 
   @Nullable
@@ -281,7 +287,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     if (directiveFile != null) {
       for (PsiElement element : directiveFile.getChildren()) {
         if (element instanceof JSClass
-            && hasTemplateReference(getDecorator((JSClass)element, COMPONENT_DEC), templateFile)) {
+            && hasTemplateReference(getDecoratorCall((JSClass)element, COMPONENT_DEC), templateFile)) {
           return (JSClass)element;
         }
       }
@@ -362,57 +368,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         addDirective(value, createIndexContentBuilderProcessor(builder), ((JsonStringLiteral)value).getValue());
       }
     }
-    else //noinspection ConstantConditions
-      if (customElement instanceof JsonProperty
-          && "name".equals(((JsonProperty)customElement).getName())
-          && ((JsonProperty)customElement).getValue() instanceof JsonStringLiteral
-          && "Pipe".equals(((JsonStringLiteral)((JsonProperty)customElement).getValue()).getValue())) {
-        final String pipeName;
-        final String pipeClassName;
-        if ((pipeName = getPipeName((JsonProperty)customElement)) != null
-            && (pipeClassName = getPipeClassName((JsonProperty)customElement)) != null) {
-          addPipe(customElement, createIndexContentBuilderProcessor(builder), pipeName, pipeClassName);
-        }
-      }
     return true;
-  }
-
-  @Nullable
-  private static String getPipeName(@NotNull JsonProperty pipeCall) {
-    JsonObject object = (JsonObject)PsiTreeUtil.findFirstParent(
-      pipeCall,
-      p -> p instanceof JsonObject && ((JsonObject)p).findProperty("arguments") != null);
-    if (object != null) {
-      JsonProperty args = object.findProperty("arguments");
-      assert args != null;
-      JsonArray argsArr = ObjectUtils.tryCast(args.getValue(), JsonArray.class);
-      if (argsArr != null) {
-        for (JsonElement el : argsArr.getValueList()) {
-          if (el instanceof JsonObject) {
-            JsonProperty nameProp = ((JsonObject)el).findProperty("name");
-            if (nameProp != null && nameProp.getValue() instanceof JsonStringLiteral) {
-              return ((JsonStringLiteral)nameProp.getValue()).getValue();
-            }
-          }
-        }
-      }
-    }
-    return null;
-  }
-
-  @Nullable
-  private static String getPipeClassName(@NotNull JsonProperty pipeCall) {
-    JsonObject object = (JsonObject)PsiTreeUtil.findFirstParent(
-      pipeCall,
-      p -> p instanceof JsonObject
-           && "class".equals(ObjectUtils.doIfNotNull(
-        ((JsonObject)p).findProperty("__symbolic"),
-        s -> ObjectUtils.doIfCast(s.getValue(), JsonStringLiteral.class,
-                                  JsonStringLiteral::getValue))));
-    if (object != null && object.getParent() instanceof JsonProperty) {
-      return ((JsonProperty)object.getParent()).getName();
-    }
-    return null;
   }
 
   @Override
