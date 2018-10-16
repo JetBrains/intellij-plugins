@@ -35,7 +35,7 @@ public class Angular2SourceDirectiveProperty implements Angular2DirectivePropert
 
   @NotNull
   @Override
-  public JSElement getNavigableElement() {
+  public JSElement getSourceElement() {
     return Objects.requireNonNull((JSElement)mySignature.getMemberSource().getSingleElement());
   }
 }

@@ -2,6 +2,7 @@
 package org.angular2.entities.source;
 
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2Module;
 import org.jetbrains.annotations.NotNull;
@@ -9,8 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class Angular2SourceDeclaration extends Angular2SourceEntity implements Angular2Declaration {
 
-  public Angular2SourceDeclaration(@NotNull ES6Decorator source) {
-    super(source);
+  public Angular2SourceDeclaration(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
+    super(decorator, implicitElement);
   }
 
   @Nullable

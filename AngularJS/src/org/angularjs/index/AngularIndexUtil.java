@@ -35,7 +35,6 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
-import org.angular2.codeInsight.Angular2PipeUtil;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,14 +47,14 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 61;
+  public static final int BASE_VERSION = 62;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
   public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = JSResolveResult::new;
 
   public static JSImplicitElement resolve(final Project project,
-                                          final StubIndexKey<String, JSImplicitElementProvider> index,
+                                          final StubIndexKey<? super String, JSImplicitElementProvider> index,
                                           final String lookupKey) {
     final Ref<JSImplicitElement> result = new Ref<>(null);
     final Processor<JSImplicitElement> processor = element -> {
@@ -71,7 +70,7 @@ public class AngularIndexUtil {
   }
 
   public static void multiResolve(Project project,
-                                  final StubIndexKey<String, JSImplicitElementProvider> index,
+                                  final StubIndexKey<? super String, JSImplicitElementProvider> index,
                                   final String lookupKey,
                                   final Processor<? super JSImplicitElement> processor) {
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
@@ -98,9 +97,6 @@ public class AngularIndexUtil {
     if (index == AngularDirectivesIndex.KEY) {
       processDirectivesMetadata(project, lookupKey, processor, scope);
     }
-    else if (index == AngularFilterIndex.KEY) {
-      processPipesMetadata(project, lookupKey, processor, scope);
-    }
   }
 
   private static boolean processDirectivesMetadata(@NotNull Project project,
@@ -122,7 +118,7 @@ public class AngularIndexUtil {
   }
 
   public static ResolveResult[] multiResolveAngularNamedDefinitionIndex(@NotNull final Project project,
-                                                                        @NotNull final ID<String, AngularNamedItemDefinition> INDEX,
+                                                                        @NotNull final ID<? super String, AngularNamedItemDefinition> INDEX,
                                                                         @NotNull final String id,
                                                                         @NotNull final Condition<? super VirtualFile> filter,
                                                                         boolean dirtyResolve) {
@@ -214,25 +210,8 @@ public class AngularIndexUtil {
     return restrictions;
   }
 
-  private static boolean processPipesMetadata(@NotNull Project project,
-                                              @NotNull String lookupKey,
-                                              @NotNull Processor<? super JSImplicitElement> processor,
-                                              @NotNull GlobalSearchScope scope) {
-    FileBasedIndex.ValueProcessor<Collection<JSImplicitElementsIndex.JSElementProxy>> implicitElementsProcessor =
-      (virtualFile, value) -> {
-        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-        if (psiFile instanceof JsonFile) {
-          for (JSImplicitElementsIndex.JSElementProxy proxy : value) {
-            JSOffsetBasedImplicitElement element = proxy.toOffsetBasedImplicitElement(psiFile);
-            if (Angular2PipeUtil.isPipeType(element.getTypeString()) && !processor.process(element)) return false;
-          }
-        }
-        return true;
-      };
-    return FileBasedIndex.getInstance().processValues(JSImplicitElementsIndex.INDEX_ID, lookupKey, null, implicitElementsProcessor, scope);
-  }
-
   private static class AngularKeysProvider implements ParameterizedCachedValueProvider<Collection<String>, Pair<Project, ID<String, ?>>> {
+    @SuppressWarnings("unchecked")
     @Override
     public CachedValueProvider.Result<Collection<String>> compute(final Pair<Project, ID<String, ?>> projectAndIndex) {
       final Project project = projectAndIndex.first;
@@ -250,13 +229,10 @@ public class AngularIndexUtil {
                ? !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class, element -> false)
                : !fileIndex.processValues(id, key, null, (FileBasedIndex.ValueProcessor)(file, value) -> false, scope)
       );
-      if (id == AngularDirectivesIndex.KEY || id == AngularFilterIndex.KEY) {
+      if (id == AngularDirectivesIndex.KEY) {
         allKeys = FileBasedIndex.getInstance().getAllKeys(JSImplicitElementsIndex.INDEX_ID, project);
-        List<String> filteredFromMeta = id == AngularDirectivesIndex.KEY
-                                        ? ContainerUtil
-                                          .filter(allKeys, key -> !processDirectivesMetadata(project, key, element -> false, scope))
-                                        : ContainerUtil
-                                          .filter(allKeys, key -> !processPipesMetadata(project, key, element -> false, scope));
+        List<String> filteredFromMeta = ContainerUtil
+          .filter(allKeys, key -> !processDirectivesMetadata(project, key, element -> false, scope));
         if (filteredKeys.isEmpty()) {
           filteredKeys = filteredFromMeta;
         }

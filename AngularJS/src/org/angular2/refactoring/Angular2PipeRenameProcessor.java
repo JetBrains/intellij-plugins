@@ -37,7 +37,7 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
 
   @Override
   public boolean canProcessElement(@NotNull PsiElement element) {
-    return Angular2PipeUtil.getPipe(element) != null
+    return Angular2EntitiesProvider.getPipe(element) != null
            && Angular2LangUtil.isAngular2Context(element);
   }
 
@@ -49,7 +49,7 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
   @Nullable
   @Override
   public PsiElement substituteElementToRename(@NotNull PsiElement element, @Nullable Editor editor) {
-    return Angular2PipeUtil.getPipe(element);
+    return Objects.requireNonNull(Angular2EntitiesProvider.getPipe(element)).getSourceElement();
   }
 
   @Override
@@ -58,7 +58,7 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
                             @NotNull UsageInfo[] usages,
                             @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     if (element instanceof JSImplicitElement && element.getParent() instanceof TypeScriptClass) {
-      JSCallExpression decorator = Angular2DecoratorUtil.getDecorator((TypeScriptClass)element.getParent(), PIPE_DEC);
+      JSCallExpression decorator = Angular2DecoratorUtil.getDecoratorCall((TypeScriptClass)element.getParent(), PIPE_DEC);
       JSProperty property = Angular2DecoratorUtil.getProperty(decorator, NAME_PROP);
       if (property != null && property.getValue() instanceof JSLiteralExpression) {
         PsiReference[] refs = property.getValue().getReferences();
@@ -78,15 +78,15 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
                                          @NotNull final PsiElement element,
                                          PsiElement nameSuggestionContext,
                                          Editor editor) {
-    return super.createRenameDialog(project, Objects.requireNonNull(Angular2PipeUtil.getPipe(element)),
+    return super.createRenameDialog(project, Objects.requireNonNull(Angular2EntitiesProvider.getPipe(element)).getSourceElement(),
                                     nameSuggestionContext, editor);
   }
 
   @Override
   public void prepareRenaming(@NotNull PsiElement element, @NotNull String newName, @NotNull Map<PsiElement, String> allRenames) {
     assert element instanceof JSImplicitElement;
-    Angular2Pipe metadata = Angular2EntitiesProvider.getPipe((JSImplicitElement)element);
-    if (metadata.getTypeScriptClass() != null) {
+    Angular2Pipe metadata = Angular2EntitiesProvider.getPipe(element);
+    if (metadata != null && metadata.getTypeScriptClass() != null) {
       JSClass pipeClass = metadata.getTypeScriptClass();
       allRenames.put(pipeClass, getDefaultPipeClassName(newName));
       if (pipeClass.getContainingFile().getName().equals(getDefaultPipeFileName(((JSImplicitElement)element).getName()))) {

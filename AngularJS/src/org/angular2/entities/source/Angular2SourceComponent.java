@@ -4,6 +4,7 @@ package org.angular2.entities.source;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -24,8 +25,8 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
 
   private static final String TEMPLATE = "template";
 
-  public Angular2SourceComponent(@NotNull ES6Decorator source) {
-    super(source);
+  public Angular2SourceComponent(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
+    super(decorator, implicitElement);
   }
 
   @Nullable

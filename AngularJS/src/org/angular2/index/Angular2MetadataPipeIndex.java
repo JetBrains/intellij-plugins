@@ -3,16 +3,16 @@ package org.angular2.index;
 
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.stubs.StubIndexKey;
-import org.angular2.entities.metadata.psi.Angular2MetadataClass;
+import org.angular2.entities.metadata.psi.Angular2MetadataPipe;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2MetadataPipeIndex extends StringStubIndexExtension<Angular2MetadataClass> {
+public class Angular2MetadataPipeIndex extends StringStubIndexExtension<Angular2MetadataPipe> {
 
-  public static final StubIndexKey<String, Angular2MetadataClass> KEY = StubIndexKey.createIndexKey("angular2.metadata.pipe.index");
+  public static final StubIndexKey<String, Angular2MetadataPipe> KEY = StubIndexKey.createIndexKey("angular2.metadata.pipe.index");
 
   @NotNull
   @Override
-  public StubIndexKey<String, Angular2MetadataClass> getKey() {
+  public StubIndexKey<String, Angular2MetadataPipe> getKey() {
     return KEY;
   }
 }

@@ -7,5 +7,10 @@ import org.jetbrains.annotations.NotNull;
 public interface Angular2Element {
 
   @NotNull
-  PsiElement getNavigableElement();
+  PsiElement getSourceElement();
+
+  @NotNull
+  default PsiElement getNavigableElement() {
+    return getSourceElement();
+  }
 }

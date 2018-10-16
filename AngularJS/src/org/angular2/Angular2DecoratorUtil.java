@@ -35,7 +35,21 @@ public class Angular2DecoratorUtil {
   }
 
   @Nullable
-  public static JSCallExpression getDecorator(JSClass cls, String name) {
+  public static ES6Decorator findDecorator(@NotNull JSClass cls, @NotNull String name) {
+    JSAttributeList list = cls.getAttributeList();
+    if (list == null) {
+      return null;
+    }
+    for (ES6Decorator decorator : PsiTreeUtil.getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
+      if (name.equals(decorator.getDecoratorName())) {
+        return decorator;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static JSCallExpression getDecoratorCall(JSClass cls, String name) {
     if (cls.getAttributeList() == null) {
       return null;
     }
