@@ -174,4 +174,17 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
                                              "AbstractClassInstantiationError", "ArgumentError", "AssertionError", "AXB", "AXB.four",
                                              "AXB.three", "AXX", "BidirectionalIterator");
   }
+
+  public void testNoCompletionAfterDigit() {
+    myFixture.configureByText("foo.dart",
+                              "main() {\n" +
+                              "  return Foo(bar: 1<caret>, );\n" +
+                              "}\n" +
+                              "class Foo {\n" +
+                              "  final double bar, baz;\n" +
+                              "  const Foo({ this.bar, this.baz, });\n" +
+                              "}\n");
+    myFixture.completeBasic();
+    assertNull(myFixture.getLookup());
+  }
 }

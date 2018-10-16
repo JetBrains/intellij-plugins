@@ -80,6 +80,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final PsiFile originalFile = parameters.getOriginalFile();
                final Project project = originalFile.getProject();
 
+               if (originalResultSet.getPrefixMatcher().getPrefix().isEmpty() &&
+                   isRightAfterBadIdentifier(parameters.getOriginalFile().getText(), parameters.getOffset())) {
+                 return;
+               }
+
                final CompletionSorter sorter = createSorter(parameters, originalResultSet.getPrefixMatcher());
                final String uriPrefix = getPrefixIfCompletingUri(parameters);
                final CompletionResultSet resultSet = uriPrefix != null
@@ -132,7 +137,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                  LookupElementBuilder lookupElement = null;
 
-                 for (DartCompletionExtension extension: DartCompletionExtension.getExtensions()) {
+                 for (DartCompletionExtension extension : DartCompletionExtension.getExtensions()) {
                    lookupElement = extension.createLookupElement(project, suggestion);
                    if (lookupElement != null) break;
                  }
@@ -145,6 +150,19 @@ public class DartServerCompletionContributor extends CompletionContributor {
                });
              }
            });
+  }
+
+  private static boolean isRightAfterBadIdentifier(@NotNull String text, int offset) {
+    if (offset == 0) return false;
+
+    int currentOffset = offset - 1;
+    if (!Character.isJavaIdentifierPart(text.charAt(currentOffset))) return false;
+
+    while (currentOffset > 0 && Character.isJavaIdentifierPart(text.charAt(currentOffset - 1))) {
+      currentOffset--;
+    }
+
+    return !Character.isJavaIdentifierStart(text.charAt(currentOffset));
   }
 
   private static void appendRuntimeCompletion(@NotNull final CompletionParameters parameters,
@@ -173,7 +191,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                                    contextFile, contextOffset,
                                    Collections.emptyList(), Collections.emptyList());
     if (completionResult != null && completionResult.suggestions != null) {
-      for (CompletionSuggestion suggestion: completionResult.suggestions) {
+      for (CompletionSuggestion suggestion : completionResult.suggestions) {
         LookupElementBuilder lookupElement = createLookupElement(project, suggestion);
         resultSet.addElement(lookupElement);
       }
