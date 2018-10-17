@@ -69,7 +69,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final Project project = originalFile.getProject();
 
                if (originalResultSet.getPrefixMatcher().getPrefix().isEmpty() &&
-                   isRightAfterBadIdentifier(parameters.getOriginalFile().getText(), parameters.getOffset())) {
+                   isRightAfterBadIdentifier(parameters.getEditor().getDocument().getImmutableCharSequence(), parameters.getOffset())) {
                  return;
                }
 
@@ -140,7 +140,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
            });
   }
 
-  private static boolean isRightAfterBadIdentifier(@NotNull String text, int offset) {
+  private static boolean isRightAfterBadIdentifier(@NotNull CharSequence text, int offset) {
     if (offset == 0) return false;
 
     int currentOffset = offset - 1;
