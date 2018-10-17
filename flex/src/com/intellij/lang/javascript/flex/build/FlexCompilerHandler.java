@@ -87,6 +87,8 @@ public class FlexCompilerHandler implements ProjectComponent {
   public void projectClosed() {
     FlexCommonUtils.deleteTempFlexConfigFiles(myProject.getName());
     FlexCompilationUtils.deleteUnzippedANEFiles();
-    myWidget.destroy();
+    if (myWidget != null) {
+      myWidget.destroy();
+    }
   }
 }
