@@ -189,10 +189,4 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     }
     super.addType(_type, source);
   }
-
-  @Nullable
-  @Override
-  protected JSNamespace evaluateNamespaceLocally(@NotNull JSReferenceExpression expression) {
-    return null;
-  }
 }
