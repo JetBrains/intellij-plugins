@@ -15,11 +15,12 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.index.GLOBAL_BINDING_MARK
+import org.jetbrains.vuejs.index.VUETIFY
 import org.jetbrains.vuejs.index.getVueIndexData
 
 class VueComponentsCache {
   companion object {
-    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf("vuetify")
+    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY)
 
     // returns module: (component: (navigation-element, isGlobal))
     fun getAllComponentsGroupedByModules(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean):
@@ -83,10 +84,11 @@ class VueComponentsCache {
     private fun getCachedComponentsData(psiDirectory: PsiDirectory): ComponentsData? {
       val provider = CachedValueProvider {
         val directoryFile = psiDirectory.virtualFile
-        
+
         val scope = GlobalSearchScopesCore.directoryScope(psiDirectory.project, directoryFile, true)
         val globalize = PACKAGES_WITH_GLOBAL_COMPONENTS.contains(psiDirectory.name)
-        CachedValueProvider.Result(VueComponentsCalculation.calculateScopeComponents(scope, globalize), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
+        CachedValueProvider.Result(VueComponentsCalculation.calculateScopeComponents(scope, globalize),
+                                   VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS)
       }
       return CachedValuesManager.getCachedValue(psiDirectory, provider)
     }
