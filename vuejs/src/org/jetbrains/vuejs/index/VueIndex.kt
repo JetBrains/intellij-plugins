@@ -41,6 +41,7 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
 const val VUE: String = "vue"
+const val VUETIFY: String = "vuetify"
 @Suppress("PropertyName")
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"

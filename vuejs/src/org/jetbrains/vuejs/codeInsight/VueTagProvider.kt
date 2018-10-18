@@ -268,7 +268,6 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "v-list-tile-sub-title",
       "v-list-tile-content"
     )
-    private const val VUETIFY = "vuetify"
   }
 }
 
