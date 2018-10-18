@@ -1,18 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language
 
+import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.lang.injection.MultiHostRegistrar
 import com.intellij.lang.javascript.JSInjectionBracesUtil
@@ -35,6 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
+import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.*
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.index.VueOptionsIndex
@@ -86,6 +76,9 @@ class VueInjector : MultiHostInjector {
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
     val project = context.project
     if (!org.jetbrains.vuejs.index.hasVue(project)) return
+
+    val fileType = context.containingFile?.originalFile?.virtualFile?.fileType
+    if (fileType != HtmlFileType.INSTANCE && fileType != VueFileType.INSTANCE) return
 
     // this supposed to work in <template lang="jade"> attribute values
     if (context is XmlAttributeValueImpl && !context.value.isNullOrBlank() && context.parent is XmlAttribute
