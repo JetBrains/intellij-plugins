@@ -258,15 +258,22 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "slot"
     )
     private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
+      //grid components
       "v-flex",
       "v-spacer",
       "v-container",
       "v-layout",
-      "v-toolbar-items",
-      "v-toolbar-title",
-      "v-list-tile-title",
+      //functional components
+      "v-card-actions",
+      "v-card-text",
+      "v-list-tile-action",
+      "v-list-tile-action-text",
+      "v-list-tile-content",
       "v-list-tile-sub-title",
-      "v-list-tile-content"
+      "v-list-tile-title",
+      "v-stepper-header",
+      "v-toolbar-items",
+      "v-toolbar-title"
     )
   }
 }
