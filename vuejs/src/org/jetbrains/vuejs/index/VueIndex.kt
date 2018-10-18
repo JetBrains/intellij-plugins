@@ -14,7 +14,6 @@
 package org.jetbrains.vuejs.index
 
 import com.intellij.javascript.nodejs.PackageJsonData
-import com.intellij.javascript.nodejs.packageJson.PackageJsonDependencies
 import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
@@ -48,6 +47,7 @@ const val LOCAL: String = "local"
 const val MIXINS: String = "mixins"
 const val EXTENDS: String = "extends"
 const val DIRECTIVES: String = "directives"
+const val NAME: String = "name"
 const val GLOBAL_BINDING_MARK: String = "*"
 const val VUE_CLASS_COMPONENT: String = "vue-class-component"
 private const val INDEXED_ACCESS_HINT = "[]"
