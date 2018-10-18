@@ -50,7 +50,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       if (!globalComponents.isEmpty()) return multiDefinitionDescriptor(globalComponents)
 
       // keep this last in case in future we would be able to normally resolve into these components
-      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(normalized)) {
+      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(normalized) || VUETIFY_UNRESOLVED_COMPONENTS.contains(normalized)) {
         return VueElementDescriptor(JSImplicitElementImpl(normalized, tag))
       }
     }
@@ -88,8 +88,8 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     }
     val globalAliased = VueComponentsCache.findGlobalLibraryComponent(tag.project, normalized) ?: return emptyList()
 
-    return setOf(globalAliased.second as? JSImplicitElement ?:
-                 JSLocalImplicitElementImpl(globalAliased.first, null, globalAliased.second, null))
+    return setOf(
+      globalAliased.second as? JSImplicitElement ?: JSLocalImplicitElementImpl(globalAliased.first, null, globalAliased.second, null))
   }
 
   private fun nameVariantsWithPossiblyGlobalMark(name: String): MutableSet<String> {
@@ -171,7 +171,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     if (!StringUtil.isEmpty(namespacePrefix)) return
 
     val scriptLanguage = detectVueScriptLanguage(tag.containingFile)
-    val files:MutableList<PsiFile> = mutableListOf()
+    val files: MutableList<PsiFile> = mutableListOf()
     val localLookups = mutableListOf<LookupElement>()
     processLocalComponents(tag) { foundName, element ->
       addLookupVariants(localLookups, tag, scriptLanguage, element, foundName!!, true)
@@ -183,7 +183,8 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     if (hasVue(tag.project)) {
       val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
       val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
-      val allComponents = VueComponentsCache.getAllComponentsGroupedByModules(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
+      val allComponents = VueComponentsCache.getAllComponentsGroupedByModules(tag.project,
+                                                                              { key -> variants.any { key.contains(it, true) } }, false)
       for (entry in allComponents) {
         entry.value.keys
           .filter { !files.contains(entry.value[it]!!.first.containingFile) }
@@ -194,6 +195,9 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       }
       elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
         LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
+      })
+      elements.addAll(VUETIFY_UNRESOLVED_COMPONENTS.map {
+        LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vuetify", true)
       })
     }
   }
@@ -227,7 +231,8 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       if (settings.hasTSImportCompletionEffective(element.project)) {
         return builder.withInsertHandler(VueInsertHandler.INSTANCE)
       }
-    } else {
+    }
+    else {
       if (settings.isUseJavaScriptAutoImport) {
         return builder.withInsertHandler(VueInsertHandler.INSTANCE)
       }
@@ -247,6 +252,12 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "component",
       "slot"
     )
+    private val VUETIFY_UNRESOLVED_COMPONENTS = setOf (
+      "v-flex",
+      "v-spacer",
+      "v-container",
+      "v-layout"
+    )
   }
 }
 
@@ -265,7 +276,7 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
   }
 
   override fun getDeclaration(): JSImplicitElement = element
-  override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
+  override fun getName(context: PsiElement?): String = (context as? XmlTag)?.name ?: name
   override fun getName(): String = fromAsset(declaration.name)
   override fun init(element: PsiElement?) {}
   override fun getQualifiedName(): String = name
@@ -312,7 +323,8 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
            ?: VueAttributeDescriptor(attributeName, isNonProp = true)
   }
 
-  override fun getAttributeDescriptor(attribute: XmlAttribute?): XmlAttributeDescriptor? = getAttributeDescriptor(attribute?.name, attribute?.parent)
+  override fun getAttributeDescriptor(attribute: XmlAttribute?): XmlAttributeDescriptor? = getAttributeDescriptor(attribute?.name,
+                                                                                                                  attribute?.parent)
 
   override fun getNSDescriptor(): XmlNSDescriptor? = null
   override fun getTopGroup(): XmlElementsGroup? = null
