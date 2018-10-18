@@ -20,7 +20,6 @@ import java.util.Set;
 
 /**
  * @author Andrey.Vokin
- * @since 8/6/12
  */
 public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override

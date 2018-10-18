@@ -24,7 +24,6 @@ import java.util.List;
 
 /**
  * @author Maxim.Mossienko
- * @since 08.04.2009
  */
 public class ReferenceSupport {
 
