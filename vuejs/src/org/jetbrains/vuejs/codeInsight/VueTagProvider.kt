@@ -196,10 +196,15 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
         LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
       })
+      if (!hasVuetify(allComponents)) return
       elements.addAll(VUETIFY_UNRESOLVED_COMPONENTS.map {
-        LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vuetify", true)
+        LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText(VUETIFY, true)
       })
     }
+  }
+
+  private fun hasVuetify(allComponents: Map<String, Map<String, Pair<PsiElement, Boolean>>>): Boolean {
+    return allComponents.filter { it.key == VUETIFY }.isNotEmpty()
   }
 
   private fun addLookupVariants(elements: MutableList<LookupElement>,
@@ -252,12 +257,18 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "component",
       "slot"
     )
-    private val VUETIFY_UNRESOLVED_COMPONENTS = setOf (
+    private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
       "v-flex",
       "v-spacer",
       "v-container",
-      "v-layout"
+      "v-layout",
+      "v-toolbar-items",
+      "v-toolbar-title",
+      "v-list-tile-title",
+      "v-list-tile-sub-title",
+      "v-list-tile-content"
     )
+    private const val VUETIFY = "vuetify"
   }
 }
 
