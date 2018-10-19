@@ -257,7 +257,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "component",
       "slot"
     )
-    private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
+    val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
       //grid components
       "v-flex",
       "v-spacer",

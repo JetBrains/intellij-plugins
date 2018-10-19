@@ -28,7 +28,9 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
+import org.jetbrains.vuejs.codeInsight.VueTagProvider
 
 class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/types/"
@@ -837,10 +839,10 @@ $script""")
 <template><v-<caret></template>
 """)
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, listOf("v-app", "v-list", "v-list-group", "v-list-tile",
-                                                                "v-list-tile-action", "v-flex", "v-list-tile-action-text",
-                                                                "v-list-tile-avatar", "v-list-tile-content",
-                                                                "v-list-tile-sub-title", "v-list-tile-title", "v-container", "v-layout", "v-spacer"))
+    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS.toList()
+    assertSameElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents,
+                                                                              listOf("v-app", "v-list", "v-list-group", "v-list-tile",
+                                                                                     "v-list-tile-avatar")))
   }
 
   fun testIviewCompletion() {
