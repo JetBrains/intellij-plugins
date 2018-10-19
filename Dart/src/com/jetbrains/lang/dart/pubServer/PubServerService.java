@@ -109,7 +109,7 @@ final class PubServerService extends NetService {
   }
 
   @Override
-  public int getAvailableSocketPort() {
+  protected int getAvailableSocketPort() {
     int initialPort = 8080;
     int maxAttempts = 10;
     int currentPort = initialPort;
