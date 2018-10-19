@@ -107,7 +107,7 @@ public abstract class MarkdownHeaderAction extends AnAction implements DumbAware
       second = PsiTreeUtil.prevVisibleLeaf(second);
     }
 
-    if (first == null || second == null) {
+    if (first == null || second == null || first.getTextOffset() > second.getTextOffset()) {
       return null;
     }
 
