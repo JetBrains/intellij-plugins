@@ -837,7 +837,7 @@ $script""")
 <template><v-<caret></template>
 """)
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, listOf("v-app", "v-list", "v-list-group", "v-list-tile",
+    assertContainsElements(myFixture.lookupElementStrings!!, listOf("v-app", "v-list", "v-list-group", "v-list-tile",
                                                                 "v-list-tile-action", "v-flex", "v-list-tile-action-text",
                                                                 "v-list-tile-avatar", "v-list-tile-content",
                                                                 "v-list-tile-sub-title", "v-list-tile-title", "v-container", "v-layout", "v-spacer"))
