@@ -27,4 +27,6 @@ public interface GherkinTokenTypes {
                                       BACKGROUND_KEYWORD, SCENARIO_KEYWORD, SCENARIO_OUTLINE_KEYWORD,
                                       EXAMPLES_KEYWORD, EXAMPLES_KEYWORD,
                                       STEP_KEYWORD);
+
+  TokenSet SCENARIOS_KEYWORDS = TokenSet.create(SCENARIO_KEYWORD, SCENARIO_OUTLINE_KEYWORD);
 }
