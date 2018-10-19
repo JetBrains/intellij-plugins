@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact version="2.3.1" name="error-prone" urlPrefix="https://repo1.maven.org/maven2/com/google/errorprone/error_prone_ant/2.3.1/">
-    <item url="error_prone_ant-2.3.1.jar"/>
+  <artifact version="2.3.2" name="error-prone" urlPrefix="https://repo1.maven.org/maven2/com/google/errorprone/error_prone_ant/2.3.2/">
+    <item url="error_prone_ant-2.3.2.jar"/>
   </artifact>
 </artifacts>
