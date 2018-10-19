@@ -42,9 +42,9 @@ import java.util.ArrayList;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberStepAnnotation;
 
 public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
-  public static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
+  private static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
   private static final String FILE_TEMPLATE_CUCUMBER_JAVA_STEP_DEFINITION_JAVA = "Cucumber Java Step Definition.java";
-  public static final String DEFAULT_STEP_KEYWORD = "Given";
+  private static final String DEFAULT_STEP_KEYWORD = "Given";
 
   @NotNull
   @Override
@@ -87,10 +87,11 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     return true;
   }
 
-  protected void runTemplateBuilderOnAddedStep(Editor editor,
-                                               PsiElement addedElement,
-                                               PsiElement regexpElement,
-                                               PsiParameterList blockVars, PsiCodeBlock body) {
+  void runTemplateBuilderOnAddedStep(@NotNull Editor editor,
+                                     @NotNull PsiElement addedElement,
+                                     PsiElement regexpElement,
+                                     PsiParameterList blockVars,
+                                     PsiCodeBlock body) {
     Project project = regexpElement.getProject();
     final TemplateBuilderImpl builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(addedElement);
 
@@ -149,7 +150,6 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
 
     TemplateManager.getInstance(project).startTemplate(editor, template, adapter);
   }
-
 
   @Override
   public boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String name) {
