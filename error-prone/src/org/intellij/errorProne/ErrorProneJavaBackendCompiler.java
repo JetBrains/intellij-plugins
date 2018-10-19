@@ -7,6 +7,7 @@ import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.java.compiler.CompilerOptions;
 
 import java.util.Collections;
 import java.util.Set;
@@ -44,5 +45,11 @@ public class ErrorProneJavaBackendCompiler implements BackendCompiler {
   @Override
   public Set<FileType> getCompilableFileTypes() {
     return Collections.singleton(StdFileTypes.JAVA);
+  }
+
+  @NotNull
+  @Override
+  public CompilerOptions getOptions() {
+    return ErrorProneCompilerConfiguration.getOptions(myProject);
   }
 }
