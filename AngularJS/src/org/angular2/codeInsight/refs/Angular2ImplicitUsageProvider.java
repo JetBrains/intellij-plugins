@@ -35,7 +35,7 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
             && isPrivateMember((JSPsiElementBase)element))) {
       JSClass cls = JSUtils.getMemberContainingClass(element);
       if (cls instanceof TypeScriptClass && Angular2LangUtil.isAngular2Context(element)) {
-        Angular2Component component = Angular2EntitiesProvider.getComponent((TypeScriptClass)cls);
+        Angular2Component component = Angular2EntitiesProvider.getComponent(cls);
         if (component != null) {
           HtmlFileImpl template = component.getHtmlTemplate();
           if (template != null) {

@@ -8,10 +8,12 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.openapi.util.UserDataHolderBase;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.angular2.entities.Angular2Entity;
+import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -52,6 +54,17 @@ public abstract class Angular2SourceEntity extends UserDataHolderBase implements
   @Override
   public TypeScriptClass getTypeScriptClass() {
     return myClass;
+  }
+
+  @NotNull
+  @Override
+  public String getName() {
+    return StringUtil.notNullize(myClass.getName(), "<unnamed>");
+  }
+
+  @Override
+  public String toString() {
+    return Angular2EntityUtils.toString(this);
   }
 
   protected <T> T getCachedValue(@NotNull CachedValueProvider<T> provider) {

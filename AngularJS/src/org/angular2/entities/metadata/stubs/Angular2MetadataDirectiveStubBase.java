@@ -1,16 +1,12 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.stubs;
 
-import com.intellij.json.psi.JsonArray;
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonStringLiteral;
-import com.intellij.json.psi.JsonValue;
+import com.intellij.json.psi.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.io.StringRef;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2EntityUtils;
@@ -23,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.EXPORT_AS_PROP;
 import static org.angular2.Angular2DecoratorUtil.SELECTOR_PROP;
 import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
@@ -91,7 +89,7 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
   private static void loadAdditionalBindingMappings(@NotNull Map<String, String> mappings,
                                                     @NotNull JsonObject initializer,
                                                     @NotNull String propertyName) {
-    JsonArray list = ObjectUtils.tryCast(initializer.findProperty(propertyName), JsonArray.class);
+    JsonArray list = tryCast(doIfNotNull(initializer.findProperty(propertyName), JsonProperty::getValue), JsonArray.class);
     if (list != null) {
       for (JsonValue v : list.getValueList()) {
         if (v instanceof JsonStringLiteral) {

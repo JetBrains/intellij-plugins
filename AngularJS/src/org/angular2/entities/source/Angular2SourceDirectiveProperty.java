@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
 import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,4 +39,10 @@ public class Angular2SourceDirectiveProperty implements Angular2DirectivePropert
   public JSElement getSourceElement() {
     return Objects.requireNonNull((JSElement)mySignature.getMemberSource().getSingleElement());
   }
+
+  @Override
+  public String toString() {
+    return Angular2EntityUtils.toString(this);
+  }
+
 }

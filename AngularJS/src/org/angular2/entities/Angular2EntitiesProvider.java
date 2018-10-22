@@ -20,7 +20,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.metadata.psi.Angular2MetadataDirective;
+import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.metadata.psi.Angular2MetadataPipe;
 import org.angular2.entities.source.Angular2SourceComponent;
@@ -113,7 +113,7 @@ public class Angular2EntitiesProvider {
     AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project)
       .stream()
       .filter(Angular2EntityUtils::isElementDirectiveIndexName)
-      .map(name -> findMetadataEntity(project, name, Angular2MetadataDirective.class, Angular2MetadataDirectiveIndex.KEY))
+      .map(name -> findMetadataEntity(project, name, Angular2MetadataDirectiveBase.class, Angular2MetadataDirectiveIndex.KEY))
       .filter(Objects::nonNull)
       .allMatch(c -> processor.process(c));
   }
@@ -152,7 +152,7 @@ public class Angular2EntitiesProvider {
         return true;
       }
     );
-    processMetadataEntities(project, indexLookupName, Angular2MetadataDirective.class, Angular2MetadataDirectiveIndex.KEY, el -> {
+    processMetadataEntities(project, indexLookupName, Angular2MetadataDirectiveBase.class, Angular2MetadataDirectiveIndex.KEY, el -> {
       result.add(el);
       return true;
     });
