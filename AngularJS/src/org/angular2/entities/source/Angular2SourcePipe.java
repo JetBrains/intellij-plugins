@@ -33,5 +33,4 @@ public class Angular2SourcePipe extends Angular2SourceDeclaration implements Ang
       Angular2EntityUtils.getPipeTransformMethods(getTypeScriptClass()), getClassModificationDependencies())
     );
   }
-
 }

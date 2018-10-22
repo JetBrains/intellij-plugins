@@ -72,7 +72,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     }
     final String tagName = xmlTag.getName();
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
-    if (NG_CONTAINER.equals(tagName) || NG_CONTENT.equals(tagName) || NG_TEMPLATE.equals(tagName)) {
+    if (NG_CONTAINER.equalsIgnoreCase(tagName) || NG_CONTENT.equalsIgnoreCase(tagName) || NG_TEMPLATE.equalsIgnoreCase(tagName)) {
       return new Angular2TagDescriptor(createDirective(xmlTag, tagName));
     }
     for (Angular2Directive directive : Angular2EntitiesProvider.findElementDirectivesCandidates(project, tagName)) {

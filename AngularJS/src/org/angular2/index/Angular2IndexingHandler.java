@@ -230,35 +230,6 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     processor.consume(pipeElement);
   }
 
-  ////XXX - remove
-  //@Override
-  //public void addContextType(JSTypeInfo info, PsiElement context) {
-  //  if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
-  //    final JSQualifiedName directiveNamespace = findDirective(context);
-  //    if (directiveNamespace != null) {
-  //      info.addType(JSNamedTypeFactory.createNamespace(directiveNamespace, JSContext.INSTANCE, null, true), true);
-  //    }
-  //  }
-  //}
-  //
-  ////XXX - remove
-  //@Override
-  //public void addContextNames(PsiElement context, List<String> names) {
-  //  if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
-  //    final JSQualifiedName directiveNamespace = findDirective(context);
-  //    if (directiveNamespace != null) {
-  //      names.add(directiveNamespace.getQualifiedName());
-  //    }
-  //  }
-  //}
-  //
-  ////XXX - remove
-  //@Nullable
-  //private static JSQualifiedName findDirective(PsiElement context) {
-  //  JSClass clazz = findComponentClass(context);
-  //  return clazz != null ? JSQualifiedNameImpl.buildProvidedNamespace(clazz) : null;
-  //}
-
   @Nullable
   public static TypeScriptClass findComponentClass(@NotNull PsiElement context) {
     final PsiFile file = context.getContainingFile();

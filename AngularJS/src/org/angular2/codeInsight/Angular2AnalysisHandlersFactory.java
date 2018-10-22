@@ -34,16 +34,16 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
                                                     @NotNull List<LocalQuickFix> quickFixes) {
         if (methodExpression.getQualifier() != null) return;
 
-        JSClass directive = Angular2IndexingHandler.findComponentClass(methodExpression);
-        if (directive != null) {
+        JSClass componentClass = Angular2IndexingHandler.findComponentClass(methodExpression);
+        if (componentClass != null) {
           SmartPsiElementPointer<JSReferenceExpression> refExpressionPointer = createPointerFor(methodExpression);
 
           quickFixes.add(new CreateJSFunctionIntentionAction(methodExpression.getReferenceName(), true, false) {
             @Override
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
-              JSClass directive = Angular2IndexingHandler.findComponentClass(psiElement);
-              assert directive != null;
-              doApplyFix(project, directive, directive.getContainingFile(), null);
+              JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
+              assert componentClass != null;
+              doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
             }
 
             @NotNull
@@ -87,15 +87,15 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
                                                 boolean ecma) {
         if (referenceExpression.getQualifier() != null) return inTypeContext;
 
-        JSClass directive = Angular2IndexingHandler.findComponentClass(referenceExpression);
-        if (directive != null) {
+        JSClass componentClass = Angular2IndexingHandler.findComponentClass(referenceExpression);
+        if (componentClass != null) {
           SmartPsiElementPointer<JSReferenceExpression> refExpressionPointer = createPointerFor(referenceExpression);
           quickFixes.add(new CreateJSVariableIntentionAction(referenceExpression.getReferenceName(), true, false, false) {
             @Override
             protected void applyFix(Project project, PsiElement psiElement, PsiFile file, Editor editor) {
-              JSClass directive = Angular2IndexingHandler.findComponentClass(psiElement);
-              assert directive != null;
-              doApplyFix(project, directive, directive.getContainingFile(), null);
+              JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
+              assert componentClass != null;
+              doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
             }
 
             @NotNull

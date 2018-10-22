@@ -3,9 +3,13 @@ package org.angular2.entities;
 
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Angular2Entity extends Angular2Element {
+
+  @NotNull
+  String getName();
 
   @Nullable
   ES6Decorator getDecorator();

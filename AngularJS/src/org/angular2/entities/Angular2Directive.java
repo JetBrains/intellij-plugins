@@ -65,7 +65,7 @@ public interface Angular2Directive extends Angular2Declaration {
         Angular2DirectiveProperty input = inputMap.get(
           name.substring(0, name.length() - OUTPUT_CHANGE_SUFFIX.length()));
         if (input != null) {
-          result.add(Pair.create(output, input));
+          result.add(Pair.create(input, output));
         }
       }
     }

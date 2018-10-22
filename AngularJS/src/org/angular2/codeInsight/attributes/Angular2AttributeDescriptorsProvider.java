@@ -1,14 +1,18 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
-import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.SmartList;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import com.intellij.xml.XmlElementDescriptor;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.lang.Angular2LangUtil;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angular2.lang.html.psi.Angular2HtmlVariable;
@@ -22,8 +26,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.util.Collections.singletonList;
-import static org.angular2.codeInsight.Angular2Processor.NG_TEMPLATE;
-import static org.angular2.entities.Angular2EntitiesProvider.findAttributeDirectivesCandidates;
 import static org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates;
 
 public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
@@ -63,7 +65,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     Consumer<XmlAttributeDescriptor> addDescriptor =
       attr -> result.putIfAbsent(attr.getName(), attr);
 
-    getApplicableDirectiveDescriptors(xmlTag).forEach(addDescriptor);
+    getDirectiveDescriptors(xmlTag).forEach(addDescriptor);
     getStandardPropertyAndEventDescriptors(xmlTag).forEach(addDescriptor);
     getExistingVarsAndRefsDescriptors(xmlTag).forEach(addDescriptor);
 
@@ -81,38 +83,100 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   @NotNull
-  public static Collection<XmlAttributeDescriptor> getApplicableDirectiveDescriptors(@NotNull XmlTag xmlTag) {
-    Set<Angular2Directive> directives = new HashSet<>();
-    directives.addAll(findElementDirectivesCandidates(xmlTag.getProject(), xmlTag.getName()));
-    directives.addAll(findElementDirectivesCandidates(xmlTag.getProject(), ""));
-    boolean isTemplateTag = xmlTag.getName().equals(NG_TEMPLATE);
-    for (XmlAttribute attribute : xmlTag.getAttributes()) {
-      if (!isTemplateTag && attribute.getName().startsWith(TEMPLATE_ATTR_PREFIX)) {
-        for (Angular2Directive d : findAttributeDirectivesCandidates(xmlTag.getProject(), attribute.getName().substring(1))) {
-          if (d.isTemplate()) {
-            directives.add(d);
+  public static Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag) {
+    Set<Angular2Directive> directiveCandidates = new HashSet<>();
+    directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), xmlTag.getName()));
+    directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), ""));
+
+    Angular2SelectorMatcher<Angular2Directive> matcher = new Angular2SelectorMatcher<>();
+    directiveCandidates.forEach(d -> matcher.addSelectables(d.getDirectiveSelectors(), d));
+
+    boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
+    Set<Angular2Directive> matchedDirectives = new HashSet<>();
+    Angular2DirectiveSelector tagInfo = Angular2DirectiveSelector.createElementCssSelector(xmlTag);
+    matcher.match(tagInfo, (selector, directive) -> {
+      if (!directive.isTemplate() || isTemplateTag) {
+        matchedDirectives.add(directive);
+      }
+    });
+
+    List<XmlAttributeDescriptor> result = new ArrayList<>();
+    for (Angular2Directive matchedDirective : matchedDirectives) {
+      result.addAll(Angular2AttributeDescriptor.getDirectiveDescriptors(matchedDirective, isTemplateTag));
+    }
+
+    Set<String> knownAttributes = new HashSet<>();
+    for (XmlAttributeDescriptor attr : result) {
+      knownAttributes.add(attr.getName());
+    }
+    getStandardPropertyAndEventDescriptors(xmlTag).forEach(
+      attr -> knownAttributes.add(attr.getName()));
+
+    Map<String, List<PsiElement>> attrsFromSelectors = new HashMap<>();
+    Set<String> inputs = new HashSet<>();
+    Set<String> outputs = new HashSet<>();
+    Set<String> inOuts = new HashSet<>();
+    for (Angular2Directive candidate : directiveCandidates) {
+      inputs.clear();
+      candidate.getInputs().forEach(in -> inputs.add(in.getName()));
+
+      Consumer<String> addAttribute = attrName -> {
+        if (!knownAttributes.contains(attrName)) {
+          attrsFromSelectors.computeIfAbsent(attrName, k -> new SmartList<>()).add(candidate.getNavigableElement());
+        }
+      };
+      if (!isTemplateTag && candidate.isTemplate()) {
+        List<Angular2DirectiveSelector> selectors = candidate.getDirectiveSelectors();
+        if (selectors.size() == 1) {
+          List<String> attributeCandidates = selectors.get(0).getAttrs();
+          if (attributeCandidates.size() == 2) {
+            addAttribute.accept("*" + attributeCandidates.get(0));
+          }
+          else {
+            CANDIDATES_LOOP:
+            for (int i = 0; i < attributeCandidates.size(); i += 2) {
+              String attrName = attributeCandidates.get(i);
+              for (String input : inputs) {
+                if (!input.startsWith(attrName)) {
+                  break CANDIDATES_LOOP;
+                }
+              }
+              addAttribute.accept("*" + attrName);
+            }
           }
         }
       }
       else {
-        for (Angular2Directive d : findAttributeDirectivesCandidates(xmlTag.getProject(), attribute.getName())) {
-          if (isTemplateTag || !d.isTemplate()) {
-            directives.add(d);
+        outputs.clear();
+        candidate.getOutputs().forEach(out -> outputs.add(out.getName()));
+        inOuts.clear();
+        candidate.getInOuts().forEach(inOut -> inOuts.add(inOut.first.getName()));
+        for (Angular2DirectiveSelector selector : candidate.getDirectiveSelectors()) {
+          for (String attr : selector.getAttrs()) {
+            addAttribute.accept(attr);
+            if (inOuts.contains(attr)) {
+              addAttribute.accept("[(" + attr + ")]");
+            }
+            if (inputs.contains(attr)) {
+              addAttribute.accept("[" + attr + "]");
+            }
+            if (outputs.contains(attr)) {
+              addAttribute.accept("(" + attr + ")");
+            }
+          }
+          for (Angular2DirectiveSelector notSelector : selector.getNotSelectors()) {
+            for (String attr : notSelector.getAttrs()) {
+              addAttribute.accept(attr);
+            }
           }
         }
       }
     }
-    Angular2SelectorMatcher<Angular2Directive> matcher = new Angular2SelectorMatcher<>();
-    directives.forEach(d -> matcher.addSelectables(d.getDirectiveSelectors(), d));
-
-    directives.clear();
-    Angular2DirectiveSelector tagInfo = Angular2DirectiveSelector.createElementCssSelector(xmlTag);
-    matcher.match(tagInfo, (selector, directive) -> directives.add(directive));
-
-    List<XmlAttributeDescriptor> result = new ArrayList<>();
-    for (Angular2Directive matchedDirective : directives) {
-      result.addAll(Angular2AttributeDescriptor.getDirectiveDescriptors(matchedDirective));
-    }
+    attrsFromSelectors.forEach((k, v) -> {
+      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(k, isTemplateTag);
+      result.add(new Angular2AttributeDescriptor(
+        k, info.elementType != XmlElementType.XML_ATTRIBUTE ? info.name : null, v));
+    });
     return result;
   }
 

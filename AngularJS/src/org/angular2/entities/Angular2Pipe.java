@@ -2,15 +2,11 @@
 package org.angular2.entities;
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
 public interface Angular2Pipe extends Angular2Declaration {
-
-  @NotNull
-  String getName();
 
   @Nullable
   Collection<? extends TypeScriptFunction> getTransformMethods();

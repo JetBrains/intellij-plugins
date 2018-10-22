@@ -8,11 +8,14 @@ import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
+import org.angular2.entities.source.Angular2SourceEntity;
 import org.angular2.lang.selector.Angular2DirectiveSelector;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
@@ -21,7 +24,6 @@ public class Angular2EntityUtils {
 
   private static final String INDEX_ELEMENT_NAME_PREFIX = ">";
   private static final String INDEX_ATTRIBUTE_NAME_PREFIX = "=";
-  private static final String INDEX_TEMPLATE_ATTRIBUTE_PREFIX = "=*";
 
   @NotNull
   public static Collection<? extends TypeScriptFunction> getPipeTransformMethods(@NotNull TypeScriptClass cls) {
@@ -80,25 +82,75 @@ public class Angular2EntityUtils {
       return Collections.emptySet();
     }
     Set<String> result = new HashSet<>();
-    for (Angular2DirectiveSelector sel : selectors) {
+    Consumer<Angular2DirectiveSelector> indexSelector = sel -> {
       String elementName = sel.getElementName();
-      if (StringUtil.isNotEmpty(elementName) && !"*".equals(elementName)) {
-        result.add(INDEX_ELEMENT_NAME_PREFIX + elementName);
+      if (StringUtil.isEmpty(elementName) || "*".equals(elementName)) {
+        result.add(INDEX_ELEMENT_NAME_PREFIX);
       }
       else {
-        List<String> attributes = sel.getAttrs();
-        if (!attributes.isEmpty()) {
-          result.add(INDEX_ATTRIBUTE_NAME_PREFIX + attributes.get(0));
-          if (isTemplate) {
-            result.add(INDEX_TEMPLATE_ATTRIBUTE_PREFIX + attributes.get(0));
-          }
-        }
-        else {
-          result.add(INDEX_ELEMENT_NAME_PREFIX); //match all elements
-        }
+        result.add(INDEX_ELEMENT_NAME_PREFIX + elementName);
       }
+      for (String attrName : sel.getAttrs()) {
+        result.add(INDEX_ATTRIBUTE_NAME_PREFIX + attrName);
+      }
+    };
+    for (Angular2DirectiveSelector sel : selectors) {
+      indexSelector.accept(sel);
+      sel.getNotSelectors().forEach(indexSelector);
     }
     return result;
   }
 
+  public static String toString(Angular2Element element) {
+    String sourceKind;
+    if (element instanceof Angular2SourceEntity) {
+      sourceKind = "source";
+    }
+    else if (element instanceof Angular2MetadataEntity) {
+      sourceKind = "metadata";
+    }
+    else {
+      sourceKind = "unknown";
+    }
+    if (element instanceof Angular2Directive) {
+      StringBuilder result = new StringBuilder();
+      Angular2Directive directive = (Angular2Directive)element;
+      result.append(directive.getName())
+        .append(" <")
+        .append(sourceKind)
+        .append(' ');
+      if (directive.isComponent()) {
+        result.append("component");
+      }
+      else if (directive.isTemplate()) {
+        result.append("template");
+      }
+      else {
+        result.append("directive");
+      }
+      result.append(">")
+        .append(": selector=")
+        .append(directive.getSelector());
+      if (directive.getExportAs() != null) {
+        result.append("; exportAs=")
+          .append(directive.getExportAs());
+      }
+      result.append("; inputs=")
+        .append(directive.getInputs().toString())
+        .append("; outputs=")
+        .append(directive.getOutputs().toString())
+        .append("; inOuts=")
+        .append(directive.getInOuts().toString());
+      return result.toString();
+    }
+    else if (element instanceof Angular2Pipe) {
+      return ((Angular2Pipe)element).getName() + "<" + sourceKind + " pipe>";
+    }
+    else if (element instanceof Angular2DirectiveProperty) {
+      return ((Angular2DirectiveProperty)element).getName();
+    }
+    else {
+      return element.toString();
+    }
+  }
 }
