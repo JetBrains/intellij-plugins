@@ -33,6 +33,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
+import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
@@ -110,7 +111,7 @@ final class PubServerService extends NetService {
 
   @Override
   protected int getAvailableSocketPort() {
-    int initialPort = DartWebdevSettings.getInstance(getProject()).WEBDEV_PORT;
+    int initialPort = DartConfigurable.getWebdevPort(getProject());
     int maxAttempts = 10;
     int currentPort = initialPort;
 
