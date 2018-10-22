@@ -9,6 +9,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.ObjectUtils;
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase;
+import org.angular2.entities.metadata.stubs.Angular2MetadataReferenceStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,10 +26,18 @@ public class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBas
     return getClassAndDependencies().first;
   }
 
+  public Angular2MetadataClassBase getExtends() {
+    Angular2MetadataReferenceStub refStub = getStub().getExtendsReference();
+    if (refStub != null) {
+      return ObjectUtils.tryCast(refStub.getPsi().resolve(), Angular2MetadataClassBase.class);
+    }
+    return null;
+  }
+
   protected Pair<TypeScriptClass, Collection<Object>> getClassAndDependencies() {
     return getCachedValue(() -> {
       String className = getStub().getClassName();
-      Angular2MetadataNodeModule nodeModule = ObjectUtils.tryCast(getParent(), Angular2MetadataNodeModule.class);
+      Angular2MetadataNodeModule nodeModule = getNodeModule();
       Pair<PsiFile, TypeScriptClass> fileAndClass = className != null && nodeModule != null
                                                     ? nodeModule.locateFileAndClass(className)
                                                     : Pair.create(null, null);

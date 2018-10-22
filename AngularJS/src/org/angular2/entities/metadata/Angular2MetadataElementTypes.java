@@ -13,17 +13,22 @@ public interface Angular2MetadataElementTypes {
 
   MetadataElementType<Angular2MetadataArrayStub> ARRAY =
     new Angular2MetadataElementType<>("ARRAY", Angular2MetadataArrayStub::new, Angular2MetadataArray::new);
-  MetadataElementType<Angular2MetadataClassStub> CLASS =
-    new Angular2MetadataElementType<>("CLASS", Angular2MetadataClassStub::new, Angular2MetadataClass::new);
-  MetadataElementType<Angular2MetadataNodeModuleStub> NODE_MODULE =
-    new Angular2MetadataElementType<>("MODULE", Angular2MetadataNodeModuleStub::new, Angular2MetadataNodeModule::new);
   MetadataElementType<Angular2MetadataObjectStub> OBJECT =
     new Angular2MetadataElementType<>("OBJECT", Angular2MetadataObjectStub::new, Angular2MetadataObject::new);
   MetadataElementType<Angular2MetadataReferenceStub> REFERENCE =
     new Angular2MetadataElementType<>("REFERENCE", Angular2MetadataReferenceStub::new, Angular2MetadataReference::new);
 
+  MetadataElementType<Angular2MetadataClassStub> CLASS =
+    new Angular2MetadataElementType<>("CLASS", Angular2MetadataClassStub::new, Angular2MetadataClass::new);
+  MetadataElementType<Angular2MetadataNodeModuleStub> NODE_MODULE =
+    new Angular2MetadataElementType<>("NODE_MODULE", Angular2MetadataNodeModuleStub::new, Angular2MetadataNodeModule::new);
+
   MetadataElementType<Angular2MetadataPipeStub> PIPE =
     new Angular2MetadataElementType<>("PIPE", Angular2MetadataPipeStub::new, Angular2MetadataPipe::new);
+  MetadataElementType<Angular2MetadataDirectiveStub> DIRECTIVE =
+    new Angular2MetadataElementType<>("DIRECTIVE", Angular2MetadataDirectiveStub::new, Angular2MetadataDirective::new);
+  MetadataElementType<Angular2MetadataComponentStub> COMPONENT =
+    new Angular2MetadataElementType<>("COMPONENT", Angular2MetadataComponentStub::new, Angular2MetadataComponent::new);
 
   IStubFileElementType<MetadataFileStubImpl> FILE = new MetadataStubFileElementType(Angular2MetadataLanguage.INSTANCE);
 

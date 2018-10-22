@@ -79,7 +79,7 @@ public class Angular2Processor {
                                                             Angular2TemplateScope rootTemplateScope) {
     List<Angular2Scope> scopes = new ArrayList<>();
 
-    final JSClass clazz = Angular2IndexingHandler.findDirectiveClass(element);
+    final JSClass clazz = Angular2IndexingHandler.findComponentClass(element);
     if (clazz != null && DialectDetector.isTypeScript(clazz)) {
       scopes.add(new Angular2ComponentScope(clazz));
     }

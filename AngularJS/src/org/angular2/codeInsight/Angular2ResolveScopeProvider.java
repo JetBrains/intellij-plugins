@@ -17,7 +17,7 @@ public class Angular2ResolveScopeProvider implements JSElementResolveScopeProvid
   @Nullable
   @Override
   public GlobalSearchScope getElementResolveScope(@NotNull PsiElement element) {
-    JSClass clazz = Angular2IndexingHandler.findDirectiveClass(element);
+    JSClass clazz = Angular2IndexingHandler.findComponentClass(element);
     if (clazz != null) {
       return JSResolveUtil.getResolveScope(clazz);
     }

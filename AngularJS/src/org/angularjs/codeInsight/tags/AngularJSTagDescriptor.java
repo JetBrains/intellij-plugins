@@ -25,9 +25,6 @@ import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
-import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -78,11 +75,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
     final String attributes = string.split(";", -1)[3];
     final String[] split = attributes.split(",");
     final List<XmlAttributeDescriptor> result = new ArrayList<>();
-    if (context != null && Angular2LangUtil.isAngular2Context(context)) {
-      result.addAll(Angular2AttributeDescriptor.getDescriptors(declaration));
-      result.addAll(Angular2AttributeDescriptor.getExistingVarsAndRefsDescriptors(context));
-    }
-    else if (split.length != 1 || !split[0].isEmpty()) {
+    if (split.length != 1 || !split[0].isEmpty()) {
       for (String aSplit : split) {
         result.add(new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(aSplit)));
       }
@@ -100,10 +93,8 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
-    final XmlAttributeDescriptor descriptor = ContainerUtil.find(getAttributesDescriptors(context),
-                                                                 descriptor1 -> attributeName.equals(descriptor1.getName()));
-    if (descriptor != null) return descriptor;
-    return context != null ? Angular2AttributeDescriptorsProvider.getAngular2Descriptor(attributeName, context.getProject()) : null;
+    return ContainerUtil.find(getAttributesDescriptors(context),
+                              descriptor1 -> attributeName.equals(descriptor1.getName()));
   }
 
   @Override

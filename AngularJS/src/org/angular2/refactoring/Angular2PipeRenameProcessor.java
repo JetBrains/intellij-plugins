@@ -20,9 +20,9 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.util.IncorrectOperationException;
 import org.angular2.Angular2DecoratorUtil;
-import org.angular2.codeInsight.Angular2PipeUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
+import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,8 +30,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.angular2.codeInsight.Angular2PipeUtil.NAME_PROP;
-import static org.angular2.codeInsight.Angular2PipeUtil.PIPE_DEC;
+import static org.angular2.Angular2DecoratorUtil.NAME_PROP;
+import static org.angular2.Angular2DecoratorUtil.PIPE_DEC;
 
 public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
 
@@ -119,8 +119,7 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
     @Nullable
     @Override
     public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
-      if (element instanceof JSImplicitElement
-          && Angular2PipeUtil.isPipeType(((JSImplicitElement)element).getTypeString())) {
+      if (element instanceof JSImplicitElement && Angular2IndexingHandler.isPipe((JSImplicitElement)element)) {
         if (location instanceof UsageViewTypeLocation) return "pipe";
         return ((JSImplicitElement)element).getName();
       }

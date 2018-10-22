@@ -1,8 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2;
 
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonProperty;
 import com.intellij.lang.javascript.JSInjectionController;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -12,14 +10,23 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Angular2DecoratorUtil {
 
+  public static final String DIRECTIVE_DEC = "Directive";
   public static final String COMPONENT_DEC = "Component";
+  public static final String PIPE_DEC = "Pipe";
+  public static final String INPUT_DEC = "Input";
+  public static final String OUTPUT_DEC = "Output";
+
+  public static final String NAME_PROP = "name";
+  public static final String SELECTOR_PROP = "selector";
+  public static final String EXPORT_AS_PROP = "exportAs";
+  public static final String INPUTS_PROP = "inputs";
+  public static final String OUTPUTS_PROP = "outputs";
 
   public static boolean isLiteralInNgDecorator(PsiElement element, String propertyName, String decoratorName) {
     if (element instanceof JSLiteralExpression) {
@@ -32,6 +39,23 @@ public class Angular2DecoratorUtil {
                                                              ES6Decorator::getDecoratorName));
     }
     return false;
+  }
+
+  @Nullable
+  public static ES6Decorator findDecorator(@NotNull JSClass cls, @NotNull String... names) {
+    JSAttributeList list = cls.getAttributeList();
+    if (list == null || names.length == 0) {
+      return null;
+    }
+    for (ES6Decorator decorator : PsiTreeUtil.getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
+      String decoratorName = decorator.getDecoratorName();
+      for (String n : names) {
+        if (n.equals(decoratorName)) {
+          return decorator;
+        }
+      }
+    }
+    return null;
   }
 
   @Nullable
@@ -73,28 +97,6 @@ public class Angular2DecoratorUtil {
       JSAttributeListOwner attributeListOwner = (JSAttributeListOwner)element;
       return attributeListOwner.getAttributeList() != null
              && attributeListOwner.getAttributeList().getAccessType() == JSAttributeList.AccessType.PRIVATE;
-    }
-    return false;
-  }
-
-  public static boolean isTemplate(PsiElement decorator) {
-    final JSClass clazz = PsiTreeUtil.getParentOfType(decorator, JSClass.class);
-    if (clazz != null) {
-      final JSFunction constructor = clazz.getConstructor();
-      final JSParameterList params = constructor != null ? constructor.getParameterList() : null;
-      return params != null && params.getText().contains(Angular2IndexingHandler.TEMPLATE_REF);
-    }
-
-    JsonProperty property = PsiTreeUtil.getParentOfType(decorator, JsonProperty.class);
-    if (property == null || !"selector".equals(property.getName())) return false;
-    property = PsiTreeUtil.getParentOfType(property, JsonProperty.class);
-    if (property == null || !"arguments".equals(property.getName())) return false;
-    property = PsiTreeUtil.getParentOfType(property, JsonProperty.class);
-    if (property == null || !"decorators".equals(property.getName())) return false;
-    PsiElement parent = property.getParent();
-    if (parent instanceof JsonObject) {
-      JsonProperty members = ((JsonObject)parent).findProperty("members");
-      return members != null && members.getText().contains(Angular2IndexingHandler.TEMPLATE_REF);
     }
     return false;
   }

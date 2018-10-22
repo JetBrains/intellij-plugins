@@ -4,6 +4,7 @@ package org.angular2.lang.metadata;
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonStringLiteral;
+import com.intellij.json.psi.JsonValue;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.ObjectUtils.tryCast;
 
 public class MetadataUtils {
 
@@ -36,6 +38,11 @@ public class MetadataUtils {
       return ((JsonStringLiteral)property.getValue()).getValue();
     }
     return null;
+  }
+
+  @Nullable
+  public static <T extends JsonValue> T getPropertyValue(@Nullable JsonProperty property, Class<T> valueClass) {
+    return property != null ? tryCast(property.getValue(), valueClass) : null;
   }
 
 }

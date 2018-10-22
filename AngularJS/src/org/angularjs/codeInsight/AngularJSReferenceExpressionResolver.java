@@ -67,7 +67,7 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
       if (isAsExpression(as)) {
         if (PsiTreeUtil.isAncestor(PsiTreeUtil.getChildOfType(as, JSDefinitionExpression.class), myRef, true)) return new JSResolveResult[]{new JSResolveResult(myRef)};
       }
-      JSClass clazz = myRef.getQualifier() == null ? Angular2IndexingHandler.findDirectiveClass(myRef) : null;
+      JSClass clazz = myRef.getQualifier() == null ? Angular2IndexingHandler.findComponentClass(myRef) : null;
       if (clazz != null && DialectDetector.isTypeScript(clazz)) {
         final TypeScriptResolveProcessor localProcessor = new TypeScriptResolveProcessor(myReferencedName, myContainingFile, myRef);
         localProcessor.setToProcessHierarchy(true);
