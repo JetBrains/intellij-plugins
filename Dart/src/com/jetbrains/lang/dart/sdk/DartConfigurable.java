@@ -4,6 +4,7 @@ package com.jetbrains.lang.dart.sdk;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
@@ -43,6 +44,9 @@ import java.util.*;
 
 public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
+  private static final int WEBDEV_PORT_DEFAULT = 53322;
+  private static final String WEBDEV_PORT_PROPERTY_NAME = "dart.webdev.port";
+
   private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
   private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
 
@@ -57,6 +61,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private JBCheckBox myCheckSdkUpdateCheckBoxFake;
   private ComboBox mySdkUpdateChannelCombo;
   private JButton myCheckSdkUpdateButton;
+  private PortField myPortField;
 
   private JPanel myModulesPanel;
 
@@ -126,8 +131,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     myCheckSdkUpdateButton.addActionListener(e -> {
       final Runnable runnable = this::checkSdkUpdate;
       ApplicationManagerEx.getApplicationEx()
-                          .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject,
-                                                               myMainPanel);
+        .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject,
+                                             myMainPanel);
     });
   }
 
@@ -228,6 +233,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
     }
 
+    if (myPortField.getNumber() != getWebdevPort(myProject)) return true;
+
     if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final Module[] selectedModules = myModulesCheckboxTreeTable.getCheckedNodes(Module.class);
       if (selectedModules.length != myModulesWithDartSdkLibAttachedInitial.size()) return true;
@@ -271,6 +278,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     final DartSdkUpdateOption sdkUpdateOption = DartSdkUpdateOption.getDartSdkUpdateOption();
     myCheckSdkUpdateCheckBox.setSelected(sdkUpdateOption != DartSdkUpdateOption.DoNotCheck);
     mySdkUpdateChannelCombo.setSelectedItem(sdkUpdateOption);
+
+    myPortField.setNumber(getWebdevPort(myProject));
 
     if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTreeTable.getTree().getModel().getRoot();
@@ -330,6 +339,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
                                                       : DartSdkUpdateOption.DoNotCheck;
           DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
         }
+
+        setWebdevPort(myProject, myPortField.getNumber());
       }
       else {
         if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
@@ -445,5 +456,13 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   public static void openDartSettings(@NotNull final Project project) {
     ShowSettingsUtilImpl.showSettingsDialog(project, DART_SETTINGS_PAGE_ID, "");
+  }
+
+  public static int getWebdevPort(@NotNull Project project) {
+    return PropertiesComponent.getInstance(project).getInt(WEBDEV_PORT_PROPERTY_NAME, WEBDEV_PORT_DEFAULT);
+  }
+
+  private static void setWebdevPort(@NotNull Project project, int port) {
+    PropertiesComponent.getInstance(project).setValue(WEBDEV_PORT_PROPERTY_NAME, port, WEBDEV_PORT_DEFAULT);
   }
 }
