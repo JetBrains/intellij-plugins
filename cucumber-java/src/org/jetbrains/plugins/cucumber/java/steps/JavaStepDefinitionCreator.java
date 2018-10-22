@@ -31,6 +31,9 @@ import cucumber.runtime.snippets.CamelCaseConcatenator;
 import cucumber.runtime.snippets.FunctionNameGenerator;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Step;
+import io.cucumber.cucumberexpressions.CucumberExpressionGenerator;
+import io.cucumber.cucumberexpressions.GeneratedExpression;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.AbstractStepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
@@ -38,6 +41,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getCucumberStepAnnotation;
 
@@ -256,6 +260,11 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     final SnippetGenerator generator = new SnippetGenerator(new JavaSnippet());
 
     String snippet = generator.getSnippet(cucumberStep, new FunctionNameGenerator(new CamelCaseConcatenator()));
+
+    if (CucumberJavaUtil.isCucumberExpressionsAvailable(step)) {
+      snippet = replaceRegexpWithCucumberExpression(snippet, step.getStepName());
+    }
+
     snippet = escapeStepDefinition(snippet, step).replaceFirst("@", methodAnnotation);
 
     JVMElementFactory factory = JVMElementFactories.requireFactory(language, step.getProject());
@@ -266,6 +275,26 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     } catch (Exception e) {
       return methodFromCucumberLibraryTemplate;
     }
+  }
+
+  private static String replaceRegexpWithCucumberExpression(@NotNull String snippet, @NotNull String step) {
+    try {
+      ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.getDefault());
+      CucumberExpressionGenerator generator1 = new CucumberExpressionGenerator(registry);
+      GeneratedExpression result = generator1.generateExpressions(step).get(0);
+      if (result != null) {
+        String cucumberExpression = new JavaSnippet().escapePattern(result.getSource());
+        String[] lines = snippet.split("\n");
+
+        int start = lines[0].indexOf('(') + 1;
+        lines[0] = lines[0].substring(0, start + 1) + cucumberExpression + "\")";
+        return StringUtil.join(lines, "");
+      }
+    }
+    catch (Exception ignored) {
+      // just use regexp-style template
+    }
+    return snippet;
   }
 
   private static PsiMethod createStepDefinitionFromSnippet(@NotNull PsiMethod methodFromSnippet, @NotNull GherkinStep step,

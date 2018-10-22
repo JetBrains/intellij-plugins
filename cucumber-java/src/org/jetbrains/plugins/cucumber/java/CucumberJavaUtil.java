@@ -1,6 +1,8 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.codeInsight.AnnotationUtil;
+import com.intellij.execution.PsiLocation;
+import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.find.findUsages.JavaFindUsagesHelper;
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions;
 import com.intellij.openapi.application.ApplicationManager;
@@ -40,7 +42,8 @@ public class CucumberJavaUtil {
   public static final String PARAMETER_TYPE_CLASS = "io.cucumber.cucumberexpressions.ParameterType";
 
   private static final Map<String, String> JAVA_PARAMETER_TYPES;
-  
+  public static final String CUCUMBER_EXPRESSIONS_CLASS_MARKER = "io.cucumber.cucumberexpressions.CucumberExpressionGenerator";
+
   static {
     Map<String, String> javaParameterTypes = new HashMap<>();
     javaParameterTypes.put("short", STANDARD_PARAMETER_TYPES.get("int"));
@@ -315,5 +318,15 @@ public class CucumberJavaUtil {
     values.putAll(STANDARD_PARAMETER_TYPES);
     values.putAll(JAVA_PARAMETER_TYPES);
     return new MapParameterTypeManager(values, declarations);
+  }
+
+  /**
+   * Checks if library with CucumberExpressions library attached to the project.
+   * @return true if step definitions should be written in Cucumber Expressions (since Cucumber v 3.0),
+   * false in case of old-style Regexp step definitions.
+   */
+  public static boolean isCucumberExpressionsAvailable(@NotNull PsiElement context) {
+    PsiLocation<PsiElement> location = new PsiLocation<>(context);
+    return LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_EXPRESSIONS_CLASS_MARKER);
   }
 }
