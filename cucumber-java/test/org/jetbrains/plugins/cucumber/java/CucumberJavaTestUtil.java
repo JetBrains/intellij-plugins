@@ -25,6 +25,16 @@ public class CucumberJavaTestUtil {
     };
   }
 
+  public static DefaultLightProjectDescriptor createCucumber3ProjectDescriptor() {
+    return new DefaultLightProjectDescriptor() {
+      @Override
+      public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
+        attachCucumberLibraries(module, model);
+        attachCucumberExpressionsLibrary(model);
+      }
+    };
+  }
+
   public static DefaultLightProjectDescriptor createCucumberJava8ProjectDescriptor() {
     return new DefaultLightProjectDescriptor() {
       @Override
@@ -50,5 +60,9 @@ public class CucumberJavaTestUtil {
     PsiTestUtil.addProjectLibrary(model, "cucumber-core", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-core"));
     PsiTestUtil.addProjectLibrary(model, "cucumber-jvm-deps", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-testing"));
     PsiTestUtil.addLibrary(module, model, "cucumber-java8", PathManager.getHomePath() + "/community/lib", "cucumber-java8-1.2.4.jar");
+  }
+
+  private static void attachCucumberExpressionsLibrary(@NotNull ModifiableRootModel model) {
+    PsiTestUtil.addProjectLibrary(model, "cucumber-expressions", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-expressions"));
   }
 }
