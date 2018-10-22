@@ -13,10 +13,12 @@ import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.util.IncorrectOperationException;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static org.angular2.Angular2DecoratorUtil.SELECTOR_PROP;
+import static org.angular2.Angular2DecoratorUtil.getProperty;
 
 /**
  * @author Dennis.Ushakov
@@ -43,7 +45,7 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
     }
 
     if (isAngular2) {
-      final JSProperty selector = Angular2IndexingHandler.getSelector(element.getParent());
+      final JSProperty selector = getProperty(element.getParent(), SELECTOR_PROP);
       final JSExpression value = selector != null ? selector.getValue() : null;
       if (value != null) {
         if (value.getText().contains("[")) newName = "[" + newName + "]";

@@ -23,13 +23,17 @@ public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2
 
   @NotNull
   public Pair<PsiFile, TypeScriptClass> locateFileAndClass(String className) {
-    VirtualFile parentDir = getContainingFile().getViewProvider().getVirtualFile().getParent();
+    VirtualFile sourceFile = getContainingFile().getViewProvider().getVirtualFile();
+    VirtualFile parentDir = sourceFile.getParent();
     String sourcePath = getStub().getMemberOrigin(className);
+    if (sourcePath == null) {
+      sourcePath = StringUtil.trimEnd(sourceFile.getName(), ".metadata.json");
+    }
     sourcePath = StringUtil.trimEnd(sourcePath, ".");
     if (!sourcePath.endsWith(".d.ts")) {
       sourcePath += ".d.ts";
     }
-    VirtualFile definitionFile = parentDir.findFileByRelativePath(sourcePath);
+    VirtualFile definitionFile = parentDir != null ? parentDir.findFileByRelativePath(sourcePath) : null;
     PsiFile definitionPsi = definitionFile != null ? getManager().findFile(definitionFile) : null;
     if (definitionPsi instanceof JSFile) {
       ResolveResultSink sink = new ResolveResultSink(definitionPsi, className);

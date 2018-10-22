@@ -4,12 +4,14 @@ package org.angularjs.codeInsight.attributes;
 import com.intellij.psi.PsiElement;
 import org.angular2.codeInsight.attributes.Angular2EventHandlerDescriptor;
 
+import java.util.Collections;
+
 /**
  * @deprecated Kept for compatibility with NativeScript
  */
 @Deprecated
 public class AngularEventHandlerDescriptor extends Angular2EventHandlerDescriptor {
   public AngularEventHandlerDescriptor(PsiElement element, String attributeName) {
-    super(element, attributeName);
+    super(attributeName, attributeName, Collections.singletonList(element));
   }
 }

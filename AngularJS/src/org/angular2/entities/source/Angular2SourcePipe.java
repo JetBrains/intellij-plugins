@@ -15,9 +15,9 @@ public class Angular2SourcePipe extends Angular2SourceDeclaration implements Ang
 
   private final String myName;
 
-  public Angular2SourcePipe(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement, @NotNull String name) {
+  public Angular2SourcePipe(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
     super(decorator, implicitElement);
-    this.myName = name;
+    this.myName = implicitElement.getName();
   }
 
   @NotNull

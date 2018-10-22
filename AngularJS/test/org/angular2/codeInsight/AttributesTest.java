@@ -640,4 +640,11 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testNgNoValidateReference() {
+    myFixture.configureByFiles("ngNoValidate.html", "ng_no_validate.directive.ts", "package.json");
+    PsiElement resolve = resolveReference("ng<caret>NativeValidate");
+    assertInstanceOf(resolve, TypeScriptClass.class);
+    assertEquals("ng_no_validate.directive.ts", resolve.getContainingFile().getName());
+  }
+
 }

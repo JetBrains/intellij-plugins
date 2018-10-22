@@ -20,8 +20,6 @@ import java.util.List;
  */
 public class AngularAttributesRegistry {
 
-  private static final List<String> CUSTOM_NG_ATTRS = Collections.singletonList("i18n");
-
   @NotNull
   public static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
                                                             @NotNull String directiveName,
@@ -66,11 +64,6 @@ public class AngularAttributesRegistry {
       return args != null && args.length > 2 ? args[2] : "";
     }
     return "";
-  }
-
-  @NotNull
-  public static List<String> getCustomAngularAttributes() {
-    return CUSTOM_NG_ATTRS;
   }
 
   /**

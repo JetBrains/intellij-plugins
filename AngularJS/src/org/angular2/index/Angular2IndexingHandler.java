@@ -2,328 +2,164 @@
 package org.angular2.index;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
-import com.intellij.json.psi.JsonProperty;
-import com.intellij.json.psi.JsonStringLiteral;
-import com.intellij.json.psi.JsonValue;
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.frameworks.jquery.JQueryCssLanguage;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
-import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
-import com.intellij.lang.javascript.index.JSIndexContentBuilder;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
-import com.intellij.lang.javascript.psi.resolve.JSTypeInfo;
-import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.css.*;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
-import com.intellij.psi.impl.source.tree.TreeUtil;
+import com.intellij.psi.stubs.IndexSink;
+import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.MultiMap;
-import org.angular2.codeInsight.Angular2PipeUtil;
 import org.angular2.codeInsight.attributes.Angular2EventHandlerDescriptor;
+import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.codeInsight.AngularJSProcessor;
 import org.angularjs.index.AngularIndexUtil;
-import org.angularjs.index.AngularJSIndexingHandler;
+import org.angularjs.index.AngularSymbolIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angularjs.index.AngularIndexUtil.hasFileReference;
-import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_DIRECTIVES_INDEX_USER_STRING;
-import static org.angularjs.index.AngularJSIndexingHandler.ANGULAR_FILTER_INDEX_USER_STRING;
 
 public class Angular2IndexingHandler extends FrameworkIndexingHandler {
-  public static final String TEMPLATE_REF = "TemplateRef";
-  public static final String SELECTOR = "selector";
   public static final String TEMPLATE_URL = "templateUrl";
 
-  public static final String ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING = "atui";
+  private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
+  private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
+  private static final String ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di";
+
+  private static final String PIPE_TYPE = "P;;;";
+  private static final String COMPONENT_TYPE = "C;;;";
+  private static final String DIRECTIVE_TYPE = "D;;;";
+  private static final String TEMPLATE_DIRECTIVE_TYPE = "T;;;";
+  public static final String TEMPLATE_REF = "TemplateRef";
+
+  private final static Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEX_MAP = new HashMap<>();
+
+  static {
+    INDEX_MAP.put(ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING, Angular2TemplateUrlIndex.KEY);
+    INDEX_MAP.put(ANGULAR2_DIRECTIVE_INDEX_USER_STRING, Angular2SourceDirectiveIndex.KEY);
+    INDEX_MAP.put(ANGULAR2_PIPE_INDEX_USER_STRING, Angular2SourcePipeIndex.KEY);
+    for (String key : INDEX_MAP.keySet()) {
+      JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
+    }
+  }
+
+  public static boolean isPipe(@NotNull JSImplicitElement element) {
+    return PIPE_TYPE.equals(element.getTypeString());
+  }
+
+  public static boolean isDirective(@NotNull JSImplicitElement element) {
+    String type = element.getTypeString();
+    if (type == null) {
+      return false;
+    }
+    return type.startsWith(COMPONENT_TYPE)
+           || type.startsWith(DIRECTIVE_TYPE)
+           || type.startsWith(TEMPLATE_DIRECTIVE_TYPE);
+  }
+
+  @Override
+  public int getVersion() {
+    return Angular2IndexBase.VERSION;
+  }
 
   @Nullable
   @Override
   public JSElementIndexingDataImpl processDecorator(@NotNull ES6Decorator decorator, @Nullable JSElementIndexingDataImpl data) {
-    if (isPipe(decorator.getDecoratorName())) {
-      TypeScriptClass pipeClass = PsiTreeUtil.getContextOfType(decorator, TypeScriptClass.class);
-      if (pipeClass != null) {
+    TypeScriptClass enclosingClass = PsiTreeUtil.getContextOfType(decorator, TypeScriptClass.class);
+    if (enclosingClass != null) {
+      String decoratorName = decorator.getDecoratorName();
+      boolean isComponent = false;
+      if (PIPE_DEC.equals(decoratorName)) {
         if (data == null) {
           data = new JSElementIndexingDataImpl();
         }
-        addPipe(pipeClass, data::addImplicitElement, getPropertyName(decorator, Angular2PipeUtil.NAME_PROP));
+        addPipe(enclosingClass, data::addImplicitElement, getPropertyName(decorator, NAME_PROP));
+      }
+      else if (DIRECTIVE_DEC.equals(decoratorName)
+               || (isComponent = COMPONENT_DEC.equals(decoratorName))) {
+        if (data == null) {
+          data = new JSElementIndexingDataImpl();
+        }
+        addDirective(enclosingClass, isComponent, data::addImplicitElement, getPropertyName(decorator, SELECTOR_PROP));
+        if (isComponent) {
+          addComponentTemplateRef(decorator, data::addImplicitElement, getPropertyName(decorator, TEMPLATE_URL));
+        }
       }
     }
-    return super.processDecorator(decorator, data);
+    return data;
+  }
+
+  private static void addDirective(@NotNull TypeScriptClass directiveClass,
+                                   boolean isComponent,
+                                   @NotNull Consumer<JSImplicitElement> processor,
+                                   @Nullable String selector) {
+    if (StringUtil.isEmpty(selector)) {
+      return;
+    }
+    boolean isTemplate = !isComponent && isTemplate(directiveClass);
+    Set<String> indexNames = Angular2EntityUtils.getDirectiveIndexNames(directiveClass.getProject(), selector, isTemplate);
+    JSImplicitElement directive = new JSImplicitElementImpl
+      .Builder(ObjectUtils.notNull(directiveClass.getName(), selector), directiveClass)
+      .setType(JSImplicitElement.Type.Class)
+      .setTypeString((isComponent ? COMPONENT_TYPE : isTemplate ? TEMPLATE_DIRECTIVE_TYPE : DIRECTIVE_TYPE) +
+                     StringUtil.join(indexNames, "/"))
+      .setUserString(ANGULAR2_DIRECTIVE_INDEX_USER_STRING)
+      .toImplicitElement();
+    processor.consume(directive);
   }
 
   @Override
-  public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
-    final JSExpression expression = callExpression.getMethodExpression();
-    if (expression instanceof JSReferenceExpression) {
-      final String name = ((JSReferenceExpression)expression).getReferenceName();
-      if (isDirective(name)) {
-        addDirective(callExpression, outData::addImplicitElement, getPropertyName(callExpression, SELECTOR));
-        addDirectiveTemplateRef(callExpression, outData::addImplicitElement, getPropertyName(callExpression, TEMPLATE_URL));
-      }
-      if (isModule(name)) {
-        addImplicitElementToModules(callExpression, outData::addImplicitElement, determineModuleName(callExpression));
-      }
+  public boolean indexImplicitElement(@NotNull JSImplicitElementStructure element, @Nullable IndexSink sink) {
+    if (sink == null) {
+      return false;
     }
-  }
-
-  @Override
-  public boolean shouldCreateStubForCallExpression(ASTNode node) {
-    ASTNode ref = node.getFirstChildNode();
-    if (ref.getElementType() == JSTokenTypes.NEW_KEYWORD) {
-      ref = TreeUtil.findSibling(ref, JSElementTypes.REFERENCE_EXPRESSION);
+    final String userID = element.getUserString();
+    final StubIndexKey<String, JSImplicitElementProvider> index = userID != null ? INDEX_MAP.get(userID) : null;
+    if (index == Angular2SourceDirectiveIndex.KEY) {
+      String type = element.toImplicitElement(null).getTypeString();
+      if (type != null && (type.startsWith(DIRECTIVE_TYPE)
+                           || type.startsWith(COMPONENT_TYPE)
+                           || type.startsWith(TEMPLATE_DIRECTIVE_TYPE))) {
+        type = type.substring(DIRECTIVE_TYPE.length());
+        StringUtil.split(type, "/")
+          .forEach(name -> sink.occurrence(index, name));
+      }
+      return true;
     }
-    if (ref != null) {
-      final ASTNode name = ref.getLastChildNode();
-      if (name != null && name.getElementType() == JSTokenTypes.IDENTIFIER) {
-        final String referencedName = name.getText();
-        return isDirective(referencedName) || isModule(referencedName);
+    else if (index != null) {
+      sink.occurrence(index, element.getName());
+      if (index == Angular2SourcePipeIndex.KEY) {
+        sink.occurrence(AngularSymbolIndex.KEY, element.getName());
+      }
+      else {
+        return true;
       }
     }
     return false;
-  }
-
-  private static String determineModuleName(@NotNull JSCallExpression callExpression) {
-    if (!(callExpression.getParent() instanceof ES6Decorator)) return null;
-    final ES6Decorator decorator = (ES6Decorator)callExpression.getParent();
-    final PsiElement owner = decorator.getOwner();
-    if (owner instanceof JSClass) return ((JSClass)owner).getName();
-    return null;
-  }
-
-  private static void addImplicitElementToModules(@NotNull PsiElement decorator,
-                                                  @NotNull Consumer<JSImplicitElement> processor,
-                                                  @Nullable String selector) {
-    if (selector == null) return;
-    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(selector, decorator)
-      .setUserString(AngularJSIndexingHandler.ANGULAR_MODULE_INDEX_USER_STRING);
-    processor.consume(elementBuilder.toImplicitElement());
-  }
-
-  private static void addDirective(@NotNull PsiElement element,
-                                   @NotNull Consumer<JSImplicitElement> processor,
-                                   @Nullable String selector) {
-    if (selector == null) return;
-    selector = selector.replace("\\n", "\n");
-    final MultiMap<String, String> attributesToElements = MultiMap.createSet();
-    PsiFile cssFile = PsiFileFactory.getInstance(element.getProject()).createFileFromText(JQueryCssLanguage.INSTANCE, selector);
-    CssSelectorList selectorList = PsiTreeUtil.findChildOfType(cssFile, CssSelectorList.class);
-    if (selectorList == null) return;
-    for (CssSelector cssSelector : selectorList.getSelectors()) {
-      for (CssSimpleSelector simpleSelector : cssSelector.getSimpleSelectors()) {
-        String elementName = simpleSelector.getElementName();
-        boolean seenAttribute = false;
-        for (CssSelectorSuffix suffix : simpleSelector.getSelectorSuffixes()) {
-          if (!(suffix instanceof CssAttribute)) continue;
-          String name = ((CssAttribute)suffix).getAttributeName();
-          if (!StringUtil.isEmpty(name)) {
-            if (seenAttribute) name = "[" + name + "]";
-            attributesToElements.putValue(name, elementName);
-          }
-          seenAttribute = true;
-        }
-        if (!seenAttribute) attributesToElements.putValue("", elementName);
-      }
-    }
-    Set<String> added = new HashSet<>();
-    boolean template = isTemplate(element);
-    for (String elementName : attributesToElements.get("")) {
-      if (!added.add(elementName)) continue;
-      JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(elementName, element)
-        .setType(JSImplicitElement.Type.Class);
-      if (!attributesToElements.containsKey(elementName)) {
-        elementBuilder.setTypeString("E;;;");
-      }
-      else {
-        Collection<String> elements = attributesToElements.get(elementName);
-        elementBuilder.setTypeString("AE;" + StringUtil.join(elements, ",") + ";;");
-      }
-      elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
-      processor.consume(elementBuilder.toImplicitElement());
-    }
-
-    for (Map.Entry<String, Collection<String>> entry : attributesToElements.entrySet()) {
-      JSImplicitElementImpl.Builder elementBuilder;
-      String attributeName = entry.getKey();
-      if (attributeName.isEmpty()) {
-        continue;
-      }
-      if (!added.add(attributeName)) continue;
-      String elements = StringUtil.join(entry.getValue(), ",");
-      if (template && elements.isEmpty()) {
-        elementBuilder = new JSImplicitElementImpl.Builder(attributeName, element)
-          .setType(JSImplicitElement.Type.Class).setTypeString("A;template,ng-template;;");
-        elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
-        processor.consume(elementBuilder.toImplicitElement());
-      }
-      final String prefix = template && !attributeName.startsWith("[") ? "*" : "";
-      final String attr = prefix + attributeName;
-      elementBuilder = new JSImplicitElementImpl.Builder(attr, element)
-        .setType(JSImplicitElement.Type.Class).setTypeString("A;" + elements + ";;");
-      elementBuilder.setUserString(ANGULAR_DIRECTIVES_INDEX_USER_STRING);
-      processor.consume(elementBuilder.toImplicitElement());
-    }
-  }
-
-  private static void addDirectiveTemplateRef(@NotNull JSCallExpression decorator,
-                                              @NotNull Consumer<JSImplicitElement> processor,
-                                              @Nullable String templateUrl) {
-    if (templateUrl == null) return;
-    int lastSlash = templateUrl.lastIndexOf('/');
-    String name = templateUrl.substring(lastSlash + 1);
-    //don't index if HTML file name matches TS file name and is in the same directory
-    if ((lastSlash <=0 || (lastSlash == 1 && templateUrl.charAt(0) == '.'))
-        && name.equals(FileUtil.getNameWithoutExtension(decorator.getContainingFile().getOriginalFile().getName()) + ".html")) {
-      return;
-    }
-    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name, decorator)
-      .setUserString(ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING)
-      .setTypeString("TU;;;");
-    processor.consume(elementBuilder.toImplicitElement());
-  }
-
-  private static void addPipe(PsiElement expression,
-                              @NotNull Consumer<JSImplicitElement> processor,
-                              String pipe) {
-    if (pipe == null) return;
-    JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(pipe, expression)
-      .setUserString(ANGULAR_FILTER_INDEX_USER_STRING)
-      .setType(JSImplicitElement.Type.Class)
-      .setTypeString(Angular2PipeUtil.createTypeString(null))
-      .toImplicitElement();
-    processor.consume(pipeElement);
-  }
-
-  @Nullable
-  public static JSProperty getSelector(PsiElement decorator) {
-    return getProperty(decorator instanceof ES6Decorator ? PsiTreeUtil.findChildOfType(decorator, JSCallExpression.class) : decorator,
-                       SELECTOR);
-  }
-
-  @Override
-  public void addContextType(JSTypeInfo info, PsiElement context) {
-    if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
-      final JSQualifiedName directiveNamespace = findDirective(context);
-      if (directiveNamespace != null) {
-        info.addType(JSNamedTypeFactory.createNamespace(directiveNamespace, JSContext.INSTANCE, null, true), true);
-      }
-    }
-  }
-
-  @Override
-  public void addContextNames(PsiElement context, List<String> names) {
-    if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
-      final JSQualifiedName directiveNamespace = findDirective(context);
-      if (directiveNamespace != null) {
-        names.add(directiveNamespace.getQualifiedName());
-      }
-    }
-  }
-
-  @Nullable
-  private static JSQualifiedName findDirective(PsiElement context) {
-    JSClass clazz = findDirectiveClass(context);
-    return clazz != null ? JSQualifiedNameImpl.buildProvidedNamespace(clazz) : null;
-  }
-
-  @Nullable
-  public static JSClass findDirectiveClass(PsiElement context) {
-    final PsiFile file = context.getContainingFile();
-    if (file == null
-        || !(file.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
-             || file.getLanguage().is(Angular2Language.INSTANCE))) {
-      return null;
-    }
-    PsiFile hostFile = getHostFile(context);
-    if (hostFile == null) {
-      return null;
-    }
-    if (!file.getOriginalFile().equals(hostFile)) {
-      // inline template
-      return PsiTreeUtil.getParentOfType(InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file), JSClass.class);
-    }
-    // non inline template file
-    JSClass result = resolveComponentWithSameName(hostFile);
-    if (result != null) {
-      return result;
-    }
-    return resolveComponentFromIndex(hostFile);
-  }
-
-  @Nullable
-  private static JSClass resolveComponentWithSameName(@NotNull PsiFile templateFile) {
-    final String name = templateFile.getViewProvider().getVirtualFile().getNameWithoutExtension();
-    final PsiDirectory dir = templateFile.getParent();
-    final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
-    if (directiveFile != null) {
-      for (PsiElement element : directiveFile.getChildren()) {
-        if (element instanceof JSClass
-            && hasTemplateReference(getDecoratorCall((JSClass)element, COMPONENT_DEC), templateFile)) {
-          return (JSClass)element;
-        }
-      }
-    }
-    return null;
-  }
-
-  private static JSClass resolveComponentFromIndex(@NotNull PsiFile templateFile) {
-    final String name = templateFile.getViewProvider().getVirtualFile().getName();
-    final Ref<JSClass> result = new Ref<>();
-    AngularIndexUtil.multiResolve(templateFile.getProject(), Angular2TemplateUrlIndex.KEY, name, el -> {
-      if (el != null) {
-        PsiElement componentDecorator = el.getParent();
-        if (componentDecorator instanceof JSCallExpression
-            && hasTemplateReference((JSCallExpression)componentDecorator, templateFile)) {
-          result.set(PsiTreeUtil.getParentOfType(componentDecorator, JSClass.class));
-          return false;
-        }
-      }
-      return true;
-    });
-    return result.get();
-  }
-
-  private static boolean hasTemplateReference(@Nullable JSCallExpression componentDecorator, @NotNull PsiFile templateFile) {
-    JSProperty templateUrl = getProperty(componentDecorator, "templateUrl");
-    if (templateUrl == null || templateUrl.getValue() == null) {
-      return false;
-    }
-    return hasFileReference(templateUrl.getValue(), templateFile);
-  }
-
-  private static PsiFile getHostFile(PsiElement context) {
-    final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
-    PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
-    return hostFile != null ? hostFile.getOriginalFile() : null;
   }
 
   @Override
@@ -354,35 +190,147 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     return false;
   }
 
-  @Override
-  public boolean canProcessCustomElement(@NotNull PsiElement element) {
-    return element instanceof JsonProperty && element.getContainingFile().getName().endsWith(".metadata.json");
+  public static boolean isTemplate(@NotNull TypeScriptClass clazz) {
+    return Stream.of(clazz.getConstructors())
+      .map(JSFunction::getParameterList)
+      .filter(Objects::nonNull)
+      .map(JSParameterList::getParameters)
+      .flatMap(Stream::of)
+      .map(JSParameterListElement::getType)
+      .filter(Objects::nonNull)
+      .map(type -> type.getTypeText())
+      .anyMatch(t -> t.contains(TEMPLATE_REF));
   }
 
-  @Override
-  public boolean processCustomElement(@NotNull PsiElement customElement, @NotNull JSIndexContentBuilder builder) {
-    if (customElement instanceof JsonProperty
-        && "selector".equals(((JsonProperty)customElement).getName())) {
-      JsonValue value = ((JsonProperty)customElement).getValue();
-      if (value instanceof JsonStringLiteral) {
-        addDirective(value, createIndexContentBuilderProcessor(builder), ((JsonStringLiteral)value).getValue());
+  private static void addComponentTemplateRef(@NotNull ES6Decorator decorator,
+                                              @NotNull Consumer<JSImplicitElement> processor,
+                                              @Nullable String templateUrl) {
+    if (templateUrl == null) return;
+    int lastSlash = templateUrl.lastIndexOf('/');
+    String name = templateUrl.substring(lastSlash + 1);
+    //don't index if HTML file name matches TS file name and is in the same directory
+    if ((lastSlash <= 0 || (lastSlash == 1 && templateUrl.charAt(0) == '.'))
+        && name.equals(FileUtil.getNameWithoutExtension(decorator.getContainingFile().getOriginalFile().getName()) + ".html")) {
+      return;
+    }
+    JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(name, decorator)
+      .setUserString(ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING);
+    processor.consume(elementBuilder.toImplicitElement());
+  }
+
+  private static void addPipe(@NotNull TypeScriptClass pipeClass,
+                              @NotNull Consumer<JSImplicitElement> processor,
+                              String pipe) {
+    if (pipe == null) return;
+    JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(pipe, pipeClass)
+      .setUserString(ANGULAR2_PIPE_INDEX_USER_STRING)
+      .setTypeString(PIPE_TYPE)
+      .setType(JSImplicitElement.Type.Class)
+      .toImplicitElement();
+    processor.consume(pipeElement);
+  }
+
+  ////XXX - remove
+  //@Override
+  //public void addContextType(JSTypeInfo info, PsiElement context) {
+  //  if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
+  //    final JSQualifiedName directiveNamespace = findDirective(context);
+  //    if (directiveNamespace != null) {
+  //      info.addType(JSNamedTypeFactory.createNamespace(directiveNamespace, JSContext.INSTANCE, null, true), true);
+  //    }
+  //  }
+  //}
+  //
+  ////XXX - remove
+  //@Override
+  //public void addContextNames(PsiElement context, List<String> names) {
+  //  if (context instanceof JSReferenceExpression && ((JSReferenceExpression)context).getQualifier() == null) {
+  //    final JSQualifiedName directiveNamespace = findDirective(context);
+  //    if (directiveNamespace != null) {
+  //      names.add(directiveNamespace.getQualifiedName());
+  //    }
+  //  }
+  //}
+  //
+  ////XXX - remove
+  //@Nullable
+  //private static JSQualifiedName findDirective(PsiElement context) {
+  //  JSClass clazz = findComponentClass(context);
+  //  return clazz != null ? JSQualifiedNameImpl.buildProvidedNamespace(clazz) : null;
+  //}
+
+  @Nullable
+  public static TypeScriptClass findComponentClass(@NotNull PsiElement context) {
+    final PsiFile file = context.getContainingFile();
+    if (file == null
+        || !(file.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+             || file.getLanguage().is(Angular2Language.INSTANCE))) {
+      return null;
+    }
+    PsiFile hostFile = getHostFile(context);
+    if (hostFile == null) {
+      return null;
+    }
+    if (!file.getOriginalFile().equals(hostFile)) {
+      // inline template
+      return PsiTreeUtil
+        .getContextOfType(InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file), TypeScriptClass.class);
+    }
+    // non inline template file
+    TypeScriptClass result = resolveComponentWithSameName(hostFile);
+    if (result != null) {
+      return result;
+    }
+    return resolveComponentFromIndex(hostFile);
+  }
+
+  @Nullable
+  private static TypeScriptClass resolveComponentWithSameName(@NotNull PsiFile templateFile) {
+    final String name = templateFile.getViewProvider().getVirtualFile().getNameWithoutExtension();
+    final PsiDirectory dir = templateFile.getParent();
+    final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
+    if (directiveFile != null) {
+      for (PsiElement element : directiveFile.getChildren()) {
+        if (element instanceof TypeScriptClass
+            && hasTemplateReference(findDecorator((TypeScriptClass)element, COMPONENT_DEC), templateFile)) {
+          return (TypeScriptClass)element;
+        }
       }
     }
-    return true;
+    return null;
   }
 
-  @Override
-  public int getVersion() {
-    return AngularIndexUtil.BASE_VERSION;
+  @Nullable
+  private static TypeScriptClass resolveComponentFromIndex(@NotNull PsiFile templateFile) {
+    final String name = templateFile.getViewProvider().getVirtualFile().getName();
+    final Ref<TypeScriptClass> result = new Ref<>();
+    AngularIndexUtil.multiResolve(templateFile.getProject(), Angular2TemplateUrlIndex.KEY, name, el -> {
+      if (el != null) {
+        PsiElement componentDecorator = el.getParent();
+        if (componentDecorator instanceof ES6Decorator
+            && hasTemplateReference((ES6Decorator)componentDecorator, templateFile)) {
+          result.set(PsiTreeUtil.getContextOfType(componentDecorator, TypeScriptClass.class));
+          return false;
+        }
+      }
+      return true;
+    });
+    return result.get();
   }
 
-  @NotNull
-  private static Consumer<JSImplicitElement> createIndexContentBuilderProcessor(@NotNull JSIndexContentBuilder builder) {
-    return element -> {
-      JSImplicitElementImpl.Builder elementBuilder = ((JSImplicitElementImpl)element).toBuilder().setProvider(null);
-      JSImplicitElementsIndex.JSElementProxy proxy =
-        new JSImplicitElementsIndex.JSElementProxy(elementBuilder, element.getParent().getTextOffset());
-      builder.addImplicitElement(element.getName(), proxy);
-    };
+  private static boolean hasTemplateReference(@Nullable ES6Decorator componentDecorator, @NotNull PsiFile templateFile) {
+    JSProperty templateUrl = getProperty(componentDecorator, "templateUrl");
+    if (templateUrl == null || templateUrl.getValue() == null) {
+      return false;
+    }
+    return hasFileReference(templateUrl.getValue(), templateFile);
   }
+
+  @Nullable
+  private static PsiFile getHostFile(@NotNull PsiElement context) {
+    final PsiElement original = CompletionUtil.getOriginalOrSelf(context);
+    PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
+    return hostFile != null ? hostFile.getOriginalFile() : null;
+  }
+
 }

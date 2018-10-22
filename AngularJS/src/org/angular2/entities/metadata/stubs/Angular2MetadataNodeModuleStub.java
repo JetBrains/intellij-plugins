@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,7 +26,7 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
   private static final String METADATA = "metadata";
 
   private StringRef myImportAs;
-  private Map<String, StringRef> myOrigins;
+  private Map<String, String> myOrigins;
 
   public Angular2MetadataNodeModuleStub(@NotNull StubInputStream dataStream, @Nullable StubElement parentStub) throws IOException {
     super(dataStream, parentStub, Angular2MetadataElementTypes.NODE_MODULE);
@@ -65,7 +64,7 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
   }
 
   public String getMemberOrigin(String memberName) {
-    return StringRef.toString(myOrigins.get(memberName));
+    return myOrigins.get(memberName);
   }
 
   private void readFile(JsonObject fileRoot) {
@@ -73,28 +72,9 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
     myOrigins = MetadataUtils.streamObjectProperty(fileRoot.findProperty(ORIGINS))
       .map(MetadataUtils::readStringProperty)
       .filter(Objects::nonNull)
-      .collect(Collectors.toMap(p -> p.first, p -> StringRef.fromString(p.second), (a, b) -> a));
+      .collect(Collectors.toMap(p -> p.first, p -> p.second, (a, b) -> a));
     MetadataUtils.streamObjectProperty(fileRoot.findProperty(METADATA))
       .forEach(this::loadMemberProperty);
   }
 
-  private static void writeStringMap(@NotNull Map<String, StringRef> origins, @NotNull StubOutputStream stream) throws IOException {
-    stream.writeVarInt(origins.size());
-    for (Map.Entry<String, StringRef> e : origins.entrySet()) {
-      stream.writeName(e.getKey());
-      writeString(e.getValue(), stream);
-    }
-  }
-
-  @NotNull
-  private static Map<String, StringRef> readStringMap(@NotNull StubInputStream stream) throws IOException {
-    Map<String, StringRef> result = new HashMap<>();
-    int size = stream.readVarInt();
-    for (int i = 0; i < size; i++) {
-      String key = stream.readNameString();
-      StringRef value = stream.readName();
-      result.put(key, value);
-    }
-    return result;
-  }
 }

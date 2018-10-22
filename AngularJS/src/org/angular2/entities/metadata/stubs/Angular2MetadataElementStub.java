@@ -23,7 +23,7 @@ public abstract class Angular2MetadataElementStub<Psi extends MetadataElement> e
     if (TYPE_FACTORY == null) {
       TYPE_FACTORY = ContainerUtil.newHashMap(
         pair("class", Angular2MetadataClassStubBase::createClassStub),
-        pair("reference", Angular2MetadataReferenceStub::new),
+        pair("reference", Angular2MetadataReferenceStub::createReferenceStub),
         pair(ARRAY_TYPE, Angular2MetadataArrayStub::new),
         pair(OBJECT_TYPE, Angular2MetadataObjectStub::new)
       );
