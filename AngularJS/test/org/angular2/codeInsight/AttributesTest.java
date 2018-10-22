@@ -10,9 +10,9 @@ import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature;
-import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
@@ -27,6 +27,7 @@ import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.metadata.psi.Angular2MetadataDirective;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -39,10 +40,6 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "attributes";
-  }
-
-  private static String getDirectiveDefinitionText(PsiElement resolve) {
-    return resolve.getParent().getText();
   }
 
   @NotNull
@@ -371,7 +368,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("for2.html", "ng_for_of.ts", "package.json");
       PsiElement resolve = resolveReference("ngF<caret>");
       assertEquals("ng_for_of.ts", resolve.getContainingFile().getName());
-      assertEquals("Directive({selector: '[ngFor][ngForOf]'})", getDirectiveDefinitionText(resolve));
+      assertEquals("@Directive({selector: '[ngFor][ngForOf]'})", resolve.getText());
     });
   }
 
@@ -409,7 +406,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("for2.html", "common.metadata.json", "package.json");
       PsiElement resolve = resolveReference("ngF<caret>");
       assertEquals("common.metadata.json", resolve.getContainingFile().getName());
-      assertEquals("\"[ngFor][ngForOf]\"", getDirectiveDefinitionText(((JSOffsetBasedImplicitElement)resolve).getElementAtOffset()));
+      assertEquals("[ngFor][ngForOf]", ((Angular2MetadataDirective)resolve).getSelector());
     });
   }
 
@@ -641,10 +638,10 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNgNoValidateReference() {
-    myFixture.configureByFiles("ngNoValidate.html", "ng_no_validate.directive.ts", "package.json");
+    myFixture.configureByFiles("ngNoValidate.html", "ng_no_validate_directive.ts", "package.json");
     PsiElement resolve = resolveReference("ng<caret>NativeValidate");
-    assertInstanceOf(resolve, TypeScriptClass.class);
-    assertEquals("ng_no_validate.directive.ts", resolve.getContainingFile().getName());
+    assertInstanceOf(resolve, ES6Decorator.class);
+    assertEquals("ng_no_validate_directive.ts", resolve.getContainingFile().getName());
   }
 
 }

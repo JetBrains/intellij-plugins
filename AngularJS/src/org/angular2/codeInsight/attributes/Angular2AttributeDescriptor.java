@@ -22,6 +22,8 @@ import icons.AngularJSIcons;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.psi.Angular2HtmlEvent;
+import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +39,7 @@ import java.util.function.Function;
 import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getCustomNgAttrs;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.EVENT;
+import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.TEMPLATE_BINDINGS;
 
 public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
 
@@ -58,10 +61,15 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       return new Angular2AttributeDescriptor(attributeName, null, elements);
     }
     Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attributeName, true);
-    if (info.elementType == XmlElementType.XML_ATTRIBUTE) {
-      return !elements.isEmpty()
-             ? new Angular2AttributeDescriptor(attributeName, null, elements)
-             : null;
+    if (elements.isEmpty()
+        && (info.elementType == XmlElementType.XML_ATTRIBUTE
+            || info.elementType == TEMPLATE_BINDINGS
+            || (info instanceof Angular2AttributeNameParser.EventInfo
+                && ((Angular2AttributeNameParser.EventInfo)info).eventType == Angular2HtmlEvent.EventType.REGULAR
+                && !info.name.contains(":"))
+            || (info instanceof Angular2AttributeNameParser.PropertyBindingInfo
+                && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY))) {
+      return null;
     }
     if (info.elementType == EVENT) {
       return new Angular2EventHandlerDescriptor(attributeName, info.name, elements);
@@ -70,7 +78,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @NotNull
-  public static List<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive) {
+  public static List<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive, boolean isTemplateTagContext) {
+    if (directive.isTemplate() && !isTemplateTagContext) {
+      return Collections.emptyList();
+    }
     List<XmlAttributeDescriptor> result = new ArrayList<>();
     addDirectiveDescriptors(directive.getInOuts(), Angular2AttributeDescriptor::createBananaBoxBinding, result);
     addDirectiveDescriptors(directive.getInputs(), Angular2AttributeDescriptor::createBinding, result);

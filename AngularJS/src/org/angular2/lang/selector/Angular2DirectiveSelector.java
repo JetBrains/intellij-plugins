@@ -6,6 +6,8 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.SmartList;
 import com.intellij.xml.util.XmlUtil;
+import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,14 +88,14 @@ public class Angular2DirectiveSelector {
 
     cssSelector.setElement(elNameNoNs);
 
+    boolean isTemplateTag = Angular2Processor.isTemplateTag(element.getName());
     for (XmlAttribute attr : element.getAttributes()) {
-      if (!attr.getName().startsWith("*")) {
-        String attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.getName());
-        cssSelector.addAttribute(attrNameNoNs, attr.getValue());
-        if (attr.getName().toLowerCase().equals("class") && attr.getValue() != null) {
-          StringUtil.split(attr.getValue(), " ")
-            .forEach(clsName -> cssSelector.addClassName(clsName));
-        }
+      String attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.getName());
+      attrNameNoNs = Angular2AttributeNameParser.parse(attrNameNoNs, isTemplateTag).name;
+      cssSelector.addAttribute(attrNameNoNs, attr.getValue());
+      if (attr.getName().toLowerCase().equals("class") && attr.getValue() != null) {
+        StringUtil.split(attr.getValue(), " ")
+          .forEach(clsName -> cssSelector.addClassName(clsName));
       }
     }
     return cssSelector;

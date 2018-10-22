@@ -107,16 +107,6 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("custom.html", "custom.after.html", "custom15.js", "angular.js");
   }
 
-  public void testCustomAttributesCompletion20TypeScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("custom2.html", "custom2.after.html", "custom.ts", "angular.js"));
-  }
-
-  public void testCustomAttributesCompletion20JavaScript() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("custom2.html", "custom2.after.html", "custom2.js", "angular.js"));
-  }
-
   public void testCustomAttributesResolve() {
     myFixture.configureByFiles("custom.after.html", "custom.js", "angular.js");
     int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());

@@ -48,7 +48,11 @@ public class Angular2Processor {
   private static volatile Map<String, String> TAG_TO_CLASS;
 
   public static final String $EVENT = "$event";
-  public static final String NG_TEMPLATE = "ng-template";
+
+  public static boolean isTemplateTag(@Nullable String tagName) {
+    return "ng-template".equalsIgnoreCase(tagName)
+           || "template".equalsIgnoreCase(tagName);
+  }
 
   public static void process(final PsiElement element, final Consumer<? super JSPsiElementBase> consumer) {
     final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
@@ -193,7 +197,7 @@ public class Angular2Processor {
     @Override
     public void visitXmlTag(XmlTag tag) {
       boolean isTemplateTag = Stream.of(tag.getChildren()).anyMatch(Angular2HtmlTemplateBindings.class::isInstance)
-                              || tag.getName().equalsIgnoreCase(NG_TEMPLATE);
+                              || isTemplateTag(tag.getName());
       if (isTemplateTag) {
         pushScope(tag);
       }
@@ -212,7 +216,7 @@ public class Angular2Processor {
     public void visitReference(Angular2HtmlReference reference) {
       JSVariable var = reference.getVariable();
       if (var != null) {
-        if (reference.getParent().getName().equalsIgnoreCase(NG_TEMPLATE)) {
+        if (isTemplateTag(reference.getParent().getName())) {
           // References on ng-template are visible within parent scope
           prevScope().add(var);
         }

@@ -65,7 +65,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     final List<XmlAttributeDescriptor> result = new ArrayList<>();
     if (myComponent != null) {
-      result.addAll(Angular2AttributeDescriptor.getDirectiveDescriptors(myComponent));
+      result.addAll(Angular2AttributeDescriptor.getDirectiveDescriptors(myComponent, false));
     }
     //if (context != null) {
     //  result.addAll(Angular2AttributeDescriptor.getApplicableDirectiveDescriptors(context));

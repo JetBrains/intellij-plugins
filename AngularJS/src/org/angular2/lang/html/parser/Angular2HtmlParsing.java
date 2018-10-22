@@ -152,7 +152,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     PsiBuilder.Marker att = mark();
     final AttributeInfo attributeInfo = Angular2AttributeNameParser.parse(
       Objects.requireNonNull(getBuilder().getTokenText()),
-      Angular2Processor.NG_TEMPLATE.contentEquals(XmlUtil.getLocalName(peekTagName())));
+      Angular2Processor.isTemplateTag(XmlUtil.findLocalNameByQualifiedName(peekTagName())));
 
     if (attributeInfo.error != null) {
       PsiBuilder.Marker attrName = mark();

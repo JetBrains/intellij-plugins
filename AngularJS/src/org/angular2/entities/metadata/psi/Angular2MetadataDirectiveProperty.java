@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.psi.PsiElement;
 import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,5 +38,10 @@ public class Angular2MetadataDirectiveProperty implements Angular2DirectivePrope
   @Override
   public PsiElement getSourceElement() {
     return source;
+  }
+
+  @Override
+  public String toString() {
+    return Angular2EntityUtils.toString(this);
   }
 }

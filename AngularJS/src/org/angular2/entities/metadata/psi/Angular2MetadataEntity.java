@@ -2,8 +2,10 @@
 package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.angular2.entities.Angular2Entity;
+import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.stubs.Angular2MetadataEntityStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,4 +36,16 @@ public class Angular2MetadataEntity<Stub extends Angular2MetadataEntityStub> ext
   public ES6Decorator getDecorator() {
     return null;
   }
+
+  @NotNull
+  @Override
+  public String getName() {
+    return StringUtil.notNullize(getStub().getMemberName(), "<unnamed>");
+  }
+
+  @Override
+  public String toString() {
+    return Angular2EntityUtils.toString(this);
+  }
+
 }
