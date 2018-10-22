@@ -21,8 +21,9 @@ public class Angular2MetadataPipeStub extends Angular2MetadataEntityStub<Angular
   @Nullable
   public static Angular2MetadataPipeStub createPipeStub(@Nullable String memberName,
                                                         @Nullable StubElement parent,
+                                                        @NotNull JsonObject classSource,
                                                         @NotNull JsonObject decoratorSource) {
-    JsonObject decoratorArg = getDecoratorArgument(decoratorSource, JsonObject.class);
+    JsonObject decoratorArg = getDecoratorInitializer(decoratorSource, JsonObject.class);
     if (decoratorArg != null) {
       String pipeName = MetadataUtils.readStringPropertyValue(decoratorArg.findProperty(NAME));
       if (pipeName != null) {
@@ -37,7 +38,7 @@ public class Angular2MetadataPipeStub extends Angular2MetadataEntityStub<Angular
   private Angular2MetadataPipeStub(@Nullable String memberName,
                                    @Nullable StubElement parent,
                                    @NotNull String pipeName) {
-    super(memberName, parent, Angular2MetadataElementTypes.PIPE);
+    super(memberName, parent, null, Angular2MetadataElementTypes.PIPE);
     myPipeName = StringRef.fromString(pipeName);
   }
 

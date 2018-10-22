@@ -9,9 +9,12 @@ import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.util.ObjectUtils;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.Angular2EntityUtils;
+import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,27 +25,26 @@ import static com.intellij.openapi.util.Pair.pair;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
 
-  private static final String EXPORT_AS = "exportAs";
-  private static final String SELECTOR = "selector";
-  private static final String INPUT = "Input";
-  private static final String INPUTS = "inputs";
-  private static final String OUTPUT = "Output";
-  private static final String OUTPUTS = "outputs";
-
   public Angular2SourceDirective(@NotNull ES6Decorator decorator, @NotNull JSImplicitElement implicitElement) {
     super(decorator, implicitElement);
   }
 
-  @Nullable
+  @NotNull
   @Override
   public String getSelector() {
-    return Angular2DecoratorUtil.getPropertyName(getDecorator(), SELECTOR);
+    return ObjectUtils.notNull(Angular2DecoratorUtil.getPropertyName(getDecorator(), Angular2DecoratorUtil.SELECTOR_PROP), "");
+  }
+
+  @Override
+  public boolean isTemplate() {
+    return getCachedValue(() -> CachedValueProvider.Result.create(
+      Angular2IndexingHandler.isTemplate(getTypeScriptClass()), getTypeScriptClass()));
   }
 
   @Nullable
   @Override
   public String getExportAs() {
-    return Angular2DecoratorUtil.getPropertyName(getDecorator(), EXPORT_AS);
+    return Angular2DecoratorUtil.getPropertyName(getDecorator(), Angular2DecoratorUtil.EXPORT_AS_PROP);
   }
 
   @NotNull
@@ -70,16 +72,18 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     List<Angular2DirectiveProperty> inputs = new ArrayList<>();
     List<Angular2DirectiveProperty> outputs = new ArrayList<>();
 
-    Map<String, String> inputMap = readPropertyMappings(INPUTS);
-    Map<String, String> outputMap = readPropertyMappings(OUTPUTS);
+    Map<String, String> inputMap = readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP);
+    Map<String, String> outputMap = readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP);
 
     TypeScriptTypeParser
       .buildTypeFromClass(getTypeScriptClass(), false)
       .getProperties()
       .forEach(prop -> {
         if (prop.getMemberSource().getSingleElement() instanceof JSAttributeListOwner) {
-          processProperty(prop, (JSAttributeListOwner)prop.getMemberSource().getSingleElement(), inputMap, INPUT, inputs);
-          processProperty(prop, (JSAttributeListOwner)prop.getMemberSource().getSingleElement(), outputMap, OUTPUT, outputs);
+          processProperty(prop, (JSAttributeListOwner)prop.getMemberSource().getSingleElement(), inputMap, Angular2DecoratorUtil.INPUT_DEC,
+                          inputs);
+          processProperty(prop, (JSAttributeListOwner)prop.getMemberSource().getSingleElement(), outputMap,
+                          Angular2DecoratorUtil.OUTPUT_DEC, outputs);
         }
       });
 
@@ -96,19 +100,10 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         .filter(expression -> expression instanceof JSLiteralExpression && ((JSLiteralExpression)expression).isQuotedLiteral())
         .map(expression -> ((JSLiteralExpression)expression).getStringValue())
         .filter(Objects::nonNull)
-        .map(Angular2SourceDirective::parsePropertyMapping)
+        .map(Angular2EntityUtils::parsePropertyMapping)
         .collect(Collectors.toMap(p -> p.first, p -> p.second, (a, b) -> a));
     }
     return Collections.emptyMap();
-  }
-
-  @NotNull
-  private static Pair<String, String> parsePropertyMapping(@NotNull String property) {
-    int ind = property.indexOf(':');
-    if (ind > 0) {
-      return pair(property.substring(0, ind).trim(), property.substring(ind + 1).trim());
-    }
-    return pair(property.trim(), property.trim());
   }
 
   private static void processProperty(@NotNull JSRecordType.PropertySignature property,

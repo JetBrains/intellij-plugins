@@ -12,7 +12,6 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -54,12 +53,12 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   }
 
   /**
-   * Kept for compatibility with NativeScript.
+   * Kept for source-level compatibility with NativeScript.
    */
   @Deprecated
   @NotNull
   public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration) {
-    return Angular2AttributeDescriptor.getDescriptors(declaration).toArray(XmlAttributeDescriptor.EMPTY);
+    return XmlAttributeDescriptor.EMPTY;
   }
 
   @Override

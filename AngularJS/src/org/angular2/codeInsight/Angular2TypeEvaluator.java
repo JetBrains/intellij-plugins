@@ -10,7 +10,6 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService;
@@ -23,15 +22,12 @@ import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
-import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE;
 
@@ -52,17 +48,20 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   }
 
   private void addTypeFromAngular2TemplateBindings(@NotNull Angular2TemplateBindings bindings) {
-    JSImplicitElement templateDirective = DirectiveUtil.getAttributeDirective(
-      "*" + bindings.getTemplateName(), bindings.getProject());
-    if (templateDirective == null) {
-      return;
+    Angular2Directive templateDirective = null;
+    for (Angular2Directive directive : Angular2EntitiesProvider.findAttributeDirectivesCandidates(
+      bindings.getProject(), bindings.getTemplateName())) {
+      if (directive.isTemplate()) {
+        templateDirective = directive;
+        break;
+      }
     }
-    Angular2Directive metadata = Angular2EntitiesProvider.getDirective(templateDirective);
-    if (metadata.getTypeScriptClass() == null) {
+    if (templateDirective == null
+        || templateDirective.getTypeScriptClass() == null) {
       return;
     }
     JSType templateRefType = null;
-    for (TypeScriptFunction fun : metadata.getTypeScriptClass().getConstructors()) {
+    for (TypeScriptFunction fun : templateDirective.getTypeScriptClass().getConstructors()) {
       for (JSParameter param : fun.getParameterVariables()) {
         if (param.getType() != null && param.getType().getTypeText().startsWith("TemplateRef<")) {
           templateRefType = param.getType();
@@ -79,16 +78,19 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     }
     JSType templateContextType = templateRefGeneric.getArguments().get(0);
     addType(templateContextType instanceof JSGenericTypeImpl
-            ? resolveTemplateContextTypeGeneric(metadata, (JSGenericTypeImpl)templateContextType, bindings)
+            ? resolveTemplateContextTypeGeneric(templateDirective, (JSGenericTypeImpl)templateContextType, bindings)
             : templateContextType, bindings);
   }
 
   private static JSType resolveTemplateContextTypeGeneric(Angular2Directive metadata,
                                                           @NotNull JSGenericTypeImpl templateContextType,
                                                           @NotNull Angular2TemplateBindings bindings) {
-    Map<String, Angular2TemplateBinding> bindingsMap = Arrays.stream(bindings.getBindings())
-      .filter(b -> !b.keyIsVar())
-      .collect(Collectors.toMap(Angular2TemplateBinding::getKey, Function.identity(), (a, b) -> a));
+    Map<String, Angular2TemplateBinding> bindingsMap = new HashMap<>();
+    for (Angular2TemplateBinding templateBinding : bindings.getBindings()) {
+      if (!templateBinding.keyIsVar()) {
+        bindingsMap.putIfAbsent(templateBinding.getKey(), templateBinding);
+      }
+    }
 
     MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> genericArguments = MultiMap.createSmart();
     final ProcessingContext processingContext = JSTypeComparingContextService.getProcessingContextWithCache(metadata.getTypeScriptClass());

@@ -3,10 +3,9 @@ package org.angular2.index;
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.psi.stubs.StubIndexKey;
-import org.angularjs.index.AngularIndexBase;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2TemplateUrlIndex extends AngularIndexBase {
+public class Angular2TemplateUrlIndex extends Angular2IndexBase<JSImplicitElementProvider> {
 
   public static final StubIndexKey<String, JSImplicitElementProvider> KEY = StubIndexKey.createIndexKey("angular2.templateUrl.index");
 

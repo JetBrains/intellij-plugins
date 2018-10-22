@@ -1,8 +1,6 @@
 package org.angularjs.index;
 
-import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.index.JSImplicitElementsIndex;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
@@ -93,28 +91,6 @@ public class AngularIndexUtil {
         return true;
       }
     );
-
-    if (index == AngularDirectivesIndex.KEY) {
-      processDirectivesMetadata(project, lookupKey, processor, scope);
-    }
-  }
-
-  private static boolean processDirectivesMetadata(@NotNull Project project,
-                                                   @NotNull String lookupKey,
-                                                   @NotNull Processor<? super JSImplicitElement> processor,
-                                                   @NotNull GlobalSearchScope scope) {
-    FileBasedIndex.ValueProcessor<Collection<JSImplicitElementsIndex.JSElementProxy>> implicitElementsProcessor =
-      (virtualFile, value) -> {
-        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-        if (psiFile instanceof JsonFile) {
-          for (JSImplicitElementsIndex.JSElementProxy proxy : value) {
-            JSOffsetBasedImplicitElement element = proxy.toOffsetBasedImplicitElement(psiFile);
-            if (AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()) && !processor.process(element)) return false;
-          }
-        }
-        return true;
-      };
-    return FileBasedIndex.getInstance().processValues(JSImplicitElementsIndex.INDEX_ID, lookupKey, null, implicitElementsProcessor, scope);
   }
 
   public static ResolveResult[] multiResolveAngularNamedDefinitionIndex(@NotNull final Project project,
@@ -229,17 +205,6 @@ public class AngularIndexUtil {
                ? !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class, element -> false)
                : !fileIndex.processValues(id, key, null, (FileBasedIndex.ValueProcessor)(file, value) -> false, scope)
       );
-      if (id == AngularDirectivesIndex.KEY) {
-        allKeys = FileBasedIndex.getInstance().getAllKeys(JSImplicitElementsIndex.INDEX_ID, project);
-        List<String> filteredFromMeta = ContainerUtil
-          .filter(allKeys, key -> !processDirectivesMetadata(project, key, element -> false, scope));
-        if (filteredKeys.isEmpty()) {
-          filteredKeys = filteredFromMeta;
-        }
-        else {
-          filteredKeys.addAll(filteredFromMeta);
-        }
-      }
       return CachedValueProvider.Result.create(filteredKeys, PsiManager.getInstance(project).getModificationTracker());
     }
   }

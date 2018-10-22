@@ -2,16 +2,18 @@
 package org.angularjs.codeInsight.attributes;
 
 import com.intellij.psi.PsiElement;
-import org.angular2.codeInsight.attributes.Angular2BindingDescriptor;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
 
 /**
  * @deprecated Kept for compatibility with NativeScript
  */
 @Deprecated
-public class AngularBindingDescriptor extends Angular2BindingDescriptor {
+public class AngularBindingDescriptor extends Angular2AttributeDescriptor {
   public AngularBindingDescriptor(@NotNull PsiElement element,
                                   @NotNull String attributeName) {
-    super(element, attributeName);
+    super(attributeName, null, Collections.singletonList(element));
   }
 }

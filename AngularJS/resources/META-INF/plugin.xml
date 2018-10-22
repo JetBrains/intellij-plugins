@@ -116,6 +116,8 @@
     <framework.detector implementation="org.angular2.cli.AngularJSFrameworkDetector"/>
     <fileTypeFactory implementation="org.angular2.AngularTypeScriptConfigFileTypeFactory"/>
     <stubIndex implementation="org.angular2.index.Angular2TemplateUrlIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2SourcePipeIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2SourceDirectiveIndex"/>
     <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
     <elementDescriptionProvider order="first"
                                 implementation="org.angular2.refactoring.Angular2PipeRenameProcessor$Angular2PipeElementDescriptor"/>
@@ -131,6 +133,8 @@
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2ServiceCompletionContributor"
                             id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider" order="first"/>
+    <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider"/>
+    <xml.elementDescriptorProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider" order="last"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
     <xml.fileNSInfoProvider implementation="org.angular2.lang.html.Angular2HtmlNSInfoProvider"/>
@@ -162,6 +166,7 @@
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataPipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataEntityClassNameIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2MetadataDirectiveIndex"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
@@ -174,7 +179,6 @@
 
     <!-- Angular 2 Expression language contributions -->
     <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler"/>
-    <JSImplicitElementsIndexFileTypeProvider implementation="org.angular2.index.Angular2ImplicitlyElementsFileTypeProvider"/>
     <LanguageServiceProvider implementation="org.angular2.service.Angular2LanguageServiceProvider"/>
     <LanguageServiceFilter implementation="org.angular2.service.Angular2LanguageServiceFilter"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>

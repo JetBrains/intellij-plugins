@@ -42,7 +42,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
-import org.angular2.index.Angular2TemplateUrlIndex;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.AngularJSReferenceExpressionResolver;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -55,8 +54,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
-
-import static org.angular2.index.Angular2IndexingHandler.ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING;
 
 /**
  * @author Dennis.Ushakov
@@ -127,7 +124,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXES.put("aci", AngularControllerIndex.KEY);
     INDEXES.put("addi", AngularDirectivesDocIndex.KEY);
     INDEXES.put(ANGULAR_DIRECTIVES_INDEX_USER_STRING, AngularDirectivesIndex.KEY);
-    INDEXES.put(ANGULAR_TEMPLATE_URLS_INDEX_USER_STRING, Angular2TemplateUrlIndex.KEY);
     INDEXES.put(ANGULAR_FILTER_INDEX_USER_STRING, AngularFilterIndex.KEY);
     INDEXES.put("aidi", AngularInjectionDelimiterIndex.KEY);
     INDEXES.put(ANGULAR_MODULE_INDEX_USER_STRING, AngularModuleIndex.KEY);

@@ -26,7 +26,7 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
 
   @Override
   public <T extends ResultSink> QualifiedItemProcessor<T> createQualifiedItemProcessor(@NotNull T sink, @NotNull PsiElement place) {
-    JSClass clazz = Angular2IndexingHandler.findDirectiveClass(place);
+    JSClass clazz = Angular2IndexingHandler.findComponentClass(place);
     if (clazz != null && DialectDetector.isTypeScript(clazz)) {
       return new TypeScriptQualifiedItemProcessor<>(sink, place.getContainingFile());
     }

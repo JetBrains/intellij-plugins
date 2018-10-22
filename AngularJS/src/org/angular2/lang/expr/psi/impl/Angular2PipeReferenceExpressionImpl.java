@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
-import org.angular2.codeInsight.Angular2PipeUtil;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class Angular2PipeReferenceExpressionImpl extends JSReferenceExpressionIm
 
   @Override
   public boolean isReferenceTo(@NotNull PsiElement element) {
-    if (Angular2PipeUtil.isPipeTransformMethod(element)) {
+    if (Angular2EntitiesProvider.isPipeTransformMethod(element)) {
       return resolve() == element;
     }
     return false;

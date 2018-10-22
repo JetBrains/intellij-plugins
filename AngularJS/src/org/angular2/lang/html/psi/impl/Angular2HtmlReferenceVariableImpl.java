@@ -72,7 +72,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   @NotNull
   @Override
   public SearchScope getUseScope() {
-    final JSClass clazz = Angular2IndexingHandler.findDirectiveClass(this);
+    final JSClass clazz = Angular2IndexingHandler.findComponentClass(this);
     LocalSearchScope localScope;
     if (clazz != null) {
       localScope = new LocalSearchScope(new PsiElement[]{clazz, this.getContainingFile()});
