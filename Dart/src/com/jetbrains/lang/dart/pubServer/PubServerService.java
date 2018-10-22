@@ -110,7 +110,7 @@ final class PubServerService extends NetService {
 
   @Override
   protected int getAvailableSocketPort() {
-    int initialPort = 8080;
+    int initialPort = DartWebdevSettings.getInstance(getProject()).WEBDEV_PORT;
     int maxAttempts = 10;
     int currentPort = initialPort;
 

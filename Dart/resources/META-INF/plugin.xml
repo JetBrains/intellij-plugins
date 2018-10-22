@@ -197,6 +197,8 @@
                     serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
     <projectService serviceInterface="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"
                     serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
+    <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.DartWebdevSettings"
+                    serviceImplementation="com.jetbrains.lang.dart.pubServer.DartWebdevSettings"/>
 
     <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"
                         serviceImplementation="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"/>

@@ -27,6 +27,7 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.flutter.FlutterUtil;
+import com.jetbrains.lang.dart.pubServer.DartWebdevSettings;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -57,6 +58,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private JBCheckBox myCheckSdkUpdateCheckBoxFake;
   private ComboBox mySdkUpdateChannelCombo;
   private JButton myCheckSdkUpdateButton;
+  private PortField myPortField;
 
   private JPanel myModulesPanel;
 
@@ -126,8 +128,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     myCheckSdkUpdateButton.addActionListener(e -> {
       final Runnable runnable = this::checkSdkUpdate;
       ApplicationManagerEx.getApplicationEx()
-                          .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject,
-                                                               myMainPanel);
+        .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject,
+                                             myMainPanel);
     });
   }
 
@@ -228,6 +230,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
     }
 
+    if (myPortField.getNumber() != DartWebdevSettings.getInstance(myProject).WEBDEV_PORT) return true;
+
     if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final Module[] selectedModules = myModulesCheckboxTreeTable.getCheckedNodes(Module.class);
       if (selectedModules.length != myModulesWithDartSdkLibAttachedInitial.size()) return true;
@@ -271,6 +275,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     final DartSdkUpdateOption sdkUpdateOption = DartSdkUpdateOption.getDartSdkUpdateOption();
     myCheckSdkUpdateCheckBox.setSelected(sdkUpdateOption != DartSdkUpdateOption.DoNotCheck);
     mySdkUpdateChannelCombo.setSelectedItem(sdkUpdateOption);
+
+    myPortField.setNumber(DartWebdevSettings.getInstance(myProject).WEBDEV_PORT);
 
     if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTreeTable.getTree().getModel().getRoot();
@@ -330,6 +336,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
                                                       : DartSdkUpdateOption.DoNotCheck;
           DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
         }
+
+        DartWebdevSettings.getInstance(myProject).WEBDEV_PORT = myPortField.getNumber();
       }
       else {
         if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
