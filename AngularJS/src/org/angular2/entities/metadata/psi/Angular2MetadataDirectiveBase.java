@@ -5,10 +5,13 @@ import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.Angular2DirectiveSelector;
+import org.angular2.entities.Angular2DirectiveSelectorImpl;
 import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStubBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,14 +23,18 @@ import static com.intellij.openapi.util.Pair.pair;
 public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2MetadataDirectiveStubBase>
   extends Angular2MetadataDeclaration<Stub>
   implements Angular2Directive {
+
+  private final Angular2DirectiveSelector mySelector;
+
   public Angular2MetadataDirectiveBase(@NotNull Stub element) {
     super(element);
+    mySelector = new Angular2DirectiveSelectorImpl(this, getStub().getSelector(), a -> new TextRange(0, 0));
   }
 
   @NotNull
   @Override
-  public String getSelector() {
-    return getStub().getSelector();
+  public Angular2DirectiveSelector getSelector() {
+    return mySelector;
   }
 
   @Nullable

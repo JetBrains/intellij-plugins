@@ -2,20 +2,15 @@
 package org.angular2.entities;
 
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import org.angular2.lang.selector.Angular2DirectiveSelector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.ParseException;
 import java.util.*;
 
 public interface Angular2Directive extends Angular2Declaration {
 
   @NotNull
-  String getSelector();
+  Angular2DirectiveSelector getSelector();
 
   @Nullable
   String getExportAs();
@@ -32,18 +27,6 @@ public interface Angular2Directive extends Angular2Declaration {
     return this instanceof Angular2Component;
   }
 
-  default List<Angular2DirectiveSelector> getDirectiveSelectors() {
-    PsiElement source = getSourceElement();
-    String selector = getSelector();
-    return CachedValuesManager.getCachedValue(source, () -> {
-      try {
-        return CachedValueProvider.Result.create(Angular2DirectiveSelector.parse(selector), source);
-      }
-      catch (ParseException e) {
-        return CachedValueProvider.Result.create(Collections.emptyList(), source);
-      }
-    });
-  }
 
   default List<Pair<Angular2DirectiveProperty, Angular2DirectiveProperty>> getInOuts() {
     final String OUTPUT_CHANGE_SUFFIX = "Change";

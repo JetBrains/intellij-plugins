@@ -1,4 +1,5 @@
-package org.angularjs.codeInsight;
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angular2.codeInsight;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.psi.*;
@@ -14,10 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-/**
- * @author Dennis.Ushakov
- */
-public class AngularJSCssInclusionContext extends CssInclusionContext {
+public class Angular2CssInclusionContext extends CssInclusionContext {
   @NotNull
   @Override
   public PsiFile[] getContextFiles(@NotNull PsiFile current) {

@@ -15,14 +15,20 @@ import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
 import com.intellij.xml.util.XmlUtil;
 import icons.AngularJSIcons;
-import org.angular2.entities.Angular2Component;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
+import org.angular2.lang.selector.Angular2SelectorMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
   private static final String NG_CONTAINER = "ng-container";
@@ -36,11 +42,15 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     }
     final Project project = xmlTag.getProject();
     Language language = xmlTag.getContainingFile().getLanguage();
-    Angular2EntitiesProvider.processDirectives(project, directive -> {
-      if (directive.isComponent()) {
-        addLookupItem(language, elements, directive, directive.getSelector());
+    Set<String> names = new HashSet<>();
+    for (LookupElement el : elements) {
+      names.add(el.getLookupString());
+    }
+    Angular2EntitiesProvider.getAllElementDirectives(project).forEach((name, list) -> {
+      if (!names.contains(name) && !list.isEmpty()) {
+        Angular2DirectiveSelectorPsiElement el = list.get(0).getSelector().getPsiElementForElement(name);
+        addLookupItem(language, elements, el, name);
       }
-      return true;
     });
     addLookupItem(language, elements, NG_CONTAINER);
     addLookupItem(language, elements, NG_CONTENT);
@@ -70,17 +80,30 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     if (!(xmlTag instanceof HtmlTag && Angular2LangUtil.isAngular2Context(xmlTag))) {
       return null;
     }
-    final String tagName = xmlTag.getName();
+    String tagName = xmlTag.getName();
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
+    tagName = XmlUtil.findLocalNameByQualifiedName(tagName);
     if (NG_CONTAINER.equalsIgnoreCase(tagName) || NG_CONTENT.equalsIgnoreCase(tagName) || NG_TEMPLATE.equalsIgnoreCase(tagName)) {
-      return new Angular2TagDescriptor(createDirective(xmlTag, tagName));
+      return new Angular2TagDescriptor(tagName, createDirective(xmlTag, tagName));
     }
-    for (Angular2Directive directive : Angular2EntitiesProvider.findElementDirectivesCandidates(project, tagName)) {
-      if (directive.isComponent()) {
-        return new Angular2TagDescriptor((Angular2Component)directive);
+
+    List<Angular2Directive> directiveCandidates = Angular2EntitiesProvider.findElementDirectivesCandidates(project, tagName);
+    if (directiveCandidates.isEmpty()) {
+      return null;
+    }
+    Angular2SelectorMatcher<Angular2Directive> matcher = new Angular2SelectorMatcher<>();
+    directiveCandidates.forEach(d -> matcher.addSelectables(d.getSelector().getSimpleSelectors(), d));
+
+    boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
+    List<Angular2Directive> matchedDirectives = new ArrayList<>();
+    Angular2DirectiveSimpleSelector tagInfo = Angular2DirectiveSimpleSelector.createElementCssSelector(xmlTag);
+    matcher.match(tagInfo, (selector, directive) -> {
+      if (!directive.isTemplate() || isTemplateTag) {
+        matchedDirectives.add(directive);
       }
-    }
-    return null;
+    });
+    return new Angular2TagDescriptor(tagName, (matchedDirectives.isEmpty() ? directiveCandidates : matchedDirectives).get(0).getSelector()
+      .getPsiElementForElement(tagName));
   }
 
   @NotNull

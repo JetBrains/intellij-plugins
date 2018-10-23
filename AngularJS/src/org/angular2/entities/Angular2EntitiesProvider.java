@@ -34,10 +34,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.util.containers.ContainerUtil.concat;
 import static com.intellij.util.containers.ContainerUtil.newHashSet;
+import static java.util.stream.Collectors.toMap;
 import static org.angular2.Angular2DecoratorUtil.*;
 
 public class Angular2EntitiesProvider {
@@ -99,23 +101,15 @@ public class Angular2EntitiesProvider {
     return findMetadataEntity(project, name, Angular2MetadataPipe.class, Angular2MetadataPipeIndex.KEY);
   }
 
-  @SuppressWarnings("BoundedWildcard")
-  public static void processDirectives(@NotNull Project project, @NotNull Processor<Angular2Directive> processor) {
-    if (!AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project)
-      .stream()
-      .filter(Angular2EntityUtils::isElementDirectiveIndexName)
-      .map(name -> AngularIndexUtil.resolve(project, Angular2SourceDirectiveIndex.KEY, name))
-      .filter(Objects::nonNull)
-      .map(Angular2EntitiesProvider::getComponent)
-      .allMatch(c -> processor.process(c))) {
-      return;
-    }
-    AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project)
-      .stream()
-      .filter(Angular2EntityUtils::isElementDirectiveIndexName)
-      .map(name -> findMetadataEntity(project, name, Angular2MetadataDirectiveBase.class, Angular2MetadataDirectiveIndex.KEY))
-      .filter(Objects::nonNull)
-      .allMatch(c -> processor.process(c));
+  public static Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
+    return Stream.concat(
+      AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project).stream(),
+      AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project).stream())
+      .filter(name -> Angular2EntityUtils.isElementDirectiveIndexName(name)
+                      && !Angular2EntityUtils.getElementName(name).isEmpty())
+      .collect(toMap(name -> Angular2EntityUtils.getElementName(name),
+                     name -> findDirectivesCandidates(project, name),
+                     ContainerUtil::concat));
   }
 
   public static Collection<String> getAllPipeNames(@NotNull Project project) {

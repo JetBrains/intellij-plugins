@@ -1,8 +1,9 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <css.elementDescriptorProvider implementation="org.angularjs.codeInsight.AngularJSCssElementDescriptionProvider"/>
+    <css.elementDescriptorProvider implementation="org.angular2.codeInsight.Angular2CssElementDescriptionProvider"/>
+    <css.inclusionContext implementation="org.angular2.codeInsight.Angular2CssInclusionContext"/>
     <css.embeddedCssProvider implementation="org.angular2.codeInsight.Angular2EmbeddedCssProvider"/>
-    <css.inclusionContext implementation="org.angularjs.codeInsight.AngularJSCssInclusionContext"/>
-    <psi.fileReferenceHelper implementation="org.angularjs.codeInsight.AngularCssFileReferenceHelper"/>
+    <psi.fileReferenceHelper implementation="org.angular2.codeInsight.Angular2CssFileReferenceHelper"/>
   </extensions>
 </idea-plugin>
