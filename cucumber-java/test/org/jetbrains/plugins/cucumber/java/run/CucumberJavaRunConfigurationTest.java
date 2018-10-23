@@ -1,5 +1,7 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
+import com.intellij.execution.Location;
+import com.intellij.execution.PsiLocation;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.ide.DataManager;
@@ -7,44 +9,47 @@ import com.intellij.idea.IdeaTestApplication;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.TestDataProvider;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.java.JavaResourceRootType;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
 public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTestCase {
   public void testScenarioOutlineNameFilter() {
-    doTest("^a few cukes$", true);
+    doTest("^a few cukes$");
   }
 
   public void testScenarioOutlineWithPatternNameFilter() {
-    doTest("^a .* few cukes$", true);
+    doTest("^a .* few cukes$");
   }
 
-  public void testSkipCconfigurationCreationFromSourceFolder() {
-    doTest(null, false);
+  public void testDoNotCreateRunConfigurationOnFoldersWithoutFeatureFiles() {
+    doFolderTest(false);
+  }
+
+  public void testCreateRunConfigurationOnFoldersWithFeatureFiles() {
+    doFolderTest(true);
   }
 
   public void testProgramArguments() {
     myFixture.configureByText("test.feature", "Fea<caret>ture: test");
 
-    ConfigurationFactory configurationFactory = CucumberJavaRunConfigurationType.getInstance().getConfigurationFactories()[0];
-    CucumberJavaRunConfiguration runConfiguration = new CucumberJavaRunConfiguration("", myFixture.getProject(), configurationFactory);
+    CucumberJavaRunConfiguration runConfiguration = createTemplateConfiguration();
     runConfiguration.setProgramParameters("--plugin pretty");
     CucumberJavaFeatureRunConfigurationProducer producer = new CucumberJavaFeatureRunConfigurationProducer();
-    final DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
-    ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext);
+    ConfigurationContext configurationContext = getConfigurationContext();
 
     PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
     producer.setupConfigurationFromContext(runConfiguration, configurationContext, new Ref<>(elementAtCaret));
 
-    assertTrue(runConfiguration.getProgramParameters().contains("--plugin pretty"));
+    String parameters = runConfiguration.getProgramParameters();
+    assertNotNull(parameters);
+    assertTrue(parameters.contains("--plugin pretty"));
   }
 
   @Override
@@ -52,26 +57,44 @@ public class CucumberJavaRunConfigurationTest extends CucumberJavaCodeInsightTes
     return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "run";
   }
 
-  private void doTest(@Nullable String expectedFilter, boolean inResourceRoot) {
+  private void doTest(@Nullable String expectedFilter) {
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile("test.feature");
-    if (inResourceRoot) {
-      PsiTestUtil.addSourceRoot(myModule, myFixture.getFile().getVirtualFile(), JavaResourceRootType.TEST_RESOURCE);
-    }
 
-    ConfigurationFactory configurationFactory = CucumberJavaRunConfigurationType.getInstance().getConfigurationFactories()[0];
-    CucumberJavaRunConfiguration runConfiguration = new CucumberJavaRunConfiguration("", myFixture.getProject(), configurationFactory);
-
-    final DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
-    ConfigurationContext configurationContext = ConfigurationContext.getFromContext(dataContext);
+    CucumberJavaRunConfiguration runConfiguration = createTemplateConfiguration();
+    ConfigurationContext configurationContext = getConfigurationContext();
 
     CucumberJavaScenarioRunConfigurationProducer producer = new CucumberJavaScenarioRunConfigurationProducer();
     PsiElement elementAtCaret = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
-    assertEquals(inResourceRoot, producer.setupConfigurationFromContext(runConfiguration, configurationContext, new Ref<>(elementAtCaret)));
+    assertTrue(producer.setupConfigurationFromContext(runConfiguration, configurationContext, new Ref<>(elementAtCaret)));
 
-    if (inResourceRoot) {
-      assertEquals(expectedFilter, runConfiguration.getNameFilter());
-    }
+    assertEquals(expectedFilter, runConfiguration.getNameFilter());
+  }
+
+  private void doFolderTest(boolean isRunConfigurationExpected) {
+    myFixture.copyDirectoryToProject(getTestName(true), "");
+    myFixture.configureByFile("StepDefs.java");
+
+    CucumberJavaRunConfiguration runConfiguration = createTemplateConfiguration();
+
+    PsiDirectory psiDirectory = myFixture.getFile().getParent();
+    Location location = new PsiLocation<>(psiDirectory);
+    ConfigurationContext configurationContext = ConfigurationContext.createEmptyContextForLocation(location);
+
+    CucumberJavaAllFeaturesInFolderRunConfigurationProducer producer = new CucumberJavaAllFeaturesInFolderRunConfigurationProducer();
+    assertEquals(isRunConfigurationExpected, producer.setupConfigurationFromContext(runConfiguration, configurationContext, new Ref<>(psiDirectory)));
+  }
+
+  @NotNull
+  private CucumberJavaRunConfiguration createTemplateConfiguration() {
+    ConfigurationFactory configurationFactory = CucumberJavaRunConfigurationType.getInstance().getConfigurationFactories()[0];
+    return new CucumberJavaRunConfiguration("", myFixture.getProject(), configurationFactory);
+  }
+
+  @NotNull
+  private ConfigurationContext getConfigurationContext() {
+    DataContext dataContext = DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent());
+    return ConfigurationContext.getFromContext(dataContext);
   }
 
   @Override
