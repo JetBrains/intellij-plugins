@@ -10,7 +10,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.source.Angular2SourceEntity;
-import org.angular2.lang.selector.Angular2DirectiveSelector;
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
@@ -64,6 +64,14 @@ public class Angular2EntityUtils {
   }
 
   @NotNull
+  public static String getElementName(@NotNull String elementDirectiveIndexName) {
+    if (!isElementDirectiveIndexName(elementDirectiveIndexName)) {
+      throw new IllegalArgumentException();
+    }
+    return elementDirectiveIndexName.substring(1);
+  }
+
+  @NotNull
   public static String getAttributeDirectiveIndexName(@NotNull String attributeName) {
     return INDEX_ATTRIBUTE_NAME_PREFIX + attributeName;
   }
@@ -74,15 +82,15 @@ public class Angular2EntityUtils {
 
   @NotNull
   public static Set<String> getDirectiveIndexNames(@NotNull Project project, @NotNull String selector, boolean isTemplate) {
-    List<Angular2DirectiveSelector> selectors;
+    List<Angular2DirectiveSimpleSelector> selectors;
     try {
-      selectors = Angular2DirectiveSelector.parse(selector);
+      selectors = Angular2DirectiveSimpleSelector.parse(selector);
     }
     catch (ParseException e) {
       return Collections.emptySet();
     }
     Set<String> result = new HashSet<>();
-    Consumer<Angular2DirectiveSelector> indexSelector = sel -> {
+    Consumer<Angular2DirectiveSimpleSelector> indexSelector = sel -> {
       String elementName = sel.getElementName();
       if (StringUtil.isEmpty(elementName) || "*".equals(elementName)) {
         result.add(INDEX_ELEMENT_NAME_PREFIX);
@@ -94,7 +102,7 @@ public class Angular2EntityUtils {
         result.add(INDEX_ATTRIBUTE_NAME_PREFIX + attrName);
       }
     };
-    for (Angular2DirectiveSelector sel : selectors) {
+    for (Angular2DirectiveSimpleSelector sel : selectors) {
       indexSelector.accept(sel);
       sel.getNotSelectors().forEach(indexSelector);
     }
@@ -130,7 +138,7 @@ public class Angular2EntityUtils {
       }
       result.append(">")
         .append(": selector=")
-        .append(directive.getSelector());
+        .append(directive.getSelector().getText());
       if (directive.getExportAs() != null) {
         result.append("; exportAs=")
           .append(directive.getExportAs());

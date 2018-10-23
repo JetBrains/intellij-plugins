@@ -121,6 +121,11 @@
     <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
     <elementDescriptionProvider order="first"
                                 implementation="org.angular2.refactoring.Angular2PipeRenameProcessor$Angular2PipeElementDescriptor"/>
+    <psi.referenceContributor implementation="org.angular2.codeInsight.refs.Angular2ReferencesContributor"/>
+    <pom.declarationSearcher implementation="org.angular2.codeInsight.refs.Angular2PomDeclarationSearcher"/>
+    <renameInputValidator implementation="org.angular2.refactoring.Angular2RenameInputValidator"/>
+    <elementDescriptionProvider
+        implementation="org.angular2.refactoring.Angular2SelectorRenameProcessor$Angular2SelectorElementDescriptor"/>
 
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>

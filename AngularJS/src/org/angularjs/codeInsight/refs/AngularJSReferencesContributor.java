@@ -4,11 +4,13 @@ package org.angularjs.codeInsight.refs;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.PsiReferenceContributor;
+import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.filters.ElementFilter;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
@@ -16,11 +18,6 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.ProcessingContext;
-import org.angular2.Angular2DecoratorUtil;
-import org.angular2.codeInsight.refs.Angular2PipeNameReferencesProvider;
-import org.angular2.codeInsight.refs.Angular2ViewChildReferencesProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
@@ -38,7 +35,6 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
   public static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ng-app");
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_PATTERN = modulePattern();
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_DEPENDENCY_PATTERN = moduleDependencyPattern();
-  public static final PsiElementPattern.Capture<JSLiteralExpression> PIPE_NAME_PATTERN = ng2LiteralInDecoratorProperty("name", "Pipe");
 
   private static final PsiElementPattern.Capture<JSLiteralExpression> NG_INCLUDE_PATTERN =
     PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
@@ -63,29 +59,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
         return true;
       }
     }));
-  private static final PsiElementPattern.Capture<JSLiteralExpression> STYLE_PATTERN =
-    PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
-      @Override
-      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-        if (element instanceof JSLiteralExpression) {
-          final JSLiteralExpression literal = (JSLiteralExpression)element;
-          if (literal.isQuotedLiteral()) {
-            if ((literal.getParent() instanceof JSArrayLiteralExpression)) {
-              final JSProperty property = ObjectUtils.tryCast(literal.getParent().getParent(), JSProperty.class);
-              if (property != null && "styleUrls".equals((property).getName())) {
-                return Angular2LangUtil.isAngular2Context(literal);
-              }
-            }
-          }
-        }
-        return false;
-      }
 
-      @Override
-      public boolean isClassAcceptable(Class hintClass) {
-        return true;
-      }
-    }));
 
   public static final PsiElementPattern.Capture<JSParameter> DI_PATTERN =
     PlatformPatterns.psiElement(JSParameter.class).and(new FilterPattern(new ElementFilter() {
@@ -100,51 +74,18 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
       }
     }));
 
-  private static final PsiElementPattern.Capture<JSLiteralExpression> VIEW_CHILD_PATTERN =
-    PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
-      @Override
-      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-        if (element instanceof JSLiteralExpression) {
-          final JSLiteralExpression literal = (JSLiteralExpression)element;
-          if (literal.isQuotedLiteral() && literal.getParent() instanceof JSArgumentList) {
-            final JSCallExpression call = ObjectUtils.tryCast(literal.getParent().getParent(), JSCallExpression.class);
-            if (call != null && call.getParent() instanceof ES6Decorator) {
-              JSReferenceExpression ref = ObjectUtils.tryCast(call.getMethodExpression(), JSReferenceExpression.class);
-              return ref != null
-                     && "ViewChild".equals(ref.getReferenceName())
-                     && Angular2LangUtil.isAngular2Context(literal);
-            }
-          }
-        }
-        return false;
-      }
-
-      @Override
-      public boolean isClassAcceptable(Class hintClass) {
-        return true;
-      }
-    }));
 
   @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     final AngularJSTemplateReferencesProvider templateProvider = new AngularJSTemplateReferencesProvider();
     registrar.registerReferenceProvider(TEMPLATE_PATTERN, templateProvider);
     registrar.registerReferenceProvider(NG_INCLUDE_PATTERN, templateProvider);
-    registrar.registerReferenceProvider(STYLE_PATTERN, new PsiReferenceProvider() {
-      @NotNull
-      @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-        return new AngularJSTemplateReferencesProvider.Angular2SoftFileReferenceSet(element).getAllReferences();
-      }
-    });
     registrar.registerReferenceProvider(CONTROLLER_PATTERN, new AngularJSControllerReferencesProvider());
     registrar.registerReferenceProvider(DI_PATTERN, new AngularJSDIReferencesProvider());
     registrar.registerReferenceProvider(UI_VIEW_PATTERN, new AngularJSUiRouterViewReferencesProvider());
     registrar.registerReferenceProvider(UI_VIEW_REF, new AngularJSUiRouterStatesReferencesProvider());
     registrar.registerReferenceProvider(NG_APP_REF, new AngularJSNgAppReferencesProvider());
     registrar.registerReferenceProvider(MODULE_PATTERN, new AngularJSModuleReferencesProvider());
-    registrar.registerReferenceProvider(VIEW_CHILD_PATTERN, new Angular2ViewChildReferencesProvider());
-    registrar.registerReferenceProvider(PIPE_NAME_PATTERN, new Angular2PipeNameReferencesProvider());
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> modulePattern() {
@@ -223,22 +164,6 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
           }
         }
         return false;
-      }
-
-      @Override
-      public boolean isClassAcceptable(Class hintClass) {
-        return true;
-      }
-    }));
-  }
-
-  private static PsiElementPattern.Capture<JSLiteralExpression> ng2LiteralInDecoratorProperty(final String propertyName, final String decoratorName) {
-    return PlatformPatterns.psiElement(JSLiteralExpression.class).and(new FilterPattern(new ElementFilter() {
-      @Override
-      public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-        return element instanceof PsiElement
-               && Angular2DecoratorUtil.isLiteralInNgDecorator((PsiElement)element, propertyName, decoratorName)
-               && Angular2LangUtil.isAngular2Context((PsiElement)element);
       }
 
       @Override

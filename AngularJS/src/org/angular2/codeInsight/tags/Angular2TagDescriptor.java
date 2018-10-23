@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.tags;
 
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlDescriptorUtil;
@@ -11,33 +10,17 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
-import org.angular2.entities.Angular2Component;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.intellij.xml.XmlAttributeDescriptor.EMPTY;
-
 public class Angular2TagDescriptor implements XmlElementDescriptor {
   private final String myName;
-  private final Angular2Component myComponent;
   private final PsiElement myDeclaration;
 
-  public Angular2TagDescriptor(@NotNull Angular2Component component) {
-    myName = component.getSelector();
-    myComponent = component;
-    myDeclaration = component.getSourceElement();
-  }
-
-  public Angular2TagDescriptor(@NotNull JSImplicitElement declaration) {
-    myName = declaration.getName();
-    myComponent = null;
+  public Angular2TagDescriptor(String name, @NotNull PsiElement declaration) {
+    myName = name;
     myDeclaration = declaration;
   }
 
@@ -63,16 +46,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    final List<XmlAttributeDescriptor> result = new ArrayList<>();
-    if (myComponent != null) {
-      result.addAll(Angular2AttributeDescriptor.getDirectiveDescriptors(myComponent, false));
-    }
-    //if (context != null) {
-    //  result.addAll(Angular2AttributeDescriptor.getApplicableDirectiveDescriptors(context));
-    //  result.addAll(Angular2AttributeDescriptor.getExistingVarsAndRefsDescriptors(context));
-    //}
-    result.addAll(Arrays.asList(HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)));
-    return result.toArray(EMPTY);
+    return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
   }
 
   @Nullable
@@ -114,10 +88,6 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   @NotNull
   public PsiElement getDeclaration() {
     return myDeclaration;
-  }
-
-  public Angular2Component getComponent() {
-    return myComponent;
   }
 
   @Override

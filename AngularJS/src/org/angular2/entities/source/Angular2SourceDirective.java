@@ -7,13 +7,11 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.util.ObjectUtils;
 import org.angular2.Angular2DecoratorUtil;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2DirectiveProperty;
-import org.angular2.entities.Angular2EntityUtils;
+import org.angular2.entities.*;
 import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +29,17 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
 
   @NotNull
   @Override
-  public String getSelector() {
-    return ObjectUtils.notNull(Angular2DecoratorUtil.getPropertyName(getDecorator(), Angular2DecoratorUtil.SELECTOR_PROP), "");
+  public Angular2DirectiveSelector getSelector() {
+    return getCachedValue(() -> {
+      JSProperty property = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.SELECTOR_PROP);
+      if (property != null && property.getValue() instanceof JSLiteralExpression) {
+        String value = ((JSLiteralExpression)property.getValue()).getStringValue();
+        return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
+          property.getValue(), value, p -> new TextRange(1 + p.second, 1 + p.second + p.first.length())), property.getValue());
+      }
+      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), "", a -> new TextRange(0, 0)),
+                                               getDecorator());
+    });
   }
 
   @Override

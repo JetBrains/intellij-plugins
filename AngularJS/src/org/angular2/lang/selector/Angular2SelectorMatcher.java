@@ -13,7 +13,7 @@ import static com.intellij.util.containers.ContainerUtil.concat;
 
 public class Angular2SelectorMatcher<T> {
 
-  public static <T> Angular2SelectorMatcher<T> createNotMatcher(List<Angular2DirectiveSelector> notSelectors) {
+  public static <T> Angular2SelectorMatcher<T> createNotMatcher(List<Angular2DirectiveSimpleSelector> notSelectors) {
     Angular2SelectorMatcher<T> notMatcher = new Angular2SelectorMatcher<>();
     notMatcher.addSelectables(notSelectors, null);
     return notMatcher;
@@ -27,13 +27,13 @@ public class Angular2SelectorMatcher<T> {
   private final Map<String, Map<String, Angular2SelectorMatcher<T>>> _attrValuePartialMap = new HashMap<>();
   private final List<SelectorListContext> _listContexts = new ArrayList<>();
 
-  public void addSelectables(@NotNull List<Angular2DirectiveSelector> cssSelectors, @Nullable T context) {
+  public void addSelectables(@NotNull List<Angular2DirectiveSimpleSelector> cssSelectors, @Nullable T context) {
     SelectorListContext listContext = null;
     if (cssSelectors.size() > 1) {
       listContext = new SelectorListContext(cssSelectors);
       this._listContexts.add(listContext);
     }
-    for (Angular2DirectiveSelector selector : cssSelectors) {
+    for (Angular2DirectiveSimpleSelector selector : cssSelectors) {
       _addSelectable(selector, context, listContext);
     }
   }
@@ -44,7 +44,7 @@ public class Angular2SelectorMatcher<T> {
    * @param cssSelector  A css selector
    * @param callbackCtxt An opaque object that will be given to the callback of the `match` function
    */
-  private void _addSelectable(@NotNull Angular2DirectiveSelector cssSelector,
+  private void _addSelectable(@NotNull Angular2DirectiveSimpleSelector cssSelector,
                               @Nullable T callbackCtxt,
                               @Nullable SelectorListContext listContext) {
     Angular2SelectorMatcher<T> matcher = this;
@@ -111,8 +111,8 @@ public class Angular2SelectorMatcher<T> {
    * @param matchedCallback This callback will be called with the object handed into `addSelectable`
    * @return boolean true if a match was found
    */
-  public boolean match(@NotNull Angular2DirectiveSelector cssSelector,
-                       @Nullable BiConsumer<Angular2DirectiveSelector, T> matchedCallback) {
+  public boolean match(@NotNull Angular2DirectiveSimpleSelector cssSelector,
+                       @Nullable BiConsumer<Angular2DirectiveSimpleSelector, T> matchedCallback) {
     final String element = cssSelector.element;
     final List<String> classNames = cssSelector.classNames;
     final List<String> attrs = cssSelector.attrs;
@@ -151,8 +151,8 @@ public class Angular2SelectorMatcher<T> {
    */
   private boolean _matchTerminal(@Nullable Map<String, List<SelectorContext<T>>> map,
                                  @Nullable String name,
-                                 @NotNull Angular2DirectiveSelector cssSelector,
-                                 @Nullable BiConsumer<Angular2DirectiveSelector, T> matchedCallback) {
+                                 @NotNull Angular2DirectiveSimpleSelector cssSelector,
+                                 @Nullable BiConsumer<Angular2DirectiveSimpleSelector, T> matchedCallback) {
     if (map == null || name == null) {
       return false;
     }
@@ -174,8 +174,8 @@ public class Angular2SelectorMatcher<T> {
    */
   private boolean _matchPartial(@Nullable Map<String, Angular2SelectorMatcher<T>> map,
                                 @Nullable String name,
-                                @NotNull Angular2DirectiveSelector cssSelector,
-                                @Nullable BiConsumer<Angular2DirectiveSelector, T> matchedCallback) {
+                                @NotNull Angular2DirectiveSimpleSelector cssSelector,
+                                @Nullable BiConsumer<Angular2DirectiveSimpleSelector, T> matchedCallback) {
     if (map == null || name == null) {
       return false;
     }
@@ -193,28 +193,29 @@ public class Angular2SelectorMatcher<T> {
 
   private static class SelectorListContext {
     public boolean alreadyMatched = false;
-    public List<Angular2DirectiveSelector> selectors;
+    public List<Angular2DirectiveSimpleSelector> selectors;
 
-    SelectorListContext(@NotNull List<Angular2DirectiveSelector> selectors) {
+    SelectorListContext(@NotNull List<Angular2DirectiveSimpleSelector> selectors) {
       this.selectors = selectors;
     }
   }
 
   // Store context to pass back selector and context when a selector is matched
   private static class SelectorContext<T> {
-    public List<Angular2DirectiveSelector> notSelectors;
-    public Angular2DirectiveSelector selector;
+    public List<Angular2DirectiveSimpleSelector> notSelectors;
+    public Angular2DirectiveSimpleSelector selector;
     public T context;
     public SelectorListContext listContext;
 
-    SelectorContext(@NotNull Angular2DirectiveSelector selector, @Nullable T context, @Nullable SelectorListContext listContext) {
+    SelectorContext(@NotNull Angular2DirectiveSimpleSelector selector, @Nullable T context, @Nullable SelectorListContext listContext) {
       this.notSelectors = selector.notSelectors;
       this.selector = selector;
       this.context = context;
       this.listContext = listContext;
     }
 
-    boolean finalize(@NotNull Angular2DirectiveSelector cssSelector, @Nullable BiConsumer<Angular2DirectiveSelector, T> callback) {
+    boolean finalize(@NotNull Angular2DirectiveSimpleSelector cssSelector,
+                     @Nullable BiConsumer<Angular2DirectiveSimpleSelector, T> callback) {
       boolean result = true;
       if (!notSelectors.isEmpty() && (listContext == null || listContext.alreadyMatched)) {
         Angular2SelectorMatcher<T> notMatcher = createNotMatcher(notSelectors);

@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.selector;
 
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
@@ -19,7 +20,9 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Angular2DirectiveSelector {
+import static com.intellij.openapi.util.Pair.pair;
+
+public class Angular2DirectiveSimpleSelector {
 
   private final static Pattern SELECTOR_REGEXP = Pattern.compile(
     "(:not\\()|" +       //":not("
@@ -34,17 +37,17 @@ public class Angular2DirectiveSelector {
   );
 
   @NotNull
-  public static List<Angular2DirectiveSelector> parse(@NotNull String selector) throws ParseException {
-    List<Angular2DirectiveSelector> results = new SmartList<>();
-    Consumer<Angular2DirectiveSelector> addResult = cssSel -> {
+  public static List<Angular2DirectiveSimpleSelector> parse(@NotNull String selector) throws ParseException {
+    List<Angular2DirectiveSimpleSelector> results = new SmartList<>();
+    Consumer<Angular2DirectiveSimpleSelector> addResult = cssSel -> {
       if (!cssSel.notSelectors.isEmpty() && cssSel.element == null && cssSel.classNames.isEmpty() &&
           cssSel.attrs.isEmpty()) {
         cssSel.element = "*";
       }
       results.add(cssSel);
     };
-    Angular2DirectiveSelector cssSelector = new Angular2DirectiveSelector();
-    Angular2DirectiveSelector current = cssSelector;
+    Angular2DirectiveSimpleSelector cssSelector = new Angular2DirectiveSimpleSelector();
+    Angular2DirectiveSimpleSelector current = cssSelector;
     boolean inNot = false;
 
     Matcher matcher = SELECTOR_REGEXP.matcher(selector);
@@ -54,7 +57,7 @@ public class Angular2DirectiveSelector {
           throw new ParseException("Nesting :not is not allowed in a selector", matcher.start(1));
         }
         inNot = true;
-        current = new Angular2DirectiveSelector();
+        current = new Angular2DirectiveSimpleSelector();
         cssSelector.notSelectors.add(current);
       }
       else if (matcher.start(2) >= 0) {
@@ -75,15 +78,59 @@ public class Angular2DirectiveSelector {
           throw new ParseException("Multiple selectors in :not are not supported", matcher.start(8));
         }
         addResult.accept(cssSelector);
-        cssSelector = current = new Angular2DirectiveSelector();
+        cssSelector = current = new Angular2DirectiveSimpleSelector();
       }
     }
     addResult.accept(cssSelector);
     return results;
   }
 
-  public static Angular2DirectiveSelector createElementCssSelector(@NotNull XmlTag element) {
-    Angular2DirectiveSelector cssSelector = new Angular2DirectiveSelector();
+  @NotNull
+  public static List<Angular2DirectiveSimpleSelectorWithRanges> parseRanges(@NotNull String selector) throws ParseException {
+    List<Angular2DirectiveSimpleSelectorWithRanges> results = new SmartList<>();
+
+    Angular2DirectiveSimpleSelectorWithRanges cssSelector = new Angular2DirectiveSimpleSelectorWithRanges();
+    Angular2DirectiveSimpleSelectorWithRanges current = cssSelector;
+    boolean inNot = false;
+
+    Matcher matcher = SELECTOR_REGEXP.matcher(selector);
+    while (matcher.find()) {
+      if (matcher.start(1) >= 0) {
+        if (inNot) {
+          throw new ParseException("Nesting :not is not allowed in a selector", matcher.start(1));
+        }
+        inNot = true;
+        current = new Angular2DirectiveSimpleSelectorWithRanges();
+        cssSelector.notSelectors.add(current);
+      }
+      else if (matcher.start(2) >= 0) {
+        current.setElement(matcher.group(2), matcher.start(2));
+      }
+      if (matcher.start(3) >= 0) {
+        current.addClassName(matcher.group(3), matcher.start(3));
+      }
+      if (matcher.start(4) >= 0) {
+        current.addAttribute(matcher.group(4), matcher.start(4));
+      }
+      if (matcher.start(7) >= 0) {
+        inNot = false;
+        current = cssSelector;
+      }
+      if (matcher.start(8) >= 0) {
+        if (inNot) {
+          throw new ParseException("Multiple selectors in :not are not supported", matcher.start(8));
+        }
+        results.add(cssSelector);
+        cssSelector = current = new Angular2DirectiveSimpleSelectorWithRanges();
+      }
+    }
+    results.add(cssSelector);
+    return results;
+  }
+
+
+  public static Angular2DirectiveSimpleSelector createElementCssSelector(@NotNull XmlTag element) {
+    Angular2DirectiveSimpleSelector cssSelector = new Angular2DirectiveSimpleSelector();
     String elNameNoNs = XmlUtil.findLocalNameByQualifiedName(element.getName());
 
     cssSelector.setElement(elNameNoNs);
@@ -105,9 +152,9 @@ public class Angular2DirectiveSelector {
   String element;
   final List<String> classNames = new SmartList<>();
   final List<String> attrs = new SmartList<>();
-  final List<Angular2DirectiveSelector> notSelectors = new SmartList<>();
+  final List<Angular2DirectiveSimpleSelector> notSelectors = new SmartList<>();
 
-  Angular2DirectiveSelector() {
+  Angular2DirectiveSimpleSelector() {
   }
 
   public boolean isElementSelector() {
@@ -151,7 +198,7 @@ public class Angular2DirectiveSelector {
   }
 
   @NotNull
-  public List<Angular2DirectiveSelector> getNotSelectors() {
+  public List<Angular2DirectiveSimpleSelector> getNotSelectors() {
     return notSelectors;
   }
 
@@ -191,4 +238,49 @@ public class Angular2DirectiveSelector {
     });
     return result.toString();
   }
+
+
+  public static class Angular2DirectiveSimpleSelectorWithRanges {
+
+    private Pair<String, Integer> element;
+    private final List<Pair<String, Integer>> classNames = new SmartList<>();
+    private final List<Pair<String, Integer>> attrs = new SmartList<>();
+    private final List<Angular2DirectiveSimpleSelectorWithRanges> notSelectors = new SmartList<>();
+
+    private Angular2DirectiveSimpleSelectorWithRanges() {
+    }
+
+    private void addAttribute(@NotNull String name, int offset) {
+      attrs.add(pair(name, offset));
+    }
+
+    private void addClassName(@NotNull String name, int offset) {
+      classNames.add(pair(name, offset));
+    }
+
+    private void setElement(@NotNull String name, int offset) {
+      element = pair(name, offset);
+    }
+
+    @Nullable
+    public Pair<String, Integer> getElementRange() {
+      return element;
+    }
+
+    @NotNull
+    public List<Pair<String, Integer>> getClassNameRanges() {
+      return classNames;
+    }
+
+    @NotNull
+    public List<Pair<String, Integer>> getAttributeRanges() {
+      return attrs;
+    }
+
+    @NotNull
+    public List<Angular2DirectiveSimpleSelectorWithRanges> getNotSelectors() {
+      return notSelectors;
+    }
+  }
+
 }
