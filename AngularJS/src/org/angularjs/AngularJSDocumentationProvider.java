@@ -13,7 +13,6 @@ import com.intellij.psi.xml.XmlElement;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularIndexUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +27,7 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
   }
 
   @Override
-  public PsiElement getDocumentationElementForLookupItem(@NotNull PsiManager psiManager, @NotNull Object object, @NotNull PsiElement element) {
+  public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
     if (element instanceof XmlElement) {
       return getElementForDocumentation(element.getProject(), object.toString());
     }
