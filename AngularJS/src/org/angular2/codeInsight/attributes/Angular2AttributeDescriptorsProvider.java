@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes;
 
+import com.intellij.openapi.project.DumbService;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.xml.XmlElementType;
@@ -11,17 +12,20 @@ import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import com.intellij.xml.XmlElementDescriptor;
 import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
+import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angular2.lang.html.psi.Angular2HtmlVariable;
-import org.angular2.lang.selector.Angular2DirectiveSelector;
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angular2.lang.selector.Angular2SelectorMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -50,14 +54,12 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   private static final List<String> CUSTOM_NG_ATTRS = singletonList("i18n");
-  private static final String TEMPLATE_ATTR_PREFIX = "*";
 
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable XmlTag xmlTag) {
-    if (xmlTag == null) {
-      return XmlAttributeDescriptor.EMPTY;
-    }
-    if (!Angular2LangUtil.isAngular2Context(xmlTag)) {
+    if (xmlTag == null
+        || DumbService.isDumb(xmlTag.getProject())
+        || !Angular2LangUtil.isAngular2Context(xmlTag)) {
       return XmlAttributeDescriptor.EMPTY;
     }
 
@@ -89,11 +91,11 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), ""));
 
     Angular2SelectorMatcher<Angular2Directive> matcher = new Angular2SelectorMatcher<>();
-    directiveCandidates.forEach(d -> matcher.addSelectables(d.getDirectiveSelectors(), d));
+    directiveCandidates.forEach(d -> matcher.addSelectables(d.getSelector().getSimpleSelectors(), d));
 
     boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
     Set<Angular2Directive> matchedDirectives = new HashSet<>();
-    Angular2DirectiveSelector tagInfo = Angular2DirectiveSelector.createElementCssSelector(xmlTag);
+    Angular2DirectiveSimpleSelector tagInfo = Angular2DirectiveSimpleSelector.createElementCssSelector(xmlTag);
     matcher.match(tagInfo, (selector, directive) -> {
       if (!directive.isTemplate() || isTemplateTag) {
         matchedDirectives.add(directive);
@@ -120,28 +122,28 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       inputs.clear();
       candidate.getInputs().forEach(in -> inputs.add(in.getName()));
 
-      Consumer<String> addAttribute = attrName -> {
+      BiConsumer<String, PsiElement> addAttribute = (attrName, element) -> {
         if (!knownAttributes.contains(attrName)) {
-          attrsFromSelectors.computeIfAbsent(attrName, k -> new SmartList<>()).add(candidate.getNavigableElement());
+          attrsFromSelectors.computeIfAbsent(attrName, k -> new SmartList<>()).add(element);
         }
       };
       if (!isTemplateTag && candidate.isTemplate()) {
-        List<Angular2DirectiveSelector> selectors = candidate.getDirectiveSelectors();
+        List<SimpleSelectorWithPsi> selectors = candidate.getSelector().getSimpleSelectorsWithPsi();
         if (selectors.size() == 1) {
-          List<String> attributeCandidates = selectors.get(0).getAttrs();
-          if (attributeCandidates.size() == 2) {
-            addAttribute.accept("*" + attributeCandidates.get(0));
+          List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selectors.get(0).getAttributes();
+          if (attributeCandidates.size() == 1) {
+            addAttribute.accept("*" + attributeCandidates.get(0).getName(), attributeCandidates.get(0));
           }
           else {
             CANDIDATES_LOOP:
-            for (int i = 0; i < attributeCandidates.size(); i += 2) {
-              String attrName = attributeCandidates.get(i);
+            for (Angular2DirectiveSelectorPsiElement attr : attributeCandidates) {
+              String attrName = attr.getName();
               for (String input : inputs) {
                 if (!input.startsWith(attrName)) {
                   break CANDIDATES_LOOP;
                 }
               }
-              addAttribute.accept("*" + attrName);
+              addAttribute.accept("*" + attrName, attr);
             }
           }
         }
@@ -151,22 +153,23 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         candidate.getOutputs().forEach(out -> outputs.add(out.getName()));
         inOuts.clear();
         candidate.getInOuts().forEach(inOut -> inOuts.add(inOut.first.getName()));
-        for (Angular2DirectiveSelector selector : candidate.getDirectiveSelectors()) {
-          for (String attr : selector.getAttrs()) {
-            addAttribute.accept(attr);
-            if (inOuts.contains(attr)) {
-              addAttribute.accept("[(" + attr + ")]");
+        for (SimpleSelectorWithPsi selector : candidate.getSelector().getSimpleSelectorsWithPsi()) {
+          for (Angular2DirectiveSelectorPsiElement attr : selector.getAttributes()) {
+            String attrName = attr.getName();
+            addAttribute.accept(attrName, attr);
+            if (inOuts.contains(attrName)) {
+              addAttribute.accept("[(" + attrName + ")]", attr);
             }
-            if (inputs.contains(attr)) {
-              addAttribute.accept("[" + attr + "]");
+            if (inputs.contains(attrName)) {
+              addAttribute.accept("[" + attrName + "]", attr);
             }
-            if (outputs.contains(attr)) {
-              addAttribute.accept("(" + attr + ")");
+            if (outputs.contains(attrName)) {
+              addAttribute.accept("(" + attrName + ")", attr);
             }
           }
-          for (Angular2DirectiveSelector notSelector : selector.getNotSelectors()) {
-            for (String attr : notSelector.getAttrs()) {
-              addAttribute.accept(attr);
+          for (SimpleSelectorWithPsi notSelector : selector.getNotSelectors()) {
+            for (Angular2DirectiveSelectorPsiElement attr : notSelector.getAttributes()) {
+              addAttribute.accept(attr.getName(), attr);
             }
           }
         }

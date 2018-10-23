@@ -14,6 +14,11 @@ import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.psi.util.PsiTreeUtil.getParentOfType;
+import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
+import static com.intellij.util.ArrayUtil.contains;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+
 public class Angular2DecoratorUtil {
 
   public static final String DIRECTIVE_DEC = "Directive";
@@ -21,22 +26,24 @@ public class Angular2DecoratorUtil {
   public static final String PIPE_DEC = "Pipe";
   public static final String INPUT_DEC = "Input";
   public static final String OUTPUT_DEC = "Output";
+  public static final String VIEW_CHILD_DEC = "ViewChild";
 
   public static final String NAME_PROP = "name";
   public static final String SELECTOR_PROP = "selector";
   public static final String EXPORT_AS_PROP = "exportAs";
   public static final String INPUTS_PROP = "inputs";
   public static final String OUTPUTS_PROP = "outputs";
+  public static final String STYLE_URLS_PROP = "styleUrls";
 
-  public static boolean isLiteralInNgDecorator(PsiElement element, String propertyName, String decoratorName) {
+  public static boolean isLiteralInNgDecorator(PsiElement element, String propertyName, String... decoratorNames) {
     if (element instanceof JSLiteralExpression) {
       final JSLiteralExpression literal = (JSLiteralExpression)element;
       final PsiElement parent;
       return literal.isQuotedLiteral()
              && (parent = literal.getParent()) instanceof JSProperty
              && propertyName.equals(((JSProperty)parent).getName())
-             && decoratorName.equals(ObjectUtils.doIfNotNull(PsiTreeUtil.getParentOfType(parent, ES6Decorator.class),
-                                                             ES6Decorator::getDecoratorName));
+             && contains(doIfNotNull(getParentOfType(parent, ES6Decorator.class), ES6Decorator::getDecoratorName),
+                         decoratorNames);
     }
     return false;
   }
@@ -47,7 +54,7 @@ public class Angular2DecoratorUtil {
     if (list == null || names.length == 0) {
       return null;
     }
-    for (ES6Decorator decorator : PsiTreeUtil.getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
+    for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
       String decoratorName = decorator.getDecoratorName();
       for (String n : names) {
         if (n.equals(decoratorName)) {
@@ -64,7 +71,7 @@ public class Angular2DecoratorUtil {
     if (list == null) {
       return null;
     }
-    for (ES6Decorator decorator : PsiTreeUtil.getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
+    for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
       if (name.equals(decorator.getDecoratorName())) {
         return decorator;
       }
@@ -78,7 +85,7 @@ public class Angular2DecoratorUtil {
       return null;
     }
     JSAttributeList list = cls.getAttributeList();
-    for (ES6Decorator decorator : PsiTreeUtil.getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
+    for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
       String decoratorName = decorator.getDecoratorName();
       if (name.equals(decoratorName)) {
         JSCallExpression call = ObjectUtils.tryCast(decorator.getExpression(), JSCallExpression.class);

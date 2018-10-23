@@ -30,8 +30,8 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
                                  new PsiReference[] {new AngularJSTemplateCacheReference((JSLiteralExpression)element)});
   }
 
-  static class Angular2SoftFileReferenceSet extends SoftFileReferenceSet {
-    Angular2SoftFileReferenceSet(PsiElement element) {
+  public static class Angular2SoftFileReferenceSet extends SoftFileReferenceSet {
+    public Angular2SoftFileReferenceSet(PsiElement element) {
       super(element);
     }
 

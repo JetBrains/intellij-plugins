@@ -2,11 +2,14 @@
 package org.angularjs;
 
 import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.util.ObjectUtils;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +53,7 @@ public class AngularTestUtil {
   }
 
   public static String getDirectiveDefinitionText(PsiElement resolve) {
-    return resolve.getParent().getText();
+    return ObjectUtils.notNull(PsiTreeUtil.getParentOfType(resolve, ES6Decorator.class), resolve.getParent()).getText();
   }
 
   @NotNull

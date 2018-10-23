@@ -31,11 +31,6 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
                                         () -> myFixture.testCompletion("custom_no_normalize.html", "custom_no_normalize.after.html", "package.json", "custom_no_normalize.ts"));
   }
 
-  public void testCustomTagsCompletion20JavaScript() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("custom.html", "custom.after.html", "package.json", "custom2.js"));
-  }
-
   public void testCustomTagsResolve20TypeScriptComponent() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
       myFixture.configureByFiles("custom.after.html", "package.json", "custom.ts");
@@ -45,7 +40,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
       PsiElement resolve = ref.resolve();
       assertNotNull(resolve);
       assertEquals("custom.ts", resolve.getContainingFile().getName());
-      assertEquals("Component({\n" +
+      assertEquals("@Component({\n" +
                    "    selector: 'my-customer',\n" +
                    "    properties: {\n" +
                    "        'id':'dependency'\n" +
@@ -63,27 +58,12 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
       PsiElement resolve = ref.resolve();
       assertNotNull(resolve);
       assertEquals("custom_directive.ts", resolve.getContainingFile().getName());
-      assertEquals("Directive({\n" +
+      assertEquals("@Directive({\n" +
                    "    selector: 'my-customer',\n" +
                    "    properties: {\n" +
                    "        'id':'dependency'\n" +
                    "    }\n" +
                    "})", AngularTestUtil.getDirectiveDefinitionText(resolve));
-    });
-  }
-
-  public void testCustomTagsResolve20JavaScript() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.configureByFiles("custom.after.html", "package.json", "custom2.js");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("my-cus<caret>tomer", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
-      assertEquals("custom2.js", resolve.getContainingFile().getName());
-      assertEquals("new angular.ComponentAnnotation({\n" +
-                   "    selector: 'my-customer'\n" +
-                   "  })", AngularTestUtil.getDirectiveDefinitionText(resolve));
     });
   }
 
@@ -182,7 +162,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
       PsiElement resolve = ref.resolve();
       assertNotNull(resolve);
       assertEquals("noNormalized.ts", resolve.getContainingFile().getName());
-      assertEquals("Component({\n" +
+      assertEquals("@Component({\n" +
                    "    selector: 'app_hello',\n" +
                    "    template: '<app_hello></app_hello>',\n" +
                    "})", AngularTestUtil.getDirectiveDefinitionText(resolve));

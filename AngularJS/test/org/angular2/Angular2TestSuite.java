@@ -13,7 +13,7 @@ import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingTest;
 import org.angular2.lang.html.lexer.Angular2HtmlLexerSpecTest;
 import org.angular2.lang.html.lexer.Angular2HtmlLexerTest;
 import org.angular2.lang.html.parser.Angular2HtmlParsingTest;
-import org.angular2.lang.selector.Angular2DirectiveSelectorSpecTest;
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest;
 import org.angular2.refactoring.AngularChangeSignatureTest;
 import org.angular2.refactoring.DirectiveRenameTest;
 import org.angular2.refactoring.RenameTest;
@@ -32,7 +32,7 @@ import org.junit.runners.Suite;
   Angular2HtmlLexerTest.class,
   Angular2HtmlHighlightingTest.class,
   Angular2HtmlParsingTest.class,
-  Angular2DirectiveSelectorSpecTest.class,
+  Angular2DirectiveSimpleSelectorSpecTest.class,
   AttributesTest.class,
   ContextTest.class,
   InjectionsTest.class,
