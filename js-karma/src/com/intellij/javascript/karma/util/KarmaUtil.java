@@ -1,6 +1,5 @@
 package com.intellij.javascript.karma.util;
 
-import com.google.common.collect.ImmutableSet;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
@@ -11,9 +10,7 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
-import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JavaScriptFileType;
-import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
+import com.intellij.lang.javascript.JSLanguageUtil;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -31,7 +28,6 @@ import org.jetbrains.io.LocalFileFinder;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class KarmaUtil {
 
@@ -43,11 +39,6 @@ public class KarmaUtil {
   private static final String[] BEFORE_EXT_PARTS = new String[] {"conf", "karma"};
   private static final String[] EXTENSIONS = {"js", "coffee", "es6", "ts"};
   private static final String[] MOST_RELEVANT_NAMES = {"karma.conf", "karma-conf", "karma-js.conf"};
-  private static final Set<FileType> FILE_TYPES = ImmutableSet.<FileType>builder()
-    .addAll(JavaScriptFileType.getFileTypesCompilableToJavaScript())
-    .addAll(TypeScriptUtil.TYPESCRIPT_FILE_TYPES)
-    .addAll(DialectDetector.JAVASCRIPT_FILE_TYPES)
-    .build();
 
   private KarmaUtil() {
   }
@@ -57,7 +48,7 @@ public class KarmaUtil {
     GlobalSearchScope contentScope = ProjectScope.getContentScope(project);
     GlobalSearchScope scope = contentScope.intersectWith(GlobalSearchScope.notScope(ProjectScope.getLibrariesScope(project)));
     List<VirtualFile> result = ContainerUtil.newArrayList();
-    for (FileType type : FILE_TYPES) {
+    for (FileType type : JSLanguageUtil.getFileTypesCompilableToJavaScript()) {
       Collection<VirtualFile> files = FileTypeIndex.getFiles(type, scope);
       for (VirtualFile file : files) {
         if (file != null && file.isValid() && !file.isDirectory() && isKarmaConfigFile(file.getNameSequence(), false)) {
