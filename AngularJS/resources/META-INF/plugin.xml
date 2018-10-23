@@ -165,7 +165,8 @@
     <filetype.stubBuilder filetype="Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonStubBuilder"/>
     <lang.parserDefinition language="Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonParserDefinition"/>
     <fileTypeFactory implementation="org.angular2.lang.metadata.MetadataJsonFileTypeFactory"/>
-    <lang.fileViewProviderFactory language="JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
+    <lang.fileViewProviderFactory language="Metadata JSON"
+                                  implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
 
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes"/>
