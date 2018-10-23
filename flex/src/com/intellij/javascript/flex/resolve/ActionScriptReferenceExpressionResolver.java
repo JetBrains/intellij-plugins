@@ -6,10 +6,8 @@ import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
-import com.intellij.lang.javascript.psi.ecmal4.JSConditionalCompileVariableReference;
-import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
-import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.lang.javascript.psi.ecmal4.JSReferenceListMember;
+import com.intellij.lang.javascript.psi.ecmal4.*;
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -156,20 +154,42 @@ public class ActionScriptReferenceExpressionResolver
 
   @Override
   protected boolean prepareProcessor(WalkUpResolveProcessor processor, @NotNull SinkResolveProcessor<ResolveResultSink> localProcessor) {
+    boolean allowOnlyCompleteMatches = false;
+
+    PsiElement context = processor.getContext();
+    if (context instanceof JSReferenceExpression) {
+      boolean haveEncounteredDynamics = false;
+      final JSReferenceExpression refExpr = (JSReferenceExpression)context;
+      final JSExpression originalQualifier = refExpr.getQualifier();
+      final JSExpression qualifier = JSResolveUtil.getRealRefExprQualifier(refExpr);
+      if (originalQualifier == null && qualifier != null && refExpr.isAttributeReference()) {
+        haveEncounteredDynamics = true;
+      }
+      else if (qualifier instanceof JSThisExpression) {
+        final JSNamespace ns = JSContextResolver.resolveContext(qualifier);
+        final String contextQualifierText = JSNamespace.getQualifiedName(ns);
+        final PsiElement clazz = contextQualifierText == null ? null :
+                                 JSClassResolver.findClassFromNamespace(contextQualifierText, context);
+        if (clazz instanceof JSClass && JSPsiImplUtils.hasModifier((JSClass)clazz, JSAttributeList.ModifierType.DYNAMIC)) {
+          haveEncounteredDynamics = true;
+        }
+      }
+
+      allowOnlyCompleteMatches = processor.getTypeInfo().isEmpty() || !haveEncounteredDynamics;
+    }
+
     boolean inDefinition = false;
-    boolean allowOnlyCompleteMatches = myUnqualifiedOrLocalResolve && localProcessor.isEncounteredDynamicClasses();
+    allowOnlyCompleteMatches |= myUnqualifiedOrLocalResolve && localProcessor.isEncounteredDynamicClasses();
 
     if (myParent instanceof JSDefinitionExpression) {
       inDefinition = true;
-      if (myUnqualifiedOrLocalResolve && localProcessor.processingEncounteredAnyTypeAccess()) allowOnlyCompleteMatches = false;
-      else allowOnlyCompleteMatches = true;
-    } else if (myQualifier instanceof JSThisExpression && localProcessor.processingEncounteredAnyTypeAccess()) {
+      allowOnlyCompleteMatches = !(myUnqualifiedOrLocalResolve && localProcessor.processingEncounteredAnyTypeAccess());
+    }
+    else if (myQualifier instanceof JSThisExpression && localProcessor.processingEncounteredAnyTypeAccess()) {
       processor.allowPartialResults();
     }
 
-    if (inDefinition || allowOnlyCompleteMatches) {
-      processor.setAddOnlyCompleteMatches(allowOnlyCompleteMatches);
-    }
+    processor.setAddOnlyCompleteMatches(allowOnlyCompleteMatches);
     processor.setSkipDefinitions(inDefinition);
     return true;
   }
