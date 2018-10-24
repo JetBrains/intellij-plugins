@@ -34,7 +34,7 @@ public class AngularJSTargetElementEvaluator implements TargetElementEvaluator {
         JSReferenceExpression callee = (JSReferenceExpression)expression;
         JSExpression qualifier = callee.getQualifier();
 
-        if (qualifier != null && AngularJSIndexingHandler.INTERESTING_METHODS.contains(callee.getReferencedName()) &&
+        if (qualifier != null && AngularJSIndexingHandler.INTERESTING_METHODS.contains(callee.getReferenceName()) &&
             (AngularIndexUtil.hasAngularJS(element.getProject()) || Angular2LangUtil.isAngular2Context(element))) {
           return element;
         }

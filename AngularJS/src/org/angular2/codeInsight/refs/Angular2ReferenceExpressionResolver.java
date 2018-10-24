@@ -30,7 +30,7 @@ import java.util.List;
 
 public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionResolver {
 
-  public Angular2ReferenceExpressionResolver(JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits) {
+  public Angular2ReferenceExpressionResolver(@NotNull JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits) {
     super(expression, ignorePerformanceLimits);
   }
 
@@ -47,6 +47,7 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     return super.resolve(expression, incompleteCode);
   }
 
+  @NotNull
   private ResolveResult[] resolvePipeNameReference(@NotNull JSReferenceExpressionImpl expression, boolean incompleteCode) {
     if (!incompleteCode) {
       ResolveResult[] results = expression.multiResolve(true);
@@ -67,7 +68,9 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     return ResolveResult.EMPTY_ARRAY;
   }
 
-  private ResolveResult[] resolveTemplateVariable(JSReferenceExpressionImpl expression) {
+  @NotNull
+  private ResolveResult[] resolveTemplateVariable(@NotNull JSReferenceExpressionImpl expression) {
+    assert myReferencedName != null;
     final Collection<JSPsiElementBase> localVariables = getItemsByName(myReferencedName, myRef);
     ReadWriteAccessDetector.Access access = JSReadWriteAccessDetector.ourInstance
       .getExpressionAccess(expression);
@@ -78,7 +81,8 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
       .toArray(ResolveResult[]::new);
   }
 
-  private static Collection<JSPsiElementBase> remapSetterGetter(JSPsiElementBase item,
+  @NotNull
+  private static Collection<JSPsiElementBase> remapSetterGetter(@NotNull JSPsiElementBase item,
                                                                 ReadWriteAccessDetector.Access access) {
     if (!(item instanceof TypeScriptFunction)) {
       return Collections.singleton(item);
@@ -100,7 +104,9 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     return result;
   }
 
-  private static void findPropertyAccessor(TypeScriptFunction function, boolean isSetter, Consumer<JSPsiElementBase> processor) {
+  private static void findPropertyAccessor(@NotNull TypeScriptFunction function,
+                                           boolean isSetter,
+                                           @NotNull Consumer<JSPsiElementBase> processor) {
     TypeScriptClass parent = (TypeScriptClass)function.getParent();
     String name = function.getName();
     if (name != null && parent != null) {
@@ -118,7 +124,8 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     }
   }
 
-  private static Collection<JSPsiElementBase> getItemsByName(final String name, PsiElement element) {
+  @NotNull
+  private static Collection<JSPsiElementBase> getItemsByName(@NotNull final String name, @NotNull PsiElement element) {
     final Collection<JSPsiElementBase> result = new ArrayList<>();
     Angular2Processor.process(element, element1 -> {
       if (name.equals(element1.getName())) {

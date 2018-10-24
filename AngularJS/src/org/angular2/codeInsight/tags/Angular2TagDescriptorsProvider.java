@@ -36,7 +36,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
   private static final String NG_TEMPLATE = "ng-template";
 
   @Override
-  public void addTagNameVariants(final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
+  public void addTagNameVariants(@NotNull final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
     if (!(xmlTag instanceof HtmlTag && Angular2LangUtil.isAngular2Context(xmlTag))) {
       return;
     }
@@ -75,7 +75,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
 
   @Nullable
   @Override
-  public XmlElementDescriptor getDescriptor(XmlTag xmlTag) {
+  public XmlElementDescriptor getDescriptor(@NotNull XmlTag xmlTag) {
     final Project project = xmlTag.getProject();
     if (!(xmlTag instanceof HtmlTag && Angular2LangUtil.isAngular2Context(xmlTag))) {
       return null;
@@ -107,7 +107,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
   }
 
   @NotNull
-  private static JSImplicitElementImpl createDirective(XmlTag xmlTag, String name) {
+  private static JSImplicitElementImpl createDirective(@NotNull XmlTag xmlTag, @NotNull String name) {
     return new JSImplicitElementImpl.Builder(name, xmlTag).setTypeString("E;;;").toImplicitElement();
   }
 }

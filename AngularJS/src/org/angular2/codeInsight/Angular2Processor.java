@@ -54,7 +54,7 @@ public class Angular2Processor {
            || "template".equalsIgnoreCase(tagName);
   }
 
-  public static void process(final PsiElement element, final Consumer<? super JSPsiElementBase> consumer) {
+  public static void process(@NotNull final PsiElement element, @NotNull final Consumer<? super JSPsiElementBase> consumer) {
     final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
     if (!checkLanguage(original)) {
       return;
@@ -70,7 +70,7 @@ public class Angular2Processor {
       .forEach(s -> s.consumeElementsFromAllScopes(consumer));
   }
 
-  private static boolean checkLanguage(PsiElement element) {
+  private static boolean checkLanguage(@NotNull PsiElement element) {
     return element.getLanguage().is(Angular2Language.INSTANCE)
            || element.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
            || (element.getParent() != null
@@ -79,8 +79,9 @@ public class Angular2Processor {
                ));
   }
 
-  private static List<Angular2Scope> calculateElementScopes(PsiElement element,
-                                                            Angular2TemplateScope rootTemplateScope) {
+  @NotNull
+  private static List<Angular2Scope> calculateElementScopes(@NotNull PsiElement element,
+                                                            @NotNull Angular2TemplateScope rootTemplateScope) {
     List<Angular2Scope> scopes = new ArrayList<>();
 
     final JSClass clazz = Angular2IndexingHandler.findComponentClass(element);
@@ -172,6 +173,7 @@ public class Angular2Processor {
       scopes.add(new Angular2TemplateScope(templateFile, null));
     }
 
+    @NotNull
     public Angular2TemplateScope getTopLevelScope() {
       myTemplateFile.accept(this);
       assert scopes.size() == 1;
@@ -266,6 +268,7 @@ public class Angular2Processor {
       return myParent;
     }
 
+    @NotNull
     public List<Angular2Scope> getChildren() {
       return Collections.unmodifiableList(children);
     }
@@ -357,7 +360,7 @@ public class Angular2Processor {
 
     private final JSClass myJsClass;
 
-    private Angular2ComponentScope(JSClass jsClass) {
+    private Angular2ComponentScope(@NotNull JSClass jsClass) {
       super(null);
       myJsClass = jsClass;
     }

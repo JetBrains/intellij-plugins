@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
 
-  static IFileElementType HTML_FILE = new IStubFileElementType(Angular2HtmlLanguage.INSTANCE);
+  static final IFileElementType HTML_FILE = new IStubFileElementType(Angular2HtmlLanguage.INSTANCE);
 
   @NotNull
   @Override
