@@ -6,7 +6,8 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
-import org.angularjs.codeInsight.DirectiveUtil;
+import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +22,9 @@ public class Angular2GotoDeclarationHandler implements GotoDeclarationHandler {
   @Nullable
   @Override
   public String getActionText(@NotNull DataContext context) {
-    if (DirectiveUtil.isComponentDeclaration(context.getData(CommonDataKeys.PSI_ELEMENT))) {
+    PsiElement symbol = context.getData(CommonDataKeys.PSI_ELEMENT);
+    if (symbol instanceof Angular2DirectiveSelectorPsiElement
+        && Angular2EntitiesProvider.findComponent((Angular2DirectiveSelectorPsiElement)symbol) != null) {
       return "Component &Declaration";
     }
     return null;
