@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Angular2Quote extends JSStatement {
 
+  @Override
   @NotNull
   String getName();
 

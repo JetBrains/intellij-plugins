@@ -44,7 +44,7 @@ public class Angular2Lexer extends MergingLexerAdapterBase {
     private final LexerPosition myOriginal;
     private final boolean myPrevTokenEscapeSequence;
 
-    public MyLexerPosition(LexerPosition original, boolean prevTokenEscapeSequence) {
+    private MyLexerPosition(LexerPosition original, boolean prevTokenEscapeSequence) {
       myOriginal = original;
       myPrevTokenEscapeSequence = prevTokenEscapeSequence;
     }

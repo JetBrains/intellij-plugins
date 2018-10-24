@@ -2,7 +2,6 @@
 package org.angular2.editor;
 
 import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider;
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
@@ -19,7 +18,7 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
   @Override
   public PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol) {
     if (DirectiveUtil.isComponentDeclaration(symbol)) {
-      Angular2Component component = Angular2EntitiesProvider.getComponent((JSImplicitElement)symbol);
+      Angular2Component component = Angular2EntitiesProvider.getComponent(symbol);
       if (component != null) {
         HtmlFileImpl htmlFile = component.getHtmlTemplate();
         if (htmlFile != null) {

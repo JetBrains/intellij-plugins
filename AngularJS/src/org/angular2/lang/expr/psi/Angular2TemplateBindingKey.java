@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Angular2TemplateBindingKey extends JSExpression {
 
+  @Override
   @NotNull
   String getName();
 }

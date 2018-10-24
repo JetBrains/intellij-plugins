@@ -18,7 +18,7 @@ import static org.angular2.Angular2DecoratorUtil.SELECTOR_PROP;
 public class Angular2PomDeclarationSearcher extends PomDeclarationSearcher {
 
   @Override
-  public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, Consumer<PomTarget> consumer) {
+  public void findDeclarationsAt(@NotNull PsiElement element, int offsetInElement, @NotNull Consumer<PomTarget> consumer) {
     if (element.getNode().getElementType() == JSTokenTypes.STRING_LITERAL
         && DialectDetector.isTypeScript(element)
         && element.getParent() instanceof JSLiteralExpression

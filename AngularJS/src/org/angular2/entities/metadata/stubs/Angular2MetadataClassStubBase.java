@@ -75,7 +75,6 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
   }
 
   public Angular2MetadataReferenceStub getExtendsReference() {
-    //noinspection unchecked
     return (Angular2MetadataReferenceStub)getChildrenStubs().stream()
       .filter(child -> child instanceof Angular2MetadataReferenceStub
                        && EXTENDS_MEMBER.equals(((Angular2MetadataReferenceStub)child).getMemberName()))

@@ -193,7 +193,7 @@ public class Angular2SelectorMatcher<T> {
 
   private static class SelectorListContext {
     public boolean alreadyMatched = false;
-    public List<Angular2DirectiveSimpleSelector> selectors;
+    public final List<Angular2DirectiveSimpleSelector> selectors;
 
     SelectorListContext(@NotNull List<Angular2DirectiveSimpleSelector> selectors) {
       this.selectors = selectors;
@@ -202,10 +202,10 @@ public class Angular2SelectorMatcher<T> {
 
   // Store context to pass back selector and context when a selector is matched
   private static class SelectorContext<T> {
-    public List<Angular2DirectiveSimpleSelector> notSelectors;
-    public Angular2DirectiveSimpleSelector selector;
-    public T context;
-    public SelectorListContext listContext;
+    public final List<Angular2DirectiveSimpleSelector> notSelectors;
+    public final Angular2DirectiveSimpleSelector selector;
+    public final T context;
+    public final SelectorListContext listContext;
 
     SelectorContext(@NotNull Angular2DirectiveSimpleSelector selector, @Nullable T context, @Nullable SelectorListContext listContext) {
       this.notSelectors = selector.notSelectors;
