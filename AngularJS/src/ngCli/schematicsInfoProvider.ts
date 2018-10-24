@@ -1,22 +1,24 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 /* Initialize access to schematics registry */
 let provider: SchematicsProvider;
-try {
-    //first try to use schematics utils approach
-    provider = require("./schematicsProvider60");
-} catch (e) {
+
+//find appropriate support
+for (let version of ["60", "62", "70"]) {
     try {
-        //if not working than try to load SchematicCommand
-        provider = require("./schematicsProvider62");
+        provider = require("./schematicsProvider" + version);
+        break;
     } catch (e) {
-        console.info("No schematics")
-        process.exit(0)
+        //ignore
     }
+}
+if (!provider) {
+    console.info("No schematics")
+    process.exit(0)
 }
 /**/
 
 import {SchematicsProvider} from "./schematicsProvider";
-import {Option} from "@angular/cli/models/command";
+import {Option} from "@angular/cli/models/interface";
 import * as path from "path";
 import * as fs from "fs";
 
@@ -33,12 +35,7 @@ const engineHost = provider.getEngineHost();
 
 const includeHidden = process.argv[2] === "--includeHidden";
 
-let defaultCollectionName;
-try {
-    defaultCollectionName = require('@angular/cli/utilities/config').getDefaultSchematicCollection();
-} catch (e) {
-    defaultCollectionName = require('@angular/cli/models/config').CliConfig.getValue('defaults.schematics.collection');
-}
+const defaultCollectionName = provider.getDefaultSchematicCollection();
 
 const collections = getAvailableSchematicCollections();
 if (collections.indexOf(defaultCollectionName) < 0) {

@@ -6,4 +6,6 @@ export interface SchematicsProvider {
     getCollection(collectionName: string): Collection<any, any>;
     getEngineHost(): FileSystemEngineHostBase;
     getSchematic(collection: Collection<any, any>, schematicName: string, allowPrivate?: boolean): Schematic<any, any>;
+
+    getDefaultSchematicCollection(): string;
 }

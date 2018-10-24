@@ -25,6 +25,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.gist.GistManagerImpl;
+import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import icons.AngularJSIcons;
@@ -37,6 +38,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -46,6 +48,8 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
 
   public static final String PACKAGE_NAME = "@angular/cli";
   private static final Logger LOG = Logger.getInstance(AngularCLIProjectGenerator.class);
+  private static final Pattern NPX_PACKAGE_PATTERN =
+    Pattern.compile("npx --package @angular/cli(?:@([0-9]+\\.[0-9]+\\.[0-9a-zA-Z-.]+))? ng");
   private static final Pattern VALID_NG_APP_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*(-[a-zA-Z][0-9a-zA-Z]*)*");
 
   @Nls
@@ -91,7 +95,30 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     while (tokenizer.hasMoreTokens()) {
       result.add(tokenizer.nextToken());
     }
+
+    if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0)) {
+      if (!result.contains("--defaults")) {
+        result.add("--defaults");
+      }
+    }
+
     return ArrayUtil.toStringArray(result);
+  }
+
+  @SuppressWarnings("SameParameterValue")
+  private static boolean isPackageGreaterOrEqual(NodePackage pkg, int major, int minor, int patch) {
+    SemVer ver = null;
+    if (pkg.getName().equals(PACKAGE_NAME)) {
+      ver = pkg.getVersion();
+    }
+    else {
+      Matcher m = NPX_PACKAGE_PATTERN.matcher(pkg.getSystemIndependentPath());
+      if (m.matches()) {
+        ver = SemVer.parseFromText(m.group(1));
+      }
+    }
+    return ver == null
+           || ver.isGreaterOrEqualThan(major, minor, patch);
   }
 
   @NotNull
@@ -296,7 +323,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
     public final String myOptions;
 
     AngularCLIProjectSettings(@NotNull Settings settings,
-                                     @NotNull String options) {
+                              @NotNull String options) {
       super(settings.myInterpreterRef, settings.myPackage);
       myOptions = options;
     }

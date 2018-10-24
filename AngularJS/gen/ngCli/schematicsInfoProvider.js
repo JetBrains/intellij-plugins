@@ -3,31 +3,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 /* Initialize access to schematics registry */
 var provider;
-try {
-    //first try to use schematics utils approach
-    provider = require("./schematicsProvider60");
-}
-catch (e) {
+//find appropriate support
+for (var _i = 0, _a = ["60", "62", "70"]; _i < _a.length; _i++) {
+    var version = _a[_i];
     try {
-        //if not working than try to load SchematicCommand
-        provider = require("./schematicsProvider62");
+        provider = require("./schematicsProvider" + version);
+        break;
     }
     catch (e) {
-        console.info("No schematics");
-        process.exit(0);
+        //ignore
     }
+}
+if (!provider) {
+    console.info("No schematics");
+    process.exit(0);
 }
 var path = require("path");
 var fs = require("fs");
 var engineHost = provider.getEngineHost();
 var includeHidden = process.argv[2] === "--includeHidden";
-var defaultCollectionName;
-try {
-    defaultCollectionName = require('@angular/cli/utilities/config').getDefaultSchematicCollection();
-}
-catch (e) {
-    defaultCollectionName = require('@angular/cli/models/config').CliConfig.getValue('defaults.schematics.collection');
-}
+var defaultCollectionName = provider.getDefaultSchematicCollection();
 var collections = getAvailableSchematicCollections();
 if (collections.indexOf(defaultCollectionName) < 0) {
     collections.push(defaultCollectionName);

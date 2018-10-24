@@ -5,13 +5,6 @@ import {SchematicCommand} from "@angular/cli/models/schematic-command";
 
 let command = new (SchematicCommand as any)({}, null);
 
-let defaultCollectionName;
-try {
-    defaultCollectionName = require('@angular/cli/utilities/config').getDefaultSchematicCollection();
-} catch (e) {
-    defaultCollectionName = require('@angular/cli/models/config').CliConfig.getValue('defaults.schematics.collection');
-}
-
 const schematicsProvider: SchematicsProvider = {
     getCollection(collectionName: string): Collection<any, any> {
         return command.getCollection(collectionName);
@@ -23,7 +16,7 @@ const schematicsProvider: SchematicsProvider = {
         return command.getSchematic(collection, schematicName, allowPrivate);
     },
     getDefaultSchematicCollection() {
-        return defaultCollectionName;
+        return command.getDefaultSchematicCollection();
     }
 }
 
