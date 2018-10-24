@@ -2,7 +2,7 @@ package com.intellij.javascript.flex;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.findUsages.SuperMethodUtil;
+import com.intellij.lang.javascript.findUsages.JSSuperMethodUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
@@ -47,8 +47,8 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
   @Override
   public PsiElement substituteElementToRename(@NotNull final PsiElement element, final Editor editor) {
     if (element instanceof JSFunction) {
-      return SuperMethodUtil.checkSuperMethod((JSFunction)element, RefactoringBundle.message("rename.title"),
-                                              RefactoringBundle.message("to.rename"));
+      return JSSuperMethodUtil.checkSuperMethod((JSFunction)element, RefactoringBundle.message("rename.title"),
+                                                RefactoringBundle.message("to.rename"));
     }
     return super.substituteElementToRename(element, editor);
   }
