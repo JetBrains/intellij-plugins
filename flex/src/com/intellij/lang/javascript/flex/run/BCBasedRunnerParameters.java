@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class BCBasedRunnerParameters implements Cloneable {
   @NotNull private String myModuleName = "";
@@ -88,21 +90,18 @@ public class BCBasedRunnerParameters implements Cloneable {
     }
   }
 
-  public boolean equals(final Object o) {
+  @Override
+  public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
-    final BCBasedRunnerParameters that = (BCBasedRunnerParameters)o;
-
-    if (!myBCName.equals(that.myBCName)) return false;
-    if (!myModuleName.equals(that.myModuleName)) return false;
-
-    return true;
+    BCBasedRunnerParameters that = (BCBasedRunnerParameters)o;
+    return Objects.equals(myModuleName, that.myModuleName) &&
+           Objects.equals(myBCName, that.myBCName);
   }
 
+  @Override
   public int hashCode() {
-    assert false;
-    return super.hashCode();
+    return Objects.hash(myModuleName, myBCName);
   }
 
   public void handleBuildConfigurationsRename(final Map<Pair<String, String>, String> renamedConfigs) {
