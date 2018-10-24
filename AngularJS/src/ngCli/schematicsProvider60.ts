@@ -3,10 +3,18 @@ import {SchematicsProvider} from "./schematicsProvider";
 
 let schematicsUtils = require('@angular/cli/utilities/schematics');
 
+let defaultCollectionName;
+try {
+    defaultCollectionName = require('@angular/cli/utilities/config').getDefaultSchematicCollection();
+} catch (e) {
+    defaultCollectionName = require('@angular/cli/models/config').CliConfig.getValue('defaults.schematics.collection');
+}
+
 const schematicsProvider: SchematicsProvider = {
     getCollection: schematicsUtils.getCollection,
     getEngineHost: schematicsUtils.getEngineHost,
-    getSchematic: schematicsUtils.getSchematic
+    getSchematic: schematicsUtils.getSchematic,
+    getDefaultSchematicCollection: () => defaultCollectionName
 }
 
 export = schematicsProvider;
