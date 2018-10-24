@@ -27,6 +27,6 @@ public class MetadataJsonFileType extends JsonFileType {
   @NotNull
   @Override
   public String getDefaultExtension() {
-    return "metadata.json";
+    return "json";
   }
 }
