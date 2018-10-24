@@ -19,32 +19,37 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   private final String myName;
   private final PsiElement myDeclaration;
 
-  public Angular2TagDescriptor(String name, @NotNull PsiElement declaration) {
+  public Angular2TagDescriptor(@NotNull String name, @NotNull PsiElement declaration) {
     myName = name;
     myDeclaration = declaration;
   }
 
+  @NotNull
   @Override
   public String getQualifiedName() {
     return myName;
   }
 
+  @NotNull
   @Override
   public String getDefaultName() {
     return myName;
   }
 
+  @NotNull
   @Override
   public XmlElementDescriptor[] getElementsDescriptors(XmlTag context) {
     return XmlDescriptorUtil.getElementsDescriptors(context);
   }
 
   @Override
+  @Nullable
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
     return XmlDescriptorUtil.getElementDescriptor(childTag, contextTag);
   }
 
   @Override
+  @NotNull
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
     return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
   }
@@ -62,6 +67,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
       attributeName, context, this::getAttributesDescriptors);
   }
 
+  @Nullable
   @Override
   public XmlNSDescriptor getNSDescriptor() {
     return null;
@@ -84,17 +90,19 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     return null;
   }
 
-  @Override
   @NotNull
+  @Override
   public PsiElement getDeclaration() {
     return myDeclaration;
   }
 
+  @NotNull
   @Override
   public String getName(PsiElement context) {
     return getName();
   }
 
+  @NotNull
   @Override
   public String getName() {
     return myName;

@@ -22,6 +22,7 @@ import com.intellij.util.Processor;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
+import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.isPrivateMember;
 
@@ -48,7 +49,7 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
     return false;
   }
 
-  private static boolean isReferencedInTemplate(PsiElement node, HtmlFileImpl template) {
+  private static boolean isReferencedInTemplate(@NotNull PsiElement node, @NotNull HtmlFileImpl template) {
     Processor<PsiReference> processor = reference ->
       reference instanceof PsiElement &&
       (JSResolveUtil.isSelfReference((PsiElement)reference) ||
