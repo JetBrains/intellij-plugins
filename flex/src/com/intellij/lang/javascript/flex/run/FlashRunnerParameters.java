@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RunConfiguration;
@@ -47,6 +48,7 @@ import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 
 public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
 
@@ -184,6 +186,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private int myFullScreenWidth = 0;
   private int myFullScreenHeight = 0;
   private int myScreenDpi = 0;
+  private boolean myClearAppDataOnEachLaunch = true;
   private @NotNull String myIOSSimulatorSdkPath = "";
   private boolean myFastPackaging = true;
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
@@ -334,6 +337,14 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
   public void setScreenDpi(final int screenDpi) {
     myScreenDpi = screenDpi;
+  }
+
+  public boolean isClearAppDataOnEachLaunch() {
+    return myClearAppDataOnEachLaunch;
+  }
+
+  public void setClearAppDataOnEachLaunch(boolean clear) {
+    myClearAppDataOnEachLaunch = clear;
   }
 
   @NotNull
@@ -727,33 +738,44 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     return clone;
   }
 
-  public boolean equals(final Object o) {
+  @Override
+  public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
+    FlashRunnerParameters that = (FlashRunnerParameters)o;
+    return myOverrideMainClass == that.myOverrideMainClass &&
+           myLaunchUrl == that.myLaunchUrl &&
+           myRunTrusted == that.myRunTrusted &&
+           myScreenWidth == that.myScreenWidth &&
+           myScreenHeight == that.myScreenHeight &&
+           myFullScreenWidth == that.myFullScreenWidth &&
+           myFullScreenHeight == that.myFullScreenHeight &&
+           myScreenDpi == that.myScreenDpi &&
+           myClearAppDataOnEachLaunch == that.myClearAppDataOnEachLaunch &&
+           myFastPackaging == that.myFastPackaging &&
+           myUsbDebugPort == that.myUsbDebugPort &&
+           Objects.equals(myOverriddenMainClass, that.myOverriddenMainClass) &&
+           Objects.equals(myOverriddenOutputFileName, that.myOverriddenOutputFileName) &&
+           Objects.equals(myUrl, that.myUrl) &&
+           Objects.equals(myLauncherParameters, that.myLauncherParameters) &&
+           Objects.equals(myAdlOptions, that.myAdlOptions) &&
+           Objects.equals(myAirProgramParameters, that.myAirProgramParameters) &&
+           myMobileRunTarget == that.myMobileRunTarget &&
+           myEmulator == that.myEmulator &&
+           Objects.equals(myIOSSimulatorSdkPath, that.myIOSSimulatorSdkPath) &&
+           myDebugTransport == that.myDebugTransport &&
+           Objects.equals(myEmulatorAdlOptions, that.myEmulatorAdlOptions) &&
+           myAppDescriptorForEmulator == that.myAppDescriptorForEmulator &&
+           Objects.equals(myDebuggerSdkRaw, that.myDebuggerSdkRaw);
+  }
 
-    final FlashRunnerParameters that = (FlashRunnerParameters)o;
-
-    if (myScreenDpi != that.myScreenDpi) return false;
-    if (myFullScreenHeight != that.myFullScreenHeight) return false;
-    if (myFullScreenWidth != that.myFullScreenWidth) return false;
-    if (myLaunchUrl != that.myLaunchUrl) return false;
-    if (myOverrideMainClass != that.myOverrideMainClass) return false;
-    if (myRunTrusted != that.myRunTrusted) return false;
-    if (myScreenHeight != that.myScreenHeight) return false;
-    if (myScreenWidth != that.myScreenWidth) return false;
-    if (myUsbDebugPort != that.myUsbDebugPort) return false;
-    if (!myAdlOptions.equals(that.myAdlOptions)) return false;
-    if (!myAirProgramParameters.equals(that.myAirProgramParameters)) return false;
-    if (myDebugTransport != that.myDebugTransport) return false;
-    if (myEmulator != that.myEmulator) return false;
-    if (!myEmulatorAdlOptions.equals(that.myEmulatorAdlOptions)) return false;
-    if (!myLauncherParameters.equals(that.myLauncherParameters)) return false;
-    if (myMobileRunTarget != that.myMobileRunTarget) return false;
-    if (!myOverriddenMainClass.equals(that.myOverriddenMainClass)) return false;
-    if (!myOverriddenOutputFileName.equals(that.myOverriddenOutputFileName)) return false;
-    if (!myUrl.equals(that.myUrl)) return false;
-
-    return true;
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), myOverrideMainClass, myOverriddenMainClass, myOverriddenOutputFileName, myLaunchUrl, myUrl,
+                        myLauncherParameters, myRunTrusted, myAdlOptions, myAirProgramParameters, myMobileRunTarget, myEmulator,
+                        myScreenWidth, myScreenHeight, myFullScreenWidth, myFullScreenHeight, myScreenDpi, myClearAppDataOnEachLaunch,
+                        myIOSSimulatorSdkPath, myFastPackaging, myDebugTransport, myUsbDebugPort, myEmulatorAdlOptions,
+                        myAppDescriptorForEmulator, myDebuggerSdkRaw);
   }
 }

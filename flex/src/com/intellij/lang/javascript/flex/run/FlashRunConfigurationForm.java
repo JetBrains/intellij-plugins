@@ -86,6 +86,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JPanel myMobileRunPanel;
   private JRadioButton myOnEmulatorRadioButton;
   private JRadioButton myOnAndroidDeviceRadioButton;
+  private JCheckBox myClearAndroidDataCheckBox;
   private JRadioButton myOnIOSSimulatorRadioButton;
   private TextFieldWithBrowseButton myIOSSimulatorSdkTextWithBrowse;
   private JRadioButton myOnIOSDeviceRadioButton;
@@ -384,6 +385,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myEmulatorCombo.setEnabled(runOnEmulator);
       UIUtil.setEnabled(myEmulatorScreenSizePanel, runOnEmulator, true);
 
+      myClearAndroidDataCheckBox.setEnabled(myOnAndroidDeviceRadioButton.isSelected());
       myFastPackagingCheckBox.setEnabled(myOnIOSDeviceRadioButton.isSelected());
 
       myEmulatorAdlOptionsLabel.setEnabled(runOnEmulator);
@@ -521,6 +523,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     }
 
     myOnAndroidDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice);
+    myClearAndroidDataCheckBox.setSelected(params.isClearAppDataOnEachLaunch());
     myOnIOSSimulatorRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSSimulator);
     myIOSSimulatorSdkTextWithBrowse.setText(FileUtil.toSystemDependentName(params.getIOSSimulatorSdkPath()));
     myOnIOSDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice);
@@ -624,6 +627,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
         PropertiesComponent.getInstance().setValue(LATEST_SELECTED_IOS_SIMULATOR_SDK_PATH_KEY, path);
       }
     }
+
+    params.setClearAppDataOnEachLaunch(myClearAndroidDataCheckBox.isSelected());
 
     params.setIOSSimulatorSdkPath(FileUtil.toSystemIndependentName(myIOSSimulatorSdkTextWithBrowse.getText().trim()));
 
