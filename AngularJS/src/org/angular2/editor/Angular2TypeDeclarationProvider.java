@@ -7,8 +7,8 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
-import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,13 +17,12 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
   @Nullable
   @Override
   public PsiElement[] getSymbolTypeDeclarations(@NotNull PsiElement symbol) {
-    if (DirectiveUtil.isComponentDeclaration(symbol)) {
-      Angular2Component component = Angular2EntitiesProvider.getComponent(symbol);
-      if (component != null) {
-        HtmlFileImpl htmlFile = component.getHtmlTemplate();
-        if (htmlFile != null) {
-          return new PsiElement[]{htmlFile};
-        }
+    Angular2Component component;
+    if (symbol instanceof Angular2DirectiveSelectorPsiElement
+        && (component = Angular2EntitiesProvider.findComponent((Angular2DirectiveSelectorPsiElement)symbol)) != null) {
+      HtmlFileImpl htmlFile = component.getHtmlTemplate();
+      if (htmlFile != null) {
+        return new PsiElement[]{htmlFile};
       }
     }
     return null;
@@ -32,7 +31,9 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
   @Nullable
   @Override
   public String getActionText(@NotNull DataContext context) {
-    if (DirectiveUtil.isComponentDeclaration(context.getData(CommonDataKeys.PSI_ELEMENT))) {
+    PsiElement symbol = context.getData(CommonDataKeys.PSI_ELEMENT);
+    if (symbol instanceof Angular2DirectiveSelectorPsiElement
+        && Angular2EntitiesProvider.findComponent((Angular2DirectiveSelectorPsiElement)symbol) != null) {
       return "Component &Template";
     }
     return null;
