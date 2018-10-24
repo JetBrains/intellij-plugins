@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -17,7 +18,6 @@ import com.jetbrains.cidr.execution.simulator.SimulatorConfiguration;
 import com.jetbrains.cidr.xcode.Xcode;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
-import com.jetbrains.cidr.xcode.model.XcodeMetaData;
 import icons.AppcodeRevealIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +57,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     String title = "Show in Reveal";
 
     XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
-    AppleSdk sdk = xcBuildConfiguration == null ? null : XcodeMetaData.getRawBuildSettings(xcBuildConfiguration).getBaseSdk();
+    AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getRawBuildSettings().getBaseSdk();
 
     File lib = null;
     boolean compatible = false;
