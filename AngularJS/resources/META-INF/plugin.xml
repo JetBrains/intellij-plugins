@@ -126,6 +126,7 @@
     <renameInputValidator implementation="org.angular2.refactoring.Angular2RenameInputValidator"/>
     <elementDescriptionProvider
         implementation="org.angular2.refactoring.Angular2SelectorRenameProcessor$Angular2SelectorElementDescriptor"/>
+    <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory"/>
 
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
