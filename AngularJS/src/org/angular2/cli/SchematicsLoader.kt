@@ -14,6 +14,7 @@ import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.gist.GistManager
 import com.intellij.util.io.DataExternalizer
@@ -133,17 +134,26 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
 
   if (output.exitCode == 0) {
     if (output.stderr.trim().isNotEmpty()) {
-      LOG.error("Error while loading schematics info.",
+      LOG.error("Error while loading schematics info.\n"
+                + shortenOutput(output.stderr),
                 Attachment("err-output", output.stderr))
     }
     return output.stdout
   }
   else {
-    LOG.error("Failed to load schematics info.",
+    LOG.error("Failed to load schematics info.\n"
+              + shortenOutput(output.stderr),
               Attachment("err-output", output.stderr),
               Attachment("std-output", output.stdout))
   }
   return ""
+}
+
+fun shortenOutput(output: String): String {
+  return StringUtil.shortenTextWithEllipsis(
+    output.replace('\\', '/')
+      .replace("(/[^()/:]+)+(/[^()/:]+)(/[^()/:]+)".toRegex(), "/...$1$2$3"),
+    500, 0)
 }
 
 const val DEFAULT_OUTPUT: String = """
