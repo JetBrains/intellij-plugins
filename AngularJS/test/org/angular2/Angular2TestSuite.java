@@ -3,6 +3,7 @@ package org.angular2;
 
 import org.angular2.cli.BlueprintListTest;
 import org.angular2.codeInsight.*;
+import org.angular2.editor.ComponentDeclarationNavigationTest;
 import org.angular2.formatting.FormattingTest;
 import org.angular2.inspections.EmptyEventHandlerInspectionTest;
 import org.angular2.lang.expr.lexer.Angular2LexerSpecTest;
@@ -47,6 +48,7 @@ import org.junit.runners.Suite;
   AngularChangeSignatureTest.class,
   DirectiveRenameTest.class,
   RenameTest.class,
+  ComponentDeclarationNavigationTest.class,
   Angular2ServiceTest.class,
 })
 public class Angular2TestSuite {

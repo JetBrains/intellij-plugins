@@ -101,6 +101,27 @@ public class Angular2EntitiesProvider {
     return findMetadataEntity(project, name, Angular2MetadataPipe.class, Angular2MetadataPipeIndex.KEY);
   }
 
+  @Nullable
+  public static Angular2Component findComponent(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+    List<Angular2Directive> candidates;
+    if (selector.isElementSelector()) {
+      candidates = findElementDirectivesCandidates(selector.getProject(), selector.getName());
+    }
+    else if (selector.isAttributeSelector()) {
+      candidates = findAttributeDirectivesCandidates(selector.getProject(), selector.getName());
+    }
+    else {
+      candidates = Collections.emptyList();
+    }
+    for (Angular2Directive directive : candidates) {
+      if (directive.isComponent()) {
+        return (Angular2Component)directive;
+      }
+    }
+    return null;
+  }
+
+  @NotNull
   public static Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
     return Stream.concat(
       AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project).stream(),
@@ -112,6 +133,7 @@ public class Angular2EntitiesProvider {
                      ContainerUtil::concat));
   }
 
+  @NotNull
   public static Collection<String> getAllPipeNames(@NotNull Project project) {
     return newHashSet(concat(AngularIndexUtil.getAllKeys(Angular2SourcePipeIndex.KEY, project),
                              AngularIndexUtil.getAllKeys(Angular2MetadataPipeIndex.KEY, project)));
@@ -123,6 +145,7 @@ public class Angular2EntitiesProvider {
            && getPipe(element) != null;
   }
 
+  @NotNull
   private static List<Angular2Directive> findDirectivesCandidates(@NotNull Project project, @NotNull String indexLookupName) {
     List<Angular2Directive> result = new ArrayList<>();
     StubIndex.getInstance().processElements(
@@ -153,10 +176,11 @@ public class Angular2EntitiesProvider {
     return result;
   }
 
+  @Nullable
   private static <T extends Angular2MetadataEntity> T findMetadataEntity(@NotNull Project project,
                                                                          @NotNull String name,
-                                                                         Class<T> entityClass,
-                                                                         StubIndexKey<String, T> key) {
+                                                                         @NotNull Class<T> entityClass,
+                                                                         @NotNull StubIndexKey<String, T> key) {
     Ref<T> res = new Ref<>();
     StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), entityClass, el -> {
       if (el.isValid()) {
@@ -168,9 +192,11 @@ public class Angular2EntitiesProvider {
     return res.get();
   }
 
-  private static <T extends Angular2MetadataEntity> void processMetadataEntities(@NotNull Project project, @NotNull String name,
-                                                                                 Class<T> entityClass, StubIndexKey<String, T> key,
-                                                                                 Processor<T> processor) {
+  private static <T extends Angular2MetadataEntity> void processMetadataEntities(@NotNull Project project,
+                                                                                 @NotNull String name,
+                                                                                 @NotNull Class<T> entityClass,
+                                                                                 @NotNull StubIndexKey<String, T> key,
+                                                                                 @NotNull Processor<T> processor) {
     StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), entityClass, el -> {
       if (el.isValid()) {
         return processor.process(el);
@@ -179,6 +205,7 @@ public class Angular2EntitiesProvider {
     });
   }
 
+  @Nullable
   private static <T extends Angular2Entity> T getEntity(@Nullable PsiElement element,
                                                         @NotNull Class<T> entityClass,
                                                         @NotNull Condition<JSImplicitElement> implicitElementTester,
