@@ -37,6 +37,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -148,9 +149,10 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     if (file == null) {
       return;
     }
-    ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project)
-                                                                                .ensureFilesWritable(file.getVirtualFile());
-    if (readonlyStatus.hasReadonlyFiles()) {
+    VirtualFile vFile = file.getVirtualFile();
+    if (ReadonlyStatusHandler.getInstance(project)
+      .ensureFilesWritable(vFile)
+      .hasReadonlyFiles()) {
       return;
     }
 
@@ -159,20 +161,18 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     Document document = editor.getDocument();
     CharSequence textBefore = document.getImmutableCharSequence();
     CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
-    ensureConfigsSaved(new VirtualFile[]{file.getVirtualFile()}, project);
+    ensureConfigsSaved(new VirtualFile[]{vFile}, project);
     PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
-    String filePath = file.getVirtualFile().getPath();
-    String text = file.getText();
+    ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable = () -> ReadAction.compute(() -> {
+      if (!isAcceptableFile(file, nodePackage)) {
+        myErrorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
+        return null;
+      }
+      return performRequestForFile(project, nodePackage, service, file, range);
+    });
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
-      .runProcessWithProgressSynchronously(() -> {
-                                             if (!isAcceptableFile(file, nodePackage)) {
-                                               myErrorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
-                                               return null;
-                                             }
-                                             return awaitFuture(service.format(filePath, text, nodePackage, range));
-                                           },
-                                           PrettierBundle.message("progress.title"), true, project);
+      .runProcessWithProgressSynchronously(computable, PrettierBundle.message("progress.title"), true, project);
     // timed out. show notification?
     if (result == null) {
       return;
@@ -180,6 +180,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     if (!StringUtil.isEmpty(result.error)) {
       myErrorHandler.showErrorWithDetails(project, editor,
                                           PrettierBundle.message("error.while.reformatting.message"), result.error);
+    }
+    else if (result.ignored) {
+      showHintLater(editor, "Prettier: " + PrettierBundle.message("file.was.ignored", file.getName()), false, null);
     }
     else {
       if (!StringUtil.equals(textBefore, result.result)) {
@@ -225,32 +228,37 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private void processFileIterator(@NotNull Project project,
                                    @NotNull final FileTreeIterator fileIterator,
                                    @NotNull NodePackage nodePackage, 
-                                   boolean reportUnsupported) {
+                                   boolean reportSkippedFiles) {
     PrettierLanguageService service = PrettierLanguageService.getInstance(project);
-    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
+    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> ReadAction.compute(() -> {
       Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
       while (fileIterator.hasNext()) {
-        PsiFile currentFile = ReadAction.compute(() -> fileIterator.next());
+        PsiFile currentFile = fileIterator.next();
         if (!isAcceptableFile(currentFile, nodePackage)) {
-          if (reportUnsupported) {
-            reformattedResults.put(currentFile,
-                                   PrettierLanguageService.FormatResult.error(PrettierBundle.message("not.supported.file", currentFile.getName())));
+          if (reportSkippedFiles) {
+            PrettierLanguageService.FormatResult errorResult = PrettierLanguageService.FormatResult
+              .error(PrettierBundle.message("not.supported.file", currentFile.getName()));
+            reformattedResults.put(currentFile,errorResult);
           }
           continue;
         }
         indicator.setText("Processing " + currentFile.getName());
-        String filePath = ReadAction.compute(() -> currentFile.getVirtualFile().getPath());
-        String text = ReadAction.compute(() -> currentFile.getText());
-        PrettierLanguageService.FormatResult result = awaitFuture(service.format(filePath, text, nodePackage, null));
+        PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, currentFile, null);
         // timed out. show notification?
         if (result == null) {
+          continue;
+        }
+        if (result.ignored) {
+          PrettierLanguageService.FormatResult errorResult =
+            PrettierLanguageService.FormatResult.error(PrettierBundle.message("file.was.ignored", currentFile.getName()));
+          reformattedResults.put(currentFile, errorResult);
           continue;
         }
         reformattedResults.put(currentFile, result);
       }
       return reformattedResults;
-    });
+    }));
 
     runWriteCommandAction(project, () -> {
       for (Map.Entry<PsiFile, PrettierLanguageService.FormatResult> entry : results.entrySet()) {
@@ -259,10 +267,11 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
           continue;
         }
         Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-        if (document != null && StringUtil.isEmpty(entry.getValue().error)) {
+        PrettierLanguageService.FormatResult result = entry.getValue();
+        if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
           CharSequence textBefore = document.getCharsSequence();
-          if (!StringUtil.equals(textBefore, entry.getValue().result)) {
-            document.setText(entry.getValue().result);
+          if (!StringUtil.equals(textBefore, result.result)) {
+            document.setText(result.result);
           }
         }
       }
@@ -273,6 +282,21 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                                           "Failed to reformat " + errors.size() + " files<br><a href=''>Details</a>",
                                           StringUtil.join(errors, "\n"));
     }
+  }
+
+  @Nullable
+  private static PrettierLanguageService.FormatResult performRequestForFile(@NotNull Project project,
+                                                                            @NotNull NodePackage nodePackage,
+                                                                            @NotNull PrettierLanguageService service,
+                                                                            @NotNull PsiFile currentFile, 
+                                                                            @Nullable TextRange range) {
+    ApplicationManager.getApplication().assertReadAccessAllowed();
+    VirtualFile currentVFile = currentFile.getVirtualFile();
+    String filePath = currentVFile.getPath();
+    String text = currentFile.getText();
+    VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
+    String ignoreFilePath = ignoreVFile != null ? ignoreVFile.getPath() : null;
+    return awaitFuture(service.format(filePath, ignoreFilePath, text, nodePackage, range));
   }
 
   @Nullable

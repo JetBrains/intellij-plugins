@@ -91,6 +91,10 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     doReformatFile(".babelrc", "");
   }
 
+  public void testIgnoredFile() {
+    doReformatFile("toReformat", "js");
+  }
+
   public void testInvalidConfigErrorReported() {
     assertError((s) -> s.contains("tabWidth"), () -> doReformatFile("js"));
   }
