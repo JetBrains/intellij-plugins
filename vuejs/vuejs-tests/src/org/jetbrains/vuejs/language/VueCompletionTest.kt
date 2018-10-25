@@ -1275,32 +1275,6 @@ Pair("""<template>
     assertNull(myFixture.lookup)
   }
 
-  fun testVuexStateCompletion() {
-    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
-    myFixture.configureByText("vuex_state.js", "export const store = new Vuex.Store({\n" +
-                                          "    state: {\n" +
-                                          "        stateState3: [\n" +
-                                          "            'uno', 'duos'\n" +
-                                          "        ],\n" +
-                                          "        StateState4: {\n" +
-                                          "            insideState1: \"uno\",\n" +
-                                          "            insideState2: \"duos\"\n" +
-                                          "        }\n" +
-                                          "    }\n" +
-                                          "})")
-    myFixture.configureByText("state.vue", "<script>\n" +
-                                           "    export default {\n" +
-                                           "        methods: {\n" +
-                                           "            ...mapState([\n" +
-                                           "                '<caret>'\n" +
-                                           "            ])\n" +
-                                           "        }\n" +
-                                           "    }\n" +
-                                           "</script>")
-    myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!,  "stateState3", "StateState4")
-  }
-
   fun testVuexGettersCompletion() {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
     myFixture.configureByText("vuex_getter.js", "export const store = new Vuex.Store({\n" +
@@ -1331,20 +1305,17 @@ Pair("""<template>
 
   fun testVuexMutationsCompletion() {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
-    myFixture.configureByText("vuex_mutations.js", "let SOME_MUTATION = 'computed property';" +
-                                          "export const store = new Vuex.Store({\n" +
-                                          "    mutations: {\n" +
-                                          "        mutation1(state, payload) {\n" +
-                                          "            let data = {\n" +
-                                          "                insideMutation1: \"uno\",\n" +
-                                          "                insideMutation2: \"duos\"\n" +
-                                          "            }\n" +
-                                          "        },\n" +
-                                          "        [SOME_MUTATION](state) {\n" +
-                                          "        }\n" +
-                                          "    }" +
-                                          "\n" +
-                                          "})")
+    myFixture.configureByText("vuex_mutations.js",
+                                     "export const store = new Vuex.Store({\n" +
+                                     "    mutations: {\n" +
+                                     "        mutation1(state, payload) {\n" +
+                                     "            let data = {\n" +
+                                     "                insideMutation1: \"uno\",\n" +
+                                     "                insideMutation2: \"duos\"\n" +
+                                     "            }\n" +
+                                     "        }\n" +
+                                     "    }\n" +
+                                     "})")
     myFixture.configureByText("state.vue", "<script>\n" +
                                            "    export default {\n" +
                                            "        methods: {\n" +
@@ -1355,29 +1326,27 @@ Pair("""<template>
                                            "    }\n" +
                                            "</script>")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!,  "mutation1", "MutationMutation4")
+    assertContainsElements(myFixture.lookupElementStrings!!,  "mutation1")
   }
   fun testVuexMutations2Completion() {
     createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
-    myFixture.configureByText("vuex_mutations.js", "export const store = new Vuex.Store({\n" +
+    myFixture.configureByText("index.js", "export const store = new Vuex.Store({\n" +
                                                    "    mutations: {\n" +
                                                    "        mutation1(state, payload) {\n" +
                                                    "            let data = {\n" +
-                                                   "                insideMutation1: \"uno\",\n" +
-                                                   "                insideMutation2: \"duos\"\n" +
+                                                   "                mutation1_inside: \"uno\",\n" +
+                                                   "                mutation2_inside: \"duos\"\n" +
                                                    "            }\n" +
-                                                   "        },\n" +
-                                                   "        mutation_2(state, payload) {\n" +
-                                                   "        },\n" +
+                                                   "        }\n" +
                                                    "    },\n" +
                                                    "    actions: {\n" +
                                                    "        action1: function ({commit}, payload) {\n" +
-                                                   "            commit('<caret>')\n" +
-                                                   "        ,\n" +
+                                                   "            commit('m<caret>')\n" +
+                                                   "        }\n" +
                                                    "    }\n" +
                                                    "})")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!,  "mutation1", "mutation_2")
+    assertContainsElements(myFixture.lookupElementStrings!!,  "mutation1")
   }
 
   fun testVuexActionsCompletion() {
