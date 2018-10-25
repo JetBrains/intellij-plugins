@@ -28,6 +28,15 @@
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
     <orderEntry type="library" scope="TEST" name="cucumber-core:2.0.1" level="project" />
     <orderEntry type="library" name="cucumber-java" level="project" />
-    <orderEntry type="library" name="cucumber-expressions" level="project" />
+    <orderEntry type="module-library">
+      <library name="cucumber-expressions" type="repository">
+        <properties maven-id="io.cucumber:cucumber-expressions:6.1.2" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/io/cucumber/cucumber-expressions/6.1.2/cucumber-expressions-6.1.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
