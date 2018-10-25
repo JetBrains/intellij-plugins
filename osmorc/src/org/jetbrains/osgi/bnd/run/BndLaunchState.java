@@ -37,6 +37,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileAttributes;
 import com.intellij.openapi.util.io.FileSystemUtil;
+import com.intellij.task.ProjectTaskContext;
+import com.intellij.task.ProjectTaskResult;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
@@ -161,7 +163,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
   public void fileGenerated(@NotNull String outputRoot, @NotNull String relativePath) { }
 
   @Override
-  public boolean shouldHotSwap(CompileContext context) {
+  public boolean shouldHotSwap(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult finishedTasksResult) {
     return false;
   }
 }
