@@ -33,7 +33,6 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
@@ -137,7 +136,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         }
     }
     else if (VueStoreUtils.ACTION == property.name || VueStoreUtils.MUTATION == property.name || VueStoreUtils.GETTER == property.name) {
-      //Actions can be action: function(){} or action({commit}, payload){}
+      //Actions can be action: function(){} or action(){}
       val es6properties = PsiTreeUtil.findChildrenOfType(property, ES6FunctionProperty::class.java)
       val jsProperties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
 
@@ -306,13 +305,6 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   private fun getComponentNameFromDescriptor(obj: JSObjectLiteralExpression): String {
     return ((obj.findProperty("name")?.value as? JSLiteralExpression)?.stringValue
             ?: FileUtil.getNameWithoutExtension(obj.containingFile.name))
-  }
-
-  private fun createVuexImplicitElement(name: String,
-                                        provider: JSImplicitElementProvider,
-                                        indexKey: String,
-                                        preffix: String): JSImplicitElementImpl {
-    return createImplicitElement(name, provider, "${preffix}_$indexKey")
   }
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {
