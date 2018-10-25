@@ -32,6 +32,7 @@
     <stubIndex implementation="org.jetbrains.vuejs.index.VueExtendsBindingIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalDirectivesIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueStoreIndex" />
     <stubElementTypeHolder class="org.jetbrains.vuejs.language.VueElementTypes" />
     <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueTemplateFactory"/>

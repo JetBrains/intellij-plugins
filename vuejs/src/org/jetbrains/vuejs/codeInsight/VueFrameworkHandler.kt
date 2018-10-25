@@ -15,6 +15,7 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.psi.ES6FunctionProperty
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.JSElementTypes
@@ -32,6 +33,7 @@ import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
@@ -46,6 +48,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isComponentDecorator
+import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.language.VueJSLanguage
 import org.jetbrains.vuejs.language.VueVForExpression
@@ -63,7 +66,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     record(VueGlobalDirectivesIndex.KEY),
     record(VueLocalDirectivesIndex.KEY),
     record(VueMixinBindingIndex.KEY),
-    record(VueOptionsIndex.KEY)
+    record(VueOptionsIndex.KEY),
+    record(VueStoreIndex.KEY)
   )
 
   companion object {
@@ -117,10 +121,54 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     //Vuetify typescript components
     else if (NAME == property.name && property.value is JSLiteralExpression) {
       val componentName = (property.value as JSLiteralExpression).stringValue
-      if (componentName != null && obj.containingFile.name.contains(toAsset(componentName ), true) && obj.containingFile.fileType is TypeScriptFileType) {
+      if (componentName != null && obj.containingFile.name.contains(toAsset(componentName),
+                                                                    true) && obj.containingFile.fileType is TypeScriptFileType) {
         out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
       }
     }
+    else if (VueStoreUtils.STATE == property.name) {
+      val properties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
+      properties
+        .filter { it.parent.parent == property }
+        .forEach {
+          if (it.name != null) {
+            out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, VueStoreUtils.STATE))
+          }
+        }
+    }
+    else if (VueStoreUtils.ACTION == property.name || VueStoreUtils.MUTATION == property.name || VueStoreUtils.GETTER == property.name) {
+      //Actions can be action: function(){} or action({commit}, payload){}
+      val es6properties = PsiTreeUtil.findChildrenOfType(property, ES6FunctionProperty::class.java)
+      val jsProperties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
+
+      es6properties
+        .filter { it.parent.parent == property }
+        .forEach {
+//          For such cases:
+//          var SOME_MUTATION = 'computed name'
+//          mutations = {
+//            [SOME_MUTATION]() {
+//            }
+//          };
+          if (it.computedPropertyName != null) {
+            val reference = it.computedPropertyName?.expression?.reference?.resolve()
+            val referenceText = PsiTreeUtil.findChildOfType(reference, JSLiteralExpression::class.java)?.value
+            if (referenceText != null) out.addImplicitElement(createImplicitElement(referenceText.toString(), it, VueStoreIndex.JS_KEY, property.name))
+          }
+          if (it.name != null) {
+            out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, property.name))
+          }
+
+        }
+      jsProperties
+        .filter { it.parent.parent == property }
+        .forEach {
+          if (it.name != null) {
+            out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, property.name))
+          }
+        }
+    }
+
     val firstProperty = obj.firstProperty ?: return outData
     if (firstProperty == property) {
       val parent = obj.parent
@@ -258,6 +306,13 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   private fun getComponentNameFromDescriptor(obj: JSObjectLiteralExpression): String {
     return ((obj.findProperty("name")?.value as? JSLiteralExpression)?.stringValue
             ?: FileUtil.getNameWithoutExtension(obj.containingFile.name))
+  }
+
+  private fun createVuexImplicitElement(name: String,
+                                        provider: JSImplicitElementProvider,
+                                        indexKey: String,
+                                        preffix: String): JSImplicitElementImpl {
+    return createImplicitElement(name, provider, "${preffix}_$indexKey")
   }
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {
