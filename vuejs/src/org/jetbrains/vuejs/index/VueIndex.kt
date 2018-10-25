@@ -52,7 +52,7 @@ const val NAME: String = "name"
 const val GLOBAL_BINDING_MARK: String = "*"
 const val VUE_CLASS_COMPONENT: String = "vue-class-component"
 private const val INDEXED_ACCESS_HINT = "[]"
-private const val DELIMITER = "#"
+const val DELIMITER = "#"
 
 fun getForAllKeys(scope:GlobalSearchScope, key:StubIndexKey<String, JSImplicitElementProvider>): Collection<JSImplicitElement> {
   val keys = StubIndex.getInstance().getAllKeys(key, scope.project!!)
