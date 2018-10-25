@@ -26,6 +26,10 @@ var PrettierPlugin = /** @class */ (function () {
     PrettierPlugin.prototype.handleReformatCommand = function (args) {
         var prettierApi = this.requirePrettierApi(args.prettierPath);
         try {
+            var options = { ignorePath: args.ignoreFilePath, withNodeModules: true };
+            if (prettierApi.getFileInfo && prettierApi.getFileInfo.sync(args.path, options).ignored) {
+                return { ignored: true };
+            }
             return { formatted: performFormat(prettierApi, args) };
         }
         catch (e) {
