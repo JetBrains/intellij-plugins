@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -552,28 +553,54 @@ public class AirPackageUtil {
   }
 
   public static boolean installApk(final Project project,
-                                   final Sdk flexSdk,
+                                   final Sdk sdk,
                                    final @Nullable DeviceInfo device,
                                    final String apkPath,
-                                   final String applicationId) {
-    return uninstallAndroidApplication(project, flexSdk, device, applicationId) &&
-           ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
-             @Override
-             protected void appendAdtOptions(final List<String> command) {
-               command.add("-installApp");
-               command.add("-platform");
-               command.add("android");
+                                   final boolean clearDataOnDevice) {
+    if (clearDataOnDevice) {
+      return ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+                                            @Override
+                                            protected void appendAdtOptions(final List<String> command) {
+                                              command.add("-installApp");
+                                              command.add("-platform");
+                                              command.add("android");
 
-               if (device != null) {
-                 command.add("-device");
-                 command.add(device.DEVICE_ID);
-               }
+                                              if (device != null) {
+                                                command.add("-device");
+                                                command.add(device.DEVICE_ID);
+                                              }
 
-               command.add("-package");
-               command.add(apkPath);
-             }
-           }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
-                                        FlexBundle.message("install.android.application.title"));
+                                              command.add("-package");
+                                              command.add(apkPath);
+                                            }
+                                          }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
+                                          FlexBundle.message("install.android.application.title"));
+    }
+    else {
+      return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+                                            @Override
+                                            protected List<String> createCommandLine() {
+                                              final ArrayList<String> command = new ArrayList<>();
+                                              command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
+                                              if (device != null) {
+                                                command.add("-s");
+                                                command.add(device.DEVICE_ID);
+                                              }
+
+                                              command.add("install");
+                                              command.add("-r");
+                                              command.add(apkPath);
+                                              return command;
+                                            }
+
+                                            @Override
+                                            protected boolean checkMessages() {
+                                              return myMessages.isEmpty() ||
+                                                     myMessages.size() == 1 && StringUtil.containsIgnoreCase(myMessages.get(0), "success");
+                                            }
+                                          }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
+                                          FlexBundle.message("install.android.application.title"));
+    }
   }
 
   public static boolean installOnIosSimulator(final Project project,
@@ -751,10 +778,10 @@ public class AirPackageUtil {
     }, FlexBundle.message("uninstalling.0", applicationId), FlexBundle.message("uninstall.ios.simulator.application.title"));
   }
 
-  private static boolean uninstallAndroidApplication(final Project project,
-                                                     final Sdk flexSdk,
-                                                     final @Nullable DeviceInfo device,
-                                                     final String applicationId) {
+  public static boolean uninstallAndroidApplication(final Project project,
+                                                    final Sdk flexSdk,
+                                                    final @Nullable DeviceInfo device,
+                                                    final String applicationId) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
       @Override
       protected void appendAdtOptions(final List<String> command) {

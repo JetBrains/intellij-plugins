@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.CommonBundle;
@@ -349,7 +350,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
            && AirPackageUtil.scanAndroidDevices(project, sdk, runnerParameters)
            && AirPackageUtil.checkAirRuntimeOnDevice(project, sdk, runnerParameters, adtVersion)
            && AirPackageUtil.packageApk(module, bc, runnerParameters, isDebug)
-           && AirPackageUtil.installApk(project, sdk, runnerParameters.getDeviceInfo(), apkPath, applicationId);
+           && (!runnerParameters.isClearAppDataOnEachLaunch() ||
+               AirPackageUtil.uninstallAndroidApplication(project, sdk, runnerParameters.getDeviceInfo(), applicationId))
+           && AirPackageUtil.installApk(project, sdk, runnerParameters.getDeviceInfo(), apkPath,
+                                        runnerParameters.isClearAppDataOnEachLaunch());
   }
 
   public static boolean packAndInstallToIOSSimulator(final Module module,
