@@ -41,6 +41,21 @@ public class FormattingTest extends LightPlatformCodeInsightFixtureTestCase {
     doTest("innerAttrFormatting_after.ts", "innerAttrFormatting.ts");
   }
 
+  public void testNoKeepLineBreaks() {
+    HtmlCodeStyleSettings htmlSettings = getSettings().getCustomSettings(HtmlCodeStyleSettings.class);
+    htmlSettings.HTML_ATTRIBUTE_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    htmlSettings.HTML_SPACE_AROUND_EQUALITY_IN_ATTRIBUTE = false;
+    htmlSettings.HTML_KEEP_LINE_BREAKS = false;
+    htmlSettings.HTML_KEEP_BLANK_LINES = 0;
+    doTest("noKeepLineBreakFormatting_after.html", "noKeepLineBreakFormatting.html");
+  }
+
+  public void testAttributeTyping() {
+    myFixture.configureByFiles("attrTyping.html", "package.json");
+    myFixture.type("\ntest2\n[test]=\"\n[(banana)]=\"\nother\n");
+    myFixture.checkResultByFile("attrTyping_after.html");
+  }
+
   private void doTest(@NotNull String expectedFile, @NotNull String... before) {
     myFixture.configureByFile("package.json");
     PsiFile psiFile = myFixture.configureByFiles(before)[0];

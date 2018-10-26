@@ -2,6 +2,7 @@
 package org.angular2.lang.html.psi.formatter;
 
 import com.intellij.formatting.Alignment;
+import com.intellij.formatting.Block;
 import com.intellij.formatting.Indent;
 import com.intellij.formatting.Wrap;
 import com.intellij.lang.ASTNode;
@@ -10,18 +11,15 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.formatter.xml.XmlBlock;
 import com.intellij.psi.formatter.xml.XmlFormattingPolicy;
 import com.intellij.psi.formatter.xml.XmlTagBlock;
+import com.intellij.psi.tree.IElementType;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 
+import java.util.ArrayList;
+
+import static com.intellij.psi.xml.XmlElementType.XML_ATTRIBUTE;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.ALL_ATTRIBUTES;
 
 public class Angular2HtmlTagBlock extends XmlTagBlock {
-
-  public Angular2HtmlTagBlock(ASTNode node,
-                              Wrap wrap,
-                              Alignment alignment,
-                              XmlFormattingPolicy policy, Indent indent) {
-    super(node, wrap, alignment, policy, indent);
-  }
 
   public Angular2HtmlTagBlock(ASTNode node,
                               Wrap wrap,
@@ -42,26 +40,22 @@ public class Angular2HtmlTagBlock extends XmlTagBlock {
   }
 
   @Override
-  protected Wrap chooseWrap(ASTNode child, Wrap tagBeginWrap, Wrap attrWrap, Wrap textWrap) {
-    if (isAngular2Attribute(child)) {
-      return attrWrap;
-    }
-    return super.chooseWrap(child, tagBeginWrap, attrWrap, textWrap);
-  }
-
-  @Override
-  protected Alignment chooseAlignment(ASTNode child, Alignment attrAlignment, Alignment textAlignment) {
-    if (isAngular2Attribute(child) && myXmlFormattingPolicy.getShouldAlignAttributes()) return attrAlignment;
-    return super.chooseAlignment(child, attrAlignment, textAlignment);
-  }
-
-  static boolean isAngular2Attribute(ASTNode node) {
-    return ALL_ATTRIBUTES.contains(node.getElementType());
+  protected Block createSyntheticBlock(ArrayList<Block> localResult, Indent childrenIndent) {
+    return new Angular2SyntheticBlock(localResult, this, Indent.getNoneIndent(), myXmlFormattingPolicy, childrenIndent);
   }
 
   @Override
   protected boolean useMyFormatter(Language myLanguage, Language childLanguage, PsiElement childPsi) {
     return (childLanguage == Angular2HtmlLanguage.INSTANCE)
            || super.useMyFormatter(myLanguage, childLanguage, childPsi);
+  }
+
+  @Override
+  protected boolean isAttributeElementType(IElementType elementType) {
+    return isAngular2AttributeElementType(elementType);
+  }
+
+  static boolean isAngular2AttributeElementType(IElementType elementType) {
+    return elementType == XML_ATTRIBUTE || ALL_ATTRIBUTES.contains(elementType);
   }
 }
