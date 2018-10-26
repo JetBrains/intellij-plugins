@@ -38,6 +38,7 @@ public interface PrettierLanguageService {
   }
 
   class FormatResult {
+    public static final FormatResult IGNORED = new FormatResult(null, null, true);
     private FormatResult(String result, String error, boolean ignored) {
       this.result = result;
       this.error = error;
@@ -50,10 +51,6 @@ public interface PrettierLanguageService {
 
     public static FormatResult formatted(String result) {
       return new FormatResult(result, null, false);
-    }
-
-    public static FormatResult ignored() {
-      return new FormatResult(null, null, true);
     }
 
     public final String result;
