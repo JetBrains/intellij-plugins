@@ -2,12 +2,13 @@
 package org.angular2.lang.metadata;
 
 import com.intellij.json.psi.JsonValue;
+import com.intellij.lang.DependentLanguage;
 import com.intellij.lang.Language;
 import com.intellij.psi.tree.IStubFileElementType;
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class MetadataLanguage extends Language {
+public abstract class MetadataLanguage extends Language implements DependentLanguage {
 
   protected MetadataLanguage(@NotNull String ID) {
     super(ID);
