@@ -82,7 +82,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
       return FormatResult.error(error);
     }
     if (JsonUtil.getChildAsBoolean(response.getElement(), "ignored", false)) {
-      return FormatResult.ignored();
+      return FormatResult.IGNORED;
     }
     return FormatResult.formatted(JsonUtil.getChildAsString(response.getElement(), "formatted"));
   }
