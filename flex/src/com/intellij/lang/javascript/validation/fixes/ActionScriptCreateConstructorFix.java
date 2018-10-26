@@ -341,7 +341,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
         newConstuctorText.append("public ");
       }
       newConstuctorText.append("function ").append(jsClass.getName());
-      JSChangeSignatureDialog.buildParameterListText(Arrays.asList(myParameters), newConstuctorText, true, DialectDetector.dialectOfElement(
+      JSChangeSignatureDialog.buildParameterListText(Arrays.asList(myParameters), newConstuctorText, DialectDetector.dialectOfElement(
         jsClass));
       newConstuctorText.append("{}");
       JSFunction constructorPrototype = (JSFunction)JSChangeUtil.createStatementFromText(myProject, newConstuctorText.toString(),
