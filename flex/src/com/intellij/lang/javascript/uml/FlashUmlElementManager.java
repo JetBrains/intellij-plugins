@@ -1,24 +1,11 @@
-/*
- * Copyright 2000-2009 JetBrains s.r.o.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *  http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.AbstractDiagramElementManager;
 import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.javascript.flex.resolve.FlexResolveHelper;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
@@ -75,23 +62,29 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
   public static boolean isAcceptableAsNodeStatic(Object element) {
-    if (element instanceof JSClass) {
+    if (element instanceof PsiFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
       return true;
     }
-    else if (element instanceof JSPackageStatement) {
-      return true;
-    }
-    else if (element instanceof JSFile) {
-      return JSPsiImplUtils.findQualifiedElement((JSFile)element) instanceof JSClass;
-    }
-    else if (element instanceof PsiFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
-      return true;
-    }
-    else if (element instanceof PsiDirectory) {
+    if (element instanceof PsiDirectory) {
       PsiDirectory directory = (PsiDirectory)element;
       String packageName = JSResolveUtil.getExpectedPackageNameFromFile(directory.getVirtualFile(), directory.getProject());
       return packageName != null && packageExists(directory.getProject(), packageName, GlobalSearchScope.allScope(directory.getProject()));
     }
+
+    if (element instanceof PsiElement && !DialectDetector.isActionScript((PsiElement)element)) {
+      return false;
+    }
+
+    if (element instanceof JSClass) {
+      return true;
+    }
+    if (element instanceof JSPackageStatement) {
+      return true;
+    }
+    if (element instanceof JSFile) {
+      return JSPsiImplUtils.findQualifiedElement((JSFile)element) instanceof JSClass;
+    }
+
     return false;
   }
 
