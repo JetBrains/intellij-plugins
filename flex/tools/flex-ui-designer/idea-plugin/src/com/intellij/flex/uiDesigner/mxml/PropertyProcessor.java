@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.google.common.base.CharMatcher;
@@ -609,7 +610,7 @@ class PropertyProcessor implements ValueWriter {
             if (!mxmlWriter.processMxmlVector(contentTag, parentContext, false)) {
               throw new InvalidPropertyException(contentTag, "invalid.vector.value");
             }
-            
+
             return isStyle ? PRIMITIVE_STYLE : PRIMITIVE;
           }
         }
@@ -778,7 +779,7 @@ class PropertyProcessor implements ValueWriter {
   }
 
   private void writeUntypedPrimitiveValue(PrimitiveAmfOutputStream out, CharSequence charSequence) {
-    final String s = CharMatcher.WHITESPACE.trimFrom(charSequence);
+    final String s = CharMatcher.whitespace().trimFrom(charSequence);
     if (s.equals("true")) {
       out.write(Amf3Types.TRUE);
       return;

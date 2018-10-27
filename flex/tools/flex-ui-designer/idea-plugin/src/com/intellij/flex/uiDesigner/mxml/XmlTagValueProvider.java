@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.google.common.base.CharMatcher;
@@ -41,7 +42,7 @@ class XmlTagValueProvider implements XmlElementValueProvider {
     XmlElementDescriptor descriptor = tag.getDescriptor();
     // may be ClassBackedElementDescriptor for fx:String: <TextArea><text><fx:String>sfsdsd</fx:String></text></TextArea>
     if (descriptor instanceof AnnotationBackedDescriptor && ((AnnotationBackedDescriptor)descriptor).isCollapseWhiteSpace()) {
-      return CharMatcher.WHITESPACE.trimAndCollapseFrom(v, ' ');
+      return CharMatcher.whitespace().trimAndCollapseFrom(v, ' ');
     }
     else {
       return v;
