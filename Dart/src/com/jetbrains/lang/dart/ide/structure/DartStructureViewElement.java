@@ -120,6 +120,8 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
     switch (element.getKind()) {
       case ElementKind.CLASS:
         return element.isAbstract() ? AbstractClass : Class;
+      case ElementKind.MIXIN:
+        return AbstractClass;
       case ElementKind.CONSTRUCTOR:
         return Method;
       case ElementKind.CONSTRUCTOR_INVOCATION:
