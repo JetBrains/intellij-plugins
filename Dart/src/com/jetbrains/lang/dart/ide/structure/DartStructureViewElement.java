@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.structure;
 
 import com.intellij.ide.structureView.StructureViewTreeElement;
@@ -120,6 +121,8 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
     switch (element.getKind()) {
       case ElementKind.CLASS:
         return element.isAbstract() ? AbstractClass : Class;
+      case ElementKind.MIXIN:
+        return AbstractClass;
       case ElementKind.CONSTRUCTOR:
         return Method;
       case ElementKind.CONSTRUCTOR_INVOCATION:
