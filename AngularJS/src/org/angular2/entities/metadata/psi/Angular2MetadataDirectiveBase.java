@@ -24,17 +24,20 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   extends Angular2MetadataDeclaration<Stub>
   implements Angular2Directive {
 
-  private final Angular2DirectiveSelector mySelector;
-
   public Angular2MetadataDirectiveBase(@NotNull Stub element) {
     super(element);
-    mySelector = new Angular2DirectiveSelectorImpl(this, getStub().getSelector(), a -> new TextRange(0, 0));
   }
 
   @NotNull
   @Override
   public Angular2DirectiveSelector getSelector() {
-    return mySelector;
+    return getCachedValue(() -> {
+      Pair<TypeScriptClass, Collection<Object>> dependencies = getClassAndDependencies();
+      return CachedValueProvider.Result.create(
+        new Angular2DirectiveSelectorImpl(dependencies.first != null ? dependencies.first : this,
+                                          getStub().getSelector(), a -> new TextRange(0, 0)),
+        dependencies.second);
+    });
   }
 
   @Nullable
@@ -94,9 +97,9 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
       JSRecordType.PropertySignature sig = classType.findPropertySignature(fieldName);
       if (sig != null) {
         PsiElement source = sig.getMemberSource().getSingleElement();
-        return new Angular2MetadataDirectiveProperty(sig, source != null ? source : this, bindingName);
+        return new Angular2MetadataDirectiveProperty(sig, source != null ? source : getSourceElement(), bindingName);
       }
     }
-    return new Angular2MetadataDirectiveProperty(null, this, bindingName);
+    return new Angular2MetadataDirectiveProperty(null, getSourceElement(), bindingName);
   }
 }
