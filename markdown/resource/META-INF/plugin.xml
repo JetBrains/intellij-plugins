@@ -131,15 +131,15 @@ Includes the following features:</p>
 
       <action class="org.intellij.plugins.markdown.ui.actions.styling.HeaderDownAction"
               id="org.intellij.plugins.markdown.ui.actions.styling.HeaderDownAction"
-              text="Increase Header Level"
-              description="Creates or increases level of a header by caret"
+              text="Decrease Header Level"
+              description="Decreases level of a header by caret"
               icon="MarkdownIcons.EditorActions.Header_level_down">
       </action>
 
       <action class="org.intellij.plugins.markdown.ui.actions.styling.HeaderUpAction"
               id="org.intellij.plugins.markdown.ui.actions.styling.HeaderUpAction"
-              text="Decrease Header Level"
-              description="Decreases level of a header by caret"
+              text="Increase Header Level"
+              description="Creates or increases level of a header by caret"
               icon="MarkdownIcons.EditorActions.Header_level_up">
       </action>
 
