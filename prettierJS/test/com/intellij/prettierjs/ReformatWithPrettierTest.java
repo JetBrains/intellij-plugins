@@ -19,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 
-import java.util.Collections;
-
 public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
 
   private NodeLinterPackageTestPaths myTestPackagePaths;
@@ -128,7 +126,7 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     try {
       final NodeJsAppRule nodeJsAppRule = new NodeJsAppRule("6.10.2");
       nodeJsAppRule.executeBefore();
-      final InstallNpmModules npmModules = new InstallNpmModules(nodeJsAppRule, ContainerUtil.list(packageName), Collections.emptyMap());
+      final InstallNpmModules npmModules = new InstallNpmModules(nodeJsAppRule, ContainerUtil.list(packageName));
       npmModules.run();
 
       return new NodeLinterPackageTestPaths(getProject(), packageName, npmModules.getNpmPath(), npmModules.getNodePath(),
