@@ -82,7 +82,7 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
   @Override
   public void index(@NotNull IndexSink sink) {
     super.index(sink);
-    Angular2EntityUtils.getDirectiveIndexNames(getProject(), getSelector(), isTemplate())
+    Angular2EntityUtils.getDirectiveIndexNames(getSelector(), isTemplate())
       .forEach(indexName -> sink.occurrence(Angular2MetadataDirectiveIndex.KEY, indexName));
   }
 

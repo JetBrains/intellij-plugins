@@ -162,18 +162,15 @@
     <implicitUsageProvider implementation="org.angular2.codeInsight.refs.Angular2ImplicitUsageProvider"/>
     <renamePsiElementProcessor implementation="org.angular2.refactoring.Angular2PipeRenameProcessor" order="first"/>
 
-    <!-- TypeScript metadata JSON contributions -->
-    <filetype.stubBuilder filetype="Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonStubBuilder"/>
-    <lang.parserDefinition language="Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonParserDefinition"/>
-    <fileTypeFactory implementation="org.angular2.lang.metadata.MetadataJsonFileTypeFactory"/>
-    <lang.fileViewProviderFactory language="Metadata JSON"
-                                  implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
-
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataPipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataEntityClassNameIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataDirectiveIndex"/>
+    <fileTypeFactory implementation="org.angular2.entities.metadata.Angular2MetadataFileTypeFactory"/>
+    <filetype.stubBuilder filetype="Angular Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonStubBuilder"/>
+    <fileType.fileViewProviderFactory filetype="Angular Metadata JSON"
+                                      implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

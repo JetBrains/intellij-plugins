@@ -15,6 +15,8 @@ import org.angularjs.AngularTestUtil;
 
 import java.util.List;
 
+import static org.angularjs.AngularTestUtil.configureWithMetadataFile;
+
 public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
@@ -147,7 +149,8 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testComplexSelectorList2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("ionic.html", "package.json", "ionic.metadata.json");
+      configureWithMetadataFile(myFixture, "ionic");
+      myFixture.configureByFiles("ionic.html");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
     });
