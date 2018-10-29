@@ -143,16 +143,20 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       es6properties
         .filter { it.parent.parent == property }
         .forEach {
-//          For such cases:
-//          var SOME_MUTATION = 'computed name'
-//          mutations = {
-//            [SOME_MUTATION]() {
-//            }
-//          };
+          //          For such cases:
+          //          var SOME_MUTATION = 'computed name'
+          //          mutations = {
+          //            [SOME_MUTATION]() {
+          //            }
+          //          };
           if (it.computedPropertyName != null) {
-            val reference = it.computedPropertyName?.expression?.reference?.resolve()
-            val referenceText = PsiTreeUtil.findChildOfType(reference, JSLiteralExpression::class.java)?.value
-            if (referenceText != null) out.addImplicitElement(createImplicitElement(referenceText.toString(), it, VueStoreIndex.JS_KEY, property.name))
+            val expr = PsiTreeUtil.findChildOfType(it, JSReferenceExpression::class.java)
+            if (expr != null && expr.referenceName != null) {
+              val reference = JSSymbolUtil.resolveLocallyIncludingDefinitions(expr.referenceName!!, expr)
+              val referenceText = PsiTreeUtil.findChildOfType(reference, JSLiteralExpression::class.java)?.value
+              if (referenceText != null) out.addImplicitElement(
+                createImplicitElement(referenceText.toString(), it, VueStoreIndex.JS_KEY, property.name))
+            }
           }
           if (it.name != null) {
             out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, property.name))
