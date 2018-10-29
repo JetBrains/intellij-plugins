@@ -97,7 +97,7 @@ public class Angular2EntityUtils {
       else {
         result.add(INDEX_ELEMENT_NAME_PREFIX + elementName);
       }
-      for (String attrName : sel.getAttrs()) {
+      for (String attrName : sel.getAttrNames()) {
         result.add(INDEX_ATTRIBUTE_NAME_PREFIX + attrName);
       }
     };

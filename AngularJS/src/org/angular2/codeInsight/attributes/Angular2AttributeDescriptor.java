@@ -183,14 +183,19 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return AngularJSIcons.Angular2;
   }
 
-  private static <T> void addDirectiveDescriptors(Collection<T> list,
-                                                  Function<T, ? extends XmlAttributeDescriptor> factory,
-                                                  List<XmlAttributeDescriptor> result) {
+  static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty info) {
+    return info.getType() != null
+           && expandStringLiteralTypes(info.getType()).isDirectlyAssignableType(STRING_TYPE, null);
+  }
+
+  private static <T> void addDirectiveDescriptors(@NotNull Collection<T> list,
+                                                  @NotNull Function<T, ? extends XmlAttributeDescriptor> factory,
+                                                  @NotNull List<XmlAttributeDescriptor> result) {
     list.forEach(el -> ObjectUtils.doIfNotNull(factory.apply(el), result::add));
   }
 
   @NotNull
-  private static Angular2AttributeDescriptor createBinding(Angular2DirectiveProperty info) {
+  private static Angular2AttributeDescriptor createBinding(@NotNull Angular2DirectiveProperty info) {
     return new Angular2AttributeDescriptor("[" + info.getName() + "]", info.getName(), singletonList(info.getNavigableElement()));
   }
 
@@ -202,14 +207,14 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @Nullable
-  private static Angular2AttributeDescriptor createOneTimeBinding(Angular2DirectiveProperty info) {
-    return info.getType() != null
-           && expandStringLiteralTypes(info.getType()).isDirectlyAssignableType(STRING_TYPE, null) ?
-           new Angular2AttributeDescriptor(info.getName(), null, singletonList(info.getNavigableElement())) : null;
+  private static Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
+    return isOneTimeBindingProperty(info)
+           ? new Angular2AttributeDescriptor(info.getName(), null, singletonList(info.getNavigableElement()))
+           : null;
   }
 
   @NotNull
-  private static Angular2EventHandlerDescriptor createEventHandler(Angular2DirectiveProperty info) {
+  private static Angular2EventHandlerDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
     return new Angular2EventHandlerDescriptor("(" + info.getName() + ")", info.getName(),
                                               singletonList(info.getNavigableElement()));
   }

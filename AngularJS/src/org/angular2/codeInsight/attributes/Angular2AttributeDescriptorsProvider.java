@@ -12,6 +12,7 @@ import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import com.intellij.xml.XmlElementDescriptor;
 import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.lang.Angular2LangUtil;
@@ -115,12 +116,12 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       attr -> knownAttributes.add(attr.getName()));
 
     Map<String, List<PsiElement>> attrsFromSelectors = new HashMap<>();
-    Set<String> inputs = new HashSet<>();
+    Map<String, Angular2DirectiveProperty> inputs = new HashMap<>();
     Set<String> outputs = new HashSet<>();
     Set<String> inOuts = new HashSet<>();
     for (Angular2Directive candidate : directiveCandidates) {
       inputs.clear();
-      candidate.getInputs().forEach(in -> inputs.add(in.getName()));
+      candidate.getInputs().forEach(in -> inputs.put(in.getName(), in));
 
       BiConsumer<String, PsiElement> addAttribute = (attrName, element) -> {
         if (!knownAttributes.contains(attrName)) {
@@ -138,7 +139,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
             CANDIDATES_LOOP:
             for (Angular2DirectiveSelectorPsiElement attr : attributeCandidates) {
               String attrName = attr.getName();
-              for (String input : inputs) {
+              for (String input : inputs.keySet()) {
                 if (!input.startsWith(attrName)) {
                   break CANDIDATES_LOOP;
                 }
@@ -156,15 +157,25 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         for (SimpleSelectorWithPsi selector : candidate.getSelector().getSimpleSelectorsWithPsi()) {
           for (Angular2DirectiveSelectorPsiElement attr : selector.getAttributes()) {
             String attrName = attr.getName();
-            addAttribute.accept(attrName, attr);
+            boolean added = false;
             if (inOuts.contains(attrName)) {
               addAttribute.accept("[(" + attrName + ")]", attr);
+              added = true;
             }
-            if (inputs.contains(attrName)) {
+            Angular2DirectiveProperty property;
+            if ((property = inputs.get(attrName)) != null) {
               addAttribute.accept("[" + attrName + "]", attr);
+              added = true;
+              if (Angular2AttributeDescriptor.isOneTimeBindingProperty(property)) {
+                addAttribute.accept(attrName, attr);
+              }
             }
             if (outputs.contains(attrName)) {
               addAttribute.accept("(" + attrName + ")", attr);
+              added = true;
+            }
+            if (!added) {
+              addAttribute.accept(attrName, attr);
             }
           }
           for (SimpleSelectorWithPsi notSelector : selector.getNotSelectors()) {
