@@ -477,6 +477,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
     else if (elementKind.equals(ElementKind.ENUM)) {
       return AllIcons.Nodes.Enum;
     }
+    else if (elementKind.equals(ElementKind.MIXIN)) {
+      return AllIcons.Nodes.AbstractClass;
+    }
     else if (elementKind.equals(ElementKind.ENUM_CONSTANT) || elementKind.equals(ElementKind.FIELD)) {
       return AllIcons.Nodes.Field;
     }
