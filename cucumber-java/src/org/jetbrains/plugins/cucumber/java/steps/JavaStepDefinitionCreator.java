@@ -280,8 +280,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   private static String replaceRegexpWithCucumberExpression(@NotNull String snippet, @NotNull String step) {
     try {
       ParameterTypeRegistry registry = new ParameterTypeRegistry(Locale.getDefault());
-      CucumberExpressionGenerator generator1 = new CucumberExpressionGenerator(registry);
-      GeneratedExpression result = generator1.generateExpressions(step).get(0);
+      CucumberExpressionGenerator generator = new CucumberExpressionGenerator(registry);
+      GeneratedExpression result = generator.generateExpressions(step).get(0);
       if (result != null) {
         String cucumberExpression = new JavaSnippet().escapePattern(result.getSource());
         String[] lines = snippet.split("\n");
