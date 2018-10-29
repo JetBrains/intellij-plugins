@@ -23,7 +23,7 @@ public class AngularJSFileFactory extends FileTypeFactory {
       @NotNull
       @Override
       public String getPresentableString() {
-        return "Angular 2 HTML";
+        return "Angular HTML Template";
       }
     });
   }
