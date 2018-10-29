@@ -232,6 +232,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertInstanceOf(resolve, JSField.class);
     });
   }
+
   public void testBindingAttributeCompletion2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_binding.html", "package.json", "object.ts");
@@ -283,7 +284,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       configureWithMetadataFile(myFixture, "button");
       myFixture.configureByFiles("compiled_binding.html", "color.d.ts");
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(),  "color");
+      assertContainsElements(myFixture.getLookupElementStrings(), "color");
     });
   }
 
@@ -292,7 +293,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       configureWithMetadataFile(myFixture, "primeButton");
       myFixture.configureByFiles("primeButton.html");
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(),  "icon", "iconPos", "label");
+      assertContainsElements(myFixture.getLookupElementStrings(), "icon", "iconPos", "label");
     });
   }
 
@@ -301,8 +302,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       configureWithMetadataFile(myFixture, "button");
       myFixture.configureByFiles("compiled_binding.html", "color.d.ts");
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(),  "color");
-      assertDoesntContain(myFixture.getLookupElementStrings(),  "tabIndex");
+      assertContainsElements(myFixture.getLookupElementStrings(), "color");
+      assertDoesntContain(myFixture.getLookupElementStrings(), "tabIndex");
     });
   }
 
@@ -478,6 +479,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertUnresolvedReference("*myHover<caret>List");
     });
   }
+
   public void testTemplate20JavaScript() {
     configureWithMetadataFile(myFixture, "template");
     myFixture.configureByFiles("template.html");
@@ -663,4 +665,22 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("ng_no_validate_directive.ts", resolve.getContainingFile().getName());
   }
 
+  public void testSelectorBasedAttributes() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      myFixture.configureByFiles("selectorBasedAttributes.ts", "package.json");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "[myInput]",
+                             "(myOutput)",
+                             "[mySimpleBindingInput]","mySimpleBindingInput",
+                             "myPlain",
+                             "[myInOut]", "[(myInOut)]");
+      assertDoesntContain(myFixture.getLookupElementStrings(),
+                          "myInput", "(myInput)", "[(myInput)]",
+                          "myOutput", "[myOutput]", "[(myOutput)]",
+                          "[myPlain]", "(myPlain)", "[(myPlain)]",
+                          "(myInOut)", "myInOut",
+                          "myInOutChange", "(myInOutChange)", "[myInOutChange]", "[(myInOutChange)]");
+    });
+  }
 }

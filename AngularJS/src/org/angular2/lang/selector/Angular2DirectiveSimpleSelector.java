@@ -187,13 +187,14 @@ public class Angular2DirectiveSimpleSelector {
    * ```
    */
   @NotNull
-  public List<String> getAttrs() {
+  public List<String> getAttrNames() {
     List<String> result = new ArrayList<>();
     if (!classNames.isEmpty()) {
       result.add("class");
-      result.add(StringUtil.join(this.classNames, " "));
     }
-    result.addAll(this.attrs);
+    for (int i = 0; i < attrs.size(); i += 2) {
+      result.add(attrs.get(i));
+    }
     return result;
   }
 
@@ -282,5 +283,4 @@ public class Angular2DirectiveSimpleSelector {
       return notSelectors;
     }
   }
-
 }
