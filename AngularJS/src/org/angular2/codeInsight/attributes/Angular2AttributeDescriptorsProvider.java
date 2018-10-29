@@ -133,7 +133,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         if (selectors.size() == 1) {
           List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selectors.get(0).getAttributes();
           if (attributeCandidates.size() == 1) {
-            addAttribute.accept("*" + attributeCandidates.get(0).getName(), attributeCandidates.get(0));
+            addAttribute.accept("*" + attributeCandidates.get(0).getName(), attributeCandidates.get(0).getNavigationElement());
           }
           else {
             CANDIDATES_LOOP:
@@ -144,7 +144,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
                   break CANDIDATES_LOOP;
                 }
               }
-              addAttribute.accept("*" + attrName, attr);
+              addAttribute.accept("*" + attrName, attr.getNavigationElement());
             }
           }
         }
@@ -159,28 +159,28 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
             String attrName = attr.getName();
             boolean added = false;
             if (inOuts.contains(attrName)) {
-              addAttribute.accept("[(" + attrName + ")]", attr);
+              addAttribute.accept("[(" + attrName + ")]", attr.getNavigationElement());
               added = true;
             }
             Angular2DirectiveProperty property;
             if ((property = inputs.get(attrName)) != null) {
-              addAttribute.accept("[" + attrName + "]", attr);
+              addAttribute.accept("[" + attrName + "]", attr.getNavigationElement());
               added = true;
               if (Angular2AttributeDescriptor.isOneTimeBindingProperty(property)) {
-                addAttribute.accept(attrName, attr);
+                addAttribute.accept(attrName, attr.getNavigationElement());
               }
             }
             if (outputs.contains(attrName)) {
-              addAttribute.accept("(" + attrName + ")", attr);
+              addAttribute.accept("(" + attrName + ")", attr.getNavigationElement());
               added = true;
             }
             if (!added) {
-              addAttribute.accept(attrName, attr);
+              addAttribute.accept(attrName, attr.getNavigationElement());
             }
           }
           for (SimpleSelectorWithPsi notSelector : selector.getNotSelectors()) {
             for (Angular2DirectiveSelectorPsiElement attr : notSelector.getAttributes()) {
-              addAttribute.accept(attr.getName(), attr);
+              addAttribute.accept(attr.getName(), attr.getNavigationElement());
             }
           }
         }

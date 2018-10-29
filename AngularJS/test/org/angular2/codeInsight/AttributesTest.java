@@ -550,7 +550,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       configureWithMetadataFile(myFixture, "routerLink");
       myFixture.configureByFiles("routerLink.html");
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(), "routerLink", "routerLink2");
+      assertContainsElements(myFixture.getLookupElementStrings(), "[routerLink]", "routerLink2");
     });
   }
 
@@ -602,7 +602,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       configureWithMetadataFile(myFixture, "flexOrder");
       myFixture.configureByFiles("flexOrder.html");
       myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(), "fxFlexOrder");
+      assertContainsElements(myFixture.getLookupElementStrings(), "[fxFlexOrder]");
     });
   }
 

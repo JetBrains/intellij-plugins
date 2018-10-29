@@ -22,13 +22,13 @@ public class Angular2MetadataEntity<Stub extends Angular2MetadataEntityStub> ext
   @NotNull
   @Override
   public PsiElement getNavigableElement() {
-    return notNull(getTypeScriptClass(), this);
+    return getSourceElement();
   }
 
   @NotNull
   @Override
   public PsiElement getSourceElement() {
-    return this;
+    return notNull(getTypeScriptClass(), this);
   }
 
   @Nullable
