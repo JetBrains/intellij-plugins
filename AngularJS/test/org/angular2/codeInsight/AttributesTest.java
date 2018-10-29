@@ -6,6 +6,8 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
+import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -681,6 +683,15 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
                           "[myPlain]", "(myPlain)", "[(myPlain)]",
                           "(myInOut)", "myInOut",
                           "myInOutChange", "(myInOutChange)", "[myInOutChange]", "[(myInOutChange)]");
+    });
+  }
+
+  public void testExportAs() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      myFixture.enableInspections(JSUnresolvedVariableInspection.class);
+      myFixture.enableInspections(JSCheckFunctionSignaturesInspection.class);
+      myFixture.configureByFiles("exportAs.ts", "package.json");
+      myFixture.checkHighlighting(true, false, true);
     });
   }
 }

@@ -85,9 +85,12 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return getAttributeDescriptor(attrName, xmlTag, this::getAttributeDescriptors);
   }
 
-  @NotNull
-  public static Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag) {
-    Set<Angular2Directive> directiveCandidates = new HashSet<>();
+  public static Set<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag) {
+    return getApplicableDirectives(xmlTag, new HashSet<>());
+  }
+
+  private static Set<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag,
+                                                                @NotNull Set<Angular2Directive> directiveCandidates) {
     directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), xmlTag.getName()));
     directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), ""));
 
@@ -102,7 +105,15 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         matchedDirectives.add(directive);
       }
     });
+    return matchedDirectives;
+  }
 
+  @NotNull
+  public static Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag) {
+    Set<Angular2Directive> directiveCandidates = new HashSet<>();
+    Set<Angular2Directive> matchedDirectives = getApplicableDirectives(xmlTag, directiveCandidates);
+
+    boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
     List<XmlAttributeDescriptor> result = new ArrayList<>();
     for (Angular2Directive matchedDirective : matchedDirectives) {
       result.addAll(Angular2AttributeDescriptor.getDirectiveDescriptors(matchedDirective, isTemplateTag));
