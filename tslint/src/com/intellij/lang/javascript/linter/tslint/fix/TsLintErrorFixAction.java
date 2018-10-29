@@ -34,6 +34,12 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
   private final long myModificationStamp;
   private final SmartPsiElementPointer<PsiFile> myPsiFilePointer;
 
+  private static final Comparator<TsLintFixInfo.TsLintFixReplacements> REPLACEMENTS_COMPARATOR =
+    Comparator
+      .<TsLintFixInfo.TsLintFixReplacements>comparingInt(value -> value.innerStart + value.innerLength)
+      .thenComparingInt(value -> value.innerStart)
+      .reversed();
+
   public TsLintErrorFixAction(@NotNull PsiFile file, @NotNull TsLinterError error, long modificationStamp) {
     myPsiFilePointer = SmartPointerManager.getInstance(file.getProject()).createSmartPsiElementPointer(file);
     myError = error;
@@ -61,7 +67,7 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    return editor != null 
+    return editor != null
            && editor.getDocument().getModificationStamp() == myModificationStamp
            && myError.getFixInfo() != null
            ///to choose top-level file if fix ('e.g. "quotes"') is invoked on string with injection.
@@ -78,17 +84,15 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
     if (info == null) {
       return;
     }
+    TsLintFixInfo.TsLintFixReplacements[] replacements = info.innerReplacements;
+    if (replacements == null || replacements.length == 0) {
+      return;
+    }
+    Arrays.sort(replacements, REPLACEMENTS_COMPARATOR);
+
     WriteCommandAction.runWriteCommandAction(project, getText(), null, () -> {
       Document document = editor.getDocument();
       String separator = FileDocumentManager.getInstance().getLineSeparator(file.getViewProvider().getVirtualFile(), project);
-
-      TsLintFixInfo.TsLintFixReplacements[] replacements = info.innerReplacements;
-
-      if (replacements == null || replacements.length == 0) {
-        return;
-      }
-      Arrays.sort(replacements, Comparator.comparingInt(el -> -el.innerStart));
-
       if (!applyReplacements(document, separator, replacements)) return;
 
       PsiDocumentManager.getInstance(project).commitDocument(document);

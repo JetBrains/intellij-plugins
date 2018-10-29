@@ -115,6 +115,10 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     doFixTest("fix", "TSLint: Fix 'quotemark'");
   }
 
+  public void testFixArrowReturnShorthand() {
+    doFixTest("main", "TSLint: Fix 'arrow-return-shorthand'");
+  }
+
   public void testSuppressRuleForLine() {
     doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "'quotemark'"));
   }
