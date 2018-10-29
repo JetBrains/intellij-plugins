@@ -35,6 +35,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import static org.angularjs.AngularTestUtil.configureWithMetadataFile;
+
 public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
@@ -267,7 +269,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testOneTimeBindingAttributeResolve2JavaScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("compiled_binding.after.html", "package.json", "button.metadata.json", "button.d.ts", "color.d.ts");
+      configureWithMetadataFile(myFixture, "button");
+      myFixture.configureByFiles("compiled_binding.after.html", "button.d.ts", "color.d.ts");
       PsiElement resolve = resolveReference("col<caret>or");
       assertEquals("color.d.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, TypeScriptPropertySignature.class);
@@ -277,7 +280,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testOneTimeBindingAttributeCompletion2JavaScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("compiled_binding.html", "package.json", "button.metadata.json", "button.d.ts", "color.d.ts");
+      configureWithMetadataFile(myFixture, "button");
+      myFixture.configureByFiles("compiled_binding.html", "color.d.ts");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(),  "color");
     });
@@ -285,7 +289,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testOneTimeBindingAttributeCompletion2JavaScriptPrimeButton() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("primeButton.html", "package.json", "primeButton.metadata.json", "primeButton.d.ts");
+      configureWithMetadataFile(myFixture, "primeButton");
+      myFixture.configureByFiles("primeButton.html");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(),  "icon", "iconPos", "label");
     });
@@ -293,7 +298,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testOneTimeBindingAttributeCompletion2ES6() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("compiled_binding.html", "package.json", "button.metadata.json", "button.d.ts", "color.d.ts");
+      configureWithMetadataFile(myFixture, "button");
+      myFixture.configureByFiles("compiled_binding.html", "color.d.ts");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(),  "color");
       assertDoesntContain(myFixture.getLookupElementStrings(),  "tabIndex");
@@ -374,7 +380,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testForCompletion2Javascript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("for2.html", "common.metadata.json", "package.json");
+      configureWithMetadataFile(myFixture, "common");
+      myFixture.configureByFiles("for2.html");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("ngF<caret>", myFixture.getFile());
       myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
       myFixture.completeBasic();
@@ -384,7 +391,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testIfCompletion4JavascriptUmd() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("if4.html", "common.metadata.json", "package.json");
+      configureWithMetadataFile(myFixture, "common");
+      myFixture.configureByFiles("if4.html");
       int offsetBySignature = AngularTestUtil.findOffsetBySignature("*<caret>", myFixture.getFile());
       myFixture.getEditor().getCaretModel().moveToOffset(offsetBySignature);
       myFixture.completeBasic();
@@ -395,7 +403,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testForTemplateCompletion2Javascript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("for2Template.html", "common.metadata.json", "package.json");
+      configureWithMetadataFile(myFixture, "common");
+      myFixture.configureByFiles("for2Template.html");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "*ngFor");
     });
@@ -403,7 +412,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testForOfResolve2Javascript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("for2.html", "common.metadata.json", "package.json");
+      configureWithMetadataFile(myFixture, "common");
+      myFixture.configureByFiles("for2.html");
       PsiElement resolve = resolveReference("ngF<caret>");
       assertEquals("common.metadata.json", resolve.getContainingFile().getName());
       assertEquals(
@@ -469,14 +479,16 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
   public void testTemplate20JavaScript() {
-    myFixture.configureByFiles("template.html", "template.metadata.json", "package.json");
+    configureWithMetadataFile(myFixture, "template");
+    myFixture.configureByFiles("template.html");
     PsiElement resolve = resolveReference("*myHover<caret>List");
     assertEquals("template.metadata.json", resolve.getContainingFile().getName());
     assertUnresolvedReference("myHover<caret>List");
   }
 
   public void testNoTemplate20JavaScript() {
-    myFixture.configureByFiles("noTemplate.html", "noTemplate.metadata.json", "package.json");
+    configureWithMetadataFile(myFixture, "noTemplate");
+    myFixture.configureByFiles("noTemplate.html");
     PsiElement resolve = resolveReference("myHover<caret>List");
     assertEquals("noTemplate.metadata.json", resolve.getContainingFile().getName());
     assertUnresolvedReference("*myHover<caret>List");
@@ -533,7 +545,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testRouterLink() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("routerLink.html", "package.json", "routerLink.metadata.json");
+      configureWithMetadataFile(myFixture, "routerLink");
+      myFixture.configureByFiles("routerLink.html");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "routerLink", "routerLink2");
     });
@@ -541,7 +554,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testComplexSelectorList() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("material.html", "package.json", "button.metadata.json");
+      configureWithMetadataFile(myFixture, "button");
+      myFixture.configureByFiles("material.html");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "mat-icon-button");
     });
@@ -549,7 +563,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testSelectorConcatenationList() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("material.html", "package.json", "button.metadata.json");
+      configureWithMetadataFile(myFixture, "button");
+      myFixture.configureByFiles("material.html");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "mat-raised-button");
     });
@@ -557,7 +572,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testComplexSelectorList2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("ionic.html", "package.json", "ionic.metadata.json");
+      configureWithMetadataFile(myFixture, "ionic");
+      myFixture.configureByFiles("ionic.html");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
     });
@@ -581,7 +597,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testSelectorListSpacesCompiled() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("flexOrder.html", "package.json", "flexOrder.metadata.json");
+      configureWithMetadataFile(myFixture, "flexOrder");
+      myFixture.configureByFiles("flexOrder.html");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "fxFlexOrder");
     });

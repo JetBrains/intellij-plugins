@@ -5,6 +5,7 @@ import org.angular2.cli.BlueprintListTest;
 import org.angular2.codeInsight.*;
 import org.angular2.editor.ComponentDeclarationNavigationTest;
 import org.angular2.formatting.FormattingTest;
+import org.angular2.index.MetadataStubsTest;
 import org.angular2.inspections.EmptyEventHandlerInspectionTest;
 import org.angular2.lang.expr.lexer.Angular2LexerSpecTest;
 import org.angular2.lang.expr.lexer.Angular2LexerTest;
@@ -49,6 +50,7 @@ import org.junit.runners.Suite;
   DirectiveRenameTest.class,
   RenameTest.class,
   ComponentDeclarationNavigationTest.class,
+  MetadataStubsTest.class,
   Angular2ServiceTest.class,
 })
 public class Angular2TestSuite {

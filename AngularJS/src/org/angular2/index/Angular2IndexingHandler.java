@@ -121,7 +121,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       return;
     }
     boolean isTemplate = !isComponent && isTemplate(directiveClass);
-    Set<String> indexNames = Angular2EntityUtils.getDirectiveIndexNames(directiveClass.getProject(), selector, isTemplate);
+    Set<String> indexNames = Angular2EntityUtils.getDirectiveIndexNames(selector, isTemplate);
     JSImplicitElement directive = new JSImplicitElementImpl
       .Builder(ObjectUtils.notNull(directiveClass.getName(), selector), directiveClass)
       .setType(JSImplicitElement.Type.Class)
@@ -303,5 +303,4 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     PsiFile hostFile = FileContextUtil.getContextFile(original != context ? original : context.getContainingFile().getOriginalFile());
     return hostFile != null ? hostFile.getOriginalFile() : null;
   }
-
 }

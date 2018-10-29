@@ -2,13 +2,12 @@
 package org.angular2.lang.metadata.psi;
 
 import com.intellij.lang.Language;
-import com.intellij.lang.LanguageParserDefinitions;
-import com.intellij.lang.ParserDefinition;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.impl.PsiFileEx;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.file.PsiBinaryFileImpl;
@@ -17,9 +16,11 @@ import com.intellij.psi.impl.source.StubbedSpine;
 import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.psi.stubs.StubTree;
 import com.intellij.psi.stubs.StubTreeLoader;
-import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.reference.SoftReference;
+import org.angular2.lang.metadata.MetadataJsonFileType;
+import org.angular2.lang.metadata.MetadataJsonLanguage;
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithStubSupport, PsiFileEx {
@@ -28,37 +29,31 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
 
   private volatile SoftReference<StubTree> myStub;
   private final Object myStubLock = new Object();
-  private final Language myLanguage;
 
-  public MetadataFileImpl(FileViewProvider fileViewProvider, Language language) {
+  private final MetadataJsonFileType myFileType;
+
+  public MetadataFileImpl(FileViewProvider fileViewProvider, MetadataJsonFileType fileType) {
     super((PsiManagerImpl)fileViewProvider.getManager(), fileViewProvider);
-    myLanguage = language;
+    myFileType = fileType;
+  }
+
+  @Override
+  public PsiFile getContainingFile() {
+    if (!isValid()) throw new PsiInvalidElementAccessException(this);
+    return this;
   }
 
   @NotNull
   @Override
   public Language getLanguage() {
-    return myLanguage;
+    return MetadataJsonLanguage.INSTANCE;
   }
 
+  @NotNull
   @Override
-  public int getTextLength() {
-    return 0;
-  }
-
-  @Override
-  public int getStartOffsetInParent() {
-    return 0;
-  }
-
-  @Override
-  public int getTextOffset() {
-    return 0;
-  }
-
-  @Override
-  public TextRange getTextRange() {
-    return TextRange.EMPTY_RANGE;
+  public PsiElement[] getChildren() {
+    MetadataFileStubImpl root = (MetadataFileStubImpl)getStubTree().getRoot();
+    return root.getPsi().getChildren();
   }
 
   @Override
@@ -75,8 +70,7 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
       if (LOG.isDebugEnabled()) {
         LOG.debug("No stub for class file in index: " + getVirtualFile().getPresentableUrl());
       }
-      ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(myLanguage);
-      newStubTree = new StubTree(new MetadataFileStubImpl(this, (IStubFileElementType)parserDefinition.getFileNodeType()));
+      newStubTree = new StubTree(new MetadataFileStubImpl(this, myFileType.getFileElementType()));
     }
 
     synchronized (myStubLock) {
@@ -118,4 +112,9 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
     }
   }
 
+  @Override
+  @NonNls
+  public String toString() {
+    return "MetadataFile:" + getName();
+  }
 }

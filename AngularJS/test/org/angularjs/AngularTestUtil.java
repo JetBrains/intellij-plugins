@@ -24,6 +24,12 @@ import static org.junit.Assert.assertTrue;
  */
 public class AngularTestUtil {
 
+  public static void configureWithMetadataFile(@NotNull CodeInsightTestFixture fixture,
+                                               @NotNull String name) {
+    fixture.copyFileToProject(name + ".metadata.json");
+    fixture.configureByFiles("package.json", name + ".d.ts");
+  }
+
   public static String getBaseTestDataPath(Class clazz) {
     String contribPath = getContribPath();
     return contribPath + "/AngularJS/test/" + clazz.getPackage().getName().replace('.', '/') + "/data/";

@@ -4,6 +4,7 @@ package org.angular2.entities.metadata;
 import com.intellij.psi.tree.IStubFileElementType;
 import org.angular2.entities.metadata.psi.*;
 import org.angular2.entities.metadata.stubs.*;
+import org.angular2.lang.metadata.MetadataJsonLanguage;
 import org.angular2.lang.metadata.psi.MetadataElementType;
 import org.angular2.lang.metadata.psi.MetadataStubFileElementType;
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
@@ -30,14 +31,14 @@ public interface Angular2MetadataElementTypes {
   MetadataElementType<Angular2MetadataComponentStub> COMPONENT =
     new Angular2MetadataElementType<>("COMPONENT", Angular2MetadataComponentStub::new, Angular2MetadataComponent::new);
 
-  IStubFileElementType<MetadataFileStubImpl> FILE = new MetadataStubFileElementType(Angular2MetadataLanguage.INSTANCE);
+  IStubFileElementType<MetadataFileStubImpl> FILE = new MetadataStubFileElementType(MetadataJsonLanguage.INSTANCE);
 
   final class Angular2MetadataElementType<Stub extends Angular2MetadataElementStub> extends MetadataElementType<Stub> {
 
     public Angular2MetadataElementType(@NotNull String debugName,
                                        @NotNull MetadataStubConstructor<Stub> stubConstructor,
                                        @NotNull MetadataElementConstructor<Stub> psiConstructor) {
-      super(debugName, Angular2MetadataLanguage.INSTANCE, stubConstructor, psiConstructor);
+      super(debugName, MetadataJsonLanguage.INSTANCE, stubConstructor, psiConstructor);
     }
   }
 }
