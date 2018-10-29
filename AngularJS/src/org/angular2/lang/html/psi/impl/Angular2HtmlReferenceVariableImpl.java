@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
@@ -18,8 +19,8 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.ObjectUtils;
 import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
+import org.angular2.entities.Angular2Directive;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
@@ -27,7 +28,10 @@ import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.lang.javascript.psi.types.TypeScriptTypeParser.buildTypeFromClass;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClass;
+import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getApplicableDirectives;
 
 public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariableStub<JSVariable>, JSVariable>
   implements Angular2HtmlReferenceVariable {
@@ -48,13 +52,25 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
       return null;
     }
 
-    String tagName = ObjectUtils.doIfNotNull(reference.getParent(), XmlTag::getName);
-
-    if (tagName != null
-        && HtmlDescriptorsTable.getTagDescriptor(tagName) != null
-        && reference.getValueElement() == null) {
-      return JSTypeUtils.createType(getHtmlElementClass(getProject(), tagName),
-                                    JSTypeSourceFactory.createTypeSource(this, true));
+    XmlTag tag = reference.getParent();
+    if (tag != null) {
+      if (reference.getValueElement() == null
+          || StringUtil.isEmpty(reference.getValueElement().getValue())) {
+        String tagName = tag.getName();
+        if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null) {
+          return JSTypeUtils.createType(getHtmlElementClass(getProject(), tagName),
+                                        JSTypeSourceFactory.createTypeSource(this, true));
+        }
+      }
+      else {
+        String exportName = reference.getValueElement().getValue();
+        for (Angular2Directive directive : getApplicableDirectives(tag)) {
+          if (exportName.equals(directive.getExportAs())) {
+            return doIfNotNull(directive.getTypeScriptClass(),
+                               clazz -> buildTypeFromClass(clazz, false));
+          }
+        }
+      }
     }
     return null;
   }
