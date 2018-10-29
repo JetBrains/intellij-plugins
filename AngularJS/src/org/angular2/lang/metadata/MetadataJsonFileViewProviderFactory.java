@@ -2,15 +2,12 @@
 package org.angular2.lang.metadata;
 
 import com.intellij.lang.Language;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.metadata.Angular2MetadataLanguage;
 import org.angular2.lang.metadata.psi.MetadataFileImpl;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 public class MetadataJsonFileViewProviderFactory implements FileViewProviderFactory {
 
@@ -20,48 +17,31 @@ public class MetadataJsonFileViewProviderFactory implements FileViewProviderFact
                                                  Language language,
                                                  @NotNull PsiManager manager,
                                                  boolean eventSystemEnabled) {
-    // To handle other, non-Angular metadata stubs, provide extension to supply other metadata languages here
-    return new MetadataFileViewProvider(manager, file, eventSystemEnabled, Angular2MetadataLanguage.INSTANCE);
+    assert file.getFileType() instanceof MetadataJsonFileType;
+    return new MetadataFileViewProvider(manager, file, (MetadataJsonFileType)file.getFileType(), eventSystemEnabled);
   }
 
-  private static class MetadataFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider {
+  public static class MetadataFileViewProvider extends SingleRootFileViewProvider {
 
-    private final Angular2MetadataLanguage myStubsLanguage;
-    private final Set<Language> myLanguages;
+    @NotNull private final MetadataJsonFileType myFileType;
 
-    protected MetadataFileViewProvider(PsiManager manager,
-                                       VirtualFile virtualFile,
-                                       boolean physical, Angular2MetadataLanguage stubsLanguage) {
-      super(manager, virtualFile, physical);
-      myStubsLanguage = stubsLanguage;
-      myLanguages = ContainerUtil.newHashSet(MetadataJsonLanguage.INSTANCE, myStubsLanguage);
+    private MetadataFileViewProvider(@NotNull PsiManager manager,
+                                     @NotNull VirtualFile file,
+                                     @NotNull MetadataJsonFileType fileType,
+                                     boolean eventSystemEnabled) {
+      super(manager, file, eventSystemEnabled, MetadataJsonLanguage.INSTANCE, fileType);
+      myFileType = fileType;
+    }
+
+    @Override
+    protected PsiFile createFile(@NotNull Project project, @NotNull VirtualFile file, @NotNull FileType fileType) {
+      return new MetadataFileImpl(this, (MetadataJsonFileType)fileType);
     }
 
     @NotNull
     @Override
-    public Language getBaseLanguage() {
-      return MetadataJsonLanguage.INSTANCE;
-    }
-
-    @NotNull
-    @Override
-    public Set<Language> getLanguages() {
-      return myLanguages;
-    }
-
-    @NotNull
-    @Override
-    protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(@NotNull VirtualFile fileCopy) {
-      return new MetadataFileViewProvider(getManager(), fileCopy, false, myStubsLanguage);
-    }
-
-    @Nullable
-    @Override
-    protected PsiFile createFile(@NotNull Language lang) {
-      if (lang == myStubsLanguage) {
-        return new MetadataFileImpl(this, myStubsLanguage);
-      }
-      return super.createFile(lang);
+    public SingleRootFileViewProvider createCopy(@NotNull VirtualFile copy) {
+      return new MetadataFileViewProvider(getManager(), copy, myFileType, false);
     }
   }
 }

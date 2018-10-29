@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
@@ -81,7 +80,7 @@ public class Angular2EntityUtils {
   }
 
   @NotNull
-  public static Set<String> getDirectiveIndexNames(@NotNull Project project, @NotNull String selector, boolean isTemplate) {
+  public static Set<String> getDirectiveIndexNames(@NotNull String selector, boolean isTemplate) {
     List<Angular2DirectiveSimpleSelector> selectors;
     try {
       selectors = Angular2DirectiveSimpleSelector.parse(selector);
