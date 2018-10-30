@@ -13,10 +13,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.editor.Caret;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
@@ -50,19 +47,17 @@ import static org.intellij.plugins.markdown.lang.MarkdownElementTypes.*;
 public class MarkdownIntroduceLinkReferenceAction extends AnAction implements DumbAware {
   private static final String VAR_NAME = "reference";
 
-  @SuppressWarnings("Duplicates")
   @Override
   public void update(@NotNull AnActionEvent e) {
     super.update(e);
 
-    final Editor editor = MarkdownActionUtil.findMarkdownTextEditor(e);
-    final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
-    if (editor == null || psiFile == null || !psiFile.isValid()) {
+    Pair<PsiFile, Editor> fileAndEditor = getFileAndEditor(e);
+    if (fileAndEditor == null) {
       return;
     }
 
-    Caret caret = editor.getCaretModel().getCurrentCaret();
-    final Couple<PsiElement> elements = MarkdownActionUtil.getElementsUnderCaretOrSelection(psiFile, caret);
+    Caret caret = fileAndEditor.getSecond().getCaretModel().getCurrentCaret();
+    final Couple<PsiElement> elements = MarkdownActionUtil.getElementsUnderCaretOrSelection(fileAndEditor.getFirst(), caret);
 
     if (elements == null) {
       e.getPresentation().setEnabled(false);
@@ -80,14 +75,15 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
     e.getPresentation().setEnabled(true);
   }
 
-  @SuppressWarnings("Duplicates")
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    final Editor editor = MarkdownActionUtil.findMarkdownTextEditor(e);
-    final PsiFile file = e.getData(CommonDataKeys.PSI_FILE);
-    if (editor == null || file == null) {
+    Pair<PsiFile, Editor> fileAndEditor = getFileAndEditor(e);
+    if (fileAndEditor == null) {
       return;
     }
+
+    final Editor editor = fileAndEditor.getSecond();
+    final PsiFile file = fileAndEditor.getFirst();
 
     Caret caret = editor.getCaretModel().getCurrentCaret();
     Couple<PsiElement> elements = MarkdownActionUtil.getElementsUnderCaretOrSelection(file, caret);
@@ -121,7 +117,8 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
       PsiElement declarationLabel = declaration.getFirstChild();
       PsiElement referenceLabel = reference.getFirstChild().getLastChild();
 
-      Expression expression = ApplicationManager.getApplication().isUnitTestMode() ? new TextExpression("reference") : new EmptyExpression();
+      Expression expression =
+        ApplicationManager.getApplication().isUnitTestMode() ? new TextExpression("reference") : new EmptyExpression();
       builder
         .replaceElement(declarationLabel, TextRange.create(1, declarationLabel.getTextLength() - 1), VAR_NAME, expression, true);
       builder
@@ -130,8 +127,25 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
       editor.getCaretModel().moveToOffset(0);
       Template template = builder.buildInlineTemplate();
 
-      TemplateManager.getInstance(project).startTemplate(editor, template, new DuplicatesFinder(file, editor, url));
+      PsiElement title = referencePair.getSecond().getLastChild();
+      String titleText = null;
+      if (PsiUtilCore.getElementType(title) == LINK_TITLE) {
+        titleText = title.getText();
+      }
+
+      TemplateManager.getInstance(project).startTemplate(editor, template, new DuplicatesFinder(file, editor, url, titleText));
     });
+  }
+
+  @Nullable
+  private static Pair<PsiFile, Editor> getFileAndEditor(@NotNull AnActionEvent e) {
+    final Editor editor = MarkdownActionUtil.findMarkdownTextEditor(e);
+    final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
+    if (editor == null || psiFile == null || !psiFile.isValid()) {
+      return null;
+    }
+
+    return Pair.create(psiFile, editor);
   }
 
   private static void insertLastNewLine(@NotNull PsiFile psiFile) {
@@ -207,10 +221,16 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
   public static void replaceDuplicates(@NotNull PsiElement file,
                                        @NotNull Editor editor,
                                        @NotNull List<SmartPsiElementPointer<PsiElement>> duplicates,
-                                       @NotNull String referenceText) {
+                                       @NotNull String referenceText,
+                                       boolean showWarning) {
+
+    String warningMessage = "";
+    if (showWarning) {
+      warningMessage = "\n\n" + MarkdownBundle.message("markdown.extract.link.extract.duplicates.warning");
+    }
     final String message =
       MarkdownBundle.message("markdown.extract.link.extract.duplicates.description", ApplicationNamesInfo.getInstance().getProductName(),
-                             duplicates.size());
+                             duplicates.size()) + warningMessage;
     final boolean isUnittest = ApplicationManager.getApplication().isUnitTestMode();
     final Project project = file.getProject();
     final int exitCode =
@@ -283,11 +303,13 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
     @NotNull private final String myUrl;
     @NotNull private final PsiFile myFile;
     @NotNull private final Editor myEditor;
+    @Nullable private final String myTitleText;
 
-    private DuplicatesFinder(@NotNull PsiFile file, @NotNull Editor editor, @NotNull String url) {
+    private DuplicatesFinder(@NotNull PsiFile file, @NotNull Editor editor, @NotNull String url, String titleText) {
       myUrl = url;
       myFile = file;
       myEditor = editor;
+      myTitleText = titleText;
     }
 
     @Override
@@ -312,22 +334,36 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
             return MarkdownTokenTypeSets.LINKS.contains(PsiUtilCore.getElementType(element))
                    && myUrl.equals(getUrl(element))
                    //inside inline links
-                   && PsiTreeUtil.findFirstParent(element, true, element1 ->  PsiUtilCore.getElementType(element1) == INLINE_LINK) == null
+                   && PsiTreeUtil.findFirstParent(element, true, element1 -> PsiUtilCore.getElementType(element1) == INLINE_LINK) == null
                    //generated link
                    && PsiTreeUtil.findFirstParent(element, element1 -> PsiUtilCore.getElementType(element1) == FULL_REFERENCE_LINK) == null;
           }
         });
+
+      boolean showWarning =
+        !Arrays.stream(duplicatedLinks)
+          .allMatch(link -> {
+            PsiElement[] children = link.getChildren();
+            return (children.length == 0 && myTitleText == null) ||
+                   (children.length == 3
+                    && PsiUtilCore.getElementType(children[2]) == LINK_TITLE
+                    && children[2].getText().equals(myTitleText));
+          });
 
       if (duplicatedLinks.length > 0) {
         List<SmartPsiElementPointer<PsiElement>> duplicates =
           ContainerUtil.map(duplicatedLinks, link -> SmartPointerManager.createPointer(link));
 
         if (ApplicationManager.getApplication().isUnitTestMode()) {
-          replaceDuplicates(myFile, myEditor, duplicates, referenceText);
+          replaceDuplicates(myFile, myEditor, duplicates, referenceText, showWarning);
+          PsiDocumentManager.getInstance(myFile.getProject()).doPostponedOperationsAndUnblockDocument(myEditor.getDocument());
+
+          Document document = myEditor.getDocument();
+          document.setText(document.getText() + "\nTitles Warning: " + showWarning);
         }
         else {
           ApplicationManager.getApplication().invokeLater(
-            () -> replaceDuplicates(myFile, myEditor, duplicates, referenceText));
+            () -> replaceDuplicates(myFile, myEditor, duplicates, referenceText, showWarning));
         }
       }
     }
