@@ -2,6 +2,7 @@
 package org.angular2.entities.metadata;
 
 import com.intellij.json.psi.JsonValue;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IStubFileElementType;
 import org.angular2.entities.metadata.stubs.Angular2MetadataNodeModuleStub;
@@ -9,7 +10,7 @@ import org.angular2.lang.metadata.MetadataJsonFileType;
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2MetadataFileType extends MetadataJsonFileType {
+public final class Angular2MetadataFileType extends MetadataJsonFileType {
 
   public static final Angular2MetadataFileType INSTANCE = new Angular2MetadataFileType();
 
@@ -18,11 +19,11 @@ public class Angular2MetadataFileType extends MetadataJsonFileType {
 
   @Override
   public boolean isMyFileType(@NotNull VirtualFile file) {
-    final String fileName = file.getName();
+    final CharSequence fileName = file.getNameSequence();
     final VirtualFile parent;
-    if (fileName.endsWith(METADATA_SUFFIX)
+    if (StringUtil.endsWith(fileName, METADATA_SUFFIX)
         && (parent = file.getParent()) != null) {
-      final VirtualFile sibling = parent.findChild(fileName.substring(0, fileName.length() - METADATA_SUFFIX.length()) + D_TS_SUFFIX);
+      final VirtualFile sibling = parent.findChild(fileName.subSequence(0, fileName.length() - METADATA_SUFFIX.length()) + D_TS_SUFFIX);
       return sibling != null;
     }
     return false;

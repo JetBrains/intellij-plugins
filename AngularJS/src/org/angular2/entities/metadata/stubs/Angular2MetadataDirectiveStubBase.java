@@ -27,8 +27,8 @@ import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2MetadataDirectiveBase> extends Angular2MetadataEntityStub<Psi> {
 
-  private StringRef mySelector;
-  private StringRef myExportAs;
+  private final StringRef mySelector;
+  private final StringRef myExportAs;
 
   public Angular2MetadataDirectiveStubBase(@Nullable String memberName,
                                            @Nullable StubElement parent,
@@ -36,13 +36,19 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
                                            @NotNull JsonObject initializer,
                                            @NotNull MetadataElementType elementType) {
     super(memberName, parent, source, elementType);
-    loadInitializer(initializer);
+    mySelector = StringRef.fromString(readStringPropertyValue(initializer.findProperty(SELECTOR_PROP)));
+    assert mySelector != null;
+    myExportAs = StringRef.fromString(readStringPropertyValue(initializer.findProperty(EXPORT_AS_PROP)));
+    loadAdditionalBindingMappings(myInputMappings, initializer, Angular2DecoratorUtil.INPUTS_PROP);
+    loadAdditionalBindingMappings(myOutputMappings, initializer, Angular2DecoratorUtil.OUTPUTS_PROP);
   }
 
   public Angular2MetadataDirectiveStubBase(@NotNull StubInputStream stream,
                                            @Nullable StubElement parent, @NotNull MetadataElementType elementType)
     throws IOException {
     super(stream, parent, elementType);
+    mySelector = stream.readName();
+    myExportAs = stream.readName();
   }
 
   @NotNull
@@ -60,21 +66,6 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     super.serialize(stream);
     writeString(mySelector, stream);
     writeString(myExportAs, stream);
-  }
-
-  @Override
-  public void deserialize(@NotNull StubInputStream stream) throws IOException {
-    super.deserialize(stream);
-    mySelector = stream.readName();
-    myExportAs = stream.readName();
-  }
-
-  private void loadInitializer(@NotNull JsonObject initializer) {
-    mySelector = StringRef.fromString(readStringPropertyValue(initializer.findProperty(SELECTOR_PROP)));
-    assert mySelector != null;
-    myExportAs = StringRef.fromString(readStringPropertyValue(initializer.findProperty(EXPORT_AS_PROP)));
-    loadAdditionalBindingMappings(myInputMappings, initializer, Angular2DecoratorUtil.INPUTS_PROP);
-    loadAdditionalBindingMappings(myOutputMappings, initializer, Angular2DecoratorUtil.OUTPUTS_PROP);
   }
 
   protected abstract boolean isTemplate();

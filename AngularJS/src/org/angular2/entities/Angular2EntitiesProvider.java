@@ -65,11 +65,7 @@ public class Angular2EntitiesProvider {
 
   @Nullable
   public static Angular2Directive getDirective(@Nullable PsiElement element) {
-    return getEntity(element, Angular2Directive.class, Angular2IndexingHandler::isDirective,
-                     (dec, el) -> DIRECTIVE_DEC.equals(dec.getDecoratorName())
-                                  ? new Angular2SourceDirective(dec, el)
-                                  : new Angular2SourceComponent(dec, el),
-                     DIRECTIVE_DEC, COMPONENT_DEC);
+    return DIRECTIVE_GETTER.get(element);
   }
 
   @Nullable
@@ -79,7 +75,7 @@ public class Angular2EntitiesProvider {
         && element.getContext() instanceof TypeScriptClass) {
       element = element.getContext();
     }
-    return getEntity(element, Angular2Pipe.class, Angular2IndexingHandler::isPipe, Angular2SourcePipe::new, PIPE_DEC);
+    return PIPE_GETTER.get(element);
   }
 
   @NotNull
@@ -205,63 +201,86 @@ public class Angular2EntitiesProvider {
     });
   }
 
-  @Nullable
-  private static <T extends Angular2Entity> T getEntity(@Nullable PsiElement element,
-                                                        @NotNull Class<T> entityClass,
-                                                        @NotNull Condition<JSImplicitElement> implicitElementTester,
-                                                        @NotNull BiFunction<ES6Decorator, JSImplicitElement, T> constructor,
-                                                        String... decoratorNames) {
-    if (element instanceof JSImplicitElement) {
-      if (!implicitElementTester.value((JSImplicitElement)element)) {
-        return null;
-      }
-      element = element.getContext();
+  private static final EntityGetter<Angular2Directive> DIRECTIVE_GETTER = new EntityGetter<>(
+    Angular2Directive.class, Angular2IndexingHandler::isDirective,
+    (dec, el) -> DIRECTIVE_DEC.equals(dec.getDecoratorName())
+                 ? new Angular2SourceDirective(dec, el)
+                 : new Angular2SourceComponent(dec, el),
+    DIRECTIVE_DEC, COMPONENT_DEC);
+
+  private static final EntityGetter<Angular2Pipe> PIPE_GETTER = new EntityGetter<>(
+    Angular2Pipe.class, Angular2IndexingHandler::isPipe, Angular2SourcePipe::new, PIPE_DEC);
+
+  private static class EntityGetter<T extends Angular2Entity> {
+
+    private final Class<T> myEntityClass;
+    private final Condition<JSImplicitElement> myImplicitElementTester;
+    private final BiFunction<ES6Decorator, JSImplicitElement, T> myEntityConstructor;
+    private final String[] myDecoratorNames;
+
+    private EntityGetter(@NotNull Class<T> aClass,
+                         @NotNull Condition<JSImplicitElement> tester,
+                         @NotNull BiFunction<ES6Decorator, JSImplicitElement, T> constructor,
+                         @NotNull String... names) {
+      myEntityClass = aClass;
+      myImplicitElementTester = tester;
+      myEntityConstructor = constructor;
+      myDecoratorNames = names;
     }
-    if (element instanceof TypeScriptClass
-        && Angular2LangUtil.isAngular2Context(element)) {
-      ES6Decorator decorator = findDecorator((TypeScriptClass)element, decoratorNames);
-      if (decorator != null) {
-        element = decorator;
-      }
-      else {
-        TypeScriptClass typeScriptClass = (TypeScriptClass)element;
-        String className = typeScriptClass.getName();
-        if (className == null
-            ////performance check
-            //|| !className.endsWith("Pipe")
-            //check classes only from d.ts files
-            || !Objects.requireNonNull(typeScriptClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.DECLARE)) {
+
+    public T get(@Nullable PsiElement element) {
+      if (element instanceof JSImplicitElement) {
+        if (!myImplicitElementTester.value((JSImplicitElement)element)) {
           return null;
         }
-        Ref<T> result = new Ref<>();
-        StubIndex.getInstance().processElements(
-          Angular2MetadataEntityClassNameIndex.KEY, className, typeScriptClass.getProject(),
-          GlobalSearchScope.projectScope(typeScriptClass.getProject()), Angular2MetadataEntity.class,
-          e -> {
-            if (e.isValid() && entityClass.isInstance(e) && e.getTypeScriptClass() == typeScriptClass) {
-              //noinspection unchecked
-              result.set((T)e);
-              return false;
-            }
-            return true;
-          });
-        return result.get();
+        element = element.getContext();
       }
-    }
-    if (element instanceof ES6Decorator) {
-      ES6Decorator dec = (ES6Decorator)element;
-      if (!ArrayUtil.contains(dec.getDecoratorName(), decoratorNames)) {
-        return null;
-      }
-      return CachedValuesManager.getCachedValue(dec, () -> {
-        JSImplicitElement entityElement = null;
-        if (dec.getIndexingData() != null) {
-          entityElement = ContainerUtil.find(ObjectUtils.notNull(dec.getIndexingData().getImplicitElements(), Collections::emptyList),
-                                             implicitElementTester);
+      if (element instanceof TypeScriptClass
+          && Angular2LangUtil.isAngular2Context(element)) {
+        ES6Decorator decorator = findDecorator((TypeScriptClass)element, myDecoratorNames);
+        if (decorator != null) {
+          element = decorator;
         }
-        return create(entityElement != null ? constructor.apply(dec, entityElement) : null, dec);
-      });
+        else {
+          TypeScriptClass typeScriptClass = (TypeScriptClass)element;
+          String className = typeScriptClass.getName();
+          if (className == null
+              ////performance check
+              //|| !className.endsWith("Pipe")
+              //check classes only from d.ts files
+              || !Objects.requireNonNull(typeScriptClass.getAttributeList()).hasModifier(JSAttributeList.ModifierType.DECLARE)) {
+            return null;
+          }
+          Ref<T> result = new Ref<>();
+          StubIndex.getInstance().processElements(
+            Angular2MetadataEntityClassNameIndex.KEY, className, typeScriptClass.getProject(),
+            GlobalSearchScope.projectScope(typeScriptClass.getProject()), Angular2MetadataEntity.class,
+            e -> {
+              if (e.isValid() && myEntityClass.isInstance(e) && e.getTypeScriptClass() == typeScriptClass) {
+                //noinspection unchecked
+                result.set((T)e);
+                return false;
+              }
+              return true;
+            });
+          return result.get();
+        }
+      }
+      if (element instanceof ES6Decorator) {
+        ES6Decorator dec = (ES6Decorator)element;
+        if (!ArrayUtil.contains(dec.getDecoratorName(), myDecoratorNames)) {
+          return null;
+        }
+        return CachedValuesManager.getCachedValue(dec, () -> {
+          JSImplicitElement entityElement = null;
+          if (dec.getIndexingData() != null) {
+            entityElement = ContainerUtil.find(ObjectUtils.notNull(dec.getIndexingData().getImplicitElements(), Collections::emptyList),
+                                               myImplicitElementTester);
+          }
+          return create(entityElement != null ? myEntityConstructor.apply(dec, entityElement) : null, dec);
+        });
+      }
+      return null;
     }
-    return null;
   }
 }

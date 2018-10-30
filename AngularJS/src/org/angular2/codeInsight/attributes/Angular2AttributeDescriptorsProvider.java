@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.SmartList;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import com.intellij.xml.XmlElementDescriptor;
@@ -126,19 +126,17 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     getStandardPropertyAndEventDescriptors(xmlTag).forEach(
       attr -> knownAttributes.add(attr.getName()));
 
-    Map<String, List<PsiElement>> attrsFromSelectors = new HashMap<>();
+    MultiMap<String, PsiElement> attrsFromSelectors = new MultiMap<>();
+    BiConsumer<String, PsiElement> addAttribute = (attrName, element) -> {
+      if (!knownAttributes.contains(attrName)) {
+        attrsFromSelectors.putValue(attrName, element);
+      }
+    };
     Map<String, Angular2DirectiveProperty> inputs = new HashMap<>();
-    Set<String> outputs = new HashSet<>();
-    Set<String> inOuts = new HashSet<>();
+    Map<String, Angular2DirectiveProperty> outputs = new HashMap<>();
+    Map<String, Angular2DirectiveProperty> inOuts = new HashMap<>();
     for (Angular2Directive candidate : directiveCandidates) {
-      inputs.clear();
-      candidate.getInputs().forEach(in -> inputs.put(in.getName(), in));
-
-      BiConsumer<String, PsiElement> addAttribute = (attrName, element) -> {
-        if (!knownAttributes.contains(attrName)) {
-          attrsFromSelectors.computeIfAbsent(attrName, k -> new SmartList<>()).add(element);
-        }
-      };
+      fillNamesAndProperties(inputs, candidate.getInputs(), p -> p);
       if (!isTemplateTag && candidate.isTemplate()) {
         List<SimpleSelectorWithPsi> selectors = candidate.getSelector().getSimpleSelectorsWithPsi();
         if (selectors.size() == 1) {
@@ -161,28 +159,26 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       }
       else {
-        outputs.clear();
-        candidate.getOutputs().forEach(out -> outputs.add(out.getName()));
-        inOuts.clear();
-        candidate.getInOuts().forEach(inOut -> inOuts.add(inOut.first.getName()));
+        fillNamesAndProperties(outputs, candidate.getOutputs(), p -> p);
+        fillNamesAndProperties(inOuts, candidate.getInOuts(), p -> p.first);
         for (SimpleSelectorWithPsi selector : candidate.getSelector().getSimpleSelectorsWithPsi()) {
           for (Angular2DirectiveSelectorPsiElement attr : selector.getAttributes()) {
             String attrName = attr.getName();
             boolean added = false;
-            if (inOuts.contains(attrName)) {
-              addAttribute.accept("[(" + attrName + ")]", attr.getNavigationElement());
+            Angular2DirectiveProperty property;
+            if ((property = inOuts.get(attrName)) != null) {
+              addAttribute.accept("[(" + attrName + ")]", property.getNavigableElement());
               added = true;
             }
-            Angular2DirectiveProperty property;
             if ((property = inputs.get(attrName)) != null) {
-              addAttribute.accept("[" + attrName + "]", attr.getNavigationElement());
+              addAttribute.accept("[" + attrName + "]", property.getNavigableElement());
               added = true;
               if (Angular2AttributeDescriptor.isOneTimeBindingProperty(property)) {
-                addAttribute.accept(attrName, attr.getNavigationElement());
+                addAttribute.accept(attrName, property.getNavigableElement());
               }
             }
-            if (outputs.contains(attrName)) {
-              addAttribute.accept("(" + attrName + ")", attr.getNavigationElement());
+            if ((property = outputs.get(attrName)) != null) {
+              addAttribute.accept("(" + attrName + ")", property.getNavigableElement());
               added = true;
             }
             if (!added) {
@@ -197,12 +193,22 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       }
     }
-    attrsFromSelectors.forEach((k, v) -> {
-      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(k, isTemplateTag);
+    attrsFromSelectors.entrySet().forEach(e -> {
+      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(e.getKey(), isTemplateTag);
       result.add(new Angular2AttributeDescriptor(
-        k, info.elementType != XmlElementType.XML_ATTRIBUTE ? info.name : null, v));
+        e.getKey(), info.elementType != XmlElementType.XML_ATTRIBUTE ? info.name : null, e.getValue()));
     });
     return result;
+  }
+
+  private static <T> void fillNamesAndProperties(@NotNull Map<String, Angular2DirectiveProperty> map,
+                                                 @NotNull Collection<T> propertiesCollection,
+                                                 @NotNull Function<T, Angular2DirectiveProperty> propertyExtractor) {
+    map.clear();
+    for (T item : propertiesCollection) {
+      Angular2DirectiveProperty property = propertyExtractor.apply(item);
+      map.put(property.getName(), property);
+    }
   }
 
   @NotNull
