@@ -117,5 +117,6 @@ The IDE uses its own TypeScript support instead of the TypeScript language servi
                                       implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory"/>
     <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.codeInsight.VueAnalysisHandlersFactory" language="VueJS"/>
     <smartCompletionContributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueJSCompletionContributor"/>
+    <tsImportResolver implementation="org.jetbrains.vuejs.codeInsight.VueTypeScriptImportsResolverProvider" order="first"/>
   </extensions>
 </idea-plugin>
