@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.linter.tslint.ui;
 
-import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterBaseView;
 import com.intellij.lang.javascript.linter.NodeModuleConfigurationView;
@@ -103,7 +102,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   @Override
   protected void setState(@NotNull TsLintState state) {
     myNodeModuleConfigurationView.getNodeInterpreterField().setInterpreterRef(state.getInterpreterRef());
-    myNodeModuleConfigurationView.getPackageField().setSelected(new NodePackage(state.getPackagePath()));
+    myNodeModuleConfigurationView.getPackageField().setSelected(state.getNodePackage());
 
     myConfigFileView.setCustomConfigFileUsed(state.isCustomConfigFileUsed());
     myConfigFileView.setCustomConfigFilePath(StringUtil.notNullize(state.getCustomConfigFilePath()));

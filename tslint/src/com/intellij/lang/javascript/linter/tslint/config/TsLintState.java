@@ -1,9 +1,12 @@
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
@@ -13,6 +16,7 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
   @NotNull
   private final NodeJsInterpreterRef myInterpreterRef;
 
+  @NotNull
   private final String myPackagePath;
 
   @Nullable
@@ -23,11 +27,11 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
   private final String myRulesDirectory;
   private final boolean myAllowJs;
 
-  public TsLintState(@NotNull NodeJsInterpreterRef nodePath,
-                     @Nullable String packagePath,
-                     boolean customConfigFileUsed,
-                     @Nullable String customConfigFilePath,
-                     @Nullable String rulesDirectory, boolean allowJs) {
+  private TsLintState(@NotNull NodeJsInterpreterRef nodePath,
+                      @NotNull String packagePath,
+                      boolean customConfigFileUsed,
+                      @Nullable String customConfigFilePath,
+                      @Nullable String rulesDirectory, boolean allowJs) {
     myCustomConfigFileUsed = customConfigFileUsed;
     myCustomConfigFilePath = customConfigFilePath;
     myInterpreterRef = nodePath;
@@ -55,7 +59,7 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     return myInterpreterRef;
   }
 
-  @Nullable
+  @NotNull
   public String getPackagePath() {
     return myPackagePath;
   }
@@ -69,10 +73,10 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     return myAllowJs;
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public String getLinterPackagePath() {
-    return myPackagePath;
+  public NodePackage getNodePackage() {
+    return new NodePackage(myPackagePath);
   }
 
   @Override
@@ -153,7 +157,7 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     if (myCustomConfigFileUsed != state.myCustomConfigFileUsed) return false;
     if (myAllowJs != state.myAllowJs) return false;
     if (!myInterpreterRef.equals(state.myInterpreterRef)) return false;
-    if (myPackagePath != null ? !myPackagePath.equals(state.myPackagePath) : state.myPackagePath != null) return false;
+    if (!Objects.equals(myPackagePath, state.myPackagePath)) return false;
     if (myCustomConfigFilePath != null
         ? !myCustomConfigFilePath.equals(state.myCustomConfigFilePath)
         : state.myCustomConfigFilePath != null) {
@@ -167,7 +171,7 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
   @Override
   public int hashCode() {
     int result = myInterpreterRef.hashCode();
-    result = 31 * result + (myPackagePath != null ? myPackagePath.hashCode() : 0);
+    result = 31 * result + myPackagePath.hashCode();
     result = 31 * result + (myCustomConfigFilePath != null ? myCustomConfigFilePath.hashCode() : 0);
     result = 31 * result + (myCustomConfigFileUsed ? 1 : 0);
     result = 31 * result + (myRulesDirectory != null ? myRulesDirectory.hashCode() : 0);
