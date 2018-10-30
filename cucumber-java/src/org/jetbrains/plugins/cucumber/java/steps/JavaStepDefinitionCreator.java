@@ -9,6 +9,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
@@ -49,6 +50,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
   public static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
   private static final String FILE_TEMPLATE_CUCUMBER_JAVA_STEP_DEFINITION_JAVA = "Cucumber Java Step Definition.java";
   public static final String DEFAULT_STEP_KEYWORD = "Given";
+
+  private final static Logger LOG = Logger.getInstance("#org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinitionCreator");
 
   @NotNull
   @Override
@@ -292,7 +295,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       }
     }
     catch (Exception ignored) {
-      // just use regexp-style template
+      LOG.warn("Failed to replace regex with Cucumber Expression for step: " + step);
     }
     return snippet;
   }
