@@ -129,7 +129,7 @@ public class MarkdownJavaFxHtmlPanel extends JavaFxHtmlPanel implements Markdown
         "__IntelliJTools.scrollToOffset(" + offset + ", '" + HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME() + "');"
       );
       final Object result = getWebViewGuaranteed().getEngine().executeScript(
-        "document.documentElement.scrollTop || document.body.scrollTop");
+        "document.documentElement.scrollTop || (document.body && document.body.scrollTop)");
       if (result instanceof Number) {
         myScrollPreservingListener.myScrollY = ((Number)result).intValue();
       }
