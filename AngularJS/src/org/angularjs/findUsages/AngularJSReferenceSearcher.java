@@ -40,8 +40,8 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
                                                 true, directive);
     }
     else if ((pipe = Angular2EntitiesProvider.getPipe(element)) != null) {
-      if (pipe.getTransformMethods() != null) {
-        for (PsiElement el : pipe.getTransformMethods()) {
+      for (PsiElement el : pipe.getTransformMethods()) {
+        if (queryParameters.getEffectiveSearchScope().contains(el.getContainingFile().getViewProvider().getVirtualFile())) {
           queryParameters.getOptimizer().searchWord(pipe.getName(), queryParameters.getEffectiveSearchScope(),
                                                     true, el);
         }

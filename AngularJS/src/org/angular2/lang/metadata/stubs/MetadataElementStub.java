@@ -8,6 +8,7 @@ import com.intellij.json.psi.JsonValue;
 import com.intellij.lang.javascript.index.flags.FlagsStructure;
 import com.intellij.lang.javascript.index.flags.FlagsStructureElement;
 import com.intellij.lang.javascript.index.flags.IntFlagsSerializer;
+import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.stubs.*;
 import com.intellij.util.io.DataInputOutputUtil;
@@ -49,18 +50,35 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
 
   protected static final FlagsStructure FLAGS_STRUCTURE = FlagsStructure.EMPTY;
 
-  private StringRef myMemberName;
+  private final StringRef myMemberName;
   private int myFlags;
-  private Map<String, MetadataElementStub> membersMap;
+  private final AtomicNotNullLazyValue<Map<String, MetadataElementStub>> membersMap =
+    new AtomicNotNullLazyValue<Map<String, MetadataElementStub>>() {
+      @NotNull
+      @Override
+      protected Map<String, MetadataElementStub> compute() {
+        return getChildrenStubs().stream()
+          .filter(stub -> ((MetadataElementStub)stub).getMemberName() != null)
+          .collect(Collectors.toMap(stub -> ((MetadataElementStub)stub).getMemberName(),
+                                    stub -> (MetadataElementStub)stub,
+                                    (a, b) -> a));
+      }
+    };
 
   public MetadataElementStub(@Nullable String memberName, @Nullable StubElement parent, @NotNull MetadataElementType elementType) {
     super(parent, elementType);
     myMemberName = StringRef.fromString(memberName);
   }
 
-  public MetadataElementStub(@NotNull StubInputStream stream, @Nullable StubElement parent, @NotNull MetadataElementType elementType) throws IOException {
+  public MetadataElementStub(@NotNull StubInputStream stream, @Nullable StubElement parent, @NotNull MetadataElementType elementType)
+    throws IOException {
     super(parent, elementType);
-    deserialize(stream);
+    final int flagsSize = getFlagsStructure().size();
+    if (flagsSize > 0) {
+      assert flagsSize <= Integer.SIZE : this.getClass();
+      myFlags = DataInputOutputUtil.readINT(stream);
+    }
+    myMemberName = stream.readName();
   }
 
   @Nullable
@@ -69,15 +87,6 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   }
 
   protected abstract Map<String, ConstructorFromJsonValue> getTypeFactory();
-
-  public void deserialize(@NotNull StubInputStream stream) throws IOException {
-    final int flagsSize = getFlagsStructure().size();
-    if (flagsSize > 0) {
-      assert flagsSize <= Integer.SIZE : this.getClass();
-      myFlags = DataInputOutputUtil.readINT(stream);
-    }
-    myMemberName = stream.readName();
-  }
 
   public void serialize(@NotNull StubOutputStream stream) throws IOException {
     if (getFlagsStructure().size() > 0) {
@@ -110,7 +119,8 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
     ConstructorFromJsonValue constructor = null;
     if (member instanceof JsonArray) {
       constructor = getTypeFactory().get(ARRAY_TYPE);
-    } else if (member instanceof JsonObject) {
+    }
+    else if (member instanceof JsonObject) {
       String type = readStringPropertyValue(((JsonObject)member).findProperty(SYMBOL_TYPE));
       constructor = getTypeFactory().get(type == null ? OBJECT_TYPE : type);
     }
@@ -120,14 +130,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   }
 
   public MetadataElementStub findMember(String name) {
-    if (membersMap == null) {
-      membersMap = getChildrenStubs().stream()
-        .filter(stub -> ((MetadataElementStub)stub).getMemberName() != null)
-        .collect(Collectors.toMap(stub -> ((MetadataElementStub)stub).getMemberName(),
-                                  stub -> (MetadataElementStub)stub,
-                                  (a, b) -> a));
-    }
-    return membersMap.get(name);
+    return membersMap.getValue().get(name);
   }
 
   protected static void writeString(@Nullable StringRef ref, @NotNull final StubOutputStream dataStream) throws IOException {
@@ -182,5 +185,4 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
                                   @NotNull JsonValue source,
                                   @Nullable StubElement parent);
   }
-
 }

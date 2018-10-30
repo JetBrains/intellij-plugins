@@ -96,7 +96,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   protected Angular2AttributeDescriptor(@NotNull String attributeName,
                                         @Nullable String bindingName,
-                                        @NotNull List<PsiElement> elements) {
+                                        @NotNull Collection<PsiElement> elements) {
     myAttributeName = attributeName;
     myBindingName = bindingName;
     if (bindingName != null) {

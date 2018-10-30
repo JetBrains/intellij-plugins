@@ -32,8 +32,8 @@ public class Angular2MetadataReferenceStub extends Angular2MetadataElementStub<A
     return null;
   }
 
-  private StringRef myName;
-  private StringRef myModule;
+  private final StringRef myName;
+  private final StringRef myModule;
 
   private Angular2MetadataReferenceStub(@Nullable String memberName,
                                         @NotNull String name,
@@ -46,6 +46,8 @@ public class Angular2MetadataReferenceStub extends Angular2MetadataElementStub<A
 
   public Angular2MetadataReferenceStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
     super(stream, parent, Angular2MetadataElementTypes.REFERENCE);
+    myName = stream.readName();
+    myModule = stream.readName();
   }
 
   @Override
@@ -53,13 +55,6 @@ public class Angular2MetadataReferenceStub extends Angular2MetadataElementStub<A
     super.serialize(stream);
     writeString(myName, stream);
     writeString(myModule, stream);
-  }
-
-  @Override
-  public void deserialize(@NotNull StubInputStream stream) throws IOException {
-    super.deserialize(stream);
-    myName = stream.readName();
-    myModule = stream.readName();
   }
 
   public String getName() {

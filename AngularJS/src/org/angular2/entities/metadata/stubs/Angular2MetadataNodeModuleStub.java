@@ -25,11 +25,13 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
   private static final String IMPORT_AS = "importAs";
   private static final String METADATA = "metadata";
 
-  private StringRef myImportAs;
-  private Map<String, String> myOrigins;
+  private final StringRef myImportAs;
+  private final Map<String, String> myOrigins;
 
-  public Angular2MetadataNodeModuleStub(@NotNull StubInputStream dataStream, @Nullable StubElement parentStub) throws IOException {
-    super(dataStream, parentStub, Angular2MetadataElementTypes.NODE_MODULE);
+  public Angular2MetadataNodeModuleStub(@NotNull StubInputStream stream, @Nullable StubElement parentStub) throws IOException {
+    super(stream, parentStub, Angular2MetadataElementTypes.NODE_MODULE);
+    myImportAs = stream.readName();
+    myOrigins = readStringMap(stream);
   }
 
   public Angular2MetadataNodeModuleStub(@Nullable StubElement parentStub, @Nullable JsonValue fileRoot) {
@@ -38,7 +40,14 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
       fileRoot = ((JsonArray)fileRoot).getValueList().get(0);
     }
     if (fileRoot instanceof JsonObject) {
-      readFile((JsonObject)fileRoot);
+      JsonObject fileRootObject = (JsonObject)fileRoot;
+      myImportAs = StringRef.fromString(MetadataUtils.readStringPropertyValue(fileRootObject.findProperty(IMPORT_AS)));
+      myOrigins = MetadataUtils.streamObjectProperty(fileRootObject.findProperty(ORIGINS))
+        .map(MetadataUtils::readStringProperty)
+        .filter(Objects::nonNull)
+        .collect(Collectors.toMap(p -> p.first, p -> p.second, (a, b) -> a));
+      MetadataUtils.streamObjectProperty(fileRootObject.findProperty(METADATA))
+        .forEach(this::loadMemberProperty);
     }
     else {
       throw new IllegalStateException();
@@ -52,13 +61,6 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
     writeStringMap(myOrigins, stream);
   }
 
-  @Override
-  public void deserialize(@NotNull StubInputStream stream) throws IOException {
-    super.deserialize(stream);
-    myImportAs = stream.readName();
-    myOrigins = readStringMap(stream);
-  }
-
   public String getImportAs() {
     return StringRef.toString(myImportAs);
   }
@@ -66,15 +68,4 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
   public String getMemberOrigin(String memberName) {
     return myOrigins.get(memberName);
   }
-
-  private void readFile(JsonObject fileRoot) {
-    myImportAs = StringRef.fromString(MetadataUtils.readStringPropertyValue(fileRoot.findProperty(IMPORT_AS)));
-    myOrigins = MetadataUtils.streamObjectProperty(fileRoot.findProperty(ORIGINS))
-      .map(MetadataUtils::readStringProperty)
-      .filter(Objects::nonNull)
-      .collect(Collectors.toMap(p -> p.first, p -> p.second, (a, b) -> a));
-    MetadataUtils.streamObjectProperty(fileRoot.findProperty(METADATA))
-      .forEach(this::loadMemberProperty);
-  }
-
 }
