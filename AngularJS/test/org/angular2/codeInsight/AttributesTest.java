@@ -13,10 +13,12 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature;
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -35,8 +37,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.intellij.openapi.util.Pair.pair;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFile;
 
 public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -667,22 +672,77 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     assertEquals("ng_no_validate_directive.ts", resolve.getContainingFile().getName());
   }
 
-  public void testSelectorBasedAttributes() {
+  public void testSelectorBasedAttributesCompletion() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("selectorBasedAttributes.ts", "package.json");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(),
                              "[myInput]",
                              "(myOutput)",
-                             "[mySimpleBindingInput]","mySimpleBindingInput",
+                             "[mySimpleBindingInput]", "mySimpleBindingInput",
                              "myPlain",
                              "[myInOut]", "[(myInOut)]");
       assertDoesntContain(myFixture.getLookupElementStrings(),
                           "myInput", "(myInput)", "[(myInput)]",
                           "myOutput", "[myOutput]", "[(myOutput)]",
+                          "(mySimpleBindingInput)", "[(mySimpleBindingInput)]",
                           "[myPlain]", "(myPlain)", "[(myPlain)]",
                           "(myInOut)", "myInOut",
                           "myInOutChange", "(myInOutChange)", "[myInOutChange]", "[(myInOutChange)]");
+    });
+  }
+
+  public void testSelectorBasedAttributesNavigation() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      myFixture.configureByFiles("selectorBasedAttributes.ts", "package.json");
+
+      final List<Pair<String,String>> attrWrap = ContainerUtil.newArrayList(
+        pair("",""),
+        pair("[","]"),
+        pair("(",")"),
+        pair("[(",")]")
+      );
+
+      for (Map.Entry<String, String> attr : ContainerUtil.<String, String>immutableMapBuilder()
+        // <simple><input><output><inout>
+        // x -> no resolve, p -> resolve to property, s -> resolve to selector
+        .put("myInput", "xpxx")
+        .put("mySimpleBindingInput", "ppxx")
+        .put("myPlain", "sxxx")
+        .put("myOutput", "xxpx")
+        .put("myInOut", "xpxp")
+        .put("myInOutChange", "xxpx")
+        .build().entrySet()) {
+
+        String name = attr.getKey();
+        String checks = attr.getValue();
+        for (int i = 0; i< attrWrap.size(); i++) {
+          Pair<String, String> wrap = attrWrap.get(i);
+          int offsetBySignature = AngularTestUtil.findOffsetBySignature(
+            wrap.first + "<caret>" + name + wrap.second + "=", myFixture.getFile());
+          PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+          String messageStart = "Attribute " + wrap.first + name + wrap.second;
+          switch (checks.charAt(i)) {
+            case 'x':
+              if (ref != null) {
+                assertNull(messageStart + " should not resolve", ref.resolve());
+              }
+              break;
+            case 'p':
+              assertNotNull(messageStart +" should have reference", ref);
+              assert ref.resolve() instanceof TypeScriptField :
+                messageStart + " should resolve to TypeScriptField instead of " + ref.resolve();
+              break;
+            case 's':
+              assertNotNull(messageStart +" should have reference", ref);
+              assert ref.resolve() instanceof Angular2DirectiveSelectorPsiElement :
+                messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " + ref.resolve();
+              break;
+            default:
+              throw new IllegalStateException("wrong char" + checks.charAt(i));
+          }
+        }
+      }
     });
   }
 

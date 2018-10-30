@@ -1,11 +1,17 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import {Component, Directive, Input, Output} from 'angular2/core';
-// Initial view: "Message: "
-// After 500ms: Message: You are my Hero!"
+
 @Component({
     selector: 'hero-message',
     template: `
-        <div <caret></div>
+        <div <caret>></div>
+        <div myPlain="foo" [myPlain]="foo" (myPlain)="foo" [(myPlain)]="foo"
+             myInput="foo" [myInput]="foo" (myInput)="foo" [(myInput)]="foo"  
+             mySimpleBindingInput="foo" [mySimpleBindingInput]="foo" (mySimpleBindingInput)="foo" [(mySimpleBindingInput)]="foo"
+             myOutput="foo" [myOutput]="foo" (myOutput)="foo" [(myOutput)]="foo"
+             myInOut="foo" [myInOut]="foo" (myInOut)="foo" [(myInOut)]="foo"
+             myInOutChange="foo" [myInOutChange]="foo" (myInOutChange)="foo" [(myInOutChange)]="foo"
+        ></div>
 `,
 })
 export class HeroAsyncMessageComponent {
