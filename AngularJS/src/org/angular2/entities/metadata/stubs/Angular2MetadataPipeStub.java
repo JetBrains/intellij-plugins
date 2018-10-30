@@ -33,7 +33,7 @@ public class Angular2MetadataPipeStub extends Angular2MetadataEntityStub<Angular
     return null;
   }
 
-  private StringRef myPipeName;
+  private final StringRef myPipeName;
 
   private Angular2MetadataPipeStub(@Nullable String memberName,
                                    @Nullable StubElement parent,
@@ -44,6 +44,7 @@ public class Angular2MetadataPipeStub extends Angular2MetadataEntityStub<Angular
 
   public Angular2MetadataPipeStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
     super(stream, parent, Angular2MetadataElementTypes.PIPE);
+    myPipeName = stream.readName();
   }
 
   @NotNull
@@ -55,12 +56,6 @@ public class Angular2MetadataPipeStub extends Angular2MetadataEntityStub<Angular
   public void serialize(@NotNull StubOutputStream stream) throws IOException {
     super.serialize(stream);
     writeString(myPipeName, stream);
-  }
-
-  @Override
-  public void deserialize(@NotNull StubInputStream stream) throws IOException {
-    super.deserialize(stream);
-    myPipeName = stream.readName();
   }
 
   @Override

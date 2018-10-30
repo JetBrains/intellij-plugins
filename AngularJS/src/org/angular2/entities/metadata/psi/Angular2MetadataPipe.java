@@ -12,9 +12,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.notNull;
 
 public class Angular2MetadataPipe extends Angular2MetadataDeclaration<Angular2MetadataPipeStub> implements Angular2Pipe {
 
@@ -28,12 +30,13 @@ public class Angular2MetadataPipe extends Angular2MetadataDeclaration<Angular2Me
     return getStub().getPipeName();
   }
 
-  @Nullable
+  @NotNull
   @Override
   public Collection<? extends TypeScriptFunction> getTransformMethods() {
     return getCachedValue(() -> {
       Pair<TypeScriptClass, Collection<Object>> pair = getClassAndDependencies();
-      return create(doIfNotNull(pair.first, Angular2EntityUtils::getPipeTransformMethods), pair.second);
+      return create(notNull(doIfNotNull(pair.first, Angular2EntityUtils::getPipeTransformMethods),
+                            Collections::emptyList), pair.second);
     });
   }
 

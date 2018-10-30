@@ -57,7 +57,7 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     assert myReferencedName != null;
     final Angular2Pipe pipe = Angular2EntitiesProvider.findPipe(myParent.getProject(), myReferencedName);
     if (pipe != null) {
-      if (pipe.getTransformMethods() != null) {
+      if (!pipe.getTransformMethods().isEmpty()) {
         return pipe.getTransformMethods()
           .stream()
           .map(JSResolveResult::new)

@@ -1,5 +1,6 @@
 package org.angular2.entities;
 
+import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -19,8 +20,37 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
   private final PsiElement mySelectorElement;
   private final String myText;
   private final Function<Pair<String, Integer>, TextRange> myCreateRange;
-  private List<Angular2DirectiveSimpleSelector> mySimpleSelectors;
-  private List<SimpleSelectorWithPsi> mySimpleSelectorsWithPsi;
+  private final AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>> mySimpleSelectors =
+    new AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>>() {
+      @NotNull
+      @Override
+      protected List<Angular2DirectiveSimpleSelector> compute() {
+        try {
+          return Collections.unmodifiableList(Angular2DirectiveSimpleSelector.parse(myText));
+        }
+        catch (ParseException e) {
+          return Collections.emptyList();
+        }
+      }
+    };
+  private final AtomicNotNullLazyValue<List<SimpleSelectorWithPsi>> mySimpleSelectorsWithPsi =
+    new AtomicNotNullLazyValue<List<SimpleSelectorWithPsi>>() {
+      @NotNull
+      @Override
+      protected List<SimpleSelectorWithPsi> compute() {
+        try {
+          List<Angular2DirectiveSimpleSelectorWithRanges> simpleSelectorsWithRanges = Angular2DirectiveSimpleSelector.parseRanges(myText);
+          List<SimpleSelectorWithPsi> result = new ArrayList<>(simpleSelectorsWithRanges.size());
+          for (Angular2DirectiveSimpleSelectorWithRanges sel : simpleSelectorsWithRanges) {
+            result.add(new SimpleSelectorWithPsiImpl(sel));
+          }
+          return Collections.unmodifiableList(result);
+        }
+        catch (ParseException e) {
+          return Collections.emptyList();
+        }
+      }
+    };
 
   public Angular2DirectiveSelectorImpl(PsiElement element, String text, Function<Pair<String, Integer>, TextRange> createRange) {
     mySelectorElement = element;
@@ -36,34 +66,14 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
 
   @NotNull
   @Override
-  public synchronized List<Angular2DirectiveSimpleSelector> getSimpleSelectors() {
-    if (mySimpleSelectors == null) {
-      try {
-        mySimpleSelectors = Collections.unmodifiableList(Angular2DirectiveSimpleSelector.parse(myText));
-      }
-      catch (ParseException e) {
-        mySimpleSelectors = Collections.emptyList();
-      }
-    }
-    return mySimpleSelectors;
+  public List<Angular2DirectiveSimpleSelector> getSimpleSelectors() {
+    return mySimpleSelectors.getValue();
   }
 
   @NotNull
   @Override
-  public synchronized List<SimpleSelectorWithPsi> getSimpleSelectorsWithPsi() {
-    if (mySimpleSelectorsWithPsi == null) {
-      try {
-        List<Angular2DirectiveSimpleSelectorWithRanges> simpleSelectorsWithRanges = Angular2DirectiveSimpleSelector.parseRanges(myText);
-        mySimpleSelectorsWithPsi = new ArrayList<>(simpleSelectorsWithRanges.size());
-        for (Angular2DirectiveSimpleSelectorWithRanges sel : simpleSelectorsWithRanges) {
-          mySimpleSelectorsWithPsi.add(new SimpleSelectorWithPsiImpl(sel));
-        }
-      }
-      catch (ParseException e) {
-        mySimpleSelectorsWithPsi = Collections.emptyList();
-      }
-    }
-    return mySimpleSelectorsWithPsi;
+  public List<SimpleSelectorWithPsi> getSimpleSelectorsWithPsi() {
+    return mySimpleSelectorsWithPsi.getValue();
   }
 
   @NotNull

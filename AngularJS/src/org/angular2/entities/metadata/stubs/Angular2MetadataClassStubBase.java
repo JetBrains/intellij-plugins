@@ -2,6 +2,7 @@
 package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.*;
+import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
@@ -18,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.intellij.openapi.util.Pair.create;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.*;
@@ -29,17 +29,21 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
 
   private static final String EXTENDS_MEMBER = "#ext";
 
-  private static Map<String, EntityFactory> ENTITY_FACTORIES;
+  private static final AtomicNotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES =
+    new AtomicNotNullLazyValue<Map<String, EntityFactory>>() {
+      @NotNull
+      @Override
+      protected Map<String, EntityFactory> compute() {
+        return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
+          .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)
+          .put(COMPONENT_DEC, Angular2MetadataComponentStub::createComponentStub)
+          .put(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::createDirectiveStub)
+          .build();
+      }
+    };
 
   private static Map<String, EntityFactory> getEntityFactories() {
-    if (ENTITY_FACTORIES == null) {
-      ENTITY_FACTORIES = ContainerUtil.newHashMap(
-        create(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub),
-        create(COMPONENT_DEC, Angular2MetadataComponentStub::createComponentStub),
-        create(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::createDirectiveStub)
-      );
-    }
-    return ENTITY_FACTORIES;
+    return ENTITY_FACTORIES.getValue();
   }
 
   public static Angular2MetadataClassStubBase<?> createClassStub(@Nullable String memberName,
@@ -53,20 +57,34 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       .orElseGet(() -> new Angular2MetadataClassStub(memberName, source, parent));
   }
 
-  protected Map<String, String> myInputMappings;
-  protected Map<String, String> myOutputMappings;
+  protected final Map<String, String> myInputMappings;
+  protected final Map<String, String> myOutputMappings;
 
   public Angular2MetadataClassStubBase(@Nullable String memberName,
                                        @Nullable StubElement parent,
                                        @Nullable JsonObject source,
                                        @NotNull MetadataElementType elementType) {
     super(memberName, parent, elementType);
-    loadClass(source);
+    if (source == null) {
+      myInputMappings = Collections.emptyMap();
+      myOutputMappings = Collections.emptyMap();
+      return;
+    }
+    JsonObject extendsClass = getPropertyValue(source.findProperty(EXTENDS), JsonObject.class);
+    if (extendsClass != null) {
+      Angular2MetadataReferenceStub.createReferenceStub(EXTENDS_MEMBER, extendsClass, this);
+    }
+    myOutputMappings = new HashMap<>();
+    myInputMappings = new HashMap<>();
+    MetadataUtils.streamObjectProperty(source.findProperty(MEMBERS))
+      .forEach(this::loadMember);
   }
 
   public Angular2MetadataClassStubBase(@NotNull StubInputStream stream,
                                        @Nullable StubElement parent, @NotNull MetadataElementType elementType) throws IOException {
     super(stream, parent, elementType);
+    myInputMappings = readStringMap(stream);
+    myOutputMappings = readStringMap(stream);
   }
 
   @Nullable
@@ -83,11 +101,11 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
   }
 
   public Map<String, String> getInputMappings() {
-    return myInputMappings;
+    return Collections.unmodifiableMap(myInputMappings);
   }
 
   public Map<String, String> getOutputMappings() {
-    return myOutputMappings;
+    return Collections.unmodifiableMap(myOutputMappings);
   }
 
   @Override
@@ -95,29 +113,6 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     super.serialize(stream);
     writeStringMap(myInputMappings, stream);
     writeStringMap(myOutputMappings, stream);
-  }
-
-  @Override
-  public void deserialize(@NotNull StubInputStream stream) throws IOException {
-    super.deserialize(stream);
-    myInputMappings = readStringMap(stream);
-    myOutputMappings = readStringMap(stream);
-  }
-
-  private void loadClass(@Nullable JsonObject source) {
-    if (source == null) {
-      myInputMappings = Collections.emptyMap();
-      myOutputMappings = Collections.emptyMap();
-      return;
-    }
-    JsonObject extendsClass = getPropertyValue(source.findProperty(EXTENDS), JsonObject.class);
-    if (extendsClass != null) {
-      Angular2MetadataReferenceStub.createReferenceStub(EXTENDS_MEMBER, extendsClass, this);
-    }
-    myOutputMappings = new HashMap<>();
-    myInputMappings = new HashMap<>();
-    MetadataUtils.streamObjectProperty(source.findProperty(MEMBERS))
-      .forEach(this::loadMember);
   }
 
   private void loadMember(JsonProperty property) {
