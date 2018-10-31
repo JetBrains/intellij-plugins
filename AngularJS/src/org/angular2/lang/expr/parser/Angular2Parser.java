@@ -2,6 +2,7 @@
 package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.WhitespacesBinders;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -427,6 +428,31 @@ public class Angular2Parser
         return true;
       }
       return false;
+    }
+
+    @Override
+    @AdvancesLexer
+    protected boolean parsePropertyNoMarker(PsiBuilder.Marker property) {
+      final IElementType firstToken = builder.getTokenType();
+
+      if (PROPERTY_NAMES.contains(firstToken)) {
+        String errorMessage = validateLiteral();
+        advancePropertyName(firstToken);
+        if (errorMessage != null) {
+          builder.error(errorMessage);
+        }
+      }
+      else {
+        builder.error(JSBundle.message("javascript.parser.message.expected.property.name"));
+        builder.advanceLexer();
+      }
+
+      parsePropertyInitializer();
+
+      property.done(PROPERTY);
+      property.setCustomEdgeTokenBinders(INCLUDE_DOC_COMMENT_AT_LEFT, WhitespacesBinders.DEFAULT_RIGHT_BINDER);
+
+      return true;
     }
 
     private boolean parsePartialStringLiteral(IElementType firstToken) {

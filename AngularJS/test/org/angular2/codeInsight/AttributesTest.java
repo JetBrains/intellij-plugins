@@ -35,13 +35,14 @@ import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFile;
 
 public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -633,7 +634,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testViewChildReferenceContentAssist() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () ->
-      assertEquals(Arrays.asList("area", "area2"),
+      assertEquals(asList("area", "area2"),
                    myFixture.getCompletionVariants("viewChildReference.ts", "package.json"))
     );
   }
@@ -652,7 +653,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testViewChildReferenceContentAssistHTML() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () ->
-      assertEquals(Arrays.asList("area", "area2"),
+      assertEquals(asList("area", "area2"),
                    myFixture.getCompletionVariants("viewChildReferenceHTML.ts", "viewChildReferenceHTML.html", "package.json"))
     );
   }
@@ -754,4 +755,28 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.checkHighlighting(true, false, true);
     });
   }
+
+  public void testNgClassContentAssist() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      myFixture.configureByFiles("ngClass.html", "ngClass.css", "package.json");
+      for (String prefix: asList("{", "[", "")) {
+        AngularTestUtil.moveToOffsetBySignature("=\"" + prefix + "'foo1 b<caret>'", myFixture);
+        myFixture.completeBasic();
+        assertEquals(ContainerUtil.set("bar", "boo"), new HashSet<>(myFixture.getLookupElementStrings()));
+      }
+    });
+  }
+
+  public void testNgClassReferences() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      myFixture.configureByFiles("ngClass.html", "ngClass.css", "package.json");
+      for (String prefix: asList("{", "[", "")) {
+        AngularTestUtil.resolveReference("=\"" + prefix + "'fo<caret>o b", myFixture);
+        AngularTestUtil.resolveReference("=\"" + prefix + "'foo b<caret>ar", myFixture);
+        AngularTestUtil.assertUnresolvedReference("=\"" + prefix + "'f<caret>oo1 ", myFixture);
+        AngularTestUtil.assertUnresolvedReference("=\"" + prefix + "'foo1 b<caret>", myFixture);
+      }
+    });
+  }
+
 }

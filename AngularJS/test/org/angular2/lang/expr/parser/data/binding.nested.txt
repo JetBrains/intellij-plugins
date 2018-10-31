@@ -21,7 +21,7 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:COLON)(':')
         JSObjectLiteralExpression
           PsiElement(JS:LBRACE)('{')
-          JSProperty
+          Angular2Property
             PsiElement(JS:IDENTIFIER)('name')
             PsiElement(JS:COLON)(':')
             PsiWhiteSpace(' ')

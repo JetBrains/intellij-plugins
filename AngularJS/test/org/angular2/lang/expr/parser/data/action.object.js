@@ -5,3 +5,6 @@
 {false:'WC', true:'CC'}[false]
 [{}]
 [{a:[]}, {b:1}]
+{ 12 : "test"}
+{ a }
+{ "a" = "b"}
