@@ -3,7 +3,7 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.lang.javascript.modules.JSImportHighlightingAndCompletionTestBase
 
-private val BASE_PATH = "/ts_imports"
+private const val BASE_PATH = "/ts_imports"
 
 class VueTypeScriptModuleTest: JSImportHighlightingAndCompletionTestBase() {
   
@@ -16,6 +16,10 @@ class VueTypeScriptModuleTest: JSImportHighlightingAndCompletionTestBase() {
   }
 
   fun testSimpleDeclare() {
+    doTestWithCopyDirectory()
+  }
+
+  fun testReferenceGlobalTyping() {
     doTestWithCopyDirectory()
   }
 }
