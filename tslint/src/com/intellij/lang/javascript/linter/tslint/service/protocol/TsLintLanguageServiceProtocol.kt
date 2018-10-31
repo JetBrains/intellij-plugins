@@ -22,7 +22,7 @@ class TsLintLanguageServiceProtocol(project: Project, readyConsumer: Consumer<*>
   override fun createState(): JSLanguageServiceInitialState {
     val result = TsLintLanguageServiceInitialState()
     val extendedState = TsLintConfiguration.getInstance(myProject).extendedState
-    result.tslintPackagePath = LocalFilePath.create(extendedState.state.packagePath)
+    result.tslintPackagePath = LocalFilePath.create(extendedState.state.nodePackage.systemDependentPath)
     result.additionalRootDirectory = LocalFilePath.create(extendedState.state.rulesDirectory)
     result.pluginName = "tslint"
     result.pluginPath = LocalFilePath.create(getPluginDirectory(this.javaClass, "js/languageService/tslint-plugin-provider.js").absolutePath)

@@ -89,7 +89,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   protected TsLintState getState() {
     final TsLintState.Builder builder = new TsLintState.Builder()
       .setNodePath(myNodeModuleConfigurationView.getNodeInterpreterField().getInterpreterRef())
-      .setPackagePath(myNodeModuleConfigurationView.getPackageField().getSelected().getSystemDependentPath())
+      .setNodePackage(myNodeModuleConfigurationView.getPackageField().getSelected())
       .setCustomConfigFileUsed(myConfigFileView.isCustomConfigFileUsed())
       .setCustomConfigFilePath(myConfigFileView.getCustomConfigFilePath())
       .setAllowJs(myAllowJs.isSelected());

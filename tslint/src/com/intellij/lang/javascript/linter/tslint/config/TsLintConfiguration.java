@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.openapi.components.State;
@@ -112,11 +113,11 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   private void restoreLinterLocalPaths(TsLintState.Builder builder) {
     myPackage.readOrDetect();
     builder.setNodePath(myPackage.getInterpreter());
-    builder.setPackagePath(StringUtil.notNullize(myPackage.getPackagePath()));
+    builder.setNodePackage(new NodePackage(myPackage.getPackagePath()));
   }
 
   private void storeLinterLocalPaths(TsLintState state) {
-    myPackage.force(state.getInterpreterRef(), state.getPackagePath());
+    myPackage.force(state.getInterpreterRef(), state.getNodePackage());
   }
 
   @NotNull
