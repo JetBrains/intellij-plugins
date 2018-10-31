@@ -1,5 +1,6 @@
 package org.jetbrains.vuejs.language
 
+import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 
 /**
@@ -53,3 +54,5 @@ export default {
 </script>
 """)
 }
+
+fun getVueTestDataPath() = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData"
