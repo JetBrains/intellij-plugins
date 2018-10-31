@@ -22,4 +22,12 @@ class VueTypeScriptModuleTest: JSImportHighlightingAndCompletionTestBase() {
   fun testReferenceGlobalTyping() {
     doTestWithCopyDirectory()
   }
+
+  fun testAutoImportFromTs() {
+    doTestAutoImportWithCopyDirectory()
+  }
+
+  fun testPathMappingResolve() {
+    doTestAutoImportWithCopyDirectory()
+  }
 }
