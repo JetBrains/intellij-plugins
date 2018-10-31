@@ -63,6 +63,8 @@ public class CucumberJavaTestUtil {
   }
 
   private static void attachCucumberExpressionsLibrary(@NotNull ModifiableRootModel model) {
-    PsiTestUtil.addProjectLibrary(model, "cucumber-expressions", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-expressions"));
+    IntelliJProjectConfiguration.LibraryRoots
+      libraryRoots = IntelliJProjectConfiguration.getModuleLibrary("intellij.cucumber.java", "cucumber-expressions");
+    PsiTestUtil.addProjectLibrary(model, "cucumber-expressions", libraryRoots.getClassesPaths());
   }
 }
