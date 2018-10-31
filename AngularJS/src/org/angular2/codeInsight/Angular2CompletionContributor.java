@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.css.resolve.HtmlCssClassOrIdReference;
 import com.intellij.psi.util.PsiUtilCore;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
@@ -46,6 +47,10 @@ public class Angular2CompletionContributor extends CompletionContributor {
             false));
         }
       });
+      result.stopHere();
+    }
+    else if (ref instanceof HtmlCssClassOrIdReference) {
+      ((HtmlCssClassOrIdReference)ref).addCompletions(parameters, result);
       result.stopHere();
     }
   }

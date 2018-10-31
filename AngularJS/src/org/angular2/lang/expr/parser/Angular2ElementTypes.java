@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.impl.*;
 import org.jetbrains.annotations.NotNull;
@@ -18,9 +19,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
+import static com.intellij.lang.javascript.JSKeywordSets.IDENTIFIER_NAMES;
+import static com.intellij.lang.javascript.JSTokenTypes.STRING_LITERAL;
+
 public interface Angular2ElementTypes extends JSElementTypes {
 
   IFileElementType FILE = JSFileElementType.create(Angular2Language.INSTANCE);
+
+  Angular2PropertyElementType PROPERTY = new Angular2PropertyElementType();
 
   IElementType PIPE_EXPRESSION = new Angular2ExpressionElementType("NG:PIPE_EXPRESSION", Angular2PipeExpressionImpl::new);
   IElementType PIPE_ARGUMENTS_LIST = new Angular2ExpressionElementType("NG:PIPE_ARGUMENTS_LIST", Angular2PipeArgumentsListImpl::new);
@@ -40,6 +46,8 @@ public interface Angular2ElementTypes extends JSElementTypes {
     throw new UnsupportedOperationException("Use createTemplateBindingStatement method instead");
   });
   JSStubElementType<JSVariableStub<JSVariable>, JSVariable> TEMPLATE_BINDING_VARIABLE = new Angular2TemplateVariableElementType();
+
+  TokenSet PROPERTY_NAMES = TokenSet.orSet(IDENTIFIER_NAMES, TokenSet.create(STRING_LITERAL));
 
   static IElementType createTemplateBindingStatement(@NotNull String key, boolean isVar, @Nullable String name) {
     return new Angular2TemplateBindingType(key, isVar, name);

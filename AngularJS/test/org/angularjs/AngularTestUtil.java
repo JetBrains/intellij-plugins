@@ -54,7 +54,7 @@ public class AngularTestUtil {
     assert caretOffset >= 0;
     signature = signature.substring(0, caretOffset) + signature.substring(caretOffset + caretSignature.length());
     int pos = psiFile.getText().indexOf(signature);
-    assertTrue(pos >= 0);
+    assertTrue("Failed to locate '" + signature +"'", pos >= 0);
     return pos + caretOffset;
   }
 
@@ -66,9 +66,9 @@ public class AngularTestUtil {
   public static PsiElement resolveReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
     int offsetBySignature = findOffsetBySignature(signature, fixture.getFile());
     PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
-    TestCase.assertNotNull(ref);
+    TestCase.assertNotNull("No reference at '" + signature + "'", ref);
     PsiElement resolve = ref.resolve();
-    TestCase.assertNotNull(resolve);
+    TestCase.assertNotNull("Reference resolves to null at '" + signature + "'", resolve);
     return resolve;
   }
 
