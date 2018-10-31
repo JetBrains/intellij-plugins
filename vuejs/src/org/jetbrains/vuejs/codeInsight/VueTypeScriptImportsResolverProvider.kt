@@ -7,14 +7,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.vuejs.index.hasVue
 
-val defaultExtensionsWithDot = arrayOf(".vue")
+const val vueExtension = ".vue"
+val defaultExtensionsWithDot = arrayOf(vueExtension)
 
 class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
-  
-  
-  override fun getExtensions(): Array<String> {
-    return defaultExtensionsWithDot
-  }
+  override fun useExplicitExtension(extensionWithDot: String): Boolean = extensionWithDot == vueExtension
+  override fun getExtensions(): Array<String> = defaultExtensionsWithDot
 
   override fun createResolver(project: Project,
                               context: TypeScriptImportResolveContext,
