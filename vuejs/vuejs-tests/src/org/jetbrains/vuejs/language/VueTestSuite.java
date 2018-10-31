@@ -41,7 +41,8 @@ public class VueTestSuite {
     testSuite.addTestSuite(VueHighlightingLexerTest.class);
     testSuite.addTestSuite(VueLexerTest.class);
     testSuite.addTestSuite(VueEmmetTest.class);
-
+    testSuite.addTestSuite(VueModuleImportTest.class);
+    
     return testSuite;
   }
 }

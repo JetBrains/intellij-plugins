@@ -226,7 +226,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     <NewComponent :prop="prop"/>
 </template>
 <script lang="ts">
-    import NewComponent from "./NewComponent";
+    import NewComponent from "./NewComponent.vue";
 
     export default {
         name: 'current-comp',

@@ -18,10 +18,8 @@ import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.ES6FunctionProperty
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
-import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.JSTokenTypes
-import com.intellij.lang.javascript.TypeScriptFileType
+import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
@@ -36,6 +34,7 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
+import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubIndexKey
@@ -338,6 +337,15 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 fun findModule(element: PsiElement?): JSEmbeddedContent? {
   val file = element as? XmlFile ?: element?.containingFile as? XmlFile
   if (file != null && file.fileType == VueFileType.INSTANCE) {
+    if (file is PsiFileImpl) {
+      val greenStub = file.greenStub
+      //stub-safe path
+      if (greenStub != null) {
+        val children = greenStub.getChildrenByType<JSElement>(JSExtendedLanguagesTokenSetProvider.MODULE_EMBEDDED_CONTENTS, JSEmbeddedContent.ARRAY_FACTORY)
+        val result = children.firstOrNull()
+        return if (result is JSEmbeddedContent) result else null 
+      }
+    }
     val script = findScriptTag(file)
     if (script != null) {
       return PsiTreeUtil.findChildOfType(script, JSEmbeddedContent::class.java)
