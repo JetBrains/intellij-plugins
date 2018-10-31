@@ -1,10 +1,10 @@
 package org.intellij.plugins.postcss.fileStructure;
 
 import com.intellij.css.util.CssPsiUtil;
+import com.intellij.icons.AllIcons;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.impl.structure.CssStructureViewElement;
 import com.intellij.psi.css.impl.structure.CssStructureViewElementsProvider;
-import icons.CssIcons;
 import org.intellij.plugins.postcss.PostCssLanguage;
 import org.intellij.plugins.postcss.psi.PostCssCustomMediaAtRule;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelectorAtRule;
@@ -41,13 +41,13 @@ public class PostCssStructureViewElementsProvider extends CssStructureViewElemen
     }
 
     if (element instanceof PostCssNest) {
-      return Collections.singletonList(CssStructureViewElement.create(element, CssIcons.At_rule, "@nest"));
+      return Collections.singletonList(CssStructureViewElement.create(element, AllIcons.Nodes.Annotationtype, "@nest"));
     }
     else if (element instanceof PostCssCustomSelectorAtRule) {
-      return Collections.singletonList(CssStructureViewElement.create(element, CssIcons.At_rule, "@custom-selector"));
+      return Collections.singletonList(CssStructureViewElement.create(element, AllIcons.Nodes.Annotationtype, "@custom-selector"));
     }
     else if (element instanceof PostCssCustomMediaAtRule) {
-      return Collections.singletonList(CssStructureViewElement.create(element, CssIcons.At_rule, "@custom-media"));
+      return Collections.singletonList(CssStructureViewElement.create(element, AllIcons.Nodes.Annotationtype, "@custom-media"));
     }
     return Collections.emptyList();
   }
