@@ -13,6 +13,11 @@
 // limitations under the License.
 package org.jetbrains.vuejs.codeInsight
 
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.lang.javascript.completion.JSCompletionUtil
+import com.intellij.lang.javascript.completion.JSLookupPriority
+import com.intellij.lang.javascript.completion.JSLookupUtilImpl
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
@@ -87,6 +92,22 @@ class VueComponentDetailsProvider {
         else -> it
       }
     }
+  }
+
+  fun getAttributesAndCreateLookupElements(location: PsiElement, priority: JSLookupPriority): ArrayList<LookupElement>? {
+    val scriptWithExport = findScriptWithExport(location.originalElement) ?: return null
+    val defaultExport = scriptWithExport.second
+    val obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression
+    val vueVariants = ArrayList<LookupElement>()
+    VueComponentDetailsProvider.INSTANCE.getAttributes(obj, location.project, false, false)
+      // do not suggest directives in injected javascript fragments
+      .filter { !it.isDirective() }
+      .forEach {
+        val builder = if (it.declaration == null) LookupElementBuilder.create(it.name)
+        else JSLookupUtilImpl.createLookupElement(it.declaration!!, it.name)
+        vueVariants.add(JSCompletionUtil.withJSLookupPriority(builder, priority))
+      }
+    return vueVariants
   }
 
   fun resolveAttribute(descriptor: JSObjectLiteralExpression,

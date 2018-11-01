@@ -94,7 +94,8 @@ The IDE uses its own TypeScript support instead of the TypeScript language servi
     <defaultLiveTemplatesProvider implementation="org.jetbrains.vuejs.liveTemplate.VueTemplatesProvider"/>
     <renamePsiElementProcessor implementation="org.jetbrains.vuejs.refactoring.VueJSComponentRenameProcessor"/>
     <referencesSearch implementation="org.jetbrains.vuejs.findUsages.VueJSReferenceSearcher"/>
-    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueCompletionContributor"/>
+    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueTagCompletionContributor"/>
+    <completion.contributor language="JavaScript" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueInsideScriptCompletionContributor"/>
     <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
   </extensions>
   <actions>
@@ -116,7 +117,7 @@ The IDE uses its own TypeScript support instead of the TypeScript language servi
     <frameworkSpecificHandlersFactory language="JavaScript"
                                       implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory"/>
     <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.codeInsight.VueAnalysisHandlersFactory" language="VueJS"/>
-    <smartCompletionContributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueJSCompletionContributor"/>
+    <smartCompletionContributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueInsideTemplateCompletionContributor"/>
     <tsImportResolver implementation="org.jetbrains.vuejs.codeInsight.VueTypeScriptImportsResolverProvider" order="first"/>
   </extensions>
 </idea-plugin>
