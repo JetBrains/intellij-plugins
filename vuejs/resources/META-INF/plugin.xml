@@ -95,7 +95,8 @@ The IDE uses its own TypeScript support instead of the TypeScript language servi
     <renamePsiElementProcessor implementation="org.jetbrains.vuejs.refactoring.VueJSComponentRenameProcessor"/>
     <referencesSearch implementation="org.jetbrains.vuejs.findUsages.VueJSReferenceSearcher"/>
     <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueTagCompletionContributor"/>
-    <completion.contributor language="JavaScript" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueInsideScriptCompletionContributor"/>
+    <completion.contributor language="JavaScript" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueInsideScriptCompletionContributor"
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor"/>
     <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
   </extensions>
   <actions>
