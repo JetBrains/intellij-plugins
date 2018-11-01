@@ -37,7 +37,7 @@ import org.jetbrains.vuejs.codeInsight.VueElementDescriptor
 import org.jetbrains.vuejs.codeInsight.completion.vuetify.VuetifyIcons
 import org.jetbrains.vuejs.index.hasVue
 
-class VueCompletionContributor : CompletionContributor() {
+class VueTagCompletionContributor : CompletionContributor() {
   init {
     extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_NAME).withParent(xmlAttribute()),
            VueEventAttrCompletionProvider())
@@ -45,9 +45,9 @@ class VueCompletionContributor : CompletionContributor() {
            VueEventAttrDataCompletionProvider())
     extend(CompletionType.BASIC, psiElement(XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN),
            VueTagAttributeCompletionProvider())
-
   }
 }
+
 
 private class VueTagAttributeCompletionProvider : CompletionProvider<CompletionParameters>() {
   private val VUE_SCRIPT_LANGUAGE = ContainerUtil.immutableSet("js", "ts")

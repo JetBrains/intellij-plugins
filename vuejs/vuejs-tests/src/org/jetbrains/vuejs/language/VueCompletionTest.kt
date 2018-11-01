@@ -1408,6 +1408,28 @@ Pair("""<template>
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!,  "action1", "action_2")
   }
+
+  fun testVueCompletionInsideScript() {
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                           "    export default {\n" +
+                                           "        name: 'test',\n" +
+                                           "        data() {\n" +
+                                           "            return {testItem: 10}\n" +
+                                           "        },\n" +
+                                           "        props : {\n" +
+                                           "          props1: true\n" +
+                                           "        },\n" +
+                                           "        methods: {\n" +
+                                           "            method1() {}\n" +
+                                           "        },\n" +
+                                           "        computed: {\n" +
+                                           "            dataData() {this.<caret> }\n" +
+                                           "        }\n" +
+                                           "    }\n" +
+                                           "</script>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "testItem", "props1", "method1")
+  }
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
