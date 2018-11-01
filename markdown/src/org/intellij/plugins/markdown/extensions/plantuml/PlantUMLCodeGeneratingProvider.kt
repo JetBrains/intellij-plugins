@@ -7,6 +7,7 @@ import org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache.MARKDOWN_FILE_PATH_KEY
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCacheCollector
 import org.intellij.plugins.markdown.ui.preview.MarkdownUtil
+import org.intellij.plugins.markdown.ui.preview.PreviewStaticServer.getGeneratedImageUrl
 import java.io.File
 import java.io.IOException
 import java.net.URLClassLoader
@@ -23,7 +24,7 @@ internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePlu
     cacheDiagram(newDiagramFile.absolutePath, text)
     cacheCollector?.addAliveCachedFile(newDiagramFile)
 
-    return "<img src=\"${newDiagramFile.toURI()}\"/>"
+    return "<img src=\"${getGeneratedImageUrl(getPluginName(), newDiagramFile.toRelativeString(File(getCacheRootPath())))}\"/>"
   }
 
   private fun cacheDiagram(newDiagramPath: String, text: String) {

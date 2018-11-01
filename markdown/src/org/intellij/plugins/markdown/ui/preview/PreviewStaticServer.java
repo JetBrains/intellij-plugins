@@ -21,19 +21,22 @@ import org.jetbrains.ide.HttpRequestHandler;
 import org.jetbrains.io.FileResponses;
 import org.jetbrains.io.Responses;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 public class PreviewStaticServer extends HttpRequestHandler {
-  private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
-
   public static final String INLINE_CSS_FILENAME = "inline.css";
-
+  private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
   private static final String PREFIX = "/api/markdown-preview/";
+  private static final String GENERATED_IMAGES_PREFIX = "generatedImages";
 
   @Nullable
   private ByteBuf myInlineStyle = null;
@@ -56,6 +59,11 @@ public class PreviewStaticServer extends HttpRequestHandler {
   private static String getStaticUrl(@NotNull String staticPath) {
     Url url = Urls.parseEncoded("http://localhost:" + BuiltInServerManager.getInstance().getPort() + PREFIX + staticPath);
     return BuiltInServerManager.getInstance().addAuthToken(Objects.requireNonNull(url)).toExternalForm();
+  }
+
+  @NotNull
+  public static String getGeneratedImageUrl(@NotNull String pluginPrefix, @NotNull String fileName) {
+    return getStaticUrl(GENERATED_IMAGES_PREFIX + "/" + pluginPrefix + "/" + fileName);
   }
 
   @NotNull
@@ -88,6 +96,17 @@ public class PreviewStaticServer extends HttpRequestHandler {
     }
 
     final String payLoad = path.substring(PREFIX.length());
+    if (payLoad.startsWith(GENERATED_IMAGES_PREFIX)) {
+      String imagePluginPrefix = payLoad.substring(GENERATED_IMAGES_PREFIX.length() + File.separator.length());
+      String pluginPrefix = StringUtil.substringBefore(imagePluginPrefix, "/");
+      String imageRelativePath = StringUtil.substringAfter(imagePluginPrefix, "/");
+
+      if (pluginPrefix != null && imageRelativePath != null) {
+        sendLocalImage(request, context.channel(), pluginPrefix, imageRelativePath);
+        return true;
+      }
+    }
+
     final List<String> typeAndName = StringUtil.split(payLoad, "/");
 
     if (typeAndName.size() != 2) {
@@ -138,6 +157,41 @@ public class PreviewStaticServer extends HttpRequestHandler {
     Responses.send(response, channel, request);
   }
 
+  private static void sendLocalImage(@NotNull FullHttpRequest request,
+                                     @NotNull Channel channel,
+                                     @NotNull String pluginPrefix,
+                                     @NotNull String imageRelativePath) {
+    long lastModified = ApplicationInfo.getInstance().getBuildDate().getTimeInMillis();
+    if (FileResponses.INSTANCE.checkCache(request, channel, lastModified)) {
+      return;
+    }
+
+    for (File pluginSystemPath : MarkdownCodeFencePluginCache.getPluginSystemPaths()) {
+      if (!pluginSystemPath.getPath().endsWith(pluginPrefix)) {
+        continue;
+      }
+
+      Path imageFile = Paths.get(pluginSystemPath.getPath(), imageRelativePath);
+      if (imageFile.toFile().exists()) {
+        byte[] data;
+        try {
+          data = FileUtilRt.loadBytes(new FileInputStream(imageFile.toFile()));
+        }
+        catch (IOException e) {
+          LOG.warn(e);
+          Responses.send(HttpResponseStatus.INTERNAL_SERVER_ERROR, channel, request);
+          return;
+        }
+
+        sendResource(request, channel, imageRelativePath, lastModified, data);
+
+        return;
+      }
+    }
+
+    Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
+  }
+
   private static void sendResource(@NotNull HttpRequest request,
                                    @NotNull Channel channel,
                                    @NotNull Class<?> clazz,
@@ -161,9 +215,14 @@ public class PreviewStaticServer extends HttpRequestHandler {
       Responses.send(HttpResponseStatus.INTERNAL_SERVER_ERROR, channel, request);
       return;
     }
+    sendResource(request, channel, resourceName, lastModified, data);
+  }
 
+  private static void sendResource(@NotNull HttpRequest request,
+                                   @NotNull Channel channel,
+                                   @NotNull String imageRelativePath, long lastModified, byte[] data) {
     FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(data));
-    response.headers().set(HttpHeaderNames.CONTENT_TYPE, FileResponses.INSTANCE.getContentType(resourceName));
+    response.headers().set(HttpHeaderNames.CONTENT_TYPE, FileResponses.INSTANCE.getContentType(imageRelativePath));
     response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, must-revalidate");
     response.headers().set(HttpHeaderNames.LAST_MODIFIED, new Date(lastModified));
     Responses.send(response, channel, request);
