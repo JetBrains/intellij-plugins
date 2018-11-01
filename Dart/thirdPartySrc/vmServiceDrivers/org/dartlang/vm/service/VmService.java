@@ -77,7 +77,7 @@ public class VmService extends VmServiceBase {
   /**
    * The minor version number of the protocol supported by this client.
    */
-  public static final int versionMinor = 9;
+  public static final int versionMinor = 12;
 
   /**
    * The [addBreakpoint] RPC is used to add a breakpoint at a specific line of some script.
@@ -270,6 +270,19 @@ public class VmService extends VmServiceBase {
   }
 
   /**
+   * Returns a ServiceObject (a specialization of an ObjRef).
+   *
+   * @undocumented
+   */
+  public void getInstances(String isolateId, String classId, int limit, ObjRefConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    params.addProperty("classId", classId);
+    params.addProperty("limit", limit);
+    request("_getInstances", params, consumer);
+  }
+
+  /**
    * The [getIsolate] RPC is used to lookup an [Isolate] object by its [id].
    */
   public void getIsolate(String isolateId, GetIsolateConsumer consumer) {
@@ -300,6 +313,16 @@ public class VmService extends VmServiceBase {
     if (offset != null) params.addProperty("offset", offset);
     if (count != null) params.addProperty("count", count);
     request("getObject", params, consumer);
+  }
+
+  /**
+   * The [getScripts] RPC is used to retrieve a [ScriptList] containing all scripts for an isolate
+   * based on the isolate's [isolateId].
+   */
+  public void getScripts(String isolateId, ScriptListConsumer consumer) {
+    JsonObject params = new JsonObject();
+    params.addProperty("isolateId", isolateId);
+    request("getScripts", params, consumer);
   }
 
   /**
@@ -723,6 +746,60 @@ public class VmService extends VmServiceBase {
         return;
       }
     }
+    if (consumer instanceof ObjRefConsumer) {
+      if (responseType.equals("@Class")) {
+        ((ObjRefConsumer) consumer).received(new ClassRef(json));
+        return;
+      }
+      if (responseType.equals("Code")) {
+        ((ObjRefConsumer) consumer).received(new Code(json));
+        return;
+      }
+      if (responseType.equals("@Code")) {
+        ((ObjRefConsumer) consumer).received(new CodeRef(json));
+        return;
+      }
+      if (responseType.equals("@Context")) {
+        ((ObjRefConsumer) consumer).received(new ContextRef(json));
+        return;
+      }
+      if (responseType.equals("@Error")) {
+        ((ObjRefConsumer) consumer).received(new ErrorRef(json));
+        return;
+      }
+      if (responseType.equals("@Field")) {
+        ((ObjRefConsumer) consumer).received(new FieldRef(json));
+        return;
+      }
+      if (responseType.equals("@Function")) {
+        ((ObjRefConsumer) consumer).received(new FuncRef(json));
+        return;
+      }
+      if (responseType.equals("@Instance")) {
+        ((ObjRefConsumer) consumer).received(new InstanceRef(json));
+        return;
+      }
+      if (responseType.equals("@Library")) {
+        ((ObjRefConsumer) consumer).received(new LibraryRef(json));
+        return;
+      }
+      if (responseType.equals("@Null")) {
+        ((ObjRefConsumer) consumer).received(new NullRef(json));
+        return;
+      }
+      if (responseType.equals("@Object")) {
+        ((ObjRefConsumer) consumer).received(new ObjRef(json));
+        return;
+      }
+      if (responseType.equals("@Script")) {
+        ((ObjRefConsumer) consumer).received(new ScriptRef(json));
+        return;
+      }
+      if (responseType.equals("@TypeArguments")) {
+        ((ObjRefConsumer) consumer).received(new TypeArgumentsRef(json));
+        return;
+      }
+    }
     if (consumer instanceof ReloadReportConsumer) {
       if (responseType.equals("ReloadReport")) {
         ((ReloadReportConsumer) consumer).received(new ReloadReport(json));
@@ -866,6 +943,10 @@ public class VmService extends VmServiceBase {
         ((ResponseConsumer) consumer).received(new Script(json));
         return;
       }
+      if (responseType.equals("ScriptList")) {
+        ((ResponseConsumer) consumer).received(new ScriptList(json));
+        return;
+      }
       if (responseType.equals("@Script")) {
         ((ResponseConsumer) consumer).received(new ScriptRef(json));
         return;
@@ -916,6 +997,12 @@ public class VmService extends VmServiceBase {
       }
       if (responseType.equals("_CpuProfile")) {
         ((ResponseConsumer) consumer).received(new CpuProfile(json));
+        return;
+      }
+    }
+    if (consumer instanceof ScriptListConsumer) {
+      if (responseType.equals("ScriptList")) {
+        ((ScriptListConsumer) consumer).received(new ScriptList(json));
         return;
       }
     }
