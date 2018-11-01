@@ -3,7 +3,7 @@
     <polygon id="cfunit-a" points="0 0 12 0 12 8 10 6 9 6 3 12 0 12"/>
   </defs>
   <g fill="none" fill-rule="evenodd">
-    <polygon fill="#62B543" points="13.75 10.75 17.25 14.25 10.25 14.25"/>
+    <polygon fill="#62B543" points="13.75 10.75 17.25 14.25 10.25 14.25" transform="rotate(90 13.75 12.5)"/>
     <polygon fill="#F26522" points="9.25 10.75 12.75 14.25 5.75 14.25" transform="rotate(-90 9.25 12.5)"/>
     <g transform="translate(2 2)">
       <mask id="cfunit-b" fill="#fff">
