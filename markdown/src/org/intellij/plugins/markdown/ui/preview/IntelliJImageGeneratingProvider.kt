@@ -77,7 +77,7 @@ internal class IntelliJImageGeneratingProvider(linkMap: LinkMap, baseURI: URI?, 
       }
     }
 
-    return super.makeAbsoluteUrl(destination)
+    return PreviewStaticServer.getAbsolutePathImageUrl(destination as String)
   }
 
   override fun getRenderInfo(text: String, node: ASTNode): LinkGeneratingProvider.RenderInfo? {
