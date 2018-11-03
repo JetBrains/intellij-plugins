@@ -4,7 +4,7 @@ enum class CloudFormationIntrinsicFunction(val id: String) {
   FnBase64("Fn::Base64"),
   FnFindInMap("Fn::FindInMap"),
   FnGetAtt("Fn::GetAtt"),
-  FnGetCidr("Fn::GetCidr"),
+  FnCidr("Fn::Cidr"),
   FnGetAZs("Fn::GetAZs"),
   FnImportValue("Fn::ImportValue"),
   FnJoin("Fn::Join"),

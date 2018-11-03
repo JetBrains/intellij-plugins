@@ -3,5 +3,5 @@ Resources:
   myEC2Instance:
     Type: "AWS::EC2::Instance"
     Properties:
-      ImageId: !GetCidr [ !GetCidr [ "a", 100 ], 100, 22 ]
-      InstanceType: !GetCidr [ "a" ]
+      ImageId: !Cidr [ !Cidr [ "a", 100 ], 100, 22 ]
+      InstanceType: !Cidr [ "a" ]
