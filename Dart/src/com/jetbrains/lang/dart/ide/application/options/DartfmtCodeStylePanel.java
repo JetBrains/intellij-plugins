@@ -28,7 +28,7 @@ public class DartfmtCodeStylePanel extends CodeStyleAbstractPanel {
   }
 
   @Override
-  public void setModel(@Nullable CodeStyleSchemesModel model) {
+  public void setModel(@NotNull CodeStyleSchemesModel model) {
     super.setModel(model);
     if (model != null) {
       model.addListener(new CodeStyleSchemesModelListener() {
