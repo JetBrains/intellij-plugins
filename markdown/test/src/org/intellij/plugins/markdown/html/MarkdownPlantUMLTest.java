@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.html;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
@@ -9,6 +8,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
 import org.intellij.plugins.markdown.MarkdownTestingUtil;
 import org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable;
+import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache;
 import org.intellij.plugins.markdown.ui.preview.MarkdownUtil;
 
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class MarkdownPlantUMLTest extends LightPlatformCodeInsightFixtureTestCas
     VirtualFile mdVFile = myFixture.getFile(PLANTUML_TARGET_DIR + "/" + getTestName(true) + ".md");
     try {
       assertTrue(MarkdownUtil.generateMarkdownHtml(mdVFile, VfsUtilCore.loadText(mdVFile), getProject()).contains(
-        "<img src=\"file:" + PathManager.getSystemPath()));
+        MarkdownUtil.md5(mdVFile.getPath(), MarkdownCodeFencePluginCache.MARKDOWN_FILE_PATH_KEY)));
     }
     catch (IOException e) {
       e.printStackTrace();
