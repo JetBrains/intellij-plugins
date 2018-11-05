@@ -7,11 +7,11 @@ import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.CachedValueProvider;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.entities.Angular2DirectiveSelectorImpl;
+import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase;
 import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStubBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,13 +31,9 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   @NotNull
   @Override
   public Angular2DirectiveSelector getSelector() {
-    return getCachedValue(() -> {
-      Pair<TypeScriptClass, Collection<Object>> dependencies = getClassAndDependencies();
-      return CachedValueProvider.Result.create(
-        new Angular2DirectiveSelectorImpl(dependencies.first != null ? dependencies.first : this,
-                                          getStub().getSelector(), a -> new TextRange(0, 0)),
-        dependencies.second);
-    });
+    return getCachedClassBasedValue(
+      cls -> new Angular2DirectiveSelectorImpl(cls != null ? cls : this,
+                                               getStub().getSelector(), a -> new TextRange(0, 0)));
   }
 
   @Nullable
@@ -60,12 +56,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
 
   @NotNull
   private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getCachedProperties() {
-    return getCachedValue(
-      () -> {
-        Pair<TypeScriptClass, Collection<Object>> dependencies = getClassAndDependencies();
-        return CachedValueProvider.Result.create(getProperties(dependencies.first), dependencies.second);
-      }
-    );
+    return getCachedClassBasedValue(this::getProperties);
   }
 
   @SuppressWarnings("unchecked")
@@ -79,11 +70,30 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
                              ? TypeScriptTypeParser.buildTypeFromClass(cls, false)
                              : null;
 
-    collectProperties(getStub().getInputMappings(), classType, inputs);
-    collectProperties(getStub().getOutputMappings(), classType, outputs);
+    Pair<Map<String, String>, Map<String, String>> mappings = getAllMappings();
+    collectProperties(mappings.first, classType, inputs);
+    collectProperties(mappings.second, classType, outputs);
 
     return pair(Collections.unmodifiableCollection(inputs),
                 Collections.unmodifiableCollection(outputs));
+  }
+
+  @SuppressWarnings("unchecked")
+  private Pair<Map<String, String>, Map<String, String>> getAllMappings() {
+    Map<String, String> inputs = new HashMap<>();
+    Map<String, String> outputs = new HashMap<>();
+    Stack<Angular2MetadataClassBase<? extends Angular2MetadataClassStubBase>> classes = new Stack<>();
+    Angular2MetadataClassBase<? extends Angular2MetadataClassStubBase> current = this;
+    while (current != null) {
+      classes.push(current);
+      current = current.getExtendedClass();
+    }
+    while (!classes.isEmpty()) {
+      current = classes.pop();
+      inputs.putAll(current.getStub().getInputMappings());
+      outputs.putAll(current.getStub().getOutputMappings());
+    }
+    return pair(inputs, outputs);
   }
 
   private void collectProperties(Map<String, String> mappings, JSRecordType classType, List<Angular2DirectiveProperty> result) {

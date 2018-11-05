@@ -2,10 +2,10 @@
 package org.angular2.codeInsight.attributes;
 
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeContext;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
+import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -223,6 +223,6 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   private static JSType expandStringLiteralTypes(@Nullable JSType type) {
     if (type == null) return null;
     type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
-    return type.transformTypeHierarchy(toApply -> toApply instanceof JSStringLiteralTypeImpl ? STRING_TYPE : toApply);
+    return type.transformTypeHierarchy(toApply -> toApply instanceof JSPrimitiveType ? STRING_TYPE : toApply);
   }
 }

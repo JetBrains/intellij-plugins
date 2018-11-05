@@ -254,7 +254,7 @@ public class Angular2EntitiesProvider {
           Ref<T> result = new Ref<>();
           StubIndex.getInstance().processElements(
             Angular2MetadataEntityClassNameIndex.KEY, className, typeScriptClass.getProject(),
-            GlobalSearchScope.projectScope(typeScriptClass.getProject()), Angular2MetadataEntity.class,
+            GlobalSearchScope.allScope(typeScriptClass.getProject()), Angular2MetadataEntity.class,
             e -> {
               if (e.isValid() && myEntityClass.isInstance(e) && e.getTypeScriptClass() == typeScriptClass) {
                 //noinspection unchecked
