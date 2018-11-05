@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -42,8 +43,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   private static final String ABSOLUTE_PATH_IMAGES_PREFIX = "images";
 
   @Nullable
-  private ByteBuf myInlineStyle = null;
-
+  private byte[] myInlineStyleBytes = null;
   private long myInlineStyleTimestamp = 0;
 
   public static PreviewStaticServer getInstance() {
@@ -85,7 +85,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   }
 
   public void setInlineStyle(@Nullable String inlineStyle) {
-    myInlineStyle = inlineStyle == null ? null : Unpooled.wrappedBuffer(inlineStyle.getBytes(StandardCharsets.UTF_8));
+    myInlineStyleBytes = inlineStyle == null ? null : inlineStyle.getBytes(StandardCharsets.UTF_8);
     myInlineStyleTimestamp = System.currentTimeMillis();
   }
 
@@ -160,12 +160,14 @@ public class PreviewStaticServer extends HttpRequestHandler {
       return;
     }
 
-    if (myInlineStyle == null) {
+    if (myInlineStyleBytes == null) {
       Responses.send(HttpResponseStatus.NOT_FOUND, channel, request);
       return;
     }
 
-    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, myInlineStyle);
+    ByteBuf inlineStyleBuf = Unpooled.wrappedBuffer(Arrays.copyOf(myInlineStyleBytes, myInlineStyleBytes.length));
+
+    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, inlineStyleBuf);
     response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/css");
     response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, must-revalidate");
     response.headers().set(HttpHeaderNames.LAST_MODIFIED, new Date(myInlineStyleTimestamp));
