@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.HtmlScriptContentProvider
@@ -15,7 +16,7 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
 //    val SEEN_INTERPOLATION:Int = 0x1000
 //  }
   companion object {
-    val SEEN_VUE_ATTRIBUTE: Int = 0x10000
+    const val SEEN_VUE_ATTRIBUTE: Int = 0x10000
   }
 
   private var interpolationLexer: Lexer? = null

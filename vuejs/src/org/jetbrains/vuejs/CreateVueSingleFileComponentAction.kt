@@ -17,7 +17,7 @@ class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundl
                                                                           "vue.create.single.file.component.action.description"),
                                                                         VuejsIcons.Vue), DumbAware {
   companion object {
-    val VUE_TEMPLATE_NAME: String = "Vue Single File Component"
+    const val VUE_TEMPLATE_NAME: String = "Vue Single File Component"
     private val name = VueBundle.message("vue.create.single.file.component.action.text")
   }
 

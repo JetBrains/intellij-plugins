@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.liveTemplate
 
 import com.intellij.codeInsight.template.TemplateContextType
@@ -9,7 +10,7 @@ import org.jetbrains.vuejs.VueFileType
 /**
  * @author Irina.Chernushina on 10/26/2017.
  */
-private val CONTEXT_TYPE = "VUE_TOP_LEVEL"
+private const val CONTEXT_TYPE = "VUE_TOP_LEVEL"
 
 class VueTopLevelLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE, "Vue top-level", VueBaseLiveTemplateContextType::class.java) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
