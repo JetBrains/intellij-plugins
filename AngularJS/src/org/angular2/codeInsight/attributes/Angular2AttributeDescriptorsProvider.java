@@ -4,6 +4,7 @@ package org.angular2.codeInsight.attributes;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
+import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.MultiMap;
@@ -42,7 +43,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     }
     if (xmlTag != null) {
       for (XmlAttributeDescriptor d : attrDescrProvider.apply(xmlTag)) {
-        if (attrName.equals(d.getName())) {
+        if (attrName.equalsIgnoreCase(d.getName())) {
           return d;
         }
       }
@@ -213,12 +214,15 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   @NotNull
   public static Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
-    final XmlElementDescriptor descriptor = xmlTag.getDescriptor();
+    XmlElementDescriptor descriptor = xmlTag.getDescriptor();
     if (!(descriptor instanceof HtmlElementDescriptorImpl)) {
-      return Collections.emptyList();
+      descriptor = HtmlNSDescriptorImpl.guessTagForCommonAttributes(xmlTag);
+      if (!(descriptor instanceof HtmlElementDescriptorImpl)) {
+        return Collections.emptyList();
+      }
     }
+    XmlAttributeDescriptor[] descriptors = ((HtmlElementDescriptorImpl)descriptor).getDefaultAttributeDescriptors(xmlTag);
     List<XmlAttributeDescriptor> result = new ArrayList<>();
-    final XmlAttributeDescriptor[] descriptors = ((HtmlElementDescriptorImpl)descriptor).getDefaultAttributeDescriptors(xmlTag);
     for (XmlAttributeDescriptor attributeDescriptor : descriptors) {
       final String name = attributeDescriptor.getName();
       //TODO - not all of the standard attributes are standard properties, mapping required for some

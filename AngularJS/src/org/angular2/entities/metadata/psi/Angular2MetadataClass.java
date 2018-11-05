@@ -10,8 +10,8 @@ public class Angular2MetadataClass extends Angular2MetadataClassBase<Angular2Met
     super(element);
   }
 
-  public String getClassName() {
-    return getStub().getClassName();
+  @Override
+  public String toString() {
+    return getName() + " <metadata class>";
   }
-
 }

@@ -2,7 +2,6 @@
 package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2EntityUtils;
@@ -37,11 +36,6 @@ public class Angular2MetadataEntity<Stub extends Angular2MetadataEntityStub> ext
     return null;
   }
 
-  @NotNull
-  @Override
-  public String getName() {
-    return StringUtil.notNullize(getStub().getMemberName(), "<unnamed>");
-  }
 
   @Override
   public String toString() {

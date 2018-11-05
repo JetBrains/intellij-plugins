@@ -4,6 +4,7 @@ package org.angular2.entities.metadata.psi;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.function.Function;
 
 public class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBase> extends Angular2MetadataElement<Stub> {
   public Angular2MetadataClassBase(@NotNull Stub element) {
@@ -26,16 +28,25 @@ public class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBas
     return getClassAndDependencies().first;
   }
 
-  public Angular2MetadataClassBase getExtends() {
+  @NotNull
+  @Override
+  public String getName() {
+    return getCachedClassBasedValue(cls -> cls != null
+                                           ? cls.getName()
+                                           : StringUtil.notNullize(getStub().getMemberName(), "<unnamed>"));
+  }
+
+  public Angular2MetadataClassBase<? extends Angular2MetadataClassStubBase> getExtendedClass() {
     Angular2MetadataReferenceStub refStub = getStub().getExtendsReference();
     if (refStub != null) {
+      //noinspection unchecked
       return ObjectUtils.tryCast(refStub.getPsi().resolve(), Angular2MetadataClassBase.class);
     }
     return null;
   }
 
   protected Pair<TypeScriptClass, Collection<Object>> getClassAndDependencies() {
-    return getCachedValue(() -> {
+    return CachedValuesManager.getCachedValue(this, () -> {
       String className = getStub().getClassName();
       Angular2MetadataNodeModule nodeModule = getNodeModule();
       Pair<PsiFile, TypeScriptClass> fileAndClass = className != null && nodeModule != null
@@ -56,7 +67,15 @@ public class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBas
     });
   }
 
-  protected <T> T getCachedValue(@NotNull CachedValueProvider<T> provider) {
-    return CachedValuesManager.getCachedValue(this, provider);
+  protected <T> T getCachedClassBasedValue(Function<TypeScriptClass, T> provider) {
+    return CachedValuesManager.getCachedValue(
+      this,
+      CachedValuesManager.getManager(getProject()).getKeyForClass(provider.getClass()),
+      () -> {
+        Pair<TypeScriptClass, Collection<Object>> dependencies = getClassAndDependencies();
+        return CachedValueProvider.Result
+          .create(provider.apply(dependencies.first), dependencies.second);
+      });
   }
+
 }
