@@ -5,7 +5,6 @@ import org.angular2.cli.BlueprintListTest;
 import org.angular2.codeInsight.*;
 import org.angular2.editor.ComponentDeclarationNavigationTest;
 import org.angular2.formatting.FormattingTest;
-import org.angular2.index.MetadataStubsTest;
 import org.angular2.inspections.EmptyEventHandlerInspectionTest;
 import org.angular2.lang.expr.lexer.Angular2LexerSpecTest;
 import org.angular2.lang.expr.lexer.Angular2LexerTest;
@@ -16,6 +15,7 @@ import org.angular2.lang.html.lexer.Angular2HtmlLexerSpecTest;
 import org.angular2.lang.html.lexer.Angular2HtmlLexerTest;
 import org.angular2.lang.html.parser.Angular2HtmlParsingTest;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest;
+import org.angular2.metadata.MetadataTest;
 import org.angular2.refactoring.AngularChangeSignatureTest;
 import org.angular2.refactoring.DirectiveRenameTest;
 import org.angular2.refactoring.RenameTest;
@@ -50,7 +50,7 @@ import org.junit.runners.Suite;
   DirectiveRenameTest.class,
   RenameTest.class,
   ComponentDeclarationNavigationTest.class,
-  MetadataStubsTest.class,
+  MetadataTest.class,
   Angular2ServiceTest.class,
 })
 public class Angular2TestSuite {

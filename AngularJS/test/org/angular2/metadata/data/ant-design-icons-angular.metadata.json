@@ -1,0 +1,1436 @@
+{
+  "__symbolic": "module",
+  "version": 4,
+  "metadata": {
+    "IconModule": {
+      "__symbolic": "class",
+      "decorators": [
+        {
+          "__symbolic": "call",
+          "expression": {
+            "__symbolic": "reference",
+            "module": "@angular/core",
+            "name": "NgModule",
+            "line": 5,
+            "character": 1
+          },
+          "arguments": [
+            {
+              "imports": [
+                {
+                  "__symbolic": "reference",
+                  "module": "@angular/common",
+                  "name": "CommonModule",
+                  "line": 6,
+                  "character": 18
+                }
+              ],
+              "exports": [
+                {
+                  "__symbolic": "reference",
+                  "name": "IconDirective"
+                }
+              ],
+              "declarations": [
+                {
+                  "__symbolic": "reference",
+                  "name": "IconDirective"
+                }
+              ],
+              "providers": [
+                {
+                  "__symbolic": "reference",
+                  "name": "IconService"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "members": {}
+    },
+    "ReqIconTask": {
+      "__symbolic": "interface"
+    },
+    "IconService": {
+      "__symbolic": "class",
+      "members": {
+        "changeAssetsSource": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "addIcon": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_addIconLiteral": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_get": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_getFromRemote": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_createObservableRequest": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "getRenderedContent": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_loadSVGFromCacheOrCreateNew": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_createSVGElementFromString": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_setSVGAttribute": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_colorizeSVGIcon": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "clear": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "__ctor__": [
+          {
+            "__symbolic": "constructor",
+            "parameterDecorators": [
+              null,
+              [
+                {
+                  "__symbolic": "call",
+                  "expression": {
+                    "__symbolic": "reference",
+                    "module": "@angular/core",
+                    "name": "Optional",
+                    "line": 228,
+                    "character": 5
+                  }
+                }
+              ],
+              [
+                {
+                  "__symbolic": "call",
+                  "expression": {
+                    "__symbolic": "reference",
+                    "module": "@angular/core",
+                    "name": "Optional",
+                    "line": 229,
+                    "character": 5
+                  }
+                },
+                {
+                  "__symbolic": "call",
+                  "expression": {
+                    "__symbolic": "reference",
+                    "module": "@angular/core",
+                    "name": "Inject",
+                    "line": 229,
+                    "character": 17
+                  },
+                  "arguments": [
+                    {
+                      "__symbolic": "reference",
+                      "module": "@angular/common",
+                      "name": "DOCUMENT",
+                      "line": 229,
+                      "character": 24
+                    }
+                  ]
+                }
+              ]
+            ],
+            "parameters": [
+              {
+                "__symbolic": "reference",
+                "module": "@angular/core",
+                "name": "RendererFactory2",
+                "line": 227,
+                "character": 32
+              },
+              {
+                "__symbolic": "reference",
+                "module": "@angular/common/http",
+                "name": "HttpBackend",
+                "line": 228,
+                "character": 36
+              },
+              {
+                "__symbolic": "reference",
+                "name": "any"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "IconDirective": {
+      "__symbolic": "class",
+      "decorators": [
+        {
+          "__symbolic": "call",
+          "expression": {
+            "__symbolic": "reference",
+            "module": "@angular/core",
+            "name": "Directive",
+            "line": 13,
+            "character": 1
+          },
+          "arguments": [
+            {
+              "selector": "[antIcon]"
+            }
+          ]
+        }
+      ],
+      "members": {
+        "type": [
+          {
+            "__symbolic": "property",
+            "decorators": [
+              {
+                "__symbolic": "call",
+                "expression": {
+                  "__symbolic": "reference",
+                  "module": "@angular/core",
+                  "name": "Input",
+                  "line": 17,
+                  "character": 3
+                }
+              }
+            ]
+          }
+        ],
+        "theme": [
+          {
+            "__symbolic": "property",
+            "decorators": [
+              {
+                "__symbolic": "call",
+                "expression": {
+                  "__symbolic": "reference",
+                  "module": "@angular/core",
+                  "name": "Input",
+                  "line": 18,
+                  "character": 3
+                }
+              }
+            ]
+          }
+        ],
+        "twoToneColor": [
+          {
+            "__symbolic": "property",
+            "decorators": [
+              {
+                "__symbolic": "call",
+                "expression": {
+                  "__symbolic": "reference",
+                  "module": "@angular/core",
+                  "name": "Input",
+                  "line": 19,
+                  "character": 3
+                }
+              }
+            ]
+          }
+        ],
+        "_changeIcon": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_parseIcon": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_setSVGElement": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "_clearSVGElement": [
+          {
+            "__symbolic": "method"
+          }
+        ],
+        "__ctor__": [
+          {
+            "__symbolic": "constructor",
+            "parameters": [
+              {
+                "__symbolic": "reference",
+                "name": "IconService"
+              },
+              {
+                "__symbolic": "reference",
+                "module": "@angular/core",
+                "name": "ElementRef",
+                "line": 83,
+                "character": 27
+              },
+              {
+                "__symbolic": "reference",
+                "module": "@angular/core",
+                "name": "Renderer2",
+                "line": 84,
+                "character": 25
+              }
+            ]
+          }
+        ],
+        "ngOnChanges": [
+          {
+            "__symbolic": "method"
+          }
+        ]
+      }
+    },
+    "IconDefinition": {
+      "__symbolic": "interface"
+    },
+    "ThemeType": {
+      "__symbolic": "interface"
+    },
+    "Manifest": {
+      "__symbolic": "interface"
+    },
+    "CachedIconDefinition": {
+      "__symbolic": "interface"
+    },
+    "TwoToneColorPaletteSetter": {
+      "__symbolic": "interface"
+    },
+    "TwoToneColorPalette": {
+      "__symbolic": "interface"
+    },
+    "printErr": {
+      "__symbolic": "function"
+    },
+    "printWarn": {
+      "__symbolic": "function"
+    },
+    "getSecondaryColor": {
+      "__symbolic": "function",
+      "parameters": [
+        "primaryColor"
+      ],
+      "value": {
+        "__symbolic": "index",
+        "expression": {
+          "__symbolic": "call",
+          "expression": {
+            "__symbolic": "reference",
+            "module": "ant-design-palettes",
+            "name": "generate",
+            "line": 15,
+            "character": 9
+          },
+          "arguments": [
+            {
+              "__symbolic": "reference",
+              "name": "primaryColor"
+            }
+          ]
+        },
+        "index": 0
+      }
+    },
+    "withSuffix": {
+      "__symbolic": "function"
+    },
+    "withSuffixAndColor": {
+      "__symbolic": "function",
+      "parameters": [
+        "name",
+        "theme",
+        "pri",
+        "sec"
+      ],
+      "value": {
+        "__symbolic": "binop",
+        "operator": "+",
+        "left": {
+          "__symbolic": "binop",
+          "operator": "+",
+          "left": {
+            "__symbolic": "binop",
+            "operator": "+",
+            "left": {
+              "__symbolic": "binop",
+              "operator": "+",
+              "left": {
+                "__symbolic": "call",
+                "expression": {
+                  "__symbolic": "reference",
+                  "name": "withSuffix"
+                },
+                "arguments": [
+                  {
+                    "__symbolic": "reference",
+                    "name": "name"
+                  },
+                  {
+                    "__symbolic": "reference",
+                    "name": "theme"
+                  }
+                ]
+              },
+              "right": "-"
+            },
+            "right": {
+              "__symbolic": "reference",
+              "name": "pri"
+            }
+          },
+          "right": "-"
+        },
+        "right": {
+          "__symbolic": "reference",
+          "name": "sec"
+        }
+      }
+    },
+    "mapAbbrToTheme": {
+      "__symbolic": "function",
+      "parameters": [
+        "abbr"
+      ],
+      "value": {
+        "__symbolic": "if",
+        "condition": {
+          "__symbolic": "binop",
+          "operator": "===",
+          "left": {
+            "__symbolic": "reference",
+            "name": "abbr"
+          },
+          "right": "o"
+        },
+        "thenExpression": "outline",
+        "elseExpression": {
+          "__symbolic": "reference",
+          "name": "abbr"
+        }
+      }
+    },
+    "alreadyHasAThemeSuffix": {
+      "__symbolic": "function",
+      "parameters": [
+        "name"
+      ],
+      "value": {
+        "__symbolic": "binop",
+        "operator": "||",
+        "left": {
+          "__symbolic": "binop",
+          "operator": "||",
+          "left": {
+            "__symbolic": "call",
+            "expression": {
+              "__symbolic": "select",
+              "expression": {
+                "__symbolic": "reference",
+                "name": "name"
+              },
+              "member": "endsWith"
+            },
+            "arguments": [
+              "-fill"
+            ]
+          },
+          "right": {
+            "__symbolic": "call",
+            "expression": {
+              "__symbolic": "select",
+              "expression": {
+                "__symbolic": "reference",
+                "name": "name"
+              },
+              "member": "endsWith"
+            },
+            "arguments": [
+              "-o"
+            ]
+          }
+        },
+        "right": {
+          "__symbolic": "call",
+          "expression": {
+            "__symbolic": "select",
+            "expression": {
+              "__symbolic": "reference",
+              "name": "name"
+            },
+            "member": "endsWith"
+          },
+          "arguments": [
+            "-twotone"
+          ]
+        }
+      }
+    },
+    "isIconDefinition": {
+      "__symbolic": "function",
+      "parameters": [
+        "target"
+      ],
+      "value": {
+        "__symbolic": "binop",
+        "operator": "&&",
+        "left": {
+          "__symbolic": "binop",
+          "operator": "&&",
+          "left": {
+            "__symbolic": "binop",
+            "operator": "&&",
+            "left": {
+              "__symbolic": "binop",
+              "operator": "===",
+              "left": {
+                "__symbolic": "error",
+                "message": "Expression form not supported",
+                "line": 48,
+                "character": 4,
+                "module": "./utils"
+              },
+              "right": "object"
+            },
+            "right": {
+              "__symbolic": "binop",
+              "operator": "===",
+              "left": {
+                "__symbolic": "error",
+                "message": "Expression form not supported",
+                "line": 49,
+                "character": 4,
+                "module": "./utils"
+              },
+              "right": "string"
+            }
+          },
+          "right": {
+            "__symbolic": "binop",
+            "operator": "===",
+            "left": {
+              "__symbolic": "error",
+              "message": "Expression form not supported",
+              "line": 50,
+              "character": 4,
+              "module": "./utils"
+            },
+            "right": "string"
+          }
+        },
+        "right": {
+          "__symbolic": "binop",
+          "operator": "||",
+          "left": {
+            "__symbolic": "binop",
+            "operator": "instanceof",
+            "left": {
+              "__symbolic": "select",
+              "expression": {
+                "__symbolic": "reference",
+                "name": "target"
+              },
+              "member": "icon"
+            },
+            "right": {
+              "__symbolic": "reference",
+              "name": "SVGElement"
+            }
+          },
+          "right": {
+            "__symbolic": "binop",
+            "operator": "===",
+            "left": {
+              "__symbolic": "error",
+              "message": "Expression form not supported",
+              "line": 53,
+              "character": 42,
+              "module": "./utils"
+            },
+            "right": "string"
+          }
+        }
+      }
+    },
+    "getIconDefinitionFromAbbr": {
+      "__symbolic": "function"
+    },
+    "cloneSVG": {
+      "__symbolic": "function",
+      "parameters": [
+        "svg"
+      ],
+      "value": {
+        "__symbolic": "call",
+        "expression": {
+          "__symbolic": "select",
+          "expression": {
+            "__symbolic": "reference",
+            "name": "svg"
+          },
+          "member": "cloneNode"
+        },
+        "arguments": [
+          true
+        ]
+      }
+    },
+    "replaceFillColor": {
+      "__symbolic": "function",
+      "parameters": [
+        "raw"
+      ],
+      "value": {
+        "__symbolic": "call",
+        "expression": {
+          "__symbolic": "select",
+          "expression": {
+            "__symbolic": "call",
+            "expression": {
+              "__symbolic": "select",
+              "expression": {
+                "__symbolic": "call",
+                "expression": {
+                  "__symbolic": "select",
+                  "expression": {
+                    "__symbolic": "call",
+                    "expression": {
+                      "__symbolic": "select",
+                      "expression": {
+                        "__symbolic": "reference",
+                        "name": "raw"
+                      },
+                      "member": "replace"
+                    },
+                    "arguments": [
+                      {
+                        "__symbolic": "error",
+                        "message": "Expression form not supported",
+                        "line": 75,
+                        "character": 13,
+                        "module": "./utils"
+                      },
+                      "\"primaryColor\""
+                    ]
+                  },
+                  "member": "replace"
+                },
+                "arguments": [
+                  {
+                    "__symbolic": "error",
+                    "message": "Expression form not supported",
+                    "line": 76,
+                    "character": 13,
+                    "module": "./utils"
+                  },
+                  "\"secondaryColor\""
+                ]
+              },
+              "member": "replace"
+            },
+            "arguments": [
+              {
+                "__symbolic": "error",
+                "message": "Expression form not supported",
+                "line": 77,
+                "character": 13,
+                "module": "./utils"
+              },
+              "\"secondaryColor\""
+            ]
+          },
+          "member": "replace"
+        },
+        "arguments": [
+          {
+            "__symbolic": "error",
+            "message": "Expression form not supported",
+            "line": 78,
+            "character": 13,
+            "module": "./utils"
+          },
+          "\"secondaryColor\""
+        ]
+      }
+    },
+    "manifest": {
+      "fill": [
+        "account-book",
+        "alert",
+        "alipay-square",
+        "alipay-circle",
+        "amazon-circle",
+        "aliwangwang",
+        "amazon-square",
+        "android",
+        "apple",
+        "api",
+        "appstore",
+        "audio",
+        "backward",
+        "bank",
+        "behance-circle",
+        "behance-square",
+        "bell",
+        "box-plot",
+        "book",
+        "build",
+        "bulb",
+        "calculator",
+        "calendar",
+        "caret-down",
+        "camera",
+        "car",
+        "caret-left",
+        "caret-right",
+        "carry-out",
+        "caret-up",
+        "check-circle",
+        "check-square",
+        "ci-circle",
+        "chrome",
+        "close-circle",
+        "clock-circle",
+        "code-sandbox-circle",
+        "cloud",
+        "code-sandbox-square",
+        "close-square",
+        "code",
+        "codepen-circle",
+        "codepen-square",
+        "compass",
+        "control",
+        "contacts",
+        "container",
+        "copy",
+        "credit-card",
+        "crown",
+        "customer-service",
+        "copyright-circle",
+        "dashboard",
+        "diff",
+        "delete",
+        "database",
+        "dingtalk-circle",
+        "dingtalk-square",
+        "dollar-circle",
+        "dislike",
+        "down-circle",
+        "dribbble-square",
+        "dribbble-circle",
+        "dropbox-circle",
+        "down-square",
+        "dropbox-square",
+        "edit",
+        "euro-circle",
+        "exclamation-circle",
+        "experiment",
+        "environment",
+        "eye",
+        "facebook",
+        "fast-backward",
+        "fast-forward",
+        "file-add",
+        "file-excel",
+        "file-exclamation",
+        "file-image",
+        "file-markdown",
+        "file-ppt",
+        "file-pdf",
+        "file-text",
+        "file-word",
+        "file-unknown",
+        "file",
+        "file-zip",
+        "filter",
+        "fire",
+        "flag",
+        "folder-add",
+        "folder-open",
+        "folder",
+        "forward",
+        "frown",
+        "funnel-plot",
+        "fund",
+        "gift",
+        "github",
+        "golden",
+        "gitlab",
+        "google-circle",
+        "google-square",
+        "google-plus-square",
+        "hdd",
+        "google-plus-circle",
+        "heart",
+        "highlight",
+        "home",
+        "html5",
+        "hourglass",
+        "ie-circle",
+        "idcard",
+        "ie-square",
+        "info-circle",
+        "insurance",
+        "instagram",
+        "interation",
+        "layout",
+        "left-square",
+        "left-circle",
+        "like",
+        "linkedin",
+        "lock",
+        "mail",
+        "medicine-box",
+        "medium-circle",
+        "medium-square",
+        "message",
+        "meh",
+        "minus-circle",
+        "minus-square",
+        "mobile",
+        "money-collect",
+        "notification",
+        "pause-circle",
+        "phone",
+        "pay-circle",
+        "picture",
+        "pie-chart",
+        "play-circle",
+        "play-square",
+        "plus-circle",
+        "plus-square",
+        "pound-circle",
+        "printer",
+        "profile",
+        "project",
+        "property-safety",
+        "pushpin",
+        "qq-circle",
+        "question-circle",
+        "read",
+        "reconciliation",
+        "qq-square",
+        "reddit-circle",
+        "red-envelope",
+        "reddit-square",
+        "rest",
+        "right-circle",
+        "right-square",
+        "rocket",
+        "safety-certificate",
+        "schedule",
+        "security-scan",
+        "setting",
+        "shopping",
+        "save",
+        "shop",
+        "sketch-square",
+        "skype",
+        "skin",
+        "sketch-circle",
+        "slack-circle",
+        "sliders",
+        "slack-square",
+        "snippets",
+        "smile",
+        "sound",
+        "star",
+        "step-backward",
+        "step-forward",
+        "stop",
+        "switcher",
+        "tags",
+        "tag",
+        "tablet",
+        "taobao-circle",
+        "thunderbolt",
+        "taobao-square",
+        "trademark-circle",
+        "twitter-circle",
+        "trophy",
+        "tool",
+        "twitter-square",
+        "up-circle",
+        "up-square",
+        "unlock",
+        "usb",
+        "video-camera",
+        "warning",
+        "wallet",
+        "weibo-circle",
+        "wechat",
+        "weibo-square",
+        "windows",
+        "yahoo",
+        "yuque",
+        "youtube",
+        "zhihu-circle",
+        "zhihu-square"
+      ],
+      "outline": [
+        "account-book",
+        "alert",
+        "alipay-circle",
+        "aliwangwang",
+        "android",
+        "apple",
+        "api",
+        "appstore",
+        "audio",
+        "backward",
+        "bank",
+        "behance-square",
+        "bell",
+        "box-plot",
+        "book",
+        "build",
+        "bulb",
+        "calculator",
+        "calendar",
+        "caret-down",
+        "camera",
+        "car",
+        "caret-left",
+        "caret-right",
+        "carry-out",
+        "caret-up",
+        "check-circle",
+        "check-square",
+        "chrome",
+        "close-circle",
+        "clock-circle",
+        "cloud",
+        "close-square",
+        "code",
+        "codepen-circle",
+        "compass",
+        "control",
+        "contacts",
+        "container",
+        "copy",
+        "credit-card",
+        "crown",
+        "customer-service",
+        "dashboard",
+        "diff",
+        "delete",
+        "database",
+        "dislike",
+        "down-circle",
+        "dribbble-square",
+        "down-square",
+        "edit",
+        "exclamation-circle",
+        "experiment",
+        "environment",
+        "eye",
+        "facebook",
+        "fast-backward",
+        "fast-forward",
+        "file-add",
+        "file-excel",
+        "file-exclamation",
+        "file-image",
+        "file-markdown",
+        "file-ppt",
+        "file-pdf",
+        "file-text",
+        "file-word",
+        "file-unknown",
+        "file",
+        "file-zip",
+        "filter",
+        "fire",
+        "flag",
+        "folder-add",
+        "folder-open",
+        "folder",
+        "forward",
+        "frown",
+        "funnel-plot",
+        "fund",
+        "gift",
+        "github",
+        "gitlab",
+        "hdd",
+        "heart",
+        "highlight",
+        "home",
+        "html5",
+        "hourglass",
+        "idcard",
+        "info-circle",
+        "insurance",
+        "instagram",
+        "interation",
+        "layout",
+        "left-square",
+        "left-circle",
+        "like",
+        "linkedin",
+        "lock",
+        "mail",
+        "medicine-box",
+        "message",
+        "meh",
+        "minus-circle",
+        "minus-square",
+        "mobile",
+        "money-collect",
+        "notification",
+        "pause-circle",
+        "phone",
+        "pay-circle",
+        "picture",
+        "pie-chart",
+        "play-circle",
+        "play-square",
+        "plus-circle",
+        "plus-square",
+        "printer",
+        "profile",
+        "project",
+        "property-safety",
+        "pushpin",
+        "question-circle",
+        "read",
+        "reconciliation",
+        "red-envelope",
+        "rest",
+        "right-circle",
+        "right-square",
+        "rocket",
+        "safety-certificate",
+        "schedule",
+        "security-scan",
+        "setting",
+        "shopping",
+        "save",
+        "shop",
+        "skype",
+        "skin",
+        "sliders",
+        "slack-square",
+        "snippets",
+        "smile",
+        "sound",
+        "star",
+        "step-backward",
+        "step-forward",
+        "stop",
+        "switcher",
+        "tags",
+        "tag",
+        "tablet",
+        "taobao-circle",
+        "thunderbolt",
+        "trophy",
+        "tool",
+        "up-circle",
+        "up-square",
+        "unlock",
+        "usb",
+        "video-camera",
+        "warning",
+        "wallet",
+        "weibo-circle",
+        "wechat",
+        "weibo-square",
+        "windows",
+        "yahoo",
+        "yuque",
+        "youtube",
+        "alibaba",
+        "align-center",
+        "align-left",
+        "align-right",
+        "alipay",
+        "aliyun",
+        "amazon",
+        "ant-design",
+        "ant-cloud",
+        "apartment",
+        "area-chart",
+        "arrow-down",
+        "arrow-right",
+        "arrow-up",
+        "arrows-alt",
+        "audit",
+        "arrow-left",
+        "bar-chart",
+        "barcode",
+        "bars",
+        "behance",
+        "bg-colors",
+        "block",
+        "bold",
+        "border-bottom",
+        "border-horizontal",
+        "border-inner",
+        "border-left",
+        "border-outer",
+        "border-right",
+        "border-top",
+        "border-verticle",
+        "border",
+        "branches",
+        "check",
+        "ci",
+        "close",
+        "cloud-download",
+        "cloud-server",
+        "cloud-sync",
+        "cloud-upload",
+        "cluster",
+        "code-sandbox",
+        "codepen",
+        "coffee",
+        "colum-height",
+        "column-width",
+        "copyright",
+        "dash",
+        "deployment-unit",
+        "desktop",
+        "dingding",
+        "disconnect",
+        "dollar",
+        "double-left",
+        "dot-chart",
+        "double-right",
+        "down",
+        "download",
+        "drag",
+        "dribbble",
+        "ellipsis",
+        "dropbox",
+        "enter",
+        "exception",
+        "euro",
+        "exclamation",
+        "export",
+        "fall",
+        "file-done",
+        "file-jpg",
+        "file-search",
+        "file-protect",
+        "file-sync",
+        "font-colors",
+        "fork",
+        "form",
+        "font-size",
+        "fullscreen-exit",
+        "fullscreen",
+        "gateway",
+        "gold",
+        "global",
+        "google-plus",
+        "google",
+        "heat-map",
+        "ie",
+        "import",
+        "inbox",
+        "info",
+        "issues-close",
+        "key",
+        "italic",
+        "laptop",
+        "left",
+        "line-chart",
+        "line-height",
+        "line",
+        "link",
+        "loading-3-quarters",
+        "loading",
+        "login",
+        "logout",
+        "man",
+        "medium-workmark",
+        "medium",
+        "menu-fold",
+        "menu-unfold",
+        "menu",
+        "minus",
+        "monitor",
+        "mr",
+        "number",
+        "paper-clip",
+        "ordered-list",
+        "pause",
+        "percentage",
+        "pic-center",
+        "pic-right",
+        "pic-left",
+        "plus",
+        "pound",
+        "poweroff",
+        "qq",
+        "qrcode",
+        "question",
+        "radar-chart",
+        "radius-bottomleft",
+        "radius-bottomright",
+        "radius-setting",
+        "radius-upleft",
+        "radius-upright",
+        "reddit",
+        "redo",
+        "reload-time",
+        "reload",
+        "retweet",
+        "right",
+        "robot",
+        "rise",
+        "rollback",
+        "safety",
+        "scan",
+        "scissor",
+        "search",
+        "select",
+        "shake",
+        "share-alt",
+        "shopping-cart",
+        "shrink",
+        "sketch",
+        "slack",
+        "small-dash",
+        "sort-ascending",
+        "solution",
+        "sort-descending",
+        "stock",
+        "strikethrough",
+        "swap-right",
+        "swap-left",
+        "swap",
+        "sync",
+        "table",
+        "taobao",
+        "team",
+        "to-top",
+        "trademark",
+        "transaction",
+        "underline",
+        "twitter",
+        "undo",
+        "unordered-list",
+        "up",
+        "upload",
+        "user-add",
+        "user-delete",
+        "user",
+        "usergroup-add",
+        "usergroup-delete",
+        "vertical-align-bottom",
+        "vertical-align-middle",
+        "vertical-align-top",
+        "vertical-left",
+        "vertical-right",
+        "weibo",
+        "wifi",
+        "woman",
+        "zhihu",
+        "zoom-out",
+        "zoom-in"
+      ],
+      "twotone": [
+        "account-book",
+        "alert",
+        "api",
+        "appstore",
+        "audio",
+        "bank",
+        "bell",
+        "box-plot",
+        "book",
+        "build",
+        "bulb",
+        "calculator",
+        "camera",
+        "car",
+        "carry-out",
+        "check-circle",
+        "check-square",
+        "close-circle",
+        "clock-circle",
+        "cloud",
+        "close-square",
+        "code",
+        "compass",
+        "control",
+        "contacts",
+        "container",
+        "copy",
+        "credit-card",
+        "crown",
+        "customer-service",
+        "dashboard",
+        "diff",
+        "delete",
+        "database",
+        "dislike",
+        "down-circle",
+        "down-square",
+        "edit",
+        "exclamation-circle",
+        "experiment",
+        "environment",
+        "eye",
+        "file-add",
+        "file-excel",
+        "file-exclamation",
+        "file-image",
+        "file-markdown",
+        "file-ppt",
+        "file-pdf",
+        "file-text",
+        "file-word",
+        "file-unknown",
+        "file",
+        "file-zip",
+        "filter",
+        "fire",
+        "flag",
+        "folder-add",
+        "folder-open",
+        "folder",
+        "frown",
+        "funnel-plot",
+        "fund",
+        "gift",
+        "hdd",
+        "heart",
+        "highlight",
+        "home",
+        "html5",
+        "hourglass",
+        "idcard",
+        "info-circle",
+        "insurance",
+        "interation",
+        "layout",
+        "left-square",
+        "left-circle",
+        "like",
+        "lock",
+        "mail",
+        "medicine-box",
+        "message",
+        "meh",
+        "minus-circle",
+        "minus-square",
+        "mobile",
+        "money-collect",
+        "notification",
+        "pause-circle",
+        "phone",
+        "picture",
+        "pie-chart",
+        "play-circle",
+        "play-square",
+        "plus-circle",
+        "plus-square",
+        "pound-circle",
+        "printer",
+        "profile",
+        "project",
+        "property-safety",
+        "pushpin",
+        "question-circle",
+        "reconciliation",
+        "red-envelope",
+        "rest",
+        "right-circle",
+        "right-square",
+        "rocket",
+        "safety-certificate",
+        "schedule",
+        "security-scan",
+        "setting",
+        "shopping",
+        "save",
+        "shop",
+        "skin",
+        "sliders",
+        "snippets",
+        "smile",
+        "sound",
+        "star",
+        "stop",
+        "switcher",
+        "tags",
+        "tag",
+        "tablet",
+        "thunderbolt",
+        "trademark-circle",
+        "trophy",
+        "tool",
+        "up-circle",
+        "up-square",
+        "unlock",
+        "usb",
+        "video-camera",
+        "warning",
+        "wallet",
+        "ci",
+        "copyright",
+        "dollar",
+        "euro",
+        "gold",
+        "canlendar"
+      ]
+    }
+  },
+  "origins": {
+    "IconModule": "./component/icon.module",
+    "ReqIconTask": "./component/icon.service",
+    "IconService": "./component/icon.service",
+    "IconDirective": "./component/icon.directive",
+    "IconDefinition": "./types",
+    "ThemeType": "./types",
+    "Manifest": "./types",
+    "CachedIconDefinition": "./types",
+    "TwoToneColorPaletteSetter": "./types",
+    "TwoToneColorPalette": "./types",
+    "printErr": "./utils",
+    "printWarn": "./utils",
+    "getSecondaryColor": "./utils",
+    "withSuffix": "./utils",
+    "withSuffixAndColor": "./utils",
+    "mapAbbrToTheme": "./utils",
+    "alreadyHasAThemeSuffix": "./utils",
+    "isIconDefinition": "./utils",
+    "getIconDefinitionFromAbbr": "./utils",
+    "cloneSVG": "./utils",
+    "replaceFillColor": "./utils",
+    "manifest": "./manifest"
+  },
+  "importAs": "@ant-design/icons-angular"
+}

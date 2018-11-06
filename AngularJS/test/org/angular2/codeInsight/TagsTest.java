@@ -10,12 +10,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import com.intellij.util.ThrowableRunnable;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
-
-import static org.angularjs.AngularTestUtil.configureWithMetadataFile;
 
 public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
@@ -144,15 +141,6 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNotNull(resolve);
       assertEquals("ngContent.after.html", resolve.getContainingFile().getName());
       assertEquals("<ng-content></ng-content>", AngularTestUtil.getDirectiveDefinitionText(resolve));
-    });
-  }
-
-  public void testComplexSelectorList2() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      configureWithMetadataFile(myFixture, "ionic");
-      myFixture.configureByFiles("ionic.html");
-      myFixture.completeBasic();
-      assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
     });
   }
 
