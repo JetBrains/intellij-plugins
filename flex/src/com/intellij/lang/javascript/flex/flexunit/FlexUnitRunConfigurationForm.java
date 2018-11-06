@@ -134,7 +134,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
 
     myShowLogCheckBox.setSelected(params.getOutputLogLevel() != null);
     myLogLevelCombo.setEnabled(params.getOutputLogLevel() != null);
-    myLogLevelCombo.setSelectedItem(params.getOutputLogLevel() == null ? null : params.getOutputLogLevel());
+    myLogLevelCombo.setSelectedItem(params.getOutputLogLevel());
 
     myRunTrustedCheckBox.setSelected(params.isTrusted());
 

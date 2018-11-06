@@ -64,15 +64,13 @@ public class MultipleSelectionListUI extends BasicListUI {
          * synchronous (it is on Windows).  See bug 4122345
          */
         if (!list.hasFocus() && list.isRequestFocusEnabled()) {
-          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-            IdeFocusManager.getGlobalInstance().requestFocus(list, true);
-          });
+          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(list, true));
         }
 
         int row = locationToIndex(list, e.getPoint());
         if (row != -1) {
           myLastPressedRow = row;
-          boolean adjusting = (e.getID() == MouseEvent.MOUSE_PRESSED) ? true : false;
+          boolean adjusting = e.getID() == MouseEvent.MOUSE_PRESSED;
           list.setValueIsAdjusting(adjusting);
           int anchorIndex = list.getAnchorSelectionIndex();
           if (e.isShiftDown() && (anchorIndex != -1)) {
