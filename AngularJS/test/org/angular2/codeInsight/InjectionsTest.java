@@ -179,5 +179,4 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
     });
   }
-
 }

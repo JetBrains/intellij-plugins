@@ -21,5 +21,4 @@ public class Angular2MetadataClassStub extends Angular2MetadataClassStubBase<Ang
   public Angular2MetadataClassStub(@NotNull StubInputStream stream, @Nullable StubElement parent) throws IOException {
     super(stream, parent, Angular2MetadataElementTypes.CLASS);
   }
-
 }

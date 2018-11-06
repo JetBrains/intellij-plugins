@@ -20,5 +20,4 @@ public abstract class Angular2MetadataElement<Stub extends Angular2MetadataEleme
     }
     return stub != null ? (Angular2MetadataNodeModule)stub.getPsi() : null;
   }
-
 }

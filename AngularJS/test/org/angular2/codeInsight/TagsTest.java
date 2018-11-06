@@ -27,7 +27,9 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testCustomTagsCompletion20NoNormalize() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("custom_no_normalize.html", "custom_no_normalize.after.html", "package.json", "custom_no_normalize.ts"));
+                                        () -> myFixture.testCompletion(
+                                          "custom_no_normalize.html", "custom_no_normalize.after.html", "package.json",
+                                          "custom_no_normalize.ts"));
   }
 
   public void testCustomTagsResolve20TypeScriptComponent() {
@@ -75,7 +77,8 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testCustomSpaceSeparated() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
                                         () -> {
-                                          final List<String> variants = myFixture.getCompletionVariants("customSpaceSeparated.html", "customSpaceSeparated.ts", "package.json");
+                                          final List<String> variants = myFixture.getCompletionVariants(
+                                            "customSpaceSeparated.html", "customSpaceSeparated.ts", "package.json");
                                           assertContainsElements(variants, "dummy-list", "dummy-nav-list");
                                         });
   }
@@ -176,5 +179,4 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.checkHighlighting(true, false, true);
     });
   }
-
 }

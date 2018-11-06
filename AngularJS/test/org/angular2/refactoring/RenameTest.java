@@ -88,8 +88,9 @@ public class RenameTest extends LightPlatformMultiFileFixtureTestCase {
   private void doMultiFileTest(String mainFile, String newName) {
     doTest((rootDir, rootAfter) -> {
       myFixture.configureFromTempProjectFile(mainFile);
-      PsiElement targetElement = TargetElementUtil.findTargetElement(myFixture.getEditor(), TargetElementUtil.ELEMENT_NAME_ACCEPTED
-                                                                                            | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
+      PsiElement targetElement = TargetElementUtil.findTargetElement(
+        myFixture.getEditor(),
+        TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
       targetElement = RenamePsiElementProcessor.forElement(targetElement).substituteElementToRename(targetElement, myFixture.getEditor());
       RenameProcessor renameProcessor = new RenameProcessor(myFixture.getProject(), targetElement, newName, true, true);
       renameProcessor.run();

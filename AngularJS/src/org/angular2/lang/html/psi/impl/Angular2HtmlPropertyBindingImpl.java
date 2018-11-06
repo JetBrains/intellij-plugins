@@ -26,5 +26,4 @@ public class Angular2HtmlPropertyBindingImpl extends Angular2HtmlPropertyBinding
       visitor.visitElement(this);
     }
   }
-
 }

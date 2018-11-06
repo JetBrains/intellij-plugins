@@ -41,5 +41,4 @@ public class Angular2MetadataEntity<Stub extends Angular2MetadataEntityStub> ext
   public String toString() {
     return Angular2EntityUtils.toString(this);
   }
-
 }

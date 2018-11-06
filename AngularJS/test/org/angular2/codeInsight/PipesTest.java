@@ -90,5 +90,4 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertEquals("asyncPipe.ts", contactField.getContainingFile().getName());
     });
   }
-
 }

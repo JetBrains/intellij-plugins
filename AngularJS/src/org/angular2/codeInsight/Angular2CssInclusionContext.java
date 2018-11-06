@@ -28,7 +28,8 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
         final List<PsiFile> result = new SmartList<>();
         for (JSExpression expression : ((JSArrayLiteralExpression)styles.getValue()).getExpressions()) {
           if (expression instanceof JSLiteralExpression && ((JSLiteralExpression)expression).isQuotedLiteral()) {
-            final List<Pair<PsiElement, TextRange>> injected = InjectedLanguageManager.getInstance(context.getProject()).getInjectedPsiFiles(expression);
+            final List<Pair<PsiElement, TextRange>> injected =
+              InjectedLanguageManager.getInstance(context.getProject()).getInjectedPsiFiles(expression);
             if (injected != null) {
               for (Pair<PsiElement, TextRange> pair : injected) {
                 if (pair.first instanceof StylesheetFile) {

@@ -19,5 +19,4 @@ public abstract class Angular2SourceDeclaration extends Angular2SourceEntity imp
   public Angular2Module getModule() {
     throw new UnsupportedOperationException();
   }
-
 }

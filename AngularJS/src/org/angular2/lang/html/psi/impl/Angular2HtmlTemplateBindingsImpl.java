@@ -42,5 +42,4 @@ public class Angular2HtmlTemplateBindingsImpl extends Angular2HtmlBoundAttribute
   public String getTemplateName() {
     return getAttributeInfo().name;
   }
-
 }

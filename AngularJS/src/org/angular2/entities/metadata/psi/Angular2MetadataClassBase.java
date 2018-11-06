@@ -77,5 +77,4 @@ public class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBas
           .create(provider.apply(dependencies.first), dependencies.second);
       });
   }
-
 }

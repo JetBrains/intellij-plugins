@@ -54,7 +54,9 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNonInlineTemplateCompletion2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("template.completion.html", "template.html", "package.json", "template.completion.ts"));
+                                        () -> myFixture.testCompletion(
+                                          "template.completion.html", "template.html", "package.json",
+                                          "template.completion.ts"));
   }
 
   public void testNonInlineTemplateResolve2TypeScript() {
@@ -121,7 +123,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testComponentFieldsFromConstructorResolve() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("template.constr.html","template.constr.ts", "package.json");
+      myFixture.configureByFiles("template.constr.html", "template.constr.ts", "package.json");
       PsiElement resolve = resolveReference("myCu<caret>stomer");
       assertEquals("template.constr.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, TypeScriptParameterImpl.class);
@@ -130,7 +132,9 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testInlineComponentFieldsFromConstructorCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        () -> myFixture.testCompletion("template.constr.completion.ts", "template.constr.completion.after.ts", "package.json"));
+                                        () -> myFixture.testCompletion(
+                                          "template.constr.completion.ts", "template.constr.completion.after.ts",
+                                          "package.json"));
   }
 
   public void testInlineTemplateCreateFunction2TypeScript() {

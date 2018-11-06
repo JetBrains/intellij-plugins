@@ -55,5 +55,4 @@ public class Angular2HtmlEventImpl extends Angular2HtmlBoundAttributeImpl implem
   public Angular2Action getAction() {
     return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2Action.class));
   }
-
 }

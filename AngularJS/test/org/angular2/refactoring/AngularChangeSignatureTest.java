@@ -16,7 +16,7 @@ public class AngularChangeSignatureTest extends JSChangeSignatureTestBase {
 
   @Override
   protected String[] getActiveFileNames() {
-    return new String[] {"component.ts"};
+    return new String[]{"component.ts"};
   }
 
   @NotNull
@@ -30,5 +30,4 @@ public class AngularChangeSignatureTest extends JSChangeSignatureTestBase {
     doTest("bar", JSAttributeList.AccessType.PUBLIC, "number",
            new JSParameterInfo("stringParam", "string", "", "\"def\"", -1));
   }
-
 }

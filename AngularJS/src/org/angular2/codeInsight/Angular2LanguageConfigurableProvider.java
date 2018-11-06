@@ -10,5 +10,4 @@ public class Angular2LanguageConfigurableProvider extends JSInheritedLanguagesCo
   public boolean isNeedToBeTerminated(@NotNull PsiElement element) {
     return false;
   }
-
 }

@@ -36,7 +36,7 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
       return null;
     }
     JSType type = JSResolveUtil.getElementJSType(bindings, JSEvaluateContext.JSEvaluationPlace.DEFAULT);
-    if (type != null ) {
+    if (type != null) {
       JSRecordType.PropertySignature signature = type.asRecordType().findPropertySignature(binding.getName());
       return signature != null ? signature.getType() : null;
     }

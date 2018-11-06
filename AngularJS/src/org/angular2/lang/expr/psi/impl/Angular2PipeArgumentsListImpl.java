@@ -20,7 +20,7 @@ public class Angular2PipeArgumentsListImpl extends JSArgumentListImpl implements
   @Override
   @NotNull
   public JSExpression[] getArguments() {
-   return ArrayUtil.prepend(getPipeLeftSideExpression(),  super.getArguments());
+    return ArrayUtil.prepend(getPipeLeftSideExpression(), super.getArguments());
   }
 
   @Nullable
@@ -29,5 +29,4 @@ public class Angular2PipeArgumentsListImpl extends JSArgumentListImpl implements
       .findChildByType(JSExtendedLanguagesTokenSetProvider.EXPRESSIONS);
     return node != null ? node.getPsi(JSExpression.class) : null;
   }
-
 }

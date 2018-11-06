@@ -44,5 +44,4 @@ public class MetadataUtils {
   public static <T extends JsonValue> T getPropertyValue(@Nullable JsonProperty property, Class<T> valueClass) {
     return property != null ? tryCast(property.getValue(), valueClass) : null;
   }
-
 }

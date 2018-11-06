@@ -802,5 +802,4 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.checkHighlighting(true, false, true);
     });
   }
-
 }
