@@ -4,6 +4,7 @@ import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.LookupElementInteractivity;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PsiElementPattern;
@@ -98,7 +99,7 @@ public class PostCssDumbAwareCompletionContributor extends CompletionContributor
     boolean insideBlock = parent.getParent() instanceof CssBlock && (!(prev instanceof PsiErrorElement));
     boolean insideNestedRule = PsiTreeUtil.getParentOfType(parent, CssRuleset.class) != null;
     if (insideBlock && insideNestedRule) {
-      result.addElement(CssCompletionUtil.lookupForKeyword("@nest", new CssAddSpaceWithBracesInsertHandler(false)));
+      result.addElement(CssCompletionUtil.lookupForKeyword("@nest", new CssAddSpaceWithBracesInsertHandler(false), LookupElementInteractivity.ALWAYS));
     }
   }
 }
