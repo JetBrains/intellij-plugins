@@ -16,13 +16,12 @@ import com.intellij.util.ProcessingContext;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2Binding;
-import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
-import org.angular2.lang.html.psi.PropertyBindingType;
 import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.isNgClassAttribute;
 
 public class Angular2ReferencesContributor extends PsiReferenceContributor {
 
@@ -98,16 +97,12 @@ public class Angular2ReferencesContributor extends PsiReferenceContributor {
       .and(new FilterPattern(new ElementFilter() {
         @Override
         public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-          XmlAttribute attribute = PsiTreeUtil.getParentOfType(context, XmlAttribute.class);
-          return attribute instanceof Angular2HtmlPropertyBinding
-                 && ((Angular2HtmlPropertyBinding)attribute).getBindingType() == PropertyBindingType.PROPERTY
-                 && "ngClass".equals(((Angular2HtmlPropertyBinding)attribute).getPropertyName())
-                 && (((JSLiteralExpression)context).isQuotedLiteral()
-                     && (checkHierarchy(context,
-                                        Angular2Binding.class)
-                         || checkHierarchy(context,
-                                           JSArrayLiteralExpression.class,
-                                           Angular2Binding.class)));
+          return isNgClassAttribute(PsiTreeUtil.getParentOfType(context, XmlAttribute.class))
+                 && ((JSLiteralExpression)context).isQuotedLiteral()
+                 && (context.getParent() instanceof Angular2Binding
+                     || checkHierarchy(context,
+                                       JSArrayLiteralExpression.class,
+                                       Angular2Binding.class));
         }
 
         @Override
@@ -120,12 +115,12 @@ public class Angular2ReferencesContributor extends PsiReferenceContributor {
       .and(new FilterPattern(new ElementFilter() {
         @Override
         public boolean isAcceptable(Object element, @Nullable PsiElement context) {
-          XmlAttribute attribute = PsiTreeUtil.getParentOfType(context, XmlAttribute.class);
-          return attribute instanceof Angular2HtmlPropertyBinding
-                 && ((Angular2HtmlPropertyBinding)attribute).getBindingType() == PropertyBindingType.PROPERTY
-                 && "ngClass".equals(((Angular2HtmlPropertyBinding)attribute).getPropertyName())
-                 && checkHierarchy(context,
-                                   JSProperty.class,
+          PsiElement parent;
+          return context != null
+                 && (parent = context.getParent()) instanceof JSProperty
+                 && parent.getLanguage().is(Angular2Language.INSTANCE)
+                 && isNgClassAttribute(PsiTreeUtil.getParentOfType(context, XmlAttribute.class))
+                 && checkHierarchy(parent,
                                    JSObjectLiteralExpression.class,
                                    Angular2Binding.class);
         }

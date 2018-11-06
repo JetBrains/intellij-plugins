@@ -13,13 +13,17 @@ import org.jetbrains.annotations.Nullable;
 
 public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
 
+  public static boolean isNgClassAttribute(@Nullable XmlAttribute attribute) {
+    return attribute instanceof Angular2HtmlPropertyBinding
+           && ((Angular2HtmlPropertyBinding)attribute).getBindingType() == PropertyBindingType.PROPERTY
+           && "ngClass".equals(((Angular2HtmlPropertyBinding)attribute).getPropertyName());
+  }
+
   @Nullable
   @Override
   public String getCustomAttributeValues(XmlTag tag, String attributeName) {
     XmlAttribute attribute = tag.getAttribute(attributeName);
-    if (attribute instanceof Angular2HtmlPropertyBinding
-        && ((Angular2HtmlPropertyBinding)attribute).getBindingType() == PropertyBindingType.PROPERTY
-        && "ngClass".equals(((Angular2HtmlPropertyBinding)attribute).getPropertyName())) {
+    if (isNgClassAttribute(attribute)) {
       return getClassNames(((Angular2HtmlPropertyBinding)attribute).getBinding());
     }
     return null;
