@@ -9,7 +9,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Url;
 import com.intellij.util.Urls;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,7 +29,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -165,9 +163,8 @@ public class PreviewStaticServer extends HttpRequestHandler {
       return;
     }
 
-    ByteBuf inlineStyleBuf = Unpooled.wrappedBuffer(Arrays.copyOf(myInlineStyleBytes, myInlineStyleBytes.length));
-
-    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, inlineStyleBuf);
+    FullHttpResponse response =
+      new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.wrappedBuffer(myInlineStyleBytes));
     response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/css");
     response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, must-revalidate");
     response.headers().set(HttpHeaderNames.LAST_MODIFIED, new Date(myInlineStyleTimestamp));
