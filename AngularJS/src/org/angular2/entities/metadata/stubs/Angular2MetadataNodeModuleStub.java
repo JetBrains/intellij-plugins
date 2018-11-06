@@ -63,5 +63,4 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
   public String getImportAs() {
     return StringRef.toString(myImportAs);
   }
-
 }

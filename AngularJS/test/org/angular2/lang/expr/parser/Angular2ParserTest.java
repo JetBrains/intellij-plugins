@@ -70,13 +70,13 @@ public class Angular2ParserTest extends LightPlatformCodeInsightTestCase impleme
     }
   }
 
-  private static void doSingleTest(String suffix, String path) throws Throwable{
+  private static void doSingleTest(String suffix, String path) throws Throwable {
     final String text = FileUtil.loadFile(new File(path, suffix), true);
     final StringBuilder result = new StringBuilder();
 
     int firstDot = suffix.indexOf('.');
     String extension = suffix.substring(0, firstDot);
-    int secondDot = suffix.indexOf('.', firstDot +1);
+    int secondDot = suffix.indexOf('.', firstDot + 1);
     String name = secondDot > 0 ? suffix.substring(firstDot + 1, secondDot) : "";
 
     for (String line : StringUtil.splitByLines(text)) {

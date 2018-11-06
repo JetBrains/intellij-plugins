@@ -26,5 +26,4 @@ public class Angular2HtmlBananaBoxBindingImpl extends Angular2HtmlPropertyBindin
       visitor.visitElement(this);
     }
   }
-
 }

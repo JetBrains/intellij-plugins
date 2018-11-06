@@ -507,9 +507,7 @@ public class Angular2ParserSpecTest {
         it("should be able to recover from a missing selector in a array literal",
            () -> recover("[[a.], b, c]"));
       });
-
     });
-
   }
 
   private static void checkAction(String exp) {
@@ -564,14 +562,14 @@ public class Angular2ParserSpecTest {
   private static Angular2TemplateBinding[] parseTemplateBindings(String key, String value, @SuppressWarnings("unused") String location) {
     ASTNode root = parse(value, key + "." + Angular2PsiParser.TEMPLATE_BINDINGS);
     return root.findChildByType(Angular2ElementTypes.TEMPLATE_BINDINGS_STATEMENT)
-               .getPsi(Angular2TemplateBindings.class)
-               .getBindings();
+      .getPsi(Angular2TemplateBindings.class)
+      .getBindings();
   }
 
   private static List<String> keys(Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings)
-                 .map(binding -> binding.getKey())
-                 .collect(Collectors.toList());
+      .map(binding -> binding.getKey())
+      .collect(Collectors.toList());
   }
 
   private static List<String> keyValues(Angular2TemplateBinding[] templateBindings) {
@@ -587,14 +585,14 @@ public class Angular2ParserSpecTest {
 
   private static List<String> keySpans(String source, Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings)
-                 .map(binding -> source.substring(binding.getTextRange().getStartOffset(), binding.getTextRange().getEndOffset()))
-                 .collect(Collectors.toList());
+      .map(binding -> source.substring(binding.getTextRange().getStartOffset(), binding.getTextRange().getEndOffset()))
+      .collect(Collectors.toList());
   }
 
   private static List<String> exprSources(Angular2TemplateBinding[] templateBindings) {
     return Arrays.stream(templateBindings)
-                 .map(binding -> binding.getExpression() != null ? binding.getExpression().getText() : null)
-                 .collect(Collectors.toList());
+      .map(binding -> binding.getExpression() != null ? binding.getExpression().getText() : null)
+      .collect(Collectors.toList());
   }
 
 
@@ -737,8 +735,8 @@ public class Angular2ParserSpecTest {
         }
         else {
           result.append("<q:")
-                .append(qualifierType.toString())
-                .append(">");
+            .append(qualifierType.toString())
+            .append(">");
         }
       }
       if (node.getReferenceName() != null) {
@@ -757,8 +755,8 @@ public class Angular2ParserSpecTest {
     @Override
     public void visitAngular2Quote(Angular2Quote quote) {
       result.append(quote.getName())
-            .append(":")
-            .append(quote.getContents());
+        .append(":")
+        .append(quote.getContents());
     }
 
     @Override
@@ -767,7 +765,7 @@ public class Angular2ParserSpecTest {
       JSExpression[] args = pipe.getArguments();
       printElement(args[0]);
       result.append(" | ")
-            .append(pipe.getName());
+        .append(pipe.getName());
       for (JSExpression expr : ArrayUtil.remove(args, 0)) {
         result.append(":");
         printElement(expr);
@@ -835,8 +833,8 @@ public class Angular2ParserSpecTest {
     public void visitJSLiteralExpression(JSLiteralExpression node) {
       if (node.isStringLiteral()) {
         result.append("\"")
-              .append(node.getStringValue())
-              .append("\"");
+          .append(node.getStringValue())
+          .append("\"");
       }
       else {
         result.append(node.getText());

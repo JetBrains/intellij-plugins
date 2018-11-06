@@ -13,5 +13,4 @@ public class Angular2EventHandlerDescriptor extends Angular2AttributeDescriptor 
                                         @NotNull List<PsiElement> elements) {
     super(attributeName, bindingName, elements);
   }
-
 }

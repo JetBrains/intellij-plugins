@@ -107,7 +107,7 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
     private final boolean myReinstall;
 
     AngularCliAddQuickFix(@NotNull VirtualFile packageJson, @NotNull String packageName,
-                                 @NotNull String versionSpec, boolean reinstall) {
+                          @NotNull String versionSpec, boolean reinstall) {
       myPackageJson = packageJson;
       myPackageName = packageName;
       myVersionSpec = versionSpec;

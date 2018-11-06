@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.settings;
 
 import com.intellij.lang.typescript.compiler.ui.TypeScriptServerServiceSettings;
@@ -17,10 +18,10 @@ public class AngularSettings implements
                              TypeScriptServerServiceSettings,
                              PersistentStateComponent<AngularSettings.Settings> {
 
-  private final SimpleModificationTracker myModificationTracker = new SimpleModificationTracker();  
-  
+  private final SimpleModificationTracker myModificationTracker = new SimpleModificationTracker();
+
   private Settings myState = new AngularSettings.Settings();
-  
+
 
   public static AngularSettings get(Project project) {
     return ServiceManager.getService(project, AngularSettings.class);

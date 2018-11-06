@@ -22,5 +22,4 @@ public class Angular2MetadataArrayStub extends Angular2MetadataElementStub<Angul
     super(memberName, parent, Angular2MetadataElementTypes.ARRAY);
     ((JsonArray)source).getValueList().forEach(v -> createMember(null, v));
   }
-
 }

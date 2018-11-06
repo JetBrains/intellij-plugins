@@ -47,7 +47,8 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     addExplicitExtension(LanguageASTFactory.INSTANCE, CSSLanguage.INSTANCE, new CssTreeElementFactory());
     registerExtensionPoint(CssElementDescriptorProvider.EP_NAME, CssElementDescriptorProvider.class);
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
-    registerApplicationService(CssElementDescriptorFactory2.class, new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
+    registerApplicationService(CssElementDescriptorFactory2.class,
+                               new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
   }
 
   @Override
@@ -261,5 +262,4 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   public void testNgInterpolationEmpty() throws Exception {
     doTestHtml("empty {{}} interpolation");
   }
-
 }

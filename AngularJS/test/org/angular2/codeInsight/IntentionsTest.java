@@ -10,12 +10,12 @@ import org.angularjs.AngularTestUtil;
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle;
 
 public class IntentionsTest extends LightPlatformCodeInsightFixtureTestCase {
-  
+
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "intentions";
   }
-  
+
   public void testComputeConstantInTemplate() {
     doTestForFile(getTestName(true), JSIntentionBundle.message("constant.constant-expression.display-name"));
   }

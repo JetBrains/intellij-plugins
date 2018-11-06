@@ -55,7 +55,7 @@ public class InspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testES6(getProject(), () -> {
       myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class);
       myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class);
-      myFixture.configureByFiles( "unusedReference.html", "unusedReference.ts", "package.json");
+      myFixture.configureByFiles("unusedReference.html", "unusedReference.ts", "package.json");
       myFixture.checkHighlighting();
     });
   }

@@ -22,7 +22,7 @@ public class ScopesTest extends LightPlatformCodeInsightFixtureTestCase {
       int lastCase = 0;
       int i = 0;
       int offset;
-      while((offset = fileText.indexOf(TEST_PREFIX, lastCase)) > 0) {
+      while ((offset = fileText.indexOf(TEST_PREFIX, lastCase)) > 0) {
         i++;
         lastCase = offset + 8;
         char result = fileText.charAt(offset + TEST_PREFIX.length());
@@ -38,5 +38,4 @@ public class ScopesTest extends LightPlatformCodeInsightFixtureTestCase {
       }
     });
   }
-
 }

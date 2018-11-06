@@ -20,7 +20,7 @@ public class FormattingTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testStyles() {
-    doTest("stylesFormatting_after.ts","stylesFormatting.ts");
+    doTest("stylesFormatting_after.ts", "stylesFormatting.ts");
   }
 
   public void testTemplate() {

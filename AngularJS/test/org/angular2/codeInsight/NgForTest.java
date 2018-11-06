@@ -41,7 +41,8 @@ public class NgForTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgForWithinAttribute() {
     JSTestUtils.testES6(getProject(), () -> {
-      final List<String> variants = myFixture.getCompletionVariants("NgForWithinAttribute.ts", "ng_for_of.ts","iterable_differs.ts", "package.json");
+      final List<String> variants = myFixture.getCompletionVariants(
+        "NgForWithinAttribute.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
       assertNotNull(variants);
       assertTrue(variants.size() >= 2);
       assertEquals("created_at", variants.get(0));
@@ -51,13 +52,13 @@ public class NgForTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgForWithinAttributeHTML() {
     JSTestUtils.testES6(getProject(), () -> {
-      final List<String> variants =
-        myFixture.getCompletionVariants("NgForWithinAttributeHTML.html", "NgForWithinAttributeHTML.ts", "ng_for_of.ts","iterable_differs.ts", "package.json");
+      final List<String> variants = myFixture.getCompletionVariants(
+        "NgForWithinAttributeHTML.html", "NgForWithinAttributeHTML.ts", "ng_for_of.ts", "iterable_differs.ts",
+        "package.json");
       assertNotNull(variants);
       assertTrue(variants.size() >= 2);
       assertEquals("created_at", variants.get(0));
       assertEquals("email", variants.get(1));
     });
   }
-
 }

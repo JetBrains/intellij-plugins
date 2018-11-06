@@ -44,5 +44,4 @@ public class Angular2SourceDirectiveProperty implements Angular2DirectivePropert
   public String toString() {
     return Angular2EntityUtils.toString(this);
   }
-
 }
