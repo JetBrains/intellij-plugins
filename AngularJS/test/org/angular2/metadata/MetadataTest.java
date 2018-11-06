@@ -1,7 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.index;
+package org.angular2.metadata;
 
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.json.psi.impl.JsonFileImpl;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SingleRootFileViewProvider;
@@ -10,7 +12,7 @@ import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory;
 import org.angular2.lang.metadata.psi.MetadataFileImpl;
 import org.angularjs.AngularTestUtil;
 
-public class MetadataStubsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class MetadataTest extends LightPlatformCodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
@@ -19,7 +21,7 @@ public class MetadataStubsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testMetadataJsonFileTypeBinary() {
     VirtualFile vFile = myFixture.copyFileToProject("common.metadata.json");
-    myFixture.configureByFiles("package.json",  "common.d.ts");
+    myFixture.configureByFiles("package.json", "common.d.ts");
     PsiFile file = myFixture.getPsiManager().findFile(vFile);
     assert file != null;
     assert file.getViewProvider() instanceof MetadataJsonFileViewProviderFactory.MetadataFileViewProvider;
@@ -40,5 +42,23 @@ public class MetadataStubsTest extends LightPlatformCodeInsightFixtureTestCase {
     assert file.getViewProvider() instanceof SingleRootFileViewProvider;
     assert !(file.getViewProvider() instanceof MetadataJsonFileViewProviderFactory.MetadataFileViewProvider);
     assert file.getViewProvider().getAllFiles().get(0) instanceof JsonFileImpl;
+  }
+
+  public void testExtendsObfuscatedName() {
+    JSTestUtils.testES6(getProject(), () -> {
+      AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd");
+      myFixture.configureByFiles("inherited_properties.html", "nz-col.component.d.ts", "nz-form-control.component.d.ts");
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.checkHighlighting(true, false, true);
+    });
+  }
+
+  public void testInterModuleExtends() {
+    JSTestUtils.testES6(getProject(), () -> {
+      AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd", "ant-design-icons-angular");
+      myFixture.configureByFiles("inter_module_props.html", "nz-icon.directive.d.ts", "icon.directive.ts");
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.checkHighlighting(true, false, true);
+    });
   }
 }

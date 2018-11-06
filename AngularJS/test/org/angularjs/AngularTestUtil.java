@@ -24,10 +24,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class AngularTestUtil {
 
-  public static void configureWithMetadataFile(@NotNull CodeInsightTestFixture fixture,
-                                               @NotNull String name) {
-    fixture.copyFileToProject(name + ".metadata.json");
-    fixture.configureByFiles("package.json", name + ".d.ts");
+  public static void configureWithMetadataFiles(@NotNull CodeInsightTestFixture fixture,
+                                                @NotNull String... names) {
+    fixture.configureByFiles("package.json");
+    for (String name : names) {
+      fixture.configureByFiles(name + ".d.ts");
+      fixture.copyFileToProject(name + ".metadata.json");
+    }
   }
 
   public static String getBaseTestDataPath(Class clazz) {
@@ -43,7 +46,7 @@ public class AngularTestUtil {
     return homePath;
   }
 
-  public static void moveToOffsetBySignature(@NotNull String signature,  @NotNull CodeInsightTestFixture fixture) {
+  public static void moveToOffsetBySignature(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
     int offset = AngularTestUtil.findOffsetBySignature(signature, fixture.getFile());
     fixture.getEditor().getCaretModel().moveToOffset(offset);
   }
@@ -54,7 +57,7 @@ public class AngularTestUtil {
     assert caretOffset >= 0;
     signature = signature.substring(0, caretOffset) + signature.substring(caretOffset + caretSignature.length());
     int pos = psiFile.getText().indexOf(signature);
-    assertTrue(pos >= 0);
+    assertTrue("Failed to locate '" + signature +"'", pos >= 0);
     return pos + caretOffset;
   }
 
@@ -66,9 +69,9 @@ public class AngularTestUtil {
   public static PsiElement resolveReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
     int offsetBySignature = findOffsetBySignature(signature, fixture.getFile());
     PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
-    TestCase.assertNotNull(ref);
+    TestCase.assertNotNull("No reference at '" + signature + "'", ref);
     PsiElement resolve = ref.resolve();
-    TestCase.assertNotNull(resolve);
+    TestCase.assertNotNull("Reference resolves to null at '" + signature + "'", resolve);
     return resolve;
   }
 
@@ -80,11 +83,13 @@ public class AngularTestUtil {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends JSElement> T checkVariableResolve(final String signature, final String varName, final Class<T> varClass, @NotNull CodeInsightTestFixture fixture) {
+  public static <T extends JSElement> T checkVariableResolve(final String signature,
+                                                             final String varName,
+                                                             final Class<T> varClass,
+                                                             @NotNull CodeInsightTestFixture fixture) {
     PsiElement resolve = resolveReference(signature, fixture);
     assertInstanceOf(resolve, varClass);
     assertEquals(varName, varClass.cast(resolve).getName());
     return (T)resolve;
   }
-
 }
