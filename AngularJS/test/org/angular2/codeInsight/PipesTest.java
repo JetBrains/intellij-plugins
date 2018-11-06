@@ -11,7 +11,7 @@ import org.angularjs.AngularTestUtil;
 
 import java.util.List;
 
-import static org.angularjs.AngularTestUtil.configureWithMetadataFile;
+import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
 import static org.angularjs.AngularTestUtil.resolveReference;
 
 public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -42,7 +42,7 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testStandardPipesCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      configureWithMetadataFile(myFixture, "common");
+      configureWithMetadataFiles(myFixture, "common");
       myFixture.configureByFiles("pipe.html");
       myFixture.completeBasic();
       final List<String> variants = myFixture.getLookupElementStrings();
@@ -53,7 +53,7 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNormalPipeResultCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      configureWithMetadataFile(myFixture, "common");
+      configureWithMetadataFiles(myFixture, "common");
       myFixture.configureByFiles("pipeResultCompletion.html", "json_pipe.d.ts");
       myFixture.completeBasic();
       final List<String> variants = myFixture.getLookupElementStrings();
@@ -64,7 +64,7 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testAsyncPipeResultCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      configureWithMetadataFile(myFixture, "common");
+      configureWithMetadataFiles(myFixture, "common");
       myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts", "async_pipe.d.ts", "Observable.d.ts");
       myFixture.completeBasic();
       final List<String> variants = myFixture.getLookupElementStrings();
@@ -75,7 +75,7 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testAsyncPipeResolution() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      configureWithMetadataFile(myFixture, "common");
+      configureWithMetadataFiles(myFixture, "common");
       myFixture.configureByFiles("asyncPipe.html", "asyncPipe.ts", "async_pipe.d.ts", "Observable.d.ts", "ng_for_of.d.ts");
 
       PsiElement transformMethod = resolveReference("makeObservable() | as<caret>ync", myFixture);
