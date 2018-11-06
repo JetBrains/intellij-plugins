@@ -145,7 +145,7 @@ Includes the following features:</p>
 
       <action class="org.intellij.plugins.markdown.ui.actions.styling.MarkdownIntroduceLinkReferenceAction"
               id="org.intellij.plugins.markdown.ui.actions.styling.MarkdownIntroduceLinkReferenceAction"
-              text="Introduce link from text"
+              text="Introduce reference"
               description="Creates link from text and replaces it with a reference"
               icon="MarkdownIcons.EditorActions.Link">
       </action>
