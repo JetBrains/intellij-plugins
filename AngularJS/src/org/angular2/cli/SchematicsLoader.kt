@@ -27,23 +27,31 @@ import java.io.IOException
 
 object SchematicsLoader {
   fun load(project: Project,
-           cli: VirtualFile): Collection<Schematic> = load(project, cli, false)
+           cli: VirtualFile): Collection<Schematic> = load(project, cli, false, true)
 
   fun load(project: Project,
            cli: VirtualFile,
-           includeHidden: Boolean): Collection<Schematic> = ApplicationManager.getApplication().runReadAction(
+           includeHidden: Boolean,
+           logErrors: Boolean): Collection<Schematic> = ApplicationManager.getApplication().runReadAction(
     Computable {
-      (if (includeHidden) ourGistHiddenList else ourGist).getFileData(project, cli)
+      try {
+        myLogErrors.set(logErrors)
+        (if (includeHidden) ourGistHiddenList else ourGist).getFileData(project, cli)
+      } finally {
+        myLogErrors.set(true)
+      }
     }
   )
 }
 
+private var myLogErrors: ThreadLocal<Boolean> = ThreadLocal.withInitial{true}
+
 private var ourGist = GistManager.getInstance().newVirtualFileGist(
-  "AngularBlueprints", 3, SchematicsExternalizer(),
-  { project, file -> doLoad(project, file, false) })
+  "AngularBlueprints", 3, SchematicsExternalizer()
+) { project, file -> doLoad(project, file, false) }
 private var ourGistHiddenList = GistManager.getInstance().newVirtualFileGist(
-  "AngularSchematicsHidden", 3, SchematicsExternalizer(),
-  { project, file -> doLoad(project, file, true) })
+  "AngularSchematicsHidden", 3, SchematicsExternalizer()
+) { project, file -> doLoad(project, file, true) }
 
 private val LOG: Logger = Logger.getInstance("#org.angular2.cli.SchematicsLoader")
 
@@ -72,6 +80,7 @@ private class SchematicsExternalizer : DataExternalizer<List<Schematic>> {
 private fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean): List<Schematic> {
   val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
   val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return emptyList()
+  if (!node.isValid) return emptyList()
 
   var parse: Collection<Schematic> = emptyList()
 
@@ -134,17 +143,25 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
 
   if (output.exitCode == 0) {
     if (output.stderr.trim().isNotEmpty()) {
-      LOG.error("Error while loading schematics info.\n"
-                + shortenOutput(output.stderr),
-                Attachment("err-output", output.stderr))
+      if (myLogErrors.get()) {
+        LOG.error("Error while loading schematics info.\n"
+                  + shortenOutput(output.stderr),
+                  Attachment("err-output", output.stderr))
+      } else {
+        LOG.info("Error while loading schematics info.\n"
+                 + shortenOutput(output.stderr))
+      }
     }
     return output.stdout
   }
-  else {
+  else if (myLogErrors.get()) {
     LOG.error("Failed to load schematics info.\n"
               + shortenOutput(output.stderr),
               Attachment("err-output", output.stderr),
               Attachment("std-output", output.stdout))
+  } else {
+    LOG.info("Error while loading schematics info.\n"
+             + shortenOutput(output.stderr))
   }
   return ""
 }

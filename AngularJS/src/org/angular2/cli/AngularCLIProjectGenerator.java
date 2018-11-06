@@ -286,7 +286,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
             localFile = localFile.getParent().getParent().getParent();
             try {
               options = SchematicsLoader.INSTANCE
-                .load(ProjectManager.getInstance().getDefaultProject(), localFile, true)
+                .load(ProjectManager.getInstance().getDefaultProject(), localFile, true, false)
                 .stream()
                 .filter(s -> "ng-new".equals(s.getName()))
                 .findFirst()
@@ -300,7 +300,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
                 .orElse(Collections.emptyList());
             }
             catch (Exception e) {
-              LOG.error("Failed to load schematics");
+              LOG.error("Failed to load schematics", e);
             }
           }
         }
