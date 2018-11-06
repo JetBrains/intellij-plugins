@@ -170,7 +170,7 @@ fun shortenOutput(output: String): String {
   return StringUtil.shortenTextWithEllipsis(
     output.replace('\\', '/')
       .replace("(/[^()/:]+)+(/[^()/:]+)(/[^()/:]+)".toRegex(), "/...$1$2$3"),
-    500, 0)
+    750, 0)
 }
 
 const val DEFAULT_OUTPUT: String = """
