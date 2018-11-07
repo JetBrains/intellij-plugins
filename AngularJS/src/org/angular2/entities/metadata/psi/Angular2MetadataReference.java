@@ -40,4 +40,10 @@ public class Angular2MetadataReference extends Angular2MetadataElement<Angular2M
            ? ObjectUtils.tryCast(module.findMember(getStub().getName()), Angular2MetadataElement.class)
            : null;
   }
+
+  @Override
+  public String toString() {
+    String module = getStub().getModule();
+    return (module == null ? "" : module + "#") + getStub().getName() + " <metadata reference>";
+  }
 }

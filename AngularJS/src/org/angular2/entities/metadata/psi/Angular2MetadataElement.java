@@ -6,6 +6,7 @@ import org.angular2.entities.metadata.stubs.Angular2MetadataElementStub;
 import org.angular2.entities.metadata.stubs.Angular2MetadataNodeModuleStub;
 import org.angular2.lang.metadata.psi.MetadataElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class Angular2MetadataElement<Stub extends Angular2MetadataElementStub> extends MetadataElement<Stub> {
 
@@ -21,4 +22,14 @@ public abstract class Angular2MetadataElement<Stub extends Angular2MetadataEleme
     return stub != null ? (Angular2MetadataNodeModule)stub.getPsi() : null;
   }
 
+  @Nullable
+  @Override
+  public String getText() {
+    return "";
+  }
+
+  @Override
+  public int getTextLength() {
+    return 0;
+  }
 }

@@ -7,10 +7,14 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SingleRootFileViewProvider;
+import com.intellij.psi.impl.DebugUtil;
+import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory;
 import org.angular2.lang.metadata.psi.MetadataFileImpl;
 import org.angularjs.AngularTestUtil;
+
+import java.io.File;
 
 public class MetadataTest extends LightPlatformCodeInsightFixtureTestCase {
 
@@ -30,10 +34,32 @@ public class MetadataTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testMetadataJsonFileTypeNormal() {
     PsiFile file = myFixture.configureByFiles("common.metadata.json", "package.json")[0];
-    assert file != null;
+    assert file instanceof JsonFileImpl;
     assert file.getViewProvider() instanceof SingleRootFileViewProvider;
     assert !(file.getViewProvider() instanceof MetadataJsonFileViewProviderFactory.MetadataFileViewProvider);
     assert file.getViewProvider().getAllFiles().get(0) instanceof JsonFileImpl;
+  }
+
+  public void testMetadataStubBuilding() {
+    myFixture.configureByFiles("package.json", "ng-zorro-antd.d.ts");
+    VirtualFile vFile = myFixture.copyFileToProject("ng-zorro-antd.metadata.json");
+    PsiFile file = myFixture.getPsiManager().findFile(vFile);
+    assert file instanceof MetadataFileImpl;
+    String result = DebugUtil.psiToString(file, false, false);
+    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "ng-zorro-antd.metadata.psi.txt").toString(), result);
+  }
+
+  public void testMetadataStubBuildingWithResolution() {
+    JSTestUtils.testES6(getProject(), () -> {
+      AngularTestUtil.configureWithMetadataFiles(myFixture, "ant-design-icons-angular");
+      myFixture.configureByFiles("ng-zorro-antd.d.ts", "nz-icon.directive.d.ts", "icon.directive.ts",
+                                 "nz-col.component.d.ts", "nz-form-control.component.d.ts");
+      VirtualFile vFile = myFixture.copyFileToProject("ng-zorro-antd.metadata.json");
+      PsiFile file = myFixture.getPsiManager().findFile(vFile);
+      assert file instanceof MetadataFileImpl;
+      String result = DebugUtil.psiToString(file, false, false);
+      UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "ng-zorro-antd.metadata.resolved.psi.txt").toString(), result);
+    });
   }
 
   public void testJsonFileType() {

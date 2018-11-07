@@ -8,4 +8,9 @@ public class Angular2MetadataObject extends Angular2MetadataElement<Angular2Meta
   public Angular2MetadataObject(@NotNull Angular2MetadataObjectStub element) {
     super(element);
   }
+
+  @Override
+  public String toString() {
+    return (getStub().getMemberName() != null ? getStub().getMemberName() + " " : "") + "<metadata object>";
+  }
 }

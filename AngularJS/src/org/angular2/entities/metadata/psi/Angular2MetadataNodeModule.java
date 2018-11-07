@@ -36,7 +36,8 @@ public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2
       TypeScriptClass cls = null;
       if (sink.getResult() instanceof TypeScriptClass) {
         cls = (TypeScriptClass)sink.getResult();
-      } else if (sink.getResult() instanceof ES6ExportSpecifierAlias) {
+      }
+      else if (sink.getResult() instanceof ES6ExportSpecifierAlias) {
         cls = ObjectUtils.tryCast(((ES6ExportSpecifierAlias)sink.getResult()).findAliasedElement(), TypeScriptClass.class);
       }
       if (cls != null) {
@@ -46,4 +47,8 @@ public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2
     return create(definitionPsi, null);
   }
 
+  @Override
+  public String toString() {
+    return getStub().getImportAs() + " <metadata node module>";
+  }
 }

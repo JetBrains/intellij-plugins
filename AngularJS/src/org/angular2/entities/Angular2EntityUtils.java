@@ -151,7 +151,7 @@ public class Angular2EntityUtils {
       return result.toString();
     }
     else if (element instanceof Angular2Pipe) {
-      return ((Angular2Pipe)element).getName() + "<" + sourceKind + " pipe>";
+      return ((Angular2Pipe)element).getName() + " <" + sourceKind + " pipe>";
     }
     else if (element instanceof Angular2DirectiveProperty) {
       return ((Angular2DirectiveProperty)element).getName();
