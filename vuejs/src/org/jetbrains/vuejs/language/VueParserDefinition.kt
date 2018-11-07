@@ -6,6 +6,7 @@ import com.intellij.lang.PsiParser
 import com.intellij.lang.html.HTMLParser
 import com.intellij.lang.html.HTMLParserDefinition
 import com.intellij.lang.html.HtmlParsing
+import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
@@ -19,7 +20,8 @@ import org.jetbrains.vuejs.VueLanguage
 
 class VueParserDefinition : HTMLParserDefinition() {
   override fun createLexer(project: Project): Lexer {
-    return VueLexer(JSRootConfiguration.getInstance(project).languageLevel)
+    val level = JSRootConfiguration.getInstance(project).languageLevel
+    return VueLexer(if (level.isES6Compatible) level else JSLanguageLevel.ES6)
   }
 
   override fun getFileNodeType(): IFileElementType {

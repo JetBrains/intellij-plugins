@@ -4,6 +4,7 @@ package org.jetbrains.vuejs.language
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
 import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
@@ -72,7 +73,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun testShorthandArrowFunctionInTemplate() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JSX, myFixture.project, ThrowableRunnable<Exception> {
+    testWithinLanguageLevel(JSLanguageLevel.JSX, myFixture.project, ThrowableRunnable<Exception> {
       myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
 <template>
     <div id="app">
@@ -93,21 +94,24 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     })
   }
 
-  fun testShorthandArrowFunctionNotParsedInECMAScript5InTemplate() {
+  fun testShorthandArrowFunctionParsedInECMAScript5InTemplate() {
+    testWithinLanguageLevel(JSLanguageLevel.ES5, myFixture.project, ThrowableRunnable<Exception>  {
       myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
-<template>
-    <div id="app">
-        <div @event="val =<error descr="expression expected">></error> bar = val"></div>
-        {{bar}}
-    </div>
-</template>
-<script>
-    export default {
-      data: (<error descr="expression expected">)</error> =<error descr="expression expected">></error> ({bar: 'abc'})<EOLError descr="statement expected"></EOLError>
-    }
-</script>
-""")
+  <template>
+      <div id="app">
+          <div @event="val =<error descr="expression expected">></error> bar = val"></div>
+          {{bar}}
+      </div>
+  </template>
+  <script>
+      export default {
+        data: ()=>({bar: 'abc'})
+      }
+  </script>
+  """)
       myFixture.checkHighlighting()
+    })
+
   }
 
   fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {
@@ -577,15 +581,17 @@ Vue.component('global-comp-literal', {
   }
 
   fun testTypeScriptTypesAreNotResolvedIfECMA5Script() {
-    myFixture.configureByText("TypeScriptTypesAreNotResolvedIfECMA5Script.vue", """
+    testWithinLanguageLevel(JSLanguageLevel.ES5, myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("TypeScriptTypesAreNotResolvedIfECMA5Script.vue", """
 <script>
-    function ds(a<error descr=", or ) expected"> </error>: <weak_warning descr="Unresolved variable or type string">string</weak_warning><error descr="Expecting newline or semicolon">)</error> {
-      encodeURI(<weak_warning descr="Unresolved variable or type a">a</weak_warning>);
+    function ds(a : <error descr="Types are not supported by current JavaScript version"><weak_warning descr="Unresolved type string">string</weak_warning></error>) {
+      encodeURI(a);
     }
     ds('a');
 </script>
 """)
-    myFixture.checkHighlighting(true, false, true)
+      myFixture.checkHighlighting(true, false, true)
+    })
   }
 
   fun testVBindVOnHighlighting() {
@@ -1111,7 +1117,7 @@ import BComponent from 'b-component'
   }
 
   fun testFlowJSEmbeddedContent() {
-    JSTestUtils.testWithinLanguageLevel<Exception>(JSLanguageLevel.FLOW, project) {
+    testWithinLanguageLevel<Exception>(JSLanguageLevel.FLOW, project) {
       myFixture.configureByText("FlowJSEmbeddedContent.vue", """
 <script>
     type Foo = { a: number }
@@ -1131,7 +1137,7 @@ import BComponent from 'b-component'
   }
 
   fun testEndTagNotForbidden() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.project, ThrowableRunnable<Exception> {
+    testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.project, ThrowableRunnable<Exception> {
 
       myFixture.enableInspections(HtmlExtraClosingTagInspection::class.java)
       myFixture.addFileToProject("input.vue", "<script>export default {name: 'Input'}</script>")
