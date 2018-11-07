@@ -35,9 +35,7 @@ import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -778,6 +776,14 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("case_insensitive.html", "one_time_binding.ts", "package.json");
       myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
       myFixture.checkHighlighting(true, false, true);
+    });
+  }
+
+  public void testContentAssistWithNotSelector() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      configureWithMetadataFiles(myFixture, "router");
+      myFixture.configureByFiles("contentAssistWithNotSelector.html");
+      myFixture.completeBasic();
     });
   }
 
