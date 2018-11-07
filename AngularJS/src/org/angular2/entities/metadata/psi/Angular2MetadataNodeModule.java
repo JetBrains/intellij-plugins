@@ -49,6 +49,7 @@ public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2
 
   @Override
   public String toString() {
-    return getStub().getImportAs() + " <metadata node module>";
+    return (getStub().getImportAs() != null ? getStub().getImportAs() + " " : "")
+           + "<metadata node module>";
   }
 }
