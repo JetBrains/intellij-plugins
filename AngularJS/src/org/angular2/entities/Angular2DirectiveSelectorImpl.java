@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
@@ -82,6 +83,11 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
     for (SimpleSelectorWithPsi selector : getSimpleSelectorsWithPsi()) {
       if (selector.getElement() != null && elementName.equalsIgnoreCase(selector.getElement().getName())) {
         return selector.getElement();
+      }
+      for (SimpleSelectorWithPsi notSelector : selector.getNotSelectors()) {
+        if (notSelector.getElement() != null && elementName.equalsIgnoreCase(notSelector.getElement().getName())) {
+          return notSelector.getElement();
+        }
       }
     }
     throw new IllegalArgumentException("Element " + elementName + " is not present in the selector: " + getText());

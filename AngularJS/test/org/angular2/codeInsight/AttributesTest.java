@@ -818,4 +818,12 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.checkHighlighting(true, false, true);
     });
   }
+
+  public void testContentAssistWithNotSelector() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      configureWithMetadataFiles(myFixture, "router");
+      myFixture.configureByFiles("contentAssistWithNotSelector.html");
+      myFixture.completeBasic();
+    });
+  }
 }
