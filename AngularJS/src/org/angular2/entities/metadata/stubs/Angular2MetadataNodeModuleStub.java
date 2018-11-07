@@ -42,7 +42,7 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
         .forEach(this::loadMemberProperty);
     }
     else {
-      throw new IllegalStateException();
+      myImportAs = null;
     }
   }
 
@@ -60,6 +60,7 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
     writeString(myImportAs, stream);
   }
 
+  @Nullable
   public String getImportAs() {
     return StringRef.toString(myImportAs);
   }
