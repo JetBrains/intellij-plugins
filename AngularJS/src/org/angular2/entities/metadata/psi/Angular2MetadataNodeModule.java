@@ -46,4 +46,9 @@ public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2
     }
     return create(definitionPsi, null);
   }
+
+  @Override
+  public String toString() {
+    return getStub().getImportAs() + " <metadata node module>";
+  }
 }
