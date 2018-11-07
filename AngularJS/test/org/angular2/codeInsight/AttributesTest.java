@@ -756,6 +756,22 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testMultipleExportAsNames() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      myFixture.configureByFiles("exportAsMultipleNames.ts", "package.json");
+      for (String name: asList("r", "f", "g")) {
+        AngularTestUtil.moveToOffsetBySignature("{{ " + name + ".<caret> }}", myFixture);
+        myFixture.completeBasic();
+        if (name.equals("g")) {
+          assertContainsElements(myFixture.getLookupElementStrings(), "split", "length", "type");
+        } else {
+          assertContainsElements(myFixture.getLookupElementStrings(), "foo");
+          assertDoesntContain(myFixture.getLookupElementStrings(), "split", "length", "type");
+        }
+      }
+    });
+  }
+
   public void testNgClassContentAssist() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("ngClass.html", "ngClass.css", "package.json");
