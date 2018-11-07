@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -76,7 +77,7 @@ public class PhoneGapAddPlatformBeforeRun extends BeforeRunTaskProvider<PhoneGap
   }
 
   @Override
-  public boolean executeTask(DataContext context,
+  public boolean executeTask(@NotNull DataContext context,
                              @NotNull final RunConfiguration configuration,
                              @NotNull ExecutionEnvironment env,
                              @NotNull PhoneGapAddPlatformTask task) {
