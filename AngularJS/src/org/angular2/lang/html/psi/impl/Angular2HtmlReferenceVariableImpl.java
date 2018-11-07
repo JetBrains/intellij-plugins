@@ -65,9 +65,11 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
       else {
         String exportName = reference.getValueElement().getValue();
         for (Angular2Directive directive : getApplicableDirectives(tag)) {
-          if (exportName.equals(directive.getExportAs())) {
-            return doIfNotNull(directive.getTypeScriptClass(),
-                               clazz -> buildTypeFromClass(clazz, false));
+          for (String exportAs: directive.getExportAsList()) {
+            if (exportName.equals(exportAs)) {
+              return doIfNotNull(directive.getTypeScriptClass(),
+                                 clazz -> buildTypeFromClass(clazz, false));
+            }
           }
         }
       }

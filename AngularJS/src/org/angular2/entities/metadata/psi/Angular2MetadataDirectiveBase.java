@@ -4,8 +4,10 @@ package org.angular2.entities.metadata.psi;
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
+import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
@@ -24,6 +26,17 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   extends Angular2MetadataDeclaration<Stub>
   implements Angular2Directive {
 
+  private final AtomicNotNullLazyValue<List<String>> exportAsList = new AtomicNotNullLazyValue<List<String>>() {
+    @NotNull
+    @Override
+    protected List<String> compute() {
+      String exportAsString = getStub().getExportAs();
+      return exportAsString == null
+             ? Collections.emptyList()
+             : StringUtil.split(exportAsString, ",");
+    }
+  };
+
   public Angular2MetadataDirectiveBase(@NotNull Stub element) {
     super(element);
   }
@@ -36,10 +49,10 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
                                                getStub().getSelector(), a -> new TextRange(0, 0)));
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public String getExportAs() {
-    return getStub().getExportAs();
+  public List<String> getExportAsList() {
+    return exportAsList.getValue();
   }
 
   @NotNull
@@ -59,7 +72,6 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
     return getCachedClassBasedValue(this::getProperties);
   }
 
-  @SuppressWarnings("unchecked")
   private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getProperties(
     @Nullable TypeScriptClass cls) {
 

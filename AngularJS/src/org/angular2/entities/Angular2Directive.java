@@ -3,7 +3,6 @@ package org.angular2.entities;
 
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -12,8 +11,8 @@ public interface Angular2Directive extends Angular2Declaration {
   @NotNull
   Angular2DirectiveSelector getSelector();
 
-  @Nullable
-  String getExportAs();
+  @NotNull
+  List<String> getExportAsList();
 
   @NotNull
   Collection<? extends Angular2DirectiveProperty> getInputs();

@@ -138,9 +138,9 @@ public class Angular2EntityUtils {
       result.append(">")
         .append(": selector=")
         .append(directive.getSelector().getText());
-      if (directive.getExportAs() != null) {
+      if (!directive.getExportAsList().isEmpty()) {
         result.append("; exportAs=")
-          .append(directive.getExportAs());
+          .append(StringUtil.join(directive.getExportAsList(), ","));
       }
       result.append("; inputs=")
         .append(directive.getInputs().toString())
