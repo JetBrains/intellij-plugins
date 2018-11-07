@@ -21,6 +21,8 @@ import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Angular2CompletionContributor extends CompletionContributor {
   private static final JSLookupPriority NG_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
@@ -39,9 +41,10 @@ public class Angular2CompletionContributor extends CompletionContributor {
         result.stopHere();
         return;
       }
+      final Set<String> contributedElements = new HashSet<>();
       Angular2Processor.process(parameters.getPosition(), element -> {
         final String name = element.getName();
-        if (name != null) {
+        if (name != null && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, null))) {
           result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(
             element, name, Angular2DecoratorUtil.isPrivateMember(element) ? NG_PRIVATE_VARIABLE_PRIORITY : NG_VARIABLE_PRIORITY, false,
             false));

@@ -30,6 +30,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
+import one.util.streamex.StreamEx;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
@@ -368,15 +369,14 @@ public class Angular2Processor {
     @NotNull
     @Override
     public List<JSPsiElementBase> getElements() {
-      return TypeScriptTypeParser
+      return StreamEx.of(TypeScriptTypeParser
         .buildTypeFromClass(myJsClass, false)
-        .getProperties()
-        .stream()
+        .getProperties())
         .map(prop -> prop.getMemberSource().getAllSourceElements())
         .flatMap(Collection::stream)
-        .filter(el -> el instanceof JSPsiElementBase)
-        .map(el -> (JSPsiElementBase)el)
-        .collect(Collectors.toList());
+        .select(JSPsiElementBase.class)
+        .filter(el -> !(el instanceof TypeScriptFunctionSignature))
+        .toList();
     }
   }
 }
