@@ -17,6 +17,7 @@ import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.psi.stubs.StubTree;
 import com.intellij.psi.stubs.StubTreeLoader;
 import com.intellij.reference.SoftReference;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.metadata.MetadataJsonFileType;
 import org.angular2.lang.metadata.MetadataJsonLanguage;
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
@@ -53,7 +54,7 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
   @Override
   public PsiElement[] getChildren() {
     MetadataFileStubImpl root = (MetadataFileStubImpl)getStubTree().getRoot();
-    return root.getPsi().getChildren();
+    return ContainerUtil.map2Array(root.getChildrenStubs(), PsiElement.class, s -> s.getPsi());
   }
 
   @Override
