@@ -80,12 +80,12 @@ function createPluginClass(state) {
             try {
                 var fullTypescriptVersion = require(tsPath);
                 for (var prop in fullTypescriptVersion) {
+                    //typescript package doesn't have all required methods from "server" package
                     if (fullTypescriptVersion.hasOwnProperty(prop) && prop !== "server") {
                         var merged = fullTypescriptVersion[prop];
                         ts_impl[prop] = merged;
                     }
                 }
-                ts_impl["ide_processed"] = true;
                 ts_impl["ide_processed"] = true;
                 //clean resources
                 var name_1 = require.resolve(tsPath);

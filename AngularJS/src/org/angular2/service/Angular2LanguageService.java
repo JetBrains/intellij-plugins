@@ -3,6 +3,7 @@ package org.angular2.service;
 
 import com.intellij.ide.highlighter.HtmlFileType;
 import com.intellij.ide.highlighter.XmlLikeFileType;
+import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.integration.JSAnnotationError;
 import com.intellij.lang.javascript.service.JSLanguageServiceCacheableCommand;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
@@ -24,6 +25,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
@@ -37,6 +39,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.Angular2LangUtil;
+import org.angular2.lang.html.Angular2HtmlFileType;
 import org.angular2.service.protocol.Angular2LanguageServiceProtocol;
 import org.angular2.service.protocol.command.Angular2CompletionsCommand;
 import org.angular2.service.protocol.command.Angular2GetHtmlErrCommand;
@@ -144,7 +147,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @NotNull
   @Override
   protected Collection<JSLanguageServiceCacheableCommand> createGetErrCommand(@NotNull VirtualFile file, @NotNull String path) {
-    if (file.getFileType() == HtmlFileType.INSTANCE) {
+    if (file.getFileType() == Angular2HtmlFileType.INSTANCE) {
       String configFile = getConfigForFile(file);
       if (configFile == null) return ContainerUtil.emptyList();
       Angular2GetHtmlErrCommand error = new Angular2GetHtmlErrCommand(path);
@@ -210,13 +213,26 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   protected String getConfigForFile(@NotNull VirtualFile file) {
     if (file.getFileType() instanceof XmlLikeFileType) {
       return ReadAction.compute(() -> {
-        VirtualFile config = TypeScriptConfigUtil.getNearestParentConfig(file);
+        if (myProject.isDisposed()) return null;
+        VirtualFile tsFile = findSiblingTsFile(file);
+        //we can have .spec.json and .app.json on the same level so let's use linked ts-file config if possible
+        if (tsFile != null) return super.getConfigForFile(file);
 
-        return config == null ? null : TypeScriptCompilerConfigUtil.normalizeNameAndPath(config);
+        Collection<TypeScriptConfig> allConfigs = TypeScriptConfigService.Provider.getConfigFiles(myProject);
+        TypeScriptConfig config = TypeScriptConfigUtil.getNearestParentConfig(file, allConfigs);
+
+        return config == null ? null : TypeScriptCompilerConfigUtil.normalizeNameAndPath(config.getConfigFile());
       });
     }
 
     return super.getConfigForFile(file);
+  }
+
+  @Nullable
+  private static VirtualFile findSiblingTsFile(@NotNull VirtualFile file) {
+    VirtualFile parent = file.getParent();
+    String nameWithoutExtension = file.getNameWithoutExtension();
+    return parent.findChild(nameWithoutExtension + TypeScriptUtil.TYPESCRIPT_FILE_EXTENSION);
   }
 
   public static boolean isEnabledAngularService(@NotNull PsiElement element) {
