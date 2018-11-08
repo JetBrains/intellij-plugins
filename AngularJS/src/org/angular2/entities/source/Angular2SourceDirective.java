@@ -3,23 +3,26 @@ package org.angular2.entities.source;
 
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
+import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.CachedValueProvider;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.*;
-import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
 
@@ -45,7 +48,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   @Override
   public boolean isTemplate() {
     return getCachedValue(() -> CachedValueProvider.Result.create(
-      Angular2IndexingHandler.isTemplate(getTypeScriptClass()), getTypeScriptClass()));
+      isTemplate(getTypeScriptClass()), getClassModificationDependencies()));
   }
 
   @Nullable
@@ -140,5 +143,23 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
       }
     }
     return null;
+  }
+
+  private static boolean isTemplate(@NotNull TypeScriptClass clazz) {
+    return !JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
+      if (aClass instanceof TypeScriptClass
+          && Stream.of(((TypeScriptClass)aClass).getConstructors())
+            .map(JSFunction::getParameterList)
+            .filter(Objects::nonNull)
+            .map(JSParameterList::getParameters)
+            .flatMap(Stream::of)
+            .map(JSParameterListElement::getType)
+            .filter(Objects::nonNull)
+            .map(type -> type.getTypeText())
+            .anyMatch(t -> t.contains(TEMPLATE_REF))) {
+        return false;
+      }
+      return true;
+    });
   }
 }

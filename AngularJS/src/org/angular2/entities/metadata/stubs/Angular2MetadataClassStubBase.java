@@ -2,11 +2,14 @@
 package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.*;
+import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
+import com.intellij.lang.javascript.index.flags.FlagsStructure;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataClassBase;
 import org.angular2.lang.metadata.MetadataUtils;
 import org.angular2.lang.metadata.psi.MetadataElementType;
@@ -57,6 +60,13 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       .orElseGet(() -> new Angular2MetadataClassStub(memberName, source, parent));
   }
 
+  private static final BooleanStructureElement IS_TEMPLATE_FLAG = new BooleanStructureElement();
+  @SuppressWarnings("StaticFieldReferencedViaSubclass")
+  protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
+    Angular2MetadataElementStub.FLAGS_STRUCTURE,
+    IS_TEMPLATE_FLAG
+  );
+
   protected final Map<String, String> myInputMappings;
   protected final Map<String, String> myOutputMappings;
 
@@ -70,6 +80,7 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       myOutputMappings = Collections.emptyMap();
       return;
     }
+    readTemplateFlag(source);
     JsonObject extendsClass = getPropertyValue(source.findProperty(EXTENDS), JsonObject.class);
     if (extendsClass != null) {
       Angular2MetadataReferenceStub.createReferenceStub(EXTENDS_MEMBER, extendsClass, this);
@@ -108,11 +119,27 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     return Collections.unmodifiableMap(myOutputMappings);
   }
 
+  public boolean isTemplate() {
+    return readFlag(IS_TEMPLATE_FLAG);
+  }
+
   @Override
   public void serialize(@NotNull StubOutputStream stream) throws IOException {
     super.serialize(stream);
     writeStringMap(myInputMappings, stream);
     writeStringMap(myOutputMappings, stream);
+  }
+
+  @Override
+  protected FlagsStructure getFlagsStructure() {
+    return FLAGS_STRUCTURE;
+  }
+
+  private void readTemplateFlag(JsonObject source) {
+    JsonObject members = tryCast(doIfNotNull(source.findProperty("members"), JsonProperty::getValue), JsonObject.class);
+    JsonProperty constructor = members != null ? members.findProperty(CONSTRUCTOR) : null;
+    writeFlag(IS_TEMPLATE_FLAG, constructor != null
+                                && constructor.getText().contains(Angular2EntityUtils.TEMPLATE_REF));
   }
 
   private void loadMember(JsonProperty property) {

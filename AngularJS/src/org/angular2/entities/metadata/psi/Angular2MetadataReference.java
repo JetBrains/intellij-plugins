@@ -18,27 +18,24 @@ public class Angular2MetadataReference extends Angular2MetadataElement<Angular2M
   @Nullable
   public Angular2MetadataElement resolve() {
     String moduleName = getStub().getModule();
-    Angular2MetadataNodeModule module;
     if (moduleName != null) {
-      Ref<Angular2MetadataNodeModule> moduleRef = new Ref<>();
+      Ref<Angular2MetadataElement> result = new Ref<>();
       StubIndex.getInstance().processElements(
         Angular2MetadataNodeModuleIndex.KEY, moduleName, getProject(),
         GlobalSearchScope.allScope(getProject()), Angular2MetadataNodeModule.class,
         nodeModule -> {
           if (nodeModule.isValid()) {
-            moduleRef.set(nodeModule);
-            return false;
+            result.set(ObjectUtils.tryCast(nodeModule.findMember(getStub().getName()),
+                                           Angular2MetadataElement.class));
+            return result.isNull();
           }
           return true;
         });
-      module = moduleRef.get();
+      return result.get();
     }
     else {
-      module = getNodeModule();
+      return ObjectUtils.tryCast(getNodeModule().findMember(getStub().getName()), Angular2MetadataElement.class);
     }
-    return module != null
-           ? ObjectUtils.tryCast(module.findMember(getStub().getName()), Angular2MetadataElement.class)
-           : null;
   }
 
   @Override

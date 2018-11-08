@@ -51,6 +51,7 @@ import org.junit.runners.Suite;
   RenameTest.class,
   ComponentDeclarationNavigationTest.class,
   MetadataTest.class,
+  NgMaterialTest.class,
   Angular2ServiceTest.class,
 })
 public class Angular2TestSuite {
