@@ -55,7 +55,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   @Override
   public List<String> getExportAsList() {
     return getCachedValue(() -> {
-      String exportAsString = Angular2DecoratorUtil.getPropertyName(getDecorator(), Angular2DecoratorUtil.EXPORT_AS_PROP);
+      String exportAsString = Angular2DecoratorUtil.getPropertyValue(getDecorator(), Angular2DecoratorUtil.EXPORT_AS_PROP);
       return CachedValueProvider.Result.create(exportAsString == null
                                                ? Collections.emptyList()
                                                : StringUtil.split(exportAsString, ","),
