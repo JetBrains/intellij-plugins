@@ -144,7 +144,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       }
     }
 
-    return result.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+    return ArrayUtil.toStringArray(result);
   }
 
   @Override

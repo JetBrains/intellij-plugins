@@ -120,11 +120,9 @@ public class Angular2Processor {
       return;
     }
     Map<String, String> tagToClass = new HashMap<>();
-    Collection<VirtualFile> libs = JSCorePredefinedLibrariesProvider
-      .getAllJSPredefinedLibraryFiles()
-      .stream()
-      .filter(lib -> TypeScriptLibraryProvider.LIB_DOM_D_TS.equals(lib.getName()))
-      .collect(Collectors.toList());
+    Collection<VirtualFile> libs = ContainerUtil.filter(JSCorePredefinedLibrariesProvider
+                                                          .getAllJSPredefinedLibraryFiles(),
+                                                        lib -> TypeScriptLibraryProvider.LIB_DOM_D_TS.equals(lib.getName()));
 
     final List<JSClass> elements = TypeScriptClassResolver.getInstance().findClassesByQName(
       "HTMLElementTagNameMap", GlobalSearchScope.filesScope(project, libs));

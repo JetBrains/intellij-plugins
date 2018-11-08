@@ -691,7 +691,7 @@ public class AirPackageUtil {
       }
 
       final int choice = Messages.showChooseDialog(project, "Select iOS device", "iOS Device", null,
-                                                   presentableNames.toArray(ArrayUtil.EMPTY_STRING_ARRAY), preferredPresentableName);
+                                                   ArrayUtil.toStringArray(presentableNames), preferredPresentableName);
       if (choice == -1) return false;
 
       final DeviceInfo selectedDevice = devices.get(choice);
@@ -740,7 +740,7 @@ public class AirPackageUtil {
       }
 
       final int choice = Messages.showChooseDialog(project, "Select Android device", "Android Device", null,
-                                                   presentableNames.toArray(ArrayUtil.EMPTY_STRING_ARRAY), preferredPresentableName);
+                                                   ArrayUtil.toStringArray(presentableNames), preferredPresentableName);
       if (choice == -1) return false;
 
       final DeviceInfo selectedDevice = devices.get(choice);

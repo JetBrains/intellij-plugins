@@ -31,6 +31,7 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -45,7 +46,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
@@ -882,8 +882,7 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   private static Collection<VirtualFile> getFilesByName(final Project project, final GlobalSearchScope scope, final String fileName) {
-    return ApplicationManager.getApplication().runReadAction(
-      (NullableComputable<Collection<VirtualFile>>)() -> FilenameIndex.getVirtualFilesByName(project, fileName, scope));
+    return ReadAction.compute(() -> FilenameIndex.getVirtualFilesByName(project, fileName, scope));
   }
 
   @Nullable

@@ -88,7 +88,7 @@ public class FlexCompilationUtils {
       final String extensionId = getExtensionId(aneFile);
       ContainerUtil.addIfNotNull(extensionIDs, extensionId);
     }
-    return extensionIDs.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+    return ArrayUtil.toStringArray(extensionIDs);
   }
 
   @Nullable

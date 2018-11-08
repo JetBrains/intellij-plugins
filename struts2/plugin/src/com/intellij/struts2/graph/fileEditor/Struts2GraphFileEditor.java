@@ -16,11 +16,10 @@
 package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.ide.structureView.StructureViewBuilder;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.graph.builder.util.GraphViewUtil;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -112,12 +111,7 @@ public class Struts2GraphFileEditor extends PerspectiveFileEditor {
   private Struts2GraphComponent createGraphComponent() {
     final Struts2GraphComponent[] graphComponent = {null};
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
-      (Runnable)() -> graphComponent[0] = ApplicationManager.getApplication().runReadAction(new Computable<Struts2GraphComponent>() {
-        @Override
-        public Struts2GraphComponent compute() {
-          return new Struts2GraphComponent(myXmlFile);
-        }
-      }), "Generating Graph", false, myXmlFile.getProject());
+      (Runnable)() -> graphComponent[0] = ReadAction.compute(() -> new Struts2GraphComponent(myXmlFile)), "Generating Graph", false, myXmlFile.getProject());
 
 
     return graphComponent[0];

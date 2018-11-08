@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -177,12 +178,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       public String getExternalDocInfoForElement(final String docURL, final PsiElement element) throws Exception {
         String result = super.getExternalDocInfoForElement(docURL, element);
         if (StringUtil.isNotEmpty(result)) {
-          result = result.replace(DISPLAY_NAME_MARKER, ApplicationManager.getApplication().runReadAction(new Computable<CharSequence>() {
-            @Override
-            public CharSequence compute() {
-              return getDisplayName(element);
-            }
-          }));
+          result = result.replace(DISPLAY_NAME_MARKER, ReadAction.compute(() -> getDisplayName(element)));
         }
         return result;
       }

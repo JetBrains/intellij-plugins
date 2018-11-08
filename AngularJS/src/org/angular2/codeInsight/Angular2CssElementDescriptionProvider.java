@@ -66,9 +66,8 @@ public class Angular2CssElementDescriptionProvider extends CssElementDescriptorP
   @NotNull
   @Override
   public String[] getSimpleSelectors(@NotNull PsiElement context) {
-    return Angular2EntitiesProvider.getAllElementDirectives(context.getProject())
-      .keySet()
-      .toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+    return ArrayUtil.toStringArray(Angular2EntitiesProvider.getAllElementDirectives(context.getProject())
+                                     .keySet());
   }
 
   @NotNull

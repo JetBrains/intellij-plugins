@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.source.Angular2SourceEntity;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
@@ -15,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
 
@@ -35,11 +35,9 @@ public class Angular2EntityUtils {
                       && prop.getMemberSource()
                         .getSingleElement() instanceof TypeScriptFunction)
       .findFirst()
-      .map(sig -> sig.getMemberSource()
-        .getAllSourceElements()
-        .stream()
-        .filter(fun -> fun instanceof TypeScriptFunction && !(fun instanceof TypeScriptFunctionSignature))
-        .collect(Collectors.toList()))
+      .map(sig -> ContainerUtil.filter(sig.getMemberSource()
+                                         .getAllSourceElements(), fun -> fun instanceof TypeScriptFunction &&
+                                                                         !(fun instanceof TypeScriptFunctionSignature)))
       .map(Collections::unmodifiableCollection)
       .orElseGet(Collections::emptyList);
   }

@@ -75,7 +75,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
           definition.dependency = dependencies.get(0);
         }
         else {
-          definition.dependencies = dependencies.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+          definition.dependencies = ArrayUtil.toStringArray(dependencies);
         }
 
         dependencies.clear();
