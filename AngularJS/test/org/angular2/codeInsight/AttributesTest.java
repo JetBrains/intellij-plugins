@@ -763,7 +763,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         AngularTestUtil.moveToOffsetBySignature("{{ " + name + ".<caret> }}", myFixture);
         myFixture.completeBasic();
         if (name.equals("g")) {
-          assertContainsElements(myFixture.getLookupElementStrings(), "split", "length", "type");
+          assertContainsElements(myFixture.getLookupElementStrings(), "length", "type");
         } else {
           assertContainsElements(myFixture.getLookupElementStrings(), "foo");
           assertDoesntContain(myFixture.getLookupElementStrings(), "split", "length", "type");
