@@ -8,8 +8,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ObjectUtils;
+import com.intellij.psi.StubBasedPsiElement;
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.ArrayUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +19,7 @@ import static com.intellij.psi.util.PsiTreeUtil.getParentOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
 import static com.intellij.util.ArrayUtil.contains;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.tryCast;
 
 public class Angular2DecoratorUtil {
 
@@ -35,7 +37,7 @@ public class Angular2DecoratorUtil {
   public static final String OUTPUTS_PROP = "outputs";
   public static final String STYLE_URLS_PROP = "styleUrls";
 
-  public static boolean isLiteralInNgDecorator(PsiElement element, String propertyName, String... decoratorNames) {
+  public static boolean isLiteralInNgDecorator(@Nullable PsiElement element, @NotNull String propertyName, String... decoratorNames) {
     if (element instanceof JSLiteralExpression) {
       final JSLiteralExpression literal = (JSLiteralExpression)element;
       final PsiElement parent;
@@ -48,6 +50,7 @@ public class Angular2DecoratorUtil {
     return false;
   }
 
+  @StubSafe
   @Nullable
   public static ES6Decorator findDecorator(@NotNull JSClass cls, @NotNull String... names) {
     JSAttributeList list = cls.getAttributeList();
@@ -65,6 +68,7 @@ public class Angular2DecoratorUtil {
     return null;
   }
 
+  @StubSafe
   @Nullable
   public static ES6Decorator findDecorator(@NotNull JSClass cls, @NotNull String name) {
     JSAttributeList list = cls.getAttributeList();
@@ -79,26 +83,6 @@ public class Angular2DecoratorUtil {
     return null;
   }
 
-  @Nullable
-  public static JSCallExpression getDecoratorCall(JSClass cls, String name) {
-    if (cls.getAttributeList() == null) {
-      return null;
-    }
-    JSAttributeList list = cls.getAttributeList();
-    for (ES6Decorator decorator : getStubChildrenOfTypeAsList(list, ES6Decorator.class)) {
-      String decoratorName = decorator.getDecoratorName();
-      if (name.equals(decoratorName)) {
-        JSCallExpression call = ObjectUtils.tryCast(decorator.getExpression(), JSCallExpression.class);
-        if (call != null
-            && call.getArguments().length == 1
-            && call.getArguments()[0] instanceof JSObjectLiteralExpression) {
-          return call;
-        }
-      }
-    }
-    return null;
-  }
-
   public static boolean isPrivateMember(JSPsiElementBase element) {
     if (element instanceof JSAttributeListOwner) {
       JSAttributeListOwner attributeListOwner = (JSAttributeListOwner)element;
@@ -108,8 +92,9 @@ public class Angular2DecoratorUtil {
     return false;
   }
 
+  @StubUnsafe
   @Nullable
-  public static String getPropertyName(PsiElement decorator, String name) {
+  public static String getPropertyValue(@Nullable ES6Decorator decorator, @NotNull String name) {
     final JSProperty selector = getProperty(decorator, name);
     final JSExpression value = selector != null ? selector.getValue() : null;
     if (value instanceof JSBinaryExpression) {
@@ -121,32 +106,32 @@ public class Angular2DecoratorUtil {
     return null;
   }
 
+  @StubSafe
   @Nullable
-  public static JSProperty getProperty(@Nullable PsiElement decorator, @NotNull String name) {
-    if (decorator instanceof ES6Decorator) {
-      decorator = ((ES6Decorator)decorator).getExpression();
+  public static JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
+    JSObjectLiteralExpression objectLiteralExpression = null;
+    for (PsiElement child: getStubChildrenOfTypeAsList(decorator, PsiElement.class)) {
+      if (child instanceof JSCallExpression) {
+        StubElement<?> callStub = child instanceof StubBasedPsiElement ? ((StubBasedPsiElement)child).getStub() : null;
+        if (callStub != null) {
+          for (StubElement callChildStub: callStub.getChildrenStubs()) {
+            PsiElement callChild = callChildStub.getPsi();
+            if (callChild instanceof JSObjectLiteralExpression) {
+              objectLiteralExpression = (JSObjectLiteralExpression)callChild;
+              break;
+            }
+          }
+        } else {
+          objectLiteralExpression = tryCast(ArrayUtil.getFirstElement(((JSCallExpression)child).getArguments()),
+                                            JSObjectLiteralExpression.class);
+        }
+        break;
+      } else if (child instanceof JSObjectLiteralExpression) {
+        objectLiteralExpression = (JSObjectLiteralExpression)child;
+        break;
+      }
     }
-    final JSArgumentList argumentList = PsiTreeUtil.getChildOfType(decorator, JSArgumentList.class);
-    JSExpression[] arguments = argumentList != null ? argumentList.getArguments() : null;
-    if (arguments == null) {
-      final JSArrayLiteralExpression array = PsiTreeUtil.getChildOfType(decorator, JSArrayLiteralExpression.class);
-      arguments = array != null ? array.getExpressions() : null;
-    }
-    final JSObjectLiteralExpression descriptor = ObjectUtils.tryCast(arguments != null && arguments.length > 0 ? arguments[0] : null,
-                                                                     JSObjectLiteralExpression.class);
-    return descriptor != null ? descriptor.findProperty(name) : null;
+    return doIfNotNull(objectLiteralExpression, expr -> expr.findProperty(name));
   }
 
-  public static boolean isDirective(@Nullable String name) {
-    return "Directive".equals(name) || "DirectiveAnnotation".equals(name) ||
-           "Component".equals(name) || "ComponentAnnotation".equals(name);
-  }
-
-  public static boolean isModule(@Nullable String name) {
-    return "NgModule".equals(name);
-  }
-
-  public static boolean isPipe(@Nullable String name) {
-    return "Pipe".equals(name);
-  }
 }

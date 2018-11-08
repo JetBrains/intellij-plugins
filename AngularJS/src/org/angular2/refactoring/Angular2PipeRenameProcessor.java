@@ -1,9 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.refactoring;
 
-import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
@@ -58,7 +58,7 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
                             @NotNull UsageInfo[] usages,
                             @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     if (element instanceof JSImplicitElement && element.getParent() instanceof TypeScriptClass) {
-      JSCallExpression decorator = Angular2DecoratorUtil.getDecoratorCall((TypeScriptClass)element.getParent(), PIPE_DEC);
+      ES6Decorator decorator = Angular2DecoratorUtil.findDecorator((TypeScriptClass)element.getParent(), PIPE_DEC);
       JSProperty property = Angular2DecoratorUtil.getProperty(decorator, NAME_PROP);
       if (property != null && property.getValue() instanceof JSLiteralExpression) {
         PsiReference[] refs = property.getValue().getReferences();

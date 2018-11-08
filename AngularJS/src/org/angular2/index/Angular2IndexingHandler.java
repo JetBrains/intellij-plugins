@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -27,6 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.attributes.Angular2EventHandlerDescriptor;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.lang.expr.Angular2Language;
@@ -94,16 +96,16 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         if (data == null) {
           data = new JSElementIndexingDataImpl();
         }
-        addPipe(enclosingClass, data::addImplicitElement, getPropertyName(decorator, NAME_PROP));
+        addPipe(enclosingClass, data::addImplicitElement, getPropertyValue(decorator, NAME_PROP));
       }
       else if (DIRECTIVE_DEC.equals(decoratorName)
                || (isComponent = COMPONENT_DEC.equals(decoratorName))) {
         if (data == null) {
           data = new JSElementIndexingDataImpl();
         }
-        addDirective(enclosingClass, data::addImplicitElement, getPropertyName(decorator, SELECTOR_PROP));
+        addDirective(enclosingClass, data::addImplicitElement, getPropertyValue(decorator, SELECTOR_PROP));
         if (isComponent) {
-          addComponentTemplateRef(decorator, data::addImplicitElement, getPropertyName(decorator, TEMPLATE_URL));
+          addComponentTemplateRef(decorator, data::addImplicitElement, getPropertyValue(decorator, TEMPLATE_URL));
         }
       }
     }
@@ -241,12 +243,11 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     final PsiDirectory dir = templateFile.getParent();
     final PsiFile directiveFile = dir != null ? dir.findFile(name + ".ts") : null;
     if (directiveFile != null) {
-      for (PsiElement element : directiveFile.getChildren()) {
-        if (element instanceof TypeScriptClass
-            && hasTemplateReference(findDecorator((TypeScriptClass)element, COMPONENT_DEC), templateFile)) {
-          return (TypeScriptClass)element;
-        }
-      }
+      return StreamEx.of(JSStubBasedPsiTreeUtil.getFileOrModuleChildrenStream(directiveFile))
+        .select(TypeScriptClass.class)
+        .filter(cls -> hasTemplateReference(findDecorator(cls, COMPONENT_DEC), templateFile))
+        .findFirst()
+        .orElse(null);
     }
     return null;
   }
