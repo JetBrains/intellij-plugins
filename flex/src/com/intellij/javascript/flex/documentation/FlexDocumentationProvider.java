@@ -17,7 +17,6 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -398,7 +397,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
         return input;
       }
       else {
-        input = StringUtil.escapeXml(input);
+        input = StringUtil.escapeXmlEntities(input);
         return "<a href=\"" + input + "\">" + input + "</a>";
       }
     }

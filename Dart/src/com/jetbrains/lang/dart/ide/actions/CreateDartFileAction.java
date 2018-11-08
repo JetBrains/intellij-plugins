@@ -13,6 +13,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import icons.DartIcons;
+import org.jetbrains.annotations.NotNull;
 
 public class CreateDartFileAction extends CreateFileFromTemplateAction {
   public CreateDartFileAction() {
@@ -29,7 +30,7 @@ public class CreateDartFileAction extends CreateFileFromTemplateAction {
   }
 
   @Override
-  protected String getActionName(PsiDirectory directory, String newName, String templateName) {
+  protected String getActionName(PsiDirectory directory, @NotNull String newName, String templateName) {
     return DartBundle.message("create.dart.file.0", newName);
   }
 

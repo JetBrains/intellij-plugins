@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.model.externalizable.toclasschain;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.Component;
@@ -25,7 +26,8 @@ public class ComponentExternalizer extends ToClassExternalizer {
 
         Component component = (Component) getContext().getElement();
 
-        IJavaField field = component.getProject().getJavaTypeCreator().createField(component.getElementClass().getName(), component.getElementClass(), true, true);
+        IJavaField field = component.getProject().getJavaTypeCreator().createField(
+          StringUtil.notNullize(component.getElementClass().getName()), component.getElementClass(), true, true);
 
         String suggestedFieldName = suggestName(field.getName(), new ArrayList<>(getContext().getTargetClass().getFields(false).keySet()));
         if (!suggestedFieldName.equals(field.getName())) {

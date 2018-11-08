@@ -183,7 +183,7 @@ public class CodeContext {
 
     JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
       @Override
-      public boolean process(VirtualFile file, String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
+      public boolean process(VirtualFile file, @NotNull String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         if (kind != JSPackageIndexInfo.Kind.CLASS) return true;
 
         if (JavaScriptSupportLoader.isMxmlOrFxgFile(file)) {

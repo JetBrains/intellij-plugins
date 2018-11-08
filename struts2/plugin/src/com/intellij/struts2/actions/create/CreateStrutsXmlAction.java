@@ -54,7 +54,7 @@ public class CreateStrutsXmlAction extends CreateFileAction {
 
   @Override
   @NotNull
-  protected PsiElement[] create(final String newName, final PsiDirectory directory) throws Exception {
+  protected PsiElement[] create(@NotNull final String newName, final PsiDirectory directory) throws Exception {
     @NonNls final String fileName = getFileName(newName);
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(directory);

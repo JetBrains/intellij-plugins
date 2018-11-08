@@ -79,6 +79,7 @@ public class FlexExtractSuperClassDialog extends FlexExtractSuperBaseDialog {
            : RefactoringBundle.message("package.for.original.class");
   }
 
+  @NotNull
   @Override
   protected String getEntityName() {
     return RefactoringBundle.message("ExtractSuperClass.superclass");

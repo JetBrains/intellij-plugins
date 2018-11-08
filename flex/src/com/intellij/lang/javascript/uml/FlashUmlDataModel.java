@@ -103,7 +103,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     final Collection<String> result = new HashSet<>();
     JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
       @Override
-      public boolean process(VirtualFile file, String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
+      public boolean process(VirtualFile file, @NotNull String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         if (kind == JSPackageIndexInfo.Kind.PACKAGE) {
           result.add(StringUtil.getQualifiedName(packageName, name));
         }
@@ -117,7 +117,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     final Collection<JSClass> result = new HashSet<>();
     JSPackageIndex.processElementsInScope(packageName, null, new JSPackageIndex.PackageElementsProcessor() {
       @Override
-      public boolean process(VirtualFile file, String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
+      public boolean process(VirtualFile file, @NotNull String name, JSPackageIndexInfo.Kind kind, boolean isPublic) {
         String qualifiedName = StringUtil.getQualifiedName(packageName, name);
         if (kind == JSPackageIndexInfo.Kind.CLASS || kind == JSPackageIndexInfo.Kind.INTERFACE) {
           PsiElement element = ActionScriptClassResolver.findClassByQNameStatic(qualifiedName, searchScope);

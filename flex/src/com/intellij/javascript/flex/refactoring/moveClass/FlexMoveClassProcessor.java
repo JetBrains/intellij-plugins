@@ -79,7 +79,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
         JSRefactoringUtil.addConstructorUsages((JSClass)element, result);
       }
       TextOccurrencesUtil.findNonCodeUsages(element, element.getQualifiedName(), mySearchInComments, mySearchInNonJavaFiles,
-                                            StringUtil.getQualifiedName(myTargetPackage, element.getName()), result);
+                                            StringUtil.getQualifiedName(myTargetPackage, StringUtil.notNullize(element.getName())), result);
     }
     return result.toArray(UsageInfo.EMPTY_ARRAY);
   }
@@ -176,6 +176,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
       }
     }
 
+    @NotNull
     @Override
     public String getCodeReferencesText(int usagesCount, int filesCount) {
       String prefix;

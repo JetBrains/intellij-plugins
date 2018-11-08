@@ -16,6 +16,7 @@ import com.intellij.tapestry.core.java.IJavaTypeCreator;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.util.IncorrectOperationException;
 import com.siyeh.ig.psiutils.ImportUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
      * {@inheritDoc}
      */
     @Override
-    public IJavaField createField(String name, IJavaClassType type, boolean isPrivate, boolean changeNameToReflectIdeSettings) {
+    public IJavaField createField(@NotNull String name, IJavaClassType type, boolean isPrivate, boolean changeNameToReflectIdeSettings) {
         String fieldName;
         if (changeNameToReflectIdeSettings) {
             fieldName = JavaCodeStyleManager.getInstance(_module.getProject()).propertyNameToVariableName(StringUtil.decapitalize(name), VariableKind.FIELD);

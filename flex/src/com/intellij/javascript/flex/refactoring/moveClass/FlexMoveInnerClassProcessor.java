@@ -48,6 +48,7 @@ import java.util.*;
 public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   private final JSQualifiedNamedElement myElement;
   private final PsiDirectory myTargetDirectory;
+  @NotNull
   private final String myClassName;
   private final String myPackageName;
   private final boolean mySearchInComments;
@@ -57,7 +58,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
   public FlexMoveInnerClassProcessor(JSQualifiedNamedElement element,
                                      PsiDirectory targetDirectory,
-                                     String className,
+                                     @NotNull String className,
                                      String packageName,
                                      boolean searchInComments,
                                      boolean searchTextOccurences,
@@ -257,6 +258,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
                                 StringUtil.getQualifiedName(myPackageName, myClassName));
     }
 
+    @NotNull
     @Override
     public String getCodeReferencesText(int usagesCount, int filesCount) {
       return FlexBundle.message("references.in.code.to.inner.0", UsageViewUtil.getLongName(getElements()[0])) +

@@ -1,5 +1,7 @@
 package com.intellij.tapestry.core.java;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
 
 /**
@@ -16,7 +18,7 @@ public interface IJavaTypeCreator {
      * @param changeNameToReflectIdeSettings {@code true} if the IDE coding style should be taken into account and be used to change the field name accordingly.
      * @return the field.
      */
-    IJavaField createField(String name, IJavaClassType type, boolean isPrivate, boolean changeNameToReflectIdeSettings);
+    IJavaField createField(@NotNull String name, IJavaClassType type, boolean isPrivate, boolean changeNameToReflectIdeSettings);
 
     /**
      * Creates a new field annotation and adds it to the field.

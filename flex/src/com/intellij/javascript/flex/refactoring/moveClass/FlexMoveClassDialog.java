@@ -235,7 +235,8 @@ public class FlexMoveClassDialog extends RefactoringDialog {
     }
     BaseRefactoringProcessor processor;
     if (myFileLocal) {
-      processor = new FlexMoveInnerClassProcessor(myElements.iterator().next(), targetDirectory, myClassNameField.getText(),
+      processor = new FlexMoveInnerClassProcessor(myElements.iterator().next(), targetDirectory,
+                                                  StringUtil.notNullize(myClassNameField.getText()),
                                                   myTargetPackageField.getText(), myCbSearchInComments.isSelected(),
                                                   myCbSearchTextOccurences.isSelected(), myCallback);
     }

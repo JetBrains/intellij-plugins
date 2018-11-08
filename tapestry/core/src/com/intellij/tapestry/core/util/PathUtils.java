@@ -1,5 +1,7 @@
 package com.intellij.tapestry.core.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 
 /**
@@ -104,6 +106,7 @@ public class PathUtils {
      * @param path the path.
      * @return the last element of the given path.
      */
+    @NotNull
     public static String getLastPathElement(String path) {
         if (isEmpty(path)) {
             return "";

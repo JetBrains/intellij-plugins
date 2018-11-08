@@ -88,6 +88,7 @@ public class FlexExtractInterfaceDialog extends FlexExtractSuperBaseDialog {
            : RefactoringBundle.message(mySourceClass.isInterface() ? "package.for.original.interface" : "package.for.original.class");
   }
 
+  @NotNull
   @Override
   protected String getEntityName() {
     return RefactoringBundle.message("extractSuperInterface.interface");

@@ -31,5 +31,5 @@ class CreateVueSingleFileComponentAction : CreateFileFromTemplateAction(VueBundl
       .addKind(name, JavaScriptSupportLoader.JAVASCRIPT.icon, VUE_TEMPLATE_NAME)
   }
 
-  override fun getActionName(directory: PsiDirectory?, newName: String?, templateName: String?): String = "Create $name $newName"
+  override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String = "Create $name $newName"
 }
