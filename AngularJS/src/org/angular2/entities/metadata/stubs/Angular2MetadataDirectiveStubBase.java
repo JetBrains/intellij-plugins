@@ -68,12 +68,10 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     writeString(myExportAs, stream);
   }
 
-  protected abstract boolean isTemplate();
-
   @Override
   public void index(@NotNull IndexSink sink) {
     super.index(sink);
-    Angular2EntityUtils.getDirectiveIndexNames(getSelector(), isTemplate())
+    Angular2EntityUtils.getDirectiveIndexNames(getSelector())
       .forEach(indexName -> sink.occurrence(Angular2MetadataDirectiveIndex.KEY, indexName));
   }
 

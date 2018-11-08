@@ -37,8 +37,10 @@ import org.angularjs.index.AngularSymbolIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angularjs.index.AngularIndexUtil.hasFileReference;
@@ -51,10 +53,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   private static final String ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di";
 
   private static final String PIPE_TYPE = "P;;;";
-  private static final String COMPONENT_TYPE = "C;;;";
   private static final String DIRECTIVE_TYPE = "D;;;";
-  private static final String TEMPLATE_DIRECTIVE_TYPE = "T;;;";
-  public static final String TEMPLATE_REF = "TemplateRef";
 
   private final static Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEX_MAP = new HashMap<>();
 
@@ -76,9 +75,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     if (type == null) {
       return false;
     }
-    return type.startsWith(COMPONENT_TYPE)
-           || type.startsWith(DIRECTIVE_TYPE)
-           || type.startsWith(TEMPLATE_DIRECTIVE_TYPE);
+    return type.startsWith(DIRECTIVE_TYPE);
   }
 
   @Override
@@ -104,7 +101,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         if (data == null) {
           data = new JSElementIndexingDataImpl();
         }
-        addDirective(enclosingClass, isComponent, data::addImplicitElement, getPropertyName(decorator, SELECTOR_PROP));
+        addDirective(enclosingClass, data::addImplicitElement, getPropertyName(decorator, SELECTOR_PROP));
         if (isComponent) {
           addComponentTemplateRef(decorator, data::addImplicitElement, getPropertyName(decorator, TEMPLATE_URL));
         }
@@ -114,19 +111,16 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static void addDirective(@NotNull TypeScriptClass directiveClass,
-                                   boolean isComponent,
                                    @NotNull Consumer<JSImplicitElement> processor,
                                    @Nullable String selector) {
     if (StringUtil.isEmpty(selector)) {
       return;
     }
-    boolean isTemplate = !isComponent && isTemplate(directiveClass);
-    Set<String> indexNames = Angular2EntityUtils.getDirectiveIndexNames(selector, isTemplate);
+    Set<String> indexNames = Angular2EntityUtils.getDirectiveIndexNames(selector);
     JSImplicitElement directive = new JSImplicitElementImpl
       .Builder(ObjectUtils.notNull(directiveClass.getName(), selector), directiveClass)
       .setType(JSImplicitElement.Type.Class)
-      .setTypeString((isComponent ? COMPONENT_TYPE : isTemplate ? TEMPLATE_DIRECTIVE_TYPE : DIRECTIVE_TYPE) +
-                     StringUtil.join(indexNames, "/"))
+      .setTypeString(DIRECTIVE_TYPE + StringUtil.join(indexNames, "/"))
       .setUserString(ANGULAR2_DIRECTIVE_INDEX_USER_STRING)
       .toImplicitElement();
     processor.consume(directive);
@@ -141,9 +135,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     final StubIndexKey<String, JSImplicitElementProvider> index = userID != null ? INDEX_MAP.get(userID) : null;
     if (index == Angular2SourceDirectiveIndex.KEY) {
       String type = element.toImplicitElement(null).getTypeString();
-      if (type != null && (type.startsWith(DIRECTIVE_TYPE)
-                           || type.startsWith(COMPONENT_TYPE)
-                           || type.startsWith(TEMPLATE_DIRECTIVE_TYPE))) {
+      if (type != null && type.startsWith(DIRECTIVE_TYPE)) {
         type = type.substring(DIRECTIVE_TYPE.length());
         StringUtil.split(type, "/")
           .forEach(name -> sink.occurrence(index, name));
@@ -188,18 +180,6 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return false;
-  }
-
-  public static boolean isTemplate(@NotNull TypeScriptClass clazz) {
-    return Stream.of(clazz.getConstructors())
-      .map(JSFunction::getParameterList)
-      .filter(Objects::nonNull)
-      .map(JSParameterList::getParameters)
-      .flatMap(Stream::of)
-      .map(JSParameterListElement::getType)
-      .filter(Objects::nonNull)
-      .map(type -> type.getTypeText())
-      .anyMatch(t -> t.contains(TEMPLATE_REF));
   }
 
   private static void addComponentTemplateRef(@NotNull ES6Decorator decorator,
