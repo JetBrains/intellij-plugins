@@ -173,6 +173,7 @@
     <filetype.stubBuilder filetype="Angular Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonStubBuilder"/>
     <fileType.fileViewProviderFactory filetype="Angular Metadata JSON"
                                       implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
+    <daemon.tooltipActionProvider implementation="org.angular2.service.Angular2TooltipActionProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
