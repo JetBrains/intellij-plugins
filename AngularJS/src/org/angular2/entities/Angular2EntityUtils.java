@@ -21,6 +21,8 @@ import static com.intellij.openapi.util.Pair.pair;
 
 public class Angular2EntityUtils {
 
+  public static final String TEMPLATE_REF = "TemplateRef";
+
   private static final String INDEX_ELEMENT_NAME_PREFIX = ">";
   private static final String INDEX_ATTRIBUTE_NAME_PREFIX = "=";
 
@@ -78,7 +80,7 @@ public class Angular2EntityUtils {
   }
 
   @NotNull
-  public static Set<String> getDirectiveIndexNames(@NotNull String selector, boolean isTemplate) {
+  public static Set<String> getDirectiveIndexNames(@NotNull String selector) {
     List<Angular2DirectiveSimpleSelector> selectors;
     try {
       selectors = Angular2DirectiveSimpleSelector.parse(selector);

@@ -45,7 +45,7 @@ public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStub
   }
 
   @Override
-  protected boolean isTemplate() {
+  public boolean isTemplate() {
     return false;
   }
 }
