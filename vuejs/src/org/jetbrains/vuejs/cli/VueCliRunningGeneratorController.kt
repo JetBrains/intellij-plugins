@@ -35,6 +35,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
+import com.intellij.openapi.project.DumbAwareRunnable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.Condition
@@ -99,12 +100,14 @@ class VueCliRunningGeneratorController internal constructor(generationLocation: 
               publisher.batchChangeStarted(project, VueBundle.message("vue.project.generator.progress.task.name"))
               val packageJson = PackageJsonUtil.findChildPackageJsonFile(project.baseDir)
               val doneCallback = PackageJsonDependenciesExternalUpdateManager.getInstance(project).externalUpdateStarted(packageJson, null)
-              StartupManager.getInstance(project).runWhenProjectIsInitialized {
-                createListeningProgress(project, Runnable {
-                  publisher.batchChangeCompleted(project)
-                  doneCallback.run()
-                }, generationLocation)
-              }
+              StartupManager.getInstance(project).runWhenProjectIsInitialized(object : DumbAwareRunnable {
+                override fun run() {
+                  createListeningProgress(project, Runnable {
+                    publisher.batchChangeCompleted(project)
+                    doneCallback.run()
+                  }, generationLocation)
+                }
+              })
             }
             listener.finishedQuestionsCloseUI(callback)
           }
