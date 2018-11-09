@@ -425,42 +425,41 @@ export default {
   }
 
   fun testCompleteElementsFromLocalData() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
-      myFixture.configureByText("CompleteElementsFromLocalData.vue", """
-<template>{{<caret>}}</template>
-<script>
-let props = ['parentMsg'];
+    configureVueDefinitions()
+    myFixture.configureByText("CompleteElementsFromLocalData.vue", """
+  <template>{{<caret>}}</template>
+  <script>
+  let props = ['parentMsg'];
 
-export default {
-  name: 'parent',
-  props: props,
-  data: {
-    groceryList: {}
+  export default {
+    name: 'parent',
+    props: props,
+    data: {
+      groceryList: {}
+    }
+  }</script>""")
+    assertDoesntContainVueLifecycleHooks()
+    assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
-}</script>""")
-      myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
 
-      myFixture.configureByText("CompleteElementsFromLocalData.vue", """
-<template>{{<caret>}}</template>
-<script>
-let props = ['parentMsg'];
+  fun testCompleteElementsFromLocalData2() {
+    configureVueDefinitions()
+    myFixture.configureByText("CompleteElementsFromLocalData2.vue", """
+    <template>{{<caret>}}</template>
+    <script>
+    let props = ['parentMsg'];
 
-export default {
-  name: 'parent',
-  props: props,
-  data:
-    () => {
-            return {
-              groceryList: {}
-            }
-          }
-}</script>""")
-      myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
-      UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "grocery-list", "parent-msg",
-                                         "GroceryList", "ParentMsg")
-    })
+    export default {
+      name: 'parent',
+      props: props,
+      data: () => {
+                return {groceryList: 12}
+              }
+    }</script>""")
+    assertDoesntContainVueLifecycleHooks()
+//    assertDoesntContain(myFixture.lookupElementStrings!!, "grocery-list", "parent-msg",
+//                                       "GroceryList", "ParentMsg")
+    assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
 
   fun testScrInStyleCompletion() {
@@ -1410,6 +1409,7 @@ Pair("""<template>
   }
 
   fun testVueCompletionInsideScript() {
+    configureVueDefinitions()
     myFixture.configureByText("test.vue", "<script>\n" +
                                            "    export default {\n" +
                                            "        name: 'test',\n" +
@@ -1430,6 +1430,57 @@ Pair("""<template>
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "testItem", "props1", "method1")
   }
+
+  fun testVueCompletionInsideScriptLifecycleHooks() {
+    configureVueDefinitions()
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                          "    export default {\n" +
+                                          "        computed: {\n" +
+                                          "            dataData() {this.<caret> }\n" +
+                                          "        }\n" +
+                                          "    }\n" +
+                                          "</script>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
+  }
+
+  fun testVueCompletionInsideScriptNoLifecycleHooks() {
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                          "    export default {\n" +
+                                          "        computed: {\n" +
+                                          "            dataData() {this.<caret> }\n" +
+                                          "        }\n" +
+                                          "    }\n" +
+                                          "</script>")
+    assertDoesntContainVueLifecycleHooks()
+  }
+
+  fun testVueCompletionInsideScriptNoLifecycleHooksTopLevel() {
+    configureVueDefinitions()
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                          "    export default {\n" +
+                                          "        this.<caret> " +
+                                          "    }\n" +
+                                          "</script>")
+    assertDoesntContainVueLifecycleHooks()
+  }
+
+  fun testVueCompletionInsideScriptNoLifecycleHooksWithoutThis() {
+    configureVueDefinitions()
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                          "    export default {\n" +
+                                          "        methods: {name(){<caret>}} " +
+                                          "    }\n" +
+                                          "</script>")
+
+    assertDoesntContainVueLifecycleHooks()
+  }
+
+  private fun assertDoesntContainVueLifecycleHooks() {
+    myFixture.completeBasic()
+    assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
+  }
+
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,

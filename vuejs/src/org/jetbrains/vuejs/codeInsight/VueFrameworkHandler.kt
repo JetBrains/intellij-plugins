@@ -18,7 +18,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
 import com.intellij.lang.ecmascript6.psi.ES6FunctionProperty
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
 import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
@@ -27,10 +27,14 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
+import com.intellij.lang.javascript.psi.resolve.JSTypeInfo
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
+import com.intellij.lang.javascript.psi.types.*
+import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
@@ -74,6 +78,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     }
 
     const val VUE: String = "Vue"
+    private const val METHOD = "methods"
+    private const val COMPUTED = "computed"
+    private const val DATA = "data"
+    private const val PROPS = "props"
+    private const val VUE_INSTANCE = "CombinedVueInstance"
+
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters")
     private val COMPONENT_INDICATOR_PROPS = setOf("template", "render", "mixins", "components", "props")
     fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression): Boolean =
@@ -82,6 +92,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     fun isDefaultExports(expression: JSExpression?): Boolean =
       expression is JSReferenceExpression && JSSymbolUtil.isAccurateReferenceExpressionName(expression as JSReferenceExpression?,
                                                                                             JSSymbolUtil.EXPORTS, "default")
+
   }
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.codeInsight.findModule(result)
