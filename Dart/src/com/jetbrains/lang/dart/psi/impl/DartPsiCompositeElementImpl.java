@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
@@ -17,6 +18,7 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -79,7 +81,8 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
     for (PsiElement child : children) {
       if (child instanceof DartFormalParameterList) {
         final DartFormalParameterList formalParameterList = (DartFormalParameterList)child;
-        final List<DartNormalFormalParameter> normalFormalParameterList = formalParameterList.getNormalFormalParameterList();
+        final List<DartNormalFormalParameter> normalFormalParameterList =
+          new ArrayList<>(formalParameterList.getNormalFormalParameterList());
         final DartOptionalFormalParameters optionalFormalParameters = formalParameterList.getOptionalFormalParameters();
         if (optionalFormalParameters != null) {
           normalFormalParameterList.addAll(
