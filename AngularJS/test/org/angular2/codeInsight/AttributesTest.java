@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -757,6 +758,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testMultipleExportAsNames() {
+    Registry.get("ide.completion.variant.limit").setValue(10000, getTestRootDisposable());
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("exportAsMultipleNames.ts", "package.json");
       for (String name: asList("r", "f", "g")) {
