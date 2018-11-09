@@ -170,7 +170,7 @@ public class DartSdkUpdateChecker {
     @NotNull final String myDownloadUrl;
     @NotNull final String myVersion;
 
-    public SdkUpdateInfo(@NotNull final String downloadUrl, @NotNull final String version) {
+    SdkUpdateInfo(@NotNull final String downloadUrl, @NotNull final String version) {
       myDownloadUrl = downloadUrl;
       myVersion = version;
     }

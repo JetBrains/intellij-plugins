@@ -1,29 +1,15 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language
 
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownBooleanAttributeInspectionBase
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection
-import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection
+import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
+import com.intellij.codeInspection.htmlInspections.*
 import com.intellij.lang.javascript.JSTestUtils
+import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.inspections.*
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection
 import com.intellij.openapi.application.PathManager
 import com.intellij.spellchecker.inspections.SpellCheckingInspection
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.ThrowableRunnable
@@ -32,9 +18,6 @@ import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspec
 import junit.framework.TestCase
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 7/19/2017.
- */
 class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
 
@@ -90,7 +73,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun testShorthandArrowFunctionInTemplate() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JSX, myFixture.project, ThrowableRunnable<Exception> {
+    testWithinLanguageLevel(JSLanguageLevel.JSX, myFixture.project, ThrowableRunnable<Exception> {
       myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
 <template>
     <div id="app">
@@ -111,21 +94,24 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
     })
   }
 
-  fun testShorthandArrowFunctionNotParsedInECMAScript5InTemplate() {
+  fun testShorthandArrowFunctionParsedInECMAScript5InTemplate() {
+    testWithinLanguageLevel(JSLanguageLevel.ES5, myFixture.project, ThrowableRunnable<Exception>  {
       myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
-<template>
-    <div id="app">
-        <div @event="val =<error descr="expression expected">></error> bar = val"></div>
-        {{bar}}
-    </div>
-</template>
-<script>
-    export default {
-      data: (<error descr="expression expected">)</error> =<error descr="expression expected">></error> ({bar: 'abc'})<EOLError descr="statement expected"></EOLError>
-    }
-</script>
-""")
+  <template>
+      <div id="app">
+          <div @event="val =<error descr="expression expected">></error> bar = val"></div>
+          {{bar}}
+      </div>
+  </template>
+  <script>
+      export default {
+        data: ()=>({bar: 'abc'})
+      }
+  </script>
+  """)
       myFixture.checkHighlighting()
+    })
+
   }
 
   fun testLocalPropsInArrayInCompAttrsAndWithKebabCaseAlso() {
@@ -264,10 +250,12 @@ const props = {seeMe: {}}
       myFixture.configureByText("CompRequiredAttributesTest.vue", """
 <template>
     <div id="app">
-        <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>>
+        <<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning> v-bind='<weak_warning descr="Unresolved variable or type incorrect">incorrect</weak_warning>'></<warning descr="Element camelCase doesn't have required attribute one"><warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning></warning>>
         <<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning> :one="5"></<warning descr="Element camelCase doesn't have required attribute three"><warning descr="Element camelCase doesn't have required attribute two"><warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning></warning></warning>>
         <camelCase one="test" two="2" three=3 with-camel-case="1" four=1></camelCase>
         <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1"></camelCase>
+        <<warning descr="Element camelCase doesn't have required attribute three">camelCase</warning> v-bind:incorrect='0' v-bind='input'></<warning descr="Element camelCase doesn't have required attribute three">camelCase</warning>>
+        <camelCase v-bind:three='3' v-bind='input'></camelCase>
         <camelCase one="test" v-bind:two="2" :three=3 withCamelCase="1" not-required=11></camelCase>
         <<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning> one="test" v-bind:two="2" :three=3></<warning descr="Element camelCase doesn't have required attribute with-camel-case">camelCase</warning>>
     </div>
@@ -281,6 +269,15 @@ const props = {seeMe: {}}
         three: {required:true},
         withCamelCase: {required:true},
         notRequired: {required:false}
+      },
+      data () {
+        return {
+          input: {
+            one: '',
+            two: '',
+            withCamelCase: ''
+          }
+        }
       }
     }
 </script>""")
@@ -584,15 +581,17 @@ Vue.component('global-comp-literal', {
   }
 
   fun testTypeScriptTypesAreNotResolvedIfECMA5Script() {
-    myFixture.configureByText("TypeScriptTypesAreNotResolvedIfECMA5Script.vue", """
+    testWithinLanguageLevel(JSLanguageLevel.ES5, myFixture.project, ThrowableRunnable<Exception> {
+      myFixture.configureByText("TypeScriptTypesAreNotResolvedIfECMA5Script.vue", """
 <script>
-    function ds(a<error descr=", or ) expected"> </error>: <weak_warning descr="Unresolved variable or type string">string</weak_warning><error descr="Expecting newline or semicolon">)</error> {
-      encodeURI(<weak_warning descr="Unresolved variable or type a">a</weak_warning>);
+    function ds(a : <error descr="Types are not supported by current JavaScript version"><weak_warning descr="Unresolved type string">string</weak_warning></error>) {
+      encodeURI(a);
     }
     ds('a');
 </script>
 """)
-    myFixture.checkHighlighting(true, false, true)
+      myFixture.checkHighlighting(true, false, true)
+    })
   }
 
   fun testVBindVOnHighlighting() {
@@ -787,32 +786,6 @@ Vue.component('global-comp-literal', {
     myFixture.doHighlighting()
   }
 
-  fun testAwaitHighlightingNotBlink() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
-      myFixture.configureByText("AwaitHighlightingNotBlink.vue", """
-<script>
-    <caret>function test() {
-        return await axios.get('mai')
-    }
-    test()
-</script>
-""")
-      for (i in 0..9) {
-        val error = myFixture.doHighlighting().first { it.description == "Expecting newline or semicolon" }
-        assertNotNull(error)
-
-        "async ".forEach { LightPlatformCodeInsightTestCase.type(it, myFixture.editor, project) }
-        val error2 = myFixture.doHighlighting().firstOrNull { it.description == "Expecting newline or semicolon" }
-        assertNull(error2)
-
-        for (j in "async ") {
-          LightPlatformCodeInsightTestCase.backspace(myFixture.editor, project)
-        }
-        assertFalse(myFixture.editor.document.text.contains("async"))
-      }
-    })
-  }
-
   fun testTsxIsNormallyParsed() {
     myFixture.configureByText("TsxIsNormallyParsed.vue",
 """
@@ -831,15 +804,16 @@ Vue.component('global-comp-literal', {
   fun testJadeWithVueShortcutAttributes() {
     myFixture.configureByText("JadeWithVueShortcutAttributes.vue", """
 <template lang="pug">
-    div(v-if="items" @fff="4" :click="onClick" class="someName")
+    div(v-if="items" @fff="4" :click="<weak_warning descr="Unresolved variable or type onClick">onClick</weak_warning>" class="someName")
 </template>
 """)
     myFixture.checkHighlighting(true, false, true, false)
   }
 
-  fun testColVueComponent() {
+  fun testComponentsNamedLikeHtmlTags() {
     myFixture.configureByText("ColVueComponent.vue", """
 <template>
+    <Input><span slot="prepend"></span></Input>
     <col>
     <Col></Col>
     <Col>
@@ -847,7 +821,8 @@ Vue.component('global-comp-literal', {
 <script lang="es6">
   export default {
     components: {
-      Col: {}
+      Col: {},
+      Input: {}
     }
   }
 </script>
@@ -886,36 +861,36 @@ export default class UsageComponent extends Vue {
   }
 
   fun testClassComponentAnnotationWithLocalComponentTs() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
-      myFixture.configureByText("vue.d.ts", "export interface Vue {}")
+    JSTestUtils.testES6<Exception>(myFixture.project) {
+      myFixture.configureByText("vue.d.ts", "export interface Vue {};export class Vue {}")
       createTwoClassComponents(myFixture, true)
       myFixture.configureByText("ClassComponentAnnotationWithLocalComponentTs.vue",
                                 """
-<template>
-  <LongVue/>
-  <ShortComponent/>
-  <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
-  <UsageComponent/>
-</template>
-<script lang="ts">
-import { Component } from 'vue-property-decorator';
-// just for test
-import { Vue } from 'vue.d.ts';
-import LongComponent from './LongComponent';
-import ShortComponent from './ShortComponent';
-@Component({
-  name: "UsageComponent",
-  components: {
-    "LongVue": LongComponent,
-    ShortComponent
+  <template>
+    <LongVue/>
+    <ShortComponent/>
+    <warning descr="Empty tag doesn't work in some browsers"><<warning descr="Unknown html tag UnknownComponent">UnknownComponent</warning>/></warning>
+    <UsageComponent/>
+  </template>
+  <script lang="ts">
+  import { Component } from 'vue-property-decorator';
+  // just for test
+  import { Vue } from 'vue.d.ts';
+  import LongComponent from './LongComponent';
+  import ShortComponent from './ShortComponent';
+  @Component({
+    name: "UsageComponent",
+    components: {
+      "LongVue": LongComponent,
+      ShortComponent
+    }
+  })
+  export default class UsageComponent extends Vue {
   }
-})
-export default class UsageComponent extends Vue {
-}
-</script>
-""")
+  </script>
+  """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testLocalComponentExtends() {
@@ -1142,7 +1117,7 @@ import BComponent from 'b-component'
   }
 
   fun testFlowJSEmbeddedContent() {
-    JSTestUtils.testWithinLanguageLevel<Exception>(JSLanguageLevel.FLOW, project) {
+    testWithinLanguageLevel<Exception>(JSLanguageLevel.FLOW, project) {
       myFixture.configureByText("FlowJSEmbeddedContent.vue", """
 <script>
     type Foo = { a: number }
@@ -1152,6 +1127,43 @@ import BComponent from 'b-component'
 """)
       myFixture.checkHighlighting()
     }
+  }
+
+  fun testTopLevelTags() {
+    myFixture.configureByText("foo.vue",
+                              "<template functional v-if='' v-else='' <warning descr=\"Attribute scoped is not allowed here\">scoped</warning>></template>\n" +
+                              "<style scoped <warning descr=\"Wrong attribute value\">src</warning> module <warning descr=\"Attribute functional is not allowed here\">functional</warning>></style>")
+    myFixture.checkHighlighting()
+  }
+
+  fun testEndTagNotForbidden() {
+    testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.project, ThrowableRunnable<Exception> {
+
+      myFixture.enableInspections(HtmlExtraClosingTagInspection::class.java)
+      myFixture.addFileToProject("input.vue", "<script>export default {name: 'Input'}</script>")
+      myFixture.configureByText("foo.vue", """<template> <Input> </Input> </template>
+      <script>
+        import Input from 'input'
+        export default { components: {Input}}
+      </script>""")
+      myFixture.checkHighlighting()
+    })
+  }
+
+  fun testColonInEventName() {
+    myFixture.enableInspections(XmlUnboundNsPrefixInspection::class.java)
+    myFixture.configureByText("foo.vue", """
+      |<template>
+      |  <div @update:property=''></div>
+      |  <div <error descr="Namespace 'update' is not bound">update</error>:property=''></div>
+      |</template>""".trimMargin())
+    myFixture.checkHighlighting()
+  }
+
+  fun testNoVueTagErrorsInPlainXml() {
+    myFixture.addFileToProject("any.vue", "") // to make sure that Vue support works for the project
+    myFixture.configureByText("foo.xml", "<component><foo/></component>".trimMargin())
+    myFixture.checkHighlighting()
   }
 }
 

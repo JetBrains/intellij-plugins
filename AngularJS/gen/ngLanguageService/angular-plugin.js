@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    }
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -39,6 +42,7 @@ function createPluginClass(state) {
         AngularLanguagePlugin.prototype.createSessionClass = function (ts_impl, defaultOptionsHolder) {
             var sessionClass = _super.prototype.createSessionClass.call(this, ts_impl, defaultOptionsHolder);
             if (ts_impl["ide_processed"]) {
+                var originalReflect = typeof Reflect != 'undefined' && Reflect.apply ? Reflect : null;
                 var requiredObject = require(state.ngServicePath);
                 var ng = requiredObject;
                 if (typeof requiredObject == "function") {
@@ -48,6 +52,15 @@ function createPluginClass(state) {
                 }
                 ts_impl["ng_service"] = ng;
                 ts_impl["ideUtil"] = util;
+                //workaround for https://github.com/angular/angular/issues/21420
+                if (originalReflect != null && !Reflect.apply) {
+                    loggerImpl.serverLogger("Restore Reflect after ng service loading", true);
+                    var ngReflect_1 = Reflect;
+                    Reflect = originalReflect;
+                    Object.keys(ngReflect_1).forEach(function (key) {
+                        Reflect[key] = Reflect[key] || ngReflect_1[key];
+                    });
+                }
                 if (!isVersionCompatible(ng, util, ts_impl)) {
                     ts_impl["ngIncompatible"] = true;
                 }
@@ -67,8 +80,10 @@ function createPluginClass(state) {
             try {
                 var fullTypescriptVersion = require(tsPath);
                 for (var prop in fullTypescriptVersion) {
-                    if (fullTypescriptVersion.hasOwnProperty(prop)) {
-                        ts_impl[prop] = fullTypescriptVersion[prop];
+                    //typescript package doesn't have all required methods from "server" package
+                    if (fullTypescriptVersion.hasOwnProperty(prop) && prop !== "server") {
+                        var merged = fullTypescriptVersion[prop];
+                        ts_impl[prop] = merged;
                     }
                 }
                 ts_impl["ide_processed"] = true;

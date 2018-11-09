@@ -36,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@SuppressWarnings("MethodMayBeStatic")
 public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   @Nullable
   protected static PsiElement findAnchor(PsiElement occurrence) {
@@ -461,7 +460,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   private static class DartInplaceVariableIntroducer extends InplaceVariableIntroducer<PsiElement> {
     private final DartComponentName myTarget;
 
-    public DartInplaceVariableIntroducer(DartComponentName target,
+    DartInplaceVariableIntroducer(DartComponentName target,
                                          DartIntroduceOperation operation,
                                          List<PsiElement> occurrences) {
       super(target, operation.getEditor(), operation.getProject(), "Introduce Variable",

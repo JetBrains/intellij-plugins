@@ -26,8 +26,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActionHandler {
   @Override
@@ -69,11 +69,13 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
                           @NotNull final Collection<DartNamedElementNode> selectedElements,
                           @NotNull final BaseCreateMethodsFix createMethodsFix) {
     Runnable runnable = new Runnable() {
+      @Override
       public void run() {
         createMethodsFix.addElementsToProcessFrom(selectedElements);
         createMethodsFix.beforeInvoke(project, editor, file);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
           public void run() {
             try {
               createMethodsFix.invoke(project, editor, file);
@@ -167,6 +169,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     final MemberChooser<DartNamedElementNode> chooser =
       new MemberChooser<DartNamedElementNode>(nodes.toArray(new DartNamedElementNode[0]), doAllowEmptySelection(), true, project, false) {
 
+        @Override
         protected JComponent createCenterPanel() {
           final JComponent superComponent = super.createCenterPanel();
           final JComponent optionsComponent = getOptionsComponent(dartClass, candidates);

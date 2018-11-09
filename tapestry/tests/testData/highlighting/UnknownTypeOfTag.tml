@@ -1,0 +1,10 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+    </head>
+    <body>
+        <a t:type="<error>UnknownType</error>"/>
+        <a t:id="<error>UnknownId</error>"/>
+        <t:<error descr="Cannot resolve symbol 't:unknown1'">unknown1</error>/>
+        <<error descr="Element unknown1 is not allowed here">unknown1</error>/>
+    </body>
+</html>

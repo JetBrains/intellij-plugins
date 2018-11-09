@@ -36,14 +36,14 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHig
     return styleViaLang(ourDefaultStyleLanguage) ?: super.getStyleLanguage()
   }
 
-  override fun seenScript() = seenScript
-  override fun seenStyle() = seenStyle
-  override fun seenTemplate() = seenTemplate
-  override fun seenTag() = seenTag
-  override fun seenAttribute() = seenAttribute
-  override fun seenVueAttribute() = seenVueAttribute
-  override fun getScriptType() = scriptType
-  override fun getStyleType() = styleType
+  override fun seenScript(): Boolean = seenScript
+  override fun seenStyle(): Boolean = seenStyle
+  override fun seenTemplate(): Boolean = seenTemplate
+  override fun seenTag(): Boolean = seenTag
+  override fun seenAttribute(): Boolean = seenAttribute
+  override fun seenVueAttribute(): Boolean = seenVueAttribute
+  override fun getScriptType(): String? = scriptType
+  override fun getStyleType(): String? = styleType
   override fun inTagState(): Boolean = baseState() == _HtmlLexer.START_TAG_NAME
 
   override fun setSeenScriptType() {

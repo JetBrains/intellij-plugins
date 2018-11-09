@@ -20,7 +20,6 @@ import com.intellij.javaee.web.CustomServletReferenceAdapter;
 import com.intellij.javaee.web.ServletMappingInfo;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -40,7 +39,6 @@ import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +49,7 @@ import java.util.List;
  */
 public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
 
+  @Override
   protected PsiReference[] createReferences(@NotNull final PsiElement psiElement,
                                             final int offset,
                                             final String text,
@@ -80,6 +79,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
     }
   }
 
+  @Override
   @Nullable
   public PathReference createWebPath(final String path,
                                      @NotNull final PsiElement psiElement,
@@ -132,6 +132,7 @@ TODO not needed so far ?!
       }
     }
 
+    @Override
     public PsiElement resolve() {
       final String ourActionExtension = ContainerUtil.find(actionExtensions, s -> StringUtil.endsWith(fullActionPath, s));
       if (ourActionExtension == null) {
@@ -149,6 +150,7 @@ TODO not needed so far ?!
       return myAction.getXmlTag();
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       final String namespace = getNamespace(fullActionPath);
@@ -168,6 +170,7 @@ TODO not needed so far ?!
       return ArrayUtil.toObjectArray(variants);
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve action '" + getValue() + "'";
@@ -234,6 +237,7 @@ TODO not needed so far ?!
       return new TextRange(offset, offset + (lastSlash == -1 ? text.length() : lastSlash));
     }
 
+    @Override
     public PsiElement resolve() {
       for (final StrutsPackage strutsPackage : allStrutsPackages) {
         if (Comparing.equal(namespace, strutsPackage.searchNamespace())) {
@@ -244,6 +248,7 @@ TODO not needed so far ?!
       return null;
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       return ContainerUtil.map2Array(allStrutsPackages, Object.class, (Function<StrutsPackage, Object>)strutsPackage -> {
@@ -254,6 +259,7 @@ TODO not needed so far ?!
       });
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve Struts 2 package '" + namespace + "'";

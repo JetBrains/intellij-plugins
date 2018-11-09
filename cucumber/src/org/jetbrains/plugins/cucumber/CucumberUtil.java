@@ -14,6 +14,7 @@
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -27,10 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CucumberUtil {
   @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
@@ -73,10 +71,22 @@ public class CucumberUtil {
   public static final String PREFIX_CHAR = "^";
   public static final String SUFFIX_CHAR = "$";
 
+  public static final Map<String, String> STANDARD_PARAMETER_TYPES;
+
+  static {
+    Map<String, String> standardParameterTypes = new HashMap<>();
+    standardParameterTypes.put("int", "-?\\d+");
+    standardParameterTypes.put("float", "-?\\d*[.,]?\\d+");
+    standardParameterTypes.put("word", "[^\\s]+");
+    standardParameterTypes.put("string", "\"(?:[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'(?:[^'\\\\]*(?:\\\\.[^'\\\\]*)*)'");
+
+    STANDARD_PARAMETER_TYPES = Collections.unmodifiableMap(standardParameterTypes);
+  }
+
   /**
    * Searches for the all references to element, representing step definition from Gherkin steps.
    * Each step should have poly reference that resolves to this element.
-   * Uses {@link #findPossibleGherkinElementUsages(com.intellij.psi.PsiElement, String, com.intellij.psi.search.TextOccurenceProcessor, com.intellij.psi.search.SearchScope)}
+   * Uses {@link #findPossibleGherkinElementUsages(PsiElement, String, TextOccurenceProcessor, SearchScope)}
    * to find elements. Than, checks for references.
    *
    * @param stepDefinitionElement step defining element (most probably method)
@@ -84,7 +94,7 @@ public class CucumberUtil {
    * @param consumer              each reference would be reported here
    * @param effectiveSearchScope  search scope
    * @return whether reference was found and reported to consumer
-   * @see #findPossibleGherkinElementUsages(com.intellij.psi.PsiElement, String, com.intellij.psi.search.TextOccurenceProcessor, com.intellij.psi.search.SearchScope)
+   * @see #findPossibleGherkinElementUsages(PsiElement, String, TextOccurenceProcessor, SearchScope)
    */
   public static boolean findGherkinReferencesToElement(@NotNull final PsiElement stepDefinitionElement,
                                                        @NotNull final String regexp,
@@ -96,7 +106,7 @@ public class CucumberUtil {
   }
 
   /**
-   * Passes to {@link com.intellij.psi.search.TextOccurenceProcessor} all elements in gherkin files that <em>may</em> have reference to
+   * Passes to {@link TextOccurenceProcessor} all elements in gherkin files that <em>may</em> have reference to
    * provided argument. I.e: calling this function for string literal "(.+)foo" would find step "Given I am foo".
    * To extract search text, {@link #getTheBiggestWordToSearchByIndex(String)} is used.
    *
@@ -105,7 +115,7 @@ public class CucumberUtil {
    * @param processor             each text occurence would be reported here
    * @param effectiveSearchScope  search scope
    * @return whether reference was found and passed to processor
-   * @see #findGherkinReferencesToElement(com.intellij.psi.PsiElement, String, com.intellij.util.Processor, com.intellij.psi.search.SearchScope)
+   * @see #findGherkinReferencesToElement(PsiElement, String, Processor, SearchScope)
    */
   public static boolean findPossibleGherkinElementUsages(@NotNull final PsiElement stepDefinitionElement,
                                                          @NotNull final String regexp,
@@ -173,6 +183,7 @@ public class CucumberUtil {
       }
       else {
         sb = new StringBuilder();
+        //noinspection AssignmentToForLoopParameter
         i++;
       }
       if (par > 0 | squareBrace > 0 | brace > 0) {
@@ -208,6 +219,136 @@ public class CucumberUtil {
       result = result.replaceAll(rule[0], rule[1]);
     }
     return result;
+  }
+
+  /**
+   * Replaces ParameterType-s injected into step definition.
+   * Step definition {@code provided {int} cucumbers } will be presented by regexp {@code ([+-]?\d+) customers }
+   * @param parameterTypeManager provides mapping from ParameterTypes name to its value
+   * @return regular expression defined by Cucumber Expression and ParameterTypes value
+   */
+  @NotNull
+  public static String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
+                                                         @NotNull ParameterTypeManager parameterTypeManager) {
+
+    String cucumberExpression2 = replaceNotNecessaryTextTemplateByRegexp(cucumberExpression);
+
+    List<Pair<TextRange, String>> parameterTypeValues = new ArrayList<>();
+    processParameterTypesInCucumberExpression(cucumberExpression2, range -> {
+      String parameterTypeName = cucumberExpression2.substring(range.getStartOffset() + 1, range.getEndOffset() - 1);
+      String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
+      parameterTypeValues.add(Pair.create(range, parameterTypeValue));
+      return true;
+    });
+
+    StringBuilder result = new StringBuilder(cucumberExpression2);
+    Collections.reverse(parameterTypeValues);
+    for (Pair<TextRange, String> rangeAndValue : parameterTypeValues) {
+      String value = rangeAndValue.getSecond();
+      if (value == null) {
+        return cucumberExpression2;
+      }
+      int startOffset = rangeAndValue.first.getStartOffset();
+      int endOffset = rangeAndValue.first.getEndOffset();
+      result.replace(startOffset, endOffset, "(" + value + ")");
+    }
+    return result.toString();
+  }
+
+  /**
+   * Replaces pattern (text) with regexp {@code (text)?}
+   * For example Cucumber Expression:
+   * {@code I have {int} cucumber(s) in my belly} is equal to regexp
+   * {@code I have \d+ cucumber(?:s)? in my belly}
+   */
+  public static String replaceNotNecessaryTextTemplateByRegexp(@NotNull String cucumberExpression) {
+    StringBuilder result = new StringBuilder();
+    int i = 0;
+    while (i < cucumberExpression.length()) {
+      char c = cucumberExpression.charAt(i);
+      if (c == '(') {
+        int j = i;
+        while (j < cucumberExpression.length()) {
+          if (cucumberExpression.charAt(j) == ')'){
+            break;
+          }
+          if (cucumberExpression.charAt(j) == '\\') {
+            break;
+          }
+          j++;
+        }
+        if (j >= cucumberExpression.length()) {
+          // Error: not closed parenthesis
+          return cucumberExpression;
+        }
+        result.append("(?:").append(cucumberExpression, i + 1, j + 1).append('?');
+        i = j + 1;
+        continue;
+      }
+      result.append(c);
+      if (c == '\\') {
+        i++;
+        result.append(cucumberExpression.charAt(i));
+      }
+      i++;
+    }
+    return result.toString();
+  }
+
+  /**
+   * Processes text ranges of every Parameter Type in Cucumber Expression
+   */
+  public static void processParameterTypesInCucumberExpression(@NotNull String cucumberExpression,
+                                                         @NotNull Processor<? super TextRange> processor) {
+    int i = 0;
+    while (i < cucumberExpression.length()) {
+      char c = cucumberExpression.charAt(i);
+      if (c == '{') {
+        int j = i;
+        while (j < cucumberExpression.length()) {
+          char parameterTypeChar = cucumberExpression.charAt(j);
+          if (parameterTypeChar == '}') {
+            break;
+          }
+          if (parameterTypeChar == '\\') {
+            j++;
+          }
+          j++;
+        }
+        if (j < cucumberExpression.length()) {
+          processor.process(TextRange.create(i, j + 1));
+          i = j + 1;
+          continue;
+        }
+        else {
+          // unclosed parameter type
+          return;
+        }
+      }
+
+      if (c == '\\') {
+        if (i >= cucumberExpression.length() - 1) {
+          // escape without following symbol;
+          return;
+        }
+        i++;
+      }
+      i++;
+    }
+  }
+
+  /**
+   * Step definition could be defined by regular expression or by Cucumber Expression (text with predefined patterns {int}, {float}, {word},
+   * {string} or defined by user). This methods helps to distinguish these two cases
+   */
+  public static boolean isCucumberExpression(@NotNull String stepDefinitionPattern) {
+    final boolean[] containsParameterTypes = {false};
+    processParameterTypesInCucumberExpression(stepDefinitionPattern, textRange -> {
+      containsParameterTypes[0] = true;
+      return false;
+    });
+
+    return containsParameterTypes[0];
   }
 
   /**

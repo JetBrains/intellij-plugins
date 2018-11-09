@@ -4,6 +4,7 @@ import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
@@ -24,7 +25,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.util.Processor;
 import org.jetbrains.annotations.NonNls;
 
 public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Condition<PsiElement> {
@@ -35,6 +35,8 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
         JavaScriptSupportLoader.isLanguageNamespace(((XmlAttribute)element).getValue())) {
       return true;
     }
+
+    if (!DialectDetector.isActionScript(element)) return false;
 
     if (element instanceof JSClass) {
       JSClass clazz = (JSClass)element;

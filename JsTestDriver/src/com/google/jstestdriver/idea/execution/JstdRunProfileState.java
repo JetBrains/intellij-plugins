@@ -37,6 +37,7 @@ import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.javascript.nodejs.NodeCommandLineUtil;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -151,7 +152,7 @@ public class JstdRunProfileState implements RunProfileState {
   private KillableColoredProcessHandler createOSProcessHandler(@NotNull String serverUrl) throws ExecutionException {
     Map<TestRunner.ParameterKey, String> params = createParameterMap(serverUrl);
     GeneralCommandLine commandLine = createCommandLine(params);
-    KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(commandLine, true);
+    KillableColoredProcessHandler processHandler = NodeCommandLineUtil.createKillableColoredProcessHandler(commandLine, true);
     ProcessTerminatedListener.attach(processHandler);
     return processHandler;
   }
@@ -265,7 +266,7 @@ public class JstdRunProfileState implements RunProfileState {
     }
     if (testType == TestType.TEST_CASE) {
       Map<String, Set<String>> scope = Collections.singletonMap(settings.getTestCaseName(),
-                                                                Collections.<String>emptySet());
+                                                                Collections.emptySet());
       return TestFileScope.customScope(scope);
     }
     if (testType == TestType.TEST_METHOD) {
@@ -296,7 +297,7 @@ public class JstdRunProfileState implements RunProfileState {
   private static class JstdConsoleProperties extends SMTRunnerConsoleProperties {
     private final JstdTestProxyFilterProvider myFilterProvider;
 
-    public JstdConsoleProperties(JstdRunConfiguration configuration, Executor executor, JstdTestProxyFilterProvider filterProvider) {
+    JstdConsoleProperties(JstdRunConfiguration configuration, Executor executor, JstdTestProxyFilterProvider filterProvider) {
       super(configuration, JSTD_FRAMEWORK_NAME, executor);
       myFilterProvider = filterProvider;
       setUsePredefinedMessageFilter(false);

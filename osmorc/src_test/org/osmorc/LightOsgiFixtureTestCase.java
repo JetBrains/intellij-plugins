@@ -1,23 +1,8 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc;
 
 import com.intellij.facet.FacetManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.application.PluginPathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -33,15 +18,17 @@ import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
 
+import static com.intellij.project.IntelliJProjectConfiguration.getModuleLibrary;
+import static com.intellij.project.IntelliJProjectConfiguration.getProjectLibrary;
+
 public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTestCase {
   private static final DefaultLightProjectDescriptor OSGi_DESCRIPTOR = new DefaultLightProjectDescriptor() {
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
       super.configureModule(module, model, contentEntry);
 
-      String libPath = PluginPathManager.getPluginHomePath("osmorc") + "/lib";
-      PsiTestUtil.addLibrary(module, model, "osgi.core", libPath, "org.apache.felix.framework-4.2.1.jar");
-      PsiTestUtil.addLibrary(module, model, "plexus", libPath, "plexus-utils-3.0.10.jar");
+      PsiTestUtil.addProjectLibrary(model, "bndlib-repository", getModuleLibrary("intellij.osgi.jps", "bndlib-repository").getClassesPaths());
+      PsiTestUtil.addProjectLibrary(model, "plexus-utils", getProjectLibrary("plexus-utils").getClassesPaths());
 
       String annotationsPath = PathManager.getJarPathForClass(NotNull.class);
       assertNotNull(annotationsPath);

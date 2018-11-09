@@ -32,5 +32,5 @@ package org.osmorc.obrimport;
  * @version $Id:$
  */
 enum QueryType {
-  Maven;
+  Maven
 }

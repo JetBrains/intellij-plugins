@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInspection.*;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
@@ -156,7 +157,7 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
       final VirtualFile pubspecFile = PubspecYamlUtil.findPubspecYamlFile(project, file);
       if (pubspecFile == null) return;
 
-      new OpenFileDescriptor(project, pubspecFile).navigate(true);
+      PsiNavigationSupport.getInstance().createNavigatable(project, pubspecFile, -1).navigate(true);
     }
   }
 
@@ -164,7 +165,7 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     @NotNull private final Set<String> myIgnoredPubspecPaths;
     @NotNull private final String myPubspecPath;
 
-    public IgnoreWarningFix(@NotNull final Set<String> ignoredPubspecPaths, @NotNull final String pubspecPath) {
+    IgnoreWarningFix(@NotNull final Set<String> ignoredPubspecPaths, @NotNull final String pubspecPath) {
       myIgnoredPubspecPaths = ignoredPubspecPaths;
       myPubspecPath = pubspecPath;
     }

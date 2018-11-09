@@ -19,15 +19,13 @@ import com.intellij.psi.impl.cache.impl.OccurrenceConsumer;
 import com.intellij.psi.impl.cache.impl.todo.LexerBasedTodoIndexer;
 import com.intellij.psi.search.UsageSearchContext;
 
-import static org.intellij.plugins.markdown.highlighting.MarkdownIndexPatternBuilder.COMMENT_TOKEN_SET;
-
 public class MarkdownTodoIndexer extends LexerBasedTodoIndexer {
   @Override
   public Lexer createLexer(OccurrenceConsumer consumer) {
     return new BaseFilterLexer(new MarkdownHighlightingLexer(), consumer) {
       @Override
       public void advance() {
-        if (COMMENT_TOKEN_SET.contains(myDelegate.getTokenType())) {
+        if (MarkdownIndexPatternBuilder.COMMENT_TOKEN_SET.contains(myDelegate.getTokenType())) {
           scanWordsInToken(UsageSearchContext.IN_COMMENTS, false, false);
           advanceTodoItemCountsInToken();
         }

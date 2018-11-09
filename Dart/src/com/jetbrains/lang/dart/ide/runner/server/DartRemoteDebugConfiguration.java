@@ -38,6 +38,7 @@ public class DartRemoteDebugConfiguration extends RunConfigurationBase implement
     return myParameters;
   }
 
+  @Override
   public void checkConfiguration() throws RuntimeConfigurationError {
     final String path = myParameters.getDartProjectPath();
     if (path.isEmpty()) {

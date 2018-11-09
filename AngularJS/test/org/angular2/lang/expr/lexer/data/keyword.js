@@ -1,0 +1,10 @@
+var
+let
+as
+null
+undefined
+true
+false
+if
+else
+this

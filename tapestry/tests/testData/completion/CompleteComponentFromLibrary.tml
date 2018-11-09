@@ -1,0 +1,7 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+        <t:w<caret>
+    </head>
+    <body>
+    </body>
+</html>

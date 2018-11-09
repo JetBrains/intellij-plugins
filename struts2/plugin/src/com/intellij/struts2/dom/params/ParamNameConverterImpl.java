@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.params;
 
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -39,6 +38,7 @@ public class ParamNameConverterImpl extends ParamNameConverter {
     return ((ParamsElement) domElement).getParamsClass();
   }
 
+  @Override
   @NotNull
   public PsiReference[] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
                                          final PsiElement psiElement,
@@ -48,7 +48,7 @@ public class ParamNameConverterImpl extends ParamNameConverter {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    for (ParamNameCustomConverter customConverter : Extensions.getExtensions(EP_NAME)) {
+    for (ParamNameCustomConverter customConverter : EP_NAME.getExtensionList()) {
       final PsiReference[] customReferences = customConverter.getCustomReferences((XmlAttributeValue) psiElement,
                                                                                   paramsElement);
       if (customReferences.length > 0) {

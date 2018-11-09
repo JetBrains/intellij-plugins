@@ -195,6 +195,29 @@ function isPreprocessorSpecified(preprocessors, preprocessorName) {
     return false;
 }
 
+function getKarmaPackagePath() {
+  const nodeModulesDirName = '/node_modules/';
+  const mainJsFile = process.argv[1].replace(/\\/g, '/');
+  var ind = mainJsFile.lastIndexOf(nodeModulesDirName);
+  if (ind < 0) return null;
+  const pkgStartInd = ind + nodeModulesDirName.length;
+  const pkgEndInd = mainJsFile.indexOf('/', pkgStartInd);
+  if (pkgEndInd < 0) return null;
+  const karmaPkgPath = mainJsFile.substring(0, pkgStartInd) + '/karma/';
+  if (mainJsFile.indexOf(karmaPkgPath) === 0 || require('fs').existsSync(karmaPkgPath)) {
+    return karmaPkgPath;
+  }
+  return mainJsFile.substring(0, pkgEndInd); // possible karma forks
+}
+
+function getKarmaFilePath(pathRelativeToKarmaPkg) {
+  const karmaPkgPath = getKarmaPackagePath();
+  if (karmaPkgPath != null) {
+    const path = require('path');
+    return path.normalize(path.join(karmaPkgPath, pathRelativeToKarmaPkg));
+  }
+}
+
 exports.attributeValueEscape = attributeValueEscape;
 exports.joinList = joinList;
 exports.sendIntellijEvent = sendIntellijEvent;
@@ -202,3 +225,4 @@ exports.isString = isString;
 exports.processStdInput = processStdInput;
 exports.removeAll = removeAll;
 exports.isPreprocessorSpecified = isPreprocessorSpecified;
+exports.getKarmaFilePath = getKarmaFilePath;

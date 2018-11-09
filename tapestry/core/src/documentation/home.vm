@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+    <link rel="stylesheet" href="$style" type="text/css">
+</head>
+
+<body>
+<div id="header"><img src="$logo"></div>
+<div style="height:20px;background:#cccc00;margin-bottom: 10px;"></div>
+
+<a name="TOP"></a>
+
+<div id="menubar">
+    <span><a href="#APP">Tapestry Applications</a></span>
+    <span>|</span>
+    <span><a href="#LIB">Core Library</a></span>
+</div>
+
+<a name="APP"></a>
+
+<div>
+    <div style="width:40%;">
+        <div class="box">
+            <div class="boxHeader">
+                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="width:80%;text-align:left;font-weight:bold;">Tapestry Applications</td>
+                        <td style="width:20%;text-align:right;padding-right:10px;font-size:11px;"><a href="#TOP">Top</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    #foreach($module in $modules)
+                    <tr>
+                        <td style="border:1px solid #efefef;padding:6px;font-weight:bold;">$module</td>
+                    </tr>
+                    #end
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="separator"/>
+</div>
+
+<a name="LIB"></a>
+
+<div>
+    <div style="width:75%;">
+        <div class="box">
+            <div class="boxHeader">
+                <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                    <tr>
+                        <td style="width:80%;text-align:left;font-weight:bold;">Core Library</td>
+                        <td style="width:20%;text-align:right;padding-right:10px;font-size:11px;"><a href="#TOP">Top</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                    <tr>
+                        <td style="border:1px solid #c2bfbf;padding:3px;text-align:center;background-color:#dfdbdb;">Pages</td>
+                    </tr>
+
+                    <tr>
+                        <td style="border:1px solid #efefef;padding:12px;">
+                            #set($count = 0)
+
+                            #foreach($elementPage in $pages.keySet())
+                            <p><b>Name:</b> $elementPage</p>
+
+                            <p><b>Description:</b> $pages.get($elementPage)</p>
+
+                            #set($count = $count + 1)
+
+                            #if ($count != $pages.keySet().size())
+                                <div style="margin-top:5px;margin-bottom:5px;border:1px dashed #f0efef;"/>
+                            #end
+                            #end
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="border:1px solid #c2bfbf;padding:3px;text-align:center;background-color:#dfdbdb;">Components</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #efefef;padding:12px;">
+                            #set($count = 0)
+
+                            #foreach($comp in $components.keySet())
+                            <p><b>Name:</b> $comp</p>
+
+                            <p><b>Description:</b> $components.get($comp)</p>
+
+                            #set($count = $count + 1)
+
+                            #if ($count != $components.keySet().size())
+                                <div style="margin-top:5px;margin-bottom:5px;border:1px dashed #f0efef;"/>
+                            #end
+                            #end
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #c2bfbf;padding:3px;text-align:center;background-color:#dfdbdb;">Mixins</td>
+                    </tr>
+                    <tr>
+                        <td style="border:1px solid #efefef;padding:12px;">
+                            #set($count = 0)
+
+                            #foreach($elementMixin in $mixins.keySet())
+                            <p><b>Name:</b> $elementMixin</p>
+
+                            <p><b>Description:</b> $mixins.get($elementMixin)</p>
+
+                            #set($count = $count + 1)
+
+                            #if ($count != $mixins.keySet().size())
+                                <div style="margin-top:5px;margin-bottom:5px;border:1px dashed #f0efef;"/>
+                            #end
+                            #end
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

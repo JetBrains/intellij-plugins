@@ -52,11 +52,13 @@ public class CreateActionMethodQuickFix extends LocalQuickFixAndIntentionActionO
            super.isAvailable();
   }
 
+  @Override
   @NotNull
   public String getText() {
     return "Create action-method '" + methodName + "'";
   }
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return "Create action-method";

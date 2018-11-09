@@ -13,7 +13,6 @@
 // limitations under the License.
 package com.jetbrains.lang.dart.ide.runner;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointTypeBase;
@@ -21,9 +20,6 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public class DartLineBreakpointType extends XLineBreakpointTypeBase {
 
@@ -31,13 +27,8 @@ public class DartLineBreakpointType extends XLineBreakpointTypeBase {
     super("Dart", DartBundle.message("dart.line.breakpoints.title"), new DartDebuggerEditorsProvider());
   }
 
+  @Override
   public boolean canPutAt(@NotNull final VirtualFile file, final int line, @NotNull final Project project) {
     return DartFileType.INSTANCE.equals(file.getFileType());
-  }
-
-  @Nullable
-  @Override
-  public Icon getPendingIcon() {
-    return AllIcons.Debugger.Db_pending_breakpoint;
   }
 }

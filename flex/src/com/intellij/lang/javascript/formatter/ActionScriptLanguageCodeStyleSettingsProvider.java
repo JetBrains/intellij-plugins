@@ -4,11 +4,10 @@ import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
+import com.intellij.psi.codeStyle.*;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +26,24 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   @Override
   public IndentOptionsEditor getIndentOptionsEditor() {
     return new ActionScriptIndentOptionsEditor();
+  }
+
+  @NotNull
+  @Override
+  public CodeStyleConfigurable createConfigurable(@NotNull CodeStyleSettings settings, @NotNull CodeStyleSettings modelSettings) {
+    return new ActionScriptCodeStyleSettingsConfigurable(settings, modelSettings);
+  }
+
+  @Nullable
+  @Override
+  public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings settings) {
+    return new ECMA4CodeStyleSettings(settings);
+  }
+
+  @Nullable
+  @Override
+  public String getConfigurableDisplayName() {
+    return "ActionScript";
   }
 
   @Override
@@ -60,11 +77,17 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
       consumer
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_DOTS_IN_REST_PARAMETER",
-                          JSBundle.message("space.after.dots.in.rest.parameter"),
+                          JSBundle.message("actionscript.space.after.dots.in.rest.parameter"),
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
       consumer.showCustomOption(JSCodeStyleSettings.class, "SPACE_BEFORE_FUNCTION_LEFT_PARENTH",
                                 JSBundle.message("space.before.function.left.parenth"),
                                 CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES);
+      consumer.showCustomOption(ECMA4CodeStyleSettings.class,
+                                "SPACE_WITHIN_ARRAY_INITIALIZER_BRACKETS",
+                                JSBundle.message("spaces.within.array.initializer"),
+                                CodeStyleSettingsCustomizable.SPACES_WITHIN);
+      consumer.renameStandardOption("SPACE_WITHIN_BRACKETS", JSBundle.message("spaces.within.indexer.brackets"));
+      
       consumer
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON",
                           JSBundle.message("space.before.type.colon"),
@@ -80,15 +103,14 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                 CodeStyleSettingsCustomizable.SPACES_WITHIN);
     }
     else if (settingsType == SettingsType.BLANK_LINES_SETTINGS) {
-      List<String> blankLinesOptions = new ArrayList<>();
-      blankLinesOptions.addAll(Arrays.asList("KEEP_BLANK_LINES_IN_CODE",
-                                             "BLANK_LINES_AFTER_IMPORTS",
-                                             "BLANK_LINES_BEFORE_IMPORTS",
-                                             "BLANK_LINES_AROUND_METHOD",
-                                             "KEEP_BLANK_LINES_IN_CODE",
-                                             "BLANK_LINES_BEFORE_PACKAGE",
-                                             "BLANK_LINES_AFTER_PACKAGE"));
-      consumer.showStandardOptions(ArrayUtil.toStringArray(blankLinesOptions));
+      String[] blankLinesOptions = new String[]{"KEEP_BLANK_LINES_IN_CODE",
+        "BLANK_LINES_AFTER_IMPORTS",
+        "BLANK_LINES_BEFORE_IMPORTS",
+        "BLANK_LINES_AROUND_METHOD",
+        "KEEP_BLANK_LINES_IN_CODE",
+        "BLANK_LINES_BEFORE_PACKAGE",
+        "BLANK_LINES_AFTER_PACKAGE"};
+      consumer.showStandardOptions(blankLinesOptions);
       consumer.showCustomOption(ECMA4CodeStyleSettings.class, "BLANK_LINES_AROUND_FUNCTION",
                                 JSBundle.message("js.blank.lines.around.function"), CodeStyleSettingsCustomizable.BLANK_LINES);
     }
@@ -177,11 +199,10 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
   }
 
   @Override
-  public CommonCodeStyleSettings getDefaultCommonSettings() {
-    CommonCodeStyleSettings commonSettings = new CommonCodeStyleSettings(getLanguage());
+  protected void customizeDefaults(@NotNull CommonCodeStyleSettings commonSettings,
+                                   @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
     commonSettings.BLANK_LINES_AFTER_PACKAGE = 0;
     commonSettings.initIndentOptions();
-    return commonSettings;
   }
 
   public final static String GENERAL_CODE_SAMPLE =

@@ -55,7 +55,6 @@ public class StringUtil {
   }
 
   public static String getMyUsername() {
-    //noinspection HardCodedStringLiteral
     return ourUsername == null ? System.getProperty("user.name") : ourUsername;
   }
 

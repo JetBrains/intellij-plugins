@@ -1,0 +1,5 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Renders an "disabled" attribute if the containing is disabled.
+    </description>
+</element>

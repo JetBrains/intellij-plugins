@@ -31,6 +31,7 @@ public class SwfPolicyFileConnection extends ServerConnectionBase {
 
   }
 
+  @Override
   protected void run(InputStream inputStream) throws IOException {
     InputStreamReader reader = new InputStreamReader(inputStream);
 

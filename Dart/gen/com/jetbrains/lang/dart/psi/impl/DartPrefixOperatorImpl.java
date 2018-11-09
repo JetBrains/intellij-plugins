@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartPrefixOperatorImpl extends DartPsiCompositeElementImpl implements DartPrefixOperator {
 
-  public DartPrefixOperatorImpl(ASTNode node) {
+  public DartPrefixOperatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 

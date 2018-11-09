@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.util;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -20,7 +21,7 @@ public abstract class ActionScriptDaemonAnalyzerTestCase extends JSDaemonAnalyze
       checkResultByFile(getBasePath() + "/" + fileName + "_after." + ext);
     }
     finally {
-      LookupManager.getInstance(myProject).hideActiveLookup();
+      LookupManager.hideActiveLookup(myProject);
     }
   }
 

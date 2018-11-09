@@ -46,7 +46,6 @@ public class FrameworkDependencyResolver {
 
   public FrameworkDependencyResolver(final BridgeSupportLoader loader) {
     myLoader = loader;
-    //noinspection ConstantConditions
     final Stream<Path> childrenStream;
     try {
       childrenStream = Files.list(getScriptsDir());

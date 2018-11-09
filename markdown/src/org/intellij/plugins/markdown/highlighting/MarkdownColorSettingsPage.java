@@ -38,6 +38,7 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
 
   private static final AttributesDescriptor[] ATTRIBUTE_DESCRIPTORS = AttributeDescriptorsHolder.INSTANCE.get();
 
+  @Override
   @NotNull
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     final Map<String, TextAttributesKey> result = new HashMap<>();
@@ -74,16 +75,19 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
     return result;
   }
 
+  @Override
   @NotNull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ATTRIBUTE_DESCRIPTORS;
   }
 
+  @Override
   @NotNull
   public ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
+  @Override
   @NonNls
   @NotNull
   public String getDemoText() {
@@ -100,16 +104,19 @@ public class MarkdownColorSettingsPage implements ColorSettingsPage {
     return "*error loading text*";
   }
 
+  @Override
   @NotNull
   public String getDisplayName() {
     return MarkdownBundle.message("markdown.plugin.name");
   }
 
+  @Override
   @NotNull
   public SyntaxHighlighter getHighlighter() {
     return new MarkdownSyntaxHighlighter();
   }
 
+  @Override
   @Nullable
   public Icon getIcon() {
     return null;

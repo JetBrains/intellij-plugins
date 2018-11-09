@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.Toggleable;
 import com.intellij.openapi.project.DumbAware;
 import org.intellij.plugins.markdown.ui.actions.MarkdownActionUtil;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware, Toggleable {
@@ -17,7 +18,7 @@ abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     final SplitFileEditor splitFileEditor = MarkdownActionUtil.findSplitEditor(e);
     e.getPresentation().setEnabled(splitFileEditor != null);
 
@@ -27,7 +28,7 @@ abstract class BaseChangeSplitLayoutAction extends AnAction implements DumbAware
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     final SplitFileEditor splitFileEditor = MarkdownActionUtil.findSplitEditor(e);
 
     if (splitFileEditor != null) {

@@ -44,10 +44,10 @@ public abstract class AbstractDependencyFilter {
   /**
    * Dependency artifacts.
    */
-  private final Collection<MavenArtifact> m_dependencyArtifacts;
+  private final Collection<? extends MavenArtifact> m_dependencyArtifacts;
 
 
-  public AbstractDependencyFilter(Collection<MavenArtifact> dependencyArtifacts) {
+  public AbstractDependencyFilter(Collection<? extends MavenArtifact> dependencyArtifacts) {
     m_dependencyArtifacts = dependencyArtifacts;
   }
 
@@ -56,12 +56,12 @@ public abstract class AbstractDependencyFilter {
     private final String m_defaultValue;
 
 
-    public DependencyFilter(String expression) {
+    DependencyFilter(String expression) {
       this(expression, "");
     }
 
 
-    public DependencyFilter(String expression, String defaultValue) {
+    DependencyFilter(String expression, String defaultValue) {
       m_instruction = new Instruction(expression);
       m_defaultValue = defaultValue;
     }
@@ -116,6 +116,7 @@ public abstract class AbstractDependencyFilter {
 
       if (!"*".equals(primaryKey)) {
         filter = new DependencyFilter(primaryKey) {
+          @Override
           boolean matches(MavenArtifact dependency) {
             return super.matches(dependency.getArtifactId());
           }
@@ -124,11 +125,11 @@ public abstract class AbstractDependencyFilter {
         filter.filter(filteredDependencies);
       }
 
-      for (Map.Entry<String, String> entry : (clause.getValue()).entrySet()) {
+      for (Map.Entry<String, String> attr : (clause.getValue()).entrySet()) {
         // ATTRIBUTE: KEY --> REGEXP
-        Map.Entry attr = (Map.Entry)entry;
         if ("groupId".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue()) {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getGroupId());
             }
@@ -136,6 +137,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("artifactId".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue()) {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getArtifactId());
             }
@@ -143,6 +145,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("version".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue()) {
+            @Override
             boolean matches(MavenArtifact dependency) {
               try {
                 // use the symbolic version if available (ie. 1.0.0-SNAPSHOT)
@@ -156,6 +159,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("scope".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue(), "compile") {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getScope());
             }
@@ -163,6 +167,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("type".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue(), "jar") {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getType());
             }
@@ -170,6 +175,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("classifier".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue()) {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(dependency.getClassifier());
             }
@@ -177,6 +183,7 @@ public abstract class AbstractDependencyFilter {
         }
         else if ("optional".equals(attr.getKey())) {
           filter = new DependencyFilter((String)attr.getValue(), "false") {
+            @Override
             boolean matches(MavenArtifact dependency) {
               return super.matches(String.valueOf(dependency.isOptional()));
             }

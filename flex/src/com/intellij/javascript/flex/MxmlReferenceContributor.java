@@ -16,11 +16,10 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptTextReference;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.impl.JSTextReference;
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.ResultSink;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
 import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
@@ -72,10 +71,12 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       XmlPatterns.xmlAttributeValue().withLocalName(or(string().endsWith(STYLE_NAME_ATTR_SUFFIX),
                                                        string().equalTo(STYLE_NAME_ATTR)))
         .and(new FilterPattern(new ElementFilter() {
+          @Override
           public boolean isAcceptable(final Object element, final PsiElement context) {
             return !((PsiElement)element).textContains('{');
           }
 
+          @Override
           public boolean isClassAcceptable(final Class hintClass) {
             return true;
           }
@@ -132,6 +133,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
     });
 
     XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, null, new ElementFilter() {
+      @Override
       public boolean isAcceptable(final Object element, final PsiElement context) {
         PsiElement parent = ((PsiElement)element).getParent();
         if (!(parent instanceof XmlAttribute) || !((XmlAttribute)parent).isNamespaceDeclaration()) {
@@ -146,15 +148,17 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         return true;
       }
 
+      @Override
       public boolean isClassAcceptable(final Class hintClass) {
         return true;
       }
     }, true, new PsiReferenceProvider() {
+      @Override
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         final String trimmedText = StringUtil.unquoteString(element.getText());
         if (CodeContext.isPackageBackedNamespace(trimmedText)) {
-          return new JSReferenceSet(element, trimmedText, 1, false, false).getReferences();
+          return new ActionScriptReferenceSet(element, trimmedText, 1, false, false).getReferences();
         }
         return PsiReference.EMPTY_ARRAY;
       }
@@ -167,22 +171,25 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       new ScopeFilter(new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE, new TagNameFilter(BINDING_TAG_NAME),
                                                             new NamespaceFilter(JavaScriptSupportLoader.LANGUAGE_NAMESPACES)), 2)),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                      @NotNull final ProcessingContext context) {
           final String trimmedText = StringUtil.unquoteString(element.getText());
           final JSReferenceSet referenceSet =
-            new JSReferenceSet(element, trimmedText, 1, false);
+            new ActionScriptReferenceSet(element, trimmedText, 1, false);
           return referenceSet.getReferences();
         }
       });
 
     XmlUtil.registerXmlAttributeValueReferenceProvider(registrar, new String[]{FlexReferenceContributor.SOURCE_ATTR_NAME}, new ScopeFilter(
       new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE, new ElementFilterBase<PsiElement>(PsiElement.class) {
+        @Override
         protected boolean isElementAcceptable(final PsiElement element, final PsiElement context) {
           return true;
         }
       }), 2)), new PsiReferenceProvider() {
+      @Override
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
         final XmlAttribute attribute = (XmlAttribute)element.getParent();
@@ -291,6 +298,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         return JavaScriptSupportLoader.isFlexMxmFile(xmlAttribute.getContainingFile());
       }
     }), new PsiReferenceProvider() {
+      @Override
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
         String attrName = ((XmlAttribute)element).getLocalName();
@@ -302,10 +310,12 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
 
     XmlUtil.registerXmlTagReferenceProvider(
       registrar, null, new ElementFilterBase<XmlTag>(XmlTag.class) {
+        @Override
         protected boolean isElementAcceptable(final XmlTag element, final PsiElement context) {
           return element.getName().indexOf('.') != -1;
         }
       }, false, new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
           final String name = ((XmlTag)element).getName();
@@ -348,6 +358,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       new String[]{"basedOn", "fromState", "toState", FlexStateElementNames.NAME, FlexStateElementNames.STATE_GROUPS},
       new ScopeFilter(new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE, new NamespaceFilter(MxmlJSClass.MXML_URIS)), 2)),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
           final PsiElement parent = element.getParent();
@@ -402,6 +413,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
       new String[]{FlexStateElementNames.EXCLUDE_FROM, FlexStateElementNames.INCLUDE_IN},
       new ScopeFilter(new ParentElementFilter(XmlTagFilter.INSTANCE, 2)),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                      @NotNull final ProcessingContext context) {
@@ -420,6 +432,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         )
       ),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                      @NotNull final ProcessingContext context) {
@@ -430,6 +443,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
 
   private static PsiReferenceProvider createReferenceProviderForTagOrAttributeExpectingJSClass(final Function<PsiReference, LocalQuickFix[]> quickFixProvider) {
     return new PsiReferenceProvider() {
+      @Override
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                    @NotNull final ProcessingContext context) {
@@ -459,8 +473,8 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
         if (trimmedValueAndRange.second.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
         if (trimmedValueAndRange.first.indexOf('{') != -1 || trimmedValueAndRange.first.indexOf('@') != -1) return PsiReference.EMPTY_ARRAY;
 
-        final JSReferenceSet jsReferenceSet =
-          new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, true) {
+        final ActionScriptReferenceSet jsReferenceSet =
+          new ActionScriptReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, true) {
             @Override
             protected JSTextReference createTextReference(String s, int offset) {
               return new MyJSTextReference(this, s, offset, quickFixProvider);
@@ -474,10 +488,10 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
     };
   }
 
-  private static class MyJSTextReference extends JSTextReference implements LocalQuickFixProvider {
+  private static class MyJSTextReference extends ActionScriptTextReference implements LocalQuickFixProvider {
     private final Function<PsiReference, LocalQuickFix[]> myQuickFixProvider;
 
-    MyJSTextReference(JSReferenceSet set,
+    MyJSTextReference(ActionScriptReferenceSet set,
                       String s,
                       int offset,
                       Function<PsiReference, LocalQuickFix[]> quickFixProvider) {

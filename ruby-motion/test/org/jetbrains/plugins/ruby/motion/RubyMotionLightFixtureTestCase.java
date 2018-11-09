@@ -54,7 +54,7 @@ public abstract class RubyMotionLightFixtureTestCase extends RubyLightFixtureTes
 
   @Nullable
   @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
+  protected LightProjectDescriptor createProjectDescriptor() {
     return new RubyMotionLightFixtureDescriptor();
   }
 

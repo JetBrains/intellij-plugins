@@ -22,7 +22,7 @@ import java.util.regex.PatternSyntaxException;
  * @author yole, Andrey Vokin
  */
 public abstract class AbstractStepDefinition {
-  private static final Pattern ESCAPE_PATTERN = Pattern.compile("(\\$\\w+|#\\{.+?})");
+  private static final Pattern ESCAPE_PATTERN = Pattern.compile("(#\\{.+?})");
 
   private static final String CUCUMBER_START_PREFIX = "\\A";
 
@@ -156,5 +156,10 @@ public abstract class AbstractStepDefinition {
       }
     }
     return results;
+  }
+
+  @Nullable
+  public String getStepDefinitionText() {
+    return getCucumberRegex();
   }
 }

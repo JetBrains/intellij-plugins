@@ -13,10 +13,12 @@ public class PhoneGapInstalledPluginsPanel extends InstalledPackagesPanel {
     super(project, area);
   }
 
+  @Override
   protected boolean installEnabled() {
     return false;
   }
 
+  @Override
   protected boolean canInstallPackage(@NotNull final InstalledPackage pyPackage) {
     return false;
   }

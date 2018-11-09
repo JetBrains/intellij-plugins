@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.application.options.CodeStyle;
@@ -121,6 +109,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }
@@ -292,7 +281,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
     assertTrue(selected);
 
-    LookupManager.getInstance(myProject).hideActiveLookup();
+    LookupManager.hideActiveLookup(myProject);
 
     checkResultByFile(BASE_PATH + getTestName(false) + "_after2.js2");
   }
@@ -1152,7 +1141,6 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     doCreateClassOrInterfaceTest("Abc", false, false, true);
   }
 
-  @SuppressWarnings({"ConstantConditions"})
   private void doCreateClassOrInterfaceTestWithCheck(String name, boolean assertNoErrors) throws Exception {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
     doCreateClassOrInterfaceTest(name, true, false, assertNoErrors);
@@ -1171,12 +1159,14 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                      "}\n" +
                      "}";
     String prevText =
-      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
+      JSTestUtils
+        .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
     try {
       doCreateClassOrInterfaceTestWithCheck("Abc", true);
     }
     finally {
-      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
+      JSTestUtils
+        .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
     }
   }
 
@@ -1194,12 +1184,14 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
                      "}\n" +
                      "}";
     String prevText =
-      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
+      JSTestUtils
+        .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, newText, getProject());
     try {
       doCreateClassOrInterfaceTestWithCheck("Abc", false);
     }
     finally {
-      JSTestUtils.modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
+      JSTestUtils
+        .modifyTemplate(ActionScriptCreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, prevText, getProject());
     }
   }
 
@@ -1643,7 +1635,8 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   @JSTestOptions(JSTestOption.WithFlexFacet)
   public void testConditionalBlocks() throws Exception {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.getCompilerOptions()
-      .setAllOptions(Collections.singletonMap("compiler.define", "CONFIG::debugging\t")));
+                                                             .setAllOptions(
+                                                               Collections.singletonMap("compiler.define", "CONFIG::debugging\t")));
 
     enableInspectionTool(new BadExpressionStatementJSInspection());
     defaultTest();

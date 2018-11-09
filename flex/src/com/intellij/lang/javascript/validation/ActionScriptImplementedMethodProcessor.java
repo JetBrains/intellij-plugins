@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.validation;
 
+import com.intellij.lang.javascript.completion.JSCompletionContributor;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -23,6 +24,7 @@ public abstract class ActionScriptImplementedMethodProcessor extends JSCollectMe
     final JSFunctionCollector alreadyUsedMethods = new JSFunctionCollector();
     ActionScriptImplementedMethodProcessor processor = new ActionScriptImplementedMethodProcessor(clazz) {
 
+      @Override
       protected void addNonImplementedFunction(final JSFunction function) {
         if (alreadyUsedMethods.hasFunctionWithTheSameKind(function.getName(), function.getKind())) return;
         alreadyUsedMethods.add(function);
@@ -45,7 +47,7 @@ public abstract class ActionScriptImplementedMethodProcessor extends JSCollectMe
   @NotNull
   @Override
   protected ResultSink createResultSink() {
-    return new CompletionResultSink(place);
+    return new CompletionResultSink(place, null);
   }
 
   @Override

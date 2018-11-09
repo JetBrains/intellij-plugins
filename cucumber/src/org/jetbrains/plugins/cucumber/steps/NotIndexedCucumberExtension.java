@@ -25,6 +25,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import java.util.*;
 
 public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtension {
+  @Override
   public Object getDataObject(@NotNull final Project project) {
     final DataObject result = new DataObject();
     result.myUpdateQueue.setPassThrough(false);
@@ -39,6 +40,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
         if (isStepLikeFile(child, parent)) {
           final PsiFile file = (PsiFile)child;
           result.myUpdateQueue.queue(new Update(parent) {
+            @Override
             public void run() {
               if (file.isValid()) {
                 reloadAbstractStepDefinitions(file);
@@ -55,6 +57,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
         final PsiElement child = event.getChild();
         if (isStepLikeFile(child, parent)) {
           result.myUpdateQueue.queue(new Update(parent) {
+            @Override
             public void run() {
               removeAbstractStepDefinitionsRelatedTo((PsiFile)child);
             }
@@ -68,13 +71,15 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       final List<VirtualFile> myPreviousStepDefsProviders = new ArrayList<>();
 
-      public void beforeRootsChange(ModuleRootEvent event) {
+      @Override
+      public void beforeRootsChange(@NotNull ModuleRootEvent event) {
         myPreviousStepDefsProviders.clear();
 
         collectAllStepDefsProviders(myPreviousStepDefsProviders, project);
       }
 
-      public void rootsChanged(ModuleRootEvent event) {
+      @Override
+      public void rootsChanged(@NotNull ModuleRootEvent event) {
         // compare new and previous content roots
         final List<VirtualFile> newStepDefsProviders = new ArrayList<>();
         collectAllStepDefsProviders(newStepDefsProviders, project);
@@ -136,8 +141,10 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(file.getProject()).getExtensionDataObject(this);
 
     dataObject.myCucumberPsiTreeListener.addChangesWatcher(file, new CucumberPsiTreeListener.ChangesWatcher() {
+      @Override
       public void onChange(PsiElement parentPsiElement) {
         dataObject.myUpdateQueue.queue(new Update(file) {
+          @Override
           public void run() {
             if (!file.getProject().isDisposed()) {
               reloadAbstractStepDefinitions(file);
@@ -214,7 +221,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     return result;
   }
 
-  public static void collectDependencies(Module module, Set<Module> modules) {
+  public static void collectDependencies(Module module, Set<? super Module> modules) {
     if (modules.contains(module)) return;
     final Module[] dependencies = ModuleRootManager.getInstance(module).getDependencies();
     for (Module dependency : dependencies) {
@@ -225,6 +232,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     }
   }
 
+  @Override
   public List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
     final Set<Module> modules = new HashSet<>();
     collectDependencies(module, modules);
@@ -287,7 +295,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   }
 
   protected static void addStepDefsRootIfNecessary(final VirtualFile root,
-                                                @NotNull final List<PsiDirectory> newStepDefinitionsRoots,
+                                                @NotNull final List<? super PsiDirectory> newStepDefinitionsRoots,
                                                 @NotNull final Set<String> processedStepDirectories,
                                                 @NotNull final Project project) {
     if (root == null || !root.isValid()) {
@@ -329,6 +337,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
                                                 final List<PsiDirectory> newStepDefinitionsRoots,
                                                 final Set<String> processedStepDirectories);
 
+  @Override
   public void reset(@NotNull final Project project) {
     final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(project).getExtensionDataObject(this);
     dataObject.myUpdateQueue.cancelAllUpdates();
@@ -338,6 +347,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     dataObject.myProcessedStepDirectories.clear();
   }
 
+  @Override
   public void flush(@NotNull final Project project) {
     final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(project).getExtensionDataObject(this);
     dataObject.myUpdateQueue.flush();

@@ -1,6 +1,5 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
@@ -54,16 +53,6 @@ public class NgRepeatTest extends LightPlatformCodeInsightFixtureTestCase {
     assertTrue(variants.size() >= 2);
     assertEquals("firstName", variants.get(0));
     assertEquals("lastName", variants.get(1));
-  }
-
-  public void testNgFor() {
-    JSTestUtils.testES6(getProject(), () -> {
-      final List<String> variants = myFixture.getCompletionVariants("NgFor.ts", "angular2.js");
-      assertNotNull(variants);
-      assertTrue(variants.size() >= 2);
-      assertEquals("created_at", variants.get(0));
-      assertEquals("email", variants.get(1));
-    });
   }
 
   public void testUnusedHighlighting() {

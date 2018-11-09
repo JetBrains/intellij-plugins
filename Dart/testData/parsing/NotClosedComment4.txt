@@ -14,7 +14,7 @@ Dart File
           REFERENCE_EXPRESSION
             ID
               PsiElement(IDENTIFIER)('z')
-          PsiErrorElement:LONG_TEMPLATE_ENTRY_END expected, unexpected end of file
+          PsiErrorElement:LONG_TEMPLATE_ENTRY_END expected
             <empty list>
   DartDocCommentImpl(MULTI_LINE_DOC_COMMENT)
     PsiElement(MULTI_LINE_DOC_COMMENT_START)('/**')

@@ -42,6 +42,7 @@ public class DartConsoleFilter implements Filter {
     myDartUrlResolver = contextFile == null ? null : DartUrlResolver.getInstance(project, contextFile);
   }
 
+  @Override
   @Nullable
   public Result applyFilter(final String line, final int entireLength) {
     if (line.startsWith(OBSERVATORY_LISTENING_ON + "http://")) {
@@ -105,7 +106,6 @@ public class DartConsoleFilter implements Filter {
 
     final String port = url.substring(colonIndex + 1);
     try {
-      //noinspection ResultOfMethodCallIgnored
       Integer.parseInt(port);
       final int startOffset = lineStartOffset + OBSERVATORY_LISTENING_ON.length();
       return new Result(startOffset, startOffset + url.length(), new ObservatoryHyperlinkInfo(url));
@@ -118,7 +118,7 @@ public class DartConsoleFilter implements Filter {
   private static class ObservatoryHyperlinkInfo implements HyperlinkInfo {
     private final String myUrl;
 
-    public ObservatoryHyperlinkInfo(@NotNull final String url) {
+    ObservatoryHyperlinkInfo(@NotNull final String url) {
       myUrl = StringUtil.replace(url, "http://0.0.0.0:", "http://localhost:");
     }
 

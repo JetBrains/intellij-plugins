@@ -74,10 +74,12 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     }
   }
 
+  @Override
   public void dispose() {
     disconnect();
   }
 
+  @Override
   public void disconnect() {
     if (myConnection != null && myConnection.isConnected()) {
       myConnection.close();
@@ -85,6 +87,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     myConnection = null;
   }
 
+  @Override
   public String[] getServers() {
     SAXBuilder saxBuilder = new SAXBuilder();
     try {
@@ -105,11 +108,13 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     return new String[]{"jabber.org"};
   }
 
+  @Override
   public AccountInfo getMyAccount() {
     initSettingsIfNeeded();
     return mySettings.getAccount();
   }
 
+  @Override
   public String connect() {
     if (isConnectedAndAuthenticated()) return null;
     AccountInfo info = getMyAccount();
@@ -117,10 +122,12 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     return connect(info.getUsername(), info.getPassword(), info.getServer(), info.getPort(), info.isForceSSL());
   }
 
+  @Override
   public String connect(String username, String password, String server, int port, boolean forceOldSSL) {
     return _createConnection(server, port, username, password, false, forceOldSSL);
   }
 
+  @Override
   public String createAccountAndConnect(String username, String password, String server, int port, boolean forceOldSSL) {
     return _createConnection(server, port, username, password, true, forceOldSSL);
   }
@@ -128,8 +135,9 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
   private String _createConnection(String server, int port, final String username, String password, boolean createAccount, boolean forceOldSSL) {
     try {
       initSettingsIfNeeded();
-      
+
       XMPPConnection.addConnectionListener(new ConnectionEstablishedListener() {
+        @Override
         public void connectionEstablished(XMPPConnection connection) {
           XMPPConnection.removeConnectionListener(this);
           fireConnected(connection);
@@ -190,6 +198,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
 
   private boolean rosterIsNotAvailable(final XMPPConnection connection) {
     new WaitFor(3000) {
+      @Override
       protected boolean condition() {
         return connection.getRoster() != null;
       }
@@ -209,6 +218,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     getMyAccount().setForceSSL(forceOldSSL);
   }
 
+  @Override
   public void setVCardInfo(String nickName, String firstName, String lastName) throws XMPPException {
     assert isConnectedAndAuthenticated() : "Not connected or authenticated";
     VCard vCard = new VCard();
@@ -231,6 +241,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     }
   }
 
+  @Override
   public VCardInfo getVCard(String jabberId) {
     assert isConnectedAndAuthenticated() : "Not connected or authenticated";
     VCard vCard = new VCard();
@@ -246,14 +257,17 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     return new VCardInfo(vCard.getFirstName(), vCard.getLastName(), vCard.getNickName());
   }
 
+  @Override
   public boolean isConnectedAndAuthenticated() {
     return myConnection != null && myConnection.isAuthenticated();
   }
 
+  @Override
   public XMPPConnection getConnection() {
     return myConnection;
   }
 
+  @Override
   public void changeSubscription(String from, boolean subscribe) {
     LOG.info((subscribe ? "Accepted": "Denied" ) + " adding self to " + from + "'s contact list.");
     changeSubscription(from, subscribe ? Presence.Type.subscribed : Presence.Type.unsubscribed);
@@ -265,6 +279,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     myConnection.sendPacket(reply);
   }
 
+  @Override
   public void setOnlinePresence(UserPresence userPresence) {
     final Presence.Mode mode;
     String status = "";
@@ -283,6 +298,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     myConnection.sendPacket(presence);
   }
 
+  @Override
   public void saveSettings() {
     initSettingsIfNeeded();
     if (!mySettings.getAccount().shouldRememberPassword()) {
@@ -291,9 +307,10 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     XMLUtil.toXml(myXStream, myIdeFacade.getConfigDir(), FILE_NAME, mySettings);
   }
 
+  @Override
   public void addUsers(String group, List<String> list) {
     if (!isConnectedAndAuthenticated()) return;
-    
+
     String self = getConnection().getUser();
     for (String id : list) {
       if (!self.startsWith(id)) {
@@ -314,10 +331,12 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     }
   }
 
+  @Override
   public void addConnectionListener(ConnectionListener connectionListener) {
     myConnectionListeners.add(connectionListener);
   }
 
+  @Override
   public void removeConnectionListener(ConnectionListener connectionListener) {
     myConnectionListeners.remove(connectionListener);
   }
@@ -341,11 +360,13 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
   }
 
   private class SmackConnectionListener implements org.jivesoftware.smack.ConnectionListener {
+    @Override
     public void connectionClosed() {
       myConnection.removeConnectionListener(this);
       fireDisconnected(false);
     }
 
+    @Override
     public void connectionClosedOnError(Exception exception) {
       try {
         myConnection.removeConnectionListener(this);

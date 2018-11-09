@@ -154,11 +154,9 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "ExcessPropertyChecks",
                                 "ExcessPropertyChecksObject",
                                 "ExplicitThisType",
-                                "ExportAssignmentAsExportDefault",
                                 "ExportDefault",
                                 "ExportImport",
                                 "ExportImportInSeveralFiles",
-                                "ExportSpecifierGlobalThing",
                                 "ExportSpecifierInAmbientModule",
                                 "ExportStatement",
                                 "ExportStatement2",
@@ -170,7 +168,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "ExtendError",
                                 "ExtendExpressionSOE",
                                 "ExtendFunction",
-                                "ExtendLibString",
                                 "ExtendPrototype",
                                 "ExtendTypeAlias",
                                 "ExtendingDefaultClasses",
@@ -221,7 +218,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "GenericIndirectConstructorAssignment",
                                 "GenericIndirectNewSignature",
                                 "GenericIndirectParameterCallSignature",
-                                "GenericSeveralSignaturesWithConstraint",
                                 "GenericWithNewSignature",
                                 "Generics",
                                 "Generics3",
@@ -277,7 +273,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "ImplementThisType",
                                 "ImplementationWithGenerics",
                                 "ImplementsInClassExpression",
-                                "ImplementsMarkerForClass",
+                                //"ImplementsMarkerForClass",
                                 "ImplicitIndexers",
                                 "ImplicitIndexersNoError",
                                 "Import",
@@ -396,7 +392,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "ModulesTwoTopLevel",
                                 "NamespaceImportColor",
                                 "NestedInterfaceHasPriorityOverGlobal",
-                                "NestedModuleAugmentation",
                                 "NeverType",
                                 "NewSignature",
                                 "NewTarget",
@@ -445,7 +440,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "PromiseThenParameter",
                                 "PropertyMarker",
                                 "QueryInspection",
-                                "ReExportDefaultSOE",
                                 "React",
                                 "ReactDef",
                                 "ReadonlyAssignmentClassErrors",
@@ -487,7 +481,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
                                 "SOE",
                                 "SOE2",
                                 "SOE3",
-                                "SOEExportSpecifier",
                                 "SameNameInterfaceClass",
                                 "SecondDefaultGeneric",
                                 "SelectGenericSignature",
@@ -708,10 +701,6 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
   }
 
   override fun testIntermediateResultsNotCachedForRecursiveTypes() {
-    LOG.info("Skipping muted test")
-  }
-
-  override fun testAsyncReparse() {
     LOG.info("Skipping muted test")
   }
 }

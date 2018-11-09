@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartClassDefinitionImpl extends AbstractDartPsiClass implements DartClassDefinition {
 
-  public DartClassDefinitionImpl(ASTNode node) {
+  public DartClassDefinitionImpl(@NotNull ASTNode node) {
     super(node);
   }
 

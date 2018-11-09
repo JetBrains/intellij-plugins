@@ -12,6 +12,7 @@ import com.jetbrains.actionscript.profiler.base.ColoredSortableTreeTable;
 import com.jetbrains.actionscript.profiler.base.NavigatableDataProducer;
 import com.jetbrains.actionscript.profiler.vo.CallInfo;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -24,7 +25,7 @@ public class CallTreeTable extends ColoredSortableTreeTable implements DataProvi
 
   @Override
   @Nullable
-  public Object getData(@NonNls String dataId) {
+  public Object getData(@NotNull @NonNls String dataId) {
     if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
       return getSelectedNavigableItem();
     }
@@ -130,7 +131,7 @@ public class CallTreeTable extends ColoredSortableTreeTable implements DataProvi
   private static abstract class AbstractCallColumnInfo extends ColumnInfo<DefaultMutableTreeNode, String> {
     private static final long MS_IN_MICROSECOND = 1000;
 
-    public AbstractCallColumnInfo(String name) {
+    AbstractCallColumnInfo(String name) {
       super(name);
     }
 

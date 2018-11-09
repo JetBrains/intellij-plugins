@@ -26,7 +26,10 @@ import com.intellij.javaee.web.WebCommonClassNames;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.paths.PathReference;
-import com.intellij.psi.*;
+import com.intellij.psi.CommonClassNames;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassType;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.jsp.JspManager;
 import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.psi.xml.XmlDocument;
@@ -55,6 +58,7 @@ import java.util.List;
  */
 public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
 
+  @Override
   @NotNull
   public List<? extends FtlVariable> getGlobalVariables(final FtlFile file) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(file);

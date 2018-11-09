@@ -29,23 +29,28 @@ public class TextXmlMessage implements XmlMessage {
     myText = text;
   }
 
+  @Override
   public String getTagName() {
     return TAG;
   }
 
+  @Override
   public String getTagNamespace() {
     return Transport.NAMESPACE;
   }
 
+  @Override
   public boolean needsResponse() {
     return false;
   }
 
+  @Override
   public void fillRequest(Element element) {
     element.setText(myText);
     element.setAttribute(WHEN_ATTR, String.valueOf(System.currentTimeMillis()));
   }
 
+  @Override
   public void processResponse(Element responseElement) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://tapestry.apache.org/schema/tapestry_5_4.xsd"
+           targetNamespace="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+  <xs:element name="body">
+    <xs:annotation>
+      <xs:documentation>
+        Defines the position within the template that the body of the component (the portion of the container's
+        template
+        enclosed by the component) will be rendered. This is optional, and only applies to components that wish
+        to render
+        their body within their template.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="extend">
+    <xs:annotation>
+      <xs:documentation>
+        Root element of a template that extends its parent template, replacing portions of the template.
+        extend elemenst may containg replace and block elements.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="extension-point">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a portion of a parent component template that may be replaced in a child component.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Unique id for the replaceable block.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="replace">
+    <xs:annotation>
+      <xs:documentation>
+        A replacement, in a child component template, for an extension-point in the parent component template.
+        This element must be an immediate child of the root element, which will be extend.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="name" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            Unique id for the replaceable block, which must match an id of an inheritable extension-point
+            block.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="content">
+    <xs:annotation>
+      <xs:documentation>
+        Marks a portion of the template as the relevant portion; anything outside of the element is discarded.
+        content elements may not be nested inside other content elements.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="remove">
+    <xs:annotation>
+      <xs:documentation>
+        A block of the template to be removed. This can be used as a comment, or to temporarily
+        delete a portion of the template (including markup, expansions and embedded components).
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="container">
+    <xs:annotation>
+      <xs:documentation>
+        May be used as the root element of a template, but is not part of the template itself. Useful when
+        a component exists to emit a series of related elements that are not inside a containing element.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="block">
+    <xs:annotation>
+      <xs:documentation>
+        A block is simply a container of other elements. Blocks do not render themselves or their bodies in the
+        normal flow; they
+        only get rendered when specifially directed to.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:ID">
+        <xs:annotation>
+          <xs:documentation>
+            An optional identifier that is used to reference the block from inside the Java class.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

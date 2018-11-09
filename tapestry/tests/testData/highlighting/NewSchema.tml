@@ -1,0 +1,5 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_4.xsd">
+<body>
+<<info>t:content</info>></<info>t:content</info>>
+</body>
+</html>

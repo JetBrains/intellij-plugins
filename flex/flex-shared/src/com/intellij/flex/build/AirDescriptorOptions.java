@@ -2,7 +2,6 @@ package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import gnu.trove.THashMap;
 
 import java.io.IOException;
@@ -73,7 +72,6 @@ public class AirDescriptorOptions {
   }
 
   public  String getAirDescriptorText() throws IOException {
-    // noinspection IOResourceOpenedButNotSafelyClosed
     final String rawText =
       FileUtil.loadTextAndClose(AirDescriptorOptions.class.getResourceAsStream("air_descriptor_template.ft"));
     return replaceMacros(rawText);

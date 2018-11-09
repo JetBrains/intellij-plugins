@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartDefaultFormalNamedParameterImpl extends DartPsiCompositeElementImpl implements DartDefaultFormalNamedParameter {
 
-  public DartDefaultFormalNamedParameterImpl(ASTNode node) {
+  public DartDefaultFormalNamedParameterImpl(@NotNull ASTNode node) {
     super(node);
   }
 

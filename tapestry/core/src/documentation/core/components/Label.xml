@@ -1,0 +1,61 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Generates a label element for a particular field. A Label will render its body, if it has one. However, in most cases it will not have a body, and will render its as it's body. Remember,\
+        however, that it is the field label that will be used in any error messages. The Label component allows for client- and server-side validation error decorations.
+    </description>
+
+    <parameters>
+        <parameter name="for">
+            The for parameter is used to identify the org.apache.tapestry.Field linked to this label (it is named this way because it results in the for attribute of the label element).
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<div class="section">Search.tml</div>
+
+<div class="source"><pre>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+    &lt;body&gt;<br/>
+<br/>
+        &lt;t:form&gt;<br/>
+<br/>
+            &lt;t:label for="search"/&gt;<br/>
+            &lt;t:textfield t:id="search" size="50"/&gt;<br/>
+<br/>
+            &lt;t:checkbox t:id="all"/&gt;<br/>
+            &lt;t:label for="all"&gt;<br/>
+                Include out of date records<br/>
+            &lt;/t:label&gt;<br/>
+<br/>
+        . . .<br/>
+<br/>
+&lt;/html&gt;</pre>
+</div>
+
+<p>
+    This demonstrates that the Label can come before
+    or after the form control element component (the TextField and Checkbox components).
+    When a Label has a body, that takes precendence over the field's label, though the field's
+    label is what's used in any error messages.
+</p>
+	]]>
+    </examples>
+
+    <notes>
+        <![CDATA[
+<p>
+    The Label component is very important for user accessiblity. A user will be able to click
+    on the label to move the cursor into the corresponding field.
+</p>
+
+<p>
+    The Label component supports informal parameters; this can be very useful
+    for adding the
+    <code>accesskey</code>
+
+    attribute supported by most browsers.
+</p>
+	]]>
+    </notes>
+</element>

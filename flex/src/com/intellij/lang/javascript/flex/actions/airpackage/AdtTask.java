@@ -36,7 +36,7 @@ public abstract class AdtTask extends ExternalTask {
 
   protected abstract void appendAdtOptions(final List<String> command);
 
-  public static void appendSigningOptions(final List<String> command,
+  public static void appendSigningOptions(final List<? super String> command,
                                           final AirPackagingOptions packagingOptions,
                                           final String keystorePassword,
                                           final String keyPassword) {
@@ -81,7 +81,7 @@ public abstract class AdtTask extends ExternalTask {
     }
   }
 
-  public static void appendPaths(final List<String> command,
+  public static void appendPaths(final List<? super String> command,
                                  final Module module,
                                  final FlexBuildConfiguration bc,
                                  final AirPackagingOptions packagingOptions,
@@ -128,7 +128,7 @@ public abstract class AdtTask extends ExternalTask {
     }
   }
 
-  private static void appendANEPaths(final List<String> command, final Module module, final FlexBuildConfiguration bc) {
+  private static void appendANEPaths(final List<? super String> command, final Module module, final FlexBuildConfiguration bc) {
     final Set<VirtualFile> extDirPaths = new THashSet<>();
     for (VirtualFile aneFile : FlexCompilationUtils.getANEFiles(ModuleRootManager.getInstance(module), bc.getDependencies())) {
       if (extDirPaths.add(aneFile.getParent())) {

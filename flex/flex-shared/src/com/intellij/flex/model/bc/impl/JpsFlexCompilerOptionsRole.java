@@ -14,6 +14,7 @@ public class JpsFlexCompilerOptionsRole extends JpsElementChildRoleBase<JpsFlexC
     super("flex compiler options");
   }
 
+  @Override
   @NotNull
   public JpsFlexCompilerOptions create() {
     return new JpsFlexCompilerOptionsImpl();

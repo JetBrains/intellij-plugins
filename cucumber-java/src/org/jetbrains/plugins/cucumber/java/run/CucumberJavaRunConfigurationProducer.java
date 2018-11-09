@@ -15,30 +15,35 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
+import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.util.Collection;
 import java.util.Set;
 
-/**
- * @author Andrey.Vokin
- * @since 8/6/12
- */
 public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfigurationProducerBase<CucumberJavaRunConfiguration> implements Cloneable {
-  public static final String FORMATTER_OPTIONS = " --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
+  public static final String FORMATTER_OPTIONS_1_0 = " --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
   public static final String FORMATTER_OPTIONS_1_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
   public static final String FORMATTER_OPTIONS_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm2SMFormatter --monochrome";
+  public static final String FORMATTER_OPTIONS_3 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter";
   public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
   public static final String CUCUMBER_1_2_PLUGIN_CLASS = "cucumber.api.Plugin";
   public static final String CUCUMBER_2_CLASS_MARKER = "cucumber.api.formatter.Formatter";
+  public static final String CUCUMBER_3_CLASS_MARKER = "cucumber.runner.TestCase";
 
+  private static final String CUCUMBER_CORE_VERSION_3 = "3";
+  private static final String CUCUMBER_CORE_VERSION_2 = "2";
+  private static final String CUCUMBER_CORE_VERSION_1_2 = "1.2";
+  private static final String CUCUMBER_CORE_VERSION_1_0 = "1";
 
   public static final Set<String> HOOK_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
                                                                                    "cucumber.annotation.After",
@@ -80,23 +85,27 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
     final Module module = ModuleUtilCore.findModuleForFile(virtualFile, project);
     if (module == null) return false;
 
+    if (virtualFile.isDirectory()) {
+      if (!FileTypeIndex.containsFileOfType(GherkinFileType.INSTANCE, GlobalSearchScopesCore.directoryScope(project, virtualFile, true))) {
+        return false;
+      }
+    }
+
     String mainClassName = null;
     String formatterOptions = null;
+    String cucumberCoreVersion;
     final Location location = context.getLocation();
     if (location != null) {
       if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_1_0_MAIN_CLASS)) {
         mainClassName = CUCUMBER_1_0_MAIN_CLASS;
-      } else if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_1_1_MAIN_CLASS)) {
+        cucumberCoreVersion = CUCUMBER_CORE_VERSION_1_0;
+      } else {
         mainClassName = CUCUMBER_1_1_MAIN_CLASS;
+        cucumberCoreVersion = getCucumberCoreVersion(location);
       }
 
-      if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_2_CLASS_MARKER)) {
-        formatterOptions = FORMATTER_OPTIONS_2;
-      } else if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_1_2_PLUGIN_CLASS))  {
-        formatterOptions = FORMATTER_OPTIONS_1_2;
-      } else {
-        formatterOptions = FORMATTER_OPTIONS;
-      }
+      configuration.setCucumberCoreVersion(cucumberCoreVersion);
+      formatterOptions = getSMFormatterOptions(cucumberCoreVersion);
     }
     if (mainClassName == null) {
       return false;
@@ -196,6 +205,31 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
       if (StringUtil.isNotEmpty(packageName)) {
         CucumberJavaUtil.addGlue(packageName, packages);
       }
+    }
+  }
+
+  @NotNull
+  private static String getCucumberCoreVersion(@NotNull Location location) {
+    if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_3_CLASS_MARKER)) {
+      return CUCUMBER_CORE_VERSION_3;
+    } else if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_2_CLASS_MARKER)) {
+      return CUCUMBER_CORE_VERSION_2;
+    } else if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_1_2_PLUGIN_CLASS))  {
+      return CUCUMBER_CORE_VERSION_1_2;
+    }
+    return CUCUMBER_CORE_VERSION_3;
+  }
+
+  @NotNull
+  private static String getSMFormatterOptions(@NotNull String cucumberCoreVersion) {
+    if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_1_0)) {
+      return FORMATTER_OPTIONS_1_0;
+    } else if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_1_2)) {
+      return FORMATTER_OPTIONS_1_2;
+    } else if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_2)) {
+      return FORMATTER_OPTIONS_2;
+    } else {
+      return FORMATTER_OPTIONS_3;
     }
   }
 }

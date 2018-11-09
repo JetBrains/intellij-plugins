@@ -53,6 +53,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     return ResultTypeResolver.isDispatchType(resultType);
   }
 
+  @Override
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
@@ -82,6 +83,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     return false;
   }
 
+  @Override
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
     return createDefaultPathReference(path, element, Struts2Icons.Action);
@@ -106,6 +108,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return StrutsConstantHelper.getActionExtensions(myElement);
     }
 
+    @Override
     public PsiElement resolve() {
       final String path = getCanonicalText();
 
@@ -145,6 +148,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
       return null;
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       final List<String> extensions = getActionExtensions();

@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.ui.NonFocusableCheckBox;
 import com.intellij.util.PlatformIcons;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,7 +60,7 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
       myUpDownHint.setToolTipText(FlexBundle.message("bc.dialog.up.down.tooltip"));
       final AnAction arrow = new AnAction() {
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
           if (e.getInputEvent() instanceof KeyEvent) {
             KeyEvent keyEvent = (KeyEvent)e.getInputEvent();
             final int code = keyEvent.getKeyCode();

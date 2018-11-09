@@ -1,0 +1,39 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Generates a render request link to some other page in the application. If an activation context is supplied (as the context parameter), then the context values will be encoded into the\
+        URL. If no context is supplied, then the target page itself will supply the context via a passivate event. Pages are not required to have an activation context. When a page does have an\
+        activation context, the value typically represents the identity of some object displayed or otherwise manipulated by the page.
+    </description>
+
+    <parameters>
+        <parameter name="anchor">
+            An anchor value to append to the generated URL (the hash separator will be added automatically).
+        </parameter>
+        <parameter name="context">
+            If provided, this is the activation context for the target page (the information will be encoded into the URL). If not provided, then the target page will provide its own activation\
+            context.
+        </parameter>
+        <parameter name="disabled">
+            If true, then then no link element is rendered (and no informal parameters as well). The body is, however, still rendered.
+        </parameter>
+        <parameter name="page">
+            The logical name of the page to link to.
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+    This will be a set of examples about PageLink.
+</p>
+	]]>
+    </examples>
+
+    <notes>
+        <![CDATA[
+<p>
+    This will be more notes about PageLink.
+</p>
+	]]>
+    </notes>
+</element>

@@ -277,7 +277,6 @@ public class OsgiBuildSession implements Reporter {
     String pattern = myExtension.getIgnoreFilePattern();
     if (!StringUtil.isEmptyOrSpaces(pattern)) {
       try {
-        //noinspection ResultOfMethodCallIgnored
         Pattern.compile(pattern);
       }
       catch (PatternSyntaxException e) {

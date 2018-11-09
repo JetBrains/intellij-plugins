@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import org.angularjs.html.Angular2HTMLLanguage;
+import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,7 +25,7 @@ public class AngularBracesInterpolationTypedHandler extends TypedHandlerDelegate
   @Override
   public Result beforeCharTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull FileType fileType) {
     final Language language = file.getLanguage();
-    if (HTMLLanguage.INSTANCE.equals(language) || Angular2HTMLLanguage.INSTANCE.equals(language)) {
+    if (HTMLLanguage.INSTANCE.equals(language) || Angular2HtmlLanguage.INSTANCE.equals(language)) {
       return myBracesCompleter.beforeCharTyped(c, project, editor, file);
     }
     return Result.CONTINUE;

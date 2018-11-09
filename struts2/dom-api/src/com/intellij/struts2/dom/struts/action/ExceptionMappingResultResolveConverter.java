@@ -38,6 +38,7 @@ import java.util.List;
  */
 public class ExceptionMappingResultResolveConverter extends ResolvingConverter<HasResultType> {
 
+  @Override
   @NotNull
   public Collection<? extends HasResultType> getVariants(final ConvertContext context) {
     final DomElement invocationElement = context.getInvocationElement();
@@ -56,6 +57,7 @@ public class ExceptionMappingResultResolveConverter extends ResolvingConverter<H
     return variants;
   }
 
+  @Override
   public HasResultType fromString(@Nullable @NonNls final String value, final ConvertContext context) {
     if (value == null) {
       return null;
@@ -65,6 +67,7 @@ public class ExceptionMappingResultResolveConverter extends ResolvingConverter<H
                               (Condition<HasResultType>)result -> Comparing.equal(result.getName().getStringValue(), value));
   }
 
+  @Override
   public String toString(@Nullable final HasResultType result, final ConvertContext context) {
     if (result == null) {
       return null;
@@ -73,6 +76,7 @@ public class ExceptionMappingResultResolveConverter extends ResolvingConverter<H
     return result.getName().getStringValue();
   }
 
+  @Override
   public String getErrorMessage(@Nullable final String value, final ConvertContext context) {
     return "Cannot resolve action-result '" + value + "'";
   }

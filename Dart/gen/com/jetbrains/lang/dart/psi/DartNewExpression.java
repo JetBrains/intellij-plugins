@@ -7,11 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public interface DartNewExpression extends DartExpression, DartReference {
 
-  @Nullable
-  DartReferenceExpression getReferenceExpression();
+  @NotNull
+  List<DartReferenceExpression> getReferenceExpressionList();
 
   @Nullable
   DartType getType();
+
+  @Nullable
+  DartTypeArguments getTypeArguments();
 
   boolean isConstantObjectExpression();
 

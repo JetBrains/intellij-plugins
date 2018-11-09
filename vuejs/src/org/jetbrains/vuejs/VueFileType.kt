@@ -6,7 +6,7 @@ import javax.swing.Icon
 
 class VueFileType : LanguageFileType(VueLanguage.INSTANCE) {
   companion object {
-    val INSTANCE = VueFileType()
+    val INSTANCE: VueFileType = VueFileType()
   }
 
   override fun getName(): String {

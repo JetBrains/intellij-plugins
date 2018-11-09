@@ -31,7 +31,6 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
@@ -57,7 +56,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
   }
 
   private static class AngularJSModuleReference extends CachingPolyReferenceBase<JSLiteralExpression> {
-    public AngularJSModuleReference(JSLiteralExpression element) {
+    AngularJSModuleReference(JSLiteralExpression element) {
       super(element, ElementManipulators.getValueTextRange(element));
     }
 
@@ -162,12 +161,6 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
       return wrappers;
     }
 
-    @NotNull
-    @Override
-    public Object[] getVariants() {
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
-    }
-
     @Override
     public boolean isSoft() {
       return true;
@@ -176,7 +169,7 @@ public class AngularJSModuleReferencesProvider extends PsiReferenceProvider {
     private static class MyCachedValueProvider implements CachedValueProvider<Pair<JSNamedElement, Integer>> {
       private final JSImplicitElement myElement;
 
-      public MyCachedValueProvider(JSImplicitElement element) {
+      MyCachedValueProvider(JSImplicitElement element) {
         myElement = element;
       }
 

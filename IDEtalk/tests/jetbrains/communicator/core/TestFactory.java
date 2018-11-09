@@ -61,7 +61,7 @@ public class TestFactory {
     assert Pico.getEventBroadcaster() != null;
   }
 
-  public static File createDir(Class<? extends Object> aClass) throws IOException {
+  public static File createDir(Class<?> aClass) throws IOException {
     return createDir(aClass.getSimpleName());
   }
 

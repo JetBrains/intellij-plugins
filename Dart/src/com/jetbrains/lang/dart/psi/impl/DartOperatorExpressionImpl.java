@@ -5,7 +5,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
@@ -42,7 +41,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     return this;
   }
 
@@ -52,7 +51,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     return false;
   }
 
@@ -64,12 +63,6 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
   @Override
   public PsiElement resolve() {
     return null;
-  }
-
-  @NotNull
-  @Override
-  public Object[] getVariants() {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
   @NotNull

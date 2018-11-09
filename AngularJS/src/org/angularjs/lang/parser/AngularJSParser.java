@@ -89,6 +89,9 @@ public class AngularJSParser
         }
 
         parseBranch(AngularJSTokenTypes.THEN);
+        if (builder.getTokenType() == JSTokenTypes.SEMICOLON) {
+          builder.advanceLexer();
+        }
         parseBranch(JSTokenTypes.ELSE_KEYWORD);
         ngIf.done(JSElementTypes.IF_STATEMENT);
         checkForSemicolon();
@@ -246,7 +249,8 @@ public class AngularJSParser
       parseHashDefinition();
 
       if (builder.getTokenType() != JSTokenTypes.OF_KEYWORD) {
-        builder.error("'of' expected");
+        expr.drop();
+        return true;
       } else {
         builder.advanceLexer();
       }

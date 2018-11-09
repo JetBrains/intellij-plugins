@@ -127,14 +127,11 @@ ASTWrapperPsiElement(FILE)
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace(' ')
   JSExpressionStatement
-    AngularJSRepeatExpression
-      JSVarStatement
-        PsiElement(JS:LET_KEYWORD)('let')
-        PsiWhiteSpace(' ')
-        JSVariable
-          PsiElement(JS:IDENTIFIER)('conditionResult')
-      PsiErrorElement:'of' expected
-        <empty list>
+    JSVarStatement
+      PsiElement(JS:LET_KEYWORD)('let')
+      PsiWhiteSpace(' ')
+      JSVariable
+        PsiElement(JS:IDENTIFIER)('conditionResult')
 ------
 ASTWrapperPsiElement(FILE)
   JSIfStatement
@@ -178,3 +175,91 @@ ASTWrapperPsiElement(FILE)
     PsiWhiteSpace(' ')
     JSReferenceExpression
       PsiElement(JS:IDENTIFIER)('loading')
+------
+ASTWrapperPsiElement(FILE)
+  JSIfStatement
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(THEN)('then')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('foo')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:ELSE_KEYWORD)('else')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('bar')
+------
+ASTWrapperPsiElement(FILE)
+  JSIfStatement
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(THEN)('then')
+    PsiErrorElement:identifier expected
+      <empty list>
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:ELSE_KEYWORD)('else')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('bar')
+------
+ASTWrapperPsiElement(FILE)
+  JSIfStatement
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(THEN)('then')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('foo')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:ELSE_KEYWORD)('else')
+    PsiErrorElement:identifier expected
+      <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  JSIfStatement
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(THEN)('then')
+    PsiErrorElement:identifier expected
+      <empty list>
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:ELSE_KEYWORD)('else')
+    PsiErrorElement:identifier expected
+      <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  JSIfStatement
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('condition')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(THEN)('then')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('foo')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    PsiElement(JS:ELSE_KEYWORD)('else')
+    PsiWhiteSpace(' ')
+    JSReferenceExpression
+      PsiElement(JS:IDENTIFIER)('bar')
+  PsiElement(JS:SEMICOLON)(';')
+  PsiWhiteSpace(' ')
+  JSVarStatement
+    PsiElement(JS:LET_KEYWORD)('let')
+    PsiWhiteSpace(' ')
+    JSVariable
+      PsiElement(JS:IDENTIFIER)('conditionResult')

@@ -147,7 +147,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     while (true) {
       boolean found = false;
       for (ModifiableFlexBuildConfiguration configuration : editor.getConfigurations(module)) {
-        if (configuration.getName().equals(name = "Config " + String.valueOf(i))) {
+        if (configuration.getName().equals(name = "Config " + i)) {
           found = true;
           break;
         }

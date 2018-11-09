@@ -18,7 +18,7 @@ public class RestartDartAnalysisServerAction extends DumbAwareAction {
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = getEventProject(e);
     if (project != null) {
       DartAnalysisServerService.getInstance(project).restartServer();

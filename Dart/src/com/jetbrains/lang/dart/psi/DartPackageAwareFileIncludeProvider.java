@@ -15,7 +15,6 @@ import com.intellij.psi.impl.include.FileIncludeProvider;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import com.intellij.xml.util.HtmlUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -80,7 +79,7 @@ public class DartPackageAwareFileIncludeProvider extends FileIncludeProvider {
       }
     });
 
-    return ContainerUtil.toArray(result, FileIncludeInfo.EMPTY);
+    return result.toArray(FileIncludeInfo.EMPTY);
   }
 
   @Nullable

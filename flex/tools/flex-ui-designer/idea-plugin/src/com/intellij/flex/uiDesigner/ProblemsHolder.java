@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -11,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.intellij.flex.uiDesigner.LogMessageUtil.createAttachment;
 
 public class ProblemsHolder {
   private static final Logger LOG = Logger.getInstance(ProblemsHolder.class.getName());
@@ -47,11 +62,11 @@ public class ProblemsHolder {
   }
 
   public void add(InvalidPropertyException e) {
-    final ProblemDescriptor problemDescriptor = new ProblemDescriptor(e.getMessage(), currentFile,
-                                                                      e.getPsiElement() == null ? -1 : getLineNumber(e.getPsiElement()));
+    int line = e.getPsiElement() == null ? -1 : getLineNumber(e.getPsiElement());
+    ProblemDescriptor problemDescriptor = new ProblemDescriptor(e.getMessage(), currentFile, line);
     problems.add(problemDescriptor);
     if (e.getCause() != null && !logDisabled) {
-      LOG.error(LogMessageUtil.createEvent(e.getMessage(), e.getCause(), problemDescriptor));
+      LOG.error(e.getMessage() + ", line: " + problemDescriptor.getLineNumber(), e, createAttachment(problemDescriptor.getFile()));
     }
   }
 
@@ -73,9 +88,9 @@ public class ProblemsHolder {
       error = FlashUIDesignerBundle.message("error.write.property", propertyName);
     }
 
-    final ProblemDescriptor problemDescriptor = new ProblemDescriptor(error, currentFile, getLineNumber(element));
+    ProblemDescriptor problemDescriptor = new ProblemDescriptor(error, currentFile, getLineNumber(element));
     if (!dontLog) {
-      LOG.error(LogMessageUtil.createEvent(error, e, problemDescriptor));
+      LOG.error(e.getMessage() + ", line: " + problemDescriptor.getLineNumber(), e, createAttachment(problemDescriptor.getFile()));
     }
     problems.add(problemDescriptor);
   }

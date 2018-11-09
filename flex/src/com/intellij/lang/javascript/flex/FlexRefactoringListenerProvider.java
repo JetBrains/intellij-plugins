@@ -96,7 +96,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     private final String myOldPackageName;
     private String myNewPackageName;
 
-    public PackageRefactoringListener(final @NotNull Project project, final @Nullable Module module, final String oldPackageName) {
+    PackageRefactoringListener(final @NotNull Project project, final @Nullable Module module, final String oldPackageName) {
       myProject = project;
       myModule = module;
       myOldPackageName = oldPackageName;
@@ -174,7 +174,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     private final String myOldClassName;
     private String myNewClassName;
 
-    public JSClassRefactoringListener(final Module module, final String oldClassName) {
+    JSClassRefactoringListener(final Module module, final String oldClassName) {
       myModule = module;
       myOldClassName = oldClassName;
     }
@@ -232,7 +232,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     protected final String myOldFilePath;
     protected String myNewFilePath;
 
-    public FileRefactoringListener(@NotNull final Module module, final String oldFilePath) {
+    FileRefactoringListener(@NotNull final Module module, final String oldFilePath) {
       myModule = module;
       myOldFilePath = oldFilePath;
     }
@@ -257,7 +257,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
   }
 
   private static class CssFileRefactoringListener extends FileRefactoringListener {
-    public CssFileRefactoringListener(final Module module, final String oldFilePath) {
+    CssFileRefactoringListener(final Module module, final String oldFilePath) {
       super(module, oldFilePath);
     }
 
@@ -290,7 +290,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
   }
 
   private static class XmlFileRefactoringListener extends FileRefactoringListener {
-    public XmlFileRefactoringListener(final Module module, final String oldFilePath) {
+    XmlFileRefactoringListener(final Module module, final String oldFilePath) {
       super(module, oldFilePath);
     }
 

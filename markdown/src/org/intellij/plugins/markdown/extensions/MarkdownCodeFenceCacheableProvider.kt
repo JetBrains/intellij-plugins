@@ -20,5 +20,10 @@ interface MarkdownCodeFenceCacheableProvider : MarkdownCodeFencePluginGenerating
   /**
    * Code fence plugin cache path
    */
-  fun getCacheRootPath(): String = "${PathManager.getSystemPath()}${File.separator}markdown${File.separator}${javaClass.simpleName}"
+  fun getCacheRootPath(): String = "${PathManager.getSystemPath()}${File.separator}markdown${File.separator}${getPluginName()}"
+
+  /**
+   * This plugin provider name, uses in path to images store
+   */
+  fun getPluginName(): String = javaClass.simpleName
 }

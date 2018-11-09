@@ -36,10 +36,12 @@ public class CodePointerXmlMessage extends TextXmlMessage {
     myVFile = vFile;
   }
 
+  @Override
   public String getTagName() {
     return TAGNAME;
   }
 
+  @Override
   public void fillRequest(@NonNls Element root) {
     super.fillRequest(root);
 

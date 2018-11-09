@@ -22,7 +22,6 @@ public class EmbedImageManager extends EmbedAssetManager<ImageAssetInfo> {
     return id;
   }
 
-  @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
   public void remove(@NotNull VirtualFile file) {
     for (ImageAssetInfo asset : assets) {
       if (asset.file.equals(file)) {
@@ -35,7 +34,7 @@ public class EmbedImageManager extends EmbedAssetManager<ImageAssetInfo> {
 class ImageAssetInfo extends EmbedAssetInfo {
   public final String mimeType;
 
-  public ImageAssetInfo(VirtualFile file, @Nullable String mimeType, int id) {
+  ImageAssetInfo(VirtualFile file, @Nullable String mimeType, int id) {
     super(file, id);
     this.mimeType = mimeType;
   }

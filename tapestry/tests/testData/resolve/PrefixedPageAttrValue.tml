@@ -1,0 +1,7 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+    </head>
+    <body>
+        <a href="#" t:type="pagelink" t:page="st<caret>artpage"  >${currDate}</a>
+    </body>
+</html>

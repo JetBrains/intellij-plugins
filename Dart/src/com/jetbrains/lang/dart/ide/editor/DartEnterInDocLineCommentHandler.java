@@ -49,13 +49,14 @@ public class DartEnterInDocLineCommentHandler extends EnterHandlerDelegateAdapte
 
       if (StringUtil.startsWith(text, offset, DartDocUtil.SINGLE_LINE_DOC_COMMENT)) {
         caretOffsetRef.set(offset);
+        caretAdvance.set(DartDocUtil.SINGLE_LINE_DOC_COMMENT.length());
       }
       else {
         final String docText = StringUtil.trimStart(probablyDocComment.getText(), DartDocUtil.SINGLE_LINE_DOC_COMMENT);
         final int spacesBeforeText = StringUtil.isEmptyOrSpaces(docText) ? 1 : StringUtil.countChars(docText, ' ', 0, true);
         final int spacesToAdd = Math.max(0, spacesBeforeText - StringUtil.countChars(text, ' ', caretOffset, true));
         document.insertString(caretOffset, DartDocUtil.SINGLE_LINE_DOC_COMMENT + StringUtil.repeatSymbol(' ', spacesToAdd));
-        caretAdvance.set(spacesBeforeText);
+        caretAdvance.set(DartDocUtil.SINGLE_LINE_DOC_COMMENT.length() + spacesBeforeText);
       }
       return Result.Default;
     }

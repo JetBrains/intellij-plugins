@@ -40,6 +40,7 @@ public class MarkdownFile extends PsiFileBase implements MarkdownPsiElement {
     visitor.visitFile(this);
   }
 
+  @Override
   @NotNull
   public FileType getFileType() {
     return MarkdownFileType.INSTANCE;

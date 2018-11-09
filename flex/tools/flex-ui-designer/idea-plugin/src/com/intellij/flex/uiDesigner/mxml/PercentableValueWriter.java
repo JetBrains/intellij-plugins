@@ -8,7 +8,7 @@ import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 class PercentableValueWriter implements ValueWriter {
   private final String value;
 
-  public PercentableValueWriter(String value) {
+  PercentableValueWriter(String value) {
     this.value = value;
   }
 

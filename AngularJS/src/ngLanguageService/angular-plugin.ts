@@ -40,6 +40,8 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             let sessionClass: SessionClass = super.createSessionClass(ts_impl, defaultOptionsHolder);
 
             if (ts_impl["ide_processed"]) {
+                const originalReflect = typeof Reflect != 'undefined' && Reflect.apply ? Reflect : null;   
+                
                 let requiredObject = require(state.ngServicePath);
                 let ng = requiredObject;
                 if (typeof requiredObject == "function") {
@@ -51,6 +53,15 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
                 ts_impl["ng_service"] = ng;
                 ts_impl["ideUtil"] = util;
 
+                //workaround for https://github.com/angular/angular/issues/21420
+                if (originalReflect != null && !Reflect.apply) {
+                    loggerImpl.serverLogger("Restore Reflect after ng service loading", true);
+                    const ngReflect = Reflect;
+                    (<any>Reflect) = originalReflect;
+                    Object.keys(ngReflect).forEach(function (key) {
+                        Reflect[key] = Reflect[key] || ngReflect[key]; 
+                    });
+                }
 
                 if (!isVersionCompatible(ng, util, ts_impl)) {
                     ts_impl["ngIncompatible"] = true;
@@ -74,8 +85,10 @@ function createPluginClass(state: AngularTypeScriptPluginState) {
             try {
                 let fullTypescriptVersion = require(tsPath);
                 for (let prop in fullTypescriptVersion) {
-                    if (fullTypescriptVersion.hasOwnProperty(prop)) {
-                        ts_impl[prop] = fullTypescriptVersion[prop];
+                    //typescript package doesn't have all required methods from "server" package
+                    if (fullTypescriptVersion.hasOwnProperty(prop) && prop !== "server") {
+                        let merged =  fullTypescriptVersion[prop];
+                        ts_impl[prop] = merged;
                     }
                 }
 

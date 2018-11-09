@@ -1,14 +1,25 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
@@ -65,19 +76,10 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
   }
 
   public void testIterableSubclasses() throws Throwable {
-    myFixture.configureByText("foo.dart", "");
+    myFixture.configureByText("foo.dart", "Iterable i;");
     myFixture.doHighlighting();
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
     assertNotNull(sdk);
-    DartTestUtils.letAnalyzerSmellCoreFile(myFixture, "set.dart");
-    DartTestUtils.letAnalyzerSmellCoreFile(myFixture, "string.dart");
-    DartTestUtils.letAnalyzerSmellCoreFile(myFixture, "list.dart");
-    DartTestUtils.letAnalyzerSmellCoreFile(myFixture, "iterable.dart");
-
-    final DartClass iterableClass = PsiTreeUtil.findChildOfType(getFile(), DartClass.class);
-    assertNotNull(iterableClass);
-    assertEquals("Iterable", iterableClass.getName());
-    getEditor().getCaretModel().moveToOffset(iterableClass.getTextOffset());
 
     final GotoTargetHandler.GotoData data = CodeInsightTestUtil.gotoImplementation(myFixture.getEditor(), myFixture.getFile());
     final List<String> actual = ContainerUtil.map(data.targets,
@@ -85,6 +87,7 @@ public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
                                                                 ? ((PsiNamedElement)psiElement).getName()
                                                                 : psiElement.toString());
 
-    assertSameElements(actual, "List", "Set", "Runes"); // only subclasses from dart:core are known to analyzer at this point
+    assertContainsElements(actual, "List", "Set", "Runes", "LinkedHashSet", "UnmodifiableListView", "ListBase",
+                           "UnmodifiableInt32x4ListView", "_SplayTreeValueIterable");
   }
 }

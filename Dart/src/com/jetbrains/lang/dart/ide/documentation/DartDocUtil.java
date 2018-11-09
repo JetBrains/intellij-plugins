@@ -84,7 +84,7 @@ public class DartDocUtil {
         builder.append(signature);
       }
       else {
-        builder.append(StringUtil.escapeXml(signature));
+        builder.append(StringUtil.escapeXmlEntities(signature));
       }
       builder.append("<br>");
     }
@@ -92,12 +92,12 @@ public class DartDocUtil {
       builder.append("<br>");
       if (hasContainingLibraryName) {
         builder.append("<b>Containing library:</b> ");
-        builder.append(StringUtil.escapeXml(containingLibraryName));
+        builder.append(StringUtil.escapeXmlEntities(containingLibraryName));
         builder.append("<br>");
       }
       if (hasContainingClassDescription) {
         builder.append("<b>Containing class:</b> ");
-        builder.append(StringUtil.escapeXml(containingClassDescription));
+        builder.append(StringUtil.escapeXmlEntities(containingClassDescription));
         builder.append("<br>");
       }
     }
@@ -108,12 +108,12 @@ public class DartDocUtil {
 
       if (hasStaticType) {
         builder.append("<b>Static type:</b> ");
-        builder.append(StringUtil.escapeXml(staticType));
+        builder.append(StringUtil.escapeXmlEntities(staticType));
         builder.append("<br>");
       }
       if (hasPropagatedType) {
         builder.append("<b>Propagated type:</b> ");
-        builder.append(StringUtil.escapeXml(propagatedType));
+        builder.append(StringUtil.escapeXmlEntities(propagatedType));
         builder.append("<br>");
       }
     }
@@ -299,7 +299,7 @@ public class DartDocUtil {
   private static void appendDartType(@NotNull final StringBuilder builder, @NotNull final DartType type) {
     final DartReferenceExpression expression = type.getReferenceExpression();
     if (expression != null) {
-      builder.append(StringUtil.escapeXml(expression.getText()));
+      builder.append(StringUtil.escapeXmlEntities(expression.getText()));
       appendTypeArguments(builder, type);
     }
     else {
@@ -336,7 +336,7 @@ public class DartDocUtil {
     final List<DartType> mixins = dartClass.getMixinsList();
     final DartType superClass = dartClass.getSuperClass();
     if (superClass != null) {
-      builder.append(" extends ").append(StringUtil.escapeXml(superClass.getText()));
+      builder.append(" extends ").append(StringUtil.escapeXmlEntities(superClass.getText()));
     }
 
     if (!mixins.isEmpty()) {
@@ -378,7 +378,7 @@ public class DartDocUtil {
 
   private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final DartReturnType returnType) {
     final String returnString =
-      returnType == null ? "dynamic" : StringUtil.escapeXml(DartPresentableUtil.buildTypeText(null, returnType, null));
+      returnType == null ? "dynamic" : StringUtil.escapeXmlEntities(DartPresentableUtil.buildTypeText(null, returnType, null));
     appendFunctionSignature(builder, function, returnString);
   }
 
@@ -386,7 +386,7 @@ public class DartDocUtil {
     builder.append("<b>").append(function.getName()).append("</b>");
     if (!function.isGetter()) {
       builder.append('(');
-      builder.append(StringUtil.escapeXml(
+      builder.append(StringUtil.escapeXmlEntities(
         DartPresentableUtil.getPresentableParameterList(function, new DartGenericSpecialization(), true, true, false)));
       builder.append(')');
     }

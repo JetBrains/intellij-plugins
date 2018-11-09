@@ -1,0 +1,56 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Multiple selection component. Generates a UI consisting of two select elements configured for multiple selection; the one on the left is the list of "available" elements, the one on the\
+        right is "selected". Elements can be moved between the lists by clicking a button, or double clicking an option (and eventually, via drag and drop). The items in the available list are kept\
+        ordered as per org.apache.tapestry.SelectModel order. When items are moved from the selected list to the available list, they items are inserted back into their proper positions. The Palette\
+        may operate in normal or re-orderable mode, controlled by the reorder parameter. In normal mode, the items in the selected list are kept in the same "natural" order as the items in the\
+        available list. In re-order mode, items moved to the selected list are simply added to the bottom of the list. In addition, two extra buttons appear to move items up and down within the\
+        selected list. Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the columns, etc. By default, the select element's widths are driven by the length of the\
+        longest option, and it is common to override this to a fixed value: style DIV.t-palette SELECT { width: 300px; } /style This ensures that the two columns are the same width, and that the\
+        column widths don't change as items move back and forth. Option groups within the org.apache.tapestry.SelectModel will be rendered, but are not supported by the many browsers, and are not\
+        fully handled on the client side.
+    </description>
+
+    <parameters>
+        <parameter name="clientId">
+            The id used to generate a page-unique client-side identifier for the component. If a component renders multiple times, a suffix will be appended to the to id to ensure uniqueness.\
+            The uniqued value may be accessed via the clientId property.
+        </parameter>
+        <parameter name="deselect">
+            The image to use for the deselect button (the default is a left pointing arrow).
+        </parameter>
+        <parameter name="disabled">
+            If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a disabled field ignores any value in the request when the form is\
+            submitted.
+        </parameter>
+        <parameter name="encoder">
+            Encoder used to translate between server-side objects and client-side strings.
+        </parameter>
+        <parameter name="label">
+            The user presentable label for the field. If not provided, a reasonable label is generated from the component's id, first by looking for a message key named "id-label"\
+            (substituting the component's actual id), then by converting the actual id to a presentable string (for example, "userId" to "User Id").
+        </parameter>
+        <parameter name="model">
+            Model used to define the values and labels used when rendering.
+        </parameter>
+        <parameter name="moveDown">
+            The image to use for the move down button (the default is a downward pointing arrow).
+        </parameter>
+        <parameter name="moveUp">
+            The image to use for the move up button (the default is an upward pointing arrow).
+        </parameter>
+        <parameter name="reorder">
+            If true, then additional buttons are provided on the client-side to allow for re-ordering of the values.
+        </parameter>
+        <parameter name="select">
+            The image to use for the select button (the default is a right pointing arrow).
+        </parameter>
+        <parameter name="selected">
+            The list of selected values from the org.apache.tapestry.SelectModel. This will be updated when the form is submitted. If the value for the parameter is null, a new list will be\
+            created, otherwise the existing list will be cleared. If unbound, defaults to a property of the container matching this component's id.
+        </parameter>
+        <parameter name="size">
+            Number of rows to display.
+        </parameter>
+    </parameters>
+</element>

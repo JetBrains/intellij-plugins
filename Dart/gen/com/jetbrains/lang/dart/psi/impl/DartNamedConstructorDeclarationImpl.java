@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartNamedConstructorDeclarationImpl extends AbstractDartComponentImpl implements DartNamedConstructorDeclaration {
 
-  public DartNamedConstructorDeclarationImpl(ASTNode node) {
+  public DartNamedConstructorDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 

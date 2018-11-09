@@ -11,6 +11,7 @@ import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
  * @author yole
  */
 public class GherkinSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
+  @Override
   @NotNull
   public SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
     return new GherkinSyntaxHighlighter(JsonGherkinKeywordProvider.getKeywordProvider());

@@ -52,6 +52,7 @@ public class MergedCallNode<T extends Sample> extends LazyNode implements Naviga
     return null;
   }
 
+  @Override
   @Nullable
   public FrameInfo getFrameInfo() {
     final CallInfo callInfo = getCallInfo();

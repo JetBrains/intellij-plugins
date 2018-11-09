@@ -1,11 +1,12 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.steps.reference;
 
-import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.ResolveResult;
-import com.intellij.util.ArrayUtil;
+import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,7 @@ import java.util.List;
  * @author yole
  */
 public class CucumberStepReference implements PsiPolyVariantReference {
+  private static final MyResolver RESOLVER = new MyResolver();
 
   private final PsiElement myStep;
   private final TextRange myRange;
@@ -31,35 +33,42 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     myRange = range;
   }
 
+  @Override
   @NotNull
   public PsiElement getElement() {
     return myStep;
   }
 
+  @Override
   @NotNull
   public TextRange getRangeInElement() {
     return myRange;
   }
 
+  @Override
   public PsiElement resolve() {
     final ResolveResult[] result = multiResolve(true);
     return result.length == 1 ? result[0].getElement() : null;
   }
 
+  @Override
   @NotNull
   public String getCanonicalText() {
     return myStep.getText();
   }
 
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  @Override
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     return myStep;
   }
 
+  @Override
   public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
     return myStep;
   }
 
-  public boolean isReferenceTo(PsiElement element) {
+  @Override
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     ResolveResult[] resolvedResults = multiResolve(false);
     for (ResolveResult rr : resolvedResults) {
       if (getElement().getManager().areElementsEquivalent(rr.getElement(), element)) {
@@ -69,11 +78,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     return false;
   }
 
-  @NotNull
-  public Object[] getVariants() {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
-  }
-
+  @Override
   public boolean isSoft() {
     return false;
   }
@@ -81,11 +86,15 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
+    Project project = getElement().getProject();
+    return ResolveCache.getInstance(project).resolveWithCaching(this, RESOLVER, false, incompleteCode);
+  }
+
+  private ResolveResult[] multiResolveInner() {
     final List<ResolveResult> result = new ArrayList<>();
     final List<PsiElement> resolvedElements = new ArrayList<>();
 
-    final CucumberJvmExtensionPoint[] extensionList = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
-    for (CucumberJvmExtensionPoint e : extensionList) {
+    for (CucumberJvmExtensionPoint e : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
       final List<PsiElement> extensionResult = e.resolveStep(myStep);
       for (final PsiElement element : extensionResult) {
         if (element != null && !resolvedElements.contains(element)) {
@@ -126,5 +135,13 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   public Collection<AbstractStepDefinition> resolveToDefinitions() {
     final CucumberStepsIndex index = CucumberStepsIndex.getInstance(myStep.getProject());
     return index.findStepDefinitions(myStep.getContainingFile(), ((GherkinStepImpl)myStep));
+  }
+
+  private static class MyResolver implements ResolveCache.PolyVariantResolver<CucumberStepReference> {
+    @Override
+    @NotNull
+    public ResolveResult[] resolve(@NotNull CucumberStepReference ref, boolean incompleteCode) {
+      return ref.multiResolveInner();
+    }
   }
 }

@@ -11,12 +11,14 @@ public class FilterSwfLoadUnloadMessagesAction extends ToggleAction implements D
 
   private static final String FILTER_SWF_LOAD_UNLOAD_MESSAGES_PROPERTY = "flex.debug.filter.swf.load.unload";
 
-  public boolean isSelected(final AnActionEvent e) {
+  @Override
+  public boolean isSelected(@NotNull final AnActionEvent e) {
     final Project project = e.getProject();
     return project != null && isFilterEnabled(project);
   }
 
-  public void setSelected(final AnActionEvent e, final boolean state) {
+  @Override
+  public void setSelected(@NotNull final AnActionEvent e, final boolean state) {
     PropertiesComponent.getInstance(e.getProject()).setValue(FILTER_SWF_LOAD_UNLOAD_MESSAGES_PROPERTY, state, true);
   }
 

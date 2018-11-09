@@ -6,6 +6,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.intellij.plugins.markdown.injection.LanguageGuesser;
 import org.intellij.plugins.markdown.lang.MarkdownFileType;
 import org.intellij.plugins.markdown.lang.MarkdownLanguage;
+import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 
 public class MarkdownInjectionTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testFenceWithLang() {
@@ -15,6 +16,23 @@ public class MarkdownInjectionTest extends LightPlatformCodeInsightFixtureTestCa
            "  bar\n" +
            "}\n" +
            "```", true);
+  }
+
+  public void testFenceWithLangWithDisabledAutoInjection() {
+    MarkdownApplicationSettings markdownSettings = MarkdownApplicationSettings.getInstance();
+    boolean oldValue = markdownSettings.isDisableInjections();
+    try {
+      markdownSettings.setDisableInjections(true);
+      doTest("```java\n" +
+             "{\"foo\":\n" +
+             "  <caret>\n" +
+             "  bar\n" +
+             "}\n" +
+             "```", false);
+    }
+    finally {
+      markdownSettings.setDisableInjections(oldValue);
+    }
   }
 
   public void testFenceWithJs() {

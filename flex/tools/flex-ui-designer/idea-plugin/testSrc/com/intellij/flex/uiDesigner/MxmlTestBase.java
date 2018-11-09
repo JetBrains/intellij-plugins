@@ -46,7 +46,6 @@ abstract class MxmlTestBase extends AppTestBase {
     }
     i = 0;
     for (String file : auxiliaryPaths) {
-      //noinspection ConstantConditions
       auxiliaryFiles[i++] = getSource(file);
     }
     
@@ -65,7 +64,6 @@ abstract class MxmlTestBase extends AppTestBase {
         files[i] = getSource(paths[i]);
       }
       else {
-        //noinspection ConstantConditions
         auxiliaryFiles[i - 1] = getSource(paths[i]);
       }
     }

@@ -25,7 +25,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.Processor;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NonNls;
@@ -37,6 +36,7 @@ public class MxmlTagNameReference extends TagNameReference {
     super(nameElement, startTagFlag);
   }
 
+  @Override
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
     final String newPackage = getNewPackage(element);
     if (newPackage == null) {

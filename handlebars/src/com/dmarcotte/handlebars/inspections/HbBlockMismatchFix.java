@@ -27,7 +27,7 @@ class HbBlockMismatchFix implements IntentionAction {
    * @param originalName       The original name of the element this action corrects
    * @param updateOpenMustache Whether or not this updates the open mustache of this block
    */
-  public HbBlockMismatchFix(String correctedName, String originalName, boolean updateOpenMustache) {
+  HbBlockMismatchFix(String correctedName, String originalName, boolean updateOpenMustache) {
     myUpdateOpenMustache = updateOpenMustache;
     myCorrectedName = correctedName;
     myOriginalName = originalName;

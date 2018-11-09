@@ -23,7 +23,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.StrutsConstantManager;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -51,10 +50,12 @@ public class WebXmlStrutsConstantNameReferenceProvider extends PsiReferenceProvi
       super(xmlTag);
     }
 
+    @Override
     public PsiElement resolve() {
       return myElement;
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
       final Module module = ModuleUtilCore.findModuleForPsiElement(myElement);

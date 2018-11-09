@@ -12,7 +12,7 @@ package {
 import foo.A;
 class Test {
     function a() {
-    var v<caret> = A.func();
+        var v<caret> = A.func();
     }
 }
 }

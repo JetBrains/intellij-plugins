@@ -42,10 +42,12 @@ public class GoToPackageSymbolProvider extends GoToSymbolProvider {
   private static final Function<StrutsPackage, String> STRUTS_PACKAGE_NAME_FUNCTION =
     (NullableFunction<StrutsPackage, String>)strutsPackage -> strutsPackage.getName().getStringValue();
 
+  @Override
   protected boolean acceptModule(final Module module) {
     return StrutsFacet.getInstance(module) != null;
   }
 
+  @Override
   protected void addNames(@NotNull final Module module, final Set<String> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
     if (strutsModel == null) {
@@ -57,6 +59,7 @@ public class GoToPackageSymbolProvider extends GoToSymbolProvider {
     result.addAll(packageNames);
   }
 
+  @Override
   protected void addItems(@NotNull final Module module, final String name, final List<NavigationItem> result) {
     final StrutsModel strutsModel = StrutsManager.getInstance(module.getProject()).getCombinedModel(module);
     if (strutsModel == null) {

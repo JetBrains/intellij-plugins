@@ -25,14 +25,17 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     myFlexmojosSdkForm = new FlexmojosSdkForm();
   }
 
+  @Override
   public void setSdk(final Sdk sdk) {
     mySdk = sdk;
   }
 
+  @Override
   public JComponent createComponent() {
     return myFlexmojosSdkForm.getMainPanel();
   }
 
+  @Override
   public boolean isModified() {
     final FlexmojosSdkAdditionalData data = (FlexmojosSdkAdditionalData)mySdk.getSdkAdditionalData();
     if (data != null) {
@@ -42,6 +45,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     return false;
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     final FlexmojosSdkAdditionalData data = (FlexmojosSdkAdditionalData)mySdk.getSdkAdditionalData();
     if (data != null) {
@@ -50,6 +54,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     }
   }
 
+  @Override
   public void reset() {
     final FlexmojosSdkAdditionalData data = (FlexmojosSdkAdditionalData)mySdk.getSdkAdditionalData();
     myFlexmojosSdkForm.setFlexCompilerClasspath(data == null ? Collections.emptyList() : data.getFlexCompilerClasspath());
@@ -57,6 +62,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     myFlexmojosSdkForm.setAirRuntimePath(data == null ? "" : data.getAirRuntimePath());
   }
 
+  @Override
   public void disposeUIResources() {
   }
 
@@ -73,6 +79,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
 
     private void initAdlChooser() {
       final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, false, false, false, false, false) {
+        @Override
         public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
           return super.isFileVisible(file, showHiddenFiles) &&
                  (file.isDirectory() || (file.getName().startsWith("adl") && isExecutableExtension(file.getExtension())));
@@ -85,6 +92,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
 
       myAdlComponent.getComponent()
         .addBrowseFolderListener("Select ADL executable file", null, null, descriptor, new TextComponentAccessor<JTextField>() {
+          @Override
           public void setText(final JTextField component, @NotNull final String text) {
             component.setText(text);
             final String adlPath = FileUtil.toSystemDependentName(text);
@@ -95,6 +103,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
             }
           }
 
+          @Override
           public String getText(final JTextField component) {
             return component.getText();
           }
@@ -103,6 +112,7 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
 
     private void initAirRuntimeChooser() {
       final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, false, false, false) {
+        @Override
         public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
           return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || ("zip".equalsIgnoreCase(file.getExtension())));
         }

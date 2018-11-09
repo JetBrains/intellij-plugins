@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -31,15 +44,18 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     myVMOptionsEditor.setDialogCaption(FlexBundle.message("flex.compiler.vm.options.title"));
   }
 
+  @Override
   public JComponent createComponent() {
     return myMainPanel;
   }
 
+  @Override
   @NotNull
   public String getId() {
     return "flex.compiler";
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return "Flex Compiler";
@@ -50,6 +66,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     return "reference.projectsettings.compiler.flex";
   }
 
+  @Override
   public boolean isModified() {
     return myConfig.USE_MXMLC_COMPC != myMxmlcCompcRadioButton.isSelected() ||
            myConfig.USE_BUILT_IN_COMPILER != myBuiltInCompilerRadioButton.isSelected() ||
@@ -58,14 +75,8 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
            !myVMOptionsEditor.getText().trim().equals(myConfig.VM_OPTIONS);
   }
 
+  @Override
   public void apply() throws ConfigurationException {
-    if (!myProject.isDefault()) {
-      final FlexCompilerHandler flexCompilerHandler = FlexCompilerHandler.getInstance(myProject);
-      flexCompilerHandler.getCompilerDependenciesCache().clear();
-      flexCompilerHandler.quitCompilerShell();
-      flexCompilerHandler.getBuiltInFlexCompilerHandler().stopCompilerProcess();
-    }
-
     myConfig.USE_BUILT_IN_COMPILER = myBuiltInCompilerRadioButton.isSelected();
     myConfig.USE_MXMLC_COMPC = myMxmlcCompcRadioButton.isSelected();
     myConfig.PREFER_ASC_20 = myPreferASC20CheckBox.isSelected();
@@ -86,6 +97,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     myConfig.VM_OPTIONS = myVMOptionsEditor.getText().trim();
   }
 
+  @Override
   public void reset() {
     myBuiltInCompilerRadioButton.setSelected(myConfig.USE_BUILT_IN_COMPILER);
     myMxmlcCompcRadioButton.setSelected(myConfig.USE_MXMLC_COMPC);
@@ -94,6 +106,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     myVMOptionsEditor.setText(myConfig.VM_OPTIONS);
   }
 
+  @Override
   public void disposeUIResources() {
   }
 }

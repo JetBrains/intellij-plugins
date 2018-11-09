@@ -1,3 +1,5 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart;
 
@@ -245,6 +247,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == MIXIN_APPLICATION) {
       r = mixinApplication(b, 0);
     }
+    else if (t == MIXIN_DECLARATION) {
+      r = mixinDeclaration(b, 0);
+    }
     else if (t == MIXINS) {
       r = mixins(b, 0);
     }
@@ -268,6 +273,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     }
     else if (t == NORMAL_PARAMETER_TYPE) {
       r = normalParameterType(b, 0);
+    }
+    else if (t == ON_MIXINS) {
+      r = onMixins(b, 0);
     }
     else if (t == ON_PART) {
       r = onPart(b, 0);
@@ -457,7 +465,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // additiveOperator multiplicativeExpressionWrapper
   public static boolean additiveExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "additiveExpression")) return false;
-    if (!nextTokenIs(b, "<additive expression>", PLUS, MINUS)) return false;
+    if (!nextTokenIs(b, "<additive expression>", MINUS, PLUS)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, ADDITIVE_EXPRESSION, "<additive expression>");
     r = additiveOperator(b, l + 1);
@@ -481,11 +489,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // additiveExpression*
   private static boolean additiveExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "additiveExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!additiveExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "additiveExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -494,7 +501,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '+' | '-'
   public static boolean additiveOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "additiveOperator")) return false;
-    if (!nextTokenIs(b, "<additive operator>", PLUS, MINUS)) return false;
+    if (!nextTokenIs(b, "<additive operator>", MINUS, PLUS)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, ADDITIVE_OPERATOR, "<additive operator>");
     r = consumeToken(b, PLUS);
@@ -519,11 +526,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' argumentListPart)*
   private static boolean argumentList_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "argumentList_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!argumentList_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "argumentList_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -650,7 +656,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('async' '*'? | 'sync' '*'?)? '=>' expression
   static boolean arrowBody(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "arrowBody")) return false;
-    if (!nextTokenIs(b, "", EXPRESSION_BODY_DEF, ASYNC, SYNC)) return false;
+    if (!nextTokenIs(b, "", ASYNC, EXPRESSION_BODY_DEF, SYNC)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_);
     r = arrowBody_0(b, l + 1);
@@ -825,11 +831,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // assignExpression*
   private static boolean assignExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "assignExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!assignExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "assignExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -897,7 +902,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // bitwiseOperator shiftExpressionWrapper
   public static boolean bitwiseExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "bitwiseExpression")) return false;
-    if (!nextTokenIs(b, "<bitwise expression>", AND, XOR, OR)) return false;
+    if (!nextTokenIs(b, "<bitwise expression>", AND, OR, XOR)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, BITWISE_EXPRESSION, "<bitwise expression>");
     r = bitwiseOperator(b, l + 1);
@@ -921,11 +926,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // bitwiseExpression*
   private static boolean bitwiseExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "bitwiseExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!bitwiseExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "bitwiseExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -934,7 +938,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '&' | '^' | '|'
   public static boolean bitwiseOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "bitwiseOperator")) return false;
-    if (!nextTokenIs(b, "<bitwise operator>", AND, XOR, OR)) return false;
+    if (!nextTokenIs(b, "<bitwise operator>", AND, OR, XOR)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, BITWISE_OPERATOR, "<bitwise operator>");
     r = consumeToken(b, AND);
@@ -1070,11 +1074,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
   static boolean callOrArrayAccessOrQualifiedRefExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callOrArrayAccessOrQualifiedRefExpression")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!callOrArrayAccessOrQualifiedRefExpression_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "callOrArrayAccessOrQualifiedRefExpression", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1083,11 +1086,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean callOrArrayAccessOrQualifiedRefExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "callOrArrayAccessOrQualifiedRefExpression_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = callExpression(b, l + 1);
     if (!r) r = arrayAccessExpression(b, l + 1);
     if (!r) r = qualifiedReferenceExpression(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1181,7 +1182,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata* 'abstract'? 'class' componentName typeParameters? (mixinApplication | standardClassDeclarationTail)
   public static boolean classDefinition(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classDefinition")) return false;
-    if (!nextTokenIs(b, "<class definition>", AT, ABSTRACT, CLASS)) return false;
+    if (!nextTokenIs(b, "<class definition>", ABSTRACT, AT, CLASS)) return false;
     boolean r, p;
     Marker m = enter_section_(b, l, _NONE_, CLASS_DEFINITION, "<class definition>");
     r = classDefinition_0(b, l + 1);
@@ -1198,11 +1199,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean classDefinition_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classDefinition_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "classDefinition_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1225,10 +1225,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean classDefinition_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classDefinition_5")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = mixinApplication(b, l + 1);
     if (!r) r = standardClassDeclarationTail(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1258,11 +1256,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   public static boolean classMembers(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "classMembers")) return false;
     Marker m = enter_section_(b, l, _NONE_, CLASS_MEMBERS, "<class members>");
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!classMemberDefinition(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "classMembers", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, l, m, true, false, simple_scope_recover_parser_);
     return true;
@@ -1314,10 +1311,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(b, l, "combinator")) return false;
     if (!nextTokenIs(b, "", HIDE, SHOW)) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = showCombinator(b, l + 1);
     if (!r) r = hideCombinator(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1337,10 +1332,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean compareExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "compareExpression_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = relationalOperator(b, l + 1);
     if (!r) r = equalityOperator(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -1359,11 +1352,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // compareExpression*
   private static boolean compareExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "compareExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!compareExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "compareExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1405,11 +1397,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // topLevelDefinition*
   static boolean dartUnit(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dartUnit")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!topLevelDefinition(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "dartUnit", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1429,11 +1420,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean declaredIdentifier_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "declaredIdentifier_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "declaredIdentifier_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1455,11 +1445,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // label*
   private static boolean defaultCase_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "defaultCase_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!label(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "defaultCase_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1561,11 +1550,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('.' <<nonStrictID>>)*
   private static boolean dottedName_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "dottedName_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!dottedName_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "dottedName_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1615,11 +1603,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean enumDefinition_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumDefinition_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "enumDefinition_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1627,11 +1614,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' enumConstantDeclaration)*
   private static boolean enumDefinition_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumDefinition_5")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!enumDefinition_5_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "enumDefinition_5", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1658,7 +1644,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '==' | '!='
   public static boolean equalityOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "equalityOperator")) return false;
-    if (!nextTokenIs(b, "<equality operator>", NEQ, EQ_EQ)) return false;
+    if (!nextTokenIs(b, "<equality operator>", EQ_EQ, NEQ)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, EQUALITY_OPERATOR, "<equality operator>");
     r = consumeToken(b, EQ_EQ);
@@ -1688,11 +1674,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean exportStatement_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "exportStatement_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "exportStatement_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1700,11 +1685,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // importConfig*
   private static boolean exportStatement_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "exportStatement_3")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!importConfig(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "exportStatement_3", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1712,11 +1696,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // combinator*
   private static boolean exportStatement_4(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "exportStatement_4")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!combinator(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "exportStatement_4", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1759,11 +1742,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (','? expression)*
   private static boolean expressionList_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "expressionList_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!expressionList_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "expressionList_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1987,11 +1969,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean factoryConstructorDeclaration_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "factoryConstructorDeclaration_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "factoryConstructorDeclaration_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -1999,11 +1980,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('external' | 'const')*
   private static boolean factoryConstructorDeclaration_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "factoryConstructorDeclaration_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!factoryConstructorDeclaration_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "factoryConstructorDeclaration_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -2088,11 +2068,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean fieldFormalParameter_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "fieldFormalParameter_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "fieldFormalParameter_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -2388,10 +2367,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean forInPart_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "forInPart_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = varAccessDeclaration(b, l + 1);
     if (!r) r = componentName(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -2710,11 +2687,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean functionDeclarationWithBody_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBody_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "functionDeclarationWithBody_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -2786,11 +2762,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean functionDeclarationWithBodyOrNative_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionDeclarationWithBodyOrNative_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "functionDeclarationWithBodyOrNative_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -2950,11 +2925,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean functionFormalParameter_1_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionFormalParameter_1_0_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "functionFormalParameter_1_0_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -2984,11 +2958,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean functionFormalParameter_1_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionFormalParameter_1_1_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "functionFormalParameter_1_1_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3024,11 +2997,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean functionFormalParameter_1_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionFormalParameter_1_2_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "functionFormalParameter_1_2_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3142,11 +3114,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean functionTypeAlias_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionTypeAlias_0_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "functionTypeAlias_0_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3184,11 +3155,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean functionTypeAlias_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionTypeAlias_1_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "functionTypeAlias_1_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3234,11 +3204,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean functionTypeWrapper_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "functionTypeWrapper_0_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = voidTypeFunctionType(b, l + 1);
     if (!r) r = untypedFunctionType(b, l + 1);
     if (!r) r = simpleType(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -3248,11 +3216,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = typedFunctionType(b, l + 1);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!typedFunctionType(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "functionTypeWrapper_0_1", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, m, null, r);
     return r;
@@ -3291,11 +3258,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean getterDeclarationWithReturnType_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "getterDeclarationWithReturnType_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "getterDeclarationWithReturnType_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3303,11 +3269,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('external' | 'static')*
   private static boolean getterDeclarationWithReturnType_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "getterDeclarationWithReturnType_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!getterDeclarationWithReturnType_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "getterDeclarationWithReturnType_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3362,11 +3327,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean getterDeclarationWithoutReturnType_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "getterDeclarationWithoutReturnType_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "getterDeclarationWithoutReturnType_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3374,11 +3338,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('external' | 'static')*
   private static boolean getterDeclarationWithoutReturnType_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "getterDeclarationWithoutReturnType_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!getterDeclarationWithoutReturnType_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "getterDeclarationWithoutReturnType_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3417,10 +3380,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   static boolean getterOrSetterDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "getterOrSetterDeclaration")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = getterDeclaration(b, l + 1);
     if (!r) r = setterDeclaration(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -3478,11 +3439,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ifNullExpression*
   private static boolean ifNullExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ifNullExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!ifNullExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "ifNullExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3578,11 +3538,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean importStatement_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "importStatement_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "importStatement_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3590,11 +3549,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // importConfig*
   private static boolean importStatement_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "importStatement_3")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!importConfig(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "importStatement_3", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3628,11 +3586,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // combinator*
   private static boolean importStatement_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "importStatement_5")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!combinator(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "importStatement_5", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3664,11 +3621,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean incompleteDeclaration_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "incompleteDeclaration_0_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "incompleteDeclaration_0_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3676,11 +3632,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('external' | 'static' | 'final' | 'const' | 'covariant')*
   private static boolean incompleteDeclaration_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "incompleteDeclaration_0_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!incompleteDeclaration_0_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "incompleteDeclaration_0_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3705,11 +3660,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = metadata(b, l + 1);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "incompleteDeclaration_1", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, m, null, r);
     return r;
@@ -3736,11 +3690,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, LT);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!consumeToken(b, LT)) break;
       if (!empty_element_parsed_guard_(b, "incorrectNormalFormalParameter_0", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, m, null, r);
     return r;
@@ -3752,11 +3705,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = nonStrictID(b, l + 1);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!nonStrictID(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "incorrectNormalFormalParameter_1", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, m, null, r);
     return r;
@@ -3779,11 +3731,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' superCallOrFieldInitializer)*
   private static boolean initializers_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "initializers_2")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!initializers_2_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "initializers_2", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3878,11 +3829,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('.' <<nonStrictID>>)*
   private static boolean libraryId_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "libraryId_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!libraryId_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "libraryId_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3913,11 +3863,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('.' <<nonStrictID>>)*
   private static boolean libraryNameElement_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "libraryNameElement_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!libraryNameElement_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "libraryNameElement_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3948,11 +3897,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' libraryComponentReferenceExpression)*
   private static boolean libraryReferenceList_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "libraryReferenceList_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!libraryReferenceList_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "libraryReferenceList_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -3987,11 +3935,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean libraryStatement_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "libraryStatement_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "libraryStatement_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4000,7 +3947,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // 'const'? typeArguments? '[' (expressionList ','?)? ']'
   public static boolean listLiteralExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listLiteralExpression")) return false;
-    if (!nextTokenIs(b, "<list literal expression>", LT, LBRACKET, CONST)) return false;
+    if (!nextTokenIs(b, "<list literal expression>", CONST, LBRACKET, LT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, LIST_LITERAL_EXPRESSION, "<list literal expression>");
     r = listLiteralExpression_0(b, l + 1);
@@ -4098,11 +4045,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // logicAndExpression*
   private static boolean logicAndExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "logicAndExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!logicAndExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "logicAndExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4135,11 +4081,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // logicOrExpression*
   private static boolean logicOrExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "logicOrExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!logicOrExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "logicOrExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4176,7 +4121,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // 'const'? typeArguments? '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
   public static boolean mapLiteralExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapLiteralExpression")) return false;
-    if (!nextTokenIs(b, "<map literal expression>", LT, CONST, LBRACE)) return false;
+    if (!nextTokenIs(b, "<map literal expression>", CONST, LBRACE, LT)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, MAP_LITERAL_EXPRESSION, "<map literal expression>");
     r = mapLiteralExpression_0(b, l + 1);
@@ -4224,11 +4169,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' mapLiteralEntry)*
   private static boolean mapLiteralExpression_3_0_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mapLiteralExpression_3_0_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!mapLiteralExpression_3_0_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "mapLiteralExpression_3_0_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4313,11 +4257,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean methodDeclaration_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "methodDeclaration_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "methodDeclaration_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4325,11 +4268,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('external' | 'static' | 'const')*
   private static boolean methodDeclaration_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "methodDeclaration_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!methodDeclaration_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "methodDeclaration_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4466,6 +4408,56 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // metadata* 'mixin' componentName typeParameters? onMixins? interfaces? classBody
+  public static boolean mixinDeclaration(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration")) return false;
+    if (!nextTokenIs(b, "<mixin declaration>", AT, MIXIN)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, MIXIN_DECLARATION, "<mixin declaration>");
+    r = mixinDeclaration_0(b, l + 1);
+    r = r && consumeToken(b, MIXIN);
+    r = r && componentName(b, l + 1);
+    r = r && mixinDeclaration_3(b, l + 1);
+    r = r && mixinDeclaration_4(b, l + 1);
+    r = r && mixinDeclaration_5(b, l + 1);
+    r = r && classBody(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // metadata*
+  private static boolean mixinDeclaration_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_0")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!metadata(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "mixinDeclaration_0", c)) break;
+    }
+    return true;
+  }
+
+  // typeParameters?
+  private static boolean mixinDeclaration_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_3")) return false;
+    typeParameters(b, l + 1);
+    return true;
+  }
+
+  // onMixins?
+  private static boolean mixinDeclaration_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_4")) return false;
+    onMixins(b, l + 1);
+    return true;
+  }
+
+  // interfaces?
+  private static boolean mixinDeclaration_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mixinDeclaration_5")) return false;
+    interfaces(b, l + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // 'with' typeList
   public static boolean mixins(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "mixins")) return false;
@@ -4483,7 +4475,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // multiplicativeOperator prefixExpression
   public static boolean multiplicativeExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiplicativeExpression")) return false;
-    if (!nextTokenIs(b, "<multiplicative expression>", REM, MUL, DIV, INT_DIV)) return false;
+    if (!nextTokenIs(b, "<multiplicative expression>", DIV, INT_DIV, MUL, REM)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, MULTIPLICATIVE_EXPRESSION, "<multiplicative expression>");
     r = multiplicativeOperator(b, l + 1);
@@ -4507,11 +4499,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // multiplicativeExpression*
   private static boolean multiplicativeExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiplicativeExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!multiplicativeExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "multiplicativeExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4520,7 +4511,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '*' | '/' | '%' | '~/'
   public static boolean multiplicativeOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "multiplicativeOperator")) return false;
-    if (!nextTokenIs(b, "<multiplicative operator>", REM, MUL, DIV, INT_DIV)) return false;
+    if (!nextTokenIs(b, "<multiplicative operator>", DIV, INT_DIV, MUL, REM)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, MULTIPLICATIVE_OPERATOR, "<multiplicative operator>");
     r = consumeToken(b, MUL);
@@ -4566,11 +4557,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean namedConstructorDeclaration_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedConstructorDeclaration_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "namedConstructorDeclaration_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4578,11 +4568,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('external' | 'const')*
   private static boolean namedConstructorDeclaration_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedConstructorDeclaration_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!namedConstructorDeclaration_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "namedConstructorDeclaration_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4643,11 +4632,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' defaultFormalNamedParameter)*
   private static boolean namedFormalParameters_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedFormalParameters_2")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!namedFormalParameters_2_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "namedFormalParameters_2", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4689,11 +4677,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' typedIdentifier)*
   private static boolean namedParameterTypes_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "namedParameterTypes_2")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!namedParameterTypes_2_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "namedParameterTypes_2", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4717,24 +4704,50 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ('new' | 'const') type ('.' referenceExpression)? <<argumentsWrapper>>
+  // newExpressionWithKeyword | simpleQualifiedReferenceExpression typeArguments '.' referenceExpression <<argumentsWrapper>>
   public static boolean newExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "newExpression")) return false;
-    if (!nextTokenIs(b, "<new expression>", CONST, NEW)) return false;
-    boolean r, p;
+    boolean r;
     Marker m = enter_section_(b, l, _COLLAPSE_, NEW_EXPRESSION, "<new expression>");
-    r = newExpression_0(b, l + 1);
+    r = newExpressionWithKeyword(b, l + 1);
+    if (!r) r = newExpression_1(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  // simpleQualifiedReferenceExpression typeArguments '.' referenceExpression <<argumentsWrapper>>
+  private static boolean newExpression_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpression_1")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = simpleQualifiedReferenceExpression(b, l + 1);
+    r = r && typeArguments(b, l + 1);
+    r = r && consumeToken(b, DOT);
+    r = r && referenceExpression(b, l + 1);
+    r = r && argumentsWrapper(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ('new' | 'const') type ('.' referenceExpression)? <<argumentsWrapper>>
+  static boolean newExpressionWithKeyword(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpressionWithKeyword")) return false;
+    if (!nextTokenIs(b, "", CONST, NEW)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_);
+    r = newExpressionWithKeyword_0(b, l + 1);
     p = r; // pin = 1
     r = r && report_error_(b, type(b, l + 1));
-    r = p && report_error_(b, newExpression_2(b, l + 1)) && r;
+    r = p && report_error_(b, newExpressionWithKeyword_2(b, l + 1)) && r;
     r = p && argumentsWrapper(b, l + 1) && r;
     exit_section_(b, l, m, r, p, null);
     return r || p;
   }
 
   // 'new' | 'const'
-  private static boolean newExpression_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "newExpression_0")) return false;
+  private static boolean newExpressionWithKeyword_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpressionWithKeyword_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, NEW);
@@ -4744,15 +4757,15 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // ('.' referenceExpression)?
-  private static boolean newExpression_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "newExpression_2")) return false;
-    newExpression_2_0(b, l + 1);
+  private static boolean newExpressionWithKeyword_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpressionWithKeyword_2")) return false;
+    newExpressionWithKeyword_2_0(b, l + 1);
     return true;
   }
 
   // '.' referenceExpression
-  private static boolean newExpression_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "newExpression_2_0")) return false;
+  private static boolean newExpressionWithKeyword_2_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "newExpressionWithKeyword_2_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, DOT);
@@ -4838,11 +4851,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' normalFormalParameter)*
   private static boolean normalFormalParameters_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "normalFormalParameters_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!normalFormalParameters_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "normalFormalParameters_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4885,11 +4897,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' normalParameterType)*
   private static boolean normalParameterTypes_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "normalParameterTypes_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!normalParameterTypes_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "normalParameterTypes_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -4936,6 +4947,20 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = !consumeToken(b, RPAREN);
     exit_section_(b, l, m, r, false, null);
     return r;
+  }
+
+  /* ********************************************************** */
+  // 'on' typeList
+  public static boolean onMixins(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "onMixins")) return false;
+    if (!nextTokenIs(b, ON)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, ON_MIXINS, null);
+    r = consumeToken(b, ON);
+    p = r; // pin = 1
+    r = r && typeList(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -4986,7 +5011,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // optionalPositionalFormalParameters (',' namedFormalParameters)? | namedFormalParameters
   public static boolean optionalFormalParameters(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "optionalFormalParameters")) return false;
-    if (!nextTokenIs(b, "<optional formal parameters>", LBRACKET, LBRACE)) return false;
+    if (!nextTokenIs(b, "<optional formal parameters>", LBRACE, LBRACKET)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, OPTIONAL_FORMAL_PARAMETERS, "<optional formal parameters>");
     r = optionalFormalParameters_0(b, l + 1);
@@ -5028,7 +5053,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // optionalPositionalParameterTypes | namedParameterTypes
   public static boolean optionalParameterTypes(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "optionalParameterTypes")) return false;
-    if (!nextTokenIs(b, "<optional parameter types>", LBRACKET, LBRACE)) return false;
+    if (!nextTokenIs(b, "<optional parameter types>", LBRACE, LBRACKET)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, OPTIONAL_PARAMETER_TYPES, "<optional parameter types>");
     r = optionalPositionalParameterTypes(b, l + 1);
@@ -5056,11 +5081,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' defaultFormalNamedParameter)*
   private static boolean optionalPositionalFormalParameters_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "optionalPositionalFormalParameters_2")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!optionalPositionalFormalParameters_2_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "optionalPositionalFormalParameters_2", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5225,11 +5249,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean partOfStatement_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partOfStatement_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "partOfStatement_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5238,10 +5261,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean partOfStatement_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partOfStatement_3")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = libraryId(b, l + 1);
     if (!r) r = uriElement(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -5264,11 +5285,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean partStatement_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "partStatement_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "partStatement_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5301,8 +5321,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '-' | '+' | '--' | '++' | '!' | '~'
   public static boolean prefixOperator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "prefixOperator")) return false;
-    if (!nextTokenIs(b, "<prefix operator>", NOT, PLUS,
-      PLUS_PLUS, MINUS, MINUS_MINUS, BIN_NOT)) return false;
+    if (!nextTokenIs(b, "<prefix operator>", BIN_NOT, MINUS,
+      MINUS_MINUS, NOT, PLUS, PLUS_PLUS)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PREFIX_OPERATOR, "<prefix operator>");
     r = consumeToken(b, MINUS);
@@ -5324,13 +5344,11 @@ public class DartParser implements PsiParser, LightPsiParser {
   static boolean primary(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "primary")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = literalExpression(b, l + 1);
     if (!r) r = functionExpression(b, l + 1);
     if (!r) r = newExpression(b, l + 1);
     if (!r) r = refOrThisOrSuperOrParenExpression(b, l + 1);
     if (!r) r = throwExpression(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -5542,11 +5560,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean setterDeclarationWithReturnType_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "setterDeclarationWithReturnType_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "setterDeclarationWithReturnType_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5554,11 +5571,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('external' | 'static')*
   private static boolean setterDeclarationWithReturnType_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "setterDeclarationWithReturnType_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!setterDeclarationWithReturnType_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "setterDeclarationWithReturnType_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5606,11 +5622,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean setterDeclarationWithoutReturnType_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "setterDeclarationWithoutReturnType_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "setterDeclarationWithoutReturnType_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5618,11 +5633,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // ('external' | 'static')*
   private static boolean setterDeclarationWithoutReturnType_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "setterDeclarationWithoutReturnType_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!setterDeclarationWithoutReturnType_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "setterDeclarationWithoutReturnType_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5676,11 +5690,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // shiftExpression*
   private static boolean shiftExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "shiftExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!shiftExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "shiftExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5715,10 +5728,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean shortTemplateEntry_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "shortTemplateEntry_1")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = thisExpression(b, l + 1);
     if (!r) r = referenceExpression(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -5763,11 +5774,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean simpleFormalParameter_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleFormalParameter_1_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "simpleFormalParameter_1_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5787,11 +5797,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean simpleFormalParameter_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleFormalParameter_2_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "simpleFormalParameter_2_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5811,11 +5820,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // qualifiedReferenceExpression*
   private static boolean simpleQualifiedReferenceExpression_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "simpleQualifiedReferenceExpression_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!qualifiedReferenceExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "simpleQualifiedReferenceExpression_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5851,7 +5859,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody?
+  // superclass? mixins? interfaces? ('native' stringLiteralExpression?)? classBody?
   static boolean standardClassDeclarationTail(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "standardClassDeclarationTail")) return false;
     boolean r;
@@ -5860,70 +5868,60 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && standardClassDeclarationTail_1(b, l + 1);
     r = r && standardClassDeclarationTail_2(b, l + 1);
     r = r && standardClassDeclarationTail_3(b, l + 1);
+    r = r && standardClassDeclarationTail_4(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
-  // (superclass mixins?)?
+  // superclass?
   private static boolean standardClassDeclarationTail_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "standardClassDeclarationTail_0")) return false;
-    standardClassDeclarationTail_0_0(b, l + 1);
+    superclass(b, l + 1);
     return true;
   }
 
-  // superclass mixins?
-  private static boolean standardClassDeclarationTail_0_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_0_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = superclass(b, l + 1);
-    r = r && standardClassDeclarationTail_0_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
   // mixins?
-  private static boolean standardClassDeclarationTail_0_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_0_0_1")) return false;
+  private static boolean standardClassDeclarationTail_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_1")) return false;
     mixins(b, l + 1);
     return true;
   }
 
   // interfaces?
-  private static boolean standardClassDeclarationTail_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_1")) return false;
+  private static boolean standardClassDeclarationTail_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_2")) return false;
     interfaces(b, l + 1);
     return true;
   }
 
   // ('native' stringLiteralExpression?)?
-  private static boolean standardClassDeclarationTail_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_2")) return false;
-    standardClassDeclarationTail_2_0(b, l + 1);
+  private static boolean standardClassDeclarationTail_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_3")) return false;
+    standardClassDeclarationTail_3_0(b, l + 1);
     return true;
   }
 
   // 'native' stringLiteralExpression?
-  private static boolean standardClassDeclarationTail_2_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_2_0")) return false;
+  private static boolean standardClassDeclarationTail_3_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_3_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = consumeToken(b, NATIVE);
-    r = r && standardClassDeclarationTail_2_0_1(b, l + 1);
+    r = r && standardClassDeclarationTail_3_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // stringLiteralExpression?
-  private static boolean standardClassDeclarationTail_2_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_2_0_1")) return false;
+  private static boolean standardClassDeclarationTail_3_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_3_0_1")) return false;
     stringLiteralExpression(b, l + 1);
     return true;
   }
 
   // classBody?
-  private static boolean standardClassDeclarationTail_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "standardClassDeclarationTail_3")) return false;
+  private static boolean standardClassDeclarationTail_4(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "standardClassDeclarationTail_4")) return false;
     classBody(b, l + 1);
     return true;
   }
@@ -5943,11 +5941,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // label*
   private static boolean statement_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "statement_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!label(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "statement_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -5981,11 +5978,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   public static boolean statements(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "statements")) return false;
     Marker m = enter_section_(b, l, _NONE_, STATEMENTS, "<statements>");
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!statement(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "statements", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, l, m, true, false, null);
     return true;
@@ -5999,11 +5995,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, STRING_LITERAL_EXPRESSION, "<string literal expression>");
     r = stringLiteralExpression_0(b, l + 1);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!stringLiteralExpression_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "stringLiteralExpression", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -6013,11 +6008,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean stringLiteralExpression_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stringLiteralExpression_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, RAW_SINGLE_QUOTED_STRING);
     if (!r) r = consumeToken(b, RAW_TRIPLE_QUOTED_STRING);
     if (!r) r = stringTemplate(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -6039,11 +6032,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (REGULAR_STRING_PART | shortTemplateEntry | longTemplateEntry)*
   private static boolean stringTemplate_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stringTemplate_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!stringTemplate_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "stringTemplate_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -6052,11 +6044,9 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean stringTemplate_1_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "stringTemplate_1_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = consumeToken(b, REGULAR_STRING_PART);
     if (!r) r = shortTemplateEntry(b, l + 1);
     if (!r) r = longTemplateEntry(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -6064,7 +6054,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   // '--' | '++'
   public static boolean suffixExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "suffixExpression")) return false;
-    if (!nextTokenIs(b, "<suffix expression>", PLUS_PLUS, MINUS_MINUS)) return false;
+    if (!nextTokenIs(b, "<suffix expression>", MINUS_MINUS, PLUS_PLUS)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _LEFT_, SUFFIX_EXPRESSION, "<suffix expression>");
     r = consumeToken(b, MINUS_MINUS);
@@ -6088,11 +6078,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // suffixExpression*
   private static boolean suffixExpressionWrapper_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "suffixExpressionWrapper_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!suffixExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "suffixExpressionWrapper_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -6128,10 +6117,8 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean superCallOrFieldInitializer_0_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "superCallOrFieldInitializer_0_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = superExpression(b, l + 1);
     if (!r) r = thisExpression(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -6252,11 +6239,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // label*
   private static boolean switchCase_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "switchCase_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!label(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "switchCase_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -6282,11 +6268,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // switchCase*
   private static boolean switchStatement_5(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "switchStatement_5")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!switchCase(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "switchStatement_5", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -6391,6 +6376,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   //                              | exportStatement
   //                              | partStatement
   //                              | classDefinition
+  //                              | mixinDeclaration
   //                              | enumDefinition
   //                              | functionTypeAlias
   //                              | getterOrSetterDeclaration
@@ -6407,6 +6393,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = exportStatement(b, l + 1);
     if (!r) r = partStatement(b, l + 1);
     if (!r) r = classDefinition(b, l + 1);
+    if (!r) r = mixinDeclaration(b, l + 1);
     if (!r) r = enumDefinition(b, l + 1);
     if (!r) r = functionTypeAlias(b, l + 1);
     if (!r) r = getterOrSetterDeclaration(b, l + 1);
@@ -6498,11 +6485,10 @@ public class DartParser implements PsiParser, LightPsiParser {
     boolean r;
     Marker m = enter_section_(b);
     r = onPart(b, l + 1);
-    int c = current_position_(b);
     while (r) {
+      int c = current_position_(b);
       if (!onPart(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "tryStatement_2_0_0", c)) break;
-      c = current_position_(b);
     }
     exit_section_(b, m, null, r);
     return r;
@@ -6585,11 +6571,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' type)*
   private static boolean typeList_1(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeList_1")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!typeList_1_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "typeList_1", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -6621,11 +6606,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean typeParameter_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeParameter_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "typeParameter_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -6674,11 +6658,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' typeParameter)*
   private static boolean typeParameters_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "typeParameters_2")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!typeParameters_2_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "typeParameters_2", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -6865,21 +6848,18 @@ public class DartParser implements PsiParser, LightPsiParser {
   private static boolean valueExpression_2_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "valueExpression_2_0")) return false;
     boolean r;
-    Marker m = enter_section_(b);
     r = isExpression(b, l + 1);
     if (!r) r = asExpression(b, l + 1);
-    exit_section_(b, m, null, r);
     return r;
   }
 
   // cascadeReferenceExpression*
   private static boolean valueExpression_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "valueExpression_3")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!cascadeReferenceExpression(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "valueExpression_3", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -6905,11 +6885,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // metadata*
   private static boolean varAccessDeclaration_0(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varAccessDeclaration_0")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!metadata(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "varAccessDeclaration_0", c)) break;
-      c = current_position_(b);
     }
     return true;
   }
@@ -7076,11 +7055,10 @@ public class DartParser implements PsiParser, LightPsiParser {
   // (',' varDeclarationListPart)*
   private static boolean varDeclarationList_2(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "varDeclarationList_2")) return false;
-    int c = current_position_(b);
     while (true) {
+      int c = current_position_(b);
       if (!varDeclarationList_2_0(b, l + 1)) break;
       if (!empty_element_parsed_guard_(b, "varDeclarationList_2", c)) break;
-      c = current_position_(b);
     }
     return true;
   }

@@ -35,15 +35,18 @@ public class FlexModuleInsight extends ModuleInsight {
     super(progress, existingModuleNames, existingProjectLibraryNames);
   }
 
+  @Override
   protected ModuleDescriptor createModuleDescriptor(final File moduleContentRoot, final Collection<DetectedSourceRoot> sourceRoots) {
     return new ModuleDescriptor(moduleContentRoot, FlexModuleType.getInstance(), sourceRoots);
   }
 
+  @Override
   protected boolean isSourceFile(final File file) {
     // TODO we need to scan import statements in MXML files as well
     return FlexProjectStructureDetector.isActionScriptFile(file);
   }
 
+  @Override
   protected void scanSourceFileForImportedPackages(final CharSequence chars, final Consumer<String> result) {
     Lexer lexer = LanguageParserDefinitions.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).createLexer(null);
     lexer.start(chars);
@@ -71,10 +74,12 @@ public class FlexModuleInsight extends ModuleInsight {
     }
   }
 
+  @Override
   protected boolean isLibraryFile(final String fileName) {
     return fileName.toLowerCase(Locale.ENGLISH).endsWith(".swc");
   }
 
+  @Override
   protected void scanLibraryForDeclaredPackages(final File file, final Consumer<String> result) throws IOException {
     try (FileInputStream in = new FileInputStream(file)) {
       ZipInputStream zip = new ZipInputStream(in);
@@ -115,6 +120,7 @@ public class FlexModuleInsight extends ModuleInsight {
     }
   }
 
+  @Override
   public boolean isApplicableRoot(final DetectedProjectRoot root) {
     return root instanceof FlexModuleSourceRoot;
   }

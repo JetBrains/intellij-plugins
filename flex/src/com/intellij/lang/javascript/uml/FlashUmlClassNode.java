@@ -16,15 +16,16 @@
 
 package com.intellij.lang.javascript.uml;
 
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.diagram.DiagramProvider;
 import com.intellij.diagram.PsiDiagramNode;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 
 public class FlashUmlClassNode extends PsiDiagramNode {
   public FlashUmlClassNode(final JSClass clazz, DiagramProvider provider) {
     super(clazz, provider);
   }
 
+  @Override
   public String getTooltip() {
     return "<html><b>" + ((JSClass)getElement()).getQualifiedName() + "</b></html>";
   }

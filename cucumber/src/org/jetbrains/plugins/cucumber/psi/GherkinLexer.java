@@ -58,18 +58,22 @@ public class GherkinLexer extends LexerBase {
     advance();
   }
 
+  @Override
   public int getState() {
     return myState;
   }
 
+  @Override
   public IElementType getTokenType() {
     return myCurrentToken;
   }
 
+  @Override
   public int getTokenStart() {
     return myCurrentTokenStart;
   }
 
+  @Override
   public int getTokenEnd() {
     return myPosition;
   }
@@ -88,6 +92,7 @@ public class GherkinLexer extends LexerBase {
     return false;
   }
 
+  @Override
   public void advance() {
     if (myPosition >= myEndOffset) {
       myCurrentToken = null;
@@ -314,11 +319,13 @@ public class GherkinLexer extends LexerBase {
     returnWhitespace(mark);
   }
 
+  @Override
   @NotNull
   public CharSequence getBufferSequence() {
     return myBuffer;
   }
 
+  @Override
   public int getBufferEnd() {
     return myEndOffset;
   }

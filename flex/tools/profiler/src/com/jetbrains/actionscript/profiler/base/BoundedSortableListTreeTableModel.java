@@ -17,10 +17,12 @@ public class BoundedSortableListTreeTableModel extends SortableListTreeTableMode
     super(root, columns);
   }
 
+  @Override
   public int getChildCount(Object parent) {
     return Math.min(MAX_CHILDREN_COUNT + 1, super.getChildCount(parent));
   }
 
+  @Override
   public Object getChild(Object parent, int index) {
     if (index == MAX_CHILDREN_COUNT) {
       return TOO_MANY_NODE;

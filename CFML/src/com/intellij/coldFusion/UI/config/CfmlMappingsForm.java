@@ -52,7 +52,7 @@ public class CfmlMappingsForm {
     public String myDirectoryPath;
     public String myLogicalPath;
 
-    public Item(String directoryPath, String logicalPath) {
+    Item(String directoryPath, String logicalPath) {
       myDirectoryPath = FileUtil.toSystemDependentName(directoryPath);
       myLogicalPath = logicalPath;
     }
@@ -123,6 +123,10 @@ public class CfmlMappingsForm {
           //noinspection SpellCheckingInspection
           setText("Railo");
         }
+        else if (CfmlLanguage.LUCEE.equals(value)) {
+          //noinspection SpellCheckingInspection
+          setText("Lucee");
+        }
       }
     });
     myLanguageLevel.addItem(CfmlLanguage.CF8);
@@ -130,6 +134,7 @@ public class CfmlMappingsForm {
     myLanguageLevel.addItem(CfmlLanguage.CF10);
     myLanguageLevel.addItem(CfmlLanguage.CF11);
     myLanguageLevel.addItem(CfmlLanguage.RAILO);
+    myLanguageLevel.addItem(CfmlLanguage.LUCEE);
 
     myMessageLabel.setIcon(UIUtil.getBalloonWarningIcon());
     myMessageLabel.setVisible(false);
@@ -167,7 +172,7 @@ public class CfmlMappingsForm {
   }
 
   private static class LogicalPathColumnInfo extends ColumnInfo<Item, String> implements ValidatingTableEditor.RowHeightProvider {
-    public LogicalPathColumnInfo() {
+    LogicalPathColumnInfo() {
       super(CfmlBundle.message("logical.path.column.info"));
     }
 
@@ -212,7 +217,7 @@ public class CfmlMappingsForm {
   }
 
   private class DirectoryPathColumnInfo extends ColumnInfo<Item, String> implements ValidatingTableEditor.RowHeightProvider {
-    public DirectoryPathColumnInfo() {
+    DirectoryPathColumnInfo() {
       super(CfmlBundle.message("directory.path.column.info"));
     }
 

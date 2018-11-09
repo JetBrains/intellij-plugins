@@ -31,7 +31,7 @@ public class DartServerRenameTest extends CodeInsightFixtureTestCase {
     private final PsiFile myPsiFile;
     private final PsiElement myPsiElement;
 
-    public DataContextForTest(Editor editor, VirtualFile virtualFile, PsiFile psiFile, PsiElement psiElement) {
+    DataContextForTest(Editor editor, VirtualFile virtualFile, PsiFile psiFile, PsiElement psiElement) {
       myEditor = editor;
       myVirtualFile = virtualFile;
       myPsiFile = psiFile;

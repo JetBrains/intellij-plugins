@@ -24,12 +24,14 @@ public class CucumberStepInspection extends GherkinInspection implements UnfairL
     return true;
   }
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return CucumberBundle.message("cucumber.inspection.undefined.step.name");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "CucumberUndefinedStep";

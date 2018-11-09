@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class RemoteFlashRunConfigurationType implements ConfigurationType, DumbAware {
+public final class RemoteFlashRunConfigurationType implements ConfigurationType, DumbAware {
 
   public static final String TYPE = "RemoteFlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash Remote Debug";
@@ -22,8 +23,9 @@ public class RemoteFlashRunConfigurationType implements ConfigurationType, DumbA
 
   public RemoteFlashRunConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
+      @Override
       @NotNull
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new RemoteFlashRunConfiguration(project, this, "");
       }
 
@@ -34,22 +36,33 @@ public class RemoteFlashRunConfigurationType implements ConfigurationType, DumbA
     };
   }
 
+  @NotNull
+  @Override
   public String getDisplayName() {
     return DISPLAY_NAME;
   }
 
+  @Override
   public String getConfigurationTypeDescription() {
     return "Remote Flash debug configuration";
   }
 
+  @Override
   public Icon getIcon() {
     return FlexIcons.Flash_remote_debug;
   }
 
+  @Override
   public ConfigurationFactory[] getConfigurationFactories() {
     return new ConfigurationFactory[]{myFactory};
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.RemoteFlashRunConfigurationType";
+  }
+
+  @Override
   @NotNull
   public String getId() {
     return TYPE;

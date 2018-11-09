@@ -1,0 +1,47 @@
+@media screen {
+  h1 {
+    <warning descr="Nested ruleset selector should start with '&'">div</warning> {
+      color: white;
+    }
+
+    @nest <warning descr="Nested ruleset selector should contain '&'">div</warning> {
+      color: white;
+    }
+
+    & div {
+      color: red;
+    }
+
+    @nest div & {
+      color: red;
+    }
+
+    <warning descr="Nested ruleset selector should start with '@nest'">div &</warning> {
+      color: red;
+    }
+  }
+}
+
+div {
+  @document domain(jetbrains.com) {
+    @media screen {
+      <warning descr="Nested ruleset selector should start with '&'">h1</warning> {
+        <warning descr="Nested ruleset selector should start with '&'">div</warning> {
+          color: white;
+        }
+
+        @nest <warning descr="Nested ruleset selector should contain '&'">div</warning> {
+          color: white;
+        }
+
+        & div {
+          color: red;
+        }
+
+        @nest div & {
+          color: red;
+        }
+      }
+    }
+  }
+}

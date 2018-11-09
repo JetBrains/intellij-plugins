@@ -24,7 +24,7 @@ class FlexSourcesRootDetector extends RootDetector {
 
   private final boolean myDetectMxml;
 
-  public FlexSourcesRootDetector() {
+  FlexSourcesRootDetector() {
     super(OrderRootType.SOURCES, false, FlexBundle.message("sources.root.detector.name"));
     myDetectMxml = true;
   }

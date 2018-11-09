@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 class FlexCssValueValidator extends CssValueValidatorImpl {
-  public FlexCssValueValidator(@NotNull FlexCssElementDescriptorProvider provider) {
+  FlexCssValueValidator(@NotNull FlexCssElementDescriptorProvider provider) {
     super(provider);
   }
 
@@ -84,7 +84,6 @@ class FlexCssValueValidator extends CssValueValidatorImpl {
 
   private static boolean isInteger(@NotNull String s) {
     try {
-      //noinspection ResultOfMethodCallIgnored
       Integer.parseInt(s, 16);
     }
     catch (NumberFormatException e) {

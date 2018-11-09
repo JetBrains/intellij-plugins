@@ -17,10 +17,12 @@ import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FlexPropertiesSupport {
   private static final BundleNameEvaluator MY_BUNDLE_NAME_EVALUATOR = new BundleNameEvaluator() {
+    @Override
     public String evaluateBundleName(PsiFile psiFile) {
       final VirtualFile virtualFile = psiFile == null ? null : psiFile.getOriginalFile().getVirtualFile();
       if (virtualFile != null && psiFile instanceof PropertiesFile) {
@@ -71,12 +73,13 @@ public class FlexPropertiesSupport {
   }
 
   private static class MyPropertyReference<T extends PsiElement> extends PropertyReference implements JSPropertyReference {
-    public MyPropertyReference(TextRange range, T element, PropertyReferenceInfoProvider<T> infoProvider) {
+    MyPropertyReference(TextRange range, T element, PropertyReferenceInfoProvider<T> infoProvider) {
       super(range.substring(element.getText()), element, infoProvider.getBundleName(element), infoProvider.isSoft(element), range);
     }
 
     @Override
     protected List<PropertiesFile> retrievePropertyFilesByBundleName(String bundleName, PsiElement element) {
+      if (bundleName == null) return Collections.emptyList();
       return PropertiesReferenceManager.getInstance(element.getProject()).findPropertiesFiles(
         element.getResolveScope(),
         bundleName,
@@ -86,15 +89,17 @@ public class FlexPropertiesSupport {
   }
 
   private static class MyResourceBundleReference extends ResourceBundleReference implements EmptyResolveMessageProvider {
-    public MyResourceBundleReference(PsiElement element, boolean soft) {
+    MyResourceBundleReference(PsiElement element, boolean soft) {
       super(element, soft);
     }
 
+    @Override
     @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve property bundle";
     }
 
+    @Override
     @Nullable
     public String evaluateBundleName(final PsiFile psiFile) {
       return MY_BUNDLE_NAME_EVALUATOR.evaluateBundleName(psiFile);

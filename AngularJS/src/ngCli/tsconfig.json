@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es5",
+    "outDir": "../../gen/ngCli"
+  },
+  "compileOnSave": true,
+  "include": [
+    "*.ts"
+  ]
+}

@@ -46,8 +46,20 @@ public interface MarkdownTokenTypeSets extends MarkdownElementTypes {
 
   TokenSet LISTS = TokenSet.create(MarkdownElementTypes.ORDERED_LIST, MarkdownElementTypes.UNORDERED_LIST);
 
-  TokenSet INLINE_HOLDING_ELEMENT_TYPES =
-    TokenSet.create(MarkdownElementTypes.PARAGRAPH,
-                    MarkdownTokenTypes.ATX_CONTENT,
-                    MarkdownTokenTypes.SETEXT_CONTENT);
+  TokenSet INLINE_HOLDING_ELEMENT_TYPES = TokenSet.orSet(HEADERS, TokenSet.create(MarkdownElementTypes.PARAGRAPH,
+                                                                                  MarkdownTokenTypes.ATX_CONTENT,
+                                                                                  MarkdownTokenTypes.SETEXT_CONTENT,
+                                                                                  MarkdownElementTypes.LINK_TEXT));
+
+
+  TokenSet AUTO_LINKS = TokenSet.create(MarkdownElementTypes.AUTOLINK,
+                                        MarkdownTokenTypes.GFM_AUTOLINK,
+                                        MarkdownTokenTypes.EMAIL_AUTOLINK);
+
+  TokenSet LINKS = TokenSet.orSet(AUTO_LINKS, TokenSet.create(INLINE_LINK));
+
+  TokenSet INLINE_HOLDING_ELEMENT_PARENTS_TYPES =
+    TokenSet.create(MarkdownTokenTypes.ATX_HEADER,
+                    MarkdownTokenTypes.SETEXT_1,
+                    MarkdownTokenTypes.SETEXT_2);
 }

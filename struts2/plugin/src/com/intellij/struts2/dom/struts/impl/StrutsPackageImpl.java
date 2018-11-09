@@ -26,7 +26,6 @@ import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackageHierarchyWalker;
-import com.intellij.util.Processor;
 import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.GenericAttributeValue;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +38,7 @@ import java.util.List;
  */
 public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackage {
 
+  @Override
   @NotNull
   public String searchNamespace() {
     final Ref<String> result = new Ref<>();
@@ -54,6 +54,7 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
     return result.isNull() ? DEFAULT_NAMESPACE : result.get();
   }
 
+  @Override
   @Nullable
   public DefaultClassRef searchDefaultClassRef() {
     final Ref<DefaultClassRef> result = new Ref<>();
@@ -71,6 +72,7 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
 
   private CachedValue<ResultType> myCachedDefaultResultType;
 
+  @Override
   @Nullable
   public ResultType searchDefaultResultType() {
     if (myCachedDefaultResultType == null) {

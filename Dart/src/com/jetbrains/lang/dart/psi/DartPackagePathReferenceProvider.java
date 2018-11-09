@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.openapi.util.TextRange;
@@ -16,6 +17,8 @@ import com.jetbrains.lang.dart.util.DartUrlResolver;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGES_FOLDER_NAME;
 
 /**
  * Resolves path in {@code <script src="packages/browser/dart.js"/>} to base Dart {@code packages} folder because relative symlinked {@code packages} folder is excluded.<br/>
@@ -80,7 +83,12 @@ public class DartPackagePathReferenceProvider extends PsiReferenceProvider {
     final TextRange textRange = ElementManipulators.getValueTextRange(psiElement);
     final String referenceText = psiElement.getText().substring(textRange.getStartOffset(), textRange.getEndOffset());
 
+    if (!referenceText.trim().startsWith(PACKAGES_FOLDER_NAME + "/") && !referenceText.contains("/" + PACKAGES_FOLDER_NAME + "/")) {
+      return FileReference.EMPTY;
+    }
+
     final FileReferenceSet referenceSet = new FileReferenceSet(referenceText, psiElement, textRange.getStartOffset(), null, true) {
+      @Override
       public FileReference createFileReference(final TextRange range, final int index, final String text) {
         return new DartPackageAwareFileReference(this, range, index, text, dartResolver);
       }

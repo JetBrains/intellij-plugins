@@ -1,16 +1,16 @@
 package org.intellij.plugins.markdown.extensions.plantuml
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
-import net.sourceforge.plantuml.FileFormat
-import net.sourceforge.plantuml.FileFormatOption
-import net.sourceforge.plantuml.SourceStringReader
 import org.intellij.plugins.markdown.extensions.MarkdownCodeFenceCacheableProvider
+import org.intellij.plugins.markdown.settings.MarkdownSettingsConfigurable
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCache.MARKDOWN_FILE_PATH_KEY
 import org.intellij.plugins.markdown.ui.preview.MarkdownCodeFencePluginCacheCollector
 import org.intellij.plugins.markdown.ui.preview.MarkdownUtil
+import org.intellij.plugins.markdown.ui.preview.PreviewStaticServer.getGeneratedImageUrl
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
+import java.net.URLClassLoader
 
 internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePluginCacheCollector?) : MarkdownCodeFenceCacheableProvider {
   // this empty constructor is needed for the component initialization
@@ -24,7 +24,7 @@ internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePlu
     cacheDiagram(newDiagramFile.absolutePath, text)
     cacheCollector?.addAliveCachedFile(newDiagramFile)
 
-    return "<img src=\"${newDiagramFile.toURI()}\"/>"
+    return "<img src=\"${getGeneratedImageUrl(getPluginName(), newDiagramFile.toRelativeString(File(getCacheRootPath())))}\"/>"
   }
 
   private fun cacheDiagram(newDiagramPath: String, text: String) {
@@ -41,16 +41,45 @@ internal class PlantUMLProvider(private var cacheCollector: MarkdownCodeFencePlu
     storeDiagram(innerText, diagramPath)
   }
 
-  override fun isApplicable(language: String): Boolean = language == "puml" || language == "plantuml"
+  override fun isApplicable(language: String): Boolean = (language == "puml" || language == "plantuml")
+                                                         && MarkdownSettingsConfigurable.isPlantUMLAvailable()
 
   companion object {
-    @Throws(IOException::class)
-    private fun storeDiagram(source: String, fileName: String) {
-      val reader = SourceStringReader(source)
-      val fos = FileOutputStream(fileName)
+    private val LOG = Logger.getInstance(PlantUMLCodeFenceLanguageProvider::class.java)
 
-      reader.outputImage(fos, FileFormatOption(FileFormat.PNG))
-      fos.close()
+    private val sourceStringReader by lazy {
+      try {
+        Class.forName("net.sourceforge.plantuml.SourceStringReader", false, URLClassLoader(
+          arrayOf(MarkdownSettingsConfigurable.getDownloadedJarPath()?.toURI()?.toURL()), this::class.java.classLoader))
+      }
+      catch (e: Exception) {
+        LOG.warn(
+          "net.sourceforge.plantuml.SourceStringReader class isn't found in downloaded PlantUML jar. " +
+          "Please try to download another PlantUML library version.", e)
+        null
+      }
+    }
+
+    private val generateImageMethod by lazy {
+      try {
+        sourceStringReader?.getDeclaredMethod("generateImage", Class.forName("java.io.File"))
+      }
+      catch (e: Exception) {
+        LOG.warn(
+          "'generateImage' method isn't found in the class 'net.sourceforge.plantuml.SourceStringReader'. " +
+          "Please try to download another PlantUML library version.", e)
+        null
+      }
+    }
+  }
+
+  @Throws(IOException::class)
+  private fun storeDiagram(source: String, fileName: String) {
+    try {
+      generateImageMethod?.invoke(sourceStringReader?.getConstructor(String::class.java)?.newInstance(source), File(fileName))
+    }
+    catch (e: Exception) {
+      LOG.warn("Cannot save diagram PlantUML diagram. ", e)
     }
   }
 }

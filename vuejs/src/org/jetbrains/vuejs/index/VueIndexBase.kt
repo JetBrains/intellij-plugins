@@ -31,7 +31,7 @@ abstract class VueIndexBase(private val key: StubIndexKey<String, JSImplicitElem
   }
 
   companion object {
-    fun createJSKey(key: StubIndexKey<String, JSImplicitElementProvider>) =
+    fun createJSKey(key: StubIndexKey<String, JSImplicitElementProvider>): String =
       key.name.split(".").joinToString("") { it.subSequence(0, 1) }
   }
 

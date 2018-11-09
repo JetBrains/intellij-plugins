@@ -49,6 +49,7 @@ public class PersistentUserModelImpl extends UserModelImpl {
     readAll();
 
     mySaver = new IDEtalkAdapter() {
+      @Override
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor(){
           @Override public void visitUserAdded(UserEvent.Added event) {
@@ -82,6 +83,7 @@ public class PersistentUserModelImpl extends UserModelImpl {
     myBroadcaster.addListener(mySaver);
   }
 
+  @Override
   public void dispose() {
     synchronized(myUsersGroupsLock) {
       myUsers.clear();

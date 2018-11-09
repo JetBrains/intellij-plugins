@@ -15,11 +15,10 @@
 
 package com.intellij.struts2.model.constant;
 
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.NullableComputable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValue;
@@ -72,10 +71,9 @@ public class StrutsConstantHelper {
             @Override
             protected List<String> compute() {
               final List<String> extensions1 =
-                  ApplicationManager.getApplication().runReadAction(
-                    (NullableComputable<List<String>>)() -> StrutsConstantManager.getInstance(project)
-                                                .getConvertedValue(psiFile,
-                                                                   StrutsCoreConstantContributor.ACTION_EXTENSION));
+                ReadAction.compute(() -> StrutsConstantManager.getInstance(project)
+                  .getConvertedValue(psiFile,
+                                     StrutsCoreConstantContributor.ACTION_EXTENSION));
 
               if (extensions1 == null) {
                 return Collections.emptyList();

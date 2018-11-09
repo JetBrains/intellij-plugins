@@ -42,11 +42,20 @@ public class CfmlLangInfo {
   private Reference<CfmlLangDictionary> myCFDictionary;
   private String myCFDictionaryLevel;
 
-  public static CfmlLangInfo getInstance(Project project) {
-    return ServiceManager.getService(project, CfmlLangInfo.class);
+  private static class InstanceWithoutApplication {
+    static CfmlLangInfo instanceWithoutApplication = new CfmlLangInfo(null);
   }
 
-  public CfmlLangInfo(Project project) {
+  public static CfmlLangInfo getInstance(@Nullable Project project) {
+    if (project != null) {
+      return ServiceManager.getService(project, CfmlLangInfo.class);
+    }
+    else {
+      return InstanceWithoutApplication.instanceWithoutApplication;
+    }
+  }
+
+  public CfmlLangInfo(@Nullable Project project) {
     myProject = project;
   }
 
@@ -71,6 +80,7 @@ public class CfmlLangInfo {
       myPredefinedFunctions = cfmlTagsParser.getFunctionsList();
       myPredefinedFunctionsInLowCase = cfmlTagsParser.getFunctionsListLowerCased();
       myPredefinedVariables = cfmlTagsParser.getPredefinedVariables();
+      myOnlineDocumentationLink = cfmlTagsParser.getOnlineDocumentationLink();
     }
 
     public String[] myPredefinedFunctions;
@@ -79,6 +89,7 @@ public class CfmlLangInfo {
     public String[] myVariableScopes;
     public Map<String, CfmlTagDescription> myTagAttributes;
     public Map<String, CfmlFunctionDescription> myFunctionParameters;
+    public String myOnlineDocumentationLink;
   }
 
   private CfmlLangDictionary getProjectDictionary() {
@@ -103,6 +114,7 @@ public class CfmlLangInfo {
   }
 
   public String getLanguageLevel() {
+    if (myProject == null) return CfmlLanguage.CF10;
     CfmlProjectConfiguration.State state = CfmlProjectConfiguration.getInstance(myProject).getState();
     return state != null ? state.getLanguageLevel() : CfmlLanguage.CF10;
   }
@@ -135,6 +147,10 @@ public class CfmlLangInfo {
     return getProjectDictionary().myFunctionParameters;
   }
 
+  public String getOnlineDocumentationLink() {
+    return getProjectDictionary().myOnlineDocumentationLink;
+  }
+
   private static final Logger LOG = Logger.getInstance(CfmlLangInfo.class.getName());
 
   @Nullable
@@ -145,7 +161,6 @@ public class CfmlLangInfo {
       if (predefined != null) {
         LineReader lineReader = new LineReader(predefined);
 
-        //noinspection unchecked
         List<byte[]> list = lineReader.readLines();
         result = new String[list.size()];
         for (int i = 0; i < list.size(); i++) {

@@ -8,10 +8,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import java.util.Collection;
 
 public class XmlBackedClassInheritorsProvider implements JSClassInheritorsProvider {
+  @Override
   public Collection<JSClass> getImplementingClasses(String parentName, Project project, GlobalSearchScope scope) {
     return FlexXmlBackedClassesIndex.searchClassInheritors(FlexXmlBackedImplementedInterfacesIndex.NAME, parentName, project, scope);
   }
 
+  @Override
   public Collection<JSClass> getExtendingClasses(String parentName, Project project, GlobalSearchScope scope) {
     return FlexXmlBackedClassesIndex.searchClassInheritors(FlexXmlBackedSuperClassesIndex.NAME, parentName, project, scope);
   }

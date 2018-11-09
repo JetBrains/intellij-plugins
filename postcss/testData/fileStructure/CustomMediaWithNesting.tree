@@ -1,0 +1,7 @@
+-CustomMediaWithNesting.pcss
+ -a
+  media (--my), (--my2)
+ -div
+  custom-media --my2
+ -[media all]
+  custom-media --my

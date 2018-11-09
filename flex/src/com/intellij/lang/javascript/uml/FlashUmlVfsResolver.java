@@ -29,6 +29,7 @@ public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
   private static final Logger LOG = Logger.getInstance(FlashUmlVfsResolver.class.getName());
   public static final String SEPARATOR = ":";
 
+  @Override
   public String getQualifiedName(Object element) {
     return getQualifiedNameStatic(element);
   }
@@ -53,7 +54,6 @@ public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
         return getQualifiedNameStatic(JSPsiImplUtils.findQualifiedElement((JSFile)element));
       }
       else if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
-        //noinspection ConstantConditions
         return getQualifiedNameStatic(XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element));
       }
       else if (element instanceof PsiDirectory) {
@@ -79,6 +79,7 @@ public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
     return qName;
   }
 
+  @Override
   public Object resolveElementByFQN(String fqn, Project project) {
     return resolveElementByFqnStatic(fqn, project);
   }

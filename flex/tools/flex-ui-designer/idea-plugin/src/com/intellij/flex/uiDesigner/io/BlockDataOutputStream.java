@@ -49,6 +49,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     }
   }
 
+  @Override
   public void reset() {
     count = SERVICE_DATA_SIZE;
     lastBlockBegin = 0;
@@ -199,7 +200,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
       end();
       return;
     }
-    
+
     if (lastBlockBegin != (count - SERVICE_DATA_SIZE)) {
       writeHeader();
       flushBuffer();

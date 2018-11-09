@@ -43,6 +43,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     setShowEdgeLabels(true);
   }
 
+  @Override
   @NotNull
   public NodeRealizer getNodeRealizer(final BasicStrutsNode node) {
     return GraphViewUtil.createNodeRealizer("Struts2NodeRenderer", getRenderer());
@@ -55,6 +56,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     return myRenderer;
   }
 
+  @Override
   public boolean editNode(final BasicStrutsNode node) {
     if (node == null) { // TODO should not happen
       return false;
@@ -68,6 +70,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     return super.editNode(node);
   }
 
+  @Override
   public boolean editEdge(final BasicStrutsEdge edge) {
     if (edge == null) {
       return false; // TODO should not happen
@@ -81,6 +84,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     return super.editEdge(edge);
   }
 
+  @Override
   public String getNodeTooltip(@Nullable final BasicStrutsNode node) {
     if (node == null) {
       return null;
@@ -89,6 +93,7 @@ public class StrutsPresentationModel extends BasicGraphPresentationModel<BasicSt
     return ElementPresentationManager.getDocumentationForElement(node.getIdentifyingElement());
   }
 
+  @Override
   public void customizeSettings(final Graph2DView view, final EditMode editMode) {
     editMode.allowBendCreation(false);
     editMode.allowEdgeCreation(false);

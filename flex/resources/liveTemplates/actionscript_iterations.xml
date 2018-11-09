@@ -7,7 +7,7 @@
     <variable name="ELEMENT_TYPE" expression="jsComponentTypeOf(ARRAY)" defaultValue="&quot;Object&quot;" alwaysStopAt="true"/>
     <variable name="VAR" expression="jsSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true"/>
     <context>
-      <option name="ACTION_SCRIPT" value="true" />
+      <option name="AS_STATEMENT" value="true" />
     </context>
   </template>
 
@@ -16,7 +16,7 @@
     <variable name="ARRAY" expression="jsArrayVariable()" defaultValue="&quot;array &quot;" alwaysStopAt="true"/>
     <variable name="VAR" expression="jsSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true"/>
     <context>
-      <option name="ACTION_SCRIPT" value="true" />
+      <option name="AS_STATEMENT" value="true" />
     </context>
   </template>
 
@@ -27,7 +27,7 @@
     <variable name="ELEMENT_TYPE" expression="jsComponentTypeOf(ARRAY)" defaultValue="&quot;Object&quot;" alwaysStopAt="true" />
     <variable name="VAR" expression="jsSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true" />
     <context>
-      <option name="ACTION_SCRIPT" value="true" />
+      <option name="AS_STATEMENT" value="true" />
     </context>
   </template>
 
@@ -38,7 +38,7 @@
     <variable name="ELEMENT_TYPE" expression="jsComponentTypeOf(ARRAY)" defaultValue="&quot;Object&quot;" alwaysStopAt="true" />
     <variable name="VAR" expression="jsSuggestVariableName()" defaultValue="&quot;o&quot;" alwaysStopAt="true" />
     <context>
-      <option name="ACTION_SCRIPT" value="true" />
+      <option name="AS_STATEMENT" value="true" />
     </context>
   </template>
 

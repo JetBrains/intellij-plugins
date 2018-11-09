@@ -53,9 +53,7 @@ public class PositionCorrector {
     }
 
     int addOn = 0;
-    for (int i = 0; i < myChanges.length; i++) {
-      Change change = myChanges[i];
-
+    for (Change change : myChanges) {
       if (line < change.getSrcLine()) {
         break;
       }

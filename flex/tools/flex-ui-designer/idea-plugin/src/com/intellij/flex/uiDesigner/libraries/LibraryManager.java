@@ -27,7 +27,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ExceptionUtil;
-import com.intellij.util.StringBuilderSpinAllocator;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -162,7 +161,7 @@ public class LibraryManager implements Disposable {
 
     module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
-      public void rootsChanged(ModuleRootEvent event) {
+      public void rootsChanged(@NotNull ModuleRootEvent event) {
         new Notification(FlashUIDesignerBundle.message("plugin.name"), FlashUIDesignerBundle.message("plugin.name"),
           "Please reopen your project to update on library changes.",
           NotificationType.WARNING).notify(project);
@@ -218,22 +217,17 @@ public class LibraryManager implements Disposable {
     }
     
     Arrays.sort(files, (o1, o2) -> StringUtil.compare(o1.getPath(), o2.getPath(), false));
-    
-    final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
-    try {
-      if (isSdk) {
-        stringBuilder.append('_');
-      }
 
-      for (VirtualFile file : files) {
-        stringBuilder.append(file.getTimeStamp()).append(file.getPath()).append(':');
-      }
+    final StringBuilder stringBuilder = new StringBuilder();
+    if (isSdk) {
+      stringBuilder.append('_');
+    }
 
-      return stringBuilder.toString();
+    for (VirtualFile file : files) {
+      stringBuilder.append(file.getTimeStamp()).append(file.getPath()).append(':');
     }
-    finally {
-      StringBuilderSpinAllocator.dispose(stringBuilder);
-    }
+
+    return stringBuilder.toString();
   }
 
   @NotNull
@@ -337,7 +331,6 @@ public class LibraryManager implements Disposable {
 
     //noinspection ConstantConditions
     VirtualFile file = library.getFile().findChild("locale").findChild(locale).findChild(bundleName + PROPERTIES_EXTENSION);
-    //noinspection ConstantConditions
     return virtualFileToProperties(project, file);
   }
 

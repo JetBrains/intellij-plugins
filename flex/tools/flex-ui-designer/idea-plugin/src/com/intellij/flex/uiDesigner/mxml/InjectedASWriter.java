@@ -37,7 +37,7 @@ class InjectedASWriter implements ValueReferenceResolver {
     }
   };
 
-  public InjectedASWriter(BaseWriter writer, ProblemsHolder problemsHolder) {
+  InjectedASWriter(BaseWriter writer, ProblemsHolder problemsHolder) {
     this.writer = writer;
     this.problemsHolder = problemsHolder;
   }
@@ -75,7 +75,6 @@ class InjectedASWriter implements ValueReferenceResolver {
     final InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type, problemsHolder);
     InjectedLanguageManager.getInstance(host.getProject()).enumerate(host, visitor);
 
-    //noinspection ThrowableResultOfMethodCallIgnored
     if (visitor.getInvalidPropertyException() != null) {
       throw visitor.getInvalidPropertyException();
     }

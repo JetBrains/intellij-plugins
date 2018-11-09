@@ -160,7 +160,7 @@ public class BndTestState extends JavaCommandLineState {
   private static class MyTestConsoleProperties extends SMTRunnerConsoleProperties implements SMCustomMessagesParsing {
     private final ServerSocket mySocket;
 
-    public MyTestConsoleProperties(@NotNull BndTestState runProfile, @NotNull Executor executor) {
+    MyTestConsoleProperties(@NotNull BndTestState runProfile, @NotNull Executor executor) {
       super(runProfile.myConfiguration, TEST_FRAMEWORK_NAME, executor);
       mySocket = runProfile.mySocket;
       setPrintTestingStartedTime(false);
@@ -185,7 +185,7 @@ public class BndTestState extends JavaCommandLineState {
     private final Object myTestLock = new Object();
     private String myCurrentTest = null;
 
-    public MyProcessOutputConsumer(@NotNull String testFrameworkName,
+    MyProcessOutputConsumer(@NotNull String testFrameworkName,
                                    @NotNull TestConsoleProperties consoleProperties,
                                    @NotNull ServerSocket socket) {
       super(testFrameworkName, consoleProperties);
@@ -377,8 +377,8 @@ public class BndTestState extends JavaCommandLineState {
         if (myFailingTest != null) {
           String testName = fullTestName(parseTestName(myFailingTest, false), myFailingTest);
           boolean testError = myReason != Proto.FAILED;
-          String expected = pair != null ? pair.first : null;
-          String actual = pair != null ? pair.second : null;
+          String expected = Pair.getFirst(pair);
+          String actual = Pair.getSecond(pair);
           myProcessor.onTestFailure(new TestFailedEvent(testName, message, stack.toString(), testError, actual, expected));
         }
         else {

@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartSuperCallOrFieldInitializerImpl extends DartPsiCompositeElementImpl implements DartSuperCallOrFieldInitializer {
 
-  public DartSuperCallOrFieldInitializerImpl(ASTNode node) {
+  public DartSuperCallOrFieldInitializerImpl(@NotNull ASTNode node) {
     super(node);
   }
 

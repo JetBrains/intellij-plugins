@@ -1,5 +1,7 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.maven;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -7,14 +9,11 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.project.*;
-import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
 import org.jetbrains.idea.maven.utils.MavenUtil;
 
@@ -49,7 +48,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
 
   private final Module myModule;
   private final String myMainConfigFilePath;
-  private final Collection<RLMInfo> myRlmInfos;
+  private final Collection<? extends RLMInfo> myRlmInfos;
 
   // compilation of modules should not overwrtite report files produced by main application compilation so some compiler options should be excluded
   private static final String[] ELEMENTS_TO_REMOVE = {"dump-config", "link-report", "resource-bundle-list"};
@@ -61,7 +60,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
                                           final MavenProject mavenProject,
                                           final MavenProjectsTree mavenProjectsTree,
                                           final String mainConfigFilePath,
-                                          final Collection<RLMInfo> rlmInfos) {
+                                          final Collection<? extends RLMInfo> rlmInfos) {
     super(mavenProject, mavenProjectsTree);
     myModule = module;
     myMainConfigFilePath = mainConfigFilePath;
@@ -72,7 +71,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
   public void perform(final Project project,
                       final MavenEmbeddersManager embeddersManager,
                       final MavenConsole console,
-                      final MavenProgressIndicator indicator) throws MavenProcessCanceledException {
+                      final MavenProgressIndicator indicator) {
     final Element mainConfigRootElement = getClonedRootElementOfMainConfigFile(myMainConfigFilePath);
     if (mainConfigRootElement == null) return;
 
@@ -86,7 +85,7 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
       // and similar but more complicated thing with resource-bundle-list / include-resource-bundle ?
       try {
         JDOMUtil.writeDocument(mainConfigRootElement.getDocument(), info.myConfigFilePath,
-                               CodeStyleSettingsManager.getSettings(project).getLineSeparator());
+                               CodeStyle.getSettings(project).getLineSeparator());
       }
       catch (IOException ignored) {/**/}
     }
@@ -107,10 +106,9 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
     final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(filePath);
     if (configFile != null) {
       try {
-        final Document document = JDOMUtil.loadDocument(configFile.getInputStream());
-        final Element clonedRootElement = document.clone().getRootElement();
-        if (clonedRootElement.getName().equals(FLEX_CONFIG)) {
-          return clonedRootElement;
+        final Element element = JDOMUtil.load(configFile.getInputStream());
+        if (element.getName().equals(FLEX_CONFIG)) {
+          return element;
         }
       }
       catch (JDOMException ignored) {/*ignore*/}

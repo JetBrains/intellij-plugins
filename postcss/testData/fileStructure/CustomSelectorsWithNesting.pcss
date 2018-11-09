@@ -1,0 +1,15 @@
+@media all {
+  @custom-selector :--button h1, h2, h3;
+}
+
+div {
+  @custom-selector :--any-link :link, :visited;
+}
+
+a {
+  @nest &:--any-link, :--button & {
+    & p {
+      color: red;
+    }
+  }
+}

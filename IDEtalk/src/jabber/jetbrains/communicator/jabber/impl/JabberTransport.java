@@ -208,7 +208,6 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     doSendMessage(xmlMessage, user, threadId);
 
     if (xmlMessage.needsResponse()) {
-      //noinspection HardCodedStringLiteral
       final Runnable responseWaiterRunnable = () -> {
         try {
           processResponse(xmlMessage, packetCollector);
@@ -547,7 +546,6 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     }
   }
 
-  @SuppressWarnings({"RefusedBequest"})
   private class MyUserModelListener extends TransportUserListener {
 
     MyUserModelListener() {

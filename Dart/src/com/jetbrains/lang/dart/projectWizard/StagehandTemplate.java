@@ -19,7 +19,7 @@ class StagehandTemplate extends DartProjectTemplate {
   @NotNull private final Stagehand myStagehand;
   @NotNull private final Stagehand.StagehandDescriptor myTemplate;
 
-  public StagehandTemplate(@NotNull final Stagehand stagehand, @NotNull final Stagehand.StagehandDescriptor template) {
+  StagehandTemplate(@NotNull final Stagehand stagehand, @NotNull final Stagehand.StagehandDescriptor template) {
     super(getLabel(template), template.myDescription);
     myStagehand = stagehand;
     myTemplate = template;

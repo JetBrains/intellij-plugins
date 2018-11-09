@@ -48,6 +48,7 @@ public class DartPubBuildAction extends DartPubActionBase {
       .message(DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(project)) ? "dart.webdev.build.title" : "dart.pub.build.title");
   }
 
+  @Override
   @Nullable
   protected String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
     final DartPubBuildDialog dialog = new DartPubBuildDialog(project, pubspecYamlFile.getParent());

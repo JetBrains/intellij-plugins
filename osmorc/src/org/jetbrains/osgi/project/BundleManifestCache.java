@@ -235,7 +235,7 @@ public class BundleManifestCache {
   }
 
   private static class JdkBundleManifest extends BundleManifest {
-    public JdkBundleManifest() {
+    JdkBundleManifest() {
       super(Collections.emptyMap());
     }
 

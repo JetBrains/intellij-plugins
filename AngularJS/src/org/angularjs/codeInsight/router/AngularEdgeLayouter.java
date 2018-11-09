@@ -48,7 +48,7 @@ public class AngularEdgeLayouter {
     private double targetY;
     private QuadCurveEdgeRealizer myRealizer;
 
-    public OneEdgeLayouter(Edge edge, AngularUiRouterEdge edgeObject, Graph2D graph) {
+    OneEdgeLayouter(Edge edge, AngularUiRouterEdge edgeObject, Graph2D graph) {
       this.edge = edge;
       this.edgeObject = edgeObject;
       sourceXcenter = graph.getCenterX(edge.source());

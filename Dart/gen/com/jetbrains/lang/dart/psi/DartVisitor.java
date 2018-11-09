@@ -1,3 +1,5 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart.psi;
 
@@ -319,6 +321,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitMixinDeclaration(@NotNull DartMixinDeclaration o) {
+    visitClass(o);
+  }
+
   public void visitMixins(@NotNull DartMixins o) {
     visitPsiCompositeElement(o);
   }
@@ -350,6 +356,10 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitNormalParameterType(@NotNull DartNormalParameterType o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitOnMixins(@NotNull DartOnMixins o) {
     visitPsiCompositeElement(o);
   }
 

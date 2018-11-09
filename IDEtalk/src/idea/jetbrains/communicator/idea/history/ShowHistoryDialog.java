@@ -49,10 +49,10 @@ import java.util.List;
 public class ShowHistoryDialog extends IdeaDialog {
   private final ConsoleView myConsole;
   private final User myUser;
-  private final List<LocalMessage> myFoundMessages;
+  private final List<? extends LocalMessage> myFoundMessages;
   private final Project myProject;
 
-  public ShowHistoryDialog(Project project, List<LocalMessage> foundMessages, User user) {
+  public ShowHistoryDialog(Project project, List<? extends LocalMessage> foundMessages, User user) {
     super(project, true);
     setModal(false);
 
@@ -133,13 +133,13 @@ public class ShowHistoryDialog extends IdeaDialog {
 
   private class Panel extends NonOpaquePanel implements DataProvider {
 
-    public Panel(JComponent wrapped) {
+    Panel(JComponent wrapped) {
       super(wrapped);
     }
 
     @Override
     @Nullable
-    public Object getData(@NonNls String dataId) {
+    public Object getData(@NotNull @NonNls String dataId) {
       if (CommonDataKeys.PROJECT.getName().equals(dataId)) {
         return myProject;
       }

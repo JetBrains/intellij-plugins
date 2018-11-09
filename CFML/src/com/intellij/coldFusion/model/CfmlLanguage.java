@@ -29,6 +29,7 @@ public class CfmlLanguage extends Language implements TemplateLanguage {
   public static final String CF10 = "cf10_tags.xml";
   public static final String CF11 = "cf11_tags.xml";
   public static final String RAILO = "Railo_tags.xml";
+  public static final String LUCEE = "Lucee_tags.xml";
 
   private CfmlLanguage() {
     super("CFML");

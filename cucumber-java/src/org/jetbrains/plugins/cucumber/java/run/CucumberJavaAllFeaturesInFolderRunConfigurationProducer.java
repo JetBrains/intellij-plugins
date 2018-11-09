@@ -1,7 +1,7 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -15,6 +15,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
+import java.util.List;
 import java.util.Set;
 
 public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
@@ -23,8 +24,7 @@ public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends Cuc
     final Set<String> glues = getHookGlue(element);
     if (element instanceof PsiDirectory) {
       final PsiDirectory dir = (PsiDirectory)element;
-      final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
-
+      final List<CucumberJvmExtensionPoint> extensions = CucumberJvmExtensionPoint.EP_NAME.getExtensionList();
       return new NullableComputable<String>() {
         @NotNull
         @Override

@@ -25,10 +25,10 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
-import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -128,10 +128,14 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
           debugProcess.setConsoleMessagesSupportEnabled(false);
           debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
           karmaServer.onBrowsersReady(() -> {
+            openConnectionIfRemoteDebugging(karmaServer, debugProcess.getConnection());
             Runnable resumeTestRunning = ConcurrencyUtil.once(() -> resumeTestRunning((OSProcessHandler)executionResult.getProcessHandler()));
             SingleAlarm alarm = new SingleAlarm(resumeTestRunning, 5000);
             alarm.request();
             debugProcess.getConnection().executeOnStart((vm) -> {
+              if (Registry.is("js.debugger.break.on.first.statement")) {
+                vm.getBreakpointManager().setBreakOnFirstStatement();
+              }
               alarm.cancelAllRequests();
               resumeTestRunning.run();
               return Unit.INSTANCE;
@@ -141,7 +145,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
         }
       }
     );
-    return session.getRunContentDescriptor();
+    return KarmaUtil.withReusePolicy(session.getRunContentDescriptor(), karmaServer);
   }
 
   @NotNull
@@ -153,10 +157,8 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
                                                                                    @NotNull Url url) {
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null && karmaConfig.getRemoteDebuggingPort() > 0) {
-      WipRemoteVmConnection connection = new WipRemoteVmConnection();
-      BrowserChromeDebugProcess debugProcess = new BrowserChromeDebugProcess(session, fileFinder, connection, executionResult);
-      connection.open(new InetSocketAddress(karmaConfig.getHostname(), karmaConfig.getRemoteDebuggingPort()));
-      return debugProcess;
+      // open connection later on browser ready to workaround WEB-33076
+      return new BrowserChromeDebugProcess(session, fileFinder, new WipRemoteVmConnection(), executionResult);
     }
     JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
     WebBrowser browser = debuggableWebBrowser.getWebBrowser();
@@ -166,6 +168,13 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     return debugEngine.createDebugProcess(session, browser, fileFinder, url, executionResult, reloadPage);
   }
 
+  private static void openConnectionIfRemoteDebugging(@NotNull KarmaServer server, @NotNull VmConnection<?> connection) {
+    KarmaConfig config = server.getKarmaConfig();
+    if (config != null && config.getRemoteDebuggingPort() > 0 && connection instanceof WipRemoteVmConnection) {
+      ((WipRemoteVmConnection)connection).open(new InetSocketAddress(config.getHostname(), config.getRemoteDebuggingPort()));
+    }
+  }
+
   @NotNull
   private static DebuggableFileFinder getDebuggableFileFinder(@NotNull KarmaServer karmaServer) {
     BiMap<String, VirtualFile> mappings = HashBiMap.create();
@@ -173,20 +182,11 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     if (karmaConfig != null) {
       VirtualFile basePath = LocalFileSystem.getInstance().findFileByPath(karmaConfig.getBasePath());
       if (basePath != null && basePath.isValid()) {
-        if (karmaConfig.isWebpack()) {
-          mappings.put("webpack:///" + basePath.getPath(), basePath);
-          VirtualFile nodeModulesDir = basePath.findChild(NodeModuleUtil.NODE_MODULES);
-          if (nodeModulesDir != null && nodeModulesDir.isValid() && nodeModulesDir.isDirectory()) {
-            mappings.put(karmaServer.formatUrlWithoutUrlRoot("/base/" + NodeModuleUtil.NODE_MODULES), nodeModulesDir);
-          }
-        }
-        else {
-          mappings.put(karmaServer.formatUrlWithoutUrlRoot("/base"), basePath);
-        }
+        mappings.put(karmaServer.formatUrlWithoutUrlRoot("/base"), basePath);
       }
     }
+    VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
     if (SystemInfo.isWindows) {
-      VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
       for (VirtualFile root : roots) {
         String key = karmaServer.formatUrlWithoutUrlRoot("/absolute" + root.getName());
         if (mappings.containsKey(key)) {
@@ -198,7 +198,6 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
       }
     }
     else {
-      VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
       if (roots.length == 1) {
         mappings.put(karmaServer.formatUrlWithoutUrlRoot("/absolute"), roots[0]);
       }

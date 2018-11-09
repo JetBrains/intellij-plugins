@@ -13,6 +13,7 @@
  */
 package com.google.dart.server;
 
+import org.dartlang.analysis.server.protocol.RequestError;
 import org.dartlang.analysis.server.protocol.SourceChange;
 
 /**
@@ -24,4 +25,6 @@ import org.dartlang.analysis.server.protocol.SourceChange;
 public interface GetStatementCompletionConsumer extends Consumer {
 
   public void computedSourceChange(SourceChange sourceChange);
+
+  public void onError(RequestError requestError);
 }

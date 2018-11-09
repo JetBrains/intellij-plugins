@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
@@ -26,7 +27,6 @@ import com.intellij.openapi.extensions.ExtensionPoint;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -86,7 +86,7 @@ public class DesignerApplicationManager {
   private ServiceManagerImpl serviceManager;
 
   private static class MyServiceManagerImpl extends ServiceManagerImpl {
-    public MyServiceManagerImpl(@NotNull DesignerApplication newApp) {
+    MyServiceManagerImpl(@NotNull DesignerApplication newApp) {
       super(true);
 
       installEP(SERVICES, newApp);
@@ -380,7 +380,7 @@ public class DesignerApplicationManager {
     notifyUser(debug, text, module.getProject(), null);
   }
 
-  static void notifyUser(boolean debug, @NotNull String text, @NotNull Project project, @Nullable final Consumer<String> handler) {
+  static void notifyUser(boolean debug, @NotNull String text, @NotNull Project project, @Nullable final Consumer<? super String> handler) {
     Notification notification = new Notification(FlashUIDesignerBundle.message("plugin.name"), getOpenActionTitle(debug), text,
                                                  NotificationType.ERROR, handler == null ? null : new NotificationListener() {
       @Override
@@ -390,13 +390,7 @@ public class DesignerApplicationManager {
         }
 
         notification.expire();
-
-        if ("help".equals(event.getDescription())) {
-          HelpManager.getInstance().invokeHelp("flex.ui.designer.launch");
-        }
-        else {
-          handler.consume(event.getDescription());
-        }
+        handler.consume(event.getDescription());
       }
     });
     notification.notify(project);
@@ -428,7 +422,7 @@ public class DesignerApplicationManager {
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable);
     connection.subscribe(ProjectManager.TOPIC, new ProjectManagerListener() {
       @Override
-      public void projectClosed(Project project) {
+      public void projectClosed(@NotNull Project project) {
         if (isApplicationClosed()) {
           return;
         }
@@ -479,9 +473,9 @@ public class DesignerApplicationManager {
 
   private static class RenderDocumentTask extends DesignerApplicationLauncher.PostTask {
     private final XmlFile psiFile;
-    private final AsyncResult<DocumentInfo> asyncResult;
+    private final AsyncResult<? super DocumentInfo> asyncResult;
 
-    public RenderDocumentTask(@NotNull XmlFile psiFile, @Nullable AsyncResult<DocumentInfo> asyncResult) {
+    RenderDocumentTask(@NotNull XmlFile psiFile, @Nullable AsyncResult<? super DocumentInfo> asyncResult) {
       this.psiFile = psiFile;
       this.asyncResult = asyncResult;
     }
@@ -549,7 +543,7 @@ public class DesignerApplicationManager {
     private final MxmlPreviewToolWindowManager previewToolWindowManager;
     private final MergingUpdateQueue updateQueue;
 
-    public MyPsiTreeChangeListener(Project project) {
+    MyPsiTreeChangeListener(Project project) {
       previewToolWindowManager = project.getComponent(MxmlPreviewToolWindowManager.class);
       updateQueue = new MergingUpdateQueue("FlashUIDesigner.update", 100, true, null);
     }
@@ -584,7 +578,7 @@ public class DesignerApplicationManager {
 
       if (psiFile instanceof XmlFile) {
         DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(psiFile);
-        if (info == null && !psiFile.equals(previewToolWindowManager.getServedFile())) {          
+        if (info == null && !psiFile.equals(previewToolWindowManager.getServedFile())) {
           return;
         }
       }

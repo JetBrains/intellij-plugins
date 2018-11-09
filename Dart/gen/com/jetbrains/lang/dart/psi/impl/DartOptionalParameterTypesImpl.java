@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartOptionalParameterTypesImpl extends DartPsiCompositeElementImpl implements DartOptionalParameterTypes {
 
-  public DartOptionalParameterTypesImpl(ASTNode node) {
+  public DartOptionalParameterTypesImpl(@NotNull ASTNode node) {
     super(node);
   }
 

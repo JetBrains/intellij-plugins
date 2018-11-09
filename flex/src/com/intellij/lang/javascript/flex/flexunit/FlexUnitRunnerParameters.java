@@ -185,6 +185,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     doCheck(project, super.checkAndGetModuleAndBC(project));
   }
 
+  @Override
   public Pair<Module, FlexBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
     final Pair<Module, FlexBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
     doCheck(project, moduleAndBC);

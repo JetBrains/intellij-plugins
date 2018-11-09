@@ -21,6 +21,7 @@ public class DartRelativePathsConsoleFilter implements Filter {
     myBaseDirPath = baseDirPath;
   }
 
+  @Override
   @Nullable
   public Result applyFilter(final String text, final int entireLength) {
     final String trimmedText = StringUtil.trimLeading(text);

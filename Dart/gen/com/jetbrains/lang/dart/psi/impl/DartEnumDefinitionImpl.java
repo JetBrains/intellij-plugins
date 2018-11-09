@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartEnumDefinitionImpl extends AbstractDartPsiClass implements DartEnumDefinition {
 
-  public DartEnumDefinitionImpl(ASTNode node) {
+  public DartEnumDefinitionImpl(@NotNull ASTNode node) {
     super(node);
   }
 

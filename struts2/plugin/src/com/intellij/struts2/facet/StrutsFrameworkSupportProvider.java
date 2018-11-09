@@ -79,6 +79,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
     super(StrutsFacetType.getInstance());
   }
 
+  @Override
   public String getTitle() {
     return UIUtil.replaceMnemonicAmpersand("Struts &2");
   }
@@ -89,6 +90,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
     return new Struts2FrameworkSupportConfigurable(this, model, getVersions(), getVersionLabelText());
   }
 
+  @Override
   protected void setupConfiguration(final StrutsFacet strutsFacet,
                                     final ModifiableRootModel modifiableRootModel, final FrameworkVersion version) {
   }
@@ -168,6 +170,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
 
 
           final NotificationListener showFacetSettingsListener = new NotificationListener() {
+            @Override
             public void hyperlinkUpdate(@NotNull final Notification notification,
                                         @NotNull final HyperlinkEvent event) {
               if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {

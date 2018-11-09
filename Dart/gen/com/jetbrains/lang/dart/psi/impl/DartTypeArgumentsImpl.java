@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartTypeArgumentsImpl extends DartPsiCompositeElementImpl implements DartTypeArguments {
 
-  public DartTypeArgumentsImpl(ASTNode node) {
+  public DartTypeArgumentsImpl(@NotNull ASTNode node) {
     super(node);
   }
 

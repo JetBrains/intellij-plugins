@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.javascript.testFramework.AbstractTestFileStructure;
+import com.intellij.javascript.testFramework.AbstractTestStructureElement;
 import com.intellij.javascript.testFramework.JstdRunElement;
 import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
@@ -10,13 +11,11 @@ import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-@NotThreadSafe
 public class JstdTestFileStructure extends AbstractTestFileStructure {
 
   private final List<JstdTestCaseStructure> myTestCaseStructures;
@@ -135,6 +134,11 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
   @Override
   public boolean contains(@NotNull String testCaseName, @Nullable String testMethodName) {
     return findPsiElement(testCaseName, testMethodName) != null;
+  }
+
+  @Override
+  public List<? extends AbstractTestStructureElement> getChildren() {
+    return myTestCaseStructures;
   }
 
   void postProcess() {

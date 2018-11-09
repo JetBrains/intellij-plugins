@@ -22,7 +22,7 @@ final class BaseWriter extends PrimitiveWriter {
 
   private final AssetCounter assetCounter;
 
-  public BaseWriter(PrimitiveAmfOutputStream out, AssetCounter assetCounter) {
+  BaseWriter(PrimitiveAmfOutputStream out, AssetCounter assetCounter) {
     super(out, new StringRegistry.StringWriter());
 
     blockOut = out.getBlockOut();

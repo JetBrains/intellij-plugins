@@ -47,10 +47,12 @@ public abstract class BeanPropertyPathConverterBase extends Converter<List<BeanP
   @Nullable
   protected abstract PsiClass findBeanPropertyClass(@NotNull final DomElement domElement);
 
+  @Override
   public String toString(@Nullable final List<BeanProperty> beanProperties, final ConvertContext convertContext) {
     return null;
   }
 
+  @Override
   public List<BeanProperty> fromString(@Nullable final String s, final ConvertContext convertContext) {
     if (s == null) {
       return null;

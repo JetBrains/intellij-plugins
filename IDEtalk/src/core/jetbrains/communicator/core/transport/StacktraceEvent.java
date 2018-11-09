@@ -34,6 +34,7 @@ public class StacktraceEvent extends MessageEvent {
     return myStacktrace;
   }
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitStacktraceEvent(this);
   }

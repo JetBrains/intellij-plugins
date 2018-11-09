@@ -29,6 +29,7 @@ public class Struts2ResourceProvider implements StandardResourceProvider {
   @NonNls
   private static final String DTD_PATH = "/resources/dtds/";
 
+  @Override
   public void registerResources(final ResourceRegistrar registrar) {
     addDTDResource(StrutsConstants.STRUTS_2_0_DTD_URI,
                    StrutsConstants.STRUTS_2_0_DTD_ID,

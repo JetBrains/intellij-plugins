@@ -6,13 +6,11 @@ import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.constant.StrutsConstantHelper;
-import com.intellij.util.Processor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +24,7 @@ import java.util.List;
  */
 public class Struts2UrlConverter extends DeployedFileUrlConverter {
 
+  @Override
   public Collection<String> getTargetPaths(@NotNull final PsiFile sourceFile, @NotNull final WebFacet webFacet) {
     final StrutsModel combinedModel = StrutsManager.getInstance(sourceFile.getProject()).getCombinedModel(webFacet.getModule());
     if (combinedModel == null) {

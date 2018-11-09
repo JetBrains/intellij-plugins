@@ -29,6 +29,7 @@ public class FlexCreateFieldFromDiagramAction extends NewJSMemberActionBase {
     return super.isEnabledOn(o) && !((JSClass)o).isInterface();
   }
 
+  @Override
   public Runnable prepare(final Object element, DiagramBuilder builder) {
     final JSClass clazz = ((JSClass)element);
     if (!JSRefactoringUtil.checkReadOnlyStatus(clazz, null, getTemplatePresentation().getText())) return null;

@@ -33,6 +33,7 @@ public class ConstantNameConverterImpl extends ConstantNameConverter {
 
   private static final Function<StrutsConstant, String> CONSTANT_NAME_FUNCTION = strutsConstant -> strutsConstant.getName();
 
+  @Override
   @NotNull
   public Collection<? extends String> getVariants(final ConvertContext context) {
     final Module module = context.getModule();

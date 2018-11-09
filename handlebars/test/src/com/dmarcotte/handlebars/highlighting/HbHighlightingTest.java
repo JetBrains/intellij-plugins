@@ -1,6 +1,7 @@
 package com.dmarcotte.handlebars.highlighting;
 
 import com.dmarcotte.handlebars.util.HbTestUtils;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,10 @@ public class HbHighlightingTest extends LightPlatformCodeInsightFixtureTestCase 
   protected void setUp() throws Exception {
     super.setUp();
     enableInspections();
+  }
+
+  private void enableInspections() {
+    myFixture.enableInspections(HtmlUnknownTagInspection.class, HtmlUnknownAttributeInspection.class);
   }
 
   @NotNull
@@ -47,7 +52,7 @@ public class HbHighlightingTest extends LightPlatformCodeInsightFixtureTestCase 
     myFixture.configureByFile(getTestName(true) + ".hbs");
   }
 
-  private void enableInspections() {
-    myFixture.enableInspections(HtmlUnknownTagInspection.class);
+  public void testTagWithAttributeValue() {
+    doTest("hbs");
   }
 }

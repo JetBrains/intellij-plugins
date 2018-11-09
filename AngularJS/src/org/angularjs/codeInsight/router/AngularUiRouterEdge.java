@@ -84,7 +84,7 @@ public class AngularUiRouterEdge extends DiagramEdgeBase<DiagramObject> {
     return myType;
   }
 
-  public static enum Type {
+  public enum Type {
     providesTemplate, fillsTemplate, parent
   }
 

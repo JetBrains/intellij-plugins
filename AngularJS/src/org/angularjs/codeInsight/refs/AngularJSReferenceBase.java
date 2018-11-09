@@ -44,6 +44,7 @@ public abstract class AngularJSReferenceBase<T extends PsiElement> extends PsiRe
   private static class MyResolver implements ResolveCache.Resolver {
     private static final MyResolver INSTANCE = new MyResolver();
 
+    @Override
     @Nullable
     public PsiElement resolve(@NotNull PsiReference ref, boolean incompleteCode) {
       return ((AngularJSReferenceBase)ref).resolveInner();

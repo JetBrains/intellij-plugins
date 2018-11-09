@@ -1,0 +1,5 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production application.
+    </description>
+</element>

@@ -39,16 +39,12 @@ import com.intellij.struts.psi.TilesModelImpl;
 import com.intellij.tiles.TilesConstants;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashSet;
 import com.intellij.util.xml.DomFileElement;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Provides Tiles-model configured via {@code org.apache.struts2.tiles.StrutsTilesListener} or
@@ -70,6 +66,7 @@ public class Struts2TilesModelProvider implements TilesModelProvider {
   private static final Condition<ParamValue> TILES_CONTEXT_PARAM_CONDITION =
     paramValue -> Comparing.equal(TilesConstants.DEFINITIONS_CONFIG_PARAMETER, paramValue.getParamName().getStringValue());
 
+  @Override
   @NotNull
   public Collection<TilesModel> computeModels(@NotNull final Module module) {
     final Project project = module.getProject();

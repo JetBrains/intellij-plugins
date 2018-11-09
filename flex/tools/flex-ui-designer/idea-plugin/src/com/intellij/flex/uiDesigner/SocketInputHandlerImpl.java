@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.abc.EntireMovieTranscoder;
@@ -6,6 +19,7 @@ import com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.ide.impl.ProjectUtil;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.properties.IProperty;
@@ -17,7 +31,6 @@ import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
@@ -27,6 +40,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.FileTypeIndex;
@@ -35,7 +49,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppIcon;
-import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.io.IdPool;
 
@@ -44,7 +57,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("StaticFieldReferencedViaSubclass")
+import static com.intellij.flex.uiDesigner.LogMessageUtil.createAttachment;
+
 public class SocketInputHandlerImpl extends SocketInputHandler {
   protected static final Logger LOG = Logger.getInstance(SocketInputHandlerImpl.class.getName());
 
@@ -79,7 +93,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   protected void createReader(InputStream inputStream) {
-    //noinspection IOResourceOpenedButNotSafelyClosed
     reader = new Reader(new BufferedInputStream(inputStream));
   }
 
@@ -288,7 +301,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private void openFile() throws IOException {
-    navigateToFile(new OpenFileDescriptor(readProject(), reader.readFile(), reader.readInt()));
+    Project project = readProject();
+    final Navigatable descriptor = PsiNavigationSupport.getInstance().createNavigatable(project, reader.readFile(), reader.readInt());
+    navigateToFile(project, descriptor);
   }
 
   private void openFileAndFindXmlAttributeOrTag() throws IOException {
@@ -317,7 +332,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       offset = tag.getTextOffset();
     }
 
-    navigateToFile(new OpenFileDescriptor(project, file, offset));
+    final Navigatable descriptor = PsiNavigationSupport.getInstance().createNavigatable(project, file, offset);
+    navigateToFile(project, descriptor);
   }
 
   private void openDocument() throws IOException {
@@ -326,18 +342,21 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     int textOffset = reader.readInt();
     boolean activateApp = reader.readBoolean();
     DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getInfo(documentFactoryId);
-    navigateToFile(new OpenFileDescriptor(project, info.getElement(), info.getRangeMarker(textOffset).getStartOffset()),
-                   activateApp);
+    final Navigatable descriptor =
+      PsiNavigationSupport.getInstance().createNavigatable(project, info.getElement(), info.getRangeMarker(textOffset).getStartOffset());
+    navigateToFile(project, descriptor, activateApp);
   }
 
-  private static void navigateToFile(final OpenFileDescriptor openFileDescriptor) {
-    navigateToFile(openFileDescriptor, true);
+  private static void navigateToFile(Project project, final Navigatable openFileDescriptor) {
+    navigateToFile(project, openFileDescriptor, true);
   }
 
-  private static void navigateToFile(final OpenFileDescriptor openFileDescriptor, final boolean activateApp) {
+  private static void navigateToFile(Project project,
+                                     final Navigatable openFileDescriptor,
+                                     final boolean activateApp) {
     ApplicationManager.getApplication().invokeLater(() -> {
       openFileDescriptor.navigate(true);
-      focusProjectWindow(openFileDescriptor.getProject(), activateApp);
+      focusProjectWindow(project, activateApp);
     });
   }
 
@@ -466,8 +485,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       ImageUtil.write(assetInfo.file, assetInfo.mimeType, fileOut);
     }
     catch (IOException e) {
-      final String userMessage = FlashUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName());
-      LOG.error(LogMessageUtil.createEvent(userMessage, ExceptionUtil.getThrowableText(e), assetInfo.file));
+      LOG.error("a problem on opening " + assetInfo.file.getName(), e, createAttachment(assetInfo.file));
       fileOut.getChannel().truncate(0);
     }
     finally {
@@ -498,7 +516,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
                                ? EmbedSwfManager.getInstance().getInfo(assetId)
                                : EmbedImageManager.getInstance().getInfo(assetId);
     ByteArrayOutputStreamEx byteOut = new ByteArrayOutputStreamEx(1024);
-    //noinspection IOResourceOpenedButNotSafelyClosed
     PrimitiveAmfOutputStream out = new PrimitiveAmfOutputStream(byteOut);
     Client.writeVirtualFile(assetInfo.file, out);
     out.writeNullableString(assetInfo instanceof SwfAssetInfo ? ((SwfAssetInfo)assetInfo).symbolName : null);
@@ -508,7 +525,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       byteOut.writeTo(fileOut);
     }
     catch (IOException e) {
-      LOG.error(LogMessageUtil.createEvent(FlashUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName()), ExceptionUtil.getThrowableText(e), assetInfo.file));
+      LOG.error("a problem on opening " + assetInfo.file.getName(), e, createAttachment(assetInfo.file));
       fileOut.getChannel().truncate(0);
     }
     finally {
@@ -539,7 +556,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       if (StringUtil.isEmpty(userMessage)) {
         userMessage = technicalMessage;
       }
-      LOG.error(LogMessageUtil.createEvent(userMessage, technicalMessage, file));
+      LOG.error(userMessage, new Throwable(technicalMessage), createAttachment(file));
     }
   }
 

@@ -5,6 +5,6 @@ import com.intellij.lang.xml.XMLLanguage
 
 class VueLanguage : XMLLanguage(HTMLLanguage.INSTANCE, "Vue") {
   companion object {
-    val INSTANCE = VueLanguage()
+    val INSTANCE: VueLanguage = VueLanguage()
   }
 }

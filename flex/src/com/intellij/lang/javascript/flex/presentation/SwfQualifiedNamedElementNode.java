@@ -16,7 +16,7 @@ import java.util.Collection;
 
 public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNamedElement> {
 
-  public SwfQualifiedNamedElementNode(Project project, JSQualifiedNamedElement element, ViewSettings settings) {
+  public SwfQualifiedNamedElementNode(Project project, @NotNull JSQualifiedNamedElement element, ViewSettings settings) {
     super(project, element, settings);
   }
 
@@ -39,7 +39,7 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
   }
 
   @Override
-  protected void update(PresentationData presentation) {
+  protected void update(@NotNull PresentationData presentation) {
     final JSQualifiedNamedElement value = getValue();
     if (value != null && value.isValid()) {
       presentation.setPresentableText(value.getName());

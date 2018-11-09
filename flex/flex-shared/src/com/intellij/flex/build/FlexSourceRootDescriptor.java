@@ -6,7 +6,7 @@ import org.jetbrains.jps.builders.impl.BuildRootDescriptorImpl;
 import java.io.File;
 
 class FlexSourceRootDescriptor extends BuildRootDescriptorImpl {
-  public FlexSourceRootDescriptor(final BuildTarget target, final File root) {
+  FlexSourceRootDescriptor(final BuildTarget target, final File root) {
     super(target, root);
   }
 }

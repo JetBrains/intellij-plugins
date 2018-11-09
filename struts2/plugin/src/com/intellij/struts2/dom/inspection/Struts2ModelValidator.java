@@ -49,12 +49,13 @@ public class Struts2ModelValidator extends ValidatorBase {
           StrutsBundle.message("inspections.struts2.model.validator.progress"));
   }
 
+  @Override
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {
     final StrutsManager strutsManager = StrutsManager.getInstance(project);
     final PsiManager psiManager = PsiManager.getInstance(project);
 
     // cache validation settings per module
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, Boolean> enabledForModule =
+    final Map<Module, Boolean> enabledForModule =
       FactoryMap.create(module1 -> isEnabledForModule(module1));
 
     final Set<VirtualFile> files = new THashSet<>();

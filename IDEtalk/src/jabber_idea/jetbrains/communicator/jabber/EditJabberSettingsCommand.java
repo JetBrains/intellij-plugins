@@ -26,6 +26,7 @@ public class EditJabberSettingsCommand extends BaseJabberConnectionCommand {
     super(jabberFacade, jabberUi);
   }
 
+  @Override
   public String getName() {
     if (isConnected()) {
       return StringUtil.getMsg("EditJabberSettingsCommand.connected",
@@ -36,6 +37,7 @@ public class EditJabberSettingsCommand extends BaseJabberConnectionCommand {
     }
   }
 
+  @Override
   public void execute() {
     myJabberUi.login(myParentComponent);
   }

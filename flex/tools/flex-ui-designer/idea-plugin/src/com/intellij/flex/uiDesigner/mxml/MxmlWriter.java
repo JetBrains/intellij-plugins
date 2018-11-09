@@ -139,7 +139,6 @@ public class MxmlWriter {
     });
   }
 
-  @SuppressWarnings("StatementWithEmptyBody")
   private boolean processElements(final XmlTag tag,
                                   @Nullable final Context parentContext,
                                   final boolean allowIncludeInExcludeFrom,
@@ -444,7 +443,7 @@ public class MxmlWriter {
           break;
         }
 
-        if (propertyKind != null && propertyKind == PropertyKind.COMPLEX) {
+        if (propertyKind == PropertyKind.COMPLEX) {
           invalidValue = true;
           LOG.warn("Text is not expected" + child);
         }
@@ -583,7 +582,6 @@ public class MxmlWriter {
       }
       else {
         // IDEA-73516
-        //noinspection ConstantConditions
         injectedASWriter.putMxmlObjectReference(id, context.getMxmlObjectReference());
       }
     }

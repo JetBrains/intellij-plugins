@@ -80,7 +80,7 @@ public class TreeTableRowSorter extends TableRowSorter {
     private final Comparator<T> comparator;
     private final boolean reverse;
 
-    public ComparatorWrapper(Comparator<T> comparator, boolean reverse) {
+    ComparatorWrapper(Comparator<T> comparator, boolean reverse) {
       this.comparator = comparator;
       this.reverse = reverse;
     }

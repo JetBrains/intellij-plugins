@@ -38,14 +38,17 @@ public class ChoosePackageDialog extends DialogWrapper{
     init();
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myPackageCombo.getChildComponent();
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   protected void doOKAction() {
     final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavascriptLanguage.INSTANCE);
     final String packageName = getPackageName();

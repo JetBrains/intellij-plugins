@@ -1,0 +1,18 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Part of org.apache.tapestry.corelib.components.Grid that renders the markup inside a single data cell. GridCell is used inside a pair of loops; the outer loop for each row, the inner loop\
+        for each property of the row.
+    </description>
+
+    <parameters>
+        <parameter name="model">
+            Model for property displayed by the cell.
+        </parameter>
+        <parameter name="object">
+            Identifies the object being rendered. The component will extract a property from the object and render its value (or delegate to a org.apache.tapestry.Block that will do so).
+        </parameter>
+        <parameter name="overrides">
+            Resources used to search for block parameter overrides (this is normally the enclosing Grid component's resources).
+        </parameter>
+    </parameters>
+</element>

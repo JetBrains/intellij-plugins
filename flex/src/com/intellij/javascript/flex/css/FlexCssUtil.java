@@ -47,7 +47,7 @@ public class FlexCssUtil {
     return text != null && text.length() >= 2 && text.charAt(0) == '"' && text.charAt(text.length() - 1) == '"';
   }
 
-  public static void collectAllIncludes(PsiElement element, Set<String> result) {
+  public static void collectAllIncludes(PsiElement element, Set<? super String> result) {
     if (element instanceof JSClass) {
       for (PsiElement elt : JSResolveUtil.getStubbedChildren(element.getParent())) {
         if (elt == element) break;

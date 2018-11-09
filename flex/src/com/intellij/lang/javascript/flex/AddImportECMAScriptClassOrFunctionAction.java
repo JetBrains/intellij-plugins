@@ -62,6 +62,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     myUnambiguousTheFlyMode = unambiguousTheFlyMode;
   }
 
+  @Override
   public boolean showHint(@NotNull final Editor editor) {
     myEditor = editor;
     final PsiElement element = myReference.getElement();
@@ -70,20 +71,24 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     return true;
   }
 
+  @Override
   @NotNull
   public String getText() {
     return myText;
   }
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return getText();
   }
 
+  @Override
   public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
     invoke(project, myEditor, descriptor.getPsiElement().getContainingFile());
   }
 
+  @Override
   public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
     if (!myReference.getElement().isValid()) return false;
     final long modL = myReference.getElement().getManager().getModificationTracker().getModificationCount();
@@ -180,6 +185,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     }
   }
 
+  @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) {
     final Collection<JSQualifiedNamedElement> candidates = getCandidates(editor, file);
 
@@ -193,6 +199,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
           new JSQualifiedNamedElementRenderer(),
         JSBundle.message("choose.class.to.import.title"),
         new PsiElementProcessor<JSQualifiedNamedElement>() {
+          @Override
           public boolean execute(@NotNull final JSQualifiedNamedElement element) {
             CommandProcessor.getInstance().executeCommand(
                 project,
@@ -235,10 +242,12 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     });
   }
 
+  @Override
   public boolean startInWriteAction() {
     return false;
   }
 
+  @Override
   public boolean execute() {
     final PsiFile containingFile = myReference.getElement().getContainingFile();
     invoke(containingFile.getProject(), myEditor, containingFile);

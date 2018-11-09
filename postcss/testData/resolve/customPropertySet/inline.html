@@ -1,0 +1,13 @@
+<style type="text/postcss">
+  :root {
+    --my-name: {
+      color: blue;
+    };
+  }
+
+  .cl {
+    @apply --<caret>my-name;
+  }
+</style>
+<html>
+</html>

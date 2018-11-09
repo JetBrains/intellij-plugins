@@ -1,11 +1,10 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
-import com.intellij.ide.browsers.BrowserSpecificSettings;
-import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.ide.browsers.chrome.ChromeSettings;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
@@ -13,15 +12,12 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.Configurable.NoScroll;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
@@ -32,7 +28,6 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.flutter.FlutterUtil;
-import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -45,10 +40,12 @@ import javax.swing.event.TreeWillExpandListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
-import java.io.File;
 import java.util.*;
 
 public class DartConfigurable implements SearchableConfigurable, NoScroll {
+
+  private static final int WEBDEV_PORT_DEFAULT = 53322;
+  private static final String WEBDEV_PORT_PROPERTY_NAME = "dart.webdev.port";
 
   private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
   private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
@@ -64,10 +61,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private JBCheckBox myCheckSdkUpdateCheckBoxFake;
   private ComboBox mySdkUpdateChannelCombo;
   private JButton myCheckSdkUpdateButton;
-
-  private ComboboxWithBrowseButton myDartiumPathComboWithBrowse;
-  private JButton myDartiumSettingsButton;
-  private JBCheckBox myCheckedModeCheckBox;
+  private PortField myPortField;
 
   private JPanel myModulesPanel;
 
@@ -76,19 +70,14 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private final @NotNull Project myProject;
 
-  private boolean myInReset = false;
-
   private boolean myDartSupportEnabledInitial;
   private @Nullable DartSdk mySdkInitial;
   private final @NotNull Collection<Module> myModulesWithDartSdkLibAttachedInitial = new THashSet<>();
 
-  private @Nullable WebBrowser myDartiumInitial;
-  private ChromeSettings myDartiumSettingsCurrent;
-
   public DartConfigurable(final @NotNull Project project) {
     myProject = project;
     initEnableDartSupportCheckBox();
-    initDartSdkAndDartiumControls();
+    initDartSdkControls();
     initModulesPanel();
     myErrorLabel.setIcon(AllIcons.Actions.Lightning);
   }
@@ -101,18 +90,13 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     });
   }
 
-  private void initDartSdkAndDartiumControls() {
-    final Computable<ChromeSettings> currentDartiumSettingsRetriever = () -> myDartiumSettingsCurrent;
-
-    final Computable<Boolean> isResettingControlsComputable = () -> myInReset;
-
-    DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
-                                              currentDartiumSettingsRetriever, myDartiumSettingsButton,
-                                              isResettingControlsComputable);
+  private void initDartSdkControls() {
+    DartSdkUtil.initDartSdkControls(myProject, mySdkPathComboWithBrowse, myVersionLabel);
 
     final JTextComponent sdkEditor = (JTextComponent)mySdkPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
     sdkEditor.getDocument().addDocumentListener(new DocumentAdapter() {
-      protected void textChanged(final DocumentEvent e) {
+      @Override
+      protected void textChanged(@NotNull final DocumentEvent e) {
         final String sdkHomePath = getTextFromCombo(mySdkPathComboWithBrowse);
         if (!sdkHomePath.isEmpty()) {
           final String version = DartSdkUtil.getSdkVersion(sdkHomePath);
@@ -122,13 +106,6 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
         }
 
         updateControlsEnabledState();
-        updateErrorLabel();
-      }
-    });
-
-    final JTextComponent dartiumEditor = (JTextComponent)myDartiumPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
-    dartiumEditor.getDocument().addDocumentListener(new DocumentAdapter() {
-      protected void textChanged(final DocumentEvent e) {
         updateErrorLabel();
       }
     });
@@ -154,7 +131,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     myCheckSdkUpdateButton.addActionListener(e -> {
       final Runnable runnable = this::checkSdkUpdate;
       ApplicationManagerEx.getApplicationEx()
-        .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject, myMainPanel);
+        .runProcessWithProgressSynchronously(runnable, DartBundle.message("checking.dart.sdk.update"), true, myProject,
+                                             myMainPanel);
     });
   }
 
@@ -255,11 +233,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       if (sdkUpdateOption != DartSdkUpdateOption.getDartSdkUpdateOption()) return true;
     }
 
-    final String dartiumPath = getTextFromCombo(myDartiumPathComboWithBrowse);
-    final String dartiumPathInitial = myDartiumInitial == null ? null : myDartiumInitial.getPath();
-    if (!dartiumPath.isEmpty() && new File(dartiumPath).exists() && !dartiumPath.equals(dartiumPathInitial)) return true;
-
-    if (myDartiumInitial != null && !myDartiumSettingsCurrent.equals(myDartiumInitial.getSpecificSettings())) return true;
+    if (myPortField.getNumber() != getWebdevPort(myProject)) return true;
 
     if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final Module[] selectedModules = myModulesCheckboxTreeTable.getCheckedNodes(Module.class);
@@ -283,8 +257,6 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   @Override
   public void reset() {
-    myInReset = true;
-
     // remember initial state
     mySdkInitial = DartSdk.getDartSdk(myProject);
     myModulesWithDartSdkLibAttachedInitial.clear();
@@ -294,15 +266,6 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     }
 
     myDartSupportEnabledInitial = !myModulesWithDartSdkLibAttachedInitial.isEmpty();
-
-    myDartiumInitial = DartiumUtil.getDartiumBrowser();
-    myDartiumSettingsCurrent = new ChromeSettings();
-    if (myDartiumInitial != null) {
-      final BrowserSpecificSettings browserSpecificSettings = myDartiumInitial.getSpecificSettings();
-      if (browserSpecificSettings instanceof ChromeSettings) {
-        myDartiumSettingsCurrent = (ChromeSettings)browserSpecificSettings.clone();
-      }
-    }
 
     // reset UI
     myEnableDartSupportCheckBox.setSelected(myDartSupportEnabledInitial);
@@ -316,18 +279,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     myCheckSdkUpdateCheckBox.setSelected(sdkUpdateOption != DartSdkUpdateOption.DoNotCheck);
     mySdkUpdateChannelCombo.setSelectedItem(sdkUpdateOption);
 
-    final String dartiumInitialPath =
-      myDartiumInitial == null ? "" : FileUtilRt.toSystemDependentName(StringUtil.notNullize(myDartiumInitial.getPath()));
-    myDartiumPathComboWithBrowse.getComboBox().getEditor().setItem(dartiumInitialPath);
-    if (!dartiumInitialPath.isEmpty()) {
-      ensureComboModelContainsCurrentItem(myDartiumPathComboWithBrowse.getComboBox());
-    }
-
-    // we decided to save one line in settings and always use Dartium in checked mode
-    myCheckedModeCheckBox.setVisible(false);
-    DartiumUtil.setCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables(), true);
-    //final boolean checkedMode = myDartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
-    //myCheckedModeCheckBox.setSelected(checkedMode);
+    myPortField.setNumber(getWebdevPort(myProject));
 
     if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTreeTable.getTree().getModel().getRoot();
@@ -341,8 +293,6 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
     updateControlsEnabledState();
     updateErrorLabel();
-
-    myInReset = false;
   }
 
   private static void ensureComboModelContainsCurrentItem(@NotNull final JComboBox comboBox) {
@@ -364,8 +314,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   }
 
   @Override
-  public void apply() throws ConfigurationException {
-    // similar to DartModuleBuilder.setupSdkAndDartium()
+  public void apply() {
+    // similar to DartModuleBuilder.setupSdk()
     final Runnable runnable = () -> {
       if (myEnableDartSupportCheckBox.isSelected()) {
         final String sdkHomePath = getTextFromCombo(mySdkPathComboWithBrowse);
@@ -390,8 +340,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
           DartSdkUpdateOption.setDartSdkUpdateOption(sdkUpdateOption);
         }
 
-        final String dartiumPath = getTextFromCombo(myDartiumPathComboWithBrowse);
-        DartiumUtil.applyDartiumSettings(dartiumPath, myDartiumSettingsCurrent);
+        setWebdevPort(myProject, myPortField.getNumber());
       }
       else {
         if (myModulesWithDartSdkLibAttachedInitial.size() > 0 && mySdkInitial != null) {
@@ -409,8 +358,6 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   public void disposeUIResources() {
     mySdkInitial = null;
     myModulesWithDartSdkLibAttachedInitial.clear();
-    myDartiumInitial = null;
-    myDartiumSettingsCurrent = null;
   }
 
   private void updateControlsEnabledState() {
@@ -444,9 +391,6 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     String message = DartSdkUtil.getErrorMessageIfWrongSdkRootPath(getTextFromCombo(mySdkPathComboWithBrowse));
     if (message != null) return message;
 
-    message = DartiumUtil.getErrorMessageIfWrongDartiumPath(getTextFromCombo(myDartiumPathComboWithBrowse));
-    if (message != null) return message;
-
     if (DartSdkLibUtil.isIdeWithMultipleModuleSupport()) {
       final Module[] modules = myModulesCheckboxTreeTable.getCheckedNodes(Module.class);
       if (modules.length == 0) {
@@ -459,7 +403,6 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private void createUIComponents() {
     mySdkPathComboWithBrowse = new ComboboxWithBrowseButton(new ComboBox<>());
-    myDartiumPathComboWithBrowse = new ComboboxWithBrowseButton(new ComboBox<>());
 
     final CheckboxTree.CheckboxTreeCellRenderer checkboxTreeCellRenderer = new CheckboxTree.CheckboxTreeCellRenderer() {
       @Override
@@ -501,10 +444,10 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     //myModulesCheckboxTreeTable.setRowHeight(myModulesCheckboxTreeTable.getRowHeight() + 2);
 
     myModulesCheckboxTreeTable.getTree().addTreeWillExpandListener(new TreeWillExpandListener() {
-      public void treeWillExpand(final TreeExpansionEvent event) throws ExpandVetoException {
+      @Override
+      public void treeWillExpand(final TreeExpansionEvent event) {}
 
-      }
-
+      @Override
       public void treeWillCollapse(final TreeExpansionEvent event) throws ExpandVetoException {
         throw new ExpandVetoException(event);
       }
@@ -513,5 +456,13 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   public static void openDartSettings(@NotNull final Project project) {
     ShowSettingsUtilImpl.showSettingsDialog(project, DART_SETTINGS_PAGE_ID, "");
+  }
+
+  public static int getWebdevPort(@NotNull Project project) {
+    return PropertiesComponent.getInstance(project).getInt(WEBDEV_PORT_PROPERTY_NAME, WEBDEV_PORT_DEFAULT);
+  }
+
+  private static void setWebdevPort(@NotNull Project project, int port) {
+    PropertiesComponent.getInstance(project).setValue(WEBDEV_PORT_PROPERTY_NAME, port, WEBDEV_PORT_DEFAULT);
   }
 }

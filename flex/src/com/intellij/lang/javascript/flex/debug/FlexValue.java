@@ -477,6 +477,7 @@ class FlexValue extends XValue {
     myDebugProcess.sendCommand(command);
   }
 
+  @Override
   public boolean canNavigateToTypeSource() {
     final boolean isObject = myResult.contains(OBJECT_MARKER);
 
@@ -489,6 +490,7 @@ class FlexValue extends XValue {
     return false;
   }
 
+  @Override
   public void computeTypeSourcePosition(@NotNull final XNavigatable navigatable) {
     if (mySourcePosition == null) {
       navigatable.setSourcePosition(null);
@@ -512,6 +514,7 @@ class FlexValue extends XValue {
     navigatable.setSourcePosition(null);
   }
 
+  @Override
   public boolean canNavigateToSource() {
     return mySourcePosition != null && (myValueType == ValueType.Variable ||
                                         myValueType == ValueType.Parameter ||
@@ -729,7 +732,6 @@ class FlexValue extends XValue {
 
   private static boolean isInteger(final String s) {
     try {
-      //noinspection ResultOfMethodCallIgnored
       Integer.parseInt(s);
       return true;
     }

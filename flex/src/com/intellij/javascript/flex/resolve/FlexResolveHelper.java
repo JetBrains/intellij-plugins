@@ -43,6 +43,7 @@ import java.util.Collection;
  * @author yole
  */
 public class FlexResolveHelper implements JSResolveHelper {
+  @Override
   @Nullable
   public PsiElement findClassByQName(final String link, final Project project, final String className, final GlobalSearchScope scope) {
     final Ref<JSClass> result = new Ref<>();
@@ -78,6 +79,7 @@ public class FlexResolveHelper implements JSResolveHelper {
     return result.get();
   }
 
+  @Override
   public boolean importClass(final PsiScopeProcessor processor, final PsiNamedElement file) {
     if (file instanceof JSFunction) return true;    // there is no need to process package stuff at function level
 
@@ -94,9 +96,11 @@ public class FlexResolveHelper implements JSResolveHelper {
     final MxmlAndFxgFilesProcessor filesProcessor = new MxmlAndFxgFilesProcessor() {
       final PsiManager manager = PsiManager.getInstance(project);
 
+      @Override
       public void addDependency(final PsiDirectory directory) {
       }
 
+      @Override
       public boolean processFile(final VirtualFile file, final VirtualFile root) {
         final PsiFile xmlFile = manager.findFile(file);
         if (!(xmlFile instanceof XmlFile)) return true;
@@ -118,6 +122,7 @@ public class FlexResolveHelper implements JSResolveHelper {
     }
   }
 
+  @Override
   public boolean processPackage(String packageQualifierText, String resolvedName, Processor<VirtualFile> processor, GlobalSearchScope globalSearchScope,
                                 Project project) {
     for(VirtualFile vfile: DirectoryIndex.getInstance(project).getDirectoriesByPackageName(packageQualifierText, globalSearchScope.isSearchInLibraries())) {
@@ -148,6 +153,7 @@ public class FlexResolveHelper implements JSResolveHelper {
     return true;
   }
 
+  @Override
   public boolean isAdequatePlaceForImport(final PsiElement place) {
     return place instanceof CssString;
   }

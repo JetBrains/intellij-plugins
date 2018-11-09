@@ -25,6 +25,7 @@ import org.jetbrains.plugins.ruby.motion.bridgesupport.Function;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.InheritanceInfoHolder;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.*;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.SingletonClassSymbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.SymbolPsiProcessor;
 
 import java.util.Collections;
@@ -35,10 +36,10 @@ import java.util.List;
  */
 public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
   @NotNull private final Module myModule;
-  @NotNull private final List<Class> myClasses;
+  @NotNull private final List<? extends Class> myClasses;
 
   public MotionClassSymbol(@NotNull Module module,
-                           @NotNull List<Class> classes) {
+                           @NotNull List<? extends Class> classes) {
     super(module.getProject(), classes.get(0).getName(), Type.CLASS, null);
     myModule = module;
     myClasses = classes;
@@ -111,5 +112,28 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
   @Override
   public Module getModule() {
     return myModule;
+  }
+
+  @Nullable
+  @Override
+  public Symbol getSingletonClassSymbol() {
+    return new MySingleton(this);
+  }
+
+  @Override
+  public boolean isSynthetic() {
+    return true;
+  }
+
+  private static class MySingleton extends SingletonClassSymbol {
+
+    MySingleton(@NotNull Symbol parent) {
+      super(parent, null);
+    }
+
+    @Override
+    public boolean processChildrenInner(SymbolPsiProcessor processor, PsiElement invocationPoint) {
+      return getParentSymbol().getChildren().processChildren(processor, invocationPoint);
+    }
   }
 }

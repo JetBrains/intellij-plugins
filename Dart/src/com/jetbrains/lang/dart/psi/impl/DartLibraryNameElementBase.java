@@ -46,6 +46,7 @@ public abstract class DartLibraryNameElementBase extends DartPsiCompositeElement
     return name.toString();
   }
 
+  @Override
   @Nullable
   public ItemPresentation getPresentation() {
     return new ItemPresentation() {

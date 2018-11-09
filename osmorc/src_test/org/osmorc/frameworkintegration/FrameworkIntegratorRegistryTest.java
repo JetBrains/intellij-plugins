@@ -37,13 +37,12 @@ public class FrameworkIntegratorRegistryTest extends LightOsgiFixtureTestCase {
   public void testRegistry() {
     FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
 
-    FrameworkIntegrator[] integrators = registry.getFrameworkIntegrators();
-    for (FrameworkIntegrator integrator : integrators) {
+    for (FrameworkIntegrator integrator : registry.getFrameworkIntegrators()) {
       assertThat(registry.findIntegratorByName(integrator.getDisplayName()), sameInstance(integrator));
     }
 
     FrameworkInstanceDefinition instanceDefinition = new FrameworkInstanceDefinition();
-    instanceDefinition.setFrameworkIntegratorName(integrators[1].getDisplayName());
-    assertThat(registry.findIntegratorByInstanceDefinition(instanceDefinition), sameInstance(integrators[1]));
+    instanceDefinition.setFrameworkIntegratorName(registry.getFrameworkIntegrators().get(1).getDisplayName());
+    assertThat(registry.findIntegratorByInstanceDefinition(instanceDefinition), sameInstance(registry.getFrameworkIntegrators().get(1)));
   }
 }

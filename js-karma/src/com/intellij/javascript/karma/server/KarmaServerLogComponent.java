@@ -5,16 +5,14 @@ import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.NopProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.runners.ExecutionUtil;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
-import com.intellij.javascript.karma.execution.KarmaServerSettings;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
-import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
-import com.intellij.lang.javascript.ConsoleCommandLineFolder;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
@@ -26,11 +24,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithActions;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
-import com.intellij.util.PathUtil;
+import com.intellij.util.ui.EmptyIcon;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,10 +112,11 @@ public class KarmaServerLogComponent implements ComponentWithActions {
                               @NotNull RunnerLayoutUi ui) {
     ConsoleView console = createConsole(project);
     KarmaServerLogComponent component = new KarmaServerLogComponent(console, server);
+    Icon emptyIcon = EmptyIcon.create(JBUI.scale(4));
     final Content content = ui.createContent(KARMA_SERVER_CONTENT_ID,
                                              component,
                                              "Karma Server",
-                                             null,
+                                             ExecutionUtil.getLiveIndicator(emptyIcon),
                                              console.getPreferredFocusableComponent());
     content.setCloseable(false);
     ui.addContent(content, 4, PlaceInGrid.bottom, false);
@@ -128,6 +127,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       @Override
       public void onTerminated(int exitCode) {
         wrapperProcessHandler.destroyProcess();
+        content.setIcon(emptyIcon);
       }
     };
     server.onTerminated(terminationCallback);
@@ -155,13 +155,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
   }
 
   private void foldCommandLine() {
-    ConsoleCommandLineFolder folder = new ConsoleCommandLineFolder("karma", "start");
-    KarmaServerSettings serverSettings = myServer.getServerSettings();
-    folder.addPlaceholderText("--config=" + PathUtil.getFileName(serverSettings.getConfigurationFilePath()));
-    if (!StringUtil.isEmptyOrSpaces(serverSettings.getBrowsers())) {
-      folder.addPlaceholderText("--browsers=" + serverSettings.getBrowsers());
-    }
-    folder.foldCommandLine(myConsole, myServer.getProcessHandler());
+    myServer.getCommandLineFolder().foldCommandLine(myConsole, myServer.getProcessHandler());
   }
 
   private void registerPrintingBrowserCapturingSuggestion() {

@@ -15,7 +15,9 @@ package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.CopyProvider;
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.ide.CopyPasteManager;
@@ -31,10 +33,17 @@ import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
+import com.intellij.util.OpenSourceUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
+import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
+import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -136,8 +145,46 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
     group.add(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
 
+    addQuickFixActions(group);
+
     final ActionPopupMenu menu = ActionManager.getInstance().createActionPopupMenu(ActionPlaces.TOOLBAR, group);
     menu.getComponent().show(component, x, y);
+  }
+
+  private void addQuickFixActions(@NotNull final DefaultActionGroup group) {
+    final List<DartProblem> selectedProblems = myTable.getSelectedObjects();
+    final DartProblem selectedProblem = selectedProblems.size() == 1 ? selectedProblems.get(0) : null;
+    final VirtualFile selectedVFile = selectedProblem != null ? selectedProblem.getFile() : null;
+    if (selectedVFile == null) return;
+
+    final List<SourceChange> selectedProblemSourceChangeFixes = new SmartList<>();
+    DartAnalysisServerService.getInstance(myProject)
+                             .askForFixesAndWaitABitIfReceivedQuickly(selectedVFile, selectedProblem.getOffset(), fixes -> {
+                               for (AnalysisErrorFixes fix : fixes) {
+                                 if (fix.getError().getCode().equals(selectedProblem.getCode())) {
+                                   selectedProblemSourceChangeFixes.addAll(fix.getFixes());
+                                 }
+                               }
+                             });
+
+    if (selectedProblemSourceChangeFixes.isEmpty()) return;
+
+    group.addSeparator();
+
+    for (final SourceChange sourceChangeFix : selectedProblemSourceChangeFixes) {
+      if (sourceChangeFix == null) continue;
+      group.add(new AnAction(sourceChangeFix.getMessage(), null, AllIcons.Actions.QuickfixBulb) {
+        @Override
+        public void actionPerformed(@NotNull final AnActionEvent event) {
+          OpenSourceUtil.navigate(PsiNavigationSupport.getInstance().createNavigatable(myProject, selectedVFile,
+                                                                                       selectedProblem.getOffset()));
+          try {
+            WriteAction.run(() -> AssistUtils.applySourceChange(myProject, sourceChangeFix, true));
+          }
+          catch (DartSourceEditException ignored) {/**/}
+        }
+      });
+    }
   }
 
   @NotNull
@@ -199,12 +246,12 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
                                              DartBundle.message("group.by.severity.description"),
                                              AllIcons.Nodes.SortBySeverity) {
       @Override
-      public boolean isSelected(AnActionEvent e) {
+      public boolean isSelected(@NotNull AnActionEvent e) {
         return myPresentationHelper.isGroupBySeverity();
       }
 
       @Override
-      public void setSelected(AnActionEvent e, boolean groupBySeverity) {
+      public void setSelected(@NotNull AnActionEvent e, boolean groupBySeverity) {
         myPresentationHelper.setGroupBySeverity(groupBySeverity);
         fireGroupingOrFilterChanged();
       }
@@ -242,12 +289,12 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     final Point tableTopLeft = new Point(myTable.getLocationOnScreen().x + visibleRect.x, myTable.getLocationOnScreen().y + visibleRect.y);
 
     JBPopupFactory.getInstance()
-      .createComponentPopupBuilder(form.getMainPanel(), form.getMainPanel())
-      .setProject(myProject)
-      .setTitle("Dart Problems Filter")
-      .setMovable(true)
-      .setRequestFocus(true)
-      .createPopup().show(RelativePoint.fromScreen(tableTopLeft));
+                  .createComponentPopupBuilder(form.getMainPanel(), form.getMainPanel())
+                  .setProject(myProject)
+                  .setTitle("Dart Problems Filter")
+                  .setMovable(true)
+                  .setRequestFocus(true)
+                  .createPopup().show(RelativePoint.fromScreen(tableTopLeft));
   }
 
   @Override
@@ -277,7 +324,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
 
   @Nullable
   @Override
-  public Object getData(@NonNls String dataId) {
+  public Object getData(@NotNull @NonNls String dataId) {
     if (PlatformDataKeys.COPY_PROVIDER.is(dataId)) {
       return this;
     }
@@ -333,18 +380,18 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   }
 
   private class FilterProblemsAction extends DumbAwareAction implements Toggleable {
-    public FilterProblemsAction() {
+    FilterProblemsAction() {
       super(DartBundle.message("filter.problems"), DartBundle.message("filter.problems.description"), AllIcons.General.Filter);
     }
 
     @Override
-    public void update(final AnActionEvent e) {
+    public void update(@NotNull final AnActionEvent e) {
       // show icon as toggled on if any filter is active
       e.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, myPresentationHelper.areFiltersApplied());
     }
 
     @Override
-    public void actionPerformed(final AnActionEvent e) {
+    public void actionPerformed(@NotNull final AnActionEvent e) {
       showFiltersPopup();
     }
   }

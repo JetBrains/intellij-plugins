@@ -13,17 +13,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitClassVisibilityInspection extends FlexUnitClassInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.testclassvisibility.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitClassVisibilityInspection";
   }
 
+  @Override
   protected void visitPotentialTestClass(@NotNull JSClass aClass, @NotNull ProblemsHolder holder, FlexUnitSupport support) {
     if (aClass.getAttributeList() == null || aClass.getAttributeList().getAccessType() != JSAttributeList.AccessType.PUBLIC) {
       final ASTNode nameIdentifier = aClass.findNameIdentifier();

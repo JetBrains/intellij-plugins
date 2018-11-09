@@ -15,7 +15,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -63,6 +62,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
     myFlexConfigInformer = flexConfigInformer;
   }
 
+  @Override
   public void perform(final Project project,
                       final MavenEmbeddersManager embeddersManager,
                       final MavenConsole console,
@@ -72,6 +72,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
     indicator.setText(FlexBundle.message("generating.flex.config.for", myMavenProject.getDisplayName()));
 
     final MavenProjectsTree.EmbedderTask task = new MavenProjectsTree.EmbedderTask() {
+      @Override
       public void run(MavenEmbedderWrapper embedder) throws MavenProcessCanceledException {
         List<VirtualFile> temporaryFiles = null;
         final IgnoredFileBean[] filesToIgnoreOriginal = ChangeListManager.getInstance(project).getFilesToIgnore();
@@ -189,7 +190,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       final String mainClassPath = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><file-specs><path-element>");
       final VirtualFile mainClassFile = mainClassPath == null ? null : LocalFileSystem.getInstance().findFileByPath(mainClassPath);
       if (mainClassFile == null || mainClassFile.isDirectory()) return;
-      
+
       final VirtualFile sourceRoot = ProjectRootManager.getInstance(module.getProject()).getFileIndex().getSourceRootForFile(mainClassFile);
       final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(mainClassFile, sourceRoot, '/');
       final String mainClass = relativePath == null

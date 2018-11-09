@@ -34,14 +34,17 @@ public abstract class GherkinPsiElementBase extends ASTWrapperPsiElement impleme
   @Override
   public ItemPresentation getPresentation() {
     return new ItemPresentation() {
+      @Override
       public String getPresentableText() {
         return GherkinPsiElementBase.this.getPresentableText();
       }
 
+      @Override
       public String getLocationString() {
         return null;
       }
 
+      @Override
       public Icon getIcon(final boolean open) {
         return GherkinPsiElementBase.this.getIcon(Iconable.ICON_FLAG_VISIBILITY);
       }

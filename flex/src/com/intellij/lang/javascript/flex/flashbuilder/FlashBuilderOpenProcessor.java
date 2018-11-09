@@ -20,6 +20,7 @@ public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBui
     super(builder);
   }
 
+  @Override
   public String[] getSupportedExtensions() {
     // This method is called from:
     // 1. OpenProjectAction#action (to make label text): we don't want *.zip to appear in label.
@@ -28,12 +29,14 @@ public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBui
     return new String[]{FlashBuilderImporter.DOT_PROJECT, "*" + FlashBuilderImporter.DOT_FXP, "*" + FlashBuilderImporter.DOT_FXPL};
   }
 
+  @Override
   @Nullable
   public Icon getIcon(final VirtualFile file) {
     if ("zip".equalsIgnoreCase(file.getExtension())) return null; // standard icon is better for zip, it is not Flash Builder specific extension
     return super.getIcon(file);
   }
 
+  @Override
   public boolean canOpenProject(final VirtualFile file) {
     // do not look inside archives here - it may be too expensive, fail later if not a suitable archieve
     return file.isDirectory()
@@ -41,6 +44,7 @@ public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBui
            : FlashBuilderProjectFinder.isFlashBuilderProject(file) || FlashBuilderProjectFinder.hasArchiveExtension(file.getPath());
   }
 
+  @Override
   protected boolean doQuickImport(final VirtualFile file, final WizardContext wizardContext) {
     assert !file.isDirectory() : file.getPath();
     final String title = FlexBundle.message("open.project.0", file.getName());

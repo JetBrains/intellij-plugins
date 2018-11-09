@@ -1,0 +1,47 @@
+@supports (display: table-cell) and (display: list-item) {
+  h1 {
+    <warning descr="Nested ruleset selector should start with '&'">div</warning> {
+      color: white;
+    }
+
+    @nest <warning descr="Nested ruleset selector should contain '&'">div</warning> {
+      color: white;
+    }
+
+    & div {
+      color: red;
+    }
+
+    @nest div & {
+      color: red;
+    }
+
+    <warning descr="Nested ruleset selector should start with '@nest'">div &</warning> {
+      color: red;
+    }
+  }
+}
+
+div {
+  @media screen {
+    @supports (display: table-cell) and (display: list-item) {
+      <warning descr="Nested ruleset selector should start with '&'">h1</warning> {
+        <warning descr="Nested ruleset selector should start with '&'">div</warning> {
+          color: white;
+        }
+
+        @nest <warning descr="Nested ruleset selector should contain '&'">div</warning> {
+          color: white;
+        }
+
+        & div {
+          color: red;
+        }
+
+        @nest div & {
+          color: red;
+        }
+      }
+    }
+  }
+}

@@ -17,6 +17,9 @@ package com.intellij.struts2.facet;
 
 import com.intellij.framework.library.DownloadableLibraryType;
 import icons.Struts2Icons;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /**
  * Support for Struts 2 library setup in project settings.
@@ -30,7 +33,13 @@ public class Struts2LibraryType extends DownloadableLibraryType {
   private static final String GROUP_ID = "struts2";
 
   public Struts2LibraryType() {
-    super("Struts 2", "struts2", GROUP_ID, Struts2Icons.Action, Struts2LibraryType.class.getResource("struts2.xml"));
+    super("Struts 2", "struts2", GROUP_ID, Struts2LibraryType.class.getResource("struts2.xml"));
+  }
+
+  @NotNull
+  @Override
+  public Icon getLibraryTypeIcon() {
+    return Struts2Icons.Action;
   }
 
   @Override

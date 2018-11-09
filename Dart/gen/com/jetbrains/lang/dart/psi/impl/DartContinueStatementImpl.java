@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartContinueStatementImpl extends DartPsiCompositeElementImpl implements DartContinueStatement {
 
-  public DartContinueStatementImpl(ASTNode node) {
+  public DartContinueStatementImpl(@NotNull ASTNode node) {
     super(node);
   }
 

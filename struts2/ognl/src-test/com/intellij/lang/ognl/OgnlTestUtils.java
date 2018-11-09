@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2018 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,10 +15,15 @@
 
 package com.intellij.lang.ognl;
 
+import org.jetbrains.annotations.NonNls;
+
 /**
  * @author Yann C&eacute;bron
  */
 public final class OgnlTestUtils {
+
+  @NonNls
+  public static final String OGNL_TEST_DATA = "/contrib/struts2/ognl/testData";
 
   private OgnlTestUtils() {
   }

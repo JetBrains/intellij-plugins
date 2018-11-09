@@ -20,7 +20,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('`')
         PsiElement(CLOSING_QUOTE)('"')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
@@ -45,7 +45,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('`')
         PsiElement(CLOSING_QUOTE)(''')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
@@ -70,7 +70,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('`')
         PsiElement(CLOSING_QUOTE)('"""')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
@@ -95,7 +95,7 @@ Dart File
         PsiElement(REGULAR_STRING_PART)('`')
         PsiElement(CLOSING_QUOTE)(''''')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
@@ -117,7 +117,7 @@ Dart File
         PsiWhiteSpace(' ')
         PsiElement(RAW_SINGLE_QUOTED_STRING)('r"`"')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
@@ -139,7 +139,7 @@ Dart File
         PsiWhiteSpace(' ')
         PsiElement(RAW_SINGLE_QUOTED_STRING)('r'`'')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
@@ -161,7 +161,7 @@ Dart File
         PsiWhiteSpace(' ')
         PsiElement(RAW_TRIPLE_QUOTED_STRING)('r"""`"""')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
@@ -183,7 +183,7 @@ Dart File
         PsiWhiteSpace(' ')
         PsiElement(RAW_TRIPLE_QUOTED_STRING)('r'''`'''')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
@@ -245,18 +245,18 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('a')
               JsonFile: JsonWithComment.dart
-                PsiErrorElement:<value> expected, unexpected end of file
+                PsiErrorElement:<value> expected
                   <empty list>
             JsonFile: JsonWithComment.dart
-              PsiErrorElement:<value> expected, unexpected end of file
+              PsiErrorElement:<value> expected
                 <empty list>
           JsonFile: JsonWithComment.dart
-            PsiErrorElement:<value> expected, unexpected end of file
+            PsiErrorElement:<value> expected
               <empty list>
         PsiElement(REGULAR_STRING_PART)(' b')
         PsiElement(CLOSING_QUOTE)('"')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')
@@ -281,17 +281,17 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('a')
               JsonFile: JsonWithComment.dart
-                PsiErrorElement:<value> expected, unexpected end of file
+                PsiErrorElement:<value> expected
                   <empty list>
             JsonFile: JsonWithComment.dart
-              PsiErrorElement:<value> expected, unexpected end of file
+              PsiErrorElement:<value> expected
                 <empty list>
           JsonFile: JsonWithComment.dart
-            PsiErrorElement:<value> expected, unexpected end of file
+            PsiErrorElement:<value> expected
               <empty list>
         PsiElement(CLOSING_QUOTE)('"')
         JsonFile: JsonWithComment.dart
-          PsiErrorElement:<value> expected, unexpected end of file
+          PsiErrorElement:<value> expected
             <empty list>
   PsiElement(;)(';')
   PsiWhiteSpace('\n')

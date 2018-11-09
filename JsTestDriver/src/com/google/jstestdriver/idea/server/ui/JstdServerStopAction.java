@@ -5,6 +5,7 @@ import com.google.jstestdriver.idea.server.JstdServerRegistry;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class JstdServerStopAction extends AnAction {
 
@@ -13,13 +14,13 @@ public class JstdServerStopAction extends AnAction {
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     e.getPresentation().setEnabled(server != null && server.isProcessRunning());
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null) {
       server.shutdownAsync();

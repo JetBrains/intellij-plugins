@@ -1,0 +1,5 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij.copyright">
+    <updater filetype="PostCSS" implementationClass="com.intellij.psi.css.UpdateCssCopyrightsProvider"/>
+  </extensions>
+</idea-plugin>

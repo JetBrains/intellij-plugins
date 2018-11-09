@@ -37,7 +37,7 @@ public class HbCommentActionTest extends HbActionHandlerTest {
       "{{/foo}}",
 
       "{{#foo}}\n" +
-      "    <!--{{bar}}-->\n" +
+      "<!--    {{bar}}-->\n" +
       "<caret>{{/foo}}"
     );
   }
@@ -130,7 +130,7 @@ public class HbCommentActionTest extends HbActionHandlerTest {
       "{{/foo}}",
 
       "{{#foo}}\n" +
-      "    {{!--{{bar}}--}}\n" +
+      "{{    !--{{bar}}--}}\n" +
       "<caret>{{/foo}}"
     );
 

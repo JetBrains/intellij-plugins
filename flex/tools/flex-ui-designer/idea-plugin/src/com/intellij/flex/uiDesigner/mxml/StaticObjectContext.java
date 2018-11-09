@@ -6,7 +6,7 @@ class StaticObjectContext extends Context {
   private int referencePosition;
   private final PrimitiveAmfOutputStream out;
 
-  public StaticObjectContext(int referencePosition, PrimitiveAmfOutputStream out, int suggestedId, Scope parentScope) {
+  StaticObjectContext(int referencePosition, PrimitiveAmfOutputStream out, int suggestedId, Scope parentScope) {
     this(referencePosition, out, parentScope);
     if (suggestedId != -1) {
       id = suggestedId;
@@ -14,7 +14,7 @@ class StaticObjectContext extends Context {
     }
   }
 
-  public StaticObjectContext(int referencePosition, PrimitiveAmfOutputStream out, Scope parentScope) {
+  StaticObjectContext(int referencePosition, PrimitiveAmfOutputStream out, Scope parentScope) {
     super(parentScope);
     this.referencePosition = referencePosition;
     this.out = out;

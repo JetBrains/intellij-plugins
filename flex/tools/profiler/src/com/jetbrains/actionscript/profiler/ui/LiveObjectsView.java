@@ -10,16 +10,15 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbServiceImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectAndLibrariesScope;
+import com.intellij.psi.search.ProjectScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.scope.ProjectFilesScope;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SpeedSearchComparator;
 import com.intellij.ui.TreeTableSpeedSearch;
-import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.jetbrains.actionscript.profiler.ProfilerBundle;
@@ -29,9 +28,7 @@ import com.jetbrains.actionscript.profiler.livetable.SizeInfoNode;
 import com.jetbrains.actionscript.profiler.model.ProfileData;
 import com.jetbrains.actionscript.profiler.model.ProfilingManager;
 import com.jetbrains.actionscript.profiler.render.SizeInfoCellRenderer;
-import com.jetbrains.actionscript.profiler.sampler.FrameInfo;
 import com.jetbrains.actionscript.profiler.sampler.SampleLocationResolver;
-import com.jetbrains.actionscript.profiler.util.AllSearchScope;
 import com.jetbrains.actionscript.profiler.util.ResolveUtil;
 import com.jetbrains.profiler.ProfileView;
 import org.jetbrains.annotations.NotNull;
@@ -162,7 +159,7 @@ public class LiveObjectsView extends ProfileView implements Disposable {
 
     final ComboBoxModel model = filterScope.getComboBox().getModel();
     if (model instanceof DefaultComboBoxModel) {
-      ((DefaultComboBoxModel)model).insertElementAt(new ScopeDescriptor(new AllSearchScope(getProject())), 0);
+      ((DefaultComboBoxModel)model).insertElementAt(new ScopeDescriptor(ProjectScope.getEverythingScope(getProject())), 0);
     }
   }
 

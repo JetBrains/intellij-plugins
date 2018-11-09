@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartVarAccessDeclarationImpl extends AbstractDartComponentImpl implements DartVarAccessDeclaration {
 
-  public DartVarAccessDeclarationImpl(ASTNode node) {
+  public DartVarAccessDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 

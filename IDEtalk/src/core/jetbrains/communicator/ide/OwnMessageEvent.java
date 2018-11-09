@@ -42,6 +42,7 @@ public abstract class OwnMessageEvent implements IDEtalkEvent {
     return myTargetUser;
   }
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitOwnMessageEvent(this);
   }

@@ -88,6 +88,7 @@ public class FlexExtractInterfaceDialog extends FlexExtractSuperBaseDialog {
            : RefactoringBundle.message(mySourceClass.isInterface() ? "package.for.original.interface" : "package.for.original.class");
   }
 
+  @NotNull
   @Override
   protected String getEntityName() {
     return RefactoringBundle.message("extractSuperInterface.interface");
@@ -95,7 +96,7 @@ public class FlexExtractInterfaceDialog extends FlexExtractSuperBaseDialog {
 
 
   private class MyMemberInfoModel extends JSUsesAndInterfacesDependencyMemberInfoModel {
-    public MyMemberInfoModel(JSClass aClass) {
+    MyMemberInfoModel(JSClass aClass) {
       super(aClass, null, false, JSInterfaceContainmentVerifier.create(myMemberInfos));
     }
 

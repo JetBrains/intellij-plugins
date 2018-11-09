@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlashUmlEdgeCreationPolicy extends DiagramEdgeCreationPolicy<Object> {
 
+  @Override
   public boolean acceptSource(@NotNull final DiagramNode<Object> source) {
     if (!(source.getIdentifyingElement() instanceof JSClass)) return false;
     final JSClass clazz = (JSClass)source.getIdentifyingElement();
@@ -18,6 +19,7 @@ public class FlashUmlEdgeCreationPolicy extends DiagramEdgeCreationPolicy<Object
     return true;
   }
 
+  @Override
   public boolean acceptTarget(@NotNull final DiagramNode<Object> target) {
     if (!(target.getIdentifyingElement() instanceof JSClass)) return false;
     final JSClass clazz = (JSClass)target.getIdentifyingElement();

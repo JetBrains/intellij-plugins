@@ -1,7 +1,8 @@
 package com.intellij.lang.javascript.linter.tslint;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
-import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterAnnotationResult;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
@@ -11,18 +12,14 @@ import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLinterInput;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -36,9 +33,7 @@ import java.util.stream.Collectors;
 public class TsLintHighlightingTest extends LinterHighlightingTest {
   @Override
   protected String getBasePath() {
-    final String homePath = isCommunity() ? PlatformTestUtil.getCommunityPath() : PathManager.getHomePath();
-    final String path = TsLintTestUtil.BASE_TEST_DATA_PATH + "/highlighting/";
-    return File.separator + FileUtil.getRelativePath(new File(homePath), new File(path));
+    return TsLintTestUtil.getTestDataRelativePath() + "/highlighting/";
   }
 
   @NotNull
@@ -102,30 +97,49 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testLineSeparatorsWin() {
-    if (!SystemInfo.isWindows) return;
     doTest("lineSeparators", "lineSeparators/data.ts", LineSeparator.CRLF);
   }
 
   public void testTimeout() {
-    JSLanguageServiceUtil.TEST_TIMEOUT_MILLIS = 1;
-    try {
-      myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceQueueImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
-      doTest("clean", "clean/clean.ts", null);
-    } finally {
-      JSLanguageServiceUtil.TEST_TIMEOUT_MILLIS = JSLanguageServiceUtil.TIMEOUT_MILLS;
-    }
+    JSLanguageServiceUtil.setTimeout(1, getTestRootDisposable());
+    myExpectedGlobalAnnotation =
+      new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceQueueImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
+    doTest("clean", "clean/clean.ts", null);
   }
 
-  public void testFix() {
-    doTest("fix", "fix/fix.ts", null);
-    myFixture.launchAction(JSTestUtils.getSingleQuickFix(myFixture, "TSLint: Fix current file"));
-    myFixture.checkResultByFile("fix/fix_after.ts");
+  public void testFixFile() {
+    doFixTest("fix", "TSLint: Fix current file");
   }
 
-  public void testAllRulesAreInConfig() throws Exception {
+  public void testFixSingleError() {
+    doFixTest("fix", "TSLint: Fix 'quotemark'");
+  }
+
+  public void testFixArrowReturnShorthand() {
+    doFixTest("main", "TSLint: Fix 'arrow-return-shorthand'");
+  }
+
+  public void testSuppressRuleForLine() {
+    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "'quotemark'"));
+  }
+
+  public void testSuppressRuleForLineAddsToExistingComment() {
+    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "'quotemark'"));
+  }
+
+  public void testSuppressRuleForFileAddsToExistingComment() {
+    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.file.description", "'quotemark'"));
+  }
+
+  public void testSuppressAllRulesForLine() {
+    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
+  }
+
+  public void _testAllRulesAreInConfig() throws Exception {
     myFixture.configureByFile(getTestName(true) + "/tslint.json");
     final Set<String> fromConfig =
-      Arrays.stream(myFixture.completeBasic()).map(lookup -> StringUtil.unquoteString(lookup.getLookupString())).collect(Collectors.toSet());
+      Arrays.stream(myFixture.completeBasic()).map(lookup -> StringUtil.unquoteString(lookup.getLookupString()))
+        .collect(Collectors.toSet());
 
     final Path rulesDir = myNodeLinterPackageTestPaths.getPackagePath().resolve("lib").resolve("rules");
     Assert.assertTrue(Files.exists(rulesDir));
@@ -136,8 +150,12 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < name.length(); i++) {
           final char ch = name.charAt(i);
-          if (Character.isUpperCase(ch)) sb.append("-").append(Character.toLowerCase(ch));
-          else sb.append(ch);
+          if (Character.isUpperCase(ch)) {
+            sb.append("-").append(Character.toLowerCase(ch));
+          }
+          else {
+            sb.append(ch);
+          }
         }
         return sb.toString();
       })
@@ -151,6 +169,15 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     }
   }
 
+  private void doFixTest(String mainFileName, String intentionDescription) {
+    String testDir = getTestName(true);
+    doTest(testDir, testDir + "/" + mainFileName + ".ts", null);
+    IntentionAction intention = myFixture.getAvailableIntention(intentionDescription);
+    assertNotNull(String.format("Expected intention with description %s to be available", intentionDescription), intention);
+    myFixture.launchAction(intention);
+    myFixture.checkResultByFile(testDir + "/" + mainFileName + "_after.ts");
+  }
+
   private void doTest(@NotNull String directoryToCopy, @NotNull String filePathToTest,
                       LineSeparator lineSeparator) {
     myFixture.copyDirectoryToProject(directoryToCopy, "");
@@ -158,7 +185,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     if (lineSeparator != null) {
       ensureLineSeparators(fileToHighlight.getVirtualFile(), lineSeparator.getSeparatorString());
     }
-    
+
     VirtualFile configVirtualFile = TslintUtil.lookupConfig(fileToHighlight.getVirtualFile());
     Assert.assertNotNull("Could not find config file", configVirtualFile);
     final TsLintConfiguration configuration = TsLintConfiguration.getInstance(getProject());

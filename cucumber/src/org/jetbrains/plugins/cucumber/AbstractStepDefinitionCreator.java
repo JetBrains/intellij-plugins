@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractStepDefinitionCreator implements StepDefinitionCreator {
+  @Override
   @NotNull
   public String getStepDefinitionFilePath(@NotNull final PsiFile psiFile) {
     final VirtualFile file = psiFile.getVirtualFile();

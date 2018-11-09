@@ -21,11 +21,13 @@ public class FlexColorReference extends BasicAttributeValueReference {
     super(element, range);
   }
 
+  @Override
   @Nullable
    public PsiElement resolve() {
      return myElement;
    }
 
+   @Override
    @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod"})
    @NotNull
    public Object[] getVariants() {
@@ -48,6 +50,7 @@ public class FlexColorReference extends BasicAttributeValueReference {
      return ourValues;
    }
 
+   @Override
    public boolean isSoft() {
      return true;
    }

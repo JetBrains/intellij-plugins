@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartMultiplicativeOperatorImpl extends DartPsiCompositeElementImpl implements DartMultiplicativeOperator {
 
-  public DartMultiplicativeOperatorImpl(ASTNode node) {
+  public DartMultiplicativeOperatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 

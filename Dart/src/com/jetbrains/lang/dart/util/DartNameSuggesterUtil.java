@@ -17,6 +17,7 @@ public class DartNameSuggesterUtil {
   private DartNameSuggesterUtil() {
   }
 
+  @NotNull
   private static String deleteNonLetterFromString(@NotNull final String string) {
     Pattern pattern = Pattern.compile("[^a-zA-Z_]+");
     Matcher matcher = pattern.matcher(string);
@@ -76,8 +77,8 @@ public class DartNameSuggesterUtil {
     if (name.startsWith("get")) {
       name = name.substring(3);
     }
-    else if (name.startsWith("is")) {
-      name = name.substring(2);
+    else {
+      name = StringUtil.trimStart(name, "is");
     }
     while (name.startsWith("_")) {
       name = name.substring(1);

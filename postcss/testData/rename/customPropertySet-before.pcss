@@ -1,0 +1,13 @@
+:root {
+  --test:{
+    font-size: 20px;
+  };
+  --my-name: {
+    color: blue;
+    @apply --te<caret>st;
+  };
+}
+
+.cl {
+  @apply --test;
+}

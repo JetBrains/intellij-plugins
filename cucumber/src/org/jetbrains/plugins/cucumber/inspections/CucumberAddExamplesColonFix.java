@@ -12,12 +12,14 @@ import org.jetbrains.plugins.cucumber.psi.GherkinElementFactory;
  */
 public class CucumberAddExamplesColonFix implements LocalQuickFix {
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return "Add missing ':' after examples keyword";
   }
 
 
+  @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
     final PsiElement examples = descriptor.getPsiElement();
     final PsiElement[] elements = GherkinElementFactory.getTopLevelElements(project, ":");

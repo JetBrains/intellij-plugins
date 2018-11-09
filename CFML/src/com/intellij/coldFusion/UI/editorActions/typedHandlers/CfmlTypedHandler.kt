@@ -43,8 +43,6 @@ import com.intellij.psi.xml.XmlTokenType
 import com.intellij.util.SystemProperties
 
 class CfmlTypedHandler : TypedHandlerDelegate() {
-
-
   override fun checkAutoPopup(charTyped: Char, project: Project, editor: Editor, file: PsiFile): Result {
     val cfmlFile = file.viewProvider.getPsi(CfmlLanguage.INSTANCE) ?: return Result.CONTINUE
 
@@ -130,7 +128,7 @@ class CfmlTypedHandler : TypedHandlerDelegate() {
 
   companion object {
 
-    val ourEnableDoublePoundInsertion = SystemProperties.getBooleanProperty("idea.cfml.insert.pair.pound", true)
+    val ourEnableDoublePoundInsertion: Boolean = SystemProperties.getBooleanProperty("idea.cfml.insert.pair.pound", true)
 
     fun insertCloseTagIfNeeded(editor: Editor, file: PsiFile, project: Project): Boolean {
       val document = editor.document

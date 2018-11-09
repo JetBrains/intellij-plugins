@@ -9,6 +9,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
  * @author yole
  */
 public class CucumberCreateStepFix extends CucumberCreateStepFixBase implements HighPriorityAction {
+  @Override
   @NotNull
   public String getName() {
     return CucumberBundle.message("cucumber.create.step.title");

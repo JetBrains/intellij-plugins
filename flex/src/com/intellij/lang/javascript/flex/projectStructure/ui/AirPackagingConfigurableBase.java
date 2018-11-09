@@ -82,6 +82,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     isIOS = model instanceof ModifiableIosPackagingOptions;
 
     myEnabledCheckBox.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
       }
@@ -120,21 +121,26 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     mySigningOptionsForm.setEnabled(enabled);
   }
 
+  @Override
   public T getEditableObject() {
     return myModel;
   }
 
+  @Override
   public void setDisplayName(final String name) {
   }
 
+  @Override
   public String getBannerSlogan() {
     return getDisplayName();
   }
 
+  @Override
   public JComponent createOptionsPanel() {
     return myMainPanel;
   }
 
+  @Override
   public void reset() {
     myFreeze = true;
     try {
@@ -155,6 +161,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     }
   }
 
+  @Override
   public boolean isModified() {
     if (isAndroid && myEnabledCheckBox.isSelected() != ((AndroidPackagingOptions)myModel).isEnabled()) return true;
     if (isIOS && myEnabledCheckBox.isSelected() != ((IosPackagingOptions)myModel).isEnabled()) return true;
@@ -167,6 +174,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     return false;
   }
 
+  @Override
   public void apply() {
     applyTo(myModel);
   }
@@ -181,6 +189,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     mySigningOptionsForm.applyTo(model.getSigningOptions());
   }
 
+  @Override
   public void disposeUIResources() {
     Disposer.dispose(myDisposable);
   }
@@ -230,6 +239,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     return !myEnabledCheckBox.isVisible() || myEnabledCheckBox.isSelected();
   }
 
+  @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
       final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);

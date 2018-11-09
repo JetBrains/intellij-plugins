@@ -32,6 +32,18 @@ class HeaderResolveTest : ResolveTestCase() {
     doTest()
   }
 
+  fun testGfmLinkPunctuation() {
+    doTest()
+  }
+
+  fun testGfmLinkSpecial() {
+    doTest()
+  }
+
+  fun testGfmLinkUppercase() {
+    doTest()
+  }
+
   fun testAFileHeader1() {
     configureByFile("header1.md")
     doTest()

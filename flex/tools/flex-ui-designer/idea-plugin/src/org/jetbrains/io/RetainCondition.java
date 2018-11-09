@@ -9,13 +9,13 @@ import java.util.Arrays;
 public class RetainCondition<K, V extends Identifiable> implements TObjectObjectProcedure<K, V> {
   private final int[] ids;
   @Nullable
-  private final Consumer<V> removedValueConsumer;
+  private final Consumer<? super V> removedValueConsumer;
 
   public RetainCondition(int[] ids) {
     this(ids, null);
   }
 
-  public RetainCondition(int[] ids, @Nullable Consumer<V> removedValueConsumer) {
+  public RetainCondition(int[] ids, @Nullable Consumer<? super V> removedValueConsumer) {
     Arrays.sort(ids);
     this.ids = ids;
     this.removedValueConsumer = removedValueConsumer;

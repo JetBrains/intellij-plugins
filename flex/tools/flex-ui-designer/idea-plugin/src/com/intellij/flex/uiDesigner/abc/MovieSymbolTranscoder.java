@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static com.intellij.flex.uiDesigner.abc.PlaceObjectFlags.*;
@@ -28,7 +27,6 @@ public class MovieSymbolTranscoder extends SymbolTranscoderBase {
   @TestOnly
   public void transcode(File in, File out, byte[] symbolName) throws IOException {
     this.symbolName = symbolName;
-    //noinspection IOResourceOpenedButNotSafelyClosed
     transcode(new FileInputStream(in), in.length(), out, false);
   }
 
@@ -276,7 +274,6 @@ public class MovieSymbolTranscoder extends SymbolTranscoderBase {
   private void decodeColorTransform() throws IOException {
     syncBits();
     boolean hasAdd = readBit();
-    @SuppressWarnings("SpellCheckingInspection")
     boolean hasMult = readBit();
     int nBits = readUBits(4);
     if (hasMult) {

@@ -68,7 +68,7 @@ public class EscapeUtils {
     private final StringBuilder myBuffer = new StringBuilder();
     private boolean myExtraEmptyString = false;
 
-    public Splitter(@NotNull String str, char delimiterChar) {
+    Splitter(@NotNull String str, char delimiterChar) {
       myStr = str;
       myDelimiterChar = delimiterChar;
       myInd = 0;

@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.vmService.frame;
 
 import com.intellij.icons.AllIcons;
@@ -84,7 +85,7 @@ public class DartVmServiceStackFrame extends XStackFrame {
       component.append(text, SimpleTextAttributes.GRAY_ATTRIBUTES);
     }
 
-    component.setIcon(AllIcons.Debugger.StackFrame);
+    component.setIcon(AllIcons.Debugger.Frame);
   }
 
   @NotNull
@@ -127,7 +128,14 @@ public class DartVmServiceStackFrame extends XStackFrame {
       return;
     }
 
-    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, thisVar.getValue().getClassRef().getId(), new GetObjectConsumer() {
+    final Object thisVarValue = thisVar.getValue();
+    if (!(thisVarValue instanceof InstanceRef)) {
+      addVars(node, vars);
+      return;
+    }
+
+    final ClassRef classRef = ((InstanceRef)thisVarValue).getClassRef();
+    myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, classRef.getId(), new GetObjectConsumer() {
       @Override
       public void received(Obj classObj) {
         final SmartList<FieldRef> staticFields = new SmartList<>();
@@ -162,13 +170,14 @@ public class DartVmServiceStackFrame extends XStackFrame {
     final XValueChildrenList childrenList = new XValueChildrenList(vars.size());
 
     for (BoundVariable var : vars) {
-      final InstanceRef value = var.getValue();
-      if (value != null) {
+      final Object value = var.getValue();
+      if (value instanceof InstanceRef) {
+        final InstanceRef instanceRef = (InstanceRef)value;
         final DartVmServiceValue.LocalVarSourceLocation varLocation =
           "this".equals(var.getName())
           ? null
           : new DartVmServiceValue.LocalVarSourceLocation(myVmFrame.getLocation().getScript(), var.getDeclarationTokenPos());
-        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, var.getName(), value, varLocation, null, false));
+        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, var.getName(), instanceRef, varLocation, null, false));
       }
     }
 
@@ -178,7 +187,7 @@ public class DartVmServiceStackFrame extends XStackFrame {
   @Nullable
   @Override
   public XDebuggerEvaluator getEvaluator() {
-    return new DartVmServiceEvaluator(myDebugProcess, myIsolateId, myVmFrame);
+    return new DartVmServiceEvaluatorInFrame(myDebugProcess, myIsolateId, myVmFrame);
   }
 
   public boolean isInDartSdkPatchFile() {

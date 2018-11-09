@@ -15,7 +15,7 @@ public abstract class FlexUnitInspectionVisitor extends JSElementVisitor {
   public FlexUnitSupport getFlexUnitSupport(PsiElement context) {
     if (!myIsInitialized) {
       final Pair<Module, FlexUnitSupport> supportForModule = FlexUnitSupport.getModuleAndSupport(context);
-      myFlexUnitSupport = supportForModule != null ? supportForModule.second : null;
+      myFlexUnitSupport = Pair.getSecond(supportForModule);
       myIsInitialized = true;
     }
     return myFlexUnitSupport;

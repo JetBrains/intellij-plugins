@@ -41,6 +41,21 @@ class VueComponents {
     fun onlyLocal(elements: Collection<JSImplicitElement>): List<JSImplicitElement> {
       return elements.filter(this::isNotInLibrary)
     }
+    
+    fun literalFor(element: PsiElement?): JSObjectLiteralExpression? {
+      if (element is JSObjectLiteralExpression) return element
+      if (element  == null) return null
+      return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element)
+        .mapNotNull { it as? JSObjectLiteralExpression }
+        .firstOrNull()
+    }
+    
+    fun meaningfulExpression(element: PsiElement?): PsiElement? {
+      if (element == null) return element
+      
+      return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element)
+        .firstOrNull { it !is JSEmbeddedContent }
+    }
 
     fun isNotInLibrary(element : JSImplicitElement): Boolean {
       val file = element.containingFile.viewProvider.virtualFile
@@ -102,8 +117,7 @@ class VueComponents {
           val parentExport = element.parent as? ES6ExportDefaultAssignment ?: return null
           return getExportedDescriptor(parentExport)
         }
-        val objLiteral = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(element!!) as? JSObjectLiteralExpression
-                         ?: return null
+        val objLiteral = VueComponents.literalFor(element!!) ?: return null
         return VueComponentDescriptor(obj = objLiteral)
       }).firstOrNull()
     }
@@ -128,6 +142,12 @@ class VueComponents {
     fun getExportedDescriptor(defaultExport: JSExportAssignment): VueComponentDescriptor? {
       val exportedObjectLiteral = defaultExport.stubSafeElement as? JSObjectLiteralExpression
       if (exportedObjectLiteral != null) return VueComponentDescriptor(obj = exportedObjectLiteral)
+
+      // export default MyComponent;  const MyComponent = {...}
+      val resolve = (defaultExport.stubSafeElement as? JSReferenceExpression)?.resolve()
+      val objLiteral = if (resolve == null) null else VueComponentsCalculation.getObjectLiteralFromResolve(listOf(resolve))
+      if (objLiteral != null) return VueComponentDescriptor(objLiteral)
+
       val attrList = PsiTreeUtil.getChildOfType(defaultExport, JSAttributeList::class.java) ?: return null
       val decorator = PsiTreeUtil.getChildOfType(attrList, ES6Decorator::class.java) ?: return null
       val objectDescriptor = VueComponents.getDescriptorFromDecorator(decorator)

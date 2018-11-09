@@ -26,6 +26,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -55,13 +56,13 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
   }
 
   @Override
-  public boolean isEnabled(AnActionEvent e, DiagramBuilder b) {
+  public boolean isEnabled(@NotNull AnActionEvent e, DiagramBuilder b) {
     return b != null && b.getDataModel() instanceof FlashUmlDataModel;
   }
 
   @Override
   @Nullable
-  public CreateClassParameters prepare(AnActionEvent e) {
+  public CreateClassParameters prepare(@NotNull AnActionEvent e) {
     DiagramBuilder diagramBuilder = getBuilder(e);
     if (diagramBuilder == null) return null;
 

@@ -1,5 +1,5 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.runner;
-
 
 import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.files.CfmlFileType;
@@ -25,15 +25,13 @@ import org.jetbrains.annotations.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
 public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlRunConfiguration> {
   private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer");
   public final static String WWW_ROOT = "wwwroot";
   public final static String DEFAULT_HOST = "http://localhost:8500";
 
   public CfmlRunConfigurationProducer() {
-    super(CfmlRunConfigurationType.
-      getInstance());
+    super(CfmlRunConfigurationType.class);
   }
 
   @Override

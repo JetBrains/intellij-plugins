@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.codeHighlighting.Pass;
@@ -12,9 +13,6 @@ import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.PlatformIcons;
 import com.intellij.xml.util.XmlTagUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.List;
 
 public class FlashUIDesignerLineMarkerProvider implements LineMarkerProvider {
   @Override
@@ -35,9 +33,5 @@ public class FlashUIDesignerLineMarkerProvider implements LineMarkerProvider {
                                 __ -> FlashUIDesignerBundle.message("gutter.open"),
                                 (GutterIconNavigationHandler<PsiElement>)(e, __) -> DesignerApplicationManager.getInstance().openDocument(psiFile, false), GutterIconRenderer.Alignment.LEFT
     );
-  }
-
-  @Override
-  public void collectSlowLineMarkers(@NotNull List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
   }
 }

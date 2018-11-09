@@ -31,6 +31,7 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
     super("flex");
   }
 
+  @Override
   @NotNull
   public List<FlexBuildTarget> computeAllTargets(@NotNull final JpsModel model) {
     final List<FlexBuildTarget> result = new ArrayList<>();
@@ -62,6 +63,7 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
     return result;
   }
 
+  @Override
   @NotNull
   public BuildTargetLoader<FlexBuildTarget> createLoader(@NotNull final JpsModel model) {
     return new FlexBuildTargetLoader(model);
@@ -70,10 +72,11 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
   private static class FlexBuildTargetLoader extends BuildTargetLoader<FlexBuildTarget> {
     private final JpsModel myModel;
 
-    public FlexBuildTargetLoader(final JpsModel model) {
+    FlexBuildTargetLoader(final JpsModel model) {
       myModel = model;
     }
 
+    @Override
     @Nullable
     public FlexBuildTarget createTarget(@NotNull final String buildTargetId) {
       final JpsProject project = myModel.getProject();

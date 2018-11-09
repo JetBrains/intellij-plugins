@@ -48,6 +48,7 @@ public class StrutsSpringPluginConstantContributor extends StrutsConstantContrib
     return StrutsConstants.SPRING_OBJECT_FACTORY_CLASS;
   }
 
+  @Override
   @NotNull
   public List<StrutsConstant> getStrutsConstantDefinitions(@NotNull final Module module) {
     return CONSTANTS;

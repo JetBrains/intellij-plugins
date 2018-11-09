@@ -12,16 +12,17 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 public class SwfFileViewProviderFactory implements FileViewProviderFactory {
+  @Override
   @NotNull
   public FileViewProvider createFileViewProvider(@NotNull final VirtualFile file, Language language, @NotNull final PsiManager manager, final boolean eventSystemEnabled) {
     return new SwfFileViewProvider(manager, file, eventSystemEnabled);
   }
 
   private static class SwfFileViewProvider extends SingleRootFileViewProvider {
-    public SwfFileViewProvider(PsiManager manager, VirtualFile file, boolean physical) {
+    SwfFileViewProvider(PsiManager manager, VirtualFile file, boolean physical) {
       super(manager, file, physical);
     }
-    
+
     @Override
     protected PsiFile createFile(@NotNull Project project, @NotNull VirtualFile vFile, @NotNull FileType fileType) {
       return new CompiledJSFile(this);
@@ -43,10 +44,11 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
   static class CompiledJSFile extends JSFileImpl implements PsiCompiledFile {
     private static final JSFileCachedData EMPTY = new JSFileCachedData();
 
-    public CompiledJSFile(FileViewProvider fileViewProvider) {
+    CompiledJSFile(FileViewProvider fileViewProvider) {
       super(fileViewProvider, DialectDetector.getJSLanguage(fileViewProvider.getVirtualFile()));
     }
 
+    @Override
     public PsiElement getMirror() {
       return this;
     }

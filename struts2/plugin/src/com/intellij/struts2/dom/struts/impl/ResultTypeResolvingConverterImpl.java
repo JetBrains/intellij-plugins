@@ -40,6 +40,7 @@ import java.util.List;
  */
 public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConverter {
 
+  @Override
   @NotNull
   public Collection<? extends ResultType> getVariants(final ConvertContext context) {
     final List<ResultType> results = new SmartList<>();
@@ -55,6 +56,7 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
     return results;
   }
 
+  @Override
   public ResultType fromString(@Nullable @NonNls final String name, final ConvertContext context) {
     if (StringUtil.isEmpty(name)) {
       return null;

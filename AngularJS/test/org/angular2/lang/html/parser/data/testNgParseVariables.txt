@@ -1,0 +1,30 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      PsiWhiteSpace(' ')
+      PsiElement(XML_ATTRIBUTE)
+        PsiErrorElement:"let-" is only supported on ng-template elements.
+          XmlToken:XML_NAME('let-a')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+    HtmlTag:ng-template
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('ng-template')
+      PsiWhiteSpace(' ')
+      Angular2HtmlVariable <a>
+        XmlToken:XML_NAME('let-a')
+        XmlToken:XML_EQ('=')
+        PsiElement(XML_ATTRIBUTE_VALUE)
+          XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+          XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('b')
+          XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+      XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('ng-template')
+      XmlToken:XML_TAG_END('>')

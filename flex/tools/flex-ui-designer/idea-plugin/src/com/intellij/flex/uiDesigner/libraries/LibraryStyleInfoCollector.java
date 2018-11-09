@@ -26,7 +26,7 @@ class LibraryStyleInfoCollector {
   private final ProblemsHolder problemsHolder;
   private final StringWriter stringWriter;
 
-  public LibraryStyleInfoCollector(AssetCounter assetCounter, ProblemsHolder problemsHolder, Module module, StringWriter stringWriter) {
+  LibraryStyleInfoCollector(AssetCounter assetCounter, ProblemsHolder problemsHolder, Module module, StringWriter stringWriter) {
     this.assetCounter = assetCounter;
     this.module = module;
     this.problemsHolder = problemsHolder;

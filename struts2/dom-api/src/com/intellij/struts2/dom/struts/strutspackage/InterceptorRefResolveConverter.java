@@ -26,10 +26,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class InterceptorRefResolveConverter extends ResolvingConverter<InterceptorOrStackBase> {
 
+  @Override
   public String getErrorMessage(@Nullable final String s, final ConvertContext context) {
     return "Cannot resolve interceptor(-stack) '" + s + "'";
   }
 
+  @Override
   public String toString(@Nullable final InterceptorOrStackBase interceptorOrStackBase, final ConvertContext context) {
     if (interceptorOrStackBase == null) {
       return null;

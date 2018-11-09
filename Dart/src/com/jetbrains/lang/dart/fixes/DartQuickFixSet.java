@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.fixes;
 
 import com.intellij.openapi.vfs.VirtualFile;
@@ -5,7 +18,6 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.ide.annotator.DartProblemGroup;
 import org.dartlang.analysis.server.protocol.AnalysisErrorFixes;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +70,7 @@ public class DartQuickFixSet {
     myPsiModCountWhenRequestSent = psiModCount;
     myVfsModCountWhenRequestSent = vfsModCount;
 
-    for (DartQuickFix fix : myQuickFixes) {
+    for (DartQuickFix fix: myQuickFixes) {
       fix.setSourceChange(null);
     }
 
@@ -70,15 +82,16 @@ public class DartQuickFixSet {
       }
 
       if (fixes == null || fixes.isEmpty()) {
-        if (myErrorCode != null) {
-          myQuickFixes.get(0).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, false));
-          myQuickFixes.get(1).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, true));
-        }
+        // Avoid confusion like in https://github.com/dart-lang/sdk/issues/27629, let 'Suppress...' quick fixes be on the 2nd level only.
+        //if (myErrorCode != null && myFile.getFileType() == DartFileType.INSTANCE) {
+        //  myQuickFixes.get(0).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, false));
+        //  myQuickFixes.get(1).setSuppressActionDelegate(new DartProblemGroup.DartSuppressAction(myErrorCode, myErrorSeverity, true));
+        //}
       }
       else {
         int index = 0;
-        for (AnalysisErrorFixes fix : fixes) {
-          for (SourceChange sourceChange : fix.getFixes()) {
+        for (AnalysisErrorFixes fix: fixes) {
+          for (SourceChange sourceChange: fix.getFixes()) {
             myQuickFixes.get(index).setSourceChange(sourceChange);
             index++;
             if (index == MAX_QUICK_FIXES) return;

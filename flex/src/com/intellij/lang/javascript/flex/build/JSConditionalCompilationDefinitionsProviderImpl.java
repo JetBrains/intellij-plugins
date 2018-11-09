@@ -136,9 +136,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
         final Collection<Pair<String, String>> result = new ArrayList<>();
 
         if (rootElement.getName().equals(FlexCompilerConfigFileUtilBase.FLEX_CONFIG)) {
-          // noinspection unchecked
           for (Element compilerElement : rootElement.getChildren(FlexCompilerConfigFileUtilBase.COMPILER, rootElement.getNamespace())) {
-            // noinspection unchecked
             for (Element defineElement : compilerElement.getChildren(DEFINE, rootElement.getNamespace())) {
               final String name = defineElement.getChildText(NAME, rootElement.getNamespace());
               final String value = defineElement.getChildText(VALUE, rootElement.getNamespace());

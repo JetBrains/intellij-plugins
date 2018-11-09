@@ -12,6 +12,7 @@ public class DartQuoteHandler extends SimpleTokenSetQuoteHandler {
     super(DartTokenTypesSets.STRINGS);
   }
 
+  @Override
   public boolean isOpeningQuote(final HighlighterIterator iterator, final int offset) {
     final IElementType type = iterator.getTokenType();
 
@@ -25,6 +26,7 @@ public class DartQuoteHandler extends SimpleTokenSetQuoteHandler {
     return false;
   }
 
+  @Override
   public boolean isClosingQuote(final HighlighterIterator iterator, final int offset) {
     final IElementType type = iterator.getTokenType();
 

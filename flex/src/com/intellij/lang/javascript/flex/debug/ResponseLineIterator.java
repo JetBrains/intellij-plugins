@@ -16,10 +16,12 @@ class ResponseLineIterator implements Iterator<String> {
     }
   }
 
+  @Override
   public boolean hasNext() {
     return current < lines.size();
   }
 
+  @Override
   public String next() {
     String result = next_(current);
     ++current;
@@ -31,11 +33,12 @@ class ResponseLineIterator implements Iterator<String> {
     if (current < lines.size()) {
       result = lines.get(current);
     } else {
-      throw new NoSuchElementException(); 
+      throw new NoSuchElementException();
     }
     return result;
   }
 
+  @Override
   public void remove() {
     throw new UnsupportedOperationException();
   }

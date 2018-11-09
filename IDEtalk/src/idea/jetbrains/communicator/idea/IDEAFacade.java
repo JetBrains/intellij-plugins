@@ -60,6 +60,7 @@ import jetbrains.communicator.idea.sendMessage.IncomingStacktraceMessage;
 import jetbrains.communicator.idea.viewFiles.ViewFilesDialog;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -96,7 +97,6 @@ public class IDEAFacade implements IDEFacade {
 
   @Override
   public File getCacheDir() {
-    //noinspection HardCodedStringLiteral
     File file = new File(PathManager.getSystemPath(), "ideTalk");
     file.mkdir();
     return file;
@@ -319,17 +319,14 @@ public class IDEAFacade implements IDEFacade {
     final LocalMessage[] result = new LocalMessage[1];
     event.accept(new EventVisitor(){
 
-      @SuppressWarnings({"RefusedBequest"})
       @Override public void visitStacktraceEvent(StacktraceEvent event) {
         result[0] = new IncomingStacktraceMessage(event);
       }
 
-      @SuppressWarnings({"RefusedBequest"})
       @Override public void visitCodePointerEvent(CodePointerEvent event) {
         result[0] = new IncomingCodePointerMessage(event, IDEAFacade.this);
       }
 
-      @SuppressWarnings({"RefusedBequest"})
       @Override public void visitMessageEvent(MessageEvent event) {
         result[0] = new IncomingLocalMessage(event);
       }
@@ -364,7 +361,7 @@ public class IDEAFacade implements IDEFacade {
     return null;
   }
 
-  public static Object getData(Component c, String dataId) {
+  public static Object getData(Component c, @NotNull String dataId) {
     Object result = null;
     while (c != null) {
       if (c instanceof DataProvider) {

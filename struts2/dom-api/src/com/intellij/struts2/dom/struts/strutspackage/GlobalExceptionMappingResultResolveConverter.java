@@ -35,6 +35,7 @@ import java.util.Collections;
  */
 public class GlobalExceptionMappingResultResolveConverter extends ResolvingConverter<GlobalResult> {
 
+  @Override
   @NotNull
   public Collection<? extends GlobalResult> getVariants(final ConvertContext context) {
     final DomElement invocationElement = context.getInvocationElement();
@@ -46,6 +47,7 @@ public class GlobalExceptionMappingResultResolveConverter extends ResolvingConve
     return Collections.emptySet();
   }
 
+  @Override
   public GlobalResult fromString(@Nullable @NonNls final String value, final ConvertContext context) {
     if (value == null) {
       return null;
@@ -55,6 +57,7 @@ public class GlobalExceptionMappingResultResolveConverter extends ResolvingConve
                               (Condition<GlobalResult>)globalResult -> Comparing.equal(value, globalResult.getName().getStringValue()));
   }
 
+  @Override
   public String toString(@Nullable final GlobalResult result, final ConvertContext context) {
     if (result == null) {
       return null;
@@ -63,6 +66,7 @@ public class GlobalExceptionMappingResultResolveConverter extends ResolvingConve
     return result.getName().getStringValue();
   }
 
+  @Override
   public String getErrorMessage(@Nullable final String value, final ConvertContext context) {
     return "Cannot resolve global result '" + value + "'";
   }

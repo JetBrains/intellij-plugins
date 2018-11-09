@@ -34,10 +34,10 @@ import java.util.*;
 
 public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
 
-  private final Collection<JSQualifiedNamedElement> myElements;
+  private final Collection<? extends JSQualifiedNamedElement> myElements;
   private final String myTargetPackage;
 
-  public FlexMoveClassProcessor(Collection<JSQualifiedNamedElement> elements,
+  public FlexMoveClassProcessor(Collection<? extends JSQualifiedNamedElement> elements,
                                 PsiDirectory targetDirectory,
                                 String targetPackage,
                                 boolean searchInComments,
@@ -79,7 +79,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
         JSRefactoringUtil.addConstructorUsages((JSClass)element, result);
       }
       TextOccurrencesUtil.findNonCodeUsages(element, element.getQualifiedName(), mySearchInComments, mySearchInNonJavaFiles,
-                                            StringUtil.getQualifiedName(myTargetPackage, element.getName()), result);
+                                            StringUtil.getQualifiedName(myTargetPackage, StringUtil.notNullize(element.getName())), result);
     }
     return result.toArray(UsageInfo.EMPTY_ARRAY);
   }
@@ -160,7 +160,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
 
   private class FlexMoveClassUsageViewDescriptor extends BaseUsageViewDescriptor {
 
-    public FlexMoveClassUsageViewDescriptor() {
+    FlexMoveClassUsageViewDescriptor() {
       super(PsiUtilCore.toPsiElementArray(myElements));
     }
 
@@ -176,6 +176,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
       }
     }
 
+    @NotNull
     @Override
     public String getCodeReferencesText(int usagesCount, int filesCount) {
       String prefix;

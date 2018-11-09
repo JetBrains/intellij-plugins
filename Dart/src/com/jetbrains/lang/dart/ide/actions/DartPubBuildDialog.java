@@ -146,17 +146,20 @@ public class DartPubBuildDialog extends DialogWrapper {
     myOtherModeTextField.setEnabled(myOtherRadioButton.isSelected());
   }
 
+  @Override
   @Nullable
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   @Nullable
   public JComponent getPreferredFocusedComponent() {
     if (myOtherRadioButton.isSelected()) return myOtherModeTextField;
     return null;
   }
 
+  @Override
   @Nullable
   protected ValidationInfo doValidate() {
     if (!myUseWebdev && myOtherRadioButton.isSelected() && StringUtil.isEmptyOrSpaces(myOtherModeTextField.getText())) {
@@ -178,6 +181,7 @@ public class DartPubBuildDialog extends DialogWrapper {
     return null;
   }
 
+  @Override
   protected void doOKAction() {
     saveDialogState();
     super.doOKAction();

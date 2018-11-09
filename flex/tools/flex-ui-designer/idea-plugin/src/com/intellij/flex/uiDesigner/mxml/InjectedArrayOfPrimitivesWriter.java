@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.psi.JSArrayLiteralExpression;
 class InjectedArrayOfPrimitivesWriter extends AbstractPrimitiveValueWriter {
   private final JSArrayLiteralExpression arrayLiteralExpression;
 
-  public InjectedArrayOfPrimitivesWriter(JSArrayLiteralExpression arrayLiteralExpression) {
+  InjectedArrayOfPrimitivesWriter(JSArrayLiteralExpression arrayLiteralExpression) {
     this.arrayLiteralExpression = arrayLiteralExpression;
   }
 

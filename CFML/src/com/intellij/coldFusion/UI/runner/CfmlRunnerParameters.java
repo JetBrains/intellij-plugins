@@ -65,7 +65,6 @@ public class CfmlRunnerParameters implements Cloneable {
       return (CfmlRunnerParameters)super.clone();
     }
     catch (CloneNotSupportedException e) {
-      //noinspection ConstantConditions
       return null;
     }
   }

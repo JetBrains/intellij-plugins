@@ -21,6 +21,7 @@ public class GherkinFeatureImpl extends GherkinPsiElementBase implements Gherkin
     return "GherkinFeature:" + getFeatureName();
   }
 
+  @Override
   public String getFeatureName() {
     ASTNode node = getNode();
     final ASTNode firstText = node.findChildByType(GherkinTokenTypes.TEXT);
@@ -34,6 +35,7 @@ public class GherkinFeatureImpl extends GherkinPsiElementBase implements Gherkin
     return getElementText();
   }
 
+  @Override
   public GherkinStepsHolder[] getScenarios() {
     final GherkinStepsHolder[] children = PsiTreeUtil.getChildrenOfType(this, GherkinStepsHolder.class);
     return children == null ? GherkinStepsHolder.EMPTY_ARRAY : children;
@@ -44,6 +46,7 @@ public class GherkinFeatureImpl extends GherkinPsiElementBase implements Gherkin
     return "Feature: " + getFeatureName();
   }
 
+  @Override
   protected void acceptGherkin(GherkinElementVisitor gherkinElementVisitor) {
     gherkinElementVisitor.visitFeature(this);
   }

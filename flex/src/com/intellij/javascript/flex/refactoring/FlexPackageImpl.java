@@ -51,15 +51,11 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   }
 
   @Override
-  protected PsiElement findPackage(String qName) {
-    return createInstance(getManager(), qName);
+  protected FlexPackageImpl findPackage(String qName) {
+    return new FlexPackageImpl(getManager(), qName);
   }
 
   @Override
-  protected FlexPackageImpl createInstance(PsiManager manager, String qName) {
-    return new FlexPackageImpl(manager, qName);
-  }
-
   protected Collection<PsiDirectory> getAllDirectories(boolean includeLibrarySources) {
     if (myDirectories == null) {
       CachedValueProvider<Collection<PsiDirectory>> provider = () -> {
@@ -84,15 +80,18 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
     return getDirectories().length > 0;
   }
 
+  @Override
   @NotNull
   public Language getLanguage() {
     return StdFileTypes.JS.getLanguage();
   }
 
+  @Override
   public String toString() {
     return "Package:" + getQualifiedName();
   }
 
+  @Override
   public void navigate(final boolean requestFocus) {
     // TODO
     //ToolWindow window = ToolWindowManager.getInstance(getProject()).getToolWindow(ToolWindowId.PROJECT_VIEW);

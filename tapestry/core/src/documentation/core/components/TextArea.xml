@@ -1,0 +1,35 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        TextArea component corresponds to a textarea element. The value parameter is almost always bound to a string, but this is not an absolute requirement.
+    </description>
+
+    <parameters>
+        <parameter name="clientId">
+            The id used to generate a page-unique client-side identifier for the component. If a component renders multiple times, a suffix will be appended to the to id to ensure uniqueness.\
+            The uniqued value may be accessed via the clientId property.
+        </parameter>
+        <parameter name="disabled">
+            If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a disabled field ignores any value in the request when the form is\
+            submitted.
+        </parameter>
+        <parameter name="label">
+            The user presentable label for the field. If not provided, a reasonable label is generated from the component's id, first by looking for a message key named "id-label"\
+            (substituting the component's actual id), then by converting the actual id to a presentable string (for example, "userId" to "User Id").
+        </parameter>
+        <parameter name="nulls">
+            Defines how nulls on the server side, or sent from the client side, are treated. The selected strategy may replace the nulls with some other value. The default strategy leaves nulls\
+            alone. Another built-in strategy, zero, replaces nulls with the value 0.
+        </parameter>
+        <parameter name="translate">
+            The object which will perform translation between server-side and client-side representations. If not specified, a value will usually be generated based on the type of the value\
+            parameter.
+        </parameter>
+        <parameter name="validate">
+            The object that will perform input validation (which occurs after translation). The translate binding prefix is generally used to provide this object in a declarative fashion.
+        </parameter>
+        <parameter name="value">
+            The value to be read and updated. This is not necessarily a string, a translator may be provided to convert between client side and server side representations. If not bound, a\
+            default binding is made to a property of the container matching the component's id. If no such property exists, then you will see a runtime exception due to the unbound value parameter.
+        </parameter>
+    </parameters>
+</element>

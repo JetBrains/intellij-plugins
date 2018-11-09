@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider, DumbAware {
 
@@ -76,19 +75,19 @@ public abstract class SplitTextEditorProvider implements AsyncFileEditorProvider
 
   @NotNull
   @Override
-  public FileEditorState readState(@Nullable Element sourceElement, @NotNull Project project, @NotNull VirtualFile file) {
-    Element child = sourceElement == null ? null : sourceElement.getChild(FIRST_EDITOR);
+  public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile file) {
+    Element child = sourceElement.getChild(FIRST_EDITOR);
     FileEditorState firstState = null;
     if (child != null) {
       firstState = myFirstProvider.readState(child, project, file);
     }
-    child = sourceElement == null ? null : sourceElement.getChild(SECOND_EDITOR);
+    child = sourceElement.getChild(SECOND_EDITOR);
     FileEditorState secondState = null;
     if (child != null) {
       secondState = mySecondProvider.readState(child, project, file);
     }
 
-    final Attribute attribute = sourceElement == null ? null : sourceElement.getAttribute(SPLIT_LAYOUT);
+    final Attribute attribute = sourceElement.getAttribute(SPLIT_LAYOUT);
 
     final String layoutName;
     if (attribute != null) {

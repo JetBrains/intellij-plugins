@@ -32,10 +32,12 @@ public class StrutsNodeRenderer extends BasicGraphNodeRenderer<BasicStrutsNode, 
     super(graphBuilder, PsiManager.getInstance(graphBuilder.getProject()).getModificationTracker());
   }
 
+  @Override
   protected Icon getIcon(final BasicStrutsNode node) {
     return node.getIcon();
   }
 
+  @Override
   protected String getNodeName(final BasicStrutsNode node) {
     return node.getName();
   }

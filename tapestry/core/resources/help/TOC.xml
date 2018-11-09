@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+
+<toc version="1.0">
+    <tocitem text="Tapestry Support" target="Loomy" image="logo">
+        <tocitem text="Tapestry View" target="view" image="doc">
+            <tocitem text="Drag and Drop" target="dnd" image="doc"/>
+            <tocitem text="Safe Delete" target="safeDelete" image="doc"/>
+        </tocitem>
+
+        <tocitem text="MetaData ToolWindow" target="metadata" image="doc"/>
+
+        <tocitem text="Wizards" target="wizards" image="doc"/>
+
+        <tocitem text="Template Editing" target="templateediting" image="doc">
+            <tocitem text="Syntax Highlighting" target="syntaxhighlighting" image="doc"/>
+            <tocitem text="Error Detection" target="errordetection" image="doc"/>
+            <tocitem text="Auto-Completion" target="autocompletion" image="doc"/>
+            <tocitem text="Navigation" target="templatenavigation" image="doc"/>
+        </tocitem>
+    </tocitem>
+</toc>

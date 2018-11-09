@@ -33,9 +33,6 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
   }
 
   private static void installCodeStyle(@NotNull Project project) {
-    if (!PrettierUtil.isEnabled()) {
-      return;
-    }
     VirtualFile aConfig = ObjectUtils.coalesce(PrettierUtil.findSingleConfigInContentRoots(project),
                                                 project.getBaseDir().findChild(PackageJsonUtil.FILE_NAME));
     if (aConfig != null) {

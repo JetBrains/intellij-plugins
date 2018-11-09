@@ -32,7 +32,7 @@ public final class IOUtil {
   private IOUtil() {
   }
 
-  public static BufferedImage readImage(File file, Processor<DataInputStream> inProcessor) throws IOException {
+  public static BufferedImage readImage(File file, Processor<? super DataInputStream> inProcessor) throws IOException {
     DataInputStream in = new DataInputStream(new FileInputStream(file));
     try {
       if (inProcessor.process(in)) {
@@ -74,7 +74,7 @@ public final class IOUtil {
                              false, null);
   }
 
-  public static void saveImage(BufferedImage image, File file, Consumer<DataOutputStream> outConsumer) throws IOException {
+  public static void saveImage(BufferedImage image, File file, Consumer<? super DataOutputStream> outConsumer) throws IOException {
     DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
     try {
       outConsumer.consume(out);

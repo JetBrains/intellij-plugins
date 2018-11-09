@@ -14,6 +14,7 @@ public class AirDesktopPackagingConfigurable extends AirPackagingConfigurableBas
     super(module, model, airDescriptorInfoProvider);
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return TAB_NAME;

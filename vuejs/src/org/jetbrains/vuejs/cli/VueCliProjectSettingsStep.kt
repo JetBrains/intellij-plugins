@@ -17,7 +17,6 @@ import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.util.projectWizard.AbstractNewProjectStep
 import com.intellij.ide.util.projectWizard.ProjectSettingsStepBase
 import com.intellij.ide.util.projectWizard.WebProjectTemplate
-import com.intellij.internal.statistic.UsageTrigger
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
@@ -134,7 +133,6 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
         else {
           RecentProjectsManager.getInstance().lastProjectCreationLocation = PathUtil.toSystemIndependentName(
             Paths.get(generationLocation).parent.normalize().toString())
-          UsageTrigger.trigger("AbstractNewProjectStep.Vue.js")
           PlatformProjectOpenProcessor.doOpenProject(projectVFolder, null, -1,
                                                      { project, _ ->
                                                        if (project != null) {

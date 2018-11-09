@@ -37,7 +37,7 @@ public class CfmlArgumentValuesCompletionProvider extends CompletionProvider<Com
 
   @Override
   protected void addCompletions(@NotNull CompletionParameters parameters,
-                                ProcessingContext context,
+                                @NotNull ProcessingContext context,
                                 @NotNull CompletionResultSet result) {
     PsiElement element = parameters.getPosition();
     CfmlFunctionCallExpression parentOfType = PsiTreeUtil.getParentOfType(element, CfmlFunctionCallExpression.class);

@@ -12,7 +12,7 @@ class MxmlPreviewToolWindowForm {
 
   volatile boolean waitingForGetDocument;
 
-  public MxmlPreviewToolWindowForm() {
+  MxmlPreviewToolWindowForm() {
   }
 
   public JPanel getContentPanel() {

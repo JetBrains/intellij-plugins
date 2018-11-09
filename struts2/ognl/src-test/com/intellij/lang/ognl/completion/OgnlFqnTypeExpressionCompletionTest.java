@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 The authors
+ * Copyright 2018 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +25,7 @@ public class OgnlFqnTypeExpressionCompletionTest extends LightCodeInsightFixture
 
   public void testNewExpressionBasicCompletion() {
     myFixture.configureByText(OgnlFileType.INSTANCE,
-                              OgnlTestUtils.createExpression("new java.util.Co<caret>"));
+                              OgnlTestUtils.createExpression("new java.util.Co<caret>ll"));
 
     myFixture.completeBasic();
     final List<String> lookupStrings = myFixture.getLookupElementStrings();
@@ -45,6 +45,13 @@ public class OgnlFqnTypeExpressionCompletionTest extends LightCodeInsightFixture
                            "Comparator");
   }
 
+  public void testJavaLangClassesAreSuggested() {
+    myFixture.configureByText(OgnlFileType.INSTANCE, OgnlTestUtils.createExpression("new Str<caret>"));
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(),
+                           "String", "StringBuilder");
+  }
+
   public void testMapTypeExpressionLimitsToMapClasses() {
     myFixture.configureByText(OgnlFileType.INSTANCE,
                               OgnlTestUtils.createExpression("#@ <caret>"));
@@ -57,5 +64,17 @@ public class OgnlFqnTypeExpressionCompletionTest extends LightCodeInsightFixture
                            "java.util.IdentityHashMap",
                            "java.util.Properties",
                            "java.util.TreeMap");
+  }
+
+  public void testNewArrayExpressionBasicCompletion() {
+    myFixture.configureByText(OgnlFileType.INSTANCE,
+                              OgnlTestUtils.createExpression("new C<caret>["));
+
+    myFixture.completeBasic();
+    final List<String> lookupStrings = myFixture.getLookupElementStrings();
+    assertContainsElements(lookupStrings,
+                           "Character", "ThreadLocal");
+    assertDoesntContain(lookupStrings,
+                        "Comparable", "Deprecated");
   }
 }

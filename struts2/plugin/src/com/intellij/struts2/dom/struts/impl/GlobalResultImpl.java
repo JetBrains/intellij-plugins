@@ -26,12 +26,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class GlobalResultImpl implements GlobalResult {
 
+  @Override
   @Nullable
   public PsiClass getParamsClass() {
     final ResultType resultType = getType().getValue();
     return resultType != null ? resultType.getResultTypeClass().getValue() : null;
   }
 
+  @Override
   @Nullable
   public ResultType getEffectiveResultType() {
     final ResultType resultType = getType().getValue();

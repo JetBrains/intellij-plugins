@@ -16,15 +16,16 @@ public class MarkdownPreviewFileEditorProvider extends WeighedFileEditorProvider
   @Override
   public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
     final FileType fileType = file.getFileType();
+
     return (fileType == MarkdownFileType.INSTANCE ||
-            fileType == ScratchFileType.INSTANCE && LanguageUtil.getLanguageForPsi(project, file) == MarkdownLanguage.INSTANCE)
-           && MarkdownHtmlPanelProvider.hasAvailableProviders();
+            fileType == ScratchFileType.INSTANCE && LanguageUtil.getLanguageForPsi(project, file) == MarkdownLanguage.INSTANCE) &&
+           MarkdownHtmlPanelProvider.hasAvailableProviders();
   }
 
   @NotNull
   @Override
   public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-    return new MarkdownPreviewFileEditor(file);
+    return new MarkdownPreviewFileEditor(project, file);
   }
 
   @NotNull

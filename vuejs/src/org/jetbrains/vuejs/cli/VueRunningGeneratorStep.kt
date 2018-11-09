@@ -27,6 +27,7 @@ import com.intellij.ui.components.JBScrollPane
 import icons.VuejsIcons
 import java.awt.BorderLayout
 import java.nio.file.Paths
+import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.ScrollPaneConstants
@@ -47,9 +48,9 @@ class VueRunningGeneratorStep(private val wizard: AbstractWizard<*>,
     controller?.onNext()
   }
 
-  override fun isLast() = controller?.isFinished() ?: false
+  override fun isLast(): Boolean = controller?.isFinished() ?: false
 
-  override fun isFirst() = true
+  override fun isFirst(): Boolean = true
 
   override fun doPreviousAction() {
     if (controller != null) Disposer.dispose(controller!!)
@@ -109,7 +110,7 @@ class VueRunningGeneratorStep(private val wizard: AbstractWizard<*>,
   override fun _commit(finishChosen: Boolean) {
   }
 
-  override fun getIcon() = VuejsIcons.Vue!!
+  override fun getIcon(): Icon = VuejsIcons.Vue!!
 
   override fun getComponent(): JComponent {
     return mainPanel

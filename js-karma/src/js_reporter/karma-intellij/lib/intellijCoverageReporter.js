@@ -1,4 +1,4 @@
-var cli = require('./intellijCli.js')
+var intellijParameters = require('./karma-intellij-parameters')
   , intellijUtil = require('./intellijUtil.js')
   , fs = require('fs')
   , path = require('path')
@@ -11,19 +11,8 @@ var cli = require('./intellijCli.js')
  * @param {Object} config
  */
 function preconfigureCoverage(config) {
-  if (cli.isWithCoverage()) {
-    configureAngularCliCoverage(config);
+  if (intellijParameters.isWithCoverage()) {
   }
-}
-
-function configureAngularCliCoverage(config) {
-  var angularCli = config.angularCli;
-  if (!angularCli) {
-    angularCli = {};
-    config.angularCli = angularCli;
-  }
-  angularCli.codeCoverage = true;
-  angularCli.sourcemaps = true;
 }
 
 /**
@@ -32,21 +21,22 @@ function configureAngularCliCoverage(config) {
  */
 function configureCoverage(config) {
   var reporters = config.reporters || [];
-  if (cli.isWithCoverage()) {
+  if (intellijParameters.isWithCoverage()) {
     reporters.push(IntellijCoverageReporter.reporterName);
-    var coverageReporter = config.coverageReporter;
-    if (!coverageReporter) {
-      coverageReporter = {reporters: []};
-      config.coverageReporter = coverageReporter;
+    if (!config.coverageReporter) {
+      config.coverageReporter = {reporters: []};
     }
-    else if (!coverageReporter.reporters) {
+    else if (!config.coverageReporter.reporters) {
       // https://github.com/karma-runner/karma-coverage/blob/master/docs/configuration.md
-      // the trick from https://github.com/karma-runner/karma-coverage/blob/v1.1.1/lib/reporter.js#L53
-      coverageReporter.reporters = [coverageReporter];
+      // the trick from https://github.com/karma-runner/karma-coverage/blob/v1.1.2/lib/reporter.js#L53
+      Object.defineProperty(config.coverageReporter, 'reporters', {
+        value: [config.coverageReporter],
+        enumerable: false // to avoid "TypeError: Converting circular structure to JSON" (WEB-33542)
+      });
     }
-    coverageReporter.reporters.push({
+    config.coverageReporter.reporters.push({
       type : 'lcovonly',
-      dir : path.join(cli.getCoverageTempDirPath())
+      dir : path.join(intellijParameters.getCoverageTempDirPath())
     });
     configureKarmaTypeScript(config);
   }
@@ -75,7 +65,7 @@ function configureKarmaTypeScript(config) {
       config.karmaTypescriptConfig.reports = reports;
     }
     if (!reports.lcovonly) {
-      reports.lcovonly = cli.getCoverageTempDirPath();
+      reports.lcovonly = intellijParameters.getCoverageTempDirPath();
     }
     extraLcovLocations.push(reports.lcovonly);
   }

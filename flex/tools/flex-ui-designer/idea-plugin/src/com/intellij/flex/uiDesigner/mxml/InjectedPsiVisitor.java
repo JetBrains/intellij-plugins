@@ -41,7 +41,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
 
   private final ProblemsHolder problemsHolder;
 
-  public InjectedPsiVisitor(PsiElement host, @Nullable String expectedType, ProblemsHolder problemsHolder) {
+  InjectedPsiVisitor(PsiElement host, @Nullable String expectedType, ProblemsHolder problemsHolder) {
     this.host = host;
     this.expectedType = expectedType;
     this.problemsHolder = problemsHolder;

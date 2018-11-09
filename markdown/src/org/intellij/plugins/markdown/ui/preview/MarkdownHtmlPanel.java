@@ -13,24 +13,24 @@ import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class MarkdownHtmlPanel implements Disposable {
-  protected static final List<String> SCRIPTS = Arrays.asList("processLinks.js", "scrollToElement.js");
+public interface MarkdownHtmlPanel extends Disposable {
+  List<String> SCRIPTS = Arrays.asList("processLinks.js", "scrollToElement.js");
 
-  protected static final List<String> STYLES = Arrays.asList("default.css", "darcula.css", PreviewStaticServer.INLINE_CSS_FILENAME);
+  List<String> STYLES = Arrays.asList("default.css", "darcula.css", PreviewStaticServer.INLINE_CSS_FILENAME);
 
   @NotNull
-  public abstract JComponent getComponent();
+  JComponent getComponent();
 
-  public abstract void setHtml(@NotNull String html);
+  void setHtml(@NotNull String html);
 
-  public abstract void setCSS(@Nullable String inlineCss, @NotNull String... fileUris);
+  void setCSS(@Nullable String inlineCss, @NotNull String... fileUris);
 
-  public abstract void render();
+  void render();
 
-  public abstract void scrollToMarkdownSrcOffset(int offset);
+  void scrollToMarkdownSrcOffset(int offset);
 
   @Nullable
-  protected static Range<Integer> nodeToSrcRange(@NotNull Node node) {
+  static Range<Integer> nodeToSrcRange(@NotNull Node node) {
     if (!node.hasAttributes()) {
       return null;
     }
@@ -46,7 +46,7 @@ public abstract class MarkdownHtmlPanel implements Disposable {
   }
 
   @NotNull
-  protected static String getCssLines(@Nullable String inlineCss, @NotNull String... fileUris) {
+  static String getCssLines(@Nullable String inlineCss, @NotNull String... fileUris) {
     StringBuilder result = new StringBuilder();
 
     for (String uri : fileUris) {
@@ -59,7 +59,7 @@ public abstract class MarkdownHtmlPanel implements Disposable {
     return result.toString();
   }
 
-  private static String migrateUriToHttp(@NotNull String uri) {
+  static String migrateUriToHttp(@NotNull String uri) {
     if (uri.equals(MarkdownCssSettings.DEFAULT.getStylesheetUri())) {
       return PreviewStaticServer.getStyleUrl("default.css");
     }

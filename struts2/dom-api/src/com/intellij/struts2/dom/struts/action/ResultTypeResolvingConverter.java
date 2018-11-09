@@ -28,10 +28,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class ResultTypeResolvingConverter extends ResolvingConverter<ResultType> {
 
+  @Override
   public String toString(@Nullable final ResultType resultType, final ConvertContext context) {
     return resultType != null ? resultType.getName().getStringValue() : null;
   }
 
+  @Override
   public String getErrorMessage(@Nullable final String value, final ConvertContext context) {
     return "Cannot resolve result-type '" + value + "'";
   }

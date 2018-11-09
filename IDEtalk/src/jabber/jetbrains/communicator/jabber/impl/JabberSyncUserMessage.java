@@ -36,6 +36,7 @@ class JabberSyncUserMessage implements Message {
     myEvent = event;
   }
 
+  @Override
   public boolean send(User user) {
     final JabberTransport jabberTransport = JabberTransport.getInstance();
     if (jabberTransport != null && jabberTransport.isOnline()) {

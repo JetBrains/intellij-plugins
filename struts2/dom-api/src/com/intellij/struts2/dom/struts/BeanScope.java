@@ -38,6 +38,7 @@ public enum BeanScope implements NamedEnum {
     this.name = name;
   }
 
+  @Override
   public String getValue() {
     return name;
   }

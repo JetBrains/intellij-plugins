@@ -21,7 +21,6 @@ import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.JabberUI;
 import jetbrains.communicator.util.StringUtil;
-import jetbrains.communicator.util.UIUtil;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -40,18 +39,22 @@ public class FindByJabberIdCommand implements NamedUserCommand {
     myUserModel = userModel;
   }
 
+  @Override
   public String getName() {
     return StringUtil.getMsg("jabber.findByIdCommandName");
   }
 
+  @Override
   public Icon getIcon() {
     return IdetalkCoreIcons.IdeTalk.Jabber;
   }
 
+  @Override
   public boolean isEnabled() {
     return true;
   }
 
+  @Override
   public void execute() {
     if (myJabberUI.connectAndLogin(null)) {
       String findByIdData = myJabberUI.getFindByIdData(Arrays.asList(myUserModel.getGroups()));

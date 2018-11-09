@@ -50,7 +50,7 @@ public abstract class BaseToggleStateAction extends ToggleAction implements Dumb
   }
 
   @Override
-  public boolean isSelected(AnActionEvent e) {
+  public boolean isSelected(@NotNull AnActionEvent e) {
     final Editor editor = MarkdownActionUtil.findMarkdownTextEditor(e);
     final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
     if (editor == null || psiFile == null) {
@@ -85,7 +85,7 @@ public abstract class BaseToggleStateAction extends ToggleAction implements Dumb
   }
 
   @Override
-  public void setSelected(AnActionEvent e, final boolean state) {
+  public void setSelected(@NotNull AnActionEvent e, final boolean state) {
     final Editor editor = MarkdownActionUtil.findMarkdownTextEditor(e);
     final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
     if (editor == null || psiFile == null) {

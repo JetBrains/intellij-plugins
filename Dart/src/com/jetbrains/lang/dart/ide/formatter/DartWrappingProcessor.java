@@ -1,9 +1,23 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.formatting.Wrap;
 import com.intellij.formatting.WrapType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Key;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.WrappingUtil;
@@ -44,6 +58,10 @@ public class DartWrappingProcessor {
     // Function definition/call
     //
     if (elementType == ARGUMENT_LIST) {
+      if (child instanceof PsiErrorElement) {
+        myNode.putUserData(DART_ARGUMENT_LIST_WRAP_KEY, null);
+      }
+
       if (mySettings.CALL_PARAMETERS_WRAP != CommonCodeStyleSettings.DO_NOT_WRAP) {
         if (!mySettings.PREFER_PARAMETERS_WRAP && childWrap != null) {
           // Not used; PREFER_PARAMETERS_WRAP cannot be changed in the UI.

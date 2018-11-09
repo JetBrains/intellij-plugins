@@ -42,7 +42,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     extend(CompletionType.BASIC, JstdConfigFileUtils.CONFIG_FILE_ELEMENT_PATTERN, new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters parameters,
-                                    ProcessingContext context,
+                                    @NotNull ProcessingContext context,
                                     @NotNull CompletionResultSet result) {
         UnquotedText text = new UnquotedText(parameters.getPosition());
         int prefixLength = Math.max(0, parameters.getOffset() - text.getUnquotedDocumentTextRange().getStartOffset());
@@ -71,12 +71,13 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     return false;
   }
 
+  @Override
   public void beforeCompletion(@NotNull CompletionInitializationContext context) {
     boolean acceptPathSeparator = false;
     final int offset = context.getEditor().getCaretModel().getOffset();
     final PsiElement element = context.getFile().findElementAt(offset);
     if (element != null) {
-      if (element.getNode().getElementType() == YAMLTokenTypes.SCALAR_KEY) {
+      if (element.getNode().getElementType() == YAMLTokenTypes.COLON) {
         return;
       }
       int prefixLength = offset - element.getTextRange().getStartOffset();
@@ -84,7 +85,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
       Character separator = extractDirectoryTrailingFileSeparator(caretBipartiteElementText);
       acceptPathSeparator = separator != null;
     }
-    
+
     final OffsetMap offsetMap = context.getOffsetMap();
     int idEnd = offsetMap.getOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET);
     final String text = context.getFile().getText();

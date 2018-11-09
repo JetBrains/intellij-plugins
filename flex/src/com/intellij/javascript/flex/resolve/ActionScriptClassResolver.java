@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.DialectOptionHolder;
@@ -13,7 +14,6 @@ import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -36,7 +36,7 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
 /**
  * @author Konstantin.Ulitin
  */
-public class ActionScriptClassResolver extends JSClassResolver {
+public final class ActionScriptClassResolver extends JSClassResolver {
 
   private static ActionScriptClassResolver INSTANCE = null;
 
@@ -89,6 +89,7 @@ public class ActionScriptClassResolver extends JSClassResolver {
     return JSInheritanceUtil.isParentClass(clazz, (JSClass)parentClass, strict);
   }
 
+  @Override
   protected PsiElement doFindClassByQName(@NotNull String link, final JavaScriptIndex index, GlobalSearchScope searchScope,
                                           boolean allowFileLocalSymbols, @NotNull DialectOptionHolder dialect) {
     Project project = index.getProject();
@@ -105,10 +106,8 @@ public class ActionScriptClassResolver extends JSClassResolver {
     JSQualifiedNamedElement resultFromLibraries = null;
     long resultFromLibrariesTimestamp = 0;
 
-    for (JSQualifiedNamedElement classCandidate : candidates) {
-      if (!(classCandidate instanceof JSQualifiedNamedElement)) continue;
-      if (JSResolveUtil.isConstructorFunction(classCandidate)) continue;
-      JSQualifiedNamedElement clazz = classCandidate;
+    for (JSQualifiedNamedElement clazz : candidates) {
+      if (clazz == null || JSResolveUtil.isConstructorFunction(clazz)) continue;
 
       if (link.equals(clazz.getQualifiedName())) {
         PsiFile file = clazz.getContainingFile();
@@ -170,7 +169,7 @@ public class ActionScriptClassResolver extends JSClassResolver {
   private static boolean isBuiltInClassName(final String className) {
     return OBJECT_CLASS_NAME.equals(className) ||
            BOOLEAN_CLASS_NAME.equals(className) ||
-           FUNCTION_CLASS_NAME.equals(className) ||
+           FUNCTION_CLASS_NAMES.contains(className) ||
            STRING_CLASS_NAME.equals(className);
   }
 
@@ -179,7 +178,7 @@ public class ActionScriptClassResolver extends JSClassResolver {
                                                       final Project project,
                                                       final String className,
                                                       final GlobalSearchScope scope) {
-    for (JSResolveHelper helper : Extensions.getExtensions(JSResolveHelper.EP_NAME)) {
+    for (JSResolveHelper helper : JSResolveHelper.EP_NAME.getExtensionList()) {
       PsiElement result = helper.findClassByQName(link, project, className, scope);
       if (result != null) return result;
     }

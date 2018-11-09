@@ -1,4 +1,4 @@
-var cli = require('./intellijCli.js')
+var intellijParameters = require('./karma-intellij-parameters')
   , intellijUtil = require('./intellijUtil.js')
   , util = require('util')
   , Tree = require('./tree.js');
@@ -17,7 +17,11 @@ function addBrowserErrorNode(tree, browser, error) {
   var browserNode = getOrCreateBrowserNode(tree, browser);
   var browserErrorNode = browserNode.addChild('Error', false, 'browserError', null);
   browserErrorNode.writeStartMessage();
-  browserErrorNode.setStatus(3, null, error);
+  if (intellijUtil.isString(error)) {
+    error = {stack: error};
+  }
+  const normalizedError = normalizeAssertionError(error.stack, error);
+  browserErrorNode.setStatus(3, null, error.message || '', error.stack, null, null);
   browserErrorNode.writeFinishMessage();
 }
 
@@ -120,6 +124,7 @@ function filterSuiteNames(suiteNames) {
 function IntellijReporter(config, fileList, formatError, globalEmitter, injector) {
   require('./kjhtml/kjhtml-specFilter-patch').apply(config.files);
   require('./karma-browser-tracker').startBrowserTracking(globalEmitter);
+  require('./karma-intellij-debug').configureTimeouts(injector);
   var logManager = new LogManager();
   this.adapters = [];
 
@@ -137,7 +142,7 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     clearOtherAdapters(injector, that);
 
     beforeRunStart = false;
-    tree = new Tree(cli.getConfigFile(), write);
+    tree = new Tree(intellijParameters.getUserConfigFilePath(), write);
     process.nextTick(function() {
       tree.write('##teamcity[enteredTheMatrix]\n');
     });
@@ -186,11 +191,17 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     var suiteNode = getOrCreateLowerSuiteNode(browserNode, suiteNames, write);
     var specNode = createSpecNode(suiteNode, suiteNames, specName);
     var status = result.pending ? 1 : result.success ? 0 : 2;
-    var failureMsg = '';
+    var stack = '';
     result.log.forEach(function (log) {
-      failureMsg += formatError(log, '\t');
+      stack += formatError(log, '\t');
     });
-    specNode.setStatus(status, result.time, failureMsg);
+    if (stack.length === 0 && result.pending) {
+      stack = 'Pending test \'' + specName + '\''
+    }
+    var firstAssertionError = Array.isArray(result.assertionErrors) ? result.assertionErrors[0] : null;
+    var assertionErrorObj = normalizeAssertionError(stack, firstAssertionError);
+    specNode.setStatus(status, result.time, assertionErrorObj.message || '', assertionErrorObj.stack,
+      assertionErrorObj.expected, assertionErrorObj.actual);
     logManager.attachTo(specNode);
     specNode.writeFinishMessage();
   };
@@ -199,6 +210,35 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
     logManager.attachToAnything(tree);
     tree.configFileNode.finishIfStarted();
     tree = null;
+  };
+}
+
+function normalizeAssertionError(stack, assertionError) {
+  if (!assertionError) {
+    return {stack: stack};
+  }
+  stack = stack || '';
+  var assertionMessage = assertionError.message;
+  var assertionName = assertionError.name;
+  var stackLeftTrimmed = stack.trimLeft();
+  if (util.isString(assertionMessage) && stackLeftTrimmed.indexOf(assertionMessage) === 0) {
+    stack = stackLeftTrimmed.substring(assertionMessage.length);
+  }
+  if (util.isString(assertionName) && util.isString(assertionMessage)) {
+    var compoundMessage = assertionName + ': ' + assertionMessage;
+    if (stackLeftTrimmed.indexOf(compoundMessage) === 0) {
+      assertionMessage = compoundMessage;
+      stack = stackLeftTrimmed.substring(compoundMessage.length);
+    }
+  }
+  if (stack.length > 0 && stack.charAt(0) === '\n') {
+    stack = stack.substring(1);
+  }
+  return {
+    message: assertionMessage,
+    stack: stack,
+    expected: assertionError.expected,
+    actual: assertionError.actual
   };
 }
 

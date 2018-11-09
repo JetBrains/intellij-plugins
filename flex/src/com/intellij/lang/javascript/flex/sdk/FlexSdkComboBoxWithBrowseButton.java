@@ -55,7 +55,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
   public static final String BC_SDK_KEY = "BC SDK";
 
-  private final Condition<Sdk> mySdkFilter;
+  private final Condition<? super Sdk> mySdkFilter;
 
   private final BCSdk myBCSdk = new BCSdk();
   private boolean myShowBCSdk = false;
@@ -64,7 +64,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     this(FLEX_SDK);
   }
 
-  public FlexSdkComboBoxWithBrowseButton(final Condition<Sdk> sdkFilter) {
+  public FlexSdkComboBoxWithBrowseButton(final Condition<? super Sdk> sdkFilter) {
     mySdkFilter = sdkFilter;
     rebuildSdkListAndSelectSdk(null); // if SDKs exist first will be selected automatically
 
@@ -115,6 +115,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     });
 
     addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         Project project = CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext());
         if (project == null) {
@@ -198,12 +199,14 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
   public void addComboboxListener(final Listener listener) {
     getComboBox().addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         listener.stateChanged();
       }
     });
 
     getComboBox().addPropertyChangeListener("model", new PropertyChangeListener() {
+      @Override
       public void propertyChange(PropertyChangeEvent evt) {
         listener.stateChanged();
       }
@@ -298,59 +301,72 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     private final ProjectSdksModel myOriginal;
     private final JdkListConfigurable myConfigurable;
 
-    public NonCommittingWrapper(final ProjectSdksModel original, JdkListConfigurable configurable) {
+    NonCommittingWrapper(final ProjectSdksModel original, JdkListConfigurable configurable) {
       myOriginal = original;
       myConfigurable = configurable;
     }
 
+    @Override
     public void apply() throws ConfigurationException {
       apply(null);
     }
 
+    @Override
     public void apply(@Nullable final MasterDetailsComponent configurable) throws ConfigurationException {
       myConfigurable.reset(); // just update the view
     }
 
+    @Override
     public void reset(@Nullable final Project project) {
       // ignore
     }
 
+    @Override
     public void addListener(final Listener listener) {
       myOriginal.addListener(listener);
     }
 
+    @Override
     public void removeListener(final Listener listener) {
       myOriginal.removeListener(listener);
     }
 
+    @Override
     public Listener getMulticaster() {
       return myOriginal.getMulticaster();
     }
 
+    @Override
     public Sdk[] getSdks() {
       return myOriginal.getSdks();
     }
 
+    @Override
     public Sdk findSdk(final String sdkName) {
       return myOriginal.findSdk(sdkName);
     }
 
+    @Override
     public void disposeUIResources() {
       // ignore
     }
 
+    @Override
     public HashMap<Sdk, Sdk> getProjectSdks() {
       return myOriginal.getProjectSdks();
     }
 
+    @Override
     public boolean isModified() {
       return myOriginal.isModified();
     }
 
+    @Override
     public void removeSdk(final Sdk editableObject) {
       myOriginal.removeSdk(editableObject);
     }
 
+    @Override
     public void createAddActions(@NotNull final DefaultActionGroup group,
                                  @NotNull final JComponent parent,
                                  @NotNull final Consumer<Sdk> updateTree,
@@ -358,30 +374,37 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       myOriginal.createAddActions(group, parent, updateTree, filter);
     }
 
+    @Override
     public void doAdd(@NotNull JComponent parent, @NotNull final SdkType type, @NotNull final Consumer<Sdk> updateTree) {
       myOriginal.doAdd(parent, type, updateTree);
     }
 
+    @Override
     public void addSdk(final Sdk sdk) {
       myOriginal.addSdk(sdk);
     }
 
+    @Override
     public void doAdd(final Sdk newSdk, @Nullable final Consumer<Sdk> updateTree) {
       myOriginal.doAdd(newSdk, updateTree);
     }
 
+    @Override
     public Sdk findSdk(@Nullable final Sdk modelJdk) {
       return myOriginal.findSdk(modelJdk);
     }
 
+    @Override
     public Sdk getProjectSdk() {
       return myOriginal.getProjectSdk();
     }
 
+    @Override
     public void setProjectSdk(final Sdk projectSdk) {
       myOriginal.setProjectSdk(projectSdk);
     }
 
+    @Override
     public boolean isInitialized() {
       return myOriginal.isInitialized();
     }

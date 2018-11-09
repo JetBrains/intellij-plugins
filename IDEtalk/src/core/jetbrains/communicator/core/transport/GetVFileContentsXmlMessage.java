@@ -30,22 +30,27 @@ public class GetVFileContentsXmlMessage implements XmlMessage {
     myFile = file;
   }
 
+  @Override
   public String getTagName() {
     return TAG;
   }
 
+  @Override
   public String getTagNamespace() {
     return Transport.NAMESPACE;
   }
 
+  @Override
   public boolean needsResponse() {
     return true;
   }
 
+  @Override
   public void fillRequest(Element element) {
     myFile.saveTo(element);
   }
 
+  @Override
   public void processResponse(Element responseElement) {
     VFile from = VFile.createFrom(responseElement);
     if (from != null) {

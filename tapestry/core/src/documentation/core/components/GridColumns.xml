@@ -1,0 +1,21 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Renders out the column headers for the grid, including links (where appropriate) to control column sorting.
+    </description>
+
+    <parameters>
+        <parameter name="dataProvider">
+            The object that provides access to bean and data models, which is typically the enclosing Grid component.
+        </parameter>
+        <parameter name="lean">
+            If true, then the CSS class on each TH element will be omitted, which can reduce the amount of output from the component overall by a considerable amount. Leave this as false, the\
+            default, when you are leveraging the CSS to customize the look and feel of particular columns.
+        </parameter>
+        <parameter name="sortAscending">
+            If true, then the sort is ascending (A - Z), if false then descending (Z - A).
+        </parameter>
+        <parameter name="sortColumnId">
+            The column which is currently being sorted. This value is the column's id, not its name. This parameter may be null, in which case no column is being used for sorting.
+        </parameter>
+    </parameters>
+</element>

@@ -174,12 +174,14 @@ public class DartPresentableUtil {
     return result.toString();
   }
 
+  @NotNull
   public static String buildTypeText(final @Nullable DartComponent element,
                                      final @NotNull DartReturnType returnType,
                                      final @Nullable DartGenericSpecialization specializations) {
     return returnType.getType() == null ? "void" : buildTypeText(element, returnType.getType(), specializations);
   }
 
+  @NotNull
   public static String buildTypeText(final @Nullable DartComponent element,
                                      final @Nullable DartType type,
                                      final @Nullable DartGenericSpecialization specializations) {
@@ -312,7 +314,7 @@ public class DartPresentableUtil {
   private static class DartTemplateExpression extends Expression {
     private final TextResult myResult;
 
-    public DartTemplateExpression(String text) {
+    DartTemplateExpression(String text) {
       myResult = new TextResult(text);
     }
 

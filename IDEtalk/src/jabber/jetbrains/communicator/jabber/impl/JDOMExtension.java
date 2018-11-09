@@ -44,20 +44,24 @@ public class JDOMExtension extends BaseExtension {
     return myElement;
   }
 
+  @Override
   public String getElementName() {
     return ELEMENT_NAME;
   }
 
+  @Override
   protected void setupData(Element root) {
     myElement.detach();
     root.addContent(myElement);
   }
 
+  @Override
   public PacketExtension parseExtension(XmlPullParser parser) throws Exception {
     String content = getContent(parser, getElementName());
     return new JDOMExtension((Element) createFrom(content));
   }
 
+  @Override
   protected Object createFrom(Element element) {
     return element.getChildren().get(0);
   }

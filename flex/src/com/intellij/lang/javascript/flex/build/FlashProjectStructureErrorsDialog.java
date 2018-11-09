@@ -53,6 +53,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     }
 
     myTree.setCellRenderer(new ColoredTreeCellRenderer() {
+      @Override
       public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
                                         boolean hasFocus) {
         final DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)value;
@@ -73,6 +74,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     });
 
     myTree.addKeyListener(new KeyAdapter() {
+      @Override
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
           openProjectStructure();
@@ -94,10 +96,12 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     init();
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     TreeUtil.expandAll(myTree);
     return myTree;

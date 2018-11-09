@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>Component that triggers an action on the server with a subsequent full page refresh.</description>
+
+    <references>
+        <component name="form/MyForm"/>
+        <component library="core" name="ActionLink"/>
+
+        <url name="Home page" link="http://www.mycomponentpage.com"/>
+        <url name="Issue Tracker" link="http://www.mycomponentissuetracker.com"/>
+    </references>
+
+    <parameters>
+        <parameter name="context">value1</parameter>
+
+        <parameter name="disabled">value2</parameter>
+    </parameters>
+
+    <examples>Some component examples in HTML.</examples>
+
+    <notes>Some component notes in HTML.</notes>
+</component>

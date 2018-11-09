@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.psi.impl;
 
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.UnfairTextRange;
@@ -61,7 +60,7 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     PsiElement element = this;
     if (getText().indexOf('.') != -1) {
       // libPrefix.name
@@ -82,7 +81,7 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     final DartReference[] references = PsiTreeUtil.getChildrenOfType(this, DartReference.class);
     final boolean chain = references != null && references.length == 2;
     if (chain) {
@@ -180,11 +179,5 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
     return leftReference != null
            ? leftReference.resolveDartClass()
            : DartClassResolveResult.create(PsiTreeUtil.getParentOfType(expression, DartClass.class));
-  }
-
-  @NotNull
-  @Override
-  public Object[] getVariants() {
-    return LookupElement.EMPTY_ARRAY;
   }
 }

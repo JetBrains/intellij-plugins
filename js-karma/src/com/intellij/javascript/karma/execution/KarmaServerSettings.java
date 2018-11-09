@@ -1,7 +1,7 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesData;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,7 +11,7 @@ public class KarmaServerSettings {
 
   private final boolean myWithCoverage;
   private final boolean myDebug;
-  private final NodeJsLocalInterpreter myNodeInterpreter;
+  private final NodeJsInterpreter myNodeInterpreter;
   private final String myNodeOptions;
   private final NodePackage myKarmaPackage;
   private final String myConfigFilePath;
@@ -32,7 +32,7 @@ public class KarmaServerSettings {
   }
 
   @NotNull
-  public NodeJsLocalInterpreter getNodeInterpreter() {
+  public NodeJsInterpreter getNodeInterpreter() {
     return myNodeInterpreter;
   }
 
@@ -88,7 +88,7 @@ public class KarmaServerSettings {
 
     return myWithCoverage == that.myWithCoverage &&
            myDebug == that.myDebug &&
-           myNodeInterpreter.getInterpreterSystemIndependentPath().equals(that.myNodeInterpreter.getInterpreterSystemIndependentPath()) &&
+           myNodeInterpreter.equals(that.myNodeInterpreter) &&
            myNodeOptions.equals(that.myNodeOptions) &&
            myKarmaPackage.equals(that.myKarmaPackage) &&
            myConfigFilePath.equals(that.myConfigFilePath) &&
@@ -101,7 +101,7 @@ public class KarmaServerSettings {
   public int hashCode() {
     int result = myWithCoverage ? 1 : 0;
     result = 31 * result + (myDebug ? 1 : 0);
-    result = 31 * result + myNodeInterpreter.getInterpreterSystemIndependentPath().hashCode();
+    result = 31 * result + myNodeInterpreter.hashCode();
     result = 31 * result + myNodeOptions.hashCode();
     result = 31 * result + myKarmaPackage.hashCode();
     result = 31 * result + myConfigFilePath.hashCode();
@@ -112,14 +112,14 @@ public class KarmaServerSettings {
   }
 
   public static class Builder {
-    private NodeJsLocalInterpreter myNodeInterpreter;
+    private NodeJsInterpreter myNodeInterpreter;
     private NodePackage myKarmaPackage;
     private KarmaRunSettings myRunSettings;
     private boolean myWithCoverage;
     private boolean myDebug;
 
     @NotNull
-    public Builder setNodeInterpreter(@NotNull NodeJsLocalInterpreter interpreter) {
+    public Builder setNodeInterpreter(@NotNull NodeJsInterpreter interpreter) {
       myNodeInterpreter = interpreter;
       return this;
     }

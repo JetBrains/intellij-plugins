@@ -21,10 +21,12 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
 
 public class DartFormatterTest extends FormatterTestCase {
 
+  @Override
   protected String getFileExtension() {
     return DartFileType.DEFAULT_EXTENSION;
   }
 
+  @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH;
   }
@@ -268,6 +270,14 @@ public class DartFormatterTest extends FormatterTestCase {
   }
 
   public void testSyntaxErrors() throws Exception {
+    doTest();
+  }
+
+  public void testErrorInArgumentList() throws Exception {
+    doTest();
+  }
+
+  public void testConstructorsWithoutNew() throws Exception {
     doTest();
   }
 }

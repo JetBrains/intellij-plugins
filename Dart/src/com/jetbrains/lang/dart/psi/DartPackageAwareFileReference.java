@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.openapi.util.TextRange;
@@ -9,6 +10,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
+import com.jetbrains.lang.dart.util.DotPackagesFileUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import static com.jetbrains.lang.dart.util.DartUrlResolver.PACKAGE_PREFIX;
 class DartPackageAwareFileReference extends FileReference {
   @NotNull private final DartUrlResolver myDartResolver;
 
-  public DartPackageAwareFileReference(@NotNull final FileReferenceSet fileReferenceSet,
+  DartPackageAwareFileReference(@NotNull final FileReferenceSet fileReferenceSet,
                                        final TextRange range,
                                        final int index,
                                        final String text,
@@ -30,6 +32,7 @@ class DartPackageAwareFileReference extends FileReference {
     myDartResolver = dartResolver;
   }
 
+  @Override
   @NotNull
   protected ResolveResult[] innerResolve(final boolean caseSensitive, @NotNull final PsiFile containingFile) {
     if (PACKAGES_FOLDER_NAME.equals(getText())) {
@@ -38,6 +41,11 @@ class DartPackageAwareFileReference extends FileReference {
       final PsiDirectory psiDirectory = packagesDir == null ? null : containingFile.getManager().findDirectory(packagesDir);
       if (psiDirectory != null) {
         return new ResolveResult[]{new PsiElementResolveResult(psiDirectory)};
+      }
+      VirtualFile dotPackages = pubspecYamlFile == null ? null : pubspecYamlFile.getParent().findChild(DotPackagesFileUtil.DOT_PACKAGES);
+      final PsiFile psiFile = dotPackages == null ? null : containingFile.getManager().findFile(dotPackages);
+      if (psiFile != null) {
+        return new ResolveResult[]{new PsiElementResolveResult(psiFile)};
       }
     }
 
@@ -60,6 +68,7 @@ class DartPackageAwareFileReference extends FileReference {
     return super.innerResolve(caseSensitive, containingFile);
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     final Object[] superVariants = super.getVariants();

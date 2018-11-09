@@ -37,9 +37,10 @@ public class ActionScriptConstructorChecker extends JSConstructorChecker {
 
   @Override
   protected void checkInstanceMemberAccesses(@NotNull JSFunction constructor, @NotNull JSClass clazz) {
-  
+
   }
 
+  @Override
   @Contract("null -> null")
   protected JSCallExpression findAnyBaseConstructorCall(@Nullable JSFunction jsFunction) {
     if (jsFunction == null) return null;

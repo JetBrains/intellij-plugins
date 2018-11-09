@@ -84,8 +84,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.MessageFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> implements Place.Navigator {
 
@@ -236,13 +236,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public final String moduleName;
     public final String bcName;
 
-    public BCItem(@NotNull String moduleName, @NotNull String bcName) {
+    BCItem(@NotNull String moduleName, @NotNull String bcName) {
       this.moduleName = moduleName;
       this.bcName = bcName;
       this.configurable = null;
     }
 
-    public BCItem(@NotNull FlexBCConfigurable configurable) {
+    BCItem(@NotNull FlexBCConfigurable configurable) {
       this.moduleName = null;
       this.bcName = null;
       this.configurable = configurable;
@@ -287,6 +287,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       dependencyType.setLinkageType(linkageType);
     }
 
+    @Override
     public void onDoubleClick() {
       if (configurable != null) {
         Project project = configurable.getModule().getProject();
@@ -294,6 +295,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }
 
+    @Override
     public ModifiableDependencyEntry apply(ModifiableDependencies dependencies) {
       ModifiableDependencyEntry entry;
       if (configurable != null) {
@@ -307,6 +309,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       return entry;
     }
 
+    @Override
     public boolean isModified(final DependencyEntry entry) {
       if (!(entry instanceof BuildConfigurationEntry)) {
         return true;
@@ -325,6 +328,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       return false;
     }
 
+    @Override
     public boolean canEdit() {
       return false;
     }
@@ -343,7 +347,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     private final Project project;
 
-    public ModuleLibraryItem(@NotNull String libraryId, @Nullable LibraryOrderEntry orderEntry, @NotNull Project project) {
+    ModuleLibraryItem(@NotNull String libraryId, @Nullable LibraryOrderEntry orderEntry, @NotNull Project project) {
       this.libraryId = libraryId;
       this.orderEntry = orderEntry;
       this.project = project;
@@ -377,6 +381,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       return !isANE();
     }
 
+    @Override
     public boolean isANE() {
       final Library library = orderEntry == null ? null : orderEntry.getLibrary();
       final VirtualFile[] files = library == null ? VirtualFile.EMPTY_ARRAY : library.getFiles(OrderRootType.CLASSES);
@@ -396,18 +401,21 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       dependencyType.setLinkageType(linkageType);
     }
 
+    @Override
     public void onDoubleClick() {
       if (canEdit()) {
         editLibrary(this);
       }
     }
 
+    @Override
     public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
       ModifiableDependencyEntry entry = myConfigEditor.createModuleLibraryEntry(dependencies, libraryId);
       entry.getDependencyType().copyFrom(dependencyType);
       return entry;
     }
 
+    @Override
     public boolean isModified(final DependencyEntry entry) {
       if (!(entry instanceof ModuleLibraryEntry)) {
         return true;
@@ -421,6 +429,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       return false;
     }
 
+    @Override
     public boolean canEdit() {
       return orderEntry != null;
     }
@@ -440,7 +449,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     private final Project project;
 
-    public SharedLibraryItem(@NotNull String libraryName,
+    SharedLibraryItem(@NotNull String libraryName,
                              @NotNull String libraryLevel,
                              @Nullable Library liveLibrary,
                              @NotNull Project project) {
@@ -473,6 +482,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       return !isANE();
     }
 
+    @Override
     public boolean isANE() {
       final VirtualFile[] files = liveLibrary == null ? VirtualFile.EMPTY_ARRAY : liveLibrary.getFiles(OrderRootType.CLASSES);
       for (VirtualFile file : files) {
@@ -491,10 +501,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       dependencyType.setLinkageType(linkageType);
     }
 
+    @Override
     public void onDoubleClick() {
       editLibrary(this);
     }
 
+    @Override
     public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
       ModifiableDependencyEntry entry;
       Library liveLibrary = findLiveLibrary();
@@ -508,6 +520,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       return entry;
     }
 
+    @Override
     public boolean isModified(final DependencyEntry entry) {
       if (!(entry instanceof ModifiableSharedLibraryEntry)) {
         return true;
@@ -527,6 +540,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       return false;
     }
 
+    @Override
     public boolean canEdit() {
       return true;
     }
@@ -544,7 +558,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     private final Sdk mySdk;
     private final SdkType mySdkType;
 
-    public SdkItem(Sdk sdk) {
+    SdkItem(Sdk sdk) {
       mySdk = sdk;
       mySdkType = (SdkType)sdk.getSdkType();
     }
@@ -636,6 +650,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private static final TableCellRenderer LINKAGE_TYPE_RENDERER = new DefaultTableCellRenderer() {
     private final ComboBoxTableRenderer<LinkageType> myComboBoxTableRenderer = new ComboBoxTableRenderer<>(null);
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       final Object tableItem = ((EditableTreeTable)table).getItemAt(row);
       if (tableItem instanceof MyTableItem && ((MyTableItem)tableItem).isLinkageEditable()) {
@@ -669,10 +684,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private static final AbstractTableCellEditor LINKAGE_TYPE_EDITOR = new AbstractTableCellEditor() {
     private JBComboBoxTableCellEditorComponent myCombo;
 
+    @Override
     public Object getCellEditorValue() {
       return myCombo.getEditorValue();
     }
 
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
       myCombo = new JBComboBoxTableCellEditorComponent(table);
       myCombo.setCell(table, row, column);
@@ -732,24 +749,29 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     myDisposable = Disposer.newDisposable();
 
     final SdkModel.Listener listener = new SdkModel.Listener() {
-      public void sdkAdded(final Sdk sdk) {
+      @Override
+      public void sdkAdded(@NotNull final Sdk sdk) {
         rebuildSdksModel();
       }
 
-      public void beforeSdkRemove(final Sdk sdk) {
+      @Override
+      public void beforeSdkRemove(@NotNull final Sdk sdk) {
         rebuildSdksModel();
       }
 
-      public void sdkChanged(final Sdk sdk, final String previousName) {
+      @Override
+      public void sdkChanged(@NotNull final Sdk sdk, final String previousName) {
         rebuildSdksModel();
       }
 
-      public void sdkHomeSelected(final Sdk sdk, final String newSdkHome) {
+      @Override
+      public void sdkHomeSelected(@NotNull final Sdk sdk, @NotNull final String newSdkHome) {
         rebuildSdksModel();
       }
     };
     sdksModel.addListener(listener);
     Disposer.register(myDisposable, new Disposable() {
+      @Override
       public void dispose() {
         sdksModel.removeListener(listener);
       }
@@ -762,6 +784,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     mySdkLabel.setLabelFor(mySdkCombo);
 
     mySdkCombo.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         if (myFreeze) {
           return;
@@ -772,6 +795,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     myComponentSetCombo.setModel(new DefaultComboBoxModel(ComponentSet.values()));
     myComponentSetCombo.setRenderer(new ListCellRendererWrapper<ComponentSet>() {
+      @Override
       public void customize(JList list, ComponentSet value, int index, boolean selected, boolean hasFocus) {
         setText(value.getPresentableText());
       }
@@ -779,6 +803,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     myFrameworkLinkageCombo
       .setRenderer(new ListCellRendererWrapper<LinkageType>() {
+        @Override
         public void customize(JList list, LinkageType value, int index, boolean selected, boolean hasFocus) {
           if (value == LinkageType.Default) {
             final Sdk sdk = mySdkCombo.getSelectedJdk();
@@ -857,7 +882,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }).setRemoveActionUpdater(new AnActionButtonUpdater() {
         @Override
-        public boolean isEnabled(AnActionEvent e) {
+        public boolean isEnabled(@NotNull AnActionEvent e) {
           if (myTable.getSelectedRowCount() == 0) return false;
           for (int row : myTable.getSelectedRows()) {
             MyTableItem item = myTable.getItemAt(row);
@@ -867,7 +892,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }).setEditActionUpdater(new AnActionButtonUpdater() {
         @Override
-        public boolean isEnabled(AnActionEvent e) {
+        public boolean isEnabled(@NotNull AnActionEvent e) {
           MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
           return item != null && item.canEdit();
         }
@@ -920,6 +945,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }
 
+      @Override
       public void natureChanged(final FlexBCConfigurable configurable) {
         Pair<BCItem, Integer> item = findDependencyItem(configurable);
         if (item != null) {
@@ -1084,6 +1110,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     };
 
     LibraryTableModifiableModelProvider provider = new LibraryTableModifiableModelProvider() {
+      @Override
       public LibraryTable.ModifiableModel getModifiableModel() {
         return myConfigEditor.getLibraryModel(myDependencies);
       }
@@ -1111,10 +1138,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           return selectedValue.hasSubStep();
         }
 
+        @Override
         public boolean isMnemonicsNavigationEnabled() {
           return true;
         }
 
+        @Override
         public PopupStep onChosen(final AddItemPopupAction selectedValue, final boolean finalChoice) {
           if (selectedValue.hasSubStep()) {
             return selectedValue.createSubStep();
@@ -1122,6 +1151,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           return doFinalStep(selectedValue);
         }
 
+        @Override
         @NotNull
         public String getTextFor(AddItemPopupAction value) {
           return "&" + value.getIndex() + "  " + value.getTitle();
@@ -1172,8 +1202,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     DefaultMutableTreeNode root = myTable.getRoot();
 
     if (delta < 0) {
-      for (int i = 0; i < selectedRows.length; i++) {
-        int row = selectedRows[i];
+      for (int row : selectedRows) {
         DefaultMutableTreeNode child = (DefaultMutableTreeNode)root.getChildAt(row);
         root.remove(row);
         root.insert(child, row + delta);
@@ -1194,18 +1223,22 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return TAB_NAME;
   }
 
+  @Override
   public void setDisplayName(final String name) {
   }
 
+  @Override
   public String getBannerSlogan() {
     return getDisplayName();
   }
 
+  @Override
   public Dependencies getEditableObject() {
     return myDependencies;
   }
@@ -1215,10 +1248,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     return "BuildConfigurationPage.Dependencies";
   }
 
+  @Override
   public JComponent createOptionsPanel() {
     return myMainPanel;
   }
 
+  @Override
   public boolean isModified() {
     final JdkComboBox.JdkComboBoxItem selectedItem = mySdkCombo.getSelectedItem();
     String currentSdkName = selectedItem.getSdkName();
@@ -1255,6 +1290,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     return false;
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     final Object targetPlayer = myTargetPlayerCombo.getSelectedItem();
     if (myTargetPlayerCombo.isVisible() && targetPlayer != null) {
@@ -1293,6 +1329,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
+  @Override
   public void reset() {
     myReset = true;
     SdkEntry sdkEntry = myDependencies.getSdkEntry();
@@ -1481,6 +1518,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
+  @Override
   public void disposeUIResources() {
     Disposer.dispose(myDisposable);
   }
@@ -1505,7 +1543,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private class AddBuildConfigurationDependencyAction extends AddItemPopupAction {
-    public AddBuildConfigurationDependencyAction(int index) {
+    AddBuildConfigurationDependencyAction(int index) {
       super(index, "Build Configuration...", null);
     }
 
@@ -1557,7 +1595,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private class AddFilesAction extends AddItemPopupAction {
-    public AddFilesAction(int index) {
+    AddFilesAction(int index) {
       super(index, FlexBundle.message("add.module.library.action.text"), null);
     }
 
@@ -1601,10 +1639,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private class AddSharedLibraryAction extends AddItemPopupAction {
 
-    public AddSharedLibraryAction(int index) {
+    AddSharedLibraryAction(int index) {
       super(index, FlexBundle.message("add.shared.library.dependency.action.text"), null);
     }
 
+    @Override
     public void run() {
       final Collection<Library> usedLibraries = new HashSet<>();
       List<MyTableItem> items = myTable.getItems();
@@ -1831,12 +1870,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private class ChooseLibrariesDialog extends ChooseLibrariesFromTablesDialog {
     private final Condition<Library> myFilter;
 
-    public ChooseLibrariesDialog(Condition<Library> liveLibraryFilter) {
+    ChooseLibrariesDialog(Condition<Library> liveLibraryFilter) {
       super(myMainPanel, "Choose Libraries", myProject, false);
       myFilter = liveLibraryFilter;
       init();
     }
 
+    @Override
     public void show() {
       if (isEmpty()) {
         Disposer.dispose(getDisposable());
@@ -1848,6 +1888,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }
 
+    @Override
     @NotNull
     protected Library[] getLibraries(@NotNull final LibraryTable table) {
       final StructureConfigurableContext context = ProjectStructureConfigurable.getInstance(myProject).getContext();

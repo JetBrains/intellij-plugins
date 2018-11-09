@@ -22,7 +22,7 @@ import javax.swing.*;
 class AnyXmlAttributeDescriptorWrapper implements AnnotationBackedDescriptor {
   private final PsiMetaData descriptor;
 
-  public AnyXmlAttributeDescriptorWrapper(PsiMetaData descriptor) {
+  AnyXmlAttributeDescriptorWrapper(PsiMetaData descriptor) {
     this.descriptor = descriptor;
   }
 
@@ -203,8 +203,8 @@ class AnyXmlAttributeDescriptorWrapper implements AnnotationBackedDescriptor {
 
   @NotNull
   @Override
-  public Object[] getDependences() {
-    return descriptor.getDependences();
+  public Object[] getDependencies() {
+    return descriptor.getDependencies();
   }
 
   @Override

@@ -119,7 +119,7 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     return myEnvs;
   }
 
-  public void setEnvs(@SuppressWarnings("NullableProblems") final Map<String, String> envs) {
+  public void setEnvs(final Map<String, String> envs) {
     if (envs != null) { // null comes from old projects or if storage corrupted
       myEnvs = envs;
     }
@@ -143,16 +143,6 @@ public class DartCommandLineRunnerParameters implements Cloneable {
     catch (RuntimeConfigurationError error) {
       return "";
     }
-  }
-
-  @NotNull
-  public VirtualFile getDartFile() throws RuntimeConfigurationError {
-    final VirtualFile dartFile = getDartFileOrDirectory();
-    if (dartFile.isDirectory()) {
-      assert myFilePath != null;
-      throw new RuntimeConfigurationError(DartBundle.message("dart.file.not.found", FileUtil.toSystemDependentName(myFilePath)));
-    }
-    return dartFile;
   }
 
   @NotNull

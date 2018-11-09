@@ -58,6 +58,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
+  @Override
   protected String getBasePath() {
     return "/flex_scope/";
   }
@@ -67,6 +68,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     return FlexTestUtils.getTestDataPath("");
   }
 
+  @Override
   protected String getExtension() {
     return "as";
   }
@@ -299,6 +301,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
         mySuffix = suffix;
       }
 
+      @Override
       public void run() throws Exception {
         FlexTestUtils.modifyConfigs(myProject, editor -> {
           final ModifiableFlexBuildConfiguration bc = editor.getConfigurations(module2)[0];

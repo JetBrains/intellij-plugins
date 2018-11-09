@@ -50,7 +50,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
     myTargetClass = clazz;
 
     setTitle(JSBundle.message("create.field.dialog.title"));
-    myVisibilityPanel.configureOptions(false, false, DialectDetector.dialectOfElement(clazz));
+    myVisibilityPanel.configureForClassMember(false, false, DialectDetector.dialectOfElement(clazz));
     myVisibilityPanel.setVisibility(JSAttributeList.AccessType.PRIVATE.name());
     myTypeLabel.setLabelFor(myTypeField.getChildComponent());
     myNameLabel.setLabelFor(myNameField);

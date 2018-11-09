@@ -40,11 +40,13 @@ public class GherkinSyntaxHighlighter extends SyntaxHighlighterBase {
     ATTRIBUTES.put(COLON, GherkinHighlighter.KEYWORD);
   }
 
+  @Override
   @NotNull
   public Lexer getHighlightingLexer() {
     return new GherkinLexer(myKeywordProvider);
   }
 
+  @Override
   @NotNull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return SyntaxHighlighterBase.pack(ATTRIBUTES.get(tokenType));

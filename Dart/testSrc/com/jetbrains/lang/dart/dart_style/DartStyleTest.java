@@ -500,14 +500,17 @@ public abstract class DartStyleTest extends FormatterTestCase {
     KNOWN_TO_FAIL.add("whitespace/switch.stmt:168  labeled cases"); // NEW 11/16
   }
 
+  @Override
   protected String getFileExtension() {
     return DartFileType.DEFAULT_EXTENSION;
   }
 
+  @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH;
   }
 
+  @Override
   protected String getBasePath() {
     return "dart_style";
   }

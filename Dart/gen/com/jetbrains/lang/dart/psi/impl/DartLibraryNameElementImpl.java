@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartLibraryNameElementImpl extends DartLibraryNameElementBase implements DartLibraryNameElement {
 
-  public DartLibraryNameElementImpl(ASTNode node) {
+  public DartLibraryNameElementImpl(@NotNull ASTNode node) {
     super(node);
   }
 

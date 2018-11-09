@@ -16,11 +16,13 @@ import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerOptions;
 public class ErrorProneCompilerConfiguration implements PersistentStateComponent<JpsJavaCompilerOptions> {
   private final JpsJavaCompilerOptions mySettings = new JpsJavaCompilerOptions();
 
+  @Override
   @NotNull
   public JpsJavaCompilerOptions getState() {
     return mySettings;
   }
 
+  @Override
   public void loadState(@NotNull JpsJavaCompilerOptions state) {
     XmlSerializerUtil.copyBean(state, mySettings);
   }

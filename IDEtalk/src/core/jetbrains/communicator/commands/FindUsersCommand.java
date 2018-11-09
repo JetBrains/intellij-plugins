@@ -25,7 +25,6 @@ import jetbrains.communicator.ide.CanceledException;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.util.StringUtil;
-import jetbrains.communicator.util.UIUtil;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -48,23 +47,28 @@ public class FindUsersCommand implements NamedUserCommand {
     myIdeFacade = ideFacade;
   }
 
+  @Override
   public String getName() {
     return StringUtil.getMsg("FindUsersCommand.name");
   }
 
+  @Override
   public Icon getIcon() {
     return IdetalkCoreIcons.IdeTalk.User;
   }
 
+  @Override
   public boolean isEnabled() {
     return true;
   }
 
+  @Override
   public void execute() {
     final List<User>[] finalUsers = new List[1];
 
     try {
       myIdeFacade.runLongProcess(StringUtil.getMsg("FindUsersCommand.dialog.title"), new IDEFacade.Process() {
+        @Override
         public void run(ProgressIndicator indicator) {
           List<User> result = new ArrayList<>();
           for (Transport transport : myTransports) {

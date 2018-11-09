@@ -54,6 +54,7 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
     myIgnoreExtendableClass = ignoreExtendableClass;
   }
 
+  @Override
   public void visitDomElement(final DomElement element) {
   }
 

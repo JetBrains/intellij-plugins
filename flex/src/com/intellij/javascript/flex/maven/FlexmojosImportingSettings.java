@@ -10,6 +10,7 @@ import javax.swing.*;
 
 public class FlexmojosImportingSettings implements AdditionalMavenImportingSettings {
 
+  @Override
   public UnnamedConfigurable createConfigurable(final Project project) {
     return new FlexmojosImportingConfigurable(project);
   }
@@ -21,26 +22,31 @@ public class FlexmojosImportingSettings implements AdditionalMavenImportingSetti
     private JPanel myMainPanel;
     private JCheckBox myGenerateFlexCompilerConfigurationCheckBox;
 
-    public FlexmojosImportingConfigurable(final Project project) {
+    FlexmojosImportingConfigurable(final Project project) {
       myConfig = FlexCompilerProjectConfiguration.getInstance(project);
     }
 
+    @Override
     public JComponent createComponent() {
       return myMainPanel;
     }
 
+    @Override
     public boolean isModified() {
       return myGenerateFlexCompilerConfigurationCheckBox.isSelected() != myConfig.GENERATE_FLEXMOJOS_CONFIGS;
     }
 
+    @Override
     public void apply() throws ConfigurationException {
       myConfig.GENERATE_FLEXMOJOS_CONFIGS = myGenerateFlexCompilerConfigurationCheckBox.isSelected();
     }
 
+    @Override
     public void reset() {
       myGenerateFlexCompilerConfigurationCheckBox.setSelected(myConfig.GENERATE_FLEXMOJOS_CONFIGS);
     }
 
+    @Override
     public void disposeUIResources() {
     }
   }

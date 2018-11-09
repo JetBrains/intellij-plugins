@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartLabelImpl extends AbstractDartComponentImpl implements DartLabel {
 
-  public DartLabelImpl(ASTNode node) {
+  public DartLabelImpl(@NotNull ASTNode node) {
     super(node);
   }
 

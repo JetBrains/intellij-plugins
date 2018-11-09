@@ -19,9 +19,9 @@ import static com.intellij.flex.uiDesigner.libraries.FlexLibsNames.*;
 
 class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
   private final String version;
-  private final Condition<String> globalContains;
+  private final Condition<? super String> globalContains;
 
-  FlexDefinitionMapProcessor(String version, Condition<String> globalContains) {
+  FlexDefinitionMapProcessor(String version, Condition<? super String> globalContains) {
     this.version = version;
     this.globalContains = globalContains;
   }

@@ -1,0 +1,29 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A component used to collect a provided date from the user. This is a wrapper around the LGPL dynarch.com DHTML/JavaScript Calendar.
+    </description>
+
+    <parameters>
+        <parameter name="clientId">
+            The id used to generate a page-unique client-side identifier for the component. If a component renders multiple times, a suffix will be appended to the to id to ensure uniqueness.\
+            The uniqued value may be accessed via the clientId property.
+        </parameter>
+        <parameter name="disabled">
+            If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a disabled field ignores any value in the request when the form\
+            is submitted.
+        </parameter>
+        <parameter name="editTime">
+            If true, then the client-side calendar will show the time as well as the date. You will probably need to bind the format parameter as well when this is true, say to %m/%d/%y %H:%M.
+        </parameter>
+        <parameter name="label">
+            The user presentable label for the field. If not provided, a reasonable label is generated from the component's id, first by looking for a message key named "id-label" (substituting\
+            the component's actual id), then by converting the actual id to a presentable string (for example, "userId" to "User Id").
+        </parameter>
+        <parameter name="validate">
+            The object that will perform input validation (which occurs after translation). The translate binding prefix is generally used to provide this object in a declarative fashion.
+        </parameter>
+        <parameter name="value">
+            The value parameter of a DateField must be a java.util.Date.
+        </parameter>
+    </parameters>
+</element>

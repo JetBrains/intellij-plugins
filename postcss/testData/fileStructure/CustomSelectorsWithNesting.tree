@@ -1,0 +1,8 @@
+-CustomSelectorsWithNesting.pcss
+ -a
+  -nest &:--any-link, :--button &
+   & p
+ -div
+  custom-selector :--any-link
+ -[media all]
+  custom-selector :--button

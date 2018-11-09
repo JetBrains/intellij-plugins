@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.HtmlScriptContentProvider
@@ -15,7 +16,7 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
 //    val SEEN_INTERPOLATION:Int = 0x1000
 //  }
   companion object {
-    val SEEN_VUE_ATTRIBUTE: Int = 0x10000
+    const val SEEN_VUE_ATTRIBUTE: Int = 0x10000
   }
 
   private var interpolationLexer: Lexer? = null
@@ -38,14 +39,14 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
 
   override fun getStyleLanguage(): Language? = styleViaLang(ourDefaultStyleLanguage) ?: super.getStyleLanguage()
 
-  override fun seenScript() = seenScript
-  override fun seenStyle()= seenStyle
-  override fun seenTemplate() = seenTemplate
-  override fun seenTag() = seenTag
-  override fun seenAttribute() = seenAttribute
-  override fun seenVueAttribute() = seenVueAttribute
-  override fun getScriptType() = scriptType
-  override fun getStyleType() = styleType
+  override fun seenScript(): Boolean = seenScript
+  override fun seenStyle(): Boolean = seenStyle
+  override fun seenTemplate(): Boolean = seenTemplate
+  override fun seenTag(): Boolean = seenTag
+  override fun seenAttribute(): Boolean = seenAttribute
+  override fun seenVueAttribute(): Boolean = seenVueAttribute
+  override fun getScriptType(): String? = scriptType
+  override fun getStyleType(): String? = styleType
   override fun inTagState(): Boolean = (state and HtmlHighlightingLexer.BASE_STATE_MASK) == _HtmlLexer.START_TAG_NAME
 
   override fun setSeenScriptType() {

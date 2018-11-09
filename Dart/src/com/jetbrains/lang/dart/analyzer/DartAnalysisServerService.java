@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
@@ -61,8 +49,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.util.*;
 import com.intellij.util.Consumer;
+import com.intellij.util.*;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -112,7 +100,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long IMPORTED_ELEMENTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
-  private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(5000);
+  private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
   private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -209,7 +197,7 @@ public class DartAnalysisServerService implements Disposable {
       boolean hasSevereProblems = false;
 
       for (AnalysisError error : errors) {
-        if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity()) || AnalysisErrorSeverity.WARNING.equals(error.getSeverity())) {
+        if (AnalysisErrorSeverity.ERROR.equals(error.getSeverity())) {
           hasSevereProblems = true;
         }
         if (!AnalysisErrorType.TODO.equals(error.getType())) {
@@ -656,7 +644,7 @@ public class DartAnalysisServerService implements Disposable {
   private void registerDocumentListener() {
     final DocumentListener documentListener = new DocumentListener() {
       @Override
-      public void beforeDocumentChange(DocumentEvent e) {
+      public void beforeDocumentChange(@NotNull DocumentEvent e) {
         if (myServer == null) return;
 
         myServerData.onDocumentChanged(e);
@@ -748,6 +736,8 @@ public class DartAnalysisServerService implements Disposable {
 
   void updateCurrentFile() {
     UIUtil.invokeLaterIfNeeded(() -> {
+      if (myProject.isDisposed()) return;
+
       final VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
       if (files.length > 0) {
         DartProblemsView.getInstance(myProject).setCurrentFile(files[0]);
@@ -785,6 +775,7 @@ public class DartAnalysisServerService implements Disposable {
       return file.getFileType() == DartFileType.INSTANCE ||
              HtmlUtil.isHtmlFile(file) ||
              file.getName().equals(PubspecYamlUtil.PUBSPEC_YAML) ||
+             file.getName().equals("analysis_options.yaml") ||
              file.getName().equals(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS);
     }
     return false;
@@ -1069,6 +1060,11 @@ public class DartAnalysisServerService implements Disposable {
     if (server == null) {
       return null;
     }
+
+    if (StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) {
+      return PostfixCompletionTemplate.EMPTY_ARRAY;
+    }
+
     final Ref<PostfixCompletionTemplate[]> resultRef = Ref.create();
     final CountDownLatch latch = new CountDownLatch(1);
     server.edit_listPostfixCompletionTemplates(new ListPostfixCompletionTemplatesConsumer() {
@@ -1080,7 +1076,9 @@ public class DartAnalysisServerService implements Disposable {
 
       @Override
       public void onError(RequestError error) {
-        logError("edit_listPostfixCompletionTemplates()", null, error);
+        if (!RequestErrorCode.UNKNOWN_REQUEST.equals(error.getCode())) {
+          logError("edit_listPostfixCompletionTemplates()", null, error);
+        }
         latch.countDown();
       }
     });
@@ -1136,6 +1134,12 @@ public class DartAnalysisServerService implements Disposable {
       public void computedSourceChange(SourceChange sourceChange) {
         resultRef.set(sourceChange);
         latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError error) {
+        latch.countDown();
+        logError("edit_getStatementCompletion()", filePath, error);
       }
     });
 
@@ -1605,6 +1609,46 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
+  public RuntimeCompletionResult execution_getSuggestions(@NotNull final String code,
+                                                          final int offset,
+                                                          @NotNull final VirtualFile contextFile,
+                                                          final int contextOffset,
+                                                          @NotNull final List<RuntimeCompletionVariable> variables,
+                                                          @NotNull final List<RuntimeCompletionExpression> expressions) {
+    final String contextFilePath = FileUtil.toSystemDependentName(contextFile.getPath());
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return new RuntimeCompletionResult(Lists.newArrayList(), Lists.newArrayList());
+    }
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    final Ref<RuntimeCompletionResult> refResult = Ref.create();
+    server.execution_getSuggestions(
+      code, offset,
+      contextFilePath, contextOffset,
+      variables, expressions,
+      new GetRuntimeCompletionConsumer() {
+        @Override
+        public void computedResult(RuntimeCompletionResult result) {
+          refResult.set(result);
+          latch.countDown();
+        }
+
+        @Override
+        public void onError(RequestError error) {
+          latch.countDown();
+          if (!RequestErrorCode.UNKNOWN_REQUEST.equals(error.getCode())) {
+            logError("execution_getSuggestions()", contextFilePath, error);
+          }
+        }
+      });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+    return refResult.get();
+  }
+
+  @Nullable
   public String execution_mapUri(@NotNull final String _id, @Nullable final String _filePath, @Nullable final String _uri) {
     // From the Dart Analysis Server Spec:
     // Exactly one of the file and uri fields must be provided. If both fields are provided, then an error of type INVALID_PARAMETER will
@@ -2027,7 +2071,7 @@ public class DartAnalysisServerService implements Disposable {
     @NotNull private final List<CompletionSuggestion> myCompletions;
     private final boolean isLast;
 
-    public CompletionInfo(@NotNull final String completionId,
+    CompletionInfo(@NotNull final String completionId,
                           int replacementOffset,
                           int originalReplacementLength,
                           @NotNull final List<CompletionSuggestion> completions,
@@ -2048,7 +2092,7 @@ public class DartAnalysisServerService implements Disposable {
     @NotNull final List<SearchResult> results;
     final boolean isLast;
 
-    public SearchResultsSet(@NotNull String id, @NotNull List<SearchResult> results, boolean isLast) {
+    SearchResultsSet(@NotNull String id, @NotNull List<SearchResult> results, boolean isLast) {
       this.id = id;
       this.results = results;
       this.isLast = isLast;

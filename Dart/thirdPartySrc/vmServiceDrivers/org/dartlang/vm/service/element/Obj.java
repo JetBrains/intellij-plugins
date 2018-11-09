@@ -34,6 +34,8 @@ public class Obj extends Response {
    *
    * Moving an Object into or out of the heap is considered a backwards compatible change for types
    * other than Instance.
+   *
+   * Can return <code>null</code>.
    */
   public ClassRef getClassRef() {
     return json.get("class") == null ? null : new ClassRef((JsonObject) json.get("class"));
@@ -55,6 +57,8 @@ public class Obj extends Response {
    *
    * Note that the size can be zero for some objects. In the current VM implementation, this occurs
    * for small integers, which are stored entirely within their object pointers.
+   *
+   * Can return <code>null</code>.
    */
   public int getSize() {
     return json.get("size") == null ? -1 : json.get("size").getAsInt();

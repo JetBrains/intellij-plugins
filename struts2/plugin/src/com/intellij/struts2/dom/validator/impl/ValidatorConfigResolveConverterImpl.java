@@ -35,6 +35,7 @@ import java.util.Collections;
  */
 public class ValidatorConfigResolveConverterImpl extends ValidatorConfigResolveConverter {
 
+  @Override
   @NotNull
   public Collection<? extends ValidatorConfig> getVariants(final ConvertContext context) {
     final Module module = context.getModule();
@@ -46,6 +47,7 @@ public class ValidatorConfigResolveConverterImpl extends ValidatorConfigResolveC
     return validatorManager.getValidators(module);
   }
 
+  @Override
   public ValidatorConfig fromString(@Nullable @NonNls final String name, final ConvertContext context) {
     if (name == null) {
       return null;

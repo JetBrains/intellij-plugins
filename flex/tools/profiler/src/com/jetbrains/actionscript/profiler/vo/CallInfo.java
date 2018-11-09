@@ -15,6 +15,7 @@ public class CallInfo implements FrameInfoProducer, QNameProducer {
     this.selfTime = selfTime;
   }
 
+  @Override
   public FrameInfo getFrameInfo() {
     return frameInfo;
   }

@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.bc;
 
 import com.intellij.lang.javascript.ConversionTestBase;
@@ -42,8 +43,9 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
 
     if (checkJdk()) {
       myOriginalSkds = ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).getState();
-      PathMacros.getInstance().setMacro(SDK_HOME_VAR, FileUtil.toCanonicalPath(getHomePath() + getBasePath() + "_fake_sdk"));
-      PathMacros.getInstance().setMacro(SDK_HOME_VAR_2, FileUtil.toCanonicalPath(getHomePath() + getBasePath() + "_fake_sdk_2"));
+      PathMacros pathMacros = PathMacros.getInstance();
+      pathMacros.setMacro(SDK_HOME_VAR, FileUtil.toCanonicalPath(getHomePath() + getBasePath() + "_fake_sdk"));
+      pathMacros.setMacro(SDK_HOME_VAR_2, FileUtil.toCanonicalPath(getHomePath() + getBasePath() + "_fake_sdk_2"));
     }
   }
 

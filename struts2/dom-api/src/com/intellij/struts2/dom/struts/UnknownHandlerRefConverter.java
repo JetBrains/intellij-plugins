@@ -28,6 +28,7 @@ public abstract class UnknownHandlerRefConverter extends ResolvingConverter<Bean
 
   protected static final String UNKNOWN_HANDLER_CLASS = "com.opensymphony.xwork2.UnknownHandler";
 
+  @Override
   public String toString(@Nullable final Bean bean, final ConvertContext convertContext) {
     if (bean == null) {
       return null;

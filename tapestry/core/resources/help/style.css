@@ -1,0 +1,241 @@
+/** { color:#f0f8ff; background:#faebd7;*/
+ /*}*/
+/*#b .z.x {*/
+   /*font-family: Verdana;*/
+   /*font-size: 13;*/
+   /*color:#005555;*/
+   /*font-weight:bold;*/
+ /*}*/
+
+a {
+   font-family: Verdana;
+   font-size: 13;
+   color:#005555;
+   font-weight:bold;
+   }
+
+a.context {
+   font-family: Verdana;
+   font-size: 12;
+   color:#993300;
+   font-weight:bold;
+   }
+
+.mainheader{
+    font-family: Verdana;
+    font-size: 15;
+    color:#ffffcc;
+    font-weight: bold;
+    }
+
+.orangeb{
+    font-family: Verdana;
+    font-size: 14;
+    color:#cc6600;
+    font-weight: bold;
+    }
+
+.tableheader{
+    font-family: Verdana;
+    color:#ffffff;
+    font-size: 13;
+    font-weight: bold;
+/*
+    background-position: 50cm;
+    background-color:#669999;
+*/
+
+    }
+
+/*
+h2{
+    font-family: Verdana;
+    color:#ffffff;
+    font-size: 13;
+    font-weight: bold;
+    background-color:#669999;
+    padding:0.3em 0 0.4em 0.5em;
+}
+*/
+
+.sectionheader {
+    background-color:#669999;
+    /*background-position:100%;*/
+    /*margin:0.3em 0 0.4em 0.5em;*/
+    padding:0.3em 0 0.4em 0.5em;
+}
+
+.ideakey{
+    font-family: Arial;
+    color:#333333;
+    font-size: 11;
+    font-style: italic;
+    }
+
+.ideakeysmall{
+    font-family: Arial;
+    color:#333333;
+    font-size: 10;
+    font-style: italic;
+    }
+
+.ideabutton{
+    font-family: Arial;
+    color:#000000;
+    font-size: 11;
+    background:#cccccc;
+    }
+
+.ideawindowname{
+    font-family: Verdana;
+    color:#ffffff;
+    font-size: 11;
+    background:#333366;
+    font-weight: bold;
+    }
+
+.detailedtext{
+    font-family: Verdana;
+    color:#005555;
+    font-size: 12;
+    font-weight: bold;
+    }
+
+.green{
+    font-family: Verdana;
+    color:#006666;
+    font-size: 12;
+    }
+
+.maroon{
+    font-family: Verdana;
+    color:#800000;
+    /*font-size: 12;*/
+    font-weight:bold;
+    }
+
+.maroonit{
+    font-family: Verdana;
+    color:#800000;
+    /*font-size: 12;*/
+    font-weight:bold;
+    font-style:italic;
+    }
+
+.note{
+    font-family: Verdana;
+    color:#000000;
+    font-size: 11;
+    }
+
+.red{
+    font-family: Verdana;
+    color:#cc0000;
+    font-size: 9;
+    font-weight: bold;
+    }
+
+.orange{
+    font-family: Verdana;
+    color:#cc6600;
+    font-size: 12;
+
+    }
+
+.header{
+    font-family: Verdana;
+    color:#006666;
+    font-size: 14;
+    font-weight: bold;
+    }
+
+.detailedbrown{
+    font-family: Verdana;
+    color:#993300;
+    font-size: 12;
+    font-weight: bold;
+    }
+
+.bold{
+    font-weight: bold;
+    font-size: 13;
+    }
+
+font {
+    font-family: Verdana;
+    color:#000000;
+    font-size: 12;
+    }
+
+td {
+    font-family: Verdana;
+    color:#000000;
+    font-size: 12;
+    }
+
+
+
+
+.intellij {
+    font-family: Verdana;
+    color:#003399;
+    font-weight: bold;
+    font-size: 12;
+     }
+
+.idea {
+    font-family: Verdana;
+    color:#3366cc;
+    font-weight: bold;
+    font-size: 12;
+    }
+
+a.notelink {
+    font-family: Verdana;
+    color:#993300;
+    font-weight: bold;
+    font-size: 11;
+    }
+
+.notebold {
+    font-family: Verdana;
+    color:#005555;
+    font-weight: bold;
+    font-size: 11;
+    }
+
+.contextcode {
+    font-weight: bold;
+    }
+
+/*  ---------------------------------- BEGIN LIST STYLES ----------------------------------------*/
+/*  As of v. 4.0 begin replacing this kind of mark-up:
+     <img src="../images/secondary/markerL2.gif">&nbsp;<a href="adoc.html">Link Text</a><br>
+    with:
+	     <ul>
+		    <li>List item 1</li>
+		    <li>List Item 2</li>
+		  </ul>
+*/
+
+div.indentlist {
+	margin-left: 18px; /* Use if you want list indented more than default */
+}
+
+ul {
+	margin-top: 8px;
+	list-style-image: url(images/secondary/markerL2.gif);
+	list-style-position: outside;
+}
+
+ol {
+	margin-top: 8px;
+	list-style-position: outside;
+	list-style-type: decimal;
+}
+
+li {
+	margin: 0px 0px 2px 8px;
+}
+
+/*  ---------------------------------- END LIST STYLES ----------------------------------------*/

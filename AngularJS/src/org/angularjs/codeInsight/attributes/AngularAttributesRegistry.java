@@ -12,20 +12,32 @@ import org.angularjs.index.AngularModuleIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Dennis.Ushakov
  */
 public class AngularAttributesRegistry {
-  static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
-                                                     @NotNull String directiveName,
-                                                     @Nullable PsiElement declaration) {
+
+  @NotNull
+  public static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
+                                                            @NotNull String directiveName,
+                                                            @Nullable PsiElement declaration) {
+    return createDescriptor(project, directiveName, declaration != null ? Collections.singletonList(declaration) : Collections.emptyList());
+  }
+
+  @NotNull
+  public static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
+                                                            @NotNull String directiveName,
+                                                            @NotNull List<PsiElement> declarations) {
     if ("ng-controller".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularControllerIndex.KEY, declaration);
+      return new AngularAttributeDescriptor(project, directiveName, AngularControllerIndex.KEY, declarations);
     }
     if ("ng-app".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.KEY, declaration);
+      return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.KEY, declarations);
     }
-    return new AngularAttributeDescriptor(project, directiveName, null, declaration);
+    return new AngularAttributeDescriptor(project, directiveName, null, declarations);
   }
 
   public static boolean isAngularExpressionAttribute(XmlAttribute parent) {
@@ -48,29 +60,42 @@ public class AngularAttributesRegistry {
     final PsiElement directive = descriptor != null ? descriptor.getDeclaration() : null;
     if (directive instanceof JSImplicitElement) {
       final String restrict = ((JSImplicitElement)directive).getTypeString();
-      final String [] args = restrict != null ? restrict.split(";", -1) : null;
+      final String[] args = restrict != null ? restrict.split(";", -1) : null;
       return args != null && args.length > 2 ? args[2] : "";
     }
     return "";
   }
 
+  /**
+   * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
+   */
+  @Deprecated
   public static boolean isEventAttribute(String name, Project project) {
     return name.startsWith("(") && name.endsWith(")") && AngularIndexUtil.hasAngularJS2(project);
   }
 
+  /**
+   * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
+   */
+  @Deprecated
   public static boolean isTagReferenceAttribute(String name, Project project) {
     return name.startsWith("#") && AngularIndexUtil.hasAngularJS2(project);
   }
 
+  /**
+   * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
+   */
+  @Deprecated
   public static boolean isVariableAttribute(String name, Project project) {
     return name.startsWith("let-") && AngularIndexUtil.hasAngularJS2(project);
   }
 
-  public static boolean isTemplateAttribute(String name, Project project) {
-    return name.startsWith("*") && AngularIndexUtil.hasAngularJS2(project);
-  }
-
+  /**
+   * @deprecated Kept for compatibility with NativeScript. Use Psi element visitor to determine attribute type.
+   */
+  @Deprecated
   public static boolean isBindingAttribute(String name, Project project) {
     return name.startsWith("[") && name.endsWith("]") && AngularIndexUtil.hasAngularJS2(project);
   }
+
 }

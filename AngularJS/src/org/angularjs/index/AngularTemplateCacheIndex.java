@@ -71,7 +71,7 @@ public class AngularTemplateCacheIndex extends ScalarIndexExtension<String> {
     }
   }
 
-  public static void processTemplates(final PsiFile psiFile, final Processor<XmlAttribute> processor) {
+  public static void processTemplates(final PsiFile psiFile, final Processor<? super XmlAttribute> processor) {
     if (psiFile instanceof XmlFile) {
       psiFile.accept(new XmlRecursiveElementWalkingVisitor() {
         @Override

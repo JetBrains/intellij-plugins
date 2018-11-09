@@ -19,6 +19,7 @@ public class CreateEventHandlerIntention extends BaseIntentionAction {
     setText(FlexBundle.message("intention.create.event.handler"));
   }
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return getText();
@@ -48,10 +49,12 @@ public class CreateEventHandlerIntention extends BaseIntentionAction {
     return false;
   }
 
+  @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
     new ActionScriptGenerateEventHandler().invoke(project, editor, file);
   }
 
+  @Override
   public boolean startInWriteAction() {
     return false;
   }

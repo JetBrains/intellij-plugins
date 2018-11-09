@@ -63,6 +63,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
   private JSClass mySourceClass;
   private final JSMemberInfo[] myMembersToMove;
+  @NotNull
   private final String myTargetName;
   private final String myTargetPackage;
   private final int myDocCommentPolicy;
@@ -76,7 +77,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
 
   public FlexExtractSuperProcessor(JSClass sourceClass,
                                    JSMemberInfo[] membersToMove,
-                                   String targetName,
+                                   @NotNull String targetName,
                                    String targetPackage,
                                    int docCommentPolicy,
                                    JSExtractSuperMode mode,
@@ -537,11 +538,13 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
   }
 
   private class JSExtractInterfaceUsageViewDescriptor extends UsageViewDescriptorAdapter {
+    @Override
     @NotNull
     public PsiElement[] getElements() {
       return new PsiElement[]{mySourceClass};
     }
 
+    @Override
     public String getProcessedElementsHeader() {
       return RefactoringBundle.message(myClassNotInterface ? "members.to.form.superclass" : "members.to.form.interface");
     }

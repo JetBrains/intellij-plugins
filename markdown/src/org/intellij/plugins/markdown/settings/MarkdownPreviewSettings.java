@@ -26,17 +26,22 @@ public final class MarkdownPreviewSettings {
   @Attribute("AutoScrollPreview")
   private boolean myIsAutoScrollPreview = true;
 
+  @Attribute("VerticalSplit")
+  private boolean myIsVerticalSplit = true;
+
   public MarkdownPreviewSettings() {
   }
 
   public MarkdownPreviewSettings(@NotNull SplitFileEditor.SplitEditorLayout splitEditorLayout,
                                  @NotNull MarkdownHtmlPanelProvider.ProviderInfo htmlPanelProviderInfo,
                                  boolean useGrayscaleRendering,
-                                 boolean isAutoScrollPreview) {
+                                 boolean isAutoScrollPreview,
+                                 boolean isVerticalSplit) {
     mySplitEditorLayout = splitEditorLayout;
     myHtmlPanelProviderInfo = htmlPanelProviderInfo;
     myUseGrayscaleRendering = useGrayscaleRendering;
     myIsAutoScrollPreview = isAutoScrollPreview;
+    myIsVerticalSplit = isVerticalSplit;
   }
 
   @NotNull
@@ -57,6 +62,10 @@ public final class MarkdownPreviewSettings {
     return myIsAutoScrollPreview;
   }
 
+  public boolean isVerticalSplit() {
+    return myIsVerticalSplit;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -66,6 +75,7 @@ public final class MarkdownPreviewSettings {
 
     if (myUseGrayscaleRendering != settings.myUseGrayscaleRendering) return false;
     if (myIsAutoScrollPreview != settings.myIsAutoScrollPreview) return false;
+    if (myIsVerticalSplit != settings.myIsVerticalSplit) return false;
     if (mySplitEditorLayout != settings.mySplitEditorLayout) return false;
     if (!myHtmlPanelProviderInfo.equals(settings.myHtmlPanelProviderInfo)) return false;
 
@@ -78,6 +88,7 @@ public final class MarkdownPreviewSettings {
     result = 31 * result + myHtmlPanelProviderInfo.hashCode();
     result = 31 * result + (myUseGrayscaleRendering ? 1 : 0);
     result = 31 * result + (myIsAutoScrollPreview ? 1 : 0);
+    result = 31 * result + (myIsVerticalSplit ? 1 : 0);
     return result;
   }
 

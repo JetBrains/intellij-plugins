@@ -20,7 +20,6 @@ import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.equalTo;
 
 public class StringRegistryTest {
-  @SuppressWarnings({"unchecked"})
   @Test
   public void rollback() {
     StringRegistry stringRegistry = new StringRegistry();

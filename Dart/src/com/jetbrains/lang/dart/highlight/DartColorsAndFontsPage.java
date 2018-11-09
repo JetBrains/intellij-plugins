@@ -231,35 +231,42 @@ public class DartColorsAndFontsPage implements ColorSettingsPage {
     };
   }
 
+  @Override
   @NotNull
   public String getDisplayName() {
     return DartBundle.message("dart.title");
   }
 
+  @Override
   public Icon getIcon() {
     return DartFileType.INSTANCE.getIcon();
   }
 
+  @Override
   @NotNull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ATTRS;
   }
 
+  @Override
   @NotNull
   public ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
+  @Override
   @NotNull
   public SyntaxHighlighter getHighlighter() {
     return new DartSyntaxHighlighter();
   }
 
+  @Override
   @NotNull
   public String getDemoText() {
     return PREVIEW_TEXT;
   }
 
+  @Override
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return PREVIEW_TAGS;
   }

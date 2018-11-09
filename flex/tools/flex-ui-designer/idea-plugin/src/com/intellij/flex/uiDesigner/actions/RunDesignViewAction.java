@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.actions;
 
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.DesignerApplicationManager;
-import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -17,6 +16,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RunDesignViewAction extends DumbAwareAction {
@@ -31,13 +31,12 @@ public class RunDesignViewAction extends DumbAwareAction {
   }
 
   @Override
-  public void actionPerformed(final AnActionEvent event) {
+  public void actionPerformed(@NotNull final AnActionEvent event) {
     final DataContext dataContext = event.getDataContext();
     XmlFile psiFile = (XmlFile)getPsiFile(CommonDataKeys.PROJECT.getData(dataContext), dataContext, ActionPlaces.isPopupPlace(event.getPlace()));
     assert psiFile != null;
 
     if (!DebugPathManager.IS_DEV) {
-      UsageTrigger.trigger(usageTriggerFeature);
     }
 
     DesignerApplicationManager.getInstance().openDocument(psiFile,
@@ -49,7 +48,7 @@ public class RunDesignViewAction extends DumbAwareAction {
   }
 
   @Override
-  public void update(final AnActionEvent event) {
+  public void update(@NotNull final AnActionEvent event) {
     final boolean popupPlace = ActionPlaces.isPopupPlace(event.getPlace());
     final boolean enabled = isEnabled(event.getDataContext(), popupPlace) && !DesignerApplicationManager.getInstance().isInitialRendering();
     if (popupPlace) {

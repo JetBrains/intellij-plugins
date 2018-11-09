@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerWorkspaceConfiguration;
@@ -11,8 +24,8 @@ import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.*;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
@@ -551,8 +564,8 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     }
   }
 
+  @Override
   public boolean execute(final CompileContext context) {
-    FlexCompilerHandler.getInstance(context.getProject()).getBuiltInFlexCompilerHandler().stopCompilerProcess();
     return validateConfiguration(context);
   }
 
@@ -603,6 +616,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     if (!independentBCsExist(modulesAndBCsToCompile)) return;
 
     final NotificationListener listener = new NotificationListener() {
+      @Override
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         notification.expire();
 
@@ -610,6 +624,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
           CompilerWorkspaceConfiguration.getInstance(project).PARALLEL_COMPILATION = true;
 
           final NotificationListener listener1 = new NotificationListener() {
+            @Override
             public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
               notification.expire();
               ShowSettingsUtil.getInstance().showSettingsDialog(project, CompilerBundle.message("compiler.configurable.display.name"));
@@ -689,14 +704,17 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
       myProblem = problem;
     }
 
+    @Override
     public boolean canNavigateToSource() {
       return false;
     }
 
+    @Override
     public boolean canNavigate() {
       return !myModule.isDisposed() && FlexBuildConfigurationManager.getInstance(myModule).findConfigurationByName(myBCNme) != null;
     }
 
+    @Override
     public void navigate(final boolean requestFocus) {
       final ProjectStructureConfigurable configurable = ProjectStructureConfigurable.getInstance(myModule.getProject());
 

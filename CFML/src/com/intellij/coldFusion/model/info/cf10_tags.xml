@@ -15,6 +15,7 @@
   ~ limitations under the License.
   -->
 <dictionary>
+  <doc link="https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-in-coldfusion-10.html"/>
     <tags>
       <tag endtagrequired="true" name="cfexchangeconversation" single="false"
            xmlstyle="false">

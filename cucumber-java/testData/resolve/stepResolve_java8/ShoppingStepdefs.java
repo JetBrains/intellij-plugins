@@ -5,5 +5,9 @@ public class ShoppingStepdefs implements En {
     Given("I have cukes in my belly", (Integer cukes) -> {
       System.out.format("Cukes: %n\n", cukes);
     });
+
+    Given("one " + "two", () -> {
+      System.out.format("Cukes: %n\n", cukes);
+    });
   }
 }

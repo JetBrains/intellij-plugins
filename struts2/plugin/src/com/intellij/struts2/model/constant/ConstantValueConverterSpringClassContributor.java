@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 public class ConstantValueConverterSpringClassContributor implements ConstantValueConverterClassContributor {
 
 
+  @Override
   @Nullable
   public PsiClass fromString(@NotNull @NonNls final String s, final ConvertContext convertContext) {
     final Module module = convertContext.getModule();

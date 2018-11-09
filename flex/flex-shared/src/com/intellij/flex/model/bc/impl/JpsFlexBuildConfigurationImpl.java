@@ -4,7 +4,6 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.*;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
@@ -66,11 +65,13 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     myTempBCForCompilation = original.myTempBCForCompilation;
   }
 
+  @Override
   @NotNull
   public JpsFlexBuildConfigurationImpl createCopy() {
     return new JpsFlexBuildConfigurationImpl(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsFlexBuildConfigurationImpl modified) {
     super.applyChanges(modified);
     // todo use setters & dispatch events
@@ -91,10 +92,12 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
 
 // -----------------------------------------
 
+  @Override
   public JpsTypedModule<JpsFlexBuildConfigurationManager> getModule() {
     return (JpsTypedModule<JpsFlexBuildConfigurationManager>)myParent.getParent().getParent();
   }
 
+  @Override
   @NotNull
   public JpsFlexBCReference createReference() {
     return new JpsFlexBCReferenceImpl(getName(), getModule().createReference());
@@ -118,6 +121,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return myOutputType;
   }
 
+  @Override
   public void setOutputType(@NotNull final OutputType outputType) {
     myOutputType = outputType;
   }
@@ -128,6 +132,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return myOptimizeFor;
   }
 
+  @Override
   public void setOptimizeFor(@NotNull final String optimizeFor) {
     myOptimizeFor = optimizeFor;
   }
@@ -138,6 +143,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return myMainClass;
   }
 
+  @Override
   public void setMainClass(@NotNull final String mainClass) {
     myMainClass = mainClass;
   }
@@ -148,6 +154,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return myOutputFileName;
   }
 
+  @Override
   public void setOutputFileName(@NotNull final String outputFileName) {
     myOutputFileName = outputFileName;
   }
@@ -158,6 +165,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return myOutputFolder;
   }
 
+  @Override
   public void setOutputFolder(@NotNull final String outputFolder) {
     myOutputFolder = outputFolder;
   }
@@ -167,6 +175,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return myUseHtmlWrapper;
   }
 
+  @Override
   public void setUseHtmlWrapper(final boolean useHtmlWrapper) {
     myUseHtmlWrapper = useHtmlWrapper;
   }
@@ -192,6 +201,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return result;
   }
 
+  @Override
   public void setRLMs(@NotNull Collection<RLMInfo> rlms) {
     if (rlms.isEmpty()) myRLMs = "";
     myRLMs = StringUtil.join(rlms, info -> info.MAIN_CLASS +
@@ -208,6 +218,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
+  @Override
   public void setCssFilesToCompile(@NotNull Collection<String> cssFilesToCompile) {
     myCssFilesToCompile = cssFilesToCompile.isEmpty() ? "" : StringUtil.join(cssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
@@ -217,15 +228,18 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return mySkipCompile;
   }
 
+  @Override
   public void setSkipCompile(final boolean skipCompile) {
     mySkipCompile = skipCompile;
   }
 
+  @Override
   @NotNull
   public JpsFlexDependencies getDependencies() {
     return myContainer.getChild(JpsFlexDependenciesImpl.ROLE);
   }
 
+  @Override
   @NotNull
   public JpsFlexCompilerOptions getCompilerOptions() {
     return myContainer.getChild(JpsFlexCompilerOptionsRole.INSTANCE);
@@ -304,11 +318,13 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return new BuildConfigurationNature(myTargetPlatform, myPureAs, myOutputType);
   }
 
+  @Override
   @Nullable
   public JpsSdk<?> getSdk() {
     return getDependencies().getSdk();
   }
 
+  @Override
   public boolean isTempBCForCompilation() {
     return myTempBCForCompilation;
   }

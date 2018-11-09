@@ -34,12 +34,14 @@ import java.util.Collection;
  */
 public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
 
+  @Override
   @NotNull
   public Collection<? extends PsiMethod> getVariants(final ConvertContext context) {
     final Action action = getActionElement(context);
     return action.getActionMethods();
   }
 
+  @Override
   public PsiMethod fromString(@Nullable @NonNls final String value, final ConvertContext context) {
     if (value == null) {
       return null;
@@ -50,14 +52,17 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
   }
 
 
+  @Override
   public String toString(@Nullable final PsiMethod psiMethod, final ConvertContext context) {
     return psiMethod != null ? psiMethod.getName() : null;
   }
 
+  @Override
   public String getErrorMessage(@Nullable final String s, final ConvertContext context) {
     return "Cannot resolve action-method '" + s + "'";
   }
 
+  @Override
   public LocalQuickFix[] getQuickFixes(final ConvertContext context) {
     final Action action = getActionElement(context);
     final String methodName = action.getMethod().getStringValue();

@@ -38,12 +38,13 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   @NotNull
   private SplitEditorLayout mySplitEditorLayout =
     MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().getSplitEditorLayout();
+
+  private boolean myVerticalSplitOption = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isVerticalSplit();
   @NotNull
   private final MyListenersMultimap myListenersGenerator = new MyListenersMultimap();
 
   private SplitEditorToolbar myToolbarWrapper;
-
-  private boolean myAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
+  private JBSplitter mySplitter;
 
   public SplitFileEditor(@NotNull E1 mainEditor, @NotNull E2 secondEditor) {
     myMainEditor = mainEditor;
@@ -58,35 +59,53 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
       mySecondEditor.putUserData(PARENT_SPLIT_KEY, this);
     }
 
-    MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener = newSettings -> {
-      boolean oldAutoScrollPreview = MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isAutoScrollPreview();
-      SplitEditorLayout oldSplitEditorLayout =
-        MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().getSplitEditorLayout();
+    MarkdownApplicationSettings.SettingsChangedListener settingsChangedListener =
+      new MarkdownApplicationSettings.SettingsChangedListener() {
+        @Override
+        public void beforeSettingsChanged(@NotNull MarkdownApplicationSettings newSettings) {
+          SplitEditorLayout oldSplitEditorLayout =
+            MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().getSplitEditorLayout();
 
-      ApplicationManager.getApplication().invokeLater(() -> {
-        if (oldAutoScrollPreview == myAutoScrollPreview) {
-          setAutoScrollPreview(newSettings.getMarkdownPreviewSettings().isAutoScrollPreview());
-        }
+          boolean oldVerticalSplitOption =
+            MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isVerticalSplit();
 
-        if (oldSplitEditorLayout == mySplitEditorLayout) {
-          triggerLayoutChange(newSettings.getMarkdownPreviewSettings().getSplitEditorLayout(), false);
+          ApplicationManager.getApplication().invokeLater(() -> {
+            if (oldSplitEditorLayout == mySplitEditorLayout) {
+              triggerLayoutChange(newSettings.getMarkdownPreviewSettings().getSplitEditorLayout(), false);
+            }
+
+            if (oldVerticalSplitOption == myVerticalSplitOption) {
+              triggerSplitOrientationChange(newSettings.getMarkdownPreviewSettings().isVerticalSplit());
+            }
+          });
         }
-      });
-    };
+      };
 
     ApplicationManager.getApplication().getMessageBus().connect(this)
       .subscribe(MarkdownApplicationSettings.SettingsChangedListener.TOPIC, settingsChangedListener);
   }
 
+  private void triggerSplitOrientationChange(boolean isVerticalSplit) {
+    if (myVerticalSplitOption == isVerticalSplit) {
+      return;
+    }
+
+    myVerticalSplitOption = isVerticalSplit;
+
+    myToolbarWrapper.refresh();
+    mySplitter.setOrientation(!myVerticalSplitOption);
+    myComponent.repaint();
+  }
+
   @NotNull
   private JComponent createComponent() {
-    final JBSplitter splitter = new JBSplitter(false, 0.5f, 0.15f, 0.85f);
-    splitter.setSplitterProportionKey(MY_PROPORTION_KEY);
-    splitter.setFirstComponent(myMainEditor.getComponent());
-    splitter.setSecondComponent(mySecondEditor.getComponent());
+    mySplitter =
+      new JBSplitter(!MarkdownApplicationSettings.getInstance().getMarkdownPreviewSettings().isVerticalSplit(), 0.5f, 0.15f, 0.85f);
+    mySplitter.setSplitterProportionKey(MY_PROPORTION_KEY);
+    mySplitter.setFirstComponent(myMainEditor.getComponent());
+    mySplitter.setSecondComponent(mySecondEditor.getComponent());
 
-
-    myToolbarWrapper = new SplitEditorToolbar(splitter);
+    myToolbarWrapper = new SplitEditorToolbar(mySplitter);
     if (myMainEditor instanceof TextEditor) {
       myToolbarWrapper.addGutterToTrack(((EditorGutterComponentEx)((TextEditor)myMainEditor).getEditor().getGutter()));
     }
@@ -96,7 +115,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
 
     final JPanel result = new JPanel(new BorderLayout());
     result.add(myToolbarWrapper, BorderLayout.NORTH);
-    result.add(splitter, BorderLayout.CENTER);
+    result.add(mySplitter, BorderLayout.CENTER);
     adjustEditorsVisibility();
 
     return result;
@@ -122,14 +141,6 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
   @NotNull
   public SplitEditorLayout getCurrentEditorLayout() {
     return mySplitEditorLayout;
-  }
-
-  public boolean isAutoScrollPreview() {
-    return myAutoScrollPreview;
-  }
-
-  public void setAutoScrollPreview(boolean autoScrollPreview) {
-    myAutoScrollPreview = autoScrollPreview;
   }
 
   private void invalidateLayout(boolean requestFocus) {
@@ -265,7 +276,7 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     Disposer.dispose(mySecondEditor);
   }
 
-  static class MyFileEditorState implements FileEditorState {
+  public static class MyFileEditorState implements FileEditorState {
     @Nullable
     private final String mySplitLayout;
     @Nullable

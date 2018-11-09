@@ -66,6 +66,6 @@ class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", Everywh
       }
     }
 
-    fun isTagEnd(element: PsiElement) = element.node.elementType == XmlTokenType.XML_END_TAG_START
+    fun isTagEnd(element: PsiElement): Boolean = element.node.elementType == XmlTokenType.XML_END_TAG_START
   }
 }

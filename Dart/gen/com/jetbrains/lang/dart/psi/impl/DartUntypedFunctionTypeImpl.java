@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartUntypedFunctionTypeImpl extends DartPsiCompositeElementImpl implements DartUntypedFunctionType {
 
-  public DartUntypedFunctionTypeImpl(ASTNode node) {
+  public DartUntypedFunctionTypeImpl(@NotNull ASTNode node) {
     super(node);
   }
 

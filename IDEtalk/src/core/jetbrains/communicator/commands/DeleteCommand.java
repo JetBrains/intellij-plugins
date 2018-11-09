@@ -41,10 +41,12 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
     myIDEFacade = facade;
   }
 
+  @Override
   public boolean enabled() {
     return myUserListComponent.getSelectedNodes().length > 0;
   }
 
+  @Override
   public void execute() {
     Object[] selectedNodes = myUserListComponent.getSelectedNodes();
 
@@ -57,19 +59,17 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
   }
 
   private void deleteSelectedGroups(Object[] selectedNodes) {
-    for (int i = 0; i < selectedNodes.length; i++) {
-      Object selectedNode = selectedNodes[i];
+    for (Object selectedNode : selectedNodes) {
       if (selectedNode instanceof String) {
-        myUserModel.removeGroup((String) selectedNode);
+        myUserModel.removeGroup((String)selectedNode);
       }
     }
   }
 
   private void deleteSelectedUsers(Object[] selectedNodes) {
-    for (int i = 0; i < selectedNodes.length; i++) {
-      Object selectedNode = selectedNodes[i];
+    for (Object selectedNode : selectedNodes) {
       if (selectedNode instanceof User) {
-        myUserModel.removeUser((User) selectedNode);
+        myUserModel.removeUser((User)selectedNode);
       }
     }
   }
@@ -81,7 +81,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
 
     StringBuffer question = new StringBuffer(QUESTION_PREFIX);
 
-    final boolean hasBothUsersAndGroups = usersToDelete.size() > 0 && groupsToDelete.size() > 0;
+    final boolean hasBothUsersAndGroups = !usersToDelete.isEmpty() && !groupsToDelete.isEmpty();
 
     appendItems(question, groupsToDelete, "group", hasBothUsersAndGroups,
         new GroupTextExtractor(groupsToDelete, hasBothUsersAndGroups));
@@ -91,6 +91,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
     }
 
     appendItems(question, usersToDelete, "user", hasBothUsersAndGroups, new ItemTextExtractor() {
+      @Override
       public String getText(Object item) {
         return ((User) item).getDisplayName();
       }
@@ -118,8 +119,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
   }
 
   private void buildListOfDeletedUsersAndGroups(Object[] selectedNodes, List usersToDelete, List groupsToDelete) {
-    for (int i = 0; i < selectedNodes.length; i++) {
-      Object selectedNode = selectedNodes[i];
+    for (Object selectedNode : selectedNodes) {
       if (selectedNode instanceof User) {
         usersToDelete.add(selectedNode);
       }
@@ -137,7 +137,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
   }
 
   private void appendItems(StringBuffer question, List items, String itemName, boolean useCommasOnly, ItemTextExtractor extractor) {
-    if (items.size() > 0) {
+    if (!items.isEmpty()) {
       StringUtil.appendItemName(question, itemName, items.size());
       question.append(' ');
       appendCommaSeparated(question, items, extractor);
@@ -181,6 +181,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
       myHasBothUsersAndGroups = hasBothUsersAndGroups;
     }
 
+    @Override
     public String getText(Object item) {
       int numberOfUsers = myUserModel.getUsers((String) item).length;
       StringBuffer sb = new StringBuffer("\"" + item + '"');

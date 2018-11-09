@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.info;
 
 import com.intellij.openapi.util.text.StringUtil;
@@ -30,11 +16,11 @@ import java.util.regex.Pattern;
 /**
  * @author vnikolaenko
  */
-// TODO: parse attributes descriptions
 // TODO: parse functions' parameters descriptions
 // TODO: parse predefined variables
 public class CfmlTagsDescriptionsParser extends DefaultHandler {
   private boolean myIsTagHelpSection = false;
+  private boolean myIsAttributeHelpSection = false;
   private boolean myIsFunctionHelpSection = false;
   private Map<String, CfmlTagDescription> myTags;
   private Map<String, CfmlFunctionDescription> myFunctions;
@@ -43,42 +29,55 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
   private CfmlFunctionDescription myCurrentFunction = null;
   private CfmlAttributeDescription myCurrentAttribute = null;
   private final List<String> myFunctionUpperCased = new LinkedList<>();
+  private String myOnlineDocumentationLink = "https://helpx.adobe.com/support/coldfusion.html"; //as default online documentation link
   private String myCurrentScope = "";
 
   private static final int TAG_STATE = 0;
   private static final int FUNCTION_STATE = 1;
   private static final int SCOPE_STATE = 2;
   private static final int PREDEFINED_VARIABLE_STATE = 3;
+  private static final int ONLINE_DOC_LINK_STATE = 4;
+  private static final int TAG_PARAMETER_STATE = 5;
 
   private int myState;
 
+
+  @Override
   public void startDocument() throws SAXException {
     myTags = new HashMap<>();
     myFunctions = new HashMap<>();
   }
 
+  @Override
   public void endDocument() throws SAXException {
   }
 
   private final Pattern myPattern = Pattern.compile("\\s{2,}");
+
   @Override
   public void characters(char[] ch, int start, int length) throws SAXException {
-    if (!myIsTagHelpSection && !myIsFunctionHelpSection) return;
+    if (!myIsTagHelpSection &&  !myIsAttributeHelpSection && !myIsFunctionHelpSection) return;
     String description = new String(ch, start, length);
     description = myPattern.matcher(description).replaceAll(" ");
 
     if (myIsTagHelpSection && myCurrentTag != null) {
       String previousDescription = myCurrentTag.getDescription();
       myCurrentTag.setDescription(
-        StringUtil.isEmpty(previousDescription) ?description:previousDescription + "\n" + description);
+        StringUtil.isEmpty(previousDescription) ? description : previousDescription + "\n" + description);
+    }
+    if (myIsAttributeHelpSection && myCurrentAttribute != null) {
+      String previousDescription = myCurrentAttribute.getDescription();
+      myCurrentAttribute.setDescription(
+        StringUtil.isEmpty(previousDescription) ? description : previousDescription + "\n" + description);
     }
     else if (myIsFunctionHelpSection && myCurrentFunction != null) {
       String previousDescription = myCurrentFunction.getDescription();
       myCurrentFunction.setDescription(
-        StringUtil.isEmpty(previousDescription) ?description:previousDescription + "\n" + description);
+        StringUtil.isEmpty(previousDescription) ? description : previousDescription + "\n" + description);
     }
   }
 
+  @Override
   public void startElement(String namespaceURI, String localName, String qName,
                            Attributes attr) throws SAXException {
     if (localName.equals("tags")) {
@@ -93,18 +92,31 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     else if (localName.equals("scopes")) {
       myState = PREDEFINED_VARIABLE_STATE;
     }
-    else if (myState == TAG_STATE) {
+    else if (localName.equals("doc")) {
+      myState = ONLINE_DOC_LINK_STATE;
+      String link = attr.getValue("link");
+      if (link != null) myOnlineDocumentationLink = link;
+    }
+    else if (myState == TAG_STATE || myState == TAG_PARAMETER_STATE) {
       myIsTagHelpSection = false;
       if (localName.equals("tag")) {
+        myState = TAG_STATE;
         final String isSingle = attr.getValue("single");
-        final String isEndtagrequired = attr.getValue("endtagrequired");
+        final String endTagRequired = attr.getValue("endtagrequired");
         myCurrentTag = new CfmlTagDescription(attr.getValue("name"),
-                                              Boolean.valueOf(isSingle), Boolean.valueOf(isEndtagrequired));
+                                              Boolean.valueOf(isSingle), Boolean.valueOf(endTagRequired));
       }
       else if (localName.equals("help")) {
-        myIsTagHelpSection = true;
+        if (myState == TAG_STATE) {
+          myIsTagHelpSection = true;
+        }
+        else {
+          myIsAttributeHelpSection = true;
+        }
       }
       else if (localName.equals("parameter")) {
+        myIsAttributeHelpSection = false;
+        myState = TAG_PARAMETER_STATE;
         String aName = attr.getValue("name");
         int aType = CfmlTypesInfo.getTypeByString(attr.getValue("type"));
         boolean aRequired = Boolean.valueOf(attr.getValue("required"));
@@ -148,6 +160,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     }
   }
 
+  @Override
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     if (localName.equals("tag") && myCurrentTag != null) {
       myTags.put(myCurrentTag.getName(), myCurrentTag);
@@ -200,5 +213,9 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
 
   public Map<String, CfmlTagDescription> getTags() {
     return myTags;
+  }
+
+  public String getOnlineDocumentationLink() {
+    return myOnlineDocumentationLink;
   }
 }

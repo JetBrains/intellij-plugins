@@ -58,7 +58,7 @@ public abstract class HbLexerTest extends PlatformLiteFixture {
   static class TokenizerResult {
     private final List<Token> _tokens;
 
-    public TokenizerResult(List<Token> tokens) {
+    TokenizerResult(List<Token> tokens) {
       _tokens = tokens;
     }
 

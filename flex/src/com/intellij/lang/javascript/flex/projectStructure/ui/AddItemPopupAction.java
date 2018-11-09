@@ -10,7 +10,7 @@ abstract class AddItemPopupAction implements Runnable {
   private final Icon myIcon;
   private final int myIndex;
 
-  public AddItemPopupAction(int index, String title, Icon icon) {
+  AddItemPopupAction(int index, String title, Icon icon) {
     myTitle = title;
     myIcon = icon;
     myIndex = index;

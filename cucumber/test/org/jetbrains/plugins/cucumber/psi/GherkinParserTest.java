@@ -8,7 +8,6 @@ import org.jetbrains.plugins.cucumber.CucumberTestUtil;
  * @author yole
  */
 public class GherkinParserTest extends ParsingTestCase {
-  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
   public GherkinParserTest() {
     super("", "feature", new GherkinParserDefinition());
   }
@@ -19,6 +18,7 @@ public class GherkinParserTest extends ParsingTestCase {
     return super.getTestName(true);
   }
 
+  @Override
   protected String getTestDataPath() {
     return CucumberTestUtil.getTestDataPath() + "/parsing";
   }
@@ -96,6 +96,10 @@ public class GherkinParserTest extends ParsingTestCase {
   }
 
   public void testScenario_outline_param() {
+    doTest(true);
+  }
+
+  public void testScenario_with_examples() {
     doTest(true);
   }
 }

@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -11,12 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * PhoneGapConfigurationType.java
- * <p/>
- * Created by Masahiro Suzuka on 2014/04/04.
- */
-public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
+public final class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
   public static final String RUN_CONFIGURATION_ID = "PhoneGap";
 
   public PhoneGapConfigurationFactory myConfigurationFactory;
@@ -25,6 +21,7 @@ public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
     myConfigurationFactory = new PhoneGapConfigurationFactory(this);
   }
 
+  @NotNull
   @Override
   public String getDisplayName() {
     return PhoneGapBundle.message("phonegap.run.configuration.title");
@@ -51,21 +48,20 @@ public class PhoneGapConfigurationType implements ConfigurationType, DumbAware {
     return new PhoneGapConfigurationFactory[]{myConfigurationFactory};
   }
 
-  public class PhoneGapConfigurationFactory extends ConfigurationFactory {
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.PhoneGap";
+  }
 
+  public class PhoneGapConfigurationFactory extends ConfigurationFactory {
     public PhoneGapConfigurationFactory(ConfigurationType type) {
       super(type);
     }
 
     @NotNull
     @Override
-    public RunConfiguration createTemplateConfiguration(Project project) {
+    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
       return new PhoneGapRunConfiguration(project, myConfigurationFactory, RUN_CONFIGURATION_ID);
-    }
-
-    @Override
-    public boolean isConfigurationSingletonByDefault() {
-      return true;
     }
   }
 }

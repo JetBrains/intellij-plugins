@@ -1,7 +1,5 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -43,29 +41,6 @@ public class FiltersTest extends LightPlatformCodeInsightFixtureTestCase {
     assertNotNull(resolve);
     assertEquals("custom.js", resolve.getContainingFile().getName());
     assertEquals("\"filta\"", resolve.getParent().getText());
-  }
-
-  public void testPipeCompletion() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("filter.html", "angular2.js", "custom.ts");
-      final List<String> variants = myFixture.getCompletionVariants("filter.html");
-      assertContainsElements(variants, "filta");
-    });
-  }
-
-  public void testPipeResolve() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("filterCustom.resolve.html", "angular2.js", "custom.ts");
-      int offsetBySignature = AngularTestUtil.findOffsetBySignature("fil<caret>ta", myFixture.getFile());
-      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-      assertNotNull(ref);
-      PsiElement resolve = ref.resolve();
-      assertNotNull(resolve);
-      assertEquals("custom.ts", resolve.getContainingFile().getName());
-      assertEquals("Pipe({\n" +
-                   "    name: \"filta\"\n" +
-                   "})", resolve.getParent().getText());
-    });
   }
 
 }

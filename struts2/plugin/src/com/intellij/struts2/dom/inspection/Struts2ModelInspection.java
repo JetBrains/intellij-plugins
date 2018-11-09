@@ -76,6 +76,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
    * @param strutsRootDomFileElement Root element of file to inspect.
    * @param holder                   Holder.
    */
+  @Override
   public void checkFileElement(final DomFileElement<StrutsRoot> strutsRootDomFileElement,
                                final DomElementAnnotationHolder holder) {
     final Module module = strutsRootDomFileElement.getModule();
@@ -95,6 +96,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     }
   }
 
+  @Override
   protected boolean shouldCheckResolveProblems(final GenericDomValue value) {
     final Converter converter = value.getConverter();
 
@@ -169,6 +171,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     return true;
   }
 
+  @Override
   protected void checkDomElement(final DomElement element,
                                  final DomElementAnnotationHolder holder,
                                  final DomHighlightingHelper helper) {
@@ -187,6 +190,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     return new String[]{StrutsBundle.message("inspections.group.path.name"), getGroupDisplayName()};
   }
 
+  @Override
   @NotNull
   @NonNls
   public String getShortName() {

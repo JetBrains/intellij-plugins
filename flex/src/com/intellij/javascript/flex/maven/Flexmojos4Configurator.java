@@ -48,7 +48,6 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
   }
 
   public static String getCompilerConfigsDir(final Project project) {
-    //noinspection ConstantConditions
     return project.getBasePath() + "/.idea/flexmojos";
   }
 
@@ -70,6 +69,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
            myMavenProject.getMavenId().getGroupId() + suffix + ".xml";
   }
 
+  @Override
   protected Collection<RLMInfo> getRLMInfos() {
     final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
     final Element modulesElement = configurationElement == null
@@ -80,7 +80,6 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
     }
 
     final List<RLMInfo> result = new ArrayList<>();
-    //noinspection unchecked
     for (final Element moduleElement : modulesElement.getChildren()) {
       if (moduleElement.getChildren().size() > 0) {
         final String mainClassRelativePath = moduleElement.getChildTextNormalize("sourceFile", moduleElement.getNamespace());
@@ -113,6 +112,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
     return result;
   }
 
+  @Override
   protected void appendGenerateConfigTask(final List<MavenProjectsProcessorTask> postTasks, final String configFilePath) {
     final Project project = myModule.getProject();
 

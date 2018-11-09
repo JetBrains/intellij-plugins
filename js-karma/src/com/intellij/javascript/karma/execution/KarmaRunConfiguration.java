@@ -1,24 +1,27 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunManager;
-import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.javascript.JSRunProfileWithCompileBeforeLaunchOption;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
+import com.intellij.javascript.karma.server.KarmaJsSourcesLocator;
 import com.intellij.javascript.karma.util.KarmaUtil;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageDescriptor;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
 import com.intellij.javascript.testFramework.util.JsTestFqn;
 import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -26,6 +29,7 @@ import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.SemVer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,8 +39,6 @@ import java.io.File;
 public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider,
                                                                                  PreferableRunConfiguration,
                                                                                  JSRunProfileWithCompileBeforeLaunchOption {
-
-  private static final Logger LOG = Logger.getInstance(KarmaRunConfiguration.class);
 
   private KarmaRunSettings myRunSettings = new KarmaRunSettings.Builder().build();
 
@@ -86,8 +88,11 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     NodePackage pkg = myRunSettings.getKarmaPackage();
     if (pkg == null) {
       Project project = getProject();
-      NodeJsLocalInterpreter interpreter = NodeJsLocalInterpreter.tryCast(myRunSettings.getInterpreterRef().resolve(project));
-      pkg = NodePackage.findPreferredPackage(project, KarmaUtil.NODE_PACKAGE_NAME, interpreter);
+      VirtualFile contextFile = getContextFile();
+      pkg = KarmaUtil.PKG_DESCRIPTOR.findFirstDirectDependencyPackage(project, null, contextFile);
+      if (shouldPreferKarmaPackage(pkg)) {
+        pkg = new NodePackageDescriptor(KarmaUtil.KARMA_PACKAGE_NAME).findFirstDirectDependencyPackage(project, null, contextFile);
+      }
       if (!pkg.isEmptyPath() && !KarmaUtil.isPathUnderContentRoots(project, pkg)) {
         NodePackage projectKarmaPackage = KarmaProjectSettings.getKarmaPackage(project);
         if (projectKarmaPackage.isEmptyPath()) {
@@ -100,14 +105,47 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
     return pkg;
   }
 
+  private boolean shouldPreferKarmaPackage(@NotNull NodePackage pkg) {
+    if (!SystemInfo.isWindows || !pkg.nameMatches(KarmaUtil.ANGULAR_CLI__PACKAGE_NAME)) {
+      return false;
+    }
+    SemVer version = pkg.getVersion();
+    if (version == null || version.getMajor() >= 6) {
+      return false;
+    }
+    String path1 = getProject().getBasePath();
+    String path2 = KarmaJsSourcesLocator.getInstance().getKarmaIntellijPackageDir().getAbsolutePath();
+    // @angular/cli < 6 doesn't work when karma-intellij on a different drive ()
+    return path1 != null && FileUtil.isWindowsAbsolutePath(path1) && FileUtil.isWindowsAbsolutePath(path2) &&
+           !path1.substring(0, 1).equals(path2.substring(0, 1));
+  }
+
+  @Nullable
+  private VirtualFile getContextFile() {
+    VirtualFile f = findFile(myRunSettings.getTestFileSystemDependentPath());
+    if (f == null) {
+      f = findFile(myRunSettings.getConfigPathSystemDependent());
+    }
+    if (f == null) {
+      f = findFile(myRunSettings.getWorkingDirectorySystemDependent());
+    }
+    return f;
+  }
+
+  @Nullable
+  private static VirtualFile findFile(@NotNull String path) {
+    return FileUtil.isAbsolute(path) ? LocalFileSystem.getInstance().findFileByPath(path) : null;
+  }
+
   private boolean isTemplate() {
-    return getTemplateRunConfiguration(getProject()) == this;
+    return RunManager.getInstance(getProject()).isTemplate(this);
   }
 
   private static boolean isTemplate(@NotNull Element element) {
     return "true".equals(element.getAttributeValue("default"));
   }
 
+  @Override
   public void onNewConfigurationCreated() {
     if (myRunSettings.getWorkingDirectorySystemDependent().isEmpty()) {
       VirtualFile workingDir = JsTestRunConfigurationProducer.guessWorkingDirectory(getProject(), myRunSettings.getConfigPathSystemDependent());
@@ -115,21 +153,6 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
         myRunSettings = myRunSettings.toBuilder().setWorkingDirectory(workingDir.getPath()).build();
       }
     }
-  }
-
-  @Nullable
-  private static KarmaRunConfiguration getTemplateRunConfiguration(@NotNull Project project) {
-    if (project.isDisposed()) {
-      return null;
-    }
-    RunManager runManager = RunManager.getInstance(project);
-    RunnerAndConfigurationSettings templateSettings = runManager.getConfigurationTemplate(KarmaConfigurationType.getFactory());
-    RunConfiguration rc = templateSettings.getConfiguration();
-    if (rc instanceof KarmaRunConfiguration) {
-      return (KarmaRunConfiguration)rc;
-    }
-    LOG.warn("No Karma template run configuration found: " + rc);
-    return null;
   }
 
   @Nullable
@@ -147,9 +170,8 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   private void check(@NotNull NodePackage karmaPackage) throws RuntimeConfigurationException {
-    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(getProject());
-    NodeJsLocalInterpreter.checkForRunConfiguration(interpreter);
-    karmaPackage.validateForRunConfiguration(KarmaUtil.NODE_PACKAGE_NAME);
+    NodeInterpreterUtil.checkForRunConfiguration(myRunSettings.getInterpreterRef().resolve(getProject()));
+    karmaPackage.validateForRunConfiguration(KarmaUtil.KARMA_PACKAGE_NAME);
     validatePath("configuration file", myRunSettings.getConfigPathSystemDependent(), true);
     validatePath("working directory", myRunSettings.getWorkingDirectorySystemDependent(), false);
     if (myRunSettings.getScopeKind() == KarmaScopeKind.TEST_FILE) {

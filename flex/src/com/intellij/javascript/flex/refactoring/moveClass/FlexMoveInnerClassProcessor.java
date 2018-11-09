@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.refactoring.moveClass;
 
+import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
@@ -21,12 +22,11 @@ import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringConflictsUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.pom.Navigatable;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.LocalSearchScope;
@@ -48,6 +48,7 @@ import java.util.*;
 public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   private final JSQualifiedNamedElement myElement;
   private final PsiDirectory myTargetDirectory;
+  @NotNull
   private final String myClassName;
   private final String myPackageName;
   private final boolean mySearchInComments;
@@ -57,7 +58,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
   public FlexMoveInnerClassProcessor(JSQualifiedNamedElement element,
                                      PsiDirectory targetDirectory,
-                                     String className,
+                                     @NotNull String className,
                                      String packageName,
                                      boolean searchInComments,
                                      boolean searchTextOccurences,
@@ -198,9 +199,10 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
       myMoveCallback.refactoringCompleted();
     }
 
-    OpenFileDescriptor descriptor =
-      new OpenFileDescriptor(myProject, insertedContainingFile.getVirtualFile(), newClass.getTextOffset());
-    FileEditorManager.getInstance(myProject).openTextEditor(descriptor, true);
+    Navigatable descriptor =
+      PsiNavigationSupport.getInstance().createNavigatable(myProject, insertedContainingFile.getVirtualFile(),
+                                                           newClass.getTextOffset());
+    descriptor.navigate(true);
   }
 
   @NotNull
@@ -245,7 +247,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
   private class FlexMoveInnerClassUsageViewDescriptor extends BaseUsageViewDescriptor {
 
-    public FlexMoveInnerClassUsageViewDescriptor() {
+    FlexMoveInnerClassUsageViewDescriptor() {
       super(myElement);
     }
 
@@ -256,6 +258,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
                                 StringUtil.getQualifiedName(myPackageName, myClassName));
     }
 
+    @NotNull
     @Override
     public String getCodeReferencesText(int usagesCount, int filesCount) {
       return FlexBundle.message("references.in.code.to.inner.0", UsageViewUtil.getLongName(getElements()[0])) +

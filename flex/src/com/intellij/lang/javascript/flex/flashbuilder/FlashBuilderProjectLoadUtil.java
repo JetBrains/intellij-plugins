@@ -113,11 +113,9 @@ public class FlashBuilderProjectLoadUtil {
   static String readProjectName(final String dotProjectFilePath) {
     FileInputStream fis = null;
     try {
-      //noinspection IOResourceOpenedButNotSafelyClosed
       fis = new FileInputStream(dotProjectFilePath);
       final String name = FlexUtils.findXMLElement(fis, PROJECT_NAME_TAG);
       if (!StringUtil.isEmptyOrSpaces(name)) {
-        //noinspection ConstantConditions
         return name;
       }
     }
@@ -167,10 +165,8 @@ public class FlashBuilderProjectLoadUtil {
       final String projectName = projectDescription.getChildText(NAME_TAG, projectDescription.getNamespace());
       project.setName(StringUtil.notNullize(projectName, FlexBundle.message("unnamed")));
 
-      //noinspection unchecked
       for (final Element linkedResourcesElement : projectDescription
         .getChildren(LINKED_RESOURCES_TAG, projectDescription.getNamespace())) {
-        //noinspection unchecked
         for (final Element linkElement : linkedResourcesElement
           .getChildren(LINK_TAG, linkedResourcesElement.getNamespace())) {
 
@@ -200,7 +196,6 @@ public class FlashBuilderProjectLoadUtil {
 
         final Element swcElement = fxpPropertiesElement.getChild(SWC_TAG);
         if (swcElement != null) {
-          //noinspection unchecked
           for (final Element linkedElement : swcElement.getChildren(LINKED_TAG)) {
             final String location = linkedElement.getAttributeValue(LOCATION_ATTR);
             final String path = linkedElement.getAttributeValue(PATH_ATTR);
@@ -270,10 +265,8 @@ public class FlashBuilderProjectLoadUtil {
           project.setTargetPlatform(TargetPlatform.Mobile);
         }
 
-        //noinspection unchecked
         for (final Element namespaceManifestsElement : flexLibPropertiesElement
           .getChildren(NAMESPACE_MANIFESTS_TAG, flexLibPropertiesElement.getNamespace())) {
-          //noinspection unchecked
           for (final Element namespaceManifestEntryElement : namespaceManifestsElement
             .getChildren(NAMESPACE_MANIFEST_ENTRY_TAG, namespaceManifestsElement.getNamespace())) {
             final String namespace = namespaceManifestEntryElement.getAttributeValue(NAMESPACE_ATTR);
@@ -284,10 +277,8 @@ public class FlashBuilderProjectLoadUtil {
           }
         }
 
-        //noinspection unchecked
         for (final Element includeResourcesElement : flexLibPropertiesElement
           .getChildren(INCLUDE_RESOURCES_ELEMENT, flexLibPropertiesElement.getNamespace())) {
-          //noinspection unchecked
           for (final Element resourceEntryElement : includeResourcesElement
             .getChildren(RESOURCE_ENTRY_ELEMENT, includeResourcesElement.getNamespace())) {
 
@@ -315,10 +306,8 @@ public class FlashBuilderProjectLoadUtil {
     flashBuilderProject.setPureActionScript(airSdk || dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null &&
                                                       flexLibPropertiesFile == null);
     if (flexLibPropertiesFile == null) {
-      //noinspection unchecked
       for (final Element buildTargetsElement : parentElement
                                                                      .getChildren(BUILD_TARGETS_ELEMENT, parentElement.getNamespace())) {
-        //noinspection unchecked
         for (final Element buildTargetElement : buildTargetsElement
                                                                       .getChildren(BUILD_TARGET_ELEMENT, parentElement.getNamespace())) {
           final String buildTarget = buildTargetElement.getAttributeValue(BUILD_TARGET_NAME_ATTR);
@@ -420,7 +409,6 @@ public class FlashBuilderProjectLoadUtil {
                                        : airSettingsElement.getChild(AIR_EXCLUDES_ELEMENT, airSettingsElement.getNamespace());
     if (airExcludesElement == null) return;
 
-    //noinspection unchecked
     for (Element pathEntryElement : airExcludesElement
                                                           .getChildren(PATH_ENTRY_ELEMENT, airExcludesElement.getNamespace())) {
       final String path = pathEntryElement.getAttributeValue(PATH_ATTR);
@@ -459,9 +447,7 @@ public class FlashBuilderProjectLoadUtil {
     if (!StringUtil.isEmptyOrSpaces(sourceFolderPath)) {
       project.addSourcePath(FileUtil.toSystemIndependentName(sourceFolderPath));
     }
-    //noinspection unchecked
     for (final Element compilerSourcePathElement : compilerElement.getChildren(COMPILER_SOURCE_PATH_TAG)) {
-      //noinspection unchecked
       for (final Element compilerSourcePathEntryElement : compilerSourcePathElement
         .getChildren(COMPILER_SOURCE_PATH_ENTRY_TAG)) {
         final String sourcePath = compilerSourcePathEntryElement.getAttributeValue(PATH_ATTR);
@@ -516,9 +502,7 @@ public class FlashBuilderProjectLoadUtil {
   private static void loadDependenciesAndCheckIfSdkUsed(final FlashBuilderProject project,
                                                         final Element compilerElement,
                                                         final Map<String, String> pathReplacementMap) {
-    //noinspection unchecked
     for (final Element libraryPathElement : compilerElement.getChildren(LIBRARY_PATH_TAG)) {
-      //noinspection unchecked
       for (final Element libraryPathEntryElement : libraryPathElement.getChildren(LIBRARY_PATH_ENTRY_TAG)) {
         final String libraryKind = StringUtil.notNullize(libraryPathEntryElement.getAttributeValue(LIBRARY_KIND_ATTR), SWC_FILE_KIND);
         if (libraryKind.equals(USE_SDK_KIND)) {
@@ -581,9 +565,7 @@ public class FlashBuilderProjectLoadUtil {
   }
 
   private static void loadApplications(final FlashBuilderProject project, final Element actionScriptPropertiesElement) {
-    //noinspection unchecked
     for (final Element applicationsElement : actionScriptPropertiesElement.getChildren(APPLICATIONS_ELEMENT)) {
-      //noinspection unchecked
       for (final Element applicationElement : applicationsElement.getChildren(APPLICATION_ELEMENT)) {
         final String path = applicationElement.getAttributeValue(PATH_ATTR);
         final String className = path == null ? null : getClassName(path);
@@ -595,9 +577,7 @@ public class FlashBuilderProjectLoadUtil {
   }
 
   private static void loadModules(final FlashBuilderProject project, final Element actionScriptPropertiesElement) {
-    //noinspection unchecked
     for (final Element modulesElement : actionScriptPropertiesElement.getChildren(MODULES_ELEMENT)) {
-      //noinspection unchecked
       for (final Element moduleElement : modulesElement.getChildren(MODULE_ELEMENT)) {
         final String mainClassPath = moduleElement.getAttributeValue(SOURCE_PATH_ATTR);
         final String outputPath = moduleElement.getAttributeValue(DEST_PATH_ATTR);
@@ -611,9 +591,7 @@ public class FlashBuilderProjectLoadUtil {
   }
 
   private static void loadCssFilesToCompile(final FlashBuilderProject project, final Element actionScriptPropertiesElement) {
-    //noinspection unchecked
     for (final Element buildSccFilesElement : actionScriptPropertiesElement.getChildren(BUILD_CSS_FILES_ELEMENT)) {
-      //noinspection unchecked
       for (final Element buildCssFileEntryElement : buildSccFilesElement.getChildren(BUILD_CSS_FILE_ENTRY_ELEMENT)) {
         final String sourcePath = buildCssFileEntryElement.getAttributeValue(SOURCE_PATH_ATTR);
         if (!StringUtil.isEmpty(sourcePath)) {

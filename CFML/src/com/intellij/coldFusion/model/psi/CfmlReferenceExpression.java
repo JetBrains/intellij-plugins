@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -22,7 +8,6 @@ import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
-import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
@@ -30,7 +15,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.CheckUtil;
-import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.scope.JavaScopeProcessorEvent;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.tree.IElementType;
@@ -38,14 +22,10 @@ import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Lera Nikolaenko
@@ -143,7 +123,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     if (element instanceof CfmlProperty && element.getContainingFile() == getContainingFile()) {
       String name = ((CfmlProperty)element).getName();
       String referenceText = getText();
@@ -168,6 +148,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return false;
   }
 
+  @Override
   @NotNull
   protected ResolveResult[] resolveInner() {
     final String referenceName = getReferenceName();
@@ -178,6 +159,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     final CfmlVariantsProcessor<ResolveResult> processor = new CfmlVariantsProcessor<ResolveResult>(this, getParent(), referenceName) {
       //Map<String, PsiNamedElement> myVariables = new HashMap<String, PsiNamedElement>();
 
+      @Override
       protected ResolveResult execute(final PsiNamedElement element, final boolean error) {
         return new PsiElementResolveResult(element, false);
       }
@@ -223,11 +205,13 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return new ResolveResult[]{results.get(0)};
   }
 
+  @Override
   @NotNull
   protected CfmlReferenceExpression parseReference(String newText) {
     return CfmlPsiUtil.createReferenceExpression(newText, getProject());
   }
 
+  @Override
   protected PsiElement getSeparator() {
     return findChildByType(CfscriptTokenTypes.POINT);
   }
@@ -266,6 +250,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return null;
   }
 
+  @Override
   protected PsiElement getReferenceNameElement() {
     PsiElement identifier = findChildByType(CfscriptTokenTypes.IDENTIFIER);
     if (identifier == null) {
@@ -279,11 +264,13 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return identifier;
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     final CfmlVariantsProcessor<PsiNamedElement> processor = new CfmlVariantsProcessor<PsiNamedElement>(this, getParent(), null) {
       Set<String> myVariablesNames = new HashSet<>();
 
+      @Override
       protected PsiNamedElement execute(final PsiNamedElement element, final boolean error) {
         if (element instanceof CfmlVariable) {
           if (myVariablesNames.add(element.getName())) {
@@ -331,6 +318,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     return result.toArray();
   }
 
+  @Override
   public PsiType getPsiType() {
     if (getParent() instanceof CfmlFunctionCallExpression) {
       final PsiType type = ((CfmlFunctionCallExpression)getParent()).getExternalType();
@@ -345,14 +333,9 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
         if (rightExpr == this || (rightExpr instanceof CfmlFunctionCallExpression &&
                                   ((CfmlFunctionCallExpression)rightExpr).getExternalType() == null &&
                                   ((CfmlFunctionCallExpression)rightExpr).getReferenceExpression() == this)) {
-          LOG.error(LogMessageEx.createEvent("CFML parsing problem",
-                                             "Please report the problem to JetBrains with the file attached\nProblem at" +
-                                             (rightExpr != null ? rightExpr.getText() : null) +
-                                             "\n" +
-                                             DebugUtil.currentStackTrace(),
-                                             "CFML parsing problem",
-                                             "CFML parsing problem",
-                                             new Attachment("problem.cfml", element.getContainingFile().getText())));
+          LOG.error("CFML parsing problem. Please report the problem to JetBrains with the file attached.",
+                    new Throwable(rightExpr.getText()),
+                    new Attachment("problem.cfml", element.getContainingFile().getText()));
           return null;
         }
       }
@@ -375,7 +358,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     CheckUtil.checkWritable(this);
 
     PsiElement newElement;
@@ -392,13 +375,13 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       else {
         newElement = CfmlPsiUtil.createIdentifier(newElementName, getProject());
       }
-      //noinspection ConstantConditions
       getNode().replaceChild(referenceNode, newElement.getNode());
     }
 
     return this;
   }
 
+  @Override
   public String toString() {
     return getNode().getElementType().toString();
   }

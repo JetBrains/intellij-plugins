@@ -1,0 +1,18 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+        <title>Start Page</title>
+    </head>
+    <body>
+        <h1>Start Page</h1>
+
+        <p> This is the start page for this application, a good place to start your modifications.
+            Just to prove this is live: </p>
+
+        <p> The current time is: ${currentTime}. </p>
+
+
+        <p>
+            [<a t:type="PageLink" page="Start">refresh</a>]
+        </p>
+    </body>
+</html>

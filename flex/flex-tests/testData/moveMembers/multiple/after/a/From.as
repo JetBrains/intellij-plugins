@@ -5,16 +5,12 @@ public class From {
     /*after*/
 
     var before1;/*after*/
-    var before2;
-    /*after*/
+    var before2;  /*after*/
 
-    var before3;
-    /*after*/
+    var before3;/*after*/
 
-    var before4;
-    /*after*/
+    var before4;  /*after*/
 
-    var before5;
-    /*after*/
+    var before5; /*after*/
 }
 }

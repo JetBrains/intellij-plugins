@@ -1,10 +1,8 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
-import com.intellij.application.options.ModulesComboBox;
+import com.intellij.application.options.ModuleDescriptionsComboBox;
 import com.intellij.execution.configurations.ConfigurationUtil;
-import com.intellij.execution.ui.ClassBrowser;
-import com.intellij.execution.ui.CommonJavaParametersPanel;
-import com.intellij.execution.ui.ConfigurationModuleSelector;
+import com.intellij.execution.ui.*;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -38,22 +36,27 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
 
   private LabeledComponent<EditorTextFieldWithBrowseButton> myMainClass;
   private JPanel myWholePanel;
-  private LabeledComponent<ModulesComboBox> myModule;
+  private LabeledComponent<ModuleDescriptionsComboBox> myModule;
   private LabeledComponent<RawCommandLineEditor> myGlue;
   private LabeledComponent<TextFieldWithBrowseButton> myFeatureOrFolder;
   private CommonJavaParametersPanel myCommonProgramParameters;
+  private LabeledComponent<ShortenCommandLineModeCombo> myShortenClasspathModeCombo;
+  private JrePathEditor myJrePathEditor;
 
   private final Module myModuleContext;
 
   public CucumberJavaApplicationConfigurable(Project project) {
     myProject = project;
-    myModuleSelector = new ConfigurationModuleSelector(project, myModule.getComponent());
+    ModuleDescriptionsComboBox moduleComponent = myModule.getComponent();
+    myModuleSelector = new ConfigurationModuleSelector(project, moduleComponent);
+    myJrePathEditor.setDefaultJreSelector(DefaultJreSelector.fromModuleDependencies(moduleComponent, false));
 
     ClassBrowser.createApplicationClassBrowser(project, myModuleSelector).setField(myMainClass.getComponent());
     myModuleContext = myModuleSelector.getModule();
 
 
     final ActionListener fileToRunActionListener = new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
         fileChooserDescriptor.setTitle(CucumberJavaBundle.message("run.configuration.form.choose.file.or.folder.title"));
@@ -67,6 +70,10 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myFeatureOrFolder.getComponent().getButton().addActionListener(fileToRunActionListener);
 
     myAnchor = UIUtil.mergeComponentsWithAnchor(myMainClass, myGlue, myFeatureOrFolder, myModule, myCommonProgramParameters);
+
+    myJrePathEditor.setAnchor(myModule.getLabel());
+    myShortenClasspathModeCombo.setAnchor(myModule.getLabel());
+    myShortenClasspathModeCombo.setComponent(new ShortenCommandLineModeCombo(myProject, myJrePathEditor, moduleComponent));
 
     myGlue.getComponent().setDialogCaption(CucumberJavaBundle.message("run.configuration.form.glue.title"));
   }
@@ -114,6 +121,8 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myMainClass.getComponent().setText(configuration.getMainClassName());
     myGlue.getComponent().setText(configuration.getGlue());
     myFeatureOrFolder.getComponent().setText(configuration.getFilePath());
+    myJrePathEditor.setPathOrName(configuration.getAlternativeJrePath(), configuration.isAlternativeJrePathEnabled());
+    myShortenClasspathModeCombo.getComponent().setSelectedItem(configuration.getShortenCommandLine());
   }
 
   @Override
@@ -124,8 +133,10 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     configuration.setMainClassName(myMainClass.getComponent().getText());
     configuration.setGlue(myGlue.getComponent().getText());
     configuration.setFilePath(myFeatureOrFolder.getComponent().getText());
-    Module selectedModule = (Module)myModule.getComponent().getSelectedItem();
-    configuration.setModule(selectedModule);
+    configuration.setAlternativeJrePath(myJrePathEditor.getJrePathOrName());
+    configuration.setAlternativeJrePathEnabled(myJrePathEditor.isAlternativeJreSelected());
+    configuration.setShortenCommandLine(myShortenClasspathModeCombo.getComponent().getSelectedItem());
+    configuration.setModule(myModuleSelector.getModule());
   }
 
   @NotNull

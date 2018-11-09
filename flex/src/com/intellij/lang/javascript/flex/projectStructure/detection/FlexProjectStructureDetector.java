@@ -19,7 +19,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.NullableFunction;
-import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,6 +39,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
     return FileTypeRegistry.getInstance().getFileTypeByFileName(file.getName()) == ActionScriptFileType.INSTANCE;
   }
 
+  @Override
   @NotNull
   public DirectoryProcessingResult detectRoots(@NotNull final File dir,
                                                @NotNull final File[] children,
@@ -62,7 +62,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
         else if (JavaScriptSupportLoader.isFlexMxmFile(child.getName())) {
           result.add(new FlexModuleSourceRoot(dir));
           // don't skip this folder since .as files can be located here, and they will make some parent folder marked as source root
-          // essentially 'dir' will be marked as source root *only* if no .as files exist at this level or below 
+          // essentially 'dir' will be marked as source root *only* if no .as files exist at this level or below
         }
       }
 
@@ -73,6 +73,7 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
     return DirectoryProcessingResult.PROCESS_CHILDREN;
   }
 
+  @Override
   public List<ModuleWizardStep> createWizardSteps(final ProjectFromSourcesBuilder builder,
                                                   final ProjectDescriptor projectDescriptor,
                                                   final Icon stepIcon) {
@@ -101,24 +102,19 @@ public class FlexProjectStructureDetector extends ProjectStructureDetector {
 
   @Nullable
   static String readQualifiedName(final CharSequence charSequence, final Lexer lexer, boolean allowStar) {
-    final StringBuilder buffer = StringBuilderSpinAllocator.alloc();
-    try {
-      while (true) {
-        if (lexer.getTokenType() != JSTokenTypes.IDENTIFIER && !(allowStar && lexer.getTokenType() != JSTokenTypes.MULT)) break;
-        buffer.append(charSequence, lexer.getTokenStart(), lexer.getTokenEnd());
-        if (lexer.getTokenType() == JSTokenTypes.MULT) break;
-        lexer.advance();
-        if (lexer.getTokenType() != JSTokenTypes.DOT) break;
-        buffer.append('.');
-        lexer.advance();
-      }
-      String packageName = buffer.toString();
-      if (StringUtil.endsWithChar(packageName, '.')) return null;
-      return packageName;
+    final StringBuilder buffer = new StringBuilder();
+    while (true) {
+      if (lexer.getTokenType() != JSTokenTypes.IDENTIFIER && !(allowStar && lexer.getTokenType() != JSTokenTypes.MULT)) break;
+      buffer.append(charSequence, lexer.getTokenStart(), lexer.getTokenEnd());
+      if (lexer.getTokenType() == JSTokenTypes.MULT) break;
+      lexer.advance();
+      if (lexer.getTokenType() != JSTokenTypes.DOT) break;
+      buffer.append('.');
+      lexer.advance();
     }
-    finally {
-      StringBuilderSpinAllocator.dispose(buffer);
-    }
+    String packageName = buffer.toString();
+    if (StringUtil.endsWithChar(packageName, '.')) return null;
+    return packageName;
   }
 
   private static final TokenSet WHITESPACE_AND_COMMENTS =

@@ -199,7 +199,6 @@ public class OsmorcFacetConfiguration implements FacetConfiguration, Modificatio
     List<Pair<String, String>> additionalJARContents = getAdditionalJARContents();
     Element additionalJARContentsElement = element.getChild("additionalJARContents");
     if (additionalJARContentsElement != null) {
-      @SuppressWarnings({"unchecked"})
       List<Element> children = additionalJARContentsElement.getChildren("entry");
       for (Element entryElement : children) {
         additionalJARContents.add(Pair.create(

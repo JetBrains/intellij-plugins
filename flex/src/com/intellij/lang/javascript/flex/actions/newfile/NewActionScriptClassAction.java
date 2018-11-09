@@ -14,10 +14,12 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.psi.PsiDirectory;
+import org.jetbrains.annotations.NotNull;
 
 public class NewActionScriptClassAction extends AnAction {
 
-  public void update(final AnActionEvent e) {
+  @Override
+  public void update(@NotNull final AnActionEvent e) {
     final DataContext dataContext = e.getDataContext();
     final Presentation presentation = e.getPresentation();
 
@@ -50,7 +52,8 @@ public class NewActionScriptClassAction extends AnAction {
     return ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
-  public void actionPerformed(final AnActionEvent e) {
+  @Override
+  public void actionPerformed(@NotNull final AnActionEvent e) {
     final DataContext dataContext = e.getDataContext();
 
     final IdeView view = LangDataKeys.IDE_VIEW.getData(dataContext);

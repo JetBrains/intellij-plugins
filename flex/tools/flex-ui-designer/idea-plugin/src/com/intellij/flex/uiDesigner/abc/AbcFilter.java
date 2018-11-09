@@ -32,7 +32,6 @@ public class AbcFilter extends AbcTranscoder {
   }
 
   public void filter(File in, File out, @Nullable Condition<CharSequence> abcNameFilter) throws IOException {
-    //noinspection IOResourceOpenedButNotSafelyClosed
     filter(new FileInputStream(in), in.length(), out, abcNameFilter);
   }
 

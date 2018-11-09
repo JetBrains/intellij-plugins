@@ -41,11 +41,13 @@ public class DartImportOrExportInfo implements DartShowHideInfo {
     return myImportPrefix;
   }
 
+  @Override
   @NotNull
   public Set<String> getShowComponents() {
     return myShowComponents;
   }
 
+  @Override
   @NotNull
   public Set<String> getHideComponents() {
     return myHideComponents;

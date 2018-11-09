@@ -42,6 +42,7 @@ import java.util.Set;
  */
 public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConverter {
 
+  @Override
   public PsiFile fromString(@Nullable @NonNls final String value, final ConvertContext context) {
     if (value == null) {
       return null;
@@ -63,11 +64,13 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
     return element instanceof PsiFile ? (PsiFile) element : null;
   }
 
+  @Override
   @NotNull
   public Collection<? extends PsiFile> getVariants(final ConvertContext context) {
     return Collections.emptyList();
   }
 
+  @Override
   public PsiElement resolve(final PsiFile psiFile, final ConvertContext context) {
     // recursive self-inclusion
     if (context.getFile().equals(psiFile)) {
@@ -82,6 +85,7 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
     return isFileAccepted(model, psiFile) ? super.resolve(psiFile, context) : null;
   }
 
+  @Override
   @NotNull
   public PsiReference[] createReferences(@NotNull final GenericDomValue genericDomValue,
                                          @NotNull final PsiElement element,
@@ -98,6 +102,7 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
 
     final int offset = ElementManipulators.getOffsetInElement(element);
     return new FilePathReferenceProvider() {
+      @Override
       protected boolean isPsiElementAccepted(final PsiElement element) {
         return super.isPsiElementAccepted(element) &&
                (!(element instanceof PsiFile) || isFileAccepted(model, (PsiFile) element));
@@ -105,6 +110,7 @@ public class IncludeFileResolvingConverterImpl extends IncludeFileResolvingConve
     }.getReferencesByElement(element, s, offset, true);
   }
 
+  @Override
   public String getErrorMessage(@Nullable final String value, final ConvertContext context) {
     // check if user tries to include current file
     if (Comparing.equal(context.getFile().getName(), value)) {

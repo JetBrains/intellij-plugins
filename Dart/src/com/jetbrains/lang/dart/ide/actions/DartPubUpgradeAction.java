@@ -29,6 +29,7 @@ public class DartPubUpgradeAction extends DartPubActionBase {
     return prefix + DartBundle.message("dart.pub.upgrade.title");
   }
 
+  @Override
   @Nullable
   protected String[] calculatePubParameters(@NotNull final Project project, @NotNull final VirtualFile pubspecYamlFile) {
     return new String[]{"upgrade"};

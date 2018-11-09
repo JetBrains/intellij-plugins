@@ -42,8 +42,38 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
     doTest("stepResolve_java8", "I have cuk<caret>es", "Given");
   }
 
+  public void testJava8WithConcatenation() {
+    doTest("stepResolve_java8", "one<caret> two", "Given");
+  }
+
   public void testNegativeLookBehind() {
     doTest("negativeLookBehind", "c<caret>a", "step_method");
+  }
+
+  public void testResolveOfStepWithParameterType() {
+    init("stepResolve_ParameterType");
+    checkReference("tod<caret>ay", "step_method");
+    checkReference("in<caret>t", "step_method");
+    checkReference("floa<caret>t", "step_method");
+    checkReference("wor<caret>d", "step_method");
+    checkReference("strin<caret>g", "step_string_method");
+  }
+
+  public void testResolveOfStepWithAdditionalParameterType() {
+    init("stepResolve_ParameterType");
+    checkReference("bigin<caret>teger", "step_method");
+    checkReference("bigde<caret>cimal", "step_method");
+    checkReference("sho<caret>rt", "step_method");
+    checkReference("by<caret>te", "step_method");
+    checkReference("lo<caret>ng", "step_method");
+    checkReference("dou<caret>ble", "step_method");
+  }
+
+  public void testResolveOfExpressionWithNotNecessaryGroup() {
+    init("stepResolve_ParameterType");
+
+    checkReference("I have 10 cucum<caret>bers in my belly", "iHaveCucumbersInMyBelly");
+    checkReference("I have 1 cucumb<caret>er in my belly", "iHaveCucumbersInMyBelly");
   }
 
   @Override

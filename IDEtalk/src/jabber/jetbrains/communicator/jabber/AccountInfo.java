@@ -105,7 +105,7 @@ public class AccountInfo {
   private String encode(String password) {
     if (password == null) return "";
     String kit = getKit();
-    StringBuffer result = new StringBuffer(password);
+    StringBuilder result = new StringBuilder(password);
     for (int i = 0; i < password.length(); i ++) {
       result.setCharAt(i, (char) ((((int) result.charAt(i)) ^ ((int) kit.charAt(i % kit.length())))));
     }

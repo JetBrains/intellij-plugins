@@ -40,6 +40,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
     return getModule().getName();
   }
 
+  @Override
   @NotNull
   public JpsTypedModule<JpsFlexBuildConfigurationManager> getModule() {
     //noinspection unchecked
@@ -70,6 +71,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
     return result;
   }
 
+  @Override
   public boolean isTests() {
     return ((FlexResourceBuildTargetType)getTargetType()).isTests();
   }

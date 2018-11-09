@@ -23,6 +23,7 @@ public class NamespacesXmlBuilder extends NanoXmlUtil.BaseXmlBuilder {
   private final StringBuilder myNamespaceUri = new StringBuilder();
   private final StringBuilder myManifest = new StringBuilder();
 
+  @Override
   public void startElement(final String name, final String nsPrefix, final String nsURI, final String systemID, final int lineNr)
     throws Exception {
     super.startElement(name, nsPrefix, nsURI, systemID, lineNr);
@@ -40,6 +41,7 @@ public class NamespacesXmlBuilder extends NanoXmlUtil.BaseXmlBuilder {
     }
   }
 
+  @Override
   public void addPCData(final Reader reader, final String systemID, final int lineNr) throws Exception {
     final String location = getLocation();
     if (INCLUDE_NAMESPACES_URI_LOCATION.equals(location)) {
@@ -53,6 +55,7 @@ public class NamespacesXmlBuilder extends NanoXmlUtil.BaseXmlBuilder {
     }
   }
 
+  @Override
   public void endElement(final String name, final String nsPrefix, final String nsURI) throws Exception {
     if (NAMESPACE_LOCATION.equals(getLocation())) {
       final String uri = myNamespaceUri.toString().trim();

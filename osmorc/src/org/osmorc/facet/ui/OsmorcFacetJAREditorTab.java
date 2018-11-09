@@ -113,6 +113,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(new UserActivityListener() {
+      @Override
       public void stateChanged() {
         myModified = true;
         updateGui();
@@ -128,6 +129,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     });
 
     ChangeListener listener = new ChangeListener() {
+      @Override
       public void stateChanged(ChangeEvent e) {
         updateGui();
       }

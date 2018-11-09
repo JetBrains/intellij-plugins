@@ -42,10 +42,12 @@ public class SendCodePointerCommand implements FileCommand, NamedUserCommand {
     myEventBroadcaster = eventBroadcaster;
   }
 
+  @Override
   public boolean isEnabled() {
     return myCodePointer != null && myVFile != null && myUser != null;
   }
 
+  @Override
   public void execute() {
     assert isEnabled();
     final String message = myIdeFacade.getMessage(StringUtil.getMsg("code_pointer.message.input"),
@@ -60,18 +62,22 @@ public class SendCodePointerCommand implements FileCommand, NamedUserCommand {
     myCodePointer = codePointer;
   }
 
+  @Override
   public void setVFile(VFile vFile) {
     myVFile = vFile;
   }
 
+  @Override
   public void setUser(User user) {
     myUser = user;
   }
 
+  @Override
   public Icon getIcon() {
     return null;
   }
 
+  @Override
   public String getName() {
     if (myVFile != null && myUser != null) {
       return StringUtil.getMsg("send.code.pointer.to", myUser.getDisplayName());

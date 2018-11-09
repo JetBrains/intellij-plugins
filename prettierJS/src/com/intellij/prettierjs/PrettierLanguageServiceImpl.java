@@ -1,5 +1,6 @@
 package com.intellij.prettierjs;
 
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
@@ -10,9 +11,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.util.JsonUtil;
@@ -21,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
@@ -45,14 +43,19 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
   @Nullable
   @Override
-  public Future<FormatResult> format(@NotNull PsiFile file, @NotNull NodePackage prettierPackage, @Nullable TextRange range) {
+  public Future<FormatResult> format(@NotNull String filePath,
+                                     @Nullable String ignoreFilePath,
+                                     @NotNull String text,
+                                     @NotNull NodePackage prettierPackage,
+                                     @Nullable TextRange range) {
     String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
+    ignoreFilePath = JSLanguageServiceUtil.normalizeNameAndPath(ignoreFilePath);
     JSLanguageServiceQueue process = getProcess();
     if (process == null || !process.isValid()) {
       return new FixedFuture<>(FormatResult.error(PrettierBundle.message("service.not.started.message")));
     }
     ReformatFileCommand command =
-      new ReformatFileCommand(file.getVirtualFile().getPath(), prettierPackagePath, file.getText(), range, myFlushConfigCache);
+      new ReformatFileCommand(filePath, prettierPackagePath, ignoreFilePath, text, range, myFlushConfigCache);
     return process.execute(command, (ignored, response) -> {
       myFlushConfigCache = false;
       return parseReformatResponse(response);
@@ -78,6 +81,9 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
     if (!StringUtil.isEmpty(error)) {
       return FormatResult.error(error);
     }
+    if (JsonUtil.getChildAsBoolean(response.getElement(), "ignored", false)) {
+      return FormatResult.IGNORED;
+    }
     return FormatResult.formatted(JsonUtil.getChildAsString(response.getElement(), "formatted"));
   }
 
@@ -101,8 +107,8 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   }
 
   private static class Protocol extends JSLanguageServiceNodeStdProtocolBase {
-    public Protocol(@NotNull Project project, @NotNull Consumer<?> readyConsumer) {
-      super(project, readyConsumer);
+    Protocol(@NotNull Project project, @NotNull Consumer<?> readyConsumer) {
+      super("prettier", project, readyConsumer);
     }
 
     @Override
@@ -114,7 +120,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
         LOGGER.error("prettier language service plugin not found");
       }
       state.pluginName = "prettier";
-      state.pluginPath = service.getAbsolutePath();
+      state.pluginPath = LocalFilePath.create(service.getAbsolutePath());
       return state;
     }
 
@@ -125,8 +131,8 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
     @Nullable
     @Override
-    protected String getNodeInterpreter() {
-      return JSLanguageServiceUtil.getInterpreterPathIfValid(
+    protected NodeJsInterpreter getInterpreter() {
+      return JSLanguageServiceUtil.getInterpreterIfValid(
         PrettierConfiguration.getInstance(myProject)
                              .getInterpreterRef()
                              .resolve(myProject));
@@ -161,20 +167,23 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   }
 
   private static class ReformatFileCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
-    public final String path;
-    public final String prettierPath;
+    public final LocalFilePath path;
+    public final LocalFilePath prettierPath;
+    @Nullable public final String ignoreFilePath;
     public final String content;
     public Integer start;
     public Integer end;
     public final boolean flushConfigCache;
 
-    public ReformatFileCommand(@NotNull String filePath,
-                               @NotNull String prettierPath,
-                               @NotNull String content,
-                               @Nullable TextRange range, 
-                               boolean flushConfigCache) {
-      this.path = filePath;
-      this.prettierPath = prettierPath;
+    ReformatFileCommand(@NotNull String filePath,
+                        @NotNull String prettierPath,
+                        @Nullable String ignoreFilePath,
+                        @NotNull String content,
+                        @Nullable TextRange range,
+                        boolean flushConfigCache) {
+      this.path = LocalFilePath.create(filePath);
+      this.prettierPath = LocalFilePath.create(prettierPath);
+      this.ignoreFilePath = ignoreFilePath;
       this.content = content;
       this.flushConfigCache = flushConfigCache;
       if (range != null) {

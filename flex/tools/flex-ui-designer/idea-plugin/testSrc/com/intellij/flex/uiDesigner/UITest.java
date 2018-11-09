@@ -146,7 +146,7 @@ public class UITest extends MxmlTestBase {
     private final String scriptName;
     private final UIMessageHandler messageHandler;
 
-    public MyTester(String scriptName, UIMessageHandler messageHandler) {
+    MyTester(String scriptName, UIMessageHandler messageHandler) {
       this.scriptName = scriptName;
       this.messageHandler = messageHandler;
     }
@@ -173,7 +173,7 @@ public class UITest extends MxmlTestBase {
     protected VirtualFile file;
     public final int command;
 
-    public UIMessageHandler(int command) {
+    UIMessageHandler(int command) {
       this.command = command;
     }
 

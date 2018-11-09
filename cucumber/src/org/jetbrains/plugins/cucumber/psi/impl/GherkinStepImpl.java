@@ -8,6 +8,8 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
@@ -49,11 +51,13 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     return "GherkinStep:" + getStepName();
   }
 
+  @Override
   @Nullable
   public ASTNode getKeyword() {
     return getNode().findChildByType(GherkinTokenTypes.STEP_KEYWORD);
   }
 
+  @Override
   @Nullable
   public String getStepName() {
     return getElementText();
@@ -67,11 +71,13 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     return StringUtil.join(children, astNode -> astNode.getText(), "").trim();
   }
 
+  @Override
   @Nullable
   public GherkinPystring getPystring() {
     return PsiTreeUtil.findChildOfType(this, GherkinPystring.class);
   }
 
+  @Override
   @Nullable
   public GherkinTable getTable() {
     final ASTNode tableNode = getNode().findChildByType(GherkinElementTypes.TABLE);
@@ -88,13 +94,19 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   @NotNull
   @Override
   public PsiReference[] getReferences() {
-    return ReferenceProvidersRegistry.getReferencesFromProviders(this, GherkinStepImpl.class);
+    return CachedValuesManager.getCachedValue(this, () -> CachedValueProvider.Result.create(getReferencesInner(), this));
   }
 
+  private PsiReference[] getReferencesInner() {
+    return ReferenceProvidersRegistry.getReferencesFromProviders(this);
+  }
+
+  @Override
   protected void acceptGherkin(GherkinElementVisitor gherkinElementVisitor) {
     gherkinElementVisitor.visitStep(this);
   }
 
+  @Override
   @NotNull
   public List<String> getParamsSubstitutions() {
     synchronized (LOCK) {
@@ -152,6 +164,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     clearCaches();
   }
 
+  @Override
   @Nullable
   public GherkinStepsHolder getStepHolder() {
     final PsiElement parent = getParent();
@@ -164,6 +177,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
     }
   }
 
+  @Override
   @Nullable
   public String getSubstitutedName() {
     final GherkinStepsHolder holder = getStepHolder();

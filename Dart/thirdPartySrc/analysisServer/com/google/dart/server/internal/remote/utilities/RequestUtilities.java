@@ -30,7 +30,11 @@ import java.util.Map.Entry;
  * @coverage dart.server.remote
  */
 public class RequestUtilities {
+  private static final String CODE = "code";
+  private static final String CONTEXT_FILE = "contextFile";
+  private static final String CONTEXT_OFFSET = "contextOffset";
   private static final String CONTEXT_ROOT = "contextRoot";
+  private static final String EXPRESSIONS = "expressions";
   private static final String FILE = "file";
   private static final String ID = "id";
   private static final String LENGTH = "length";
@@ -44,8 +48,13 @@ public class RequestUtilities {
   private static final String SUBSCRIPTIONS = "subscriptions";
   private static final String SUPER_ONLY = "superOnly";
   private static final String URI = "uri";
+  private static final String VARIABLES = "variables";
   private static final String KEY = "key";
   private static final String ELEMENTS = "elements";
+  private static final String VALUE = "value";
+  private static final String ACTION = "action";
+  private static final String EVENT = "event";
+  private static final String MILLIS = "millis";
 
   // Server domain
   private static final String METHOD_SERVER_GET_VERSION = "server.getVersion";
@@ -65,6 +74,12 @@ public class RequestUtilities {
   private static final String METHOD_ANALYSIS_SET_SUBSCRIPTIONS = "analysis.setSubscriptions";
   private static final String METHOD_ANALYSIS_UPDATE_CONTENT = "analysis.updateContent";
   private static final String METHOD_ANALYSIS_UPDATE_OPTIONS = "analysis.updateOptions";
+
+  // Analytics domain
+  private static final String METHOD_ANALYTICS_ENABLE = "analytics.enable";
+  private static final String METHOD_ANALYTICS_ISENABLED = "analytics.isEnabled";
+  private static final String METHOD_ANALYTICS_SEND_EVENT = "analytics.sendEvent";
+  private static final String METHOD_ANALYTICS_SEND_TIMING = "analytics.sendTiming";
 
   // Edit domain
   private static final String METHOD_EDIT_FORMAT = "edit.format";
@@ -93,6 +108,7 @@ public class RequestUtilities {
   // Execution domain
   private static final String METHOD_EXECUTION_CREATE_CONTEXT = "execution.createContext";
   private static final String METHOD_EXECUTION_DELETE_CONTEXT = "execution.deleteContext";
+  private static final String METHOD_EXECUTION_GET_SUGGESTIONS = "execution.getSuggestions";
   private static final String METHOD_EXECUTION_MAP_URI = "execution.mapUri";
   private static final String METHOD_EXECUTION_SET_SUBSCRIPTIONS = "execution.setSubscriptions";
 
@@ -665,6 +681,41 @@ public class RequestUtilities {
   }
 
   /**
+   * Generate and return a {@value #METHOD_EXECUTION_GET_SUGGESTIONS} request.
+   * <p>
+   * <pre>
+   * request: {
+   *   "id": String
+   *   "method": "execution.getSuggestions"
+   *   "params": {
+   *     "code": String
+   *     "offset": int
+   *     "contextFile": FilePath
+   *     "contextOffset": int
+   *     "variables": List<RuntimeCompletionVariable>
+   *     "expressions": optional List<RuntimeCompletionExpression>
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateExecutionGetSuggestions(String idValue,
+                                                           String code,
+                                                           int offset,
+                                                           String contextFile,
+                                                           int contextOffset,
+                                                           List<RuntimeCompletionVariable> variables,
+                                                           List<RuntimeCompletionExpression> expressions) {
+    JsonObject params = new JsonObject();
+    params.addProperty(CODE, code);
+    params.addProperty(OFFSET, offset);
+    params.addProperty(CONTEXT_FILE, contextFile);
+    params.addProperty(CONTEXT_OFFSET, contextOffset);
+    params.add(VARIABLES, buildJsonElement(variables));
+    params.add(EXPRESSIONS, buildJsonElement(expressions));
+    return buildJsonObjectRequest(idValue, METHOD_EXECUTION_GET_SUGGESTIONS, params);
+  }
+
+  /**
    * Generate and return a {@value #METHOD_EXECUTION_MAP_URI} request.
    * <p>
    * <pre>
@@ -872,6 +923,29 @@ public class RequestUtilities {
 
   public static JsonObject generateDiagnosticGetServerPort(String idValue) {
     return buildJsonObjectRequest(idValue, METHOD_DIAGNOSTIC_GET_SERVER_PORT);
+  }
+
+  public static JsonObject generateAnalyticsEnable(String idValue, boolean value) {
+    JsonObject params = new JsonObject();
+    params.add(VALUE, buildJsonElement(value));
+    return buildJsonObjectRequest(idValue, METHOD_ANALYTICS_ENABLE, params);
+  }
+
+  public static JsonObject generateAnalyticsIsEnabled(String idValue) {
+    return buildJsonObjectRequest(idValue, METHOD_ANALYTICS_ISENABLED);
+  }
+
+  public static JsonObject generateAnalyticsSendEvent(String idValue, String action) {
+    JsonObject params = new JsonObject();
+    params.add(ACTION, buildJsonElement(action));
+    return buildJsonObjectRequest(idValue, METHOD_ANALYTICS_SEND_EVENT, params);
+  }
+
+  public static JsonObject generateAnalyticsSendTiming(String idValue, String event, int millis) {
+    JsonObject params = new JsonObject();
+    params.add(EVENT, buildJsonElement(event));
+    params.add(MILLIS, buildJsonElement(millis));
+    return buildJsonObjectRequest(idValue, METHOD_ANALYTICS_SEND_TIMING, params);
   }
 
   /**

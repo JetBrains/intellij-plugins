@@ -15,8 +15,9 @@ public class FlexAntMessageCustomizer extends AntMessageCustomizer {
   private static final String WARNING_MARKER = " Warning: ";
   public static final String COL_MARKER = "col: ";
 
+  @Override
   @Nullable
-  public AntMessage createCustomizedMessage(final String text, final int priority) {
+  public AntMessage createCustomizedMessage(final String text, @AntMessage.Priority int priority) {
     // Searching for the same pattern as in FlexCompilerHandler.errorPattern, but avoid regexp for the sake of performance
     // Pattern.compile("(.*?)(\\(\\D.*\\))?(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+):?)? (Warning|Error): (.*)");
     // C:\work\flex_projects\ant\src\com\flexTasks\LabelBuilder.as(21): col: 29 Error: Syntax error: leftparen before l.

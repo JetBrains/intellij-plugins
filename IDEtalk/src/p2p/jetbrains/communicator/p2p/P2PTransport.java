@@ -118,7 +118,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   }
 
   class IDETalkShutdownHook extends Thread {
-    public IDETalkShutdownHook() {
+    IDETalkShutdownHook() {
       super("IDE Talk shutdown hook");
       setDaemon(true);
     }

@@ -16,7 +16,6 @@
 package com.intellij.struts2.model.constant.contributor;
 
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.struts2.dom.ConverterUtil;
@@ -73,7 +72,7 @@ class ResultTypeConverter extends DelimitedListConverter<ResultType> {
 
   @Override
   protected Object[] getReferenceVariants(final ConvertContext convertContext,
-                                          final GenericDomValue<List<ResultType>> listGenericDomValue) {
+                                          final GenericDomValue<? extends List<ResultType>> listGenericDomValue) {
     final StrutsModel strutsModel = ConverterUtil.getStrutsModelOrCombined(convertContext);
     if (strutsModel == null) {
       return ArrayUtil.EMPTY_OBJECT_ARRAY;

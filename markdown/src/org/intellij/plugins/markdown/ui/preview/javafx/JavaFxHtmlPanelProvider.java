@@ -22,7 +22,7 @@ public class JavaFxHtmlPanelProvider extends MarkdownHtmlPanelProvider {
   @NotNull
   @Override
   public MarkdownHtmlPanel createHtmlPanel() {
-    return new JavaFxHtmlPanel();
+    return new MarkdownJavaFxHtmlPanel();
   }
 
   @NotNull

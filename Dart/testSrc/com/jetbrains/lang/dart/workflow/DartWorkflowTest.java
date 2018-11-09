@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.workflow;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -56,6 +57,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
       ApplicationManager.getApplication().runWriteAction(() -> {
         final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
         final ContentEntry contentEntry = model.getContentEntries()[0];
+        contentEntry.clearExcludeFolders();
         contentEntry.addExcludeFolder(rootUrl + "/dir1/someFolder");
         contentEntry.addExcludeFolder(rootUrl + "/dir1/packages/project1");
         contentEntry.addExcludeFolder(rootUrl + "/dir1/web/packages");
@@ -88,7 +90,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                          rootUrl + "/dir1/someFolder",
                          rootUrl + "/dir1/packages/project1",
                          rootUrl + "/dir1/web/packages",
-                         rootUrl + "/dir2/.pub",
+                           rootUrl + "/dir2/.pub",
                          rootUrl + "/dir2/build",
                          rootUrl + "/dir2/someFolder",
                          rootUrl + "/dir2/lib/someFolder",

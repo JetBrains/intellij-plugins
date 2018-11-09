@@ -10,8 +10,8 @@ import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
 public class DartUseScope extends GlobalSearchScope {
-
-  @NotNull final VirtualFile myFileWithSearchedDeclaration;
+  @NotNull
+  private final VirtualFile myFileWithSearchedDeclaration;
 
   /**
    * @param fileWithSearchedDeclaration must be within project content
@@ -30,11 +30,6 @@ public class DartUseScope extends GlobalSearchScope {
 
     return psiFile != null &&
            ResolveScopeManager.getInstance(getProject()).getResolveScope(psiFile).contains(myFileWithSearchedDeclaration);
-  }
-
-  @Override
-  public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
-    return 0;
   }
 
   @Override

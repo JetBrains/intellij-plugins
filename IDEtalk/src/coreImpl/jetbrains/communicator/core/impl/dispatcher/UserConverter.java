@@ -16,8 +16,8 @@
 package jetbrains.communicator.core.impl.dispatcher;
 
 import com.thoughtworks.xstream.converters.SingleValueConverter;
-import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.core.users.User;
+import jetbrains.communicator.core.users.UserModel;
 
 /**
  * @author Kir
@@ -29,16 +29,19 @@ class UserConverter implements SingleValueConverter {
     myUserModel = userModel;
   }
 
+  @Override
   public String toString(Object obj) {
     User user = ((User) obj);
     return user.getTransportCode() + ':' + user.getName();
   }
 
+  @Override
   public Object fromString(String str) {
     int idx = str.indexOf(':');
     return myUserModel.createUser(str.substring(idx + 1), str.substring(0, idx));
   }
 
+  @Override
   public boolean canConvert(Class type) {
     return User.class.isAssignableFrom(type);
   }

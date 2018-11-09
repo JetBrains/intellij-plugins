@@ -356,7 +356,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     private RerunPubCommandAction rerunPubCommandAction;
     private StopProcessAction stopProcessAction;
 
-    public PubToolWindowContentInfo(@NotNull final Module module,
+    PubToolWindowContentInfo(@NotNull final Module module,
                                     @NotNull final VirtualFile pubspecYamlFile,
                                     @NotNull final GeneralCommandLine command,
                                     @NotNull final String actionTitle,
@@ -383,7 +383,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     @NotNull private final PubToolWindowContentInfo myInfo;
     private OSProcessHandler myProcessHandler;
 
-    public RerunPubCommandAction(@NotNull final PubToolWindowContentInfo info) {
+    RerunPubCommandAction(@NotNull final PubToolWindowContentInfo info) {
       super(DartBundle.message("rerun.pub.command.action.name"),
             DartBundle.message("rerun.pub.command.action.description"),
             AllIcons.Actions.Execute);

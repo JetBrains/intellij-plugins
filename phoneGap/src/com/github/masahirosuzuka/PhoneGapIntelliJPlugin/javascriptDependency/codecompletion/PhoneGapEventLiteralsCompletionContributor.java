@@ -25,7 +25,7 @@ public class PhoneGapEventLiteralsCompletionContributor extends CompletionContri
     return new CompletionProvider<CompletionParameters>() {
       @Override
       protected void addCompletions(@NotNull CompletionParameters completionParameters,
-                                    ProcessingContext processingContext,
+                                    @NotNull ProcessingContext processingContext,
                                     @NotNull CompletionResultSet completionResultSet) {
         Project project = completionParameters.getEditor().getProject();
 

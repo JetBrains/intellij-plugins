@@ -126,15 +126,14 @@ public class CfmlLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
     }
   }
 
+
   @Override
-  public CommonCodeStyleSettings getDefaultCommonSettings() {
-    CommonCodeStyleSettings commonSettings = new CommonCodeStyleSettings(CfmlLanguage.INSTANCE);
-    commonSettings.initIndentOptions();
+  protected void customizeDefaults(@NotNull CommonCodeStyleSettings commonSettings,
+                                   @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
     commonSettings.CLASS_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     commonSettings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.NEXT_LINE;
     commonSettings.SPECIAL_ELSE_IF_TREATMENT = false;
     commonSettings.SPACE_AFTER_TYPE_CAST = false;
-    return commonSettings;
   }
 
   @Nullable

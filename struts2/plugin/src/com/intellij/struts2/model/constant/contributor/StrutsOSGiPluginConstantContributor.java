@@ -42,6 +42,7 @@ public class StrutsOSGiPluginConstantContributor extends StrutsConstantContribut
     return "org.apache.struts2.osgi.StrutsOsgiListener";
   }
 
+  @Override
   @NotNull
   public List<StrutsConstant> getStrutsConstantDefinitions(@NotNull final Module module) {
     return CONSTANTS;

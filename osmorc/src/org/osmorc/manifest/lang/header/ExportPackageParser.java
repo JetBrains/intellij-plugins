@@ -34,7 +34,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.ManifestBundle;
 import org.jetbrains.lang.manifest.header.HeaderParser;
@@ -76,7 +75,7 @@ public class ExportPackageParser extends BasePackageParser {
             ContainerUtil.addAll(references, getPackageReferences(manifestToken));
           }
         }
-        return ContainerUtilRt.toArray(references, new PsiReference[references.size()]);
+        return references.toArray(PsiReference.EMPTY_ARRAY);
       }
     }
 

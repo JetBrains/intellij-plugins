@@ -1,11 +1,11 @@
 package com.google.jstestdriver.idea.assertFramework.jstd.codeInsight;
 
-import com.intellij.javascript.testFramework.codeInsight.AbstractJsGenerateAction;
-import com.intellij.javascript.testFramework.codeInsight.GenerateActionContext;
-import com.intellij.javascript.testFramework.codeInsight.JsGeneratorUtils;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestCaseStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBuilder;
+import com.intellij.javascript.testFramework.codeInsight.AbstractJsGenerateAction;
+import com.intellij.javascript.testFramework.codeInsight.GenerateActionContext;
+import com.intellij.javascript.testFramework.codeInsight.JsGeneratorUtils;
 import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSCallExpression;
@@ -77,11 +77,12 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
     private final JSObjectLiteralExpression myTestsObjectLiteral;
     private final GenerateActionContext myContext;
 
-    public TestGeneratorOnObjectLiteral(@NotNull JSObjectLiteralExpression testsObjectLiteral, GenerateActionContext context) {
+    TestGeneratorOnObjectLiteral(@NotNull JSObjectLiteralExpression testsObjectLiteral, GenerateActionContext context) {
       myTestsObjectLiteral = testsObjectLiteral;
       myContext = context;
     }
 
+    @Override
     public void run() {
       JsGeneratorUtils.generateProperty(myTestsObjectLiteral, myContext, "\"test ${name}\": function() {|}");
     }
@@ -92,7 +93,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
     private final JSArgumentList myArgumentList;
     private final GenerateActionContext myContext;
 
-    public TestGeneratorOnNewlyCreatedObjectLiteral(@NotNull JSArgumentList argumentList,
+    TestGeneratorOnNewlyCreatedObjectLiteral(@NotNull JSArgumentList argumentList,
                                                     @NotNull GenerateActionContext context) {
       myArgumentList = argumentList;
       myContext = context;

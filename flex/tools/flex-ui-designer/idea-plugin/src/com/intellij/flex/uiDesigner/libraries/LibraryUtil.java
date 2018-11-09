@@ -20,7 +20,6 @@ import java.util.zip.ZipInputStream;
 
 final class LibraryUtil {
   public static Pair<CharArrayReader, ByteArrayInputStream> openSwc(final File in) throws IOException {
-    //noinspection IOResourceOpenedButNotSafelyClosed
     return openSwc(new BufferedInputStream(new FileInputStream(in)));
   }
 
@@ -110,7 +109,7 @@ final class LibraryUtil {
   private static class MyZipInputStream extends ZipInputStream {
     private boolean ignoreClose = true;
 
-    public MyZipInputStream(InputStream in) {
+    MyZipInputStream(InputStream in) {
       super(in);
     }
 
@@ -123,7 +122,7 @@ final class LibraryUtil {
   }
 
   private static class MyCharArrayReader extends CharArrayReader {
-    public MyCharArrayReader(char[] buf) {
+    MyCharArrayReader(char[] buf) {
       super(buf);
     }
 

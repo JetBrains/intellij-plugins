@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -23,10 +24,10 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.ui.ColorChooser;
 import com.intellij.ui.ColorLineMarkerProvider;
+import com.intellij.util.ui.ColorIcon;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.xml.XmlAttributeDescriptor;
-import com.intellij.xml.util.ColorIconCache;
 import com.intellij.xml.util.ColorMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +45,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
     if (!(element instanceof XmlAttribute) || !JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
       return;
     }
-    if (!LineMarkerSettings.getSettings().isEnabled(new ColorLineMarkerProvider())) {
+    if (!LineMarkerSettings.getSettings().isEnabled(ColorLineMarkerProvider.INSTANCE)) {
       return;
     }
     XmlAttribute attribute = (XmlAttribute)element;
@@ -130,7 +131,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
     public Icon getIcon() {
       Color color = getColor(myColorValue);
       if (color != null) {
-        return JBUI.scale(new ColorIconCache.ColorIcon(ICON_SIZE, color));
+        return JBUI.scale(new ColorIcon(ICON_SIZE, color));
       }
       return JBUI.scale(EmptyIcon.create(ICON_SIZE));
     }
@@ -168,12 +169,13 @@ public class FlexMxmlColorAnnotator implements Annotator {
     @Override
     public AnAction getClickAction() {
       return new AnAction() {
-        public void actionPerformed(final AnActionEvent e) {
+        @Override
+        public void actionPerformed(@NotNull final AnActionEvent e) {
           final Editor editor = CommonDataKeys.EDITOR.getData(e.getDataContext());
           if (editor != null) {
             Color currentColor = getColor(myColorValue);
             final Color color = ColorChooser
-              .chooseColor(editor.getComponent(), FlexBundle.message("flex.choose.color.dialog.title"), currentColor);
+              .chooseColor(editor.getProject(), editor.getComponent(), FlexBundle.message("flex.choose.color.dialog.title"), currentColor);
             if (color != null && !color.equals(currentColor)) {
               final PsiFile psiFile = myAttribute.getContainingFile();
               if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return;

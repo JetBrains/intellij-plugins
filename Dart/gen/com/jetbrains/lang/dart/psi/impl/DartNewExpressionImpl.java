@@ -27,15 +27,21 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
   }
 
   @Override
-  @Nullable
-  public DartReferenceExpression getReferenceExpression() {
-    return findChildByClass(DartReferenceExpression.class);
+  @NotNull
+  public List<DartReferenceExpression> getReferenceExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartReferenceExpression.class);
   }
 
   @Override
   @Nullable
   public DartType getType() {
     return findChildByClass(DartType.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
   }
 
   public boolean isConstantObjectExpression() {

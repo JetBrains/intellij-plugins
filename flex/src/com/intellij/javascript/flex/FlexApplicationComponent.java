@@ -29,11 +29,13 @@ public class FlexApplicationComponent extends FileTypeFactory implements MetaDat
   private static final Icon ICON = AllIcons.FileTypes.JavaClass;
 
   public static final FileType SWF_FILE_TYPE = new FileType() {
+    @Override
     @NotNull
     public String getName() {
       return "SWF";
     }
 
+    @Override
     @NotNull
     public String getDescription() {
       return "Adobe Flash animation";
@@ -45,6 +47,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements MetaDat
       return "swf";
     }
 
+    @Override
     public Icon getIcon() {
       return ICON;
     }
@@ -85,12 +88,14 @@ public class FlexApplicationComponent extends FileTypeFactory implements MetaDat
     );
   }
 
+  @Override
   public void createFileTypes(final @NotNull FileTypeConsumer consumer) {
     consumer.consume(SWF_FILE_TYPE, "swf");
     consumer.consume(MXML, "mxml;fxg");
   }
 
 
+  @Override
   public void registerResources(ResourceRegistrar registrar) {
     registrar.addStdResource(HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG, "/schemas/FlexCompilerSchema.xsd", FlexApplicationComponent.class);
 

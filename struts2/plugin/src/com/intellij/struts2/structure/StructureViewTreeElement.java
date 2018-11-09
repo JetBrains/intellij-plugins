@@ -82,6 +82,7 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
   }
 
 
+  @Override
   @NotNull
   public TreeElement[] getChildren() {
     final DomElement element = getElement();
@@ -105,6 +106,7 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
    *
    * @return null if no extra text is provided for the current element.
    */
+  @Override
   @Nullable
   public String getLocationString() {
     final XmlElement xmlElement = getElement().getXmlElement();

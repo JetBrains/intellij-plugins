@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartVoidTypeFunctionTypeImpl extends DartPsiCompositeElementImpl implements DartVoidTypeFunctionType {
 
-  public DartVoidTypeFunctionTypeImpl(ASTNode node) {
+  public DartVoidTypeFunctionTypeImpl(@NotNull ASTNode node) {
     super(node);
   }
 

@@ -17,11 +17,13 @@ public class JpsFlexLibraryType extends JpsElementTypeBase<JpsSimpleElement<JpsF
 
   public static JpsLibraryPropertiesSerializer<JpsSimpleElement<JpsFlexLibraryProperties>> createLibraryPropertiesSerializer() {
     return new JpsLibraryPropertiesSerializer<JpsSimpleElement<JpsFlexLibraryProperties>>(INSTANCE, ID) {
+      @Override
       public JpsSimpleElement<JpsFlexLibraryProperties> loadProperties(@Nullable final Element propertiesElement) {
         final String libraryId = propertiesElement == null ? null : propertiesElement.getAttributeValue(ID_ATTR);
         return JpsElementFactory.getInstance().createSimpleElement(new JpsFlexLibraryProperties(libraryId));
       }
 
+      @Override
       public void saveProperties(final JpsSimpleElement<JpsFlexLibraryProperties> propertiesElement, final Element element) {
         final String libraryId = propertiesElement.getData().getLibraryId();
         if (libraryId != null) {

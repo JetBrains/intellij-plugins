@@ -29,6 +29,7 @@ public class SendMessageEvent extends OwnMessageEvent {
     super(message, user);
   }
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitSendMessageEvent(this);
   }

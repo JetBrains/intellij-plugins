@@ -36,7 +36,7 @@ final class IncrementalDocumentSynchronizer extends Update {
   private boolean isSkippedXml;
   private boolean isStyleDataChanged;
 
-  public IncrementalDocumentSynchronizer(PsiTreeChangeEvent event) {
+  IncrementalDocumentSynchronizer(PsiTreeChangeEvent event) {
     super("FlashUIDesigner.incrementalUpdate");
     this.event = event;
   }
@@ -200,12 +200,11 @@ final class IncrementalDocumentSynchronizer extends Update {
     if (type == null) {
       return !typeName.equals(FlexAnnotationNames.EFFECT);
     }
-    else if (type.equals(JSCommonTypeNames.FUNCTION_CLASS_NAME) || typeName.equals(FlexAnnotationNames.EVENT)) {
+    else if (JSCommonTypeNames.FUNCTION_CLASS_NAMES.contains(type) || typeName.equals(FlexAnnotationNames.EVENT)) {
       return true;
     }
 
     final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-    //noinspection IOResourceOpenedButNotSafelyClosed
     final PrimitiveAmfOutputStream dataOut = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(16));
     PrimitiveWriter writer = new PrimitiveWriter(dataOut, stringWriter);
     boolean needRollbackStringWriter = true;

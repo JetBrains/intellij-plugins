@@ -63,10 +63,15 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
         for (StructureViewTreeElement structureViewChild : structureViewChildren) {
           if (structureViewChild instanceof JSStructureViewElement) {
             PsiElement childElement = ((JSStructureViewElement)structureViewChild).getValue();
-            result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode)parent).getSettings()));
+            if (childElement != null) {
+              result.add(new FlexClassMemberNode((JSElement)childElement, ((ProjectViewNode)parent).getSettings()));
+            }
           }
           else {
-            result.add(new UnknownNode(psiParent.getProject(), structureViewChild, ((ProjectViewNode)parent).getSettings()));
+            Object value = structureViewChild.getValue();
+            if (value != null) {
+              result.add(new UnknownNode(psiParent.getProject(), structureViewChild, value, ((ProjectViewNode)parent).getSettings()));
+            }
           }
         }
       }
@@ -113,12 +118,12 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
   private static class FlexFileNode extends PsiFileNode {
 
-    public FlexFileNode(final PsiFile value, final ViewSettings viewSettings) {
+    FlexFileNode(@NotNull PsiFile value, final ViewSettings viewSettings) {
       super(value.getProject(), value, viewSettings);
     }
 
     @Override
-    protected void updateImpl(final PresentationData data) {
+    protected void updateImpl(@NotNull final PresentationData data) {
       PsiFile value = getValue();
 
       String className = null;
@@ -189,9 +194,9 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
   private static class UnknownNode extends ProjectViewNode<Object> {
     private final StructureViewTreeElement myElement;
 
-    public UnknownNode(Project project,
-                       final StructureViewTreeElement element, final ViewSettings viewSettings) {
-      super(project, element.getValue(), viewSettings);
+    UnknownNode(Project project,
+                final StructureViewTreeElement element, @NotNull Object value, final ViewSettings viewSettings) {
+      super(project, value, viewSettings);
       myElement = element;
     }
 
@@ -207,7 +212,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
     }
 
     @Override
-    protected void update(final PresentationData presentation) {
+    protected void update(@NotNull final PresentationData presentation) {
       final ItemPresentation p = myElement.getPresentation();
 
       presentation.setPresentableText(p.getPresentableText());

@@ -1,21 +1,20 @@
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.*;
+import com.intellij.diagram.actions.DiagramCreateNewElementAction;
 import com.intellij.diagram.actions.DiagramCreateNewNodeElementAction;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
-import com.intellij.lang.javascript.uml.actions.*;
-import com.intellij.lang.javascript.uml.actions.NewFlexComponentUmlAction;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.uml.actions.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.diagram.actions.DiagramCreateNewElementAction;
 import org.intellij.lang.annotations.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,30 +40,36 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
     return ID;
   }
 
+  @Override
   public FlashUmlVisibilityManager createVisibilityManager() {
     return myVisibilityManager;
   }
 
+  @Override
   public FlashUmlNodeContentManager getNodeContentManager() {
     return myNodeContentManager;
   }
 
+  @Override
   public FlashUmlElementManager getElementManager() {
     return myElementManager;
   }
 
+  @Override
   public FlashUmlVfsResolver getVfsResolver() {
     return myVfsResolver;
   }
 
+  @Override
   public FlashUmlRelationshipManager getRelationshipManager() {
     return myRelationshipManager;
   }
 
+  @Override
   public FlashUmlDataModel createDataModel(@NotNull Project project,
-                                        @Nullable Object element,
-                                        @Nullable VirtualFile file,
-                                        DiagramPresentationModel presentationModel) {
+                                           @Nullable Object element,
+                                           @Nullable VirtualFile file,
+                                           DiagramPresentationModel presentationModel) {
     if (element instanceof JSFile) {
       element = JSPsiImplUtils.findQualifiedElement((JSFile)element);
     }

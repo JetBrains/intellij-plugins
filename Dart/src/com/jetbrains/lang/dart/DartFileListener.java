@@ -263,7 +263,7 @@ public class DartFileListener implements VirtualFileListener {
   }
 
   public static void updateDependenciesOnDartPackagesLibrary(@NotNull final Project project,
-                                                             @NotNull final Condition<Module> moduleFilter,
+                                                             @NotNull final Condition<? super Module> moduleFilter,
                                                              @NotNull final Library library) {
     for (Module module : ModuleManager.getInstance(project).getModules()) {
       if (moduleFilter.value(module)) {

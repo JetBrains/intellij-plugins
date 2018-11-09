@@ -35,18 +35,22 @@ public class CucumberPsiTreeListener extends PsiTreeChangeAdapter {
     processChange(event.getParent());
   }
 
+  @Override
   public void childRemoved(@NotNull final PsiTreeChangeEvent event) {
     processChange(event.getParent());
   }
 
+  @Override
   public void childReplaced(@NotNull final PsiTreeChangeEvent event) {
     processChange(event.getParent());
   }
 
+  @Override
   public void childrenChanged(@NotNull final PsiTreeChangeEvent event) {
     processChange(event.getParent());
   }
 
+  @Override
   public void childMoved(@NotNull final PsiTreeChangeEvent event) {
     processChange(event.getOldParent());
     processChange(event.getNewParent());

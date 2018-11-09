@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "downlevelIteration": true,
+    "outDir": "../../gen/js/"
+  },
+  "compileOnSave": false
+}

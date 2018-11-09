@@ -51,7 +51,5 @@ public class TsLintFixInfo {
     public String innerText;
   }
 
-  @Nullable
-  public String innerRuleName;
   public TsLintFixReplacements[] innerReplacements;
 }

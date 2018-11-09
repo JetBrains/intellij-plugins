@@ -26,15 +26,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class FlexFileReferenceHelper extends FileReferenceHelper {
+  @Override
   @NotNull
   public Collection<PsiFileSystemItem> getContexts(final Project project, @NotNull final VirtualFile file) {
     return Collections.emptyList();
   }
 
+  @Override
   public boolean isMine(final Project project, @NotNull final VirtualFile file) {
     return false;
   }
 
+  @Override
   @NotNull
   public List<? extends LocalQuickFix> registerFixes(final FileReference reference) {
     final PsiElement element = reference.getElement();
@@ -69,15 +72,18 @@ public class FlexFileReferenceHelper extends FileReferenceHelper {
       registerElementRefForFix(element, null);
     }
 
+    @Override
     @NotNull
     public String getName() {
       return "Add leading slash";
     }
 
+    @Override
     public boolean startInWriteAction() {
       return true;
     }
 
+    @Override
     protected void applyFix(final Project project, final PsiElement psiElement, final PsiFile file, final Editor editor) {
       final ASTNode oldValueNode = ((JSAttributeNameValuePair)psiElement).getValueNode();
       final String oldText = oldValueNode.getText();

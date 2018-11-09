@@ -6,10 +6,11 @@ import com.intellij.xml.impl.schema.AnyXmlElementDescriptor;
 
 class AnyXmlElementWithAnyChildrenDescriptor extends AnyXmlElementDescriptor implements XmlElementDescriptorAwareAboutChildren {
 
-  public AnyXmlElementWithAnyChildrenDescriptor() {
+  AnyXmlElementWithAnyChildrenDescriptor() {
     super(null, null);
   }
 
+  @Override
   public boolean allowElementsFromNamespace(final String namespace, final XmlTag context) {
     return false;
   }

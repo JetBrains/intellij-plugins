@@ -1,0 +1,38 @@
+GherkinFile:scenario_with_examples.feature
+  GherkinFeature:test
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('test')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:with Examples
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('with Examples')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:step
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('step')
+      PsiWhiteSpace('\n  ')
+      GherkinExamplesBlock:
+        PsiElement(EXAMPLES_KEYWORD)('Examples')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace('\n    ')
+        GherkinTable
+          GherkinTableHeaderRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('name')
+            PsiWhiteSpace('  ')
+            PsiElement(PIPE)('|')
+          PsiWhiteSpace('\n    ')
+          GherkinTableRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('value')
+            PsiWhiteSpace(' ')
+            PsiElement(PIPE)('|')

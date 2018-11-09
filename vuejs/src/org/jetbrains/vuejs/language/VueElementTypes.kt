@@ -17,10 +17,10 @@ import com.intellij.psi.util.PsiTreeUtil
 
 object VueElementTypes {
   val FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INSTANCE)
-  val EMBEDDED_JS = object : JSEmbeddedContentElementType(VueJSLanguage.INSTANCE, "VueJS") {
+  val EMBEDDED_JS: JSEmbeddedContentElementType = object : JSEmbeddedContentElementType(VueJSLanguage.INSTANCE, "VueJS") {
     override fun createStripperLexer(baseLanguage: Language): Lexer? = null
   }
-  val V_FOR_EXPRESSION = object : VueJSCompositeElementType("V_FOR_EXPRESSION") {
+  val V_FOR_EXPRESSION: VueJSCompositeElementType = object : VueJSCompositeElementType("V_FOR_EXPRESSION") {
     override fun createCompositeNode(): ASTNode = VueVForExpression(this)
   }
 }

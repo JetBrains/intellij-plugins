@@ -8,9 +8,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Sergey Simonchik
- */
 public class KarmaCoverageSuite extends BaseCoverageSuite {
 
   private final KarmaCoverageEngine myKarmaCoverageEngine;

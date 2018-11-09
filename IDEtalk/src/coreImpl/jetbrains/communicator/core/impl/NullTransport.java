@@ -29,52 +29,65 @@ import javax.swing.*;
  * @author Kir
  */
 public class NullTransport implements Transport {
+  @Override
   public void initializeProject(String projectName, MutablePicoContainer projectLevelContainer) {
   }
 
+  @Override
   public Class<? extends NamedUserCommand> getSpecificFinderClass() {
     return null;
   }
 
+  @Override
   public String getName() {
     return "NULL";
   }
 
+  @Override
   public boolean isSelf(User user) {
     return false;
   }
 
+  @Override
   public Icon getIcon(UserPresence userPresence) {
     return null;
   }
 
+  @Override
   public String[] getProjects(User user) {
     //noinspection SSBasedInspection
     return new String[0];
   }
 
+  @Override
   public String getAddressString(User user) {
     return null;
   }
 
+  @Override
   public User[] findUsers(ProgressIndicator progressIndicator) {
     return new User[0];
   }
 
+  @Override
   public void sendXmlMessage(User user, XmlMessage message) {
   }
 
+  @Override
   public void setOwnPresence(UserPresence userPresence) {
   }
 
+  @Override
   public boolean isOnline() {
     return false;
   }
 
+  @Override
   public UserPresence getUserPresence(User user) {
     return new UserPresence(false);
   }
 
+  @Override
   public boolean hasIdeTalkClient(User user) {
     return false;
   }

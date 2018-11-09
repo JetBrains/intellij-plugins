@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionUtilCore
@@ -28,8 +16,8 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
-import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
@@ -39,11 +27,11 @@ import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.ArrayUtil
 import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import icons.VuejsIcons
 import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.VueLanguage
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.getExportedDescriptor
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
@@ -51,7 +39,7 @@ import org.jetbrains.vuejs.index.*
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
-    if (tag != null && hasVue(tag.project)) {
+    if (tag != null && tag.containingFile.language == VueLanguage.INSTANCE && hasVue(tag.project)) {
       val name = tag.name
 
       val localComponents = findLocalComponents(name, tag)
@@ -62,7 +50,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       if (!globalComponents.isEmpty()) return multiDefinitionDescriptor(globalComponents)
 
       // keep this last in case in future we would be able to normally resolve into these components
-      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(normalized)) {
+      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(normalized) || VUETIFY_UNRESOLVED_COMPONENTS.contains(normalized)) {
         return VueElementDescriptor(JSImplicitElementImpl(normalized, tag))
       }
     }
@@ -72,12 +60,12 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   private fun findLocalComponents(name: String, contextElement: PsiElement): List<JSImplicitElement> {
     val localComponents = mutableListOf<JSImplicitElement>()
     val decapitalized = name.decapitalize()
-    processLocalComponents(contextElement, { foundName, element ->
+    processLocalComponents(contextElement) { foundName, element ->
       if (foundName == decapitalized || foundName == toAsset(decapitalized) || foundName == toAsset(decapitalized).capitalize()) {
         localComponents.add(element)
       }
       return@processLocalComponents true
-    })
+    }
     return localComponents
   }
 
@@ -100,8 +88,8 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     }
     val globalAliased = VueComponentsCache.findGlobalLibraryComponent(tag.project, normalized) ?: return emptyList()
 
-    return setOf(globalAliased.second as? JSImplicitElement ?:
-                 JSLocalImplicitElementImpl(globalAliased.first, null, globalAliased.second, null))
+    return setOf(
+      globalAliased.second as? JSImplicitElement ?: JSLocalImplicitElementImpl(globalAliased.first, null, globalAliased.second, null))
   }
 
   private fun nameVariantsWithPossiblyGlobalMark(name: String): MutableSet<String> {
@@ -127,18 +115,19 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       }
     }
 
-    VueComponentDetailsProvider.INSTANCE.processLocalComponents(component, contextElement.project, { name, element ->
+    VueComponentDetailsProvider.INSTANCE.processLocalComponents(component, contextElement.project) { name, element ->
       if (name != null) {
-        val meaningfulElement = JSStubBasedPsiTreeUtil.calculateMeaningfulElement(element)
-        processComponentMeaningfulElement(name, meaningfulElement, processor, element)
-      } else true
-    })
+        val literalOrElement = VueComponents.meaningfulExpression(element) ?: element
+        processComponentMeaningfulElement(name, literalOrElement, processor, element)
+      }
+      else true
+    }
   }
 
   private fun processComponentMeaningfulElement(localName: String, meaningfulElement: PsiElement,
                                                 processor: (String?, JSImplicitElement) -> Boolean,
                                                 sourceElement: PsiElement?): Boolean {
-    var obj = meaningfulElement as? JSObjectLiteralExpression
+    var obj = VueComponentsCalculation.getObjectLiteralFromResolve(listOf(meaningfulElement))
     var clazz: JSClassExpression<*>? = null
     if (obj == null) {
       val compDefaultExport = meaningfulElement.parent as? ES6ExportDefaultAssignment
@@ -177,22 +166,25 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     return true
   }
 
-  override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, prefix: String?) {
+  override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, namespacePrefix: String?) {
     elements ?: return
+    if (!StringUtil.isEmpty(namespacePrefix)) return
+
     val scriptLanguage = detectVueScriptLanguage(tag.containingFile)
-    val files:MutableList<PsiFile> = mutableListOf()
+    val files: MutableList<PsiFile> = mutableListOf()
     val localLookups = mutableListOf<LookupElement>()
-    processLocalComponents(tag, { foundName, element ->
+    processLocalComponents(tag) { foundName, element ->
       addLookupVariants(localLookups, tag, scriptLanguage, element, foundName!!, true)
       files.add(element.containingFile)
       return@processLocalComponents true
-    })
+    }
     elements.addAll(localLookups.map { PrioritizedLookupElement.withPriority((it as LookupElementBuilder).bold(), 100.0) })
 
     if (hasVue(tag.project)) {
       val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
       val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
-      val allComponents = VueComponentsCache.getAllComponentsGroupedByModules(tag.project, { key -> variants.any { key.contains(it, true) } }, false)
+      val allComponents = VueComponentsCache.getAllComponentsGroupedByModules(tag.project,
+                                                                              { key -> variants.any { key.contains(it, true) } }, false)
       for (entry in allComponents) {
         entry.value.keys
           .filter { !files.contains(entry.value[it]!!.first.containingFile) }
@@ -204,7 +196,15 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
         LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
       })
+      if (!hasVuetify(allComponents)) return
+      elements.addAll(VUETIFY_UNRESOLVED_COMPONENTS.map {
+        LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText(VUETIFY, true)
+      })
     }
+  }
+
+  private fun hasVuetify(allComponents: Map<String, Map<String, Pair<PsiElement, Boolean>>>): Boolean {
+    return allComponents.filter { it.key == VUETIFY }.isNotEmpty()
   }
 
   private fun addLookupVariants(elements: MutableList<LookupElement>,
@@ -236,7 +236,8 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       if (settings.hasTSImportCompletionEffective(element.project)) {
         return builder.withInsertHandler(VueInsertHandler.INSTANCE)
       }
-    } else {
+    }
+    else {
       if (settings.isUseJavaScriptAutoImport) {
         return builder.withInsertHandler(VueInsertHandler.INSTANCE)
       }
@@ -256,6 +257,52 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "component",
       "slot"
     )
+    val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
+      //grid components
+      "v-flex",
+      "v-spacer",
+      "v-container",
+      "v-layout",
+      //functional components
+      "v-bottom-sheet-transition",
+      "v-breadcrumbs-divider",
+      "v-carousel-reverse-transition",
+      "v-carousel-transition",
+      "v-dialog-bottom-transition",
+      "v-dialog-transition",
+      "v-expand-transition",
+      "v-fab-transition",
+      "v-fade-transition",
+      "v-menu",
+      "v-menu-transition",
+      "v-row-expand-transition",
+      "v-scale-transition",
+      "v-scroll-x-reverse-transition",
+      "v-scroll-x-transition",
+      "v-scroll-y-reverse-transition",
+      "v-scroll-y-transition",
+      "v-slide-x-reverse-transition",
+      "v-slide-x-transition",
+      "v-slide-y-reverse-transition",
+      "v-slide-y-transition",
+      "v-stepper-items",
+      "v-tab-item",
+      "v-tab-reverse-transition",
+      "v-tab-transition",
+      "v-table-overflow",
+      "v-tabs",
+      "v-tabs-items",
+      "v-card-actions",
+      "v-card-text",
+      "v-list-tile-action",
+      "v-list-tile-action-text",
+      "v-list-tile-content",
+      "v-list-tile-sub-title",
+      "v-list-tile-title",
+      "v-stepper-header",
+      "v-toolbar-items",
+      "v-toolbar-title"
+    )
   }
 }
 
@@ -266,12 +313,19 @@ fun multiDefinitionDescriptor(variants: Collection<JSImplicitElement>): VueEleme
 }
 
 class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JSImplicitElement> = listOf(element)) : XmlElementDescriptor {
-  override fun getDeclaration() = element
-  override fun getName(context: PsiElement?):String = (context as? XmlTag)?.name ?: name
-  override fun getName() = fromAsset(declaration.name)
+  companion object {
+    // it is better to use default attributes method since it is guaranteed to do not call any extension providers
+    fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
+      ((HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)
+         ?.getDefaultAttributeDescriptors(context) ?: emptyArray())
+  }
+
+  override fun getDeclaration(): JSImplicitElement = element
+  override fun getName(context: PsiElement?): String = (context as? XmlTag)?.name ?: name
+  override fun getName(): String = fromAsset(declaration.name)
   override fun init(element: PsiElement?) {}
-  override fun getQualifiedName() = name
-  override fun getDefaultName() = name
+  override fun getQualifiedName(): String = name
+  override fun getDefaultName(): String = name
 
   override fun getElementsDescriptors(context: XmlTag): Array<XmlElementDescriptor> {
     return XmlDescriptorUtil.getElementsDescriptors(context)
@@ -281,16 +335,10 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
     return XmlDescriptorUtil.getElementDescriptor(childTag, contextTag)
   }
 
-  // it is better to use default attributes method since it is guaranteed to do not call any extension providers
-  private fun getDefaultHtmlAttributes(context: XmlTag?): Array<out XmlAttributeDescriptor> =
-    ((HtmlNSDescriptorImpl.guessTagForCommonAttributes(context) as? HtmlElementDescriptorImpl)?.
-      getDefaultAttributeDescriptors(context) ?: emptyArray())
-
   override fun getAttributesDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
     val result = mutableListOf<XmlAttributeDescriptor>()
     val defaultHtmlAttributes = getDefaultHtmlAttributes(context)
     result.addAll(defaultHtmlAttributes)
-    VueAttributesProvider.addBindingAttributes(result, defaultHtmlAttributes)
     result.addAll(VueAttributesProvider.getDefaultVueAttributes())
 
     val obj = VueComponents.findComponentDescriptor(declaration)
@@ -320,11 +368,11 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
            ?: VueAttributeDescriptor(attributeName, isNonProp = true)
   }
 
-  override fun getAttributeDescriptor(attribute: XmlAttribute?) = getAttributeDescriptor(attribute?.name, attribute?.parent)
+  override fun getAttributeDescriptor(attribute: XmlAttribute?): XmlAttributeDescriptor? = getAttributeDescriptor(attribute?.name,
+                                                                                                                  attribute?.parent)
 
   override fun getNSDescriptor(): XmlNSDescriptor? = null
   override fun getTopGroup(): XmlElementsGroup? = null
-  override fun getContentType() = CONTENT_TYPE_ANY
+  override fun getContentType(): Int = CONTENT_TYPE_ANY
   override fun getDefaultValue(): String? = null
-  override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY!!
 }

@@ -16,6 +16,7 @@ package org.dartlang.vm.service.element;
 // This is a generated file.
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 @SuppressWarnings({"WeakerAccess", "unused", "UnnecessaryInterfaceModifier"})
@@ -25,10 +26,16 @@ public class Frame extends Response {
     super(json);
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public CodeRef getCode() {
     return json.get("code") == null ? null : new CodeRef((JsonObject) json.get("code"));
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public FuncRef getFunction() {
     return json.get("function") == null ? null : new FuncRef((JsonObject) json.get("function"));
   }
@@ -37,21 +44,30 @@ public class Frame extends Response {
     return json.get("index") == null ? -1 : json.get("index").getAsInt();
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public FrameKind getKind() {
     if (json.get("kind") == null) return null;
     
-    String name = json.get("kind").getAsString();
+    JsonElement value = json.get("kind");
     try {
-      return FrameKind.valueOf(name);
+      return value == null ? FrameKind.Unknown : FrameKind.valueOf(value.getAsString());
     } catch (IllegalArgumentException e) {
       return FrameKind.Unknown;
     }
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public SourceLocation getLocation() {
     return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
   }
 
+  /**
+   * Can return <code>null</code>.
+   */
   public ElementList<BoundVariable> getVars() {
     if (json.get("vars") == null) return null;
     

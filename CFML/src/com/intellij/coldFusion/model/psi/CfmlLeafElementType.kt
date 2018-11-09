@@ -32,11 +32,18 @@ class CfmlLeafElementType(s: String) : CfmlElementType(s), ILeafElementType {
   }
 }
 
-class CfmlLeafPsiElement(cfmlLeafElementType: CfmlLeafElementType, leafText: CharSequence) : LeafPsiElement(cfmlLeafElementType, leafText), PsiLanguageInjectionHost {
+class CfmlLeafPsiElement(cfmlLeafElementType: CfmlLeafElementType, leafText: CharSequence) : LeafPsiElement(cfmlLeafElementType,
+                                                                                                            leafText), PsiLanguageInjectionHost {
 
-  override fun isValidHost() = (this.parent is CfmlTagImpl && (this.parent as CfmlTagImpl).name?.toLowerCase() == "cfquery")
+  override fun isValidHost(): Boolean {
+    val parent = this.parent ?: return false
+    if (parent !is CfmlTagImpl) return false
+    val isCfquery = parent.name?.toLowerCase() == "cfquery"
+    val isCfifInCfquery = parent.name?.toLowerCase() == "cfif" && (parent.parent is CfmlTagImpl) && (parent.parent as CfmlTagImpl).name?.toLowerCase() == "cfquery"
+    return isCfquery || isCfifInCfquery
+  }
 
-  override fun updateText(text: String) = replaceWithText(text) as PsiLanguageInjectionHost
+  override fun updateText(text: String): PsiLanguageInjectionHost = replaceWithText(text) as PsiLanguageInjectionHost
 
   override fun createLiteralTextEscaper(): LiteralTextEscaper<out PsiLanguageInjectionHost> = LiteralTextEscaper.createSimple(this)
 

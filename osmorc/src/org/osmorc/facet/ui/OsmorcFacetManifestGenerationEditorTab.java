@@ -73,6 +73,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
 
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.addUserActivityListener(new UserActivityListener() {
+      @Override
       public void stateChanged() {
         myModified = true;
       }
@@ -80,6 +81,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     watcher.register(myRootPanel);
 
     myBundleActivator.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         onBundleActivatorSelect();
       }

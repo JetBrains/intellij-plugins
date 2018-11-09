@@ -18,7 +18,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.*;
  * Places where we've gone off book to make the live syntax detection a more pleasant experience are
  * marked HB_CUSTOMIZATION.  If we find bugs, or the grammar is ever updated, these are the first candidates to check.
  */
-@SuppressWarnings("Duplicates") // suppress duplicate detection since we want to maintain the structural parity between
+// suppress duplicate detection since we want to maintain the structural parity between
                                 // the code and the jison grammar rules, which can appear to duplicate code
 public class HbParsing {
   private final PsiBuilder builder;

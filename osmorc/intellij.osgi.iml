@@ -22,18 +22,7 @@
     <orderEntry type="module" module-name="intellij.java.debugger.impl" />
     <orderEntry type="module" module-name="intellij.java.manifest" />
     <orderEntry type="module" module-name="intellij.platform.smRunner" />
-    <orderEntry type="module" module-name="intellij.osgi.jps" exported="" />
-    <orderEntry type="module-library" exported="">
-      <library name="org.apache.felix.framework">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/org.apache.felix.framework-4.2.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/org.apache.felix.framework-4.2.1.jar!/OSGI-OPT/src/java" />
-        </SOURCES>
-      </library>
-    </orderEntry>
+    <orderEntry type="module" module-name="intellij.osgi.jps" />
     <orderEntry type="module-library">
       <library name="OSGi namespaces">
         <CLASSES>
@@ -55,5 +44,6 @@
     <orderEntry type="library" scope="TEST" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
     <orderEntry type="library" scope="TEST" name="hamcrest" level="project" />
+    <orderEntry type="module" module-name="intellij.platform.jps.build" scope="TEST" />
   </component>
 </module>

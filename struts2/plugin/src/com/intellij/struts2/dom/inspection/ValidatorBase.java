@@ -37,6 +37,7 @@ abstract class ValidatorBase extends InspectionValidator {
     return ValidationConfiguration.getInstance(module.getProject()).isSelected(getDescription());
   }
 
+  @Override
   public final boolean isAvailableOnScope(@NotNull final CompileScope scope) {
     for (final Module module : scope.getAffectedModules()) {
       if (isEnabledForModule(module)) {

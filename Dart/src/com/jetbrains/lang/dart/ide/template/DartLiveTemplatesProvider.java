@@ -7,6 +7,7 @@ public class DartLiveTemplatesProvider implements DefaultLiveTemplatesProvider {
   private static final @NonNls String[] DEFAULT_TEMPLATES =
     new String[]{"/liveTemplates/dart_miscellaneous"};
 
+  @Override
   public String[] getDefaultLiveTemplateFiles() {
     return DEFAULT_TEMPLATES;
   }

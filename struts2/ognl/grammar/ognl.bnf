@@ -208,9 +208,9 @@ mapEntryElement ::= expression ':' expression {
     valueExpression="expression[1]"
   ]
   name="map entry"
-  pin=2
+  pin=1
 }
-private mapExpressionSequence ::= mapEntryElement (',' mapEntryElement)*
+private mapExpressionSequence ::= [] mapEntryElement (',' mapEntryElement)* {pin(".*")=1}
 private mapTypeExpression ::= '#@' fqnTypeExpression '@{' {
   pin=1
 }

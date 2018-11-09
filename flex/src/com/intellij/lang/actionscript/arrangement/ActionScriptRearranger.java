@@ -17,6 +17,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.psi.codeStyle.arrangement.ArrangementSettings;
 import com.intellij.psi.codeStyle.arrangement.ArrangementSettingsSerializer;
 import com.intellij.psi.codeStyle.arrangement.DefaultArrangementSettingsSerializer;
 import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
@@ -67,8 +68,8 @@ public class ActionScriptRearranger extends JSRearrangerBase {
 
   @NotNull
   @Override
-  protected ArrangementSettingsToken detectFieldType(JSVariable variable) {
-    return variable != null && variable.isConst() ? CONST : VAR;
+  protected ArrangementSettingsToken detectFieldType(@NotNull ArrangementSettings settings, @NotNull JSVariable variable) {
+    return variable.isConst() ? CONST : VAR;
   }
 
   @NotNull
@@ -134,6 +135,7 @@ public class ActionScriptRearranger extends JSRearrangerBase {
     }
   }
 
+  @Override
   @NotNull
   protected Set<ArrangementSettingsToken> detectModifiers(@NotNull final JSAttributeListOwner fieldOrMethod) {
     final Set<ArrangementSettingsToken> result = ContainerUtil.newHashSet();
@@ -256,6 +258,7 @@ public class ActionScriptRearranger extends JSRearrangerBase {
     return matchRules;
   }
 
+  @Override
   protected boolean isModifierEnabled(@NotNull ArrangementSettingsToken modifier,
                                       @NotNull ArrangementSettingsToken type,
                                       @NotNull Set<ArrangementSettingsToken> existingModifiers) {

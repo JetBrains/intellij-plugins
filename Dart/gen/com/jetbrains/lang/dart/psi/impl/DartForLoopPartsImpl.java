@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartForLoopPartsImpl extends DartPsiCompositeElementImpl implements DartForLoopParts {
 
-  public DartForLoopPartsImpl(ASTNode node) {
+  public DartForLoopPartsImpl(@NotNull ASTNode node) {
     super(node);
   }
 

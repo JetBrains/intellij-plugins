@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.parsers;
 
 import com.intellij.coldFusion.model.CfmlLanguage;
@@ -87,7 +73,7 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
   IElementType SWITCHEXPRESSION = new CfmlCompositeElementType("SWITCHEXPRESSION");
   IElementType CASEEXPRESSION = new CfmlCompositeElementType("CASEEXPRESSION");
   IElementType TRYCATCHEXPRESSION = new CfmlCompositeElementType("TRYCATCHEXPRESSION");
-  
+
   IElementType BLOCK_OF_STATEMENTS = new CfmlCompositeElementType("BLOCK_OF_STATEMENTS");
   IElementType CATCHEXPRESSION = new CfmlCompositeElementType("CATCH_EXPRESSION");
   IElementType INCLUDEEXPRESSION = new CfmlCompositeElementType("INCLUDE_EXPRESSION");
@@ -97,7 +83,7 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
       return new CfmlScriptImportImpl(node);
     }
   };
-  
+
   IElementType FUNCTION_ARGUMENT = new CfmlCompositeElementType("FUNCTION_ARGUMENT") {
     @Override
     public PsiElement createPsiElement(ASTNode node) {
@@ -130,6 +116,7 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
   };
   CfmlCompositeElementType SCRIPT_EXPRESSION = new CfmlCompositeElementType("SomeScriptExression");
   CfmlCompositeElementType REFERENCE_EXPRESSION = new CfmlCompositeElementType("ReferenceExpression") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       if ("super".equalsIgnoreCase(node.getText())) {
         return new CfmlSuperComponentReference(node);
@@ -141,61 +128,73 @@ public interface CfmlElementTypes extends CfmlStubElementTypes {
     }
   };
   CfmlCompositeElementType FUNCTION_CALL_EXPRESSION = new CfmlCompositeElementType("FunctionCallExpression") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlFunctionCallExpression(node);
     }
   };
   CfmlCompositeElementType FUNCTION_DEFINITION = new CfmlCompositeElementType("FunctionDefinition") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlFunctionImpl(node);
     }
   };
   CfmlCompositeElementType TAG_FUNCTION_CALL = new CfmlCompositeElementType("FunctionInvoke") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlTagInvokeImpl(node);
     }
   };
   CfmlCompositeElementType PARAMETERS_LIST = new CfmlCompositeElementType("ParametersList") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlParametersList(node);
     }
   };
   CfmlCompositeElementType ARGUMENT_LIST = new CfmlCompositeElementType("ArgumentList") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlArgumentList(node);
     }
   };
   CfmlCompositeElementType PROPERTY_TAG = new CfmlCompositeElementType("PropertyTag") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlTagPropertyImpl(node);
     }
   };
   CfmlCompositeElementType FUNCTION_TAG = new CfmlCompositeElementType("Tag") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlTagFunctionImpl(node);
     }
   };
   CfmlCompositeElementType INVOKE_TAG = new CfmlCompositeElementType("Tag") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlTagInvokeImpl(node);
     }
   };
   CfmlCompositeElementType ARGUMENT_TAG = new CfmlCompositeElementType("Tag") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlTagFunctionParameterImpl(node);
     }
   };
   CfmlCompositeElementType SCRIPT_TAG = new CfmlCompositeElementType("Tag") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlTagScriptImpl(node);
     }
   };
   CfmlCompositeElementType TAG = new CfmlCompositeElementType("Tag") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlTagImpl(node);
     }
   };
   CfmlCompositeElementType ATTRIBUTE = new CfmlCompositeElementType("Attribute") {
+    @Override
     public PsiElement createPsiElement(final ASTNode node) {
       return new CfmlAttributeImpl(node);
     }

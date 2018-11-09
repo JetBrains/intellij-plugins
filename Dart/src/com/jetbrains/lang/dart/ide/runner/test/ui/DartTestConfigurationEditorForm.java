@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test.ui;
 
 import com.intellij.execution.configuration.EnvironmentVariablesComponent;
@@ -67,7 +68,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
 
     final DocumentAdapter dirListener = new DocumentAdapter() {
       @Override
-      protected void textChanged(final DocumentEvent e) {
+      protected void textChanged(@NotNull final DocumentEvent e) {
         onTestDirChanged(project);
       }
     };

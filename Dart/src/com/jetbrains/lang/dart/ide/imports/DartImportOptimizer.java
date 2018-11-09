@@ -48,7 +48,7 @@ public class DartImportOptimizer implements ImportOptimizer {
               myFileChanged = true;
               final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
               if (document != null) {
-                // Tricky story. Committing a document here is required in oder to guarantee that DartPostFormatProcessor.processText() is called afterwards.
+                // Tricky story. Committing a document here is required in order to guarantee that DartPostFormatProcessor.processText() is called afterwards.
                 PsiDocumentManager.getInstance(file.getProject()).commitDocument(document);
               }
             }

@@ -28,11 +28,13 @@ public class DartPackagesLibraryProperties extends LibraryProperties<DartPackage
     myPackageNameToDirsMap = packageNameToDirsMap;
   }
 
+  @Override
   @Nullable
   public DartPackagesLibraryProperties getState() {
     return this;
   }
 
+  @Override
   public void loadState(@NotNull final DartPackagesLibraryProperties state) {
     XmlSerializerUtil.copyBean(state, this);
   }

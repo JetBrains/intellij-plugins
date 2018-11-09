@@ -58,6 +58,10 @@
                      key="inspection.gherkin.background.after.scenario.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="ERROR" implementationClass="org.jetbrains.plugins.cucumber.inspections.GherkinMisplacedBackgroundInspection"/>
 
+    <localInspection language="Gherkin" shortName="GherkinScenarioToScenarioOutline" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+                     key="inspection.gherkin.scenario.with.examples.section.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.jetbrains.plugins.cucumber.inspections.GherkinScenarioToScenarioOutlineInspection"/>
+
     <completion.contributor language="Gherkin"
                             implementationClass="org.jetbrains.plugins.cucumber.completion.CucumberCompletionContributor"/>
 

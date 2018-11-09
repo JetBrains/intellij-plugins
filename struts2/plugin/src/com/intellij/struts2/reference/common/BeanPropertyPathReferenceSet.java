@@ -54,6 +54,7 @@ public class BeanPropertyPathReferenceSet extends ReferenceSetBase<BeanPropertyP
     this.supportsReadOnlyProperties = supportsReadOnlyProperties;
   }
 
+  @Override
   @NotNull
   protected BeanPropertyPathReference createReference(final TextRange range, final int index) {
     return createBeanPropertyPathReference(range, index);

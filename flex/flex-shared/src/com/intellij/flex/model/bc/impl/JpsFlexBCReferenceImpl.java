@@ -21,7 +21,7 @@ class JpsFlexBCReferenceImpl
 
   static final JpsElementChildRole<JpsFlexBCReference> ROLE = JpsElementChildRoleBase.create("build configuration reference");
 
-  public JpsFlexBCReferenceImpl(@NotNull final String name, final JpsModuleReference moduleReference) {
+  JpsFlexBCReferenceImpl(@NotNull final String name, final JpsModuleReference moduleReference) {
     super(name, moduleReference);
   }
 
@@ -29,6 +29,7 @@ class JpsFlexBCReferenceImpl
     super(original);
   }
 
+  @Override
   @NotNull
   public JpsFlexBCReferenceImpl createCopy() {
     return new JpsFlexBCReferenceImpl(this);

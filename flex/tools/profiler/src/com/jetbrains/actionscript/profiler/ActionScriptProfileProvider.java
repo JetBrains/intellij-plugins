@@ -13,10 +13,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class ActionScriptProfileProvider implements ProfilerSnapshotProvider {
 
+  @Override
   public boolean accepts(@NotNull VirtualFile file) {
     return file.getFileType() instanceof CpuSnapshotFileType || file.getFileType() instanceof LiveObjectsFileType;
   }
 
+  @Override
   @Nullable
   public ProfileView createView(@NotNull VirtualFile file, @NotNull Project project) {
     if (file.getFileType() instanceof CpuSnapshotFileType) {

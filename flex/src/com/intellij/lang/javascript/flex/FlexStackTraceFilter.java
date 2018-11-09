@@ -42,6 +42,7 @@ public class FlexStackTraceFilter implements Filter {
     myProject = project;
   }
 
+  @Override
   @Nullable
   public Result applyFilter(final String line, final int entireLength) {
     //    [trace]    at org.flexunit::Assert$/fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\Assert.as:294]
@@ -144,11 +145,12 @@ public class FlexStackTraceFilter implements Filter {
     private final Collection<VirtualFile> myFiles;
     private final int myLine;
 
-    public OpenOneOfSeveralFilesHyperlinkInfo(@NotNull final Collection<VirtualFile> files, final int line) {
+    OpenOneOfSeveralFilesHyperlinkInfo(@NotNull final Collection<VirtualFile> files, final int line) {
       myFiles = files;
       myLine = line;
     }
 
+    @Override
     public void navigate(final Project project) {
       final List<VirtualFile> validFiles = new ArrayList<>(myFiles.size());
       for (final VirtualFile file : myFiles) {

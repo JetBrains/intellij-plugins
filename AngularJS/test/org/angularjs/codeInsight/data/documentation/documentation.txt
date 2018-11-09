@@ -4,4 +4,4 @@
 <p>constructor function. The controller instance can be published into a scope property
 <p>by specifying <code>as propertyName</code>.</div><table class='sections'></table>
 ---
-http://docs.angularjs.org/api/ng/directive/ngController
+https://docs.angularjs.org/api/ng/directive/ngController

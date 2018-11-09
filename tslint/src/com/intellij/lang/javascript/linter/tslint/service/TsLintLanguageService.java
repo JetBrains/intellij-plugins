@@ -1,9 +1,6 @@
 package com.intellij.lang.javascript.linter.tslint.service;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.intellij.idea.RareLogger;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
@@ -14,6 +11,7 @@ import com.intellij.lang.javascript.linter.tslint.service.commands.TsLintGetErro
 import com.intellij.lang.javascript.linter.tslint.service.protocol.TsLintLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer;
+import com.intellij.lang.javascript.service.protocol.LocalFilePath;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -58,7 +56,8 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     if (process == null) {
       return new FixedFuture<>(Collections.singletonList(new TsLinterError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
     }
-    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(parameters.getPath(), parameters.getConfigPath(),
+    TsLintGetErrorsCommand command = new TsLintGetErrorsCommand(LocalFilePath.create(parameters.getPath()),
+                                                                LocalFilePath.create(parameters.getConfigPath()),
                                                                 StringUtil.notNullize(content));
     return process.execute(command, createHighlightProcessor(parameters.getPath()));
   }
@@ -74,7 +73,8 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     }
 
     //doesn't pass content (file should be saved before)
-    TsLintFixErrorsCommand command = new TsLintFixErrorsCommand(parameters.getPath(), parameters.getConfigPath());
+    TsLintFixErrorsCommand command = new TsLintFixErrorsCommand(LocalFilePath.create(parameters.getPath()),
+                                                                LocalFilePath.create(parameters.getConfigPath()));
     return process.execute(command, createHighlightProcessor(parameters.getPath()));
   }
 
@@ -124,13 +124,13 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   @NotNull
-  private static JSLanguageServiceCommandProcessor<List<TsLinterError>> createHighlightProcessor(@NotNull String path) {
-    return (object, answer) -> parseResults(answer, path);
+  private JSLanguageServiceCommandProcessor<List<TsLinterError>> createHighlightProcessor(@NotNull String path) {
+    return (object, answer) -> parseResults(answer, path, JSLanguageServiceUtil.getGson(this));
   }
 
 
   @Nullable
-  private static List<TsLinterError> parseResults(@NotNull JSLanguageServiceAnswer answer, @NotNull String path) {
+  private static List<TsLinterError> parseResults(@NotNull JSLanguageServiceAnswer answer, @NotNull String path, @NotNull Gson gson) {
     final JsonObject element = answer.getElement();
     final JsonElement error = element.get("error");
     if (error != null) {
@@ -141,7 +141,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     final String version = element.get("version").getAsString();
     final SemVer tsLintVersion = SemVer.parseFromText(version);
     final boolean isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion);
-    final TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased);
+    final TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased, gson);
     return ContainerUtil.newArrayList(parser.getErrors());
   }
 

@@ -21,6 +21,7 @@ public class GherkinFileImpl extends PsiFileBase implements GherkinFile {
     super(viewProvider, GherkinLanguage.INSTANCE);
   }
 
+  @Override
   @NotNull
   public FileType getFileType() {
     return GherkinFileType.INSTANCE;
@@ -31,6 +32,7 @@ public class GherkinFileImpl extends PsiFileBase implements GherkinFile {
     return "GherkinFile:" + getName();
   }
 
+  @Override
   public List<String> getStepKeywords() {
     final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider();
     List<String> result = new ArrayList<>();
@@ -45,6 +47,7 @@ public class GherkinFileImpl extends PsiFileBase implements GherkinFile {
     return result;
   }
 
+  @Override
   public String getLocaleLanguage() {
     final ASTNode node = getNode();
 

@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.AutoPopupController;
@@ -32,6 +20,7 @@ import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -58,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
@@ -75,14 +65,32 @@ public class DartServerCompletionContributor extends CompletionContributor {
              protected void addCompletions(@NotNull final CompletionParameters parameters,
                                            @NotNull final ProcessingContext context,
                                            @NotNull final CompletionResultSet originalResultSet) {
-               VirtualFile file = DartResolveUtil.getRealVirtualFile(parameters.getOriginalFile());
+               final PsiFile originalFile = parameters.getOriginalFile();
+               final Project project = originalFile.getProject();
+
+               if (originalResultSet.getPrefixMatcher().getPrefix().isEmpty() &&
+                   isRightAfterBadIdentifier(parameters.getEditor().getDocument().getImmutableCharSequence(), parameters.getOffset())) {
+                 return;
+               }
+
+               final CompletionSorter sorter = createSorter(parameters, originalResultSet.getPrefixMatcher());
+               final String uriPrefix = getPrefixIfCompletingUri(parameters);
+               final CompletionResultSet resultSet = uriPrefix != null
+                                                     ? originalResultSet.withRelevanceSorter(sorter).withPrefixMatcher(uriPrefix)
+                                                     : originalResultSet.withRelevanceSorter(sorter);
+
+               // If completion is requested in "Evaluate Expression" dialog or when editing a breakpoint condition, use runtime completion.
+               if (originalFile instanceof DartExpressionCodeFragment) {
+                 appendRuntimeCompletion(parameters, resultSet);
+                 return;
+               }
+
+               VirtualFile file = DartResolveUtil.getRealVirtualFile(originalFile);
                if (file instanceof VirtualFileWindow) {
                  file = ((VirtualFileWindow)file).getDelegate();
                }
 
                if (file == null) return;
-
-               final Project project = parameters.getOriginalFile().getProject();
 
                if (file.getFileType() == HtmlFileType.INSTANCE &&
                    PubspecYamlUtil.findPubspecYamlFile(project, file) == null &&
@@ -96,16 +104,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
                das.updateFilesContent();
 
-               final int offset =
-                 InjectedLanguageManager.getInstance(project).injectedToHost(parameters.getOriginalFile(), parameters.getOffset());
+               final int offset = InjectedLanguageManager.getInstance(project).injectedToHost(originalFile, parameters.getOffset());
                final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
-
-               final CompletionSorter sorter = createSorter(parameters, originalResultSet.getPrefixMatcher());
-               final String uriPrefix = getPrefixIfCompletingUri(parameters);
-               final CompletionResultSet resultSet = uriPrefix != null
-                                                     ? originalResultSet.withRelevanceSorter(sorter).withPrefixMatcher(uriPrefix)
-                                                     : originalResultSet.withRelevanceSorter(sorter);
 
                das.addCompletions(file, completionId, (replacementOffset, replacementLength, suggestion) -> {
                  final CompletionResultSet updatedResultSet;
@@ -139,6 +140,52 @@ public class DartServerCompletionContributor extends CompletionContributor {
            });
   }
 
+  private static boolean isRightAfterBadIdentifier(@NotNull CharSequence text, int offset) {
+    if (offset == 0) return false;
+
+    int currentOffset = offset - 1;
+    if (!Character.isJavaIdentifierPart(text.charAt(currentOffset))) return false;
+
+    while (currentOffset > 0 && Character.isJavaIdentifierPart(text.charAt(currentOffset - 1))) {
+      currentOffset--;
+    }
+
+    return !Character.isJavaIdentifierStart(text.charAt(currentOffset));
+  }
+
+  private static void appendRuntimeCompletion(@NotNull final CompletionParameters parameters,
+                                              @NotNull final CompletionResultSet resultSet) {
+    final PsiFile originalFile = parameters.getOriginalFile();
+    final Project project = originalFile.getProject();
+    final PsiElement contextElement = originalFile.getContext();
+    if (contextElement == null) {
+      return;
+    }
+
+    final VirtualFile contextFile = contextElement.getContainingFile().getVirtualFile();
+    final int contextOffset = contextElement.getTextOffset();
+
+    final Document dummyDocument = FileDocumentManager.getInstance().getDocument(originalFile.getVirtualFile());
+    if (dummyDocument == null) {
+      return;
+    }
+
+    final String code = dummyDocument.getText();
+    final int codeOffset = parameters.getOffset();
+
+    final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+    final RuntimeCompletionResult completionResult =
+      das.execution_getSuggestions(code, codeOffset,
+                                   contextFile, contextOffset,
+                                   Collections.emptyList(), Collections.emptyList());
+    if (completionResult != null && completionResult.suggestions != null) {
+      for (CompletionSuggestion suggestion : completionResult.suggestions) {
+        LookupElementBuilder lookupElement = createLookupElement(project, suggestion);
+        resultSet.addElement(lookupElement);
+      }
+    }
+  }
+
   private static CompletionSorter createSorter(@NotNull final CompletionParameters parameters, @NotNull final PrefixMatcher prefixMatcher) {
     final LookupElementWeigher dartWeigher = new LookupElementWeigher("dartRelevance", true, false) {
       @Override
@@ -168,7 +215,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
   /**
    * Handles completion provided by angular_analyzer_plugin in HTML files and inside string literals;
-   * our PSI doesn't allow top calculate prefix in such cases
+   * our PSI doesn't allow to calculate prefix in such cases
    */
   @Nullable
   private static String getPrefixForSpecialCases(@NotNull final CompletionParameters parameters, final int replacementOffset) {
@@ -239,7 +286,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
         reference.getRangeInElement(); // to ensure that references are sorted by range
         reference = ((PsiMultiReference)reference).getReferences()[0];
       }
-      if (reference instanceof DartNewExpression || reference instanceof DartParenthesizedExpression) {
+      if (reference instanceof DartNewExpression ||
+          reference instanceof DartParenthesizedExpression ||
+          reference instanceof DartListLiteralExpression ||
+          reference instanceof DartMapLiteralExpression) {
         // historically DartNewExpression is a reference; it can appear here only in situation like new Foo(o.<caret>);
         // without the following hack closing paren is replaced on Tab. We won't get here if at least one symbol after dot typed.
         context.setReplacementOffset(context.getStartOffset());
@@ -426,6 +476,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
     }
     else if (elementKind.equals(ElementKind.ENUM)) {
       return AllIcons.Nodes.Enum;
+    }
+    else if (elementKind.equals(ElementKind.MIXIN)) {
+      return AllIcons.Nodes.AbstractClass;
     }
     else if (elementKind.equals(ElementKind.ENUM_CONSTANT) || elementKind.equals(ElementKind.FIELD)) {
       return AllIcons.Nodes.Field;

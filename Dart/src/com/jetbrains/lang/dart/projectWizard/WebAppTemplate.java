@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Locale;
 
 class WebAppTemplate extends DartProjectTemplate {
-  public WebAppTemplate() {
+  WebAppTemplate() {
     super(DartBundle.message("dart.web.app.title"), "");
   }
 

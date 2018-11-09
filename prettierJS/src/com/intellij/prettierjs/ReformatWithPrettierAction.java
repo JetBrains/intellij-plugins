@@ -7,8 +7,7 @@ import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.DialectDetector;
@@ -38,6 +37,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -58,7 +58,11 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static final int REQUEST_TIMEOUT = 3000;
@@ -73,15 +77,14 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     if (project == null) {
       e.getPresentation().setEnabledAndVisible(false);
       return;
     }
     NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
-    e.getPresentation().setEnabledAndVisible(PrettierUtil.isEnabled()
-                                             && nodePackage != null && !nodePackage.isEmptyPath()
+    e.getPresentation().setEnabledAndVisible(nodePackage != null && !nodePackage.isEmptyPath()
                                              && isAcceptableFileContext(e));
   }
 
@@ -95,19 +98,15 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     if (project == null) {
       return;
     }
     Editor editor = e.getData(CommonDataKeys.EDITOR);
-    if (!PrettierUtil.isEnabled()) {
-      return;
-    }
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(project);
-    NodeJsInterpreter interpreter = configuration.getInterpreterRef().resolve(project);
     try {
-      NodeJsLocalInterpreter.castAndValidate(interpreter);
+      NodeInterpreterUtil.getValidInterpreterOrThrow(configuration.getInterpreterRef().resolve(project));
     }
     catch (ExecutionException e1) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.invalid.interpreter"),
@@ -128,8 +127,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     SemVer nodePackageVersion = nodePackage.getVersion();
-    if (nodePackageVersion != null && !nodePackageVersion.isGreaterOrEqualThan(1, 8, 0)) {
-      myErrorHandler.showError(project, editor, PrettierBundle.message("error.unsupported.version"), null);
+    if (nodePackageVersion != null && nodePackageVersion.compareTo(PrettierUtil.MIN_VERSION) < 0) {
+      myErrorHandler.showError(project, editor,
+                               PrettierBundle.message("error.unsupported.version", PrettierUtil.MIN_VERSION.getRawVersion()), null);
       return;
     }
 
@@ -149,9 +149,10 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     if (file == null) {
       return;
     }
-    ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project)
-                                                                                .ensureFilesWritable(file.getVirtualFile());
-    if (readonlyStatus.hasReadonlyFiles()) {
+    VirtualFile vFile = file.getVirtualFile();
+    if (ReadonlyStatusHandler.getInstance(project)
+      .ensureFilesWritable(vFile)
+      .hasReadonlyFiles()) {
       return;
     }
 
@@ -160,23 +161,28 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     Document document = editor.getDocument();
     CharSequence textBefore = document.getImmutableCharSequence();
     CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
-    ensureConfigsSaved(new VirtualFile[]{file.getVirtualFile()}, project);
+    ensureConfigsSaved(new VirtualFile[]{vFile}, project);
+    PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
+    ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable = () -> ReadAction.compute(() -> {
+      if (!isAcceptableFile(file, nodePackage)) {
+        myErrorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
+        return null;
+      }
+      return performRequestForFile(project, nodePackage, service, file, range);
+    });
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
-      .runProcessWithProgressSynchronously(() -> {
-                                             if (!isAcceptableFile(file, nodePackage)) {
-                                               myErrorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
-                                               return null;
-                                             }
-                                             return processFileWithService(file, nodePackage, range);
-                                           },
-                                           PrettierBundle.message("progress.title"), true, project);
+      .runProcessWithProgressSynchronously(computable, PrettierBundle.message("progress.title"), true, project);
+    // timed out. show notification?
     if (result == null) {
       return;
     }
     if (!StringUtil.isEmpty(result.error)) {
       myErrorHandler.showErrorWithDetails(project, editor,
                                           PrettierBundle.message("error.while.reformatting.message"), result.error);
+    }
+    else if (result.ignored) {
+      showHintLater(editor, "Prettier: " + PrettierBundle.message("file.was.ignored", file.getName()), false, null);
     }
     else {
       if (!StringUtil.equals(textBefore, result.result)) {
@@ -222,28 +228,37 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private void processFileIterator(@NotNull Project project,
                                    @NotNull final FileTreeIterator fileIterator,
                                    @NotNull NodePackage nodePackage, 
-                                   boolean reportUnsupported) {
-    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> {
+                                   boolean reportSkippedFiles) {
+    PrettierLanguageService service = PrettierLanguageService.getInstance(project);
+    Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> ReadAction.compute(() -> {
       Map<PsiFile, PrettierLanguageService.FormatResult> reformattedResults = new HashMap<>();
 
       while (fileIterator.hasNext()) {
-        PsiFile currentFile = ReadAction.compute(() -> fileIterator.next());
+        PsiFile currentFile = fileIterator.next();
         if (!isAcceptableFile(currentFile, nodePackage)) {
-          if (reportUnsupported) {
-            reformattedResults.put(currentFile,
-                                   PrettierLanguageService.FormatResult.error(PrettierBundle.message("not.supported.file", currentFile.getName())));
+          if (reportSkippedFiles) {
+            PrettierLanguageService.FormatResult errorResult = PrettierLanguageService.FormatResult
+              .error(PrettierBundle.message("not.supported.file", currentFile.getName()));
+            reformattedResults.put(currentFile,errorResult);
           }
           continue;
         }
         indicator.setText("Processing " + currentFile.getName());
-        PrettierLanguageService.FormatResult result = ReadAction.compute(() -> processFileWithService(currentFile, nodePackage, null));
+        PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, currentFile, null);
+        // timed out. show notification?
         if (result == null) {
+          continue;
+        }
+        if (result.ignored) {
+          PrettierLanguageService.FormatResult errorResult =
+            PrettierLanguageService.FormatResult.error(PrettierBundle.message("file.was.ignored", currentFile.getName()));
+          reformattedResults.put(currentFile, errorResult);
           continue;
         }
         reformattedResults.put(currentFile, result);
       }
       return reformattedResults;
-    });
+    }));
 
     runWriteCommandAction(project, () -> {
       for (Map.Entry<PsiFile, PrettierLanguageService.FormatResult> entry : results.entrySet()) {
@@ -252,10 +267,11 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
           continue;
         }
         Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
-        if (document != null && StringUtil.isEmpty(entry.getValue().error)) {
+        PrettierLanguageService.FormatResult result = entry.getValue();
+        if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
           CharSequence textBefore = document.getCharsSequence();
-          if (!StringUtil.equals(textBefore, entry.getValue().result)) {
-            document.setText(entry.getValue().result);
+          if (!StringUtil.equals(textBefore, result.result)) {
+            document.setText(result.result);
           }
         }
       }
@@ -269,11 +285,23 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   @Nullable
-  private static PrettierLanguageService.FormatResult processFileWithService(@NotNull PsiFile currentFile,
-                                                                             @NotNull NodePackage nodePackage,
-                                                                             @Nullable TextRange range) {
-    PrettierLanguageService service = PrettierLanguageService.getInstance(currentFile.getProject());
-    return JSLanguageServiceUtil.awaitFuture(service.format(currentFile, nodePackage, range), REQUEST_TIMEOUT);
+  private static PrettierLanguageService.FormatResult performRequestForFile(@NotNull Project project,
+                                                                            @NotNull NodePackage nodePackage,
+                                                                            @NotNull PrettierLanguageService service,
+                                                                            @NotNull PsiFile currentFile, 
+                                                                            @Nullable TextRange range) {
+    ApplicationManager.getApplication().assertReadAccessAllowed();
+    VirtualFile currentVFile = currentFile.getVirtualFile();
+    String filePath = currentVFile.getPath();
+    String text = currentFile.getText();
+    VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
+    String ignoreFilePath = ignoreVFile != null ? ignoreVFile.getPath() : null;
+    return awaitFuture(service.format(filePath, ignoreFilePath, text, nodePackage, range));
+  }
+
+  @Nullable
+  private static PrettierLanguageService.FormatResult awaitFuture(@Nullable Future<PrettierLanguageService.FormatResult> future) {
+    return JSLanguageServiceUtil.awaitFuture(future, REQUEST_TIMEOUT);
   }
 
   private static <T> T executeUnderProgress(@NotNull Project project, @NotNull NullableFunction<ProgressIndicator, T> handler) {

@@ -1,0 +1,131 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        An HTML form, which will enclose other components to render out the various types of fields. A Form emits many notification events. When it renders, it fires a\
+        org.apache.tapestry.corelib.components.Form#PREPARE_FOR_RENDER notification, followed by a org.apache.tapestry.corelib.components.Form#PREPARE notification. When the form is submitted, the
+        component\
+        emits several notifications: first a org.apache.tapestry.corelib.components.Form#PREPARE_FOR_SUBMIT, then a org.apache.tapestry.corelib.components.Form#PREPARE: these allow the page to update
+        its\
+        state as necessary to prepare for the form submission, then (after components enclosed by the form have operated), a org.apache.tapestry.corelib.components.Form#VALIDATEevent is emitted, to
+        allow for\
+        cross-form validation. After that, either a org.apache.tapestry.corelib.components.Form#SUCCESS OR org.apache.tapestry.corelib.components.Form#FAILURE event\
+        (depending on whether the org.apache.tapestry.ValidationTracker has recorded any errors). Lastly, a org.apache.tapestry.corelib.components.Form#SUBMIT event, for any listeners that care only
+        about\
+        form submission, regardless of success or failure. For all of these notifications, the event context is derived from the context parameter. This context is encoded into the form's action URI\
+        (the parameter is not read when the form is submitted, instead the values encoded into the form are used).
+    </description>
+
+    <parameters>
+        <parameter name="clientValidation">
+            If true (the default) then client validation is enabled for the form, and the default set of JavaScript libraries (Prototype, Scriptaculous and the Tapestry library) will\
+            be added to the rendered page, and the form will register itself for validation. This may be turned off when client validation is not desired; for example, when many validations are used
+            that do not\
+            operate on the client side at all.
+        </parameter>
+        <parameter name="context">
+            The context for the link (optional parameter). This list of values will be converted into strings and included in the URI. The strings will be coerced back to whatever their values\
+            are and made available to event handler methods.
+        </parameter>
+        <parameter name="tracker">
+            The object which will record user input and validation errors. The object must be persistent between requests (since the form submission and validation occurs in an component event\
+            request and the subsequent render occurs in a render request). The default is a persistent property of the Form component and this is sufficient for nearly all purposes\
+            (except when a Form is rendered inside a loop).
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+    Examples of the Form component are provided in the many
+    other pages that discuss specific form control element components,
+    such as TextArea.
+</p>
+	]]>
+    </examples>
+
+    <notes>
+        <![CDATA[
+<p>
+    The Form component generates a seemingly bewildering number of
+    events, designed to address a wide range of needs. The goal
+    is to give you as the developer the tools necessary to
+    effeciently manage state.
+</p>
+
+<p>
+    All of the events that are triggered will pass along
+    the values defined by the context parameter. Most often,
+    there is no context, or the context is a single value
+    (a primary key used to identify the object being updated
+    by the form).
+</p>
+
+<div class="section">Render Events</div>
+
+<p>
+    Render event handler methods should
+    <em>not</em>
+
+    return a value, doing
+    so will be an error. The methods are intended to allow
+    the page to convert a primary key stored in the context
+    back into an object ready to have its properties updated
+    by the Form.
+</p>
+
+<p>
+    The context passed to component event handler methods is provided by reading the context parameter.
+</p>
+
+<ul>
+    <li>prepareForRender</li>
+    <li>prepare</li>
+</ul>
+
+<div class="section">Submit Events</div>
+
+<p>
+Submit events may return a navigational value, which will
+abort any remaining processing of the form submission.
+
+The context provided to component event handler methods
+originates in the form submission (it is stored in hidden form fields); the
+context parameter is <i>not</i> read during a form submission.
+</p>
+
+<ul>
+
+    <li>prepareForSubmit</li>
+    <li>prepare</li>
+    <li>validate</li>
+    <li>failure <i>or</i> success </li>
+    <li>submit</li>
+
+</ul>
+
+<p>
+The validate event is to allow the page to
+perform cross-field validation. The failure or success
+event is fired based on whether there are or are not any
+validation errors.
+</p>
+
+<div class="section">Form Ids</div>
+
+<p>
+It is considered a best practice to give explicit ids to
+Form components, and form control element components.
+These ids propogate down to the client side as
+element names and/or ids, and eventually show up
+as query parameters when the form is submitted.
+</p>
+
+<p>
+To achieve a more RESTful URL scheme, give the form component
+an id based on what it does rather than what data it updates, thus
+<code>&lt;t:form t:id="search"/&gt;</code> rather than
+<code>&lt;t:form t:id="searchData"/&gt;</code> or
+<code>&lt;t:form t:id="searchForm"/&gt;</code>.
+</p>
+	]]>
+    </notes>
+</element>

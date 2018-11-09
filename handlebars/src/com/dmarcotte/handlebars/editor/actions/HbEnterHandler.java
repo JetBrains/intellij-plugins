@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.dmarcotte.handlebars.editor.actions;
 
 import com.dmarcotte.handlebars.psi.HbPsiFile;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class HbEnterHandler extends EnterHandlerDelegateAdapter {
 
+  @Override
   public Result preprocessEnter(@NotNull final PsiFile file,
                                 @NotNull final Editor editor,
                                 @NotNull final Ref<Integer> caretOffset,

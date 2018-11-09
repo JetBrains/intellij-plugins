@@ -192,7 +192,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
     for (final Map.Entry<PsiMethod, Set<PathReference>> entries : pathReferenceMap.entrySet()) {
       final NavigationGutterIconBuilder<PathReference> gutterIconBuilder =
-          NavigationGutterIconBuilder.create(AllIcons.Hierarchy.Base, PATH_REFERENCE_CONVERTER,
+          NavigationGutterIconBuilder.create(AllIcons.Actions.Forward, PATH_REFERENCE_CONVERTER,
                                              PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER)
                                      .setAlignment(GutterIconRenderer.Alignment.LEFT)
                                      .setPopupTitle(StrutsBundle.message("annotators.action.goto.result"))

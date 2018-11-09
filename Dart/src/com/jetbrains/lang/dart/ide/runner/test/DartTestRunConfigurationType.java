@@ -1,11 +1,13 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.lang.dart.DartBundle;
@@ -13,15 +15,20 @@ import com.jetbrains.lang.dart.DartFileType;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
-public class DartTestRunConfigurationType extends ConfigurationTypeBase implements DumbAware {
-  protected DartTestRunConfigurationType() {
+public final class DartTestRunConfigurationType extends ConfigurationTypeBase implements DumbAware {
+  public DartTestRunConfigurationType() {
     super("DartTestRunConfigurationType", DartBundle.message("runner.test.configuration.name"),
-          DartBundle.message("runner.test.configuration.description"), DartIcons.Dart_test);
+          DartBundle.message("runner.test.configuration.description"), NotNullLazyValue.createValue(() -> DartIcons.Dart_test));
     addFactory(new DartTestConfigurationFactory(this));
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.DartTestRunConfigurationType";
+  }
+
   public static DartTestRunConfigurationType getInstance() {
-    return Extensions.findExtension(CONFIGURATION_TYPE_EP, DartTestRunConfigurationType.class);
+    return ConfigurationTypeUtil.findConfigurationType(DartTestRunConfigurationType.class);
   }
 
   public static class DartTestConfigurationFactory extends ConfigurationFactory {

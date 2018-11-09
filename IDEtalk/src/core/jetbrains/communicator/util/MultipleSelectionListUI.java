@@ -30,11 +30,16 @@ public class MultipleSelectionListUI extends BasicListUI {
   private int myLastDraggedRow = -1;
   private int myLastPressedRow = -1;
 
+  @Override
   protected MouseInputListener createMouseInputListener() {
     return new MouseInputListener() {
+      @Override
       public void mouseClicked(MouseEvent e) {}
+      @Override
       public void mouseEntered(MouseEvent e) {}
+      @Override
       public void mouseExited(MouseEvent e) {}
+      @Override
       public void mousePressed(MouseEvent e) {
         if (e.isConsumed()) {
           selectedOnPress = false;
@@ -59,15 +64,13 @@ public class MultipleSelectionListUI extends BasicListUI {
          * synchronous (it is on Windows).  See bug 4122345
          */
         if (!list.hasFocus() && list.isRequestFocusEnabled()) {
-          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-            IdeFocusManager.getGlobalInstance().requestFocus(list, true);
-          });
+          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(list, true));
         }
 
         int row = locationToIndex(list, e.getPoint());
         if (row != -1) {
           myLastPressedRow = row;
-          boolean adjusting = (e.getID() == MouseEvent.MOUSE_PRESSED) ? true : false;
+          boolean adjusting = e.getID() == MouseEvent.MOUSE_PRESSED;
           list.setValueIsAdjusting(adjusting);
           int anchorIndex = list.getAnchorSelectionIndex();
           if (e.isShiftDown() && (anchorIndex != -1)) {
@@ -78,6 +81,7 @@ public class MultipleSelectionListUI extends BasicListUI {
         }
       }
 
+      @Override
       public void mouseDragged(MouseEvent e) {
         if (e.isConsumed()) {
           return;
@@ -107,9 +111,11 @@ public class MultipleSelectionListUI extends BasicListUI {
         }
       }
 
+      @Override
       public void mouseMoved(MouseEvent e) {
       }
 
+      @Override
       public void mouseReleased(MouseEvent e) {
         if (selectedOnPress) {
           if (!SwingUtilities.isLeftMouseButton(e)) {

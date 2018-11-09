@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartBreakStatementImpl extends DartPsiCompositeElementImpl implements DartBreakStatement {
 
-  public DartBreakStatementImpl(ASTNode node) {
+  public DartBreakStatementImpl(@NotNull ASTNode node) {
     super(node);
   }
 

@@ -6,7 +6,7 @@ final class MxmlObjectReference implements ValueReference {
   final int id;
   StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance;
 
-  public MxmlObjectReference(int id) {
+  MxmlObjectReference(int id) {
     this.id = id;
   }
 

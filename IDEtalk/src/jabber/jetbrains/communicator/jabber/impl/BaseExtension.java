@@ -38,10 +38,12 @@ public abstract class BaseExtension implements PacketExtension, PacketExtensionP
   private static final Logger LOG = Logger.getLogger(BaseExtension.class);
   static final String NAMESPACE = Transport.NAMESPACE + "/jabber";
 
+  @Override
   public final String getNamespace() {
     return NAMESPACE;
   }
 
+  @Override
   public String toXML() {
     Element root = new Element(getElementName());
     setupData(root);
@@ -79,7 +81,7 @@ public abstract class BaseExtension implements PacketExtension, PacketExtensionP
   }
 
   protected static String getContent(XmlPullParser parser, String tagName) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     try {
       int event = parser.getEventType();
       // get the content

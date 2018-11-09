@@ -26,10 +26,12 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
     myRunConfiguration = runConfiguration;
   }
 
+  @Override
   protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
     updateParams(newElement);
   }
 
+  @Override
   public void undoElementMovedOrRenamed(@NotNull final PsiElement newElement, @NotNull final String oldQualifiedName) {
     undo(newElement, oldQualifiedName);
   }
@@ -61,6 +63,7 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       super(runConfiguration);
     }
 
+    @Override
     protected void updateParams(final PsiElement newElement) {
       final JSClass newClass = FlexRefactoringListenerProvider.getJSClass(newElement);
       if (newClass == null) return;
@@ -92,6 +95,7 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       super(runConfiguration);
     }
 
+    @Override
     protected void updateParams(final PsiElement newElement) {
       if (!(newElement instanceof PsiDirectory)) return;
       updatePackage(myRunConfiguration,
@@ -109,6 +113,7 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       super(runConfiguration);
     }
 
+    @Override
     protected void updateParams(final PsiElement newElement) {
       if (!(newElement instanceof JSFunction)) return;
       final String newName = ((JSFunction)newElement).getName();
@@ -131,6 +136,7 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
       super(runConfiguration);
     }
 
+    @Override
     protected void updateParams(final PsiElement newElement) {
       if (newElement instanceof PsiDirectoryContainer) {
         updatePackage(myRunConfiguration, FlexRefactoringListenerProvider.getPackageName(newElement));

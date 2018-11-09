@@ -20,21 +20,25 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
     super(MODULE_TYPE_ID);
   }
 
+  @Override
   @NotNull
   public FlexModuleBuilder createModuleBuilder() {
     return new FlexModuleBuilder();
   }
 
+  @Override
   @NotNull
   public String getName() {
     return FlexBundle.message("flash.module.type.name");
   }
 
+  @Override
   @NotNull
   public String getDescription() {
     return FlexBundle.message("flash.module.type.description");
   }
 
+  @Override
   public Icon getNodeIcon(final boolean isOpened) {
     return FlexIcons.Flex.Flash_module_closed;
   }

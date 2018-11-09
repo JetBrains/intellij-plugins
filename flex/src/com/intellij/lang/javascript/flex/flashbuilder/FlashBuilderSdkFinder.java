@@ -37,7 +37,7 @@ public class FlashBuilderSdkFinder {
 
   private final Project myProject;
   private final String myInitiallySelectedPath;
-  private final List<FlashBuilderProject> myAllProjects;
+  private final List<? extends FlashBuilderProject> myAllProjects;
 
   private String myWorkspacePath;
   private final Map<String, String> mySdkNameToRootPath = new HashMap<>();
@@ -55,7 +55,7 @@ public class FlashBuilderSdkFinder {
 
   public FlashBuilderSdkFinder(final Project project,
                                final String initiallySelectedPath,
-                               final List<FlashBuilderProject> allProjects) {
+                               final List<? extends FlashBuilderProject> allProjects) {
     myProject = project;
     myInitiallySelectedPath = initiallySelectedPath;
     myAllProjects = allProjects;
@@ -169,7 +169,6 @@ public class FlashBuilderSdkFinder {
       final String versionElement = "<flex-sdk-description><version>";
       FileInputStream is = null;
       try {
-        //noinspection IOResourceOpenedButNotSafelyClosed
         is = new FileInputStream(descriptionFile);
         final Map<String, List<String>> info = FlexUtils.findXMLElements(is, Arrays.asList(nameElement, versionElement));
 
@@ -278,7 +277,6 @@ public class FlashBuilderSdkFinder {
     final Element sdksElement = sdkInfoDocument;
     if (!sdksElement.getName().equals(SDKS_ELEMENT)) return false;
 
-    //noinspection unchecked
     for (final Element sdkElement : sdksElement.getChildren(SDK_ELEMENT)) {
       final Attribute defaultSdkAttr = sdkElement.getAttribute(DEFAULT_SDK_ATTR);
       final Attribute sdkNameAttr = sdkElement.getAttribute(SDK_NAME_ATTR);

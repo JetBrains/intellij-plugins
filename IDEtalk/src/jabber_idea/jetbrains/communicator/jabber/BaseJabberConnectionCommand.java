@@ -17,7 +17,6 @@ package jetbrains.communicator.jabber;
 
 import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.commands.NamedUserCommand;
-import jetbrains.communicator.util.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,12 +38,14 @@ public abstract class BaseJabberConnectionCommand implements NamedUserCommand {
     myParentComponent = parentComponent;
   }
 
+  @Override
   public Icon getIcon() {
     if (isConnected())
       return IdetalkCoreIcons.IdeTalk.Jabber;
     return IdetalkCoreIcons.IdeTalk.Offline;
   }
 
+  @Override
   public boolean isEnabled() {
     return true;
   }

@@ -47,7 +47,7 @@ class DelimitedStringValuesConverter extends DelimitedListConverter<String> {
 
   @Override
   protected Object[] getReferenceVariants(final ConvertContext convertContext,
-                                          final GenericDomValue<List<String>> listGenericDomValue) {
+                                          final GenericDomValue<? extends List<String>> listGenericDomValue) {
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 

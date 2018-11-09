@@ -17,5 +17,5 @@ OgnlFile:MissingSequenceClosingRightBrace.ognl
       PsiWhiteSpace(' ')
       LITERAL_EXPRESSION
         PsiElement(INTEGER_LITERAL)('2')
-      PsiErrorElement:',', <operator> or '}' expected, unexpected end of file
+      PsiErrorElement:',', <operator> or '}' expected
         <empty list>

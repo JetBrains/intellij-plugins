@@ -119,6 +119,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     myAirVersionCombo.setModel(new DefaultComboBoxModel(items));
 
     final ActionListener listener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
       }
@@ -128,10 +129,12 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     myIOSCheckBox.addActionListener(listener);
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   protected ValidationInfo doValidate() {
     final String fileName = myDescriptorFileNameTextField.getText().trim();
     if (fileName.isEmpty()) {
@@ -190,6 +193,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     UIUtil.setEnabled(myIOSPanel, myIOSCheckBox.isSelected(), true);
   }
 
+  @Override
   protected void doOKAction() {
     final String airVersion = ((String)myAirVersionCombo.getSelectedItem()).trim();
     final String appId = myAppIdTextField.getText().trim();
@@ -283,6 +287,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     return myAndroidCheckBox.isVisible() && myAndroidCheckBox.isSelected() && myIOSCheckBox.isVisible() && myIOSCheckBox.isSelected();
   }
 
+  @Override
   protected String getHelpId() {
     return "flex.CreateAirDescriptorTemplateDialog";
   }

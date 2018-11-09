@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 class HbStructureViewModel extends TextEditorBasedStructureViewModel {
   static final Class[] ourSuitableClasses = new Class[]{HbBlockWrapper.class, HbPlainMustache.class};
 
-  public HbStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
+  HbStructureViewModel(@NotNull PsiFile psiFile, @Nullable Editor editor) {
     super(editor, psiFile);
   }
 

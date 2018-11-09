@@ -10,6 +10,7 @@ public class JsErrorMessageTest extends TestCase {
 
   private File myBasePath;
 
+  @Override
   public void setUp() throws Exception {
     super.setUp();
     myBasePath = JstdTestRoot.getTestDataDir();

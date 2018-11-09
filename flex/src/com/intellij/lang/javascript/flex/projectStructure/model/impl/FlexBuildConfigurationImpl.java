@@ -1,11 +1,11 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -14,9 +14,7 @@ import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -313,6 +311,7 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
     copy.myWrapperTemplatePath = myWrapperTemplatePath;
   }
 
+  @Override
   public boolean isEqual(FlexBuildConfiguration bc) {
     final FlexBuildConfigurationImpl other = (FlexBuildConfigurationImpl)bc;
     if (!myAirDesktopPackagingOptions.isEqual(other.myAirDesktopPackagingOptions)) return false;
@@ -349,6 +348,7 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
                                                         sdk -> sdkEntry.getName().equals(sdk.getName()));
   }
 
+  @Override
   public boolean isTempBCForCompilation() {
     return myTempBCForCompilation;
   }

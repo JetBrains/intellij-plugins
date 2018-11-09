@@ -257,7 +257,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     final Map<String, String> eventsMap = new THashMap<>();
     class EventsDataCollector extends ResolveProcessor implements ActionScriptResolveUtil.MetaDataProcessor {
 
-      public EventsDataCollector() {
+      EventsDataCollector() {
         super(null);
 
         setToProcessHierarchy(true);
@@ -368,7 +368,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     private final ResolveState state = new ResolveState();
     private Map<String, String> myEventsMap = new THashMap<>();
 
-    public MyEventSubclassesProcessor(final PsiElement expr, final List<LookupElement> variants) {
+    MyEventSubclassesProcessor(final PsiElement expr, final List<LookupElement> variants) {
       super(null);
       myExpr = expr;
       myVariants = variants;

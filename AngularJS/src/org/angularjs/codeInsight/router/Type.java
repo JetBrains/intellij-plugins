@@ -15,7 +15,7 @@ public enum Type {
 
   public static class Categories {
     public final static DiagramCategory STATE = new DiagramCategory("States", AllIcons.Hierarchy.Class, true);
-    public final static DiagramCategory VIEW = new DiagramCategory("Views", AllIcons.Hierarchy.Base, true);
+    public final static DiagramCategory VIEW = new DiagramCategory("Views", AllIcons.Actions.Forward, true);
     public final static DiagramCategory TEMPLATE = new DiagramCategory("Templates", AllIcons.Actions.EditSource, true);
     public final static DiagramCategory TEMPLATE_PLACEHOLDER =
       new DiagramCategory("TemplatePlaceholders", AllIcons.Actions.Unselectall, true);

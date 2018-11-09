@@ -44,8 +44,13 @@ public class MarkdownBraceMatcher extends PairedBraceMatcherAdapter {
     }
 
     @Override
-    public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, IElementType contextType) {
-      return true;
+    public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, IElementType type) {
+      return type == null ||
+             type == MarkdownTokenTypes.WHITE_SPACE ||
+             type == MarkdownTokenTypes.EOL ||
+             type == MarkdownTokenTypes.RPAREN ||
+             type == MarkdownTokenTypes.RBRACKET ||
+             type == MarkdownTokenTypes.GT;
     }
 
     @Override

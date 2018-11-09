@@ -35,6 +35,7 @@ public class SizeInfoNode extends DefaultMutableTreeNode implements FrameInfoPro
     setUserObject(qName);
   }
 
+  @Override
   @Nullable
   public FrameInfo getFrameInfo() {
     return frameInfo;

@@ -34,7 +34,7 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
   protected String myPackageName;
   protected String myClassName;
   private final boolean myIdentifierIsValid;
-  private Consumer<String> myCreatedClassFqnConsumer;
+  private Consumer<? super String> myCreatedClassFqnConsumer;
 
   public CreateMxmlFileIntentionBase(final String classFqn, final @NotNull PsiElement element) {
     myElement = element;
@@ -44,28 +44,34 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
     myPackageName = StringUtil.getPackageName(classFqn);
   }
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return CodeInsightBundle.message("create.file.family");
   }
 
+  @Override
   public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
     return myIdentifierIsValid && myElement.isValid();
   }
 
-  public void setCreatedClassFqnConsumer(final Consumer<String> consumer) {
+  @Override
+  public void setCreatedClassFqnConsumer(final Consumer<? super String> consumer) {
     myCreatedClassFqnConsumer = consumer;
   }
 
+  @Override
   @NotNull
   public String getName() {
     return getText();
   }
 
+  @Override
   public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
     invoke(project, null, myElement.getContainingFile());
   }
 
+  @Override
   public void invoke(@NotNull final Project project, final @Nullable Editor editor, final PsiFile file) throws IncorrectOperationException {
     final Module module = ModuleUtil.findModuleForPsiElement(file);
     if (module == null) {

@@ -33,11 +33,10 @@ class AbcMerger extends AbcTranscoder {
   @Nullable
   private DefinitionProcessor definitionProcessor;
 
-  public AbcMerger(Map<CharSequence, Definition> definitionMap, File outFile, @Nullable DefinitionProcessor definitionProcessor) throws IOException {
+  AbcMerger(Map<CharSequence, Definition> definitionMap, File outFile, @Nullable DefinitionProcessor definitionProcessor) throws IOException {
     this.definitionMap = definitionMap;
     this.definitionProcessor = definitionProcessor;
 
-    //noinspection IOResourceOpenedButNotSafelyClosed
     out = new FileOutputStream(outFile);
     channel = out.getChannel();
     channel.position(SwfUtil.getWrapHeaderLength());

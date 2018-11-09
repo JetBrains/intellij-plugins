@@ -47,7 +47,7 @@ public class JstdConfigParsingUtils {
   }
 
   @NotNull
-  public static List<File> mapFileInfos2Files(@NotNull Collection<FileInfo> fileInfos) {
+  public static List<File> mapFileInfos2Files(@NotNull Collection<? extends FileInfo> fileInfos) {
     List<File> files = Lists.newArrayListWithExpectedSize(fileInfos.size());
     for (FileInfo fileInfo : fileInfos) {
       File file = fileInfo.toFile();

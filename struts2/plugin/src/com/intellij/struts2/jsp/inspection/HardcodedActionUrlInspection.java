@@ -103,7 +103,6 @@ public class HardcodedActionUrlInspection extends XmlSuppressableInspectionTool 
       myActionExtension = actionExtension;
     }
 
-    @SuppressWarnings("DialogTitleCapitalization")
     @NotNull
     @Override
     public String getFamilyName() {

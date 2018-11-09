@@ -61,6 +61,7 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
    */
   public static final String VALIDATION_XML = "validator.xml";
 
+  @Override
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
     final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(StrutsBundle.message("struts2"),
                                                                               Struts2Icons.Action);

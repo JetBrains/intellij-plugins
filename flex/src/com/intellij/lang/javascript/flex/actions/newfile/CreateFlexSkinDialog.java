@@ -53,10 +53,12 @@ public class CreateFlexSkinDialog extends DialogWrapper {
     init();
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myPackageCombo.getChildComponent();
   }
@@ -69,6 +71,7 @@ public class CreateFlexSkinDialog extends DialogWrapper {
     return myHostComponentCombo.getText().trim();
   }
 
+  @Override
   protected void doOKAction() {
     final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage());
     final String packageName = getPackageName();

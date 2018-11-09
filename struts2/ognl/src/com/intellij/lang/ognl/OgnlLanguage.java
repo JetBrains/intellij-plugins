@@ -45,6 +45,7 @@ public class OgnlLanguage extends Language implements InjectableLanguage {
 
     SyntaxHighlighterFactory.LANGUAGE_FACTORY
         .addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
+          @Override
           @NotNull
           protected SyntaxHighlighter createHighlighter() {
             return new OgnlHighlighter();

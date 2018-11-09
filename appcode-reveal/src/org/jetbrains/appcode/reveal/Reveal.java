@@ -2,8 +2,8 @@ package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.util.ExecUtil;
-import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.mac.foundation.NSWorkspace;
@@ -104,8 +104,8 @@ public class Reveal {
                        parts.size() > 2 ? StringUtil.parseInt(parts.get(2), 0) : 0);
   }
 
-  public static void refreshReveal(@NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
-    UsageTrigger.trigger("appcode.reveal.showInReveal");
+  public static void refreshReveal(@NotNull Project project, @NotNull File revealBundle, @NotNull String bundleID, @Nullable String deviceName) throws ExecutionException {
+    RevealUsageTriggerCollector.Companion.trigger(project, "showInReveal");
 
     if (isCompatibleWithRevealOnePointSixOrHigher(revealBundle)) {
       refreshRevealPostOnePointSix(revealBundle, bundleID, deviceName);

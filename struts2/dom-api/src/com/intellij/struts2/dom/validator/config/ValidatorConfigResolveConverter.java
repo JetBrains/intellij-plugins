@@ -26,10 +26,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class ValidatorConfigResolveConverter extends ResolvingConverter<ValidatorConfig> {
 
+  @Override
   public String toString(@Nullable final ValidatorConfig validatorConfig, final ConvertContext context) {
     return validatorConfig != null ? validatorConfig.getName().getStringValue() : null;
   }
 
+  @Override
   public String getErrorMessage(@Nullable final String s, final ConvertContext context) {
     return "Cannot resolve validator '" + s + "'";
   }

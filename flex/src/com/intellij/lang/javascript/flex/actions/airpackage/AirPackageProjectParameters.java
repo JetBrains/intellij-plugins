@@ -104,10 +104,12 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
     return getInstance(project).myPasswordStore;
   }
 
+  @Override
   public AirPackageProjectParameters getState() {
     return this;
   }
 
+  @Override
   public void loadState(@NotNull final AirPackageProjectParameters state) {
     XmlSerializerUtil.copyBean(state, this);
   }

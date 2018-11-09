@@ -17,7 +17,6 @@ import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.javascript.testFramework.util.EscapeUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -142,7 +141,7 @@ public class JstdTestLocationProvider implements SMTestLocator {
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     testMethodName = StringUtil.trimStart(testMethodName, "test ");
     String key = JsTestFileByTestNameIndex.createQUnitKeyForTestFromDefaultModule(testMethodName);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findFilesByKey(key, scope);
     List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
 
     for (VirtualFile jsTestVirtualFile : validJsTestVirtualFiles) {
@@ -215,7 +214,7 @@ public class JstdTestLocationProvider implements SMTestLocator {
     while (lastSpaceInd >= 0) {
       String topLevelSuiteName = joinedSuites.substring(0, lastSpaceInd);
       String key = JsTestFileByTestNameIndex.createJasmineKey(Collections.singletonList(topLevelSuiteName));
-      List<VirtualFile> files = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+      List<VirtualFile> files = JsTestFileByTestNameIndex.findFilesByKey(key, scope);
       for (VirtualFile file : files) {
         if (file.isValid()) {
           return file;

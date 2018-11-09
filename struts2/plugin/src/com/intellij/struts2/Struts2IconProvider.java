@@ -41,6 +41,7 @@ import javax.swing.*;
  */
 public class Struts2IconProvider extends IconProvider {
 
+  @Override
   @Nullable
   public Icon getIcon(@NotNull final PsiElement element, final int flags) {
 

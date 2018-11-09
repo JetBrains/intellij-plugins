@@ -7,7 +7,7 @@ class AuditorOutput extends OutputStream {
   private final OutputStream out;
   public int written = -1;
 
-  public AuditorOutput(OutputStream out) {
+  AuditorOutput(OutputStream out) {
     this.out = out;
   }
 

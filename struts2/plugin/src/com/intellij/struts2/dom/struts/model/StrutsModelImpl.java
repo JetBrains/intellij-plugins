@@ -16,7 +16,6 @@
 package com.intellij.struts2.dom.struts.model;
 
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
@@ -57,16 +56,19 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
     super(strutsRootDomFileElement, xmlFiles);
   }
 
+  @Override
   @NotNull
   public List<StrutsRoot> getMergedStrutsRoots() {
     return ContainerUtil.map(getRoots(), ROOT_ELEMENT_MAPPER);
   }
 
+  @Override
   @NotNull
   public List<StrutsPackage> getStrutsPackages() {
     return ContainerUtil.concat(getMergedStrutsRoots(), STRUTS_PACKAGE_COLLECTOR);
   }
 
+  @Override
   @NotNull
   public Set<InterceptorOrStackBase> getAllInterceptorsAndStacks() {
     final Set<InterceptorOrStackBase> interceptorOrStackBases = new HashSet<>();
@@ -79,12 +81,14 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
     return interceptorOrStackBases;
   }
 
+  @Override
   @NotNull
   public List<Action> findActionsByName(@NotNull @NonNls final String name,
                                         @Nullable @NonNls final String namespace) {
     return ContainerUtil.findAll(getActionsForNamespace(namespace), action -> action.matchesPath(name));
   }
 
+  @Override
   @NotNull
   public List<Action> findActionsByClass(@NotNull final PsiClass clazz) {
     return findActionsByClassInner(clazz, false);
@@ -114,6 +118,7 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
     return !findActionsByClassInner(clazz, true).isEmpty();
   }
 
+  @Override
   public List<Action> getActionsForNamespace(@Nullable @NonNls final String namespace) {
     final List<Action> actionResultList = new SmartList<>();
 
@@ -126,6 +131,7 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
     return actionResultList;
   }
 
+  @Override
   public boolean processActions(final Processor<Action> processor) {
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
       final List<Action> actions = strutsPackage.getActions();

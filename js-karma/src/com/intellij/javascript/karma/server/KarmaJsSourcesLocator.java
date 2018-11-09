@@ -9,13 +9,19 @@ import java.io.File;
 import java.io.IOException;
 
 public class KarmaJsSourcesLocator {
+  private static final KarmaJsSourcesLocator INSTANCE = new KarmaJsSourcesLocator();
   private static final String KARMA_INTELLIJ_NAME = "karma-intellij";
   private static final String JS_REPORTER_NAME = "js_reporter";
 
   private final File myKarmaIntellijPackageDir;
 
-  public KarmaJsSourcesLocator() {
+  private KarmaJsSourcesLocator() {
     myKarmaIntellijPackageDir = findKarmaIntellijPackageDir();
+  }
+
+  @NotNull
+  public static KarmaJsSourcesLocator getInstance() {
+    return INSTANCE;
   }
 
   /**
@@ -41,7 +47,7 @@ public class KarmaJsSourcesLocator {
       return new File(pluginBaseDir, JS_REPORTER_NAME);
     }
     if (ApplicationManager.getApplication().isInternal()) {
-      String srcDir = jarPath.replace("/out/classes/production/intellij.karma", "/contrib/js-karma/src");
+      String srcDir = jarPath.replace('\\', '/').replace("/out/classes/production/intellij.karma", "/contrib/js-karma/src");
       if (new File(srcDir).isDirectory()) {
         jarPath = srcDir;
       }
@@ -58,8 +64,8 @@ public class KarmaJsSourcesLocator {
   }
 
   @NotNull
-  public File getServerAppFile() throws IOException {
-    return getAppFile("intellijServer.js");
+  public File getIntellijConfigFile() throws IOException {
+    return getAppFile("intellij.conf.js");
   }
 
   @NotNull
@@ -70,5 +76,10 @@ public class KarmaJsSourcesLocator {
     catch (IOException e) {
       throw new ExecutionException("Cannot locate intellijRunner.js", e);
     }
+  }
+
+  @NotNull
+  public File getKarmaIntellijPackageDir() {
+    return myKarmaIntellijPackageDir;
   }
 }

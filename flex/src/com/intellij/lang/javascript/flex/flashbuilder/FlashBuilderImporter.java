@@ -77,28 +77,34 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     return myParameters;
   }
 
+  @Override
   public void cleanup() {
     super.cleanup();
     myParameters = null;
   }
 
+  @Override
   @NotNull
   public String getName() {
     return FlexBundle.message("flash.builder");
   }
 
+  @Override
   public Icon getIcon() {
     return FlexIcons.Flex.Flash_builder;
   }
 
+  @Override
   public boolean isMarked(final String element) {
     return true;
   }
 
+  @Override
   public boolean isOpenProjectSettingsAfter() {
     return getParameters().myOpenProjectSettingsAfter;
   }
 
+  @Override
   public void setOpenProjectSettingsAfter(boolean openProjectSettingsAfter) {
     getParameters().myOpenProjectSettingsAfter = openProjectSettingsAfter;
   }
@@ -119,10 +125,12 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     getParameters().myExtractPath = extractPath;
   }
 
+  @Override
   public List<String> getList() {
     return getParameters().myFlashBuilderProjectFilePaths;
   }
 
+  @Override
   public void setList(final List<String> flashBuilderProjectFiles) /*throws ConfigurationException*/ {
     getParameters().myFlashBuilderProjectFilePaths = flashBuilderProjectFiles;
   }
@@ -161,6 +169,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     return PathUtil.getFileName(path);
   }
 
+  @Override
   public List<Module> commit(final Project project,
                              final ModifiableModuleModel model,
                              final ModulesProvider modulesProvider,

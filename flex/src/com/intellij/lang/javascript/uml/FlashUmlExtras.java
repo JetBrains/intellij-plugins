@@ -55,7 +55,7 @@ public class FlashUmlExtras extends DiagramExtras<Object> {
   }
 
   @Override
-  public Object getData(final String dataId, final List<DiagramNode<Object>> diagramNodes, final DiagramBuilder builder) {
+  public Object getData(@NotNull final String dataId, final List<DiagramNode<Object>> diagramNodes, final DiagramBuilder builder) {
     if (!CommonDataKeys.NAVIGATABLE.is(dataId)) {
       return null;
     }

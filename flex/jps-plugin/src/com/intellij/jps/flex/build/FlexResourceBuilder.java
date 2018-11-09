@@ -39,11 +39,13 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
     super(Arrays.asList(FlexResourceBuildTargetType.PRODUCTION, FlexResourceBuildTargetType.TEST));
   }
 
+  @Override
   @NotNull
   public String getPresentableName() {
     return BUILDER_NAME;
   }
 
+  @Override
   public void build(@NotNull final FlexResourceBuildTarget target,
                     @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexResourceBuildTarget> holder,
                     @NotNull final BuildOutputConsumer outputConsumer,
@@ -55,6 +57,7 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
 
     try {
       holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexResourceBuildTarget>() {
+        @Override
         public boolean apply(final FlexResourceBuildTarget target, final File file, final BuildRootDescriptor root) throws IOException {
           if (excludes.isExcluded(file)) return true;
 

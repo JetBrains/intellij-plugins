@@ -42,6 +42,7 @@ public class CreateStrutsXmlAction extends CreateFileAction {
           StrutsIcons.STRUTS_CONFIG_FILE);
   }
 
+  @Override
   protected boolean isAvailable(final DataContext dataContext) {
     if (!super.isAvailable(dataContext)) {
       return false;
@@ -51,8 +52,9 @@ public class CreateStrutsXmlAction extends CreateFileAction {
     return module != null && JavaPsiFacade.getInstance(module.getProject()).findPackage("org.apache.struts2") != null;
   }
 
+  @Override
   @NotNull
-  protected PsiElement[] create(final String newName, final PsiDirectory directory) throws Exception {
+  protected PsiElement[] create(@NotNull final String newName, final PsiDirectory directory) throws Exception {
     @NonNls final String fileName = getFileName(newName);
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(directory);

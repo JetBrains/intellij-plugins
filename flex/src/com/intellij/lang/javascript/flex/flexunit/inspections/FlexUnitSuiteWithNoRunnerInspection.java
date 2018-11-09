@@ -11,18 +11,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitSuiteWithNoRunnerInspection extends FlexUnitSuiteInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.suitewithnorunner.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitSuiteWithNoRunnerInspection";
   }
 
 
+  @Override
   protected void visitSuite(JSClass aClass, @NotNull ProblemsHolder holder, FlexUnitSupport support) {
     if (support.isFlexUnit1SuiteSubclass(aClass) || support.isFlunitSuiteSubclass(aClass)) return;
     if (FlexUnitSupport.getCustomRunner(aClass) == null) {

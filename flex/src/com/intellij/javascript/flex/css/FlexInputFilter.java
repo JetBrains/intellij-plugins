@@ -26,6 +26,7 @@ class FlexInputFilter extends DefaultFileTypeSpecificInputFilter {
     return FlexInputFilterHolder.ourInstance;
   }
 
+  @Override
   public boolean acceptInput(@NotNull final VirtualFile file) {
     FileType type = file.getFileType();
     if (type == ActionScriptFileType.INSTANCE ||

@@ -68,7 +68,6 @@ public class CreateToStringFix extends BaseCreateMethodsFix<DartComponent> {
       //noinspection ConstantConditions
       template.addTextSegment(component.getName());
       template.addTextSegment(": $");
-      //noinspection ConstantConditions
       template.addTextSegment(component.getName());
       if (iterator.hasNext()) {
         template.addTextSegment(", ");

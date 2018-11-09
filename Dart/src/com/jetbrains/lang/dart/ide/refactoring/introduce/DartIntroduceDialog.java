@@ -73,10 +73,12 @@ public class DartIntroduceDialog extends DialogWrapper {
     }
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myNameComboBox;
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myContentPane;
   }

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -26,7 +12,6 @@ import com.intellij.lang.parameterInfo.*;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,10 +26,12 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
   // for test purposes
   private String myText;
 
+  @Override
   public boolean couldShowInLookup() {
     return true;
   }
 
+  @Override
   public Object[] getParametersForLookup(LookupElement item, ParameterInfoContext context) {
     final Object o = item.getObject();
     if (o instanceof PsiElement) {
@@ -57,10 +44,6 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
       return ArrayUtil.toObjectArray(methods);
     }
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
-  }
-
-  public Object[] getParametersForDocumentation(CfmlFunctionDescription p, ParameterInfoContext context) {
-    return ArrayUtil.toObjectArray(p.getParameters());
   }
 
   private static boolean isEmbraced(@Nullable PsiElement element, int offset) {
@@ -98,14 +81,17 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
     return null;
   }
 
+  @Override
   public PsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
     return findAnchorElement(context.getEditor().getCaretModel().getOffset(), context.getFile());
   }
 
+  @Override
   public PsiElement findElementForUpdatingParameterInfo(@NotNull UpdateParameterInfoContext context) {
     return findAnchorElement(context.getEditor().getCaretModel().getOffset(), context.getFile());
   }
 
+  @Override
   public void showParameterInfo(@NotNull PsiElement element, @NotNull CreateParameterInfoContext context) {
     ResolveResult[] variants = ResolveResult.EMPTY_ARRAY;
     if (element instanceof PsiPolyVariantReference) {
@@ -125,9 +111,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
               CfmlFunctionDescription javaMethodDescr =
                 new CfmlFunctionDescription(function.getName(), function.getReturnType().getPresentableText());
               final PsiParameter[] psiParameters = function.getParameterList().getParameters();
-              final int paramsNum = psiParameters.length;
-              for (int i = 0; i < paramsNum; i++) {
-                PsiParameter psiParameter = psiParameters[i];
+              for (PsiParameter psiParameter : psiParameters) {
                 javaMethodDescr.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(psiParameter.getName(),
                                                                                                   psiParameter.getType()
                                                                                                     .getPresentableText(), true));
@@ -149,6 +133,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
     }
   }
 
+  @Override
   public void updateParameterInfo(@NotNull PsiElement place, @NotNull UpdateParameterInfoContext context) {
     if (context.getParameterOwner() == null) {
       context.setParameterOwner(place);
@@ -165,14 +150,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
   }
 
 
-  public String getParameterCloseChars() {
-    return ",){}";
-  }
-
-  public boolean tracksParameterIndex() {
-    return false;
-  }
-
+  @Override
   public void updateUI(CfmlFunctionDescription p, @NotNull ParameterInfoUIContext context) {
     if (p == null) {
       context.setUIComponentEnabled(false);

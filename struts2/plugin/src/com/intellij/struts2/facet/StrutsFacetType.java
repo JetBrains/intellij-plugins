@@ -42,10 +42,12 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
     return findInstance(StrutsFacetType.class);
   }
 
+  @Override
   public StrutsFacetConfiguration createDefaultConfiguration() {
     return new StrutsFacetConfiguration();
   }
 
+  @Override
   public StrutsFacet createFacet(@NotNull final Module module,
                                  final String name,
                                  @NotNull final StrutsFacetConfiguration configuration,
@@ -53,10 +55,12 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
     return new StrutsFacet(this, module, name, configuration, underlyingFacet);
   }
 
+  @Override
   public boolean isSuitableModuleType(final ModuleType moduleType) {
     return moduleType instanceof JavaModuleType;
   }
 
+  @Override
   public Icon getIcon() {
     return Struts2Icons.Action;
   }

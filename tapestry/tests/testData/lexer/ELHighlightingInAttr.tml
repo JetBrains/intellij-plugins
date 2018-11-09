@@ -1,0 +1,10 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <head>
+	<t:hidden value="the value is ${rrrrr?.tt.r(77, -5.3, [-3,  -2])}!!!">
+              <title>Hello World Page</title>
+        </t:hidden>    
+    </head>
+    <body>
+        <a href="#" t:type="pagelink" page="startpage">my link</a>
+    </body>
+</html>

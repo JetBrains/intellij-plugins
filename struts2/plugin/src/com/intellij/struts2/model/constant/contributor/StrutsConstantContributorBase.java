@@ -48,6 +48,7 @@ public abstract class StrutsConstantContributorBase implements StrutsConstantCon
   @NotNull
   protected abstract String getRequiredPluginClassName();
 
+  @Override
   public boolean isAvailable(@NotNull final Module module) {
     return JavaPsiFacade.getInstance(module.getProject())
         .findClass(getRequiredPluginClassName(),

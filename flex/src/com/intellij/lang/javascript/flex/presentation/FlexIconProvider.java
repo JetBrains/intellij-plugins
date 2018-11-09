@@ -2,9 +2,9 @@ package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.IconProvider;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.openapi.compiler.CompilerManager;
@@ -23,7 +23,6 @@ public class FlexIconProvider extends IconProvider {
 
   @Override
   public Icon getIcon(@NotNull PsiElement element, int flags) {
-    int transformedFlags = ElementBase.transformFlags(element, flags);
 
     Icon icon = null;
 
@@ -34,9 +33,11 @@ public class FlexIconProvider extends IconProvider {
           icon = jsClass.getIcon(flags);
         }
       }
-    } else if (element instanceof JSFileImpl) {
+    }
+    else if (element instanceof JSFileImpl) {
       final JSNamedElement mainDeclaredElement = ActionScriptResolveUtil.findMainDeclaredElement((JSFileImpl)element);
       if (mainDeclaredElement != null) {
+        int transformedFlags = ElementBase.transformFlags(element, flags);
         icon = mainDeclaredElement.getIcon(transformedFlags);
       }
     }

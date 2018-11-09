@@ -9,10 +9,10 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.javascript.debugger.locationResolving.JSLocationResolver;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -20,6 +20,8 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.util.CatchingConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class KarmaRunProfileState implements RunProfileState {
 
@@ -31,6 +33,7 @@ public class KarmaRunProfileState implements RunProfileState {
   private final NodePackage myKarmaPackage;
   private final KarmaRunSettings myRunSettings;
   private final KarmaExecutionType myExecutionType;
+  private List<List<String>> myFailedTestNames;
 
   public KarmaRunProfileState(@NotNull Project project,
                               @NotNull KarmaRunConfiguration runConfiguration,
@@ -56,10 +59,9 @@ public class KarmaRunProfileState implements RunProfileState {
 
   @Nullable
   public KarmaServer getServerOrStart(@NotNull final Executor executor) throws ExecutionException {
-    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolve(myProject);
-    NodeJsLocalInterpreter localInterpreter = NodeJsLocalInterpreter.castAndValidate(interpreter);
+    NodeJsInterpreter interpreter = myRunSettings.getInterpreterRef().resolveNotNull(myProject);
     KarmaServerSettings serverSettings = new KarmaServerSettings.Builder()
-      .setNodeInterpreter(localInterpreter)
+      .setNodeInterpreter(interpreter)
       .setKarmaPackage(myKarmaPackage)
       .setRunSettings(myRunSettings)
       .setWithCoverage(myExecutionType == KarmaExecutionType.COVERAGE)
@@ -73,6 +75,7 @@ public class KarmaRunProfileState implements RunProfileState {
       server = null;
     }
     if (server == null) {
+      JSLocationResolver.Companion.getInstance().dropCache(myRunConfiguration);
       registry.startServer(
         serverSettings,
         new CatchingConsumer<KarmaServer, Exception>() {
@@ -103,13 +106,18 @@ public class KarmaRunProfileState implements RunProfileState {
                                                               executor,
                                                               server,
                                                               myRunSettings,
-                                                              myExecutionType);
-    SMTRunnerConsoleView smtRunnerConsoleView = session.getSmtConsoleView();
+                                                              myExecutionType,
+                                                              myFailedTestNames);
+    SMTRunnerConsoleView consoleView = session.getSmtConsoleView();
     ProcessHandler processHandler = session.getProcessHandler();
-    // TODO make smtRunnerConsoleView instance of LanguageConsoleView to make it more usage for debugging
-    DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
-    executionResult.setRestartActions(new ToggleAutoTestAction());
+    DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
+    executionResult.setRestartActions(((KarmaConsoleProperties)consoleView.getProperties()).createRerunFailedTestsAction(consoleView),
+                                      new ToggleAutoTestAction());
     return executionResult;
+  }
+
+  public void setFailedTestNames(@NotNull List<List<String>> failedTestNames) {
+    myFailedTestNames = failedTestNames;
   }
 
   @NotNull

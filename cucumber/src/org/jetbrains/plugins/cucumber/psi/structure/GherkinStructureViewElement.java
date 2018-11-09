@@ -23,6 +23,7 @@ public class GherkinStructureViewElement extends PsiTreeElementBase<PsiElement> 
     super(psiElement);
   }
 
+  @Override
   @NotNull
   public Collection<StructureViewTreeElement> getChildrenBase() {
     List<StructureViewTreeElement> result = new ArrayList<>();
@@ -52,6 +53,7 @@ public class GherkinStructureViewElement extends PsiTreeElementBase<PsiElement> 
   }
 
 
+  @Override
   public String getPresentableText() {
     return ((NavigationItem) getElement()).getPresentation().getPresentableText();
   }

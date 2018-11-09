@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2018 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +23,12 @@ import com.intellij.lexer.FlexAdapter;
 public class OgnlLexer extends FlexAdapter {
 
   public OgnlLexer() {
-    super(new _OgnlLexer());
+    super(new _OgnlLexer() {
+      @Override
+      public void reset(CharSequence buffer, int start, int end, int initialState) {
+        super.reset(buffer, start, end, initialState);
+        resetInternal();
+      }
+    });
   }
-
 }

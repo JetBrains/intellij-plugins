@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartClassBodyImpl extends DartPsiCompositeElementImpl implements DartClassBody {
 
-  public DartClassBodyImpl(ASTNode node) {
+  public DartClassBodyImpl(@NotNull ASTNode node) {
     super(node);
   }
 

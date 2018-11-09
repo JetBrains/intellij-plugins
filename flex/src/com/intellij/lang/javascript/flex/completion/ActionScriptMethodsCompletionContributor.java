@@ -6,7 +6,6 @@ import com.intellij.codeInsight.completion.CompletionProvider;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.completion.JSQualifiedElementNameCompletionProvider;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -28,7 +27,7 @@ public class ActionScriptMethodsCompletionContributor extends CompletionContribu
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
+                                           @NotNull ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
                final PsiElement position = parameters.getPosition();
                final PsiElement prev = JSPsiImplUtils.getPrevSiblingIgnoreWhitespace(position);

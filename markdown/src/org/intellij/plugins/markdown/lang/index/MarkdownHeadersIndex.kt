@@ -15,7 +15,7 @@ class MarkdownHeadersIndex : StringStubIndexExtension<MarkdownHeaderImpl>() {
   override fun getKey(): StubIndexKey<String, MarkdownHeaderImpl> = KEY
 
   companion object {
-    val KEY = StubIndexKey.createIndexKey<String, MarkdownHeaderImpl>("markdown.header")
+    val KEY: StubIndexKey<String, MarkdownHeaderImpl> = StubIndexKey.createIndexKey<String, MarkdownHeaderImpl>("markdown.header")
 
     fun collectFileHeaders(suggestHeaderRef: String, project: Project, psiFile: PsiFile?): Collection<PsiElement> {
       val list = ContainerUtil.newArrayList<PsiElement>()

@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartUserDefinableOperatorImpl extends DartPsiCompositeElementImpl implements DartUserDefinableOperator {
 
-  public DartUserDefinableOperatorImpl(ASTNode node) {
+  public DartUserDefinableOperatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 

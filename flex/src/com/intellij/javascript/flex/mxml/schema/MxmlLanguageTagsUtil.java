@@ -310,20 +310,24 @@ public class MxmlLanguageTagsUtil {
       myAttribute = attribute;
     }
 
+    @Override
     @NotNull
     public String getText() {
       return FlexBundle.message("remove.namespace.declaration");
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
       return XmlErrorMessages.message("remove.attribute.quickfix.family");
     }
 
+    @Override
     public boolean isAvailable(final @NotNull Project project, final Editor editor, final PsiFile file) {
       return myAttribute.isValid();
     }
 
+    @Override
     public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
       final int offset = removeXmlAttribute(myAttribute);
       if (offset != -1) {
@@ -375,6 +379,7 @@ public class MxmlLanguageTagsUtil {
       return prevSibling;
     }
 
+    @Override
     public boolean startInWriteAction() {
       return true;
     }
@@ -391,24 +396,29 @@ public class MxmlLanguageTagsUtil {
       myNamespace = namespace;
     }
 
+    @Override
     @NotNull
     public String getText() {
       return FlexBundle.message("declare.namespace", myNamespace);
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
       return "Declare namespace";
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
       return myRootTag.isValid();
     }
 
+    @Override
     public boolean startInWriteAction() {
       return true;
     }
 
+    @Override
     public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
       if (!myRootTag.isValid()) return;
 

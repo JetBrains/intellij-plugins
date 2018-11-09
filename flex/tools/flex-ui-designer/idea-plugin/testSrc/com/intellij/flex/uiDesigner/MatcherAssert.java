@@ -17,7 +17,6 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 
-@SuppressWarnings({"unchecked"})
 public final class MatcherAssert {
   public static <T> void assertThat(T actual, Matcher<? super T> matcher) {
     assertThat("", actual, matcher);

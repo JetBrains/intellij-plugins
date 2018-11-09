@@ -21,6 +21,7 @@ import com.jetbrains.actionscript.profiler.model.ProfilingManager;
 import com.jetbrains.actionscript.profiler.ui.node.CPUSnapshotNode;
 import com.jetbrains.actionscript.profiler.ui.node.LiveObjectsNode;
 import icons.FlexProfilerIcons;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -47,7 +48,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
   private final Alarm myAlarm = new Alarm();
   private static final int MINUTE = 60 * 1000;
 
-  public ActionScriptProfileControlPanel(String runConfigurationName, final Module module) {
+  public ActionScriptProfileControlPanel(@NotNull String runConfigurationName, final Module module) {
     this.runConfigurationName = runConfigurationName;
     this.module = module;
 
@@ -121,6 +122,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
     myAlarm.addRequest(() -> NOTIFICATION_GROUP.createNotification(ProfilerBundle.message("profiler.connection.timeout"), NotificationType.ERROR)
       .notify(module.getProject()), MINUTE);
     profilingManager.initializeProfiling(profilerDataConsumer, new ProfilingManager.Callback() {
+      @Override
       public void finished(@Nullable String data, @Nullable IOException ex) {
         if (data != null && connectionCallback != null) {
           myAlarm.cancelAllRequests();
@@ -155,12 +157,12 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
                        ProfilerBundle.message("start.cpu.profiling.description"),
                        FlexProfilerIcons.StartCPU) {
         @Override
-        public boolean isSelected(AnActionEvent e) {
+        public boolean isSelected(@NotNull AnActionEvent e) {
           return currentState == State.CPU_PROFILING;
         }
 
         @Override
-        public void setSelected(AnActionEvent e, boolean state) {
+        public void setSelected(@NotNull AnActionEvent e, boolean state) {
           if (state) {
             profilingManager.startCpuProfiling(new ProfilingManager.Callback() {
               @Override
@@ -188,7 +190,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
           super.update(e);
           e.getPresentation().setEnabled(currentState != State.NONE);
         }
@@ -197,8 +199,9 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
                    ProfilerBundle.message("do.gc.description"),
                    FlexProfilerIcons.GC) {
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
           profilingManager.doGc(new ProfilingManager.Callback() {
+            @Override
             public void finished(@Nullable String data, @Nullable IOException ex) {
               //TODO
             }
@@ -206,7 +209,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
           super.update(e);
           e.getPresentation().setEnabled(currentState != State.NONE);
         }

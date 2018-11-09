@@ -36,18 +36,22 @@ public class ShowDiffCommand implements FileCommand, NamedUserCommand {
     myFacade = ideFacade;
   }
 
+  @Override
   public void setUser(User user) {
     myUser = user;
   }
 
+  @Override
   public void setVFile(VFile vFile) {
     myVFile = vFile;
   }
 
+  @Override
   public boolean isEnabled() {
     return myUser != null && myVFile != null && myFacade.hasFile(myVFile);
   }
 
+  @Override
   public void execute() {
     String content = myUser.getVFile(myVFile, myFacade);
     if (content != null) {
@@ -55,10 +59,12 @@ public class ShowDiffCommand implements FileCommand, NamedUserCommand {
     }
   }
 
+  @Override
   public Icon getIcon() {
     return null;
   }
 
+  @Override
   public String getName() {
     if (myVFile != null && myUser != null) {
       return StringUtil.getMsg("show.diff.for.file.with.user", myUser.getDisplayName());

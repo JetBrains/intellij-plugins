@@ -39,6 +39,7 @@ public interface Result extends HasResultType, ParamsElement, GenericDomValue<Pa
   @NonNls
   String DEFAULT_NAME = "success";
 
+  @Override
   @NameValue
   @Scope(ParentScopeProvider.class)
   GenericAttributeValue<String> getName();
@@ -48,6 +49,7 @@ public interface Result extends HasResultType, ParamsElement, GenericDomValue<Pa
    *
    * @return null if none defined.
    */
+  @Override
   @Convert(ResultTypeResolvingConverter.class)
   GenericAttributeValue<ResultType> getType();
 

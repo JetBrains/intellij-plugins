@@ -5,13 +5,11 @@ import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -22,6 +20,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.SemVer;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,6 +35,7 @@ public class PrettierUtil {
   public static final String PACKAGE_NAME = "prettier";
   public static final List<String> CONFIG_FILE_EXTENSIONS = ContainerUtil.list(".yaml", ".yml", ".json", ".js");
   public static final String RC_FILE_NAME = ".prettierrc";
+  private static final String IGNORE_FILE_NAME = ".prettierignore";
   public static final String JS_CONFIG_FILE_NAME = "prettier.config.js";
   public static final Key<ParameterizedCachedValue<Config, PsiFile>> CACHE_KEY = new Key<>(PrettierUtil.class.getName() + ".config");
 
@@ -48,6 +48,7 @@ public class PrettierUtil {
   public static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
     ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
   
+  public static final SemVer MIN_VERSION = new SemVer("1.8.0", 1, 8, 0);
   private static final Logger LOG = Logger.getInstance(PrettierUtil.class);
   public static final String BRACKET_SPACING = "bracketSpacing";
   public static final String PRINT_WIDTH = "printWidth";
@@ -59,10 +60,6 @@ public class PrettierUtil {
   private static final String JSX_BRACKET_SAME_LINE = "jsxBracketSameLine";
 
   private PrettierUtil() {
-  }
-
-  public static boolean isEnabled() {
-    return ApplicationManager.getApplication().isUnitTestMode() || Registry.is("prettierjs.enabled");
   }
 
   public static boolean isConfigFile(@NotNull PsiElement element) {
@@ -95,6 +92,13 @@ public class PrettierUtil {
       }
     }
     return false;
+  }
+
+  @Nullable
+  public static VirtualFile findIgnoreFile(@NotNull VirtualFile source, @NotNull Project project) {
+    VirtualFile packageJson = PackageJsonUtil.findUpPackageJson(source);
+    VirtualFile rootDir = packageJson != null ? packageJson.getParent() : project.getBaseDir();
+    return rootDir == null ? null : rootDir.findChild(IGNORE_FILE_NAME);
   }
 
   @NotNull

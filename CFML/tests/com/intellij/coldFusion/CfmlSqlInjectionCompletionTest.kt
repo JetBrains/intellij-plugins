@@ -5,7 +5,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.sql.completion.SqlCompletionTestCase
 import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.dialects.SqlLanguageDialect
-import com.intellij.sql.formatter.settings.SqlCodeStyleSettings
+import com.intellij.sql.formatter.settings.SqlCodeStyleConst
 import com.intellij.sql.psi.SqlLanguage
 import com.intellij.util.FileContentUtil
 import java.util.*
@@ -34,7 +34,7 @@ class CfmlSqlInjectionCompletionTest : SqlCompletionTestCase(null) {
 
 
   fun testFrom() {
-    sqlSettings.KEYWORD_CASE = SqlCodeStyleSettings.TO_LOWER
+    sqlSettings.KEYWORD_CASE = SqlCodeStyleConst.TO_LOWER
     doTestVariants("select * <caret>", CompletionType.BASIC, 1, SqlCompletionTestCase.MatchType.CONTAINS, "from")
   }
 
@@ -73,7 +73,7 @@ class CfmlSqlInjectionCompletionTest : SqlCompletionTestCase(null) {
                               type: CompletionType,
                               count: Int,
                               matchType: SqlCompletionTestCase.MatchType,
-                              vararg variants: String): Unit {
+                              vararg variants: String) {
     val dialect = SqlLanguage.INSTANCE.dialects.find { it.id == "SQL92" }
     SqlDialectMappings.getInstance(project).setMapping(null, dialect as SqlLanguageDialect)
     val file = myFixture.file

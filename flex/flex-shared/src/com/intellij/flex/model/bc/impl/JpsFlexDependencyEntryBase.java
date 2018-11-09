@@ -19,6 +19,7 @@ abstract class JpsFlexDependencyEntryBase<Self extends JpsFlexDependencyEntryBas
     myLinkageType = original.myLinkageType;
   }
 
+  @Override
   public void applyChanges(@NotNull final Self modified) {
     super.applyChanges(modified);
     //myLinkageType = modified.myLinkageType;
@@ -26,11 +27,13 @@ abstract class JpsFlexDependencyEntryBase<Self extends JpsFlexDependencyEntryBas
 
 // ------------------------------------
 
+  @Override
   @NotNull
   public LinkageType getLinkageType() {
     return myLinkageType;
   }
 
+  @Override
   public void setLinkageType(final LinkageType linkageType) {
     myLinkageType = linkageType;
   }

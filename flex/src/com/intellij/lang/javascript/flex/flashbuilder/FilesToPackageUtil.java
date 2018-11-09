@@ -44,6 +44,7 @@ public class FilesToPackageUtil {
     map.put(rootFolder, rootFolderNode);
 
     VfsUtilCore.visitChildrenRecursively(rootFolder, new VirtualFileVisitor() {
+      @Override
       @NotNull
       public Result visitFileEx(@NotNull final VirtualFile file) {
         if (file.equals(rootFolder)) return CONTINUE;

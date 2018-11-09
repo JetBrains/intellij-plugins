@@ -34,6 +34,7 @@ public abstract class GroupEvent implements IDEtalkEvent {
     return myGroup;
   }
 
+  @Override
   public void accept(EventVisitor visitor) {
     visitor.visitGroupEvent(this);
   }

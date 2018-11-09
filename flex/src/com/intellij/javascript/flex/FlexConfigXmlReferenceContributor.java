@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.lang.javascript.flex.ReferenceSupport;
-import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.filters.position.NamespaceFilter;
@@ -16,6 +16,7 @@ import static com.intellij.patterns.XmlPatterns.*;
 public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
   public static final String CLASS_REFERENCE = "ClassReference";
 
+  @Override
   public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
     XmlUtil.registerXmlTagReferenceProvider(
       registrar,
@@ -44,6 +45,7 @@ public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(
       xmlAttributeValue(xmlAttribute("class").withParent(xmlTag().withName("component").withParent(xmlTag().withName("componentPackage")))),
       new PsiReferenceProvider() {
+        @Override
         @NotNull
         public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
           TextRange myRange = ElementManipulators.getValueTextRange(element);
@@ -54,8 +56,8 @@ public class FlexConfigXmlReferenceContributor extends PsiReferenceContributor {
       });
   }
 
-  static class FlexConfigXmlReferenceSet extends JSReferenceSet {
-    public FlexConfigXmlReferenceSet(@NotNull PsiElement element, String text, int offset) {
+  static class FlexConfigXmlReferenceSet extends ActionScriptReferenceSet {
+    FlexConfigXmlReferenceSet(@NotNull PsiElement element, String text, int offset) {
       super(element, text, offset, false, true);
     }
 

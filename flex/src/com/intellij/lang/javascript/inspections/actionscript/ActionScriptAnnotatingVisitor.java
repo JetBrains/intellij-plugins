@@ -70,13 +70,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     JavaScriptSupportLoader.MXML_FILE_EXTENSION,
     JavaScriptSupportLoader.FXG_FILE_EXTENSION
   };
-  
+
   public ActionScriptAnnotatingVisitor(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
     super(psiElement, holder);
   }
 
   @NotNull
-  @Override 
+  @Override
   protected ActionScriptConstructorChecker createConstructorChecker() {
     return new ActionScriptConstructorChecker(myProblemReporter);
   }
@@ -119,6 +119,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
    * @deprecated use {@link com.intellij.lang.javascript.psi.JSTypeUtils
    * #areTypesCompatible(com.intellij.lang.javascript.psi.JSType, com.intellij.lang.javascript.psi.JSType)} instead.
    */
+  @Deprecated
   protected static boolean compatibleType(String overrideParameterType,
                                           String parameterType,
                                           PsiElement overrideContext,
@@ -286,6 +287,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     final JSCollectMembersToImplementProcessor implementedMethodProcessor = new ActionScriptImplementedMethodProcessor(jsClass) {
       ImplementMethodsFix implementMethodsFix = null;
 
+      @Override
       protected void addNonImplementedFunction(final JSFunction function) {
         final ASTNode node = myJsClass.findNameIdentifier();
         if (node == null) return;
@@ -301,6 +303,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                                     implementMethodsFix);
       }
 
+      @Override
       protected void addImplementedFunction(final JSFunction interfaceFunction, final JSFunction implementationFunction) {
         final JSAttributeList attributeList = implementationFunction.getAttributeList();
         if (attributeList == null || attributeList.getAccessType() != JSAttributeList.AccessType.PUBLIC) {
@@ -338,6 +341,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                                         ),
                                         ErrorReportingClient.ProblemKind.ERROR,
                                         new JSChangeSignatureFix(implementationFunction, expectedParameterList, false) {
+                                          @Override
                                           @NotNull
                                           public String getText() {
                                             return JSBundle.message("javascript.fix.message.change.parameters.to.expected");
@@ -413,6 +417,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
         final Ref<JSFunction> set = new Ref<>();
         boolean b = JSResolveUtil.iterateType(node, parent, qName, new JSOverrideHandler() {
+          @Override
           public boolean process(@NotNull final List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
             //noinspection StringEquality
             if (qName == className || qName != null && qName.equals(className)) return true;
@@ -508,6 +513,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             );
 
             annotation.registerFix(new JSChangeSignatureFix(node, overrideParameterList, false) {
+              @Override
               @NotNull
               public String getText() {
                 return JSBundle.message("javascript.fix.message.change.parameters.to.expected");
@@ -563,35 +569,41 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   private static class AddOverrideIntentionAction implements IntentionAction {
     private final JSFunction myNode;
 
-    public AddOverrideIntentionAction(final JSFunction node) {
+    AddOverrideIntentionAction(final JSFunction node) {
       myNode = node;
     }
 
+    @Override
     @NotNull
     public String getText() {
       return JSBundle.message("javascript.fix.add.override.modifier");
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
       return getText();
     }
 
+    @Override
     public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
       return myNode.isValid();
     }
 
+    @Override
     public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      JSAttributeListWrapper w = new JSAttributeListWrapper(myNode.getAttributeList(), project);
+      JSAttributeListWrapper w = new JSAttributeListWrapper(myNode);
       w.overrideModifier(JSAttributeList.ModifierType.OVERRIDE, true);
       w.applyTo(myNode);
     }
 
+    @Override
     public boolean startInWriteAction() {
       return true;
     }
   }
 
+  @Override
   public void visitJSPackageStatement(final JSPackageStatement packageStatement) {
     final JSFile jsFile = PsiTreeUtil.getParentOfType(packageStatement, JSFile.class);
     final PsiElement context = jsFile == null ? null : jsFile.getContext();
@@ -630,24 +642,29 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         )
       );
       annotation.registerFix(new IntentionAction() {
+        @Override
         @NotNull
         public String getText() {
           return JSBundle.message("javascript.fix.package.name", expected);
         }
 
+        @Override
         @NotNull
         public String getFamilyName() {
           return getText();
         }
 
+        @Override
         public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
           return packageStatement.isValid();
         }
 
+        @Override
         public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
           JSPackageStatementImpl.doChangeName(project, packageStatement, expected);
         }
 
+        @Override
         public boolean startInWriteAction() {
           return true;
         }
@@ -1125,6 +1142,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
 
+  @Override
   protected void validateGetter(@NotNull JSFunction getter, JSFunction setter, JSType type) {
     if (type instanceof JSVoidType) {
       // TODO: fix!
@@ -1162,6 +1180,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
+  @Override
   protected void validateRestParameterType(JSParameterListElement parameter) {
     PsiElement typeElement = parameter.getTypeElement();
     if (typeElement != null && !"Array".equals(typeElement.getText())) {
@@ -1173,6 +1192,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
   }
 
+  @Override
   public void visitJSThisExpression(final JSThisExpression node) {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.this.referenced.from.static.context");
   }

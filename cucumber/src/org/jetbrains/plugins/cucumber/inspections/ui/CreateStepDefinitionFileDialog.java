@@ -81,6 +81,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     validateAll();
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myFileNameTextField;
   }

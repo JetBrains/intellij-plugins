@@ -18,7 +18,7 @@ public class HbKeywordCompletionContributor extends CompletionContributor {
            new CompletionProvider<CompletionParameters>() {
              @Override
              protected void addCompletions(@NotNull CompletionParameters parameters,
-                                           ProcessingContext context,
+                                           @NotNull ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
                PsiElement position = PsiTreeUtil.getParentOfType(parameters.getPosition(), HbMustacheName.class);
                PsiElement prevSibling = position != null ? position.getPrevSibling() : null;

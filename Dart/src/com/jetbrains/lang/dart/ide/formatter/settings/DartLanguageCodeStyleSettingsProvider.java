@@ -1,12 +1,14 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter.settings;
 
+import com.intellij.application.options.CodeStyleAbstractConfigurable;
+import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.application.options.IndentOptionsEditor;
 import com.intellij.application.options.SmartIndentOptionsEditor;
 import com.intellij.lang.Language;
-import com.intellij.psi.codeStyle.CodeStyleSettingsCustomizable;
-import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
+import com.intellij.psi.codeStyle.*;
 import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.ide.application.options.DartCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
 public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSettingsProvider {
@@ -37,27 +39,24 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
   }
 
   @Override
-  public CommonCodeStyleSettings getDefaultCommonSettings() {
-    CommonCodeStyleSettings defaultSettings = new CommonCodeStyleSettings(getLanguage());
-    CommonCodeStyleSettings.IndentOptions indentOptions = defaultSettings.initIndentOptions();
+  protected void customizeDefaults(@NotNull CommonCodeStyleSettings commonSettings,
+                                   @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
     indentOptions.INDENT_SIZE = 2;
     indentOptions.CONTINUATION_INDENT_SIZE = 4;
     indentOptions.TAB_SIZE = 2;
-    defaultSettings.RIGHT_MARGIN = 80;
-    defaultSettings.CALL_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.METHOD_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.BINARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.ASSIGNMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED; // TODO Remove if not needed.
-    defaultSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
-    defaultSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED | CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM;
-    defaultSettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
-    defaultSettings.ALIGN_MULTILINE_TERNARY_OPERATION = false;
-    defaultSettings.ALIGN_MULTILINE_PARAMETERS = false;
-    defaultSettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = true;
-    defaultSettings.KEEP_SIMPLE_METHODS_IN_ONE_LINE = true;
-    defaultSettings.KEEP_SIMPLE_CLASSES_IN_ONE_LINE = true;
-    return defaultSettings;
+    commonSettings.RIGHT_MARGIN = 80;
+    commonSettings.CALL_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    commonSettings.METHOD_PARAMETERS_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    commonSettings.ARRAY_INITIALIZER_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    commonSettings.BINARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
+    commonSettings.ASSIGNMENT_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED; // TODO Remove if not needed.
+    commonSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED | CommonCodeStyleSettings.WRAP_ON_EVERY_ITEM;
+    commonSettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
+    commonSettings.ALIGN_MULTILINE_TERNARY_OPERATION = false;
+    commonSettings.ALIGN_MULTILINE_PARAMETERS = false;
+    commonSettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE = true;
+    commonSettings.KEEP_SIMPLE_METHODS_IN_ONE_LINE = true;
+    commonSettings.KEEP_SIMPLE_CLASSES_IN_ONE_LINE = true;
   }
 
   @Override
@@ -236,4 +235,25 @@ public class DartLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSett
   public static final String INDENT_CODE_SAMPLE = "main(){\n" +
                                                   "  print(239);\n" +
                                                   "}";
+
+  @Override
+  public CustomCodeStyleSettings createCustomSettings(@NotNull final CodeStyleSettings settings) {
+    return new DartCodeStyleSettings(settings);
+  }
+
+  @NotNull
+  @Override
+  public CodeStyleConfigurable createConfigurable(@NotNull CodeStyleSettings baseSettings, @NotNull CodeStyleSettings modelSettings) {
+    return new CodeStyleAbstractConfigurable(baseSettings, modelSettings, getConfigurableDisplayName()) {
+      @Override
+      protected CodeStyleAbstractPanel createPanel(CodeStyleSettings settings) {
+        return new DartCodeStyleMainPanel(getCurrentSettings(), settings);
+      }
+
+      @Override
+      public String getHelpTopic() {
+        return "reference.settingsdialog.codestyle.dart";
+      }
+    };
+  }
 }

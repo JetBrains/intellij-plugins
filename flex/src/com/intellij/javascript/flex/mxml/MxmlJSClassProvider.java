@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -6,7 +7,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassProvider;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataCache;
 import com.intellij.psi.PsiElement;
@@ -33,11 +33,14 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
   private static final Key<CachedValue<XmlTag[]>> CHILD_INLINE_COMPONENTS_TAGS_KEY = Key.create("child.inline.components.tags");
   private static final UserDataCache<CachedValue<XmlTag[]>, XmlTag, Object> ourChildComponentsTagsCache =
     new UserDataCache<CachedValue<XmlTag[]>, XmlTag, Object>() {
+      @Override
       protected CachedValue<XmlTag[]> compute(final XmlTag tag, final Object p) {
         return CachedValuesManager.getManager(tag.getProject()).createCachedValue(new CachedValueProvider<XmlTag[]>() {
+          @Override
           public Result<XmlTag[]> compute() {
             final Collection<XmlTag> result = new ArrayList<>();
             tag.processElements(new PsiElementProcessor() {
+              @Override
               public boolean execute(@NotNull PsiElement element) {
                 if (element instanceof XmlTag) {
                   XmlTag tag = (XmlTag)element;
@@ -61,7 +64,7 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
     };
 
   public static MxmlJSClassProvider getInstance() {
-    for (XmlBackedJSClassProvider provider : Extensions.getExtensions(EP_NAME)) {
+    for (XmlBackedJSClassProvider provider : EP_NAME.getExtensionList()) {
       if (provider instanceof MxmlJSClassProvider) {
         return (MxmlJSClassProvider)provider;
       }

@@ -59,7 +59,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
   }
 
   @Override
-  public void actionPerformed(final AnActionEvent event) {
+  public void actionPerformed(@NotNull final AnActionEvent event) {
     final Project project = event.getProject();
     if (project == null) return;
 
@@ -96,7 +96,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
   protected abstract void runOverFiles(@NotNull final Project project, @NotNull final List<VirtualFile> dartFiles);
 
   @Override
-  public void update(final AnActionEvent event) {
+  public void update(@NotNull final AnActionEvent event) {
     final Presentation presentation = event.getPresentation();
     final Project project = event.getProject();
     if (project == null) {

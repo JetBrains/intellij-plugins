@@ -35,10 +35,12 @@ class StringValuesConverter extends ResolvingConverter.StringConverter {
     this.values = values;
   }
 
+  @Override
   public String fromString(final String s, final ConvertContext context) {
     return Arrays.binarySearch(values, s) > -1 ? s : null;
   }
 
+  @Override
   @NotNull
   public Collection<? extends String> getVariants(final ConvertContext context) {
     return Arrays.asList(values);

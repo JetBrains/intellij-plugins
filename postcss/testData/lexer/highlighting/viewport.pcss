@@ -1,0 +1,33 @@
+@viewport {
+    width: 397px;
+}
+
+@media (min-width: 397px) {
+    @viewport {
+        width: 500px;
+    }
+    @-webkit-viewport {
+        width: 500px;
+    }
+    @-moz-viewport {
+        width: 500px;
+    }
+    @-ms-viewport {
+        width: 500px;
+    }
+    @-o-viewport {
+        width: 500px;
+    }
+}
+
+@media (min-width: 397px) {
+    div {
+        color: green;
+    }
+}
+
+div.nested {
+  @viewport {
+      width: 397px;
+  }
+}

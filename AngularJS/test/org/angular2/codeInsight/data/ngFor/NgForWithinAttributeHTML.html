@@ -1,0 +1,14 @@
+<table>
+  <thead>
+  <tr>
+    <th style="width: 1%;text-align: left;">#</th>
+    <th style="width: 1%;text-align: left;">Username</th>
+    <th style="text-align: left;">Email</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr [style]="{'visible': contact.<caret>}" *ngFor="let contact of contacts; index as i; trackBy: test; trackBy: test2">
+    <td>{{i + 1}}</td>
+  </tr>
+  </tbody>
+</table>

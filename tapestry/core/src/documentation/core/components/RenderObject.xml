@@ -1,0 +1,7 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Renders out an object using the org.apache.tapestry.services.ObjectRenderer service. Used primarily on the org.apache.tapestry.corelib.pages.ExceptionReport page. This is focused on\
+        objects that have a specific org.apache.tapestry.services.ObjectRenderer strategy. The org.apache.tapestry.corelib.components.BeanDisplay component is used for displaying the contents of
+        arbitrary objects in terms of a series of property names and values.
+    </description>
+</element>

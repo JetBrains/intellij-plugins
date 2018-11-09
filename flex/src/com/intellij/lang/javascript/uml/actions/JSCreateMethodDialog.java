@@ -153,7 +153,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
   }
 
   private class CreateAction extends AbstractAction {
-    public CreateAction() {
+    CreateAction() {
       putValue(NAME, JSBundle.message("create.button.text"));
       putValue(DEFAULT_ACTION, Boolean.TRUE);
     }

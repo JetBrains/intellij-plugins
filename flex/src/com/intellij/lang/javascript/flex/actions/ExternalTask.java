@@ -175,13 +175,15 @@ public abstract class ExternalTask {
 
   public static void runInBackground(final ExternalTask task,
                                      final String progressTitle,
-                                     final @Nullable Consumer<List<String>> onSuccess,
-                                     final @Nullable Consumer<List<String>> onFailure) {
+                                     final @Nullable Consumer<? super List<String>> onSuccess,
+                                     final @Nullable Consumer<? super List<String>> onFailure) {
     ProgressManager.getInstance().run(new Task.Backgroundable(task.myProject, progressTitle, true) {
+      @Override
       public void run(@NotNull final ProgressIndicator indicator) {
         createRunnable(task).run();
       }
 
+      @Override
       public void onSuccess() {
         if (task.checkMessages()) {
           if (onSuccess != null) {

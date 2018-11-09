@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartTernaryExpressionImpl extends DartExpressionImpl implements DartTernaryExpression {
 
-  public DartTernaryExpressionImpl(ASTNode node) {
+  public DartTernaryExpressionImpl(@NotNull ASTNode node) {
     super(node);
   }
 

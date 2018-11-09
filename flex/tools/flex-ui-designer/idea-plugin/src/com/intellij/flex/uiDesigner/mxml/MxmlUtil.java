@@ -121,7 +121,6 @@ public final class MxmlUtil {
     while ((classes = aClass.getSuperClasses()).length > 0) {
       JSClass parentClass = classes[0];
       PsiFile containingFile = parentClass.getContainingFile();
-      //noinspection ConstantConditions
       if (!projectFileIndex.isInSourceContent(containingFile.getVirtualFile())) {
         return new Trinity<>(-1, parentClass.getQualifiedName(),
                              computePropertyFilter
@@ -145,7 +144,7 @@ public final class MxmlUtil {
   private static class CustomComponentPropertyFilter implements Condition<AnnotationBackedDescriptor> {
     private final Set<PsiFile> filteredFiles;
 
-    public CustomComponentPropertyFilter(Set<PsiFile> filteredFiles) {
+    CustomComponentPropertyFilter(Set<PsiFile> filteredFiles) {
       this.filteredFiles = filteredFiles;
     }
 

@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+    <LINK REL="stylesheet" HREF="../style.css" TYPE="text/css">
+    <title>Loomy: Auto-Completion</title>
+</head>
+<body style="font-family: Verdana; font-size: 13" bgColor="#ffffff" LEFTMARGIN=0 RIGHTMARGIN=0 MARGINWIDTH=0
+      MARGINHEIGHT=0 TOPMARGIN=0 link="#336666" vlink="#669999" alink="#669999">
+
+<table cellspacing="0" width="65%" height="30" cellPadding=0 border="0">
+    <tr>
+        <td width="70%" valign="center" bgcolor="#669999" background="../images/secondary/headerBg.gif">
+            <font class="mainheader">&nbsp;&nbsp;Auto-Completion</font>
+        </td>
+        <td width="30%" valign="center" height="25" align="right" background="../images/secondary/headerBg.gif">
+            <img src="../images/secondary/headerSec.gif">
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2"><img src="../images/secondary/transparency.gif" width="800" height="1" border="0">
+        </td>
+    </tr>
+</table>
+<table cellpadding="15" width="750" border="0">
+    <tr>
+        <td>
+            <br>
+            Auto-completion makes template editing much faster. <font class="detailedtext">Loomy</font> extends this feature introducing lot's of <font class="detailedtext">Tapestry</font> specific
+            completions.
+            <br><br>
+            This section covers the following features:
+
+            <ul>
+                <li><a class="context" href="#tags">Component Tags Auto-Completion</a></li>
+                <li><a class="context" href="#parameters">Component Parameters Auto-Completion</a></li>
+                <li><a class="context" href="#valuesparameters">Parameters Values Auto-completion</a></li>
+            </ul>
+
+            <table width="100%" cellPadding="8">
+                <tr>
+                    <td bgcolor="#669999">
+                        <a name="tags"><font class="tableheader">Component Tags Auto-Completion</font></a>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            When editing your template you can take advantage of the auto-completion feature to help you insert a
+            component using both types of possible annotations for that:<br>
+            <ul>
+                <li>
+                    <font class="detailedtext">Invisible Instrumentation</font>
+                    <br><br>Just use the auto-completion feature on the <i><font class="detailedtext">t:type</font></i>
+                    attribute value.
+                    <br><br><img border="1" src="../images/templateediting/autocompleteinv.png"><br><br>
+                </li>
+                <li>
+                    <font class="detailedtext">Component Tag</font>
+                    <br><br>Just use the auto-completion feature on the tag name where you want to insert the component.
+                    <br><br><img border="1" src="../images/templateediting/autocomplete.png"><br><br>
+                </li>
+            </ul>
+
+            <table width="100%" cellPadding="8">
+                <tr>
+                    <td bgcolor="#669999">
+                        <a name="parameters"><font class="tableheader">Component Parameters Auto-Completion</font></a>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            Component tags have additional parameters that don't conform to the HTML standard and so the default
+            auto-completion won't help you. This plugin extends the auto-completion feature adding the <font
+                class="detailedtext">Tapestry</font> component parameters to the list of possible tag parameters.
+            <br><br><img border="1" src="../images/templateediting/autocompleteparameter.png"><br><br>
+            <table width="100%" cellPadding="8">
+                <tr>
+                    <td bgcolor="#669999">
+                        <a name="valuesparameters"><font class="tableheader">Parameters Values Auto-completion</font></a>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            Auto-completion of property binding is available so you can save lot's of time navigating from template to class.<br><br>
+
+            <font class="detailedtext">Page parameter of the PageLink component:</font>
+            <br><br><img border="1" src="../images/templateediting/autocompletevalueparameter.png"><br><br><br>
+            <font class="detailedtext">Boolean parameters:</font>
+            <br><br><img border="1" src="../images/templateediting/autocompletebooleanparameter.png"><br><br><br>
+            <font class="detailedtext">Simple properties:</font>
+            <br><br><img border="1" src="../images/templateediting/autocompletevalueparameterprefixprop.png"><br><br><br>
+            <font class="detailedtext">Composed properties:</font>
+            <br><br><img border="1" src="../images/templateediting/autocompletecomposedprop.png"><br>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

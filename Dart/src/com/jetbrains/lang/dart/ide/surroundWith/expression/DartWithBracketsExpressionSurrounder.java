@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DartWithBracketsExpressionSurrounder extends DartWithExpressionSurrounder {
 
+  @Override
   public boolean isApplicable(@NotNull PsiElement[] elements) {
     // Limit this to named arguments; the intent is to convert a Flutter child: param to children:, which may involve creating red code.
     return super.isApplicable(elements) && elements[0].getParent() instanceof DartNamedArgument;

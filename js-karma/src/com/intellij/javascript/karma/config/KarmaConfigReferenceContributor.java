@@ -33,11 +33,13 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   public static final ElementPattern<JSLiteralExpression> STRING_LITERAL_INSIDE_KARMA_CONFIG_FILE =
     PlatformPatterns.psiElement(JSLiteralExpression.class)
     .and(new FilterPattern(new ElementFilter() {
+      @Override
       public boolean isAcceptable(Object element, PsiElement context) {
         PsiFile psiFile = context.getContainingFile();
         return KarmaUtil.isKarmaConfigFile(psiFile.getName(), false);
       }
 
+      @Override
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }
@@ -79,7 +81,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   }
 
   private static class BasePathFileReferenceSet extends FileReferenceSet {
-    public BasePathFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
+    BasePathFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
       super(getString(literalExpression),
             literalExpression,
             1,
@@ -127,7 +129,7 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
   private static class FilesFileReferenceSet extends FileReferenceSet {
     private boolean myPatternUsed = false;
 
-    public FilesFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
+    FilesFileReferenceSet(@NotNull JSLiteralExpression literalExpression, @NotNull PsiReferenceProvider psiReferenceProvider) {
       super(StringUtil.unquoteString(literalExpression.getText()),
             literalExpression,
             1,

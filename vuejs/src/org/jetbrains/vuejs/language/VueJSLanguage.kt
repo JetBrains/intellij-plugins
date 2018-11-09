@@ -113,6 +113,6 @@ class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6, Jav
   }
 
   companion object {
-    val INSTANCE = VueJSLanguage()
+    val INSTANCE: VueJSLanguage = VueJSLanguage()
   }
 }

@@ -15,11 +15,11 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
+import com.intellij.lang.ecmascript6.psi.ES6FunctionProperty
 import com.intellij.lang.ecmascript6.psi.JSClassExpression
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
-import com.intellij.lang.javascript.JSElementTypes
-import com.intellij.lang.javascript.JSStubElementTypes
-import com.intellij.lang.javascript.JSTokenTypes
+import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil
+import com.intellij.lang.javascript.*
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler
 import com.intellij.lang.javascript.index.JSSymbolUtil
 import com.intellij.lang.javascript.psi.*
@@ -27,13 +27,18 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator
+import com.intellij.lang.javascript.psi.resolve.JSTypeInfo
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl
+import com.intellij.lang.javascript.psi.types.*
+import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.XmlElementVisitor
+import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.stubs.IndexSink
 import com.intellij.psi.stubs.StubIndexKey
@@ -45,6 +50,7 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isComponentDecorator
+import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.language.VueJSLanguage
 import org.jetbrains.vuejs.language.VueVForExpression
@@ -62,7 +68,8 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     record(VueGlobalDirectivesIndex.KEY),
     record(VueLocalDirectivesIndex.KEY),
     record(VueMixinBindingIndex.KEY),
-    record(VueOptionsIndex.KEY)
+    record(VueOptionsIndex.KEY),
+    record(VueStoreIndex.KEY)
   )
 
   companion object {
@@ -70,14 +77,68 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       return Pair(VueIndexBase.createJSKey(key), key)
     }
 
-    const val VUE = "Vue"
+    const val VUE: String = "Vue"
+    private const val METHOD = "methods"
+    private const val COMPUTED = "computed"
+    private const val DATA = "data"
+    private const val PROPS = "props"
+    private const val VUE_INSTANCE = "CombinedVueInstance"
+
     private val VUE_DESCRIPTOR_OWNERS = arrayOf(VUE, "mixin", "component", "extends", "directive", "delimiters")
     private val COMPONENT_INDICATOR_PROPS = setOf("template", "render", "mixins", "components", "props")
     fun hasComponentIndicatorProperties(obj: JSObjectLiteralExpression): Boolean =
-      obj.properties.any { Companion.COMPONENT_INDICATOR_PROPS.contains(it.name) }
+      obj.properties.any { COMPONENT_INDICATOR_PROPS.contains(it.name) }
+
+    fun isDefaultExports(expression: JSExpression?): Boolean =
+      expression is JSReferenceExpression && JSSymbolUtil.isAccurateReferenceExpressionName(expression as JSReferenceExpression?,
+                                                                                            JSSymbolUtil.EXPORTS, "default")
+
   }
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.codeInsight.findModule(result)
+
+  override fun addContextType(info: JSTypeInfo, context: PsiElement) {
+    if (context.containingFile.fileType != VueFileType.INSTANCE) return
+    if (!VueFrameworkInsideScriptSpecificHandlersFactory.isInsideScript(context)) return
+    val parent = PsiTreeUtil.findFirstParent(context, Condition {
+      return@Condition it is JSObjectLiteralExpression && it.parent is ES6ExportDefaultAssignment
+    })
+    if (parent == null) return
+    if (context !is JSReferenceExpression) return
+    if (context.qualifier !is JSThisExpression) return
+    if (context.parent.parent is ES6ExportDefaultAssignment) return
+    val processGenericType = processGenericType(context, parent)
+    if (processGenericType != null) info.addRecordType(processGenericType)
+  }
+
+  private fun processGenericType(context: JSReferenceExpression,
+                                 parent: PsiElement?): JSRecordType? {
+    val typeAlias = JSFileReferencesUtil.resolveModuleReference(context.containingFile, "vue/types/vue").firstOrNull()
+    if (typeAlias == null) return null
+    val typeSource = JSTypeSourceFactory.createTypeSource(typeAlias, false)
+    val vueType = JSNamedTypeFactory.createType(VUE_INSTANCE, typeSource, JSContext.INSTANCE)
+    val vue = JSNamedTypeFactory.createType(VUE, typeSource, JSContext.INSTANCE)
+    val methodPropertyType = JSResolveUtil.getElementJSType((parent as JSObjectLiteralExpression).findProperty(METHOD),
+                                                            JSEvaluateContext.JSEvaluationPlace.DEFAULT)
+    val computedPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(COMPUTED), JSEvaluateContext.JSEvaluationPlace.DEFAULT)
+    val propsPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(PROPS), JSEvaluateContext.JSEvaluationPlace.DEFAULT)
+    val dataFunction = (parent.findProperty(DATA) as? ES6FunctionProperty)
+    val dataStream = JSTypeUtils.getFunctionType(
+      JSResolveUtil.getElementJSType(dataFunction, JSEvaluateContext.JSEvaluationPlace.DEFAULT),
+      false,
+      context)
+      .filter { it is JSFunctionType }.findFirst()
+    val dataPropertyType = if (dataStream.isPresent) (dataStream.get() as? JSFunctionType)?.returnType
+    else null ?: JSTypeCastUtil.NO_RECORD_TYPE
+    val genericArguments = listOf(vue, dataPropertyType, getContextualType(methodPropertyType),
+                                  getContextualType(computedPropertyType), getContextualType(propsPropertyType))
+    return JSGenericTypeImpl(typeSource, vueType, genericArguments).asRecordType()
+  }
+
+  private fun getContextualType(type: JSType?): JSType {
+    if (type == null) return JSTypeCastUtil.NO_RECORD_TYPE
+    return JSContextualUnionTypeImpl.getContextualUnionType((type as JSCompositeTypeImpl).types, type.source)
+  }
 
   override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
     val obj = property.parent as JSObjectLiteralExpression
@@ -93,29 +154,87 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
             recordMixin(out, it.firstProperty!!, null, false)
           }
         }
-    } else if (EXTENDS == property.name && property.value is JSReferenceExpression) {
+    }
+    else if (EXTENDS == property.name && property.value is JSReferenceExpression) {
       recordExtends(out, property, property.value, false)
-    } else if (DIRECTIVES == property.name) {
-      (property.value as? JSObjectLiteralExpression)?.properties?.forEach {
-          directive ->
-          if (!directive.name.isNullOrBlank()) {
-            if (directive.value is JSReferenceExpression) {
-              recordDirective(out, directive, directive.name!!, directive.value, false)
+    }
+    else if (DIRECTIVES == property.name) {
+      (property.value as? JSObjectLiteralExpression)?.properties?.forEach { directive ->
+        if (!directive.name.isNullOrBlank()) {
+          if (directive.value is JSReferenceExpression) {
+            recordDirective(out, directive, directive.name!!, directive.value, false)
+          }
+          else if (directive.value is JSObjectLiteralExpression || directive.value is JSFunction) {
+            recordDirective(out, directive, directive.name!!, null, false)
+          }
+        }
+      }
+    }
+    //Vuetify typescript components
+    else if (NAME == property.name && property.value is JSLiteralExpression) {
+      val componentName = (property.value as JSLiteralExpression).stringValue
+      if (componentName != null && obj.containingFile.name.contains(toAsset(componentName),
+                                                                    true) && obj.containingFile.fileType is TypeScriptFileType) {
+        out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
+      }
+    }
+    else if (VueStoreUtils.STATE == property.name) {
+      val properties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
+      properties
+        .filter { it.parent.parent == property }
+        .forEach {
+          if (it.name != null) {
+            out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, VueStoreUtils.STATE))
+          }
+        }
+    }
+    else if (VueStoreUtils.ACTION == property.name || VueStoreUtils.MUTATION == property.name || VueStoreUtils.GETTER == property.name) {
+      //Actions can be action: function(){} or action(){}
+      val es6properties = PsiTreeUtil.findChildrenOfType(property, ES6FunctionProperty::class.java)
+      val jsProperties = PsiTreeUtil.findChildrenOfType(property, JSProperty::class.java)
+
+      es6properties
+        .filter { it.parent.parent == property }
+        .forEach {
+          //          For such cases:
+          //          var SOME_MUTATION = 'computed name'
+          //          mutations = {
+          //            [SOME_MUTATION]() {
+          //            }
+          //          };
+          if (it.computedPropertyName != null) {
+            val expr = PsiTreeUtil.findChildOfType(it, JSReferenceExpression::class.java)
+            if (expr != null && expr.referenceName != null) {
+              val reference = JSSymbolUtil.resolveLocallyIncludingDefinitions(expr.referenceName!!, expr)
+              val referenceText = PsiTreeUtil.findChildOfType(reference, JSLiteralExpression::class.java)?.value
+              if (referenceText != null) out.addImplicitElement(
+                createImplicitElement(referenceText.toString(), it, VueStoreIndex.JS_KEY, property.name))
             }
-            else if (directive.value is JSObjectLiteralExpression || directive.value is JSFunction) {
-              recordDirective(out, directive, directive.name!!, null, false)
-            }
+          }
+          if (it.name != null) {
+            out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, property.name))
+          }
+
+        }
+      jsProperties
+        .filter { it.parent.parent == property }
+        .forEach {
+          if (it.name != null) {
+            out.addImplicitElement(createImplicitElement(it.name!!, it, VueStoreIndex.JS_KEY, property.name))
           }
         }
     }
 
     val firstProperty = obj.firstProperty ?: return outData
     if (firstProperty == property) {
-      if (obj.parent is JSExportAssignment) {
+      val parent = obj.parent
+      if (parent is JSExportAssignment ||
+          (parent is JSAssignmentExpression && isDefaultExports(parent.definitionExpression?.expression))) {
         if (obj.containingFile.fileType == VueFileType.INSTANCE || obj.containingFile is JSFile && hasComponentIndicatorProperties(obj)) {
           out.addImplicitElement(createImplicitElement(getComponentNameFromDescriptor(obj), property, VueComponentsIndex.JS_KEY))
         }
-      } else if (((obj.parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
+      }
+      else if (((parent as? JSProperty) == null) && isDescriptorOfLinkedInstanceDefinition(obj)) {
         val binding = (obj.findProperty("el")?.value as? JSLiteralExpression)?.stringValue
         out.addImplicitElement(createImplicitElement(binding ?: "", property, VueOptionsIndex.JS_KEY))
       }
@@ -130,8 +249,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val classExpression = exportAssignment.stubSafeElement as? JSClassExpression<*> ?: return data
 
     val nameProperty = VueComponents.getDescriptorFromDecorator(decorator)?.findProperty("name")
-    val name = getTextIfLiteral(nameProperty?.value) ?:
-               FileUtil.getNameWithoutExtension(decorator.containingFile.name)
+    val name = getTextIfLiteral(nameProperty?.value) ?: FileUtil.getNameWithoutExtension(decorator.containingFile.name)
     val outData = data ?: JSElementIndexingDataImpl()
     outData.addImplicitElement(createImplicitElement(name, classExpression, VueComponentsIndex.JS_KEY, null, null, false))
     return outData
@@ -161,12 +279,14 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
         outData.addImplicitElement(createImplicitElement(componentName, provider, VueComponentsIndex.JS_KEY,
                                                          nameRefString, arguments[1], true))
       }
-    } else if (VueStaticMethod.Mixin.matches(reference)) {
+    }
+    else if (VueStaticMethod.Mixin.matches(reference)) {
       if (arguments.size == 1) {
         val provider = (arguments[0] as? JSObjectLiteralExpression)?.firstProperty ?: callExpression
         recordMixin(outData, provider, arguments[0], true)
       }
-    } else if (VueStaticMethod.Directive.matches(reference)) {
+    }
+    else if (VueStaticMethod.Directive.matches(reference)) {
       val directiveName = getTextIfLiteral(arguments[0])
       if (arguments.size >= 2 && directiveName != null && !directiveName.isNullOrBlank()) {
         recordDirective(outData, callExpression, directiveName, arguments[1], true)
@@ -192,9 +312,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   }
 
   private fun recordExtends(outData: JSElementIndexingData,
-                          provider: JSImplicitElementProvider,
-                          descriptorRef: PsiElement?,
-                          isGlobal: Boolean) {
+                            provider: JSImplicitElementProvider,
+                            descriptorRef: PsiElement?,
+                            isGlobal: Boolean) {
     outData.addImplicitElement(createImplicitElement(if (isGlobal) GLOBAL else LOCAL, provider, VueExtendsBindingIndex.JS_KEY, null,
                                                      descriptorRef, isGlobal))
   }
@@ -203,9 +323,9 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val argumentList = obj.parent as? JSArgumentList ?: return false
     if (argumentList.arguments[0] == obj) {
       return JSSymbolUtil.isAccurateReferenceExpressionName(
-          (argumentList.parent as? JSNewExpression)?.methodExpression as? JSReferenceExpression, VUE) ||
-        JSSymbolUtil.isAccurateReferenceExpressionName(
-          (argumentList.parent as? JSCallExpression)?.methodExpression as? JSReferenceExpression, VUE, "extends")
+        (argumentList.parent as? JSNewExpression)?.methodExpression as? JSReferenceExpression, VUE) ||
+             JSSymbolUtil.isAccurateReferenceExpressionName(
+               (argumentList.parent as? JSCallExpression)?.methodExpression as? JSReferenceExpression, VUE, "extends")
     }
     return false
   }
@@ -236,12 +356,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       statement.findChildByType(JSStubElementTypes.DEFINITION_EXPRESSION)
     else statement
     val ref = referenceHolder?.findChildByType(JSElementTypes.REFERENCE_EXPRESSION) ?: return false
-    return ref.getChildren(TokenSet.create(JSTokenTypes.IDENTIFIER)).filter { it.text in VUE_DESCRIPTOR_OWNERS}.any()
+    return ref.getChildren(TokenSet.create(JSTokenTypes.IDENTIFIER)).filter { it.text in VUE_DESCRIPTOR_OWNERS }.any()
   }
 
   private fun getComponentNameFromDescriptor(obj: JSObjectLiteralExpression): String {
     return ((obj.findProperty("name")?.value as? JSLiteralExpression)?.stringValue
-     ?: FileUtil.getNameWithoutExtension(obj.containingFile.name))
+            ?: FileUtil.getNameWithoutExtension(obj.containingFile.name))
   }
 
   override fun indexImplicitElement(element: JSImplicitElementStructure, sink: IndexSink?): Boolean {
@@ -271,6 +391,16 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 fun findModule(element: PsiElement?): JSEmbeddedContent? {
   val file = element as? XmlFile ?: element?.containingFile as? XmlFile
   if (file != null && file.fileType == VueFileType.INSTANCE) {
+    if (file is PsiFileImpl) {
+      val greenStub = file.greenStub
+      //stub-safe path
+      if (greenStub != null) {
+        val children = greenStub.getChildrenByType<JSElement>(JSExtendedLanguagesTokenSetProvider.MODULE_EMBEDDED_CONTENTS,
+                                                              JSEmbeddedContent.ARRAY_FACTORY)
+        val result = children.firstOrNull()
+        return if (result is JSEmbeddedContent) result else null
+      }
+    }
     val script = findScriptTag(file)
     if (script != null) {
       return PsiTreeUtil.findChildOfType(script, JSEmbeddedContent::class.java)
@@ -279,7 +409,7 @@ fun findModule(element: PsiElement?): JSEmbeddedContent? {
   return null
 }
 
-fun findScriptTag(xmlFile : XmlFile): XmlTag? {
+fun findScriptTag(xmlFile: XmlFile): XmlTag? {
   if (xmlFile.fileType == VueFileType.INSTANCE) {
     val visitor = MyScriptVisitor()
     xmlFile.accept(visitor)
@@ -311,10 +441,10 @@ private class MyScriptVisitor : VueFileVisitor() {
   }
 }
 
-open class VueFileVisitor: XmlElementVisitor() {
-  override fun visitXmlDocument(document: XmlDocument?) = recursion(document)
+open class VueFileVisitor : XmlElementVisitor() {
+  override fun visitXmlDocument(document: XmlDocument?): Unit = recursion(document)
 
-  override fun visitXmlFile(file: XmlFile?) = recursion(file)
+  override fun visitXmlFile(file: XmlFile?): Unit = recursion(file)
 
   protected fun recursion(element: PsiElement?) {
     element?.children?.forEach { it.accept(this) }

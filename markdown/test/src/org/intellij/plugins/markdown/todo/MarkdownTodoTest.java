@@ -38,6 +38,14 @@ public class MarkdownTodoTest extends LightPlatformCodeInsightFixtureTestCase {
     doTest("[//]: #a (a todo comment)", 1);
   }
 
+  public void testLinkNotTodo() {
+    doTest("[url](todo comment)", 0);
+  }
+
+  public void testLinkReferenceDefinition() {
+    doTest("[foo]: /url \"todo comment\"", 0);
+  }
+
   public void testTodoInNotALinkPosition() {
     doTest("todo comment", 0);
   }

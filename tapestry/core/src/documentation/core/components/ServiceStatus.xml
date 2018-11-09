@@ -1,0 +1,6 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Page used to see the status of all services defined by the org.apache.tapestry.ioc.Registry. TODO: Add filters to control which services are displayed. TODO: Disable this page if in\
+        production mode (or not, as it does no harm).
+    </description>
+</element>

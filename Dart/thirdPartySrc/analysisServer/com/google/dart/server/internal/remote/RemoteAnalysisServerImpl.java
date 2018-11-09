@@ -29,10 +29,7 @@ import com.google.dart.server.utilities.logging.Logging;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.dartlang.analysis.server.protocol.AnalysisOptions;
-import org.dartlang.analysis.server.protocol.ImportedElements;
-import org.dartlang.analysis.server.protocol.RefactoringOptions;
-import org.dartlang.analysis.server.protocol.RequestError;
+import org.dartlang.analysis.server.protocol.*;
 import org.osgi.framework.Version;
 
 import java.io.IOException;
@@ -268,6 +265,30 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void analytics_enable(boolean value) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsEnable(id, value));
+  }
+
+  @Override
+  public void analytics_isEnabled(IsEnabledConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsIsEnabled(id), consumer);
+  }
+
+  @Override
+  public void analytics_sendEvent(String action) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsSendEvent(id, action));
+  }
+
+  @Override
+  public void analytics_sendTiming(String event, int millis) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateAnalyticsSendTiming(id, event, millis));
+  }
+
+  @Override
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions(id, file, offset), consumer);
@@ -369,6 +390,24 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void execution_deleteContext(String contextId) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateExecutionDeleteContext(id, contextId));
+  }
+
+  @Override
+  public void execution_getSuggestions(String code,
+                                       int offset,
+                                       String contextFile,
+                                       int contextOffset,
+                                       List<RuntimeCompletionVariable> variables,
+                                       List<RuntimeCompletionExpression> expressions,
+                                       GetRuntimeCompletionConsumer consumer) {
+    String id = generateUniqueId();
+    sendRequestToServer(id,
+                        RequestUtilities.generateExecutionGetSuggestions(
+                          id,
+                          code, offset,
+                          contextFile, contextOffset,
+                          variables, expressions),
+                        consumer);
   }
 
   @Override
@@ -694,6 +733,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     //
     else if (consumer instanceof CreateContextConsumer) {
       new CreateContextProcessor((CreateContextConsumer)consumer).process(resultObject, requestError);
+    }
+    else if (consumer instanceof GetRuntimeCompletionConsumer) {
+      new GetRuntimeCompletionProcessor((GetRuntimeCompletionConsumer)consumer).process(resultObject, requestError);
     }
     else if (consumer instanceof MapUriConsumer) {
       new MapUriProcessor((MapUriConsumer)consumer).process(resultObject, requestError);

@@ -1,20 +1,14 @@
 package org.angularjs.codeInsight;
 
-import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.inspections.JSBitwiseOperatorUsageInspection;
-import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.sixrr.inspectjs.confusing.CommaExpressionJSInspection;
@@ -59,8 +53,8 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgRepeatImplicitResolve() {
     myFixture.configureByFiles("ngRepeatImplicitType.html", "angular.js");
-    final PsiElement resolve = checkVariableResolve("ind<caret>ex", "$index", JSLocalImplicitElementImpl.class);
-    assertEquals("Number", ((JSLocalImplicitElementImpl)resolve).getTypeString());
+    final JSLocalImplicitElementImpl resolve = checkVariableResolve("ind<caret>ex", "$index", JSLocalImplicitElementImpl.class);
+    assertEquals("Number", resolve.getTypeString());
   }
 
   public void testNgRepeatExplicitCompletion() {
@@ -68,7 +62,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testInternalDefinitionCompletion() {
-    myFixture.testCompletion("internalDefinition.html",  "internalDefinition.after.html", "angular.js");
+    myFixture.testCompletion("internalDefinition.html", "internalDefinition.after.html", "angular.js");
   }
 
   public void testNgRepeatExplicitCompletionInScript() {
@@ -118,7 +112,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNgRepeatEndCompletion() {
-    myFixture.testCompletion("ngRepeatEnd.html","ngRepeatEnd.after.html", "angular.js");
+    myFixture.testCompletion("ngRepeatEnd.html", "ngRepeatEnd.after.html", "angular.js");
   }
 
   public void testNgRepeatEndResolve() {
@@ -139,7 +133,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("ngControllerAlias.resolve.html", "angular.js", "custom.js");
     checkVariableResolve("ap<caret>p", "app", JSDefinitionExpression.class);
   }
-  
+
   public void testEmmetBeforeInjection() {
     myFixture.configureByFiles("ngController.emmet.html", "angular.js", "custom.js");
     myFixture.type('\t');
@@ -233,109 +227,13 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
-  public void testEventHandler2Resolve() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("event.html", "angular2.js", "event.ts");
-      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
-    });
-  }
-
-  public void testBinding2Resolve() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("binding.html", "angular2.js", "event.ts");
-      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
-    });
-  }
-
-  public void testBindingPrivate2Resolve() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("binding.html", "angular2.js", "event_private.ts");
-      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
-    });
-  }
-
-  public void testNgIfResolve() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("ngIf.ts", "angular2.js", "ngIf.ts");
-      checkVariableResolve("my_use<caret>r.last", "my_user", JSDefinitionExpression.class);
-    });
-  }
-
-  private PsiElement checkVariableResolve(final String signature, final String varName, final Class<? extends JSElement> varClass) {
-    int offsetBySignature = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
-    PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
-    assertNotNull(ref);
-    PsiElement resolve = ref.resolve();
-    assertInstanceOf(resolve, varClass);
-    assertEquals(varName, varClass.cast(resolve).getName());
-    return resolve;
+  private <T extends JSElement> T checkVariableResolve(final String signature, final String varName, final Class<T> varClass) {
+    return AngularTestUtil.checkVariableResolve(signature, varName, varClass, myFixture);
   }
 
   public void testMessageFormat() {
     myFixture.configureByFiles("messageFormat.html", "messageFormatController.js", "angular.js");
     myFixture.checkHighlighting();
-  }
-
-  public void testStyles2() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("custom.ts", "angular2.js");
-      final int offset = AngularTestUtil.findOffsetBySignature("Helvetica <caret>Neue", myFixture.getFile());
-      final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
-      assertEquals(CSSLanguage.INSTANCE, element.getLanguage());
-    });
-  }
-
-  public void testHost() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("host.ts", "angular2.js");
-      for (String signature : new String[]{"eve<caret>nt", "bind<caret>ing", "at<caret>tribute"}) {
-        final int offset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
-        final PsiElement element = InjectedLanguageUtil.findElementAtNoCommit(myFixture.getFile(), offset);
-        assertEquals(signature, AngularJSLanguage.INSTANCE, element.getContainingFile().getLanguage());
-      }
-    });
-  }
-
-  public void testUnterminated() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.enableInspections(UnterminatedStatementJSInspection.class);
-      myFixture.configureByFiles("unterminated.ts", "angular2.js");
-      myFixture.checkHighlighting();
-    });
-  }
-
-  public void testNgForExternalCompletion() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(),
-                                        () -> myFixture.testCompletion("ngFor.html", "ngFor.after.html", "angular2.js"));
-  }
-
-  public void testNgForExternalResolve() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("ngFor.after.html", "angular2.js");
-      checkVariableResolve("myTo<caret>do", "myTodo", JSVariable.class);
-    });
-  }
-
-  public void testNgForInlineCompletion() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(),
-                                        () -> myFixture.testCompletion("ngFor.ts", "ngFor.after.ts", "angular2.js"));
-  }
-
-  public void testNgForInlineResolve() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("ngFor.after.ts", "angular2.js");
-      checkVariableResolve("\"myTo<caret>do\"", "myTodo", JSVariable.class);
-    });
-  }
-
-  public void test$EventExternalCompletion() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(),
-                                        () -> myFixture.testCompletion("$event.html", "$event.after.html", "angular2.js"));
-  }
-
-  public void test$EventInlineCompletion() {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(),
-                                        () -> myFixture.testCompletion("$event.ts", "$event.after.ts", "angular2.js"));
   }
 
   public void testElementOnly() {

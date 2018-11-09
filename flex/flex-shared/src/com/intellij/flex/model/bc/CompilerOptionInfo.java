@@ -1,9 +1,11 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.bc;
 
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.xmlb.Constants;
 import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -328,14 +330,13 @@ public class CompilerOptionInfo {
       assert rootElement != null;
       assert "options".equals(rootElement.getName());
 
-      //noinspection unchecked
       for (Element element : rootElement.getChildren()) {
         final CompilerOptionInfo info;
         if ("group".equals(element.getName())) {
           info = loadGroup(element);
         }
         else {
-          assert "option".equals(element.getName());
+          assert Constants.OPTION.equals(element.getName());
           info = loadOption(element);
         }
         infos.add(info);
@@ -371,14 +372,13 @@ public class CompilerOptionInfo {
 
     final List<CompilerOptionInfo> infos = new ArrayList<>();
 
-    //noinspection unchecked
     for (final Element element : groupElement.getChildren()) {
       final CompilerOptionInfo info;
       if ("group".equals(element.getName())) {
         info = loadGroup(element);
       }
       else {
-        assert "option".equals(element.getName());
+        assert Constants.OPTION.equals(element.getName());
         info = loadOption(element);
       }
       infos.add(info);
@@ -436,7 +436,6 @@ public class CompilerOptionInfo {
   private static ListElement[] readListElements(final Element element) {
     final List<ListElement> result = new LinkedList<>();
 
-    //noinspection unchecked
     for (final Element childElement : element.getChildren("listElement")) {
       final String name = childElement.getAttributeValue("name");
       final String displayName = childElement.getAttributeValue("displayName");

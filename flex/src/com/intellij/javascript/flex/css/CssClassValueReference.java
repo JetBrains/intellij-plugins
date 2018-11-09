@@ -88,7 +88,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
   }
 
   @Override
-  public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
     final ElementManipulator<PsiElement> manipulator = ElementManipulators.getManipulator(myElement);
     assert manipulator != null;
     return manipulator.handleContentChange(myElement, getRangeInElement(), newElementName);
@@ -122,7 +122,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
   }
 
   @Override
-  public boolean isReferenceTo(PsiElement element) {
+  public boolean isReferenceTo(@NotNull PsiElement element) {
     if (element instanceof CssSelectorSuffix) {
       String text = element.getText();
       return text != null && !text.isEmpty() && text.substring(1).equals(getValue(myElement));

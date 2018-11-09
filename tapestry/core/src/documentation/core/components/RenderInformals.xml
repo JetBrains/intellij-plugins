@@ -1,0 +1,9 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Used to render out all informal parameters, at the end of the org.apache.tapestry.annotations.BeginRender phase. This mixin can be used with components that render a single tag inside the\
+        org.apache.tapestry.annotations.BeginRender phase. RenderInformals will activate during the PostBeginRender phase to write additional attributes, from the informal parameters, into the active\
+        element. If you want this behavior, but need to render more than a single tag, then implement render phase methods for the org.apache.tapestry.annotations.BeforeRenderTemplate and\
+        org.apache.tapestry.annotations.AfterRenderTemplate phases. Use those phases to write the additional elements and close them. This is often used as a base class, for cases where a component\
+        doesn't have other mixins.
+    </description>
+</element>

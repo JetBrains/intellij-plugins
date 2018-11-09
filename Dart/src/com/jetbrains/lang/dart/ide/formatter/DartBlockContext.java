@@ -10,7 +10,7 @@ class DartBlockContext {
   private final FormattingMode myMode;
   private final CommonCodeStyleSettings myDartSettings;
 
-  public DartBlockContext(CodeStyleSettings settings, FormattingMode mode) {
+  DartBlockContext(CodeStyleSettings settings, FormattingMode mode) {
     mySettings = settings;
     myMode = mode;
     myDartSettings = settings.getCommonSettings(DartLanguage.INSTANCE);

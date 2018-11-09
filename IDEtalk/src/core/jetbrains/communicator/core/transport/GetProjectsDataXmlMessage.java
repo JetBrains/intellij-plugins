@@ -32,21 +32,26 @@ public class GetProjectsDataXmlMessage implements XmlMessage {
     myResult = result;
   }
 
+  @Override
   public String getTagName() {
     return TAG;
   }
 
+  @Override
   public String getTagNamespace() {
     return Transport.NAMESPACE;
   }
 
+  @Override
   public boolean needsResponse() {
     return true;
   }
 
+  @Override
   public void fillRequest(Element element) {
   }
 
+  @Override
   public void processResponse(Element responseElement) {
     List children = responseElement.getChildren();
     if (children.size() > 0) {

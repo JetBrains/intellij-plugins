@@ -42,7 +42,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
   private final String myText;
   private final Icon myIcon;
 
-  public DartComponentUsageGroup(@NotNull DartComponent element) {
+  DartComponentUsageGroup(@NotNull DartComponent element) {
     myFile = element.getContainingFile().getVirtualFile();
     myText = StringUtil.notNullize(element.getName());
     myElementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
@@ -74,7 +74,7 @@ class DartComponentUsageGroup implements UsageGroup, DataProvider {
 
   @Nullable
   @Override
-  public Object getData(@NonNls String dataId) {
+  public Object getData(@NotNull @NonNls String dataId) {
     if (CommonDataKeys.PSI_ELEMENT.is(dataId)) {
       final DartComponentName nameElement = getNameElement();
       if (nameElement != null) {

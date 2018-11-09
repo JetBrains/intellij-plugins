@@ -123,8 +123,6 @@ public class CfmlIndentProcessor extends CfmlFormatterUtil {
                  myType == CfmlElementTypes.TRYCATCHEXPRESSION ||
                  myType == CfmlElementTypes.FUNCTION_DEFINITION ||
                  myType == CfscriptTokenTypes.RETURN_KEYWORD ||
-                 (myType == CfmlElementTypes.REFERENCE_EXPRESSION &&
-                  parentType == CfmlElementTypes.BLOCK_OF_STATEMENTS) ||
                  parentType == CfmlElementTypes.BLOCK_OF_STATEMENTS
           ) {
           if (parentType != CfmlElementTypes.SCRIPT_TAG) {

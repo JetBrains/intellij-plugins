@@ -15,6 +15,7 @@ import java.util.Comparator;
 
 public class FlashUmlImplementationsProvider extends ImplementationsProvider<Object> {
 
+  @Override
   public Object[] getElements(Object element, Project project) {
     JSClass clazz = (JSClass)element;
     final Collection<PsiElement> inheritors = Collections.synchronizedSet(new THashSet<PsiElement>());
@@ -31,14 +32,17 @@ public class FlashUmlImplementationsProvider extends ImplementationsProvider<Obj
     return inheritors.toArray(PsiElement.EMPTY_ARRAY);
   }
 
+  @Override
   public boolean isEnabledOn(Object element) {
     return element instanceof JSClass;
   }
 
+  @Override
   public String getHeaderName(Object element, Project project) {
     return JSBundle.message("javascript.uml.show.implementations.header", ((JSClass)element).getName());
   }
 
+  @Override
   public Comparator<Object> getComparator() {
     return (o1, o2) -> PSI_COMPARATOR.compare((PsiElement)o1, (PsiElement)o2);
   }

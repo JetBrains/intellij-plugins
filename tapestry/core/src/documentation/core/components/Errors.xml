@@ -1,0 +1,45 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Standard validation error presenter. Must be enclosed by a org.apache.tapestry.corelib.components.Form component. If errors are present, renders a div element around a banner message and\
+        around an unnumbered list of error messages. Renders nothing if the org.apache.tapestry.ValidationTracker shows no errors.
+    </description>
+
+    <parameters>
+        <parameter name="banner">
+            The banner message displayed above the errors. The default value is "You must correct the following errors before you may continue.".
+        </parameter>
+        <parameter name="class">
+            The CSS class for the div element rendered by the component. The default value is "t-error".
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+    The Errors component automatically connects with the Form that encloses it. Just place the
+    component inside a Form.
+</p>
+
+<div class="section">Search.tml</div>
+
+<div class="source"><pre>
+&lt;html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd"&gt;<br/>
+    &lt;body&gt;<br/>
+<br/>
+    &lt;t:form&gt;<br/>
+        &lt;t:errors&gt;<br/>
+        &lt;t:label for="search"/&gt;<br/>
+        &lt;t:textfield t:id="search"/&gt;<br/>
+        &lt;input type="submit" value="Search"/&gt;<br/>
+    &lt;/t:form&gt;<br/>
+<br/>
+    &lt;/body&gt;<br/>
+&lt;/html&gt;</pre>
+</div>
+
+<p>
+    The Errors component here will display any validation errors that occur when the form is submitted.
+</p>
+	]]>
+    </examples>
+</element>

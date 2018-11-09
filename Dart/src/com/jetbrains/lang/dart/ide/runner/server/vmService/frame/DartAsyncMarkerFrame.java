@@ -13,6 +13,7 @@ public class DartAsyncMarkerFrame extends XStackFrame {
   public DartAsyncMarkerFrame() {
   }
 
+  @Override
   public void customizePresentation(@NotNull ColoredTextContainer component) {
     component.append("<asynchronous gap>", SimpleTextAttributes.EXCLUDED_ATTRIBUTES);
     component.setIcon(AllIcons.General.SeparatorH);

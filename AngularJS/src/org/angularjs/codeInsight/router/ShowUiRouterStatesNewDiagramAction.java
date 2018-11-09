@@ -1,7 +1,6 @@
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.DiagramProvider;
-import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProgressManager;
@@ -16,6 +15,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import icons.AngularJSIcons;
 import org.angularjs.index.AngularIndexUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,8 +30,7 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   public static final String DESCRIPTION = "Show AngularJS ui-router State Diagram";
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
-    UsageTrigger.trigger(USAGE_KEY);
+  public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
     if (project == null) return;
 
@@ -100,9 +99,9 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
-    e.getPresentation().setEnabledAndVisible(project != null && AngularIndexUtil.hasAngularJS(project) && !AngularIndexUtil.hasAngularJS2(project));
+    e.getPresentation().setEnabledAndVisible(project != null && AngularIndexUtil.hasAngularJS(project));
 
     e.getPresentation().setText(DESCRIPTION);
     e.getPresentation().setDescription(DESCRIPTION);

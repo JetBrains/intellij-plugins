@@ -1,0 +1,11 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A close relative of the org.apache.tapestry.corelib.components.If component that inverts the meaning of its test. This is easier than an If component with the negate parameter set to true.
+    </description>
+
+    <parameters>
+        <parameter name="test">
+            If true, then the body of the If component is rendered. If false, the body is omitted.
+        </parameter>
+    </parameters>
+</element>

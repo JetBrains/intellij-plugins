@@ -69,7 +69,7 @@ public class UIUtil {
     }
   }
 
-  public static void setupUserList(JList userListComponent, List<User> users) {
+  public static void setupUserList(JList userListComponent, List<? extends User> users) {
 
     Collections.sort(users, (o1, o2) -> compareUsers(o1, o2));
 

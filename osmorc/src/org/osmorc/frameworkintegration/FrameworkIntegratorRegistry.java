@@ -25,9 +25,10 @@
 package org.osmorc.frameworkintegration;
 
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.extensions.Extensions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
@@ -38,8 +39,8 @@ public class FrameworkIntegratorRegistry {
   }
 
   @NotNull
-  public FrameworkIntegrator[] getFrameworkIntegrators() {
-    return Extensions.getExtensions(FrameworkIntegrator.EP_NAME);
+  public List<FrameworkIntegrator> getFrameworkIntegrators() {
+    return FrameworkIntegrator.EP_NAME.getExtensionList();
   }
 
   @Nullable

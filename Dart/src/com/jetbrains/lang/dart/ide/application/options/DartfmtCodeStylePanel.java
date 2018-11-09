@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.ide.application.options;
 
 import com.intellij.application.options.CodeStyleAbstractPanel;
 import com.intellij.application.options.codeStyle.CodeStyleSchemesModel;
-import com.intellij.application.options.codeStyle.CodeStyleSettingsListener;
+import com.intellij.application.options.codeStyle.CodeStyleSchemesModelListener;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
@@ -28,10 +28,10 @@ public class DartfmtCodeStylePanel extends CodeStyleAbstractPanel {
   }
 
   @Override
-  public void setModel(@Nullable CodeStyleSchemesModel model) {
+  public void setModel(@NotNull CodeStyleSchemesModel model) {
     super.setModel(model);
     if (model != null) {
-      model.addListener(new CodeStyleSettingsListener() {
+      model.addListener(new CodeStyleSchemesModelListener() {
         @Override
         public void afterCurrentSettingsChanged() {
           updateRightMarginLabel();

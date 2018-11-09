@@ -19,17 +19,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.testmethodreturntype.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitMethodReturnTypeInspection";
   }
 
+  @Override
   protected void visitPotentialTestMethod(JSFunction method, ProblemsHolder holder, FlexUnitSupport support) {
     if (FlexUnitSupport.getCustomRunner((JSClass)method.getParent()) != null) return;
     if (method.getKind() != JSFunction.FunctionKind.SIMPLE) return;

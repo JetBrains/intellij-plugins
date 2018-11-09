@@ -17,6 +17,7 @@ import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
@@ -27,7 +28,9 @@ import com.intellij.psi.xml.XmlAttribute
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
+import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
+import org.jetbrains.vuejs.codeInsight.VueTagProvider
 
 class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/types/"
@@ -191,7 +194,7 @@ import compUI from 'compUI.vue'
 """)
     myFixture.configureByText("CompleteWithImportCreateExport.vue", """
 <template>
-<To<caret>
+<To<caret>></To>
 </template>
 <script>
 </script>
@@ -203,7 +206,7 @@ import compUI from 'compUI.vue'
       myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR)
       myFixture.checkResult("""
 <template>
-<ToImport<caret>
+<ToImport<caret>></ToImport>
 </template>
 <script>
     import ToImport from "./toImport";
@@ -422,42 +425,39 @@ export default {
   }
 
   fun testCompleteElementsFromLocalData() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
-      myFixture.configureByText("CompleteElementsFromLocalData.vue", """
-<template>{{<caret>}}</template>
-<script>
-let props = ['parentMsg'];
+    configureVueDefinitions()
+    myFixture.configureByText("CompleteElementsFromLocalData.vue", """
+  <template>{{<caret>}}</template>
+  <script>
+  let props = ['parentMsg'];
 
-export default {
-  name: 'parent',
-  props: props,
-  data: {
-    groceryList: {}
+  export default {
+    name: 'parent',
+    props: props,
+    data: {
+      groceryList: {}
+    }
+  }</script>""")
+    assertDoesntContainVueLifecycleHooks()
+    assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
-}</script>""")
-      myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
 
-      myFixture.configureByText("CompleteElementsFromLocalData.vue", """
-<template>{{<caret>}}</template>
-<script>
-let props = ['parentMsg'];
+  fun testCompleteElementsFromLocalData2() {
+    configureVueDefinitions()
+    myFixture.configureByText("CompleteElementsFromLocalData2.vue", """
+    <template>{{<caret>}}</template>
+    <script>
+    let props = ['parentMsg'];
 
-export default {
-  name: 'parent',
-  props: props,
-  data:
-    () => {
-            return {
-              groceryList: {}
-            }
-          }
-}</script>""")
-      myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
-      UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "grocery-list", "parent-msg",
-                                         "GroceryList", "ParentMsg")
-    })
+    export default {
+      name: 'parent',
+      props: props,
+      data: () => {
+                return {groceryList: 12}
+              }
+    }</script>""")
+    assertDoesntContainVueLifecycleHooks()
+    assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
 
   fun testScrInStyleCompletion() {
@@ -695,8 +695,8 @@ $script""")
 </template>
 $script""")
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "v-bind:href", "v-bind:hidden", "v-bind:onclick", "v-bind:onchange")
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":two-words")
+    assertContainsElements(myFixture.lookupElementStrings!!, "hidden", "onclick", "onchange", "key", "is")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":use-me", ":two-words", "use-me", "two-words")
 
     myFixture.configureByText("User.vue", """
 <template>
@@ -836,10 +836,10 @@ $script""")
 <template><v-<caret></template>
 """)
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, listOf("v-app", "v-list", "v-list-group", "v-list-tile",
-                                                                "v-list-tile-action", "v-list-tile-action-text",
-                                                                "v-list-tile-avatar", "v-list-tile-content",
-                                                                "v-list-tile-sub-title", "v-list-tile-title"))
+    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS.toList()
+    assertSameElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents,
+                                                                              listOf("v-app", "v-list", "v-list-group", "v-list-tile",
+                                                                                     "v-list-tile-avatar")))
   }
 
   fun testIviewCompletion() {
@@ -867,9 +867,20 @@ $script""")
 </script>
 """)
     myFixture.completeBasic()
-    assertContainsElements(myFixture.lookupElementStrings!!, "aaa", ":aaa", "v-for", "ddd", "sss")
-    // actually the test is against exception, which occurred on completion
-    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "123", "true")
+    assertContainsElements(myFixture.lookupElementStrings!!, "aaa", "v-for", "ddd", "sss",
+                           "class", "about", "onclick", "v-bind", "v-bind:", "v-on:")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, ":aaa", ":ddd", ":sss", ":about", ":onclick", ":", "123", "true")
+
+    myFixture.type(":")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, ":aaa", ":ddd", ":sss", ":about", ":onclick")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "aaa", "v-for", "ddd", "sss", "v-bind", "v-bind:", "v-on:")
+
+    myFixture.type("a")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, ":aaa", ":about")
+    UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!, "aaa", "v-for", "ddd", "sss", "v-bind",
+                                       ":ddd", ":sss", ":onclick", "v-bind:", "v-on:")
   }
 
   fun testBuefyCompletion() {
@@ -1227,6 +1238,247 @@ Pair("""<template>
     assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive",
                        "ctrl", "alt", "shift", "meta", "exact")
   }
+
+  fun testAutopopupAfterVOnSelection() {
+    myFixture.configureByText("a.vue", "<div v-o<caret>>")
+    myFixture.completeBasic()
+    (myFixture.lookup as LookupImpl).finishLookup(Lookup.NORMAL_SELECT_CHAR)
+    // new completion must start
+    myFixture.assertPreferredCompletionItems(0, "abort", "autocomplete", "autocompleteerror", "blur", "cancel", "canplay")
+    (myFixture.lookup as LookupImpl).finishLookup(Lookup.NORMAL_SELECT_CHAR)
+    myFixture.checkResult("<div v-on:abort=\"<caret>\">")
+  }
+
+  fun testStyleAttributes() {
+    myFixture.configureByText("foo.vue", "<style <caret>></style>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "scoped", "src", "module")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "functional")
+  }
+
+  fun testTemplateAttributes() {
+    myFixture.configureByText("foo.vue", "<template <caret>></template>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "functional", "v-if", "v-else")
+    assertDoesntContain(myFixture.lookupElementStrings!!, "scoped", "module")
+  }
+
+  fun testNoVueTagsWithNamespace() {
+    myFixture.configureByText("foo.vue", """
+      <template>
+        <foo:tran<caret>/>
+      </template>""")
+    myFixture.completeBasic()
+    assertNull(myFixture.lookup)
+  }
+
+  fun testVuexGettersCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureByText("vuex_getter.js", "export const store = new Vuex.Store({\n" +
+                                          "    getters: {\n" +
+                                          "        getter1(state) {\n" +
+                                          "            let data = {\n" +
+                                          "                insideGetter1: \"uno\",\n" +
+                                          "                insideGetter2: \"duos\"\n" +
+                                          "            }\n" +
+                                          "        },\n" +
+                                          "        getter_2(state) {\n" +
+                                          "        }\n" +
+                                          "    }\n" +
+                                          "\n" +
+                                          "})")
+    myFixture.configureByText("state.vue", "<script>\n" +
+                                           "    export default {\n" +
+                                           "        methods: {\n" +
+                                           "            ...mapGetters([\n" +
+                                           "                '<caret>'\n" +
+                                           "            ])\n" +
+                                           "        }\n" +
+                                           "    }\n" +
+                                           "</script>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "getter1", "getter_2")
+  }
+
+  fun testVuexMutationsCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureByText("vuex_mutations.js",
+                                     "export const store = new Vuex.Store({\n" +
+                                     "    mutations: {\n" +
+                                     "        mutation1(state, payload) {\n" +
+                                     "            let data = {\n" +
+                                     "                insideMutation1: \"uno\",\n" +
+                                     "                insideMutation2: \"duos\"\n" +
+                                     "            }\n" +
+                                     "        }\n" +
+                                     "    }\n" +
+                                     "})")
+    myFixture.configureByText("state.vue", "<script>\n" +
+                                           "    export default {\n" +
+                                           "        methods: {\n" +
+                                           "            ...mapMutations([\n" +
+                                           "                '<caret>'\n" +
+                                           "            ])\n" +
+                                           "        }\n" +
+                                           "    }\n" +
+                                           "</script>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!,  "mutation1")
+  }
+  fun testVuexMutations2Completion() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureByText("index.js", "export const store = new Vuex.Store({\n" +
+                                                   "    mutations: {\n" +
+                                                   "        mutation1(state, payload) {\n" +
+                                                   "            let data = {\n" +
+                                                   "                mutation1_inside: \"uno\",\n" +
+                                                   "                mutation2_inside: \"duos\"\n" +
+                                                   "            }\n" +
+                                                   "        }\n" +
+                                                   "    },\n" +
+                                                   "    actions: {\n" +
+                                                   "        action1: function ({commit}, payload) {\n" +
+                                                   "            commit('m<caret>')\n" +
+                                                   "        }\n" +
+                                                   "    }\n" +
+                                                   "})")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!,  "mutation1")
+  }
+
+  fun testVuexActionsCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureByText("vuex_actions.js", "export const store = new Vuex.Store({\n" +
+                                                 "    actions: {\n" +
+                                                 "        action1: function ({commit}, payload) {\n" +
+                                                 "            commit('mutation1')\n" +
+                                                 "            let data = {\n" +
+                                                 "                insideAction1: \"uno\",\n" +
+                                                 "                insideAction2: \"duos\"\n" +
+                                                 "            }\n" +
+                                                 "        },\n" +
+                                                 "        action_2: function ({commit}) {\n" +
+                                                 "            commit('mutation_2')\n" +
+                                                 "        },\n" +
+                                                 "    },\n" +
+                                                 "})")
+    myFixture.configureByText("state.vue", "<script>\n" +
+                                           "    export default {\n" +
+                                           "        methods: {\n" +
+                                           "            ...mapActions([\n" +
+                                           "                '<caret>'\n" +
+                                           "            ])\n" +
+                                           "        }\n" +
+                                           "    }\n" +
+                                           "</script>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!,  "action1", "action_2")
+  }
+
+  fun testVuexActions2Completion() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuex\": \"^3.0.1\"")
+    myFixture.configureByText("vuex_actions.js", "export const store = new Vuex.Store({\n" +
+                                                 "    actions: {\n" +
+                                                 "        action1: function ({commit}, payload) {\n" +
+                                                 "            commit('mutation1')\n" +
+                                                 "            let data = {\n" +
+                                                 "                insideAction1: \"uno\",\n" +
+                                                 "                insideAction2: \"duos\"\n" +
+                                                 "            }\n" +
+                                                 "        },\n" +
+                                                 "        action_2: function ({commit}) {\n" +
+                                                 "            commit('mutation_2')\n" +
+                                                 "        },\n" +
+                                                 "    },\n" +
+                                                 "})")
+    myFixture.configureByText("state.vue", "\n" +
+                                           "<script>\n" +
+                                           "    export default {\n" +
+                                           "        },\n" +
+                                           "        computed: {\n" +
+                                           "            dataData() {\n" +
+                                           "                this.store.dispatch('<caret>')\n" +
+                                           "            },\n" +
+                                           "        }\n" +
+                                           "    }\n" +
+                                           "</script>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!,  "action1", "action_2")
+  }
+
+  fun testVueCompletionInsideScript() {
+    configureVueDefinitions()
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                           "    export default {\n" +
+                                           "        name: 'test',\n" +
+                                           "        data() {\n" +
+                                           "            return {testItem: 10}\n" +
+                                           "        },\n" +
+                                           "        props : {\n" +
+                                           "          props1: true\n" +
+                                           "        },\n" +
+                                           "        methods: {\n" +
+                                           "            method1() {}\n" +
+                                           "        },\n" +
+                                           "        computed: {\n" +
+                                           "            dataData() {this.<caret> }\n" +
+                                           "        }\n" +
+                                           "    }\n" +
+                                           "</script>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "testItem", "props1", "method1")
+  }
+
+  fun testVueCompletionInsideScriptLifecycleHooks() {
+    configureVueDefinitions()
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                          "    export default {\n" +
+                                          "        computed: {\n" +
+                                          "            dataData() {this.<caret> }\n" +
+                                          "        }\n" +
+                                          "    }\n" +
+                                          "</script>")
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
+  }
+
+  fun testVueCompletionInsideScriptNoLifecycleHooks() {
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                          "    export default {\n" +
+                                          "        computed: {\n" +
+                                          "            dataData() {this.<caret> }\n" +
+                                          "        }\n" +
+                                          "    }\n" +
+                                          "</script>")
+    assertDoesntContainVueLifecycleHooks()
+  }
+
+  fun testVueCompletionInsideScriptNoLifecycleHooksTopLevel() {
+    configureVueDefinitions()
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                          "    export default {\n" +
+                                          "        this.<caret> " +
+                                          "    }\n" +
+                                          "</script>")
+    assertDoesntContainVueLifecycleHooks()
+  }
+
+  fun testVueCompletionInsideScriptNoLifecycleHooksWithoutThis() {
+    configureVueDefinitions()
+    myFixture.configureByText("test.vue", "<script>\n" +
+                                          "    export default {\n" +
+                                          "        methods: {name(){<caret>}} " +
+                                          "    }\n" +
+                                          "</script>")
+
+    assertDoesntContainVueLifecycleHooks()
+  }
+
+  private fun assertDoesntContainVueLifecycleHooks() {
+    myFixture.completeBasic()
+    assertDoesntContain(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
+  }
+
 }
 
 fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,

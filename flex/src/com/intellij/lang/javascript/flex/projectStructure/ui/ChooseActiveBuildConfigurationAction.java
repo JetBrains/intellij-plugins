@@ -36,7 +36,8 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   private static final Icon ICON_ACTIVE_SELECTED = PlatformIcons.CHECK_ICON_SELECTED;
   private static final Icon ICON_EMPTY = EmptyIcon.create(ICON_ACTIVE);
 
-  public void update(final AnActionEvent e) {
+  @Override
+  public void update(@NotNull final AnActionEvent e) {
     boolean enabled = isEnabled(e.getDataContext());
     if (ActionPlaces.isPopupPlace(e.getPlace())) {
       e.getPresentation().setVisible(enabled);
@@ -54,7 +55,8 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
-  public void actionPerformed(final AnActionEvent e) {
+  @Override
+  public void actionPerformed(@NotNull final AnActionEvent e) {
     Module module = LangDataKeys.MODULE.getData(e.getDataContext());
     if (module != null) {
       createPopup(module).showInBestPositionFor(e.getDataContext());
@@ -142,7 +144,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
     private final FlexBuildConfigurationManager myManager;
 
-    public SelectBcAction(final FlexBuildConfiguration bc, final FlexBuildConfigurationManager manager) {
+    SelectBcAction(final FlexBuildConfiguration bc, final FlexBuildConfigurationManager manager) {
       super(bc.getName(), getDescription(bc), bc.getIcon());
       myBc = bc;
       myManager = manager;
@@ -152,7 +154,8 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
       return bc.getNature().getPresentableText();
     }
 
-    public void actionPerformed(final AnActionEvent e) {
+    @Override
+    public void actionPerformed(@NotNull final AnActionEvent e) {
       myManager.setActiveBuildConfiguration(myBc);
     }
 
@@ -165,7 +168,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   private static class EditBcsAction extends DumbAwareAction {
     private final Module myModule;
 
-    public EditBcsAction(Module module) {
+    EditBcsAction(Module module) {
       super(null);
       myModule = module;
       final AnAction a = ActionManager.getInstance().getAction("ShowProjectStructureSettings");
@@ -173,7 +176,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       final FlexBuildConfiguration activeConfiguration = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
       final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myModule.getProject());
       ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), c, () -> {
@@ -186,7 +189,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   private static class MyPanel extends JPanel {
     private final SimpleColoredComponent myComponent;
 
-    public MyPanel() {
+    MyPanel() {
       super(new BorderLayout());
       setBorder(new EmptyBorder(2, 0, 2, 0));
       setOpaque(true);

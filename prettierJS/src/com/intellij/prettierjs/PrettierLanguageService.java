@@ -4,7 +4,6 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +12,10 @@ import java.util.concurrent.Future;
 
 public interface PrettierLanguageService {
   @Nullable
-  Future<FormatResult> format(@NotNull PsiFile file, @NotNull NodePackage prettierPackage, @Nullable TextRange range);
+  Future<FormatResult> format(@NotNull String filePath,
+                              String ignoreFilePath, @NotNull String text,
+                              @NotNull NodePackage prettierPackage,
+                              @Nullable TextRange range);
 
   @Nullable
   Future<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage);
@@ -36,20 +38,23 @@ public interface PrettierLanguageService {
   }
 
   class FormatResult {
-    private FormatResult(String result, String error) {
+    public static final FormatResult IGNORED = new FormatResult(null, null, true);
+    private FormatResult(String result, String error, boolean ignored) {
       this.result = result;
       this.error = error;
+      this.ignored = ignored;
     }
 
     public static FormatResult error(String error) {
-      return new FormatResult(null, error);
+      return new FormatResult(null, error, false);
     }
 
     public static FormatResult formatted(String result) {
-      return new FormatResult(result, null);
+      return new FormatResult(result, null, false);
     }
 
     public final String result;
     public final String error;
+    public final boolean ignored;
   }
 }

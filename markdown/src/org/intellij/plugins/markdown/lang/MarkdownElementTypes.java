@@ -78,4 +78,8 @@ public interface MarkdownElementTypes {
   IElementType ATX_4 = platformType(org.intellij.markdown.MarkdownElementTypes.ATX_4);
   IElementType ATX_5 = platformType(org.intellij.markdown.MarkdownElementTypes.ATX_5);
   IElementType ATX_6 = platformType(org.intellij.markdown.MarkdownElementTypes.ATX_6);
+
+  org.intellij.markdown.MarkdownElementType COMMENT = new org.intellij.markdown.MarkdownElementType("COMMENT", true);
+
+  IElementType LINK_COMMENT = platformType(COMMENT);
 }

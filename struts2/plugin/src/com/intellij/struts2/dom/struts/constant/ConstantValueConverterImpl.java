@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ConstantValueConverterImpl extends ConstantValueConverter {
 
+  @Override
   @Nullable
   public Converter<?> getConverter(@NotNull final GenericDomValue domElement) {
     final Constant constant = (Constant) domElement.getParent();

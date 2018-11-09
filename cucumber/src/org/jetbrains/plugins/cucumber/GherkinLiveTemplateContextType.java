@@ -21,10 +21,12 @@ public class GherkinLiveTemplateContextType extends TemplateContextType {
     super(CONTEXT_NAME, CucumberBundle.message("live.templates.context.cucumber.name"));
   }
 
+  @Override
   public boolean isInContext(@NotNull final PsiFile file, final int offset) {
     return file instanceof GherkinFileImpl;
   }
 
+  @Override
   public SyntaxHighlighter createHighlighter() {
     return new GherkinSyntaxHighlighter(new PlainGherkinKeywordProvider());
   }

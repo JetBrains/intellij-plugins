@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -32,7 +33,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       final JLabel label = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
 
       final DartProblem problem = (DartProblem)value;
-      setText(problem.getErrorMessage());
+      setText(problem.getErrorMessage().replaceAll("(\n)+", " "));
 
       setToolTipText(generateToolTipText(problem.getErrorMessage(), problem.getCorrectionMessage()));
 
@@ -82,7 +83,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private final Comparator<DartProblem> myDescriptionComparator = new DartProblemsComparator(DartProblemsComparator.MESSAGE_COLUMN_ID);
   private final Comparator<DartProblem> myLocationComparator = new DartProblemsComparator(DartProblemsComparator.LOCATION_COLUMN_ID);
 
-  public DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsPresentationHelper presentationHelper) {
+  DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsPresentationHelper presentationHelper) {
     myProject = project;
     myPresentationHelper = presentationHelper;
     myItems = new ArrayList<>();

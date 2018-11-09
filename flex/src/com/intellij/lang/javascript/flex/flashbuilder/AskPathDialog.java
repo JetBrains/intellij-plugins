@@ -24,10 +24,12 @@ public class AskPathDialog extends DialogWrapper {
     init();
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   protected void doOKAction() {
     final File dir = new File(getPath());
     if (dir.isDirectory() && dir.list().length > 0) {

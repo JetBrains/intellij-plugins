@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.google.jstestdriver.idea.execution.settings;
 
 import com.google.common.collect.Lists;
@@ -7,6 +8,7 @@ import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.util.JDOMExternalizer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.JdomKt;
 import com.intellij.util.ObjectUtils;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -75,7 +77,6 @@ public class JstdRunSettingsSerializationUtils {
     return builder.build();
   }
 
-  @SuppressWarnings("unchecked")
   private static List<String> readFilesExcludedFromCoverage(@NotNull Element root) {
     List<String> excludedPaths = Lists.newArrayList();
     Element coverageElement = root.getChild(Key.COVERAGE.getKey());
@@ -130,7 +131,6 @@ public class JstdRunSettingsSerializationUtils {
     builder.setJSFilePath(FileUtil.toSystemDependentName(jsFile));
   }
 
-  @SuppressWarnings({"unchecked"})
   @NotNull
   private static <E extends Enum<E>> E readEnumByName(@NotNull Element element, @NotNull Key key, @NotNull E defaultValue) {
     String str = readString(element, key, "");
@@ -183,7 +183,6 @@ public class JstdRunSettingsSerializationUtils {
   }
 
   private static void writeString(@NotNull Element element, @NotNull Key key, @NotNull String value) {
-    JDOMExternalizer.write(element, key.getKey(), value);
+    JdomKt.addOptionTag(element, key.getKey(), value, "setting");
   }
-
 }

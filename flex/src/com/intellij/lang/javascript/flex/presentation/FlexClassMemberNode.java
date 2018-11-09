@@ -19,7 +19,7 @@ import java.util.Collection;
 
 public class FlexClassMemberNode extends ProjectViewNode<JSElement> {
 
-  public FlexClassMemberNode(JSElement element, ViewSettings settings) {
+  public FlexClassMemberNode(@NotNull JSElement element, ViewSettings settings) {
     super(element.getProject(), element, settings);
   }
 
@@ -41,7 +41,7 @@ public class FlexClassMemberNode extends ProjectViewNode<JSElement> {
   }
 
   @Override
-  protected void update(PresentationData presentation) {
+  protected void update(@NotNull PresentationData presentation) {
     String text;
     JSElement value = getValue();
     if (value == null || !value.isValid()) {

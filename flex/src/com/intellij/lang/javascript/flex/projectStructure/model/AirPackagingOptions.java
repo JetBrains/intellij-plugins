@@ -35,6 +35,7 @@ public interface AirPackagingOptions {
       PATH_IN_PACKAGE = pathInPackage;
     }
 
+    @Override
     public FilePathAndPathInPackage clone() {
       try {
         return (FilePathAndPathInPackage)super.clone();

@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartEnumConstantDeclarationImpl extends AbstractDartComponentImpl implements DartEnumConstantDeclaration {
 
-  public DartEnumConstantDeclarationImpl(ASTNode node) {
+  public DartEnumConstantDeclarationImpl(@NotNull ASTNode node) {
     super(node);
   }
 

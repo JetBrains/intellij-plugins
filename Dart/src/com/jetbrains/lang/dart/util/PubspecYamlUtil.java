@@ -131,7 +131,7 @@ public class PubspecYamlUtil {
     final FileDocumentManager documentManager = FileDocumentManager.getInstance();
     final Document cachedDocument = documentManager.getCachedDocument(pubspecYamlFile);
     final Long currentTimestamp = cachedDocument != null ? cachedDocument.getModificationStamp() : pubspecYamlFile.getModificationCount();
-    final Long cachedTimestamp = data == null ? null : data.first;
+    final Long cachedTimestamp = Pair.getFirst(data);
 
     if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
       data = null;
@@ -153,7 +153,7 @@ public class PubspecYamlUtil {
       catch (IOException ignored) {/* unlucky */}
     }
 
-    return data == null ? null : data.second;
+    return Pair.getSecond(data);
   }
 
   @Nullable

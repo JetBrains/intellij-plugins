@@ -72,7 +72,6 @@ public class AngularJSInjector implements MultiHostInjector {
     }
   }
 
-  @SuppressWarnings("SpellCheckingInspection")
   private static boolean nonBindable(@NotNull final XmlTextImpl xmlText) {
     final XmlTag parentTag = xmlText.getParentTag();
     return parentTag != null && (parentTag.getAttribute("ngNonBindable") != null || parentTag.getAttribute("ng-non-bindable") != null);
@@ -80,7 +79,7 @@ public class AngularJSInjector implements MultiHostInjector {
 
   @NotNull
   @Override
-  public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
+  public List<Class<? extends PsiElement>> elementsToInjectIn() {
     return Arrays.asList(XmlTextImpl.class, XmlAttributeValueImpl.class);
   }
 }

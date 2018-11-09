@@ -1,0 +1,26 @@
+<!DOCTYPE web-app
+      PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+      "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+    <display-name>My Tapestry Application</display-name>
+    <context-param>
+        <param-name>some.param</param-name>
+        <param-value>some.value</param-value>
+    </context-param>
+    <context-param>
+        <param-name>tapestry.app-package</param-name>
+        <param-value>org.example.myapp</param-value>
+    </context-param>
+    <filter>
+        <filter-name>somefilter</filter-name>
+        <filter-class>org.apache.tapestry5.BaseValidationDecorator</filter-class>
+    </filter>
+    <filter>
+        <filter-name>app</filter-name>
+        <filter-class>org.apache.tapestry5.TapestryFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>app</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+</web-app>

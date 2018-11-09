@@ -19,7 +19,6 @@ public class EntireMovieTranscoder extends MovieTranscoder {
   @SuppressWarnings("UnusedDeclaration")
   @TestOnly
   public void transcode(File in, File out) throws IOException {
-    //noinspection IOResourceOpenedButNotSafelyClosed
     transcode(new FileInputStream(in), in.length(), out, false);
   }
 

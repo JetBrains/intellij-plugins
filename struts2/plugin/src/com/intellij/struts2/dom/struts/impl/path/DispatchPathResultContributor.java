@@ -40,6 +40,7 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
     return ResultTypeResolver.isDispatchType(resultType);
   }
 
+  @Override
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
@@ -61,6 +62,7 @@ public class DispatchPathResultContributor extends StrutsResultContributor {
     return false;
   }
 
+  @Override
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
     return createDefaultPathReference(path, element, null);

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 class ImageValueWriter extends BinaryValueWriter {
   private final String mimeType;
 
-  public ImageValueWriter(@NotNull VirtualFile virtualFile, @Nullable String mimeType) {
+  ImageValueWriter(@NotNull VirtualFile virtualFile, @Nullable String mimeType) {
     super(virtualFile);
     this.mimeType = mimeType;
   }

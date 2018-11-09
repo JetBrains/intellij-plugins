@@ -49,6 +49,7 @@ public class FlexmojosSdkType extends SdkType {
     return descriptor;
   }
 
+  @NotNull
   @Override
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
     return "Flexmojos SDK " + getVersionString(sdkHome);

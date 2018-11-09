@@ -1,0 +1,70 @@
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <as, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('AppCtrl')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <app, true, as>
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('app')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <as, false, null>
+      JSReferenceExpression
+        PsiElement(JS:IDENTIFIER)('AppCtrl')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <, true, as>
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiErrorElement:Identifier or keyword expected
+        <empty list>
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <as, false, null>
+      JSReferenceExpression
+        JSReferenceExpression
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('NS')
+          PsiElement(JS:DOT)('.')
+          PsiElement(JS:IDENTIFIER)('App')
+        PsiElement(JS:DOT)('.')
+        PsiElement(JS:IDENTIFIER)('Ctrl')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <app, true, as>
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('app')
+------
+ASTWrapperPsiElement(FILE)
+  Angular2TemplateBindings
+    Angular2TemplateBinding <foo-bar-t1, true, as>
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('foo-bar-t1')
+    PsiElement(JS:SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    Angular2TemplateBinding <foo-, true, foo>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('foo')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:AS_KEYWORD)('as')
+      PsiWhiteSpace(' ')
+      JSVarStatement
+        Angular2TemplateVariable
+          PsiElement(JS:IDENTIFIER)('foo-')
+      PsiErrorElement:Identifier or keyword expected
+        <empty list>
+      PsiElement(JS:NUMERIC_LITERAL)('2')
+    Angular2TemplateBinding <asBar, false, null>
+      Angular2TemplateBindingKey
+        PsiElement(JS:IDENTIFIER)('bar')
+      PsiErrorElement:expression expected
+        <empty list>

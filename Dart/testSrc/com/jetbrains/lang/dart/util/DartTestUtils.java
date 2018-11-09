@@ -1,3 +1,16 @@
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.Disposable;
@@ -11,16 +24,13 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.testFramework.PsiTestCase;
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import junit.framework.TestCase;
@@ -29,8 +39,6 @@ import org.jetbrains.annotations.TestOnly;
 import org.junit.Assert;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -142,13 +150,13 @@ public class DartTestUtils {
       try {
         final List<OrderEntry> entriesToRemove = new SmartList<>();
 
-        for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
+        for (OrderEntry orderEntry: modifiableModel.getOrderEntries()) {
           if (orderEntry instanceof LibraryOrderEntry) {
             entriesToRemove.add(orderEntry);
           }
         }
 
-        for (OrderEntry orderEntry : entriesToRemove) {
+        for (OrderEntry orderEntry: entriesToRemove) {
           modifiableModel.removeOrderEntry(orderEntry);
         }
 
@@ -179,25 +187,12 @@ public class DartTestUtils {
                                                 @NotNull final VirtualFile... vFiles) {
     DartAnalysisServerService.getInstance(test.getProject()).serverReadyForRequest(test.getProject());
     // Trigger navigation requests for each file that needs to have navigation data during resolution.
-    for (VirtualFile vFile : vFiles) {
+    for (VirtualFile vFile: vFiles) {
       String name = vFile.getName();
       VirtualFile testFile = testRoot.findChild(name);
       if (testFile == null) TestCase.fail();
       DartAnalysisServerService.getInstance(test.getProject()).analysis_getNavigation(testFile, 0, (int)testFile.getLength());
     }
     return testRoot;
-  }
-
-  public static void letAnalyzerSmellCoreFile(@NotNull final CodeInsightTestFixture fixture, @NotNull final String fileName)
-    throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-    final DartSdk sdk = DartSdk.getDartSdk(fixture.getProject());
-    final VirtualFile iterableFile = LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/" + fileName);
-    TestCase.assertNotNull(iterableFile);
-    fixture.openFileInEditor(iterableFile);
-
-    // let's keep updateVisibleFiles() method package-local, but here we need to invoke it because FileEditorManagerListener is not notified in test environment
-    final Method method = DartAnalysisServerService.class.getDeclaredMethod("updateVisibleFiles");
-    method.setAccessible(true);
-    method.invoke(DartAnalysisServerService.getInstance(fixture.getProject()));
   }
 }

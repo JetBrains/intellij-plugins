@@ -106,6 +106,7 @@ public class CucumberStepRenameDialog extends RenameDialog {
     return super.getSuggestedNames();
   }
 
+  @Override
   protected void processNewNameChanged() {
     getPreviewAction().setEnabled(true);
     getRefactorAction().setEnabled(true);

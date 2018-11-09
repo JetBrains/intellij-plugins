@@ -36,7 +36,7 @@ import java.util.Map;
 public class CfmlPredefinedVariablesCompletion extends CompletionProvider<CompletionParameters> {
   @Override
   protected void addCompletions(@NotNull CompletionParameters parameters,
-                                ProcessingContext context,
+                                @NotNull ProcessingContext context,
                                 @NotNull CompletionResultSet result) {
     Map<String, Integer> myPredefinedVariables = CfmlLangInfo.getInstance(parameters.getPosition().getProject()).getPredefinedVariables();
     String tagName = getNameForCfmlTag(parameters);

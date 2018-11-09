@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class StrutsPackageWithinPackageScopeProvider extends ScopeProvider {
 
+  @Override
   @Nullable
   public DomElement getScope(@NotNull final DomElement element) {
     return element.getParentOfType(StrutsPackage.class, true);

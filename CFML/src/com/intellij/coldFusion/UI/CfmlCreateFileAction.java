@@ -22,6 +22,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import icons.CFMLIcons;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author: vnikolaenko
@@ -51,7 +52,7 @@ public class CfmlCreateFileAction extends CreateFileFromTemplateAction implement
   }
 
   @Override
-  protected String getActionName(PsiDirectory directory, String newName, String templateName) {
+  protected String getActionName(PsiDirectory directory, @NotNull String newName, String templateName) {
     return "CFML/CFC file";
   }
 

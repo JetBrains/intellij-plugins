@@ -1,0 +1,7 @@
+<hr>
+<div>
+  Name: {{vm.hero.name}}<br>
+  Location: <editable-field field-value="vm.hero.location" field-type="text" on-update="vm.update('location', value)"></editable-field><br>
+  <button ng-click="vm.delete()">Delete</button>
+</div>
+

@@ -59,10 +59,12 @@ public class OsgiEntryPoint extends EntryPoint {
     ADD_ACTIVATORS_TO_ENTRIES = selected;
   }
 
+  @Override
   public void readExternal(Element element) throws InvalidDataException {
     XmlSerializer.deserializeInto(this, element);
   }
 
+  @Override
   public void writeExternal(Element element) throws WriteExternalException {
     XmlSerializer.serializeInto(this, element, new SkipDefaultValuesSerializationFilters());
   }

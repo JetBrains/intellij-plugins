@@ -18,16 +18,20 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class GenerateFlexUnitMethodActionBase extends ActionScriptBaseJSGenerateAction {
+  @Override
   @NotNull
   protected BaseJSGenerateHandler getGenerateHandler() {
     return new BaseJSGenerateHandler() {
+      @Override
       protected String getTitleKey() {
         return null;
       }
 
+      @Override
       protected BaseCreateMembersFix createFix(PsiElement clazz) {
         return new BaseCreateMembersFix((JSClass)clazz) {
 
+          @Override
           public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
             evalAnchor(editor, file);
             final PsiElement addedElement = doAddOneMethod(project, "public function fake():void{}", anchor);
@@ -48,6 +52,7 @@ public abstract class GenerateFlexUnitMethodActionBase extends ActionScriptBaseJ
         };
       }
 
+      @Override
       protected boolean canHaveEmptySelectedElements() {
         return true;
       }
@@ -56,6 +61,7 @@ public abstract class GenerateFlexUnitMethodActionBase extends ActionScriptBaseJ
 
   protected abstract void buildTemplate(final Template template, final JSClass jsClass);
 
+  @Override
   protected boolean isApplicableForMemberContainer(final @NotNull PsiElement jsClass, final PsiFile psiFile, final @NotNull Editor editor) {
     final VirtualFile virtualFile = psiFile.getVirtualFile();
     return jsClass instanceof JSClass && !(jsClass instanceof XmlBackedJSClassImpl) &&

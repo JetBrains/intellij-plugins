@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
@@ -48,7 +49,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
   }
 
   @Override
-  public void update(AnActionEvent e) {
+  public void update(@NotNull AnActionEvent e) {
     super.update(e);
 
     e.getPresentation().setIcon(ICON);
@@ -56,7 +57,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     String title = "Show in Reveal";
 
     XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
-    AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
+    AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getRawBuildSettings().getBaseSdk();
 
     File lib = null;
     boolean compatible = false;
@@ -91,7 +92,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
   }
 
   @Override
-  public void actionPerformed(AnActionEvent e) {
+  public void actionPerformed(@NotNull AnActionEvent e) {
     Project project = getEventProject(e);
     if (project == null) return;
 
@@ -116,7 +117,7 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     if (appBundle == null) return;
 
     try {
-      Reveal.refreshReveal(appBundle, myBundleID, getDeviceName(myDestination));
+      Reveal.refreshReveal(project, appBundle, myBundleID, getDeviceName(myDestination));
     }
     catch (ExecutionException ex) {
       Reveal.LOG.info(ex);

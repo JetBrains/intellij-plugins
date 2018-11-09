@@ -26,7 +26,6 @@
 package org.osmorc.obrimport;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.Extensions;
 
 /**
  * Application component which provides the available bundle repositories.
@@ -41,6 +40,6 @@ public class ObrProvider {
    * @return a list of known obrs.
    */
   public Obr[] getAvailableObrs() {
-    return Extensions.getExtensions(new ExtensionPointName<Obr>("Osmorc.obr"));
+    return new ExtensionPointName<Obr>("Osmorc.obr").getExtensions();
   }
 }

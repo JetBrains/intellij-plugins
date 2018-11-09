@@ -18,6 +18,7 @@ public interface JpsFlexBuildConfiguration
 
   JpsTypedModule<JpsFlexBuildConfigurationManager> getModule();
 
+  @Override
   @NotNull
   String getName();
 

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2013 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.highlighting;
 
 import com.intellij.coldFusion.CfmlBundle;
@@ -61,63 +47,64 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
       myProject = project;
     }
 
+    @Override
     @NotNull
     public Lexer getHighlightingLexer() {
       return new CfmlLexer(true, myProject);
     }
 
     static final TextAttributesKey CFML_ATTRIBUTE = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.attribute"),
+      CfmlBundle.cfmlizeMessage("cfml.attribute"),
       CustomHighlighterColors.CUSTOM_KEYWORD2_ATTRIBUTES
     );
 
     static final TextAttributesKey CFML_COMMENT = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.comment"),
+      CfmlBundle.cfmlizeMessage("cfml.comment"),
       DefaultLanguageHighlighterColors.DOC_COMMENT
     );
 
     static final TextAttributesKey CFML_TAG_NAME = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.tag.name"),
+      CfmlBundle.cfmlizeMessage("cfml.tag.name"),
       XmlHighlighterColors.HTML_TAG_NAME
     );
 
     static final TextAttributesKey CFML_BRACKETS = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.bracket"),
+      CfmlBundle.cfmlizeMessage("cfml.bracket"),
       DefaultLanguageHighlighterColors.BRACES
     );
 
     static final TextAttributesKey CFML_OPERATOR = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.operator"),
+      CfmlBundle.cfmlizeMessage("cfml.operator"),
       DefaultLanguageHighlighterColors.OPERATION_SIGN
     );
 
     static final TextAttributesKey CFML_STRING = TextAttributesKey.createTextAttributesKey(
-      "Cfml" + CfmlBundle.message("cfml.string"),
+      CfmlBundle.cfmlizeMessage("cfml.string"),
       DefaultLanguageHighlighterColors.STRING
     );
 
     static final TextAttributesKey CFML_NUMBER = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.number"),
+      CfmlBundle.cfmlizeMessage("cfml.number"),
       DefaultLanguageHighlighterColors.NUMBER
     );
 
     static final TextAttributesKey CFML_IDENTIFIER = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.identifier"),
+      CfmlBundle.cfmlizeMessage("cfml.identifier"),
       DefaultLanguageHighlighterColors.IDENTIFIER
     );
 
     static final TextAttributesKey CFML_BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.badcharacter"),
+      CfmlBundle.cfmlizeMessage("cfml.badcharacter"),
       HighlighterColors.BAD_CHARACTER
     );
 
     static final TextAttributesKey CFML_SHARP = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.sharp"),
+      CfmlBundle.cfmlizeMessage("cfml.sharp"),
       CustomHighlighterColors.CUSTOM_KEYWORD2_ATTRIBUTES
     );
 
     static final TextAttributesKey CFML_KEYWORD = TextAttributesKey.createTextAttributesKey(
-      CfmlBundle.message("cfml.keyword"),
+      CfmlBundle.cfmlizeMessage("cfml.keyword"),
       DefaultLanguageHighlighterColors.KEYWORD
     );
 
@@ -149,6 +136,7 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
       keys2.put(CfscriptTokenTypes.CLOSESHARP, CFML_SHARP);
     }
 
+    @Override
     @NotNull
     public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
       return pack(keys2.get(tokenType));

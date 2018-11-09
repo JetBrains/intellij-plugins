@@ -69,7 +69,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
 
   private class MyDocumentAdapter implements DocumentListener {
     @Override
-    public void documentChanged(DocumentEvent e) {
+    public void documentChanged(@NotNull DocumentEvent e) {
       firePropertyChange("text", null, null);
     }
   }

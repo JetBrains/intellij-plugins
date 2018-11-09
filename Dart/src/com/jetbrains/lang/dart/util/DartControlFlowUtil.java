@@ -31,7 +31,7 @@ public class DartControlFlowUtil {
     return result;
   }
 
-  public static void addFromVarDeclarationList(Set<DartComponentName> result, DartVarDeclarationList declarationList) {
+  public static void addFromVarDeclarationList(Set<? super DartComponentName> result, DartVarDeclarationList declarationList) {
     result.add(declarationList.getVarAccessDeclaration().getComponentName());
     for (DartVarDeclarationListPart declarationListPart : declarationList.getVarDeclarationListPartList()) {
       result.add(declarationListPart.getComponentName());

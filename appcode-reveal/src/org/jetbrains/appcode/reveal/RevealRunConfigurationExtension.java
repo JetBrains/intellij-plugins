@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.CommonBundle;
@@ -8,7 +9,6 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.icons.AllIcons;
-import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -112,13 +112,13 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   @Override
-  protected boolean isApplicableFor(@NotNull AppCodeRunConfiguration configuration) {
+  public boolean isApplicableFor(@NotNull AppCodeRunConfiguration configuration) {
     if (ApplicationManager.getApplication().isUnitTestMode()) return false;
     return configuration instanceof AppCodeAppRunConfiguration;
   }
 
   @Override
-  protected boolean isEnabledFor(@NotNull AppCodeRunConfiguration config, @Nullable RunnerSettings runnerSettings) {
+  public boolean isEnabledFor(@NotNull AppCodeRunConfiguration config, @Nullable RunnerSettings runnerSettings) {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) return false;
 
@@ -137,7 +137,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   private static AppleSdk getSdk(@NotNull final AppCodeRunConfiguration config) {
     return ReadAction.compute(() -> {
       XCBuildConfiguration xcBuildConfiguration = config.getConfiguration();
-      return xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
+      return xcBuildConfiguration == null ? null : xcBuildConfiguration.getRawBuildSettings().getBaseSdk();
     });
   }
 
@@ -174,7 +174,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     File toInject = installReveal(configuration, buildConfiguration, mainExecutable, settings);
     if (toInject == null) return;
 
-    UsageTrigger.trigger("appcode.reveal.inject");
+    RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "inject");
 
     environment.putUserData(FILE_TO_INJECT, toInject);
   }
@@ -252,7 +252,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       setRevealSettings(configuration, settings);
     }
 
-    UsageTrigger.trigger("appcode.reveal.installOnDevice");
+    RevealUsageTriggerCollector.Companion.trigger(configuration.getProject(), "installOnDevice");
 
     return signAndInstall(libReveal, buildConfiguration, mainExecutable);
   }
@@ -392,8 +392,8 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
       FormBuilder builder = new FormBuilder();
 
       myRevealNotFoundOrIncompatible = new HyperlinkLabel();
-      myRevealNotFoundOrIncompatible.setIcon(AllIcons.RunConfigurations.ConfigurationWarning);
-      myRevealNotFoundOrIncompatible.setHyperlinkTarget("http://revealapp.com");
+      myRevealNotFoundOrIncompatible.setIcon(AllIcons.General.BalloonError);
+      myRevealNotFoundOrIncompatible.setHyperlinkTarget("https://revealapp.com");
 
       myNotAvailable = new JBLabel("<html>" +
               "Reveal integration is only available for iOS applications.<br>" +

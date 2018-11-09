@@ -27,6 +27,7 @@ public class DartFindUsagesProvider implements FindUsagesProvider {
     return null;
   }
 
+  @Override
   @NotNull
   public String getType(@NotNull final PsiElement element) {
     if (element instanceof DartLibraryNameElement) {
@@ -36,6 +37,7 @@ public class DartFindUsagesProvider implements FindUsagesProvider {
     return type == null ? "reference" : type.toString().toLowerCase(Locale.US);
   }
 
+  @Override
   @NotNull
   public String getDescriptiveName(@NotNull final PsiElement element) {
     if (element instanceof PsiNamedElement) {
@@ -44,6 +46,7 @@ public class DartFindUsagesProvider implements FindUsagesProvider {
     return "";
   }
 
+  @Override
   @NotNull
   public String getNodeText(@NotNull final PsiElement element, final boolean useFullName) {
     final String name = element instanceof PsiNamedElement ? ((PsiNamedElement)element).getName() : null;

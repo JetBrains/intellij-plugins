@@ -180,6 +180,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     super.tearDown();
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();
   }
@@ -1148,6 +1149,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     defaultTest();
   }
 
+  @Override
   protected Collection<HighlightInfo> defaultTest() throws IOException {
     return doTestFor(true, getTestName(false) + ".mxml");
   }

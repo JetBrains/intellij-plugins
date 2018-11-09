@@ -1,12 +1,15 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import gnu.trove.THashMap;
+import org.dartlang.vm.service.element.Isolate;
 import org.dartlang.vm.service.element.IsolateRef;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class IsolatesInfo {
 
@@ -15,10 +18,23 @@ public class IsolatesInfo {
     private final String myIsolateName;
     private boolean breakpointsSet = false;
     private boolean shouldInitialResume = false;
+    private CompletableFuture<Isolate> myCachedIsolate;
 
     private IsolateInfo(@NotNull final String isolateId, @NotNull final String isolateName) {
       myIsolateId = isolateId;
       myIsolateName = isolateName;
+    }
+
+    void invalidateCache() {
+      myCachedIsolate = null;
+    }
+
+    CompletableFuture<Isolate> getCachedIsolate() {
+      return myCachedIsolate;
+    }
+
+    void setCachedIsolate(CompletableFuture<Isolate> cachedIsolate) {
+      myCachedIsolate = cachedIsolate;
     }
 
     public String getIsolateId() {
@@ -72,6 +88,27 @@ public class IsolatesInfo {
 
   public synchronized void deleteIsolate(@NotNull final IsolateRef isolateRef) {
     myIsolateIdToInfoMap.remove(isolateRef.getId());
+  }
+
+  public synchronized void invalidateCache(String isolateId) {
+    IsolateInfo info = myIsolateIdToInfoMap.get(isolateId);
+    if (info != null) {
+      info.invalidateCache();
+    }
+  }
+
+  public synchronized CompletableFuture<Isolate> getCachedIsolate(String isolateId, Supplier<CompletableFuture<Isolate>> isolateSupplier) {
+    IsolateInfo info = myIsolateIdToInfoMap.get(isolateId);
+    if (info == null) {
+      return null;
+    }
+    CompletableFuture<Isolate> cachedIsolate = info.getCachedIsolate();
+    if (cachedIsolate != null) {
+      return cachedIsolate;
+    }
+    cachedIsolate = isolateSupplier.get();
+    info.setCachedIsolate(cachedIsolate);
+    return cachedIsolate;
   }
 
   public synchronized Collection<IsolateInfo> getIsolateInfos() {

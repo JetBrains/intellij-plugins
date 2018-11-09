@@ -4,9 +4,14 @@
   <name>Handlebars/Mustache</name>
 
   <description><![CDATA[
-      <a href="http://handlebarsjs.com/">Handlebars</a> and <a href="http://mustache.github.com/">Mustache</a> template support
-      <br><br><b>Note:</b> The plugin is a part of WebStorm IDE and you don't need install it manually for WebStorm<br><br>
-    ]]>
+<p>Support for <a href="http://handlebarsjs.com/">Handlebars</a> and <a href="http://mustache.github.io/">Mustache</a> template languages</p>
+<p>Features</p>
+<ul>
+<li>Customizable highlighting for the template syntax</li>
+<li>Completion for closing tags and braces as well as for HTML tags</li>
+<li>Files with the .html extension can be treated as Handlebars or Mustache files</li>
+<li>Automatic indentation when typing</li>
+</ul>]]>
   </description>
   <category>HTML/JavaScript Development</category>
   <depends>com.intellij.modules.lang</depends>

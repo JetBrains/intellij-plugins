@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
- * @since Jul 20, 2009
  */
 public class ReportingAnalyzer extends Analyzer {
   private final Reporter myReporter;

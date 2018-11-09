@@ -1,0 +1,16 @@
+{
+  "name": "idea-tslint-service",
+  "version": "0.0.1",
+  "description": "tslint idea server implementation",
+  "main": " ",
+  "devDependencies": {
+    "tslint": "^5.10.0",
+    "@types/node": "10.1.0",
+    "typescript": "^2.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JetBrains/intellij-plugins.git"
+  },
+  "author": "JetBrains"
+}

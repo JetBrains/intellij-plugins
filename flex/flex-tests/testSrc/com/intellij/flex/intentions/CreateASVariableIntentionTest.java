@@ -48,6 +48,7 @@ public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }

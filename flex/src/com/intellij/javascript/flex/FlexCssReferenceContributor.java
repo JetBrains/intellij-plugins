@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
-import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptReferenceSet;
 import com.intellij.lang.javascript.refactoring.util.ActionScriptRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.ActionScriptCreateClassOrInterfaceFix;
 import com.intellij.openapi.module.Module;
@@ -34,12 +34,14 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(final @NotNull PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(PlatformPatterns.psiElement(CssString.class).and(new FilterPattern(new ElementFilter() {
+      @Override
       public boolean isAcceptable(Object element, PsiElement context) {
         CssFunction fun = PsiTreeUtil.getParentOfType((PsiElement)element, CssFunction.class);
         String funName;
         return fun != null && (FlexReferenceContributor.CLASS_REFERENCE.equals(funName = fun.getName()) || "Embed".equals(funName));
       }
 
+      @Override
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }
@@ -61,7 +63,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
           return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.EMBEDDED_ASSET);
         }
         final String value = StringUtil.unquoteString(element.getText());
-        JSReferenceSet refSet = new JSReferenceSet(element, value, 1, false, true);
+        ActionScriptReferenceSet refSet = new ActionScriptReferenceSet(element, value, 1, false, true);
         if (fun != null && element instanceof CssString) {
           assert FlexReferenceContributor.CLASS_REFERENCE.equals(fun.getName());
           refSet.setLocalQuickFixProvider(new LocalQuickFixProvider() {
@@ -92,6 +94,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
     });
 
     registrar.registerReferenceProvider(PlatformPatterns.psiElement().and(new FilterPattern(new ElementFilter() {
+      @Override
       public boolean isAcceptable(Object element, PsiElement context) {
         if (element instanceof CssTokenImpl || element instanceof CssString) {
           CssTermList cssTermList = PsiTreeUtil.getParentOfType((PsiElement)element, CssTermList.class);
@@ -114,6 +117,7 @@ public class FlexCssReferenceContributor extends PsiReferenceContributor {
         return false;
       }
 
+      @Override
       public boolean isClassAcceptable(Class hintClass) {
         return true;
       }

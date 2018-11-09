@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.util;
 
 import com.intellij.execution.RunManager;
@@ -251,7 +252,7 @@ public class FlexTestUtils {
   }
 
   public static FlexProjectConfigurationEditor createConfigEditor(final Module... modules) {
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection") final Map<Module, ModifiableRootModel> models =
+    final Map<Module, ModifiableRootModel> models =
       FactoryMap.create(module -> {
         final ModifiableRootModel result1 = ModuleRootManager.getInstance(module).getModifiableModel();
         Disposer.register(module, new Disposable() {
@@ -292,10 +293,12 @@ public class FlexTestUtils {
         });
       }
 
+      @Override
       public Library findSourceLibraryForLiveName(final String name, final String level) {
         return findSourceLibrary(name, level);
       }
 
+      @Override
       public Library findSourceLibrary(final String name, final String level) {
         return getLibrariesTable(level).getLibraryByName(name);
       }
@@ -530,8 +533,7 @@ public class FlexTestUtils {
                                             final String packageName,
                                             final String className,
                                             final String methodName) {
-    final List<RunnerAndConfigurationSettings> settings = runManager.getConfigurationSettingsList(
-      FlexUnitRunConfigurationType.getInstance());
+    final List<RunnerAndConfigurationSettings> settings = runManager.getConfigurationSettingsList(FlexUnitRunConfigurationType.class);
     RunnerAndConfigurationSettings settingsToCheck = null;
     for (RunnerAndConfigurationSettings setting : settings) {
       if (configName.equals(setting.getName())) {
@@ -550,7 +552,7 @@ public class FlexTestUtils {
 
   public static void createFlashRunConfig(final RunManager runManager,
                                           final Module module, final String configName, final String className, boolean generatedName) {
-    final RunnerAndConfigurationSettings settings = runManager.createRunConfiguration(configName, FlashRunConfigurationType.getFactory());
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(configName, FlashRunConfigurationType.class);
     runManager.addConfiguration(settings);
 
     final FlashRunnerParameters params = ((FlashRunConfiguration)settings.getConfiguration()).getRunnerParameters();
@@ -572,8 +574,7 @@ public class FlexTestUtils {
                                              final String className,
                                              final String methodName,
                                              boolean generatedName) {
-    final RunnerAndConfigurationSettings settings =
-      runManager.createRunConfiguration(configName, FlexUnitRunConfigurationType.getFactory());
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration(configName, FlexUnitRunConfigurationType.class);
     runManager.addConfiguration(settings);
 
     final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)settings.getConfiguration()).getRunnerParameters();

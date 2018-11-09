@@ -107,6 +107,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     mySuiteData = new HashMap<>();
   }
 
+  @Override
   protected boolean processServiceMessages(final String text, final Key outputType, final ServiceMessageVisitor visitor)
     throws ParseException {
     LOG.debug("<<< " + text.trim());
@@ -694,7 +695,7 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     public String toString() {
-      return getClass().getSimpleName() + "(" + String.valueOf(myId) + "," + String.valueOf(myName) + ")";
+      return getClass().getSimpleName() + "(" + myId + "," + myName + ")";
     }
   }
 

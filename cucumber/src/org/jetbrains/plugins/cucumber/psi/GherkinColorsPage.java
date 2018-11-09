@@ -61,36 +61,43 @@ public class GherkinColorsPage implements ColorSettingsPage {
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("regexp_param", GherkinHighlighter.REGEXP_PARAMETER);
   }
 
+  @Override
   @Nullable
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
     return ADDITIONAL_HIGHLIGHT_DESCRIPTORS;
   }
 
+  @Override
   @NotNull
   public String getDisplayName() {
     return CucumberBundle.message("color.settings.gherkin.name");
   }
 
+  @Override
   @NotNull
   public Icon getIcon() {
     return icons.CucumberIcons.Cucumber;
   }
 
+  @Override
   @NotNull
   public AttributesDescriptor[] getAttributeDescriptors() {
     return ATTRS;
   }
 
+  @Override
   @NotNull
   public ColorDescriptor[] getColorDescriptors() {
     return ColorDescriptor.EMPTY_ARRAY;
   }
 
+  @Override
   @NotNull
   public SyntaxHighlighter getHighlighter() {
     return new GherkinSyntaxHighlighter(new PlainGherkinKeywordProvider());
   }
 
+  @Override
   @NotNull
   public String getDemoText() {
     return DEMO_TEXT;

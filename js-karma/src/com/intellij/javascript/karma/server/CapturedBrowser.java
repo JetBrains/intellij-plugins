@@ -2,9 +2,6 @@ package com.intellij.javascript.karma.server;
 
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Sergey Simonchik
- */
 public class CapturedBrowser {
 
   private final String myName;

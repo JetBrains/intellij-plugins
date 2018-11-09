@@ -14,7 +14,7 @@ class ModuleLibraryEntryImpl implements ModifiableModuleLibraryEntry, StatefulDe
   @NotNull
   private final String myLibraryId;
 
-  public ModuleLibraryEntryImpl(@NotNull String libraryId) {
+  ModuleLibraryEntryImpl(@NotNull String libraryId) {
     myLibraryId = libraryId;
   }
 
@@ -48,6 +48,7 @@ class ModuleLibraryEntryImpl implements ModifiableModuleLibraryEntry, StatefulDe
     return true;
   }
 
+  @Override
   public EntryState getState() {
     EntryState state = new EntryState();
     state.LIBRARY_ID = myLibraryId;

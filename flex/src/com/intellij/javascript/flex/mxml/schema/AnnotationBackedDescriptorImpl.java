@@ -43,11 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Maxim.Mossienko
@@ -682,12 +678,6 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return getName();
   }
 
-  @NotNull
-  @Override
-  public Object[] getDependences() {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
-  }
-
   @Override
   public String getQualifiedName() {
     return getName();
@@ -997,7 +987,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       }
     }
 
-    return result.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+    return ArrayUtil.toStringArray(result);
   }
 
   private static String lowercaseStart(final String s) {

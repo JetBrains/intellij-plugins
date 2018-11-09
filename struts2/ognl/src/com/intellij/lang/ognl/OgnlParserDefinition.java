@@ -87,7 +87,7 @@ public class OgnlParserDefinition implements ParserDefinition {
   }
 
   @Override
-  public SpaceRequirements spaceExistanceTypeBetweenTokens(final ASTNode left, final ASTNode right) {
+  public SpaceRequirements spaceExistenceTypeBetweenTokens(final ASTNode left, final ASTNode right) {
     final Lexer lexer = createLexer(left.getPsi().getProject());
     return LanguageUtil.canStickTokensTogetherByLexer(left, right, lexer);
   }

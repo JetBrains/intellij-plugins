@@ -1,5 +1,6 @@
 package org.intellij.plugins.markdown.settings;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -19,12 +20,15 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.TextBrowseFolderListener;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.CollectionComboBoxModel;
-import com.intellij.ui.EnumComboBoxModel;
-import com.intellij.ui.ListCellRendererWrapper;
-import com.intellij.ui.TitledSeparator;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBRadioButton;
+import com.intellij.ui.components.labels.LinkLabel;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.download.DownloadableFileDescription;
+import com.intellij.util.download.DownloadableFileService;
+import com.intellij.util.ui.UIUtil;
 import org.intellij.plugins.markdown.MarkdownBundle;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanelProvider;
 import org.intellij.plugins.markdown.ui.split.SplitFileEditor;
@@ -40,6 +44,7 @@ import java.awt.event.ItemListener;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,6 +62,14 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private JPanel myPreviewTitledSeparator;
   private JBCheckBox myAutoScrollCheckBox;
   private JPanel myMultipleProvidersPreviewPanel;
+  private LinkLabel myPlantUMLDownload;
+  private JBLabel myPlantUMLStatusLabel;
+  private JBRadioButton myVerticalLayout;
+  private JBRadioButton myHorizontalLayout;
+  private JBLabel myVerticalSplitLabel;
+  private JBCheckBox myDisableInjections;
+
+  private static final Color SUCCESS_COLOR = new JBColor(0x008000, 0x6A8759);
 
   @Nullable
   private EditorEx myEditor;
@@ -103,10 +116,61 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
       @Override
       public void actionPerformed(ActionEvent e) {
         adjustAutoScroll();
+        adjustSplitOption();
       }
     });
 
     adjustAutoScroll();
+
+    updatePlantUMLLabel(false);
+    myPlantUMLStatusLabel.setFontColor(UIUtil.FontColor.BRIGHTER);
+
+    myPlantUMLDownload.setListener((source, data) -> {
+      DownloadableFileService downloader = DownloadableFileService.getInstance();
+      DownloadableFileDescription description =
+        downloader.createFileDescription(MarkdownSettingsConfigurable.PLANTUML_JAR_URL, MarkdownSettingsConfigurable.PLANTUML_JAR);
+
+      downloader.createDownloader(Collections.singletonList(description), MarkdownSettingsConfigurable.PLANT_UML_DIRECTORY + ".jar")
+        .downloadFilesWithProgress(MarkdownSettingsConfigurable.getDirectoryToDownload().getAbsolutePath(), null, myMainPanel);
+
+      updatePlantUMLLabel(true);
+    }, null);
+  }
+
+  private void adjustSplitOption() {
+    boolean isSplitted = myDefaultSplitLayout.getSelectedItem() == SplitFileEditor.SplitEditorLayout.SPLIT;
+    myVerticalLayout.setEnabled(isSplitted);
+    myHorizontalLayout.setEnabled(isSplitted);
+    myVerticalSplitLabel.setEnabled(isSplitted);
+  }
+
+  public void updatePlantUMLLabel(boolean isJustInstalled) {
+    myPlantUMLStatusLabel.setForeground(JBColor.foreground());
+    myPlantUMLStatusLabel.setIcon(null);
+
+    if (MarkdownSettingsConfigurable.isPlantUMLAvailable()) {
+      if (isJustInstalled) {
+        myPlantUMLStatusLabel.setForeground(SUCCESS_COLOR);
+        myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.success"));
+      }
+      else {
+        myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.installed"));
+      }
+      myPlantUMLDownload.setVisible(false);
+    }
+    else {
+      if (isJustInstalled) {
+        myPlantUMLStatusLabel.setForeground(JBColor.RED);
+        myPlantUMLStatusLabel.setIcon(AllIcons.General.Warning);
+        myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.failed"));
+        myPlantUMLDownload.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.retry"));
+      }
+      else {
+        myPlantUMLStatusLabel.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download.isnt.installed"));
+        myPlantUMLDownload.setText(MarkdownBundle.message("markdown.settings.preview.plantUML.download"));
+      }
+      myPlantUMLDownload.setVisible(true);
+    }
   }
 
   private void adjustAutoScroll() {
@@ -190,7 +254,6 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     myApplyCustomCssText.setSelected(settings.isTextEnabled());
     resetEditor(settings.getStylesheetText());
 
-    //noinspection ConstantConditions
     myCssURIListener.actionPerformed(null);
     myCustomCssTextListener.actionPerformed(null);
   }
@@ -239,7 +302,6 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   }
 
   private void createMultipleProvidersSettings() {
-    //noinspection unchecked
     final List<MarkdownHtmlPanelProvider.ProviderInfo> providerInfos =
       ContainerUtil.mapNotNull(MarkdownHtmlPanelProvider.getProviders(),
                                provider -> {
@@ -311,6 +373,8 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     mySplitLayoutModel.setSelectedItem(settings.getSplitEditorLayout());
     myUseGrayscaleRenderingForJBCheckBox.setSelected(settings.isUseGrayscaleRendering());
     myAutoScrollCheckBox.setSelected(settings.isAutoScrollPreview());
+    myVerticalLayout.setSelected(settings.isVerticalSplit());
+    myHorizontalLayout.setSelected(!settings.isVerticalSplit());
 
     updateUseGrayscaleEnabled();
   }
@@ -324,6 +388,15 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     return new MarkdownPreviewSettings(mySplitLayoutModel.getSelectedItem(),
                                        provider,
                                        myUseGrayscaleRenderingForJBCheckBox.isSelected(),
-                                       myAutoScrollCheckBox.isSelected());
+                                       myAutoScrollCheckBox.isSelected(),
+                                       myVerticalLayout.isSelected());
+  }
+
+  public void setDisableInjections(boolean disableInjections) {
+    myDisableInjections.setSelected(disableInjections);
+  }
+
+  public boolean isDisableInjections() {
+    return myDisableInjections.isSelected();
   }
 }

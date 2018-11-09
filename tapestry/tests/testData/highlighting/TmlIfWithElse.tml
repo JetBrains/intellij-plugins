@@ -1,0 +1,20 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd"
+          xmlns:p="tapestry:parameter">
+  <body>
+  <h1>Plaid!</h1>
+
+  <<info>t:if</info> <info>test</info>="">
+
+    <p>${thisText}</p>
+
+    <p:else>
+      <p>${thatText}</p>
+    </p:else>
+
+  </<info>t:if</info>>
+
+  <<info>t:testComp</info> <info>format</info>="MM/dd/yyyy" <info>it</info>="<inject>111</inject>" <info>it2</info>="<inject>111</inject>"/>
+
+  </body>
+
+</html>

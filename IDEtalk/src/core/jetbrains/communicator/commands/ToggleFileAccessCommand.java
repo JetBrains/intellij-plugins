@@ -34,11 +34,13 @@ public class ToggleFileAccessCommand extends EnabledWhenFocusedCommand {
     myUserModel = userModel;
   }
 
+  @Override
   public boolean enabled() {
     Object[] nodes = myUserListComponent.getSelectedNodes();
     final Boolean[] val = new Boolean[1];
 
     return nodes.length > 0 && doForSelected(new UserAction() {
+      @Override
       public boolean executeAndContinue(User user) {
         if (val[0] == null) {
           val[0] = user.canAccessMyFiles();
@@ -53,8 +55,10 @@ public class ToggleFileAccessCommand extends EnabledWhenFocusedCommand {
     });
   }
 
+  @Override
   public void execute() {
     doForSelected(new UserAction() {
+      @Override
       public boolean executeAndContinue(User user) {
         toggleAccessToFiles(user);
         return true;
@@ -70,6 +74,7 @@ public class ToggleFileAccessCommand extends EnabledWhenFocusedCommand {
     final Boolean[] val = new Boolean[1];
 
     doForSelected(new UserAction() {
+      @Override
       public boolean executeAndContinue(User user) {
         val[0] = user.canAccessMyFiles();
         return false;

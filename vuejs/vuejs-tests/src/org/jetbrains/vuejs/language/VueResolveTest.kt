@@ -1326,7 +1326,7 @@ const props = {seeMe: {}}
     val function = reference!!.resolve()
     TestCase.assertNotNull(function)
     TestCase.assertTrue(function is TypeScriptFunction)
-    TestCase.assertEquals("lib.d.ts", function!!.containingFile.name)
+    TestCase.assertEquals("lib.es5.d.ts", function!!.containingFile.name)
   }
 
   fun testECMA5Resolve() {
@@ -1806,6 +1806,25 @@ export default class UsageComponent extends Vue {
                                          "</style>")
     val usages = myFixture.findUsages(myFixture.elementAtCaret)
     assertEquals(2, usages.size)
+  }
+
+  fun testComponentExportDefault() {
+    myFixture.addFileToProject("HelloWorld.vue", """
+      <script>
+        const HelloWorld = { name: 'HelloWorld' };
+        export default HelloWorld;
+      </script>""")
+    myFixture.configureByText("App.vue", """
+      <template>
+        <HelloWorld<caret> msg="foo"></HelloWorld>
+      </template>
+      <script>
+        import HelloWorld from './HelloWorld.vue';
+        export default app;
+        const app = { name: 'app', components: { HelloWorld } };
+      </script>""")
+    val reference =  myFixture.file.findReferenceAt(myFixture.editor.caretModel.offset)
+    TestCase.assertEquals("name: 'HelloWorld'", reference!!.resolve()!!.parent.text);
   }
 }
 

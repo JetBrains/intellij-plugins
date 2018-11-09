@@ -17,11 +17,12 @@ public class IonicExecutor extends CordovaBasedExecutor {
     if (!isIonic3AndLater()) {
       return new String[]{myPath, "start", name};
     }
-    
+
     return new String[]{myPath, "start", name, "blank", "--skip-link", "--confirm", "--no-interactive"};
   }
 
 
+  @Override
   @NotNull
   public String getFrameworkName() {
     return "Ionic";

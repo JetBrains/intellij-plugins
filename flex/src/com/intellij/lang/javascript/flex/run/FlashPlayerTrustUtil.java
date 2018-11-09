@@ -61,7 +61,7 @@ public class FlashPlayerTrustUtil {
       }
     }
 
-    updateTrustedStatus(module.getProject(), isTrusted, isDebug, paths.toArray(ArrayUtil.EMPTY_STRING_ARRAY));
+    updateTrustedStatus(module.getProject(), isTrusted, isDebug, ArrayUtil.toStringArray(paths));
   }
 
   public static void updateTrustedStatus(final Project project,
@@ -141,7 +141,7 @@ public class FlashPlayerTrustUtil {
       }
     }
 
-    return result.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+    return ArrayUtil.toStringArray(result);
   }
 
   @Nullable

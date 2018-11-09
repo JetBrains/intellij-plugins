@@ -32,33 +32,40 @@ public class DartCommenter implements CodeDocumentationAwareCommenter {
     return null;
   }
 
+  @Override
   @Nullable
   public IElementType getLineCommentTokenType() {
     return DartTokenTypesSets.SINGLE_LINE_COMMENT;
   }
 
+  @Override
   @Nullable
   public IElementType getBlockCommentTokenType() {
     return DartTokenTypesSets.MULTI_LINE_COMMENT;
   }
 
+  @Override
   public String getDocumentationCommentPrefix() {
     return "/**";
   }
 
+  @Override
   public String getDocumentationCommentLinePrefix() {
     return "*";
   }
 
+  @Override
   public String getDocumentationCommentSuffix() {
     return "*/";
   }
 
+  @Override
   public boolean isDocumentationComment(final PsiComment element) {
     return element.getTokenType() == DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT ||
            element.getTokenType() == DartTokenTypesSets.MULTI_LINE_DOC_COMMENT;
   }
 
+  @Override
   @Nullable
   public IElementType getDocumentationCommentTokenType() {
     return DartTokenTypesSets.SINGLE_LINE_DOC_COMMENT;

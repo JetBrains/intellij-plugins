@@ -34,10 +34,12 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
     return buildPresentableText("Scenario Outline");
   }
 
+  @Override
   protected void acceptGherkin(GherkinElementVisitor gherkinElementVisitor) {
     gherkinElementVisitor.visitScenarioOutline(this);
   }
 
+  @Override
   @NotNull
   public List<GherkinExamplesBlock> getExamplesBlocks() {
     List<GherkinExamplesBlock> result = new ArrayList<>();
@@ -48,6 +50,7 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
     return result;
   }
 
+  @Override
   @Nullable
   public Map<String, String> getOutlineTableMap() {
     if (myOutlineTableMap == null) {

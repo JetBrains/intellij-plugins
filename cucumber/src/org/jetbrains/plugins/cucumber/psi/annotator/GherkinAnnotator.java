@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class GherkinAnnotator implements Annotator {
 
+    @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
         final GherkinAnnotatorVisitor visitor = new GherkinAnnotatorVisitor(holder);
         psiElement.accept(visitor);

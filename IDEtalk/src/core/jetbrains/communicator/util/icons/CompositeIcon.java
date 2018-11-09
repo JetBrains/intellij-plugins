@@ -58,19 +58,19 @@ public class CompositeIcon implements Icon {
     myIcons.remove(icon);
   }
 
+  @Override
   public int getIconHeight() {
     int max = 0;
-    for (Iterator<Icon> it = myIcons.iterator(); it.hasNext();) {
-      Icon icon = it.next();
+    for (Icon icon : myIcons) {
       max = Math.max(max, icon.getIconHeight());
     }
     return max;
   }
 
+  @Override
   public int getIconWidth() {
     int width = 0;
-    for (int i = 0; i < myIcons.size(); i++) {
-      Icon icon = myIcons.get(i);
+    for (Icon icon : myIcons) {
       width += icon.getIconWidth();
     }
     if (width > 0) {
@@ -79,12 +79,12 @@ public class CompositeIcon implements Icon {
     return width;
   }
 
+  @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
     int height = getIconHeight();
 
     int currX = x;
-    for (int i = 0; i < myIcons.size(); i++) {
-      Icon icon = myIcons.get(i);
+    for (Icon icon : myIcons) {
       int iconY = y + (height - icon.getIconHeight()) / 2;
       icon.paintIcon(c, g, currX, iconY);
       currX += icon.getIconWidth() + myGap;

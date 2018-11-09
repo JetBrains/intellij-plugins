@@ -30,6 +30,8 @@ public class ClassObj extends Obj {
 
   /**
    * The error which occurred during class finalization, if it exists.
+   *
+   * Can return <code>null</code>.
    */
   public ErrorRef getError() {
     return json.get("error") == null ? null : new ErrorRef((JsonObject) json.get("error"));
@@ -83,6 +85,8 @@ public class ClassObj extends Obj {
 
   /**
    * The location of this class in the source code.
+   *
+   * Can return <code>null</code>.
    */
   public SourceLocation getLocation() {
     return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
@@ -92,6 +96,8 @@ public class ClassObj extends Obj {
    * The mixin type for this class, if any.
    *
    * The value will be of the kind: Type.
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getMixin() {
     return json.get("mixin") == null ? null : new InstanceRef((JsonObject) json.get("mixin"));
@@ -118,6 +124,8 @@ public class ClassObj extends Obj {
 
   /**
    * The superclass of this class, if any.
+   *
+   * Can return <code>null</code>.
    */
   public ClassRef getSuperClass() {
     return json.get("super") == null ? null : new ClassRef((JsonObject) json.get("super"));
@@ -127,6 +135,8 @@ public class ClassObj extends Obj {
    * The supertype for this class, if any.
    *
    * The value will be of the kind: Type.
+   *
+   * Can return <code>null</code>.
    */
   public InstanceRef getSuperType() {
     return json.get("superType") == null ? null : new InstanceRef((JsonObject) json.get("superType"));

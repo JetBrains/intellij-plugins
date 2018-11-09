@@ -48,4 +48,10 @@ public class CfmlBundle {
     }
     return bundle;
   }
+
+  // TextAttributeKey names must be globally unique.
+  // However those in CfmlBundle are not. So mangle them.
+  public static String cfmlizeMessage(@NotNull @PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key) {
+    return "Cfml" + message(key);
+  }
 }

@@ -105,6 +105,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     }
   }
 
+  @Override
   public FlexBuildConfiguration[] getBuildConfigurations() {
     return Arrays.copyOf(myConfigurations, myConfigurations.length);
   }
@@ -144,6 +145,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     }
   }
 
+  @Override
   public State getState() {
     final State state = new State();
     for (FlexBuildConfigurationImpl configuration : myConfigurations) {
@@ -154,6 +156,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     return state;
   }
 
+  @Override
   public void loadState(@NotNull final State state) {
     if (myModule == null) {
       throw new IllegalStateException("Cannot load state of a dummy config manager instance");
@@ -208,7 +211,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
         configList.get(i).setName(uniqueNames.get(i));
       }
     }
-    
+
     return configList.toArray(new FlexBuildConfigurationImpl[0]);
   }
 

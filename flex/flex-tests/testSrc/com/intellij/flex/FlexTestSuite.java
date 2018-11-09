@@ -16,10 +16,7 @@ import com.intellij.flex.generate.ActionScriptGenerateTest;
 import com.intellij.flex.highlighting.*;
 import com.intellij.flex.imports.FlexAutoImportsTest;
 import com.intellij.flex.imports.FlexOptimizeImportsTest;
-import com.intellij.flex.intentions.ActionScriptIntentionActionTest;
-import com.intellij.flex.intentions.CreateASFunctionIntentionTest;
-import com.intellij.flex.intentions.CreateASVariableIntentionTest;
-import com.intellij.flex.intentions.FlexConvertToLocalTest;
+import com.intellij.flex.intentions.*;
 import com.intellij.flex.parser.ActionScriptParsingTest;
 import com.intellij.flex.parser.FlexImporterTest;
 import com.intellij.flex.projectView.FlexProjectViewTest;
@@ -28,11 +25,10 @@ import com.intellij.flex.resolver.ActionScriptResolveTest;
 import com.intellij.flex.resolver.FlexCssNavigationTest;
 import com.intellij.flex.uml.FlashUmlTest;
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-@SuppressWarnings({"JUnitTestClassNamingConvention", "JUnitTestCaseWithNoTests"})
-public class FlexTestSuite extends TestCase {
+@SuppressWarnings({"JUnitTestCaseWithNoTests"})
+public class FlexTestSuite {
 
   public static Test suite() {
     final TestSuite testSuite = new TestSuite(FlexTestSuite.class.getSimpleName());
@@ -99,6 +95,7 @@ public class FlexTestSuite extends TestCase {
     testSuite.addTestSuite(CreateASFunctionIntentionTest.class);
     testSuite.addTestSuite(CreateASVariableIntentionTest.class);
     testSuite.addTestSuite(FlexConvertToLocalTest.class);
+    testSuite.addTestSuite(ImportJSClassIntentionTest.class);
 
     //com.intellij.flex.maven.*
     //testSuite.addTestSuite(Flexmojos3ImporterTest.class);

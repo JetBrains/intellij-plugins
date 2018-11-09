@@ -68,6 +68,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     return FileUtil.toSystemIndependentName(projectSystemDir.getPath()) + "/tmp";
   }
 
+  @Override
   public boolean execute(CompileContext context) {
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(context.getCompileScope());
     if (!(runConfiguration instanceof FlexUnitRunConfiguration)) {
@@ -211,6 +212,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
             final Collection<Pair<String, Set<String>>> result = new ArrayList<>();
             JSPackageIndex
               .processElementsInScopeRecursive(params.getPackageName(), new JSPackageIndex.PackageQualifiedElementsProcessor() {
+                @Override
                 public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
                   if (kind == JSPackageIndexInfo.Kind.CLASS) {
                     PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(qualifiedName, moduleScope);

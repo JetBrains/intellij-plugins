@@ -20,6 +20,7 @@ import java.util.List;
 
 public class JpsFlexModelSerializerExtension extends JpsModelSerializerExtension {
 
+  @Override
   @NotNull
   public List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
     return Arrays.asList(JpsFlexCompilerProjectExtension.createProjectExtensionSerializerIws(),
@@ -28,22 +29,26 @@ public class JpsFlexModelSerializerExtension extends JpsModelSerializerExtension
                          JpsFlexProjectLevelCompilerOptionsExtension.createProjectExtensionSerializer());
   }
 
+  @Override
   @NotNull
   public List<? extends JpsSdkPropertiesSerializer<?>> getSdkPropertiesSerializers() {
     return Arrays.asList(JpsFlexSdkType.createJpsSdkPropertiesSerializer(),
                          JpsFlexmojosSdkType.createSdkPropertiesSerializer());
   }
 
+  @Override
   @NotNull
   public List<? extends JpsLibraryPropertiesSerializer<?>> getLibraryPropertiesSerializers() {
     return Collections.singletonList(JpsFlexLibraryType.createLibraryPropertiesSerializer());
   }
 
+  @Override
   @NotNull
   public List<? extends JpsModulePropertiesSerializer<?>> getModulePropertiesSerializers() {
     return Collections.singletonList(JpsFlexModuleType.createModulePropertiesSerializer());
   }
 
+  @Override
   @NotNull
   public List<? extends JpsRunConfigurationPropertiesSerializer<?>> getRunConfigurationPropertiesSerializers() {
     return Arrays.asList(JpsFlashRunConfigurationType.createRunConfigurationSerializer(),

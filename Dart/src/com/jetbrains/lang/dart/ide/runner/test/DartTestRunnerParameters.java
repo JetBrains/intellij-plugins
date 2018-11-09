@@ -19,7 +19,7 @@ public class DartTestRunnerParameters extends DartCommandLineRunnerParameters im
     return myScope;
   }
 
-  public void setScope(@SuppressWarnings("NullableProblems") final Scope scope) {
+  public void setScope(final Scope scope) {
     if (scope != null) { // null in case of corrupted storage
       //noinspection deprecation
       if (scope == Scope.GROUP || scope == Scope.METHOD) {

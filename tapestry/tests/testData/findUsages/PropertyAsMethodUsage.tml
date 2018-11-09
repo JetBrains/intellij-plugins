@@ -1,0 +1,6 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_1_0.xsd">
+    <body>
+    <t:count t:value="DateProp.day" end="3">${GETDATEPROP()}</t:count>
+    ${datep<caret>rop}
+    </body>
+</html>

@@ -15,10 +15,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -29,32 +32,46 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
   @NotNull
   private final TsLinterError myError;
   private final long myModificationStamp;
+  private final SmartPsiElementPointer<PsiFile> myPsiFilePointer;
 
+  private static final Comparator<TsLintFixInfo.TsLintFixReplacements> REPLACEMENTS_COMPARATOR =
+    Comparator
+      .<TsLintFixInfo.TsLintFixReplacements>comparingInt(value -> value.innerStart + value.innerLength)
+      .thenComparingInt(value -> value.innerStart)
+      .reversed();
 
-  public TsLintErrorFixAction(@NotNull TsLinterError error, @NotNull Document document) {
-    //noinspection DialogTitleCapitalization
-    setText(getFamilyName());
+  public TsLintErrorFixAction(@NotNull PsiFile file, @NotNull TsLinterError error, long modificationStamp) {
+    myPsiFilePointer = SmartPointerManager.getInstance(file.getProject()).createSmartPsiElementPointer(file);
     myError = error;
-    myModificationStamp = document.getModificationStamp();
+    myModificationStamp = modificationStamp;
   }
 
   @NotNull
   @Override
   public String getText() {
-    //noinspection DialogTitleCapitalization
-    return TsLintBundle.message("tslint.action.fix.problems.current.text");
+    return getText(myError.getCode());
   }
 
   @Nls
   @NotNull
   @Override
   public String getFamilyName() {
-    return getText();
+    return getText(null);
+  }
+
+  @NotNull
+  private static String getText(@Nullable String errorCode) {
+    String errorMessage = StringUtil.isNotEmpty(errorCode) ? "'" + errorCode + "'" : "current error";
+    return TsLintBundle.message("tslint.action.fix.problems.current.text", errorMessage);
   }
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-    return editor != null && editor.getDocument().getModificationStamp() == myModificationStamp && myError.getFixInfo() != null;
+    return editor != null
+           && editor.getDocument().getModificationStamp() == myModificationStamp
+           && myError.getFixInfo() != null
+           ///to choose top-level file if fix ('e.g. "quotes"') is invoked on string with injection.
+           && file == myPsiFilePointer.getElement();
   }
 
   @Override
@@ -67,17 +84,15 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
     if (info == null) {
       return;
     }
+    TsLintFixInfo.TsLintFixReplacements[] replacements = info.innerReplacements;
+    if (replacements == null || replacements.length == 0) {
+      return;
+    }
+    Arrays.sort(replacements, REPLACEMENTS_COMPARATOR);
+
     WriteCommandAction.runWriteCommandAction(project, getText(), null, () -> {
       Document document = editor.getDocument();
       String separator = FileDocumentManager.getInstance().getLineSeparator(file.getViewProvider().getVirtualFile(), project);
-
-      TsLintFixInfo.TsLintFixReplacements[] replacements = info.innerReplacements;
-
-      if (replacements == null || replacements.length == 0) {
-        return;
-      }
-      Arrays.sort(replacements, Comparator.comparingInt(el -> -el.innerStart));
-
       if (!applyReplacements(document, separator, replacements)) return;
 
       PsiDocumentManager.getInstance(project).commitDocument(document);
@@ -86,33 +101,29 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
     DaemonCodeAnalyzer.getInstance(project).restart(file);
   }
 
-  public boolean applyReplacements(@NotNull Document document,
-                                   @NotNull String separator,
-                                   @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements) {
+  private static boolean applyReplacements(@NotNull Document document,
+                                           @NotNull String separator,
+                                           @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements) {
     if ("\n".equals(separator)) {
-      if (!applyFor(document.getTextLength(), replacements,
-                    (replacement) -> document
-                      .replaceString(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil
-                        .notNullize(replacement.innerText)))) {
-        return false;
-      }
+      return applyFor(document.getTextLength(), replacements,
+                      replacement -> document
+                        .replaceString(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil
+                          .notNullize(replacement.innerText)));
     }
-    else {
-      StringBuilder newContent = new StringBuilder(StringUtilRt.convertLineSeparators(document.getText(), separator));
-      if (!applyFor(newContent.length(), replacements,
-                    (replacement) -> newContent
-                      .replace(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil.notNullize(
-                        replacement.innerText)))) {
-        return false;
-      }
+    StringBuilder newContent = new StringBuilder(StringUtilRt.convertLineSeparators(document.getText(), separator));
+    if (applyFor(newContent.length(), replacements,
+                 replacement -> newContent
+                   .replace(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil.notNullize(
+                     replacement.innerText)))) {
       document.setText(StringUtilRt.convertLineSeparators(newContent, "\n"));
+      return true;
     }
-    return true;
+    return false;
   }
 
-  public boolean applyFor(int documentLength,
-                          @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements,
-                          @NotNull Consumer<TsLintFixInfo.TsLintFixReplacements> apply) {
+  private static boolean applyFor(int documentLength,
+                                  @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements,
+                                  @NotNull Consumer<TsLintFixInfo.TsLintFixReplacements> apply) {
     for (TsLintFixInfo.TsLintFixReplacements replacement : replacements) {
       int offset = replacement.innerStart;
       if (offset > documentLength || (offset + replacement.innerLength) > documentLength) {

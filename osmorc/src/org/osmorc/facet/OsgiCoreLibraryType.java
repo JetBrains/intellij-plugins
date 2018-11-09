@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -32,7 +33,7 @@ public class OsgiCoreLibraryType extends DownloadableLibraryType {
   private static final String DETECTOR_CLASS = "org.osgi.framework.Constants";
 
   public OsgiCoreLibraryType() {
-    super("OSGi Core API", ID, ID, OsmorcIdeaIcons.Osgi, OsgiCoreLibraryType.class.getResource("osgi.core.xml"));
+    super("OSGi Core API", ID, ID, OsgiCoreLibraryType.class.getResource("osgi.core.xml"));
   }
 
   @Override
@@ -67,6 +68,12 @@ public class OsgiCoreLibraryType extends DownloadableLibraryType {
 
     // unknown version
     return new LibraryVersionProperties(null);
+  }
+
+  @NotNull
+  @Override
+  public Icon getLibraryTypeIcon() {
+    return OsmorcIdeaIcons.Osgi;
   }
 
   @Override

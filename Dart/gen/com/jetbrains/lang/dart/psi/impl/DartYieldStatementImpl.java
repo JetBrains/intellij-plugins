@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartYieldStatementImpl extends DartPsiCompositeElementImpl implements DartYieldStatement {
 
-  public DartYieldStatementImpl(ASTNode node) {
+  public DartYieldStatementImpl(@NotNull ASTNode node) {
     super(node);
   }
 

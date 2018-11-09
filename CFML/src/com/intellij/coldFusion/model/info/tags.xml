@@ -15,6 +15,7 @@
   ~ limitations under the License.
   -->
 <dictionary>
+  <doc link="https://cfdocs.org/cf9"/>
     <tags>
         <!--
     cfabort

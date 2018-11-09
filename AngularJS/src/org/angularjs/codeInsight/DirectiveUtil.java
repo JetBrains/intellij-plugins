@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight;
 
 import com.intellij.json.psi.JsonElement;
@@ -11,6 +12,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.util.Processor;
+import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
@@ -39,20 +41,26 @@ public class DirectiveUtil {
     if (name.startsWith("data-")) {
       name = name.substring(5);
     }
-    else name = trimStart(name, "x-");
+    else {
+      name = trimStart(name, "x-");
+    }
     name = name.replace(':', '-');
     name = name.replace('_', '-');
     if (name.endsWith("-start")) {
       name = name.substring(0, name.length() - 6);
     }
-    else name = trimEnd(name, "-end");
+    else {
+      name = trimEnd(name, "-end");
+    }
     return name;
   }
 
   public static boolean isAngular2Directive(final PsiElement directive) {
-    return directive instanceof JSImplicitElement && (directive.getParent() instanceof JSCallExpression ||
-                                                      directive.getParent() instanceof ES6Decorator ||
-                                                      directive.getParent() instanceof JsonElement);
+    return directive instanceof JSImplicitElement
+           && !Angular2IndexingHandler.isPipe((JSImplicitElement)directive)
+           && (directive.getParent() instanceof JSCallExpression ||
+               directive.getParent() instanceof ES6Decorator ||
+               directive.getParent() instanceof JsonElement);
   }
 
   public static String attributeToDirective(final PsiElement directive, final String name) {
@@ -67,7 +75,7 @@ public class DirectiveUtil {
   }
 
   public static boolean processTagDirectives(final Project project,
-                                             Processor<JSImplicitElement> processor) {
+                                             Processor<? super JSImplicitElement> processor) {
     final Collection<String> docDirectives = AngularIndexUtil.getAllKeys(AngularDirectivesDocIndex.KEY, project);
     for (String directiveName : docDirectives) {
       final JSImplicitElement directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.KEY);
@@ -92,12 +100,22 @@ public class DirectiveUtil {
   }
 
   public static JSImplicitElement getTagDirective(String directiveName, Project project) {
-    final JSImplicitElement directive = getTagDirective(project, directiveName, AngularDirectivesDocIndex.KEY);
-    return directive == null ? getTagDirective(project, directiveName, AngularDirectivesIndex.KEY) : directive;
+    return getDirective(directiveName, project);
   }
 
-  private static JSImplicitElement getTagDirective(Project project, String directiveName, final StubIndexKey<String, JSImplicitElementProvider> index) {
-    final JSImplicitElement directive = AngularIndexUtil.resolve(project, index, directiveName);
+  private static JSImplicitElement getTagDirective(Project project,
+                                                   String directiveName,
+                                                   final StubIndexKey<String, JSImplicitElementProvider> index) {
+    return getDirective(directiveName, project, index);
+  }
+
+  private static JSImplicitElement getDirective(String name, Project project) {
+    final JSImplicitElement directive = getDirective(name, project, AngularDirectivesDocIndex.KEY);
+    return directive == null ? getDirective(name, project, AngularDirectivesIndex.KEY) : directive;
+  }
+
+  private static JSImplicitElement getDirective(String name, Project project, final StubIndexKey<String, JSImplicitElementProvider> index) {
+    JSImplicitElement directive = AngularIndexUtil.resolve(project, index, name);
     final String restrictions = directive != null ? directive.getTypeString() : null;
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
@@ -112,7 +130,7 @@ public class DirectiveUtil {
   @Nullable
   public static JSImplicitElement getDirective(@Nullable PsiElement element) {
     if (element instanceof JSImplicitElement) {
-      return isAngular2Directive(element) ? (JSImplicitElement)element : getDirective(element, ((JSImplicitElement)element).getName());
+      return isAngular2Directive(element) ? null : getDirective(element, ((JSImplicitElement)element).getName());
     }
     if (element instanceof JSLiteralExpression && ((JSLiteralExpression)element).isQuotedLiteral()) {
       return getDirective(element, StringUtil.unquoteString(element.getText()));

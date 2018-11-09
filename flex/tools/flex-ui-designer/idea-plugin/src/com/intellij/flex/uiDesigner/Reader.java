@@ -23,7 +23,6 @@ public class Reader extends DataInputStream {
       this.in = in;
 
       try {
-        //noinspection IOResourceOpenedButNotSafelyClosed
         fileOut = new FileOutputStream(new File("/Users/develar/clientOut"));
       }
       catch (FileNotFoundException e) {

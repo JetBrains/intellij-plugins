@@ -16,7 +16,6 @@
 package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.Bean;
@@ -36,6 +35,7 @@ import java.util.*;
  */
 public class UnknownHandlerRefConverterImpl extends UnknownHandlerRefConverter {
 
+  @Override
   @NotNull
   public Collection<? extends Bean> getVariants(final ConvertContext convertContext) {
     final StrutsModel model = ConverterUtil.getStrutsModel(convertContext);
@@ -47,6 +47,7 @@ public class UnknownHandlerRefConverterImpl extends UnknownHandlerRefConverter {
     return getBeansOfTypeUnknownHandler(model);
   }
 
+  @Override
   public Bean fromString(@Nullable final String name, final ConvertContext convertContext) {
     if (StringUtil.isEmpty(name)) {
       return null;

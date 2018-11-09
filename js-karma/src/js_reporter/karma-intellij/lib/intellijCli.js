@@ -2,7 +2,6 @@ var join = require('path').join;
 
 var SERVER_PORT_KEY = 'serverPort'
   , CONFIG_FILE_KEY = 'configFile'
-  , KARMA_PACKAGE_DIR_KEY = 'karmaPackageDir'
   , DEBUG_KEY = 'debug'
   , PROTOCOL_KEY = 'protocol'
   , URL_ROOT_KEY = 'urlRoot'
@@ -29,24 +28,6 @@ function parseArguments() {
 }
 
 var options = parseArguments();
-
-function getKarmaPackageDir() {
-  var karmaPackageDir = options[KARMA_PACKAGE_DIR_KEY];
-  if (!karmaPackageDir) {
-    throw Error("Karma package dir isn't specified.");
-  }
-  return karmaPackageDir;
-}
-
-function getKarmaFilePath(relativePath) {
-  var karmaPath = getKarmaPackageDir();
-  return join(karmaPath, relativePath);
-}
-
-function requireKarmaModule(moduleName) {
-  var karmaPath = getKarmaPackageDir();
-  return require(join(karmaPath, moduleName));
-}
 
 function getConfigFile() {
   var configFile = options[CONFIG_FILE_KEY];
@@ -105,8 +86,6 @@ function isLastTestRunWithTestNameFilter() {
   return options['lastTestRunWithTestNameFilter'] === 'true';
 }
 
-exports.getKarmaFilePath = getKarmaFilePath;
-exports.requireKarmaModule = requireKarmaModule;
 exports.getConfigFile = getConfigFile;
 exports.getServerPort = getServerPort;
 exports.isDebug = isDebug;

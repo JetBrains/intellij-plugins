@@ -20,10 +20,12 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition {
       return null;
     }
     PsiExpression stepExpression = argumentList.getExpressions()[0];
-    if (stepExpression instanceof PsiLiteralExpression) {
-      Object value = ((PsiLiteralExpression)stepExpression).getValue();
-      if (value instanceof String) {
-        return (String)value;
+    final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();
+    final Object constantValue = evaluationHelper.computeConstantExpression(stepExpression, false);
+
+    if (constantValue != null) {
+      if (constantValue instanceof String) {
+        return (String)constantValue;
       }
     }
     return null;

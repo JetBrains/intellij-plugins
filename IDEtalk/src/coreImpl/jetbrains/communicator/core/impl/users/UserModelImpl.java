@@ -106,7 +106,7 @@ public class UserModelImpl implements UserModel, Disposable {
         result.add(lastGroup);
       }
     }
-    return result.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+    return ArrayUtil.toStringArray(result);
   }
 
   @Override

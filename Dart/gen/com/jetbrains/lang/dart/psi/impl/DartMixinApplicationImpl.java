@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartMixinApplicationImpl extends DartPsiCompositeElementImpl implements DartMixinApplication {
 
-  public DartMixinApplicationImpl(ASTNode node) {
+  public DartMixinApplicationImpl(@NotNull ASTNode node) {
     super(node);
   }
 

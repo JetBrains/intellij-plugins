@@ -1,7 +1,7 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.execution.RunManager;
-import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
@@ -59,6 +59,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
   private boolean myCheckPlayerVersion;
   private boolean myExpressInstall;
 
+  @Override
   public ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }
@@ -111,6 +112,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     myExpressInstall = expressInstall;
   }
 
+  @Override
   public void setupRootModel(final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
     final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
     if (contentEntry == null) return;
@@ -219,7 +221,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
   }
 
   public static void createRunConfiguration(final Module module, final FlexBuildConfiguration bc) {
-    final RunManager runManager = RunManagerEx.getInstance(module.getProject());
+    final RunManager runManager = RunManager.getInstance(module.getProject());
 
     final List<RunConfiguration> existingConfigurations = runManager.getConfigurationsList(FlashRunConfigurationType.getInstance());
     for (RunConfiguration configuration : existingConfigurations) {
@@ -230,7 +232,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
       }
     }
 
-    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", FlashRunConfigurationType.getFactory());
+    final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", FlashRunConfigurationType.class);
     final FlashRunConfiguration runConfiguration = (FlashRunConfiguration)settings.getConfiguration();
     final FlashRunnerParameters params = runConfiguration.getRunnerParameters();
     params.setModuleName(module.getName());
@@ -260,6 +262,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
 
     if (sourceRoot == null) {
       sourceRoot = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+        @Override
         public VirtualFile compute() {
           try {
             return contentRoot.createChildDirectory(this, "src");

@@ -19,10 +19,12 @@ public class FlashUmlNodeContentManager extends AbstractDiagramNodeContentManage
 
   private final static DiagramCategory[] CATEGORIES = {FIELDS, CONSTRUCTORS, METHODS, PROPERTIES};
 
+  @Override
   public DiagramCategory[] getContentCategories() {
     return CATEGORIES;
   }
 
+  @Override
   public boolean isInCategory(Object obj, DiagramCategory category, DiagramState presentation) {
     if (!(obj instanceof PsiElement)) return false;
     PsiElement element = (PsiElement)obj;

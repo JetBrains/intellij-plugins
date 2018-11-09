@@ -28,7 +28,6 @@ public class PrettierCodeStyleEditorNotificationProvider
   private final PropertiesComponent myPropertiesComponent;
   private final EditorNotifications myEditorNotifications;
 
-  @SuppressWarnings("Unused")
   public PrettierCodeStyleEditorNotificationProvider(PropertiesComponent propertiesComponent,
                                                      Project project,
                                                      EditorNotifications editorNotifications, 
@@ -59,9 +58,6 @@ public class PrettierCodeStyleEditorNotificationProvider
     if (!(fileEditor instanceof TextEditor)) return null;
     final Project project = ((TextEditor)fileEditor).getEditor().getProject();
     if (project == null) {
-      return null;
-    }
-    if (!PrettierUtil.isEnabled()) {
       return null;
     }
     if (!file.isWritable() || JSProjectUtil.isInLibrary(file, project) || JSLibraryUtil.isProbableLibraryFile(file)) {

@@ -66,7 +66,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
   }
 
   private void doTest(final String fromFilePath,
-                      final String className,
+                      @NotNull String className,
                       final String targetPackage,
                       final boolean searchInStringsAndComments,
                       final boolean searchTextOccurences,
@@ -82,7 +82,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
 
   private void performAction(VirtualFile rootDir,
                              String fromFilePath,
-                             String className,
+                             @NotNull String className,
                              final String targetPackage,
                              boolean searchInStringsAndComments,
                              boolean searchTextOccurences,

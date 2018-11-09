@@ -11,11 +11,13 @@ import javax.swing.*;
 
 public class ProfileFileTypeFactory extends FileTypeFactory {
   final static FileType instance = new FileType() {
+    @Override
     @NotNull
     public String getName() {
       return "Snapshot";
     }
 
+    @Override
     @NotNull
     public String getDescription() {
       return "Profiler Snapshot";
@@ -27,6 +29,7 @@ public class ProfileFileTypeFactory extends FileTypeFactory {
       return "";
     }
 
+    @Override
     public Icon getIcon() {
       return AllIcons.Actions.ProfileCPU;
     }
@@ -46,7 +49,7 @@ public class ProfileFileTypeFactory extends FileTypeFactory {
       return null;
     }
   };
-  
+
   @Override
   public void createFileTypes(@NotNull FileTypeConsumer fileTypeConsumer) {
     fileTypeConsumer.consume(instance, "snapshot");

@@ -61,8 +61,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForFile;
 import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
@@ -92,7 +92,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     attributes.addChild(createAttributeValueDescriptor("scaleGridLeft", false, descriptorFactory, attributes));
     attributes.addChild(createAttributeValueDescriptor("scaleGridRight", false, descriptorFactory, attributes));
     attributes.addChild(createAttributeValueDescriptor("symbol", false, descriptorFactory, attributes));
-    
+
     embedFunctionValue.addChild(descriptorFactory.createStringValueDescriptor(null, 1, 1, embedFunctionValue));
     embedFunctionValue.addChild(attributes);
 
@@ -110,22 +110,23 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     attributeValue.addChild(descriptorFactory.createStringValueDescriptor(null, 1, 1, attributeValue));
     return attributeValue;
   }
-  
+
   private static CssGroupValue createBooleanAttributeValueDescriptor(@NotNull String attributeName, boolean required,
                                                                      @NotNull CssElementDescriptorFactory2 descriptorFactory,
                                                                      @NotNull CssGroupValue parent) {
     CssGroupValue attributeValue = descriptorFactory.createGroupValue(CssGroupValue.Type.ALL, required ? 1 : 0, 1, parent, null);
     attributeValue.addChild(descriptorFactory.createNameValueDescriptor(attributeName, attributeName, 1, 1, attributeValue));
     attributeValue.addChild(descriptorFactory.createTextValueDescriptor("=", 1, 1, attributeValue));
-    
+
     CssGroupValue booleanValue = descriptorFactory.createGroupValue(CssGroupValue.Type.OR, 1, 1, attributeValue, null);
     booleanValue.addChild(descriptorFactory.createStringValueDescriptor("true", 1, 1, booleanValue));
     booleanValue.addChild(descriptorFactory.createStringValueDescriptor("false", 1, 1, booleanValue));
-    
+
     attributeValue.addChild(booleanValue);
     return attributeValue;
   }
 
+  @Override
   public boolean isMyContext(@Nullable PsiElement context) {
     if (context == null || !context.isValid()) return false;
     PsiFile file = context.getContainingFile();
@@ -245,6 +246,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return result;
   }
 
+  @Override
   public PsiElement getDocumentationElementForSelector(@NotNull String selectorName, @Nullable PsiElement context) {
     if (context != null) {
       Collection<JSQualifiedNamedElement> classes = getClasses(selectorName, context);
@@ -293,6 +295,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return ContainerUtil.createMaybeSingletonList(myFunctionDescriptors.get(functionName));
   }
 
+  @Override
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
     if (selector.equals("global")) return true;
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
@@ -316,6 +319,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   private static void fillPropertyDescriptorsDynamically(@NotNull final JSClass jsClass, Set<JSClass> visited, final Set<CssPropertyDescriptor> result) {
     if (!visited.add(jsClass)) return;
     FlexUtils.processMetaAttributesForClass(jsClass, new ActionScriptResolveUtil.MetaDataProcessor() {
+      @Override
       public boolean process(@NotNull JSAttribute jsAttribute) {
         if (FlexAnnotationNames.STYLE.equals(jsAttribute.getName())) {
           JSAttributeNameValuePair pair = jsAttribute.getValueByName("name");
@@ -329,6 +333,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         return true;
       }
 
+      @Override
       public boolean handleOtherElement(PsiElement el, PsiElement context, @Nullable Ref<PsiElement> continuePassElement) {
         return true;
       }
@@ -385,6 +390,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return false;
   }
 
+  @Override
   @NotNull
   public Collection<? extends CssPropertyDescriptor> getAllPropertyDescriptors(@Nullable PsiElement context) {
     if(context == null || DumbService.getInstance(context.getProject()).isDumb()) {
@@ -404,13 +410,14 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     for (String key : keys) {
       if (!isInClassicForm(key)) {
         for (Set<FlexStyleIndexInfo> infos : index.getValues(FlexStyleIndex.INDEX_ID, key, scope)) {
-          result.add(new FlexCssPropertyDescriptor(infos)); 
+          result.add(new FlexCssPropertyDescriptor(infos));
         }
       }
     }
     return result;
   }
 
+  @Override
   @NotNull
   public String[] getSimpleSelectors(@NotNull PsiElement context) {
     Module module = findModuleForPsiElement(context);
@@ -459,6 +466,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return declaration instanceof JSClass ? (JSClass)declaration : null;
   }
 
+  @Override
   @NotNull
   public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
     // flex 4
@@ -517,6 +525,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return false;
   }
 
+  @Override
   public String generateDocForSelector(@NotNull String selectorName, @Nullable PsiElement context) {
     PsiElement[] declarations = getDeclarationsForSimpleSelector(selectorName, context);
     JSClass[] classes = new JSClass[declarations.length];
@@ -568,6 +577,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return result;
   }
 
+  @Override
   @NotNull
   public PsiReference getStyleReference(PsiElement element, int start, int end, boolean caseSensitive) {
     return new HtmlCssClassOrIdReference(element, start, end, caseSensitive, false);

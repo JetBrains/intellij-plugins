@@ -42,6 +42,7 @@ public class NonStructuralModifiableBuildConfiguration implements FlexBuildConfi
     myOriginal.setRLMs(rlms);
   }
 
+  @Override
   @NotNull
   public String getName() {
     return myOriginal.getName();

@@ -64,11 +64,13 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
     XmlFileHighlighter.registerEmbeddedTokenAttributes(ATTRIBUTES, null);
   }
 
+  @Override
   @NotNull
   public Lexer getHighlightingLexer() {
     return new DartLexer();
   }
 
+  @Override
   @NotNull
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(ATTRIBUTES.get(tokenType));

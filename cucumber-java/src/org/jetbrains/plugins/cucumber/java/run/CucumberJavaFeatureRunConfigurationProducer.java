@@ -1,7 +1,7 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,7 +20,6 @@ import java.util.Set;
 
 /**
  * @author Andrey.Vokin
- * @since 8/6/12
  */
 public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
@@ -29,8 +28,7 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
     if (file instanceof GherkinFile) {
       return () -> {
         final Set<String> glues = getHookGlue(element);
-        final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
-        for (CucumberJvmExtensionPoint extension : extensions) {
+        for (CucumberJvmExtensionPoint extension : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
           glues.addAll(extension.getGlues((GherkinFile)file, glues));
         }
 

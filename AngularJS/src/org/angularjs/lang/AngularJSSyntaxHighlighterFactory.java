@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.lang;
 
 import com.intellij.lang.javascript.JSTokenTypes;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author Dennis.Ushakov
  */
 public class AngularJSSyntaxHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
+  @Override
   @NotNull
   protected SyntaxHighlighter createHighlighter() {
     return new AngularJSSyntaxHighlighter();
@@ -27,12 +29,13 @@ public class AngularJSSyntaxHighlighterFactory extends SingleLazyInstanceSyntaxH
   private static class AngularJSSyntaxHighlighter extends JSHighlighter {
     private final Map<IElementType, TextAttributesKey> myKeysMap = new THashMap<>();
 
-    public AngularJSSyntaxHighlighter() {
+    AngularJSSyntaxHighlighter() {
       super(AngularJSLanguage.INSTANCE.getOptionHolder(), false);
       myKeysMap.put(JSTokenTypes.AS_KEYWORD, DefaultLanguageHighlighterColors.KEYWORD);
       myKeysMap.put(AngularJSTokenTypes.TRACK_BY_KEYWORD, DefaultLanguageHighlighterColors.KEYWORD);
     }
 
+    @Override
     @NotNull
     public TextAttributesKey[] getTokenHighlights(final IElementType tokenType) {
       if (myKeysMap.containsKey(tokenType)) {

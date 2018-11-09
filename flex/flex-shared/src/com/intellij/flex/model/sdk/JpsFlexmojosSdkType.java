@@ -25,6 +25,7 @@ public class JpsFlexmojosSdkType extends JpsSdkType<JpsSimpleElement<JpsFlexmojo
 
   public static JpsSdkPropertiesSerializer<JpsSimpleElement<JpsFlexmojosSdkProperties>> createSdkPropertiesSerializer() {
     return new JpsSdkPropertiesSerializer<JpsSimpleElement<JpsFlexmojosSdkProperties>>(ID, INSTANCE) {
+      @Override
       @NotNull
       public JpsSimpleElement<JpsFlexmojosSdkProperties> loadProperties(@Nullable final Element propertiesElement) {
         final Collection<String> flexCompilerClasspath = new ArrayList<>();
@@ -48,6 +49,7 @@ public class JpsFlexmojosSdkType extends JpsSdkType<JpsSimpleElement<JpsFlexmojo
         return JpsElementFactory.getInstance().createSimpleElement(properties);
       }
 
+      @Override
       public void saveProperties(@NotNull final JpsSimpleElement<JpsFlexmojosSdkProperties> propertiesElement,
                                  @NotNull final Element element) {
         final JpsFlexmojosSdkProperties properties = propertiesElement.getData();

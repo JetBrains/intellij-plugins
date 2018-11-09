@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uiDesigner.testAssistant.run;
 
 import com.intellij.execution.ExecutionException;
@@ -18,7 +19,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class AnyApplication implements ConfigurationType {
+public final class AnyApplication implements ConfigurationType {
   private final ConfigurationFactory factory;
 
   AnyApplication() {
@@ -31,6 +32,7 @@ public class AnyApplication implements ConfigurationType {
     };
   }
 
+  @NotNull
   @Override
   public String getDisplayName() {
     return "AnyApplication";
@@ -55,6 +57,11 @@ public class AnyApplication implements ConfigurationType {
   @Override
   public ConfigurationFactory[] getConfigurationFactories() {
     return new ConfigurationFactory[]{factory};
+  }
+
+  @Override
+  public String getHelpTopic() {
+    return "reference.dialogs.rundebug.com.intellij.flex.uiDesigner.testAssistant.run.AnyApplication";
   }
 
   private static class AnyApplicationConfiguration extends RunConfigurationBase implements ModuleRunProfile {

@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInspection.LocalQuickFix;
@@ -7,7 +8,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -24,7 +24,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.ContainerUtil;
-import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.*;
@@ -36,6 +35,7 @@ import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,11 +49,13 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
     return false;
   }
 
+  @Override
   @NotNull
   public String getFamilyName() {
     return getName();
   }
 
+  @Override
   public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinStep step = (GherkinStep)descriptor.getPsiElement();
     final GherkinFile featureFile = (GherkinFile)step.getContainingFile();
@@ -90,7 +92,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
           @Override
           public Icon getIconFor(CucumberStepDefinitionCreationContext value) {
             PsiFile psiFile = value.getPsiFile();
-            return psiFile == null ? AllIcons.Actions.CreateFromUsage : psiFile.getIcon(0);
+            return psiFile == null ? AllIcons.Actions.IntentionBulb : psiFile.getIcon(0);
           }
 
           @Override
@@ -174,10 +176,12 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
   @Nullable
   private static CreateStepDefinitionFileModel askUserForFilePath(@NotNull final GherkinStep step) {
     final InputValidator validator = new InputValidator() {
+      @Override
       public boolean checkInput(final String filePath) {
         return !StringUtil.isEmpty(filePath);
       }
 
+      @Override
       public boolean canClose(final String fileName) {
         return true;
       }
@@ -185,7 +189,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
 
     Map<BDDFrameworkType, String> supportedFileTypesAndDefaultFileNames = new HashMap<>();
     Map<BDDFrameworkType, PsiDirectory> fileTypeToDefaultDirectoryMap = new HashMap<>();
-    for (CucumberJvmExtensionPoint e : Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME)) {
+    for (CucumberJvmExtensionPoint e : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
       if (e instanceof OptionalStepDefinitionExtensionPoint) {
         // Skip if framework file creation support is optional
         if (!((OptionalStepDefinitionExtensionPoint)e).participateInStepDefinitionCreation(step)) {

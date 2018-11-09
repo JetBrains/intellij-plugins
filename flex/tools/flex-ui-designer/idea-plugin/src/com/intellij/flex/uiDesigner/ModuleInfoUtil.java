@@ -231,7 +231,7 @@ public final class ModuleInfoUtil {
 
       private StylesheetFile stylesheetFile;
 
-      public MyInjectedPsiVisitor(PsiElement host) {
+      MyInjectedPsiVisitor(PsiElement host) {
         this.host = host;
       }
 

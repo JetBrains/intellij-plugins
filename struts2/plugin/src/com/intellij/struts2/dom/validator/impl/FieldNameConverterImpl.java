@@ -60,6 +60,7 @@ public class FieldNameConverterImpl extends FieldNameConverter {
     return psiFacade.findClass(qualifiedActionClassName, new PackageScope(containingPackage, false, false));
   }
 
+  @Override
   @NotNull
   public PsiReference[] createReferences(final GenericDomValue<List<BeanProperty>> listGenericDomValue,
                                          final PsiElement psiElement,

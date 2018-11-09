@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 The authors
+ * Copyright 2018 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +27,8 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassRe
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+
 abstract class OgnlFqnTypeExpressionBase extends OgnlExpressionImpl implements OgnlFqnTypeExpression {
 
   protected OgnlFqnTypeExpressionBase(@NotNull ASTNode node) {
@@ -37,7 +39,7 @@ abstract class OgnlFqnTypeExpressionBase extends OgnlExpressionImpl implements O
   @Override
   public PsiReference[] getReferences() {
     JavaClassReferenceProvider referenceProvider = new JavaClassReferenceProvider();
-    referenceProvider.setOption(JavaClassReferenceProvider.DEFAULT_PACKAGE, CommonClassNames.DEFAULT_PACKAGE);
+    referenceProvider.setOption(JavaClassReferenceProvider.IMPORTS, Collections.singletonList(CommonClassNames.DEFAULT_PACKAGE));
 
     OgnlPsiUtil.customizeFqnTypeExpressionReferences(this, referenceProvider);
 

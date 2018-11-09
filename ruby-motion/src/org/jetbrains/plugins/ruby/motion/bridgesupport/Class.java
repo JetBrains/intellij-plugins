@@ -45,7 +45,7 @@ public class Class extends FunctionHolder {
     return mySubClasses.get(name);
   }
 
-  public static Map<String, Class> mergeClasses(Collection<Class> classes) {
+  public static Map<String, Class> mergeClasses(Collection<? extends Class> classes) {
     final Map<String, Class> result = new HashMap<>();
     for (Class clazz : classes) {
       final String name = clazz.getName();

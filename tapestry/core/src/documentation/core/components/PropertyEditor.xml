@@ -1,0 +1,23 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Used to edit a single property of a bean. This is used primarily by org.apache.tapestry.corelib.components.BeanEditForm. Unlike BeanEditForm, the object to be edited must already exist\
+        and the must be passed in explicitly.
+    </description>
+
+    <parameters>
+        <parameter name="model">
+            The model that identifies the parameters to be edited, their order, and every other aspect.
+        </parameter>
+        <parameter name="object">
+            The object to be edited by the BeanEditor. This will be read when the component renders and updated when the form for the component is submitted. Typically, the container will listen\
+            for a "prepare" event, in order to ensure that a non-null value is ready to be read or updated.
+        </parameter>
+        <parameter name="overrides">
+            Where to search for local overrides of property editing blocks as block parameters. Further, the container of the overrides is used as the source for overridden validation\
+            messages. This is normally the component itself, but when the component is used within a BeanEditForm, it will be the BeanEditForm's block parameter that will be searched.
+        </parameter>
+        <parameter name="property">
+            Identifies the property to be edited by the editor.
+        </parameter>
+    </parameters>
+</element>

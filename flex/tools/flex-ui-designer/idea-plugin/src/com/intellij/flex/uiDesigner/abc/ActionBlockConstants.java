@@ -168,12 +168,12 @@ interface ActionBlockConstants {
   /**
    * @deprecated use getglobalscope+getslot
    */
-  int OP_getglobalslot = 0x6e;
+  @Deprecated int OP_getglobalslot = 0x6e;
 
   /**
    * @deprecated use getglobalscope+setslot
    */
-  int OP_setglobalslot = 0x6f;
+  @Deprecated int OP_setglobalslot = 0x6f;
 
 
   int OP_convert_s = 0x70;
@@ -193,23 +193,23 @@ interface ActionBlockConstants {
   /**
    * @deprecated use OP_convert_b
    */
-  int OP_coerce_b = 0x81;
+  @Deprecated int OP_coerce_b = 0x81;
   int OP_coerce_a = 0x82;
   /**
    * @deprecated use OP_convert_i
    */
-  int OP_coerce_i = 0x83;
+  @Deprecated int OP_coerce_i = 0x83;
   /**
    * @deprecated use OP_convert_d
    */
-  int OP_coerce_d = 0x84;
+  @Deprecated int OP_coerce_d = 0x84;
   int OP_coerce_s = 0x85;
   int OP_astype = 0x86;
   int OP_astypelate = 0x87;
   /**
    * @deprecated use OP_convert_u
    */
-  int OP_coerce_u = 0x88;
+  @Deprecated int OP_coerce_u = 0x88;
   int OP_coerce_o = 0x89;
 
   int OP_negate_p = 0x8f;

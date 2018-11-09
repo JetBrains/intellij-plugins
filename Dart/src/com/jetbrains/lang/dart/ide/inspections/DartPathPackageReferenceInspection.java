@@ -284,7 +284,6 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
   }
 
 
-  @SuppressWarnings("IfStatementWithIdenticalBranches")
   private static String getProjectRootsConfigurableName() {
     if (PlatformUtils.isWebStorm() || PlatformUtils.isPhpStorm()) {
       // "Directories" comes from com.intellij.webcore.resourceRoots.WebIdeProjectStructureConfigurable.getDisplayName()

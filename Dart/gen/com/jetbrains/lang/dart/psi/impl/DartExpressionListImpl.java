@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartExpressionListImpl extends DartPsiCompositeElementImpl implements DartExpressionList {
 
-  public DartExpressionListImpl(ASTNode node) {
+  public DartExpressionListImpl(@NotNull ASTNode node) {
     super(node);
   }
 

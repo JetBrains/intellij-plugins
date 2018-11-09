@@ -147,7 +147,6 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-//noinspection EmptyCatchBlock
     try {
       myFacade.getConnection().getAccountManager().deleteAccount();
     } catch (Throwable e) {

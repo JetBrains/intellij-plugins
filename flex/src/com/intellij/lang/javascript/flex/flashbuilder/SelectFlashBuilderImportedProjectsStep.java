@@ -11,6 +11,7 @@ public class SelectFlashBuilderImportedProjectsStep extends SelectImportedProjec
     super(context);
   }
 
+  @Override
   protected String getElementText(final String dotProjectFilePath) {
     final StringBuilder builder = new StringBuilder();
     builder.append(FlashBuilderProjectLoadUtil.readProjectName(dotProjectFilePath));
@@ -21,6 +22,7 @@ public class SelectFlashBuilderImportedProjectsStep extends SelectImportedProjec
     return builder.toString();
   }
 
+  @Override
   public boolean isStepVisible() {
     final FlashBuilderImporter builder = (FlashBuilderImporter)getBuilder();
     if (builder == null) return false;
@@ -41,6 +43,7 @@ public class SelectFlashBuilderImportedProjectsStep extends SelectImportedProjec
     return super.isStepVisible();
   }
 
+  @Override
   public String getHelpId() {
     return "reference.dialogs.new.project.import.flex.page2";
   }

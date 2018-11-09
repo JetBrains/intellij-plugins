@@ -480,62 +480,77 @@ public class DartStatementMover extends LineMover {
     result[0] = false;
 
     element.accept(new DartVisitor() {
+      @Override
       public void visitAssertStatement(@NotNull DartAssertStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitBreakStatement(@NotNull DartBreakStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitContinueStatement(@NotNull DartContinueStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitDoWhileStatement(@NotNull DartDoWhileStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitForStatement(@NotNull DartForStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitIfStatement(@NotNull DartIfStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitRethrowStatement(@NotNull DartRethrowStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitReturnStatement(@NotNull DartReturnStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitSwitchStatement(@NotNull DartSwitchStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitTryStatement(@NotNull DartTryStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitWhileStatement(@NotNull DartWhileStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitYieldEachStatement(@NotNull DartYieldEachStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitYieldStatement(@NotNull DartYieldStatement o) {
         result[0] = true;
       }
 
+      @Override
       public void visitVarDeclarationList(@NotNull DartVarDeclarationList o) {
         result[0] = expressionStatementTeminator(o) != null;
       }
 
+      @Override
       public void visitExpression(@NotNull DartExpression o) {
         result[0] = expressionStatementTeminator(o) != null;
       }

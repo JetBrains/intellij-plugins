@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartSuperclassImpl extends DartPsiCompositeElementImpl implements DartSuperclass {
 
-  public DartSuperclassImpl(ASTNode node) {
+  public DartSuperclassImpl(@NotNull ASTNode node) {
     super(node);
   }
 

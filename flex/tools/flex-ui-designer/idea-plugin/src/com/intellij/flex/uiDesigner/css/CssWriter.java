@@ -339,7 +339,6 @@ public class CssWriter {
           propertyOut.writeAmfUInt(color.getRGB());
         }
         else if (termType == CssTermTypes.IDENT) {
-          //noinspection ConstantConditions
           ASTNode node = child.getFirstChild().getNode();
           if (node.getElementType() == CssElementTypes.CSS_FUNCTION) {
             LOG.assertTrue(writeCssType);
@@ -351,7 +350,6 @@ public class CssWriter {
         }
         else if (termType == CssTermTypes.NUMBER || termType == CssTermTypes.NEGATIVE_NUMBER || termType == CssTermTypes.LENGTH || termType == CssTermTypes.NEGATIVE_LENGTH) {
           // todo if termType equals CssTermTypes.LENGTH, we must respect unit
-          //noinspection ConstantConditions
           writeNumberValue(child.getFirstChild().getNode(), false);
         }
         else if (termType == CssTermTypes.STRING) {
@@ -386,7 +384,6 @@ public class CssWriter {
     }
   }
 
-  @SuppressWarnings("ConstantConditions")
   private void writeFunctionValue(CssFunction cssFunction, @Nullable FlexStyleIndexInfo info) throws InvalidPropertyException {
     final String functionName = cssFunction.getName();
     CssTermList termList = cssFunction.getValue();
@@ -455,7 +452,6 @@ public class CssWriter {
         PsiElement firstChild = child.getFirstChild();
         if (firstChild instanceof LeafElement && ((LeafElement)firstChild).getElementType() == CssElementTypes.CSS_IDENT) {
           CharSequence name = firstChild.getNode().getChars();
-          @SuppressWarnings("ConstantConditions")
           PsiElement valueElement = child.getLastChild().getFirstChild();
           if (StringUtil.equals(name, "source")) {
             source = InjectionUtil.getReferencedFile(valueElement);

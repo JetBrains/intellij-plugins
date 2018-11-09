@@ -174,7 +174,13 @@ module Spec
                     end
 
           # Backtrace
-          backtrace = example_notification.formatted_backtrace.join("\n")
+
+          if example_notification.respond_to? :fully_formatted_lines
+            backtrace_lines = example_notification.fully_formatted_lines(0)
+          else
+            backtrace_lines = example_notification.formatted_backtrace
+          end
+          backtrace = backtrace_lines.join("\n")
 
           debug_log("Example failing... full name = [#{running_example_full_name}], Message:\n#{message} \n\nBackrace:\n#{backtrace}\n\n, additional flowid suffix=[#{additional_flowid_suffix}]")
 

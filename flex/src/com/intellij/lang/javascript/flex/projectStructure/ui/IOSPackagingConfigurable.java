@@ -14,6 +14,7 @@ public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<Modif
     super(module, model, airDescriptorInfoProvider);
   }
 
+  @Override
   @Nls
   public String getDisplayName() {
     return TAB_NAME;

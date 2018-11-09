@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartOnPartImpl extends DartPsiCompositeElementImpl implements DartOnPart {
 
-  public DartOnPartImpl(ASTNode node) {
+  public DartOnPartImpl(@NotNull ASTNode node) {
     super(node);
   }
 

@@ -87,14 +87,17 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
               final String expressionValue = ((JSLiteralExpression)bundleExpression).getStringValue();
               if (expressionValue != null) {
                 provider = new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
+                  @Override
                   public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
                     return getValueRange(element);
                   }
 
+                  @Override
                   public String getBundleName(JSLiteralExpressionImpl element) {
                     return expressionValue;
                   }
 
+                  @Override
                   public boolean isSoft(JSLiteralExpressionImpl element) {
                     return false;
                   }
@@ -118,14 +121,17 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
 
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourPropertyInfoProvider =
     new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
+      @Override
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
       }
 
+      @Override
       public String getBundleName(JSLiteralExpressionImpl element) {
         return null;
       }
 
+      @Override
       public boolean isSoft(JSLiteralExpressionImpl element) {
         return false;
       }
@@ -133,14 +139,17 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
 
   private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourSoftPropertyInfoProvider =
     new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
+      @Override
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
       }
 
+      @Override
       public String getBundleName(JSLiteralExpressionImpl element) {
         return null;
       }
 
+      @Override
       public boolean isSoft(JSLiteralExpressionImpl element) {
         return true;
       }
@@ -149,10 +158,12 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
 
   private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl> ourBundleInfoProvider =
     new FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl>() {
+      @Override
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
       }
 
+      @Override
       public boolean isSoft(JSLiteralExpressionImpl element) {
         return false;
       }
@@ -160,10 +171,12 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
 
   private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl> ourSoftBundleInfoProvider =
     new FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl>() {
+      @Override
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
       }
 
+      @Override
       public boolean isSoft(JSLiteralExpressionImpl element) {
         return true;
       }

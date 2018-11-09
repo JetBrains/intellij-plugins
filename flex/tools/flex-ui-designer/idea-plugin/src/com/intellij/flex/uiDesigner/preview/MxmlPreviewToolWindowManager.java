@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uiDesigner.preview;
 
 import com.intellij.flex.uiDesigner.*;
@@ -18,8 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.openapi.wm.ex.ToolWindowManagerAdapter;
-import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
+import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
@@ -29,7 +29,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -112,13 +111,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
   }
 
-  @Override
-  @NotNull
-  @NonNls
-  public String getComponentName() {
-    return "MxmlPreviewToolWindowManager";
-  }
-
   private void initToolWindow() {
     toolWindowForm = new MxmlPreviewToolWindowForm();
     String toolWindowId = FlashUIDesignerBundle.message("mxml.preview.tool.window.title");
@@ -134,7 +126,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       toolWindow.hide(null);
     }
 
-    ((ToolWindowManagerEx)ToolWindowManager.getInstance(project)).addToolWindowManagerListener(new ToolWindowManagerAdapter() {
+    project.getMessageBus().connect().subscribe(ToolWindowManagerListener.TOPIC, new ToolWindowManagerListener() {
       @Override
       public void stateChanged() {
         if (project.isDisposed() || toolWindow == null || !toolWindow.isAvailable()) {
@@ -342,7 +334,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
         initToolWindow();
         // idea inspection bug
-        //noinspection ConstantConditions
         assert toolWindow != null;
       }
 

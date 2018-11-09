@@ -28,16 +28,18 @@ import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.PsiTypeVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.regex.Matcher;
 
 /**
  * @author vnikolaenko
  */
 public class CfmlJavaLoaderClassType extends PsiType {
-  private GlobalSearchScope mySearchScope;
+  private final GlobalSearchScope mySearchScope;
   private final Project myProject;
 
   private class JarFileScope extends GlobalSearchScope {
@@ -45,7 +47,6 @@ public class CfmlJavaLoaderClassType extends PsiType {
     private final Module myModule;
 
     private JarFileScope(@NotNull VirtualFile file) {
-      super();
       myVirtualFile = file;
       ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
       myModule = fileIndex.getModuleForFile(myVirtualFile);
@@ -54,11 +55,6 @@ public class CfmlJavaLoaderClassType extends PsiType {
     @Override
     public boolean contains(@NotNull VirtualFile file) {
       return VfsUtilCore.isAncestor(myVirtualFile, file, true);
-    }
-
-    @Override
-    public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
-      return 0;
     }
 
     @Override
@@ -72,28 +68,27 @@ public class CfmlJavaLoaderClassType extends PsiType {
     }
   }
 
-  public CfmlJavaLoaderClassType(PsiComment comment, Project project) {
+  CfmlJavaLoaderClassType(PsiComment comment, Project project) {
     super(PsiAnnotation.EMPTY_ARRAY);
     final String text = comment.getText();
 
     myProject = project;
     Matcher javaLoaderMatcher = CfmlFile.LOADER_DECL_PATTERN_TEMP.matcher(text);
-    mySearchScope = GlobalSearchScope.allScope(project);//EMPTY_SCOPE;
+    GlobalSearchScope searchScope = GlobalSearchScope.allScope(project);//EMPTY_SCOPE;
 
     if (javaLoaderMatcher.matches()) {
       Collection<String> collection = CfmlPsiUtil.findBetween(text, "loadPaths=\"", "\"");
-      if (collection != null) {
-        for (String str : collection) {
-          VirtualFile file = JarFileSystem.getInstance().findFileByPath(str + JarFileSystem.JAR_SEPARATOR);
-          if (file != null) {
-            mySearchScope = mySearchScope.uniteWith(new JarFileScope(file));
-          }
-        }
-      }
+      GlobalSearchScope[] scopes = collection.stream()
+        .map(str -> JarFileSystem.getInstance().findFileByPath(str + JarFileSystem.JAR_SEPARATOR))
+        .filter(Objects::nonNull)
+        .map(file -> new JarFileScope(file))
+        .toArray(GlobalSearchScope[]::new);
+      searchScope = scopes.length == 0 ? searchScope : GlobalSearchScope.union(ArrayUtil.append(scopes, searchScope));
     }
+    mySearchScope = searchScope;
   }
 
-  public GlobalSearchScope getSearchScope() {
+  GlobalSearchScope getSearchScope() {
     return mySearchScope;
   }
 

@@ -38,6 +38,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
     return FlexTestUtils.getTestDataPath("");
   }
 
+  @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }

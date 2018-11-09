@@ -15,11 +15,13 @@ public class GherkinFileType extends LanguageFileType {
     super(GherkinLanguage.INSTANCE);
   }
 
+  @Override
   @NotNull
   public String getName() {
     return "Cucumber";
   }
 
+  @Override
   @NotNull
   public String getDescription() {
     return "Cucumber scenario";
@@ -31,6 +33,7 @@ public class GherkinFileType extends LanguageFileType {
     return "feature";
   }
 
+  @Override
   public Icon getIcon() {
     return icons.CucumberIcons.Cucumber;
   }

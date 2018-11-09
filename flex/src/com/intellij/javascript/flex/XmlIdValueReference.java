@@ -52,6 +52,7 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
   private static final FileBasedUserDataCache<List<PsiElement>> ourCachedIdsCache = new FileBasedUserDataCache<List<PsiElement>>() {
     private final Key<CachedValue<List<PsiElement>>> ourCachedIdsValueKey = Key.create("mxml.id.cached.value");
 
+    @Override
     protected List<PsiElement> doCompute(PsiFile file) {
       final List<PsiElement> result = new ArrayList<>();
 
@@ -67,6 +68,7 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
       return result;
     }
 
+    @Override
     protected Key<CachedValue<List<PsiElement>>> getKey() {
       return ourCachedIdsValueKey;
     }
@@ -80,12 +82,14 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
     }
   }
 
+  @Override
   @Nullable
   public PsiElement resolve() {
     final Ref<PsiElement> result = new Ref<>();
     process(new PsiElementProcessor<PsiElement>() {
       final String canonicalText = getCanonicalText();
 
+      @Override
       public boolean execute(@NotNull final PsiElement element) {
         final String idValue = getIdValue(element);
         if (idValue != null && idValue.equals(canonicalText)) {
@@ -99,11 +103,13 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
     return result.get();
   }
 
+  @Override
   @NotNull
   public Object[] getVariants() {
     final List<String> result = new LinkedList<>();
 
     process(new PsiElementProcessor<PsiElement>() {
+      @Override
       public boolean execute(@NotNull final PsiElement element) {
         result.add(getIdValue(element));
         return true;
@@ -113,6 +119,7 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
     return ArrayUtil.toObjectArray(result);
   }
 
+  @Override
   public boolean isSoft() {
     return false;
   }

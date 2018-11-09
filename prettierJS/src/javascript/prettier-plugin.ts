@@ -4,6 +4,7 @@ declare var require: any;
 type PrettierApi = typeof prettier & { path: string }
 
 interface FormatResponse {
+    ignored?: boolean,
     error?: string,
     formatted?: string,
 }
@@ -13,6 +14,7 @@ type FormatArguments = {
     end?: number,
     path: string,
     prettierPath: string,
+    ignoreFilePath?: string,
     content: string,
     flushConfigCache: boolean
 }
@@ -55,6 +57,10 @@ export class PrettierPlugin implements LanguagePlugin {
         let prettierApi = this.requirePrettierApi(args.prettierPath);
 
         try {
+            let options = {ignorePath: args.ignoreFilePath, withNodeModules: true};
+            if (prettierApi.getFileInfo && prettierApi.getFileInfo.sync(args.path, options).ignored) {
+                return {ignored: true}
+            }
             return {formatted: performFormat(prettierApi, args)}
         }
         catch (e) {

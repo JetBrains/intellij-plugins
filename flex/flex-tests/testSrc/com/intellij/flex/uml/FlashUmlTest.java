@@ -50,6 +50,7 @@ import com.intellij.util.JdomKt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jdom.transform.JDOMResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -87,7 +88,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
   }
 
   @Override
-  public Object getData(String dataId) {
+  public Object getData(@NotNull String dataId) {
     if (dataId.equals(CommonDataKeys.PSI_ELEMENT.getName()) ||
         dataId.equals(AnActionEvent.injectedId(CommonDataKeys.PSI_ELEMENT.getName()))) {
       return TargetElementUtil.findTargetElement(getEditor(), TargetElementUtil.getInstance().getReferenceSearchFlags());

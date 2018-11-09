@@ -36,30 +36,37 @@ public abstract class KirTreeNode implements TreeNode {
   protected abstract List getChildNodes();
   protected abstract Component renderIn(JLabel label, boolean selected, boolean hasFocus);
 
+  @Override
   public int getChildCount() {
     return getChildNodes().size();
   }
 
+  @Override
   public boolean getAllowsChildren() {
     return getChildCount() > 0;
   }
 
+  @Override
   public boolean isLeaf() {
     return getChildCount() == 0;
   }
 
+  @Override
   public Enumeration children() {
     return Collections.enumeration(getChildNodes());
   }
 
+  @Override
   public TreeNode getParent() {
     return myParent;
   }
 
+  @Override
   public TreeNode getChildAt(int childIndex) {
     return (TreeNode) getChildNodes().get(childIndex);
   }
 
+  @Override
   public int getIndex(TreeNode node) {
     throw new UnsupportedOperationException("Not implemented in " + getClass().getName());
   }

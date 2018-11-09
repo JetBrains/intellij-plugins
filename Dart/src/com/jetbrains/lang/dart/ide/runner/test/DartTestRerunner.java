@@ -18,9 +18,9 @@ import java.util.List;
 
 public class DartTestRerunner implements RunProfileState {
   private final ExecutionEnvironment environment;
-  private final List<AbstractTestProxy> failedTests;
+  private final List<? extends AbstractTestProxy> failedTests;
 
-  DartTestRerunner(@NotNull ExecutionEnvironment env, @NotNull List<AbstractTestProxy> tests) {
+  DartTestRerunner(@NotNull ExecutionEnvironment env, @NotNull List<? extends AbstractTestProxy> tests) {
     environment = env;
     failedTests = tests;
   }

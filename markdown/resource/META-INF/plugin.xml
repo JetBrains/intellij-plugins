@@ -7,8 +7,18 @@
   <depends optional="true" config-file="plugin-intelliLang.xml">org.intellij.intelliLang</depends>
 
   <description><![CDATA[
-      Markdown support for IntelliJ products
-    ]]></description>
+<p>Provides the capability to edit markdown files within the IDE and see the rendered HTML in a live preview.
+</br>
+</br>
+Includes the following features:</p>
+<ul>
+<li>Document structure view, headers folding, highlighting, TODOs.</li>
+<li>Code completion and navigation for links to project files.</li>
+<li>Embedding fenced code blocks for different languages.</li>
+<li>Visualizing diagrams for the DOT or PlantUML diagramming languages.</li>
+<li>Ability to use custom stylesheets for a live preview.</li>
+</ul>
+]]></description>
 
   <change-notes><![CDATA[
     ]]>
@@ -98,6 +108,13 @@
               icon="MarkdownIcons.EditorActions.Bold">
       </action>
 
+      <action class="org.intellij.plugins.markdown.ui.actions.styling.ToggleStrikethroughAction"
+              id="org.intellij.plugins.markdown.ui.actions.styling.ToggleStrikethroughAction"
+              text="Toggle strikethrough mode"
+              description="Toggles strikethrough mode on caret/selection"
+              icon="MarkdownIcons.EditorActions.Strike_through">
+      </action>
+
       <action class="org.intellij.plugins.markdown.ui.actions.styling.ToggleItalicAction"
               id="org.intellij.plugins.markdown.ui.actions.styling.ToggleItalicAction"
               text="Toggle italic mode"
@@ -110,6 +127,27 @@
               text="Toggle monospaced (code span) mode"
               description="Toggles monospaced mode (rendered as code span) on caret/selection"
               icon="MarkdownIcons.EditorActions.Code_span">
+      </action>
+
+      <action class="org.intellij.plugins.markdown.ui.actions.styling.HeaderDownAction"
+              id="org.intellij.plugins.markdown.ui.actions.styling.HeaderDownAction"
+              text="Decrease Header Level"
+              description="Decreases level of a header by caret"
+              icon="MarkdownIcons.EditorActions.Header_level_down">
+      </action>
+
+      <action class="org.intellij.plugins.markdown.ui.actions.styling.HeaderUpAction"
+              id="org.intellij.plugins.markdown.ui.actions.styling.HeaderUpAction"
+              text="Increase Header Level"
+              description="Creates or increases level of a header by caret"
+              icon="MarkdownIcons.EditorActions.Header_level_up">
+      </action>
+
+      <action class="org.intellij.plugins.markdown.ui.actions.styling.MarkdownIntroduceLinkReferenceAction"
+              id="org.intellij.plugins.markdown.ui.actions.styling.MarkdownIntroduceLinkReferenceAction"
+              text="Introduce reference"
+              description="Creates link from text and replaces it with a reference"
+              icon="MarkdownIcons.EditorActions.Link">
       </action>
     </group>
 
@@ -127,26 +165,26 @@
               id="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorOnlyLayoutChangeAction"
               text="Show editor only"
               description="Sets markdown editor layout to show editor only"
-              icon="MarkdownIcons.Layout.Editor_only">
+              icon="AllIcons.General.LayoutEditorOnly">
       </action>
       <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorAndPreviewLayoutChangeAction"
               id="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorAndPreviewLayoutChangeAction"
               text="Show editor and preview"
               description="Sets markdown editor layout to show editor and preview in split"
-              icon="MarkdownIcons.Layout.Editor_preview">
+              icon="AllIcons.General.LayoutEditorPreview">
       </action>
       <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.PreviewOnlyLayoutChangeAction"
               id="org.intellij.plugins.markdown.ui.actions.editorLayout.PreviewOnlyLayoutChangeAction"
               text="Show preview only"
               description="Sets markdown editor layout to show preview only"
-              icon="MarkdownIcons.Layout.Preview_only">
+              icon="AllIcons.General.LayoutPreviewOnly">
       </action>
       <separator/>
       <action class="org.intellij.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
               id="org.intellij.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
               text="Auto-Scroll Preview"
               description="Enable/Disable preview auto scroll"
-              icon="AllIcons.General.AutoscrollFromSource">
+              icon="AllIcons.Actions.SynchronizeScrolling">
       </action>
     </group>
   </actions>

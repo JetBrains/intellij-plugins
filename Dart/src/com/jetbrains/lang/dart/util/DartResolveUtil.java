@@ -192,7 +192,7 @@ public class DartResolveUtil {
 
   public static void processTopLevelDeclarations(final @NotNull PsiElement context,
                                                  final @NotNull DartPsiScopeProcessor processor,
-                                                 final @NotNull List<VirtualFile> files,
+                                                 final @NotNull List<? extends VirtualFile> files,
                                                  final @Nullable String componentNameHint) {
     for (VirtualFile virtualFile : files) {
       if (!processTopLevelDeclarations(context, processor, virtualFile, componentNameHint)) {
@@ -217,8 +217,8 @@ public class DartResolveUtil {
   private static boolean processTopLevelDeclarationsImpl(final @NotNull PsiElement context,
                                                          final @NotNull DartPsiScopeProcessor processor,
                                                          final @Nullable VirtualFile virtualFile,
-                                                         final @Nullable Set<VirtualFile> filesOfInterest,
-                                                         final @NotNull Set<VirtualFile> alreadyProcessed,
+                                                         final @Nullable Set<? extends VirtualFile> filesOfInterest,
+                                                         final @NotNull Set<? super VirtualFile> alreadyProcessed,
                                                          final boolean privateOnly) {
     if (virtualFile == null) return true;
 
@@ -470,7 +470,7 @@ public class DartResolveUtil {
   }
 
   @NotNull
-  public static <T> List<T> findSubComponents(final Function<DartClass, List<T>> fun, @NotNull DartClass... rootDartClasses) {
+  public static <T> List<T> findSubComponents(final Function<? super DartClass, ? extends List<T>> fun, @NotNull DartClass... rootDartClasses) {
     final List<T> unfilteredResult = new ArrayList<>();
     processSuperClasses(dartClass -> {
       unfilteredResult.addAll(fun.fun(dartClass));
@@ -479,7 +479,7 @@ public class DartResolveUtil {
     return unfilteredResult;
   }
 
-  public static boolean processSuperClasses(PsiElementProcessor<DartClass> processor, @NotNull DartClass... rootDartClasses) {
+  public static boolean processSuperClasses(PsiElementProcessor<? super DartClass> processor, @NotNull DartClass... rootDartClasses) {
     final Set<DartClass> processedClasses = new THashSet<>();
     final LinkedList<DartClass> classes = new LinkedList<>();
     classes.addAll(Arrays.asList(rootDartClasses));
@@ -504,8 +504,8 @@ public class DartResolveUtil {
     return true;
   }
 
-  public static void collectSupers(@NotNull final List<DartClass> superClasses,
-                                   @NotNull final List<DartClass> superInterfaces,
+  public static void collectSupers(@NotNull final List<? super DartClass> superClasses,
+                                   @NotNull final List<? super DartClass> superInterfaces,
                                    @Nullable DartClass rootDartClass) {
     processSupers(dartClass -> {
       superClasses.add(dartClass);
@@ -516,8 +516,8 @@ public class DartResolveUtil {
     }, rootDartClass);
   }
 
-  public static void processSupers(@Nullable PsiElementProcessor<DartClass> superClassProcessor,
-                                   @Nullable PsiElementProcessor<DartClass> superInterfaceProcessor,
+  public static void processSupers(@Nullable PsiElementProcessor<? super DartClass> superClassProcessor,
+                                   @Nullable PsiElementProcessor<? super DartClass> superInterfaceProcessor,
                                    @Nullable DartClass rootDartClass) {
     final Set<DartClass> processedClasses = new THashSet<>();
     DartClass currentClass = rootDartClass;
@@ -561,7 +561,7 @@ public class DartResolveUtil {
     }
   }
 
-  public static Map<Pair<String, Boolean>, DartComponent> namedComponentToMap(List<DartComponent> unfilteredResult) {
+  public static Map<Pair<String, Boolean>, DartComponent> namedComponentToMap(List<? extends DartComponent> unfilteredResult) {
     final Map<Pair<String, Boolean>, DartComponent> result = new HashMap<>();
     for (DartComponent dartComponent : unfilteredResult) {
       // need order
@@ -619,7 +619,7 @@ public class DartResolveUtil {
     return body == null ? null : body.getClassMembers();
   }
 
-  public static List<DartComponent> filterComponentsByType(List<DartComponent> components, final DartComponentType type) {
+  public static List<DartComponent> filterComponentsByType(List<? extends DartComponent> components, final DartComponentType type) {
     return ContainerUtil.filter(components, component -> type == DartComponentType.typeOf(component));
   }
 

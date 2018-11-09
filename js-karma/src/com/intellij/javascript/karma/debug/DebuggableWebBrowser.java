@@ -29,7 +29,7 @@ public class DebuggableWebBrowser {
   @Nullable
   public static DebuggableWebBrowser create(@NotNull WebBrowser browser) {
     ILiveEditOptions liveEditOptions = ServiceManager.getService(ILiveEditOptions.class);
-    boolean useExtension = liveEditOptions != null && liveEditOptions.isChromeUpdateApp();
+    boolean useExtension = liveEditOptions != null && liveEditOptions.isUseJBChromeExtension();
     JavaScriptDebugEngine debugEngine = JavaScriptDebugEngine.Companion.findByBrowser(browser, useExtension);
     return debugEngine != null ? new DebuggableWebBrowser(debugEngine, browser) : null;
   }

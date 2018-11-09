@@ -129,7 +129,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
 
     manager.startTemplate(editorToRunTemplate, template, new TemplateEditingAdapter() {
       @Override
-      public void templateFinished(Template template, boolean brokenOff) {
+      public void templateFinished(@NotNull Template template, boolean brokenOff) {
         if (brokenOff) return;
 
         ApplicationManager.getApplication().runWriteAction(() -> {

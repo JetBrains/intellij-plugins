@@ -34,6 +34,7 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
     super(StrutsRoot.class, StrutsRoot.TAG_NAME);
   }
 
+  @Override
   protected void initializeFileDescription() {
     registerNamespacePolicy(StrutsDomConstants.STRUTS_NAMESPACE_KEY,
                             StrutsConstants.STRUTS_DTDS);

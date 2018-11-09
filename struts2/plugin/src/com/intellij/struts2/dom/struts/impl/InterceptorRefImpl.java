@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class InterceptorRefImpl implements InterceptorRef {
 
+  @Override
   @Nullable
   public PsiClass getParamsClass() {
     final InterceptorOrStackBase interceptorOrStack = getName().getValue();

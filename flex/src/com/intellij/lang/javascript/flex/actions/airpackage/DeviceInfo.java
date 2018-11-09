@@ -26,6 +26,7 @@ public class DeviceInfo {
     final List<DeviceInfo> result = new ArrayList<>();
 
     ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+      @Override
       protected List<String> createCommandLine() {
         final ArrayList<String> command = new ArrayList<>();
         command.add(sdk.getHomePath() + AirPackageUtil.ADB_RELATIVE_PATH);
@@ -33,6 +34,7 @@ public class DeviceInfo {
         return command;
       }
 
+      @Override
       protected boolean checkMessages() {
         // List of devices attached
         // HT058HL00538<Tab>device
@@ -61,11 +63,13 @@ public class DeviceInfo {
     final List<DeviceInfo> result = new ArrayList<>();
 
     ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+      @Override
       protected void appendAdtOptions(final List<String> command) {
         command.add("-devices");
         command.add("-platform");
         command.add("ios");      }
 
+      @Override
       protected boolean checkMessages() {
         // List of attached devices:
         // Handle<Tab>DeviceClass<Tab>DeviceUUID<Tab><Tab><Tab><Tab><Tab>DeviceName

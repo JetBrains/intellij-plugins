@@ -33,6 +33,7 @@ public class RemoteFlashRunConfigurationForm extends SettingsEditor<RemoteFlashR
     myProject = project;
 
     final ActionListener listener = new ActionListener() {
+      @Override
       public void actionPerformed(final ActionEvent e) {
         updateControls();
       }
@@ -45,11 +46,13 @@ public class RemoteFlashRunConfigurationForm extends SettingsEditor<RemoteFlashR
     myDebugOverUSBRadioButton.addActionListener(listener);
   }
 
+  @Override
   @NotNull
   protected JComponent createEditor() {
     return myMainPanel;
   }
 
+  @Override
   protected void resetEditorFrom(@NotNull final RemoteFlashRunConfiguration configuration) {
     final RemoteFlashRunnerParameters params = configuration.getRunnerParameters();
     myBCCombo.resetFrom(params);
@@ -65,6 +68,7 @@ public class RemoteFlashRunConfigurationForm extends SettingsEditor<RemoteFlashR
     updateControls();
   }
 
+  @Override
   protected void applyEditorTo(@NotNull final RemoteFlashRunConfiguration configuration) throws ConfigurationException {
     final RemoteFlashRunnerParameters params = configuration.getRunnerParameters();
     myBCCombo.applyTo(params);
@@ -88,6 +92,7 @@ public class RemoteFlashRunConfigurationForm extends SettingsEditor<RemoteFlashR
     catch (NumberFormatException ignore) {/*ignore*/}
   }
 
+  @Override
   protected void disposeEditor() {
     myBCCombo.dispose();
   }

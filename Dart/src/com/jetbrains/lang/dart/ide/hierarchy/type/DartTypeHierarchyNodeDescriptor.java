@@ -27,6 +27,7 @@ public final class DartTypeHierarchyNodeDescriptor extends HierarchyNodeDescript
     return element instanceof DartClass ? (DartClass)element : null;
   }
 
+  @Override
   public final boolean update() {
     boolean changes = super.update();
 

@@ -18,6 +18,7 @@ package com.jetbrains.lang.dart.ide.runner;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
@@ -28,7 +29,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DartExecutionHelper {
 
@@ -58,7 +58,7 @@ public class DartExecutionHelper {
     final DartAnalysisServerService analysisServerService = DartAnalysisServerService.getInstance(project);
     List<DartServerData.DartError> errors = analysisServerService.getErrors(scope);
     if (onlyErrors) {
-      errors = errors.stream().filter(DartServerData.DartError::isError).collect(Collectors.toList());
+      errors = ContainerUtil.filter(errors, DartServerData.DartError::isError);
     }
 
     return errors;

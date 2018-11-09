@@ -1,0 +1,3 @@
+${STEP_KEYWORD}(${STEP_REGEXP}, ${PARAMETERS} -> {
+    ${BODY}
+})

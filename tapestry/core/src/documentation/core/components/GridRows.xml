@@ -1,0 +1,37 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        Renders out a series of rows within the table. Inside a org.apache.tapestry.corelib.components.Form, a series of row index numbers are stored into the form ( ). This is not ideal ... in a\
+        situation where the data set can shift between the form render and the form submission, this can cause unexpected results, including applying changes to the wrong objects.
+    </description>
+
+    <parameters>
+        <parameter name="currentPage">
+            The current page number within the available pages (indexed from 1).
+        </parameter>
+        <parameter name="lean">
+            If true, then the CSS class on each TD cell will be omitted, which can reduce the amount of output from the component overall by a considerable amount. Leave this as false, the\
+            default, when you are leveraging the CSS to customize the look and feel of particular columns.
+        </parameter>
+        <parameter name="provider">
+            Object that provides access to the bean and data models used to render the Grid.
+        </parameter>
+        <parameter name="row">
+            The current row being rendered, this is primarily an output parameter used to allow the Grid, and the Grid's container, to know what object is being rendered.
+        </parameter>
+        <parameter name="rowClass">
+            Parameter used to set the CSS class for each row (each tr element) within the tbody). This is not cached, so it will be recomputed for each row.
+        </parameter>
+        <parameter name="rowsPerPage">
+            Number of rows displayed on each page. Long result sets are split across multiple pages.
+        </parameter>
+        <parameter name="sortAscending">
+            If true, then the sort is ascending (A - Z), if false the descending (Z - A).
+        </parameter>
+        <parameter name="sortColumnId">
+            The column which is currently being sorted. This value is the column's id, not its name. This parameter may be null, in which case no column is being used for sorting.
+        </parameter>
+        <parameter name="volatile">
+            If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false, enabling state saving logic within Forms.
+        </parameter>
+    </parameters>
+</element>

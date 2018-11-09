@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2006 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.viewFiles;
 
 import com.intellij.icons.AllIcons;
@@ -34,6 +20,7 @@ import jetbrains.communicator.util.KirTree;
 import jetbrains.communicator.util.KirTreeNode;
 import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.TreeUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -64,7 +51,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
   public static final String SHOW_READ_ONLY_KEY = "SHOW_READ_ONLY_KEY";
   private OpenFileAction myOpenFileAction;
 
-  public ViewFilesPanel(FileTypeManager fileTypeManager, ActionManager actionManager, IDEFacade facade) {
+  ViewFilesPanel(FileTypeManager fileTypeManager, ActionManager actionManager, IDEFacade facade) {
     super(new BorderLayout(2, 2));
     setOpaque(false);
 
@@ -73,10 +60,11 @@ class ViewFilesPanel extends JPanel implements DataProvider {
     myShowReadOnly = Pico.getOptions().isSet(SHOW_READ_ONLY_KEY, true);
 
     myTree = new KirTree(){
+      @Override
       protected void onEnter() {
         super.onEnter();
         if (myOpenFileAction.isEnabled()) {
-          myOpenFileAction.actionPerformed(null);
+          myOpenFileAction.perform();
         }
       }
     };
@@ -90,7 +78,8 @@ class ViewFilesPanel extends JPanel implements DataProvider {
     setMinimumSize(new Dimension(200, 0));
   }
 
-  public Object getData(String dataId) {
+  @Override
+  public Object getData(@NotNull String dataId) {
     if (DiffAction.USER.equals(dataId)) {
       return myUser;
     }
@@ -117,6 +106,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
         myTree);
 
     AnAction diffAction = new DiffAction(myTree) {
+      @Override
       protected User getUser() {
         return myUser;
       }
@@ -133,7 +123,8 @@ class ViewFilesPanel extends JPanel implements DataProvider {
 
   private void addRefreshAction(DefaultActionGroup actionGroup) {
     actionGroup.add(new AnAction(StringUtil.getMsg("refresh.file.list"), "", AllIcons.Actions.Refresh) {
-      public void actionPerformed(AnActionEvent e) {
+      @Override
+      public void actionPerformed(@NotNull AnActionEvent e) {
         refreshData(myUser, myUser.getProjectsData(myIdeFacade));
       }
     });
@@ -145,11 +136,13 @@ class ViewFilesPanel extends JPanel implements DataProvider {
         StringUtil.getMsg("idea.show_read_only.description"),
         AllIcons.Ide.Readonly
         ) {
-      public boolean isSelected(AnActionEvent e) {
+      @Override
+      public boolean isSelected(@NotNull AnActionEvent e) {
         return myShowReadOnly;
       }
 
-      public void setSelected(AnActionEvent e, boolean state) {
+      @Override
+      public void setSelected(@NotNull AnActionEvent e, boolean state) {
         showReadOnly(state);
       }
     });
@@ -187,14 +180,16 @@ class ViewFilesPanel extends JPanel implements DataProvider {
   private class MyRootNode extends KirTreeNode {
     private List<KirTreeNode> myChildren;
 
-    public MyRootNode() {
+    MyRootNode() {
       super(null);
     }
 
+    @Override
     protected Component renderIn(JLabel label, boolean selected, boolean hasFocus) {
       return label;
     }
 
+    @Override
     protected List getChildNodes() {
       if (myChildren == null) {
         myChildren = new ArrayList<>();
@@ -217,18 +212,19 @@ class ViewFilesPanel extends JPanel implements DataProvider {
     private List<FileNode> myChildren;
     private final VFile[] myProjectFiles;
 
-    public ProjectNode(TreeNode parent, String name, VFile[] projectFiles) {
+    ProjectNode(TreeNode parent, String name, VFile[] projectFiles) {
       super(parent);
       myName = name;
       myProjectFiles = projectFiles;
     }
 
-    public ProjectNode(TreeNode parent, String name) {
+    ProjectNode(TreeNode parent, String name) {
       super(parent);
       myName = name;
       myProjectFiles = myProjectsData.getProjectFiles(myName);
     }
 
+    @Override
     protected List getChildNodes() {
       if (myChildren == null) {
         myChildren = new ArrayList<>();
@@ -243,6 +239,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
       return myChildren;
     }
 
+    @Override
     protected Component renderIn(JLabel label, boolean selected, boolean hasFocus) {
       if (NON_PROJECT_NODE.equals(myName)) {
         label.setIcon(IdetalkCoreIcons.Nodes.Unknown);
@@ -266,10 +263,12 @@ class ViewFilesPanel extends JPanel implements DataProvider {
       myVFile = projectFile;
     }
 
+    @Override
     protected List getChildNodes() {
       return Collections.emptyList();
     }
 
+    @Override
     protected Component renderIn(JLabel label, boolean selected, boolean hasFocus) {
       if (myVFile.isWritable()) {
         label.setIcon(getIconByExtension());

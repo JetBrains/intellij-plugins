@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 The authors
+ * Copyright 2018 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,12 +20,12 @@ import com.intellij.facet.impl.FacetUtil;
 import com.intellij.javaee.DeploymentDescriptorsConstants;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.javaee.web.facet.WebFacetType;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.project.IntelliJProjectConfiguration;
 import com.intellij.struts2.facet.StrutsFacetType;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -107,7 +107,7 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
     }
 
     if (addJ2eeLibrary) {
-      PsiTestUtil.addLibrary(module, model, "JavaEE", PathManager.getHomePath() + "/lib/", "javaee.jar", "javase-javax.jar");
+      PsiTestUtil.addProjectLibrary(model, "JavaEE", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("JavaEE"));
     }
 
     for (LibraryDefinition library : libraries) {

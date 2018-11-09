@@ -34,6 +34,7 @@ public class FlexSuspendContext extends XSuspendContext {
     myFlexExecutionStack.myAprioriKnownFrames = myFlexExecutionStack.getFrames(frames);
   }
 
+  @Override
   public XExecutionStack getActiveExecutionStack() {
     return myFlexExecutionStack;
   }
@@ -48,10 +49,12 @@ public class FlexSuspendContext extends XSuspendContext {
       myTopFrame = topFrame;
     }
 
+    @Override
     public XStackFrame getTopFrame() {
       return myTopFrame;
     }
 
+    @Override
     public void computeStackFrames(final int frameIndex, final XStackFrameContainer container) {
       if (myAprioriKnownFrames != null) {
         container.addStackFrames(myAprioriKnownFrames.subList(frameIndex, myAprioriKnownFrames.size()), true);

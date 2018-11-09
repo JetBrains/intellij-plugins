@@ -48,6 +48,7 @@ public class ActionJavaAnnotator extends ActionAnnotatorBase {
     return Struts2Icons.Action;
   }
 
+  @Override
   protected PsiClass getActionPsiClass(@NotNull final PsiElement psiElement) {
     if (!(psiElement instanceof PsiClass)) {
       return null;

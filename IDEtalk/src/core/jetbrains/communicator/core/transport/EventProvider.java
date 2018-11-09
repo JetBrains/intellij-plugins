@@ -29,10 +29,12 @@ public abstract class EventProvider extends XmlResponseProvider {
     myBroadcaster = broadcaster;
   }
 
+  @Override
   public String getTagNamespace() {
     return Transport.NAMESPACE;
   }
 
+  @Override
   public boolean processAndFillResponse(Element response, Element requestRoot, Transport transport, String remoteUser) {
     TransportEvent event = createEvent(transport, remoteUser, requestRoot);
     String when = requestRoot.getAttributeValue(XmlMessage.WHEN_ATTR);

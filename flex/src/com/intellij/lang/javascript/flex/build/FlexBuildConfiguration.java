@@ -36,7 +36,7 @@ public class FlexBuildConfiguration {
   public boolean USE_CUSTOM_CONFIG_FILE_FOR_TESTS = false;
   public String CUSTOM_CONFIG_FILE_FOR_TESTS = "";
   /** @deprecated */
-  public String APPLICATION_ENTRY_POINT = "";
+  @Deprecated public String APPLICATION_ENTRY_POINT = "";
   public String MAIN_CLASS = "";
   public String OUTPUT_FILE_NAME = "";
   public boolean USE_FACET_COMPILE_OUTPUT_PATH = false;
@@ -87,6 +87,7 @@ public class FlexBuildConfiguration {
       return result;
     }
 
+    @Override
     protected NamespaceAndManifestFileInfo clone() {
       try {
         return (NamespaceAndManifestFileInfo)super.clone();
@@ -119,6 +120,7 @@ public class FlexBuildConfiguration {
       return result;
     }
 
+    @Override
     protected ConditionalCompilationDefinition clone() {
       try {
         return (ConditionalCompilationDefinition)super.clone();

@@ -36,6 +36,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
     setTitle(title);
   }
 
+  @Override
   protected void init() {
     myMainPanel = new JPanel(new BorderLayout());
 
@@ -70,6 +71,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
   private void initButtons() {
     ToolbarDecorator d = ToolbarDecorator.createDecorator(myTable);
     d.setAddAction(new AnActionButtonRunnable() {
+      @Override
       public void run(AnActionButton button) {
         if (addObject()) {
           ((AbstractTableModel)myTable.getModel()).fireTableDataChanged();
@@ -80,6 +82,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
       }
     });
     d.setRemoveAction(new AnActionButtonRunnable() {
+      @Override
       public void run(AnActionButton anActionButton) {
         TableUtil.stopEditing(myTable);
         final int[] selectedRows = myTable.getSelectedRows();
@@ -101,10 +104,12 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
 
   protected abstract boolean addObject();
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   protected void doOKAction() {
     final TableCellEditor cellEditor = myTable.getCellEditor();
     if (cellEditor != null) {
@@ -120,23 +125,29 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
 
   protected abstract class TableModelBase extends DefaultTableModel {
 
+    @Override
     public abstract int getColumnCount();
 
+    @Override
     public int getRowCount() {
       return myList.size();
     }
 
+    @Override
     @Nullable
     public abstract String getColumnName(int column);
 
+    @Override
     public abstract Class getColumnClass(int column);
 
+    @Override
     public Object getValueAt(final int row, final int column) {
       return getValue(myList.get(row), column);
     }
 
     protected abstract Object getValue(final T t, final int column);
 
+    @Override
     public void setValueAt(final Object aValue, final int row, final int column) {
       setValue(myList.get(row), column, aValue);
     }

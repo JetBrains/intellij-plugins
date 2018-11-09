@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NonNls;
 class DumpSourceLocationCommand extends DebuggerCommand {
   private final FlexDebugProcess myFlexDebugProcess;
 
-  public DumpSourceLocationCommand(FlexDebugProcess flexDebugProcess) {
+  DumpSourceLocationCommand(FlexDebugProcess flexDebugProcess) {
     super("bt", CommandOutputProcessingType.SPECIAL_PROCESSING);
     myFlexDebugProcess = flexDebugProcess;
   }

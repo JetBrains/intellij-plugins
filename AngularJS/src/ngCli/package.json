@@ -1,0 +1,8 @@
+{
+  "name": "ng-cli",
+  "version": "1.0.0",
+  "dependencies": {
+    "@angular/cli": "7.0.2",
+    "@types/node": "10.3.1"
+  }
+}

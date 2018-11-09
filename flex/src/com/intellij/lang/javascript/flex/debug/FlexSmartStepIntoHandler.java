@@ -188,7 +188,7 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
 
   private static class JSFunctionSmartStepIntoVariant extends PsiBackedSmartStepIntoVariant<JSFunction> {
 
-    public JSFunctionSmartStepIntoVariant(@NotNull JSFunction element) {
+    JSFunctionSmartStepIntoVariant(@NotNull JSFunction element) {
       super(element);
     }
 

@@ -130,7 +130,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
   }
 
   @Override
-  public void compilationFinished(boolean aborted, int errors, int warnings, CompileContext context) {
+  public void compilationFinished(boolean aborted, int errors, int warnings, @NotNull CompileContext context) {
     if (!aborted && errors == 0 && bundlesChanged()) {
       try {
         myLauncher.update();
@@ -158,7 +158,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
   }
 
   @Override
-  public void fileGenerated(String outputRoot, String relativePath) { }
+  public void fileGenerated(@NotNull String outputRoot, @NotNull String relativePath) { }
 
   @Override
   public boolean shouldHotSwap(CompileContext context) {

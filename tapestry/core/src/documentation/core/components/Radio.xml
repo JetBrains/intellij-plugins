@@ -1,0 +1,124 @@
+<element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../presentation.xsd">
+    <description>
+        A radio button (i.e., input type="radio"). Radio buttons must operate within a org.apache.tapestry.RadioContainer (normally, the org.apache.tapestry.corelib.components.RadioGroup component).\
+        If the value parameter is not bound, then the default value is a property of the container component whose name matches the Radio component's id.
+    </description>
+
+    <parameters>
+        <parameter name="disabled">
+            If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a disabled field ignores any value in the request when the form is\
+            submitted.
+        </parameter>
+        <parameter name="label">
+            The user presentable label for the field. If not provided, a reasonable label is generated from the component's id, first by looking for a message key named "id-label"\
+            (substituting the component's actual id), then by converting the actual id to a presentable string (for example, "userId" to "User Id").
+        </parameter>
+        <parameter name="value">
+            The value associated with this radio button. This is used to determine which radio button will be selected when the page is rendered, and also becomes the value assigned when the form\
+            is submitted.
+        </parameter>
+    </parameters>
+
+    <examples>
+        <![CDATA[
+<p>
+    Radio components are always used in conjunction with
+    a RadioGroup component. The RadioComponent defines the property
+    that will be read and updated, and the individual Radio
+    components determine what value will be assigned to the property.
+</p>
+
+<p>
+    Our example will be part of a page that collects credit card information.
+    We'll just be showing the portions related to
+    a set of radio buttons for choosing the type of credit card.
+</p>
+
+<div class="section">CardType.java</div>
+
+<div class="source"><pre>
+public enum CardType<br/>
+{<br/>
+    MASTER_CARD, VISA, AMERICAN_EXPRESS, DINERS_CLUB, DISCOVER<br/>
+}
+</pre>
+</div>
+
+<div class="section">Payment.tml (partial)</div>
+
+<div class="source"><pre>
+    &lt;t:radiogroup t:id="type" t:encoder="cardTypeEncoder"/&gt;<br/>
+<br/>
+        &lt;t:radio t:id="masterCard"/&gt; &lt;t:label for="masterCard"/&gt;<br/>
+        &lt;t:radio t:id="visa"/&gt; &lt;t:label for="visa"/&gt;<br/>
+        &lt;t:radio t:id="amex"/&gt; &lt;t:label for="amex"/&gt;<br/>
+        &lt;t:radio t:id="dinersClub"/&gt; &lt;t:label for="dinersClub"/&gt;<br/>
+<br/>
+        &lt;t:radio t:id="discover"/&gt; &lt;t:label for="discover"/&gt;<br/>
+    &lt;/t:radiogroup&gt;
+
+</pre>
+</div>
+
+<p>
+    The advantage of using radio buttons here, rather than a drop down list,
+    is that we could extend the labels to use a small image of each
+    type of supported card.
+</p>
+
+<p>
+    We're once again using the trick of matching the component's id
+    to a property of the containing page. The RadioGroup's value parameter
+    will be bound to the page's type property. Likewise, each of the
+    Radio components will be matched to a property of the page.
+</p>
+
+<div class="section">Payment.java (partial)</div>
+
+<div class="source"><pre>
+public class Payment<br/>
+{<br/>
+    . . .<br/>
+<br/>
+    @Persist<br/>
+    private CardType _type;<br/>
+<br/>
+    public ValueEncoder getCardTypeEncoder()<br/>
+    {<br/>
+        return new EnumValueEncoder(CardType.class);<br/>
+    }<br/>
+<br/>
+    public CardType getType() { return _type; }<br/>
+<br/>
+    public void setType(CardType type) { _type = type; }<br/>
+<br/>
+    public CardType getMasterCard() { return CardType.MASTER_CARD; }<br/>
+<br/>
+    public CardType getVisa() { return CardType.VISA; }<br/>
+<br/>
+    public CardType getAmex() { return CardType.AMERICAN_EXPRESS; }<br/>
+<br/>
+    public CardType getDinersClub() { return CardType.DINERS_CLUB; }<br/>
+<br/>
+    public CardType getDiscover() { return CardType.DISCOVER; }<br/>
+<br/>
+    . . .
+}</pre>
+</div>
+
+
+<p>
+    We use a number of read-only properties to provide
+    each Radio component with its Enum value, that will
+    ultimately be assigned to the page's type property
+    (if that corresponding Radio component is selected by the user).
+</p>
+
+<p>
+    This is far from the only pattern of usage; it is much more likely
+    that you will use a Loop component around a single Radio component
+    than you will use a whole array of Radio components as in this example.
+</p>
+	]]>
+    </examples>
+</element>

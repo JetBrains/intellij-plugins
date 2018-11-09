@@ -37,7 +37,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
 
   private final boolean vGreaterOrEquals4_5;
 
-  public FlexDefinitionProcessor(String version) {
+  FlexDefinitionProcessor(String version) {
     vGreaterOrEquals4_5 = StringUtil.compareVersionNumbers(version, "4.5") >= 0;
   }
 

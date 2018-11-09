@@ -1,0 +1,9 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <<info>t:count</info> <info>end</info>="<inject>2</inject>" <info>t:start</info>="<inject>5</inject>">
+        </<info>t:count</info>>
+    </head>
+    <body>
+    <<info>t:actionlink</info> class="alink" foobaz="true"/>
+    </body>
+</html>

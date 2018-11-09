@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint;
 
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import com.jetbrains.jsonSchema.impl.JsonSchemaComplianceInspection;
+import com.jetbrains.jsonSchema.impl.inspections.JsonSchemaComplianceInspection;
 
 /**
  * @author Irina.Chernushina on 9/28/2015.

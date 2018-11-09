@@ -42,20 +42,24 @@ public class StrutsManagerImpl extends StrutsManager {
     myStrutsModelFactory = new StrutsModelFactory(project);
   }
 
+  @Override
   public boolean isStruts2ConfigFile(@NotNull final XmlFile file) {
     return DomManager.getDomManager(file.getProject()).getFileElement(file, StrutsRoot.class) != null;
   }
 
+  @Override
   @Nullable
   public StrutsModel getModelByFile(@NotNull final XmlFile file) {
     return myStrutsModelFactory.getModelByConfigFile(file);
   }
 
+  @Override
   @NotNull
   public List<StrutsModel> getAllModels(@NotNull final Module module) {
     return myStrutsModelFactory.getAllModels(module);
   }
 
+  @Override
   @Nullable
   public StrutsModel getCombinedModel(@Nullable final Module module) {
     return myStrutsModelFactory.getCombinedModel(module);
@@ -67,6 +71,7 @@ public class StrutsManagerImpl extends StrutsManager {
     return getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement));
   }
 
+  @Override
   @NotNull
   public Set<StrutsFileSet> getAllConfigFileSets(@NotNull final Module module) {
     if (module.isDisposed()) {

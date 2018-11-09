@@ -554,7 +554,7 @@
 	  "scenario_outline": "Abstract Scenario",
 	  "examples": "Voorbeelden",
 	  "given": "*|Gegeven|Stel",
-	  "when": "*|Als",
+	  "when": "*|Als|Wanneer",
 	  "then": "*|Dan",
 	  "and": "*|En",
 	  "but": "*|Maar"

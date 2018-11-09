@@ -58,6 +58,7 @@ public class StrutsReferenceContributor extends PsiReferenceContributor {
                    )
       );
 
+  @Override
   public void registerReferenceProviders(@NotNull final PsiReferenceRegistrar registrar) {
     registerWebXml(registrar);
     registerStrutsXmlTags(registrar);

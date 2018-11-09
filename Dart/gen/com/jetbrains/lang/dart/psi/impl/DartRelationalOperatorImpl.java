@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
 public class DartRelationalOperatorImpl extends DartPsiCompositeElementImpl implements DartRelationalOperator {
 
-  public DartRelationalOperatorImpl(ASTNode node) {
+  public DartRelationalOperatorImpl(@NotNull ASTNode node) {
     super(node);
   }
 

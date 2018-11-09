@@ -15,8 +15,8 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
+import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.meta.PsiPresentableMetaData
 import com.intellij.psi.xml.XmlElement
@@ -26,7 +26,6 @@ import com.intellij.xml.XmlAttributeDescriptor
 import com.intellij.xml.XmlAttributeDescriptorsProvider
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
-import org.jetbrains.annotations.NonNls
 import org.jetbrains.vuejs.VueLanguage
 import org.jetbrains.vuejs.codeInsight.VueAttributesProvider.Companion.isBinding
 import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.attributeAllowsNoValue
@@ -34,30 +33,34 @@ import javax.swing.Icon
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   companion object {
-    val SCOPED = "scoped"
-    @NonNls private val SRC_ATTR_NAME = "src"
-    private val DEFAULT_BINDABLE = arrayOf("key", "is")
-    val DEFAULT = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
-                          "v-on", "v-bind", "v-model", "v-pre", "v-cloak","v-once",
-                          "slot", "ref").
-                  plus(DEFAULT_BINDABLE.map { "v-bind:" + it }).
-                  plus(DEFAULT_BINDABLE.map { ":" + it })
-    val HAVE_NO_PARAMS = setOf("v-else", "v-once", "v-pre", "v-cloak", "scoped")
-    val HAVE_JS_AS_VALUE = DEFAULT - "slot" - "ref"
+    private const val SCOPED_ATTR: String = "scoped"
+    private const val SRC_ATTR = "src"
+    private const val MODULE_ATTR: String = "module"
+    private const val FUNCTIONAL_ATTR: String = "functional"
+
+    // "v-on" is not included because it can't be used as is, it must be followed by a colon and an event, this is supported separately
+    val DEFAULT: Set<String> = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
+                                     "v-bind", "v-model", "v-pre", "v-cloak", "v-once",
+                                     "slot", "ref")
+    val HAVE_NO_PARAMS: Set<String> = setOf("v-else", "v-once", "v-pre", "v-cloak", SCOPED_ATTR, MODULE_ATTR, FUNCTIONAL_ATTR)
+
+    fun isInjectJS(attrName: String): Boolean {
+      if (attrName == "slot" || attrName == "ref") return false
+      if (DEFAULT.contains(attrName)) return true
+      if (attrName.startsWith("@") || attrName.startsWith("v-on:") ||
+          attrName.startsWith(":") || attrName.startsWith("v-bind:")) {
+        return true
+      }
+      return false
+    }
 
     fun vueAttributeDescriptor(attributeName: String?): VueAttributeDescriptor? {
       if (DEFAULT.contains(attributeName!!)) return VueAttributeDescriptor(attributeName)
       return null
     }
+    fun getDefaultVueAttributes(): Array<VueAttributeDescriptor> = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
 
-    fun getDefaultVueAttributes() = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
-    fun isBinding(name: String) = name.startsWith(":") || name.startsWith("v-bind:")
-
-    fun addBindingAttributes(result: MutableList<XmlAttributeDescriptor>,
-                             commonAttributes: Array<out XmlAttributeDescriptor>) {
-      result.addAll(commonAttributes.map { VueAttributeDescriptor(":" + it.name, it.declaration) })
-      result.addAll(commonAttributes.map { VueAttributeDescriptor("v-bind:" + it.name, it.declaration) })
-    }
+    fun isBinding(name: String): Boolean = name.startsWith(":") || name.startsWith("v-bind:")
   }
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
@@ -65,15 +68,13 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     val result = mutableListOf<XmlAttributeDescriptor>()
     result.addAll(getDefaultVueAttributes())
 
-    // v-bind:any-standard-attribute support
-    val commonAttributes = (context.descriptor as? HtmlElementDescriptorImpl)?.getDefaultAttributeDescriptors(context)
-    if (commonAttributes != null) {
-      addBindingAttributes(result, commonAttributes)
+    if (isTopLevelTemplateTag(context)) {
+      result.add(VueAttributeDescriptor(FUNCTIONAL_ATTR))
     }
-
-    if (insideStyle(context)) {
-      result.add(VueAttributeDescriptor(SCOPED))
-      result.add(VueAttributeDescriptor(SRC_ATTR_NAME))
+    if (isTopLevelStyleTag(context)) {
+      result.add(VueAttributeDescriptor(SCOPED_ATTR))
+      result.add(VueAttributeDescriptor(SRC_ATTR))
+      result.add(VueAttributeDescriptor(MODULE_ATTR))
     }
     result.addAll(VueDirectivesProvider.getAttributes(findLocalDescriptor(context), context.project))
     return result.toTypedArray()
@@ -86,7 +87,8 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
     if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project) || attributeName == null) return null
-    if (attributeName in arrayOf(SCOPED, SRC_ATTR_NAME) && insideStyle(context)) {
+    if (isTopLevelTemplateTag(context) && attributeName == FUNCTIONAL_ATTR ||
+        isTopLevelStyleTag(context) && attributeName in arrayOf(SCOPED_ATTR, SRC_ATTR, MODULE_ATTR)) {
       return VueAttributeDescriptor(attributeName)
     }
     val fromDirective = VueDirectivesProvider.resolveAttribute(findLocalDescriptor(context), attributeName, context.project)
@@ -98,15 +100,21 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     return vueAttributeDescriptor(attributeName)
   }
 
-  private fun insideStyle(context: XmlTag) = "style" == context.name && context.containingFile?.language == VueLanguage.INSTANCE
+  private fun isTopLevelStyleTag(tag: XmlTag): Boolean = tag.parentTag == null &&
+                                                         tag.name == "style" &&
+                                                         tag.containingFile?.language == VueLanguage.INSTANCE
+
+  private fun isTopLevelTemplateTag(tag: XmlTag): Boolean = tag.parentTag == null &&
+                                                            tag.name == "template" &&
+                                                            tag.containingFile?.language == VueLanguage.INSTANCE
 }
 
 class VueAttributeDescriptor(private val name:String,
                              private val element:PsiElement? = null,
                              private val isDirective: Boolean = false,
                              private val isNonProp: Boolean = false) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
-  override fun getName() = name
-  override fun getDeclaration() = element
+  override fun getName(): String = name
+  override fun getDeclaration(): PsiElement? = element
   override fun init(element: PsiElement?) {}
   override fun isRequired(): Boolean {
     if (isBinding(name)) return false
@@ -115,24 +123,23 @@ class VueAttributeDescriptor(private val name:String,
     return literal != null && literal.isBooleanLiteral && "true" == literal.significantValue
   }
 
-  override fun isFixed() = false
-  override fun hasIdType() = false
-  override fun getDependences(): Array<out Any> = ArrayUtil.EMPTY_OBJECT_ARRAY
+  override fun isFixed(): Boolean = false
+  override fun hasIdType(): Boolean = false
   override fun getEnumeratedValueDeclaration(xmlElement: XmlElement?, value: String?): PsiElement? {
     return if (isEnumerated) xmlElement else super.getEnumeratedValueDeclaration(xmlElement, value)
   }
 
-  override fun hasIdRefType() = false
-  override fun getDefaultValue() = null
-  override fun isEnumerated() = isDirective || isNonProp ||
-                                VueAttributesProvider.HAVE_NO_PARAMS.contains(name) || attributeAllowsNoValue(name)
+  override fun hasIdRefType(): Boolean = false
+  override fun getDefaultValue(): Nothing? = null
+  override fun isEnumerated(): Boolean = isDirective || isNonProp ||
+                                         VueAttributesProvider.HAVE_NO_PARAMS.contains(name) || attributeAllowsNoValue(name)
   override fun getEnumeratedValues(): Array<out String> {
     if (isEnumerated) {
       return arrayOf(name)
     }
     return ArrayUtil.EMPTY_STRING_ARRAY
   }
-  override fun getTypeName() = null
+  override fun getTypeName(): String? = null
   override fun getIcon(): Icon = VuejsIcons.Vue
 
   fun createNameVariant(newName: String) : VueAttributeDescriptor {
@@ -143,4 +150,4 @@ class VueAttributeDescriptor(private val name:String,
   fun isDirective(): Boolean = isDirective
 }
 
-fun findProperty(obj: JSObjectLiteralExpression?, name:String) = obj?.properties?.find { it.name == name }
+fun findProperty(obj: JSObjectLiteralExpression?, name:String): JSProperty? = obj?.properties?.find { it.name == name }

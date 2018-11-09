@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.pubServer;
 
 import com.intellij.execution.ExecutionException;
@@ -45,6 +33,7 @@ import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.runner.DartConsoleFilter;
 import com.jetbrains.lang.dart.ide.runner.DartRelativePathsConsoleFilter;
+import com.jetbrains.lang.dart.sdk.DartConfigurable;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import icons.DartIcons;
@@ -68,7 +57,9 @@ import org.jetbrains.io.SimpleChannelInboundHandlerAdapter;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
@@ -106,7 +97,7 @@ final class PubServerService extends NetService {
     }
   }
 
-  public PubServerService(@NotNull Project project, @NotNull ConsoleManager consoleManager) {
+  PubServerService(@NotNull Project project, @NotNull ConsoleManager consoleManager) {
     super(project, consoleManager);
 
     nioClientBootstrap().handler(new ChannelInitializer() {
@@ -116,6 +107,24 @@ final class PubServerService extends NetService {
         channel.pipeline().addLast(new PubServeChannelHandler(), ChannelExceptionHandler.getInstance());
       }
     });
+  }
+
+  @Override
+  protected int getAvailableSocketPort() {
+    int initialPort = DartConfigurable.getWebdevPort(getProject());
+    int maxAttempts = 10;
+    int currentPort = initialPort;
+
+    while (true) {
+      try (ServerSocket serverSocket = new ServerSocket(currentPort)) {
+        return serverSocket.getLocalPort();
+      }
+      catch (IOException e) {/* try next port */}
+
+      if (++currentPort - initialPort > maxAttempts) {
+        return super.getAvailableSocketPort();
+      }
+    }
   }
 
   @Nullable
@@ -190,13 +199,13 @@ final class PubServerService extends NetService {
 
     if (DartWebdev.INSTANCE.useWebdev(dartSdk)) {
       commandLine.addParameters("global", "run", "webdev", "serve");
-      commandLine.addParameter(firstServedDir.getName() + ":" + String.valueOf(port));
+      commandLine.addParameter(firstServedDir.getName() + ":" + port);
       commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue() + ".webdev");
     }
     else {
       commandLine.addParameter("serve");
       commandLine.addParameter(firstServedDir.getName());
-      commandLine.addParameter("--port=" + String.valueOf(port));
+      commandLine.addParameter("--port=" + port);
     }
 
     final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
@@ -303,7 +312,7 @@ final class PubServerService extends NetService {
 
   @ChannelHandler.Sharable
   private class PubServeChannelHandler extends SimpleChannelInboundHandlerAdapter<HttpObject> {
-    public PubServeChannelHandler() {
+    PubServeChannelHandler() {
       super(false);
     }
 
@@ -346,7 +355,7 @@ final class PubServerService extends NetService {
     private boolean myNotificationAboutErrors;
     private Notification myNotification;
 
-    public PubServeOutputListener(final Project project) {
+    PubServeOutputListener(final Project project) {
       myProject = project;
     }
 

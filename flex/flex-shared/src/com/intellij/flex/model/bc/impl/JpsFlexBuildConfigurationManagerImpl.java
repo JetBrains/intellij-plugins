@@ -32,11 +32,13 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
     super(original);
   }
 
+  @Override
   @NotNull
   public JpsFlexBuildConfigurationManagerImpl createCopy() {
     return new JpsFlexBuildConfigurationManagerImpl(this);
   }
 
+  @Override
   public void applyChanges(@NotNull final JpsFlexBuildConfigurationManagerImpl modified) {
     super.applyChanges(modified);
     //..
@@ -44,6 +46,7 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
 
 // ------------------------------
 
+  @Override
   public List<JpsFlexBuildConfiguration> getBuildConfigurations() {
     return myContainer.getChild(JpsFlexBuildConfigurationImpl.COLLECTION_ROLE).getElements();
   }
@@ -52,6 +55,7 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
   //  return myContainer.getChild(JpsFlexBuildConfigurationImpl.COLLECTION_ROLE).addChild(new JpsFlexBuildConfigurationImpl(name));
   //}
 
+  @Override
   public JpsFlexBuildConfiguration getActiveConfiguration() {
     return myActiveConfiguration;
   }
@@ -68,16 +72,19 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
     return null;
   }
 
+  @Override
   public JpsFlexModuleOrProjectCompilerOptions getModuleLevelCompilerOptions() {
     return myContainer.getChild(JpsFlexCompilerOptionsRole.INSTANCE);
   }
 
+  @Override
   public JpsFlexBuildConfiguration createCopy(@NotNull final JpsFlexBuildConfiguration bc) {
     final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createCopy();
     copy.setParent(((JpsFlexBuildConfigurationImpl)bc).getParent());
     return copy;
   }
 
+  @Override
   public JpsFlexBuildConfiguration createTemporaryCopyForCompilation(@NotNull final JpsFlexBuildConfiguration bc) {
     final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createCopy();
     copy.setParent(((JpsFlexBuildConfigurationImpl)bc).getParent());

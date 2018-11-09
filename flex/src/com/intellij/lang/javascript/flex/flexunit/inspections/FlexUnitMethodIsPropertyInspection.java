@@ -12,17 +12,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class FlexUnitMethodIsPropertyInspection extends FlexUnitMethodInspectionBase {
 
+  @Override
   @Nls
   @NotNull
   public String getDisplayName() {
     return FlexBundle.message("flexunit.inspection.testmethodisproperty.displayname");
   }
 
+  @Override
   @NotNull
   public String getShortName() {
     return "FlexUnitMethodIsPropertyInspection";
   }
 
+  @Override
   protected void visitPotentialTestMethod(JSFunction method, ProblemsHolder holder, FlexUnitSupport support) {
     if (FlexUnitSupport.getCustomRunner((JSClass)method.getParent()) != null) return;
     if (method.getAttributeList() != null && method.getKind() == JSFunction.FunctionKind.GETTER ||

@@ -1,12 +1,14 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.refactoring;
 
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.refactoring.JSDefaultRenameProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.ElementDescriptionLocation;
+import com.intellij.psi.ElementDescriptionProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.rename.RenameDialog2;
 import com.intellij.refactoring.rename.RenameUtil;
@@ -15,7 +17,6 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.util.IncorrectOperationException;
 import org.angularjs.codeInsight.DirectiveUtil;
-import org.angularjs.index.AngularJS2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,23 +39,12 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
 
   @Override
   public void renameElement(@NotNull PsiElement element, @NotNull String newName, @NotNull UsageInfo[] usages, @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
-    final boolean isAngular2 = DirectiveUtil.isAngular2Directive(element);
     final PsiNamedElement directive = (PsiNamedElement)element;
-    final String attributeName = isAngular2 ? newName : DirectiveUtil.getAttributeName(newName);
+    final String attributeName = DirectiveUtil.getAttributeName(newName);
     for (UsageInfo usage : usages) {
       RenameUtil.rename(usage, attributeName);
     }
-
-    if (isAngular2) {
-      final JSProperty selector = AngularJS2IndexingHandler.getSelector(element.getParent());
-      final JSExpression value = selector != null ? selector.getValue() : null;
-      if (value != null) {
-        if (value.getText().contains("[")) newName = "[" + newName + "]";
-        ElementManipulators.getManipulator(value).handleContentChange(value, newName);
-      }
-    } else {
-      directive.setName(DirectiveUtil.attributeToDirective(element, newName));
-    }
+    directive.setName(DirectiveUtil.attributeToDirective(element, newName));
     if (listener != null) {
       listener.elementRenamed(element);
     }

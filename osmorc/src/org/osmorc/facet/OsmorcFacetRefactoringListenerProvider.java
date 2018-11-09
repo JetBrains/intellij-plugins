@@ -43,6 +43,7 @@ public class OsmorcFacetRefactoringListenerProvider implements RefactoringElemen
     myApplication = application;
   }
 
+  @Override
   @Nullable
   public RefactoringElementListener getListener(final PsiElement element) {
     if (element instanceof PsiClass) {
@@ -71,6 +72,7 @@ public class OsmorcFacetRefactoringListenerProvider implements RefactoringElemen
       this.application = application;
     }
 
+    @Override
     public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
       application.runWriteAction(() -> osmorcFacetConfiguration.setBundleActivator(((PsiClass)newElement).getQualifiedName()));
     }

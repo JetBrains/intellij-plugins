@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
@@ -85,6 +86,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JPanel myMobileRunPanel;
   private JRadioButton myOnEmulatorRadioButton;
   private JRadioButton myOnAndroidDeviceRadioButton;
+  private JCheckBox myClearAndroidDataCheckBox;
   private JRadioButton myOnIOSSimulatorRadioButton;
   private TextFieldWithBrowseButton myIOSSimulatorSdkTextWithBrowse;
   private JRadioButton myOnIOSDeviceRadioButton;
@@ -175,7 +177,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myMainClassComponent.addDocumentListener(new DocumentListener() {
       @Override
-      public void documentChanged(final DocumentEvent e) {
+      public void documentChanged(@NotNull final DocumentEvent e) {
         final String shortName = StringUtil.getShortName(myMainClassComponent.getText().trim());
         if (!shortName.isEmpty()) {
           myOutputFileNameTextField.setText(shortName + ".swf");
@@ -185,7 +187,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myOutputFileNameTextField.getDocument().addDocumentListener(new com.intellij.ui.DocumentAdapter() {
       @Override
-      protected void textChanged(final javax.swing.event.DocumentEvent e) {
+      protected void textChanged(@NotNull final javax.swing.event.DocumentEvent e) {
         final FlexBuildConfiguration bc = myBCCombo.getBC();
         if (bc != null && bc.getTargetPlatform() == TargetPlatform.Web) {
           updateBCOutputLabel(bc);
@@ -258,7 +260,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   public static void initAppDescriptorForEmulatorCombo(final JComboBox appDescriptorForEmulatorCombo,
-                                                       final NullableComputable<FlexBuildConfiguration> bcComputable) {
+                                                       final NullableComputable<? extends FlexBuildConfiguration> bcComputable) {
     appDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(AppDescriptorForEmulator.values()));
     appDescriptorForEmulatorCombo
       .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>() {
@@ -383,6 +385,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myEmulatorCombo.setEnabled(runOnEmulator);
       UIUtil.setEnabled(myEmulatorScreenSizePanel, runOnEmulator, true);
 
+      myClearAndroidDataCheckBox.setEnabled(myOnAndroidDeviceRadioButton.isSelected());
       myFastPackagingCheckBox.setEnabled(myOnIOSDeviceRadioButton.isSelected());
 
       myEmulatorAdlOptionsLabel.setEnabled(runOnEmulator);
@@ -520,6 +523,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     }
 
     myOnAndroidDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice);
+    myClearAndroidDataCheckBox.setSelected(params.isClearAppDataOnEachLaunch());
     myOnIOSSimulatorRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSSimulator);
     myIOSSimulatorSdkTextWithBrowse.setText(FileUtil.toSystemDependentName(params.getIOSSimulatorSdkPath()));
     myOnIOSDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice);
@@ -623,6 +627,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
         PropertiesComponent.getInstance().setValue(LATEST_SELECTED_IOS_SIMULATOR_SDK_PATH_KEY, path);
       }
     }
+
+    params.setClearAppDataOnEachLaunch(myClearAndroidDataCheckBox.isSelected());
 
     params.setIOSSimulatorSdkPath(FileUtil.toSystemIndependentName(myIOSSimulatorSdkTextWithBrowse.getText().trim()));
 

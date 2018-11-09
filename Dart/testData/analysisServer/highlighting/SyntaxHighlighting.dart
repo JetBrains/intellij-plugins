@@ -6,7 +6,7 @@
     <info textAttributesKey="DART_KEYWORD">show</info> <info textAttributesKey="DART_CLASS">HtmlElement</info>,
     <weak_warning descr="The name document is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_TOP_LEVEL_VARIABLE_DECLARATION">document</info></weak_warning>,
     <weak_warning descr="The name EventListener is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">EventListener</info></weak_warning>,
-    <warning descr="'queryAll' is deprecated and shouldn't be used." textAttributesKey="DEPRECATED_ATTRIBUTES"><weak_warning descr="The name queryAll is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_TOP_LEVEL_FUNCTION_REFERENCE">queryAll</info></weak_warning></warning>,
+    <warning descr="'CDataSection' is deprecated and shouldn't be used." textAttributesKey="DEPRECATED_ATTRIBUTES"><weak_warning descr="The name CDataSection is shown, but not used." textAttributesKey="DART_HINT"><info textAttributesKey="DART_CLASS">CDataSection</info></weak_warning></warning>,
     <weak_warning descr="The library 'dart:html' doesn't export a member with the shown name 'incorrect'." textAttributesKey="DART_HINT"><info textAttributesKey="DART_IDENTIFIER">incorrect</info></weak_warning>;
 
 <info textAttributesKey="DART_KEYWORD">get</info> <info textAttributesKey="DART_TOP_LEVEL_GETTER_DECLARATION">topLevelGetter</info> {
@@ -99,7 +99,7 @@ class <info textAttributesKey="DART_CLASS">Foo2</info><<info textAttributesKey="
     <info textAttributesKey="DART_INSTANCE_SETTER_REFERENCE">instanceSetter</info> = 1;
     <info textAttributesKey="DART_FUNCTION_TYPE_ALIAS">Compare</info>;
     "see $<info textAttributesKey="DART_INSTANCE_GETTER_REFERENCE">mapLiteral</info> as well";
-    "see ${<info textAttributesKey="DART_INSTANCE_GETTER_REFERENCE">mapLiteral</info> + " $this "} as well";
+    "see ${<info textAttributesKey="DART_INSTANCE_GETTER_REFERENCE">mapLiteral</info> <error descr="The operator '+' isn't defined for the class 'Map<Object, Object>'." textAttributesKey="DART_ERROR">+</error> " $this "} as well";
   }
 
   <info textAttributesKey="DART_TYPE_NAME_DYNAMIC">dynamic</info> <info textAttributesKey="DART_INSTANCE_METHOD_DECLARATION">abstractMethod</info>();

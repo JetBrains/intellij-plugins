@@ -28,7 +28,7 @@ public class DotPackagesFileUtil {
     Pair<Long, Map<String, String>> data = dotPackagesFile.getUserData(MOD_STAMP_TO_PACKAGES_MAP);
 
     final Long currentTimestamp = dotPackagesFile.getModificationCount();
-    final Long cachedTimestamp = data == null ? null : data.first;
+    final Long cachedTimestamp = Pair.getFirst(data);
 
     if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
       data = null;
@@ -41,7 +41,7 @@ public class DotPackagesFileUtil {
       }
     }
 
-    return data == null ? null : data.second;
+    return Pair.getSecond(data);
   }
 
   @Nullable

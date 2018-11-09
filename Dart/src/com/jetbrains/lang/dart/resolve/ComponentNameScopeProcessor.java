@@ -7,9 +7,9 @@ import java.util.Set;
 
 public class ComponentNameScopeProcessor extends DartPsiScopeProcessor {
 
-  private final @NotNull Set<DartComponentName> myResult;
+  private final @NotNull Set<? super DartComponentName> myResult;
 
-  public ComponentNameScopeProcessor(final @NotNull Set<DartComponentName> result) {
+  public ComponentNameScopeProcessor(final @NotNull Set<? super DartComponentName> result) {
     this.myResult = result;
   }
 

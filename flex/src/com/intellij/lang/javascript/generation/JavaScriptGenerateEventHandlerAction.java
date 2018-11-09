@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class JavaScriptGenerateEventHandlerAction extends ActionScriptBaseJSGenerateAction {
 
+  @Override
   @NotNull
   protected BaseJSGenerateHandler getGenerateHandler() {
     return new ActionScriptGenerateEventHandler();

@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Locale;
 
 class CmdLineAppTemplate extends DartProjectTemplate {
-  public CmdLineAppTemplate() {
+  CmdLineAppTemplate() {
     super(DartBundle.message("dart.commandline.app.title"), "");
   }
 

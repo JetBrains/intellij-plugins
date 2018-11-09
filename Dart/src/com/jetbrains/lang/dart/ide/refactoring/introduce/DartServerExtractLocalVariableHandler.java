@@ -225,7 +225,7 @@ class DartServerExtractLocalVariableDialog extends ServerRefactoringDialog<Serve
   @NotNull final ServerExtractLocalVariableRefactoring myRefactoring;
   private final NameSuggestionsField myVariableNameField;
 
-  public DartServerExtractLocalVariableDialog(@NotNull Project project,
+  DartServerExtractLocalVariableDialog(@NotNull Project project,
                                               @NotNull Editor editor,
                                               @NotNull ServerExtractLocalVariableRefactoring refactoring) {
     super(project, editor, refactoring);
