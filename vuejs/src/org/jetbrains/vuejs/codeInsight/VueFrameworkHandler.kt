@@ -97,6 +97,49 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
 
   override fun findModule(result: PsiElement): PsiElement? = org.jetbrains.vuejs.codeInsight.findModule(result)
 
+  override fun addContextType(info: JSTypeInfo, context: PsiElement) {
+    if (context.containingFile.fileType != VueFileType.INSTANCE) return
+    if (!VueFrameworkInsideScriptSpecificHandlersFactory.isInsideScript(context)) return
+    val parent = PsiTreeUtil.findFirstParent(context, Condition {
+      return@Condition it is JSObjectLiteralExpression && it.parent is ES6ExportDefaultAssignment
+    })
+    if (parent == null) return
+    if (context !is JSReferenceExpression) return
+    if (context.qualifier !is JSThisExpression) return
+    if (context.parent.parent is ES6ExportDefaultAssignment) return
+    val processGenericType = processGenericType(context, parent)
+    if (processGenericType != null) info.addRecordType(processGenericType)
+  }
+
+  private fun processGenericType(context: JSReferenceExpression,
+                                 parent: PsiElement?): JSRecordType? {
+    val typeAlias = JSFileReferencesUtil.resolveModuleReference(context.containingFile, "vue/types/vue").firstOrNull()
+    if (typeAlias == null) return null
+    val typeSource = JSTypeSourceFactory.createTypeSource(typeAlias, false)
+    val vueType = JSNamedTypeFactory.createType(VUE_INSTANCE, typeSource, JSContext.INSTANCE)
+    val vue = JSNamedTypeFactory.createType(VUE, typeSource, JSContext.INSTANCE)
+    val methodPropertyType = JSResolveUtil.getElementJSType((parent as JSObjectLiteralExpression).findProperty(METHOD),
+                                                            JSEvaluateContext.JSEvaluationPlace.DEFAULT)
+    val computedPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(COMPUTED), JSEvaluateContext.JSEvaluationPlace.DEFAULT)
+    val propsPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(PROPS), JSEvaluateContext.JSEvaluationPlace.DEFAULT)
+    val dataFunction = (parent.findProperty(DATA) as? ES6FunctionProperty)
+    val dataStream = JSTypeUtils.getFunctionType(
+      JSResolveUtil.getElementJSType(dataFunction, JSEvaluateContext.JSEvaluationPlace.DEFAULT),
+      false,
+      context)
+      .filter { it is JSFunctionType }.findFirst()
+    val dataPropertyType = if (dataStream.isPresent) (dataStream.get() as? JSFunctionType)?.returnType
+    else null ?: JSTypeCastUtil.NO_RECORD_TYPE
+    val genericArguments = listOf(vue, dataPropertyType, getContextualType(methodPropertyType),
+                                  getContextualType(computedPropertyType), getContextualType(propsPropertyType))
+    return JSGenericTypeImpl(typeSource, vueType, genericArguments).asRecordType()
+  }
+
+  private fun getContextualType(type: JSType?): JSType {
+    if (type == null) return JSTypeCastUtil.NO_RECORD_TYPE
+    return JSContextualUnionTypeImpl.getContextualUnionType((type as JSCompositeTypeImpl).types, type.source)
+  }
+
   override fun processAnyProperty(property: JSProperty, outData: JSElementIndexingData?): JSElementIndexingData? {
     val obj = property.parent as JSObjectLiteralExpression
 
@@ -352,9 +395,10 @@ fun findModule(element: PsiElement?): JSEmbeddedContent? {
       val greenStub = file.greenStub
       //stub-safe path
       if (greenStub != null) {
-        val children = greenStub.getChildrenByType<JSElement>(JSExtendedLanguagesTokenSetProvider.MODULE_EMBEDDED_CONTENTS, JSEmbeddedContent.ARRAY_FACTORY)
+        val children = greenStub.getChildrenByType<JSElement>(JSExtendedLanguagesTokenSetProvider.MODULE_EMBEDDED_CONTENTS,
+                                                              JSEmbeddedContent.ARRAY_FACTORY)
         val result = children.firstOrNull()
-        return if (result is JSEmbeddedContent) result else null 
+        return if (result is JSEmbeddedContent) result else null
       }
     }
     val script = findScriptTag(file)
