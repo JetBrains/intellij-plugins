@@ -25,12 +25,5 @@ public final class MarkdownIcons {
     public static final Icon Strike_through = load("/icons/editor_actions/Strike_through.png"); // 16x16
 
   }
-
-  public final static class Layout {
-    public static final Icon Editor_only = load("/icons/layout/Editor_only.png"); // 16x16
-    public static final Icon Editor_preview = load("/icons/layout/Editor_preview.png"); // 16x16
-    public static final Icon Preview_only = load("/icons/layout/Preview_only.png"); // 16x16
-
-  }
   public static final Icon MarkdownPlugin = load("/icons/MarkdownPlugin.png"); // 16x16
 }
