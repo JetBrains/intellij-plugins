@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
 import com.jetbrains.lang.dart.ide.annotator.DartAnnotator;
-import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.AnalysisError;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +40,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)
               ? AllIcons.General.Error
               : AnalysisErrorSeverity.WARNING.equals(severity)
-                ? DartIcons.Dart_warning
+                ? AllIcons.General.Warning
                 : AllIcons.General.Information);
 
       return label;

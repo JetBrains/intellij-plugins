@@ -1,5 +1,7 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.structure;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.ide.util.treeView.NodeDescriptorProvidingKey;
@@ -11,7 +13,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
-import icons.DartIcons;
 import org.dartlang.analysis.server.protocol.Element;
 import org.dartlang.analysis.server.protocol.ElementKind;
 import org.dartlang.analysis.server.protocol.Outline;
@@ -23,7 +24,6 @@ import javax.swing.*;
 import static com.intellij.icons.AllIcons.Nodes.*;
 import static com.intellij.icons.AllIcons.Nodes.Class;
 import static com.intellij.icons.AllIcons.Nodes.Enum;
-import static com.intellij.icons.AllIcons.RunConfigurations.Junit;
 
 public class DartStructureViewElement implements StructureViewTreeElement, ItemPresentation, NodeDescriptorProvidingKey {
 
@@ -151,9 +151,9 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
       case ElementKind.TOP_LEVEL_VARIABLE:
         return finalOrConst ? TOP_LEVEL_CONST_ICON : TOP_LEVEL_VAR_ICON;
       case ElementKind.UNIT_TEST_GROUP:
-        return Junit;
+        return TestSourceFolder;
       case ElementKind.UNIT_TEST_TEST:
-        return DartIcons.TestNode;
+        return AllIcons.RunConfigurations.Junit;
 
       case ElementKind.CLASS_TYPE_ALIAS:
       case ElementKind.COMPILATION_UNIT:
