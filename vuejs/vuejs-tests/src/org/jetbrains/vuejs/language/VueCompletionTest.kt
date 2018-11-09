@@ -457,8 +457,6 @@ export default {
               }
     }</script>""")
     assertDoesntContainVueLifecycleHooks()
-//    assertDoesntContain(myFixture.lookupElementStrings!!, "grocery-list", "parent-msg",
-//                                       "GroceryList", "ParentMsg")
     assertContainsElements(myFixture.lookupElementStrings!!, "groceryList", "parentMsg")
   }
 
