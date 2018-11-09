@@ -165,19 +165,19 @@ Includes the following features:</p>
               id="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorOnlyLayoutChangeAction"
               text="Show editor only"
               description="Sets markdown editor layout to show editor only"
-              icon="MarkdownIcons.Layout.Editor_only">
+              icon="AllIcons.General.LayoutEditorOnly">
       </action>
       <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorAndPreviewLayoutChangeAction"
               id="org.intellij.plugins.markdown.ui.actions.editorLayout.EditorAndPreviewLayoutChangeAction"
               text="Show editor and preview"
               description="Sets markdown editor layout to show editor and preview in split"
-              icon="MarkdownIcons.Layout.Editor_preview">
+              icon="AllIcons.General.LayoutEditorPreview">
       </action>
       <action class="org.intellij.plugins.markdown.ui.actions.editorLayout.PreviewOnlyLayoutChangeAction"
               id="org.intellij.plugins.markdown.ui.actions.editorLayout.PreviewOnlyLayoutChangeAction"
               text="Show preview only"
               description="Sets markdown editor layout to show preview only"
-              icon="MarkdownIcons.Layout.Preview_only">
+              icon="AllIcons.General.LayoutPreviewOnly">
       </action>
       <separator/>
       <action class="org.intellij.plugins.markdown.ui.actions.scrolling.AutoScrollAction"
