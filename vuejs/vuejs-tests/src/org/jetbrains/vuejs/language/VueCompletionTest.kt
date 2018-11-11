@@ -831,18 +831,41 @@ $script""")
     assertSameElements(myFixture.lookupElementStrings!!, listOf("mt-field", "mt-swipe", "mt-swipe-item"))
   }
 
-  fun testVuetifyCompletion() {
+  fun testVuetifyCompletion_017() {
     createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"0.17.2\"")
-    myFixture.copyDirectoryToProject("../libs/vuetify/node_modules", "./node_modules")
+    myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_017/node_modules", "./node_modules")
     myFixture.configureByText("VuetifyCompletion.vue",
 """
 <template><v-<caret></template>
 """)
     myFixture.completeBasic()
     val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS.toList()
-    assertSameElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents,
-                                                                              listOf("v-app", "v-list", "v-list-group", "v-list-tile",
-                                                                                     "v-list-tile-avatar")))
+    assertContainsElements(myFixture.lookupElementStrings!!, listOf("v-list", "v-list-group", "v-list-tile", "v-list-tile-action"))
+    assertContainsElements(myFixture.lookupElementStrings!!, vuetifyComponents)
+  }
+
+  fun testVuetifyCompletion_137() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"1.3.7\"")
+    myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_137/node_modules", "./node_modules")
+    myFixture.configureByText("VuetifyCompletion.vue",
+                              """
+<template><v-<caret></template>
+""")
+    myFixture.completeBasic()
+    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS.toList()
+    assertContainsElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents, listOf("v-alert")))
+  }
+
+  fun testVuetifyCompletion_1210() {
+    createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"1.2.10\"")
+    myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
+    myFixture.configureByText("VuetifyCompletion.vue",
+                              """
+<template><v-<caret></template>
+""")
+    myFixture.completeBasic()
+    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS.toList()
+    assertContainsElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents, listOf("v-btn")))
   }
 
   fun testIviewCompletion() {
