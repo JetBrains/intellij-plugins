@@ -14,16 +14,21 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.structureView.JSStructureViewModel;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import static com.intellij.flex.util.FlexTestUtils.getPathToMockFlex;
 import static com.intellij.lang.javascript.StructureViewTestUtil.getIcon;
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
@@ -42,14 +47,23 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
-  }
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return new LightProjectDescriptor() {
+      @NotNull
+      @Override
+      public ModuleType getModuleType() {
+        return FlexModuleType.getInstance();
+      }
 
-  @Override
-  protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+      @Nullable
+      @Override
+      public Sdk getSdk() {
+        return FlexTestUtils.createSdk(getPathToMockFlex(FlexStructureViewTest.class, getTestName(false)),
+                                       "3.4.0", getTestRootDisposable());
+      }
+    };
   }
+  
 
   @Override
   protected String getBasePath() {
@@ -61,9 +75,9 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     return FlexTestUtils.getTestDataPath("");
   }
 
-  public void testECMAL4Structure() throws Exception {
+  public void testECMAL4Structure()  {
 
-    configureByFile(BASE_PATH + "15.js2");
+    myFixture.configureByFile(BASE_PATH + "15.js2");
     final Object[] items = getTopLevelItems();
     assertEquals(3, items.length);
 
@@ -91,8 +105,8 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("delegate:Object", getText(treeNodes.get(OBJECT_METHODS_COUNT + 6)));
   }
 
-  public void testGroupByClass2() throws Exception {
-    configureByFile(BASE_PATH + "15.js2");
+  public void testGroupByClass2()  {
+    myFixture.configureByFile(BASE_PATH + "15.js2");
     Object[] items = getTopLevelItems();
     assertEquals(3, items.length);
 
@@ -125,7 +139,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
   }
 
   public void testGroupByClass3() {
-    configureByFiles(null, BASE_PATH + "15_2.js2", BASE_PATH + "15_3.js2");
+    myFixture.configureByFiles(BASE_PATH + "15_2.js2", BASE_PATH + "15_3.js2");
     Object[] items = getTopLevelItems();
     assertEquals(1, items.length);
 
@@ -147,7 +161,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
   }
 
   public void testBug3() {
-    configureByFiles(null, BASE_PATH + "22.js2", BASE_PATH + "22_2.js2");
+    myFixture.configureByFiles(BASE_PATH + "22.js2", BASE_PATH + "22_2.js2");
     Object[] items = getTopLevelItems();
     assertEquals(2, items.length);
     assertEquals("XXX", getText(items[0]));
@@ -172,8 +186,8 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("bbb", getText(treeNodes.get(OBJECT_METHODS_COUNT + 1)));
   }
 
-  public void testPrivateIconsForClassMembers() throws Exception {
-    configureByFile(BASE_PATH + "15.js2");
+  public void testPrivateIconsForClassMembers()  {
+    myFixture.configureByFile(BASE_PATH + "15.js2");
     Object[] items = getTopLevelItems();
     assertEquals(3, items.length);
     List<AbstractTreeNode> treeNodes = getChildren(items[0]);
@@ -187,7 +201,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
   }
 
   public void testIncludedMembers() {
-    configureByFiles(null, BASE_PATH + "IncludedMembers.js2", BASE_PATH + "IncludedMembers_2.js2");
+    myFixture.configureByFiles(BASE_PATH + "IncludedMembers.js2", BASE_PATH + "IncludedMembers_2.js2");
 
     Object[] items = getTopLevelItems();
     assertEquals(1, items.length);
@@ -198,64 +212,64 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("__aaa__()", getText(treeNodes.get(0)));
   }
 
-  public void testInherited1() throws Exception {
-    configureByFile(BASE_PATH + "Inherited1.as");
-    StructureViewTestUtil.checkStructureView(myEditor);
+  public void testInherited1()  {
+    myFixture.configureByFile(BASE_PATH + "Inherited1.as");
+    StructureViewTestUtil.checkStructureView(myFixture.getEditor());
   }
 
-  public void testInherited2() throws Exception {
-    configureByFiles(null, BASE_PATH + "Inherited2.as", BASE_PATH + "Inherited2_2.as");
-    StructureViewTestUtil.checkStructureView(myEditor);
+  public void testInherited2()  {
+    myFixture.configureByFiles(BASE_PATH + "Inherited2.as", BASE_PATH + "Inherited2_2.as");
+    StructureViewTestUtil.checkStructureView(myFixture.getEditor());
   }
 
-  public void testInherited3() throws Exception {
-    configureByFiles(null, BASE_PATH + "Inherited3.as",
+  public void testInherited3()  {
+    myFixture.configureByFiles(BASE_PATH + "Inherited3.as",
                      BASE_PATH + "Inherited3_1.as",
                      BASE_PATH + "Inherited3_2.as",
                      BASE_PATH + "Inherited3_3.as",
                      BASE_PATH + "Inherited3_4.as");
-    StructureViewTestUtil.checkStructureView(myEditor);
+    StructureViewTestUtil.checkStructureView(myFixture.getEditor());
   }
 
-  public void testWithNameAttribute() throws Exception {
-    configureByFile(BASE_PATH + getTestName(false) + ".mxml");
-    StructureViewTestUtil.checkStructureView(myEditor);
+  public void testWithNameAttribute()  {
+    myFixture.configureByFile(BASE_PATH + getTestName(false) + ".mxml");
+    StructureViewTestUtil.checkStructureView(myFixture.getEditor());
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testWithIncludedFiles1() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + ".mxml",
+  public void testWithIncludedFiles1()  {
+    myFixture.configureByFiles(BASE_PATH + getTestName(false) + ".mxml",
                      BASE_PATH + getTestName(false) + "_1.css",
                      BASE_PATH + getTestName(false) + "_2.as",
                      BASE_PATH + getTestName(false) + "_3.as",
                      BASE_PATH + getTestName(false) + "_4.as");
-    StructureViewTestUtil.checkStructureView(myEditor);
+    StructureViewTestUtil.checkStructureView(myFixture.getEditor());
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testSuperClasses() throws Exception {
+  public void testSuperClasses()  {
     String s = BASE_PATH + getTestName(false);
-    configureByFiles(null, s + ".as", s + "_2.as", s + "_3.as", s + "_4.as");
-    StructureViewTestUtil.checkStructureView(myEditor);
+    myFixture.configureByFiles(s + ".as", s + "_2.as", s + "_3.as", s + "_4.as");
+    StructureViewTestUtil.checkStructureView(myFixture.getEditor());
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testLocalVarDerived3() throws Exception {
+  public void testLocalVarDerived3()  {
     trivialOneFileTest("js2");
   }
 
-  public void testNsDeclShouldBeOneTime() throws Exception {
+  public void testNsDeclShouldBeOneTime()  {
     trivialOneFileTest("js2");
   }
 
-  public void testExtraTopMembers() throws Exception {
+  public void testExtraTopMembers()  {
     trivialOneFileTest("js2");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testObjectFields() throws Exception {
+  public void testObjectFields()  {
     String s = BASE_PATH + getTestName(false);
-    configureByFiles(null, s + ".js2");
-    StructureViewTestUtil.checkStructureView(myEditor, false);
+    myFixture.configureByFiles(s + ".js2");
+    StructureViewTestUtil.checkStructureView(myFixture.getEditor(), false);
   }
 }

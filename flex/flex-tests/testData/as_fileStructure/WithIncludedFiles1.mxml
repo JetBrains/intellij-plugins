@@ -45,8 +45,8 @@
       <node text="ownField:String"/>
     </node>
     <node text="mx:Script">
-      <node text="bar()"/>
       <node text="p:String"/>
+      <node text="bar()"/>
     </node>
     <node text="mx:Style">
       <node text=".inFile"/>
