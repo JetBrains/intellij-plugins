@@ -2,6 +2,7 @@
 package org.intellij.plugins.markdown.ui.preview
 
 import com.intellij.openapi.project.Project
+import com.intellij.util.Urls
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.findChildOfType
@@ -70,6 +71,12 @@ internal class IntelliJImageGeneratingProvider(linkMap: LinkMap, baseURI: URI?, 
       return destination
     }
 
+    val url = Urls.parse(destination as String, false)
+    if (url != null && url.scheme != null) {
+      //external URL
+      return destination
+    }
+
     WebServerPathToFileManager.getInstance(project).getPathInfo(destination.toString())?.let {
       val urls = getBuiltInServerUrls(it, project)
       if (!urls.isEmpty()) {
@@ -77,7 +84,7 @@ internal class IntelliJImageGeneratingProvider(linkMap: LinkMap, baseURI: URI?, 
       }
     }
 
-    return PreviewStaticServer.getAbsolutePathImageUrl(destination as String)
+    return PreviewStaticServer.getAbsolutePathImageUrl(destination)
   }
 
   override fun getRenderInfo(text: String, node: ASTNode): LinkGeneratingProvider.RenderInfo? {
