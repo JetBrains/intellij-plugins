@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.util.Key;
@@ -18,7 +19,7 @@ import static com.jetbrains.lang.dart.ide.index.DartImportOrExportInfo.Kind;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static final int INDEX_VERSION = 23;
+  public static final int INDEX_VERSION = 24;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
