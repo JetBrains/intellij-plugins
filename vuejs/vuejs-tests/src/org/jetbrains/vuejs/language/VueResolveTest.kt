@@ -1452,11 +1452,10 @@ const props = {seeMe: {}}
 
   fun testResolveVuetifyComponent() {
     createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"0.17.2\"")
-    myFixture.copyDirectoryToProject("../libs/vuetify/node_modules", "./node_modules")
+    myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_017/node_modules", "./node_modules")
     val testData = arrayOf(
       Trinity("v-list", "v-list", "VList.js"),
-      Trinity("v-list-tile-content", "v-list-tile-content", "index.js"),
-      Trinity("v-app", "v-app", "VApp.js")
+      Trinity("v-list-tile-content", "v-list-tile-content", "index.js")
     )
     testData.forEach {
       myFixture.configureByText("ResolveVuetifyComponent.vue", "<template><<caret>${it.first}></${it.first}></template>")
