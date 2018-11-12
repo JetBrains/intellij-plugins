@@ -2,6 +2,7 @@
 package org.intellij.plugins.markdown.ui.preview
 
 import com.intellij.openapi.project.Project
+import com.intellij.util.Urls
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.findChildOfType
@@ -67,6 +68,12 @@ internal class IntelliJImageGeneratingProvider(linkMap: LinkMap, baseURI: URI?, 
 
   override fun makeAbsoluteUrl(destination: CharSequence): CharSequence {
     if (destination.startsWith('#')) {
+      return destination
+    }
+
+    val url = Urls.parse(destination as String, false)
+    if (url != null && url.scheme != null) {
+      //external URL
       return destination
     }
 
