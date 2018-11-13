@@ -828,4 +828,13 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.completeBasic();
     });
   }
+
+  public void testNoLifecycleHooksInContentAssist() {
+    JSTestUtils.testES6(myFixture.getProject(), ()-> {
+      myFixture.configureByFiles("lifecycleHooks.ts", "package.json");
+      myFixture.completeBasic();
+      assertEquals(ContainerUtil.sorted(myFixture.getLookupElementStrings()), ContainerUtil.newArrayList("testOne", "testTwo", "testing"));
+    });
+  }
+
 }
