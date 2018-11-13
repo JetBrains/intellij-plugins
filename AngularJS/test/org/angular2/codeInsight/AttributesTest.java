@@ -837,4 +837,12 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testDecoratorInGetter() {
+    JSTestUtils.testES6(myFixture.getProject(), ()-> {
+      myFixture.configureByFiles("decoratorInGetter.ts", "package.json");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "[age]");
+    });
+  }
+
 }

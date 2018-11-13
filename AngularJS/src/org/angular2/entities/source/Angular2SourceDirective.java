@@ -4,6 +4,7 @@ package org.angular2.entities.source;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
@@ -11,8 +12,10 @@ import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider;
 import org.angular2.Angular2DecoratorUtil;
+import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
 import org.angular2.entities.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,8 +88,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
 
   @NotNull
   private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getProperties() {
-    List<Angular2DirectiveProperty> inputs = new ArrayList<>();
-    List<Angular2DirectiveProperty> outputs = new ArrayList<>();
+    Map<String, Angular2DirectiveProperty> inputs = new LinkedHashMap<>();
+    Map<String, Angular2DirectiveProperty> outputs = new LinkedHashMap<>();
 
     Map<String, String> inputMap = readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP);
     Map<String, String> outputMap = readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP);
@@ -95,16 +98,14 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
       .buildTypeFromClass(getTypeScriptClass(), false)
       .getProperties()
       .forEach(prop -> {
-        if (prop.getMemberSource().getSingleElement() instanceof JSAttributeListOwner) {
-          processProperty(prop, (JSAttributeListOwner)prop.getMemberSource().getSingleElement(), inputMap, Angular2DecoratorUtil.INPUT_DEC,
-                          inputs);
-          processProperty(prop, (JSAttributeListOwner)prop.getMemberSource().getSingleElement(), outputMap,
-                          Angular2DecoratorUtil.OUTPUT_DEC, outputs);
+        for (JSAttributeListOwner el : getPropertySources(prop.getMemberSource().getSingleElement())) {
+          processProperty(prop, el, inputMap, Angular2DecoratorUtil.INPUT_DEC, inputs);
+          processProperty(prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, outputs);
         }
       });
 
-    return pair(Collections.unmodifiableCollection(inputs),
-                Collections.unmodifiableCollection(outputs));
+    return pair(Collections.unmodifiableCollection(inputs.values()),
+                Collections.unmodifiableCollection(outputs.values()));
   }
 
   @NotNull
@@ -122,11 +123,28 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     return Collections.emptyMap();
   }
 
+  private static List<JSAttributeListOwner> getPropertySources(PsiElement property) {
+    if (property instanceof TypeScriptFunction) {
+      TypeScriptFunction fun = (TypeScriptFunction)property;
+      if (!fun.isSetProperty() && !fun.isGetProperty()) {
+        return Collections.emptyList();
+      }
+      List<JSAttributeListOwner> result = new ArrayList<>();
+      result.add(fun);
+      Angular2ReferenceExpressionResolver.findPropertyAccessor(fun, fun.isGetProperty(), result::add);
+      return result;
+    }
+    else if (property instanceof JSAttributeListOwner) {
+      return Collections.singletonList((JSAttributeListOwner)property);
+    }
+    return Collections.emptyList();
+  }
+
   private static void processProperty(@NotNull JSRecordType.PropertySignature property,
                                       @NotNull JSAttributeListOwner field,
                                       @NotNull Map<String, String> mappings,
                                       @NotNull String decorator,
-                                      @NotNull List<Angular2DirectiveProperty> result) {
+                                      @NotNull Map<String, Angular2DirectiveProperty> result) {
     String bindingName = mappings.get(property.getMemberName());
     if (bindingName == null && field.getAttributeList() != null) {
       bindingName = Arrays.stream(field.getAttributeList().getDecorators())
@@ -136,7 +154,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         .orElse(null);
     }
     if (bindingName != null) {
-      result.add(new Angular2SourceDirectiveProperty(property, bindingName));
+      result.putIfAbsent(bindingName, new Angular2SourceDirectiveProperty(property, bindingName));
     }
   }
 
