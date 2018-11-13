@@ -16,6 +16,8 @@ import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.nodejs.NodeStackTraceFilter;
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructure;
+import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructureBuilder;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
@@ -229,6 +231,11 @@ public class KarmaExecutionSession {
     }
     QUnitFileStructure qunit = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
     elements = qunit.getTopLevelElements();
+    if (!elements.isEmpty()) {
+      return elements;
+    }
+    MochaTddFileStructure mochaTdd = MochaTddFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+    elements = mochaTdd.getTopLevelElements();
     if (!elements.isEmpty()) {
       return elements;
     }

@@ -7,6 +7,8 @@ import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.testFramework.JsTestElementPath;
 import com.intellij.javascript.testFramework.PreferableRunConfiguration;
+import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructure;
+import com.intellij.javascript.testFramework.interfaces.mochaTdd.MochaTddFileStructureBuilder;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
@@ -97,6 +99,10 @@ public class KarmaRunConfigurationProducer extends JsTestRunConfigurationProduce
     }
     JasmineFileStructure jasmineStructure = JasmineFileStructureBuilder.getInstance().fetchCachedTestFileStructure(file);
     JsTestElementPath path = jasmineStructure.findTestElementPath(textRange);
+    if (path == null) {
+      MochaTddFileStructure mochaTddFileStructure = MochaTddFileStructureBuilder.getInstance().fetchCachedTestFileStructure(file);
+      path = mochaTddFileStructure.findTestElementPath(textRange);
+    }
     if (path != null) {
       templateSettings = guessConfigFileIfNeeded(templateSettings, virtualFile, element.getProject());
       KarmaRunSettings.Builder builder = templateSettings.toBuilder();
