@@ -72,9 +72,9 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       return null;
     }
     if (info.elementType == EVENT) {
-      return new Angular2EventHandlerDescriptor(attributeName, info.name, elements);
+      return new Angular2EventHandlerDescriptor(attributeName, info, elements);
     }
-    return new Angular2AttributeDescriptor(attributeName, info.name, elements);
+    return new Angular2AttributeDescriptor(attributeName, info, elements);
   }
 
   @NotNull
@@ -92,17 +92,20 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   private final PsiElement[] myElements;
   private final String myAttributeName;
-  private final String myBindingName;
+  private final Angular2AttributeNameParser.AttributeInfo myInfo;
 
   protected Angular2AttributeDescriptor(@NotNull String attributeName,
-                                        @Nullable String bindingName,
+                                        boolean isInTemplateTag,
+                                        @NotNull Collection<PsiElement> elements) {
+    this(attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag), elements);
+  }
+
+  protected Angular2AttributeDescriptor(@NotNull String attributeName,
+                                        @Nullable Angular2AttributeNameParser.AttributeInfo info,
                                         @NotNull Collection<PsiElement> elements) {
     myAttributeName = attributeName;
-    myBindingName = bindingName;
-    if (bindingName != null) {
-      assert myAttributeName.contains(myBindingName);
-    }
     myElements = elements.toArray(PsiElement.EMPTY_ARRAY);
+    myInfo = info != null && info.elementType != XmlElementType.XML_ATTRIBUTE ? info : null;
   }
 
   @Override
@@ -161,11 +164,11 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @Nullable
   @Override
   public String handleTargetRename(@NotNull @NonNls String newTargetName) {
-    if (myBindingName != null) {
-      int start = myAttributeName.indexOf(myBindingName);
+    if (myInfo != null) {
+      int start = myAttributeName.lastIndexOf(myInfo.name);
       return myAttributeName.substring(0, start)
              + newTargetName
-             + myAttributeName.substring(start + myBindingName.length());
+             + myAttributeName.substring(start + myInfo.name.length());
     }
     else {
       return newTargetName;
@@ -175,6 +178,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @Override
   public String getTypeName() {
     return null;
+  }
+
+  public Angular2AttributeNameParser.AttributeInfo getInfo() {
+    return myInfo;
   }
 
   @Nullable
@@ -196,12 +203,13 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @NotNull
   private static Angular2AttributeDescriptor createBinding(@NotNull Angular2DirectiveProperty info) {
-    return new Angular2AttributeDescriptor("[" + info.getName() + "]", info.getName(), singletonList(info.getNavigableElement()));
+    return new Angular2AttributeDescriptor("[" + info.getName() + "]", false,
+                                           singletonList(info.getNavigableElement()));
   }
 
   @NotNull
   private static Angular2AttributeDescriptor createBananaBoxBinding(@NotNull Pair<Angular2DirectiveProperty, Angular2DirectiveProperty> info) {
-    return new Angular2AttributeDescriptor("[(" + info.first.getName() + ")]", info.first.getName(),
+    return new Angular2AttributeDescriptor("[(" + info.first.getName() + ")]", false,
                                            ContainerUtil.newArrayList(info.first.getNavigableElement(),
                                                                       info.second.getNavigableElement()));
   }
@@ -215,7 +223,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @NotNull
   private static Angular2EventHandlerDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
-    return new Angular2EventHandlerDescriptor("(" + info.getName() + ")", info.getName(),
+    return new Angular2EventHandlerDescriptor("(" + info.getName() + ")", false,
                                               singletonList(info.getNavigableElement()));
   }
 

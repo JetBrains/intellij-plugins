@@ -182,6 +182,12 @@ public class Angular2AttributeNameParser {
       this.elementType = elementType;
     }
 
+    public boolean isEquivalent(@Nullable AttributeInfo otherInfo) {
+      return otherInfo != null
+        && name.equals(otherInfo.name)
+        && elementType == otherInfo.elementType;
+    }
+
     @Override
     public String toString() {
       return "<" + name + ">";
@@ -196,6 +202,13 @@ public class Angular2AttributeNameParser {
     public PropertyBindingInfo(@NotNull String name, boolean bananaBoxBinding, @NotNull PropertyBindingType bindingType) {
       super(name, bananaBoxBinding ? BANANA_BOX_BINDING : PROPERTY_BINDING);
       this.bindingType = bindingType;
+    }
+
+    @Override
+    public boolean isEquivalent(@Nullable AttributeInfo otherInfo) {
+      return otherInfo instanceof PropertyBindingInfo
+        && bindingType == ((PropertyBindingInfo)otherInfo).bindingType
+        && super.isEquivalent(otherInfo);
     }
 
     @Override
@@ -226,6 +239,14 @@ public class Angular2AttributeNameParser {
       super(name, EVENT, error);
       this.animationPhase = animationPhase;
       this.eventType = EventType.ANIMATION;
+    }
+
+    @Override
+    public boolean isEquivalent(@Nullable AttributeInfo otherInfo) {
+      return otherInfo instanceof EventInfo
+        && eventType == ((EventInfo)otherInfo).eventType
+        && animationPhase == ((EventInfo)otherInfo).animationPhase
+        && super.isEquivalent(otherInfo);
     }
 
     @Override

@@ -1,1 +1,10 @@
-<my-comp (click)="" <warning descr="Attribute (foo) is not allowed here">(foo)</warning>="" [id]="'foo'" <warning descr="Attribute [bar] is not allowed here">[bar]</warning>="" style=""></my-comp>
+<my-comp (click)=""
+         on-cancel=""
+         <warning descr="Attribute (foo) is not allowed here">(foo)</warning>=""
+         <warning descr="Attribute on-bar is not allowed here">on-bar</warning>=""
+         [id]="'foo'"
+         bind-innerHTML=""
+         <warning descr="Attribute bind-foo is not allowed here">bind-foo</warning>=""
+         <warning descr="Attribute [bar] is not allowed here">[bar]</warning>=""
+         style="">
+</my-comp>

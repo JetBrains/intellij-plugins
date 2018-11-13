@@ -13,7 +13,6 @@ import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -51,7 +50,13 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     if (xmlTag != null) {
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrName, true);
       for (XmlAttributeDescriptor d : attrDescrProvider.apply(xmlTag)) {
-        if (attrName.equalsIgnoreCase(d.getName())) {
+        if (d instanceof Angular2AttributeDescriptor) {
+          if (attrName.equals(d.getName())
+              || info.isEquivalent(((Angular2AttributeDescriptor)d).getInfo())) {
+            return d;
+          }
+        }
+        else if (attrName.equalsIgnoreCase(d.getName())) {
           return d;
         }
       }
@@ -206,8 +211,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     }
     attrsFromSelectors.entrySet().forEach(e -> {
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(e.getKey(), isTemplateTag);
-      result.add(new Angular2AttributeDescriptor(
-        e.getKey(), info.elementType != XmlElementType.XML_ATTRIBUTE ? info.name : null, e.getValue()));
+      result.add(new Angular2AttributeDescriptor(e.getKey(), info, e.getValue()));
     });
     return result;
   }
@@ -225,62 +229,64 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   @NotNull
   public static Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
     return CachedValuesManager.getCachedValue(xmlTag, STANDARD_PROPERTIES_KEY, () -> {
-        Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag.getName()));
-        JSType tagClass = Angular2Processor.getHtmlElementClassType(xmlTag, xmlTag.getName());
-        List<XmlAttributeDescriptor> result = new ArrayList<>();
-        Set<Object> dependencies = new HashSet<>();
-        if (tagClass != null) {
-          for (JSRecordType.PropertySignature property : tagClass.asRecordType().getProperties()) {
-            if (property.getMemberSource().getSingleElement() instanceof JSAttributeListOwner) {
-              JSAttributeListOwner propertyDeclaration =
-                (JSAttributeListOwner)property.getMemberSource().getSingleElement();
-              if (!(propertyDeclaration instanceof TypeScriptPropertySignature)
-                  || (propertyDeclaration.getAttributeList() != null
-                      && propertyDeclaration.getAttributeList().hasModifier(JSAttributeList.ModifierType.READONLY))) {
-                continue;
-              }
-              dependencies.add(propertyDeclaration.getContainingFile());
-              String name;
-              if (property.getMemberName().startsWith("on")) {
-                name = "(" + property.getMemberName().substring(2) + ")";
-              }
-              else {
-                name = "[" + property.getMemberName() + "]";
-              }
-              if (allowedElementProperties.remove(name)) {
-                result.add(Angular2AttributeDescriptor.create(name, propertyDeclaration));
-              }
+      Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag.getName()));
+      JSType tagClass = Angular2Processor.getHtmlElementClassType(xmlTag, xmlTag.getName());
+      List<XmlAttributeDescriptor> result = new ArrayList<>();
+      Set<Object> dependencies = new HashSet<>();
+      boolean isInTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
+      if (tagClass != null) {
+        for (JSRecordType.PropertySignature property : tagClass.asRecordType().getProperties()) {
+          if (property.getMemberSource().getSingleElement() instanceof JSAttributeListOwner) {
+            JSAttributeListOwner propertyDeclaration =
+              (JSAttributeListOwner)property.getMemberSource().getSingleElement();
+            if (!(propertyDeclaration instanceof TypeScriptPropertySignature)
+                || (propertyDeclaration.getAttributeList() != null
+                    && propertyDeclaration.getAttributeList().hasModifier(JSAttributeList.ModifierType.READONLY))) {
+              continue;
+            }
+            dependencies.add(propertyDeclaration.getContainingFile());
+            String name;
+            if (property.getMemberName().startsWith("on")) {
+              name = "(" + property.getMemberName().substring(2) + ")";
+            }
+            else {
+              name = "[" + property.getMemberName() + "]";
+            }
+            if (allowedElementProperties.remove(name)) {
+              result.add(Angular2AttributeDescriptor.create(name, propertyDeclaration));
             }
           }
         }
-        for (String name : allowedElementProperties) {
-          if (name.startsWith("(")) {
-            result.add(new Angular2EventHandlerDescriptor(name, name.substring(1, name.length() - 1), Collections.emptyList()));
-          }
-          else {
-            result.add(new Angular2AttributeDescriptor(name, name.substring(1, name.length() - 1), Collections.emptyList()));
-          }
+      }
+      for (String name : allowedElementProperties) {
+        if (name.startsWith("(")) {
+          result.add(new Angular2EventHandlerDescriptor(name, isInTemplateTag, Collections.emptyList()));
         }
-        return CachedValueProvider.Result.create(Collections.unmodifiableList(result),
-                                                 !dependencies.isEmpty() ? dependencies :
-                                                 Collections.singleton(PsiModificationTracker.MODIFICATION_COUNT));
-      });
+        else {
+          result.add(new Angular2AttributeDescriptor(name, isInTemplateTag, Collections.emptyList()));
+        }
+      }
+      return CachedValueProvider.Result.create(Collections.unmodifiableList(result),
+                                               !dependencies.isEmpty() ? dependencies :
+                                               Collections.singleton(PsiModificationTracker.MODIFICATION_COUNT));
+    });
   }
 
   @NotNull
   public static List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(@NotNull XmlTag xmlTag) {
     List<XmlAttributeDescriptor> result = new ArrayList<>();
+    boolean isInTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
     xmlTag.acceptChildren(new Angular2HtmlElementVisitor() {
       @Override
       public void visitVariable(Angular2HtmlVariable variable) {
         result
-          .add(new Angular2AttributeDescriptor(variable.getName(), variable.getVariableName(), singletonList(variable.getNameElement())));
+          .add(new Angular2AttributeDescriptor(variable.getName(), isInTemplateTag, singletonList(variable.getNameElement())));
       }
 
       @Override
       public void visitReference(Angular2HtmlReference reference) {
         result.add(
-          new Angular2AttributeDescriptor(reference.getName(), reference.getReferenceName(), singletonList(reference.getNameElement())));
+          new Angular2AttributeDescriptor(reference.getName(), isInTemplateTag, singletonList(reference.getNameElement())));
       }
     });
     return result;
