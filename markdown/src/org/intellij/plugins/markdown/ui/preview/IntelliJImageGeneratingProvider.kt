@@ -85,7 +85,7 @@ internal class IntelliJImageGeneratingProvider(linkMap: LinkMap, baseURI: URI?, 
         }
       }
     }
-    finally {
+    catch (e: Throwable) {
     }
 
     return PreviewStaticServer.getAbsolutePathImageUrl(destination)
