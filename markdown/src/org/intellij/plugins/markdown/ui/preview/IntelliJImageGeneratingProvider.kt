@@ -2,6 +2,8 @@
 package org.intellij.plugins.markdown.ui.preview
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.Urls
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.ast.ASTNode
@@ -67,18 +69,19 @@ internal class IntelliJImageGeneratingProvider(linkMap: LinkMap, baseURI: URI?, 
   private val inlineLinkProvider = InlineLinkGeneratingProvider(baseURI)
 
   override fun makeAbsoluteUrl(destination: CharSequence): CharSequence {
-    if (destination.startsWith('#')) {
-      return destination
+    val destinationEx = if (SystemInfo.isWindows) StringUtil.replace(destination.toString(), "%5C", "/") else destination.toString()
+    if (destinationEx.startsWith('#')) {
+      return destinationEx
     }
 
-    val url = Urls.parse(destination as String, false)
+    val url = Urls.parse(destinationEx, true)
     if (url != null && url.scheme != null) {
       //external URL
-      return destination
+      return destinationEx
     }
 
     try {
-      WebServerPathToFileManager.getInstance(project).getPathInfo(destination.toString())?.let {
+      WebServerPathToFileManager.getInstance(project).getPathInfo(destinationEx)?.let {
         val urls = getBuiltInServerUrls(it, project)
         if (!urls.isEmpty()) {
           return urls.first().toExternalForm()
@@ -88,7 +91,7 @@ internal class IntelliJImageGeneratingProvider(linkMap: LinkMap, baseURI: URI?, 
     catch (e: Throwable) {
     }
 
-    return PreviewStaticServer.getAbsolutePathImageUrl(destination)
+    return PreviewStaticServer.getAbsolutePathImageUrl(destinationEx)
   }
 
   override fun getRenderInfo(text: String, node: ASTNode): LinkGeneratingProvider.RenderInfo? {
