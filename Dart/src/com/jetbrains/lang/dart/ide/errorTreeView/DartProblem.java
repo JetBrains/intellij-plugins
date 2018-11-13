@@ -91,7 +91,7 @@ public class DartProblem {
       contentRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(file, false);
 
       final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
-                                  ? DartBuildFileUtil.findPackageRootBuildFile(myProject, file)
+                                  ? DartBuildFileUtil.findPackageRootBuildFile(myProject, file, false)
                                   : PubspecYamlUtil.findPubspecYamlFile(myProject, file);
       if (pubspec == null) {
         dartPackageName = null;

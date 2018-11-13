@@ -64,6 +64,7 @@ import com.jetbrains.lang.dart.assists.QuickAssistSet;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
+import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsViewSettings;
 import com.jetbrains.lang.dart.ide.template.postfix.DartPostfixTemplateProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
@@ -757,11 +758,21 @@ public class DartAnalysisServerService implements Disposable {
     UIUtil.invokeLaterIfNeeded(() -> {
       if (myProject.isDisposed()) return;
 
-      final VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
-      if (files.length > 0) {
-        DartProblemsView.getInstance(myProject).setCurrentFile(files[0]);
-      }
+      DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile(), this);
     });
+  }
+
+  public boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {
+    return myRootsHandler.isInIncludedRoots(vFile);
+  }
+
+  @Nullable
+  VirtualFile getCurrentOpenFile() {
+    final VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
+    if (files.length > 0) {
+      return files[0];
+    }
+    return null;
   }
 
   void updateVisibleFiles() {
@@ -866,6 +877,13 @@ public class DartAnalysisServerService implements Disposable {
 
     if (!filesToUpdate.isEmpty()) {
       server.analysis_updateContent(filesToUpdate, myServerData::onFilesContentUpdated);
+    }
+  }
+
+  public void setScopedAnalysisModeAndRoots(@NotNull final DartProblemsViewSettings.ScopedAnalysisMode mode,
+                                            @Nullable final VirtualFile currentFile) {
+    if (myRootsHandler != null) {
+      myRootsHandler.setScopedAnalysisModeAndRoots(mode, currentFile);
     }
   }
 
@@ -1881,7 +1899,7 @@ public class DartAnalysisServerService implements Disposable {
         startServer(sdk);
 
         if (myServer != null) {
-          myRootsHandler.ensureProjectServed();
+          myRootsHandler.ensureProjectServed(DartProblemsView.getInstance(myProject).getScopeAnalysisMode(), getCurrentOpenFile());
         }
       }
 
@@ -2097,10 +2115,10 @@ public class DartAnalysisServerService implements Disposable {
     private final boolean isLast;
 
     CompletionInfo(@NotNull final String completionId,
-                          int replacementOffset,
-                          int originalReplacementLength,
-                          @NotNull final List<CompletionSuggestion> completions,
-                          boolean isLast) {
+                   int replacementOffset,
+                   int originalReplacementLength,
+                   @NotNull final List<CompletionSuggestion> completions,
+                   boolean isLast) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
       this.myOriginalReplacementLength = originalReplacementLength;

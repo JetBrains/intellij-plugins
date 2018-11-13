@@ -5,6 +5,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
@@ -56,11 +57,15 @@ public class DartProblemsPresentationHelper {
     assert (!areFiltersApplied());
   }
 
-  public void updateFromUI(@NotNull final DartProblemsFilterForm form) {
+  public void updateFromFilterSettingsUI(@NotNull final DartProblemsFilterForm form) {
     mySettings.showErrors = form.isShowErrors();
     mySettings.showWarnings = form.isShowWarnings();
     mySettings.showHints = form.isShowHints();
     mySettings.fileFilterMode = form.getFileFilterMode();
+  }
+
+  public void updateFromServerSettingsUI(@NotNull final DartAnalysisServerSettingsForm form) {
+    mySettings.scopedAnalysisMode = form.getScopeAnalysisMode();
   }
 
   public boolean areFiltersApplied() {
@@ -116,6 +121,14 @@ public class DartProblemsPresentationHelper {
     return mySettings.fileFilterMode;
   }
 
+  public DartProblemsViewSettings.ScopedAnalysisMode getScopedAnalysisMode() {
+    return mySettings.scopedAnalysisMode;
+  }
+
+  public void setAnalysisRoots() {
+    DartAnalysisServerService.getInstance(myProject).setScopedAnalysisModeAndRoots(mySettings.scopedAnalysisMode, myCurrentFile);
+  }
+
   public boolean shouldShowProblem(@NotNull final DartProblem problem) {
     if (!isShowErrors() && AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) return false;
     if (!isShowWarnings() && AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) return false;
@@ -164,7 +177,7 @@ public class DartProblemsPresentationHelper {
     }
     else {
       final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
-                                  ? DartBuildFileUtil.findPackageRootBuildFile(myProject, myCurrentFile)
+                                  ? DartBuildFileUtil.findPackageRootBuildFile(myProject, myCurrentFile, false)
                                   : PubspecYamlUtil.findPubspecYamlFile(myProject, myCurrentFile);
       if (pubspec == null) {
         packageRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(myCurrentFile, false);

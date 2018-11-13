@@ -45,8 +45,12 @@ public class AnalysisServerDiagnosticsAction extends DumbAwareAction {
     final Project project = e.getProject();
     if (project == null) return;
 
+    run(project);
+  }
+
+  void run(@NotNull final Project project) {
     // Get the current analysis server.
-    DartAnalysisServerService server = DartAnalysisServerService.getInstance(project);
+    final DartAnalysisServerService server = DartAnalysisServerService.getInstance(project);
 
     // Ask it for the diagnostics port.
     server.diagnostic_getServerPort(new GetServerPortConsumer() {

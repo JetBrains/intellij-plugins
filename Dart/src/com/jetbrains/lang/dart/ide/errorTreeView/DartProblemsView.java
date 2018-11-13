@@ -14,6 +14,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -113,9 +115,6 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
       ToolWindowEx toolWindowEx = (ToolWindowEx)myToolWindow;
       toolWindowEx.setTitleActions(new AnalysisServerFeedbackAction());
-      ArrayList<AnAction> gearActions = new ArrayList<>();
-      gearActions.add(new AnalysisServerDiagnosticsAction());
-      toolWindowEx.setAdditionalGearActions(new DefaultActionGroup(gearActions));
 
       myPanel.setToolWindowUpdater(new ToolWindowUpdater() {
         @Override
@@ -166,6 +165,10 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   public static DartProblemsView getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, DartProblemsView.class);
+  }
+
+  public DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode() {
+    return myPresentationHelper.getScopedAnalysisMode();
   }
 
   @SuppressWarnings("unused")
@@ -252,16 +255,24 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
   public void loadState(@NotNull DartProblemsViewSettings state) {
     myPresentationHelper.setSettings(state);
     if (myPanel != null) {
-      myPanel.fireGroupingOrFilterChanged();
+      myPanel.fireScopedAnalysisOrFilterChanged();
     }
   }
 
-  public void setCurrentFile(@Nullable final VirtualFile file) {
-    if (myPresentationHelper.setCurrentFile(file) &&
-        myPresentationHelper.getFileFilterMode() != DartProblemsViewSettings.FileFilterMode.All) {
-      if (myPanel != null) {
-        myPanel.fireGroupingOrFilterChanged();
+  public void setCurrentFile(@Nullable final VirtualFile vFile, @NotNull final DartAnalysisServerService dasService) {
+    if (myPresentationHelper.setCurrentFile(vFile) &&
+        (myPresentationHelper.getFileFilterMode() != DartProblemsViewSettings.FileFilterMode.All ||
+         myPresentationHelper.getScopedAnalysisMode() != DartProblemsViewSettings.ScopedAnalysisMode.All)
+    ) {
+      if (myPanel == null || vFile == null) {
+        return;
       }
+      // If the Scoped Analysis root will change and is a non-Dart SDK, non-library file, then clear all problems
+      final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
+      if (!dasService.isInIncludedRoots(vFile) && !projectFileIndex.isInLibraryClasses(vFile)) {
+        clearAll();
+      }
+      myPanel.fireScopedAnalysisOrFilterChanged();
     }
   }
 

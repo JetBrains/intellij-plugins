@@ -148,18 +148,14 @@ public class DartAnnotator implements Annotator {
   }
 
   @Contract("_, null -> false")
-  private static boolean canBeAnalyzedByServer(@NotNull final Project project, @Nullable final VirtualFile file) {
-    if (!DartAnalysisServerService.isLocalAnalyzableFile(file)) return false;
+  private static boolean canBeAnalyzedByServer(@NotNull final Project project, @Nullable final VirtualFile vFile) {
+    if (!DartAnalysisServerService.isLocalAnalyzableFile(vFile)) return false;
 
     final DartSdk sdk = DartSdk.getDartSdk(project);
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return false;
 
     // server can highlight files from Dart SDK, packages and from modules with enabled Dart support
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    if (fileIndex.isInLibraryClasses(file)) return true;
-
-    final Module module = fileIndex.getModuleForFile(file);
-    return module != null && DartSdkLibUtil.isDartSdkEnabled(module);
+    return DartAnalysisServerService.getInstance(project).isInIncludedRoots(vFile);
   }
 
   public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final String filePath,
@@ -179,15 +175,16 @@ public class DartAnnotator implements Annotator {
       session.putUserData(DART_SERVER_DATA_HANDLED, Boolean.TRUE);
 
       final VirtualFile vFile = element.getContainingFile().getVirtualFile();
-      final DartAnalysisServerService service = DartAnalysisServerService.getInstance(element.getProject());
-      if (canBeAnalyzedByServer(element.getProject(), vFile) && service.serverReadyForRequest(element.getProject())) {
-        service.updateFilesContent();
+      final Project project = element.getProject();
+      final DartAnalysisServerService dasService = DartAnalysisServerService.getInstance(project);
+      if (canBeAnalyzedByServer(project, vFile) && dasService.serverReadyForRequest(project)) {
+        dasService.updateFilesContent();
 
         if (ApplicationManager.getApplication().isUnitTestMode()) {
-          service.waitForAnalysisToComplete_TESTS_ONLY(vFile);
+          dasService.waitForAnalysisToComplete_TESTS_ONLY(vFile);
         }
 
-        applyServerHighlighting(vFile, holder);
+        applyServerHighlighting(vFile, dasService, holder);
       }
     }
 
@@ -225,18 +222,19 @@ public class DartAnnotator implements Annotator {
     }
   }
 
-  private static void applyServerHighlighting(@NotNull final VirtualFile file, @NotNull final AnnotationHolder holder) {
+  private static void applyServerHighlighting(@NotNull final VirtualFile vFile,
+                                              @NotNull final DartAnalysisServerService dasService,
+                                              @NotNull final AnnotationHolder holder) {
     final PsiFile psiFile = holder.getCurrentAnnotationSession().getFile();
 
-    final DartAnalysisServerService das = DartAnalysisServerService.getInstance(psiFile.getProject());
-    for (DartServerData.DartError error : das.getErrors(file)) {
-      if (shouldIgnoreMessageFromDartAnalyzer(file.getPath(), error.getAnalysisErrorFileSD())) continue;
+    for (DartServerData.DartError error : dasService.getErrors(vFile)) {
+      if (shouldIgnoreMessageFromDartAnalyzer(vFile.getPath(), error.getAnalysisErrorFileSD())) continue;
 
       final Annotation annotation = createAnnotation(holder, error, psiFile.getTextLength());
 
       if (annotation != null) {
         final DartQuickFixSet quickFixSet =
-          new DartQuickFixSet(psiFile.getManager(), file, error.getOffset(), error.getCode(), error.getSeverity());
+          new DartQuickFixSet(psiFile.getManager(), vFile, error.getOffset(), error.getCode(), error.getSeverity());
 
         for (IntentionAction quickFix : quickFixSet.getQuickFixes()) {
           annotation.registerFix(quickFix);
@@ -248,7 +246,7 @@ public class DartAnnotator implements Annotator {
       }
     }
 
-    for (DartServerData.DartHighlightRegion region : das.getHighlight(file)) {
+    for (DartServerData.DartHighlightRegion region : dasService.getHighlight(vFile)) {
       final String attributeKey = HIGHLIGHTING_TYPE_MAP.get(region.getType());
       if (attributeKey != null) {
         final TextRange textRange = new TextRange(region.getOffset(), region.getOffset() + region.getLength());

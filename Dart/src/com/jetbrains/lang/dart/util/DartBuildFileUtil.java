@@ -29,16 +29,19 @@ public class DartBuildFileUtil {
 
   /**
    * Return the BUILD build in the root of the package that contains the given context file.
-   *
+   * <p>
    * This may be not the closest BUILD file.
    * For example it will ignore "examples/BUILD" file, because the enclosing folder contains a "lib" folder and another BUILD file.
+   * <p>
+   * When doConsiderNonProjectFiles is true, a VirtualFile can be returned even if the passed VirtualFile is not in the project context.
    */
   @Nullable
-  public static VirtualFile findPackageRootBuildFile(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+  public static VirtualFile findPackageRootBuildFile(@NotNull final Project project, @NotNull final VirtualFile contextFile,
+                                                     final boolean doConsiderNonProjectFiles) {
+    final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     VirtualFile parent = contextFile.isDirectory() ? contextFile : contextFile.getParent();
 
-    while (parent != null && fileIndex.isInContent(parent)) {
+    while (parent != null && (doConsiderNonProjectFiles || projectFileIndex.isInContent(parent))) {
       final VirtualFile file = parent.findChild(BUILD_FILE_NAME);
       if (file != null && !file.isDirectory()) {
         final VirtualFile parent2 = parent.getParent();

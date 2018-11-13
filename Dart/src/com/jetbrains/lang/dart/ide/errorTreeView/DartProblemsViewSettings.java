@@ -21,12 +21,15 @@ public class DartProblemsViewSettings {
 
   public enum FileFilterMode {All, ContentRoot, DartPackage, Directory, File}
 
+  public enum ScopedAnalysisMode {All, DartPackage}
+
   static final boolean AUTO_SCROLL_TO_SOURCE_DEFAULT = false;
   static final boolean GROUP_BY_SEVERITY_DEFAULT = true;
   static final boolean SHOW_ERRORS_DEFAULT = true;
   static final boolean SHOW_WARNINGS_DEFAULT = true;
   static final boolean SHOW_HINTS_DEFAULT = true;
   static final FileFilterMode FILE_FILTER_MODE_DEFAULT = FileFilterMode.All;
+  static final ScopedAnalysisMode SCOPED_ANALYSIS_MODE_DEFAULT = ScopedAnalysisMode.All;
 
   @Attribute(value = "auto-scroll-to-source")
   public boolean autoScrollToSource = AUTO_SCROLL_TO_SOURCE_DEFAULT;
@@ -43,4 +46,7 @@ public class DartProblemsViewSettings {
   public boolean showWarnings = SHOW_WARNINGS_DEFAULT;
   @Attribute(value = "show-hints")
   public boolean showHints = SHOW_HINTS_DEFAULT;
+
+  @Attribute(value = "scoped-analysis-mode")
+  public ScopedAnalysisMode scopedAnalysisMode = SCOPED_ANALYSIS_MODE_DEFAULT;
 }

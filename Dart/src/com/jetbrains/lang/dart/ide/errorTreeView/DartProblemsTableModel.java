@@ -269,12 +269,15 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private DartProblem addErrorsAndReturnReplacementForSelection(@NotNull final Map<String, List<AnalysisError>> filePathToErrors,
                                                                 @Nullable final DartProblem oldSelectedProblem) {
     DartProblem newSelectedProblem = null;
+    final DartProblemsViewSettings.ScopedAnalysisMode scopedAnalysisMode = myPresentationHelper.getScopedAnalysisMode();
 
     final List<DartProblem> problemsToAdd = new ArrayList<>();
     for (Map.Entry<String, List<AnalysisError>> entry : filePathToErrors.entrySet()) {
       final String filePath = entry.getKey();
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-      final List<AnalysisError> errors = vFile != null && ProjectFileIndex.getInstance(myProject).isInContent(vFile)
+      final List<AnalysisError> errors = vFile != null &&
+                                         (scopedAnalysisMode != DartProblemsViewSettings.ScopedAnalysisMode.All ||
+                                          ProjectFileIndex.getInstance(myProject).isInContent(vFile))
                                          ? entry.getValue()
                                          : AnalysisError.EMPTY_LIST;
 
@@ -334,8 +337,9 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
     mySortKey = sortKey;
   }
 
-  public void onFilterChanged() {
+  public void onAnalysisScopeOrFilterChanged() {
     ApplicationManager.getApplication().assertIsDispatchThread();
+    myPresentationHelper.setAnalysisRoots();
     if (myPresentationHelper.areFiltersApplied()) {
       myErrorCountAfterFilter = 0;
       myWarningCountAfterFilter = 0;

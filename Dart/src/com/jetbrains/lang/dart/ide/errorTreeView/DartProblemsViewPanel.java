@@ -181,6 +181,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     final DefaultActionGroup group = new DefaultActionGroup();
 
     addReanalyzeActions(group);
+    group.addAction(new AnalysisServerSettingsAction());
     group.addSeparator();
 
     addAutoScrollToSourceAction(group);
@@ -242,45 +243,63 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
       @Override
       public void setSelected(@NotNull AnActionEvent e, boolean groupBySeverity) {
         myPresentationHelper.setGroupBySeverity(groupBySeverity);
-        fireGroupingOrFilterChanged();
+        fireScopedAnalysisOrFilterChanged();
       }
     };
 
     group.addAction(action);
   }
 
-  void fireGroupingOrFilterChanged() {
+  void fireScopedAnalysisOrFilterChanged() {
     myTable.getRowSorter().allRowsChanged();
-    ((DartProblemsTableModel)myTable.getModel()).onFilterChanged();
+    ((DartProblemsTableModel)myTable.getModel()).onAnalysisScopeOrFilterChanged();
     updateStatusDescription();
   }
 
   private void showFiltersPopup() {
-    final DartProblemsFilterForm form = new DartProblemsFilterForm();
-    form.reset(myPresentationHelper);
-
-    form.addListener(new DartProblemsFilterForm.FilterListener() {
+    final DartProblemsFilterForm myFilterForm = new DartProblemsFilterForm();
+    myFilterForm.reset(myPresentationHelper);
+    myFilterForm.addListener(new DartProblemsFilterForm.FilterListener() {
       @Override
       public void filtersChanged() {
-        myPresentationHelper.updateFromUI(form);
-        fireGroupingOrFilterChanged();
+        myPresentationHelper.updateFromFilterSettingsUI(myFilterForm);
+        fireScopedAnalysisOrFilterChanged();
       }
 
       @Override
       public void filtersResetRequested() {
         myPresentationHelper.resetAllFilters();
-        form.reset(myPresentationHelper);
-        fireGroupingOrFilterChanged();
+        myFilterForm.reset(myPresentationHelper);
+        fireScopedAnalysisOrFilterChanged();
       }
     });
 
+    createAndShowJBPopup("Dart Problems Filter", myFilterForm.getMainPanel());
+  }
+
+  private void showAnalysisServerSettingsPopup() {
+    final DartAnalysisServerSettingsForm serverSettingsForm = new DartAnalysisServerSettingsForm(myProject);
+    serverSettingsForm.reset(myPresentationHelper);
+
+    serverSettingsForm.addListener(new DartAnalysisServerSettingsForm.ServerSettingsListener() {
+      @Override
+      public void settingsChanged() {
+        myPresentationHelper.updateFromServerSettingsUI(serverSettingsForm);
+        fireScopedAnalysisOrFilterChanged();
+      }
+    });
+
+    createAndShowJBPopup(DartBundle.message("analysis.server.settings.title"), serverSettingsForm.getMainPanel());
+  }
+
+  private void createAndShowJBPopup(@NotNull final String title, @NotNull final JPanel jPanel) {
     final Rectangle visibleRect = myTable.getVisibleRect();
     final Point tableTopLeft = new Point(myTable.getLocationOnScreen().x + visibleRect.x, myTable.getLocationOnScreen().y + visibleRect.y);
 
     JBPopupFactory.getInstance()
-      .createComponentPopupBuilder(form.getMainPanel(), form.getMainPanel())
+      .createComponentPopupBuilder(jPanel, jPanel)
       .setProject(myProject)
-      .setTitle("Dart Problems Filter")
+      .setTitle(title)
       .setMovable(true)
       .setRequestFocus(true)
       .createPopup().show(RelativePoint.fromScreen(tableTopLeft));
@@ -382,6 +401,18 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     @Override
     public void actionPerformed(@NotNull final AnActionEvent e) {
       showFiltersPopup();
+    }
+  }
+
+  private class AnalysisServerSettingsAction extends DumbAwareAction {
+    AnalysisServerSettingsAction() {
+      super(DartBundle.message("analysis.server.settings"), DartBundle.message("analysis.server.settings.description"),
+            AllIcons.General.GearPlain);
+    }
+
+    @Override
+    public void actionPerformed(@NotNull final AnActionEvent e) {
+      showAnalysisServerSettingsPopup();
     }
   }
 }
