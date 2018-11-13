@@ -246,7 +246,6 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_binding.html", "package.json", "object.ts");
       myFixture.completeBasic();
-      myFixture.type('\n');
       myFixture.checkResultByFile("attribute_binding.after.html");
     });
   }
@@ -320,7 +319,6 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_binding.html", "package.json", "object_with_function.ts");
       myFixture.completeBasic();
-      myFixture.type('\n');
       myFixture.checkResultByFile("attribute_binding.after.html");
     });
   }
@@ -842,6 +840,18 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("decoratorInGetter.ts", "package.json");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "[age]");
+    });
+  }
+
+  public void testStandardTagProperties() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      myFixture.configureByFiles("standardTagProperties.ts", "package.json");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                          "[autofocus]", "[readOnly]", "[selectionDirection]", "[innerHTML]",
+                          "(auxclick)", "(blur)", "(click)", "(paste)", "(webkitfullscreenchange)");
+      assertDoesntContain(myFixture.getLookupElementStrings(),
+                             "innerHTML", "[class]");
     });
   }
 

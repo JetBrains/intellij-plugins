@@ -4,14 +4,13 @@ package org.angular2.codeInsight;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
-import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.JSPsiElementBase;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider;
 import com.intellij.lang.typescript.resolve.TypeScriptClassResolver;
@@ -42,7 +41,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Angular2Processor {
@@ -106,13 +104,16 @@ public class Angular2Processor {
     return ContainerUtil.reverse(scopes);
   }
 
-  @NotNull
+  @Nullable
   @NonNls
-  public static String getHtmlElementClass(@NotNull Project project, @NotNull @NonNls String tagName) {
+  public static JSType getHtmlElementClassType(@NotNull PsiElement scope, @NotNull @NonNls String tagName) {
     if (TAG_TO_CLASS == null) {
-      initTagToClassMap(project);
+      initTagToClassMap(scope.getProject());
     }
-    return TAG_TO_CLASS.getOrDefault(tagName.toLowerCase(), "HTMLElement");
+    String classType = TAG_TO_CLASS.getOrDefault(tagName.toLowerCase(), "HTMLElement");
+
+    return JSTypeUtils.createType(classType,
+                                  JSTypeSourceFactory.createTypeSource(scope, true));
   }
 
   private static synchronized void initTagToClassMap(@NotNull Project project) {
@@ -368,8 +369,8 @@ public class Angular2Processor {
     @Override
     public List<JSPsiElementBase> getElements() {
       return StreamEx.of(TypeScriptTypeParser
-        .buildTypeFromClass(myJsClass, false)
-        .getProperties())
+                           .buildTypeFromClass(myJsClass, false)
+                           .getProperties())
         .map(prop -> prop.getMemberSource().getAllSourceElements())
         .flatMap(Collection::stream)
         .select(JSPsiElementBase.class)
