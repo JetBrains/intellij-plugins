@@ -77,11 +77,15 @@ internal class IntelliJImageGeneratingProvider(linkMap: LinkMap, baseURI: URI?, 
       return destination
     }
 
-    WebServerPathToFileManager.getInstance(project).getPathInfo(destination.toString())?.let {
-      val urls = getBuiltInServerUrls(it, project)
-      if (!urls.isEmpty()) {
-        return urls.first().toExternalForm()
+    try {
+      WebServerPathToFileManager.getInstance(project).getPathInfo(destination.toString())?.let {
+        val urls = getBuiltInServerUrls(it, project)
+        if (!urls.isEmpty()) {
+          return urls.first().toExternalForm()
+        }
       }
+    }
+    catch (e: Throwable) {
     }
 
     return super.makeAbsoluteUrl(destination)
