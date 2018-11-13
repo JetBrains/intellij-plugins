@@ -3,13 +3,11 @@ package org.angular2.lang.html.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -19,7 +17,6 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.xml.util.documentation.HtmlDescriptorsTable;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes;
@@ -30,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.javascript.psi.types.TypeScriptTypeParser.buildTypeFromClass;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClass;
+import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClassType;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getApplicableDirectives;
 
 public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariableStub<JSVariable>, JSVariable>
@@ -56,16 +53,12 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
     if (tag != null) {
       if (reference.getValueElement() == null
           || StringUtil.isEmpty(reference.getValueElement().getValue())) {
-        String tagName = tag.getName();
-        if (HtmlDescriptorsTable.getTagDescriptor(tagName) != null) {
-          return JSTypeUtils.createType(getHtmlElementClass(getProject(), tagName),
-                                        JSTypeSourceFactory.createTypeSource(this, true));
-        }
+        return getHtmlElementClassType(this, tag.getName());
       }
       else {
         String exportName = reference.getValueElement().getValue();
         for (Angular2Directive directive : getApplicableDirectives(tag)) {
-          for (String exportAs: directive.getExportAsList()) {
+          for (String exportAs : directive.getExportAsList()) {
             if (exportName.equals(exportAs)) {
               return doIfNotNull(directive.getTypeScriptClass(),
                                  clazz -> buildTypeFromClass(clazz, false));

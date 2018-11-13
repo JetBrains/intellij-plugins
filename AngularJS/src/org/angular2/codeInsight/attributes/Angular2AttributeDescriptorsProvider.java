@@ -1,16 +1,23 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes;
 
+import com.intellij.lang.javascript.psi.JSRecordType;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
-import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
-import com.intellij.xml.XmlElementDescriptor;
 import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
@@ -42,6 +49,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       return null;
     }
     if (xmlTag != null) {
+      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrName, true);
       for (XmlAttributeDescriptor d : attrDescrProvider.apply(xmlTag)) {
         if (attrName.equalsIgnoreCase(d.getName())) {
           return d;
@@ -56,6 +64,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   private static final List<String> CUSTOM_NG_ATTRS = singletonList("i18n");
+  private static final Key<CachedValue<List<XmlAttributeDescriptor>>> STANDARD_PROPERTIES_KEY =
+    new Key<>("angular.standard.properties");
 
   @Override
   public XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable XmlTag xmlTag) {
@@ -214,26 +224,47 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   @NotNull
   public static Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
-    XmlElementDescriptor descriptor = xmlTag.getDescriptor();
-    if (!(descriptor instanceof HtmlElementDescriptorImpl)) {
-      descriptor = HtmlNSDescriptorImpl.guessTagForCommonAttributes(xmlTag);
-      if (!(descriptor instanceof HtmlElementDescriptorImpl)) {
-        return Collections.emptyList();
-      }
-    }
-    XmlAttributeDescriptor[] descriptors = ((HtmlElementDescriptorImpl)descriptor).getDefaultAttributeDescriptors(xmlTag);
-    List<XmlAttributeDescriptor> result = new ArrayList<>();
-    for (XmlAttributeDescriptor attributeDescriptor : descriptors) {
-      final String name = attributeDescriptor.getName();
-      //TODO - not all of the standard attributes are standard properties, mapping required for some
-      if (name.startsWith("on")) {
-        result.add(Angular2AttributeDescriptor.create("(" + name.substring(2) + ")", attributeDescriptor.getDeclaration()));
-      }
-      else {
-        result.add(Angular2AttributeDescriptor.create("[" + name + "]", attributeDescriptor.getDeclaration()));
-      }
-    }
-    return result;
+    return CachedValuesManager.getCachedValue(xmlTag, STANDARD_PROPERTIES_KEY, () -> {
+        Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag.getName()));
+        JSType tagClass = Angular2Processor.getHtmlElementClassType(xmlTag, xmlTag.getName());
+        List<XmlAttributeDescriptor> result = new ArrayList<>();
+        Set<Object> dependencies = new HashSet<>();
+        if (tagClass != null) {
+          for (JSRecordType.PropertySignature property : tagClass.asRecordType().getProperties()) {
+            if (property.getMemberSource().getSingleElement() instanceof JSAttributeListOwner) {
+              JSAttributeListOwner propertyDeclaration =
+                (JSAttributeListOwner)property.getMemberSource().getSingleElement();
+              if (!(propertyDeclaration instanceof TypeScriptPropertySignature)
+                  || (propertyDeclaration.getAttributeList() != null
+                      && propertyDeclaration.getAttributeList().hasModifier(JSAttributeList.ModifierType.READONLY))) {
+                continue;
+              }
+              dependencies.add(propertyDeclaration.getContainingFile());
+              String name;
+              if (property.getMemberName().startsWith("on")) {
+                name = "(" + property.getMemberName().substring(2) + ")";
+              }
+              else {
+                name = "[" + property.getMemberName() + "]";
+              }
+              if (allowedElementProperties.remove(name)) {
+                result.add(Angular2AttributeDescriptor.create(name, propertyDeclaration));
+              }
+            }
+          }
+        }
+        for (String name : allowedElementProperties) {
+          if (name.startsWith("(")) {
+            result.add(new Angular2EventHandlerDescriptor(name, name.substring(1, name.length() - 1), Collections.emptyList()));
+          }
+          else {
+            result.add(new Angular2AttributeDescriptor(name, name.substring(1, name.length() - 1), Collections.emptyList()));
+          }
+        }
+        return CachedValueProvider.Result.create(Collections.unmodifiableList(result),
+                                                 !dependencies.isEmpty() ? dependencies :
+                                                 Collections.singleton(PsiModificationTracker.MODIFICATION_COUNT));
+      });
   }
 
   @NotNull
