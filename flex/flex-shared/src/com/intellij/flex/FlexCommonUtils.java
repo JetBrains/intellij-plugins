@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -370,7 +371,8 @@ public class FlexCommonUtils {
   /**
    * @param processor (namespace, relative path with no leading slash)
    */
-  public static void processStandardNamespaces(final JpsFlexBuildConfiguration bc, final PairConsumer<? super String, ? super String> processor) {
+  public static void processStandardNamespaces(final JpsFlexBuildConfiguration bc,
+                                               final PairConsumer<? super String, ? super String> processor) {
     final JpsSdk<?> sdk = bc.getSdk();
     if (bc.isPureAs() || sdk == null || sdk.getSdkType() != JpsFlexSdkType.INSTANCE) return;
 
@@ -1046,6 +1048,11 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "35") >= 0) return "46";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "34") >= 0) return "45";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "33") >= 0) return "44";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "32") >= 0) return "43";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "31") >= 0) return "42";
     if (StringUtil.compareVersionNumbers(targetPlayer, "30") >= 0) return "41";
     if (StringUtil.compareVersionNumbers(targetPlayer, "29") >= 0) return "40";
     if (StringUtil.compareVersionNumbers(targetPlayer, "28") >= 0) return "39";
@@ -1082,6 +1089,11 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForAirVersion(final String airVersion) {
+    if (StringUtil.compareVersionNumbers(airVersion, "35") >= 0) return "46";
+    if (StringUtil.compareVersionNumbers(airVersion, "34") >= 0) return "45";
+    if (StringUtil.compareVersionNumbers(airVersion, "33") >= 0) return "44";
+    if (StringUtil.compareVersionNumbers(airVersion, "32") >= 0) return "43";
+    if (StringUtil.compareVersionNumbers(airVersion, "31") >= 0) return "42";
     if (StringUtil.compareVersionNumbers(airVersion, "30") >= 0) return "41";
     if (StringUtil.compareVersionNumbers(airVersion, "29") >= 0) return "40";
     if (StringUtil.compareVersionNumbers(airVersion, "28") >= 0) return "39";
