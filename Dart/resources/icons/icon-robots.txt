@@ -1,0 +1,1 @@
+deprecated: testNode.png -> com.intellij.icons.AllIcons@/runConfigurations/junit.svg; to be removed in IDEA 2019 - use AllIcons.RunConfigurations.Junit
