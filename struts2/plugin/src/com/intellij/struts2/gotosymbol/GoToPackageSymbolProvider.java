@@ -15,8 +15,10 @@
 
 package com.intellij.struts2.gotosymbol;
 
+import com.intellij.facet.ProjectFacetManager;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
@@ -29,6 +31,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -41,6 +44,12 @@ public class GoToPackageSymbolProvider extends GoToSymbolProvider {
 
   private static final Function<StrutsPackage, String> STRUTS_PACKAGE_NAME_FUNCTION =
     (NullableFunction<StrutsPackage, String>)strutsPackage -> strutsPackage.getName().getStringValue();
+
+  @NotNull
+  @Override
+  protected Collection<Module> calcAcceptableModules(@NotNull Project project) {
+    return ProjectFacetManager.getInstance(project).getModulesWithFacet(StrutsFacet.FACET_TYPE_ID);
+  }
 
   @Override
   protected boolean acceptModule(final Module module) {
