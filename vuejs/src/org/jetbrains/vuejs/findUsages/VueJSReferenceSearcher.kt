@@ -25,7 +25,7 @@ class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.
 
     if (component != null) {
       val content = findModule(element) ?: return
-      val defaultExport = ES6PsiUtil.findDefaultExport(content) as PsiElement
+      val defaultExport = ES6PsiUtil.findDefaultExport(content) as? PsiElement ?: return
       val collector = SearchRequestCollector(queryParameters.optimizer.searchSession)
       queryParameters.optimizer.searchQuery(
         QuerySearchRequest(ReferencesSearch.search(defaultExport, queryParameters.effectiveSearchScope), collector,
