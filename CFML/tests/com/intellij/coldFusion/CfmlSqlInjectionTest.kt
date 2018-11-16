@@ -1,18 +1,27 @@
 package com.intellij.coldFusion
 
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
+import com.intellij.database.Dbms
+import com.intellij.database.psi.DbDataSource
+import com.intellij.database.psi.DbPsiFacade
+import com.intellij.database.psi.DbPsiFacadeImpl
+import com.intellij.database.util.DbSqlUtil
+import com.intellij.database.util.SqlDialects
 import com.intellij.injected.editor.DocumentWindow
 import com.intellij.lang.annotation.HighlightSeverity
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.sql.datasource.SqlDataSourceTestCase
+import com.intellij.sql.database.SqlDataSourceImpl
+import com.intellij.sql.database.SqlDataSourceManager
 import com.intellij.sql.dialects.SqlDialectMappings
-import com.intellij.sql.dialects.sql92.Sql92Dialect
-import com.intellij.sql.dialects.sqlite.SqliteDialect
 import com.intellij.sql.psi.SqlCommonKeywords
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
+import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.isNullOrEmpty
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
@@ -27,15 +36,9 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
   override fun getBasePath() = "/injection"
 
   override fun setUp() {
-    //this object needed just for data source creation
     super.setUp()
-    object : SqlDataSourceTestCase() {
-      fun create() {
-        this.myFixture = this@CfmlSqlInjectionTest.myFixture
-        createDataSource(SqliteDialect.INSTANCE, null, "Sqlite.create.ddl")
-        createDataSource(SqliteDialect.INSTANCE, null, "Sqlite2.create.ddl")
-      }
-    }.create()
+    myFixture.createDataSource("Sqlite.create.ddl")
+    myFixture.createDataSource("Sqlite2.create.ddl")
   }
 
   @Test
@@ -115,11 +118,38 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
 
   private fun prepareWithDatabase() {
     prepare()
-    val dialect = Sql92Dialect.INSTANCE
+    val dialect = SqlDialects.findDialectById("SQL92")
     SqlDialectMappings.getInstance(project).setMapping(myFixture.file.virtualFile, dialect)
     val file: PsiFile = myFixture.file
     FileContentUtil.reparseFiles(project, listOf<VirtualFile>(file.virtualFile), false)
     myFixture.configureFromExistingVirtualFile(file.virtualFile)
   }
 
+}
+
+fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSource {
+  val dialect = DbSqlUtil.getSqlDialect(Dbms.SQLITE)
+  val urls = ContainerUtil.newArrayList<String>()
+  val project = project
+  for (file in ddlFiles) {
+    val virtualFile = copyFileToProject(file)
+    SqlDialectMappings.getInstance(project).setMapping(virtualFile, dialect)
+    urls.add(virtualFile.url)
+  }
+
+  val dataSource = SqlDataSourceImpl(dialect.dbms.name, project, null)
+  dataSource.init()
+  dataSource.urls = urls
+
+  val dbPsiFacade = DbPsiFacade.getInstance(project)
+  val manager = SqlDataSourceManager.getInstance(project)
+  TestCase.assertNotNull(manager)
+  val dataSourceElement = (dbPsiFacade as DbPsiFacadeImpl).createDataSourceWrapperElement(dataSource, manager)
+
+  manager.addDataSource(dataSource)
+  Disposer.register(testRootDisposable, Disposable { manager.removeDataSource(dataSource) })
+
+  val files = dataSource.files
+  TestCase.assertFalse(files.isEmpty())
+  return dataSourceElement
 }
