@@ -232,22 +232,23 @@ public class CucumberUtil {
                                                          @NotNull ParameterTypeManager parameterTypeManager) {
 
     cucumberExpression = escapeCucumberExpression(cucumberExpression);
-    String cucumberExpression2 = replaceNotNecessaryTextTemplateByRegexp(cucumberExpression);
+    cucumberExpression = replaceNotNecessaryTextTemplateByRegexp(cucumberExpression);
+    String escapedCucumberExpression = cucumberExpression;
 
     List<Pair<TextRange, String>> parameterTypeValues = new ArrayList<>();
-    processParameterTypesInCucumberExpression(cucumberExpression2, range -> {
-      String parameterTypeName = cucumberExpression2.substring(range.getStartOffset() + 1, range.getEndOffset() - 1);
+    processParameterTypesInCucumberExpression(escapedCucumberExpression, range -> {
+      String parameterTypeName = escapedCucumberExpression.substring(range.getStartOffset() + 1, range.getEndOffset() - 1);
       String parameterTypeValue = parameterTypeManager.getParameterTypeValue(parameterTypeName);
       parameterTypeValues.add(Pair.create(range, parameterTypeValue));
       return true;
     });
 
-    StringBuilder result = new StringBuilder(cucumberExpression2);
+    StringBuilder result = new StringBuilder(escapedCucumberExpression);
     Collections.reverse(parameterTypeValues);
     for (Pair<TextRange, String> rangeAndValue : parameterTypeValues) {
       String value = rangeAndValue.getSecond();
       if (value == null) {
-        return cucumberExpression2;
+        return escapedCucumberExpression;
       }
       int startOffset = rangeAndValue.first.getStartOffset();
       int endOffset = rangeAndValue.first.getEndOffset();
