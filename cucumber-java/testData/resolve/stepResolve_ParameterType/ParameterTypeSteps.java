@@ -76,4 +76,8 @@ public class ParameterTypeSteps {
   @And("I have {int} cucumber(s) in my belly")
   public void iHaveCucumbersInMyBelly(int arg1) throws Throwable {
   }
+
+  @And("I have ${int}")
+  public void iHaveDollars(int arg1) throws Throwable {
+  }
 }

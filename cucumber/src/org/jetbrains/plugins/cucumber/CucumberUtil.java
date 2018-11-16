@@ -231,6 +231,7 @@ public class CucumberUtil {
   public static String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
                                                          @NotNull ParameterTypeManager parameterTypeManager) {
 
+    cucumberExpression = escapeCucumberExpression(cucumberExpression);
     String cucumberExpression2 = replaceNotNecessaryTextTemplateByRegexp(cucumberExpression);
 
     List<Pair<TextRange, String>> parameterTypeValues = new ArrayList<>();
@@ -448,5 +449,13 @@ public class CucumberUtil {
     }
     result.append(stepName.subSequence(currentOffset, stepName.length()));
     return new OutlineStepSubstitution(result.toString(), offsets);
+  }
+
+  public static String escapeCucumberExpression(@NotNull String stepPattern) {
+    return stepPattern.replaceAll("\\\\", "\\\\\\\\")
+      .replaceAll("\\$", "\\\\\\$")
+      .replaceAll("\\^", "\\\\^")
+      .replaceAll("\\*", "\\\\*")
+      .replaceAll("\\.", "\\\\.");
   }
 }

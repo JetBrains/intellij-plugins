@@ -15,3 +15,4 @@ Feature: Parameter Type test
     When There is double 10.0
     When I have 10 cucumbers in my belly
     When I have 1 cucumber in my belly
+    When I have $10
