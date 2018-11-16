@@ -15,7 +15,7 @@ public class JSKarmaIcons {
 
 
   public static class Icons {
-    public static final Icon Karma2 = load("/icons/karma2.png"); // 16x16
+    public static final Icon Karma2 = load("/icons/karma2.svg"); // 16x16
 
   }
 

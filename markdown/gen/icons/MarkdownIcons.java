@@ -16,14 +16,14 @@ public final class MarkdownIcons {
 
 
   public final static class EditorActions {
-    public static final Icon Bold = load("/icons/editor_actions/Bold.png"); // 16x16
-    public static final Icon Code_span = load("/icons/editor_actions/Code_span.png"); // 16x16
-    public static final Icon Header_level_down = load("/icons/editor_actions/Header_level_down.png"); // 16x16
-    public static final Icon Header_level_up = load("/icons/editor_actions/Header_level_up.png"); // 16x16
-    public static final Icon Italic = load("/icons/editor_actions/Italic.png"); // 16x16
-    public static final Icon Link = load("/icons/editor_actions/Link.png"); // 16x16
-    public static final Icon Strike_through = load("/icons/editor_actions/Strike_through.png"); // 16x16
+    public static final Icon Bold = load("/icons/editor_actions/Bold.svg"); // 16x16
+    public static final Icon Code_span = load("/icons/editor_actions/Code_span.svg"); // 16x16
+    public static final Icon Header_level_down = load("/icons/editor_actions/Header_level_down.svg"); // 16x16
+    public static final Icon Header_level_up = load("/icons/editor_actions/Header_level_up.svg"); // 16x16
+    public static final Icon Italic = load("/icons/editor_actions/Italic.svg"); // 16x16
+    public static final Icon Link = load("/icons/editor_actions/Link.svg"); // 16x16
+    public static final Icon Strike_through = load("/icons/editor_actions/Strike_through.svg"); // 16x16
 
   }
-  public static final Icon MarkdownPlugin = load("/icons/MarkdownPlugin.png"); // 16x16
+  public static final Icon MarkdownPlugin = load("/icons/MarkdownPlugin.svg"); // 16x16
 }

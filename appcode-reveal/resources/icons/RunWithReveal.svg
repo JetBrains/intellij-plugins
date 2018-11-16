@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <linearGradient id="runwithreveal-a" x1="66.089%" x2="44.758%" y1="0%" y2="81.35%">
+      <stop offset="0%" stop-color="#CED3D4"/>
+      <stop offset="100%" stop-color="#E8EBEC"/>
+    </linearGradient>
+    <linearGradient id="runwithreveal-b" x1="50%" x2="50%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#F9F9F9"/>
+      <stop offset="100%" stop-color="#EFF2F3"/>
+    </linearGradient>
+    <linearGradient id="runwithreveal-c" x1="100%" x2="19.889%" y1="0%" y2="76.504%">
+      <stop offset="0%" stop-color="#D8D9DA"/>
+      <stop offset="100%" stop-color="#E8EAEB"/>
+    </linearGradient>
+    <linearGradient id="runwithreveal-d" x1="80.35%" x2="56.347%" y1="0%" y2="82.54%">
+      <stop offset="0%" stop-color="#FFF"/>
+      <stop offset="100%" stop-color="#EFF1F2"/>
+    </linearGradient>
+    <linearGradient id="runwithreveal-e" x1="0%" y1="0%" y2="104.989%">
+      <stop offset="0%" stop-color="#F98A92"/>
+      <stop offset="100%" stop-color="#E0506A"/>
+    </linearGradient>
+    <linearGradient id="runwithreveal-f" x1="61.867%" x2="0%" y1="44.196%" y2="100%">
+      <stop offset="0%" stop-color="#E63D5B"/>
+      <stop offset="100%" stop-color="#A32000"/>
+    </linearGradient>
+    <linearGradient id="runwithreveal-g" x1="0%" x2="34.148%" y1="0%" y2="92.906%">
+      <stop offset="0%" stop-color="#CDD1D2"/>
+      <stop offset="51.651%" stop-color="#FFF"/>
+      <stop offset="100%" stop-color="#E5E6E7"/>
+    </linearGradient>
+    <linearGradient id="runwithreveal-h" x1="0%" x2="88.833%" y1="5.173%" y2="74.087%">
+      <stop offset="0%" stop-color="#FCFDFA"/>
+      <stop offset="100%" stop-color="#F8CF2E"/>
+    </linearGradient>
+    <linearGradient id="runwithreveal-i" x1="63.625%" x2="35.351%" y1="2.23%" y2="81.579%">
+      <stop offset="0%" stop-color="#F9D900"/>
+      <stop offset="100%" stop-color="#F0A600"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <polygon fill="#7B3541" fill-rule="nonzero" points="13 8 14.9 9.1 13 10"/>
+    <polygon fill="url(#runwithreveal-a)" fill-rule="nonzero" points="5.993 1.3 7.7 9 2.6 6"/>
+    <polygon fill="url(#runwithreveal-b)" fill-rule="nonzero" points="8.177 .877 9.884 8.577 5.587 6.03" transform="scale(-1 1) rotate(20 0 -39.143)"/>
+    <polygon fill="url(#runwithreveal-c)" fill-rule="nonzero" points="12.9 2.1 9.266 7 9.876 4.9"/>
+    <polygon fill="url(#runwithreveal-d)" fill-rule="nonzero" points="12.9 2.1 14 9 7.7 9"/>
+    <polygon fill="url(#runwithreveal-e)" fill-rule="nonzero" points="12.9 2.1 14.9 9.1 14 9"/>
+    <polygon fill="url(#runwithreveal-f)" fill-rule="nonzero" points="2.2 4.4 5 11.4 1.1 12.1"/>
+    <polygon fill="url(#runwithreveal-g)" fill-rule="nonzero" points="3.282 3.706 6.58 9.089 3.781 11.229" transform="rotate(-18 4.93 7.468)"/>
+    <polygon fill="url(#runwithreveal-h)" fill-rule="nonzero" points="9.1 5.4 14 9 11.7 15"/>
+    <polygon fill="url(#runwithreveal-i)" fill-rule="nonzero" points="9.1 5.4 11.7 15 5 11.4"/>
+  </g>
+</svg>

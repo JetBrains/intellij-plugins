@@ -14,5 +14,5 @@ public final class AppcodeRevealIcons {
     return IconLoader.getIcon(path, AppcodeRevealIcons.class);
   }
 
-  public static final Icon RunWithReveal = load("/icons/RunWithReveal.png"); // 16x16
+  public static final Icon RunWithReveal = load("/icons/RunWithReveal.svg"); // 16x16
 }
