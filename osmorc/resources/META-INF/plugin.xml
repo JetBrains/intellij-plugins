@@ -26,7 +26,7 @@
 <idea-plugin>
   <id>Osmorc</id>
   <name>Osmorc</name>
-  <version>1.4.12</version>
+  <version>1.4.13</version>
   <description><![CDATA[
     <p>Adds support for the development of OSGi-based applications.</p>
 
@@ -50,6 +50,10 @@
 
   <change-notes>
     <![CDATA[
+      <b>Version 1.4.13</b>
+      <ul>
+        <li>introduced option to extract META-INF and OSGI-INF folder from generated jar file into modules output folder</li>
+      </ul>
       <b>Version 1.4.12</b>
       <ul>
         <li>Bndlib 4.0.0</li>

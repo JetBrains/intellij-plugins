@@ -65,6 +65,9 @@ public class OsmorcModuleExtensionProperties {
   @XCollection(propertyElementName = "additionalJARContents")
   public List<OsmorcJarContentEntry> myAdditionalJARContents = ContainerUtil.newArrayList();
 
+  @Attribute("extractMetaInfOsgiInfToTargetClasses")
+  public boolean myExtractMetaInfOsgIInfToTargetClasses = true;
+
   @Attribute("ignoreFilePattern")
   public String myIgnoreFilePattern;
 
