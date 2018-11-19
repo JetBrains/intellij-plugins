@@ -1,7 +1,9 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
+import com.intellij.ide.highlighter.ArchiveFileType;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
@@ -24,7 +26,6 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -301,7 +302,7 @@ public class CodeContext {
   }
 
   private static void handleFileDependency(Module module, Map<String, CodeContext> contextsOfModule, VirtualFile file) {
-    if (file.getFileType() == FileTypes.ARCHIVE &&
+    if (file.getFileType() == ArchiveFileType.INSTANCE &&
         ("swc".equalsIgnoreCase(file.getExtension()) ||
          "ane".equalsIgnoreCase(file.getExtension()) ||
          "jar".equalsIgnoreCase(file.getExtension()))) {
