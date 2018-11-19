@@ -31,7 +31,6 @@ import com.intellij.util.gist.GistManagerImpl
 import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
-import icons.JavaScriptLanguageIcons
 import org.angular2.cli.*
 import java.awt.BorderLayout
 import java.awt.Component
@@ -90,7 +89,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     }
 
     val actionGroup = DefaultActionGroup()
-    val refresh: AnAction = object : AnAction(JavaScriptLanguageIcons.BuildTools.Refresh) {
+    val refresh: AnAction = object : AnAction(AllIcons.Actions.Refresh) {
       init {
         shortcutSet = CustomShortcutSet(*KeymapManager.getInstance().activeKeymap.getShortcuts("Refresh"))
       }
