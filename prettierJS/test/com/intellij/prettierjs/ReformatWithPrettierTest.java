@@ -97,6 +97,10 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     assertError((s) -> s.contains("tabWidth"), () -> doReformatFile("js"));
   }
 
+  public void testWithExplicitCrlf() {
+    doReformatFile("toReformat", "js");
+  }
+
   private void doReformatFile(final String extension) {
     doReformatFile("toReformat", extension);
   }
