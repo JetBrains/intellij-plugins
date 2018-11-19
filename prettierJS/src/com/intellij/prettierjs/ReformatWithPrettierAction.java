@@ -39,6 +39,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -49,6 +50,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.LightweightHint;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.LineSeparator;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
@@ -158,9 +160,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
 
     TextRange range = editor.getSelectionModel().hasSelection()
                       ? new TextRange(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd()) : null;
-    Document document = editor.getDocument();
-    CharSequence textBefore = document.getImmutableCharSequence();
-    CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
     ensureConfigsSaved(new VirtualFile[]{vFile}, project);
     PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
     ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable = () -> ReadAction.compute(() -> {
@@ -185,8 +184,12 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       showHintLater(editor, "Prettier: " + PrettierBundle.message("file.was.ignored", file.getName()), false, null);
     }
     else {
-      if (!StringUtil.equals(textBefore, result.result)) {
-        runWriteCommandAction(project, () -> document.setText(result.result));
+      Document document = editor.getDocument();
+      CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
+      CharSequence textBefore = document.getImmutableCharSequence();
+      String newContent = StringUtilRt.convertLineSeparators(result.result, LineSeparator.LF.getSeparatorString());
+      if (!StringUtil.equals(textBefore, newContent)) {
+        runWriteCommandAction(project, () -> document.setText(newContent));
         caretVisualPositionKeeper.restoreOriginalLocation(true);
       }
       showHintLater(editor, buildNotificationMessage(document, textBefore), false, null);
@@ -270,8 +273,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         PrettierLanguageService.FormatResult result = entry.getValue();
         if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
           CharSequence textBefore = document.getCharsSequence();
-          if (!StringUtil.equals(textBefore, result.result)) {
-            document.setText(result.result);
+          String newContent = StringUtilRt.convertLineSeparators(result.result, LineSeparator.LF.getSeparatorString());
+          if (!StringUtil.equals(textBefore, newContent)) {
+            document.setText(newContent);
           }
         }
       }
