@@ -1,7 +1,7 @@
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.util.PsiNavigationSupport;
+import com.intellij.ide.actions.OpenFileAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -38,8 +38,6 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
-
-import static com.intellij.ide.impl.ProjectUtil.focusProjectWindow;
 
 class SafeOpener {
   private static final Logger LOG = Logger.getInstance(SafeOpener.class);
@@ -109,7 +107,7 @@ class SafeOpener {
       }
 
       if (anchor == null) {
-        navigateToFile(project, targetFile);
+        ApplicationManager.getApplication().invokeLater(() -> OpenFileAction.openFile(targetFile, project));
         return true;
       }
 
@@ -159,11 +157,6 @@ class SafeOpener {
     PsiNavigateUtil.navigate(item);
 
     if (!oldAutoScrollPreview) splitEditor.setAutoScrollPreview(false);
-  }
-
-  private static void navigateToFile(@NotNull Project project, @NotNull VirtualFile targetFile) {
-    PsiNavigationSupport.getInstance().createNavigatable(project, targetFile, -1).navigate(true);
-    focusProjectWindow(project, true);
   }
 
   private static void showHeadersPopup(@NotNull Collection<PsiElement> headers, @NotNull RelativePoint point) {
