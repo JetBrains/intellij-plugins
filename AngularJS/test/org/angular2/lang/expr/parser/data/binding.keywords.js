@@ -1,0 +1,10 @@
+null
+nullize
+undefined
+undefinedes
+true
+trues
+false
+falses
+this
+thisus

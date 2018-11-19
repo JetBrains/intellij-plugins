@@ -3,18 +3,26 @@ package org.angular2.lang.expr.highlighting;
 
 import com.intellij.lang.javascript.highlighting.JSHighlighter;
 import com.intellij.lexer.Lexer;
-import org.angularjs.lang.AngularJSLanguage;
+import com.intellij.psi.tree.TokenSet;
+import org.angular2.lang.expr.Angular2Language;
+import org.angular2.lang.expr.lexer.Angular2TokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2SyntaxHighlighter extends JSHighlighter {
 
   public Angular2SyntaxHighlighter() {
-    super(AngularJSLanguage.INSTANCE.getOptionHolder(), false);
+    super(Angular2Language.INSTANCE.getOptionHolder(), false);
   }
 
   @NotNull
   @Override
   public Lexer getHighlightingLexer() {
     return new Angular2HighlightingLexer(getDialectOptionsHolder());
+  }
+
+  @NotNull
+  @Override
+  public TokenSet getKeywords() {
+    return Angular2TokenTypes.KEYWORDS;
   }
 }

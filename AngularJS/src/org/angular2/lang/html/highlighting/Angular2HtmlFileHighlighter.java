@@ -2,13 +2,16 @@
 package org.angular2.lang.html.highlighting;
 
 import com.intellij.ide.highlighter.HtmlFileHighlighter;
+import com.intellij.lang.javascript.highlighting.JSHighlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.XmlHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
+import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
+import org.angular2.lang.expr.lexer.Angular2TokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -79,6 +82,14 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
     myInterpolationConfig = interpolationConfig;
   }
 
+  @NotNull
+  @Override
+  public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
+    if (Angular2TokenTypes.KEYWORDS.contains(tokenType)) {
+      return SyntaxHighlighterBase.pack(XmlHighlighterColors.HTML_CODE, JSHighlighter.JS_KEYWORD);
+    }
+    return super.getTokenHighlights(tokenType);
+  }
 
   @NotNull
   @Override

@@ -394,6 +394,11 @@ public class Angular2Parser
     }
 
     @Override
+    protected boolean isIdentifierToken(IElementType tokenType) {
+      return !KEYWORDS.contains(tokenType) && super.isIdentifierToken(tokenType);
+    }
+
+    @Override
     protected int getCurrentBinarySignPriority(boolean allowIn, boolean advance) {
       if (builder.getTokenType() == OR
           || builder.getTokenType() == AS_KEYWORD) {
