@@ -19,6 +19,7 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,7 +105,8 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
   private static boolean applyReplacements(@NotNull Document document,
                                            @NotNull String separator,
                                            @NotNull TsLintFixInfo.TsLintFixReplacements[] replacements) {
-    if ("\n".equals(separator)) {
+    String lf = LineSeparator.LF.getSeparatorString();
+    if (lf.equals(separator)) {
       return applyFor(document.getTextLength(), replacements,
                       replacement -> document
                         .replaceString(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil
@@ -115,7 +117,7 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
                  replacement -> newContent
                    .replace(replacement.innerStart, replacement.innerStart + replacement.innerLength, StringUtil.notNullize(
                      replacement.innerText)))) {
-      document.setText(StringUtilRt.convertLineSeparators(newContent, "\n"));
+      document.setText(StringUtilRt.convertLineSeparators(newContent, lf));
       return true;
     }
     return false;
