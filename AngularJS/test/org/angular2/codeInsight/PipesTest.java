@@ -90,4 +90,13 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertEquals("asyncPipe.ts", contactField.getContainingFile().getName());
     });
   }
+
+  public void testAsyncNgIfAsContentAssist() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      configureWithMetadataFiles(myFixture, "common");
+      myFixture.configureByFiles("ngIfAs.ts", "async_pipe.d.ts", "Observable.d.ts");
+      myFixture.completeBasic();
+      myFixture.checkResultByFile("ngIfAs.after.ts");
+    });
+  }
 }
