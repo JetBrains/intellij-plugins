@@ -759,12 +759,13 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     Registry.get("ide.completion.variant.limit").setValue(10000, getTestRootDisposable());
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("exportAsMultipleNames.ts", "package.json");
-      for (String name: asList("r", "f", "g")) {
+      for (String name : asList("r", "f", "g")) {
         AngularTestUtil.moveToOffsetBySignature("{{ " + name + ".<caret> }}", myFixture);
         myFixture.completeBasic();
         if (name.equals("g")) {
-          assertContainsElements(myFixture.getLookupElementStrings(), "split", "length", "type");
-        } else {
+          assertContainsElements(myFixture.getLookupElementStrings(), "length", "type");
+        }
+        else {
           assertContainsElements(myFixture.getLookupElementStrings(), "foo");
           assertDoesntContain(myFixture.getLookupElementStrings(), "split", "length", "type");
         }
@@ -828,7 +829,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testNoLifecycleHooksInContentAssist() {
-    JSTestUtils.testES6(myFixture.getProject(), ()-> {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("lifecycleHooks.ts", "package.json");
       myFixture.completeBasic();
       assertEquals(ContainerUtil.sorted(myFixture.getLookupElementStrings()), ContainerUtil.newArrayList("testOne", "testTwo", "testing"));
@@ -836,7 +837,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testDecoratorInGetter() {
-    JSTestUtils.testES6(myFixture.getProject(), ()-> {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("decoratorInGetter.ts", "package.json");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "[age]");
@@ -848,11 +849,18 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("standardTagProperties.ts", "package.json");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(),
-                          "[autofocus]", "[readOnly]", "[selectionDirection]", "[innerHTML]",
-                          "(auxclick)", "(blur)", "(click)", "(paste)", "(webkitfullscreenchange)");
+                             "[autofocus]", "[readOnly]", "[selectionDirection]", "[innerHTML]",
+                             "(auxclick)", "(blur)", "(click)", "(paste)", "(webkitfullscreenchange)");
       assertDoesntContain(myFixture.getLookupElementStrings(),
-                             "innerHTML", "[class]");
+                          "innerHTML", "[class]");
     });
   }
 
+  public void testNgIfAsContentAssist() {
+    JSTestUtils.testES6(myFixture.getProject(), () -> {
+      myFixture.configureByFiles("ngIfAs.ts", "package.json");
+      myFixture.completeBasic();
+      myFixture.checkResultByFile("ngIfAs.after.ts");
+    });
+  }
 }

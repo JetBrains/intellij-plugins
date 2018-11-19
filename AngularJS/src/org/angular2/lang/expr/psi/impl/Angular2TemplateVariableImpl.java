@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
+import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
@@ -35,12 +36,22 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
     if (binding == null || binding.getName() == null || bindings == null) {
       return null;
     }
-    JSType type = JSResolveUtil.getElementJSType(bindings, JSEvaluateContext.JSEvaluationPlace.DEFAULT);
-    if (type != null) {
-      JSRecordType.PropertySignature signature = type.asRecordType().findPropertySignature(binding.getName());
-      return signature != null ? signature.getType() : null;
+    JSType propertyType = null;
+    String propertyName = binding.getName();
+    for (Angular2TemplateBinding candidate : bindings.getBindings()) {
+      if (candidate != binding && !candidate.keyIsVar() && propertyName.equals(candidate.getKey())) {
+        propertyType = JSResolveUtil.getExpressionJSType(candidate.getExpression());
+        break;
+      }
     }
-    return null;
+    if (propertyName != null && (propertyType == null || propertyType instanceof JSAnyType)) {
+      JSType contextType = JSResolveUtil.getElementJSType(bindings, JSEvaluateContext.JSEvaluationPlace.DEFAULT);
+      if (contextType != null) {
+        JSRecordType.PropertySignature signature = contextType.asRecordType().findPropertySignature(propertyName);
+        propertyType = signature != null ? signature.getType() : null;
+      }
+    }
+    return propertyType;
   }
 
   @Override
