@@ -62,4 +62,9 @@ class VueModuleImportTest: JSImportHighlightingAndCompletionTestBase() {
       doTestActionWithCopyDirectory("Insert 'import HelloWorld from \"./src/HelloWorld.vue\"'", "vue", null)
     })
   }
+
+  fun testAmbientTypingsInVue() {
+    doTestWithCopyDirectory()
+  }
+
 }
