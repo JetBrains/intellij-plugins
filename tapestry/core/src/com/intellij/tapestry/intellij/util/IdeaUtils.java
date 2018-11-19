@@ -115,7 +115,7 @@ public class IdeaUtils {
     List<WebRoot> webRoots = webFacet.getWebRoots();
 
     for (WebRoot webRoot : webRoots) {
-      if (webRoot.getFile().getPath().equals(directory.getPath())) {
+      if (directory.equals(webRoot.getFile())) {
         return true;
       }
     }
