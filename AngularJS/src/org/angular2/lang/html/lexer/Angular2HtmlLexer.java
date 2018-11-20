@@ -27,14 +27,27 @@ public class Angular2HtmlLexer extends HtmlLexer {
 
   public static class Angular2HtmlMergingLexer extends MergingLexerAdapterBase {
 
-    public static boolean isLexerWithinInterpolationOrExpansion(int state) {
-      state &= 0x7F;
-      return state == _Angular2HtmlLexer.EXPANSION_FORM_CONTENT
-             || state == _Angular2HtmlLexer.EXPANSION_FORM_CASE_END
-             || state == _Angular2HtmlLexer.INTERPOLATION
-             || state == _Angular2HtmlLexer.UNTERMINATED_INTERPOLATION;
+    public static boolean isLexerWithinInterpolation(int state) {
+      state &= BASE_STATE_MASK;
+      return state == _Angular2HtmlLexer.INTERPOLATION;
     }
 
+    public static boolean isLexerWithinUnterminatedInterpolation(int state) {
+      state &= BASE_STATE_MASK;
+      return state == _Angular2HtmlLexer.UNTERMINATED_INTERPOLATION;
+    }
+
+    public static boolean isLexerWithinExpansionForm(int state) {
+      state &= BASE_STATE_MASK;
+      return state == _Angular2HtmlLexer.EXPANSION_FORM_CONTENT
+             || state == _Angular2HtmlLexer.EXPANSION_FORM_CASE_END;
+    }
+
+    public static int getBaseLexerState(int state) {
+      return state & BASE_STATE_MASK;
+    }
+
+    private static final int BASE_STATE_MASK = 0x7F;
     private static final int STATE_SHIFT = BASE_STATE_SHIFT + 3;
     private static final int STATE_MASK = 0xff << STATE_SHIFT;
 
