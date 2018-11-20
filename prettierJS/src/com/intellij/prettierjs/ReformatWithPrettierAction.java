@@ -49,6 +49,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.LightweightHint;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.LineSeparator;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
@@ -186,12 +187,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
       CharSequence textBefore = document.getImmutableCharSequence();
       String newContent = result.result;
-      boolean lineSeparatorUpdated = false;
-      if (result.lineSeparator != null) {
-        String newSeparatorString = result.lineSeparator.getSeparatorString();
-        lineSeparatorUpdated = !StringUtil.equals(vFile.getDetectedLineSeparator(), newSeparatorString);
-        vFile.setDetectedLineSeparator(newSeparatorString);
-      }
+      boolean lineSeparatorUpdated = setDetectedLineSeparator(vFile, result.lineSeparator);
       if (!StringUtil.equals(textBefore, newContent)) {
         String documentContent = StringUtil.convertLineSeparators(newContent);
         runWriteCommandAction(project, () -> document.setText(documentContent));
@@ -278,9 +274,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         PrettierLanguageService.FormatResult result = entry.getValue();
         if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
           CharSequence textBefore = document.getCharsSequence();
-          if (result.lineSeparator != null) {
-            virtualFile.setDetectedLineSeparator(result.lineSeparator.getSeparatorString());
-          }
+          setDetectedLineSeparator(virtualFile, result.lineSeparator);
           String newContent = StringUtil.convertLineSeparators(result.result);
           if (!StringUtil.equals(textBefore, newContent)) {
             document.setText(newContent);
@@ -376,6 +370,20 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     if (file instanceof JSFile) {
       DialectOptionHolder optionHolder = DialectDetector.dialectOfElement(file);
       return optionHolder == null || (!optionHolder.isCoffeeScript && !optionHolder.isECMA4);
+    }
+    return false;
+  }
+
+  /**
+   * @returns true if line separator was updated
+   */
+  private static boolean setDetectedLineSeparator(@NotNull VirtualFile vFile, @Nullable LineSeparator newSeparator) {
+    if (newSeparator != null) {
+      String newSeparatorString = newSeparator.getSeparatorString();
+      if (!StringUtil.equals(vFile.getDetectedLineSeparator(), newSeparatorString)) {
+        vFile.setDetectedLineSeparator(newSeparatorString);
+        return true;
+      }
     }
     return false;
   }
