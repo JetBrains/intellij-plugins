@@ -188,9 +188,12 @@ public class HbCommentActionTest extends HbActionHandlerTest {
   }
 
   @Override
-  protected void tearDown()
-    throws Exception {
-    HbConfig.setCommenterLanguage(myPrevCommenterLang);
-    super.tearDown();
+  protected void tearDown() throws Exception {
+    try {
+      HbConfig.setCommenterLanguage(myPrevCommenterLang);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 }
