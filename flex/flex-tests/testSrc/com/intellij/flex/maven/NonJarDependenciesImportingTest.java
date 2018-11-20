@@ -10,13 +10,19 @@ import org.jetbrains.idea.maven.server.MavenServerManager;
 import java.io.File;
 
 public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
+
   @Override
   protected void tearDown() throws Exception {
-    for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(FlexmojosSdkType.getInstance())) {
-      WriteAction.run(()->ProjectJdkTable.getInstance().removeJdk(sdk));
+    try {
+      for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(FlexmojosSdkType.getInstance())) {
+        WriteAction.run(() -> ProjectJdkTable.getInstance().removeJdk(sdk));
+      }
     }
-    super.tearDown();
+    finally {
+      super.tearDown();
+    }
   }
+
   public void testArtifactTypeProvidedByExtensionPlugin() {
     // this test is basically the same as com.intellij.flex.maven.Flexmojos3ImporterTest.testConfiguringResourceBundleDependency
     MavenServerManager.getInstance().setUseMaven2();
