@@ -46,8 +46,12 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    myPsiFiles.clear();
-    super.tearDown();
+    try {
+      myPsiFiles.clear();
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   @Override
