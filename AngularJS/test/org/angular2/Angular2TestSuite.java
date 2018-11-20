@@ -16,6 +16,7 @@ import org.angular2.lang.html.lexer.Angular2HtmlLexerTest;
 import org.angular2.lang.html.parser.Angular2HtmlParsingTest;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelectorSpecTest;
 import org.angular2.metadata.MetadataTest;
+import org.angular2.navigation.GotoSymbolTest;
 import org.angular2.refactoring.AngularChangeSignatureTest;
 import org.angular2.refactoring.DirectiveRenameTest;
 import org.angular2.refactoring.RenameTest;
@@ -53,6 +54,7 @@ import org.junit.runners.Suite;
   MetadataTest.class,
   NgMaterialTest.class,
   Angular2ServiceTest.class,
+  GotoSymbolTest.class,
 })
 public class Angular2TestSuite {
 }
