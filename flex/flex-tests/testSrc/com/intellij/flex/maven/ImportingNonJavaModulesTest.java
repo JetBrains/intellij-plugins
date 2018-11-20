@@ -16,10 +16,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ImportingNonJavaModulesTest extends MavenImportingTestCase {
   @Override
   protected void tearDown() throws Exception {
-    for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(FlexmojosSdkType.getInstance())) {
-      WriteAction.run(()->ProjectJdkTable.getInstance().removeJdk(sdk));
+    try {
+      for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(FlexmojosSdkType.getInstance())) {
+        WriteAction.run(() -> ProjectJdkTable.getInstance().removeJdk(sdk));
+      }
     }
-    super.tearDown();
+    finally {
+      super.tearDown();
+    }
   }
 
   public void testRecreatingNonJavaModules() {
