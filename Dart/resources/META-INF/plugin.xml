@@ -232,6 +232,7 @@
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartDumbAwareStartupActivity"/>
 
     <editorAppearanceConfigurable instance="com.jetbrains.lang.dart.analyzer.DartEditorAppearanceConfigurable"/>
+    <search.optionContributor implementation="com.jetbrains.lang.dart.DartSearchableOptionContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
