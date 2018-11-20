@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
 
@@ -37,29 +38,32 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
   @Override
   public void sendFeedback(@NotNull Project project, @Nullable String errorMessage, @Nullable String serverLog) {
     final ApplicationInfoEx appInfo = ApplicationInfoEx.getInstanceEx();
-    boolean isEAP = appInfo.isEAP();
-    String ijBuild = isEAP ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
-    String sdkVersion = getSdkVersion(project);
-    String platformDescription = StringUtil.replace(SendFeedbackAction.getDescription(), ";", " ").trim();
-    String urlTemplate = DartBundle.message("dart.feedback.url.template", ijBuild, sdkVersion, platformDescription);
+    final boolean isEAP = appInfo.isEAP();
+    final String intellijBuild = isEAP ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
+    final String sdkVersion = getSdkVersion(project);
+    final String platformDescription = StringUtil.replace(SendFeedbackAction.getDescription(), ";", " ").trim();
+
+    final String url = DartBundle.message("dart.feedback.url");
+    String body = DartBundle.message("dart.feedback.template", intellijBuild, sdkVersion, platformDescription);
+
     if (errorMessage != null) {
-      errorMessage = "```\n" + errorMessage + "```";
+      body += DartBundle.message("dart.feedback.error", errorMessage.trim());
+    }
+
+    if (serverLog != null) {
       try {
-        File file = FileUtil.createTempFile("report", ".txt");
-        FileUtil.writeToFile(file, errorMessage);
-        if (serverLog != null) {
-          // Assume serverLog is never long enough that opening and closing the file is cheaper than copying it.
-          FileUtil.writeToFile(file, "\n\n" + serverLog, true);
-        }
-        String potentialTemplate =
-          urlTemplate + "\n\n" + DartBundle.message("dart.error.file.instructions", file.getAbsolutePath()) + "\n\n" + errorMessage;
-        urlTemplate = potentialTemplate.substring(0, Math.min(potentialTemplate.length(), MAX_URL_LENGTH));
+        final File file = FileUtil.createTempFile("report", ".txt");
+        FileUtil.writeToFile(file, errorMessage == null ? "" : errorMessage.trim());
+        FileUtil.writeToFile(file, "\n\n" + serverLog, true);
+        body += DartBundle.message("dart.feedback.file", file.getAbsolutePath());
       }
       catch (IOException e) {
         // ignore it
       }
     }
-    openBrowserOnFeedbackForm(urlTemplate, project);
+
+    //noinspection deprecation
+    openBrowserOnFeedbackForm(url + URLEncoder.encode(body), project);
   }
 
   public static void openBrowserOnFeedbackForm(@NotNull String urlTemplate, @Nullable Project project) {
