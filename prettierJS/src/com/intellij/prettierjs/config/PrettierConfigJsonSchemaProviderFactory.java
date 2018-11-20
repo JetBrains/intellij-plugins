@@ -18,7 +18,7 @@ public final class PrettierConfigJsonSchemaProviderFactory implements JsonSchema
   @Override
   public List<JsonSchemaFileProvider> getProviders(@NotNull final Project project) {
     EmbeddedJsonSchemaFileProvider provider = new EmbeddedJsonSchemaFileProvider(SCHEMA_FILE_NAME, "Prettier",
-                                                                                 "http://json.schemastore.org/prettierrc-1.8.2",
+                                                                                 "http://json.schemastore.org/prettierrc",
                                                                                  PrettierConfigJsonSchemaProviderFactory.class, "/") {
       @Override
       public boolean isAvailable(@NotNull VirtualFile file) {
