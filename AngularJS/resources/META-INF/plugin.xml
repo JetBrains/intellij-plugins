@@ -149,6 +149,7 @@
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
     <typeDeclarationProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider" order="first"/>
     <html.attributeValueProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeValueProvider"/>
+    <colorSettingsPage implementation="org.angular2.lang.html.highlighting.Angular2ColorsAndFontsPage"/>
 
     <!-- Angular 2 Expression Language contributions -->
     <codeInsight.template.postfixTemplateProvider language="Angular2"
