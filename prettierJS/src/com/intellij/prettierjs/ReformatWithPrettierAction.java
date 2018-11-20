@@ -185,12 +185,19 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       Document document = editor.getDocument();
       CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
       CharSequence textBefore = document.getImmutableCharSequence();
-      String newContent = StringUtil.convertLineSeparators(result.result);
+      String newContent = result.result;
+      boolean lineSeparatorUpdated = false;
+      if (result.lineSeparator != null) {
+        String newSeparatorString = result.lineSeparator.getSeparatorString();
+        lineSeparatorUpdated = !StringUtil.equals(vFile.getDetectedLineSeparator(), newSeparatorString);
+        vFile.setDetectedLineSeparator(newSeparatorString);
+      }
       if (!StringUtil.equals(textBefore, newContent)) {
-        runWriteCommandAction(project, () -> document.setText(newContent));
+        String documentContent = StringUtil.convertLineSeparators(newContent);
+        runWriteCommandAction(project, () -> document.setText(documentContent));
         caretVisualPositionKeeper.restoreOriginalLocation(true);
       }
-      showHintLater(editor, buildNotificationMessage(document, textBefore), false, null);
+      showHintLater(editor, buildNotificationMessage(document, textBefore, lineSeparatorUpdated), false, null);
     }
   }
 
@@ -271,6 +278,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         PrettierLanguageService.FormatResult result = entry.getValue();
         if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
           CharSequence textBefore = document.getCharsSequence();
+          if (result.lineSeparator != null) {
+            virtualFile.setDetectedLineSeparator(result.lineSeparator.getSeparatorString());
+          }
           String newContent = StringUtil.convertLineSeparators(result.result);
           if (!StringUtil.equals(textBefore, newContent)) {
             document.setText(newContent);
@@ -317,9 +327,11 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     WriteCommandAction.runWriteCommandAction(project, PrettierBundle.message("command.name"), null, runnable);
   }
 
-  private static String buildNotificationMessage(@NotNull Document document, @NotNull CharSequence textBefore) {
+  private static String buildNotificationMessage(@NotNull Document document, @NotNull CharSequence textBefore, boolean lineSeparatorsUpdated) {
     int number = FormatChangedTextUtil.getInstance().calculateChangedLinesNumber(document, textBefore);
-    return "Prettier: " + (number > 0 ? "Reformatted " + number + " lines" : "No lines changed. Content is already properly formatted");
+    return "Prettier: " + (number > 0 ? "Reformatted " + number + " lines"
+                                      : lineSeparatorsUpdated
+                                        ? "Line endings were updated" : "No lines changed. Content is already properly formatted");
   }
 
   private static void showHintLater(@NotNull Editor editor,

@@ -1,5 +1,6 @@
 package com.intellij.prettierjs;
 
+import com.google.gson.JsonObject;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.service.*;
@@ -12,6 +13,7 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.Consumer;
+import com.intellij.util.LineSeparator;
 import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.util.JsonUtil;
@@ -77,14 +79,18 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
   @NotNull
   private static FormatResult parseReformatResponse(JSLanguageServiceAnswer response) {
-    final String error = JsonUtil.getChildAsString(response.getElement(), "error");
+    JsonObject jsonObject = response.getElement();
+    final String error = JsonUtil.getChildAsString(jsonObject, "error");
     if (!StringUtil.isEmpty(error)) {
       return FormatResult.error(error);
     }
-    if (JsonUtil.getChildAsBoolean(response.getElement(), "ignored", false)) {
+    if (JsonUtil.getChildAsBoolean(jsonObject, "ignored", false)) {
       return FormatResult.IGNORED;
     }
-    return FormatResult.formatted(JsonUtil.getChildAsString(response.getElement(), "formatted"));
+    String formattedResult = JsonUtil.getChildAsString(jsonObject, "formatted");
+    String lineSeparator = JsonUtil.getChildAsString(jsonObject, "lineSeparator");
+    LineSeparator separator = PrettierUtil.parseLineSeparator(lineSeparator);
+    return FormatResult.formatted(formattedResult, separator);
   }
 
   @NotNull

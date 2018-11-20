@@ -229,12 +229,17 @@ public class PrettierUtil {
   }
 
   @Nullable
-  private static String parseLineSeparatorValue(@Nullable String string) {
+  public static String parseLineSeparatorValue(@Nullable String string) {
+    LineSeparator separator = parseLineSeparator(string);
+    return separator != null ? separator.getSeparatorString() : null;
+  }
+
+  @Nullable
+  public static LineSeparator parseLineSeparator(@Nullable String string) {
     if (string == null) {
       return null;
     }
-    LineSeparator parsed = StringUtil.parseEnum(string.toUpperCase(Locale.US), null, LineSeparator.class);
-    return parsed != null ? parsed.getSeparatorString() : null;
+    return StringUtil.parseEnum(string.toUpperCase(Locale.US), null, LineSeparator.class);
   }
 
   @Nullable
