@@ -36,8 +36,12 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    Disposer.dispose(getTestRootDisposable());
-    super.tearDown();
+    try {
+      Disposer.dispose(getTestRootDisposable());
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   @Override
