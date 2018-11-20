@@ -143,8 +143,7 @@ public class CfmlRunConfigurationTest extends CfmlCodeInsightFixtureTestCase {
   }
 
   public Presentation getPresentationForRunAction() {
-    AnAction[] actions = ExecutorAction.getActions();
-    final AnAction runAction = actions[0];
+    final AnAction runAction = ExecutorAction.getActionList().get(0);
     AnActionEvent e = AnActionEvent.createFromDataContext(ActionPlaces.EDITOR_POPUP, null, DataManager
       .getInstance().getDataContext(myFixture.getEditor().getComponent()));
     runAction.update(e);
