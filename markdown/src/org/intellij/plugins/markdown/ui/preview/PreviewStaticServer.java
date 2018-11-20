@@ -52,7 +52,7 @@ public class PreviewStaticServer extends HttpRequestHandler {
   public static String createCSP(@NotNull List<String> scripts, @NotNull List<String> styles) {
     return "default-src 'none'; script-src " + StringUtil.join(scripts, " ") + "; "
            + "style-src https: " + StringUtil.join(styles, " ") + "; "
-           + "img-src *; connect-src 'none'; font-src *; " +
+           + "img-src file: *; connect-src 'none'; font-src *; " +
            "object-src 'none'; media-src 'none'; child-src 'none';";
   }
 
