@@ -39,7 +39,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.openapi.vfs.ReadonlyStatusHandler;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -50,7 +49,6 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.LightweightHint;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.LineSeparator;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
@@ -187,7 +185,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       Document document = editor.getDocument();
       CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
       CharSequence textBefore = document.getImmutableCharSequence();
-      String newContent = StringUtilRt.convertLineSeparators(result.result, LineSeparator.LF.getSeparatorString());
+      String newContent = StringUtil.convertLineSeparators(result.result);
       if (!StringUtil.equals(textBefore, newContent)) {
         runWriteCommandAction(project, () -> document.setText(newContent));
         caretVisualPositionKeeper.restoreOriginalLocation(true);
@@ -273,7 +271,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         PrettierLanguageService.FormatResult result = entry.getValue();
         if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
           CharSequence textBefore = document.getCharsSequence();
-          String newContent = StringUtilRt.convertLineSeparators(result.result, LineSeparator.LF.getSeparatorString());
+          String newContent = StringUtil.convertLineSeparators(result.result);
           if (!StringUtil.equals(textBefore, newContent)) {
             document.setText(newContent);
           }
