@@ -37,10 +37,14 @@ public abstract class FlexmojosImporterTestBase extends MavenImportingTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(FlexmojosSdkType.getInstance())) {
-      WriteAction.run(()->ProjectJdkTable.getInstance().removeJdk(sdk));
+    try {
+      for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(FlexmojosSdkType.getInstance())) {
+        WriteAction.run(() -> ProjectJdkTable.getInstance().removeJdk(sdk));
+      }
     }
-    super.tearDown();
+    finally {
+      super.tearDown();
+    }
   }
 
   protected void checkBCCount(final String moduleName, int bcCount) {
