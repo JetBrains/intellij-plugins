@@ -19,5 +19,10 @@ public class DartSearchableOptionContributor extends SearchableOptionContributor
     processor.addOptions("dart " + DartBundle.message("dart.smartKeys.insertDefaultArgValues.text"), null,
                          "Dart: " + DartBundle.message("dart.smartKeys.insertDefaultArgValues.text"), "editor.preferences.smartKeys", null,
                          false);
+
+    processor.addOptions("Dart SDK path", null,
+                         "Dart SDK path", "dart.settings", null, false);
+    processor.addOptions("Dart pub webdev server port", null,
+                         "Dart webdev server port", "dart.settings", null, false);
   }
 }
