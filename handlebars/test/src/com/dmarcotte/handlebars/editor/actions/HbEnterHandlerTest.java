@@ -17,11 +17,13 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
   }
 
   @Override
-  protected void tearDown()
-    throws Exception {
-    HbConfig.setFormattingEnabled(myPrevFormatSetting);
-
-    super.tearDown();
+  protected void tearDown() throws Exception {
+    try {
+      HbConfig.setFormattingEnabled(myPrevFormatSetting);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   /**
