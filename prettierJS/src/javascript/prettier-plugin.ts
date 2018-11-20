@@ -7,6 +7,7 @@ interface FormatResponse {
     ignored?: boolean,
     error?: string,
     formatted?: string,
+    lineSeparator?: string
 }
 
 type FormatArguments = {
@@ -61,7 +62,7 @@ export class PrettierPlugin implements LanguagePlugin {
             if (prettierApi.getFileInfo && prettierApi.getFileInfo.sync(args.path, options).ignored) {
                 return {ignored: true}
             }
-            return {formatted: performFormat(prettierApi, args)}
+            return performFormat(prettierApi, args)
         }
         catch (e) {
             return {error: `${args.path}: ${e.stack && e.stack.length > 0 ? e.stack : e.message}`};
@@ -101,7 +102,7 @@ function flatten<T>(arr: T[][]): T[] {
     return arr.reduce((previousValue, currentValue) => previousValue.concat(currentValue))
 }
 
-function performFormat(api: PrettierApi, args: FormatArguments) {
+function performFormat(api: PrettierApi, args: FormatArguments): { formatted: string, lineSeparator?: string } {
     if (args.flushConfigCache) {
         api.clearConfigCache()
     }
@@ -115,5 +116,5 @@ function performFormat(api: PrettierApi, args: FormatArguments) {
 
     config.rangeStart = args.start;
     config.rangeEnd = args.end;
-    return api.format(args.content, config);
+    return {formatted: api.format(args.content, config), lineSeparator: config.endOfLine};
 }

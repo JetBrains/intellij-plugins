@@ -30,7 +30,7 @@ var PrettierPlugin = /** @class */ (function () {
             if (prettierApi.getFileInfo && prettierApi.getFileInfo.sync(args.path, options).ignored) {
                 return { ignored: true };
             }
-            return { formatted: performFormat(prettierApi, args) };
+            return performFormat(prettierApi, args);
         }
         catch (e) {
             return { error: args.path + ": " + (e.stack && e.stack.length > 0 ? e.stack : e.message) };
@@ -80,5 +80,5 @@ function performFormat(api, args) {
     }
     config.rangeStart = args.start;
     config.rangeEnd = args.end;
-    return api.format(args.content, config);
+    return { formatted: api.format(args.content, config), lineSeparator: config.endOfLine };
 }
