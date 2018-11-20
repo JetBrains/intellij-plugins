@@ -40,6 +40,16 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
            "}");
   }
 
+  public void testJsonWithAutoLineSeparator() {
+    PrettierUtil.Config parsed = doParse(".prettierrc.json",
+                                         "{\n" +
+                                         "  \"printWidth\": 113,\n" +
+                                         "  \"endOfLine\": \"auto\"\n" +
+                                         "}");
+    assertEquals(113, parsed.printWidth);
+    assertNull(parsed.lineSeparator);
+  }
+
   public void testPackageJsonConfig() {
     doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.all, true, null),
            "package.json",
@@ -88,7 +98,11 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
   }
 
   private void doTest(PrettierUtil.Config expected, String fileName, String fileContent) {
+    assertSameConfig(expected, doParse(fileName, fileContent));
+  }
+
+  private PrettierUtil.Config doParse(String fileName, String fileContent) {
     PsiFile psiFile = myFixture.configureByText(fileName, fileContent);
-    assertSameConfig(expected, PrettierUtil.parseConfig(psiFile.getProject(), psiFile.getVirtualFile()));
+    return PrettierUtil.parseConfig(psiFile.getProject(), psiFile.getVirtualFile());
   }
 }
