@@ -80,6 +80,14 @@ public class Angular2EntityUtils {
   }
 
   @NotNull
+  public static String getAttributeName(@NotNull String attributeIndexName) {
+    if (!isAttributeDirectiveIndexName(attributeIndexName)) {
+      throw new IllegalArgumentException();
+    }
+    return attributeIndexName.substring(1);
+  }
+
+  @NotNull
   public static Set<String> getDirectiveIndexNames(@NotNull String selector) {
     List<Angular2DirectiveSimpleSelector> selectors;
     try {

@@ -127,6 +127,7 @@
     <elementDescriptionProvider
         implementation="org.angular2.refactoring.Angular2SelectorRenameProcessor$Angular2SelectorElementDescriptor"/>
     <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory"/>
+    <gotoSymbolContributor implementation="org.angular2.navigation.Angular2GotoSymbolContributor"/>
 
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>

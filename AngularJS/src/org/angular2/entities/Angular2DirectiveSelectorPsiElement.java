@@ -1,12 +1,18 @@
 package org.angular2.entities;
 
+import com.intellij.icons.AllIcons;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.FakePsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import icons.AngularJSIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implements PomTarget, NavigationItem {
 
@@ -77,22 +83,21 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
 
   @Override
   public String getPresentableText() {
-    StringBuilder builder = new StringBuilder();
-    if (myIsElement) {
-      builder.append("Element");
-    }
-    else {
-      builder.append("Attribute");
-    }
-    builder.append(" selector: ");
-    builder.append(getName());
-    return builder.toString();
+    return getName();
   }
 
   @Nullable
   @Override
   public String getLocationString() {
-    return myParent.getContainingFile().getName() + ":" + getTextOffset();
+    TypeScriptClass clazz = PsiTreeUtil.getContextOfType(myParent, TypeScriptClass.class, false);
+    return clazz != null ? "(" + clazz.getName() + ", " + myParent.getContainingFile().getName() + ")"
+                         : myParent.getContainingFile().getName() + ":" + getTextOffset();
+  }
+
+  @Nullable
+  @Override
+  public Icon getIcon(boolean open) {
+    return isElementSelector() ? AllIcons.Nodes.Tag : AngularJSIcons.Attribute;
   }
 
   public boolean isElementSelector() {
