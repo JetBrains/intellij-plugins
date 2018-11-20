@@ -40,8 +40,12 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
 
   @Override
   public void tearDown() throws Exception {
-    ExternalResourceManagerEx.getInstanceEx().setDefaultHtmlDoctype(myOldDoctype, myFixture.getProject());
-    super.tearDown();
+    try {
+      ExternalResourceManagerEx.getInstanceEx().setDefaultHtmlDoctype(myOldDoctype, myFixture.getProject());
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   public void testHtmlTagName() {
