@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.google.jstestdriver.idea.coverage;
 
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
@@ -53,13 +54,13 @@ public class JstdCoverageProgramRunner extends AsyncProgramRunner {
   @Override
   protected Promise<RunContentDescriptor> execute(@NotNull ExecutionEnvironment environment, @NotNull RunProfileState state) throws ExecutionException {
     if (JstdRunProfileState.cast(state).getRunSettings().isExternalServerType()) {
-      return Promise.resolve(null);
+      return Promises.resolvedPromise(null);
     }
     JstdToolWindowManager jstdToolWindowManager = JstdToolWindowManager.getInstance(environment.getProject());
     jstdToolWindowManager.setAvailable(true);
     JstdServer server = JstdServerRegistry.getInstance().getServer();
     if (server != null && !server.isStopped()) {
-      return Promise.resolve(start(server, environment));
+      return Promises.resolvedPromise(start(server, environment));
     }
     return jstdToolWindowManager.restartServer()
       .thenAsync(it -> {

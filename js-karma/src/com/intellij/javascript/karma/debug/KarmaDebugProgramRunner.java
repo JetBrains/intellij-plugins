@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.debug;
 
 import com.google.common.collect.BiMap;
@@ -73,11 +74,11 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     FileDocumentManager.getInstance().saveAllDocuments();
     ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) {
-      return Promise.resolve(null);
+      return Promises.resolvedPromise(null);
     }
     KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult, state);
     if (consoleView == null) {
-      return Promise.resolve(KarmaUtil.createDefaultDescriptor(executionResult, environment));
+      return Promises.resolvedPromise(KarmaUtil.createDefaultDescriptor(executionResult, environment));
     }
     KarmaServer karmaServer = consoleView.getKarmaServer();
     if (executionResult.getProcessHandler() instanceof NopProcessHandler) {
