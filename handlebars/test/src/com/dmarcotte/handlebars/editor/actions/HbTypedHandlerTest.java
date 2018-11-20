@@ -27,10 +27,13 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
 
   @Override
   protected void tearDown() throws Exception {
-    HbConfig.setAutoGenerateCloseTagEnabled(myPrevAutoCloseSetting);
-    formatterTestSettings.tearDown();
-
-    super.tearDown();
+    try {
+      HbConfig.setAutoGenerateCloseTagEnabled(myPrevAutoCloseSetting);
+      formatterTestSettings.tearDown();
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   /**
