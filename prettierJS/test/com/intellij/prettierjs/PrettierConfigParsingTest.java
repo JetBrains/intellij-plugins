@@ -3,6 +3,7 @@ package com.intellij.prettierjs;
 import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.util.LineSeparator;
 
 public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTestCase {
   
@@ -22,7 +23,8 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
   }
 
   public void testJsonConfig() {
-    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.all, true),
+    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.all, true, 
+                                   LineSeparator.CRLF.getSeparatorString()),
            ".prettierrc.json",
            "{\n" +
            "  \"semi\": false,\n" +
@@ -33,12 +35,13 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
            "  \"tabWidth\": 3,\n" +
            "  \"useTabs\": true,\n" +
            "  \"trailingComma\": \"all\",\n" +
-           "  \"parser\": \"babylon\"\n" +
+           "  \"parser\": \"babylon\",\n" +
+           "  \"endOfLine\": \"crlf\"\n" +
            "}");
   }
 
   public void testPackageJsonConfig() {
-    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.all, true),
+    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.all, true, null),
            "package.json",
            "{\n" +
            "  \"devDependencies\": {\n" +
@@ -60,7 +63,8 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
   }
 
   public void testYamlConfig() {
-    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.es5, true),
+    doTest(new PrettierUtil.Config(true, false, 120, false, true, 3, PrettierUtil.TrailingCommaOption.es5, true,
+                                   LineSeparator.CRLF.getSeparatorString()),
            ".prettierrc.yml",
            "semi: false\n" +
            "bracketSpacing: false\n" +
@@ -70,8 +74,9 @@ public class PrettierConfigParsingTest extends LightPlatformCodeInsightFixtureTe
            "tabWidth: 3\n" +
            "useTabs: true\n" +
            "trailingComma: es5\n" +
-           "parser: babylon");
-
+           "parser: babylon\n" +
+           "endOfLine: crlf"
+    );
   }
 
   private static void assertSameConfig(PrettierUtil.Config expected, PrettierUtil.Config actual) {

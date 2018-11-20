@@ -1,6 +1,7 @@
 package com.intellij.prettierjs;
 
-import com.google.gson.JsonObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
@@ -18,10 +19,10 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
+import com.intellij.util.LineSeparator;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
-import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
@@ -57,7 +58,9 @@ public class PrettierUtil {
   public static final String TAB_WIDTH = "tabWidth";
   public static final String TRAILING_COMMA = "trailingComma";
   public static final String USE_TABS = "useTabs";
+  public static final String END_OF_LINE = "endOfLine";
   private static final String JSX_BRACKET_SAME_LINE = "jsxBracketSameLine";
+  private static final Gson OUR_GSON_SERIALIZER = new GsonBuilder().create();
 
   private PrettierUtil() {
   }
@@ -179,15 +182,16 @@ public class PrettierUtil {
         if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
           return null;
         }
-        JsonObject object = JsonUtil.tryParseJsonObject(file.getText());
-        return parseConfigFromJsonObject(JsonUtil.getChildAsObject(object, PACKAGE_NAME));
+        Map<String, Object> packageJsonMap = OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class);
+        //noinspection unchecked
+        Map<String, Object> packageJsonSectionMap = packageJsonMap != null ? (Map<String, Object>)packageJsonMap.get(PACKAGE_NAME) : null;
+        return parseConfigFromMap(packageJsonSectionMap);
       }
       if (file instanceof JsonFile) {
-        JsonObject object = JsonUtil.tryParseJsonObject(file.getText());
-        return parseConfigFromJsonObject(object);
+        return parseConfigFromMap(OUR_GSON_SERIALIZER.<Map<String,Object>>fromJson(file.getText(), Map.class));
       }
       if (JSLinterConfigLangSubstitutor.YamlLanguageHolder.INSTANCE.equals(file.getLanguage())) {
-        return parseYamlConfig(file);
+        return parseConfigFromMap(new Yaml().load(file.getText()));
       }
     }
     catch (Exception e) {
@@ -196,17 +200,8 @@ public class PrettierUtil {
     return null;
   }
 
-  @Nullable
-  private static Config parseYamlConfig(@NotNull PsiFile file) {
-    Map<String, Object> map;
-
-    try {
-      map = new Yaml().load(file.getText());
-    }
-    catch (Exception e) {
-      LOG.info(String.format("Could not read config data from file [%s]", file.getVirtualFile().getPath()), e);
-      return null;
-    }
+  @NotNull
+  private static Config parseConfigFromMap(@Nullable Map<String, Object> map) {
     if (map == null) {
       return Config.DEFAULT;
     }
@@ -218,7 +213,8 @@ public class PrettierUtil {
       getBooleanValue(map, SINGLE_QUOTE),
       getIntValue(map, TAB_WIDTH),
       parseTrailingCommaValue(ObjectUtils.tryCast(map.get(TRAILING_COMMA), String.class)),
-      getBooleanValue(map, USE_TABS)
+      getBooleanValue(map, USE_TABS),
+      parseLineSeparatorValue(ObjectUtils.tryCast(map.get(END_OF_LINE), String.class))
     );
   }
 
@@ -228,25 +224,17 @@ public class PrettierUtil {
   }
 
   private static Integer getIntValue(@NotNull Map<String, Object> map, String key) {
-    Integer value = ObjectUtils.tryCast(map.get(key), Integer.class);
+    Number value = ObjectUtils.tryCast(map.get(key), Number.class);
     return value == null ? null : value.intValue();
   }
 
-  @NotNull
-  private static Config parseConfigFromJsonObject(@Nullable JsonObject obj) {
-    if (obj == null) {
-      return PrettierUtil.Config.DEFAULT;
+  @Nullable
+  private static String parseLineSeparatorValue(@Nullable String string) {
+    if (string == null) {
+      return null;
     }
-    return new Config(
-      JsonUtil.getChildAsBooleanObj(obj, JSX_BRACKET_SAME_LINE),
-      JsonUtil.getChildAsBooleanObj(obj, BRACKET_SPACING),
-      JsonUtil.getChildAsIntegerObj(obj, PRINT_WIDTH),
-      JsonUtil.getChildAsBooleanObj(obj, SEMI),
-      JsonUtil.getChildAsBooleanObj(obj, SINGLE_QUOTE),
-      JsonUtil.getChildAsIntegerObj(obj, TAB_WIDTH),
-      parseTrailingCommaValue(JsonUtil.getChildAsString(obj, TRAILING_COMMA)),
-      JsonUtil.getChildAsBooleanObj(obj, USE_TABS)
-    );
+    LineSeparator parsed = StringUtil.parseEnum(string.toUpperCase(Locale.US), null, LineSeparator.class);
+    return parsed != null ? parsed.getSeparatorString() : null;
   }
 
   @Nullable
@@ -270,9 +258,11 @@ public class PrettierUtil {
     public final int tabWidth;
     public final TrailingCommaOption trailingComma;
     public final boolean useTabs;
+    @Nullable
+    public final String lineSeparator;
 
     private Config() {
-      this(null, null, null, null, null, null, null, null);
+      this(null, null, null, null, null, null, null, null, null);
     }
 
     public Config(@Nullable Boolean jsxBracketSameLine,
@@ -282,7 +272,8 @@ public class PrettierUtil {
                   @Nullable Boolean singleQuote,
                   @Nullable Integer tabWidth,
                   @Nullable TrailingCommaOption trailingComma,
-                  @Nullable Boolean useTabs) {
+                  @Nullable Boolean useTabs, 
+                  @Nullable String lineSeparator) {
       this.jsxBracketSameLine = ObjectUtils.coalesce(jsxBracketSameLine, false);
       this.bracketSpacing = ObjectUtils.coalesce(bracketSpacing, true);
       this.printWidth = ObjectUtils.coalesce(printWidth, 80);
@@ -291,6 +282,7 @@ public class PrettierUtil {
       this.tabWidth = ObjectUtils.coalesce(tabWidth, 2);
       this.trailingComma = ObjectUtils.coalesce(trailingComma, TrailingCommaOption.none);
       this.useTabs = ObjectUtils.coalesce(useTabs, false);
+      this.lineSeparator = lineSeparator;
     }
 
     @Override
@@ -302,8 +294,9 @@ public class PrettierUtil {
              ", semi=" + semi +
              ", singleQuote=" + singleQuote +
              ", tabWidth=" + tabWidth +
-             ", trailingComma='" + trailingComma + '\'' +
+             ", trailingComma=" + trailingComma +
              ", useTabs=" + useTabs +
+             ", lineSeparator=" + lineSeparator +
              '}';
     }
   }

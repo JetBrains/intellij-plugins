@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectConfigurator;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -54,6 +55,7 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
     boolean previousUsePerProjectSettings = settingsManager.USE_PER_PROJECT_SETTINGS;
     CodeStyleSettings previousSettings = settingsManager.getCurrentSettings();
     CodeStyleSettings newSettings = previousSettings.clone();
+    newSettings.LINE_SEPARATOR = config.lineSeparator;
     installJSDialectSettings(newSettings, config, JavascriptLanguage.INSTANCE, JSCodeStyleSettings.class);
     installJSDialectSettings(newSettings, config, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptCodeStyleSettings.class);
     settingsManager.USE_PER_PROJECT_SETTINGS = true;
@@ -64,7 +66,8 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
   public static boolean isInstalled(@NotNull Project project, @NotNull PrettierUtil.Config config) {
     CodeStyleSettings settings = CodeStyle.getSettings(project);
     return isInstalledForDialect(settings, config, JavascriptLanguage.INSTANCE, JSCodeStyleSettings.class)
-           && isInstalledForDialect(settings, config, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptCodeStyleSettings.class);
+           && isInstalledForDialect(settings, config, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptCodeStyleSettings.class)
+           && StringUtil.equals(settings.LINE_SEPARATOR, config.lineSeparator);
   }
 
   private static boolean isInstalledForDialect(CodeStyleSettings settings,
