@@ -40,6 +40,11 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
       super(element, ElementManipulators.getValueTextRange(element));
     }
 
+    @Override
+    public boolean isSoft() {
+      return false;
+    }
+
     @Nullable
     @Override
     public PsiElement resolveInner() {

@@ -12,17 +12,17 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.rename.RenameDialog;
 import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.usageView.UsageInfo;
-import com.intellij.usageView.UsageViewTypeLocation;
 import com.intellij.util.IncorrectOperationException;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -113,17 +113,5 @@ public class Angular2PipeRenameProcessor extends JSDefaultRenameProcessor {
 
   private static String getDefaultPipeClassName(String pipeName) {
     return StringUtil.capitalize(pipeName) + "Pipe";
-  }
-
-  public static class Angular2PipeElementDescriptor implements ElementDescriptionProvider {
-    @Nullable
-    @Override
-    public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
-      if (element instanceof JSImplicitElement && Angular2IndexingHandler.isPipe((JSImplicitElement)element)) {
-        if (location instanceof UsageViewTypeLocation) return "pipe";
-        return ((JSImplicitElement)element).getName();
-      }
-      return null;
-    }
   }
 }
