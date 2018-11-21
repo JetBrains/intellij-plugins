@@ -6,10 +6,8 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.impl.PsiManagerEx;
-import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
-import junit.framework.TestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,35 +24,47 @@ public class GotoSymbolTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testElementSelector() {
     myFixture.configureByFiles("my-table.component.ts", "package.json");
-    // Element selectors are prefixed with `>` in the index. The prefix is not visible to the user.
-    doTest(">app-my-table", "MyTableComponent (my-table.component.ts)", "app-my-table (MyTableComponent, my-table.component.ts)");
+    doTest("app-my-table", true,
+           "MyTableComponent (my-table.component.ts) - TypeScriptClass",
+           "app-my-table (MyTableComponent, my-table.component.ts) - ElementDirectiveSelector<app-my-table>");
   }
 
   public void testAttributeSelector() {
     myFixture.configureByFiles("my-table.component.ts", "package.json");
-    // Attribute selectors are prefixed with `=` in the index. The prefix is not visible to the user.
-    doTest("=app-my-table", "MyTableComponent (my-table.component.ts)", "app-my-table (MyTableComponent, my-table.component.ts)");
+    doTest("app-my-table", true,
+           "MyTableComponent (my-table.component.ts) - TypeScriptClass",
+           "app-my-table (MyTableComponent, my-table.component.ts) - AttributeDirectiveSelector<app-my-table>");
+  }
+
+  public void testAttrAndElementSelector() {
+    myFixture.configureByFiles("my-table.component.ts", "package.json");
+    doTest("app-my-table", true,
+           "MyTableComponent (my-table.component.ts) - TypeScriptClass",
+           "app-my-table (MyTableComponent, my-table.component.ts) - AttributeDirectiveSelector<app-my-table>",
+           "app-my-table (MyTableComponent, my-table.component.ts) - ElementDirectiveSelector<app-my-table>");
   }
 
   public void testPipe() {
     myFixture.configureByFiles("foo.pipe.ts", "package.json");
-    doTest("foo", "foo (foo.pipe.ts)");
+    doTest("foo", false,
+           "foo (foo.pipe.ts)");
   }
 
-  private void doTest(@NotNull String name, @NotNull String... expectedNames) {
+  private void doTest(@NotNull String name, boolean detailed, @NotNull String... expectedItems) {
     ((PsiManagerEx)myFixture.getPsiManager()).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, myFixture.getTestRootDisposable());
 
     GotoSymbolModel2 model = new GotoSymbolModel2(myFixture.getProject());
 
-    UsefulTestCase.assertContainsElements(asList(model.getNames(false)), name);
+    assertContainsElements(asList(model.getNames(false)), name);
     final ArrayList<String> actual = ContainerUtil.newArrayList();
     for (Object o : model.getElementsByName(name, false, "")) {
       if (o instanceof NavigationItem) {
         final ItemPresentation presentation = ((NavigationItem)o).getPresentation();
-        TestCase.assertNotNull(presentation);
-        actual.add(presentation.getPresentableText() + " " + presentation.getLocationString());
+        assertNotNull(presentation);
+        actual.add(presentation.getPresentableText() + " " + presentation.getLocationString() +
+                   (detailed ? " - " + o.toString() : ""));
       }
     }
-    UsefulTestCase.assertSameElements(actual, expectedNames);
+    assertSameElements(actual, expectedItems);
   }
 }

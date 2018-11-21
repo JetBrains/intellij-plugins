@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.angular2.entities.Angular2EntitiesProvider.getDirective;
 
@@ -41,36 +42,53 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
 
   @Override
   public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
-    StubIndex.getInstance().processAllKeys(Angular2SourceDirectiveIndex.KEY, processor, scope, filter);
+    StubIndex.getInstance().processAllKeys(Angular2SourceDirectiveIndex.KEY, key -> {
+      if (Angular2EntityUtils.isElementDirectiveIndexName(key)) {
+        key = Angular2EntityUtils.getElementName(key);
+      }
+      else if (Angular2EntityUtils.isAttributeDirectiveIndexName(key)) {
+        key = Angular2EntityUtils.getAttributeName(key);
+      }
+      else {
+        return true;
+      }
+      if (!key.isEmpty()) {
+        return processor.process(key);
+      }
+      return true;
+    }, scope, filter);
   }
 
   @Override
   public void processElementsWithName(@NotNull String name,
                                       @NotNull Processor<NavigationItem> processor,
                                       @NotNull FindSymbolParameters parameters) {
-    StubIndex.getInstance().processElements(
-      Angular2SourceDirectiveIndex.KEY, name, parameters.getProject(), parameters.getSearchScope(),
-      parameters.getIdFilter(), JSImplicitElementProvider.class, provider -> {
-        final JSElementIndexingData indexingData = provider.getIndexingData();
-        if (indexingData != null) {
-          final Collection<JSImplicitElement> elements = indexingData.getImplicitElements();
-          if (elements != null) {
-            for (JSImplicitElement element : elements) {
-              if (element.isValid()) {
-                Angular2Directive directive = getDirective(element);
-                if (directive != null) {
-                  if (!processor.process(directive.getTypeScriptClass())
-                      || !processSelectors(name, directive.getSelector().getSimpleSelectorsWithPsi(), processor)) {
-                    return false;
+    Stream.of(Angular2EntityUtils.getAttributeDirectiveIndexName(name),
+              Angular2EntityUtils.getElementDirectiveIndexName(name))
+      .forEach(
+        indexName -> StubIndex.getInstance().processElements(
+          Angular2SourceDirectiveIndex.KEY, indexName, parameters.getProject(), parameters.getSearchScope(),
+          parameters.getIdFilter(), JSImplicitElementProvider.class, provider -> {
+            final JSElementIndexingData indexingData = provider.getIndexingData();
+            if (indexingData != null) {
+              final Collection<JSImplicitElement> elements = indexingData.getImplicitElements();
+              if (elements != null) {
+                for (JSImplicitElement element : elements) {
+                  if (element.isValid()) {
+                    Angular2Directive directive = getDirective(element);
+                    if (directive != null) {
+                      if (!processor.process(directive.getTypeScriptClass())
+                          || !processSelectors(name, directive.getSelector().getSimpleSelectorsWithPsi(), processor)) {
+                        return false;
+                      }
+                      return true;
+                    }
                   }
-                  return true;
                 }
               }
             }
-          }
-        }
-        return true;
-      });
+            return true;
+          }));
   }
 
   private static boolean processSelectors(@NotNull String name,
@@ -78,17 +96,12 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
                                           @NotNull Processor<NavigationItem> processor) {
 
     for (Angular2DirectiveSelector.SimpleSelectorWithPsi selector : selectors) {
-      if (Angular2EntityUtils.isElementDirectiveIndexName(name)
-          && !processSelectorElement(Angular2EntityUtils.getElementName(name),
-                                     selector.getElement(), processor)) {
+      if (!processSelectorElement(name, selector.getElement(), processor)) {
         return false;
       }
-      if (Angular2EntityUtils.isAttributeDirectiveIndexName(name)) {
-        String attrName = Angular2EntityUtils.getAttributeName(name);
-        for (Angular2DirectiveSelectorPsiElement attribute : selector.getAttributes()) {
-          if (!processSelectorElement(attrName, attribute, processor)) {
-            return false;
-          }
+      for (Angular2DirectiveSelectorPsiElement attribute : selector.getAttributes()) {
+        if (!processSelectorElement(name, attribute, processor)) {
+          return false;
         }
       }
       if (!processSelectors(name, selector.getNotSelectors(), processor)) {
