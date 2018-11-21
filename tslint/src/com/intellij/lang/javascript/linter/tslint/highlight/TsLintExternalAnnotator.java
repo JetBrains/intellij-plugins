@@ -93,11 +93,8 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
   @Nullable
   @Override
-  protected TsLinterInput createInfo(Project project,
-                                     @NotNull PsiFile psiFile,
+  protected TsLinterInput createInfo(@NotNull PsiFile psiFile,
                                      TsLintState state,
-                                     Document document,
-                                     String fileContent,
                                      EditorColorsScheme colorsScheme) {
     VirtualFile config = TslintUtil.getConfig(state, psiFile.getVirtualFile());
     boolean skipProcessing = config != null && saveConfigFileAndReturnSkipProcessing(psiFile.getProject(), config);
@@ -105,7 +102,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       return null;
     }
 
-    return new TsLinterInput(project, psiFile, fileContent, state, colorsScheme, config);
+    return new TsLinterInput(psiFile, state, colorsScheme, config);
   }
 
 
