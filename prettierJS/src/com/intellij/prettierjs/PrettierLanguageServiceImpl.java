@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.Consumer;
-import com.intellij.util.LineSeparator;
 import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.util.JsonUtil;
@@ -88,9 +87,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
       return FormatResult.IGNORED;
     }
     String formattedResult = JsonUtil.getChildAsString(jsonObject, "formatted");
-    String lineSeparator = JsonUtil.getChildAsString(jsonObject, "lineSeparator");
-    LineSeparator separator = PrettierUtil.parseLineSeparator(lineSeparator);
-    return FormatResult.formatted(formattedResult, separator);
+    return FormatResult.formatted(formattedResult);
   }
 
   @NotNull

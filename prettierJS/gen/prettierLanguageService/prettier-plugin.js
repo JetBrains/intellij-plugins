@@ -80,5 +80,5 @@ function performFormat(api, args) {
     }
     config.rangeStart = args.start;
     config.rangeEnd = args.end;
-    return { formatted: api.format(args.content, config), lineSeparator: config.endOfLine };
+    return { formatted: api.format(args.content, config) };
 }

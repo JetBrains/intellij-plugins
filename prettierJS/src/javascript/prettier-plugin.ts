@@ -6,8 +6,7 @@ type PrettierApi = typeof prettier & { path: string }
 interface FormatResponse {
     ignored?: boolean,
     error?: string,
-    formatted?: string,
-    lineSeparator?: string
+    formatted?: string
 }
 
 type FormatArguments = {
@@ -102,7 +101,7 @@ function flatten<T>(arr: T[][]): T[] {
     return arr.reduce((previousValue, currentValue) => previousValue.concat(currentValue))
 }
 
-function performFormat(api: PrettierApi, args: FormatArguments): { formatted: string, lineSeparator?: string } {
+function performFormat(api: PrettierApi, args: FormatArguments): { formatted: string} {
     if (args.flushConfigCache) {
         api.clearConfigCache()
     }
@@ -116,5 +115,5 @@ function performFormat(api: PrettierApi, args: FormatArguments): { formatted: st
 
     config.rangeStart = args.start;
     config.rangeEnd = args.end;
-    return {formatted: api.format(args.content, config), lineSeparator: config.endOfLine};
+    return {formatted: api.format(args.content, config)};
 }

@@ -187,7 +187,12 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       CaretVisualPositionKeeper caretVisualPositionKeeper = new CaretVisualPositionKeeper(document);
       CharSequence textBefore = document.getImmutableCharSequence();
       String newContent = result.result;
-      boolean lineSeparatorUpdated = setDetectedLineSeparator(vFile, result.lineSeparator);
+      /*
+       * This checks only the first line break, but given that we don't handle mixed line separators,
+       * this is enough to detect if separators were changed by the external process
+       */
+      LineSeparator newLineSeparator = StringUtil.detectSeparators(newContent);
+      boolean lineSeparatorUpdated = setDetectedLineSeparator(vFile, newLineSeparator);
       if (!StringUtil.equals(textBefore, newContent)) {
         String documentContent = StringUtil.convertLineSeparators(newContent);
         runWriteCommandAction(project, () -> document.setText(documentContent));
@@ -274,7 +279,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         PrettierLanguageService.FormatResult result = entry.getValue();
         if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
           CharSequence textBefore = document.getCharsSequence();
-          setDetectedLineSeparator(virtualFile, result.lineSeparator);
+          LineSeparator newlineSeparator = StringUtil.detectSeparators(result.result);
+          setDetectedLineSeparator(virtualFile, newlineSeparator);
           String newContent = StringUtil.convertLineSeparators(result.result);
           if (!StringUtil.equals(textBefore, newContent)) {
             document.setText(newContent);

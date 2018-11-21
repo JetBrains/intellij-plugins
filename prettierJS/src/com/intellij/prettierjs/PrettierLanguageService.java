@@ -4,7 +4,6 @@ import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,25 +38,23 @@ public interface PrettierLanguageService {
   }
 
   class FormatResult {
-    public static final FormatResult IGNORED = new FormatResult(null, null, null, true);
+    public static final FormatResult IGNORED = new FormatResult(null, null, true);
     public final String result;
-    @Nullable public final LineSeparator lineSeparator;
     public final String error;
     public final boolean ignored;
 
-    private FormatResult(String result, @Nullable LineSeparator lineSeparator, String error, boolean ignored) {
+    private FormatResult(String result, String error, boolean ignored) {
       this.result = result;
-      this.lineSeparator = lineSeparator;
       this.error = error;
       this.ignored = ignored;
     }
 
     public static FormatResult error(String error) {
-      return new FormatResult(null, null, error, false);
+      return new FormatResult(null, error, false);
     }
 
-    public static FormatResult formatted(String result, @Nullable LineSeparator lineSeparator) {
-      return new FormatResult(result, lineSeparator, null, false);
+    public static FormatResult formatted(String result) {
+      return new FormatResult(result, null, false);
     }
   }
 }
