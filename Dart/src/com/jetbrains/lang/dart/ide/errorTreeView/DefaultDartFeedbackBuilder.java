@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
@@ -60,8 +61,7 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
       }
     }
 
-    //noinspection deprecation
-    openBrowserOnFeedbackForm(url + URLEncoder.encode(body), project);
+    openBrowserOnFeedbackForm(url + urlEncode(body), project);
   }
 
   public static void openBrowserOnFeedbackForm(@NotNull String urlTemplate, @Nullable Project project) {
@@ -71,5 +71,15 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
   protected String getSdkVersion(@NotNull Project project) {
     DartSdk sdk = DartSdk.getDartSdk(project);
     return sdk == null ? "<NO SDK>" : sdk.getVersion();
+  }
+
+  private static String urlEncode(String input) {
+    try {
+      return URLEncoder.encode(input, "UTF-8");
+    }
+    catch (UnsupportedEncodingException e) {
+      // Unreachable - UTF-8 is always supported.
+      return input;
+    }
   }
 }
