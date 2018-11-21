@@ -58,12 +58,7 @@ public class UserTreeRenderer extends ColoredTreeCellRenderer {
 
 
     if (TreeUtils.getUserObject(value) instanceof String) { // group
-      if (leaf) {
-        setIcon(IdetalkCoreIcons.Nodes.Group_close);
-      }
-      else {
-        setIcon(IconLoader.getIcon(expanded ? "/nodes/group_open.png" : "/nodes/group_close.png"));
-      }
+      setIcon(IdetalkCoreIcons.Nodes.Group_close);
 
       String group = value.toString();
       append(group, getGroupAttributes(group));

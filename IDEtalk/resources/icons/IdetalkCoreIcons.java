@@ -1,5 +1,6 @@
 package icons;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
@@ -13,27 +14,27 @@ public class IdetalkCoreIcons {
     return IconLoader.getIcon(path, IdetalkCoreIcons.class);
   }
 
-  public static final Icon CodePointer = load("/codePointer.png"); // 17x18
-  public static final Icon EditSource = load("/editSource.png"); // 16x16
+  public static final Icon CodePointer = AllIcons.Nodes.Tag;
+  public static final Icon EditSource = AllIcons.Actions.EditSource;
 
   public static class IdeTalk {
-    public static final Icon Away = load("/ideTalk/away.png"); // 16x16
-    public static final Icon Jabber = load("/ideTalk/jabber.png"); // 16x16
-    public static final Icon Jabber_dnd = load("/ideTalk/jabber_dnd.png"); // 16x16
-    public static final Icon Notavailable = load("/ideTalk/notavailable.png"); // 16x16
-    public static final Icon Offline = load("/ideTalk/offline.png"); // 16x16
-    public static final Icon User = load("/ideTalk/user.png"); // 16x16
-    public static final Icon User_dnd = load("/ideTalk/user_dnd.png"); // 16x16
-    public static final Icon User_toolwindow = load("/ideTalk/user_toolwindow.png"); // 13x13
-
+    public static final Icon Away = load("/ideTalk/away.svg"); // 16x16
+    public static final Icon Jabber = load("/ideTalk/jabber.svg"); // 16x16
+    public static final Icon Jabber_dnd = load("/ideTalk/jabber_dnd.svg"); // 16x16
+    public static final Icon Notavailable = load("/ideTalk/notavailable.svg"); // 16x16
+    public static final Icon Offline = load("/ideTalk/offline.svg"); // 16x16
+    public static final Icon User = load("/ideTalk/user.svg"); // 16x16
+    public static final Icon User_dnd = load("/ideTalk/user_dnd.svg"); // 16x16
+    public static final Icon User_toolwindow = load("/ideTalk/user_toolwindow.svg"); // 13x13
   }
-  public static final Icon Message = load("/message.png"); // 17x18
+
+  public static final Icon Message = load("/message.svg"); // 16x16
 
   public static class Nodes {
-    public static final Icon Group_close = load("/nodes/group_close.png"); // 16x16
-    public static final Icon Group_open = load("/nodes/group_open.png"); // 16x16
-    public static final Icon Unknown = load("/nodes/unknown.png"); // 18x18
-
+    public static final Icon Group_close = load("/nodes/group_close.svg"); // 16x16
+    public static final Icon Group_open = Group_close;
+    public static final Icon Unknown = AllIcons.Nodes.Unknown;
   }
-  public static final Icon Stacktrace = load("/stacktrace.png"); // 17x18
+
+  public static final Icon Stacktrace = load("/stacktrace.svg"); // 16x16
 }
