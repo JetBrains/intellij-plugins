@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -134,8 +135,6 @@ public class DartStyleAction extends AbstractDartFileProcessingAction {
 
     if (ok) {
       final Runnable onSuccessRunnable = () -> {
-        CommandProcessor.getInstance().markCurrentCommandAsGlobal(project);
-
         for (Map.Entry<VirtualFile, String> entry : fileToNewContentMap.entrySet()) {
           final VirtualFile file = entry.getKey();
           final Document document = FileDocumentManager.getInstance().getDocument(file);
