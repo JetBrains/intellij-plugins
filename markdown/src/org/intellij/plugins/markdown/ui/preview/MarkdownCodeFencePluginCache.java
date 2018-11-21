@@ -50,8 +50,7 @@ public class MarkdownCodeFencePluginCache implements Disposable {
     });
   }
 
-  @NotNull
-  public static List<File> getPluginSystemPaths() {
+  private static List<File> getPluginSystemPaths() {
     return Arrays.stream(MarkdownCodeFencePluginGeneratingProvider.Companion.getEP_NAME().getExtensions())
                  .filter(MarkdownCodeFenceCacheableProvider.class::isInstance)
                  .map(MarkdownCodeFenceCacheableProvider.class::cast)

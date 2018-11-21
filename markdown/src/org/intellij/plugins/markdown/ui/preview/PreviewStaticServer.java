@@ -20,13 +20,9 @@ import org.jetbrains.ide.HttpRequestHandler;
 import org.jetbrains.io.FileResponses;
 import org.jetbrains.io.Responses;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
