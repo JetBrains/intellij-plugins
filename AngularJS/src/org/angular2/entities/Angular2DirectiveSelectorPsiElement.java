@@ -107,4 +107,9 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
   public boolean isAttributeSelector() {
     return !myIsElement;
   }
+
+  @Override
+  public String toString() {
+    return (myIsElement ? "ElementDirectiveSelector" : "AttributeDirectiveSelector") + "<" + myName + ">";
+  }
 }
