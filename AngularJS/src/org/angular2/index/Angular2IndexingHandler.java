@@ -3,6 +3,7 @@ package org.angular2.index;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -224,7 +225,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     if (hostFile == null) {
       return null;
     }
-    if (!file.getOriginalFile().equals(hostFile)) {
+    if (!file.getOriginalFile().equals(hostFile) && DialectDetector.isTypeScript(hostFile)) {
       // inline template
       return PsiTreeUtil
         .getContextOfType(InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file), TypeScriptClass.class);

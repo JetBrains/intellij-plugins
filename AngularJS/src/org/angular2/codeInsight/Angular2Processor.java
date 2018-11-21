@@ -2,6 +2,7 @@
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
 import com.intellij.lang.javascript.psi.*;
@@ -19,12 +20,14 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
@@ -33,7 +36,10 @@ import one.util.streamex.StreamEx;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
+import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.psi.*;
 import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl;
 import org.jetbrains.annotations.NonNls;
@@ -53,19 +59,37 @@ public class Angular2Processor {
            || "template".equalsIgnoreCase(tagName);
   }
 
-  public static void process(@NotNull final PsiElement element, @NotNull final Consumer<? super JSPsiElementBase> consumer) {
-    final PsiElement original = CompletionUtil.getOriginalOrSelf(element);
+  public static void process(final @NotNull PsiElement element, @NotNull final Consumer<? super JSPsiElementBase> consumer) {
+    PsiElement original = CompletionUtil.getOriginalOrSelf(element);
     if (!checkLanguage(original)) {
       return;
     }
-    final PsiFile file = original.getContainingFile();
-
-    final Angular2TemplateScope templateRootScope = CachedValuesManager.getCachedValue(file, () -> {
-      final Angular2TemplateScope result = new Angular2TemplateScopeBuilder(file).getTopLevelScope();
+    boolean expressionIsInjected = original.getContainingFile().getLanguage().is(Angular2Language.INSTANCE);
+    final PsiElement hostElement;
+    if (expressionIsInjected) {
+      //we are working within injection
+      hostElement = InjectedLanguageManager.getInstance(element.getProject()).getInjectionHost(element);
+      if (hostElement == null) {
+        return;
+      }
+      original = CompletionUtil.getOriginalOrSelf(hostElement);
+    }
+    else {
+      hostElement = element;
+    }
+    final PsiFile hostFile = original.getContainingFile();
+    final Angular2TemplateScope templateRootScope = CachedValuesManager.getCachedValue(hostFile, () -> {
+      final Angular2TemplateScope result;
+      if (!expressionIsInjected) {
+        result = new Angular2TemplateScopeBuilder(hostFile).getTopLevelScope();
+      }
+      else {
+        result = new Angular2ForeignTemplateScopeBuilder(hostFile).getTopLevelScope();
+      }
       return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
     });
 
-    calculateElementScopes(element, templateRootScope)
+    calculateElementScopes(element, hostElement, templateRootScope)
       .forEach(s -> s.consumeElementsFromAllScopes(consumer));
   }
 
@@ -80,6 +104,7 @@ public class Angular2Processor {
 
   @NotNull
   private static List<Angular2Scope> calculateElementScopes(@NotNull PsiElement element,
+                                                            @NotNull PsiElement hostElement,
                                                             @NotNull Angular2TemplateScope rootTemplateScope) {
     List<Angular2Scope> scopes = new ArrayList<>();
 
@@ -87,10 +112,24 @@ public class Angular2Processor {
     if (clazz != null && DialectDetector.isTypeScript(clazz)) {
       scopes.add(new Angular2ComponentScope(clazz));
     }
-    scopes.add(Objects.requireNonNull(rootTemplateScope.findBestMatchingTemplateScope(element)));
+    scopes.add(Objects.requireNonNull(rootTemplateScope.findBestMatchingTemplateScope(hostElement)));
 
-    if (element instanceof JSElement
-        || element.getParent() instanceof JSElement) {
+    if (element != hostElement) {
+      PsiElement attribute = hostElement;
+      while (attribute != null
+             && !(attribute instanceof XmlAttribute)
+             && !(attribute instanceof XmlTag)) {
+        attribute = attribute.getParent();
+      }
+      if (attribute instanceof XmlAttribute) {
+        AttributeInfo info = Angular2AttributeNameParser.parse(((XmlAttribute)attribute).getName(), true);
+        if (info.type == Angular2AttributeNameParser.AttributeType.EVENT) {
+          scopes.add(new Angular2EventScope(((XmlAttribute)attribute)));
+        }
+      }
+    }
+    else if (element instanceof JSElement
+             || element.getParent() instanceof JSElement) {
       PsiElement attribute = element;
       while (attribute != null
              && !(attribute instanceof XmlAttribute)
@@ -250,6 +289,112 @@ public class Angular2Processor {
     }
   }
 
+  private static class Angular2ForeignTemplateScopeBuilder extends XmlRecursiveElementVisitor {
+
+    @NotNull
+    private final PsiFile myTemplateFile;
+    private final Stack<Angular2TemplateScope> scopes = new Stack<>();
+
+    private Angular2ForeignTemplateScopeBuilder(@NotNull PsiFile templateFile) {
+      myTemplateFile = templateFile;
+      scopes.add(new Angular2TemplateScope(templateFile, null));
+    }
+
+    @NotNull
+    public Angular2TemplateScope getTopLevelScope() {
+      myTemplateFile.accept(this);
+      assert scopes.size() == 1;
+      return scopes.peek();
+    }
+
+    private Angular2TemplateScope currentScope() {
+      return scopes.peek();
+    }
+
+    private void popScope() {
+      scopes.pop();
+    }
+
+    private void pushScope(@NotNull XmlTag tag) {
+      scopes.push(new Angular2TemplateScope(tag, currentScope()));
+    }
+
+    private void addElement(@NotNull JSPsiElementBase element) {
+      currentScope().add(element);
+    }
+
+    @Override
+    public void visitXmlTag(XmlTag tag) {
+      boolean isTemplateTag = Stream.of(tag.getChildren()).anyMatch(Angular2HtmlTemplateBindings.class::isInstance)
+                              || isTemplateTag(tag.getName());
+      if (isTemplateTag) {
+        pushScope(tag);
+      }
+      super.visitXmlTag(tag);
+      if (isTemplateTag) {
+        popScope();
+      }
+    }
+
+    @Override
+    public void visitXmlAttribute(XmlAttribute attribute) {
+      if (attribute.getParent() == null) {
+        return;
+      }
+      boolean isTemplateTag = isTemplateTag(attribute.getParent().getName());
+      AttributeInfo info = Angular2AttributeNameParser.parse(
+        attribute.getName(), isTemplateTag);
+      switch (info.type) {
+        case REFERENCE:
+          addReference(attribute, info, isTemplateTag);
+          break;
+        case VARIABLE:
+          addVariable(attribute, info);
+          break;
+        case TEMPLATE_BINDINGS:
+          addTemplateBindings(attribute);
+          break;
+        default:
+      }
+    }
+
+    public void addReference(@NotNull XmlAttribute attribute, @NotNull AttributeInfo info, boolean isTemplateTag) {
+      JSImplicitElement var = createVariable(info.name, attribute);
+      if (isTemplateTag) {
+        // References on ng-template are visible within parent scope
+        prevScope().add(var);
+      }
+      else {
+        currentScope().add(var);
+      }
+    }
+
+    @NotNull
+    private Angular2TemplateScope prevScope() {
+      return scopes.get(scopes.size() - 2);
+    }
+
+    public void addVariable(@NotNull XmlAttribute attribute, @NotNull AttributeInfo info) {
+      addElement(createVariable(info.name, attribute));
+    }
+
+    public void addTemplateBindings(@NotNull XmlAttribute attribute) {
+      XmlAttributeValue value = attribute.getValueElement();
+      if (value != null && value.getTextLength() >= 2) {
+        PsiElement injection = InjectedLanguageManager.getInstance(attribute.getProject()).findInjectedElementAt(
+          value.getContainingFile(), value.getTextOffset() + 1);
+        Angular2TemplateBindings bindings = PsiTreeUtil.getParentOfType(injection, Angular2TemplateBindings.class);
+        if (bindings != null) {
+          for (Angular2TemplateBinding b : bindings.getBindings()) {
+            if (b.keyIsVar() && b.getVariableDefinition() != null) {
+              addElement(b.getVariableDefinition());
+            }
+          }
+        }
+      }
+    }
+  }
+
   private abstract static class Angular2Scope {
 
     @Nullable
@@ -341,9 +486,14 @@ public class Angular2Processor {
 
   private static class Angular2EventScope extends Angular2Scope {
 
-    private final Angular2HtmlEvent myEvent;
+    private final XmlAttribute myEvent;
 
     private Angular2EventScope(@NotNull Angular2HtmlEvent event) {
+      super(null);
+      myEvent = event;
+    }
+
+    private Angular2EventScope(@NotNull XmlAttribute event) {
       super(null);
       myEvent = event;
     }
