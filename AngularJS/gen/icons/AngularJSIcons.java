@@ -16,5 +16,4 @@ public final class AngularJSIcons {
 
   public static final Icon Angular2 = load("/icons/angular2.svg"); // 16x16
   public static final Icon AngularJS = load("/icons/AngularJS.svg"); // 16x16
-  public static final Icon Attribute = load("/icons/attribute.svg"); // 16x16
 }
