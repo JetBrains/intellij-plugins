@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematicsRegistryService {
 
@@ -116,12 +115,9 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
   private static List<NodePackageBasicInfo> readNgAddPackages(@NotNull String content) {
     JsonObject contents = (JsonObject)new JsonParser().parse(content);
     return Collections.unmodifiableList(
-      contents.get("ng-add")
-        .getAsJsonObject()
-        .entrySet()
-        .stream()
-        .map(e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString()))
-        .collect(Collectors.toList()));
+      ContainerUtil.map(
+        contents.get("ng-add").getAsJsonObject().entrySet(),
+        e -> new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString())));
   }
 
   @Nullable

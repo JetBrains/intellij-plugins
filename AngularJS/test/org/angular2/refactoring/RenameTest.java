@@ -50,8 +50,20 @@ public class RenameTest extends LightPlatformMultiFileFixtureTestCase {
     doMultiFileTest("test.component.html", "newReference");
   }
 
+  public void testReferenceFromTSNoStrings() {
+    doMultiFileTest("test.component.ts", "newReference", false);
+  }
+
+  public void testReferenceFromHTMLNoStrings() {
+    doMultiFileTest("test.component.html", "newReference", false);
+  }
+
   public void testPipeFromHTML() {
     doMultiFileTest("test.component.html", "bar");
+  }
+
+  public void testPipeFromHTMLNoStrings() {
+    doMultiFileTest("test.component.html", "bar", false);
   }
 
   public void testPipeFromTS() {
@@ -60,6 +72,10 @@ public class RenameTest extends LightPlatformMultiFileFixtureTestCase {
 
   public void testPipeFromTS2() {
     doMultiFileTest("foo.pipe.ts", "bar");
+  }
+
+  public void testPipeFromTS2NoStrings() {
+    doMultiFileTest("foo.pipe.ts", "bar", false);
   }
 
   public void testComponentWithRelatedFiles() {
@@ -86,13 +102,18 @@ public class RenameTest extends LightPlatformMultiFileFixtureTestCase {
   }
 
   private void doMultiFileTest(String mainFile, String newName) {
+    doMultiFileTest(mainFile, newName, true);
+  }
+
+  private void doMultiFileTest(String mainFile, String newName, boolean searchCommentsAndText) {
     doTest((rootDir, rootAfter) -> {
       myFixture.configureFromTempProjectFile(mainFile);
       PsiElement targetElement = TargetElementUtil.findTargetElement(
         myFixture.getEditor(),
         TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
       targetElement = RenamePsiElementProcessor.forElement(targetElement).substituteElementToRename(targetElement, myFixture.getEditor());
-      RenameProcessor renameProcessor = new RenameProcessor(myFixture.getProject(), targetElement, newName, true, true);
+      RenameProcessor renameProcessor =
+        new RenameProcessor(myFixture.getProject(), targetElement, newName, searchCommentsAndText, searchCommentsAndText);
       renameProcessor.run();
     });
   }
