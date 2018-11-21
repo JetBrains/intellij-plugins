@@ -3,6 +3,7 @@ package org.angular2.lang.html.parser;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.xml.XmlElementType;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
 import org.angular2.lang.html.psi.PropertyBindingType;
@@ -11,8 +12,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
-import static com.intellij.psi.xml.XmlElementType.XML_ATTRIBUTE;
-import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 import static org.angular2.lang.html.psi.PropertyBindingType.*;
 
 public class Angular2AttributeNameParser {
@@ -21,7 +20,7 @@ public class Angular2AttributeNameParser {
   @NotNull
   public static AttributeInfo parseBound(@NotNull String name) {
     AttributeInfo info = parse(name, true);
-    return info.elementType != XML_ATTRIBUTE ? info :
+    return info.type != AttributeType.XML_ATTRIBUTE ? info :
            new PropertyBindingInfo(info.name, false, PROPERTY);
   }
 
@@ -61,12 +60,15 @@ public class Angular2AttributeNameParser {
     else if (name.startsWith("@")) {
       return new PropertyBindingInfo(name.substring(1), false, ANIMATION);
     }
-    return new AttributeInfo(name, XML_ATTRIBUTE);
+    return new AttributeInfo(name, AttributeType.XML_ATTRIBUTE);
   }
 
   @NotNull
-  private static String normalizeAttributeName(@NotNull String name) {
-    return StringUtil.trimStart(name, "data-");
+  public static String normalizeAttributeName(@NotNull String name) {
+    if (StringUtil.startsWithIgnoreCase(name, "data-")) {
+      return name.substring(5);
+    }
+    return name;
   }
 
   @NotNull
@@ -116,7 +118,7 @@ public class Angular2AttributeNameParser {
 
   @NotNull
   private static AttributeInfo parseTemplateBindings(@NotNull String name) {
-    return new AttributeInfo(name, TEMPLATE_BINDINGS);
+    return new AttributeInfo(name, AttributeType.TEMPLATE_BINDINGS);
   }
 
   @NotNull
@@ -144,23 +146,44 @@ public class Angular2AttributeNameParser {
   @NotNull
   private static AttributeInfo parseVariable(@NotNull String varName, boolean isInTemplateTag) {
     if (!isInTemplateTag) {
-      return new AttributeInfo(varName, XML_ATTRIBUTE, "\"let-\" is only supported on ng-template elements.");
+      return new AttributeInfo(varName, AttributeType.XML_ATTRIBUTE, "\"let-\" is only supported on ng-template elements.");
     }
     else if (varName.contains("-")) {
-      return new AttributeInfo(varName, XML_ATTRIBUTE, "\"-\" is not allowed in variable names");
+      return new AttributeInfo(varName, AttributeType.XML_ATTRIBUTE, "\"-\" is not allowed in variable names");
     }
-    return new AttributeInfo(varName, VARIABLE);
+    return new AttributeInfo(varName, AttributeType.VARIABLE);
   }
 
   @NotNull
   private static AttributeInfo parseReference(@NotNull String refName) {
     if (refName.contains("-")) {
-      return new AttributeInfo(refName, XML_ATTRIBUTE, "\"-\" is not allowed in reference names");
+      return new AttributeInfo(refName, AttributeType.XML_ATTRIBUTE, "\"-\" is not allowed in reference names");
     }
     else if (refName.isEmpty()) {
-      return new AttributeInfo("", XML_ATTRIBUTE);
+      return new AttributeInfo("", AttributeType.XML_ATTRIBUTE);
     }
-    return new AttributeInfo(refName, REFERENCE);
+    return new AttributeInfo(refName, AttributeType.REFERENCE);
+  }
+
+  public enum AttributeType {
+
+    REFERENCE(Angular2HtmlElementTypes.REFERENCE),
+    XML_ATTRIBUTE(XmlElementType.XML_ATTRIBUTE),
+    VARIABLE(Angular2HtmlElementTypes.VARIABLE),
+    BANANA_BOX_BINDING(Angular2HtmlElementTypes.BANANA_BOX_BINDING),
+    PROPERTY_BINDING(Angular2HtmlElementTypes.PROPERTY_BINDING),
+    EVENT(Angular2HtmlElementTypes.EVENT),
+    TEMPLATE_BINDINGS(Angular2HtmlElementTypes.TEMPLATE_BINDINGS);
+
+    private final IElementType myElementType;
+
+    AttributeType(IElementType elementType) {
+      myElementType = elementType;
+    }
+
+    IElementType getElementType() {
+      return myElementType;
+    }
   }
 
   public static class AttributeInfo {
@@ -169,23 +192,30 @@ public class Angular2AttributeNameParser {
     public final String name;
     @Nullable
     public final String error;
+    /**
+     * @deprecated Use {@code type} field instead
+     */
     @NotNull
+    @Deprecated
     public final IElementType elementType;
+    public final AttributeType type;
 
-    public AttributeInfo(@NotNull String name, @NotNull IElementType elementType) {
-      this(name, elementType, null);
+    public AttributeInfo(@NotNull String name, @NotNull AttributeType type) {
+      this(name, type, null);
     }
 
-    public AttributeInfo(@NotNull String name, @NotNull IElementType elementType, @Nullable String error) {
+    public AttributeInfo(@NotNull String name, @NotNull AttributeType type, @Nullable String error) {
       this.name = name;
       this.error = error;
-      this.elementType = elementType;
+      this.type = type;
+      //noinspection deprecation
+      this.elementType = type.getElementType();
     }
 
     public boolean isEquivalent(@Nullable AttributeInfo otherInfo) {
       return otherInfo != null
-        && name.equals(otherInfo.name)
-        && elementType == otherInfo.elementType;
+             && name.equals(otherInfo.name)
+             && type == otherInfo.type;
     }
 
     @Override
@@ -200,15 +230,15 @@ public class Angular2AttributeNameParser {
     public final PropertyBindingType bindingType;
 
     public PropertyBindingInfo(@NotNull String name, boolean bananaBoxBinding, @NotNull PropertyBindingType bindingType) {
-      super(name, bananaBoxBinding ? BANANA_BOX_BINDING : PROPERTY_BINDING);
+      super(name, bananaBoxBinding ? AttributeType.BANANA_BOX_BINDING : AttributeType.PROPERTY_BINDING);
       this.bindingType = bindingType;
     }
 
     @Override
     public boolean isEquivalent(@Nullable AttributeInfo otherInfo) {
       return otherInfo instanceof PropertyBindingInfo
-        && bindingType == ((PropertyBindingInfo)otherInfo).bindingType
-        && super.isEquivalent(otherInfo);
+             && bindingType == ((PropertyBindingInfo)otherInfo).bindingType
+             && super.isEquivalent(otherInfo);
     }
 
     @Override
@@ -226,7 +256,7 @@ public class Angular2AttributeNameParser {
     public final EventType eventType;
 
     public EventInfo(@NotNull String name) {
-      super(name, EVENT);
+      super(name, AttributeType.EVENT);
       eventType = EventType.REGULAR;
       animationPhase = null;
     }
@@ -236,7 +266,7 @@ public class Angular2AttributeNameParser {
     }
 
     public EventInfo(@NotNull String name, @NotNull AnimationPhase animationPhase, @Nullable String error) {
-      super(name, EVENT, error);
+      super(name, AttributeType.EVENT, error);
       this.animationPhase = animationPhase;
       this.eventType = EventType.ANIMATION;
     }
@@ -244,9 +274,9 @@ public class Angular2AttributeNameParser {
     @Override
     public boolean isEquivalent(@Nullable AttributeInfo otherInfo) {
       return otherInfo instanceof EventInfo
-        && eventType == ((EventInfo)otherInfo).eventType
-        && animationPhase == ((EventInfo)otherInfo).animationPhase
-        && super.isEquivalent(otherInfo);
+             && eventType == ((EventInfo)otherInfo).eventType
+             && animationPhase == ((EventInfo)otherInfo).animationPhase
+             && super.isEquivalent(otherInfo);
     }
 
     @Override

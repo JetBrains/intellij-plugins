@@ -9,40 +9,48 @@ import com.intellij.lang.javascript.inject.JSFormattableInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlText;
 import com.intellij.util.ObjectUtils;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
 
 public class Angular2Injector implements MultiHostInjector {
 
+  private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
+
   @NotNull
   @Override
   public List<Class<? extends PsiElement>> elementsToInjectIn() {
-    return Collections.singletonList(JSLiteralExpression.class);
+    return Arrays.asList(JSLiteralExpression.class, XmlText.class);
   }
 
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-    if (!Angular2LangUtil.isAngular2Context(context)) return;
     final PsiElement parent = context.getParent();
-    if (parent != null
-        && context instanceof JSLiteralExpressionImpl
+    if (parent == null
+        || parent.getLanguage().is(Angular2Language.INSTANCE)
+        || parent.getLanguage().is(Angular2HtmlLanguage.INSTANCE)
+        || !Angular2LangUtil.isAngular2Context(context)) {
+      return;
+    }
+    if (context instanceof JSLiteralExpressionImpl
         && ((JSLiteralExpressionImpl)context).isQuotedLiteral()) {
       if (injectIntoDirectiveProperty(registrar, context, parent, "template", Angular2HtmlLanguage.INSTANCE, null)
           || (parent instanceof JSArrayLiteralExpression
@@ -60,18 +68,37 @@ public class Angular2Injector implements MultiHostInjector {
         }
       }
     }
+    else if (context instanceof XmlText) {
+      injectInterpolations(registrar, context);
+    }
   }
 
-  private static boolean injectIntoEmbeddedLiteral(@NotNull MultiHostRegistrar registrar, PsiElement context, PsiElement parent) {
-    if (parent instanceof JSEmbeddedContent && !parent.getLanguage().is(Angular2Language.INSTANCE)) {
+  private static boolean injectIntoEmbeddedLiteral(@NotNull MultiHostRegistrar registrar,
+                                                   @NotNull PsiElement context,
+                                                   @NotNull PsiElement parent) {
+    if (parent instanceof JSEmbeddedContent) {
       final XmlAttribute attribute = PsiTreeUtil.getParentOfType(parent, XmlAttribute.class);
       final String expressionType;
-      if (attribute != null && (expressionType = getExpressionFileExtension(context.getTextLength(), attribute.getName(), false)) != null) {
-        inject(registrar, context, Angular2Language.INSTANCE, expressionType);
+      if (attribute != null) {
+        if ((expressionType = getExpressionFileExtension(context.getTextLength(), attribute.getName(), false)) != null) {
+          inject(registrar, context, Angular2Language.INSTANCE, expressionType);
+        }
+        else {
+          injectInterpolations(registrar, context);
+        }
         return true;
       }
     }
     return false;
+  }
+
+  private static void injectInterpolations(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
+    Matcher matcher = INTERPOLATION_PATTERN.matcher(context.getText());
+    while (matcher.find()) {
+      inject(registrar, context, Angular2Language.INSTANCE,
+             new TextRange(matcher.start(1), matcher.end(1)),
+             INTERPOLATION);
+    }
   }
 
   @Nullable
@@ -80,7 +107,7 @@ public class Angular2Injector implements MultiHostInjector {
       return null;
     }
     if (!hostBinding) {
-      attributeName = StringUtil.trimStart(attributeName.toLowerCase(Locale.ENGLISH), "data-");
+      attributeName = Angular2AttributeNameParser.normalizeAttributeName(attributeName);
     }
     if ((attributeName.startsWith("(") && attributeName.endsWith(")"))
         || (!hostBinding && attributeName.startsWith("on-"))) {
@@ -135,7 +162,13 @@ public class Angular2Injector implements MultiHostInjector {
 
   private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context, @NotNull Language language,
                              @Nullable String extension) {
-    final TextRange range = ElementManipulators.getValueTextRange(context);
-    registrar.startInjecting(language, extension).addPlace(null, null, (PsiLanguageInjectionHost)context, range).doneInjecting();
+    inject(registrar, context, language, ElementManipulators.getValueTextRange(context), extension);
+  }
+
+  private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context, @NotNull Language language,
+                             @NotNull TextRange range, @Nullable String extension) {
+    registrar.startInjecting(language, extension)
+      .addPlace(null, null, (PsiLanguageInjectionHost)context, range)
+      .doneInjecting();
   }
 }
