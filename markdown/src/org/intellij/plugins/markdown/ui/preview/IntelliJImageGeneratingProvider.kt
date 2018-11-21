@@ -4,7 +4,6 @@ package org.intellij.plugins.markdown.ui.preview
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.Urls
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.findChildOfType
@@ -14,8 +13,6 @@ import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.html.TransparentInlineHolderProvider
 import org.intellij.markdown.html.entities.EntityConverter
 import org.intellij.markdown.parser.LinkMap
-import org.jetbrains.builtInWebServer.WebServerPathToFileManager
-import org.jetbrains.builtInWebServer.getBuiltInServerUrls
 import java.net.URI
 
 internal abstract class LinkGeneratingProvider(private val baseURI: URI?) : GeneratingProvider {
@@ -74,24 +71,7 @@ internal class IntelliJImageGeneratingProvider(linkMap: LinkMap, baseURI: URI?, 
       return destinationEx
     }
 
-    val url = Urls.parse(destinationEx, true)
-    if (url != null && url.scheme != null) {
-      //external URL
-      return destinationEx
-    }
-
-    try {
-      WebServerPathToFileManager.getInstance(project).getPathInfo(destinationEx)?.let {
-        val urls = getBuiltInServerUrls(it, project)
-        if (!urls.isEmpty()) {
-          return urls.first().toExternalForm()
-        }
-      }
-    }
-    catch (e: Throwable) {
-    }
-
-    return PreviewStaticServer.getAbsolutePathImageUrl(destinationEx)
+    return super.makeAbsoluteUrl(destinationEx)
   }
 
   override fun getRenderInfo(text: String, node: ASTNode): LinkGeneratingProvider.RenderInfo? {
