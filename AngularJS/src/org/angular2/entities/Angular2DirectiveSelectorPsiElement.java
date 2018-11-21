@@ -8,7 +8,6 @@ import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import icons.AngularJSIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,7 +96,7 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
   @Nullable
   @Override
   public Icon getIcon(boolean open) {
-    return isElementSelector() ? AllIcons.Nodes.Tag : AngularJSIcons.Attribute;
+    return isElementSelector() ? AllIcons.Nodes.Tag : AllIcons.Nodes.ObjectTypeAttribute;
   }
 
   public boolean isElementSelector() {
