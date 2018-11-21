@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.application.options;
 
 import com.intellij.application.options.CodeStyleAbstractPanel;
@@ -6,7 +7,6 @@ import com.intellij.application.options.codeStyle.CodeStyleSchemesModelListener;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.ui.components.JBLabel;
 import com.jetbrains.lang.dart.DartBundle;
@@ -19,6 +19,8 @@ import javax.swing.*;
 
 public class DartfmtCodeStylePanel extends CodeStyleAbstractPanel {
 
+  public static final String TAB_TITLE = "Dartfmt";
+
   private JPanel myMainPanel;
   private JCheckBox myDelegateToDartfmtCheckBox;
   private JBLabel myRightMarginLabel;
@@ -30,14 +32,12 @@ public class DartfmtCodeStylePanel extends CodeStyleAbstractPanel {
   @Override
   public void setModel(@NotNull CodeStyleSchemesModel model) {
     super.setModel(model);
-    if (model != null) {
-      model.addListener(new CodeStyleSchemesModelListener() {
-        @Override
-        public void afterCurrentSettingsChanged() {
-          updateRightMarginLabel();
-        }
-      });
-    }
+    model.addListener(new CodeStyleSchemesModelListener() {
+      @Override
+      public void afterCurrentSettingsChanged() {
+        updateRightMarginLabel();
+      }
+    });
   }
 
   private static DartCodeStyleSettings getDartCodeStyleSettings(@NotNull final CodeStyleSettings settings) {
@@ -46,7 +46,7 @@ public class DartfmtCodeStylePanel extends CodeStyleAbstractPanel {
 
   @Override
   protected String getTabTitle() {
-    return "Dartfmt";
+    return TAB_TITLE;
   }
 
   @Override
@@ -79,7 +79,7 @@ public class DartfmtCodeStylePanel extends CodeStyleAbstractPanel {
   }
 
   @Override
-  public void apply(@NotNull final CodeStyleSettings settings) throws ConfigurationException {
+  public void apply(@NotNull final CodeStyleSettings settings) {
     getDartCodeStyleSettings(settings).DELEGATE_TO_DARTFMT = myDelegateToDartfmtCheckBox.isSelected();
   }
 

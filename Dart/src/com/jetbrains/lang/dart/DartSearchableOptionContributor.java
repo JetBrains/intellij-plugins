@@ -1,8 +1,10 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
+import com.intellij.application.options.CodeStyleConfigurableWrapper;
 import com.intellij.ide.ui.search.SearchableOptionContributor;
 import com.intellij.ide.ui.search.SearchableOptionProcessor;
+import com.jetbrains.lang.dart.ide.application.options.DartfmtCodeStylePanel;
 import org.jetbrains.annotations.NotNull;
 
 public class DartSearchableOptionContributor extends SearchableOptionContributor {
@@ -19,6 +21,10 @@ public class DartSearchableOptionContributor extends SearchableOptionContributor
     processor.addOptions("dart " + DartBundle.message("dart.smartKeys.insertDefaultArgValues.text"), null,
                          "Dart: " + DartBundle.message("dart.smartKeys.insertDefaultArgValues.text"), "editor.preferences.smartKeys", null,
                          false);
+
+    processor.addOptions("Dart format style dartfmt", DartfmtCodeStylePanel.TAB_TITLE,
+                         "Use the dartfmt tool when formatting the whole file", CodeStyleConfigurableWrapper.getConfigurableId("Dart"),
+                         "Code Style > Dart", false);
 
     processor.addOptions("Dart SDK path", null,
                          "Dart SDK path", "dart.settings", null, false);
