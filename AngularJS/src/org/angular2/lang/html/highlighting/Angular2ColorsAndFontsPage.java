@@ -24,16 +24,16 @@ public class Angular2ColorsAndFontsPage implements ColorSettingsPage, DisplayPri
 
   static {
     ATTRS = new AttributesDescriptor[]{
-      new AttributesDescriptor("Two way binding `[()]`", NG_BANANA_BINDING_ATTR_NAME),
-      new AttributesDescriptor("Event binding `()`", NG_EVENT_BINDING_ATTR_NAME),
-      new AttributesDescriptor("Property binding `[]`", NG_PROPERTY_BINDING_ATTR_NAME),
-      new AttributesDescriptor("Structural directive binding `*`", NG_TEMPLATE_BINDINGS_ATTR_NAME),
-      new AttributesDescriptor("Interpolation delimiter", NG_INTERPOLATION_DELIMITER),
+      new AttributesDescriptor("Two way data binding ‘[(...)]’", NG_BANANA_BINDING_ATTR_NAME),
+      new AttributesDescriptor("Event binding ‘(event)’", NG_EVENT_BINDING_ATTR_NAME),
+      new AttributesDescriptor("Property binding ‘[property]’", NG_PROPERTY_BINDING_ATTR_NAME),
+      new AttributesDescriptor("Structural directive ‘*directive’", NG_TEMPLATE_BINDINGS_ATTR_NAME),
+      new AttributesDescriptor("Braces in interpolation", NG_INTERPOLATION_DELIMITER),
       new AttributesDescriptor("Plural expression", NG_EXPANSION_FORM),
-      new AttributesDescriptor("Plural expression comma", NG_EXPANSION_FORM_COMMA),
-      new AttributesDescriptor("Plural expression delimiter", NG_EXPANSION_FORM_DELIMITER),
+      new AttributesDescriptor("Comma in plural expression", NG_EXPANSION_FORM_COMMA),
+      new AttributesDescriptor("Braces in plural expression", NG_EXPANSION_FORM_DELIMITER),
       new AttributesDescriptor("Template expression", NG_EXPRESSION),
-      new AttributesDescriptor("Template reference variable `#`", NG_REFERENCE_ATTR_NAME),
+      new AttributesDescriptor("Template reference variable ‘#var’", NG_REFERENCE_ATTR_NAME),
     };
   }
 
