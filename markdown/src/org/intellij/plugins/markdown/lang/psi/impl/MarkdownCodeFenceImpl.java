@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.lang.psi.impl;
 
 import com.intellij.navigation.ItemPresentation;
@@ -113,25 +114,7 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
       @NotNull
       @Override
       public TextRange getRelevantTextRange() {
-        return getContentTextRange();
-      }
-
-      public TextRange getContentTextRange() {
-        final MarkdownCodeFenceContentImpl first = PsiTreeUtil.findChildOfType(myHost, MarkdownCodeFenceContentImpl.class);
-        if (first == null) {
-          return TextRange.EMPTY_RANGE;
-        }
-
-        MarkdownCodeFenceContentImpl last = null;
-        for (PsiElement child = myHost.getLastChild(); child != null; child = child.getPrevSibling()) {
-          if (child instanceof MarkdownCodeFenceContentImpl) {
-            last = ((MarkdownCodeFenceContentImpl)child);
-            break;
-          }
-        }
-        assert last != null;
-
-        return TextRange.create(first.getStartOffsetInParent(), last.getStartOffsetInParent() + last.getTextLength());
+        return getContentTextRange(myHost);
       }
 
       @Override
@@ -139,6 +122,25 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
         return false;
       }
     };
+  }
+
+  @NotNull
+  public static TextRange getContentTextRange(@NotNull final PsiElement context) {
+    final MarkdownCodeFenceContentImpl first = PsiTreeUtil.findChildOfType(context, MarkdownCodeFenceContentImpl.class);
+    if (first == null) {
+      return TextRange.EMPTY_RANGE;
+    }
+
+    MarkdownCodeFenceContentImpl last = null;
+    for (PsiElement child = context.getLastChild(); child != null; child = child.getPrevSibling()) {
+      if (child instanceof MarkdownCodeFenceContentImpl) {
+        last = ((MarkdownCodeFenceContentImpl)child);
+        break;
+      }
+    }
+    assert last != null;
+
+    return TextRange.create(first.getStartOffsetInParent(), last.getStartOffsetInParent() + last.getTextLength());
   }
 
   public static class Manipulator extends AbstractElementManipulator<MarkdownCodeFenceImpl> {
