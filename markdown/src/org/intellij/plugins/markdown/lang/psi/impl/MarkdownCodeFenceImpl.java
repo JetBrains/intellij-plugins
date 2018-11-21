@@ -114,7 +114,25 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
       @NotNull
       @Override
       public TextRange getRelevantTextRange() {
-        return getContentTextRange(myHost);
+        return getContentTextRange();
+      }
+
+      public TextRange getContentTextRange() {
+        final MarkdownCodeFenceContentImpl first = PsiTreeUtil.findChildOfType(myHost, MarkdownCodeFenceContentImpl.class);
+        if (first == null) {
+          return TextRange.EMPTY_RANGE;
+        }
+
+        MarkdownCodeFenceContentImpl last = null;
+        for (PsiElement child = myHost.getLastChild(); child != null; child = child.getPrevSibling()) {
+          if (child instanceof MarkdownCodeFenceContentImpl) {
+            last = ((MarkdownCodeFenceContentImpl)child);
+            break;
+          }
+        }
+        assert last != null;
+
+        return TextRange.create(first.getStartOffsetInParent(), last.getStartOffsetInParent() + last.getTextLength());
       }
 
       @Override
@@ -122,25 +140,6 @@ public class MarkdownCodeFenceImpl extends CompositePsiElement implements PsiLan
         return false;
       }
     };
-  }
-
-  @NotNull
-  public static TextRange getContentTextRange(@NotNull final PsiElement context) {
-    final MarkdownCodeFenceContentImpl first = PsiTreeUtil.findChildOfType(context, MarkdownCodeFenceContentImpl.class);
-    if (first == null) {
-      return TextRange.EMPTY_RANGE;
-    }
-
-    MarkdownCodeFenceContentImpl last = null;
-    for (PsiElement child = context.getLastChild(); child != null; child = child.getPrevSibling()) {
-      if (child instanceof MarkdownCodeFenceContentImpl) {
-        last = ((MarkdownCodeFenceContentImpl)child);
-        break;
-      }
-    }
-    assert last != null;
-
-    return TextRange.create(first.getStartOffsetInParent(), last.getStartOffsetInParent() + last.getTextLength());
   }
 
   public static class Manipulator extends AbstractElementManipulator<MarkdownCodeFenceImpl> {
