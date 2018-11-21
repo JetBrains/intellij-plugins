@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.StringRegistry;
@@ -126,11 +127,10 @@ public class AppTest extends AppTestBase {
     DesignerApplicationManager.getInstance().renderDocument(myModule, Tests.virtualToPsi(myProject, file));
     await();
   }
-  
+
   @Override
   protected void tearDown() throws Exception {
     try {
-      super.tearDown();
       if (getName().equals("testCloseAndOpenProject")) {
         callClientAssert("close");
       }
@@ -138,6 +138,7 @@ public class AppTest extends AppTestBase {
     finally {
       DesignerApplicationManager.getInstance().disposeApplication();
       StringRegistry.getInstance().reset();
+      super.tearDown();
     }
   }
 

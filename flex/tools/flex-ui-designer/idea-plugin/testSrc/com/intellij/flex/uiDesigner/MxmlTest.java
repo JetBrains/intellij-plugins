@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -177,7 +178,11 @@ public class MxmlTest extends MxmlTestBase {
 
   @Override
   protected void tearDown() throws Exception {
-    TestDocumentProblemManager.setExpectedProblems(null);
-    super.tearDown();
+    try {
+      TestDocumentProblemManager.setExpectedProblems(null);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 }
