@@ -9,7 +9,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.HintedReferenceHost;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
 import com.intellij.psi.search.LocalSearchScope;
@@ -31,7 +34,7 @@ import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClassType
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getApplicableDirectives;
 
 public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariableStub<JSVariable>, JSVariable>
-  implements Angular2HtmlReferenceVariable {
+  implements Angular2HtmlReferenceVariable, HintedReferenceHost {
 
   public Angular2HtmlReferenceVariableImpl(ASTNode node) {
     super(node);
@@ -120,5 +123,16 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   private Angular2HtmlReference getReferenceDefinitionAttribute() {
     return (Angular2HtmlReference)PsiTreeUtil.findFirstParent(
       this, Angular2HtmlReference.class::isInstance);
+  }
+
+  @NotNull
+  @Override
+  public PsiReference[] getReferences(@NotNull PsiReferenceService.Hints hints) {
+    return super.getReferences();
+  }
+
+  @Override
+  public boolean shouldAskParentForReferences(@NotNull PsiReferenceService.Hints hints) {
+    return false;
   }
 }

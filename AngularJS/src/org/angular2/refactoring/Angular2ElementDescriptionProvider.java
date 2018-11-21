@@ -1,0 +1,50 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angular2.refactoring;
+
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.psi.ElementDescriptionLocation;
+import com.intellij.psi.ElementDescriptionProvider;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
+import com.intellij.usageView.UsageViewLongNameLocation;
+import com.intellij.usageView.UsageViewTypeLocation;
+import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
+import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class Angular2ElementDescriptionProvider implements ElementDescriptionProvider {
+
+  @Nullable
+  @Override
+  public String getElementDescription(@NotNull PsiElement element, @NotNull ElementDescriptionLocation location) {
+    String type = getTypeDescription(element);
+    if (type != null) {
+      if (location instanceof UsageViewTypeLocation) {
+        return type;
+      }
+      if (location instanceof UsageViewLongNameLocation) {
+        return type + " " + ((PsiNamedElement)element).getName();
+      }
+      return ((PsiNamedElement)element).getName();
+    }
+    return null;
+  }
+
+  private static String getTypeDescription(@NotNull PsiElement element) {
+    if (element instanceof Angular2DirectiveSelectorPsiElement) {
+      return ((Angular2DirectiveSelectorPsiElement)element).isElementSelector()
+             ? "element selector"
+             : "attribute selector";
+    }
+    if (element instanceof JSImplicitElement
+        && Angular2IndexingHandler.isPipe((JSImplicitElement)element)) {
+      return "pipe";
+    }
+    if (element instanceof Angular2HtmlReferenceVariable) {
+      return "template reference variable";
+    }
+    return null;
+  }
+}
