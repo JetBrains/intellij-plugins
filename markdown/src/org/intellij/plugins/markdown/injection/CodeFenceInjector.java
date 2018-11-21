@@ -33,8 +33,14 @@ public class CodeFenceInjector implements MultiHostInjector {
     }
 
     registrar.startInjecting(language);
-    final TextRange rangeInHost = MarkdownCodeFenceImpl.getContentTextRange(context);
-    registrar.addPlace(null, null, ((MarkdownCodeFenceImpl)context), rangeInHost);
+    final List<MarkdownCodeFenceContentImpl> list = PsiTreeUtil.getChildrenOfTypeAsList(context, MarkdownCodeFenceContentImpl.class);
+    for (int i = 0; i < list.size(); i++) {
+      final MarkdownCodeFenceContentImpl content = list.get(i);
+      final boolean includeEol = (i + 1 < list.size());
+      final TextRange rangeInHost = TextRange.from(content.getStartOffsetInParent(),
+                                                   content.getTextLength() + (includeEol ? 1 : 0));
+      registrar.addPlace(null, null, ((MarkdownCodeFenceImpl)context), rangeInHost);
+    }
     registrar.doneInjecting();
   }
 
