@@ -5,6 +5,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.lang.javascript.JSInjectionBracesUtil;
 import com.intellij.lang.javascript.inject.JSFormattableInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl;
@@ -89,22 +90,9 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
   private static void injectInterpolations(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-    final String interpolationStart = "{{";
-    final String interpolationEnd = "}}";
-    final String text = context.getText();
-
-    int index = -1;
-    while ((index = text.indexOf(interpolationStart, index)) >= 0) {
-      int end = text.indexOf(interpolationEnd, index + interpolationStart.length());
-      if (end > 0) {
-        inject(registrar, context, Angular2Language.INSTANCE,
-               new TextRange(index + interpolationStart.length(), end),
-               INTERPOLATION);
-        index = end + interpolationEnd.length();
-      } else {
-        break;
-      }
-    }
+    JSInjectionBracesUtil.injectInXmlTextByDelimiters(registrar, context, Angular2Language.INSTANCE,
+                                                      JSInjectionBracesUtil.DEFAULT_START, JSInjectionBracesUtil.DEFAULT_END,
+                                                      INTERPOLATION);
   }
 
   @Nullable
@@ -168,11 +156,7 @@ public class Angular2Injector implements MultiHostInjector {
 
   private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context, @NotNull Language language,
                              @Nullable String extension) {
-    inject(registrar, context, language, ElementManipulators.getValueTextRange(context), extension);
-  }
-
-  private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context, @NotNull Language language,
-                             @NotNull TextRange range, @Nullable String extension) {
+    TextRange range = ElementManipulators.getValueTextRange(context);
     registrar.startInjecting(language, extension)
       .addPlace(null, null, (PsiLanguageInjectionHost)context, range)
       .doneInjecting();
