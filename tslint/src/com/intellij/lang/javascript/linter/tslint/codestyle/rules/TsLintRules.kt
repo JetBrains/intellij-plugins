@@ -42,7 +42,10 @@ val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSp
                                                            AlignFunctionCallParametersRule(),
                                                            MaxBlankLinesRule(),
                                                            WhitespaceAtEndOfLineRule(),
-                                                           SpaceAtLineCommentStartRule()
+                                                           SpaceAtLineCommentStartRule(),
+                                                           MergeImportsFromSameModuleRule(),
+                                                           FilenameConventionRule(),
+                                                           ForceCurlyBracesRule()
 )
 
 class ImportDestructuringSpacingRule : TsLintSimpleRule<Boolean>("import-destructuring-spacing") {
@@ -622,5 +625,74 @@ class SpaceAtLineCommentStartRule : TsLintSimpleRule<Boolean>("comment-format") 
   override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
     languageSettings.LINE_COMMENT_ADD_SPACE = value
     languageSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
+  }
+}
+
+class MergeImportsFromSameModuleRule : TsLintSimpleRule<Boolean>("no-duplicate-imports") {
+  override fun getConfigValue(option: TslintJsonOption): Boolean? = true
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return codeStyleSettings.isMergeImports
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    codeStyleSettings.isMergeImports = value
+  }
+}
+
+class FilenameConventionRule : TsLintSimpleRule<JSCodeStyleSettings.JSFileNameStyle>("file-name-casing") {
+  override fun getConfigValue(option: TslintJsonOption): JSCodeStyleSettings.JSFileNameStyle? {
+    val string = option.getStringValues().elementAtOrNull(0)
+    if (string == "camel-case") {
+      return JSCodeStyleSettings.JSFileNameStyle.CAMEL_CASE
+    }
+    if (string == "pascal-case") {
+      return JSCodeStyleSettings.JSFileNameStyle.PASCAL_CASE
+    }
+    if (string == "kebab-case") {
+      return JSCodeStyleSettings.JSFileNameStyle.LISP_CASE
+    }
+    return null
+
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings,
+                                codeStyleSettings: JSCodeStyleSettings): JSCodeStyleSettings.JSFileNameStyle {
+    return codeStyleSettings.FILE_NAME_STYLE
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings,
+                        codeStyleSettings: JSCodeStyleSettings,
+                        value: JSCodeStyleSettings.JSFileNameStyle) {
+    codeStyleSettings.FILE_NAME_STYLE = value
+  }
+}
+
+class ForceCurlyBracesRule : TsLintSimpleRule<Int>("curly") {
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Int {
+    val ifBraceForce = languageSettings.IF_BRACE_FORCE
+    if (languageSettings.FOR_BRACE_FORCE == ifBraceForce &&
+        languageSettings.WHILE_BRACE_FORCE == ifBraceForce &&
+        languageSettings.DOWHILE_BRACE_FORCE == ifBraceForce) {
+      return ifBraceForce
+    }
+    return -1;
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Int) {
+    languageSettings.IF_BRACE_FORCE = value
+    languageSettings.FOR_BRACE_FORCE = value
+    languageSettings.WHILE_BRACE_FORCE = value
+    languageSettings.DOWHILE_BRACE_FORCE = value
+  }
+
+  override fun getConfigValue(option: TslintJsonOption): Int? {
+    val values = option.getStringValues()
+    if (values.contains("as-needed")) {
+      return CommonCodeStyleSettings.DO_NOT_FORCE
+    }
+    if (values.contains("ignore-same-line")){
+      return CommonCodeStyleSettings.FORCE_BRACES_IF_MULTILINE
+    }
+    return CommonCodeStyleSettings.FORCE_BRACES_ALWAYS
   }
 }
