@@ -4,8 +4,6 @@ PostCSS File:ApplyWithoutIdent.pcss
       PsiElement(CSS_RULESET_LIST)
         PsiElement(CSS_APPLY)
           PsiElement(CSS_APPLY_SYM)('@apply')
-          PsiErrorElement:an identifier expected
-            <empty list>
         PsiErrorElement:unexpected token
           <empty list>
         PsiWhiteSpace(' ')
