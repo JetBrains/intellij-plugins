@@ -1,3 +1,7 @@
+/*
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+ */
+
 package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.ExecutionException;
@@ -47,7 +51,7 @@ public class KarmaJsSourcesLocator {
       return new File(pluginBaseDir, JS_REPORTER_NAME);
     }
     if (ApplicationManager.getApplication().isInternal()) {
-      String srcDir = jarPath.replace('\\', '/').replace("/out/classes/production/intellij.karma", "/contrib/js-karma/src");
+      String srcDir = jarPath.replace('\\', '/').replace("/out/classes/production/intellij.karma", "/contrib/js-karma/resources");
       if (new File(srcDir).isDirectory()) {
         jarPath = srcDir;
       }
