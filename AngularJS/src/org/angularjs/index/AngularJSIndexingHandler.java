@@ -715,7 +715,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static boolean processTemplateUrlProperty(@NotNull JSProperty property, @NotNull JSElementIndexingData data) {
     JSExpression value;
     if ((value = property.getValue()) instanceof JSLiteralExpression
-        && ((JSLiteralExpression)value).isQuotedLiteral()
         && isControllerProperty(property)) {
       return indexComponentTemplateRef(property, unquote(value), data);
     }
@@ -725,7 +724,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static boolean indexComponentTemplateRef(@NotNull JSProperty property,
                                                    @Nullable String url,
                                                    @NotNull JSElementIndexingData data) {
-    if (StringUtil.isEmpty(url)) {
+    if (StringUtil.isEmptyOrSpaces(url)) {
       return false;
     }
     String fileName = new File(url).getName();
