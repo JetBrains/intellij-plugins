@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
+import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.HintedReferenceHost;
 import com.intellij.psi.PsiElement;
@@ -28,7 +29,6 @@ import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.lang.javascript.psi.types.TypeScriptTypeParser.buildTypeFromClass;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClassType;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getApplicableDirectives;
@@ -64,7 +64,9 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
           for (String exportAs : directive.getExportAsList()) {
             if (exportName.equals(exportAs)) {
               return doIfNotNull(directive.getTypeScriptClass(),
-                                 clazz -> buildTypeFromClass(clazz, false));
+                                 clazz -> clazz.getQualifiedName() != null
+                                          ? JSNamedTypeFactory.createExplicitlyDeclaredType(clazz.getQualifiedName(), clazz)
+                                          : null);
             }
           }
         }
