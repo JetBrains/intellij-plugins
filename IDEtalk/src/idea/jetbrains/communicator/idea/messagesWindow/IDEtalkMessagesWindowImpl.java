@@ -1,17 +1,5 @@
 /*
- * Copyright 2000-2009 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
  */
 package jetbrains.communicator.idea.messagesWindow;
 
@@ -28,7 +16,7 @@ import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.content.*;
-import icons.IdetalkCoreIcons;
+import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.IDEtalkProperties;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.dispatcher.LocalMessageDispatcher;
@@ -312,7 +300,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     public void actionPerformed(ActionEvent e) {
       final Icon blinkingIcon = myDispatcher.getBlinkingIcon();
       if (blinkingIcon == null) {
-        myToolWindow.setIcon(IdetalkCoreIcons.IdeTalk.User_toolwindow);
+        myToolWindow.setIcon(IdeTalkCoreIcons.IdeTalk.User_toolwindow);
       }
       else {
         if (System.getProperty(IDEtalkProperties.IDEA_IDE_TALK_NO_TOOLBAR_BLINK) == null) {
@@ -323,7 +311,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
           myToolWindow.setIcon(new EmptyIcon(13, 13));
         }
         else {
-          myToolWindow.setIcon(new IconSizeWrapper(IdetalkCoreIcons.IdeTalk.User_toolwindow, blinkingIcon));
+          myToolWindow.setIcon(new IconSizeWrapper(IdeTalkCoreIcons.IdeTalk.User_toolwindow, blinkingIcon));
         }
       }
     }

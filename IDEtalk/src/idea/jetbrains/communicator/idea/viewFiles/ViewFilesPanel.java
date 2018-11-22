@@ -1,4 +1,6 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+ */
 package jetbrains.communicator.idea.viewFiles;
 
 import com.intellij.icons.AllIcons;
@@ -9,7 +11,6 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.treeStructure.Tree;
-import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.ProjectsData;
@@ -242,7 +243,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
     @Override
     protected Component renderIn(JLabel label, boolean selected, boolean hasFocus) {
       if (NON_PROJECT_NODE.equals(myName)) {
-        label.setIcon(IdetalkCoreIcons.Nodes.Unknown);
+        label.setIcon(AllIcons.Nodes.Unknown);
       }
       else {
         label.setIcon(AllIcons.Nodes.IdeaProject);
@@ -287,7 +288,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
         FileType fileType = myFileTypeManager.getFileTypeByExtension(getExtension());
         return fileType.getIcon();
       }
-      return IdetalkCoreIcons.Nodes.Unknown;
+      return AllIcons.Nodes.Unknown;
     }
 
     private String getExtension() {

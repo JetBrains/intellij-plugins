@@ -1,10 +1,12 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+ */
 package jetbrains.communicator.idea;
 
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import icons.IdetalkCoreIcons;
+import com.intellij.util.ui.UIUtil;
+import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.util.TreeUtils;
 import jetbrains.communicator.util.UserActionWithValue;
@@ -20,13 +22,13 @@ public class UserTreeRenderer extends ColoredTreeCellRenderer {
 
   public UserTreeRenderer(JTree tree) {
     myTree = tree;
-    setFont(com.intellij.util.ui.UIUtil.getLabelFont());
+    setFont(UIUtil.getLabelFont());
   }
 
   @Override
   public void updateUI() {
     super.updateUI();
-    setFont(com.intellij.util.ui.UIUtil.getLabelFont());
+    setFont(UIUtil.getLabelFont());
   }
 
   @Override
@@ -58,7 +60,7 @@ public class UserTreeRenderer extends ColoredTreeCellRenderer {
 
 
     if (TreeUtils.getUserObject(value) instanceof String) { // group
-      setIcon(IdetalkCoreIcons.Nodes.Group_close);
+      setIcon(IdeTalkCoreIcons.Nodes.Group_close);
 
       String group = value.toString();
       append(group, getGroupAttributes(group));
