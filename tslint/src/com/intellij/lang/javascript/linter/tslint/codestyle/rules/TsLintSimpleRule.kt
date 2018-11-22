@@ -10,33 +10,32 @@ abstract class TsLintSimpleRule<T>(val optionId: String) : TsLintRule {
                            languageSettings: CommonCodeStyleSettings,
                            codeStyleSettings: JSCodeStyleSettings,
                            config: TsLintConfigWrapper): Boolean {
-    if (!hasOption(config)) return false
+    val option = config.getOption(optionId)
+    if (option == null || !option.isEnabled()) return false
 
-    val configValue = getConfigValue(config)
+    val configValue = getConfigValue(option)
     return configValue != null && getSettingsValue(languageSettings, codeStyleSettings) != configValue
   }
-
-  abstract fun getConfigValue(config: TsLintConfigWrapper): T?
 
   override fun apply(project: Project,
                      languageSettings: CommonCodeStyleSettings,
                      codeStyleSettings: JSCodeStyleSettings,
                      config: TsLintConfigWrapper) {
-    val value = getConfigValue(config) ?: return
+    val option = config.getOption(optionId)
+    if (option == null) return
+    val value = getConfigValue(option) ?: return
 
     setValue(languageSettings, codeStyleSettings, value)
   }
 
-  open fun hasOption(config: TsLintConfigWrapper): Boolean = config.getOption(optionId)?.isEnabled() ?: false
+  protected abstract fun getConfigValue(option: TslintJsonOption): T?
 
-  abstract fun getSettingsValue(languageSettings: CommonCodeStyleSettings,
-                                codeStyleSettings: JSCodeStyleSettings): T
+  abstract fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): T
 
   @Suppress("UNCHECKED_CAST")
   fun setDirectValue(languageSettings: CommonCodeStyleSettings,
                      codeStyleSettings: JSCodeStyleSettings, value: Any?) {
     setValue(languageSettings, codeStyleSettings, value as T)
   }
-  abstract fun setValue(languageSettings: CommonCodeStyleSettings,
-                        codeStyleSettings: JSCodeStyleSettings, value: T)
+  abstract fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: T)
 }
