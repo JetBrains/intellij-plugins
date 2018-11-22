@@ -102,10 +102,9 @@ class SemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
     val option = config.getOption(optionId) ?: return null
 
     val stringValues = option.getStringValues()
-    if (stringValues.contains("always")) return true
     if (stringValues.contains("never")) return false
 
-    return null
+    return true
   }
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
@@ -123,10 +122,9 @@ open class ForceSemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
     val option = config.getOption(optionId) ?: return null
 
     val stringValues = option.getStringValues()
-    if (stringValues.contains("always")) return true
     if (stringValues.contains("never")) return true
 
-    return null
+    return true
   }
 
 
