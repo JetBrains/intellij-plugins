@@ -179,4 +179,11 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
     });
   }
+
+  public void testTemplateReferencedThroughImportStatement() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.configureByFiles("event_private.html", "package.json", "event_private.import.ts");
+      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+    });
+  }
 }

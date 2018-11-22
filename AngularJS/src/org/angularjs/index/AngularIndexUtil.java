@@ -1,10 +1,15 @@
 package org.angularjs.index;
 
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.ecmascript6.TypeScriptResolveProcessor;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
+import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
+import com.intellij.lang.javascript.psi.resolve.ResolveResultSink;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
@@ -29,6 +34,7 @@ import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.psi.util.ParameterizedCachedValueProvider;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Function;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -38,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
@@ -45,7 +52,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 62;
+  public static final int BASE_VERSION = 63;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
@@ -170,13 +177,37 @@ public class AngularIndexUtil {
   public static boolean hasFileReference(@NotNull PsiElement element, @NotNull PsiFile file) {
     VirtualFile vf = file.getOriginalFile().getViewProvider().getVirtualFile();
     for (PsiReference ref : element.getReferences()) {
-      PsiElement resolvedFile = ref.resolve();
-      if (resolvedFile instanceof PsiFile
-          && ((PsiFile)resolvedFile).getOriginalFile().getViewProvider().getVirtualFile().equals(vf)) {
+      PsiElement resolvedElement = ref.resolve();
+      PsiFile resolvedFile = null;
+      if (resolvedElement instanceof PsiFile) {
+        resolvedFile = (PsiFile)resolvedElement;
+      }
+      else if (resolvedElement instanceof ES6ImportedBinding) {
+        for (PsiElement importedElement : ((ES6ImportedBinding)resolvedElement).findReferencedElements()) {
+          if (importedElement instanceof PsiFile) {
+            resolvedFile = (PsiFile)importedElement;
+            break;
+          }
+        }
+      }
+      if (resolvedFile != null
+          && resolvedFile.getOriginalFile().getViewProvider().getVirtualFile().equals(vf)) {
         return true;
       }
     }
     return false;
+  }
+
+  @NotNull
+  public static List<PsiElement> resolveLocally(@NotNull JSReferenceExpression ref) {
+    final TypeScriptResolveProcessor<ResolveResultSink> localProcessor =
+      new TypeScriptResolveProcessor<>(ref.getReferenceName(), ref.getContainingFile(), ref);
+    if (ref.getQualifier() == null) {
+      localProcessor.setToProcessHierarchy(false);
+      JSReferenceExpressionImpl.doProcessLocalDeclarations(ref, null, localProcessor,
+                                                           false, false, true, null);
+    }
+    return ObjectUtils.notNull(localProcessor.getResults(), Collections::emptyList);
   }
 
   public static String convertRestrictions(final Project project, String restrictions) {
