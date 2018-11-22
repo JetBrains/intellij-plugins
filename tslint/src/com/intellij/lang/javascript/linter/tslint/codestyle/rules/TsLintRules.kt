@@ -35,7 +35,7 @@ val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSp
 )
 
 class ImportDestructuringSpacingRule : TsLintSimpleRule<Boolean>("import-destructuring-spacing") {
-  override fun getConfigValue(config: TsLintConfigWrapper): Boolean = true
+  override fun getConfigValue(option: TslintJsonOption): Boolean = true
 
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings,
                                 codeStyleSettings: JSCodeStyleSettings
@@ -49,9 +49,7 @@ class ImportDestructuringSpacingRule : TsLintSimpleRule<Boolean>("import-destruc
 }
 
 class QuotemarkRule : TsLintSimpleRule<String>("quotemark") {
-  override fun getConfigValue(config: TsLintConfigWrapper): String? {
-    val option = config.getOption(optionId) ?: return null
-
+  override fun getConfigValue(option: TslintJsonOption): String? {
     val stringValues = option.getStringValues()
     if (stringValues.contains("single")) return "'"
     if (stringValues.contains("double")) return "\""
@@ -72,9 +70,7 @@ class QuotemarkRule : TsLintSimpleRule<String>("quotemark") {
 }
 
 class ForceQuotemarkRule : TsLintSimpleRule<Boolean>("quotemark") {
-  override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
-    val option = config.getOption(optionId) ?: return null
-
+  override fun getConfigValue(option: TslintJsonOption): Boolean? {
     val stringValues = option.getStringValues()
     if (stringValues.contains("avoid-escape")) return null
 
@@ -98,9 +94,7 @@ class ForceQuotemarkRule : TsLintSimpleRule<Boolean>("quotemark") {
 }
 
 class SemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
-  override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
-    val option = config.getOption(optionId) ?: return null
-
+  override fun getConfigValue(option: TslintJsonOption): Boolean? {
     val stringValues = option.getStringValues()
     if (stringValues.contains("never")) return false
 
@@ -118,9 +112,7 @@ class SemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
 }
 
 open class ForceSemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
-  override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
-    val option = config.getOption(optionId) ?: return null
-
+  override fun getConfigValue(option: TslintJsonOption): Boolean? {
     val stringValues = option.getStringValues()
     if (stringValues.contains("never")) return true
 
@@ -139,8 +131,7 @@ open class ForceSemicolonRule : TsLintSimpleRule<Boolean>("semicolon") {
 
 abstract class MergedArrayRule(id: String) : TsLintSimpleRule<Boolean>(id) {
 
-  override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
-    val option = config.getOption(optionId) ?: return null
+  override fun getConfigValue(option: TslintJsonOption): Boolean? {
     val stringValues = option.getStringValues()
 
     if (stringValues.contains(getCode())) return defaultValue()
@@ -195,8 +186,7 @@ abstract class FunctionSpacesRule : TsLintSimpleRule<Boolean>("space-before-func
   val ALWAYS: String = "always"
   val NEVER: String = "never"
 
-  override fun getConfigValue(config: TsLintConfigWrapper): Boolean? {
-    val option = config.getOption(optionId) ?: return null
+  override fun getConfigValue(option: TslintJsonOption): Boolean? {
     val stringValues = option.getStringValues()
     if (stringValues.count() == 1) {
       if (stringValues.contains(ALWAYS)) {
@@ -427,8 +417,7 @@ class WhitespaceImportsRule : MergedArrayRule("whitespace") {
 }
 
 class IndentRule : TsLintSimpleRule<String>("indent") {
-  override fun getConfigValue(config: TsLintConfigWrapper): String? {
-    val option = config.getOption(optionId) ?: return null
+  override fun getConfigValue(option: TslintJsonOption): String? {
     val stringValues = option.getStringValues()
 
     if (stringValues.contains("spaces")) return "spaces"
@@ -459,8 +448,7 @@ class IndentRule : TsLintSimpleRule<String>("indent") {
 }
 
 class MaxLineLengthRule : TsLintSimpleRule<Int>("max-line-length") {
-  override fun getConfigValue(config: TsLintConfigWrapper): Int? {
-    val option = config.getOption(optionId) ?: return null
+  override fun getConfigValue(option: TslintJsonOption): Int? {
     return option.getNumberValue()
   }
 
@@ -475,8 +463,7 @@ class MaxLineLengthRule : TsLintSimpleRule<Int>("max-line-length") {
 }
 
 class ImportBlacklistRule : TsLintSimpleRule<Collection<String>>("import-blacklist") {
-  override fun getConfigValue(config: TsLintConfigWrapper): Collection<String>? {
-    val option = config.getOption(optionId) ?: return null
+  override fun getConfigValue(option: TslintJsonOption): Collection<String>? {
     if (!option.isEnabled()) return null
 
     val stringValues = option.getStringValues()
