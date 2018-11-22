@@ -26,14 +26,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
 
 public class Angular2Injector implements MultiHostInjector {
-
-  private static final Pattern INTERPOLATION_PATTERN = Pattern.compile("\\{\\{(.*?)}}");
 
   @NotNull
   @Override
@@ -93,11 +89,21 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
   private static void injectInterpolations(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-    Matcher matcher = INTERPOLATION_PATTERN.matcher(context.getText());
-    while (matcher.find()) {
-      inject(registrar, context, Angular2Language.INSTANCE,
-             new TextRange(matcher.start(1), matcher.end(1)),
-             INTERPOLATION);
+    final String interpolationStart = "{{";
+    final String interpolationEnd = "}}";
+    final String text = context.getText();
+
+    int index = -1;
+    while ((index = text.indexOf(interpolationStart, index)) >= 0) {
+      int end = text.indexOf(interpolationEnd, index + interpolationStart.length());
+      if (end > 0) {
+        inject(registrar, context, Angular2Language.INSTANCE,
+               new TextRange(index + interpolationStart.length(), end),
+               INTERPOLATION);
+        index = end + interpolationEnd.length();
+      } else {
+        break;
+      }
     }
   }
 
