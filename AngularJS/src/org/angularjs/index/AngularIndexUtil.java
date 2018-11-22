@@ -2,17 +2,15 @@ package org.angularjs.index;
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.ecmascript6.TypeScriptResolveProcessor;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
-import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.ResolveResultSink;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.NoAccessDuringPsiEvents;
@@ -34,7 +32,6 @@ import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.psi.util.ParameterizedCachedValueProvider;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Function;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -200,14 +197,10 @@ public class AngularIndexUtil {
 
   @NotNull
   public static List<PsiElement> resolveLocally(@NotNull JSReferenceExpression ref) {
-    final TypeScriptResolveProcessor<ResolveResultSink> localProcessor =
-      new TypeScriptResolveProcessor<>(ref.getReferenceName(), ref.getContainingFile(), ref);
-    if (ref.getQualifier() == null) {
-      localProcessor.setToProcessHierarchy(false);
-      JSReferenceExpressionImpl.doProcessLocalDeclarations(ref, null, localProcessor,
-                                                           false, false, true, null);
+    if (ref.getQualifier() == null && ref.getReferenceName() != null) {
+      return JSStubBasedPsiTreeUtil.resolveLocallyWithMergedResults(ref.getReferenceName(), ref);
     }
-    return ObjectUtils.notNull(localProcessor.getResults(), Collections::emptyList);
+    return Collections.emptyList();
   }
 
   public static String convertRestrictions(final Project project, String restrictions) {
