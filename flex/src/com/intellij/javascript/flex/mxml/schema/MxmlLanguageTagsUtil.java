@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.daemon.IdeValidationHost;
@@ -124,10 +125,6 @@ public class MxmlLanguageTagsUtil {
     if (parentTag == null || !(parentTag.getParent() instanceof XmlDocument) || tag != parentTag.getSubTags()[0]) {
       addErrorMessage(tag, JSBundle.message("javascript.validation.tag.must.be.first.child.of.root.tag", tag.getName()), host);
       return;
-    }
-
-    for (XmlAttribute attribute : tag.getAttributes()) {
-      addErrorMessage(attribute, XmlErrorMessages.message("attribute.is.not.allowed.here", attribute.getName()), host);
     }
 
     for (XmlTag subTag : tag.getSubTags()) {
