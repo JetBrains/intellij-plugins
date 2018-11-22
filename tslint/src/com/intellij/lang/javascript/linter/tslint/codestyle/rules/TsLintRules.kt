@@ -1,8 +1,10 @@
 package com.intellij.lang.javascript.linter.tslint.codestyle.rules
 
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
+import com.intellij.util.LineSeparator
 
 val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSpacingRule(),
                                                            QuotemarkRule(),
@@ -31,7 +33,15 @@ val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSp
                                                            WhitespaceImportsRule(),
                                                            MaxLineLengthRule(),
                                                            ImportBlacklistRule(),
-                                                           IndentRule()
+                                                           SortedImportPartsRule(),
+                                                           SortedImportPathsRule(),
+                                                           IndentRule(),
+                                                           LinebreakStyleRule(),
+                                                           NewlineAtEndOfFileRule(),
+                                                           AlignFunctionDeclarationParametersRule(),
+                                                           AlignFunctionCallParametersRule(),
+                                                           MaxBlankLinesRule(),
+                                                           WhitespaceAtEndOfLineRule()
 )
 
 class ImportDestructuringSpacingRule : TsLintSimpleRule<Boolean>("import-destructuring-spacing") {
@@ -406,7 +416,7 @@ class WhitespaceCommaRule : MergedArrayRule("whitespace") {
 class WhitespaceImportsRule : MergedArrayRule("whitespace") {
   override fun getCode(): String = "check-module"
   override fun defaultValue(): Boolean = true
-  
+
   override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
     return codeStyleSettings.SPACES_WITHIN_IMPORTS
   }
@@ -480,5 +490,119 @@ class ImportBlacklistRule : TsLintSimpleRule<Collection<String>>("import-blackli
   override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Collection<String>) {
     codeStyleSettings.BLACKLIST_IMPORTS = StringUtil.join(value, ",")
   }
+}
 
+class SortedImportPartsRule : TsLintSimpleRule<Boolean>("ordered-imports") {
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return codeStyleSettings.IMPORT_SORT_MEMBERS
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    codeStyleSettings.IMPORT_SORT_MEMBERS = value
+  }
+
+  override fun getConfigValue(option: TslintJsonOption): Boolean? {
+    return option.getStringMapValue()["named-imports-order"] != "any"
+  }
+}
+
+class SortedImportPathsRule : TsLintSimpleRule<Boolean>("ordered-imports") {
+  override fun getConfigValue(option: TslintJsonOption): Boolean? {
+    return option.getStringMapValue()["import-sources-order"] != "any"
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return codeStyleSettings.IMPORT_SORT_MODULE_NAME
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    codeStyleSettings.IMPORT_SORT_MODULE_NAME = value
+  }
+}
+
+class LinebreakStyleRule : TsLintSimpleRule<String>("linebreak-style") {
+  override fun getConfigValue(option: TslintJsonOption): String? {
+    val values = option.getStringValues()
+    if (values.contains("CRLF")) {
+      return LineSeparator.CRLF.separatorString
+    }
+    if (values.contains("LF")) {
+      return LineSeparator.LF.separatorString
+    }
+    return null
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): String {
+    return languageSettings.rootSettings.lineSeparator
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: String) {
+    languageSettings.rootSettings.LINE_SEPARATOR = value
+  }
+}
+
+class NewlineAtEndOfFileRule : TsLintSimpleRule<Boolean>("eofline") {
+  override fun getConfigValue(option: TslintJsonOption): Boolean? {
+    return true
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return EditorSettingsExternalizable.getInstance().isEnsureNewLineAtEOF
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    EditorSettingsExternalizable.getInstance().isEnsureNewLineAtEOF = value
+  }
+}
+
+class AlignFunctionDeclarationParametersRule : MergedArrayRule("align") {
+  override fun getCode(): String = "parameters"
+  override fun defaultValue(): Boolean = true
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return languageSettings.ALIGN_MULTILINE_PARAMETERS
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    languageSettings.ALIGN_MULTILINE_PARAMETERS = value
+  }
+}
+
+class AlignFunctionCallParametersRule : MergedArrayRule("align") {
+  override fun getCode(): String = "arguments"
+  override fun defaultValue(): Boolean = true
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return languageSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    languageSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS = value
+  }
+}
+
+class MaxBlankLinesRule : TsLintSimpleRule<Int>("no-consecutive-blank-lines") {
+  override fun getConfigValue(option: TslintJsonOption): Int? {
+    return option.getNumberValue() ?: 1
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Int {
+    return languageSettings.KEEP_BLANK_LINES_IN_CODE
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Int) {
+    languageSettings.KEEP_BLANK_LINES_IN_CODE = value
+  }
+}
+
+class WhitespaceAtEndOfLineRule : TsLintSimpleRule<Boolean>("no-trailing-whitespace") {
+  override fun getConfigValue(option: TslintJsonOption): Boolean? = true
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return EditorSettingsExternalizable.getInstance().stripTrailingSpaces != EditorSettingsExternalizable.STRIP_TRAILING_SPACES_NONE
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    EditorSettingsExternalizable.getInstance().stripTrailingSpaces = EditorSettingsExternalizable.STRIP_TRAILING_SPACES_WHOLE
+  }
 }
