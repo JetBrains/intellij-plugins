@@ -19,7 +19,7 @@ package com.intellij.coldFusion.UI.editorActions.typedHandlers;
 import com.intellij.openapi.editor.Document;
 
 /**
- * @by anonymous
+ * @author anonymous
  */
 public class DocumentUtils {
   static char getCharAt(Document document, int offset) {
