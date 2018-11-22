@@ -1,6 +1,9 @@
 package org.angularjs.index;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.ecmascript6.psi.ES6FromClause;
+import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
@@ -55,6 +58,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -74,6 +79,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String COMPONENT = "component";
   public static final String BINDINGS = "bindings";
   public static final String TEMPLATE_URL = "templateUrl";
+  public static final String TEMPLATE = "template";
   public static final String CONTROLLER_AS = "controllerAs";
   public static final String MODULE = "module";
   public static final String FILTER = "filter";
@@ -284,6 +290,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (name == null) return outData;
     JSElementIndexingData localOutData;
     if (TEMPLATE_URL.equals(name) && processTemplateUrlProperty(
+      property, localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData))) {
+      return localOutData;
+    }
+    if (TEMPLATE.equals(name) && processTemplateProperty(
       property, localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData))) {
       return localOutData;
     }
@@ -680,26 +690,51 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return ((JSLiteralExpression)value).getStringValue();
   }
 
-  private static boolean processTemplateUrlProperty(JSProperty property, JSElementIndexingData data) {
+  private static boolean isControllerProperty(@NotNull JSProperty property) {
     PsiElement parent = property.getParent();
-    if (!(parent instanceof JSObjectLiteralExpression) ||
-        ((JSObjectLiteralExpression)parent).findProperty(CONTROLLER) == null) {
-      return false;
-    }
-    JSExpression value = property.getValue();
-    if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
-      String url = unquote(value);
-      if (url != null) {
-        String fileName = new File(url).getName();
-        data.addImplicitElement(
-          new JSImplicitElementImpl.Builder(fileName, property)
-            .setTypeString("TU;;;")
-            .setUserString(Objects.requireNonNull(INDEXES.getKeysByValue(AngularTemplateUrlIndex.KEY)).get(0))
-            .toImplicitElement());
-        return true;
+    return (parent instanceof JSObjectLiteralExpression) &&
+           ((JSObjectLiteralExpression)parent).findProperty(CONTROLLER) != null;
+  }
+
+  private static boolean processTemplateProperty(@NotNull JSProperty property, @NotNull JSElementIndexingData data) {
+    if (property.getValue() instanceof JSReferenceExpression
+        && isControllerProperty(property)) {
+      for (PsiElement resolvedElement : AngularIndexUtil.resolveLocally((JSReferenceExpression)property.getValue())) {
+        if (resolvedElement instanceof ES6ImportedBinding) {
+          ES6FromClause from = doIfNotNull(((ES6ImportedBinding)resolvedElement).getDeclaration(),
+                                           ES6ImportDeclaration::getFromClause);
+          if (from != null) {
+            return indexComponentTemplateRef(property, doIfNotNull(from.getReferenceText(), StringUtil::unquoteString), data);
+          }
+        }
       }
     }
     return false;
+  }
+
+  private static boolean processTemplateUrlProperty(@NotNull JSProperty property, @NotNull JSElementIndexingData data) {
+    JSExpression value;
+    if ((value = property.getValue()) instanceof JSLiteralExpression
+        && ((JSLiteralExpression)value).isQuotedLiteral()
+        && isControllerProperty(property)) {
+      return indexComponentTemplateRef(property, unquote(value), data);
+    }
+    return false;
+  }
+
+  private static boolean indexComponentTemplateRef(@NotNull JSProperty property,
+                                                   @Nullable String url,
+                                                   @NotNull JSElementIndexingData data) {
+    if (StringUtil.isEmpty(url)) {
+      return false;
+    }
+    String fileName = new File(url).getName();
+    data.addImplicitElement(
+      new JSImplicitElementImpl.Builder(fileName, property)
+        .setTypeString("TU;;;")
+        .setUserString(Objects.requireNonNull(INDEXES.getKeysByValue(AngularTemplateUrlIndex.KEY)).get(0))
+        .toImplicitElement());
+    return true;
   }
 
   private static boolean bindingsProcessor(JSProperty property, JSElementIndexingData data) {

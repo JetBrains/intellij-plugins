@@ -2,6 +2,9 @@
 package org.angular2.index;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
+import com.intellij.lang.ecmascript6.psi.ES6FromClause;
+import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
+import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
@@ -45,11 +48,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angularjs.index.AngularIndexUtil.hasFileReference;
 
 public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   public static final String TEMPLATE_URL = "templateUrl";
+  public static final String TEMPLATE = "template";
 
   private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
   private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
@@ -106,7 +111,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         }
         addDirective(enclosingClass, data::addImplicitElement, getPropertyValue(decorator, SELECTOR_PROP));
         if (isComponent) {
-          addComponentTemplateRef(decorator, data::addImplicitElement, getPropertyValue(decorator, TEMPLATE_URL));
+          addComponentTemplateRef(decorator, data::addImplicitElement, getTemplateFileUrl(decorator));
         }
       }
     }
@@ -272,11 +277,35 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static boolean hasTemplateReference(@Nullable ES6Decorator componentDecorator, @NotNull PsiFile templateFile) {
-    JSProperty templateUrl = getProperty(componentDecorator, "templateUrl");
-    if (templateUrl == null || templateUrl.getValue() == null) {
-      return false;
+    JSProperty templateProp = getProperty(componentDecorator, TEMPLATE_URL);
+    if (templateProp == null || templateProp.getValue() == null) {
+      templateProp = getProperty(componentDecorator, TEMPLATE);
+      if (templateProp == null || templateProp.getValue() == null) {
+        return false;
+      }
     }
-    return hasFileReference(templateUrl.getValue(), templateFile);
+    return hasFileReference(templateProp.getValue(), templateFile);
+  }
+
+  @Nullable
+  private static String getTemplateFileUrl(@NotNull ES6Decorator decorator) {
+    String templateUrl = getPropertyValue(decorator, TEMPLATE_URL);
+    if (templateUrl != null) {
+      return templateUrl;
+    }
+    JSProperty property = getProperty(decorator, TEMPLATE);
+    if (property != null && property.getValue() instanceof JSReferenceExpression) {
+      for (PsiElement resolvedElement : AngularIndexUtil.resolveLocally((JSReferenceExpression)property.getValue())) {
+        if (resolvedElement instanceof ES6ImportedBinding) {
+          ES6FromClause from = doIfNotNull(((ES6ImportedBinding)resolvedElement).getDeclaration(),
+                                           ES6ImportDeclaration::getFromClause);
+          if (from != null) {
+            return doIfNotNull(from.getReferenceText(), StringUtil::unquoteString);
+          }
+        }
+      }
+    }
+    return null;
   }
 
   @Nullable

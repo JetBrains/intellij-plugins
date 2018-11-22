@@ -64,8 +64,15 @@ public class ControllerTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.configureByFiles("editableField.html", "editableField.js", "angular.js");
     AngularTestUtil.moveToOffsetBySignature("\"$ctrl.<caret>editMode\"", myFixture);
     myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), "editMode", "fieldValue", "fieldType", "onUpdate", "reset", "handleModeChange");
-    assertDoesntContain(myFixture.getLookupElementStrings(),"$onInit");
+    assertContainsElements(myFixture.getLookupElementStrings(),
+                           "editMode", "fieldValue", "fieldType", "onUpdate", "reset", "handleModeChange");
+    assertDoesntContain(myFixture.getLookupElementStrings(), "$onInit");
   }
 
+  public void testTemplateReferencedThroughImport() {
+    myFixture.configureByFiles("heroDetail.html", "editableField.html", "editableField.js", "heroDetail.import.js", "angular.js");
+    AngularTestUtil.moveToOffsetBySignature("\"<caret>vm.delete()\"", myFixture);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "vm");
+  }
 }
