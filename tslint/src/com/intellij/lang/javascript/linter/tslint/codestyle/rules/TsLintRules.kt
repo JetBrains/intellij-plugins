@@ -31,6 +31,7 @@ val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSp
                                                            WhitespaceShiftOperatorRule(),
                                                            WhitespaceCommaRule(),
                                                            WhitespaceImportsRule(),
+                                                           WhitespaceInTypeAssertionRule(),
                                                            MaxLineLengthRule(),
                                                            ImportBlacklistRule(),
                                                            SortedImportPartsRule(),
@@ -430,6 +431,20 @@ class WhitespaceImportsRule : MergedArrayRule("whitespace") {
   }
 }
 
+class WhitespaceInTypeAssertionRule : MergedArrayRule("whitespace") {
+  override fun getCode(): String = "check-typecast"
+
+  override fun defaultValue(): Boolean = true
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return codeStyleSettings.SPACE_WITHIN_TYPE_ASSERTION
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    codeStyleSettings.SPACE_WITHIN_TYPE_ASSERTION = value
+  }
+}
+
 class IndentRule : TsLintSimpleRule<String>("indent") {
   override fun getConfigValue(option: TslintJsonOption): String? {
     val stringValues = option.getStringValues()
@@ -675,7 +690,7 @@ class ForceCurlyBracesRule : TsLintSimpleRule<Int>("curly") {
         languageSettings.DOWHILE_BRACE_FORCE == ifBraceForce) {
       return ifBraceForce
     }
-    return -1;
+    return -1
   }
 
   override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Int) {
