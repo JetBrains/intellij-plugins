@@ -41,7 +41,8 @@ val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSp
                                                            AlignFunctionDeclarationParametersRule(),
                                                            AlignFunctionCallParametersRule(),
                                                            MaxBlankLinesRule(),
-                                                           WhitespaceAtEndOfLineRule()
+                                                           WhitespaceAtEndOfLineRule(),
+                                                           SpaceAtLineCommentStartRule()
 )
 
 class ImportDestructuringSpacingRule : TsLintSimpleRule<Boolean>("import-destructuring-spacing") {
@@ -604,5 +605,22 @@ class WhitespaceAtEndOfLineRule : TsLintSimpleRule<Boolean>("no-trailing-whitesp
 
   override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
     EditorSettingsExternalizable.getInstance().stripTrailingSpaces = EditorSettingsExternalizable.STRIP_TRAILING_SPACES_WHOLE
+  }
+}
+
+class SpaceAtLineCommentStartRule : TsLintSimpleRule<Boolean>("comment-format") {
+  override fun getConfigValue(option: TslintJsonOption): Boolean? {
+    if (option.getStringValues().contains("check-space"))
+      return true
+    return null
+  }
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return languageSettings.LINE_COMMENT_ADD_SPACE
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    languageSettings.LINE_COMMENT_ADD_SPACE = value
+    languageSettings.LINE_COMMENT_AT_FIRST_COLUMN = false
   }
 }
