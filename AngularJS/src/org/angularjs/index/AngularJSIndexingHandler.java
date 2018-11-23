@@ -751,9 +751,20 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
       final String componentName = unquote(arguments[0]);
       addImplicitElements(property, BINDINGS, AngularDirectivesDocIndex.KEY, DirectiveUtil.getAttributeName(property.getName()),
-                          "A;" + (componentName != null ? DirectiveUtil.getAttributeName(componentName) : "") + ";expression;", data);
+                          "A;" + (componentName != null ? DirectiveUtil.getAttributeName(componentName) : "") + ";" +
+                          getBindingType(property.getValue()) + ";", data);
       return true;
     }
     return false;
+  }
+
+  private static String getBindingType(@Nullable JSExpression valueExpr) {
+    if (valueExpr != null && valueExpr instanceof JSLiteralExpression) {
+      String typeStr = ((JSLiteralExpression)valueExpr).getStringValue();
+      if (typeStr != null && typeStr.startsWith("@")) {
+        return "constString";
+      }
+    }
+    return "expression";
   }
 }
