@@ -32,7 +32,7 @@ import org.junit.runners.Suite;
   AngularMessageFormatAnnotatorTest.class,
   DirectiveRenameTest.class,
   AngularUiRouterTest.class,
-  ControllerTest.class,
+  ComponentsTest.class,
   NgDocTest.class,
   Angular2TestSuite.class
 })
