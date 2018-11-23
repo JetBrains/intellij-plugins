@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
@@ -61,6 +62,7 @@ public class PrettierUtil {
   public static final String END_OF_LINE = "endOfLine";
   private static final String JSX_BRACKET_SAME_LINE = "jsxBracketSameLine";
   private static final Gson OUR_GSON_SERIALIZER = new GsonBuilder().create();
+  private static final String CONFIG_SECTION_NAME = PACKAGE_NAME;
 
   private PrettierUtil() {
   }
@@ -135,15 +137,12 @@ public class PrettierUtil {
 
   @Nullable
   public static VirtualFile findSingleConfigInContentRoots(@NotNull Project project) {
-    List<VirtualFile> configs = ContainerUtil.newSmartList();
-    for (VirtualFile dir : ProjectRootManager.getInstance(project).getContentRoots()) {
-      VirtualFile found = findSingleConfigInDirectory(dir);
-      if (found != null) {
-        configs.add(found);
+    return JSLinterConfigFileUtil.findDistinctConfigInContentRoots(project, CONFIG_FILE_NAMES_WITH_PACKAGE_JSON, file -> {
+      if (PackageJsonUtil.isPackageJsonFile(file)) {
+        return PackageJsonUtil.getOrCreateData(file).getTopLevelProperties().contains(CONFIG_SECTION_NAME);
       }
-    }
-
-    return configs.size() == 1 ? ContainerUtil.getFirstItem(configs) : null;
+      return true;
+    });
   }
 
   @Nullable

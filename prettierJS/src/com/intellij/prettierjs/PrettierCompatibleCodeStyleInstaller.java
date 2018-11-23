@@ -4,8 +4,8 @@ import com.intellij.application.options.CodeStyle;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.JavascriptLanguage;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
+import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAwareRunnable;
@@ -19,7 +19,6 @@ import com.intellij.platform.DirectoryProjectConfigurator;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,23 +33,37 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
   }
 
   private static void installCodeStyle(@NotNull Project project) {
-    VirtualFile aConfig = ObjectUtils.coalesce(PrettierUtil.findSingleConfigInContentRoots(project),
-                                                project.getBaseDir().findChild(PackageJsonUtil.FILE_NAME));
+    VirtualFile aConfig = PrettierUtil.findSingleConfigInContentRoots(project);
     if (aConfig != null) {
-      PrettierUtil.Config config = PrettierUtil.parseConfig(project, aConfig);
-      if (config != null) {
-        Pair<CodeStyleSettings, Boolean> previousSettings = install(project, config);
-        PrettierNotificationUtil.reportCodeStyleSettingsImported(project, aConfig, () -> {
-          CodeStyleSettingsManager settingsManager = CodeStyleSettingsManager.getInstance(project);
-          settingsManager.setMainProjectCodeStyle(previousSettings.first);
-          settingsManager.USE_PER_PROJECT_SETTINGS = previousSettings.second;
-        });
-      }
+      install(project, aConfig, false);
     }
   }
 
+  public static void install(@NotNull Project project, @NotNull VirtualFile virtualFile, boolean reportAlreadyImported) {
+    PrettierUtil.Config config = PrettierUtil.parseConfig(project, virtualFile);
+    if (config != null) {
+      install(project, virtualFile, config, reportAlreadyImported);
+    }
+  }
+
+  public static void install(@NotNull Project project, @NotNull VirtualFile configFile,
+                             @NotNull PrettierUtil.Config config, boolean reportAlreadyImported) {
+    if (isInstalled(project, config)) {
+      if (reportAlreadyImported) {
+        JSLinterUtil.reportCodeStyleSettingsAlreadyImported(project, "Prettier");
+      }
+      return;
+    }
+    Pair<CodeStyleSettings, Boolean> previousSettings = install(project, config);
+    PrettierNotificationUtil.reportCodeStyleSettingsImported(project, configFile, () -> {
+      CodeStyleSettingsManager settingsManager = CodeStyleSettingsManager.getInstance(project);
+      settingsManager.setMainProjectCodeStyle(previousSettings.first);
+      settingsManager.USE_PER_PROJECT_SETTINGS = previousSettings.second;
+    });
+  }
+
   @NotNull
-  public static Pair<CodeStyleSettings, Boolean> install(@NotNull Project project, @NotNull PrettierUtil.Config config) {
+  private static Pair<CodeStyleSettings, Boolean> install(@NotNull Project project, @NotNull PrettierUtil.Config config) {
     CodeStyleSettingsManager settingsManager = CodeStyleSettingsManager.getInstance(project);
     boolean previousUsePerProjectSettings = settingsManager.USE_PER_PROJECT_SETTINGS;
     CodeStyleSettings previousSettings = settingsManager.getCurrentSettings();

@@ -56,6 +56,11 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
       <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta alt shift P" />
       <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="meta alt shift P"/>
     </action>
+    <action id="PrettierImportCodeStyleAction" class="com.intellij.prettierjs.PrettierImportCodeStyleAction"
+            text="Apply Prettier Code Style Rules">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
   </actions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
     <ProviderFactory implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaProviderFactory"/>

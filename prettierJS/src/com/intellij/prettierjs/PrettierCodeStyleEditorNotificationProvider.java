@@ -19,8 +19,7 @@ import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PrettierCodeStyleEditorNotificationProvider
-  extends EditorNotifications.Provider<EditorNotificationPanel>
+public class PrettierCodeStyleEditorNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel>
   implements DumbAware {
 
   private static final Key<EditorNotificationPanel> KEY = Key.create("prettier.codestyle.notification.panel");
@@ -67,7 +66,21 @@ public class PrettierCodeStyleEditorNotificationProvider
       return null;
     }
 
-    PrettierUtil.Config config = findConfigForFile(file, project);
+    PrettierUtil.Config config = null;
+    if (PrettierUtil.isConfigFile(file)) {
+      config = PrettierUtil.parseConfig(project, file);
+    }
+    if (PackageJsonUtil.isPackageJsonFile(file)) {
+      //if package.json is currently opened, but there is a neighboring config file
+      VirtualFile configVFile = PrettierUtil.findSingleConfigInDirectory(file.getParent());
+      if (configVFile != null) {
+        config = PrettierUtil.parseConfig(project, configVFile);
+        file = configVFile;
+      }
+      else {
+        config = PrettierUtil.parseConfig(project, file);
+      }
+    }
     if (config == null) {
       return null;
     }
@@ -77,10 +90,11 @@ public class PrettierCodeStyleEditorNotificationProvider
     final EditorNotificationPanel panel = new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND);
     panel.setText(PrettierBundle.message("editor.notification.title"));
 
+    PrettierUtil.Config finalConfig = config;
+    VirtualFile finalFile = file;
     panel.createActionLabel(PrettierBundle.message("editor.notification.yes.text"),
                             () -> {
-                              PrettierCompatibleCodeStyleInstaller.install(project, config);
-                              PrettierNotificationUtil.reportCodeStyleSettingsImported(project, file, null);
+                              PrettierCompatibleCodeStyleInstaller.install(project, finalFile, finalConfig, false);
                               myEditorNotifications.updateAllNotifications();
                             });
     panel.createActionLabel(PrettierBundle.message("editor.notification.no.text"), () -> {
@@ -89,22 +103,6 @@ public class PrettierCodeStyleEditorNotificationProvider
     });
 
     return panel;
-  }
-
-  @Nullable
-  private static PrettierUtil.Config findConfigForFile(@NotNull VirtualFile file, Project project) {
-    if (PrettierUtil.isConfigFile(file)) {
-      return PrettierUtil.parseConfig(project, file);
-    }
-    if (PackageJsonUtil.isPackageJsonFile(file)) {
-      //if package.json is currently opened, but there is a neighboring config file
-      VirtualFile config = PrettierUtil.findSingleConfigInDirectory(file.getParent());
-      if (config != null) {
-        return PrettierUtil.parseConfig(project, config);
-      }
-      return PrettierUtil.parseConfig(project, file);
-    }
-    return null;
   }
 
   private boolean alreadyDismissed() {
