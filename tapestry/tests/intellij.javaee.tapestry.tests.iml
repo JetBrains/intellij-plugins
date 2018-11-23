@@ -9,7 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="intellij.javaee.tapestry" />
-    <orderEntry type="library" name="Velocity" level="project" />
     <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
     <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
     <orderEntry type="library" name="CGLIB" level="project" />
