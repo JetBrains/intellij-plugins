@@ -3,6 +3,7 @@ package com.jetbrains.profiler;
 import com.intellij.execution.Executor;
 import com.intellij.execution.ExecutorRegistry;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +31,7 @@ public class DefaultProfilerExecutor extends Executor {
 
   @Override
   public Icon getDisabledIcon() {
-    return AllIcons.Process.DisabledDebug;
+    return IconLoader.getDisabledIcon(getIcon());
   }
 
   @Override
