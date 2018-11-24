@@ -58,10 +58,6 @@ public class FlexInlineVariableTest extends JSInlineVariableTestBase {
     doTest(getTestName(false), "mxml", true);
   }
 
-  public void testInliningFunExpr3() throws Exception {
-    ecmaTest();
-  }
-
   public void testInlineOneFieldUsage() throws Exception {
     doTest(getTestName(false), "js2", true, true);
   }

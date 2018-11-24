@@ -23,6 +23,7 @@ public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
     SYNTAX_MAP.put(DartTokenTypes.LBRACE, BlockOpeningBrace);
     SYNTAX_MAP.put(DartTokenTypes.RBRACE, BlockClosingBrace);
     SYNTAX_MAP.put(DartTokenTypes.LBRACKET, ArrayOpeningBracket);
+    SYNTAX_MAP.put(DartTokenTypes.RBRACKET, ArrayClosingBracket);
     SYNTAX_MAP.put(DartTokenTypes.LPAREN, LeftParenthesis);
     SYNTAX_MAP.put(DartTokenTypes.RPAREN, RightParenthesis);
     SYNTAX_MAP.put(DartTokenTypes.COLON, Colon);
@@ -31,6 +32,7 @@ public class DartLineIndentProvider extends JavaLikeLangLineIndentProvider {
     SYNTAX_MAP.put(DartTokenTypes.IF, IfKeyword);
     SYNTAX_MAP.put(DartTokenTypes.ELSE, ElseKeyword);
     SYNTAX_MAP.put(DartTokenTypes.FOR, ForKeyword);
+    SYNTAX_MAP.put(DartTokenTypes.DO, DoKeyword);
     SYNTAX_MAP.put(DartTokenTypesSets.MULTI_LINE_COMMENT, BlockComment);
     SYNTAX_MAP.put(DartTokenTypesSets.MULTI_LINE_COMMENT_END, DocBlockEnd);
     SYNTAX_MAP.put(DartTokenTypesSets.MULTI_LINE_DOC_COMMENT_START, DocBlockStart);

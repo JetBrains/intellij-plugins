@@ -130,8 +130,6 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       Arrays.asList("Flex", "Flex2", "FlexWithLocalCss", "DuplicatedIdsInMxml", "PathesInMxml", "ReferencingClass", "EnumeratedValues"));
 
     myTestsWithCssLoader.addAll(Arrays.asList("Flex", "FlexWithLocalCss"));
-
-    ContainerUtil.addAll(myTestsWithLoadingSavingCaches, "AsSpecific");
   }
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -779,7 +777,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".as");
   }
 
-  @JSTestOptions(JSTestOption.WithFlexFacet)
+  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithLoadingAndSavingCaches})
   public void testAsSpecific() throws Exception {
     disableInspectionTool(JSUnusedLocalSymbolsInspection.SHORT_NAME);
     final String testName = getTestName(false);

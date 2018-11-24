@@ -1,6 +1,0 @@
-(function() {
-    var onLoadCallback = fun<caret>ction() {
-        alert("hehe")
-    }
-    document.addEventListener('load', onLoadCallback, false);
-})()
