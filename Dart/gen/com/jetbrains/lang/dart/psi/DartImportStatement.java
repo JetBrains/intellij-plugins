@@ -17,6 +17,9 @@ public interface DartImportStatement extends DartImportOrExportStatement {
   List<DartShowCombinator> getShowCombinatorList();
 
   @NotNull
+  List<DartStringLiteralExpression> getStringLiteralExpressionList();
+
+  @NotNull
   DartUriElement getUriElement();
 
   @NotNull

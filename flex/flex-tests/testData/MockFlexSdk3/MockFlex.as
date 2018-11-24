@@ -1216,6 +1216,8 @@ class State {
     public native function get text():String;
   }
   class TextArea extends UIComponent{
+      native public function get wordWrap():Boolean;
+      native public function set wordWrap(value:Boolean):void;
       public native function set text(_:String);
     public native function get text():String;
   }

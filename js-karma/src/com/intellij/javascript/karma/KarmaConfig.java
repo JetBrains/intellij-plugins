@@ -5,8 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.intellij.javascript.karma.util.GsonUtil;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,12 +80,12 @@ public class KarmaConfig {
     if (jsonElement.isJsonObject()) {
       JsonObject rootObject = jsonElement.getAsJsonObject();
 
-      boolean autoWatch = GsonUtil.getBooleanProperty(rootObject, AUTO_WATCH, false);
+      boolean autoWatch = JsonUtil.getChildAsBoolean(rootObject, AUTO_WATCH, false);
       List<String> browsers = parseBrowsers(rootObject);
       String basePath = parseBasePath(jsonElement, rootObject, configurationFileDir);
       String hostname = parseHostname(jsonElement, rootObject);
       String urlRoot = parseUrlRoot(jsonElement, rootObject);
-      boolean webpack = GsonUtil.getBooleanProperty(rootObject, WEBPACK, false);
+      boolean webpack = JsonUtil.getChildAsBoolean(rootObject, WEBPACK, false);
 
       return new KarmaConfig(autoWatch, basePath, browsers, hostname, urlRoot, webpack);
     }
@@ -96,7 +96,7 @@ public class KarmaConfig {
   private static String parseBasePath(@NotNull JsonElement all,
                                       @NotNull JsonObject obj,
                                       @NotNull File configurationFileDir) {
-    String basePath = GsonUtil.getStringProperty(obj, BASE_PATH);
+    String basePath = JsonUtil.getChildAsString(obj, BASE_PATH);
     if (basePath == null) {
       LOG.warn("Can not parse Karma config.basePath from " + all.toString());
       basePath = configurationFileDir.getAbsolutePath();
@@ -105,7 +105,7 @@ public class KarmaConfig {
   }
 
   private static String parseUrlRoot(@NotNull JsonElement all, @NotNull JsonObject obj) {
-    String urlRoot = GsonUtil.getStringProperty(obj, URL_ROOT);
+    String urlRoot = JsonUtil.getChildAsString(obj, URL_ROOT);
     if (urlRoot == null) {
       LOG.warn("Can not parse Karma config.urlRoot from " + all.toString());
       urlRoot = "/";
@@ -120,7 +120,7 @@ public class KarmaConfig {
   }
 
   private static String parseHostname(@NotNull JsonElement all, @NotNull JsonObject obj) {
-    String hostname = GsonUtil.getStringProperty(obj, HOST_NAME);
+    String hostname = JsonUtil.getChildAsString(obj, HOST_NAME);
     if (hostname == null) {
       LOG.warn("Can not parse Karma config.hostname from " + all.toString());
       hostname = "localhost";
@@ -136,7 +136,7 @@ public class KarmaConfig {
       JsonArray browsersArray = browsersElement.getAsJsonArray();
       List<String> browsers = Lists.newArrayList();
       for (JsonElement browserElement : browsersArray) {
-        String browser = GsonUtil.getAsString(browserElement);
+        String browser = JsonUtil.getString(browserElement);
         if (browser != null) {
           browsers.add(browser);
         }

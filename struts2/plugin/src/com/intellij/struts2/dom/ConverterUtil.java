@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2016 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 public final class ConverterUtil {
 
   // "{0}" through "{9}"
-  private static final Pattern WILDCARD_PATTERN = Pattern.compile("\\{\\d\\}");
+  private static final Pattern WILDCARD_PATTERN = Pattern.compile("\\{\\d}");
 
   private ConverterUtil() {
   }

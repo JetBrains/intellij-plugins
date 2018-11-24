@@ -240,11 +240,13 @@ HEX_NUMBER = 0 [Xx] {HEX_DIGIT}*
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "|"                { return OR; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "|="               { return OR_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "||"               { return OR_OR; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "||="              { return OR_OR_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "^"                { return XOR; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "^="               { return XOR_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "&"                { return AND; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "&="               { return AND_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "&&"               { return AND_AND; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "&&="              { return AND_AND_EQ; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "@"                { return AT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "#"                { return HASH; }
 

@@ -21,7 +21,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -513,8 +512,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.set"));
       }
 
-      PsiElement clazz = JSResolveUtil.unwrapProxy(
-        ActionScriptClassResolver.findClassByQNameStatic(myOverriddenMainClass, moduleAndBC.first.getModuleScope(true)));
+      PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(myOverriddenMainClass, moduleAndBC.first.getModuleScope(true));
       if (!(clazz instanceof JSClass)) {
         throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.found", myOverriddenMainClass, bc.getName()));
       }

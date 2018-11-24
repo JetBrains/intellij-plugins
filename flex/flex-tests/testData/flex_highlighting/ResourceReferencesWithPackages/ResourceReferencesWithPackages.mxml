@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+  <mx:Metadata>
+    [ResourceBundle("resourcepackage.mybundle4")]
+    [ResourceBundle("<error descr="Cannot resolve property bundle">mybundle4</error>")]
+  </mx:Metadata>
+  <mx:Script>
+    function foo() {
+      resourceManager.getString('resourcepackage.mybundle4', 'prompt5');
+      resourceManager.getString('<error descr="Cannot resolve property bundle">mybundle4</error>', '<error descr="Cannot resolve property key">prompt5</error>');
+    }
+  </mx:Script>
+  <mx:Label text="@Resource(key='prompt5', bundle='resourcepackage.mybundle4')"/>
+  <mx:Label text="@Resource(key='<error descr="Cannot resolve property key">prompt5</error>', bundle='<error descr="Cannot resolve property bundle">mybundle4</error>')"/>
+</mx:Application>

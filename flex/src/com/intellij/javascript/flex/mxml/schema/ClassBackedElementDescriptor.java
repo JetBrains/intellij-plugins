@@ -407,7 +407,6 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   static boolean isDynamicClass(PsiElement element) {
-    element = JSResolveUtil.unwrapProxy(element);
     JSAttributeList attrList;
     return element instanceof JSClass &&
         (attrList = ((JSClass)element).getAttributeList()) != null &&
@@ -528,7 +527,6 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
       if (element instanceof JSNamedElement) {
         JSNamedElement jsClass = (JSNamedElement)element;
-        jsClass = (JSNamedElement)JSResolveUtil.unwrapProxy(jsClass);
 
         if (visited == null || !visited.contains(jsClass)) {
           if (!MxmlJSClass.XML_TAG_NAME.equals(jsClass.getName()) && !MxmlJSClass.XMLLIST_TAG_NAME.equals(jsClass.getName())) {
@@ -547,7 +545,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
               appendSuperClassDescriptors(
                   map,
                   packageToInternalDescriptors,
-                  JSResolveUtil.unwrapProxy(ActionScriptClassResolver.findClassByQNameStatic(OBJECT_CLASS_NAME, jsClass)),
+                  ActionScriptClassResolver.findClassByQNameStatic(OBJECT_CLASS_NAME, jsClass),
                   visited);
             }
           }
@@ -941,7 +939,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       return EMPTY_ARRAY;
     }
 
-    final PsiElement clazz = JSResolveUtil.unwrapProxy(ActionScriptClassResolver.findClassByQNameStatic(arrayElementType, declaration));
+    final PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(arrayElementType, declaration);
     if (!(clazz instanceof JSClass)) {
       return EMPTY_ARRAY;
     }
@@ -988,9 +986,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
           return null;
         }
 
-        PsiElement element = JSResolveUtil.unwrapProxy(declaration);
-        if (element instanceof JSClass) {
-          if (!JSResolveUtil.isAssignableType(arrayElementType, ((JSClass)element).getQualifiedName(), element)) {
+        if (declaration instanceof JSClass) {
+          if (!JSResolveUtil.isAssignableType(arrayElementType, ((JSClass)declaration).getQualifiedName(), declaration)) {
             return null;
           }
         }
@@ -1002,7 +999,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   @Nullable
   public AnnotationBackedDescriptor getDefaultPropertyDescriptor() {
     if (!defaultPropertyDescriptorInitialized) {
-      PsiElement element = predefined ? null : JSResolveUtil.unwrapProxy(getDeclaration());
+      PsiElement element = predefined ? null : getDeclaration();
 
       if (element instanceof XmlFile) {
         element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
@@ -1158,8 +1155,6 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   static boolean processAttributes(PsiElement jsClass, AttributedItemsProcessor processor) {
-    jsClass = JSResolveUtil.unwrapProxy(jsClass);
-
     return doProcess(jsClass, processor);
   }
 

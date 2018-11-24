@@ -130,6 +130,7 @@
   OR="|"
   OR_EQ="|="
   OR_OR="||"
+  OR_OR_EQ="||="
   QUEST="?"
   QUEST_DOT="?."
   QUEST_QUEST="??"
@@ -139,6 +140,7 @@
   AND="&"
   AND_EQ="&="
   AND_AND="&&"
+  AND_AND_EQ="&&="
   HASH="#"
   AT="@"
   ]
@@ -164,7 +166,7 @@ private top_level_recover ::= !(<<nonStrictID>> | '@' | 'abstract' | 'class' | '
 
 incompleteDeclaration ::= metadata* ('external' | 'static' | 'final' | 'const')* type | metadata+;
 
-partOfStatement ::= metadata* 'part' 'of' libraryId ';' {
+partOfStatement ::= metadata* 'part' 'of' (libraryId | uriElement)';' {
   pin=4
   methods = [ getLibraryName ]
 }
@@ -180,7 +182,7 @@ libraryNameElement ::= <<nonStrictID>> ('.' <<nonStrictID>>)* {
   methods=[getName]
 }
 
-importStatement ::= metadata* 'import' uriElement ('deferred'? 'as' componentName )? combinator* ';' {
+importStatement ::= metadata* 'import' uriElement importConfig* ('deferred'? 'as' componentName )? combinator* ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [
@@ -189,11 +191,14 @@ importStatement ::= metadata* 'import' uriElement ('deferred'? 'as' componentNam
   ]
 }
 
-exportStatement ::= metadata* 'export' uriElement combinator* ';' {
+exportStatement ::= metadata* 'export' uriElement importConfig* combinator* ';' {
   pin=3
   implements="com.jetbrains.lang.dart.psi.DartImportOrExportStatement"
   methods = [ getUriString ]
 }
+
+private importConfig ::= 'if' '(' dottedName ('==' stringLiteralExpression)? ')' stringLiteralExpression
+private dottedName ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
 
 private combinator ::= showCombinator | hideCombinator
 
@@ -329,16 +334,19 @@ shiftOperator ::= '<<' | <<gtGt>>
 relationalOperator ::= <<gtEq>> | '>' | '<=' | '<'
 bitwiseOperator ::= '&' | '^' | '|'
 
-assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|=' | '??='
+assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '&&=' | '^=' | '|=' | '||=' | '??='
 equalityOperator ::= '==' | '!='
 
-formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ','? ')'
-                      | '(' namedFormalParameters? ')'
+formalParameterList ::= '(' ')' |
+                        '(' normalFormalParameters (',' optionalFormalParameters)? ','? ')' |
+                        '(' optionalFormalParameters ')'
+private normalFormalParameters ::= normalFormalParameter (',' normalFormalParameter)*
 
 fieldFormalParameter ::= metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression formalParameterList?
 
-namedFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']' |
-                          '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? '}'
+optionalFormalParameters ::= optionalPositionalFormalParameters (',' namedFormalParameters)? | namedFormalParameters
+private optionalPositionalFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']'
+private namedFormalParameters ::= '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? '}'
 
 defaultFormalNamedParameter ::= normalFormalParameter (('=' | ':') expression)? {recoverWhile="default_formal_parameter_recover"}
 private default_formal_parameter_recover ::= !(')' | ',' | ']' | '}')
@@ -413,13 +421,15 @@ label::= componentName ':'
 }
 
 private expressionWithRecoverUntilParen ::= expression {recoverWhile="not_paren_recover"}
+private expressionWithRecoverUntilParenOrComma ::= expression {recoverWhile="not_paren_or_comma_recover"}
 private not_paren_recover ::= !')'
+private not_paren_or_comma_recover ::= !(')' | ',')
 
 whileStatement ::= 'while' '(' expressionWithRecoverUntilParen ')' statement {pin=1}
 doWhileStatement ::= 'do' statement 'while' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
 forStatement ::= 'await'? 'for' forLoopPartsInBraces statement {pin=2}
 //todo component
-assertStatement ::= 'assert' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
+assertStatement ::= 'assert' '(' expressionWithRecoverUntilParenOrComma (',' stringLiteralExpression)? ')' ';' {pin=1}
 yieldEachStatement ::= 'yield' '*' expression ';' {pin=2}
 yieldStatement ::= 'yield' expression ';' {pin=1}
 breakStatement ::= 'break' referenceExpression? ';' {pin=1}
@@ -470,14 +480,14 @@ parameterNameReferenceExpression ::= << nonStrictID >>
 
 expression ::= assignExpressionWrapper {recoverWhile="expression_recover"}
 private expression_recover ::= !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-                                 '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
+                                 '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
                                  'continue' | 'default' | 'deferred' | 'do' | 'else' | 'export' | 'external' | 'factory' | 'final' | 'finally' | 'for' |
                                  'get' | 'hide' | 'if' | 'import' | 'is' | 'library' | 'native' | 'new' | 'on' | 'operator' | 'part' |
                                  'rethrow' | 'return' | 'set' | 'show' | 'static' | 'super' | 'switch' | 'sync' | 'this' | 'throw' | 'try' |
-                                 'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
+                                 'typedef' | 'var' | 'void' | 'while' | '{' | '|' | '|=' | '||' | '||=' | '}' | '~' | '~/' | '~/=' | CLOSING_QUOTE |
                                   FALSE | HEX_NUMBER | LONG_TEMPLATE_ENTRY_END | LONG_TEMPLATE_ENTRY_START | NULL | NUMBER |
                                   OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING | REGULAR_STRING_PART |
                                   SHORT_TEMPLATE_ENTRY_START | TRUE)

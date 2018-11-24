@@ -38,7 +38,7 @@ public class AngularJSDIReferencesProvider extends PsiReferenceProvider {
       final String name = getCanonicalText();
       final PsiFile psiFile = getElement().getContainingFile();
       final WalkUpResolveProcessor processor = new WalkUpResolveProcessor(
-        name, BaseJSSymbolProcessor.EMPTY_CONTEXT,
+        name,
         psiFile,
         getElement(),
         BaseJSSymbolProcessor.MatchMode.Any

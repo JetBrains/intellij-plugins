@@ -54,16 +54,16 @@ public class DartPresentableUtil {
         result.append(", ");
       }
     }
-    final DartNamedFormalParameters namedFormalParameters = parameterList.getNamedFormalParameters();
-    if (namedFormalParameters != null) {
+    final DartOptionalFormalParameters optionalFormalParameters = parameterList.getOptionalFormalParameters();
+    if (optionalFormalParameters != null) {
       if (!list.isEmpty()) {
         result.append(", ");
       }
 
-      final boolean isOptional = isOptionalParameterList(namedFormalParameters);
+      final boolean isOptional = isOptionalParameterList(optionalFormalParameters);
       result.append(isOptional ? '{' : '[');
 
-      List<DartDefaultFormalNamedParameter> list1 = namedFormalParameters.getDefaultFormalNamedParameterList();
+      List<DartDefaultFormalNamedParameter> list1 = optionalFormalParameters.getDefaultFormalNamedParameterList();
       for (int i = 0, size = list1.size(); i < size; i++) {
         if (i > 0) {
           result.append(", ");
@@ -78,7 +78,7 @@ public class DartPresentableUtil {
     return result.toString();
   }
 
-  private static boolean isOptionalParameterList(final @NotNull DartNamedFormalParameters parameters) {
+  private static boolean isOptionalParameterList(final @NotNull DartOptionalFormalParameters parameters) {
     // Workaround for the lack of distinction between named and optional params in the grammar
     final PsiElement firstChild = parameters.getFirstChild();
     return firstChild != null && "{".equals(firstChild.getText());

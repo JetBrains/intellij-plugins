@@ -23,7 +23,6 @@ import de.roderick.weberknecht.WebSocketEventHandler;
 import de.roderick.weberknecht.WebSocketException;
 import de.roderick.weberknecht.WebSocketMessage;
 
-import org.dartlang.vm.service.consumer.BreakpointConsumer;
 import org.dartlang.vm.service.consumer.Consumer;
 import org.dartlang.vm.service.consumer.GetInstanceConsumer;
 import org.dartlang.vm.service.consumer.GetLibraryConsumer;

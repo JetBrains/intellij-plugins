@@ -100,7 +100,11 @@ public class DartVmServiceBreakpointHandler extends XBreakpointHandler<XLineBrea
 
   public void breakpointResolved(@NotNull final Breakpoint vmBreakpoint) {
     final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myVmBreakpointIdToXBreakpointMap.get(vmBreakpoint.getId());
-    myDebugProcess.getSession().updateBreakpointPresentation(xBreakpoint, Db_verified_breakpoint, null);
+
+    // This can be null when the breakpoint has been set by another debugger client.
+    if (xBreakpoint != null) {
+      myDebugProcess.getSession().updateBreakpointPresentation(xBreakpoint, Db_verified_breakpoint, null);
+    }
   }
 
   public void breakpointFailed(@NotNull final XLineBreakpoint<XBreakpointProperties> xBreakpoint) {

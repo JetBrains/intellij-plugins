@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface DartFormalParameterList extends DartPsiCompositeElement {
 
-  @Nullable
-  DartNamedFormalParameters getNamedFormalParameters();
-
   @NotNull
   List<DartNormalFormalParameter> getNormalFormalParameterList();
+
+  @Nullable
+  DartOptionalFormalParameters getOptionalFormalParameters();
 
 }

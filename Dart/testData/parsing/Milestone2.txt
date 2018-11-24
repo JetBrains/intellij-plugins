@@ -50,6 +50,15 @@ Dart File
       ID
         PsiElement(IDENTIFIER)('Lib')
     PsiElement(;)(';')
+  PART_OF_STATEMENT
+    PsiElement(part)('part')
+    PsiElement(of)('of')
+    URI_ELEMENT
+      STRING_LITERAL_EXPRESSION
+        PsiElement(OPEN_QUOTE)('"')
+        PsiElement(REGULAR_STRING_PART)('uri')
+        PsiElement(CLOSING_QUOTE)('"')
+    PsiElement(;)(';')
   EXPORT_STATEMENT
     PsiElement(export)('export')
     URI_ELEMENT
@@ -1819,7 +1828,7 @@ Dart File
         PsiElement(IDENTIFIER)('CSSMatrix')
     FORMAL_PARAMETER_LIST
       PsiElement(()('(')
-      NAMED_FORMAL_PARAMETERS
+      OPTIONAL_FORMAL_PARAMETERS
         PsiElement([)('[')
         DEFAULT_FORMAL_NAMED_PARAMETER
           NORMAL_FORMAL_PARAMETER
@@ -2098,7 +2107,7 @@ Dart File
                   ID
                     PsiElement(IDENTIFIER)('array')
             PsiElement(,)(',')
-            NAMED_FORMAL_PARAMETERS
+            OPTIONAL_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER

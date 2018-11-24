@@ -81,7 +81,7 @@ public class DartVmServiceListener implements VmServiceListener {
       case PauseExit:
         break;
       case PauseStart:
-        myDebugProcess.getVmServiceWrapper().handleIsolatePausedOnStart(event.getIsolate());
+        myDebugProcess.getVmServiceWrapper().handleIsolate(event.getIsolate(), true);
         break;
       case Resume:
         myDebugProcess.isolateResumed(event.getIsolate());
@@ -91,6 +91,7 @@ public class DartVmServiceListener implements VmServiceListener {
       case VMUpdate:
         break;
       case WriteEvent:
+        myDebugProcess.handleWriteEvent(event.getBytes());
         break;
       case Unknown:
         break;
@@ -104,11 +105,11 @@ public class DartVmServiceListener implements VmServiceListener {
     }
   }
 
-  private void onIsolatePaused(@NotNull final IsolateRef isolateRef,
-                               @Nullable final ElementList<Breakpoint> vmBreakpoints,
-                               @Nullable final InstanceRef exception,
-                               @Nullable final Frame vmTopFrame,
-                               boolean atAsyncSuspension) {
+  void onIsolatePaused(@NotNull final IsolateRef isolateRef,
+                       @Nullable final ElementList<Breakpoint> vmBreakpoints,
+                       @Nullable final InstanceRef exception,
+                       @Nullable final Frame vmTopFrame,
+                       boolean atAsyncSuspension) {
     if (vmTopFrame == null) {
       myDebugProcess.getSession().positionReached(new XSuspendContext() {
       });

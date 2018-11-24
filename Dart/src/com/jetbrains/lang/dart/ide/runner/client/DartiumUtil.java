@@ -146,12 +146,13 @@ public class DartiumUtil {
     }
   }
 
-  public static void removeUnsupportedAsyncFlag() {
+  public static void resetDartiumFlags() {
     final WebBrowser dartium = getDartiumBrowser();
     final BrowserSpecificSettings browserSpecificSettings = dartium == null ? null : dartium.getSpecificSettings();
     if (!(browserSpecificSettings instanceof ChromeSettings)) return;
 
     final Map<String, String> envVars = browserSpecificSettings.getEnvironmentVariables();
     setDartFlagState(envVars, ENABLE_ASYNC_OPTION, false);
+    setDartFlagState(envVars, CHECKED_MODE_OPTION, true);
   }
 }

@@ -134,7 +134,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
     final Computable<Boolean> isResettingControlsComputable = () -> myInReset;
 
     DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
-                                              currentDartiumSettingsRetriever, myDartiumSettingsButton, myCheckedModeCheckBox,
+                                              currentDartiumSettingsRetriever, myDartiumSettingsButton,
                                               isResettingControlsComputable);
 
     final JTextComponent sdkEditor = (JTextComponent)mySdkPathComboWithBrowse.getComboBox().getEditor().getEditorComponent();
@@ -398,8 +398,11 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       ensureComboModelContainsCurrentItem(myDartiumPathComboWithBrowse.getComboBox());
     }
 
-    final boolean checkedMode = myDartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
-    myCheckedModeCheckBox.setSelected(checkedMode);
+    // we decided to save one line in settings and always use Dartium in checked mode
+    myCheckedModeCheckBox.setVisible(false);
+    DartiumUtil.setCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables(), true);
+    //final boolean checkedMode = myDartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
+    //myCheckedModeCheckBox.setSelected(checkedMode);
 
     if (DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final CheckedTreeNode rootNode = (CheckedTreeNode)myModulesCheckboxTreeTable.getTree().getModel().getRoot();
@@ -509,7 +512,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private void updateControlsEnabledState() {
     UIUtil.setEnabled(mySettingsPanel, myEnableDartSupportCheckBox.isSelected(), true);
 
-    mySdkUpdateChannelCombo.setEnabled(myCheckSdkUpdateCheckBox.isSelected() && myCheckedModeCheckBox.isEnabled());
+    mySdkUpdateChannelCombo.setEnabled(myCheckSdkUpdateCheckBox.isEnabled() && myCheckSdkUpdateCheckBox.isSelected());
 
     if (!DartSdkGlobalLibUtil.isIdeWithMultipleModuleSupport()) {
       final String path = myModuleToCustomPackageRootCurrent.entrySet().iterator().next().getValue();

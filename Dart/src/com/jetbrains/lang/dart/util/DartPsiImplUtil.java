@@ -4,12 +4,10 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.ResolveState;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.*;
+import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.resolve.DartResolveProcessor;
@@ -102,8 +100,27 @@ public class DartPsiImplUtil {
   }
 
   @NotNull
-  public static String getLibraryName(@NotNull DartPartOfStatement partOfStatement) {
-    return partOfStatement.getLibraryId().getText();
+  public static String getLibraryName(@NotNull final DartPartOfStatement partOfStatement) {
+    final DartLibraryId libraryId = partOfStatement.getLibraryId();
+    if (libraryId != null) {
+      return libraryId.getText();
+    }
+
+    final DartUriElement uriElement = partOfStatement.getUriElement();
+    assert uriElement != null : "[" + partOfStatement.toString() + "]";
+
+    final String uri = uriElement.getUriStringAndItsRange().first;
+    final VirtualFile file = DartResolveUtil.getRealVirtualFile(partOfStatement.getContainingFile());
+    final VirtualFile targetFile = file == null ? null : DartResolveUtil.getImportedFile(partOfStatement.getProject(), file, uri);
+    final PsiFile targetPsiFile = targetFile == null || file.equals(targetFile) ? null : partOfStatement.getManager().findFile(targetFile);
+    final DartLibraryStatement libraryStatement = targetPsiFile == null
+                                                  ? null
+                                                  : PsiTreeUtil.getChildOfType(targetPsiFile, DartLibraryStatement.class);
+    if (libraryStatement != null) {
+      return libraryStatement.getLibraryNameElement().getName();
+    }
+
+    return PathUtil.getFileName(uri);
   }
 
   @NotNull

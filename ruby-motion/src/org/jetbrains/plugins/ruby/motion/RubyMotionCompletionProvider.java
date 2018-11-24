@@ -21,7 +21,6 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.completion.RubyAbstractMethod
 import org.jetbrains.plugins.ruby.ruby.codeInsight.completion.RubyCompletionProvider;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.completion.RubyLookupElement;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.types.RType;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RPsiElement;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.methodCall.RCall;
@@ -57,7 +56,7 @@ public class RubyMotionCompletionProvider extends RubyCompletionProvider {
     final Function function = symbol.getFunction();
     if (function.getArguments().size() < 2 || !function.getName().contains(":")) return null;
 
-    return new RubyLookupElement(function.getName(), "", SymbolUtil.getSymbolFullQualifiedName(parent), bold, AllIcons.Nodes.Method,
+    return new RubyLookupElement(function.getName(), "", parent.getFQNWithNesting().getFullPath(), bold, AllIcons.Nodes.Method,
                                  null, new SelectorInsertHandler(function));
   }
 

@@ -27,15 +27,21 @@ public class DartPartOfStatementImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @Override
-  @NotNull
+  @Nullable
   public DartLibraryId getLibraryId() {
-    return findNotNullChildByClass(DartLibraryId.class);
+    return findChildByClass(DartLibraryId.class);
   }
 
   @Override
   @NotNull
   public List<DartMetadata> getMetadataList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  }
+
+  @Override
+  @Nullable
+  public DartUriElement getUriElement() {
+    return findChildByClass(DartUriElement.class);
   }
 
   @NotNull

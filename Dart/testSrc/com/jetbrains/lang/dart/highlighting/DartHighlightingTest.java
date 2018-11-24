@@ -12,6 +12,7 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.inspections.DartPathPackageReferenceInspection;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 
 public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   protected String getBasePath() {
@@ -155,5 +156,19 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
     myFixture.openFileInEditor(libFile2.getVirtualFile());
     myFixture.checkResult("import 'libFile.dart';\n" +
                           "import 'package:ProjectName/libFile.dart';");
+  }
+
+  public void testUriInPartOf() throws Exception {
+    final PsiFile libFile = myFixture.addFileToProject("foo/bar/libFile.dart", "library libName;");
+    final PsiFile part1File = myFixture.addFileToProject("part1.dart", "part of 'part1.dart'"); // self reference
+    final PsiFile part2File = myFixture.addFileToProject("part2.dart", "part of 'foo/bar/wrong.dart'"); // wrong reference
+    final PsiFile part3File = myFixture.addFileToProject("part3.dart", "part of 'foo/bar/libFile.dart"); // reference to libName
+    final PsiFile part4File = myFixture.addFileToProject("part4.dart", "part of anotherLib;"); // reference to anotherLib
+
+    assertEquals("libName", DartResolveUtil.getLibraryName(libFile));
+    assertEquals("part1.dart", DartResolveUtil.getLibraryName(part1File));
+    assertEquals("wrong.dart", DartResolveUtil.getLibraryName(part2File));
+    assertEquals("libName", DartResolveUtil.getLibraryName(part3File));
+    assertEquals("anotherLib", DartResolveUtil.getLibraryName(part4File));
   }
 }

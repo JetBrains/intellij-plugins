@@ -13,16 +13,16 @@ public class DartFunctionDescription {
   private final String name;
   private final String returnType;
   @NotNull private final DartParameterDescription[] myParameters;
-  @NotNull private final DartNamedParameterDescription[] myNamedParameters;
+  @NotNull private final DartOptionalParameterDescription[] myOptionalParameters;
 
   public DartFunctionDescription(String name,
                                  String type,
                                  @NotNull DartParameterDescription[] parameters,
-                                 @NotNull DartNamedParameterDescription[] namedParameters) {
+                                 @NotNull DartOptionalParameterDescription[] optionalParameters) {
     this.name = name;
     returnType = type;
     myParameters = parameters;
-    myNamedParameters = namedParameters;
+    myOptionalParameters = optionalParameters;
   }
 
   public String getName() {
@@ -48,16 +48,16 @@ public class DartFunctionDescription {
     }
 
 
-    if (myNamedParameters.length > 0) {
-      final String[] braces = myNamedParameters[0].isPositional() ? new String[]{"[", "]"} : new String[]{"{", "}"};
+    if (myOptionalParameters.length > 0) {
+      final String[] braces = myOptionalParameters[0].isPositional() ? new String[]{"[", "]"} : new String[]{"{", "}"};
 
       if (result.length() > 0) {
         result.append(", ");
       }
       result.append(braces[0]);
 
-      for (int i = 0, length = myNamedParameters.length; i < length; i++) {
-        DartNamedParameterDescription namedParameterDescription = myNamedParameters[i];
+      for (int i = 0, length = myOptionalParameters.length; i < length; i++) {
+        DartOptionalParameterDescription namedParameterDescription = myOptionalParameters[i];
         if (i > 0) {
           result.append(", ");
         }
@@ -86,15 +86,15 @@ public class DartFunctionDescription {
     }
     startOffset += myParameters.length > 0 ? ", [".length() : "[".length();
 
-    for (int i = 0, length = myNamedParameters.length; i < length; i++) {
+    for (int i = 0, length = myOptionalParameters.length; i < length; i++) {
       if ((i + myParameters.length) == index) {
         int shift = i == 0 ? 0 : ", ".length();
-        return new TextRange(startOffset + shift, startOffset + shift + myNamedParameters[i].toString().length());
+        return new TextRange(startOffset + shift, startOffset + shift + myOptionalParameters[i].toString().length());
       }
       if (i > 0) {
         startOffset += ", ".length();
       }
-      startOffset += myNamedParameters[i].toString().length();
+      startOffset += myOptionalParameters[i].toString().length();
     }
     return new TextRange(0, 0);
   }
@@ -136,6 +136,6 @@ public class DartFunctionDescription {
                             : DartPresentableUtil.buildTypeText(namedComponent, returnType, resolveResult.getSpecialization());
     return new DartFunctionDescription(namedComponent.getName(), typeText,
                                        DartParameterDescription.getParameters(namedComponent, resolveResult.getSpecialization()),
-                                       DartNamedParameterDescription.getParameters(namedComponent, resolveResult.getSpecialization()));
+                                       DartOptionalParameterDescription.getParameters(namedComponent, resolveResult.getSpecialization()));
   }
 }

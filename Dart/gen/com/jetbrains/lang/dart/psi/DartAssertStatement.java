@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface DartAssertStatement extends DartPsiCompositeElement {
 
-  @Nullable
-  DartExpression getExpression();
+  @NotNull
+  List<DartExpression> getExpressionList();
 
 }

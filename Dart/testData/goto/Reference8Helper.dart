@@ -1,3 +1,0 @@
-class Bar {
-  String test;
-}

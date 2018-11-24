@@ -14,7 +14,6 @@ import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
-import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;

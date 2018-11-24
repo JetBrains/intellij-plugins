@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 The authors
+ * Copyright 2016 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,10 +23,10 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.contexts.model.SpringModel;
-import com.intellij.spring.facet.SpringFacet;
-import com.intellij.spring.model.SpringModelSearchParameters;
 import com.intellij.spring.model.SpringBeanPointer;
+import com.intellij.spring.model.SpringModelSearchParameters;
 import com.intellij.spring.model.converters.SpringConverterUtil;
+import com.intellij.spring.model.utils.SpringCommonUtils;
 import com.intellij.spring.model.utils.SpringModelSearchers;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
@@ -68,7 +68,7 @@ public class ExtendableClassConverterSpringContributor
       return false;
     }
 
-    if (SpringFacet.getInstance(module) == null) {
+    if (!SpringCommonUtils.hasSpringFacet(module)) {
       return false;
     }
 

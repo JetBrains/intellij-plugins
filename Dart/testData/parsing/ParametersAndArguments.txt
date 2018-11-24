@@ -142,7 +142,7 @@ Dart File
               PsiElement(IDENTIFIER)('m1')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
-            NAMED_FORMAL_PARAMETERS
+            OPTIONAL_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
@@ -157,7 +157,7 @@ Dart File
                         PsiElement(IDENTIFIER)('foo')
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
-                      NAMED_FORMAL_PARAMETERS
+                      OPTIONAL_FORMAL_PARAMETERS
                         PsiElement([)('[')
                         DEFAULT_FORMAL_NAMED_PARAMETER
                           NORMAL_FORMAL_PARAMETER
@@ -187,7 +187,7 @@ Dart File
               PsiElement(IDENTIFIER)('m2')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
-            NAMED_FORMAL_PARAMETERS
+            OPTIONAL_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
@@ -202,7 +202,7 @@ Dart File
                         PsiElement(IDENTIFIER)('foo')
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
-                      NAMED_FORMAL_PARAMETERS
+                      OPTIONAL_FORMAL_PARAMETERS
                         PsiElement([)('[')
                         DEFAULT_FORMAL_NAMED_PARAMETER
                           NORMAL_FORMAL_PARAMETER
@@ -230,7 +230,7 @@ Dart File
                         PsiElement(IDENTIFIER)('bar')
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
-                      NAMED_FORMAL_PARAMETERS
+                      OPTIONAL_FORMAL_PARAMETERS
                         PsiElement([)('[')
                         DEFAULT_FORMAL_NAMED_PARAMETER
                           NORMAL_FORMAL_PARAMETER
@@ -260,7 +260,7 @@ Dart File
               PsiElement(IDENTIFIER)('m3')
           FORMAL_PARAMETER_LIST
             PsiElement(()('(')
-            NAMED_FORMAL_PARAMETERS
+            OPTIONAL_FORMAL_PARAMETERS
               PsiElement([)('[')
               DEFAULT_FORMAL_NAMED_PARAMETER
                 NORMAL_FORMAL_PARAMETER
@@ -275,7 +275,7 @@ Dart File
                         PsiElement(IDENTIFIER)('foo')
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
-                      NAMED_FORMAL_PARAMETERS
+                      OPTIONAL_FORMAL_PARAMETERS
                         PsiElement([)('[')
                         DEFAULT_FORMAL_NAMED_PARAMETER
                           NORMAL_FORMAL_PARAMETER
@@ -314,7 +314,7 @@ Dart File
                         PsiElement(IDENTIFIER)('bar')
                     FORMAL_PARAMETER_LIST
                       PsiElement(()('(')
-                      NAMED_FORMAL_PARAMETERS
+                      OPTIONAL_FORMAL_PARAMETERS
                         PsiElement([)('[')
                         DEFAULT_FORMAL_NAMED_PARAMETER
                           NORMAL_FORMAL_PARAMETER

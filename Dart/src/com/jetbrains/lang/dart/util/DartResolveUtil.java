@@ -89,13 +89,15 @@ public class DartResolveUtil {
         return false;
       }
     }
-    final DartNamedFormalParameters namedFormalParameters = list.getNamedFormalParameters();
-    if (namedFormalParameters == null) {
+    final DartOptionalFormalParameters optionalFormalParameters = list.getOptionalFormalParameters();
+    if (optionalFormalParameters == null) {
       return true;
     }
-    for (int size = namedFormalParameters.getDefaultFormalNamedParameterList().size(); i - normalFormalParameterList.size() < size; ++i) {
+    for (int size = optionalFormalParameters.getDefaultFormalNamedParameterList().size();
+         i - normalFormalParameterList.size() < size;
+         ++i) {
       final DartDefaultFormalNamedParameter defaultFormalParameter =
-        namedFormalParameters.getDefaultFormalNamedParameterList().get(i - normalFormalParameterList.size());
+        optionalFormalParameters.getDefaultFormalNamedParameterList().get(i - normalFormalParameterList.size());
       final DartType dartType = findType(defaultFormalParameter.getNormalFormalParameter());
       if (dartType != null && !canAssign(resolveClassByType(dartType).getDartClass(), classes[i])) {
         return false;
@@ -848,10 +850,10 @@ public class DartResolveUtil {
       if (componentName != null && name.equals(componentName.getText())) return componentName;
     }
 
-    final DartNamedFormalParameters namedFormalParameters = parameterList.getNamedFormalParameters();
-    if (namedFormalParameters == null) return null;
+    final DartOptionalFormalParameters optionalFormalParameters = parameterList.getOptionalFormalParameters();
+    if (optionalFormalParameters == null) return null;
 
-    for (DartDefaultFormalNamedParameter namedParameter : namedFormalParameters.getDefaultFormalNamedParameterList()) {
+    for (DartDefaultFormalNamedParameter namedParameter : optionalFormalParameters.getDefaultFormalNamedParameterList()) {
       final DartComponentName parameterName = namedParameter.getNormalFormalParameter().findComponentName();
       if (parameterName != null && name.equals(parameterName.getText())) return parameterName;
     }
@@ -868,10 +870,10 @@ public class DartResolveUtil {
     if (index < normalParameterSize) {
       return parameterList.getNormalFormalParameterList().get(index);
     }
-    final DartNamedFormalParameters namedFormalParameters = parameterList.getNamedFormalParameters();
-    return namedFormalParameters == null
+    final DartOptionalFormalParameters optionalFormalParameters = parameterList.getOptionalFormalParameters();
+    return optionalFormalParameters == null
            ? null
-           : namedFormalParameters.getDefaultFormalNamedParameterList().get(index - normalParameterSize);
+           : optionalFormalParameters.getDefaultFormalNamedParameterList().get(index - normalParameterSize);
   }
 
   @Nullable
@@ -882,7 +884,7 @@ public class DartResolveUtil {
 
   private static int getParameterIndex(@NotNull PsiElement element, @NotNull DartFormalParameterList parameterList) {
     int normalIndex = parameterList.getNormalFormalParameterList().indexOf(element);
-    final DartNamedFormalParameters formalParameters = parameterList.getNamedFormalParameters();
+    final DartOptionalFormalParameters formalParameters = parameterList.getOptionalFormalParameters();
     int namedIndex = formalParameters == null ? -1 : formalParameters.getDefaultFormalNamedParameterList().indexOf(element);
     return normalIndex >= 0 ? normalIndex : namedIndex >= 0 ? namedIndex + parameterList.getNormalFormalParameterList().size() : -1;
   }

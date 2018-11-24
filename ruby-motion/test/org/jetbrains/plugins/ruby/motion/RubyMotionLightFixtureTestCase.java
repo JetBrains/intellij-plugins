@@ -17,7 +17,6 @@ import org.jetbrains.plugins.ruby.motion.symbols.FunctionSymbol;
 import org.jetbrains.plugins.ruby.motion.symbols.MotionClassSymbol;
 import org.jetbrains.plugins.ruby.rails.RubyLightProjectDescriptorBase;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil;
 import org.jetbrains.plugins.ruby.ruby.sdk.LanguageLevel;
 import org.jetbrains.plugins.ruby.ruby.testCases.RubyFixtureTestCase;
 import org.jetbrains.plugins.ruby.ruby.testCases.RubyLightFixtureTestCase;
@@ -58,7 +57,7 @@ public abstract class RubyMotionLightFixtureTestCase extends RubyLightFixtureTes
     final PsiReference ref = findReferenceBySignature(signature);
     final Symbol symbol = RubyTestUtil.resolveToSymbol(ref);
     TestCase.assertTrue(symbol instanceof MotionClassSymbol || symbol instanceof FunctionSymbol);
-    TestCase.assertEquals(fqn, SymbolUtil.getSymbolFullQualifiedName(symbol));
+    TestCase.assertEquals(fqn, symbol.getFQNWithNesting().getFullPath());
   }
 
   public static class RubyMotionLightFixtureDescriptor extends RubyLightProjectDescriptorBase {

@@ -45,10 +45,6 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
       "CompleteAfterThis2", "CompleteAfterSuper", "ConstrTypePickedUp", "CompleteWithoutQualifier"
     ));
 
-    myRealSmartCompletionTests.addAll(Arrays.asList(
-      "ConstTypePickedUp", "ConstTypePickedUp2", "CompletionInXmlTag"
-    ));
-
     myTestsWithSaveAndLoadCaches.addAll(Arrays.asList(
       "FuncTypePickedUp", "FuncTypePickedUp2", "FuncTypePickedUp3", "ConstTypePickedUp",
       "ConstTypePickedUp2", "VarTypePickedUp3", "VarTypePickedUp4", "VarTypePickedUp5"
@@ -387,6 +383,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTestForFiles(files);
   }
 
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
   public final void testConstTypePickedUp() throws Exception {
     final LookupElement[] items = doTest("");
     assertNotNull(items);
@@ -394,6 +391,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("appendChild", items[1].getLookupString());
   }
 
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
   public final void testConstTypePickedUp2() throws Exception {
     final LookupElement[] items = doTest("");
     assertNotNull(items);
@@ -530,6 +528,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("", "js2");
   }
 
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
   public final void testCompletionInXmlTag() throws Exception {
     LookupElement[] items = doTest("");
     assertNull(items);

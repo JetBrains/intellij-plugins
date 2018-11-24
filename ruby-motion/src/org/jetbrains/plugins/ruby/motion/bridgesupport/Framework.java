@@ -1,7 +1,7 @@
 package org.jetbrains.plugins.ruby.motion.bridgesupport;
 
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.plugins.ruby.ruby.lang.psi.impl.RNameUtilCore;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class Framework extends FunctionHolder {
 
   @TestOnly
   public Class getClass(final String name) {
-    return getClass(RNameUtilCore.getPath(name));
+    return getClass(FQN.Builder.fromString(name).asList());
   }
 
   public Class getClass(final List<String> name) {

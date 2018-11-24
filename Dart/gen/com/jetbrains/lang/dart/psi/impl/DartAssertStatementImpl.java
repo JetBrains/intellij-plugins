@@ -27,9 +27,9 @@ public class DartAssertStatementImpl extends DartPsiCompositeElementImpl impleme
   }
 
   @Override
-  @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
+  @NotNull
+  public List<DartExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
   }
 
 }

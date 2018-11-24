@@ -87,10 +87,10 @@ public interface DartTokenTypes {
   IElementType MULTIPLICATIVE_OPERATOR = new DartElementType("MULTIPLICATIVE_OPERATOR");
   IElementType NAMED_ARGUMENT = new DartElementType("NAMED_ARGUMENT");
   IElementType NAMED_CONSTRUCTOR_DECLARATION = new DartElementType("NAMED_CONSTRUCTOR_DECLARATION");
-  IElementType NAMED_FORMAL_PARAMETERS = new DartElementType("NAMED_FORMAL_PARAMETERS");
   IElementType NEW_EXPRESSION = new DartElementType("NEW_EXPRESSION");
   IElementType NORMAL_FORMAL_PARAMETER = new DartElementType("NORMAL_FORMAL_PARAMETER");
   IElementType ON_PART = new DartElementType("ON_PART");
+  IElementType OPTIONAL_FORMAL_PARAMETERS = new DartElementType("OPTIONAL_FORMAL_PARAMETERS");
   IElementType PARAMETER_NAME_REFERENCE_EXPRESSION = new DartElementType("PARAMETER_NAME_REFERENCE_EXPRESSION");
   IElementType PARENTHESIZED_EXPRESSION = new DartElementType("PARENTHESIZED_EXPRESSION");
   IElementType PART_OF_STATEMENT = new DartElementType("PART_OF_STATEMENT");
@@ -141,6 +141,7 @@ public interface DartTokenTypes {
   IElementType ABSTRACT = new DartElementType("abstract");
   IElementType AND = new DartElementType("&");
   IElementType AND_AND = new DartElementType("&&");
+  IElementType AND_AND_EQ = new DartElementType("&&=");
   IElementType AND_EQ = new DartElementType("&=");
   IElementType AS = new DartElementType("as");
   IElementType ASSERT = new DartElementType("assert");
@@ -221,6 +222,7 @@ public interface DartTokenTypes {
   IElementType OR = new DartElementType("|");
   IElementType OR_EQ = new DartElementType("|=");
   IElementType OR_OR = new DartElementType("||");
+  IElementType OR_OR_EQ = new DartElementType("||=");
   IElementType PART = new DartElementType("part");
   IElementType PLUS = new DartElementType("+");
   IElementType PLUS_EQ = new DartElementType("+=");
@@ -500,9 +502,6 @@ public interface DartTokenTypes {
       else if (type == NAMED_CONSTRUCTOR_DECLARATION) {
         return new DartNamedConstructorDeclarationImpl(node);
       }
-      else if (type == NAMED_FORMAL_PARAMETERS) {
-        return new DartNamedFormalParametersImpl(node);
-      }
       else if (type == NEW_EXPRESSION) {
         return new DartNewExpressionImpl(node);
       }
@@ -511,6 +510,9 @@ public interface DartTokenTypes {
       }
       else if (type == ON_PART) {
         return new DartOnPartImpl(node);
+      }
+      else if (type == OPTIONAL_FORMAL_PARAMETERS) {
+        return new DartOptionalFormalParametersImpl(node);
       }
       else if (type == PARAMETER_NAME_REFERENCE_EXPRESSION) {
         return new DartParameterNameReferenceExpressionImpl(node);

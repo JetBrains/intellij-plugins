@@ -7,11 +7,14 @@ import com.intellij.psi.PsiElement;
 
 public interface DartPartOfStatement extends DartPsiCompositeElement {
 
-  @NotNull
+  @Nullable
   DartLibraryId getLibraryId();
 
   @NotNull
   List<DartMetadata> getMetadataList();
+
+  @Nullable
+  DartUriElement getUriElement();
 
   @NotNull
   String getLibraryName();

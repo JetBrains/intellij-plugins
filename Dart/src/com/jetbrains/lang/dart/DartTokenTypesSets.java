@@ -102,13 +102,14 @@ public interface DartTokenTypesSets {
 
   TokenSet OPERATORS = TokenSet.create(
     MINUS, MINUS_EQ, MINUS_MINUS, PLUS, PLUS_PLUS, PLUS_EQ, DIV, DIV_EQ, MUL, MUL_EQ, INT_DIV, INT_DIV_EQ, REM_EQ, REM, BIN_NOT, NOT,
-    EQ, EQ_EQ, NEQ, GT, GT_EQ, GT_GT_EQ, LT, LT_EQ, LT_LT, LT_LT_EQ, OR, OR_EQ, OR_OR, XOR, XOR_EQ, AND,
-    AND_EQ, AND_AND, LBRACKET, RBRACKET, AS, QUEST_QUEST
+    EQ, EQ_EQ, NEQ, GT, GT_EQ, GT_GT_EQ, LT, LT_EQ, LT_LT, LT_LT_EQ, OR, OR_EQ, OR_OR, OR_OR_EQ, XOR, XOR_EQ, AND,
+    AND_EQ, AND_AND, AND_AND_EQ, LBRACKET, RBRACKET, AS, QUEST_QUEST, QUEST_QUEST_EQ
   );
 
   TokenSet ASSIGNMENT_OPERATORS = TokenSet.create(
-    // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|=' | '??='
-    EQ, MUL_EQ, DIV_EQ, INT_DIV_EQ, REM_EQ, PLUS_EQ, MINUS_EQ, LT_LT_EQ, GT_GT_EQ, AND_EQ, XOR_EQ, OR_EQ, QUEST_QUEST_EQ
+    // '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '&&=' | '^=' | '|=' | '||=' | '??='
+    EQ, MUL_EQ, DIV_EQ, INT_DIV_EQ, REM_EQ, PLUS_EQ, MINUS_EQ, LT_LT_EQ, GT_GT_EQ, AND_EQ, AND_AND_EQ, XOR_EQ, OR_EQ, OR_OR_EQ,
+    QUEST_QUEST_EQ
   );
 
   TokenSet BINARY_EXPRESSIONS = TokenSet.create(

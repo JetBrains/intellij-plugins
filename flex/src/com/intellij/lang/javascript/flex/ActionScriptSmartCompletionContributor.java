@@ -422,9 +422,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       if (clazzToProcess == null) return;
       myEventsMap = getEventsMap(clazzToProcess);
 
-      final PsiElement eventClass1 = JSResolveUtil.unwrapProxy(
-        ActionScriptClassResolver
-          .findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
+      final PsiElement eventClass1 = ActionScriptClassResolver
+        .findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression));
       if ((eventClass1 instanceof JSClass)) {
         setToProcessMembers(true);
         setTypeContext(false);
@@ -436,9 +435,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         }
       }
 
-      final PsiElement eventClass2 = JSResolveUtil.unwrapProxy(
-        ActionScriptClassResolver
-          .findClassByQName(FlexCommonTypeNames.STARLING_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
+      final PsiElement eventClass2 = ActionScriptClassResolver
+        .findClassByQName(FlexCommonTypeNames.STARLING_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression));
       if ((eventClass2 instanceof JSClass)) {
         setToProcessMembers(true);
         setTypeContext(false);

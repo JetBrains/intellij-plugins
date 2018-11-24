@@ -60,8 +60,9 @@ public class ExportPackageParser extends BasePackageParser {
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
     PsiElement parent = headerValuePart.getParent();
     if (parent instanceof Clause) {
-      PsiElement element = headerValuePart.getOriginalElement();
-      if (isPackageRef(element.getPrevSibling())) {
+      PsiElement element = headerValuePart.getOriginalElement().getPrevSibling();
+      if (!(element instanceof ManifestToken) ||
+          ((ManifestToken)element).getTokenType() != ManifestTokenType.SEMICOLON) {
         return getPackageReferences(headerValuePart);
       }
     }
@@ -80,16 +81,6 @@ public class ExportPackageParser extends BasePackageParser {
     }
 
     return PsiReference.EMPTY_ARRAY;
-  }
-
-  private static boolean isPackageRef(PsiElement element) {
-    if (element instanceof ManifestToken) {
-      ManifestToken manifestToken = (ManifestToken)element;
-      return manifestToken.getTokenType() != ManifestTokenType.SEMICOLON;
-    }
-    else {
-      return true;
-    }
   }
 
   @Override

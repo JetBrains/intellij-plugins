@@ -26,7 +26,6 @@ import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.util.Consumer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.DartBundle;
@@ -48,6 +47,7 @@ import java.util.List;
 
 public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<DartProjectWizardData> {
   private static final String DART_PROJECT_TEMPLATE = "DART_PROJECT_TEMPLATE";
+  private static final String CREATE_SAMPLE_UNCHECKED = "CREATE_SAMPLE_UNCHECKED";
 
   private JPanel myMainPanel;
   private ComboboxWithBrowseButton mySdkPathComboWithBrowse;
@@ -100,11 +100,14 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     // now setup controls
     DartSdkUtil.initDartSdkAndDartiumControls(null, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
                                               new Computable.PredefinedValueComputable<>(myDartiumSettingsCurrent),
-                                              myDartiumSettingsButton, myCheckedModeCheckBox,
+                                              myDartiumSettingsButton,
                                               new Computable.PredefinedValueComputable<>(false));
 
-    final boolean checkedMode = dartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
-    myCheckedModeCheckBox.setSelected(checkedMode);
+    // we decided to save one line in settings and always use Dartium in checked mode
+    DartiumUtil.setCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables(), true);
+    myCheckedModeCheckBox.setVisible(false);
+    //final boolean checkedMode = dartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
+    //myCheckedModeCheckBox.setSelected(checkedMode);
 
     myCreateSampleProjectCheckBox.addActionListener(new ActionListener() {
       @Override
@@ -173,7 +176,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     myTemplatesList.setEnabled(true);
 
     final String selectedTemplateName = PropertiesComponent.getInstance().getValue(DART_PROJECT_TEMPLATE);
-    myCreateSampleProjectCheckBox.setSelected(selectedTemplateName != null);
+    myCreateSampleProjectCheckBox.setSelected(!CREATE_SAMPLE_UNCHECKED.equals(selectedTemplateName));
     myTemplatesList.setEnabled(myCreateSampleProjectCheckBox.isSelected());
 
     DartProjectTemplate selectedTemplate = null;
@@ -221,7 +224,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
     settingsStep.addSettingsField(DartBundle.message("dart.sdk.path.label"), mySdkPathComboWithBrowse);
     settingsStep.addSettingsField(DartBundle.message("version.label"), myVersionLabel);
     settingsStep.addSettingsField(DartBundle.message("dartium.path.label"), myDartiumSettingsPanel);
-    settingsStep.addSettingsField("", myCheckedModeCheckBox);
+    //settingsStep.addSettingsField("", myCheckedModeCheckBox); we decided to save one line in settings and always use Dartium in checked mode
     settingsStep.addSettingsComponent(myTemplatesPanel);
   }
 
@@ -234,7 +237,7 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
     final DartProjectTemplate template = myCreateSampleProjectCheckBox.isSelected()
                                          ? (DartProjectTemplate)myTemplatesList.getSelectedValue() : null;
-    PropertiesComponent.getInstance().setValue(DART_PROJECT_TEMPLATE, template == null ? null : template.getName());
+    PropertiesComponent.getInstance().setValue(DART_PROJECT_TEMPLATE, template == null ? CREATE_SAMPLE_UNCHECKED : template.getName());
 
     return new DartProjectWizardData(sdkPath, dartiumPath, myDartiumSettingsCurrent, template);
   }

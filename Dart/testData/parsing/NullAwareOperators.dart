@@ -10,6 +10,8 @@ class NAO1 {
     g = x || y ?? z;
     h = x ?? y || z;
     a ??= c;
+    a ||= c;
+    a &&= c;
     this?.f(e, f, g ?? h);
   }
 }

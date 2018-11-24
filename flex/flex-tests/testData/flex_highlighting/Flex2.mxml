@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<mx:Application xmlns:mx="<error>http://www.adobe.com/2006/mxml</error>">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
 
     <mx:HBox>
       <mx:Tree/>
@@ -11,8 +11,8 @@
     </mx:HBox>
   <mx:Style></mx:Style>
   <!--<mx:Style source="main2.css"/> TODO: fixme-->
-      <mx:Label styleName="error" text="This is an error"/>
-      <mx:Label styleName="title" text="This is a title"/>
-      <mx:TextArea width="200" height="100" wordWrap="true" text="This is a TextArea"/>
+      <mx:Label styleName="<warning descr="Invalid CSS selector">error</warning>" text="This is an error"/>
+      <mx:Label styleName="<warning descr="Invalid CSS selector">title</warning>" text="This is a title"/>
+      <mx:TextArea width="200" height="100" wordWrap="true" <error descr="Attribute incorrect is not allowed here">incorrect</error>="true" text="This is a TextArea"/>
 
 </mx:Application>
