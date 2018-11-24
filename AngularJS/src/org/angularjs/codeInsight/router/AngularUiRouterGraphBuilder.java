@@ -19,13 +19,13 @@ import static org.angularjs.codeInsight.router.Type.template;
 public class AngularUiRouterGraphBuilder {
   @NotNull private final Project myProject;
   private final Map<String, UiRouterState> myStatesMap;
-  private final Map<String, Template> myTemplatesMap;
+  private final Map<VirtualFile, Template> myTemplatesMap;
   @Nullable private final RootTemplate myRootTemplate;
   private final VirtualFile myKey;
 
   public AngularUiRouterGraphBuilder(@NotNull Project project,
                                      @NotNull Map<String, UiRouterState> statesMap,
-                                     @NotNull Map<String, Template> templatesMap,
+                                     @NotNull Map<VirtualFile, Template> templatesMap,
                                      @Nullable RootTemplate rootTemplate, VirtualFile key) {
     myProject = project;
     myStatesMap = statesMap;
@@ -46,9 +46,9 @@ public class AngularUiRouterGraphBuilder {
   }
 
   public static class GraphNodesBuilder {
-    public static final String DEFAULT = "<default>";
+    public static final String DEFAULT = "$default";
     @NotNull private final Map<String, UiRouterState> myStatesMap;
-    @NotNull private final Map<String, Template> myTemplatesMap;
+    @NotNull private final Map<VirtualFile, Template> myTemplatesMap;
     @Nullable private final RootTemplate myRootTemplate;
     private final VirtualFile myKey;
 
@@ -62,7 +62,7 @@ public class AngularUiRouterGraphBuilder {
     private final List<AngularUiRouterNode> allNodes = new ArrayList<>();
 
     public GraphNodesBuilder(@NotNull Map<String, UiRouterState> statesMap,
-                             @NotNull Map<String, Template> templatesMap, @Nullable RootTemplate rootTemplate, VirtualFile key) {
+                             @NotNull Map<VirtualFile, Template> templatesMap, @Nullable RootTemplate rootTemplate, VirtualFile key) {
       myStatesMap = statesMap;
       myTemplatesMap = templatesMap;
       myRootTemplate = rootTemplate;
@@ -80,7 +80,7 @@ public class AngularUiRouterGraphBuilder {
     public void build(@NotNull final AngularUiRouterDiagramProvider provider, @NotNull final Project project) {
       final DiagramObject rootDiagramObject;
       if (myRootTemplate != null) {
-        myRootNode = getOrCreateTemplateNode(provider, normalizeTemplateUrl(myRootTemplate.getRelativeUrl()), myRootTemplate.getTemplate());
+        myRootNode = getOrCreateTemplateNode(provider, myKey, normalizeTemplateUrl(myRootTemplate.getRelativeUrl()), myRootTemplate.getTemplate());
         myRootNode.getIdentifyingElement().setType(Type.topLevelTemplate);
       } else {
         // todo remove from diagram if not used
@@ -104,17 +104,26 @@ public class AngularUiRouterGraphBuilder {
         stateNodes.put(state.getName(), node);
         final String templateUrl = normalizeTemplateUrl(state.getTemplateUrl());
 
-        if (templateUrl != null) {
-          final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, templateUrl, null);
+        if (templateUrl != null && !state.hasViews()) {
+          final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, state.getTemplateFile(), templateUrl, null);
           edges.add(new AngularUiRouterEdge(templateNode, node, "provides", AngularUiRouterEdge.Type.providesTemplate));
+        } else if (state.isHasTemplateDefined() && state.getTemplatePointer() != null) {
+          final PsiElement element = state.getTemplatePointer().getElement();
+          if (element != null && element.isValid()) {
+            final AngularUiRouterNode localTemplateNode = createLocalTemplate(element, provider);
+            edges.add(new AngularUiRouterEdge(localTemplateNode, node, "provides", AngularUiRouterEdge.Type.providesTemplate));
+          }
         }
         if (state.hasViews()) {
           if (state.isAbstract()) {
             stateObject.addWarning("Abstract state can not be instantiated so it makes no sense to define views for it.");
           }
-          else {
-            stateObject.addWarning("Since 'views' are defined for state, template information would be ignored.");
+          else if (templateUrl != null || state.isHasTemplateDefined()) {
+            stateObject.addWarning("Since 'views' are defined for state, state template information would be ignored.");
           }
+        }
+        if (state.isHasTemplateDefined() && state.getTemplatePointer() == null) {
+          stateObject.addNote("Has embedded template definition.");
         }
       }
 
@@ -132,8 +141,14 @@ public class AngularUiRouterGraphBuilder {
 
             final String template = view.getTemplate();
             if (!StringUtil.isEmptyOrSpaces(template)) {
-              final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, template, null);
+              final AngularUiRouterNode templateNode = getOrCreateTemplateNode(provider, view.getTemplateFile(), template, null);
               edges.add(new AngularUiRouterEdge(templateNode, node, name + " provides ", AngularUiRouterEdge.Type.providesTemplate).setTargetName(name));
+            } else if (view.getTemplatePointer() != null) {
+              final PsiElement element = view.getTemplatePointer().getElement();
+              if (element != null && element.isValid()) {
+                final AngularUiRouterNode localTemplateNode = createLocalTemplate(element, provider);
+                edges.add(new AngularUiRouterEdge(localTemplateNode, node, name + " provides ", AngularUiRouterEdge.Type.providesTemplate).setTargetName(name));
+              }
             }
             node.getIdentifyingElement().addChild(viewObject, node);
           }
@@ -168,23 +183,30 @@ public class AngularUiRouterGraphBuilder {
       }
       createStateParentEdges();
 
-      allNodes.add(myRootNode);
-      allNodes.addAll(stateNodes.values());
-      allNodes.addAll(templateNodes.values());
-
-      mergeParallelEdges();
-      //allNodes.addAll(templatePlaceHoldersNodes.values());
-      //allNodes.addAll(viewNodes.values());
+      final List<AngularUiRouterNode> list = new ArrayList<>();
+      list.add(myRootNode);
+      list.addAll(stateNodes.values());
+      list.addAll(templateNodes.values());
+      for (AngularUiRouterNode node : list) {
+        if (!allNodes.contains(node)) allNodes.add(node);
+      }
     }
 
-    private void mergeParallelEdges() {
-      /*final Map<AngularUiRouterNode, Integer> nodes = new HashMap<>();
-      int i = 0;
-      for (AngularUiRouterNode node : allNodes) {
-        nodes.put(node, i++);
-      }
-      final Map<Pair<Integer, Integer>, AngularUiRouterEdge> newEdges = new HashMap<>();*/
+    private AngularUiRouterNode createLocalTemplate(PsiElement element, AngularUiRouterDiagramProvider provider) {
+      final String name = element.getContainingFile().getName() + " (local)";
+      final String key = element.getContainingFile().getVirtualFile().getUrl() + ":" + element.getTextRange().getStartOffset();
+      final Template template = AngularUiRouterDiagramBuilder.readTemplateFromFile(element.getProject(), name, element);
+      if (!templateNodes.containsKey(key)) {
+        final DiagramObject templateObject = new DiagramObject(Type.template, name, template.getPointer());
+        final AngularUiRouterNode templateNode = new AngularUiRouterNode(templateObject, provider);
+        templateNodes.put(key, templateNode);
 
+        putPlaceholderNodes(key, template, templateNode);
+      }
+      final AngularUiRouterNode templateNode = templateNodes.get(key);
+      assert templateNode != null;
+      templateNode.getIdentifyingElement().setTooltip(key);
+      return templateNode;
     }
 
     private void connectViewOrStateWithPlaceholder(AngularUiRouterNode stateNode, String viewName, Pair<AngularUiRouterNode, String> pair) {
@@ -216,7 +238,7 @@ public class AngularUiRouterGraphBuilder {
       usedTemplateUrl = normalizeTemplateUrl(usedTemplateUrl);
       final DiagramObject placeholder = templatePlaceHoldersNodes.get(Pair.create(usedTemplateUrl, placeholderName));
       if (placeholder != null && placeholder.getContainer() != null) {
-        final AngularUiRouterEdge edge = new AngularUiRouterEdge(placeholder.getContainer(), stateNode, viewName + " fills " + placeholderName,
+        final AngularUiRouterEdge edge = new AngularUiRouterEdge(placeholder.getContainer(), stateNode, viewName + " populates " + placeholderName,
                                                                  AngularUiRouterEdge.Type.fillsTemplate).setSourceName(placeholderName)
           .setTargetName(viewName);
         edge.setTargetAnchor(placeholder);
@@ -321,25 +343,33 @@ public class AngularUiRouterGraphBuilder {
     }
 
     @NotNull
-    private AngularUiRouterNode getOrCreateTemplateNode(AngularUiRouterDiagramProvider provider, @NotNull String templateUrl, @Nullable Template template) {
+    private AngularUiRouterNode getOrCreateTemplateNode(AngularUiRouterDiagramProvider provider,
+                                                        @Nullable VirtualFile templateFile,
+                                                        @NotNull String templateUrl, @Nullable Template template) {
       final String fullUrl = templateUrl;
       final int idx = fullUrl.lastIndexOf('/');
       templateUrl = idx >= 0 ? templateUrl.substring(idx + 1) : templateUrl;
-      template = template == null ? myTemplatesMap.get(fullUrl) : template;
-      if (template == null || template.getPointer() == null) {
+      template = template == null && templateFile != null ? myTemplatesMap.get(templateFile) : template;
+      if (template == null || template.getPointer() == null || templateFile == null) {
+        final AngularUiRouterNode templateNode = templateNodes.get(fullUrl);
+        if (templateNode != null) return templateNode;
+
         // file not found
         final DiagramObject templateObject = new DiagramObject(Type.template, templateUrl, null);
         templateObject.addError("Can not find template file");
-        templateNodes.put(templateUrl, new AngularUiRouterNode(templateObject, provider));
+        final AngularUiRouterNode fictiveNode = new AngularUiRouterNode(templateObject, provider);
+        fictiveNode.getIdentifyingElement().setTooltip(fullUrl);
+        templateNodes.put(fullUrl, fictiveNode);
+        return fictiveNode;
       }
-      else if (!templateNodes.containsKey(templateUrl)) {
+      else if (!templateNodes.containsKey(templateFile.getUrl())) {
         final DiagramObject templateObject = new DiagramObject(Type.template, templateUrl, template.getPointer());
         final AngularUiRouterNode templateNode = new AngularUiRouterNode(templateObject, provider);
-        templateNodes.put(templateUrl, templateNode);
+        templateNodes.put(templateFile.getUrl(), templateNode);
 
         putPlaceholderNodes(fullUrl, template, templateNode);
       }
-      final AngularUiRouterNode templateNode = templateNodes.get(templateUrl);
+      final AngularUiRouterNode templateNode = templateNodes.get(templateFile.getUrl());
       assert templateNode != null;
       templateNode.getIdentifyingElement().setTooltip(fullUrl);
       return templateNode;

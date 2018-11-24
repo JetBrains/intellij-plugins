@@ -181,6 +181,26 @@ public class DartCallHierarchyTest extends HierarchyViewTestBase {
     doCallHierarchyTest("A", "a", false, "A.dart", "B.dart", "C.dart");
   }
 
+  public void testLocalFnInMethod() throws Exception {
+    doCallHierarchyTest(null, "baz", true, "C.dart");
+  }
+
+  public void testLocalFnInFunction() throws Exception {
+    doCallHierarchyTest(null, "baz", true, "C.dart");
+  }
+
+  public void testNamedConstructorCallers() throws Exception {
+    doCallHierarchyTest("X", "z7", true, "A.dart");
+  }
+
+  public void testGetterSetterCallers() throws Exception {
+    doCallHierarchyTest("X", "it", true, "A.dart");
+  }
+
+  public void testFactoryConstructorCallers() throws Exception {
+    doCallHierarchyTest("X", "zz", true, "A.dart");
+  }
+
   private static class ExitVisitor extends Error {
   }
 }

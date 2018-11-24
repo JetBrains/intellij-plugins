@@ -4,8 +4,11 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
+import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
@@ -107,6 +110,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXES.put("ami", AngularModuleIndex.KEY);
     INDEXES.put("asi", AngularSymbolIndex.KEY);
     INDEXES.put("arsi", AngularUiRouterStatesIndex.KEY);
+    INDEXES.put("arsgi", AngularUiRouterGenericStatesIndex.KEY);
 
     for (String key : INDEXES.keySet()) {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
@@ -206,6 +210,28 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         }
       }
     };
+  }
+
+  @Override
+  public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
+    final JSReferenceExpression reference = ObjectUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
+    if (reference == null) return;
+    if (!JSSymbolUtil.isAccurateReferenceExpressionName(reference, "$stateProvider", STATE)) return;
+    final JSExpression[] arguments = callExpression.getArguments();
+    if (arguments.length == 1 && arguments[0] instanceof JSReferenceExpression) {
+      addImplicitElements(callExpression, null, AngularUiRouterGenericStatesIndex.KEY, STATE, null, outData);
+    }
+  }
+
+  @Override
+  public boolean shouldCreateStubForCallExpression(ASTNode node) {
+    final ASTNode methodExpression = JSCallExpressionImpl.getMethodExpression(node);
+    if (methodExpression == null) return false;
+
+    final ASTNode referencedNameElement = methodExpression.getLastChildNode();
+    final ASTNode qualifier = JSReferenceExpressionImpl.getQualifierNode(methodExpression);
+    if (qualifier == null) return false;
+    return "state".equals(referencedNameElement.getText()) && "$stateProvider".equalsIgnoreCase(qualifier.getText());
   }
 
   @Nullable
@@ -573,21 +599,22 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return new PairProcessor<JSProperty, JSElementIndexingData>() {
       @Override
       public boolean process(JSProperty property, JSElementIndexingData outData) {
-        if (AngularJSUiRouterConstants.controllerAs.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
-          final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
-          if (!value.isQuotedLiteral()) return false;
-          final String unquotedValue = unquote(value);
+        if (!(property.getValue() instanceof JSLiteralExpression)) return true;
+        final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
+        if (!value.isQuotedLiteral()) return true;
+        final String unquotedValue = unquote(value);
+        if (AngularJSUiRouterConstants.controllerAs.equals(property.getName())) {
           return recordControllerAs(property, outData, value, unquotedValue);
-        } else if (CONTROLLER.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
-          final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
-          if (!value.isQuotedLiteral()) return false;
-          final String unquotedValue = unquote(value);
+        } else if (CONTROLLER.equals(property.getName())) {
           final int idx = unquotedValue != null ? unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES) : 0;
           if (idx > 0 && (idx + AS_CONNECTOR_WITH_SPACES.length()) < (unquotedValue.length() - 1)) {
             return recordControllerAs(property, outData, value, unquotedValue.substring(idx + AS_CONNECTOR_WITH_SPACES.length(), unquotedValue.length()));
           }
+        } else if ("name".equals(property.getName())) {
+          addImplicitElements(value, STATE, INDEXERS.get(STATE), unquotedValue, null, outData);
+          return true;
         }
-        return false;
+        return true;
       }
 
       private boolean recordControllerAs(JSProperty property,

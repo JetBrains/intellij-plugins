@@ -11,7 +11,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep
  * @author Max Medvedev
  */
 class CreateStepTest extends GrCucumberLightTestCase {
-  final String basePath = null
 
   void 'test simple step creation'() {
     doTest '''\

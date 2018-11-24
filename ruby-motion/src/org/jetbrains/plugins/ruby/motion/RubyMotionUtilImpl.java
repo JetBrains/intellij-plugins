@@ -478,13 +478,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
             final RubyAbstractCommandLineState rubyState = (RubyAbstractCommandLineState)state;
             final TextConsoleBuilder consoleBuilder = rubyState.getConsoleBuilder();
             process = serverProcessHandler instanceof MotionDeviceProcessHandler ?
-                      new RubyMotionDeviceDebugProcess(session, state, env.getExecutor(), consoleBuilder, serverProcessHandler) {
-                        @Override
-                        protected ProcessHandlerWithPID createSimulatorProcessHandler(RunParameters parameters)
-                          throws ExecutionException {
-                          return (ProcessHandlerWithPID)serverProcessHandler;
-                        }
-                      } :
+                      new RubyMotionDeviceDebugProcess(session, state, env.getExecutor(), consoleBuilder, serverProcessHandler) :
                       new RubyMotionSimulatorDebugProcess(session, state, env.getExecutor(), consoleBuilder, serverProcessHandler) {
                         @Override
                         protected ProcessHandlerWithPID createSimulatorProcessHandler(RunParameters parameters) throws ExecutionException {

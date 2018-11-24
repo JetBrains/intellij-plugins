@@ -12,7 +12,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.jetbrains.cidr.execution.debugger.CidrDebuggerLog;
-import com.jetbrains.cidr.execution.debugger.IPhoneSimulatorDebugProcessBase;
+import com.jetbrains.cidr.execution.debugger.IPhoneSimulatorDebugProcess;
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrBreakpointHandler;
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrExceptionBreakpointHandler;
 import com.jetbrains.cidr.execution.debugger.breakpoints.CidrSymbolicBreakpointHandler;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
 * @author Dennis.Ushakov
 */
-public abstract class RubyMotionSimulatorDebugProcess extends IPhoneSimulatorDebugProcessBase {
+public abstract class RubyMotionSimulatorDebugProcess extends IPhoneSimulatorDebugProcess {
   private final RunProfileState myState;
   private final Executor myExecutor;
   private final ProcessHandler myServerProcessHandler;

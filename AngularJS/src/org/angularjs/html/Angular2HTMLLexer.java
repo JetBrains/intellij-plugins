@@ -129,6 +129,8 @@ public class Angular2HTMLLexer extends HtmlLexer {
   private static Lexer createLexer(IElementType type) {
     final _AngularJSInterpolationsLexer lexer = new _AngularJSInterpolationsLexer(null);
     lexer.setType(type);
-    return new MergingLexerAdapter(new FlexAdapter(lexer), TokenSet.create(AngularJSElementTypes.EMBEDDED_CONTENT, XmlTokenType.XML_DATA_CHARACTERS));
+    return new MergingLexerAdapter(new FlexAdapter(lexer), TokenSet.create(AngularJSElementTypes.EMBEDDED_CONTENT,
+                                                                           XmlTokenType.XML_DATA_CHARACTERS,
+                                                                           XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN));
   }
 }

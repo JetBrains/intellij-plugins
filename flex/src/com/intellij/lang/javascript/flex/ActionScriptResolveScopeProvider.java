@@ -83,7 +83,15 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
     if (file == null) return JSResolveUtil.getJavaScriptSymbolsResolveScope(project);
 
     final GlobalSearchScope scope = isApplicable(file) ? ResolveScopeManager.getInstance(project).getDefaultResolveScope(file) : null;
-    if (scope != null) return scope;
+    if (scope != null) {
+      if (ProjectFileIndex.SERVICE.getInstance(project).isInLibraryClasses(file) && !scope.contains(file)) {
+        // safe but not 100% correct fix for IDEA-157606
+        // The problem happens when ModuleA -> ModuleB -> lib.swc and we calculate resolve scope for file from lib.swc. FlexOrderEnumerationHandler filters our 'ModuleB -> lib.swc' dependency because it is initialized with ModuleA. Oh, LibraryRuntimeClasspathScope computation is so complicated...
+        return scope.union(GlobalSearchScope.fileScope(project, file));
+      }
+      return scope;
+    }
+
     final GlobalSearchScope fileResolveScope = getResolveScope(file, project, false);
     return fileResolveScope != null ? fileResolveScope : JSResolveUtil.getJavaScriptSymbolsResolveScope(project);
   }

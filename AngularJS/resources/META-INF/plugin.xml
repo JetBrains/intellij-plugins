@@ -35,6 +35,7 @@
     <stubIndex implementation="org.angularjs.index.AngularFilterIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularUiRouterStatesIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularUiRouterGenericStatesIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularTemplateCacheIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularInjectionDelimiterIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularUiRouterViewsIndex"/>

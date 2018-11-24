@@ -24,7 +24,6 @@ import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
@@ -67,7 +66,6 @@ import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import com.sixrr.inspectjs.validity.BadExpressionStatementJSInspection;
 import com.sixrr.inspectjs.validity.FunctionWithInconsistentReturnsJSInspection;
@@ -2424,7 +2422,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     defaultTest(); // IDEA-153275
   }
 
-  @JSTestOptions(JSTestOption.WithLineMarkers)
+  @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithSemanticKeywords})
   public void testSemanticHighlighting() throws Exception {
     defaultTest(); // IDEA-110040
   }

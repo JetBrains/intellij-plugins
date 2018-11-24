@@ -17,6 +17,7 @@ public class UiRouterState {
   private final String myName;
   private String myUrl;
   private String myTemplateUrl;
+  private boolean myHasTemplateDefined;
   private String myParentName;
   private List<UiView> myViews;
   @Nullable private SmartPsiElementPointer<PsiElement> myPointer;
@@ -24,6 +25,9 @@ public class UiRouterState {
   @NotNull
   private final VirtualFile myFile;
   @Nullable private List<SmartPsiElementPointer<PsiElement>> myDuplicateDefinitions;
+  private VirtualFile myTemplateFile;
+  @Nullable private SmartPsiElementPointer<PsiElement> myTemplatePointer;
+  private boolean myGeneric;
 
   public UiRouterState(@NotNull String name, @NotNull VirtualFile file) {
     myName = name;
@@ -49,6 +53,14 @@ public class UiRouterState {
 
   public void setUrl(String url) {
     myUrl = url;
+  }
+
+  public boolean isHasTemplateDefined() {
+    return myHasTemplateDefined;
+  }
+
+  public void setHasTemplateDefined(boolean hasTemplateDefined) {
+    myHasTemplateDefined = hasTemplateDefined;
   }
 
   public void setTemplateUrl(String templateUrl) {
@@ -106,6 +118,7 @@ public class UiRouterState {
     UiRouterState state = (UiRouterState)o;
 
     if (!myName.equals(state.myName)) return false;
+    if (myPointer != null ? !myPointer.equals(state.myPointer) : state.myPointer != null) return false;
     if (!myFile.equals(state.myFile)) return false;
 
     return true;
@@ -114,7 +127,33 @@ public class UiRouterState {
   @Override
   public int hashCode() {
     int result = myName.hashCode();
+    result = 31 * result + (myPointer != null ? myPointer.hashCode() : 0);
     result = 31 * result + myFile.hashCode();
     return result;
+  }
+
+  public void setTemplateFile(VirtualFile templateFile) {
+    myTemplateFile = templateFile;
+  }
+
+  public VirtualFile getTemplateFile() {
+    return myTemplateFile;
+  }
+
+  public boolean isGeneric() {
+    return myGeneric;
+  }
+
+  public void setGeneric(boolean generic) {
+    myGeneric = generic;
+  }
+
+  @Nullable
+  public SmartPsiElementPointer<PsiElement> getTemplatePointer() {
+    return myTemplatePointer;
+  }
+
+  public void setTemplatePointer(@Nullable SmartPsiElementPointer<PsiElement> templatePointer) {
+    myTemplatePointer = templatePointer;
   }
 }

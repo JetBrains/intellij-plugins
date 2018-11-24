@@ -1,0 +1,5 @@
+<node text="baz() → void (C.dart)" base="true">
+  <node text="() in () in foo() (C.dart)"/>
+  <node text="() in foo() (C.dart)"/>
+  <node text="C.foo() (C.dart)"/>
+</node>

@@ -1,9 +1,7 @@
 package com.intellij.javascript.flex;
 
-import com.intellij.javascript.flex.completion.ActionScriptCompletionKeywordsContributor;
 import com.intellij.javascript.flex.index.ActionScriptCustomIndexer;
 import com.intellij.javascript.flex.resolve.*;
-import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
 import com.intellij.lang.javascript.flex.ActionScriptExpectedTypeEvaluator;
@@ -43,7 +41,8 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
     return new ActionScriptExpectedTypeEvaluator(parent);
   }
 
-  public int getSpecificCompletionVariantPriority(final PsiElement element) {
+  @Nullable
+  public JSLookupPriority getSpecificCompletionVariantPriority(final PsiElement element) {
     if (element instanceof JSQualifiedNamedElement) {
       final String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
       if (qName != null && "avmplus".equals(StringUtil.getPackageName(qName))) {
@@ -51,7 +50,7 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
       }
     }
 
-    return -1;
+    return null;
   }
 
   @NotNull

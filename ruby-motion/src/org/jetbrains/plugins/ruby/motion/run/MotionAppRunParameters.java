@@ -33,11 +33,6 @@ class MotionAppRunParameters extends RunParameters {
            new TrivialInstaller(new GeneralCommandLine(""));
   }
 
-  @Override
-  public boolean isWaitFor() {
-    return false;
-  }
-
   @Nullable
   @Override
   public String getArchitectureId() {
@@ -45,8 +40,13 @@ class MotionAppRunParameters extends RunParameters {
   }
 
   public AMDevice getDevice() {
+    return getDevice(myServerProcessHandler);
+  }
+
+  @NotNull
+  public static AMDevice getDevice(ProcessHandler serverProcessHandler) {
     try {
-      return ((DeviceProcessHandler)myServerProcessHandler).getDevice();
+      return ((DeviceProcessHandler)serverProcessHandler).getDevice();
     }
     catch (ExecutionException e) {
       CidrDebuggerLog.LOG.error(e);
