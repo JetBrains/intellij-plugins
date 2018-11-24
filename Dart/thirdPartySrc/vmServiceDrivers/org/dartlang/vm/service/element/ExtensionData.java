@@ -15,19 +15,14 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
+import com.google.gson.JsonObject;
+
 /**
- * An {@link ExceptionPauseMode} indicates how the isolate pauses when an exception is thrown.
+ * An {@link ExtensionData} is an arbitrary map that can have any contents.
  */
-public enum ExceptionPauseMode {
+public class ExtensionData extends Element {
 
-  All,
-
-  None,
-
-  Unhandled,
-
-  /**
-   * Represents a value returned by the VM but unknown to this client
-   */
-  Unknown
+  public ExtensionData(JsonObject json) {
+    super(json);
+  }
 }

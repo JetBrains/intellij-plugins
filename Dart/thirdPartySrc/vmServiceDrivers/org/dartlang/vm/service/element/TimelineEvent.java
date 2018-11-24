@@ -15,19 +15,14 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
+import com.google.gson.JsonObject;
+
 /**
- * An {@link ExceptionPauseMode} indicates how the isolate pauses when an exception is thrown.
+ * An {@link TimelineEvent} is an arbitrary map that contains a Trace Event Format event.
  */
-public enum ExceptionPauseMode {
+public class TimelineEvent extends Element {
 
-  All,
-
-  None,
-
-  Unhandled,
-
-  /**
-   * Represents a value returned by the VM but unknown to this client
-   */
-  Unknown
+  public TimelineEvent(JsonObject json) {
+    super(json);
+  }
 }

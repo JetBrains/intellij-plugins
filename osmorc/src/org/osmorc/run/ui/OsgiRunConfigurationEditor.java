@@ -60,6 +60,7 @@ import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Editor for a bundle run configuration.
@@ -223,7 +224,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   }
 
   private void onRemoveClick() {
-    int[] indices = myBundlesTable.getSelectedRows();
+    int[] indices = IntStream.of(myBundlesTable.getSelectedRows()).map(myBundlesTable::convertRowIndexToModel).sorted().toArray();
     RunConfigurationTableModel model = getTableModel();
     for (int i = indices.length - 1; i >= 0; i--) {
       model.removeBundleAt(indices[i]);

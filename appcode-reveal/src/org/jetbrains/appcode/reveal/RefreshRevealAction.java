@@ -12,8 +12,11 @@ import com.jetbrains.cidr.execution.AppCodeRunConfiguration;
 import com.jetbrains.cidr.execution.BuildDestination;
 import com.jetbrains.cidr.execution.SimulatedBuildDestination;
 import com.jetbrains.cidr.execution.simulator.SimulatorConfiguration;
+import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
+import com.jetbrains.cidr.xcode.model.XCBuildConfiguration;
 import icons.AppcodeRevealIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -49,18 +52,27 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
 
     String title = "Show in Reveal";
 
-    File lib = Reveal.getRevealLib();
-    boolean compatible = Reveal.isCompatible();
+    XCBuildConfiguration xcBuildConfiguration = myConfiguration.getConfiguration();
+    AppleSdk sdk = xcBuildConfiguration == null ? null : xcBuildConfiguration.getBaseSdk();
 
-    e.getPresentation().setEnabled(lib != null
-                                   && compatible
+    File lib = null;
+    boolean compatible = false;
 
-                                   && !myDisabled
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle != null) {
+      lib = Reveal.getRevealLib(appBundle, sdk);
+      compatible = Reveal.isCompatible(appBundle);
 
-                                   && myProcessHandler.isStartNotified()
-                                   && !myProcessHandler.isProcessTerminating()
-                                   && !myProcessHandler.isProcessTerminated()
-    );
+      e.getPresentation().setEnabled(lib != null
+              && compatible
+
+              && !myDisabled
+
+              && myProcessHandler.isStartNotified()
+              && !myProcessHandler.isProcessTerminating()
+              && !myProcessHandler.isProcessTerminated()
+      );
+    }
 
     if (lib == null) {
       title += " (Reveal library not found)";
@@ -97,8 +109,11 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
       return;
     }
 
+    File appBundle = Reveal.getDefaultRevealApplicationBundle();
+    if (appBundle == null) return;
+
     try {
-      Reveal.refreshReveal(myBundleID, getDeviceName(myDestination));
+      Reveal.refreshReveal(appBundle, myBundleID, getDeviceName(myDestination));
     }
     catch (ExecutionException ex) {
       Reveal.LOG.info(ex);
@@ -106,12 +121,11 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
     }
   }
 
-  @NotNull
+  @Nullable
   private static String getDeviceName(@NotNull BuildDestination destination) throws ExecutionException {
     if (destination.isDevice()) {
       return destination.getDeviceSafe().getName();
-    }
-    else if (destination.isSimulator()) {
+    } else if (destination.isSimulator()) {
       SimulatedBuildDestination.Simulator simulator = destination.getSimulator();
       if (simulator == null) throw new ExecutionException("Simulator not specified.");
 
@@ -120,7 +134,12 @@ public class RefreshRevealAction extends AnAction implements AnAction.Transparen
           return "iPhone Simulator";
         case SimulatorConfiguration.IPAD_FAMILY:
           return "iPad Simulator";
+        case SimulatorConfiguration.TV_FAMILY:
+          return "Apple TV Simulator";
+        case SimulatorConfiguration.WATCH_FAMILY:
+          return "Apple Watch Simulator";
       }
+
       throw new ExecutionException("Unknown simulator type: " + simulator);
     }
     throw new ExecutionException("Unsupported destination: " + destination);

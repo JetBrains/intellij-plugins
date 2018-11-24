@@ -29,8 +29,8 @@ public class Instance extends Obj {
   }
 
   /**
-   * The elements of a List instance.
-   * 
+   * The elements of a Map instance.
+   *
    * Provided for instance kinds:
    *  - Map
    */
@@ -45,22 +45,22 @@ public class Instance extends Obj {
 
   /**
    * The bound of a TypeParameter or BoundedType.
-   * 
+   *
    * The value will always be of one of the kinds: Type, TypeRef, TypeParameter, BoundedType.
-   * 
+   *
    * Provided for instance kinds:
    *  - BoundedType
    *  - TypeParameter
    */
   public InstanceRef getBound() {
-    return new InstanceRef((JsonObject) json.get("bound"));
+    return json.get("bound") == null ? null : new InstanceRef((JsonObject) json.get("bound"));
   }
 
   /**
    * The bytes of a TypedData instance.
-   * 
+   *
    * The data is provided as a Base64 encoded string.
-   * 
+   *
    * Provided for instance kinds:
    *  - Uint8ClampedList
    *  - Uint8List
@@ -90,29 +90,30 @@ public class Instance extends Obj {
 
   /**
    * The context associated with a Closure instance.
-   * 
+   *
    * Provided for instance kinds:
    *  - Closure
    */
   public ContextRef getClosureContext() {
-    return new ContextRef((JsonObject) json.get("closureContext"));
+    return json.get("closureContext") == null ? null : new ContextRef((JsonObject) json.get("closureContext"));
   }
 
   /**
    * The function associated with a Closure instance.
-   * 
+   *
    * Provided for instance kinds:
    *  - Closure
    */
   public FuncRef getClosureFunction() {
-    return new FuncRef((JsonObject) json.get("closureFunction"));
+    return json.get("closureFunction") == null ? null : new FuncRef((JsonObject) json.get("closureFunction"));
   }
 
   /**
-   * The number of elements or associations returned. This is only provided when it is less than
-   * length.
-   * 
+   * The number of elements or associations or codeunits returned. This is only provided when it is
+   * less than length.
+   *
    * Provided for instance kinds:
+   *  - String
    *  - List
    *  - Map
    *  - Uint8ClampedList
@@ -136,10 +137,10 @@ public class Instance extends Obj {
 
   /**
    * The elements of a List instance.
-   * 
+   *
    * Provided for instance kinds:
    *  - List
-   * 
+   *
    * @return one of <code>ElementList<InstanceRef></code> or <code>ElementList<Sentinel></code>
    */
   public ElementList<InstanceRef> getElements() {
@@ -165,22 +166,22 @@ public class Instance extends Obj {
 
   /**
    * Whether this regular expression is case sensitive.
-   * 
+   *
    * Provided for instance kinds:
    *  - RegExp
    */
   public boolean getIsCaseSensitive() {
-    return json.get("isCaseSensitive").getAsBoolean();
+    return json.get("isCaseSensitive") == null ? false : json.get("isCaseSensitive").getAsBoolean();
   }
 
   /**
    * Whether this regular expression matches multiple lines.
-   * 
+   *
    * Provided for instance kinds:
    *  - RegExp
    */
   public boolean getIsMultiLine() {
-    return json.get("isMultiLine").getAsBoolean();
+    return json.get("isMultiLine") == null ? false : json.get("isMultiLine").getAsBoolean();
   }
 
   /**
@@ -196,9 +197,11 @@ public class Instance extends Obj {
   }
 
   /**
-   * The length of a List or the number of associations in a Map.
-   * 
+   * The length of a List or the number of associations in a Map or the number of codeunits in a
+   * String.
+   *
    * Provided for instance kinds:
+   *  - String
    *  - List
    *  - Map
    *  - Uint8ClampedList
@@ -222,17 +225,17 @@ public class Instance extends Obj {
 
   /**
    * The referent of a MirrorReference instance.
-   * 
+   *
    * Provided for instance kinds:
    *  - MirrorReference
    */
   public InstanceRef getMirrorReferent() {
-    return new InstanceRef((JsonObject) json.get("mirrorReferent"));
+    return json.get("mirrorReferent") == null ? null : new InstanceRef((JsonObject) json.get("mirrorReferent"));
   }
 
   /**
    * The name of a Type instance.
-   * 
+   *
    * Provided for instance kinds:
    *  - Type
    */
@@ -241,10 +244,11 @@ public class Instance extends Obj {
   }
 
   /**
-   * The index of the first element or association returned. This is only provided when it is
-   * non-zero.
-   * 
+   * The index of the first element or association or codeunit returned. This is only provided when
+   * it is non-zero.
+   *
    * Provided for instance kinds:
+   *  - String
    *  - List
    *  - Map
    *  - Uint8ClampedList
@@ -268,7 +272,7 @@ public class Instance extends Obj {
 
   /**
    * The index of a TypeParameter instance.
-   * 
+   *
    * Provided for instance kinds:
    *  - TypeParameter
    */
@@ -278,17 +282,17 @@ public class Instance extends Obj {
 
   /**
    * The parameterized class of a type parameter:
-   * 
+   *
    * Provided for instance kinds:
    *  - TypeParameter
    */
   public ClassRef getParameterizedClass() {
-    return new ClassRef((JsonObject) json.get("parameterizedClass"));
+    return json.get("parameterizedClass") == null ? null : new ClassRef((JsonObject) json.get("parameterizedClass"));
   }
 
   /**
    * The pattern of a RegExp instance.
-   * 
+   *
    * Provided for instance kinds:
    *  - RegExp
    */
@@ -298,60 +302,60 @@ public class Instance extends Obj {
 
   /**
    * The key for a WeakProperty instance.
-   * 
+   *
    * Provided for instance kinds:
    *  - WeakProperty
    */
   public InstanceRef getPropertyKey() {
-    return new InstanceRef((JsonObject) json.get("propertyKey"));
+    return json.get("propertyKey") == null ? null : new InstanceRef((JsonObject) json.get("propertyKey"));
   }
 
   /**
    * The key for a WeakProperty instance.
-   * 
+   *
    * Provided for instance kinds:
    *  - WeakProperty
    */
   public InstanceRef getPropertyValue() {
-    return new InstanceRef((JsonObject) json.get("propertyValue"));
+    return json.get("propertyValue") == null ? null : new InstanceRef((JsonObject) json.get("propertyValue"));
   }
 
   /**
    * The type bounded by a BoundedType instance - or - the referent of a TypeRef instance.
-   * 
+   *
    * The value will always be of one of the kinds: Type, TypeRef, TypeParameter, BoundedType.
-   * 
+   *
    * Provided for instance kinds:
    *  - BoundedType
    *  - TypeRef
    */
   public InstanceRef getTargetType() {
-    return new InstanceRef((JsonObject) json.get("targetType"));
+    return json.get("targetType") == null ? null : new InstanceRef((JsonObject) json.get("targetType"));
   }
 
   /**
    * The type arguments for this type.
-   * 
+   *
    * Provided for instance kinds:
    *  - Type
    */
   public TypeArgumentsRef getTypeArguments() {
-    return new TypeArgumentsRef((JsonObject) json.get("typeArguments"));
+    return json.get("typeArguments") == null ? null : new TypeArgumentsRef((JsonObject) json.get("typeArguments"));
   }
 
   /**
    * The corresponding Class if this Type is canonical.
-   * 
+   *
    * Provided for instance kinds:
    *  - Type
    */
   public ClassRef getTypeClass() {
-    return new ClassRef((JsonObject) json.get("typeClass"));
+    return json.get("typeClass") == null ? null : new ClassRef((JsonObject) json.get("typeClass"));
   }
 
   /**
    * The value of this instance as a string.
-   * 
+   *
    * Provided for the instance kinds:
    *  - Bool (true or false)
    *  - Double (suitable for passing to Double.parse())
@@ -365,6 +369,8 @@ public class Instance extends Obj {
   /**
    * The valueAsString for String references may be truncated. If so, this property is added with
    * the value 'true'.
+   *
+   * New code should use 'length' and 'count' instead.
    */
   public boolean getValueAsStringIsTruncated() {
     JsonElement elem = json.get("valueAsStringIsTruncated");

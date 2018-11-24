@@ -19,19 +19,26 @@ public class DartVmServiceSuspendContext extends XSuspendContext {
   @NotNull private final DartVmServiceExecutionStack myActiveExecutionStack;
 
   private List<XExecutionStack> myExecutionStacks;
+  private boolean myAtAsyncSuspension;
 
   public DartVmServiceSuspendContext(@NotNull final DartVmServiceDebugProcess debugProcess,
                                      @NotNull final IsolateRef isolateRef,
                                      @NotNull final Frame topFrame,
-                                     @Nullable final InstanceRef exception) {
+                                     @Nullable final InstanceRef exception,
+                                     boolean atAsyncSuspension) {
     myDebugProcess = debugProcess;
     myActiveExecutionStack = new DartVmServiceExecutionStack(debugProcess, isolateRef.getId(), isolateRef.getName(), topFrame, exception);
+    myAtAsyncSuspension = atAsyncSuspension;
   }
 
   @NotNull
   @Override
   public XExecutionStack getActiveExecutionStack() {
     return myActiveExecutionStack;
+  }
+
+  public boolean getAtAsyncSuspension() {
+    return myAtAsyncSuspension;
   }
 
   @Override

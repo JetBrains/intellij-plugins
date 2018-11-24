@@ -34,9 +34,16 @@ public class DartVmServiceListener implements VmServiceListener {
   }
 
   @Override
+  public void connectionOpened() {
+
+  }
+
+  @Override
   public void received(@NotNull final String streamId, @NotNull final Event event) {
     switch (event.getKind()) {
       case BreakpointAdded:
+        // TODO Respond to breakpoints added by the observatory.
+        // myBreakpointHandler.vmBreakpointAdded(null, event.getIsolate().getId(), event.getBreakpoint());
         break;
       case BreakpointRemoved:
         break;
@@ -62,13 +69,13 @@ public class DartVmServiceListener implements VmServiceListener {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           final ElementList<Breakpoint> breakpoints = event.getKind() == EventKind.PauseBreakpoint ? event.getPauseBreakpoints() : null;
           final InstanceRef exception = event.getKind() == EventKind.PauseException ? event.getException() : null;
-          onIsolatePaused(event.getIsolate(), breakpoints, exception, event.getTopFrame());
+          onIsolatePaused(event.getIsolate(), breakpoints, exception, event.getTopFrame(), event.getAtAsyncSuspension());
         });
         break;
       case PauseExit:
         break;
       case PauseStart:
-        myDebugProcess.getVmServiceWrapper().handleIsolatePausedOnStart(event.getIsolate());
+        myDebugProcess.getVmServiceWrapper().handleIsolate(event.getIsolate(), true);
         break;
       case Resume:
         myDebugProcess.isolateResumed(event.getIsolate());
@@ -76,30 +83,40 @@ public class DartVmServiceListener implements VmServiceListener {
       case VMUpdate:
         break;
       case WriteEvent:
+        myDebugProcess.handleWriteEvent(event.getBytes());
         break;
       case Unknown:
         break;
     }
   }
 
-  private void onIsolatePaused(@NotNull final IsolateRef isolateRef,
-                               @Nullable final ElementList<Breakpoint> vmBreakpoints,
-                               @Nullable final InstanceRef exception,
-                               @Nullable final Frame vmTopFrame) {
+  @Override
+  public void connectionClosed() {
+    if (myDebugProcess.isRemoteDebug()) {
+      myDebugProcess.getSession().stop();
+    }
+  }
+
+  void onIsolatePaused(@NotNull final IsolateRef isolateRef,
+                       @Nullable final ElementList<Breakpoint> vmBreakpoints,
+                       @Nullable final InstanceRef exception,
+                       @Nullable final Frame vmTopFrame,
+                       boolean atAsyncSuspension) {
     if (vmTopFrame == null) {
       myDebugProcess.getSession().positionReached(new XSuspendContext() {
       });
       return;
     }
 
-    final DartVmServiceSuspendContext suspendContext = new DartVmServiceSuspendContext(myDebugProcess, isolateRef, vmTopFrame, exception);
+    final DartVmServiceSuspendContext suspendContext =
+      new DartVmServiceSuspendContext(myDebugProcess, isolateRef, vmTopFrame, exception, atAsyncSuspension);
     final XStackFrame xTopFrame = suspendContext.getActiveExecutionStack().getTopFrame();
     final XSourcePosition sourcePosition = xTopFrame == null ? null : xTopFrame.getSourcePosition();
 
     if (vmBreakpoints == null || vmBreakpoints.isEmpty()) {
       final StepOption latestStep = myDebugProcess.getVmServiceWrapper().getLatestStep();
 
-      if (latestStep != null && equalSourcePositions(myLatestSourcePosition, sourcePosition)) {
+      if (latestStep == StepOption.Over && equalSourcePositions(myLatestSourcePosition, sourcePosition)) {
         // continue stepping to change current line
         myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), latestStep);
       }
@@ -114,7 +131,17 @@ public class DartVmServiceListener implements VmServiceListener {
         LOG.error(vmBreakpoints.size() + " breakpoints hit in one shot.");
       }
 
+      // Remove any temporary (run to cursor) breakpoints.
+      myBreakpointHandler.removeTemporaryBreakpoints(isolateRef.getId());
+
       final XLineBreakpoint<XBreakpointProperties> xBreakpoint = myBreakpointHandler.getXBreakpoint(vmBreakpoints.get(0));
+
+      if (xBreakpoint == null) {
+        // breakpoint could be set in the Observatory
+        myLatestSourcePosition = sourcePosition;
+        myDebugProcess.getSession().positionReached(suspendContext);
+        return;
+      }
 
       if ("false".equals(evaluateExpression(isolateRef.getId(), vmTopFrame, xBreakpoint.getConditionExpression()))) {
         myDebugProcess.getVmServiceWrapper().resumeIsolate(isolateRef.getId(), null);

@@ -1,8 +1,6 @@
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil;
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.SoftFileReferenceSet;
@@ -37,13 +35,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       final Project project = element.getProject();
       if (AngularIndexUtil.hasAngularJS2(project)) {
         final PsiFile file = element.getContainingFile().getOriginalFile();
-        final TypeScriptConfig config = TypeScriptCompilerConfigUtil.getConfigForFile(project, file.getVirtualFile());
-        if (config != null) {
-          final PsiDirectory directory = PsiManager.getInstance(project).findDirectory(config.getConfigFile().getParent());
-          if (directory != null) {
-            return Collections.<PsiFileSystemItem>singleton(directory);
-          }
-        }
+        return Collections.singleton(file.getContainingDirectory());
       }
 
       return super.getDefaultContexts();

@@ -19,6 +19,7 @@ import org.dartlang.vm.service.element.Event;
  * Interface used by {@link VmService} to notify others of VM events.
  */
 public interface VmServiceListener {
+  public void connectionOpened();
 
   /**
    * Called when a VM event has been received.
@@ -26,4 +27,6 @@ public interface VmServiceListener {
    * @param event the event
    */
   public void received(String streamId, Event event);
+
+  public void connectionClosed();
 }

@@ -12,7 +12,7 @@ function stripExitCodeInfo(buffer) {
   if (!Buffer.isBuffer(buffer)) {
     return buffer;
   }
-  var tailPos = buffer.length - EXIT_CODE_BUF.length - 1;
+  var tailPos = buffer.length - EXIT_CODE_BUF.length - 2;
   if (tailPos < 0) {
     return buffer;
   }

@@ -1,5 +1,7 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -21,6 +23,12 @@ public class DependencyInjectionTest extends LightPlatformCodeInsightFixtureTest
   @Override
   protected boolean isWriteActionRequired() {
     return getTestName(true).contains("Completion");
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    JSTestUtils.forbidStubAstSwitch(myFixture::getFile, getProject(), this);
   }
 
   public void testInjectedServiceCompletion() {
@@ -99,5 +107,12 @@ public class DependencyInjectionTest extends LightPlatformCodeInsightFixtureTest
     assertNotNull(resolve);
     assertInstanceOf(resolve, JSImplicitElement.class);
     assertEquals("'myService'", AngularTestUtil.getDirectiveDefinitionText(resolve));
+  }
+
+  public void testPropertyInitializedWithInjectedParameter() {
+    myFixture.copyFileToProject("property.to.parameter.js");
+    myFixture.copyFileToProject("angular.js");
+    myFixture.configureByText(JavaScriptFileType.INSTANCE, "someRef.serv.<caret>");
+    myFixture.completeBasic();
   }
 }

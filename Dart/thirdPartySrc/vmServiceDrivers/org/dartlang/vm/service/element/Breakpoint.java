@@ -34,6 +34,29 @@ public class Breakpoint extends Obj {
   }
 
   /**
+   * Is this a breakpoint that was added synthetically as part of a step OverAsyncSuspension resume
+   * command?
+   */
+  public boolean getIsSyntheticAsyncContinuation() {
+    return json.get("isSyntheticAsyncContinuation") == null ? false : json.get("isSyntheticAsyncContinuation").getAsBoolean();
+  }
+
+  /**
+   * SourceLocation when breakpoint is resolved, UnresolvedSourceLocation when a breakpoint is not
+   * resolved.
+   *
+   * @return one of <code>SourceLocation</code> or <code>UnresolvedSourceLocation</code>
+   */
+  public Object getLocation() {
+    JsonObject elem = (JsonObject)json.get("location");
+    if (elem == null) return null;
+
+    if (elem.get("type").getAsString() == "SourceLocation") return new SourceLocation(elem);
+    if (elem.get("type").getAsString() == "UnresolvedSourceLocation") return new UnresolvedSourceLocation(elem);
+    return null;
+  }
+
+  /**
    * Has this breakpoint been assigned to a specific program location?
    */
   public boolean getResolved() {

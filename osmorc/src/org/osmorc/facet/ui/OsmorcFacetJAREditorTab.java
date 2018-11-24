@@ -232,9 +232,9 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   }
 
   private void onRemoveAdditionalJarContent() {
-    final int row = myAdditionalJARContentsTable.getSelectedRow();
-    final int editingCol = myAdditionalJARContentsTable.getEditingColumn();
-    final int editingRow = myAdditionalJARContentsTable.getEditingRow();
+    int row = myAdditionalJARContentsTable.convertRowIndexToModel(myAdditionalJARContentsTable.getSelectedRow());
+    int editingCol = myAdditionalJARContentsTable.getEditingColumn();
+    int editingRow = myAdditionalJARContentsTable.getEditingRow();
     if (editingCol != -1 && editingRow != -1) {
       TableCellEditor editor = myAdditionalJARContentsTable.getCellEditor(editingRow, editingCol);
       editor.cancelCellEditing();

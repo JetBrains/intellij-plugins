@@ -31,7 +31,7 @@ public class ClassObj extends Obj {
    * The error which occurred during class finalization, if it exists.
    */
   public ErrorRef getError() {
-    return new ErrorRef((JsonObject) json.get("error"));
+    return json.get("error") == null ? null : new ErrorRef((JsonObject) json.get("error"));
   }
 
   /**
@@ -60,8 +60,8 @@ public class ClassObj extends Obj {
 
   /**
    * A list of interface types for this class.
-   * 
-   * The value will be of the kind: Type.
+   *
+   * The values will be of the kind: Type.
    */
   public ElementList<InstanceRef> getInterfaces() {
     return new ElementList<InstanceRef>(json.get("interfaces").getAsJsonArray()) {
@@ -83,7 +83,16 @@ public class ClassObj extends Obj {
    * The location of this class in the source code.
    */
   public SourceLocation getLocation() {
-    return new SourceLocation((JsonObject) json.get("location"));
+    return json.get("location") == null ? null : new SourceLocation((JsonObject) json.get("location"));
+  }
+
+  /**
+   * The mixin type for this class, if any.
+   *
+   * The value will be of the kind: Type.
+   */
+  public InstanceRef getMixin() {
+    return json.get("mixin") == null ? null : new InstanceRef((JsonObject) json.get("mixin"));
   }
 
   /**
@@ -109,7 +118,16 @@ public class ClassObj extends Obj {
    * The superclass of this class, if any.
    */
   public ClassRef getSuperClass() {
-    return new ClassRef((JsonObject) json.get("super"));
+    return json.get("super") == null ? null : new ClassRef((JsonObject) json.get("super"));
+  }
+
+  /**
+   * The supertype for this class, if any.
+   *
+   * The value will be of the kind: Type.
+   */
+  public InstanceRef getSuperType() {
+    return json.get("superType") == null ? null : new InstanceRef((JsonObject) json.get("superType"));
   }
 
   /**

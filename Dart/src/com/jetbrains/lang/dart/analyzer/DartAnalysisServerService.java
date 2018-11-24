@@ -17,11 +17,9 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
@@ -81,6 +79,8 @@ public class DartAnalysisServerService {
 
   public static final String MIN_SDK_VERSION = "1.12";
 
+  private static final long UPDATE_FILES_TIMEOUT = 300;
+
   private static final long CHECK_CANCELLED_PERIOD = 10;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
@@ -112,6 +112,7 @@ public class DartAnalysisServerService {
   private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
   private final List<String> myVisibleFiles = new ArrayList<String>();
   private final Set<Document> myChangedDocuments = new THashSet<Document>();
+  private final Alarm myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, ApplicationManager.getApplication());
 
   @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
   @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<SearchResultsSet>();
@@ -270,6 +271,9 @@ public class DartAnalysisServerService {
           }
         }
       }
+
+      myUpdateFilesAlarm.cancelAllRequests();
+      myUpdateFilesAlarm.addRequest(DartAnalysisServerService.this::updateFilesContent, UPDATE_FILES_TIMEOUT);
     }
   };
 
@@ -376,8 +380,9 @@ public class DartAnalysisServerService {
     final Processor<? super PsiFileSystemItem> falseProcessor = (Processor<PsiFileSystemItem>)item -> false;
 
     final Condition<Module> moduleFilter = module -> DartSdkGlobalLibUtil.isDartSdkEnabled(module) &&
-                                                 !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
-                                             falseProcessor, module.getModuleContentScope(), project, null);
+                                                     !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
+                                                                                       falseProcessor, module.getModuleContentScope(),
+                                                                                       project, null);
 
     final DartFileListener.DartLibInfo libInfo = new DartFileListener.DartLibInfo(true);
     libInfo.addRoots(rootsToAddToLib);
@@ -423,6 +428,8 @@ public class DartAnalysisServerService {
             DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
           }
 
+          updateCurrentFile();
+
           if (isLocalAnalyzableFile(file)) {
             updateVisibleFiles();
           }
@@ -430,6 +437,8 @@ public class DartAnalysisServerService {
 
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
+          updateCurrentFile();
+
           if (isLocalAnalyzableFile(event.getOldFile()) || isLocalAnalyzableFile(event.getNewFile())) {
             updateVisibleFiles();
           }
@@ -437,6 +446,8 @@ public class DartAnalysisServerService {
 
         @Override
         public void fileClosed(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
+          updateCurrentFile();
+
           if (isLocalAnalyzableFile(file)) {
             // file could be opened in more than one editor, so this check is needed
             for (Project project : myRootsHandler.getTrackedProjects()) {
@@ -489,17 +500,18 @@ public class DartAnalysisServerService {
     return myServerData.getImplementedMembers(file);
   }
 
-  void updateVisibleFiles() {
+  void updateCurrentFile() {
     UIUtil.invokeLaterIfNeeded(() -> {
       for (Project project : myRootsHandler.getTrackedProjects()) {
-        // workaround for IDEA-148691
-        final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-        final VirtualFile currentFile = editor instanceof EditorEx ? ((EditorEx)editor).getVirtualFile() : null;
-        DartProblemsView.getInstance(project).setCurrentFile(currentFile);
+        final VirtualFile[] files = FileEditorManager.getInstance(project).getSelectedFiles();
+        if (files.length > 0) {
+          DartProblemsView.getInstance(project).setCurrentFile(files[0]);
+        }
       }
     });
+  }
 
-
+  void updateVisibleFiles() {
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
       final List<String> newVisibleFiles = new ArrayList<String>();
@@ -536,7 +548,7 @@ public class DartAnalysisServerService {
 
   public void updateFilesContent() {
     if (myServer != null) {
-      ApplicationManager.getApplication().runReadAction(() -> doUpdateFilesContent());
+      ApplicationManager.getApplication().runReadAction(this::doUpdateFilesContent);
     }
   }
 
@@ -547,6 +559,8 @@ public class DartAnalysisServerService {
     if (server == null) {
       return;
     }
+
+    myUpdateFilesAlarm.cancelAllRequests();
 
     final Map<String, Object> filesToUpdate = new THashMap<String, Object>();
     ApplicationManager.getApplication().assertReadAccessAllowed();
@@ -1345,6 +1359,7 @@ public class DartAnalysisServerService {
       }
 
       stopShowingServerProgress();
+      myUpdateFilesAlarm.cancelAllRequests();
 
       myServerSocket = null;
       myServer = null;

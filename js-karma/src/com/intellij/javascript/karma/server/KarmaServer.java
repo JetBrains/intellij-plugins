@@ -21,7 +21,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +63,7 @@ public class KarmaServer {
     myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     File configurationFile = myServerSettings.getConfigurationFile();
     myState = new KarmaServerState(this, configurationFile);
-    myProcessOutputManager = new KarmaProcessOutputManager(processHandler, line -> myState.onStandardOutputLineAvailable(line));
+    myProcessOutputManager = new KarmaProcessOutputManager(processHandler, myState::onStandardOutputLineAvailable);
     myWatcher = new KarmaWatcher(this);
     registerStreamEventHandlers();
     myProcessOutputManager.startNotify();
@@ -152,7 +151,7 @@ public class KarmaServer {
     commandLine.withWorkDirectory(serverSettings.getConfigurationFile().getParentFile());
     commandLine.setExePath(serverSettings.getNodeInterpreter().getInterpreterSystemDependentPath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
-    //commandLine.addParameter("--debug-brk=34598");
+    //NodeCommandLineUtil.addDebugParameters(commandLine, 34598);
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + serverSettings.getConfigurationFilePath());
@@ -191,7 +190,7 @@ public class KarmaServer {
 
   public void shutdownAsync() {
     LOG.info("Shutting down asynchronously Karma server " + myProcessHashCode);
-    ApplicationManager.getApplication().executeOnPooledThread(() -> shutdown());
+    ApplicationManager.getApplication().executeOnPooledThread(this::shutdown);
   }
 
   private void shutdown() {

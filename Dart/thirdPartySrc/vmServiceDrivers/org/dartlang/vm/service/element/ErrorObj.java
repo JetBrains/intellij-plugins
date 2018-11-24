@@ -30,7 +30,7 @@ public class ErrorObj extends Obj {
    * If this error is due to an unhandled exception, this is the exception thrown.
    */
   public InstanceRef getException() {
-    return new InstanceRef((JsonObject) json.get("exception"));
+    return json.get("exception") == null ? null : new InstanceRef((JsonObject) json.get("exception"));
   }
 
   /**
@@ -56,6 +56,6 @@ public class ErrorObj extends Obj {
    * If this error is due to an unhandled exception, this is the stacktrace object.
    */
   public InstanceRef getStacktrace() {
-    return new InstanceRef((JsonObject) json.get("stacktrace"));
+    return json.get("stacktrace") == null ? null : new InstanceRef((JsonObject) json.get("stacktrace"));
   }
 }

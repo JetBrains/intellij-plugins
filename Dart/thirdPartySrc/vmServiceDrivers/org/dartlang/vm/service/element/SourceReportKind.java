@@ -15,16 +15,17 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
-/**
- * An {@link ExceptionPauseMode} indicates how the isolate pauses when an exception is thrown.
- */
-public enum ExceptionPauseMode {
+public enum SourceReportKind {
 
-  All,
+  /**
+   * Used to request a code coverage information.
+   */
+  Coverage,
 
-  None,
-
-  Unhandled,
+  /**
+   * Used to request a list of token positions of possible breakpoints.
+   */
+  PossibleBreakpoints,
 
   /**
    * Represents a value returned by the VM but unknown to this client

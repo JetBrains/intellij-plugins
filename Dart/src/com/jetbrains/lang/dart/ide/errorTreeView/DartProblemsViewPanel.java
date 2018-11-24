@@ -34,7 +34,6 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
-import com.intellij.util.Function;
 import com.intellij.util.containers.Convertor;
 import com.jetbrains.lang.dart.DartBundle;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -284,7 +283,12 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
   @Override
   public void performCopy(@NotNull DataContext dataContext) {
     final List<DartProblem> selectedObjects = myTable.getSelectedObjects();
-    final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity() + ": " + problem.getErrorMessage() + " (" + problem.getPresentableLocation() + ")", "\n");
+    final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity() +
+                                                                 ": " +
+                                                                 problem.getErrorMessage() +
+                                                                 " (" +
+                                                                 problem.getPresentableLocation() +
+                                                                 ")", "\n");
 
     if (!s.isEmpty()) {
       CopyPasteManager.getInstance().setContents(new StringSelection(s));

@@ -15,19 +15,32 @@ package org.dartlang.vm.service.element;
 
 // This is a generated file.
 
+import com.google.gson.JsonObject;
+import java.util.List;
+
 /**
- * An {@link ExceptionPauseMode} indicates how the isolate pauses when an exception is thrown.
+ * The {@link SourceReportCoverage} class represents coverage information for one
+ * SourceReportRange.
  */
-public enum ExceptionPauseMode {
+public class SourceReportCoverage extends Element {
 
-  All,
-
-  None,
-
-  Unhandled,
+  public SourceReportCoverage(JsonObject json) {
+    super(json);
+  }
 
   /**
-   * Represents a value returned by the VM but unknown to this client
+   * A list of token positions in a SourceReportRange which have been executed.  The list is
+   * sorted.
    */
-  Unknown
+  public List<Integer> getHits() {
+    return getListInt("hits");
+  }
+
+  /**
+   * A list of token positions in a SourceReportRange which have not been executed.  The list is
+   * sorted.
+   */
+  public List<Integer> getMisses() {
+    return getListInt("misses");
+  }
 }

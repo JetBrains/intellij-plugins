@@ -32,6 +32,13 @@ public class Element {
   }
 
   /**
+   * Return a specific JSON member as a list of strings.
+   */
+  List<String> getListString(String memberName) {
+    return jsonArrayToListString(json.getAsJsonArray(memberName));
+  }
+
+  /**
    * Return a specific JSON member as a list of list of integers.
    */
   List<List<Integer>> getListListInt(String memberName) {
@@ -49,6 +56,15 @@ public class Element {
     List<Integer> result = new ArrayList<Integer>();
     for (int index = 0; index < size; ++index) {
       result.add(array.get(index).getAsInt());
+    }
+    return result;
+  }
+
+  private List<String> jsonArrayToListString(JsonArray array) {
+    int size = array.size();
+    List<String> result = new ArrayList<String>();
+    for (int index = 0; index < size; ++index) {
+      result.add(array.get(index).getAsString());
     }
     return result;
   }

@@ -121,8 +121,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
             && ((JSArgumentList)parent).getArguments().length == 1) {
             if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[0], (PsiElement)element, false)) {
               final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
-              if (methodExpression instanceof JSReferenceExpression && ((JSReferenceExpression)methodExpression).getQualifier() != null &&
-                  AngularJSIndexingHandler.MODULE.equals(((JSReferenceExpression)methodExpression).getReferenceName())) {
+              if (looksLikeAngularModuleReference(methodExpression)) {
                 return true;
               }
             }
@@ -151,10 +150,7 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
             if (PsiTreeUtil.isAncestor(((JSArgumentList)parent).getArguments()[1], (PsiElement)element, false) &&
                 ((JSArgumentList)parent).getArguments()[1] instanceof JSArrayLiteralExpression) {
               final JSExpression methodExpression = ((JSCallExpression)parent.getParent()).getMethodExpression();
-              if (methodExpression instanceof JSReferenceExpression && ((JSReferenceExpression)methodExpression).getQualifier() != null &&
-                  AngularJSIndexingHandler.MODULE.equals(((JSReferenceExpression)methodExpression).getReferenceName())) {
-                return true;
-              }
+              if (looksLikeAngularModuleReference(methodExpression)) return true;
             }
           }
         }
@@ -166,6 +162,14 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
         return true;
       }
     }));
+  }
+
+  static boolean looksLikeAngularModuleReference(JSExpression methodExpression) {
+    if (methodExpression instanceof JSReferenceExpression && ((JSReferenceExpression)methodExpression).getQualifier() != null &&
+        AngularJSIndexingHandler.MODULE.equals(((JSReferenceExpression)methodExpression).getReferenceName())) {
+      return true;
+    }
+    return false;
   }
 
   private static PsiElementPattern.Capture<JSLiteralExpression> literalInProperty(final String propertyName) {
