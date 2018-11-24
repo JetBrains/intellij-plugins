@@ -3,6 +3,7 @@ package org.intellij.plugins.markdown.ui.preview.javafx;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import javafx.application.Platform;
@@ -18,19 +19,29 @@ import netscape.javascript.JSObject;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
-import org.intellij.plugins.markdown.util.MarkdownPluginUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URI;
 
 // Instantiated by reflection
 @SuppressWarnings("unused")
 public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
+  private static final NotNullLazyValue<String> MY_SCRIPTING_LINES = new NotNullLazyValue<String>() {
+    @NotNull
+    @Override
+    protected String compute() {
+      final Class<JavaFxHtmlPanel> clazz = JavaFxHtmlPanel.class;
+      //noinspection StringBufferReplaceableByString
+      return new StringBuilder()
+        .append("<script src=\"").append(clazz.getResource("scrollToElement.js")).append("\"></script>\n")
+        .append("<script src=\"").append(clazz.getResource("processLinks.js")).append("\"></script>\n")
+        .toString();
+    }
+  };
+  
   @NotNull
   private final JFXPanel myPanel;
   @Nullable
@@ -165,17 +176,7 @@ public class JavaFxHtmlPanel extends MarkdownHtmlPanel {
 
   @NotNull
   private static String getScriptingLines() {
-    try {
-      final String libPath = MarkdownPluginUtil.getMarkdownPluginPath() + "/lib";
-      //noinspection StringBufferReplaceableByString
-      return new StringBuilder()
-        .append("<script src=\"").append(new File(libPath + "/scrollToElement.js").toURI()).append("\"></script>\n")
-        .append("<script src=\"").append(new File(libPath + "/processLinks.js").toURI()).append("\"></script>\n")
-        .toString();
-    }
-    catch (FileNotFoundException e) {
-      return "";
-    }
+      return MY_SCRIPTING_LINES.getValue();
   }
 
   public static class JavaPanelBridge {

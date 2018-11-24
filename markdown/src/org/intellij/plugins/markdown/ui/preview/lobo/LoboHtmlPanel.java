@@ -4,6 +4,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.StreamUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.ui.JBColor;
 import com.intellij.util.Range;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
@@ -23,6 +25,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 
 final class LoboHtmlPanel extends MarkdownHtmlPanel {
   private static final int FOCUS_ELEMENT_DY = 100;
@@ -33,8 +38,6 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
   private final MarkdownHtmlRendererContext myHtmlRendererContext;
   @NotNull
   private String myLastRenderedHtml = "";
-  @Nullable
-  private String myCssFileUri = null;
   @Nullable
   private String myCssInlineText = null;
 
@@ -65,15 +68,21 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
   @Override
   public void setCSS(@Nullable String inlineCss, @NotNull String... fileUris) {
     myCssInlineText = inlineCss;
-    if (fileUris.length > 0) {
-      myCssFileUri = fileUris[0];
+    if (fileUris.length > 0 && fileUris[0] != null) {
+      try {
+        final URL url = URI.create(fileUris[0]).toURL();
+        final String cssText = StreamUtil.readText(url.openStream(), CharsetToolkit.UTF8);
+        myCssInlineText += "\n" + cssText;
+      }
+      catch (IOException ignore) {
+      }
     }
   }
 
   @Override
   public void setHtml(@NotNull String html) {
     myLastRenderedHtml = html;
-    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines(myCssInlineText, myCssFileUri));
+    final String htmlToRender = html.replace("<head>", "<head>" + getCssLines(myCssInlineText));
     myPanel.setHtml(htmlToRender, "file://a.html", myHtmlRendererContext);
   }
 
