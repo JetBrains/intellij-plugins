@@ -47,7 +47,7 @@ public class SourceReportRange extends Element {
    * The token position at which this range ends.  Inclusive.
    */
   public int getEndPos() {
-    return json.get("endPos").getAsInt();
+    return json.get("endPos") == null ? -1 : json.get("endPos").getAsInt();
   }
 
   /**
@@ -72,13 +72,13 @@ public class SourceReportRange extends Element {
    * range of code.
    */
   public int getScriptIndex() {
-    return json.get("scriptIndex").getAsInt();
+    return json.get("scriptIndex") == null ? -1 : json.get("scriptIndex").getAsInt();
   }
 
   /**
    * The token position at which this range begins.
    */
   public int getStartPos() {
-    return json.get("startPos").getAsInt();
+    return json.get("startPos") == null ? -1 : json.get("startPos").getAsInt();
   }
 }

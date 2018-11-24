@@ -28,7 +28,7 @@ public class VM extends Response {
    * Word length on target architecture (e.g. 32, 64).
    */
   public int getArchitectureBits() {
-    return json.get("architectureBits").getAsInt();
+    return json.get("architectureBits") == null ? -1 : json.get("architectureBits").getAsInt();
   }
 
   /**
@@ -54,7 +54,7 @@ public class VM extends Response {
    * The process id for the VM.
    */
   public int getPid() {
-    return json.get("pid").getAsInt();
+    return json.get("pid") == null ? -1 : json.get("pid").getAsInt();
   }
 
   /**
@@ -63,7 +63,7 @@ public class VM extends Response {
    * Suitable to pass to DateTime.fromMillisecondsSinceEpoch.
    */
   public int getStartTime() {
-    return json.get("startTime").getAsInt();
+    return json.get("startTime") == null ? -1 : json.get("startTime").getAsInt();
   }
 
   /**

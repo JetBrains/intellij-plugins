@@ -208,23 +208,33 @@ public class AirPackageAction extends DumbAwareAction {
 
   private static Consumer<List<String>> createFailureConsumer(final Project project, final String packagePath, final ExternalTask task) {
     return messages -> {
-      String reason = StringUtil.join(messages, "<br>");
-      if (reason.length() > 1000) {
-        reason = reason.substring(0, 1000) + "...";
+      final String reason = StringUtil.join(messages, "<br>");
+
+      final NotificationListener listener = new NotificationListener.Adapter() {
+        @Override
+        protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+          if ("full.error.message".equals(e.getDescription())) {
+            Messages.showIdeaMessageDialog(project, reason, "Error Message",
+                                           new String[]{Messages.OK_BUTTON}, 0, null, null);
+          }
+
+          if ("adt.command.line".equals(e.getDescription())) {
+            Messages.showIdeaMessageDialog(project, task.getCommandLine(), "ADT Command Line",
+                                           new String[]{Messages.OK_BUTTON}, 0, null, null);
+          }
+        }
+      };
+
+      final String message;
+      if (reason.length() > 500) {
+        message = FlexBundle
+          .message("failed.to.create.air.package.truncated", PathUtil.getFileName(packagePath), reason.substring(0, 500) + "...");
+      }
+      else {
+        message = FlexBundle.message("failed.to.create.air.package", PathUtil.getFileName(packagePath), reason);
       }
 
-      NOTIFICATION_GROUP
-        .createNotification("", FlexBundle.message("failed.to.create.air.package", PathUtil.getFileName(packagePath), reason),
-                            NotificationType.ERROR, new NotificationListener() {
-            public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
-              if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                notification.expire();
-                Messages.showIdeaMessageDialog(project, task.getCommandLine(), "ADT Command Line",
-                                               new String[]{Messages.OK_BUTTON}, 0, null, null);
-              }
-            }
-          })
-        .notify(project);
+      NOTIFICATION_GROUP.createNotification("", message, NotificationType.ERROR, listener).notify(project);
     };
   }
 

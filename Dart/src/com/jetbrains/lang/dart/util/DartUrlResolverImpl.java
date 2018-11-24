@@ -207,10 +207,7 @@ public class DartUrlResolverImpl extends DartUrlResolver {
     if (myPubspecYamlFile == null || baseDir == null) return;
     final VirtualFile dotPackagesFile = baseDir.findChild(DotPackagesFileUtil.DOT_PACKAGES);
 
-    if (dotPackagesFile != null &&
-        !dotPackagesFile.isDirectory() &&
-        myDartSdk != null &&
-        StringUtil.compareVersionNumbers(myDartSdk.getVersion(), "1.12") >= 0) {
+    if (dotPackagesFile != null && !dotPackagesFile.isDirectory()) {
       final Map<String, String> packagesMap = DotPackagesFileUtil.getPackagesMap(dotPackagesFile);
       if (packagesMap != null) {
         for (Map.Entry<String, String> entry : packagesMap.entrySet()) {

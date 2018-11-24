@@ -15,20 +15,18 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.cidr.execution.*;
-import com.jetbrains.cidr.execution.deviceSupport.AMDevice;
-import com.jetbrains.cidr.execution.deviceSupport.AMDeviceUtil;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
+import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames;
 import com.jetbrains.cidr.xcode.model.*;
 import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
@@ -48,15 +46,17 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   private static final String REVEAL_SETTINGS_TAG = "REVEAL_SETTINGS";
   private static final Key<RevealSettings> REVEAL_SETTINGS_KEY = Key.create(REVEAL_SETTINGS_TAG);
   private static final Key<String> BUNDLE_ID_KEY = Key.create("BUNDLE_INFO");
+  private static final Key<File> FILE_TO_INJECT = Key.create("reveal.library.to.inject");
+  private static final List<String> KNOWN_FRAMEWORK_NAMES = ContainerUtil.newArrayList("RevealServer", "Reveal");
 
   @NotNull
   public static RevealSettings getRevealSettings(@NotNull AppCodeRunConfiguration config) {
-    RevealSettings settings = config.getCopyableUserData(REVEAL_SETTINGS_KEY);
+    RevealSettings settings = config.getUserData(REVEAL_SETTINGS_KEY);
     return settings == null ? new RevealSettings() : settings;
   }
 
   public static void setRevealSettings(@NotNull AppCodeRunConfiguration runConfiguration, @Nullable RevealSettings settings) {
-    runConfiguration.putCopyableUserData(REVEAL_SETTINGS_KEY, settings);
+    runConfiguration.putUserData(REVEAL_SETTINGS_KEY, settings);
   }
 
   @Override
@@ -88,6 +88,12 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     settingsTag.setAttribute("autoInstall", String.valueOf(settings.autoInstall));
     settingsTag.setAttribute("askToEnableAutoInstall", String.valueOf(settings.askToEnableAutoInstall));
     element.addContent(settingsTag);
+  }
+
+  @Override
+  public void copyConfiguration(@NotNull AppCodeRunConfiguration from, @NotNull AppCodeRunConfiguration to) {
+    RevealSettings settings = getRevealSettings(from);
+    setRevealSettings(to, settings.clone());
   }
 
   @Nullable
@@ -156,14 +162,10 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   @Override
-  public void install(@NotNull AppCodeRunConfiguration configuration,
-                      @NotNull File product,
-                      @NotNull ExecutionEnvironment environment,
-                      @NotNull BuildConfiguration buildConfiguration,
-                      @NotNull File mainExecutable,
-                      @NotNull GeneralCommandLine commandLine) throws ExecutionException {
-    super.install(configuration, product, environment, buildConfiguration, mainExecutable, commandLine);
-
+  public void installIntoApplicationBundle(@NotNull AppCodeRunConfiguration configuration,
+                                           @NotNull ExecutionEnvironment environment,
+                                           @NotNull BuildConfiguration buildConfiguration,
+                                           @NotNull File mainExecutable) throws ExecutionException {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
     if (appBundle == null) return;
 
@@ -172,25 +174,21 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     RevealSettings settings = getRevealSettings(configuration);
     if (!settings.autoInject) return;
 
-    File toInject = installReveal(configuration, product, environment, buildConfiguration, commandLine, mainExecutable, settings);
+    File toInject = installReveal(configuration, buildConfiguration, mainExecutable, settings);
     if (toInject == null) return;
-    Reveal.LOG.info("Injecting Reveal lib: " + toInject);
 
     UsageTrigger.trigger("appcode.reveal.inject");
 
-    CidrExecUtil.appendSearchPath(commandLine.getEnvironment(), EnvParameterNames.DYLD_INSERT_LIBRARIES, toInject.getPath());
+    environment.putUserData(FILE_TO_INJECT, toInject);
   }
 
   @Nullable
   private static File installReveal(@NotNull final AppCodeRunConfiguration configuration,
-                                    @NotNull File product,
-                                    @NotNull ExecutionEnvironment environment,
                                     @NotNull BuildConfiguration buildConfiguration,
-                                    @NotNull GeneralCommandLine commandLine,
                                     @NotNull File mainExecutable,
                                     @NotNull final RevealSettings settings) throws ExecutionException {
     File appBundle = Reveal.getDefaultRevealApplicationBundle();
-    if (appBundle == null) throw new ExecutionException("Reveal application bundle not found");;
+    if (appBundle == null) throw new ExecutionException("Reveal application bundle not found");
 
     File libReveal = Reveal.getRevealLib(appBundle, getSdk(configuration));
     if (libReveal == null) throw new ExecutionException("Reveal library not found");
@@ -198,7 +196,11 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     Reveal.LOG.info("Reveal lib found at " + libReveal);
 
     if (hasBundledRevealLib(buildConfiguration, libReveal)) {
-      return new File(commandLine.getExePath(), libReveal.getName());
+      return new File(libReveal.getName());
+    }
+
+    if (hasRevealFramework(buildConfiguration)) {
+      return null;
     }
 
     BuildDestination destination = buildConfiguration.getDestination();
@@ -259,9 +261,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
 
     UsageTrigger.trigger("appcode.reveal.installOnDevice");
 
-    AMDevice device = destination.getDeviceSafe();
-    return installOnDevice(libReveal, buildConfiguration, mainExecutable, commandLine, device,
-            getBundleID(environment, product));
+    return signAndInstall(libReveal, buildConfiguration, mainExecutable);
   }
 
   private static boolean hasBundledRevealLib(@NotNull final BuildConfiguration buildConfiguration, @NotNull final File libReveal) {
@@ -281,35 +281,30 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     });
   }
 
-  @NotNull
-  private static File installOnDevice(@NotNull File libReveal,
-                                      @NotNull final BuildConfiguration buildConfiguration,
-                                      @NotNull File mainExecutable,
-                                      @NotNull GeneralCommandLine commandLine,
-                                      @NotNull AMDevice device,
-                                      @NotNull String bundleId) throws ExecutionException {
-    File tempDir;
-    File libRevealInTempDir;
-    try {
-      tempDir = FileUtil.createTempDirectory("libReveal", null);
-      libRevealInTempDir = new File(tempDir, libReveal.getName());
+  private static boolean hasRevealFramework(@NotNull BuildConfiguration buildConfiguration) {
+    return ApplicationManager.getApplication().runReadAction((Computable<Boolean>)() -> {
+      List<String> flags = buildConfiguration.getBuildSetting(BuildSettingNames.OTHER_LDFLAGS).getStringList();
+      return flags.stream().anyMatch(flag -> KNOWN_FRAMEWORK_NAMES.contains(StringUtil.unquoteString(flag)));
+    });
+  }
 
-      FileUtil.copy(libReveal, libRevealInTempDir);
+  @NotNull
+  private static File signAndInstall(@NotNull File libReveal,
+                                     @NotNull final BuildConfiguration buildConfiguration,
+                                     @NotNull File mainExecutable) throws ExecutionException {
+    File frameworksDir = new File(mainExecutable.getParent(), "Frameworks");
+    File libRevealCopy = new File(frameworksDir, libReveal.getName());
+
+    try {
+      FileUtil.copy(libReveal, libRevealCopy);
     }
     catch (IOException e) {
       throw new ExecutionException("Cannot create a temporary copy of Reveal library", e);
     }
 
-    try {
-      AppCodeInstaller.codesignBinary(buildConfiguration, mainExecutable, tempDir.getAbsolutePath(), libRevealInTempDir.getName());
-      AMDeviceUtil.transferPathToApplicationBundle(device, libRevealInTempDir.getParent(), "/tmp", bundleId);
-    } finally {
-      FileUtil.delete(tempDir);
-    }
+    AppCodeInstaller.codesignBinary(buildConfiguration, mainExecutable, frameworksDir.getAbsolutePath(), libRevealCopy.getName());
 
-    String homeDir = AMDeviceUtil.getHomeDirFromAppEnvironment(commandLine);
-
-    return new File(new File(homeDir), "tmp/" + libRevealInTempDir.getParentFile().getName() + "/" + libRevealInTempDir.getName());
+    return new File("Frameworks", libRevealCopy.getName());
   }
 
 
@@ -331,10 +326,19 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
   }
 
   @Override
-  protected void patchCommandLine(@NotNull AppCodeRunConfiguration configuration,
-                                  @Nullable RunnerSettings runnerSettings,
-                                  @NotNull GeneralCommandLine cmdLine,
-                                  @NotNull String runnerId) throws ExecutionException {
+  public void patchCommandLine(@NotNull ExecutionEnvironment environment, @NotNull GeneralCommandLine cmdLine) {
+    File toInject = FILE_TO_INJECT.get(environment);
+
+    if (toInject != null) {
+      if (!toInject.isAbsolute()) {
+        File bundle = new File(cmdLine.getExePath()).getParentFile();
+        toInject = new File(bundle, toInject.getPath());
+      }
+
+      Reveal.LOG.info("Injecting Reveal lib: " + toInject);
+
+      CidrExecUtil.appendSearchPath(cmdLine.getEnvironment(), EnvParameterNames.DYLD_INSERT_LIBRARIES, toInject.getPath());
+    }
   }
 
   private static class MyEditor<T extends AppCodeRunConfiguration> extends SettingsEditor<T> {
@@ -469,9 +473,19 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
     }
   }
 
-  public static class RevealSettings {
+  public static class RevealSettings implements Cloneable {
     public boolean autoInject;
     public boolean autoInstall = true;
     public boolean askToEnableAutoInstall = true;
+
+    @Override
+    public RevealSettings clone() {
+      try {
+        return (RevealSettings)super.clone();
+      }
+      catch (CloneNotSupportedException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 }

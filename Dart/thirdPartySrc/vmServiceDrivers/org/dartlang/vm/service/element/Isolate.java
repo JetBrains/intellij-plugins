@@ -91,7 +91,7 @@ public class Isolate extends Response {
    * The number of live ports for this isolate.
    */
   public int getLivePorts() {
-    return json.get("livePorts").getAsInt();
+    return json.get("livePorts") == null ? -1 : json.get("livePorts").getAsInt();
   }
 
   /**
@@ -145,6 +145,6 @@ public class Isolate extends Response {
    * Suitable to pass to DateTime.fromMillisecondsSinceEpoch.
    */
   public int getStartTime() {
-    return json.get("startTime").getAsInt();
+    return json.get("startTime") == null ? -1 : json.get("startTime").getAsInt();
   }
 }

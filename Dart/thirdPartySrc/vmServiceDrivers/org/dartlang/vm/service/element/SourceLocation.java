@@ -30,7 +30,7 @@ public class SourceLocation extends Response {
    * The last token of the location if this is a range.
    */
   public int getEndTokenPos() {
-    return json.get("endTokenPos").getAsInt();
+    return json.get("endTokenPos") == null ? -1 : json.get("endTokenPos").getAsInt();
   }
 
   /**
@@ -44,6 +44,6 @@ public class SourceLocation extends Response {
    * The first token of the location.
    */
   public int getTokenPos() {
-    return json.get("tokenPos").getAsInt();
+    return json.get("tokenPos") == null ? -1 : json.get("tokenPos").getAsInt();
   }
 }

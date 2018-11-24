@@ -33,6 +33,7 @@ public class DartVmServiceValue extends XNamedValue {
   @NotNull private final DartVmServiceDebugProcess myDebugProcess;
   @NotNull private String myIsolateId;
   @NotNull private final InstanceRef myInstanceRef;
+  @Nullable private final LocalVarSourceLocation myLocalVarSourceLocation;
   @Nullable private final FieldRef myFieldRef;
   private final boolean myIsException;
 
@@ -42,29 +43,35 @@ public class DartVmServiceValue extends XNamedValue {
                             @NotNull final String isolateId,
                             @NotNull final String name,
                             @NotNull final InstanceRef instanceRef,
+                            @Nullable final LocalVarSourceLocation localVarSourceLocation,
                             @Nullable final FieldRef fieldRef,
                             boolean isException) {
     super(name);
     myDebugProcess = debugProcess;
     myIsolateId = isolateId;
     myInstanceRef = instanceRef;
+    myLocalVarSourceLocation = localVarSourceLocation;
     myFieldRef = fieldRef;
     myIsException = isException;
   }
 
   @Override
   public boolean canNavigateToSource() {
-    return myFieldRef != null;
+    return myLocalVarSourceLocation != null || myFieldRef != null;
   }
 
   @Override
   public void computeSourcePosition(@NotNull final XNavigatable navigatable) {
-    if (myFieldRef == null) {
-      navigatable.setSourcePosition(null);
-      return;
+    if (myLocalVarSourceLocation != null) {
+      reportSourcePosition(myDebugProcess, navigatable, myIsolateId, myLocalVarSourceLocation.myScriptRef,
+                           myLocalVarSourceLocation.myTokenPos);
     }
-
-    doComputeSourcePosition(myDebugProcess, navigatable, myIsolateId, myFieldRef);
+    else if (myFieldRef != null) {
+      doComputeSourcePosition(myDebugProcess, navigatable, myIsolateId, myFieldRef);
+    }
+    else {
+      navigatable.setSourcePosition(null);
+    }
   }
 
   static void doComputeSourcePosition(@NotNull final DartVmServiceDebugProcess debugProcess,
@@ -74,7 +81,10 @@ public class DartVmServiceValue extends XNamedValue {
     debugProcess.getVmServiceWrapper().getObject(isolateId, fieldRef.getId(), new GetObjectConsumer() {
       @Override
       public void received(final Obj field) {
-        reportSourcePosition(debugProcess, navigatable, isolateId, ((Field)field).getLocation());
+        final SourceLocation location = ((Field)field).getLocation();
+        reportSourcePosition(debugProcess, navigatable, isolateId,
+                             location == null ? null : location.getScript(),
+                             location == null ? -1 : location.getTokenPos());
       }
 
       @Override
@@ -99,7 +109,10 @@ public class DartVmServiceValue extends XNamedValue {
     myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, myInstanceRef.getClassRef().getId(), new GetObjectConsumer() {
       @Override
       public void received(final Obj classObj) {
-        reportSourcePosition(myDebugProcess, navigatable, myIsolateId, ((ClassObj)classObj).getLocation());
+        final SourceLocation location = ((ClassObj)classObj).getLocation();
+        reportSourcePosition(myDebugProcess, navigatable, myIsolateId,
+                             location == null ? null : location.getScript(),
+                             location == null ? -1 : location.getTokenPos());
       }
 
       @Override
@@ -117,14 +130,15 @@ public class DartVmServiceValue extends XNamedValue {
   private static void reportSourcePosition(@NotNull final DartVmServiceDebugProcess debugProcess,
                                            @NotNull final XNavigatable navigatable,
                                            @NotNull final String isolateId,
-                                           @Nullable final SourceLocation location) {
-    if (location == null) {
+                                           @Nullable final ScriptRef script,
+                                           final int tokenPos) {
+    if (script == null || tokenPos <= 0) {
       navigatable.setSourcePosition(null);
       return;
     }
 
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      final XSourcePosition sourcePosition = debugProcess.getSourcePosition(isolateId, location.getScript(), location.getTokenPos());
+      final XSourcePosition sourcePosition = debugProcess.getSourcePosition(isolateId, script, tokenPos);
       ApplicationManager.getApplication().runReadAction(() -> navigatable.setSourcePosition(sourcePosition));
     });
   }
@@ -367,7 +381,7 @@ public class DartVmServiceValue extends XNamedValue {
     final XValueChildrenList childrenList = new XValueChildrenList(listElements.size());
     int index = myCollectionChildrenAlreadyShown.get();
     for (InstanceRef listElement : listElements) {
-      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement, null, false));
+      childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, String.valueOf(index++), listElement, null, null, false));
     }
     node.addChildren(childrenList, true);
   }
@@ -388,8 +402,9 @@ public class DartVmServiceValue extends XNamedValue {
 
         @Override
         public void computeChildren(@NotNull XCompositeNode node) {
-          final DartVmServiceValue key = new DartVmServiceValue(myDebugProcess, myIsolateId, "key", keyInstanceRef, null, false);
-          final DartVmServiceValue value = new DartVmServiceValue(myDebugProcess, myIsolateId, "value", valueInstanceRef, null, false);
+          final DartVmServiceValue key = new DartVmServiceValue(myDebugProcess, myIsolateId, "key", keyInstanceRef, null, null, false);
+          final DartVmServiceValue value =
+            new DartVmServiceValue(myDebugProcess, myIsolateId, "value", valueInstanceRef, null, null, false);
           node.addChildren(XValueChildrenList.singleton(key), false);
           node.addChildren(XValueChildrenList.singleton(value), true);
         }
@@ -404,7 +419,8 @@ public class DartVmServiceValue extends XNamedValue {
     for (BoundField field : fields) {
       final InstanceRef value = field.getValue();
       if (value != null) {
-        childrenList.add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value, field.getDecl(), false));
+        childrenList
+          .add(new DartVmServiceValue(myDebugProcess, myIsolateId, field.getDecl().getName(), value, null, field.getDecl(), false));
       }
     }
     node.addChildren(childrenList, true);
@@ -454,5 +470,15 @@ public class DartVmServiceValue extends XNamedValue {
   @NotNull
   public InstanceRef getInstanceRef() {
     return myInstanceRef;
+  }
+
+  static class LocalVarSourceLocation {
+    @NotNull private final ScriptRef myScriptRef;
+    private final int myTokenPos;
+
+    public LocalVarSourceLocation(@NotNull final ScriptRef scriptRef, final int tokenPos) {
+      myScriptRef = scriptRef;
+      myTokenPos = tokenPos;
+    }
   }
 }

@@ -1,10 +1,15 @@
 package org.jetbrains.plugins.cucumber.groovy;
 
-import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.JavaModuleType;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -15,8 +20,6 @@ import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
-import org.jetbrains.plugins.cucumber.psi.GherkinRecursiveElementVisitor;
-import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.NotIndexedCucumberExtension;
 import org.jetbrains.plugins.groovy.GroovyFileType;
@@ -24,7 +27,10 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Max Medvedev
@@ -53,16 +59,13 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
   }
 
   @Nullable
-  public String getGlue(@NotNull GherkinStep step) {
-    for (PsiReference ref : step.getReferences()) {
-      PsiElement refElement = ref.resolve();
-      if (refElement != null && refElement instanceof GrMethodCall) {
-        GroovyFile groovyFile = (GroovyFile)refElement.getContainingFile();
-        VirtualFile vfile = groovyFile.getVirtualFile();
-        if (vfile != null) {
-          VirtualFile parentDir = vfile.getParent();
-          return PathUtil.getLocalPath(parentDir);
-        }
+  private String getGlue(PsiElement stepDefinition) {
+    if (stepDefinition != null && stepDefinition instanceof GrMethodCall) {
+      GroovyFile groovyFile = (GroovyFile)stepDefinition.getContainingFile();
+      VirtualFile vfile = groovyFile.getVirtualFile();
+      if (vfile != null) {
+        VirtualFile parentDir = vfile.getParent();
+        return PathUtil.getLocalPath(parentDir);
       }
     }
     return null;
@@ -76,15 +79,13 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
     }
     final Set<String> glues = gluesFromOtherFiles;
 
-    file.accept(new GherkinRecursiveElementVisitor() {
-      @Override
-      public void visitStep(GherkinStep step) {
-        final String glue = getGlue(step);
-        if (glue != null) {
-          glues.add(glue);
-        }
+    for (AbstractStepDefinition stepDefinition : getAllStepDefinitions(file.getProject())) {
+      final PsiElement stepDefinitionElement = stepDefinition.getElement();
+      final String glue = getGlue(stepDefinitionElement);
+      if (glue != null) {
+        glues.add(glue);
       }
-    });
+    }
 
     return glues;
   }

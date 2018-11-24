@@ -77,7 +77,7 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
   }
 
   private void doAnnotatorTest() throws Exception {
-    final InspectionProfileImpl profile = (InspectionProfileImpl)InspectionProjectProfileManager.getInstance(myProject).getCurrentProfile();
+    final InspectionProfileImpl profile = InspectionProjectProfileManager.getInstance(myProject).getCurrentProfile();
     InspectionsKt.runInInitMode(() -> {
       profile.enableTool(JSUnresolvedVariableInspection.SHORT_NAME, myProject);
       return null;

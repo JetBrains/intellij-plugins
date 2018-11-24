@@ -31,7 +31,7 @@ public class Context extends Obj {
    * The number of variables in this context.
    */
   public int getLength() {
-    return json.get("length").getAsInt();
+    return json.get("length") == null ? -1 : json.get("length").getAsInt();
   }
 
   /**

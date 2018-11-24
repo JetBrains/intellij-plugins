@@ -39,7 +39,7 @@ public class Message extends Response {
    * processed.
    */
   public int getIndex() {
-    return json.get("index").getAsInt();
+    return json.get("index") == null ? -1 : json.get("index").getAsInt();
   }
 
   /**
@@ -68,6 +68,6 @@ public class Message extends Response {
    * The size (bytes) of the encoded message.
    */
   public int getSize() {
-    return json.get("size").getAsInt();
+    return json.get("size") == null ? -1 : json.get("size").getAsInt();
   }
 }

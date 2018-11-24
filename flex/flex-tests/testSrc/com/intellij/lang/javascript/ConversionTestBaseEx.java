@@ -9,12 +9,13 @@ import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.PlatformTestUtil;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 
 import java.io.File;
 import java.io.IOException;
+
+import static com.intellij.testFramework.Assertions.assertThat;
 
 public abstract class ConversionTestBaseEx extends ConversionTestBase {
 
@@ -103,13 +104,13 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
     if (checkJdk()) {
       Element sdkState = ((ProjectJdkTableImpl)ProjectJdkTable.getInstance()).getState();
       ConversionHelper.collapsePaths(sdkState);
-      PlatformTestUtil.assertElementsEqual(JDOMUtil.load(new File(globalAfter, JDK_TABLE_XML)), sdkState);
+      assertThat(sdkState).isEqualTo(new File(globalAfter, JDK_TABLE_XML));
     }
 
     {
       Element globalLibState = ApplicationLibraryTable.getApplicationTable().getState();
       ConversionHelper.collapsePaths(globalLibState);
-      PlatformTestUtil.assertElementsEqual(JDOMUtil.load(new File(globalAfter, GLOBAL_LIBS_XML)), globalLibState);
+      assertThat(globalLibState).isEqualTo(new File(globalAfter, GLOBAL_LIBS_XML));
     }
     return true;
   }

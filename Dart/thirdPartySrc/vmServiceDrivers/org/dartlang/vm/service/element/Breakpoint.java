@@ -30,7 +30,7 @@ public class Breakpoint extends Obj {
    * A number identifying this breakpoint to the user.
    */
   public int getBreakpointNumber() {
-    return json.get("breakpointNumber").getAsInt();
+    return json.get("breakpointNumber") == null ? -1 : json.get("breakpointNumber").getAsInt();
   }
 
   /**

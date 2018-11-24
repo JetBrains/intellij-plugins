@@ -14,7 +14,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.Function;
 import com.intellij.util.TimeoutUtil;
 import com.intellij.util.text.StringTokenizer;
 import org.jetbrains.annotations.NotNull;
@@ -203,13 +202,14 @@ public abstract class ExternalTask {
     }
     else {
       String message = messages.isEmpty() ? FlexBundle.message("unexpected.empty.adt.output") : StringUtil.join(messages, "\n");
-      if (message.length() > 1000) {
-        message = message.substring(0, 1000) + "...";
+      if (message.length() > 10000) {
+        message = message.substring(0, 10000) + "...";
       }
       if (task instanceof AdtPackageTask) {
         message += "\n\nADT command line:\n" + task.getCommandLine();
       }
-      Messages.showErrorDialog(task.myProject, message, frameTitle);
+      Messages
+        .showIdeaMessageDialog(task.myProject, message, frameTitle, new String[]{Messages.OK_BUTTON}, 0, Messages.getErrorIcon(), null);
     }
     return false;
   }

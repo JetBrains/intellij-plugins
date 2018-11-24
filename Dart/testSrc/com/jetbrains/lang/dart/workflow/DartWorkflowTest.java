@@ -115,8 +115,10 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                          rootUrl + "/dir2/tool/sub/packages",
                          rootUrl + "/dir2/web/packages",
                          rootUrl + "/dir2/web/sub/packages",
-                         rootUrl + "/dir2/example/lib/packages",
+                         rootUrl + "/dir2/example/.pub",
+                         rootUrl + "/dir2/example/build",
                          rootUrl + "/dir2/example/packages",
+                         rootUrl + "/dir2/example/lib/packages",
                          rootUrl + "/dir2/example/lib/sub/packages",
                          rootUrl + "/dir2/example/web/packages",
                          rootUrl + "/dir2/example/web/sub/packages"

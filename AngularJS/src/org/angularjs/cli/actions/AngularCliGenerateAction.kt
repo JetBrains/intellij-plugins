@@ -178,7 +178,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
 
     val filter = AngularCLIFilter(project, baseDir.path)
     AngularCLIProjectGenerator.generate(node, AngularCLIProjectGenerator.ng(module.virtualFile?.path!!),
-                                        project.baseDir, project, null, arrayOf(filter), "generate", blueprint.name, *arguments)
+                                        project.baseDir, project.baseDir, project, null, arrayOf(filter), "generate", blueprint.name, *arguments)
   }
 
   override fun update(e: AnActionEvent?) {

@@ -19,7 +19,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.impl.source.tree.TreeUtil;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -262,11 +261,6 @@ public class AngularJS2IndexingHandler extends FrameworkIndexingHandler {
       }
     }
     return null;
-  }
-
-  @Override
-  public boolean canProcessCustomElement(@NotNull PsiElement element) {
-    return element instanceof HtmlTag;
   }
 
   @Override

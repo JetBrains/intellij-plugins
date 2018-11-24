@@ -395,7 +395,7 @@ public class VmServiceWrapper implements Disposable {
     addRequest(() -> myVmService.evaluateInFrame(isolateId, vmFrame.getIndex(), expression, new EvaluateInFrameConsumer() {
       @Override
       public void received(InstanceRef instanceRef) {
-        callback.evaluated(new DartVmServiceValue(myDebugProcess, isolateId, "result", instanceRef, null, false));
+        callback.evaluated(new DartVmServiceValue(myDebugProcess, isolateId, "result", instanceRef, null, null, false));
       }
 
       @Override

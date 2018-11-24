@@ -28,6 +28,8 @@
 
     <lang.elementManipulator forClass="org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl"
                              implementationClass="org.intellij.plugins.markdown.lang.psi.impl.MarkdownCodeFenceImpl$Manipulator"/>
+    <lang.elementManipulator forClass="org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestinationImpl"
+                             implementationClass="org.intellij.plugins.markdown.lang.psi.impl.MarkdownLinkDestinationImpl$Manipulator"/>
 
     <colorSettingsPage implementation="org.intellij.plugins.markdown.highlighting.MarkdownColorSettingsPage"/>
     <syntaxHighlighter key="Markdown" implementationClass="org.intellij.plugins.markdown.highlighting.MarkdownSyntaxHighlighter"/>
@@ -65,6 +67,7 @@
     <editorNotificationProvider implementation="org.intellij.plugins.markdown.ui.preview.javafx.JavaFxCouldBeEnabledNotificationProvider"/>
     <lang.psiStructureViewFactory language="Markdown"
                                   implementationClass="org.intellij.plugins.markdown.structureView.MarkdownStructureViewFactory"/>
+    <psi.referenceContributor implementation="org.intellij.plugins.markdown.lang.references.MarkdownReferenceProvider"/>
     <stripTrailingSpacesFilterFactory implementation="org.intellij.plugins.markdown.editor.MarkdownStripTrailingSpacesFilterFactory"/>
   </extensions>
 
