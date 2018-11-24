@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,7 @@ public class ResultActionPropertyReferenceProvider extends PsiReferenceProvider 
   @Override
   public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
                                                @NotNull final ProcessingContext processingContext) {
-    final Result result = (Result) DomUtil.getDomElement(psiElement);
+    final Result result = (Result)DomUtil.getDomElement(psiElement);
     assert result != null : psiElement.getText();
     final Action action = result.getParentOfType(Action.class, true);
     assert action != null : psiElement.getText();
@@ -70,32 +70,31 @@ public class ResultActionPropertyReferenceProvider extends PsiReferenceProvider 
 
       final String expressionString = resultText.substring(startOffset, startOffset + length);
       final BeanPropertyPathReferenceSet propertyPathReferenceSet =
-          new BeanPropertyPathReferenceSet(expressionString,
-                                           psiElement,
-                                           startOffset,
-                                           '.',
-                                           actionClass,
-                                           true) {
+        new BeanPropertyPathReferenceSet(expressionString,
+                                         psiElement,
+                                         startOffset,
+                                         '.',
+                                         actionClass,
+                                         true) {
 
-            // TODO CTOR creates references eagerly, so we have to subclass here
-            @Override
-            public boolean isSoft() {
-              return false;
-            }
+          // TODO CTOR creates references eagerly, so we have to subclass here
+          @Override
+          public boolean isSoft() {
+            return false;
+          }
 
-            @NotNull
-            @Override
-            protected BeanPropertyPathReference createReference(final TextRange range, final int index) {
-              final TextRange shift = range.shiftRight(tagValueStartOffset); // shift range to XmlTag value range
-              return createBeanPropertyPathReference(shift, index);
-            }
-
-          };
+          @NotNull
+          @Override
+          protected BeanPropertyPathReference createReference(final TextRange range, final int index) {
+            final TextRange shift = TextRange.from(range.getStartOffset() + tagValueStartOffset,
+                                                   range.getLength()); // shift range to XmlTag value range
+            return createBeanPropertyPathReference(shift, index);
+          }
+        };
 
       references = ArrayUtil.mergeArrays(references, propertyPathReferenceSet.getPsiReferences());
     }
 
     return references;
   }
-
 }

@@ -6,7 +6,9 @@ import com.intellij.execution.PsiLocation;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
@@ -19,12 +21,20 @@ class TestCaseNode extends Node {
   private final JstdConfigFileNode myJstdConfigFileNode;
   private final Map<String, TestNode> myTestNodeMap = Maps.newHashMap();
 
-  public TestCaseNode(final JstdConfigFileNode jstdConfigFileNode, String testCaseName) {
+  public TestCaseNode(final JstdConfigFileNode jstdConfigFileNode, @Nullable final String jsTestFilePath, String testCaseName) {
     myJstdConfigFileNode = jstdConfigFileNode;
     setTestProxy(new SMTestProxyWithPrinterAndLocation(testCaseName, true, new LocationProvider() {
       @Override
       Location provideLocation(@NotNull Project project) {
-        PsiElement element = NavUtils.findPsiElement(project, jstdConfigFileNode.getConfigFile(), getName(), null);
+        if (jsTestFilePath == null) {
+          return null;
+        }
+        PsiElement element = NavUtils.findPsiElement(
+          project,
+          new File(jsTestFilePath),
+          getName(),
+          null
+        );
         return PsiLocation.fromPsiElement(element);
       }
     }));

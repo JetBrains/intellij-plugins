@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.config.JstdConfigStructure;
 import com.google.jstestdriver.idea.execution.TestListenerContext;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
+import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -91,9 +92,12 @@ public class RemoteTestListener {
 
     Node testCaseParentNode = fakeJstdConfigFileNode ? browserNode : jstdConfigFileNode;
     if (!jstdConfigFileNodeAlreadyExists) {
-      JstdConfigStructure configStructure = JstdConfigStructure.newConfigStructure(jstdConfigFileNode.getConfigFile());
-      StacktracePrinter stacktracePrinter = new StacktracePrinter(myContext.consoleView(), configStructure, message.browser);
-      testCaseParentNode.wirePrinter(stacktracePrinter);
+      JstdConfigStructure configStructure = JstdConfigStructure.parseConfigStructure(jstdConfigFileNode.getConfigFile());
+      SMTRunnerConsoleView consoleView = myContext.consoleView();
+      if (consoleView.getProperties() != null) {
+        StacktracePrinter stacktracePrinter = new StacktracePrinter(consoleView, configStructure, message.browser);
+        testCaseParentNode.wirePrinter(stacktracePrinter);
+      }
     }
 
     myLastTestCaseParentNode = testCaseParentNode;
@@ -101,13 +105,13 @@ public class RemoteTestListener {
     TestCaseNode testCaseNode = jstdConfigFileNode.getTestCaseNode(message.testCase);
     myLastConfigFile = jstdConfigFileNode.getConfigFile();
     if (testCaseNode == null) {
-      testCaseNode = new TestCaseNode(jstdConfigFileNode, message.testCase);
+      testCaseNode = new TestCaseNode(jstdConfigFileNode, message.jsTestFilePath, message.testCase);
       onSuiteStarted(testCaseParentNode.getTestProxy(), testCaseNode.getTestProxy());
     }
 
     TestNode testNode = testCaseNode.getTestByName(message.testName);
     if (testNode == null) {
-      testNode = new TestNode(testCaseNode, message.testName);
+      testNode = new TestNode(message.jsTestFilePath, testCaseNode, message.testName);
       onTestStarted(testCaseNode.getTestProxy(), testNode.getTestProxy());
     }
     return testNode;

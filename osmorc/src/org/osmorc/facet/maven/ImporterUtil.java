@@ -235,8 +235,14 @@ public class ImporterUtil {
     props.put(Constants.INCLUDE_RESOURCE, sanitizedHeader.toString());
   }
 
+  /**
+   * Creates a fake analyzer instance around the given map. This is mostly done so the felix bnd maven plugin code doesn't have to be
+   * changed that much.
+   * @param props the properties to wrap
+   * @return a fake analyzer.
+   */
   @NotNull
-  private static Analyzer makeFakeAnalyzer(final @NotNull Map<String, String> props) {
+  public static Analyzer makeFakeAnalyzer(final @NotNull Map<String, String> props) {
     return new Analyzer() {
       @Override
       public String getProperty(String key) {

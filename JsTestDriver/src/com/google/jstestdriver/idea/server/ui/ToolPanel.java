@@ -270,7 +270,7 @@ public class ToolPanel extends SimpleToolWindowPanel {
     private final JTextField myCaptureUrlTextField;
 
     private CopyAction(@NotNull JTextField captureUrlTextField, @NotNull JComponent parent) {
-      super("Copy", "Copy", PlatformIcons.COPY_ICON);
+      super("Copy URL", "Copy capturing URL", PlatformIcons.COPY_ICON);
       myCaptureUrlTextField = captureUrlTextField;
       ShortcutSet shortcutSet = new CustomShortcutSet(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
       registerCustomShortcutSet(shortcutSet, parent);

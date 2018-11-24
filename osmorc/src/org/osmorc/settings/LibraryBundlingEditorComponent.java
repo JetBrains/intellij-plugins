@@ -26,10 +26,16 @@
 package org.osmorc.settings;
 
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.ActionToolbarPosition;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.ToolbarDecorator;
+import com.intellij.util.PlatformIcons;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.beans.BeanAdapter;
@@ -38,8 +44,6 @@ import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -51,16 +55,12 @@ import java.util.List;
 public class LibraryBundlingEditorComponent {
   private JPanel mainPanel;
   private JTextField libraryRegex;
-  private JButton addRuleButton;
-  private JButton removeRuleButton;
-  private JButton duplicateButton;
-  private JButton upButton;
-  private JButton downButton;
   private JList libraries;
   private ManifestEditor manifestEntries;
   private JCheckBox neverBundle;
   private JCheckBox stopAfterThisRule;
   private JPanel _manifestEntriesHolder;
+  private JPanel myLibrariesPanel;
   private SelectionInList<LibraryBundlificationRule> selectedRule;
   private boolean modified;
   private PropertyChangeListener beanPropertyChangeListener;
@@ -68,83 +68,6 @@ public class LibraryBundlingEditorComponent {
   private List<LibraryBundlificationRule> rules;
 
   public LibraryBundlingEditorComponent() {
-
-    addRuleButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        LibraryBundlificationRule newRule = new LibraryBundlificationRule();
-        rules.add(newRule);
-        selectedRule.fireIntervalAdded(rules.size() - 1, rules.size() - 1);
-        selectedRule.setSelection(newRule);
-        notifyChanged();
-      }
-    });
-
-    removeRuleButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        if (rules.size() == 1) {
-          LibraryBundlificationRule newRule = new LibraryBundlificationRule();
-          rules.set(0, newRule);
-          selectedRule.fireContentsChanged(0, 1);
-          selectedRule.setSelection(newRule);
-        }
-        else {
-          int oldSelectionIndex = selectedRule.getSelectionIndex();
-          rules.remove(selectedRule.getValue());
-          selectedRule.fireIntervalRemoved(rules.size(), rules.size());
-          final int newSelectionIndex = oldSelectionIndex > 0 ? oldSelectionIndex - 1 : oldSelectionIndex;
-
-          if (newSelectionIndex == oldSelectionIndex) {
-            // force a change event, since the underlying list has changed and this needs to be reflected in the text fields
-            selectedRule.clearSelection();
-          }
-
-          selectedRule.setSelectionIndex(newSelectionIndex);
-        }
-        notifyChanged();
-      }
-    });
-
-    duplicateButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        LibraryBundlificationRule rule = selectedRule.getSelection();
-        if (rule != null) {
-          LibraryBundlificationRule newRule = rule.copy();
-          int selectedIndex = selectedRule.getSelectionIndex();
-          rules.add(selectedIndex, newRule);
-          selectedRule.fireIntervalAdded(selectedIndex, selectedIndex);
-          notifyChanged();
-        }
-      }
-    });
-
-    upButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        int selectionIndex = selectedRule.getSelectionIndex();
-        if (selectionIndex > 0) {
-          LibraryBundlificationRule ruleToMove = rules.get(selectionIndex);
-          rules.set(selectionIndex, rules.get(selectionIndex - 1));
-          rules.set(selectionIndex - 1, ruleToMove);
-          selectedRule.fireContentsChanged(selectionIndex - 1, selectionIndex);
-          selectedRule.setSelectionIndex(selectionIndex - 1);
-          notifyChanged();
-        }
-      }
-    });
-
-    downButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        int selectionIndex = selectedRule.getSelectionIndex();
-        if (selectionIndex < rules.size() - 1) {
-          LibraryBundlificationRule ruleToMove = rules.get(selectionIndex);
-          rules.set(selectionIndex, rules.get(selectionIndex + 1));
-          rules.set(selectionIndex + 1, ruleToMove);
-          selectedRule.fireContentsChanged(selectionIndex, selectionIndex + 1);
-          selectedRule.setSelectionIndex(selectionIndex + 1);
-          notifyChanged();
-        }
-      }
-    });
-
     // Am not sure if this is really a good idea. However using the default project produces some nice NPEs somehwere
     // deep inside the EnterHandler.
     final DataContext dataContext = DataManager.getInstance().getDataContext();
@@ -193,6 +116,81 @@ public class LibraryBundlingEditorComponent {
   private void createUIComponents() {
     selectedRule = new SelectionInList<LibraryBundlificationRule>();
     libraries = BasicComponentFactory.createList(selectedRule);
+
+    myLibrariesPanel = ToolbarDecorator.createDecorator(libraries)
+      .setAddAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          LibraryBundlificationRule newRule = new LibraryBundlificationRule();
+          rules.add(newRule);
+          selectedRule.fireIntervalAdded(rules.size() - 1, rules.size() - 1);
+          selectedRule.setSelection(newRule);
+          notifyChanged();
+        }
+      }).setRemoveAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          if (rules.size() == 1) {
+            LibraryBundlificationRule newRule = new LibraryBundlificationRule();
+            rules.set(0, newRule);
+            selectedRule.fireContentsChanged(0, 1);
+            selectedRule.setSelection(newRule);
+          }
+          else {
+            int oldSelectionIndex = selectedRule.getSelectionIndex();
+            rules.remove(selectedRule.getValue());
+            selectedRule.fireIntervalRemoved(rules.size(), rules.size());
+            final int newSelectionIndex = oldSelectionIndex > 0 ? oldSelectionIndex - 1 : oldSelectionIndex;
+
+            if (newSelectionIndex == oldSelectionIndex) {
+              // force a change event, since the underlying list has changed and this needs to be reflected in the text fields
+              selectedRule.clearSelection();
+            }
+
+            selectedRule.setSelectionIndex(newSelectionIndex);
+          }
+          notifyChanged();
+        }
+      }).setUpAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          int selectionIndex = selectedRule.getSelectionIndex();
+          if (selectionIndex > 0) {
+            LibraryBundlificationRule ruleToMove = rules.get(selectionIndex);
+            rules.set(selectionIndex, rules.get(selectionIndex - 1));
+            rules.set(selectionIndex - 1, ruleToMove);
+            selectedRule.fireContentsChanged(selectionIndex - 1, selectionIndex);
+            selectedRule.setSelectionIndex(selectionIndex - 1);
+            notifyChanged();
+          }
+        }
+      }).setDownAction(new AnActionButtonRunnable() {
+        @Override
+        public void run(AnActionButton button) {
+          int selectionIndex = selectedRule.getSelectionIndex();
+          if (selectionIndex < rules.size() - 1) {
+            LibraryBundlificationRule ruleToMove = rules.get(selectionIndex);
+            rules.set(selectionIndex, rules.get(selectionIndex + 1));
+            rules.set(selectionIndex + 1, ruleToMove);
+            selectedRule.fireContentsChanged(selectionIndex, selectionIndex + 1);
+            selectedRule.setSelectionIndex(selectionIndex + 1);
+            notifyChanged();
+          }
+        }
+      }).addExtraAction(new AnActionButton("Copy", PlatformIcons.COPY_ICON) {
+        @Override
+        public void actionPerformed(AnActionEvent e) {
+          LibraryBundlificationRule rule = selectedRule.getSelection();
+          if (rule != null) {
+            LibraryBundlificationRule newRule = rule.copy();
+            int selectedIndex = selectedRule.getSelectionIndex();
+            rules.add(selectedIndex, newRule);
+            selectedRule.fireIntervalAdded(selectedIndex, selectedIndex);
+            notifyChanged();
+          }
+        }
+      }).setToolbarPosition(ActionToolbarPosition.TOP).createPanel();
+
     // adapter always holds currently selected bean
     beanAdapter = new BeanAdapter<LibraryBundlificationRule>(new LibraryBundlificationRule());
     libraryRegex = BasicComponentFactory.createTextField(beanAdapter.getValueModel("ruleRegex"), false);

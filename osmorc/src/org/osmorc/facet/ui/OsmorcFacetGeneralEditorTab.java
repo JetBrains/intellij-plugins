@@ -38,9 +38,12 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
+import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
+import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -62,7 +65,7 @@ import java.util.jar.Attributes;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
+public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements PanelWithAnchor {
 
 
   private JRadioButton myManuallyEditedRadioButton;
@@ -82,12 +85,16 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
   private TextFieldWithBrowseButton myBundlorFile;
   private JPanel myBundlorPanel;
   private JCheckBox myDoNotSynchronizeFacetCheckBox;
+  private JBLabel myBndFileLocationJBLabel;
+  private JBLabel myBundlorFileLocationJBLabel;
+  private JBLabel myManifestFileLocationJBLabel;
   private boolean myModified;
   private final FacetEditorContext myEditorContext;
   private final Module myModule;
   static final Key<Boolean> MANUAL_MANIFEST_EDITING_KEY = Key.create("MANUAL_MANIFEST_EDITING");
   static final Key<Boolean> BND_CREATION_KEY = Key.create("BND_CREATION");
   static final Key<Boolean> BUNDLOR_CREATION_KEY = Key.create("BUNDLOR_CREATION");
+  private JComponent myAnchor;
 
   public OsmorcFacetGeneralEditorTab(FacetEditorContext editorContext) {
     myEditorContext = editorContext;
@@ -139,6 +146,8 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         checkFileExisting();
       }
     });
+
+    setAnchor(myManifestFileLocationJBLabel);
   }
 
   private void updateGui() {
@@ -189,6 +198,19 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
         }
       }
     }
+  }
+
+  @Override
+  public JComponent getAnchor() {
+    return myAnchor;
+  }
+
+  @Override
+  public void setAnchor(@Nullable JComponent anchor) {
+    this.myAnchor = anchor;
+    myBundlorFileLocationJBLabel.setAnchor(anchor);
+    myBndFileLocationJBLabel.setAnchor(anchor);
+    myManifestFileLocationJBLabel.setAnchor(anchor);
   }
 
 

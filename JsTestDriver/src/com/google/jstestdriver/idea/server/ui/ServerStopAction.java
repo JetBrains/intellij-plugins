@@ -5,11 +5,15 @@ import com.google.jstestdriver.ServerStartupAction;
 import com.google.jstestdriver.idea.icons.JstdIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
 
 /**
 * @author Sergey Simonchik
 */
 public class ServerStopAction extends AnAction {
+
+  private static final Logger LOG = Logger.getInstance(ServerStopAction.class);
 
   private final JstdServerState myServerState;
 
@@ -27,8 +31,16 @@ public class ServerStopAction extends AnAction {
   public void actionPerformed(AnActionEvent e) {
     ServerStartupAction serverStartupAction = ToolPanel.myServerStartupAction;
     if (serverStartupAction != null) {
-      new ServerShutdownAction(serverStartupAction).run(null);
+      runStopAction(serverStartupAction);
       ToolPanel.myServerStartupAction = null;
+    }
+  }
+
+  public static void runStopAction(@NotNull ServerStartupAction serverStartupAction) {
+    try {
+      new ServerShutdownAction(serverStartupAction).run(null);
+    } catch (Exception e) {
+      LOG.warn(e);
     }
   }
 }

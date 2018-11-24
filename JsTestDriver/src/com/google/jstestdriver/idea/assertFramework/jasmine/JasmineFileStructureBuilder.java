@@ -3,8 +3,8 @@ package com.google.jstestdriver.idea.assertFramework.jasmine;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructureBuilder;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
-import com.google.jstestdriver.idea.util.ObjectUtils;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

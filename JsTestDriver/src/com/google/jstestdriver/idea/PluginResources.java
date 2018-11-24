@@ -15,15 +15,6 @@
  */
 package com.google.jstestdriver.idea;
 
-import com.google.jstestdriver.browser.BrowserCaptureEvent.Event;
-import com.google.jstestdriver.idea.icons.JstdIcons;
-
-import javax.swing.*;
-import java.awt.color.ColorSpace;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
-import java.io.IOException;
-
 /**
  * Access to all the text and image resources for the plugin.
  * @author alexeagle@google.com (Alex Eagle)
@@ -41,37 +32,4 @@ public class PluginResources {
     return MessageBundle.message("captureLabel");
   }
 
-  public static class BrowserIcon {
-    private final BufferedImage color;
-    private final BufferedImage greyscale;
-    private ColorConvertOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
-
-    public BrowserIcon(BufferedImage color) {
-      this.color = color;
-      greyscale = op.filter(color, null);
-    }
-
-    public static BrowserIcon buildFromResource(String resourceName) throws IOException {
-      return new BrowserIcon(JstdIcons.loadImage(resourceName));
-    }
-
-    public Icon getColorIcon() {
-      return new ImageIcon(color);
-    }
-
-    public Icon getGreyscaleIcon() {
-      return new ImageIcon(greyscale);
-    }
-
-    public Icon getIconForEvent(Event event) {
-      switch (event) {
-        case CONNECTED:
-          return getColorIcon();
-        case DISCONNECTED:
-          return getGreyscaleIcon();
-        default:
-          throw new IllegalStateException("Unknown event " + event);
-      }
-    }
-  }
 }

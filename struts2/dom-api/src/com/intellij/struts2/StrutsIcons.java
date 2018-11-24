@@ -94,7 +94,7 @@ public final class StrutsIcons {
   /**
    * Overlay icon for "default" elements.
    */
-  private static final Icon OVERLAY_DEFAULT = IconLoader.getIcon("/gutter/check.png");
+  private static final Icon OVERLAY_DEFAULT = PlatformIcons.CHECK_ICON;
 
   // struts.xml
   public static final Icon ACTION = loadIcon(ACTION_PATH);

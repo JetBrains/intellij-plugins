@@ -17,8 +17,11 @@ import com.google.jstestdriver.server.JstdTestCaseStore;
 import com.google.jstestdriver.util.NullStopWatch;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
 
+import java.io.IOException;
+import java.net.*;
 import java.util.Collections;
 import java.util.Set;
 
@@ -26,6 +29,8 @@ import java.util.Set;
  * @author Sergey Simonchik
  */
 public class ServerStartAction extends AnAction {
+
+  private static final Logger LOG = Logger.getInstance(ServerStartAction.class);
 
   private final JstdServerState myServerState;
 
@@ -66,11 +71,63 @@ public class ServerStartAction extends AnAction {
       serverStartupAction.run(null);
       ToolPanel.myServerStartupAction = serverStartupAction;
     } catch (Exception ex) {
-      Messages.showErrorDialog(
+      ServerStopAction.runStopAction(serverStartupAction);
+
+      String title = "JsTestDriver Server Launching";
+      int sslPort = serverPort + 1;
+      if (!isLocalPortAvailable(serverPort)) {
+        Messages.showErrorDialog(
           "Can't start JsTestDriver server on port " + serverPort
-              + ".\nMake sure the port is free.",
-          "JsTestDriver Server Launching"
-      );
+          + ".\nMake sure the port is free.",
+          title
+        );
+      }
+      else if (!isLocalPortAvailable(sslPort)) {
+          Messages.showErrorDialog(
+            "Can't start JsTestDriver server.\nMake sure the ssl port " + sslPort + " is free.",
+            title
+          );
+      }
+      else {
+        String message = "Can't start JsTestDriver server due to unknown reasons.";
+        Messages.showErrorDialog(
+          message + "\n" + "See idea.log (Help->Reveal Log in ...).",
+          title
+        );
+        LOG.warn(message, ex);
+      }
+    }
+  }
+
+  @SuppressWarnings({"SocketOpenedButNotSafelyClosed", "SynchronizationOnLocalVariableOrMethodParameter", "WaitNotInLoop"})
+  private static boolean isLocalPortAvailable(int port) {
+    ServerSocket serverSocket = null;
+    try {
+      serverSocket = new ServerSocket();
+      SocketAddress endpoint = new InetSocketAddress(InetAddress.getByName(null), port);
+      serverSocket.bind(endpoint);
+      //workaround for linux : calling close() immediately after opening socket
+      //may result that socket is not closed
+      synchronized(serverSocket) {
+        try {
+          serverSocket.wait(1);
+        }
+        catch (InterruptedException e) {
+          LOG.error(e);
+        }
+      }
+      return true;
+    }
+    catch (IOException e) {
+      return false;
+    } finally {
+      if (serverSocket != null) {
+        try {
+          serverSocket.close();
+        }
+        catch (IOException ignored) {
+        }
+      }
     }
   }
 

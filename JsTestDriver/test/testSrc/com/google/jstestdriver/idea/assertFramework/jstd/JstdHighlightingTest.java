@@ -23,7 +23,7 @@ public class JstdHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
   private void defaultTest() throws IOException {
-    doTestFor(true, getTestName(false)+".js");
+    doTestFor(true, getTestName(true)+".js");
   }
 
   @Override
