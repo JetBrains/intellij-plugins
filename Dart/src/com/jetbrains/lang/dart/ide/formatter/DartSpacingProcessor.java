@@ -745,7 +745,7 @@ public class DartSpacingProcessor {
       return Spacing.createDependentLFSpacing(0, 0, node1.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
-    if (elementType == NAMED_ARGUMENT || elementType == DEFAULT_FORMAL_NAMED_PARAMETER) {
+    if (elementType == NAMED_ARGUMENT || elementType == DEFAULT_FORMAL_NAMED_PARAMETER || elementType == MAP_LITERAL_ENTRY) {
       if (type1 == COLON) {
         return addSingleSpaceIf(true);
       }

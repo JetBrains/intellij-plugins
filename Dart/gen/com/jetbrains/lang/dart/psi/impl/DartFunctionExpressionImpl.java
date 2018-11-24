@@ -38,4 +38,10 @@ public class DartFunctionExpressionImpl extends DartFunctionExpressionBase imple
     return findNotNullChildByClass(DartFunctionExpressionBody.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
+  }
+
 }

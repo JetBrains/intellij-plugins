@@ -13,4 +13,7 @@ public interface DartFunctionExpression extends DartExpression {
   @NotNull
   DartFunctionExpressionBody getFunctionExpressionBody();
 
+  @Nullable
+  DartTypeParameters getTypeParameters();
+
 }

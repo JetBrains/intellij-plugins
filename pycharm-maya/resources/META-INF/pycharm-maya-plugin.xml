@@ -7,10 +7,6 @@
                          instance="com.jetbrains.maya.MayaSettingsConfigurable"/>
   </extensions>
 
-  <extensions defaultExtensionNs="Pythonid">
-    <pythonFlavorProvider implementation="com.jetbrains.maya.MayaFlavorProvider"/>
-  </extensions>
-
   <actions>
     <action id="SendToMaya"
             class="com.jetbrains.maya.SendToMayaAction"

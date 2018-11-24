@@ -22,4 +22,7 @@ public interface DartFunctionDeclarationWithBody extends DartComponent {
   @Nullable
   DartReturnType getReturnType();
 
+  @Nullable
+  DartTypeParameters getTypeParameters();
+
 }

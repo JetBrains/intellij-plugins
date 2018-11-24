@@ -62,4 +62,10 @@ public class DartFunctionDeclarationWithBodyOrNativeImpl extends AbstractDartCom
     return findChildByClass(DartStringLiteralExpression.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
+  }
+
 }

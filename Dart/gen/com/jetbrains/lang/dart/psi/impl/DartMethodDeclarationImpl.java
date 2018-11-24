@@ -68,4 +68,10 @@ public class DartMethodDeclarationImpl extends AbstractDartMethodDeclarationImpl
     return findChildByClass(DartStringLiteralExpression.class);
   }
 
+  @Override
+  @Nullable
+  public DartTypeParameters getTypeParameters() {
+    return findChildByClass(DartTypeParameters.class);
+  }
+
 }

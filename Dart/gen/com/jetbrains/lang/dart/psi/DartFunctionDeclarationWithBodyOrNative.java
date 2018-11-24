@@ -25,4 +25,7 @@ public interface DartFunctionDeclarationWithBodyOrNative extends DartComponent {
   @Nullable
   DartStringLiteralExpression getStringLiteralExpression();
 
+  @Nullable
+  DartTypeParameters getTypeParameters();
+
 }
