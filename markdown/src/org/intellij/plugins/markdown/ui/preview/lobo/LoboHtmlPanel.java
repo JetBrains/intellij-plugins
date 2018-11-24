@@ -5,9 +5,11 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.StreamUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.ui.JBColor;
 import com.intellij.util.Range;
+import com.intellij.util.ui.JBUI;
 import org.intellij.plugins.markdown.ui.preview.MarkdownHtmlPanel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,12 +69,13 @@ final class LoboHtmlPanel extends MarkdownHtmlPanel {
 
   @Override
   public void setCSS(@Nullable String inlineCss, @NotNull String... fileUris) {
-    myCssInlineText = inlineCss;
+    myCssInlineText = StringUtil.notNullize(inlineCss);
     if (fileUris.length > 0 && fileUris[0] != null) {
       try {
         final URL url = URI.create(fileUris[0]).toURL();
         final String cssText = StreamUtil.readText(url.openStream(), CharsetToolkit.UTF8);
-        myCssInlineText += "\n" + cssText;
+        myCssInlineText = cssText + "\n" + myCssInlineText;
+        myCssInlineText += "body {\n  font-size: " + JBUI.scale(100) + "%;\n}";
       }
       catch (IOException ignore) {
       }

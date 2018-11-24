@@ -14,11 +14,11 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.ui.JBUI;
 import org.intellij.markdown.IElementType;
 import org.intellij.markdown.ast.ASTNode;
 import org.intellij.markdown.html.GeneratingProvider;
@@ -32,6 +32,9 @@ import org.intellij.plugins.markdown.settings.MarkdownPreviewSettings;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.owasp.html.HtmlPolicyBuilder;
+import org.owasp.html.PolicyFactory;
+import org.owasp.html.Sanitizers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,6 +47,32 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
   private final static long PARSING_CALL_TIMEOUT_MS = 50L;
 
   private final static long RENDERING_DELAY_MS = 20L;
+
+  final static NotNullLazyValue<PolicyFactory> SANITIZER_VALUE = new NotNullLazyValue<PolicyFactory>() {
+    @NotNull
+    @Override
+    protected PolicyFactory compute() {
+      return Sanitizers.BLOCKS
+        .and(Sanitizers.FORMATTING)
+        .and(new HtmlPolicyBuilder()
+               .allowUrlProtocols("file", "http", "https").allowElements("img")
+               .allowAttributes("alt", "src", "title").onElements("img")
+               .allowAttributes("border", "height", "width").onElements("img")
+               .toFactory())
+        .and(new HtmlPolicyBuilder()
+               .allowUrlProtocols("file", "http", "https", "mailto").allowElements("a")
+               .allowAttributes("href", "title").onElements("a")
+               .toFactory())
+        .and(Sanitizers.TABLES)
+        .and(new HtmlPolicyBuilder()
+               .allowElements("body", "pre")
+               .allowAttributes(HtmlGenerator.Companion.getSRC_ATTRIBUTE_NAME()).globally().toFactory())
+        .and(new HtmlPolicyBuilder()
+               .allowElements("code", "tr")
+               .allowAttributes("class").onElements("code", "tr")
+               .toFactory());
+    }
+  };
   @NotNull
   private final JPanel myHtmlPanelWrapper;
   @NotNull
@@ -211,7 +240,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
         mySwingAlarm.cancelRequest(myLastHtmlOrRefreshRequest);
       }
       myLastHtmlOrRefreshRequest = () -> {
-        final String currentHtml = "<html><head></head>" + html + "</html>";
+        final String currentHtml = "<html><head></head>" + SANITIZER_VALUE.getValue().sanitize(html) + "</html>";
         if (!currentHtml.equals(myLastRenderedHtml)) {
           myLastRenderedHtml = currentHtml;
           myPanel.setHtml(myLastRenderedHtml);
@@ -303,16 +332,16 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
 
   private static void updatePanelCssSettings(@NotNull MarkdownHtmlPanel panel, @NotNull final MarkdownCssSettings cssSettings) {
     ApplicationManager.getApplication().assertIsDispatchThread();
-    //noinspection StringBufferReplaceableByString
-    final String inlineCss = new StringBuilder()
-      .append(cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() + "\n" : "")
-      .append("body {\n  font-size: ").append(JBUI.scale(100)).append("%;\n}")
-      .toString();
 
-    panel.setCSS(inlineCss, cssSettings.isUriEnabled() ? cssSettings.getStylesheetUri() : null);
+    final String inlineCss = cssSettings.isTextEnabled() ? cssSettings.getStylesheetText() : null;
+    if (cssSettings.isUriEnabled()) {
+      panel.setCSS(inlineCss, cssSettings.getStylesheetUri());
+    }
+    else {
+      panel.setCSS(inlineCss);
+    }
     panel.render();
   }
-
 
 
   private class MyUpdatePanelOnSettingsChangedListener implements MarkdownApplicationSettings.SettingsChangedListener {
