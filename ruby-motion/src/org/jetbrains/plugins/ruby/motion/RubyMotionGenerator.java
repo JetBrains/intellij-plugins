@@ -2,11 +2,9 @@ package org.jetbrains.plugins.ruby.motion;
 
 import com.intellij.facet.ui.ValidationResult;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectGenerator;
@@ -19,8 +17,6 @@ import org.jetbrains.plugins.ruby.RBundle;
 import org.jetbrains.plugins.ruby.RubyFrameworkProjectGenerator;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionGeneratorTab;
 import org.jetbrains.plugins.ruby.motion.ui.RubyMotionSettingsHolder;
-import org.jetbrains.plugins.ruby.rails.facet.ui.wizard.ui.TabbedSettingsDialog;
-import org.jetbrains.plugins.ruby.rails.facet.ui.wizard.ui.TabbedSettingsEditorTab;
 import org.jetbrains.plugins.ruby.ruby.RModuleUtil;
 
 import javax.swing.*;
@@ -60,7 +56,7 @@ public class RubyMotionGenerator extends RubyFrameworkProjectGenerator<RubyMotio
     module.putUserData(RubyMotionUtilImpl.PROJECT_TYPE, projectType);
     RubyMotionFacetConfigurator.configure(baseDir, module);
     StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
-      ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).generateApp(baseDir, module, sdk, projectType, settings.isUseCalabash());
+      ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).generateApp(baseDir, module, sdk, projectType);
       RModuleUtil.getInstance().refreshRubyModuleTypeContent(module);
     });
   }

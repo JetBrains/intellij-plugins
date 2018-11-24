@@ -108,7 +108,7 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     JSClass targetClass = (JSClass)resolver.findClassByQName(targetClassName, JSMoveMembersDialog.getScope(myProject));
     assertNotNull("Class " + targetClassName + " not found", targetClass);
 
-    final List<JSMemberInfo> memberInfos = new ArrayList<JSMemberInfo>();
+    final List<JSMemberInfo> memberInfos = new ArrayList<>();
     JSMemberInfo.extractStaticMembers(sourceClass, memberInfos, new MemberInfoBase.Filter<JSAttributeListOwner>() {
       @Override
       public boolean includeMember(JSAttributeListOwner member) {

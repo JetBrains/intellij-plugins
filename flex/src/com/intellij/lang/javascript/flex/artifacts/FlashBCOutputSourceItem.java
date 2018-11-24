@@ -85,7 +85,7 @@ public class FlashBCOutputSourceItem extends PackagingSourceItem {
         return Collections.singletonList(new FileCopyPackagingElement(outputFilePath));
 
       case OutputFileAndHtmlWrapper:
-        final List<PackagingElement<?>> result = new ArrayList<PackagingElement<?>>();
+        final List<PackagingElement<?>> result = new ArrayList<>();
 
         result.add(new FileCopyPackagingElement(outputFilePath));
         result.add(new FileCopyPackagingElement(outputFolderPath + "/" + BCUtils.getWrapperFileName(myBc)));

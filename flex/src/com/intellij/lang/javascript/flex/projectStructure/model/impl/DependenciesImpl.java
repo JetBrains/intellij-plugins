@@ -33,7 +33,7 @@ class DependenciesImpl implements ModifiableDependencies {
   @NotNull
   private LinkageType myFrameworkLinkage = DEFAULT_FRAMEWORK_LINKAGE;
 
-  private final List<ModifiableDependencyEntry> myEntries = new ArrayList<ModifiableDependencyEntry>();
+  private final List<ModifiableDependencyEntry> myEntries = new ArrayList<>();
 
   @Nullable
   private SdkEntryImpl mySdk;

@@ -92,7 +92,7 @@ final class IndexHistory {
 
   TIntObjectHashMap<byte[]> getModifiedMethodBodies() {
     return constantPool.modifiedMethodBodies == null
-           ? (constantPool.modifiedMethodBodies = new TIntObjectHashMap<byte[]>())
+           ? (constantPool.modifiedMethodBodies = new TIntObjectHashMap<>())
            : constantPool.modifiedMethodBodies;
   }
 

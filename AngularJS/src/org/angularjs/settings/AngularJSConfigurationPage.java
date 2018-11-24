@@ -12,8 +12,8 @@ import javax.swing.*;
 public class AngularJSConfigurationPage extends BeanConfigurable<AngularJSConfig> implements UnnamedConfigurable {
   protected AngularJSConfigurationPage() {
     super(AngularJSConfig.getInstance());
-
-    checkBox("INSERT_WHITESPACE", "Auto-insert whitespace in the interpolations");
+    AngularJSConfig settings = getInstance();
+    checkBox("Auto-insert whitespace in the interpolations", ()->settings.INSERT_WHITESPACE, v->settings.INSERT_WHITESPACE=v);
   }
 
   @Override

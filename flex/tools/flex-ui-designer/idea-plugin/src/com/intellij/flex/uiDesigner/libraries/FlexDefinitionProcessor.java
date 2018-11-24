@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.google.common.base.Charsets;
 import com.intellij.flex.uiDesigner.abc.AbcModifierBase;
 import com.intellij.flex.uiDesigner.abc.AbcUtil;
 import com.intellij.flex.uiDesigner.abc.DataBuffer;
@@ -14,6 +13,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,7 +53,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     if (StringUtil.equals(name, "mx.containers:Panel")) {
       final List<SkipMethodKey> skippedMethods;
       if (vGreaterOrEquals4_5) {
-        skippedMethods = new ArrayList<SkipMethodKey>(1);
+        skippedMethods = new ArrayList<>(1);
         skippedMethods.add(new SkipMethodKey("addChildAt", true));
       }
       else {
@@ -66,7 +66,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       definition.doAbcData.abcModifier = new MethodAccessModifier("loadContent", null);
     }
     else if (StringUtil.equals(name, "mx.styles:StyleProtoChain")) {
-      List<String> list = new ArrayList<String>(2);
+      List<String> list = new ArrayList<>(2);
       list.add("matchStyleDeclarations");
       list.add("sortOnSpecificity");
       definition.doAbcData.abcModifier = new MethodAccessModifier(list);
@@ -75,7 +75,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       final boolean mxCore = StringUtil.startsWith(name, MX_CORE);
       if (mxCore) {
         if (equals(name, MX_CORE.length(), "UIComponent")) {
-          List<SkipMethodKey> list = new ArrayList<SkipMethodKey>(1);
+          List<SkipMethodKey> list = new ArrayList<>(1);
           list.add(new SkipMethodKey("removedFromStageHandler", false, true));
           definition.doAbcData.abcModifier = new MethodAccessModifier("UIComponent", list, new VarAccessModifier("deferredSetStyles"));
         }
@@ -120,7 +120,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
 
       final List<SkipMethodKey> skippedMethods;
       if (skipInitialize || skipCommitProperties) {
-        skippedMethods = new ArrayList<SkipMethodKey>(2);
+        skippedMethods = new ArrayList<>(2);
         skippedMethods.add(new SkipMethodKey("initialize", true));
         if (skipCommitProperties) {
           skippedMethods.add(new SkipMethodKey("commitProperties", false));
@@ -188,14 +188,14 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     }
 
     n = AbcUtil.readU32(buffer);
-    final CharsetEncoder charsetEncoder = Charsets.UTF_8.newEncoder().onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(
+    final CharsetEncoder charsetEncoder = StandardCharsets.UTF_8.newEncoder().onMalformedInput(CodingErrorAction.REPLACE).onUnmappableCharacter(
       CodingErrorAction.REPLACE);
     o:
     while (n-- > 1) {
       int l = AbcUtil.readU32(buffer);
       buffer.limit(buffer.position() + l);
       buffer.mark();
-      final CharBuffer charBuffer = Charsets.UTF_8.decode(buffer);
+      final CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer);
       buffer.limit(buffer.capacity());
       int index = 0;
       do {

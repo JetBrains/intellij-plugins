@@ -2,7 +2,7 @@ package org.angularjs.codeInsight.attributes;
 
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.ES7Decorator;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -47,9 +47,9 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
                                                                   NotNullFunction<JSNamedElement, XmlAttributeDescriptor> factory) {
     final JSClass clazz = PsiTreeUtil.getParentOfType(declaration, JSClass.class);
     if (clazz != null) {
-      JSVariable[] fields = clazz.getFields();
-      final List<XmlAttributeDescriptor> result = new ArrayList<XmlAttributeDescriptor>(fields.length);
-      for (JSVariable field : fields) {
+      JSField[] fields = clazz.getFields();
+      final List<XmlAttributeDescriptor> result = new ArrayList<>(fields.length);
+      for (JSField field : fields) {
         if (!hasDecorator(field, decorator)) continue;
         result.add(factory.fun(field));
       }
@@ -68,7 +68,7 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     final JSAttributeList list = field.getAttributeList();
     if (list != null) {
       for (PsiElement candidate : list.getChildren()) {
-        if (candidate instanceof ES7Decorator) {
+        if (candidate instanceof ES6Decorator) {
           final PsiElement child = candidate.getLastChild();
           if (child instanceof JSCallExpression) {
             final JSExpression expression = ((JSCallExpression)child).getMethodExpression();

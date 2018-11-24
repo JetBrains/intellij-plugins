@@ -29,7 +29,7 @@ import java.util.*;
 @Tag("mapps")
 public class CfmlMappingsConfig implements Cloneable {
   @NotNull
-  private Map<String, String> serverMappings = new HashMap<String, String>();
+  private Map<String, String> serverMappings = new HashMap<>();
 
   public CfmlMappingsConfig(@NotNull Map<String, String> mappings) {
     serverMappings = mappings;
@@ -55,7 +55,7 @@ public class CfmlMappingsConfig implements Cloneable {
   }
 
   public List<String> mapVirtualToReal(@NotNull String virtualPath) {
-    List<String> result = new LinkedList<String>();
+    List<String> result = new LinkedList<>();
 
     Set<Map.Entry<String, String>> entries = getServerMappings().entrySet();
     for (Map.Entry<String, String> entry : entries) {
@@ -93,7 +93,7 @@ public class CfmlMappingsConfig implements Cloneable {
 
   @Override
   public CfmlMappingsConfig clone() {
-    HashMap<String, String> newServerMappings = new HashMap<String, String>();
+    HashMap<String, String> newServerMappings = new HashMap<>();
     newServerMappings.putAll(getServerMappings());
     return new CfmlMappingsConfig(newServerMappings);
   }

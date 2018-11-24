@@ -86,12 +86,7 @@ public class HbTypedHandler extends TypedHandlerDelegate {
         ASTNode node = elementAt != null ? elementAt.getNode() : null;
         if (node != null && node.getElementType() == HbTokenTypes.INVALID) {
           // we should be looking at the beginning of a close brace.  Find its matching open brace and auto-complete based on its type
-          PsiElement mustache = PsiTreeUtil.findFirstParent(elementAt, new Condition<PsiElement>() {
-            @Override
-            public boolean value(PsiElement psiElement) {
-              return psiElement instanceof HbMustache;
-            }
-          });
+          PsiElement mustache = PsiTreeUtil.findFirstParent(elementAt, psiElement -> psiElement instanceof HbMustache);
 
           if (mustache != null) {
             String braceCompleter;
@@ -192,14 +187,9 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     }
 
     PsiElement elementAtCaret = provider.findElementAt(offset - 1, HbLanguage.class);
-    PsiElement closeOrSimpleInverseParent = PsiTreeUtil.findFirstParent(elementAtCaret, true, new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement element) {
-        return element != null
-               && (element instanceof HbSimpleInverse
-                   || element instanceof HbCloseBlockMustache);
-      }
-    });
+    PsiElement closeOrSimpleInverseParent = PsiTreeUtil.findFirstParent(elementAtCaret, true, element -> element != null
+                                                                                                     && (element instanceof HbSimpleInverse
+               || element instanceof HbCloseBlockMustache));
 
     // run the formatter if the user just completed typing a SIMPLE_INVERSE or a CLOSE_BLOCK_STACHE
     if (closeOrSimpleInverseParent != null) {

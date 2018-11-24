@@ -65,8 +65,8 @@ public class HbHighlighter extends SyntaxHighlighterBase {
   );
 
   static {
-    keys1 = new HashMap<IElementType, TextAttributesKey>();
-    keys2 = new HashMap<IElementType, TextAttributesKey>();
+    keys1 = new HashMap<>();
+    keys2 = new HashMap<>();
 
     keys1.put(HbTokenTypes.OPEN, MUSTACHES);
     keys1.put(HbTokenTypes.OPEN_BLOCK, MUSTACHES);
@@ -98,18 +98,18 @@ public class HbHighlighter extends SyntaxHighlighterBase {
   }
 
   public static final Map<TextAttributesKey, Pair<String, HighlightSeverity>> DISPLAY_NAMES
-    = new LinkedHashMap<TextAttributesKey, Pair<String, HighlightSeverity>>();
+    = new LinkedHashMap<>();
 
   static {
-    DISPLAY_NAMES.put(MUSTACHES, new Pair<String, HighlightSeverity>(HbBundle.message("hb.page.colors.descriptor.mustaches.key"), null));
+    DISPLAY_NAMES.put(MUSTACHES, new Pair<>(HbBundle.message("hb.page.colors.descriptor.mustaches.key"), null));
     DISPLAY_NAMES
-      .put(IDENTIFIERS, new Pair<String, HighlightSeverity>(HbBundle.message("hb.page.colors.descriptor.identifiers.key"), null));
-    DISPLAY_NAMES.put(COMMENTS, new Pair<String, HighlightSeverity>(HbBundle.message("hb.page.colors.descriptor.comments.key"), null));
-    DISPLAY_NAMES.put(OPERATORS, new Pair<String, HighlightSeverity>(HbBundle.message("hb.page.colors.descriptor.operators.key"), null));
-    DISPLAY_NAMES.put(VALUES, new Pair<String, HighlightSeverity>(HbBundle.message("hb.page.colors.descriptor.values.key"), null));
-    DISPLAY_NAMES.put(STRINGS, new Pair<String, HighlightSeverity>(HbBundle.message("hb.page.colors.descriptor.strings.key"), null));
+      .put(IDENTIFIERS, new Pair<>(HbBundle.message("hb.page.colors.descriptor.identifiers.key"), null));
+    DISPLAY_NAMES.put(COMMENTS, new Pair<>(HbBundle.message("hb.page.colors.descriptor.comments.key"), null));
+    DISPLAY_NAMES.put(OPERATORS, new Pair<>(HbBundle.message("hb.page.colors.descriptor.operators.key"), null));
+    DISPLAY_NAMES.put(VALUES, new Pair<>(HbBundle.message("hb.page.colors.descriptor.values.key"), null));
+    DISPLAY_NAMES.put(STRINGS, new Pair<>(HbBundle.message("hb.page.colors.descriptor.strings.key"), null));
     DISPLAY_NAMES
-      .put(DATA_PREFIX, new Pair<String, HighlightSeverity>(HbBundle.message("hb.page.colors.descriptor.data.prefix.key"), null));
-    DISPLAY_NAMES.put(ESCAPE, new Pair<String, HighlightSeverity>(HbBundle.message("hb.page.colors.descriptor.escape.key"), null));
+      .put(DATA_PREFIX, new Pair<>(HbBundle.message("hb.page.colors.descriptor.data.prefix.key"), null));
+    DISPLAY_NAMES.put(ESCAPE, new Pair<>(HbBundle.message("hb.page.colors.descriptor.escape.key"), null));
   }
 }

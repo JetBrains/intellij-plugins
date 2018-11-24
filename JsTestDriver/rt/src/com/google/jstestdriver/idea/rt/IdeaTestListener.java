@@ -26,7 +26,7 @@ public class IdeaTestListener implements TestListener {
   private final boolean myDryRun;
   private final TestFileScope myTestFileScope;
   private final TestPathFactory myTestPathFactory;
-  private final Set<FileLoadError> myDryRunErrors = new HashSet<FileLoadError>();
+  private final Set<FileLoadError> myDryRunErrors = new HashSet<>();
 
   public IdeaTestListener(@NotNull TreeManager treeManager,
                           @NotNull File jstdConfigFile,

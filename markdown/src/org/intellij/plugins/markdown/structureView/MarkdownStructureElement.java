@@ -121,7 +121,7 @@ public class MarkdownStructureElement implements StructureViewTreeElement, Sorta
 
     if (hasTrivialChild(parentToTraverse)) return EMPTY_ARRAY;
 
-    List<TreeElement> result = new ArrayList<TreeElement>();
+    List<TreeElement> result = new ArrayList<>();
     for (PsiElement element : parentToTraverse.getChildren()) {
       final IElementType type = element.getNode().getElementType();
       if (!PRESENTABLE_TYPES.contains(type)) {

@@ -26,10 +26,10 @@ public class DartStructureViewElement extends PsiTreeElementBase<NavigatablePsiE
   @Override
   public Collection<StructureViewTreeElement> getChildrenBase() {
     final NavigatablePsiElement element = getElement();
-    final List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
+    final List<StructureViewTreeElement> result = new ArrayList<>();
 
     if (element instanceof DartFile || element instanceof DartEmbeddedContent) {
-      THashSet<DartComponentName> componentNames = new THashSet<DartComponentName>();
+      THashSet<DartComponentName> componentNames = new THashSet<>();
       DartPsiCompositeElementImpl
         .processDeclarationsImpl(element, new ComponentNameScopeProcessor(componentNames), ResolveState.initial(), null);
       for (DartComponentName componentName : componentNames) {

@@ -68,11 +68,11 @@ public class JSFieldCanBeLocalInspection extends JSInspection {
 
       // sorted - for predictable caret position after quick fix
       final SortedMap<JSFunction, Collection<PsiReference>> functionToReferences =
-        new TreeMap<JSFunction, Collection<PsiReference>>(
+        new TreeMap<>(
           (f1, f2) -> f1.getTextRange().getStartOffset() - f2.getTextRange().getStartOffset());
 
-      final Map<JSFunction, PsiElement> functionToFirstReadUsage = new THashMap<JSFunction, PsiElement>();
-      final Map<JSFunction, PsiElement> functionToFirstWriteUsage = new THashMap<JSFunction, PsiElement>();
+      final Map<JSFunction, PsiElement> functionToFirstReadUsage = new THashMap<>();
+      final Map<JSFunction, PsiElement> functionToFirstWriteUsage = new THashMap<>();
 
       final PsiFile topLevelFile = InjectedLanguageManager.getInstance(field.getProject()).getTopLevelFile(field);
 
@@ -88,7 +88,7 @@ public class JSFieldCanBeLocalInspection extends JSInspection {
 
         Collection<PsiReference> references = functionToReferences.get(function);
         if (references == null) {
-          references = new ArrayList<PsiReference>();
+          references = new ArrayList<>();
           functionToReferences.put(function, references);
         }
         references.add(reference);

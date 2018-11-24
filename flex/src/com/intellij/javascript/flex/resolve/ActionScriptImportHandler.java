@@ -54,13 +54,9 @@ public class ActionScriptImportHandler extends JSImportHandler {
     new UserDataCache<CachedValue<Map<String, JSImportedElementResolveResult>>, PsiElement, Object>() {
       protected CachedValue<Map<String, JSImportedElementResolveResult>> compute(final PsiElement psiElement, final Object p) {
         return CachedValuesManager
-          .getManager(psiElement.getProject()).createCachedValue(new CachedValueProvider<Map<String, JSImportedElementResolveResult>>() {
-            public Result<Map<String, JSImportedElementResolveResult>> compute() {
-              return new Result<Map<String, JSImportedElementResolveResult>>(
-                ContainerUtil.<String, JSImportedElementResolveResult>newConcurrentMap(),
-                PsiModificationTracker.MODIFICATION_COUNT);
-            }
-          }, false);
+          .getManager(psiElement.getProject()).createCachedValue(() -> new CachedValueProvider.Result<Map<String, JSImportedElementResolveResult>>(
+            ContainerUtil.<String, JSImportedElementResolveResult>newConcurrentMap(),
+            PsiModificationTracker.MODIFICATION_COUNT), false);
       }
     };
 
@@ -83,7 +79,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
       name = genericSignature.elementType;
     }
 
-    final Ref<JSImportedElementResolveResult> resultRef = new Ref<JSImportedElementResolveResult>();
+    final Ref<JSImportedElementResolveResult> resultRef = new Ref<>();
 
     final String name1 = name;
     JSResolveUtil.walkOverStructure(context, context1 -> {

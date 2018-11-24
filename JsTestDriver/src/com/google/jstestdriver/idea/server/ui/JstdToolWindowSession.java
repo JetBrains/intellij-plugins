@@ -14,8 +14,6 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.ui.tabs.TabInfo;
-import com.intellij.util.Consumer;
-import com.intellij.util.Function;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.Promise;
@@ -116,7 +114,7 @@ public class JstdToolWindowSession {
   @NotNull
   public Promise<JstdServer> restart(@NotNull JstdServerSettings settings) {
     return JstdServerRegistry.getInstance().restartServer(settings)
-      .rejected(error -> showServerStartupError(error))
+      .rejected(this::showServerStartupError)
       .then(server -> {
         attachToServer(server);
         return server;

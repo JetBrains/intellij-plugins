@@ -80,7 +80,7 @@ public class CfmlSurroundWithTest extends CfmlCodeInsightFixtureTestCase {
 
   private void doTestNoSurround() {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
-    List<SurroundDescriptor> surroundDescriptors = new ArrayList<SurroundDescriptor>();
+    List<SurroundDescriptor> surroundDescriptors = new ArrayList<>();
     surroundDescriptors.addAll(LanguageSurrounders.INSTANCE.allForLanguage(CfmlLanguage.INSTANCE));
     for (SurroundDescriptor descriptor : surroundDescriptors) {
       assertEquals(descriptor

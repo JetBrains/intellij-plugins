@@ -8,7 +8,7 @@ class State {
 
   String name;
 
-  final LinkedList<OverrideBase> overrides = new LinkedList<OverrideBase>();
+  final LinkedList<OverrideBase> overrides = new LinkedList<>();
   private final StateWriter stateWriter;
 
   State(StateWriter stateWriter, int index) {

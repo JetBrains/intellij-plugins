@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class CompositeIcon implements Icon {
   private final int myGap;
-  private final List<Icon> myIcons = new ArrayList<Icon>();
+  private final List<Icon> myIcons = new ArrayList<>();
 
   public CompositeIcon() {
     this (1);

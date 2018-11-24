@@ -76,19 +76,28 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
       if (forced != null) return forced;
     }
     final PsiFile containingFile = element.getContainingFile();
-    if (containingFile == null) return JSResolveUtil.getJavaScriptSymbolsResolveScope(element.getProject());
+    if (containingFile == null) return getProjectScopeIncludingPredefines(element.getProject());
     final PsiFile psiFile = containingFile.getOriginalFile();
     VirtualFile file = psiFile.getVirtualFile();
     final Project project = psiFile.getProject();
-    if (file == null) return JSResolveUtil.getJavaScriptSymbolsResolveScope(project);
+    if (file == null) return getProjectScopeIncludingPredefines(project);
 
     final GlobalSearchScope scope = isApplicable(file) ? ResolveScopeManager.getInstance(project).getDefaultResolveScope(file) : null;
-    if (scope != null) return scope;
+    if (scope != null) {
+      if (ProjectFileIndex.SERVICE.getInstance(project).isInLibraryClasses(file) && !scope.contains(file)) {
+        // safe but not 100% correct fix for IDEA-157606
+        // The problem happens when ModuleA -> ModuleB -> lib.swc and we calculate resolve scope for file from lib.swc. FlexOrderEnumerationHandler filters our 'ModuleB -> lib.swc' dependency because it is initialized with ModuleA. Oh, LibraryRuntimeClasspathScope computation is so complicated...
+        return scope.union(GlobalSearchScope.fileScope(project, file));
+      }
+      return scope;
+    }
+
     final GlobalSearchScope fileResolveScope = getResolveScope(file, project, false);
-    return fileResolveScope != null ? fileResolveScope : JSResolveUtil.getJavaScriptSymbolsResolveScope(project);
+    return fileResolveScope != null ? fileResolveScope : getProjectScopeIncludingPredefines(project);
   }
 
-  protected boolean isApplicable(final VirtualFile file) {
+  @Override
+  protected boolean isApplicable(@NotNull final VirtualFile file) {
     return file.getFileType() == ActionScriptFileType.INSTANCE || file.getFileType() == FlexApplicationComponent.MXML ||
            file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE;
   }

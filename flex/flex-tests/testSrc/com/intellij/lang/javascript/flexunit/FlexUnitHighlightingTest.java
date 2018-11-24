@@ -56,7 +56,7 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
 
   @Override
   protected LocalInspectionTool[] configureLocalInspectionTools() {
-    ArrayList<LocalInspectionTool> tools = new ArrayList<LocalInspectionTool>(Arrays.asList(super.configureLocalInspectionTools()));
+    ArrayList<LocalInspectionTool> tools = new ArrayList<>(Arrays.asList(super.configureLocalInspectionTools()));
     new FlexUnitInspectionToolProvider();
     for (Class aClass : FlexUnitInspectionToolProvider.getInspectionClasses()) {
       try {

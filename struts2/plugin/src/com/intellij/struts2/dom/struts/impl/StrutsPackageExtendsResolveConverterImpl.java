@@ -50,11 +50,8 @@ public class StrutsPackageExtendsResolveConverterImpl extends StrutsPackageExten
       return null;
     }
 
-    return ContainerUtil.find(strutsModel.getStrutsPackages(), new Condition<StrutsPackage>() {
-      public boolean value(final StrutsPackage strutsPackage) {
-        return Comparing.equal(name, strutsPackage.getName().getStringValue());
-      }
-    });
+    return ContainerUtil.find(strutsModel.getStrutsPackages(),
+                              strutsPackage -> Comparing.equal(name, strutsPackage.getName().getStringValue()));
   }
 
   @Override

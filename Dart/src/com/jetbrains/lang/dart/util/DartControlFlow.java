@@ -45,16 +45,13 @@ public class DartControlFlow {
     final LocalSearchScope localSearchScope = new LocalSearchScope(scope);
     final List<DartComponentName> outDeclarations = ContainerUtil.filter(
       DartControlFlowUtil.getSimpleDeclarations(elements, null, false),
-      new Condition<DartComponentName>() {
-        @Override
-        public boolean value(DartComponentName componentName) {
-          for (PsiReference usage : ReferencesSearch.search(componentName, localSearchScope, false).findAll()) {
-            if (usage.getElement().getTextRange().getStartOffset() > lastElementEndOffset) {
-              return true;
-            }
+      componentName -> {
+        for (PsiReference usage : ReferencesSearch.search(componentName, localSearchScope, false).findAll()) {
+          if (usage.getElement().getTextRange().getStartOffset() > lastElementEndOffset) {
+            return true;
           }
-          return false;
         }
+        return false;
       });
 
     // find params
@@ -63,13 +60,10 @@ public class DartControlFlow {
       element.accept(dartReferenceVisitor);
     }
     final List<DartComponentName> inComponentNames = ContainerUtil.filter(
-      dartReferenceVisitor.getComponentNames(), new Condition<DartComponentName>() {
-        @Override
-        public boolean value(DartComponentName componentName) {
-          final int offset = componentName.getTextRange().getStartOffset();
-          final boolean declarationInElements = firstElementStartOffset <= offset && offset < lastElementEndOffset;
-          return !declarationInElements;
-        }
+      dartReferenceVisitor.getComponentNames(), componentName -> {
+        final int offset = componentName.getTextRange().getStartOffset();
+        final boolean declarationInElements = firstElementStartOffset <= offset && offset < lastElementEndOffset;
+        return !declarationInElements;
       });
 
 
@@ -129,7 +123,7 @@ public class DartControlFlow {
   }
 
   private static class DartReferenceVisitor extends PsiRecursiveElementVisitor {
-    private final List<DartComponentName> myComponentNames = new ArrayList<DartComponentName>();
+    private final List<DartComponentName> myComponentNames = new ArrayList<>();
 
     public List<DartComponentName> getComponentNames() {
       return myComponentNames;

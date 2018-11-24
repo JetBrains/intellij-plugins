@@ -97,14 +97,14 @@ public abstract class AbstractDependencyFilter {
   protected final void processInstructions(String header) throws DependencyEmbedderException {
     Parameters instructions = OSGiHeader.parseHeader(MISSING_KEY_PATTERN.matcher(header).replaceAll("$1$2*;$3"));
 
-    Collection<MavenArtifact> availableDependencies = new LinkedHashSet<MavenArtifact>(m_dependencyArtifacts);
+    Collection<MavenArtifact> availableDependencies = new LinkedHashSet<>(m_dependencyArtifacts);
 
     DependencyFilter filter;
     for (Iterator<Map.Entry<String, Attrs>> clauseIterator = instructions.entrySet().iterator(); clauseIterator.hasNext(); ) {
       String inline = "false";
 
       // always start with a fresh *modifiable* collection for each unique clause
-      Collection<MavenArtifact> filteredDependencies = new LinkedHashSet<MavenArtifact>(availableDependencies);
+      Collection<MavenArtifact> filteredDependencies = new LinkedHashSet<>(availableDependencies);
 
       // CLAUSE: REGEXP --> { ATTRIBUTE MAP }
       Map.Entry<String, Attrs> clause = clauseIterator.next();

@@ -60,7 +60,7 @@ public class OsgiManifestColorsAndFontsPage implements ColorSettingsPage {
 
   private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHTING;
   static {
-    ADDITIONAL_HIGHLIGHTING = new HashMap<String, TextAttributesKey>();
+    ADDITIONAL_HIGHLIGHTING = new HashMap<>();
     ADDITIONAL_HIGHLIGHTING.put("attributeName", OsgiManifestColorsAndFonts.ATTRIBUTE_NAME_KEY);
     ADDITIONAL_HIGHLIGHTING.put("attributeAssignment", OsgiManifestColorsAndFonts.ATTRIBUTE_ASSIGNMENT_KEY);
     ADDITIONAL_HIGHLIGHTING.put("attributeValue", OsgiManifestColorsAndFonts.ATTRIBUTE_VALUE_KEY);

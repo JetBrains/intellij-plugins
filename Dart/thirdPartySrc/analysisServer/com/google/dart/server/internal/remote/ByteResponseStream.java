@@ -13,16 +13,12 @@
  */
 package com.google.dart.server.internal.remote;
 
-import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -91,7 +87,7 @@ public class ByteResponseStream implements ResponseStream {
    * @param debugStream the {@link PrintStream} to print all lines to, may be {@code null}
    */
   public ByteResponseStream(InputStream stream, DebugPrintStream debugStream) {
-    reader = new BufferedReader(new InputStreamReader(stream, Charsets.UTF_8));
+    reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
     this.debugStream = debugStream;
     new LinesReaderThread().start();
   }

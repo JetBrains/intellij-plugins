@@ -71,7 +71,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     if (ModuleType.get(module) == FlexModuleType.getInstance() || !CodeContext.isStdNamespace(uri)) {
       Map<String, ParameterizedCachedValue<XmlFile, Module>> descriptors = module.getUserData(DESCRIPTORS_MAP_IN_MODULE);
       if (descriptors == null) {
-        descriptors = new THashMap<String, ParameterizedCachedValue<XmlFile, Module>>();
+        descriptors = new THashMap<>();
         module.putUserData(DESCRIPTORS_MAP_IN_MODULE, descriptors);
       }
 
@@ -88,7 +88,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
               result.putUserData(FlexMxmlNSDescriptor.NS_KEY, uri);
               result.putUserData(FlexMxmlNSDescriptor.MODULE_KEY, module);
 
-              return new CachedValueProvider.Result<XmlFile>(result, PsiModificationTracker.MODIFICATION_COUNT);
+              return new CachedValueProvider.Result<>(result, PsiModificationTracker.MODIFICATION_COUNT);
             }
           }, false);
 
@@ -119,8 +119,8 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     final Module module = ProjectRootManager.getInstance(project).getFileIndex().getModuleForFile(file.getVirtualFile());
     final Collection<String> illegalNamespaces = getIllegalNamespaces(file);
 
-    final Set<String> result = new THashSet<String>();
-    final Set<String> componentsThatHaveNotPackageBackedNamespace = new THashSet<String>();
+    final Set<String> result = new THashSet<>();
+    final Set<String> componentsThatHaveNotPackageBackedNamespace = new THashSet<>();
 
     for (final String namespace : CodeContextHolder.getInstance(project).getNamespaces(module)) {
       if (!CodeContext.isPackageBackedNamespace(namespace) && !illegalNamespaces.contains(namespace)) {
@@ -200,7 +200,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     final XmlDocument document = file.getDocument();
     final XmlTag rootTag = document == null ? null : document.getRootTag();
     final String[] knownNamespaces = rootTag == null ? null : rootTag.knownNamespaces();
-    final Collection<String> illegalNamespaces = new ArrayList<String>();
+    final Collection<String> illegalNamespaces = new ArrayList<>();
     if (knownNamespaces != null) {
       if (ArrayUtil.contains(JavaScriptSupportLoader.MXML_URI, knownNamespaces)) {
         ContainerUtil.addAll(illegalNamespaces, MxmlJSClass.FLEX_4_NAMESPACES);

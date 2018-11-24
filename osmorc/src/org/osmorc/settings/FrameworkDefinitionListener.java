@@ -8,7 +8,7 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import java.util.List;
 
 public interface FrameworkDefinitionListener {
-  Topic<FrameworkDefinitionListener> TOPIC = new Topic<FrameworkDefinitionListener>("OSGi Framework Definition Changes", FrameworkDefinitionListener.class);
+  Topic<FrameworkDefinitionListener> TOPIC = new Topic<>("OSGi Framework Definition Changes", FrameworkDefinitionListener.class);
 
   /**
    * Receives pairs of (oldInstance, newInstance).

@@ -134,18 +134,16 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
                                                       null, getTestClassPackageScope(module),
                                                       RefactoringBundle.message("choose.destination.package"));
 
-    final Condition<JSClass> filter = new Condition<JSClass>() {
-      public boolean value(final JSClass jsClass) {
-        final JSAttributeList attributeList = jsClass.getAttributeList();
-        return !jsClass.isInterface() && attributeList != null && !attributeList.hasModifier(JSAttributeList.ModifierType.FINAL);
-      }
+    final Condition<JSClass> filter = jsClass -> {
+      final JSAttributeList attributeList = jsClass.getAttributeList();
+      return !jsClass.isInterface() && attributeList != null && !attributeList.hasModifier(JSAttributeList.ModifierType.FINAL);
     };
 
     mySuperClassField = JSReferenceEditor.forClassName("", module.getProject(), null, getSuperClassScope(module), null, filter,
                                                        JSBundle.message("choose.super.class.title"));
 
 
-    final List<JSMemberInfo> memberInfos = new ArrayList<JSMemberInfo>();
+    final List<JSMemberInfo> memberInfos = new ArrayList<>();
     JSMemberInfo.extractClassMembers(myContextClass, memberInfos, new MemberInfoBase.Filter<JSAttributeListOwner>() {
       public boolean includeMember(final JSAttributeListOwner member) {
         final JSAttributeList attributeList = member.getAttributeList();

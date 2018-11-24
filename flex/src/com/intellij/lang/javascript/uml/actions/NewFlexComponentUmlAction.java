@@ -41,13 +41,13 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
   public Object createElement(final DiagramDataModel<Object> model,
                               final CreateClassParameters params,
                               final AnActionEvent event) {
-    final Ref<JSClass> clazz = new Ref<JSClass>();
+    final Ref<JSClass> clazz = new Ref<>();
     CommandProcessor.getInstance().executeCommand(params.getTargetDirectory().getProject(), () -> {
       try {
         CreateClassOrInterfaceFix
           .createClass(params.getTemplateName(), params.getClassName(), params.getPackageName(), getSuperClass(params),
                        params.getInterfacesFqns(), params.getTargetDirectory(), getActionName(), true,
-                       new HashMap<String, Object>(params.getTemplateAttributes()),
+                       new HashMap<>(params.getTemplateAttributes()),
                        jsClass -> {
                          CreateFlexComponentFix.fixParentComponent(jsClass, params.getSuperclassFqn());
                          clazz.set(jsClass);

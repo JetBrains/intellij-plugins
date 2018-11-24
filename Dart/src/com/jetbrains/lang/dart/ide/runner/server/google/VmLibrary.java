@@ -40,7 +40,7 @@ public class VmLibrary {
     lib.url = obj.optString("url");
 
     // imports
-    lib.importedLibraryIds = new ArrayList<Integer>();
+    lib.importedLibraryIds = new ArrayList<>();
 
     JSONArray arr = obj.getJSONArray("imports");
 

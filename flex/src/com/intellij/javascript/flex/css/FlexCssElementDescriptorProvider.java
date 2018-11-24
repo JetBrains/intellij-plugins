@@ -18,7 +18,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
@@ -151,8 +152,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     if (vFile != null) {
-      final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
-      return dialect != CssDialect.CLASSIC;
+      CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
+      return dialect == null || dialect == FlexCSSDialect.getInstance();
     }
 
     return true;
@@ -232,7 +233,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         }
       }
     }
-    List<FlexStyleIndexInfo> result = new ArrayList<FlexStyleIndexInfo>();
+    List<FlexStyleIndexInfo> result = new ArrayList<>();
     for (Collection<FlexStyleIndexInfo> collection : collections) {
       for (FlexStyleIndexInfo info : collection) {
         if (namesFromSelectors == null || namesFromSelectors.contains(info.getClassOrFileName())) {
@@ -259,7 +260,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   @Override
-  public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name) {
+  public Collection<? extends CssPseudoSelectorDescriptor> findPseudoSelectorDescriptors(@NotNull String name, @Nullable PsiElement context) {
     return Collections.singletonList(new CssPseudoSelectorDescriptorStub(name));
   }
 
@@ -313,7 +314,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   private static void fillPropertyDescriptorsDynamically(@NotNull final JSClass jsClass, Set<JSClass> visited, final Set<CssPropertyDescriptor> result) {
     if (!visited.add(jsClass)) return;
-    FlexUtils.processMetaAttributesForClass(jsClass, new JSResolveUtil.MetaDataProcessor() {
+    FlexUtils.processMetaAttributesForClass(jsClass, new ActionScriptResolveUtil.MetaDataProcessor() {
       public boolean process(@NotNull JSAttribute jsAttribute) {
         if (FlexAnnotationNames.STYLE.equals(jsAttribute.getName())) {
           JSAttributeNameValuePair pair = jsAttribute.getValueByName("name");
@@ -397,7 +398,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
     FileBasedIndex index = FileBasedIndex.getInstance();
     Collection<String> keys = ContainerUtil.sorted(index.getAllKeys(FlexStyleIndex.INDEX_ID, context.getProject()));
-    List<FlexCssPropertyDescriptor> result = new ArrayList<FlexCssPropertyDescriptor>();
+    List<FlexCssPropertyDescriptor> result = new ArrayList<>();
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
     for (String key : keys) {
       if (!isInClassicForm(key)) {
@@ -436,7 +437,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @Nullable
   public static XmlElementDescriptor getTypeSelectorDescriptor(@NotNull CssSimpleSelector selector, @NotNull Module module) {
-    CssStylesheet stylesheet = ((CssFile)selector.getContainingFile()).getStylesheet();
+    CssStylesheet stylesheet = ((StylesheetFile)selector.getContainingFile()).getStylesheet();
     CssNamespace namespace = stylesheet != null ? stylesheet.getNamespace(selector.getNamespaceName()) : null;
     if (namespace != null && namespace.getUri() != null) {
       return CodeContext.getContext(namespace.getUri(), module).getElementDescriptor(selector.getElementName(), (XmlTag)null);
@@ -475,7 +476,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   private static PsiElement getReferencedElement(@NotNull PsiElement element) {
-    if (element instanceof JSClassImpl) {
+    if (element instanceof ActionScriptClassImpl) {
       return element.getNavigationElement();
     }
     else if (element instanceof XmlBackedJSClassImpl) {
@@ -494,7 +495,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   private static PsiElement[] getDeclarationsForSimpleSelector(@NotNull String className, @Nullable PsiElement context) {
     Collection<JSQualifiedNamedElement> elements = getClasses(className, context);
     if (elements != null && elements.size() > 0) {
-      List<PsiElement> result = new ArrayList<PsiElement>();
+      List<PsiElement> result = new ArrayList<>();
       Set<String> qNames = ContainerUtil.newLinkedHashSet();
       for (JSQualifiedNamedElement c : elements) {
         if (c instanceof JSClass) {

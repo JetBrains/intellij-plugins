@@ -208,7 +208,7 @@ public class AngularJSMessageFormatParser extends ExpressionParser<AngularJSPars
       if (keywords.length == 0) {
         myRequiredSelectionKeywords = null;
       } else {
-        myRequiredSelectionKeywords = new HashSet<String>();
+        myRequiredSelectionKeywords = new HashSet<>();
         Collections.addAll(myRequiredSelectionKeywords, keywords);
       }
     }

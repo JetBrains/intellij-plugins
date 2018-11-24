@@ -43,20 +43,10 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 public class FreeMarkerOgnlInjector implements MultiHostInjector {
 
   private static final PsiElementPattern.Capture<FtlStringLiteral> OGNL_ELEMENT_PATTERN =
-      createPattern(new Condition<String>() {
-        @Override
-        public boolean value(final String s) {
-          return s.contains(OgnlLanguage.EXPRESSION_PREFIX);
-        }
-      });
+      createPattern(s -> s.contains(OgnlLanguage.EXPRESSION_PREFIX));
 
   private static final PsiElementPattern.Capture<FtlStringLiteral> OGNL_LIST_ELEMENT_PATTERN =
-      createPattern(new Condition<String>() {
-        @Override
-        public boolean value(final String s) {
-          return s.startsWith("{");
-        }
-      });
+      createPattern(s -> s.startsWith("{"));
 
   private static PsiElementPattern.Capture<FtlStringLiteral> createPattern(final Condition<String> valueTextCondition) {
     return psiElement(FtlStringLiteral.class)

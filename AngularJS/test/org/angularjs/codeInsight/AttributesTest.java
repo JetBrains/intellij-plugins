@@ -2,7 +2,7 @@ package org.angularjs.codeInsight;
 
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
-import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspectionBase;
+import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.JSField;
@@ -246,7 +246,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgSrc() {
     myFixture.configureByFiles("ng-src.html", "angular.js");
-    myFixture.enableInspections(RequiredAttributesInspectionBase.class);
+    myFixture.enableInspections(RequiredAttributesInspection.class);
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
     myFixture.checkHighlighting();
   }
@@ -254,7 +254,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testEventHandlers2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("event.html", "angular2.js");
-      myFixture.enableInspections(RequiredAttributesInspectionBase.class);
+      myFixture.enableInspections(RequiredAttributesInspection.class);
       myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
       myFixture.checkHighlighting();
     });
@@ -271,7 +271,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testVariableDeclarations2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("variable.html", "custom.ts", "angular2.js");
-      myFixture.enableInspections(RequiredAttributesInspectionBase.class);
+      myFixture.enableInspections(RequiredAttributesInspection.class);
       myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
       myFixture.checkHighlighting();
     });
@@ -660,4 +660,26 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testCssExternalReference20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("cssExtRef.ts", "angular2.js", "css.css");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("inDa<caret>Class", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+      assertEquals("css.css", resolve.getContainingFile().getName());
+    });
+  }
+
+  public void testCssInternalReference20() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("cssIntRef.ts", "angular2.js");
+      int offsetBySignature = AngularTestUtil.findOffsetBySignature("inDa<caret>Class", myFixture.getFile());
+      PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+      assertNotNull(ref);
+      PsiElement resolve = ref.resolve();
+      assertNotNull(resolve);
+    });
+  }
 }

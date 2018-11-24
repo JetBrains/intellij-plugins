@@ -15,8 +15,8 @@ import java.util.Set;
 */
 public class GherkinKeywordList {
   // maps custom language keyword to base (English) keyword
-  private Map<String, String> myKeyword2BaseNameTable = new THashMap<String, String>();
-  private Set<String> myKeywordsWithNoSpaceAfter = new THashSet<String>();
+  private Map<String, String> myKeyword2BaseNameTable = new THashMap<>();
+  private Set<String> myKeywordsWithNoSpaceAfter = new THashSet<>();
   private GherkinKeywordTable myKeywordsTable = new GherkinKeywordTable();
 
   public GherkinKeywordList() {

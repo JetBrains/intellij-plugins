@@ -47,7 +47,7 @@ public class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
       return;
     }
 
-    Collection<JSQualifiedNamedElement> adjusted = new ArrayList<JSQualifiedNamedElement>(elements.length);
+    Collection<JSQualifiedNamedElement> adjusted = new ArrayList<>(elements.length);
     for (PsiElement element : elements) {
       final JSQualifiedNamedElement e = adjustForMove(element);
       if (!JSRefactoringUtil.checkReadOnlyStatus(e, null, RefactoringBundle.message("move.title"))) return;

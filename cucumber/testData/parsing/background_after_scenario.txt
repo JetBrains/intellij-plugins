@@ -1,0 +1,26 @@
+GherkinFile:background_after_scenario.feature
+  GherkinFeature:Current language
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('Current language')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:Change current language
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('Change current language')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:I am on the root page
+        PsiElement(STEP_KEYWORD)('When')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('I am on the root page')
+    PsiWhiteSpace('\n\n  ')
+    GherkinScenario(Background):
+      PsiElement(BACKGROUND_KEYWORD)('Background')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:signed in user
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('signed in user')

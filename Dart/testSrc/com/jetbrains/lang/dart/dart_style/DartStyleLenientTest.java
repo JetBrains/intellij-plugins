@@ -12,7 +12,7 @@ import java.util.Set;
 public class DartStyleLenientTest extends DartStyleTest {
 
   /** The set of tests that are known to fail only in lenient mode. */
-  private static final Set<String> KNOWN_TO_FAIL_LENIENT = new THashSet<String>();
+  private static final Set<String> KNOWN_TO_FAIL_LENIENT = new THashSet<>();
 
   static {
     //KNOWN_TO_FAIL_LENIENT.add("regression/0000/0083.unit:1");
@@ -22,7 +22,7 @@ public class DartStyleLenientTest extends DartStyleTest {
    * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>dirName</code>.
    */
   protected void runTestInDirectory(String dirName) throws Exception {
-    Set<String> fail = new THashSet<String>();
+    Set<String> fail = new THashSet<>();
     fail.addAll(KNOWN_TO_FAIL);
     fail.addAll(KNOWN_TO_FAIL_LENIENT);
     runTestInDirectory(dirName, fail);

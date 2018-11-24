@@ -40,7 +40,7 @@ import java.util.Map;
  * @author Dennis.Ushakov
  */
 public class AngularJSProcessor {
-  private static final Map<String, String> NG_REPEAT_IMPLICITS = new HashMap<String, String>();
+  private static final Map<String, String> NG_REPEAT_IMPLICITS = new HashMap<>();
   static {
     NG_REPEAT_IMPLICITS.put("$index", "Number");
     NG_REPEAT_IMPLICITS.put("$first", "Boolean");
@@ -60,15 +60,11 @@ public class AngularJSProcessor {
 
     final XmlFile file = (XmlFile)hostFile;
 
-    final Collection<JSPsiElementBase> cache = CachedValuesManager.getCachedValue(file, new CachedValueProvider<Collection<JSPsiElementBase>>() {
-      @Nullable
-      @Override
-      public Result<Collection<JSPsiElementBase>> compute() {
-        final Collection<JSPsiElementBase> result = new ArrayList<JSPsiElementBase>();
-        processDocument(file.getDocument(), result);
+    final Collection<JSPsiElementBase> cache = CachedValuesManager.getCachedValue(file, () -> {
+      final Collection<JSPsiElementBase> result = new ArrayList<>();
+      processDocument(file.getDocument(), result);
 
-        return Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
-      }
+      return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
     });
     for (JSPsiElementBase namedElement : cache) {
       if (scopeMatches(original, namedElement)){

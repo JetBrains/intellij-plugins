@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -162,7 +163,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker<Annotation> {
   }
 
   private static boolean isAddEventListenerMethod(final JSFunction method) {
-    if ("addEventListener".equals(method.getName())) {
+    if (ActionScriptResolveUtil.ADD_EVENT_LISTENER_METHOD.equals(method.getName())) {
       PsiElement methodParent = method.getParent();
       if (methodParent instanceof JSClass) {
         JSClass declaringClass = (JSClass)methodParent;

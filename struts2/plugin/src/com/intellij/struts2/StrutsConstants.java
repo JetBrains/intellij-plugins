@@ -98,15 +98,21 @@ public final class StrutsConstants {
   public static final String STRUTS_2_3_DTD_ID = "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN";
 
 
+  @NonNls
+  public static final String STRUTS_2_5_DTD_URI = "http://struts.apache.org/dtds/struts-2.5.dtd";
+  @NonNls
+  public static final String STRUTS_2_5_DTD_ID = "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN";
+
   /**
    * All struts.xml DTD-IDs/URIs.
    */
   @NonNls
   public static final String[] STRUTS_DTDS = {
-      STRUTS_2_0_DTD_URI, STRUTS_2_0_DTD_ID,
-      STRUTS_2_1_DTD_URI, STRUTS_2_1_DTD_ID,
-      STRUTS_2_1_7_DTD_URI, STRUTS_2_1_7_DTD_ID,
-      STRUTS_2_3_DTD_URI, STRUTS_2_3_DTD_ID
+    STRUTS_2_0_DTD_URI, STRUTS_2_0_DTD_ID,
+    STRUTS_2_1_DTD_URI, STRUTS_2_1_DTD_ID,
+    STRUTS_2_1_7_DTD_URI, STRUTS_2_1_7_DTD_ID,
+    STRUTS_2_3_DTD_URI, STRUTS_2_3_DTD_ID,
+    STRUTS_2_5_DTD_URI, STRUTS_2_5_DTD_ID
   };
 
   @NonNls
@@ -137,11 +143,11 @@ public final class StrutsConstants {
    */
   @NonNls
   public static final String[] VALIDATOR_DTDS = {
-      VALIDATOR_1_00_DTD_URI, VALIDATOR_1_00_DTD_ID,
-      VALIDATOR_1_00_STRUTS_DTD_URI, VALIDATOR_1_00_STRUTS_DTD_ID,
-      VALIDATOR_1_02_DTD_URI, VALIDATOR_1_02_DTD_ID,
-      VALIDATOR_1_02_STRUTS_DTD_URI, VALIDATOR_1_02_STRUTS_DTD_ID,
-      VALIDATOR_1_03_DTD_URI, VALIDATOR_1_03_DTD_ID
+    VALIDATOR_1_00_DTD_URI, VALIDATOR_1_00_DTD_ID,
+    VALIDATOR_1_00_STRUTS_DTD_URI, VALIDATOR_1_00_STRUTS_DTD_ID,
+    VALIDATOR_1_02_DTD_URI, VALIDATOR_1_02_DTD_ID,
+    VALIDATOR_1_02_STRUTS_DTD_URI, VALIDATOR_1_02_STRUTS_DTD_ID,
+    VALIDATOR_1_03_DTD_URI, VALIDATOR_1_03_DTD_ID
   };
 
   @NonNls
@@ -161,9 +167,9 @@ public final class StrutsConstants {
 
   @NonNls
   public static final String[] VALIDATOR_CONFIG_DTDS = {
-      VALIDATOR_CONFIG_DTD_URI, VALIDATOR_CONFIG_DTD_ID,
-      VALIDATOR_CONFIG_STRUTS_DTD_URI, VALIDATOR_CONFIG_STRUTS_DTD_ID,
-      VALIDATOR_DEFINITION_DTD_URI, VALIDATOR_DEFINITION_DTD_ID
+    VALIDATOR_CONFIG_DTD_URI, VALIDATOR_CONFIG_DTD_ID,
+    VALIDATOR_CONFIG_STRUTS_DTD_URI, VALIDATOR_CONFIG_STRUTS_DTD_ID,
+    VALIDATOR_DEFINITION_DTD_URI, VALIDATOR_DEFINITION_DTD_ID
   };
 
   /**
@@ -183,7 +189,7 @@ public final class StrutsConstants {
    */
   @NonNls
   public static final String[] TAGLIB_STRUTS_UI_CSS_ATTRIBUTES =
-      new String[]{"buttonCssStyle", "cssErrorStyle", "cssStyle", "doubleCssStyle"};
+    new String[]{"buttonCssStyle", "cssErrorStyle", "cssStyle", "doubleCssStyle"};
 
   /**
    * Struts jQuery-plugin taglib URI.
@@ -268,5 +274,4 @@ public final class StrutsConstants {
    */
   @NonNls
   public static final String TAGLIB_BOOTSTRAP_PLUGIN_PREFIX = "sb";
-
 }

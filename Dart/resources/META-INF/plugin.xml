@@ -46,7 +46,8 @@
 
     <colorSettingsPage implementation="com.jetbrains.lang.dart.highlight.DartColorsAndFontsPage"/>
     <lang.foldingBuilder language="Dart" implementationClass="com.jetbrains.lang.dart.folding.DartFoldingBuilder"/>
-    <extendWordSelectionHandler implementation="com.jetbrains.lang.dart.ide.editor.DartDocLineCommentSelectionHandler"/>
+    <extendWordSelectionHandler implementation="com.jetbrains.lang.dart.ide.editor.DartWordSelectionHandler"/>
+    <basicWordSelectionFilter implementation="com.jetbrains.lang.dart.ide.editor.DartSelectionFilter"/>
 
     <html.scriptContentProvider language="Dart" implementationClass="com.jetbrains.lang.dart.DartScriptContentProvider"/>
     <nonProjectFileWritingAccessExtension implementation="com.jetbrains.lang.dart.ide.DartWritingAccessProvider"/>
@@ -62,6 +63,7 @@
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
     <callHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyProvider"/>
+    <methodHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.method.DartMethodHierarchyProvider"/>
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartUriElement"
                              implementationClass="com.jetbrains.lang.dart.psi.impl.DartUriElementBase$DartUriElementManipulator"/>
     <lang.elementManipulator forClass="com.jetbrains.lang.dart.psi.DartStringLiteralExpression"
@@ -83,17 +85,11 @@
     <inlineActionHandler implementation="com.jetbrains.lang.dart.ide.refactoring.DartInlineHandler"/>
 
     <codeInsight.lineMarkerProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodLineMarkerProvider"/>
-    <!--<codeInsight.lineMarkerProvider language="Dart"-->
-                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartImplementationsMarkerProvider"/>-->
     <codeInsight.lineMarkerProvider language="Dart"
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerImplementationsMarkerProvider"/>
-    <!--<codeInsight.lineMarkerProvider language="Dart"-->
-                                    <!--implementationClass="com.jetbrains.lang.dart.ide.marker.DartMethodOverrideMarkerProvider"/>-->
     <codeInsight.lineMarkerProvider language="Dart"
                                     implementationClass="com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider"/>
 
-    <!--<codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartGotoSuperHandler"/>-->
-    <!--<definitionsSearch implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex$DefinitionsSearchExecutor"/>-->
     <codeInsight.gotoSuper language="Dart" implementationClass="com.jetbrains.lang.dart.ide.actions.DartServerGotoSuperHandler"/>
     <definitionsScopedSearch implementation="com.jetbrains.lang.dart.ide.actions.DartInheritorsSearcher"/>
 
@@ -102,14 +98,15 @@
     <codeInsight.implementMethod language="Dart"
                                  implementationClass="com.jetbrains.lang.dart.ide.generation.DartImplementMethodHandler"/>
 
+    <statementUpDownMover implementation="com.jetbrains.lang.dart.ide.moveCode.DartStatementMover" id="statement" order="before component" />
+    <statementUpDownMover implementation="com.jetbrains.lang.dart.ide.moveCode.DartComponentMover" id="component" order="before xml" />
+
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartImportAndExportIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartPartUriIndex"/>
-    <!--<fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartSourceIndex"/>-->
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartClassIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartLibraryIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartComponentIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartSymbolIndex"/>
-    <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex"/>
 
     <!-- moduleBuilder works in IntelliJ IDEA only -->
     <moduleBuilder builderClass="com.jetbrains.lang.dart.projectWizard.DartModuleBuilder"/>
@@ -198,6 +195,8 @@
     <localInspection bundle="com.jetbrains.lang.dart.DartBundle" key="outdated.dependencies.inspection.name"
                      groupName="Dart" enabledByDefault="true" level="WARNING" language="Dart"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartOutdatedDependenciesInspection"/>
+    <lineIndentProvider implementation="com.jetbrains.lang.dart.ide.editor.DartLineIndentProvider"/>
+    <testSourcesFilter implementation="com.jetbrains.lang.dart.test.DartTestSourcesFilter"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains">
@@ -296,6 +295,18 @@
     <group id="DartCallHierarchyPopupMenu">
       <reference ref="DartCallHierarchy.BaseOnThisFunction"/>
       <separator/>
+      <reference ref="EditSource"/>
+      <separator/>
+      <reference ref="FindUsages"/>
+      <reference ref="RefactoringMenu"/>
+      <separator/>
+      <reference ref="AddToFavorites"/>
+      <separator/>
+      <reference ref="VersionControlsGroup"/>
+      <separator/>
+    </group>
+
+    <group id="DartMethodHierarchyPopupMenu">
       <reference ref="EditSource"/>
       <separator/>
       <reference ref="FindUsages"/>

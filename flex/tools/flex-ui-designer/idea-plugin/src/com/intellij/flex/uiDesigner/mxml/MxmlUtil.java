@@ -28,7 +28,7 @@ import static com.intellij.flex.uiDesigner.mxml.MxmlWriter.LOG;
 
 public final class MxmlUtil {
   private static final Pattern FLEX_SDK_ABSTRACT_CLASSES = Pattern.compile("^(mx|spark)\\.(.*)?Base$");
-  private static final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> NON_PROJECT_CLASS = new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(-1, null, null);
+  private static final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> NON_PROJECT_CLASS = new Trinity<>(-1, null, null);
 
   static final String UNKNOWN_COMPONENT_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownComponent";
   static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
@@ -103,13 +103,13 @@ public final class MxmlUtil {
     }
 
     if (psiFile instanceof XmlFile) {
-      return new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(
+      return new Trinity<>(
         DocumentFactoryManager.getInstance().getId(virtualFile, (XmlFile)psiFile, projectComponentReferenceCounter), null, null);
     }
 
     final Set<PsiFile> filteredFiles;
     if (computePropertyFilter) {
-      filteredFiles = new THashSet<PsiFile>();
+      filteredFiles = new THashSet<>();
       filteredFiles.add(psiFile);
     }
     else {
@@ -123,10 +123,10 @@ public final class MxmlUtil {
       PsiFile containingFile = parentClass.getContainingFile();
       //noinspection ConstantConditions
       if (!projectFileIndex.isInSourceContent(containingFile.getVirtualFile())) {
-        return new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(-1, parentClass.getQualifiedName(),
-                                                                                   computePropertyFilter
-                                                                                   ? new CustomComponentPropertyFilter(filteredFiles)
-                                                                                   : null);
+        return new Trinity<>(-1, parentClass.getQualifiedName(),
+                             computePropertyFilter
+                             ? new CustomComponentPropertyFilter(filteredFiles)
+                             : null);
       }
       else if (computePropertyFilter) {
         filteredFiles.add(containingFile);

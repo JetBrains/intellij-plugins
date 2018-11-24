@@ -65,7 +65,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     protected List<StructureViewTreeElement> collectMyElements(final THashSet<String> referencedNamedIds,
                                                                final JSQualifiedName ns,
                                                                final PsiFile contextFile) {
-      final List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
+      final List<StructureViewTreeElement> result = new ArrayList<>();
       final ResolveProcessor processor = new ResolveProcessor(null) {
         @Override
         public boolean execute(@NotNull final PsiElement element, @NotNull final ResolveState state) {

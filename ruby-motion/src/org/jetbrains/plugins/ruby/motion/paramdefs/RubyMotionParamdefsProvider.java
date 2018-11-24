@@ -37,7 +37,7 @@ public class RubyMotionParamdefsProvider implements ParamDefProvider {
   }
 
   private static void doRegisterParamdefs(ParamDefManager manager) {
-    final Map<String, Map<String, Collection<Function>>> mergedFunctions = new HashMap<String, Map<String, Collection<Function>>>();
+    final Map<String, Map<String, Collection<Function>>> mergedFunctions = new HashMap<>();
     BridgeSupportLoader.getInstance().processFrameworks(framework -> loadAvailableSelectors(framework, mergedFunctions));
     for (Map.Entry<String, Map<String, Collection<Function>>> entry : mergedFunctions.entrySet()) {
       registerParamDef(manager, entry.getKey(), entry.getValue());
@@ -52,12 +52,12 @@ public class RubyMotionParamdefsProvider implements ParamDefProvider {
         final String name = clazz.getName() + "::" + MotionSymbolUtil.getSelectorNames(function).get(0);
         Map<String, Collection<Function>> allFunctions = mergedFunctions.get(name);
         if (allFunctions == null) {
-          allFunctions = new HashMap<String, Collection<Function>>();
+          allFunctions = new HashMap<>();
           mergedFunctions.put(name, allFunctions);
         }
         Collection<Function> frameworkFunctions = allFunctions.get(version);
         if (frameworkFunctions == null) {
-          frameworkFunctions = new ArrayList<Function>();
+          frameworkFunctions = new ArrayList<>();
           allFunctions.put(version, frameworkFunctions);
         }
         frameworkFunctions.add(function);

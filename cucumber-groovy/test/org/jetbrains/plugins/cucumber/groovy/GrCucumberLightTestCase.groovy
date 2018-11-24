@@ -35,6 +35,7 @@ abstract class GrCucumberLightTestCase extends LightGroovyTestCase {
     public static final INSTANCE = new GrCucumberLightProjectDescriptor()
   }
 
+  @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return GrCucumberLightProjectDescriptor.INSTANCE

@@ -154,7 +154,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
 
   public List<T> getItems() {
     int rows = getRowCount();
-    List<T> result = new ArrayList<T>(rows);
+    List<T> result = new ArrayList<>(rows);
     for (int row = 0; row < rows; row++) {
       result.add(getItemAt(row));
     }

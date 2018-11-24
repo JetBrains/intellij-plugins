@@ -1,7 +1,7 @@
 package org.angularjs.codeInsight;
 
+import com.intellij.openapi.util.text.InjectorMatchingEndFinder;
 import junit.framework.TestCase;
-import org.angularjs.editor.AngularJSInjectorMatchingEndFinder;
 import org.junit.Assert;
 
 /**
@@ -23,7 +23,7 @@ public class AngularJSInjectorMatchingEndFinderTest extends TestCase {
   private static void defaultTest(String text, String check) {
     final int startIdx = text.indexOf("{{", 0);
     int afterStart = startIdx < 0 ? -1 : (startIdx + "{{".length());
-    final int end = AngularJSInjectorMatchingEndFinder.findMatchingEnd("{{", "}}", text, afterStart);
+    final int end = InjectorMatchingEndFinder.findMatchingEnd("{{", "}}", text, afterStart);
     Assert.assertTrue(afterStart > 0);
     Assert.assertTrue(end > 0);
     Assert.assertEquals(check, text.substring(afterStart, end));

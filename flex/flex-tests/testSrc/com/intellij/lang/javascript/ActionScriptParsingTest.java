@@ -22,7 +22,7 @@ public class ActionScriptParsingTest extends ParsingTestCase {
     super.setUp();
     addExplicitExtension(LanguageASTFactory.INSTANCE, JavascriptLanguage.INSTANCE, new JavascriptASTFactory());
     addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, new XmlASTFactory());
-    registerExtensionPoint(new ExtensionPointName<StartTagEndTokenProvider>("com.intellij.xml.startTagEndToken"),
+    registerExtensionPoint(new ExtensionPointName<>("com.intellij.xml.startTagEndToken"),
                            StartTagEndTokenProvider.class);
   }
 

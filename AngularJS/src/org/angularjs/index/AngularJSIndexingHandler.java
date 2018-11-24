@@ -4,8 +4,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
+import com.intellij.lang.javascript.index.JSSymbolUtil;
+import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTag;
 import com.intellij.lang.javascript.psi.jsdoc.JSDocTagValue;
@@ -13,6 +17,7 @@ import com.intellij.lang.javascript.psi.literal.JSLiteralImplicitElementProvider
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.types.JSContext;
@@ -23,7 +28,9 @@ import com.intellij.lang.javascript.psi.util.JSTreeUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.CompositeElement;
@@ -32,6 +39,7 @@ import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
+import com.intellij.util.indexing.IndexingDataKeys;
 import gnu.trove.THashSet;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.router.AngularJSUiRouterConstants;
@@ -48,15 +56,15 @@ import java.util.*;
  */
 public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXERS =
-    new HashMap<String, StubIndexKey<String, JSImplicitElementProvider>>();
-  private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<String, Function<String, String>>();
-  private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<String, Function<PsiElement, String>>();
-  private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<String, PairProcessor<JSProperty, JSElementIndexingData>>();
-  private final static Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<String, Function<String, List<String>>>();
+    new HashMap<>();
+  private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<>();
+  private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<>();
+  private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<>();
+  private final static Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<>();
   private final static Map<String, Processor<JSArgumentList>> ARGUMENT_LIST_CHECKERS = new HashMap<>();
 
-  public static final Set<String> INTERESTING_METHODS = new HashSet<String>();
-  public static final Set<String> INJECTABLE_METHODS = new HashSet<String>();
+  public static final Set<String> INTERESTING_METHODS = new HashSet<>();
+  public static final Set<String> INJECTABLE_METHODS = new HashSet<>();
   public static final String CONTROLLER = "controller";
   public static final String DIRECTIVE = "directive";
   public static final String COMPONENT = "component";
@@ -91,14 +99,14 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXERS.put(FILTER, AngularFilterIndex.KEY);
     INDEXERS.put(STATE, AngularUiRouterStatesIndex.KEY);
 
-    final THashSet<String> allInterestingMethods = new THashSet<String>(INTERESTING_METHODS);
+    final THashSet<String> allInterestingMethods = new THashSet<>(INTERESTING_METHODS);
     allInterestingMethods.addAll(INJECTABLE_METHODS);
     allInterestingMethods.addAll(INDEXERS.keySet());
     allInterestingMethods.add(START_SYMBOL);
     allInterestingMethods.add(END_SYMBOL);
     ALL_INTERESTING_METHODS = ArrayUtil.toStringArray(allInterestingMethods);
 
-    INDEXES = new BidirectionalMap<String, StubIndexKey<String, JSImplicitElementProvider>>();
+    INDEXES = new BidirectionalMap<>();
     INDEXES.put("aci", AngularControllerIndex.KEY);
     INDEXES.put("addi", AngularDirectivesDocIndex.KEY);
     INDEXES.put("adi", AngularDirectivesIndex.KEY);
@@ -107,6 +115,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     INDEXES.put("ami", AngularModuleIndex.KEY);
     INDEXES.put("asi", AngularSymbolIndex.KEY);
     INDEXES.put("arsi", AngularUiRouterStatesIndex.KEY);
+    INDEXES.put("arsgi", AngularUiRouterGenericStatesIndex.KEY);
+    INDEXES.put("agmi", AngularGenericModulesIndex.KEY);
 
     for (String key : INDEXES.keySet()) {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
@@ -119,7 +129,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     // example of nested states https://scotch.io/tutorials/angular-routing-using-ui-router
     POLY_NAME_CONVERTERS.put(STATE, (NotNullFunction<String, List<String>>)dom -> {
       final String[] parts = dom.split("\\.");
-      final List<String> result = new ArrayList<String>();
+      final List<String> result = new ArrayList<>();
       result.add(dom);
       String tail = "";
       for (int i = parts.length - 1; i > 0; i--) {
@@ -194,6 +204,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
                   String interpolation = unquote(argument);
                   // '//' interpolations are usually dragged from examples folder and not supposed to be used by real users
                   if ("//".equals(interpolation)) return;
+                  PsiFile file = qualifier.getContainingFile();
+                  VirtualFile virtualFile = file.getOriginalFile().getVirtualFile();
+                  virtualFile = virtualFile == null ? IndexingDataKeys.VIRTUAL_FILE.get(file) : virtualFile;
+
+                  if (JSLibraryUtil.isProbableLibraryFile(virtualFile)) return;
                   addImplicitElements(argument, null, AngularInjectionDelimiterIndex.KEY, command, interpolation, outIndexingData);
                 }
               }
@@ -206,6 +221,35 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         }
       }
     };
+  }
+
+  @Override
+  public void processCallExpression(JSCallExpression callExpression, @NotNull JSElementIndexingData outData) {
+    final JSReferenceExpression reference = ObjectUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
+    if (reference == null) return;
+    if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, "$stateProvider", STATE)) {
+      final JSExpression[] arguments = callExpression.getArguments();
+      if (arguments.length == 1 && arguments[0] instanceof JSReferenceExpression) {
+        addImplicitElements(callExpression, null, AngularUiRouterGenericStatesIndex.KEY, STATE, null, outData);
+      }
+    } else if (JSSymbolUtil.isAccurateReferenceExpressionName(reference, "angular", MODULE)) {
+      final JSExpression[] arguments = callExpression.getArguments();
+      if (arguments.length > 1 && arguments[0] instanceof JSReferenceExpression) {
+        addImplicitElements(callExpression, null, AngularGenericModulesIndex.KEY, MODULE, null, outData);
+      }
+    }
+  }
+
+  @Override
+  public boolean shouldCreateStubForCallExpression(ASTNode node) {
+    final ASTNode methodExpression = JSCallExpressionImpl.getMethodExpression(node);
+    if (methodExpression == null) return false;
+
+    final ASTNode referencedNameElement = methodExpression.getLastChildNode();
+    final ASTNode qualifier = JSReferenceExpressionImpl.getQualifierNode(methodExpression);
+    if (qualifier == null) return false;
+    return STATE.equals(referencedNameElement.getText()) && "$stateProvider".equalsIgnoreCase(qualifier.getText()) ||
+           MODULE.equals(referencedNameElement.getText()) && "angular".equalsIgnoreCase(qualifier.getText());
   }
 
   @Nullable
@@ -267,7 +311,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public boolean indexImplicitElement(@NotNull JSImplicitElement element, @Nullable IndexSink sink) {
+  public boolean indexImplicitElement(@NotNull JSImplicitElementStructure element, @Nullable IndexSink sink) {
     final String userID = element.getUserString();
     final StubIndexKey<String, JSImplicitElementProvider> index = userID != null ? INDEXES.get(userID) : null;
     if (index != null) {
@@ -525,7 +569,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         }
       }
     }
-    if (resolveResult instanceof JSParameter && isInjectable(resolveResult)) {
+    if (resolveResult instanceof JSParameter && evaluator.isFromCurrentFile(resolveResult) && isInjectable(resolveResult)) {
       final String name = ((JSParameter)resolveResult).getName();
       final JSTypeSource source = JSTypeSourceFactory.createTypeSource(resolveResult);
       final JSType type = JSNamedType.createType(name, source, JSContext.UNKNOWN);
@@ -573,21 +617,22 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return new PairProcessor<JSProperty, JSElementIndexingData>() {
       @Override
       public boolean process(JSProperty property, JSElementIndexingData outData) {
-        if (AngularJSUiRouterConstants.controllerAs.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
-          final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
-          if (!value.isQuotedLiteral()) return false;
-          final String unquotedValue = unquote(value);
+        if (!(property.getValue() instanceof JSLiteralExpression)) return true;
+        final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
+        if (!value.isQuotedLiteral()) return true;
+        final String unquotedValue = unquote(value);
+        if (AngularJSUiRouterConstants.controllerAs.equals(property.getName())) {
           return recordControllerAs(property, outData, value, unquotedValue);
-        } else if (CONTROLLER.equals(property.getName()) && property.getValue() instanceof JSLiteralExpression) {
-          final JSLiteralExpression value = (JSLiteralExpression)property.getValue();
-          if (!value.isQuotedLiteral()) return false;
-          final String unquotedValue = unquote(value);
+        } else if (CONTROLLER.equals(property.getName())) {
           final int idx = unquotedValue != null ? unquotedValue.indexOf(AS_CONNECTOR_WITH_SPACES) : 0;
           if (idx > 0 && (idx + AS_CONNECTOR_WITH_SPACES.length()) < (unquotedValue.length() - 1)) {
             return recordControllerAs(property, outData, value, unquotedValue.substring(idx + AS_CONNECTOR_WITH_SPACES.length(), unquotedValue.length()));
           }
+        } else if ("name".equals(property.getName())) {
+          addImplicitElements(value, STATE, INDEXERS.get(STATE), unquotedValue, null, outData);
+          return true;
         }
-        return false;
+        return true;
       }
 
       private boolean recordControllerAs(JSProperty property,

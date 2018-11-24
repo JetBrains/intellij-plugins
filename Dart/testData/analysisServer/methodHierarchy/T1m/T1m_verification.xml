@@ -1,0 +1,16 @@
+<node text="T1 (t1.dart)" base="true">
+  <node text="C1 (t1.dart)">
+    <node text="C1a (t1.dart)">
+      <node text="X (t3.dart)"/>
+    </node>
+  </node>
+  <node text="C2 (t2.dart)">
+    <node text="C2a (t2.dart)">
+      <node text="Y (t3.dart)">
+        <node text="Z (t3.dart)">
+          <node text="Z1 (t3.dart)"/>
+        </node>
+      </node>
+    </node>
+  </node>
+</node>

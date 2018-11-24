@@ -166,13 +166,8 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     final PsiFile psiFile = element == null ? null : element.getContainingFile();
     if (psiFile == null) return false;
     
-    return CachedValuesManager.getCachedValue(psiFile, new CachedValueProvider<Boolean>() {
-      @Nullable
-      @Override
-      public Result<Boolean> compute() {
-        return Result.create(hasMacRubySupport(psiFile), PsiModificationTracker.MODIFICATION_COUNT);
-      }
-    });
+    return CachedValuesManager.getCachedValue(psiFile, () -> CachedValueProvider.Result
+      .create(hasMacRubySupport(psiFile), PsiModificationTracker.MODIFICATION_COUNT));
   }
 
   private boolean hasMacRubySupport(PsiFile psiFile) {
@@ -308,8 +303,8 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
 
   private Trinity<String, String[], ProjectType> doCalculateSdkAndFrameworks(RFile file) {
     final ProjectType projectType = calculateProjectType(file);
-    final Ref<String> sdkVersion = new Ref<String>(getDefaultSdkVersion(projectType));
-    final Set<String> frameworks = new HashSet<String>();
+    final Ref<String> sdkVersion = new Ref<>(getDefaultSdkVersion(projectType));
+    final Set<String> frameworks = new HashSet<>();
     Collections.addAll(frameworks, projectType == ProjectType.OSX ? DEFAULT_OSX_FRAMEWORKS :
                                    projectType == ProjectType.ANDROID ? DEFAULT_ANDROID_FRAMEWORKS :
                                    DEFAULT_IOS_FRAMEWORKS);
@@ -407,8 +402,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
   public void generateApp(final VirtualFile dir,
                                  final Module module,
                                  Sdk sdk,
-                                 final ProjectType projectType,
-                                 final boolean useCalabash)  {
+                                 final ProjectType projectType)  {
     final Project project = module.getProject();
     final String applicationHomePath = dir.getPath();
     final File tempDirectory;
@@ -432,9 +426,6 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
         GeneratorsUtil.openFileInEditor(project, "app/app_delegate.rb", applicationHomePath);
         GeneratorsUtil.openFileInEditor(project, RakeUtilBase.RAKE_FILE, applicationHomePath);
         GeneratorsUtil.openFileInEditor(project, BundlerUtil.GEMFILE, applicationHomePath);
-        if (useCalabash && projectType == ProjectType.IOS) {
-          MotionCalabashUtil.addCalabashSupport(project, module, applicationHomePath);
-        }
       }
     };
     final MergingCommandLineArgumentsProvider resultProvider =
@@ -483,13 +474,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
             final RubyAbstractCommandLineState rubyState = (RubyAbstractCommandLineState)state;
             final TextConsoleBuilder consoleBuilder = rubyState.getConsoleBuilder();
             process = serverProcessHandler instanceof MotionDeviceProcessHandler ?
-                      new RubyMotionDeviceDebugProcess(session, state, env.getExecutor(), consoleBuilder, serverProcessHandler) {
-                        @Override
-                        protected ProcessHandlerWithPID createSimulatorProcessHandler(RunParameters parameters)
-                          throws ExecutionException {
-                          return (ProcessHandlerWithPID)serverProcessHandler;
-                        }
-                      } :
+                      new RubyMotionDeviceDebugProcess(session, state, env.getExecutor(), consoleBuilder, serverProcessHandler) :
                       new RubyMotionSimulatorDebugProcess(session, state, env.getExecutor(), consoleBuilder, serverProcessHandler) {
                         @Override
                         protected ProcessHandlerWithPID createSimulatorProcessHandler(RunParameters parameters) throws ExecutionException {

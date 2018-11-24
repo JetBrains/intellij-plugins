@@ -71,7 +71,7 @@ public class ResourceCollector {
   }
 
   private static String getMavenResourcePaths(@NotNull MavenProject currentProject) {
-    Set<String> pathSet = new LinkedHashSet<String>();
+    Set<String> pathSet = new LinkedHashSet<>();
     for (MavenResource resource : getMavenResources(currentProject)) {
       final String sourcePath = resource.getDirectory();
       final String targetPath = resource.getTargetPath();
@@ -147,7 +147,7 @@ public class ResourceCollector {
   }
 
   private static List<MavenResource> getMavenResources(MavenProject currentProject) {
-    List<MavenResource> resources = new ArrayList<MavenResource>(currentProject.getResources());
+    List<MavenResource> resources = new ArrayList<>(currentProject.getResources());
 
     // also scan for any "packageinfo" files lurking in the source folders
     List<String> packageInfoIncludes = Collections.singletonList("**/packageinfo");

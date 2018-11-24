@@ -208,7 +208,7 @@ public class FlexMoveTest extends JSMoveTestBase {
     doTest(new PerformAction() {
       @Override
       public void performAction(VirtualFile rootDir, VirtualFile rootAfter) throws Exception {
-        Collection<PsiDirectory> dirsToMove = new ArrayList<PsiDirectory>();
+        Collection<PsiDirectory> dirsToMove = new ArrayList<>();
         for (String s : toMove) {
           final VirtualFile child = VfsUtilCore.findRelativeFile(s, rootDir);
           assertNotNull("Folder " + s + " not found", child);

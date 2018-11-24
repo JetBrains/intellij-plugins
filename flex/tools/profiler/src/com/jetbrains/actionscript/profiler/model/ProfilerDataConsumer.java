@@ -47,7 +47,7 @@ public class ProfilerDataConsumer {
   public void referenced(int pid, int id) {
     Set<Integer> integers = profileData.getReferences().get(pid);
     if (integers == null) {
-      integers = new LinkedHashSet<Integer>(3);
+      integers = new LinkedHashSet<>(3);
       profileData.getReferences().put(pid, integers);
     }
     integers.add(id);

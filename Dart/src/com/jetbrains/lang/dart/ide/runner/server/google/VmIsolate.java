@@ -25,8 +25,8 @@ public class VmIsolate {
   private boolean paused = false;
   private boolean firstBreak = true;
 
-  private Map<Integer, VmClass> classInfoMap = new HashMap<Integer, VmClass>();
-  private Map<Integer, VmLibrary> libraryInfoMap = new HashMap<Integer, VmLibrary>();
+  private Map<Integer, VmClass> classInfoMap = new HashMap<>();
+  private Map<Integer, VmLibrary> libraryInfoMap = new HashMap<>();
   private boolean myTemporarilyInterrupted;
 
   protected VmIsolate(int isolateId, boolean paused) {

@@ -21,7 +21,7 @@ public class DartGenericSpecialization implements Cloneable {
   final Map<String, DartClassResolveResult> map;
 
   public DartGenericSpecialization() {
-    this(new THashMap<String, DartClassResolveResult>());
+    this(new THashMap<>());
   }
 
   protected DartGenericSpecialization(Map<String, DartClassResolveResult> map) {
@@ -30,7 +30,7 @@ public class DartGenericSpecialization implements Cloneable {
 
   @Override
   public DartGenericSpecialization clone() {
-    final Map<String, DartClassResolveResult> clonedMap = new THashMap<String, DartClassResolveResult>();
+    final Map<String, DartClassResolveResult> clonedMap = new THashMap<>();
     for (String key : map.keySet()) {
       clonedMap.put(key, map.get(key));
     }
@@ -51,7 +51,7 @@ public class DartGenericSpecialization implements Cloneable {
 
   public DartGenericSpecialization getInnerSpecialization(PsiElement element) {
     final String prefixToRemove = getGenericKey(element, "");
-    final Map<String, DartClassResolveResult> result = new THashMap<String, DartClassResolveResult>();
+    final Map<String, DartClassResolveResult> result = new THashMap<>();
     for (String key : map.keySet()) {
       final DartClassResolveResult value = map.get(key);
       String newKey = key;

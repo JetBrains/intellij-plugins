@@ -58,7 +58,7 @@ public class CfmlParameterInfoTest extends CfmlCodeInsightFixtureTestCase {
     Object[] items = createContext.getItemsToShow();
     assertTrue(items != null);
     assertTrue(items.length > 0);
-    MockParameterInfoUIContext context = new MockParameterInfoUIContext<PsiElement>(elt);
+    MockParameterInfoUIContext context = new MockParameterInfoUIContext<>(elt);
     parameterInfoHandler.updateUI((CfmlFunctionDescription)items[0], context);
     assertEquals(s, parameterInfoHandler.getText());
 

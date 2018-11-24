@@ -45,7 +45,7 @@ public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
     public static final CfmlProcessorEvent SET_INITIAL_CLASS = new CfmlProcessorEvent();
   }
 
-  private final Set<T> myResult = new LinkedHashSet<T>();
+  private final Set<T> myResult = new LinkedHashSet<>();
   private final String myReferenceName;
   private final JavaMethodResolveHelper myMethods;
   private final boolean myIsMethodCall;
@@ -141,11 +141,11 @@ public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
             (myIsForCompletion || "init".equals(myReferenceName))) {
           myWasConstructorFound = true;
           if (!methodClass.equals(myInitialClass) && !myIsForCompletion) {
-            addIfNotNull(execute(myInitialClass, false), myResult);
+            addIfNotNull(myResult, execute(myInitialClass, false));
             return true;
           }
           else {
-            addIfNotNull(execute(method, myMethods.getResolveError() == JavaMethodResolveHelper.ErrorType.RESOLVE), myResult);
+            addIfNotNull(myResult, execute(method, myMethods.getResolveError() == JavaMethodResolveHelper.ErrorType.RESOLVE));
             return true;
           }
         }
@@ -169,7 +169,7 @@ public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
           referenceNameLoweCase.substring(3).equalsIgnoreCase(elementName)
         ) {
         if (!referenceNameLoweCase.startsWith("get") || methodCallArity() == 0) {
-          addIfNotNull(execute((PsiNamedElement)element, false), myResult);
+          addIfNotNull(myResult, execute((PsiNamedElement)element, false));
         }
         return myResult.isEmpty();
       }
@@ -190,7 +190,7 @@ public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
 
     T execute = execute((PsiNamedElement)element, false);
     if (execute != null) {
-      addIfNotNull(execute, myResult);
+      addIfNotNull(myResult, execute);
       if (myIsForCompletion || myResult.isEmpty()) {
         return true;
       } else if (namedElement instanceof CfmlVariable) {
@@ -218,7 +218,7 @@ public abstract class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
       for (final JavaMethodCandidateInfo method : myMethods.getMethods()) {
         T execute = execute(method.getMethod(), myMethods.getResolveError() == JavaMethodResolveHelper.ErrorType.RESOLVE);
         if (execute != null) {
-          addIfNotNull(execute, myResult);
+          addIfNotNull(myResult, execute);
         }
       }
     }

@@ -12,7 +12,7 @@ import java.util.List;
 class CallTreeNode implements FrameInfoProducer, FilePathProducer {
   private final FrameInfo frameInfo;
   private long duration;
-  private final THashMap<FrameInfo, CallTreeNode> children = new THashMap<FrameInfo, CallTreeNode>();
+  private final THashMap<FrameInfo, CallTreeNode> children = new THashMap<>();
 
   public CallTreeNode() {
     frameInfo = null;
@@ -68,7 +68,7 @@ class CallTreeNode implements FrameInfoProducer, FilePathProducer {
   }
 
   List<CallTreeNode> getChildren() {
-    return new ArrayList<CallTreeNode>(children.values());
+    return new ArrayList<>(children.values());
   }
 
   @Override

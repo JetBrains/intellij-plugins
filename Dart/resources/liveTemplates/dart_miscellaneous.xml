@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templateSet group="Dart">
-  <template name="iter" value="for ($VAR$ in $ITERABLE$) {&#10;  $END$&#10;}"
+  <template name="iter" value="for (var $VAR$ in $ITERABLE$) {&#10;  $END$&#10;}"
             resource-bundle="com.jetbrains.lang.dart.DartBundle" key="livetemplate.description.iter" toReformat="true"
             toShortenFQNames="true">
     <variable name="ITERABLE" expression="dartIterableVariable()" defaultValue="&quot;array &quot;" alwaysStopAt="true"/>

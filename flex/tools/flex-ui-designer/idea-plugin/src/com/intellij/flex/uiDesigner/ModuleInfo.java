@@ -106,7 +106,7 @@ class ExternalLocalStyleHolder extends LocalStyleHolder {
   ExternalLocalStyleHolder(@NotNull VirtualFile file, @NotNull byte[] data, @NotNull VirtualFile user) {
     super(file, data);
 
-    users = new ArrayList<VirtualFile>(5);
+    users = new ArrayList<>(5);
     users.add(user);
   }
 

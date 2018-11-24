@@ -114,7 +114,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
     @NotNull
     public Object[] getVariants() {
       final List<Action> allActions = model.getActionsForNamespace(null);
-      final List<LookupElementBuilder> variants = new ArrayList<LookupElementBuilder>(allActions.size());
+      final List<LookupElementBuilder> variants = new ArrayList<>(allActions.size());
       for (final Action action : allActions) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {

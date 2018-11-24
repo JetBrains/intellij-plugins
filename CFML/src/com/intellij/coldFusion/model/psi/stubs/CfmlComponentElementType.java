@@ -36,6 +36,7 @@ public abstract class CfmlComponentElementType extends CfmlStubElementType<CfmlC
     super(debugName, language);
   }
 
+  @NotNull
   @Override
   public CfmlComponentStub createStub(@NotNull CfmlComponent psi, StubElement parentStub) {
     return new CfmlComponentStubImpl(parentStub, this, psi.getName(),

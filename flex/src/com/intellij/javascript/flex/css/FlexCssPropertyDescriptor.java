@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -140,7 +140,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private static Set<String> addValuesFromFormats(@NotNull List<CssValueDescriptor> children, @NotNull Collection<FlexStyleIndexInfo> infos) {
     Set<String> formats = ContainerUtil.newLinkedHashSet();
     for (FlexStyleIndexInfo info : infos) {
-      ContainerUtil.addIfNotNull(info.getFormat(), formats);
+      ContainerUtil.addIfNotNull(formats, info.getFormat());
     }
     
     if (formats.contains(COLOR_FORMAT)) {
@@ -174,7 +174,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   private static void addValuesFromTypes2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssValueDescriptor> children) {
     Set<String> types = ContainerUtil.newHashSet();
     for (FlexStyleIndexInfo info : infos) {
-      ContainerUtil.addIfNotNull(info.getType(), types);
+      ContainerUtil.addIfNotNull(types, info.getType());
     }
     if (types.contains(JSCommonTypeNames.NUMBER_CLASS_NAME) && !formats.contains(LENGTH_FORMAT)) {
       children.add(createCssNumberValue());
@@ -249,7 +249,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
    */
   @NotNull
   private static CssPropertyValueImpl createPropertyValue(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
-    List<CssPropertyValue> children = new ArrayList<CssPropertyValue>();
+    List<CssPropertyValue> children = new ArrayList<>();
     Set<String> formats = addValuesFromFormats(infos, children);
     addValuesFromEnumerations(infos, children);
     addValuesFromTypes(infos, formats, children);
@@ -284,7 +284,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   public String getDocumentationString(@Nullable PsiElement context) {
     if (context == null) return null;
     PsiElement[] declarations = getDeclarations(context);
-    List<DocumentationElement> docElements = new ArrayList<DocumentationElement>();
+    List<DocumentationElement> docElements = new ArrayList<>();
     for (PsiElement declaration : declarations) {
       PsiFile file = declaration.getContainingFile();
       if (file != null) {
@@ -391,7 +391,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   @NotNull
   @Override
   public PsiElement[] getDeclarations(@NotNull PsiElement context) {
-    Map<PsiElement, PairInfo> navElement2pairInfo = new HashMap<PsiElement, PairInfo>();
+    Map<PsiElement, PairInfo> navElement2pairInfo = new HashMap<>();
     final Project project = context.getProject();
 
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
@@ -425,7 +425,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
 
     Set<PsiElement> navPairs = navElement2pairInfo.keySet();
-    Map<String, PsiElement> qName2ResultElement = new HashMap<String, PsiElement>();
+    Map<String, PsiElement> qName2ResultElement = new HashMap<>();
     for (PsiElement navPair : navPairs) {
       PairInfo pairInfo = navElement2pairInfo.get(navPair);
       String jsClassQName = pairInfo.myJsClassQName;
@@ -453,7 +453,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     return "yes".equalsIgnoreCase(myInherit) || "true".equals(myInherit);
   }
 
-  private class MyMetaDataProcessor implements JSResolveUtil.MetaDataProcessor {
+  private class MyMetaDataProcessor implements ActionScriptResolveUtil.MetaDataProcessor {
     private JSAttributeNameValuePair myResult;
 
     public boolean process(@NotNull JSAttribute jsAttribute) {

@@ -1,0 +1,9 @@
+GherkinFile:no_steps.feature
+  GherkinFeature:No steps
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('No steps')
+    PsiWhiteSpace('\n  ')
+    GherkinFeatureHeader
+      PsiElement(TEXT)('Some description goes here')

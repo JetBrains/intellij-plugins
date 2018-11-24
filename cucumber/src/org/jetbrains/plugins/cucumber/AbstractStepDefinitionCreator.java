@@ -41,7 +41,7 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
     }
 
     // in subfolder
-    final List<String> dirsReversed = new ArrayList<String>();
+    final List<String> dirsReversed = new ArrayList<>();
     while (parent != null) {
       final String name = parent.getName();
       if (CucumberUtil.STEP_DEFINITIONS_DIR_NAME.equals(name)) {
@@ -72,7 +72,7 @@ public abstract class AbstractStepDefinitionCreator implements StepDefinitionCre
       final PsiDirectory featureParentDir = featureFile.getParent();
       assert featureParentDir != null;
 
-      final Ref<PsiDirectory> dirRef = new Ref<PsiDirectory>();
+      final Ref<PsiDirectory> dirRef = new Ref<>();
       new WriteCommandAction.Simple(step.getProject(),
                                     CucumberBundle.message("cucumber.quick.fix.create.step.command.name.add")) {
         @Override

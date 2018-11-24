@@ -28,7 +28,7 @@ public class VmCallFrame extends VmRef {
   private static final int MAX_STACK_DEPTH = 2000;
 
   static List<VmCallFrame> createFrom(VmIsolate isolate, JSONArray arr) throws JSONException {
-    List<VmCallFrame> frames = new ArrayList<VmCallFrame>();
+    List<VmCallFrame> frames = new ArrayList<>();
 
     int stackDepth = Math.min(arr.length(), MAX_STACK_DEPTH);
 

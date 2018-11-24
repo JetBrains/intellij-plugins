@@ -57,11 +57,11 @@ class OgnlBlock implements ASTBlock {
     if (blocks == null) {
       blocks = buildSubBlocks();
     }
-    return new ArrayList<Block>(blocks);
+    return new ArrayList<>(blocks);
   }
 
   private List<Block> buildSubBlocks() {
-    final List<Block> myBlocks = new ArrayList<Block>();
+    final List<Block> myBlocks = new ArrayList<>();
     for (ASTNode child = astNode.getFirstChildNode(); child != null; child = child.getTreeNext()) {
       if (child.getTextRange().getLength() == 0) {
         continue;

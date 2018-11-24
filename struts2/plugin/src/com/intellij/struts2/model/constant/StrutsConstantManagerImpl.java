@@ -69,12 +69,10 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
   @NonNls
   private static final String STRUTS_PROPERTIES_FILENAME = "struts.properties";
 
-  private static final Condition<Filter> WEB_XML_STRUTS_FILTER_CONDITION = new Condition<Filter>() {
-    public boolean value(final Filter filter) {
-      final PsiClass filterClass = filter.getFilterClass().getValue();
-      return InheritanceUtil.isInheritor(filterClass, StrutsConstants.STRUTS_2_0_FILTER_CLASS) ||
-             InheritanceUtil.isInheritor(filterClass, StrutsConstants.STRUTS_2_1_FILTER_CLASS);
-    }
+  private static final Condition<Filter> WEB_XML_STRUTS_FILTER_CONDITION = filter -> {
+    final PsiClass filterClass = filter.getFilterClass().getValue();
+    return InheritanceUtil.isInheritor(filterClass, StrutsConstants.STRUTS_2_0_FILTER_CLASS) ||
+           InheritanceUtil.isInheritor(filterClass, StrutsConstants.STRUTS_2_1_FILTER_CLASS);
   };
 
 
@@ -101,11 +99,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
       return null;
     }
 
-    final StrutsConstant strutsConstant = ContainerUtil.find(getConstants(module), new Condition<StrutsConstant>() {
-      public boolean value(final StrutsConstant strutsConstant) {
-        return Comparing.equal(strutsConstant.getName(), strutsConstantKey.getKey());
-      }
-    });
+    final StrutsConstant strutsConstant = ContainerUtil.find(getConstants(module), strutsConstant1 -> Comparing.equal(strutsConstant1.getName(), strutsConstantKey.getKey()));
 
     //noinspection unchecked
     return strutsConstant != null ? strutsConstant.getConverter() : null;
@@ -163,27 +157,21 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     String value = null;
 
     // 1. default.properties from struts2-core.jar
-    final IProperty strutsDefaultProperty = ContainerUtil.find(properties, new Condition<IProperty>() {
-      public boolean value(final IProperty property) {
-        final VirtualFile virtualFile = property.getPropertiesFile().getVirtualFile();
-        return virtualFile != null &&
-               virtualFile.getFileSystem() instanceof JarFileSystem &&
-               StringUtil.endsWith(virtualFile.getPath(), STRUTS_DEFAULT_PROPERTIES) &&
-               ModuleUtilCore.moduleContainsFile(module, virtualFile, true);
-      }
+    final IProperty strutsDefaultProperty = ContainerUtil.find(properties, property -> {
+      final VirtualFile virtualFile = property.getPropertiesFile().getVirtualFile();
+      return virtualFile != null &&
+             virtualFile.getFileSystem() instanceof JarFileSystem &&
+             StringUtil.endsWith(virtualFile.getPath(), STRUTS_DEFAULT_PROPERTIES) &&
+             ModuleUtilCore.moduleContainsFile(module, virtualFile, true);
     });
     if (strutsDefaultProperty != null) {
       value = strutsDefaultProperty.getValue();
     }
 
     // 2. <constant> from StrutsModel
-    final Condition<Constant> constantNameCondition = new Condition<Constant>() {
-      public boolean value(final Constant constant) {
-        return Comparing.equal(constant.getName().getStringValue(), name);
-      }
-    };
+    final Condition<Constant> constantNameCondition = constant -> Comparing.equal(constant.getName().getStringValue(), name);
 
-    final List<DomFileElement<StrutsRoot>> domFileElements = new ArrayList<DomFileElement<StrutsRoot>>();
+    final List<DomFileElement<StrutsRoot>> domFileElements = new ArrayList<>();
     collectStrutsXmls(domFileElements, strutsModel, "struts-default.xml", true);
     collectStrutsXmls(domFileElements, strutsModel, "struts-plugin.xml", true);
     collectStrutsXmls(domFileElements, strutsModel, "struts.xml", false);
@@ -197,13 +185,11 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     }
 
     // 3. struts.properties in current module
-    final IProperty strutsProperty = ContainerUtil.find(properties, new Condition<IProperty>() {
-      public boolean value(final IProperty property) {
-        final VirtualFile virtualFile = property.getPropertiesFile().getVirtualFile();
-        return virtualFile != null &&
-               Comparing.equal(virtualFile.getName(), STRUTS_PROPERTIES_FILENAME) &&
-               ModuleUtilCore.moduleContainsFile(module, virtualFile, false);
-      }
+    final IProperty strutsProperty = ContainerUtil.find(properties, property -> {
+      final VirtualFile virtualFile = property.getPropertiesFile().getVirtualFile();
+      return virtualFile != null &&
+             Comparing.equal(virtualFile.getName(), STRUTS_PROPERTIES_FILENAME) &&
+             ModuleUtilCore.moduleContainsFile(module, virtualFile, false);
     });
     if (strutsProperty != null) {
       value = strutsProperty.getValue();
@@ -266,9 +252,9 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
                                         @NotNull @NonNls final String strutsXmlName,
                                         final boolean onlyInJARs) {
     ContainerUtil.process(model.getRoots(),
-                          new FilteringProcessor<DomFileElement<StrutsRoot>>(
-                              getStrutsXmlCondition(strutsXmlName, onlyInJARs),
-                              new CommonProcessors.CollectProcessor<DomFileElement<StrutsRoot>>(domFileElements)));
+                          new FilteringProcessor<>(
+                            getStrutsXmlCondition(strutsXmlName, onlyInJARs),
+                            new CommonProcessors.CollectProcessor<>(domFileElements)));
   }
 
   /**
@@ -280,19 +266,17 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
    */
   private static Condition<DomFileElement<StrutsRoot>> getStrutsXmlCondition(final String strutsXmlName,
                                                                              final boolean onlyInJARs) {
-    return new Condition<DomFileElement<StrutsRoot>>() {
-      public boolean value(final DomFileElement<StrutsRoot> strutsRootDomFileElement) {
-        final XmlFile xmlFile = strutsRootDomFileElement.getFile();
-        final boolean nameMatch = Comparing.equal(xmlFile.getName(), strutsXmlName);
-        if (!onlyInJARs) {
-          return nameMatch;
-        }
-
-        final VirtualFile virtualFile = xmlFile.getVirtualFile();
-        return nameMatch &&
-               virtualFile != null &&
-               virtualFile.getFileSystem() instanceof JarFileSystem;
+    return strutsRootDomFileElement -> {
+      final XmlFile xmlFile = strutsRootDomFileElement.getFile();
+      final boolean nameMatch = Comparing.equal(xmlFile.getName(), strutsXmlName);
+      if (!onlyInJARs) {
+        return nameMatch;
       }
+
+      final VirtualFile virtualFile = xmlFile.getVirtualFile();
+      return nameMatch &&
+             virtualFile != null &&
+             virtualFile.getFileSystem() instanceof JarFileSystem;
     };
   }
 }

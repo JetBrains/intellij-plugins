@@ -52,8 +52,8 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
 
   public DependencyEmbedder(Collection<MavenArtifact> dependencyArtifacts) {
     super(dependencyArtifacts);
-    myInlinePaths = new LinkedHashSet<String>();
-    myEmbeddedArtifacts = new LinkedHashSet<MavenArtifact>();
+    myInlinePaths = new LinkedHashSet<>();
+    myEmbeddedArtifacts = new LinkedHashSet<>();
   }
 
   public void processHeaders(Analyzer analyzer) throws DependencyEmbedderException {

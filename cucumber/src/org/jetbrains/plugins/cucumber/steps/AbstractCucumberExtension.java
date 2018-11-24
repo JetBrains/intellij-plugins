@@ -28,7 +28,7 @@ public abstract class AbstractCucumberExtension implements CucumberJvmExtensionP
     final Set<String> stepVariants = getAllPossibleStepVariants(element);
 
     final List<AbstractStepDefinition> stepDefinitions = loadStepsFor(element.getContainingFile(), module);
-    final List<PsiElement> result = new ArrayList<PsiElement>();
+    final List<PsiElement> result = new ArrayList<>();
 
     for (final AbstractStepDefinition stepDefinition : stepDefinitions) {
       for (final String s : stepVariants) {

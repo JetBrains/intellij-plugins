@@ -54,12 +54,9 @@ public class AngularJSUiRouterViewReferencesProvider extends PsiReferenceProvide
           if (!StringUtil.isEmptyOrSpaces(templateUrlText)) {
             templateUrlText = templateUrlText.trim().replace('\\', '/');
             final String finalTemplateUrlText = templateUrlText;
-            return new Condition<VirtualFile>() {
-              @Override
-              public boolean value(VirtualFile file) {
-                final String path = file.getPath();
-                return path.endsWith(finalTemplateUrlText);
-              }
+            return file -> {
+              final String path = file.getPath();
+              return path.endsWith(finalTemplateUrlText);
             };
           }
         }

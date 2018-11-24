@@ -27,7 +27,7 @@ public class ProfilingConnection {
   private OutputStream myOutputStream;
   private DataInputStream myInputStream;
   private PacketProcessor myCurrentPacketProcessor;
-  private final Map<String, PacketProcessor> myInitialString2ProcessorsMap = new HashMap<String, PacketProcessor>();
+  private final Map<String, PacketProcessor> myInitialString2ProcessorsMap = new HashMap<>();
   private final Callback myIoHandler;
   private final int myPort;
   private static final int ourAgentVersion = 4;
@@ -182,7 +182,7 @@ public class ProfilingConnection {
     void finished(@Nullable String data, @Nullable IOException ex);
   }
 
-  private final LinkedList<Callback> callbacks = new LinkedList<Callback>();
+  private final LinkedList<Callback> callbacks = new LinkedList<>();
 
   public void stopCpuProfiling(final Callback callback) throws IOException {
     simpleCommand(new Callback() {
@@ -285,8 +285,8 @@ public class ProfilingConnection {
     private long sampleDuration = -1;
     private int frameIndex;
 
-    private final Map<String, String> dictionary = new HashMap<String, String>(1000);
-    private final Map<String, String> typeDictionary = new HashMap<String, String>(1000);
+    private final Map<String, String> dictionary = new HashMap<>(1000);
+    private final Map<String, String> typeDictionary = new HashMap<>(1000);
     private FrameInfo[] frames;
     private String type;
     private String specialArgs;

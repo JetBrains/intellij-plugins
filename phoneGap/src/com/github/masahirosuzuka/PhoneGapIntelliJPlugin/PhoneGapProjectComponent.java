@@ -1,5 +1,6 @@
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
+import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.externalToolsDetector.PhoneGapExecutableChecker;
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.PhoneGapSettings;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
@@ -8,7 +9,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileAdapter;
 import com.intellij.openapi.vfs.VirtualFileEvent;
@@ -34,8 +34,11 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
   @Override
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
-      if (PhoneGapUtil.isPhoneGapProject(myProject) && PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
-        excludePlatformFolders();
+      if (PhoneGapUtil.isPhoneGapProject(myProject)) {
+        if (PhoneGapSettings.getInstance().isExcludePlatformFolder()) {
+          excludePlatformFolders();
+        }
+        PhoneGapExecutableChecker.check(myProject);
       }
     });
 
@@ -111,11 +114,7 @@ public class PhoneGapProjectComponent extends AbstractProjectComponent {
   }
 
   private static Collection<String> getOldExcludedFolders(Module module, final VirtualFile root) {
-    return ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), new Condition<String>() {
-      public boolean value(final String url) {
-        return url.startsWith(root.getUrl());
-      }
-    });
+    return ContainerUtil.filter(ModuleRootManager.getInstance(module).getExcludeRootUrls(), url -> url.startsWith(root.getUrl()));
   }
 
   private static VirtualFile getContentRoot(Module module, VirtualFile root) {

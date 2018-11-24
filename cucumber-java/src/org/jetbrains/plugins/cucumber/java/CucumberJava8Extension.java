@@ -34,7 +34,7 @@ public class CucumberJava8Extension extends AbstractCucumberJavaExtension {
 
   @Override
   public List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module) {
-    final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
+    final List<AbstractStepDefinition> result = new ArrayList<>();
 
     final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
     final GlobalSearchScope javaFiles = GlobalSearchScope.getScopeRestrictedByFileTypes(dependenciesScope, JavaFileType.INSTANCE);

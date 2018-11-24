@@ -123,7 +123,7 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
   private void expectSetOneOnlineUser() throws UnknownHostException {
     User p2PUser = UserImpl.create("nick", P2PTransport.CODE);
 
-    List<String> projects = new ArrayList<String>();
+    List<String> projects = new ArrayList<>();
     projects.add("project1");
 
     OnlineUserInfo onlineUserInfo = new OnlineUserInfo(InetAddress.getByName("localhost"), PORT, projects, new UserPresence(PresenceMode.AWAY));

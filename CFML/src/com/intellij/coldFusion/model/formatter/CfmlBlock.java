@@ -120,7 +120,7 @@ public class CfmlBlock extends TemplateLanguageBlock {
       return defaultRange;
     }
 
-    LinkedList<PsiElement> elements = new LinkedList<PsiElement>(Arrays.asList(commonHtmlParent.getChildren()));
+    LinkedList<PsiElement> elements = new LinkedList<>(Arrays.asList(commonHtmlParent.getChildren()));
     while (!elements.isEmpty()) {
       PsiElement e = elements.remove();
       if (!ArrayUtil.contains(e.getNode().getElementType(), WHITESPACE)) {

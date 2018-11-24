@@ -35,7 +35,7 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
   @NotNull
   @Override
   public Collection<? extends AbstractTreeNode> getChildren() {
-    return new ArrayList<AbstractTreeNode>();
+    return new ArrayList<>();
   }
 
   @Override

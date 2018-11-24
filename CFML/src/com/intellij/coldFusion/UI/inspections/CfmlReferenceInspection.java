@@ -38,15 +38,12 @@ import static com.intellij.codeInspection.ProblemHighlightType.WEAK_WARNING;
  * Date: 17.02.2009
  */
 public class CfmlReferenceInspection extends CfmlInspectionBase {
-  private static final Map<String, Condition<PsiElement>> myDictionary = new HashMap<String, Condition<PsiElement>>();
+  private static final Map<String, Condition<PsiElement>> myDictionary = new HashMap<>();
 
   static {
-    myDictionary.put("arguments", new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement psiElement) {
-        CfmlFunction parentOfType = PsiTreeUtil.getParentOfType(psiElement, CfmlFunction.class);
-        return parentOfType != null;
-      }
+    myDictionary.put("arguments", psiElement -> {
+      CfmlFunction parentOfType = PsiTreeUtil.getParentOfType(psiElement, CfmlFunction.class);
+      return parentOfType != null;
     });
   }
 

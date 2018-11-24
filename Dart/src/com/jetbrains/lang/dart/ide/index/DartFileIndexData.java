@@ -9,13 +9,12 @@ import java.util.List;
 import java.util.Map;
 
 public class DartFileIndexData {
-  private List<String> myClassNames = new ArrayList<String>();
-  private List<DartImportOrExportInfo> myImportAndExportInfos = new ArrayList<DartImportOrExportInfo>();
-  private Map<String, DartComponentInfo> myComponentInfoMap = new THashMap<String, DartComponentInfo>();
-  final Map<String, List<DartComponentInfo>> myInheritorsMap = new THashMap<String, List<DartComponentInfo>>();
-  @NotNull private String myLibraryName;
-  private List<String> myPartUris = new ArrayList<String>();
-  private List<String> mySymbols = new ArrayList<String>();
+  private List<String> myClassNames = new ArrayList<>();
+  private List<DartImportOrExportInfo> myImportAndExportInfos = new ArrayList<>();
+  private Map<String, DartComponentInfo> myComponentInfoMap = new THashMap<>();
+  private String myLibraryName;
+  private List<String> myPartUris = new ArrayList<>();
+  private List<String> mySymbols = new ArrayList<>();
   private boolean myIsPart;
 
   public List<String> getClassNames() {
@@ -44,19 +43,6 @@ public class DartFileIndexData {
 
   public void addImportInfo(final @NotNull DartImportOrExportInfo importInfo) {
     myImportAndExportInfos.add(importInfo);
-  }
-
-  public Map<String, List<DartComponentInfo>> getInheritorsMap() {
-    return myInheritorsMap;
-  }
-
-  public void addInheritor(@NotNull String className, DartComponentInfo inheritor) {
-    List<DartComponentInfo> list = myInheritorsMap.get(className);
-    if (list == null) {
-      list = new ArrayList<DartComponentInfo>();
-      myInheritorsMap.put(className, list);
-    }
-    list.add(inheritor);
   }
 
   @NotNull

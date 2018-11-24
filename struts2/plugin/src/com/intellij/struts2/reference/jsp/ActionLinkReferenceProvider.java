@@ -89,7 +89,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
       return null;
     }
 
-    return new PathReference(path, new ConstantFunction<PathReference, Icon>(Struts2Icons.Action)); /*{
+    return new PathReference(path, new ConstantFunction<>(Struts2Icons.Action)); /*{
 TODO not needed so far ?!
    public PsiElement resolve() {
         return action.getXmlTag();
@@ -133,11 +133,7 @@ TODO not needed so far ?!
     }
 
     public PsiElement resolve() {
-      final String ourActionExtension = ContainerUtil.find(actionExtensions, new Condition<String>() {
-        public boolean value(final String s) {
-          return StringUtil.endsWith(fullActionPath, s);
-        }
-      });
+      final String ourActionExtension = ContainerUtil.find(actionExtensions, s -> StringUtil.endsWith(fullActionPath, s));
       if (ourActionExtension == null) {
         return null;
       }
@@ -160,7 +156,7 @@ TODO not needed so far ?!
       final String firstExtension = actionExtensions.get(0);
 
       final List<Action> actionList = strutsModel.getActionsForNamespace(namespace);
-      final List<Object> variants = new ArrayList<Object>(actionList.size());
+      final List<Object> variants = new ArrayList<>(actionList.size());
       for (final Action action : actionList) {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {

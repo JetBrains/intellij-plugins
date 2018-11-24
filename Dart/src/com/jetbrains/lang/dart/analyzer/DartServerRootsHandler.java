@@ -18,6 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import com.intellij.util.io.URLUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.sdk.DartConfigurable;
@@ -35,15 +36,15 @@ import java.util.Set;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartServerRootsHandler {
-  private final Set<Project> myTrackedProjects = new THashSet<Project>();
-  private final List<String> myIncludedRoots = new SmartList<String>();
-  private final List<String> myExcludedRoots = new SmartList<String>();
-  private final Map<String, String> myPackageRoots = new THashMap<String, String>();
+  private final Set<Project> myTrackedProjects = new THashSet<>();
+  private final List<String> myIncludedRoots = new SmartList<>();
+  private final List<String> myExcludedRoots = new SmartList<>();
+  private final Map<String, String> myPackageRoots = new THashMap<>();
 
   public DartServerRootsHandler() {
     // ProjectManagerListener.projectClosed() is not called in unittest mode, that's why ProjectLifecycleListener is used - it is called always
     final MessageBusConnection busConnection = ApplicationManager.getApplication().getMessageBus().connect();
-    busConnection.subscribe(ProjectLifecycleListener.TOPIC, new ProjectLifecycleListener.Adapter() {
+    busConnection.subscribe(ProjectLifecycleListener.TOPIC, new ProjectLifecycleListener() {
       @Override
       public void afterProjectClosed(@NotNull final Project project) {
         if (myTrackedProjects.remove(project)) {
@@ -94,9 +95,9 @@ public class DartServerRootsHandler {
       DartAnalysisServerService.getInstance().stopServer();
     }
 
-    final List<String> newIncludedRoots = new SmartList<String>();
-    final List<String> newExcludedRoots = new SmartList<String>();
-    final Map<String, String> newPackageRoots = new SmartHashMap<String, String>();
+    final List<String> newIncludedRoots = new SmartList<>();
+    final List<String> newExcludedRoots = new SmartList<>();
+    final Map<String, String> newPackageRoots = new SmartHashMap<>();
 
     if (sdk != null) {
       for (Project project : myTrackedProjects) {
@@ -112,11 +113,14 @@ public class DartServerRootsHandler {
           final Set<String> excludedPackageSymlinkUrls = getExcludedPackageSymlinkUrls(module);
 
           for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
-            newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntry.getUrl())));
+            final String contentEntryUrl = contentEntry.getUrl();
+            if (contentEntryUrl.startsWith(URLUtil.FILE_PROTOCOL + URLUtil.SCHEME_SEPARATOR)) {
+              newIncludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentEntryUrl)));
 
-            for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
-              if (!excludedPackageSymlinkUrls.contains(excludedUrl)) {
-                newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
+              for (String excludedUrl : contentEntry.getExcludeFolderUrls()) {
+                if (excludedUrl.startsWith(contentEntryUrl) && !excludedPackageSymlinkUrls.contains(excludedUrl)) {
+                  newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
+                }
               }
             }
           }
@@ -138,7 +142,7 @@ public class DartServerRootsHandler {
   }
 
   private static Set<String> getExcludedPackageSymlinkUrls(@NotNull final Module module) {
-    final Set<String> result = new THashSet<String>();
+    final Set<String> result = new THashSet<>();
 
     final Collection<VirtualFile> pubspecYamlFiles =
       FilenameIndex.getVirtualFilesByName(module.getProject(), PUBSPEC_YAML, module.getModuleContentScope());

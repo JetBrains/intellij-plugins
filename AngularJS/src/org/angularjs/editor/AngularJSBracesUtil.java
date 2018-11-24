@@ -20,8 +20,8 @@ public class AngularJSBracesUtil {
   public static final String DEFAULT_START = "{{";
   public static final String DEFAULT_END = "}}";
 
-  private static final Set<String> DEFAULT_CONFLICTS = new HashSet<String>(Arrays.asList("DjangoTemplate", "Jinja2", "Web2Py",
-                                                                                         "Handlebars", "Twig", "Blade"));
+  private static final Set<String> DEFAULT_CONFLICTS = new HashSet<>(Arrays.asList("DjangoTemplate", "Jinja2", "Web2Py",
+                                                                                   "Handlebars", "Twig", "Blade"));
 
   public static String getInjectionStart(Project project) {
     return getInjectionDelimiter(project, "startSymbol", DEFAULT_START);

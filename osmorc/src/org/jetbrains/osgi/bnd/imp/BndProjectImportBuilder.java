@@ -113,12 +113,7 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
     }
 
     if (myWorkspace != null) {
-      List<Project> toImport = ContainerUtil.filter(myProjects, new Condition<Project>() {
-        @Override
-        public boolean value(Project project) {
-          return isMarked(project);
-        }
-      });
+      List<Project> toImport = ContainerUtil.filter(myProjects, project1 -> isMarked(project1));
       final BndProjectImporter importer = new BndProjectImporter(project, myWorkspace, toImport);
       Module rootModule = importer.createRootModule(model);
       importer.setupProject();

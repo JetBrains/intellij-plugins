@@ -66,7 +66,7 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
       return Collections.emptyList();
     }
 
-    final List<FtlVariable> result = new ArrayList<FtlVariable>();
+    final List<FtlVariable> result = new ArrayList<>();
     result.add(new MyFtlLightVariable("stack", file, (FtlType) null));
     result.add(new MyFtlLightVariable("response", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));
     result.add(new MyFtlLightVariable("res", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));

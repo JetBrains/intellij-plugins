@@ -120,7 +120,7 @@ class MessageHistory {
   private List<LocalMessage> filterHistoryByDate(User user, Date since) {
     List<LocalMessage> list = myHistory.readMessages(user);
     if (since != null) {
-      List<LocalMessage> result = new ArrayList<LocalMessage>(list.size());
+      List<LocalMessage> result = new ArrayList<>(list.size());
       for (LocalMessage message : list) {
         if (message.getWhen().after(since)) {
           result.add(message);
@@ -207,7 +207,7 @@ class MessageHistory {
   }
 
   private synchronized Map<Date, DayHistory> getHistory() {
-    Map<Date, DayHistory> result = new HashMap<Date, DayHistory>();
+    Map<Date, DayHistory> result = new HashMap<>();
 
     for (User user : myHistory.keySet()) {
       List<LocalMessage> messages = myHistory.get(user);

@@ -22,7 +22,7 @@ class SdkEntryImpl implements SdkEntry {
   @NotNull
   private final String myName;
 
-  private final LinkedHashMap<String, DependencyTypeImpl> myDependencyTypes = new LinkedHashMap<String, DependencyTypeImpl>();
+  private final LinkedHashMap<String, DependencyTypeImpl> myDependencyTypes = new LinkedHashMap<>();
 
   public SdkEntryImpl(State state) {
     myName = StringUtil.notNullize(state.NAME);
@@ -87,7 +87,7 @@ class SdkEntryImpl implements SdkEntry {
     public String NAME;
 
     @Tag("dependencies")
-    public List<EntryState> DEPENDENCY_TYPES = new ArrayList<EntryState>();
+    public List<EntryState> DEPENDENCY_TYPES = new ArrayList<>();
   }
 
   @Tag("entry")

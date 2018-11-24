@@ -74,7 +74,7 @@ class DartPackageAwareFileReference extends FileReference {
     }
 
     if (getIndex() == 1 && PACKAGES_FOLDER_NAME.equals(getFileReferenceSet().getReference(0).getText())) {
-      final Collection<Object> result = new ArrayList<Object>(myDartResolver.getLivePackageNames());
+      final Collection<Object> result = new ArrayList<>(myDartResolver.getLivePackageNames());
       if (!result.isEmpty()) {
         Collections.addAll(result, superVariants);
         return ArrayUtil.toObjectArray(result);

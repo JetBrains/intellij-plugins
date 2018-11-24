@@ -256,7 +256,7 @@ setterDeclaration ::= setterDeclarationWithReturnType | setterDeclarationWithout
 private setterDeclarationWithReturnType    ::= metadata* ('external' | 'static')* returnType 'set' componentName formalParameterList (';' | functionBodyOrNative) {pin=5}
 private setterDeclarationWithoutReturnType ::= metadata* ('external' | 'static')*            'set' componentName formalParameterList (';' | functionBodyOrNative) {pin=4}
 
-typeParameters ::= '<' typeParameter (',' typeParameter)* '>' {pin=1}
+typeParameters ::= '<' typeParameter? (',' typeParameter)* '>' {pin=1}
 typeParameter ::= metadata* componentName ('extends' type)?
 {recoverWhile="type_parameter_recover" mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
@@ -332,13 +332,13 @@ bitwiseOperator ::= '&' | '^' | '|'
 assignmentOperator ::= '=' | '*=' | '/=' | '~/=' | '%=' | '+=' | '-=' | '<<=' | <<gtGtEq>> | '&=' | '^=' | '|=' | '??='
 equalityOperator ::= '==' | '!='
 
-formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ')'
+formalParameterList ::= '(' normalFormalParameter (',' normalFormalParameter)* (',' namedFormalParameters)? ','? ')'
                       | '(' namedFormalParameters? ')'
 
 fieldFormalParameter ::= metadata* finalConstVarVoidOrType? 'this' '.' referenceExpression formalParameterList?
 
-namedFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ']' |
-                          '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* '}'
+namedFormalParameters ::= '[' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? ']' |
+                          '{' defaultFormalNamedParameter (',' defaultFormalNamedParameter)* ','? '}'
 
 defaultFormalNamedParameter ::= normalFormalParameter (('=' | ':') expression)? {recoverWhile="default_formal_parameter_recover"}
 private default_formal_parameter_recover ::= !(')' | ',' | ']' | '}')
@@ -379,20 +379,20 @@ type ::= simpleQualifiedReferenceExpression typeArguments? {
 }
 
 typeArguments ::= '<' typeList '>'
-typeList ::= type (',' type)*
+typeList ::= type? (',' type)*
 
-block ::= '{' statements '}' {pin=1}
+block ::= '{' statements '}' {pin=1 implements="com.jetbrains.lang.dart.psi.IDartBlock"}
 
 statements ::= statement* {implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private statement ::= label* nonLabelledStatement
 
-private nonLabelledStatement ::= block // Guard to break tie with map literal.  todo why ';'?
-                               | functionDeclarationWithBody ';'?
-                               | forStatement ';'?
-                               | whileStatement ';'?
-                               | doWhileStatement ';'?
-                               | switchStatement ';'?
-                               | ifStatement ';'?
+private nonLabelledStatement ::= block // Guard to break tie with map literal.
+                               | functionDeclarationWithBody
+                               | forStatement
+                               | whileStatement
+                               | doWhileStatement
+                               | switchStatement
+                               | ifStatement
                                | rethrowStatement
                                | tryStatement
                                | breakStatement
@@ -453,7 +453,7 @@ varInit ::= '=' expression {pin=1}
 expressionList ::= expression (',' expression)*
 arguments ::= '(' argumentList? ')'
 
-argumentList ::= argumentListPart (',' argumentListPart)* {recoverWhile="argument_list_recover"}
+argumentList ::= argumentListPart (',' argumentListPart)* ','? {recoverWhile="argument_list_recover"}
 private argument_list_recover ::= !(')')
 private argumentListPart ::= namedArgument | expression {recoverWhile="argument_list_part_recover"}
 private argument_list_part_recover ::= !(')' | ',')
@@ -606,6 +606,7 @@ mapLiteralEntry ::= expression ':' expression {recoverWhile="map_literal_entry_r
 private map_literal_entry_recover ::= !(',' | '}')
 
 functionExpression ::= formalParameterList functionExpressionBody
+{mixin="com.jetbrains.lang.dart.psi.impl.DartFunctionExpressionBase"}
 functionSignature ::= metadata* functionDeclarationPrivate
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private functionDeclarationPrivate ::= returnType componentName formalParameterList | componentName formalParameterList // todo remove, use functionSignature as in spec
@@ -623,5 +624,6 @@ functionExpressionBody ::= <<arrowBodyWrapper>> | <<blockBodyWrapper>>
 //functionExpressionBody ::= arrowBody | blockBody
 
 private arrowBody ::= ('async' '*'? | 'sync' '*'?)? '=>' expression {pin=2}
-private blockBody ::= ('async' '*'? | 'sync' '*'?)? block
+private blockBody ::= ('async' '*'? | 'sync' '*'?)? lazyParseableBlock
+private lazyParseableBlock ::= <<lazyParseableBlockImpl>>
 

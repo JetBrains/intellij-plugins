@@ -1,6 +1,6 @@
 <idea-plugin version="2" url="https://github.com/JetBrains/intellij-plugins/tree/master/AngularJS">
   <name>AngularJS</name>
-  <description>Support for AngularJS</description>
+  <description>Support for AngularJS and Angular 2</description>
   <vendor>johnlindquist, JetBrains</vendor>
 
   <depends>JavaScript</depends>
@@ -35,6 +35,8 @@
     <stubIndex implementation="org.angularjs.index.AngularFilterIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularSymbolIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularUiRouterStatesIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularUiRouterGenericStatesIndex"/>
+    <stubIndex implementation="org.angularjs.index.AngularGenericModulesIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularTemplateCacheIndex"/>
     <stubIndex implementation="org.angularjs.index.AngularInjectionDelimiterIndex"/>
     <fileBasedIndex implementation="org.angularjs.index.AngularUiRouterViewsIndex"/>
@@ -76,6 +78,9 @@
     <directoryProjectGenerator implementation="org.angularjs.AngularJSProjectGenerator"/>
     <directoryProjectGenerator implementation="org.angularjs.cli.AngularCLIProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
+    <directoryProjectConfigurator implementation="org.angularjs.cli.AngularJSProjectConfigurator"
+                                  order="after PlatformProjectConfigurator"/>
+    <framework.detector implementation="org.angularjs.cli.AngularJSFrameworkDetector"/>
 
     <localInspection implementationClass="org.angularjs.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
                      groupName="AngularJS" enabledByDefault="true" level="WARNING" language="HTML"/>
@@ -89,4 +94,12 @@
     <dialectSpecificHandlersFactory language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSSpecificHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSLanguageConfigurableProvider"/>
   </extensions>
+
+  <actions>
+    <action class="org.angularjs.cli.actions.AngularCliGenerateAction" id="angularCliGenerate"
+            text="Angular CLI..." description="Generates new code from AngularCLI blueprints"
+            icon="/icons/angular2.png">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
+    </action>
+  </actions>
 </idea-plugin>

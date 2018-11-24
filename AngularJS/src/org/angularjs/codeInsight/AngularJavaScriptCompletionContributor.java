@@ -3,11 +3,11 @@ package org.angularjs.codeInsight;
 import com.intellij.codeInsight.completion.CompletionContributor;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavascriptLanguage;
+import com.intellij.lang.javascript.completion.JSCompletionUtil;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
@@ -63,7 +63,7 @@ public class AngularJavaScriptCompletionContributor extends CompletionContributo
       if (comment != null) {
         builder = builder.withTailText(comment, true);
       }
-      final LookupElement item = PrioritizedLookupElement.withPriority(builder, JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY);
+      final LookupElement item = JSCompletionUtil.withJSLookupPriority(builder, JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY);
       result.addElement(item);
     }
   }

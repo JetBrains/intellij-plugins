@@ -99,9 +99,9 @@ public class DartGeneratorPeer implements WebProjectGenerator.GeneratorPeer<Dart
 
     // now setup controls
     DartSdkUtil.initDartSdkAndDartiumControls(null, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
-                                              new Computable.PredefinedValueComputable<ChromeSettings>(myDartiumSettingsCurrent),
+                                              new Computable.PredefinedValueComputable<>(myDartiumSettingsCurrent),
                                               myDartiumSettingsButton, myCheckedModeCheckBox,
-                                              new Computable.PredefinedValueComputable<Boolean>(false));
+                                              new Computable.PredefinedValueComputable<>(false));
 
     final boolean checkedMode = dartiumInitial == null || DartiumUtil.isCheckedMode(myDartiumSettingsCurrent.getEnvironmentVariables());
     myCheckedModeCheckBox.setSelected(checkedMode);

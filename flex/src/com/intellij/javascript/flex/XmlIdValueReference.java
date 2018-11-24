@@ -53,7 +53,7 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
     private final Key<CachedValue<List<PsiElement>>> ourCachedIdsValueKey = Key.create("mxml.id.cached.value");
 
     protected List<PsiElement> doCompute(PsiFile file) {
-      final List<PsiElement> result = new ArrayList<PsiElement>();
+      final List<PsiElement> result = new ArrayList<>();
 
       file.accept(new XmlRecursiveElementVisitor(true) {
         @Override
@@ -82,7 +82,7 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
 
   @Nullable
   public PsiElement resolve() {
-    final Ref<PsiElement> result = new Ref<PsiElement>();
+    final Ref<PsiElement> result = new Ref<>();
     process(new PsiElementProcessor<PsiElement>() {
       final String canonicalText = getCanonicalText();
 
@@ -101,7 +101,7 @@ public class XmlIdValueReference extends BasicAttributeValueReference {
 
   @NotNull
   public Object[] getVariants() {
-    final List<String> result = new LinkedList<String>();
+    final List<String> result = new LinkedList<>();
 
     process(new PsiElementProcessor<PsiElement>() {
       public boolean execute(@NotNull final PsiElement element) {

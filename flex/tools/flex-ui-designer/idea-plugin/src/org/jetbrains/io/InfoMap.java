@@ -71,7 +71,7 @@ public class InfoMap<E,I extends Info<E>> implements Disposable {
   }
 
   public void remove(int[] ids, @Nullable Consumer<I> removedValueConsumer) {
-    elements.retainEntries(new RetainCondition<E, I>(ids, removedValueConsumer));
+    elements.retainEntries(new RetainCondition<>(ids, removedValueConsumer));
   }
 
   public void remove(TObjectObjectProcedure<E, I> filter) {

@@ -8,6 +8,6 @@ package com.intellij.lang.javascript.generation;
 public class JavaScriptGenerateEventHandlerAction extends ActionScriptBaseJSGenerateAction {
 
   protected BaseJSGenerateHandler getGenerateHandler() {
-    return new JavaScriptGenerateEventHandler();
+    return new ActionScriptGenerateEventHandler();
   }
 }

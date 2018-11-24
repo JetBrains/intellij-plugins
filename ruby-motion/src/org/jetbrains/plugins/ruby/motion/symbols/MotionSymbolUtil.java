@@ -39,11 +39,11 @@ public class MotionSymbolUtil {
   private static final Set<String> FLOAT_TYPES;
   private static final Set<String> INT_TYPES;
   static {
-    final HashSet<String> floatTypes = new HashSet<String>();
+    final HashSet<String> floatTypes = new HashSet<>();
     Collections.addAll(floatTypes, "float", "double", "Float32", "Float64", "CGFloat");
     FLOAT_TYPES = Collections.unmodifiableSet(floatTypes);
 
-    final HashSet<String> intTypes = new HashSet<String>();
+    final HashSet<String> intTypes = new HashSet<>();
     Collections.addAll(intTypes, "int", "short", "char", "long", "long long", "Byte", "SignedByte", "NSInteger", "NSUInteger", "size_t");
     INT_TYPES = Collections.unmodifiableSet(intTypes);
   }
@@ -57,7 +57,7 @@ public class MotionSymbolUtil {
   public static List<RTypedSyntheticSymbol> createSelectorSymbols(@NotNull final Module module,
                                                                   @Nullable final MotionClassSymbol parent,
                                                                   final Function function) {
-    final List<RTypedSyntheticSymbol> result = new ArrayList<RTypedSyntheticSymbol>();
+    final List<RTypedSyntheticSymbol> result = new ArrayList<>();
     for (String name : getSelectorNames(function)) {
       result.add(createFunctionSymbol(module, parent, function, name));
     }
@@ -150,7 +150,7 @@ public class MotionSymbolUtil {
   }
 
   public static List<String> getSelectorNames(Function function) {
-    final List<String> names = new ArrayList<String>();
+    final List<String> names = new ArrayList<>();
     names.add(getFunctionName(function));
     final String name = function.getName();
     final int argsSize = function.getArguments().size();
@@ -258,7 +258,7 @@ public class MotionSymbolUtil {
     }
 
     private void processClasses(Collection<Framework> frameworks, Set<Symbol> symbols) {
-      final MultiMap<String, Class> classesMap = new MultiMap<String, Class>();
+      final MultiMap<String, Class> classesMap = new MultiMap<>();
       for (Framework framework : frameworks) {
         for (Class clazz : framework.getClasses()) {
           classesMap.putValue(clazz.getName(), clazz);
@@ -272,7 +272,7 @@ public class MotionSymbolUtil {
 
     public Set<Symbol> getSymbols() {
       if (mySymbols == null) {
-        final Set<Symbol> symbols = new LinkedHashSet<Symbol>();
+        final Set<Symbol> symbols = new LinkedHashSet<>();
         processMotionSymbols(symbols);
         mySymbols = symbols;
       }

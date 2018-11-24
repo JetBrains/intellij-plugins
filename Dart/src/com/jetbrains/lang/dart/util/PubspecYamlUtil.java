@@ -69,7 +69,7 @@ public class PubspecYamlUtil {
                                                              @NotNull final VirtualFile pubspecYamlFile,
                                                              @NotNull final PairConsumer<String, VirtualFile> pathPackageNameAndDirConsumer) {
 
-    processInProjectPathPackagesRecursively(project, pubspecYamlFile, new THashSet<VirtualFile>(), pathPackageNameAndDirConsumer);
+    processInProjectPathPackagesRecursively(project, pubspecYamlFile, new THashSet<>(), pathPackageNameAndDirConsumer);
   }
 
   private static void processInProjectPathPackagesRecursively(@NotNull final Project project,

@@ -18,7 +18,7 @@ import static com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors.*;
 public class DartColorsAndFontsPage implements ColorSettingsPage {
   private static final AttributesDescriptor[] ATTRS;
 
-  private static final Map<String, TextAttributesKey> PREVIEW_TAGS = new HashMap<String, TextAttributesKey>();
+  private static final Map<String, TextAttributesKey> PREVIEW_TAGS = new HashMap<>();
   private static final String PREVIEW_TEXT =
     "<DART_KEYWORD>library</DART_KEYWORD> <DART_LIBRARY_NAME>libraryName</DART_LIBRARY_NAME>;\n" +
     "<DART_KEYWORD>import</DART_KEYWORD> \"dart:html\" <DART_KEYWORD>as</DART_KEYWORD> <DART_IMPORT_PREFIX>html</DART_IMPORT_PREFIX>;\n" +

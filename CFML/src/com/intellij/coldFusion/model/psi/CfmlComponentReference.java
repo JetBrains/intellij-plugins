@@ -124,7 +124,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
    * @return
    */
   public static Collection<CfmlComponent> resolveFromQualifiedName(String componentQualifiedName, @NotNull CfmlFile originalFile) {
-    List<CfmlComponent> result = new ArrayList<CfmlComponent>();
+    List<CfmlComponent> result = new ArrayList<>();
 
     if (componentQualifiedName == null) {
       return result;
@@ -347,7 +347,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
                                        @Nullable CfmlComponentReference reference,
                                        final boolean forceQualify
                                        ) {
-    Collection<Object> variants = new THashSet<Object>();
+    Collection<Object> variants = new THashSet<>();
 
     String directoryName = "";
     if (text.contains(".")) {

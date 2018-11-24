@@ -98,7 +98,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     myAfterCommitRunnable = null;
 
-    myCompletionPerformer = () -> FlexCompletionTest.super.complete();
+    myCompletionPerformer = () -> super.complete();
   }
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -158,7 +158,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
           myFile = injectedPsi;
         }
 
-        FlexCompletionTest.super.complete();
+        super.complete();
 
         myEditor = savedEditor;
         myFile = savedFile;
@@ -932,8 +932,8 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testTwoCompletions() throws Exception {
     myCompletionPerformer = () -> {
-      FlexCompletionTest.super.complete();
-      FlexCompletionTest.super.complete();
+      super.complete();
+      super.complete();
     };
     mxmlTest();
   }
@@ -943,7 +943,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     myCompletionPerformer = () -> {
       final int offset = myEditor.getCaretModel().getOffset();
 
-      FlexCompletionTest.super.complete();
+      super.complete();
 
       assertEquals("\n" + "    var v = myButtonOne;\n" + "  ", getEditor().getDocument().getText());
 
@@ -952,7 +952,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
       myEditor.getCaretModel().moveToOffset(offset);
 
-      FlexCompletionTest.super.complete();
+      super.complete();
     };
     mxmlTest();
   }
@@ -1042,7 +1042,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
       for (Map.Entry<Integer, String> entry : map.entrySet()) {
         myItems = null;
         getEditor().getCaretModel().moveToOffset(entry.getKey());
-        FlexCompletionTest.super.complete();
+        super.complete();
         assertNull(myItems);
       }
     };

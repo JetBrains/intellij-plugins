@@ -42,8 +42,8 @@ public class CoverageReport {
   }
 
   private static List<LineHits> doMerge(@NotNull List<LineHits> aList, @NotNull List<LineHits> bList) {
-    PeekingIterator<LineHits> ai = new PeekingIterator<LineHits>(aList.iterator());
-    PeekingIterator<LineHits> bi = new PeekingIterator<LineHits>(bList.iterator());
+    PeekingIterator<LineHits> ai = new PeekingIterator<>(aList.iterator());
+    PeekingIterator<LineHits> bi = new PeekingIterator<>(bList.iterator());
     List<LineHits> out = Lists.newArrayList();
     while (ai.hasNext() && bi.hasNext()) {
       final LineHits x;
@@ -95,7 +95,7 @@ public class CoverageReport {
     if (unique) {
       return;
     }
-    List<LineHits> out = new ArrayList<LineHits>(report.size());
+    List<LineHits> out = new ArrayList<>(report.size());
     LineHits prev = null;
     for (LineHits cur : report) {
       if (prev != null && prev.getLineNumber() == cur.getLineNumber()) {

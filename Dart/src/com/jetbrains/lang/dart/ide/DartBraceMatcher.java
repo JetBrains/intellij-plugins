@@ -5,6 +5,7 @@ import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.jetbrains.lang.dart.DartTokenTypes;
+import com.jetbrains.lang.dart.DartTokenTypesSets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,7 @@ public class DartBraceMatcher implements PairedBraceMatcher {
 
   @Override
   public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, @Nullable IElementType contextType) {
-    return true;
+    return contextType == null || !DartTokenTypesSets.STRINGS.contains(contextType);
   }
 
   @Override

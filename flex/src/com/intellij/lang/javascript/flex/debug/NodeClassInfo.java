@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.util.Iconable;
@@ -56,17 +56,17 @@ public class NodeClassInfo {
     final JSAttributeList classAttributes = jsClass.getAttributeList();
     final boolean dynamic = classAttributes != null && classAttributes.hasModifier(JSAttributeList.ModifierType.DYNAMIC);
 
-    final Map<String, Icon> ownStaticFields = new THashMap<String, Icon>();
-    final Map<String, Icon> ownStaticProperties = new THashMap<String, Icon>();
-    final Map<String, Icon> ownFields = new THashMap<String, Icon>();
-    final Map<String, Icon> ownProperties = new THashMap<String, Icon>();
-    final Map<String, Icon> inheritedStaticFields = new THashMap<String, Icon>();
-    final Map<String, Icon> inheritedStaticProperties = new THashMap<String, Icon>();
-    final Map<String, Icon> inheritedFields = new THashMap<String, Icon>();
-    final Map<String, Icon> inheritedProperties = new THashMap<String, Icon>();
+    final Map<String, Icon> ownStaticFields = new THashMap<>();
+    final Map<String, Icon> ownStaticProperties = new THashMap<>();
+    final Map<String, Icon> ownFields = new THashMap<>();
+    final Map<String, Icon> ownProperties = new THashMap<>();
+    final Map<String, Icon> inheritedStaticFields = new THashMap<>();
+    final Map<String, Icon> inheritedStaticProperties = new THashMap<>();
+    final Map<String, Icon> inheritedFields = new THashMap<>();
+    final Map<String, Icon> inheritedProperties = new THashMap<>();
 
     fillMapsForClass(jsClass, ownStaticFields, ownStaticProperties, ownFields, ownProperties);
-    fillMapsForSupersRecursively(jsClass, new THashSet<JSClass>(), inheritedStaticFields, inheritedStaticProperties, inheritedFields,
+    fillMapsForSupersRecursively(jsClass, new THashSet<>(), inheritedStaticFields, inheritedStaticProperties, inheritedFields,
                                  inheritedProperties);
 
     return new NodeClassInfo(normalizeIfVector(jsClass.getQualifiedName()), dynamic, ownStaticFields, ownStaticProperties, ownFields,
@@ -100,7 +100,7 @@ public class NodeClassInfo {
                                        final Map<String, Icon> staticProperties,
                                        final Map<String, Icon> fields,
                                        final Map<String, Icon> properties) {
-    for (final JSVariable variable : jsClass.getFields()) {
+    for (final JSField variable : jsClass.getFields()) {
       final JSAttributeList varAttributes = variable.getAttributeList();
       if (varAttributes != null && varAttributes.hasModifier(JSAttributeList.ModifierType.STATIC)) {
         staticFields.put(variable.getName(), variable.getIcon(Iconable.ICON_FLAG_VISIBILITY));

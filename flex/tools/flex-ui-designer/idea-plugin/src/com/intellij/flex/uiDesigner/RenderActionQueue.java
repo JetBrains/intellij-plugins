@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
 class RenderActionQueue implements Runnable {
-  private final Queue<RenderAction> queue = new Queue<RenderAction>(4);
+  private final Queue<RenderAction> queue = new Queue<>(4);
   private boolean suspended;
   // pending due to suspend
   private boolean wasPending;
@@ -94,7 +94,7 @@ class RenderActionQueue implements Runnable {
       return Comparing.equal(action.file, file) ? (T)action.result : null;
     }
 
-    final Ref<AsyncResult> result = new Ref<AsyncResult>();
+    final Ref<AsyncResult> result = new Ref<>();
     processActions(action -> {
       if (Comparing.equal(action.file, file)) {
         result.set(action.result);

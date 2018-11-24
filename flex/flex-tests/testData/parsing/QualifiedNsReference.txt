@@ -18,7 +18,7 @@ JSFile:QualifiedNsReference.js2
       PsiElement(JS:LBRACE)('{')
       PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
-  JSClass
+  ActionScriptClass
     JSAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
@@ -51,7 +51,7 @@ JSFile:QualifiedNsReference.js2
     PsiWhiteSpace('\n')
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  JSClass
+  ActionScriptClass
     JSAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')

@@ -30,7 +30,7 @@ public class DartValue extends XNamedValue {
   private final @NotNull VmValue myVmValue;
   private final boolean myIsException;
 
-  private Ref<Integer> myListOrMapChildrenAlreadyShown = new Ref<Integer>(0);
+  private Ref<Integer> myListOrMapChildrenAlreadyShown = new Ref<>(0);
 
   static final String OBJECT_OF_TYPE_PREFIX = "object of type ";
 
@@ -201,7 +201,7 @@ public class DartValue extends XNamedValue {
 
     final AtomicInteger handledResponsesAmount = new AtomicInteger(0);
 
-    final SortedList<DartValue> sortedChildren = new SortedList<DartValue>(
+    final SortedList<DartValue> sortedChildren = new SortedList<>(
       (o1, o2) -> StringUtil.naturalCompare(o1.getName(), o2.getName()));
 
     for (int listIndex = fromIndex; listIndex < fromIndex + childrenAmount; listIndex++) {

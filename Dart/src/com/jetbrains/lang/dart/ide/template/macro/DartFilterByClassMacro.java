@@ -22,17 +22,14 @@ public abstract class DartFilterByClassMacro extends Macro {
   public Result calculateResult(@NotNull Expression[] params, ExpressionContext context) {
     final PsiElement at = context.getPsiElementAtStartOffset();
     final Set<DartComponentName> variables = DartRefactoringUtil.collectUsedComponents(at);
-    final List<DartComponentName> filtered = ContainerUtil.filter(variables, new Condition<DartComponentName>() {
-      @Override
-      public boolean value(DartComponentName name) {
-        final PsiElement nameParent = name.getParent();
-        if (nameParent instanceof DartClass) {
-          return false;
-        }
-        final DartClassResolveResult result = DartResolveUtil.getDartClassResolveResult(nameParent);
-        final DartClass dartClass = result.getDartClass();
-        return dartClass != null && filter(dartClass);
+    final List<DartComponentName> filtered = ContainerUtil.filter(variables, name -> {
+      final PsiElement nameParent = name.getParent();
+      if (nameParent instanceof DartClass) {
+        return false;
       }
+      final DartClassResolveResult result = DartResolveUtil.getDartClassResolveResult(nameParent);
+      final DartClass dartClass = result.getDartClass();
+      return dartClass != null && filter(dartClass);
     });
     return filtered.isEmpty() ? null : new PsiElementResult(filtered.iterator().next());
   }

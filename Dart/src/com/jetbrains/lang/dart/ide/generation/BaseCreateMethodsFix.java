@@ -26,7 +26,7 @@ import java.util.*;
 
 abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   protected static final String DART_TEMPLATE_GROUP = "Dart";
-  private final Set<T> elementsToProcess = new LinkedHashSet<T>();
+  private final Set<T> elementsToProcess = new LinkedHashSet<>();
   protected final DartClass myDartClass;
   protected final DartGenericSpecialization specializations;
   protected PsiElement anchor = null;
@@ -131,8 +131,8 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     final Comparator<T> tComparator = (o1, o2) -> o1.getTextRange().getStartOffset() - o2.getTextRange().getStartOffset();
 
     final int size = elementsToProcess.size();
-    final LinkedHashSet<T> result = new LinkedHashSet<T>(size);
-    final List<T> objectsFromSameFile = new ArrayList<T>();
+    final LinkedHashSet<T> result = new LinkedHashSet<>(size);
+    final List<T> objectsFromSameFile = new ArrayList<>();
     PsiFile containingFile = null;
 
     for (int i = 0; i < size; ++i) {

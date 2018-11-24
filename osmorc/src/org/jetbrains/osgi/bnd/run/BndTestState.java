@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2015 JetBrains s.r.o.
+ * Copyright 2000-2016 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,9 +93,9 @@ public class BndTestState extends JavaCommandLineState {
         }
       });
     }
-    catch (Exception e) {
-      LOG.info(e);
-      throw new CantRunException(message("bnd.run.configuration.cannot.run", runFile, e.getMessage()));
+    catch (Throwable t) {
+      LOG.info(t);
+      throw new CantRunException(message("bnd.run.configuration.cannot.run", runFile, BndLaunchUtil.message(t)));
     }
 
     //noinspection InstanceofIncompatibleInterface

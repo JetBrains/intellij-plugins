@@ -61,10 +61,10 @@ public class PhoneGapPluginsView {
                                  String workDir,
                                  PhoneGapConfigurable.RepositoryStore repositoryStore,
                                  final VersionCallback callback) {
-    final Ref<PhoneGapPackageManagementService> service = new Ref<PhoneGapPackageManagementService>();
-    final Ref<String> error = new Ref<String>();
-    final Ref<String> warning = new Ref<String>();
-    final Ref<String> version = new Ref<String>();
+    final Ref<PhoneGapPackageManagementService> service = new Ref<>();
+    final Ref<String> error = new Ref<>();
+    final Ref<String> warning = new Ref<>();
+    final Ref<String> version = new Ref<>();
     try {
       PhoneGapCommandLine commandLine = checkParams(error, warning, version, path, workDir);
 

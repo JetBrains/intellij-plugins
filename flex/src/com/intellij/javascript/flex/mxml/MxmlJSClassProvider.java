@@ -36,7 +36,7 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
       protected CachedValue<XmlTag[]> compute(final XmlTag tag, final Object p) {
         return CachedValuesManager.getManager(tag.getProject()).createCachedValue(new CachedValueProvider<XmlTag[]>() {
           public Result<XmlTag[]> compute() {
-            final Collection<XmlTag> result = new ArrayList<XmlTag>();
+            final Collection<XmlTag> result = new ArrayList<>();
             tag.processElements(new PsiElementProcessor() {
               public boolean execute(@NotNull PsiElement element) {
                 if (element instanceof XmlTag) {
@@ -54,7 +54,7 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
                 return true;
               }
             }, null);
-            return new Result<XmlTag[]>(result.toArray(new XmlTag[result.size()]), tag);
+            return new Result<>(result.toArray(new XmlTag[result.size()]), tag);
           }
         }, false);
       }
@@ -126,14 +126,14 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
     final XmlTag[] directChildren = ourChildComponentsTagsCache.get(CHILD_INLINE_COMPONENTS_TAGS_KEY, rootTag, null).getValue();
     Collection<XmlTag> allChildren;
     if (recursive) {
-      allChildren = new ArrayList<XmlTag>();
+      allChildren = new ArrayList<>();
       collectComponentsTagRecursively(directChildren, allChildren);
     }
     else {
       allChildren = Arrays.asList(directChildren);
     }
 
-    Collection<XmlBackedJSClass> result = new ArrayList<XmlBackedJSClass>(allChildren.size());
+    Collection<XmlBackedJSClass> result = new ArrayList<>(allChildren.size());
     for (XmlTag tag : allChildren) {
       result.add(XmlBackedJSClassFactory.getInstance().getXmlBackedClass(tag));
     }

@@ -33,7 +33,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   private static final JSAttributeList.ModifierType[] ourModifierTypes = JSAttributeList.ModifierType.values();
 
   public AS3InterfaceStubDumper(StubElement parent) {
-    parents = new LinkedList<StubElement>();
+    parents = new LinkedList<>();
     parents.add(parent);
   }
 
@@ -51,7 +51,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
 
   @Override
   protected void processArgumentList(MethodInfo methodInfo, String parentName) {
-    parents.add(new JSParameterListStubImpl(parents.getLast()));
+    parents.add(new JSParameterListStubImpl(parents.getLast(), JSStubElementTypes.PARAMETER_LIST));
     super.processArgumentList(methodInfo, parentName);
     parents.removeLast();
   }
@@ -96,7 +96,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
 
   @Override
   public void processVariable(SlotInfo info, String indent, String attr) {
-    parents.add(new JSVarStatementStubImpl(parents.getLast()));
+    parents.add(new JSVarStatementStubImpl(parents.getLast(), JSStubElementTypes.VAR_STATEMENT));
     super.processVariable(info, indent, attr);
     String parentName = info.getParentName();
     String qName = getMultinameAsPackageName(info.name, parentName);
@@ -116,7 +116,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   @Override
   public void processClass(SlotInfo slotInfo, Abc abc, String attr, String indent) {
     parents.add(
-      new JSClassStubImpl(
+      new ActionScriptClassStubImpl(
         slotInfo.name.name,
         slotInfo.isInterfaceClass(),
         getMultinameAsPackageName(slotInfo.name, null),
@@ -142,7 +142,7 @@ class AS3InterfaceStubDumper extends AS3InterfaceDumper {
   @Override
   protected void processModifierList(MemberInfo memberInfo, String attr, String indent) {
     StringTokenizer tokenizer = new StringTokenizer(attr, " ");
-    List<JSAttributeList.ModifierType> modifiers = new SmartList<JSAttributeList.ModifierType>();
+    List<JSAttributeList.ModifierType> modifiers = new SmartList<>();
     JSAttributeList.AccessType accessType = null;
     String ns = null;
 

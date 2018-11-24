@@ -33,12 +33,6 @@ public class MayaSettingsConfigurable implements SearchableConfigurable, Configu
     return "maya";
   }
 
-  @Override
-  public Runnable enableSearch(String option) {
-    return null;
-  }
-
-
   @Nls
   @Override
   public String getDisplayName() {

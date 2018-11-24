@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
+import static com.jetbrains.lang.dart.DartTokenTypesSets.BLOCKS;
 
 public class DartBlock extends AbstractBlock implements BlockWithParent {
   public static final List<DartBlock> DART_EMPTY = Collections.emptyList();
@@ -62,7 +63,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
     if (isLeaf()) {
       return EMPTY;
     }
-    final ArrayList<Block> tlChildren = new ArrayList<Block>();
+    final ArrayList<Block> tlChildren = new ArrayList<>();
     for (ASTNode childNode = getNode().getFirstChildNode(); childNode != null; childNode = childNode.getTreeNext()) {
       if (FormatterUtil.containsWhiteSpacesOnly(childNode)) continue;
       final DartBlock childBlock = new DartBlock(childNode, createChildWrap(childNode), createChildAlignment(childNode), mySettings);
@@ -84,7 +85,8 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
 
   @Nullable
   protected Alignment createChildAlignment(ASTNode child) {
-    if (child.getElementType() != LPAREN && child.getElementType() != BLOCK) {
+    final IElementType type = child.getElementType();
+    if (type != LPAREN && !BLOCKS.contains(type)) {
       return myAlignmentProcessor.createChildAlignment();
     }
     return null;
@@ -166,7 +168,7 @@ public class DartBlock extends AbstractBlock implements BlockWithParent {
 
   public List<DartBlock> getSubDartBlocks() {
     if (mySubDartBlocks == null) {
-      mySubDartBlocks = new ArrayList<DartBlock>();
+      mySubDartBlocks = new ArrayList<>();
       for (Block block : getSubBlocks()) {
         mySubDartBlocks.add((DartBlock)block);
       }

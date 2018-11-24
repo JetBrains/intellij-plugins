@@ -131,13 +131,13 @@ public class VmServiceWrapper implements Disposable {
     // Just to make sure that the main isolate is not handled twice, both from handleDebuggerConnected() and DartVmServiceListener.received(PauseStart)
     if (myIsolatesInfo.addIsolate(isolateRef)) {
       addRequest(() -> myVmService.setExceptionPauseMode(isolateRef.getId(),
-                                                     ExceptionPauseMode.Unhandled,
-                                                     new VmServiceConsumers.SuccessConsumerWrapper() {
-                                          @Override
-                                          public void received(Success response) {
-                                            setInitialBreakpointsAndResume(isolateRef.getId());
-                                          }
-                                        }));
+                                                         ExceptionPauseMode.Unhandled,
+                                                         new VmServiceConsumers.SuccessConsumerWrapper() {
+                                                           @Override
+                                                           public void received(Success response) {
+                                                             setInitialBreakpointsAndResume(isolateRef.getId());
+                                                           }
+                                                         }));
     }
   }
 
@@ -204,9 +204,10 @@ public class VmServiceWrapper implements Disposable {
     }
 
     addRequest(() -> {
-      final String uri = myDebugProcess.getUriForFile(position.getFile());
       final int line = position.getLine() + 1;
-      myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
+      for (String uri : myDebugProcess.getUrisForFile(position.getFile())) {
+        myVmService.addBreakpointWithScriptUri(isolateId, uri, line, consumer);
+      }
     });
   }
 
@@ -250,7 +251,7 @@ public class VmServiceWrapper implements Disposable {
       public void received(final Stack vmStack) {
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           InstanceRef exceptionToAddToFrame = exception;
-          final List<XStackFrame> result = new ArrayList<XStackFrame>(vmStack.getFrames().size());
+          final List<XStackFrame> result = new ArrayList<>(vmStack.getFrames().size());
           for (Frame vmFrame : vmStack.getFrames()) {
             final DartVmServiceStackFrame stackFrame =
               new DartVmServiceStackFrame(myDebugProcess, isolateId, vmFrame, exceptionToAddToFrame);

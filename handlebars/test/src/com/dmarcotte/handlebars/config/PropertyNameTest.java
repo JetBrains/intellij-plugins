@@ -34,7 +34,7 @@ public class PropertyNameTest {
 
   @Parameterized.Parameters
   public static List<Object[]> parameters() {
-    List<Object[]> testParameters = new ArrayList<Object[]>();
+    List<Object[]> testParameters = new ArrayList<>();
     for (PropertyTestDefinition propertyTestDefinition : PROPERTY_TEST_DEFINITIONS) {
       testParameters.add(new Object[]{propertyTestDefinition});
     }

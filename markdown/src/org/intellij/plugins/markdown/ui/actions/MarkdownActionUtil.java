@@ -82,12 +82,9 @@ public class MarkdownActionUtil {
                                                  @NotNull PsiElement element2,
                                                  @NotNull final IElementType elementType) {
     final PsiElement base = PsiTreeUtil.findCommonParent(element1, element2);
-    return PsiTreeUtil.findFirstParent(base, false, new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement element) {
-        final ASTNode node = element.getNode();
-        return node != null && node.getElementType() == elementType;
-      }
+    return PsiTreeUtil.findFirstParent(base, false, element -> {
+      final ASTNode node = element.getNode();
+      return node != null && node.getElementType() == elementType;
     });
   }
 }

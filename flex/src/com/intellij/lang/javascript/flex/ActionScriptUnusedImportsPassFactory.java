@@ -64,7 +64,7 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
         file instanceof JSFile && !(file instanceof PsiCompiledElement) && file.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
        ) {
       final HighlightDisplayKey key = HighlightDisplayKey.find(JSUnusedLocalSymbolsInspection.SHORT_NAME);
-      if (InspectionProjectProfileManager.getInstance(file.getProject()).getInspectionProfile().isToolEnabled(key, file)) {
+      if (InspectionProjectProfileManager.getInstance(file.getProject()).getCurrentProfile().isToolEnabled(key, file)) {
         return new ActionScriptUnusedImportsHighlightingPass(file, editor);
       }
     }
@@ -138,7 +138,7 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
 
     private List<HighlightInfo> getHighlights() {
       final AnnotationHolder annotationHolder = new AnnotationHolderImpl(new AnnotationSession(myFile));
-      final List<HighlightInfo> infos = new ArrayList<HighlightInfo>(importStatements.size() + fqnsToReplaceWithShortName.size());
+      final List<HighlightInfo> infos = new ArrayList<>(importStatements.size() + fqnsToReplaceWithShortName.size());
       IntentionAction action = createOptimizeImportsIntention();
 
       createHighlights(importStatements, annotationHolder, action, JSBundle.message("javascript.validation.unused.import"), infos,

@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighter;
-import com.jetbrains.lang.dart.psi.DartBlock;
+import com.jetbrains.lang.dart.psi.IDartBlock;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,7 +57,7 @@ public abstract class DartTemplateContextType extends TemplateContextType {
 
     @Override
     protected boolean isInContext(@NotNull PsiElement element) {
-      return PsiTreeUtil.getNonStrictParentOfType(element, DartBlock.class, PsiComment.class) instanceof DartBlock;
+      return PsiTreeUtil.getNonStrictParentOfType(element, IDartBlock.class, PsiComment.class) instanceof IDartBlock;
     }
   }
 }

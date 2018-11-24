@@ -63,10 +63,10 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
     if (file == null || editor == null) return EMPTY_ARRAY;
 
 
-    List<AnAction> result = new ArrayList<AnAction>();
+    List<AnAction> result = new ArrayList<>();
     final UserModel userModel = getUserModel();
     String[] groups = userModel.getGroups();
-    List<String> groupsWithUsers = new ArrayList<String>();
+    List<String> groupsWithUsers = new ArrayList<>();
     for (String group : groups) {
       if (userModel.getUsers(group).length > 0) {
         groupsWithUsers.add(group);
@@ -90,7 +90,7 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
   }
 
   private ActionGroup createGroupWithUsersActionGroup(final String group, final UserModel userModel, final VirtualFile file, final Editor editor) {
-    List<AnAction> users = new ArrayList<AnAction>();
+    List<AnAction> users = new ArrayList<>();
     User[] groupUsers = userModel.getUsers(group);
     fillWithUserActions(groupUsers, users, file, editor);
     final AnAction[] actions = users.toArray(new AnAction[users.size()]);

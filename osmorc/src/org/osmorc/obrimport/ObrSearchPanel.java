@@ -89,7 +89,7 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
           case Maven:
             List result = null;
             try {
-              result = Arrays.asList(selectedObr.queryForMavenArtifact(_queryString.getText(), ObrSearchPanel.this));
+              result = Arrays.asList(selectedObr.queryForMavenArtifact(_queryString.getText(), this));
               setResults(result);
             }
             catch (final IOException e1) {

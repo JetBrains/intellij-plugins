@@ -74,7 +74,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   public DartProblemsTableModel(@NotNull final Project project, @NotNull final DartProblemsFilter filter) {
     myProject = project;
     myFilter = filter;
-    myItems = new ArrayList<DartProblem>();
+    myItems = new ArrayList<>();
     setColumnInfos(new ColumnInfo[]{createDescriptionColumn(), createLocationColumn()});
     setItems(myItems);
     setSortable(true);
@@ -259,7 +259,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
                                                                 @Nullable final DartProblem oldSelectedProblem) {
     DartProblem newSelectedProblem = null;
 
-    final List<DartProblem> problemsToAdd = new ArrayList<DartProblem>();
+    final List<DartProblem> problemsToAdd = new ArrayList<>();
     for (Map.Entry<String, List<AnalysisError>> entry : filePathToErrors.entrySet()) {
       final String filePath = entry.getKey();
       final List<AnalysisError> errors = entry.getValue();

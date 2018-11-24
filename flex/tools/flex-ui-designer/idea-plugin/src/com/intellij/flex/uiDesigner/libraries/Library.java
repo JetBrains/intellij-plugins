@@ -22,7 +22,7 @@ public class Library extends Info<VirtualFile> {
   public AssetCounter assetCounter;
 
   // en_US => {"layout", "components"}
-  public final Map<String, THashSet<String>> resourceBundles = new THashMap<String, THashSet<String>>();
+  public final Map<String, THashSet<String>> resourceBundles = new THashMap<>();
 
   Library(@NotNull VirtualFile file) {
     super(file);

@@ -70,7 +70,7 @@ public class JstdSettings {
 
   @NotNull
   public List<String> getFilesExcludedFromCoverageRec() {
-    List<String> out = new ArrayList<String>();
+    List<String> out = new ArrayList<>();
     for (String path : myFilesExcludedFromCoverage) {
       File file = new File(path);
       if (file.isDirectory()) {

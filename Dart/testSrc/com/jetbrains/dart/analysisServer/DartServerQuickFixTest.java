@@ -2,13 +2,15 @@ package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
 
@@ -17,6 +19,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 
   protected String getBasePath() {
@@ -37,9 +40,7 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
   private void doQuickFixTest(@NotNull final String intentionStartText,
                               @Nullable final VirtualFile fileUpdatedByFix,
                               boolean fixAvailable) {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-
-    final PsiFile initialFile = myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.configureByFile(getTestName(false) + ".dart");
 
     final IntentionAction quickFix = myFixture.findSingleIntention(intentionStartText);
     assertEquals(fixAvailable, quickFix.isAvailable(getProject(), getEditor(), getFile()));
@@ -67,8 +68,6 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
   }
 
   public void testCreatePartFile() throws Throwable {
-    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
-
     myFixture.configureByFile(getTestName(false) + ".dart");
 
     final IntentionAction quickFix = myFixture.findSingleIntention("Create file 'CreatePartFile_part.dart'");
@@ -86,5 +85,61 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
 
   public void testUseEqEqNull() throws Throwable {
     doQuickFixTest("Use == null instead of 'is Null'");
+  }
+
+  private void doCrLfAwareTest(@NotNull final String content, @NotNull final String intentionStartText, @NotNull final String after) {
+    final VirtualFile file = myFixture.configureByText("foo.dart", content).getVirtualFile();
+
+    // configureByText() has normalized line breaks, save once again
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        final int i = content.indexOf("<caret>");
+        VfsUtil.saveText(file, content.substring(0, i) + content.substring(i + "<caret>".length()));
+      }
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+
+    final IntentionAction quickFix = myFixture.findSingleIntention(intentionStartText);
+    ApplicationManager.getApplication().runWriteAction(() -> quickFix.invoke(getProject(), getEditor(), getFile()));
+
+    myFixture.checkResult(after);
+  }
+
+  public void testHandleCrlf1() throws Throwable {
+    final String content = "\r\n\r\n \r\r \n\n" +
+                           "class A{\r\n" +
+                           "}\r\n" +
+                           "foo() {\r\n" +
+                           "  List a = new A().<caret>bar(1, true, '');\r\n" +
+                           "}";
+    final String after = "\n\n \n\n \n\n" +
+                         "class A{\n" +
+                         "  List<caret> bar(int i, bool arg1, String s) {\n" +
+                         "  }\n" +
+                         "}\n" +
+                         "foo() {\n" +
+                         "  List a = new A().bar(1, true, '');\n" +
+                         "}";
+    doCrLfAwareTest(content, "Create method", after);
+  }
+
+  public void testHandleCrlf2() throws Throwable {
+    final String content = "\r\n\r\n \r\r \n\n" +
+                           "foo() {\r\n" +
+                           "  List a = new A().<caret>bar(1, true, '');\r\n" +
+                           "}\r\n" +
+                           "class A{\r\n" +
+                           "}";
+    final String after = "\n\n \n\n \n\n" +
+                         "foo() {\n" +
+                         "  List a = new A().bar(1, true, '');\n" +
+                         "}\n" +
+                         "class A{\n" +
+                         "  List<caret> bar(int i, bool arg1, String s) {\n" +
+                         "  }\n" +
+                         "}";
+    doCrLfAwareTest(content, "Create method", after);
   }
 }

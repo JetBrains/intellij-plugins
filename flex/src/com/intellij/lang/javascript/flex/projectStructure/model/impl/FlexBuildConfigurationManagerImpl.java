@@ -140,12 +140,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   private void updateActiveConfiguration(@Nullable final String activeName) {
     if (myConfigurations.length > 0) {
       myActiveConfiguration =
-        activeName != null ? ContainerUtil.find(myConfigurations, new Condition<FlexBuildConfigurationImpl>() {
-          @Override
-          public boolean value(FlexBuildConfigurationImpl bc) {
-            return bc.getName().equals(activeName);
-          }
-        }) : null;
+        activeName != null ? ContainerUtil.find(myConfigurations, bc -> bc.getName().equals(activeName)) : null;
       if (myActiveConfiguration == null) {
         myActiveConfiguration = myConfigurations[0];
       }
@@ -169,7 +164,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     if (myModule == null) {
       throw new IllegalStateException("Cannot load state of a dummy config manager instance");
     }
-    Collection<FlexBuildConfigurationImpl> configurations = new ArrayList<FlexBuildConfigurationImpl>(state.CONFIGURATIONS.size());
+    Collection<FlexBuildConfigurationImpl> configurations = new ArrayList<>(state.CONFIGURATIONS.size());
     for (FlexBuildConfigurationState configurationState : state.CONFIGURATIONS) {
       FlexBuildConfigurationImpl configuration = new FlexBuildConfigurationImpl();
       configuration.loadState(configurationState, myModule.getProject());
@@ -192,7 +187,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
       return new FlexBuildConfigurationImpl[]{new FlexBuildConfigurationImpl()};
     }
 
-    List<FlexBuildConfigurationImpl> configList = new ArrayList<FlexBuildConfigurationImpl>(configurations);
+    List<FlexBuildConfigurationImpl> configList = new ArrayList<>(configurations);
     for (FlexBuildConfigurationImpl configuration : configList) {
       if (StringUtil.isEmpty(configuration.getName())) {
         LOG.warn("Empty build configuration name");
@@ -200,7 +195,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
       }
     }
 
-    Set<String> names = new HashSet<String>();
+    Set<String> names = new HashSet<>();
     String duplicateName = null;
     for (FlexBuildConfiguration c : configList) {
       if (StringUtil.isEmpty(c.getName())) {
@@ -226,13 +221,13 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   }
 
   public static List<String> generateUniqueNames(List<String> names) {
-    List<String> result = new ArrayList<String>(names.size());
-    Set<String> namesBefore = new HashSet<String>();
+    List<String> result = new ArrayList<>(names.size());
+    Set<String> namesBefore = new HashSet<>();
     for (int i = 0; i < names.size(); i++) {
       String name = names.get(i);
       String newName = name;
       if (namesBefore.contains(newName)) {
-        Set<String> otherNames = new HashSet<String>(namesBefore);
+        Set<String> otherNames = new HashSet<>(namesBefore);
         otherNames.addAll(names.subList(i + 1, names.size()));
         int index = 1;
         while (true) {
@@ -249,7 +244,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   public static class State {
     @Tag("configurations")
     @AbstractCollection(surroundWithTag = false, elementTag = "configuration")
-    public List<FlexBuildConfigurationState> CONFIGURATIONS = new ArrayList<FlexBuildConfigurationState>();
+    public List<FlexBuildConfigurationState> CONFIGURATIONS = new ArrayList<>();
 
     @Property(surroundWithTag = false)
     public CompilerOptionsImpl.State myModuleLevelCompilerOptions = new CompilerOptionsImpl.State();

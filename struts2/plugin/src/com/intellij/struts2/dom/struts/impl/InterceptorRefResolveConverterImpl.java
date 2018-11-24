@@ -40,7 +40,7 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
 
   @NotNull
   public Collection<? extends InterceptorOrStackBase> getVariants(final ConvertContext context) {
-    final List<InterceptorOrStackBase> results = new SmartList<InterceptorOrStackBase>();
+    final List<InterceptorOrStackBase> results = new SmartList<>();
     final Processor<StrutsPackage> processor = strutsPackage -> {
       final List<InterceptorOrStackBase> allInterceptors = getAllInterceptors(strutsPackage);
       results.addAll(allInterceptors);
@@ -58,14 +58,10 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
       return null;
     }
 
-    final Condition<InterceptorOrStackBase> nameCondition = new Condition<InterceptorOrStackBase>() {
-      @Override
-      public boolean value(final InterceptorOrStackBase interceptorOrStackBase) {
-        return name.equals(interceptorOrStackBase.getName().getStringValue());
-      }
-    };
+    final Condition<InterceptorOrStackBase> nameCondition =
+      interceptorOrStackBase -> name.equals(interceptorOrStackBase.getName().getStringValue());
 
-    final Ref<InterceptorOrStackBase> resolveResult = new Ref<InterceptorOrStackBase>();
+    final Ref<InterceptorOrStackBase> resolveResult = new Ref<>();
     final Processor<StrutsPackage> processor = strutsPackage -> {
       final InterceptorOrStackBase result = ContainerUtil.find(getAllInterceptors(strutsPackage), nameCondition);
       if (result != null) {

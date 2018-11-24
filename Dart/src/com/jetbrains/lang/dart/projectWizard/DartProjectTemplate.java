@@ -65,7 +65,7 @@ public abstract class DartProjectTemplate {
       LOG.error("DartProjectTemplate.loadTemplatesAsync() must be called in pooled thread without read action");
     }
 
-    final List<DartProjectTemplate> templates = new ArrayList<DartProjectTemplate>();
+    final List<DartProjectTemplate> templates = new ArrayList<>();
     try {
       templates.addAll(getStagehandTemplates(sdkRoot));
     }
@@ -89,7 +89,7 @@ public abstract class DartProjectTemplate {
 
     final List<StagehandDescriptor> templates = STAGEHAND.getAvailableTemplates(sdkRoot);
 
-    ourTemplateCache = new ArrayList<DartProjectTemplate>();
+    ourTemplateCache = new ArrayList<>();
 
     for (StagehandDescriptor template : templates) {
       ourTemplateCache.add(new StagehandTemplate(STAGEHAND, template));

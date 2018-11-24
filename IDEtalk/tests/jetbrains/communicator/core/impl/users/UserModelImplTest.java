@@ -234,7 +234,7 @@ public class UserModelImplTest extends BaseTestCase {
 
   private static class MyIDEtalkListener implements IDEtalkListener {
     private String myLog;
-    private final List<IDEtalkEvent> myEvents = new ArrayList<IDEtalkEvent>();
+    private final List<IDEtalkEvent> myEvents = new ArrayList<>();
 
     public MyIDEtalkListener() {
       clear();

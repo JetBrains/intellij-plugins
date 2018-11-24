@@ -55,7 +55,7 @@ public class DartProblemsView {
   private DartProblemsViewPanel myPanel;
 
   private final Object myLock = new Object(); // use this lock to access myScheduledFilePathToErrors and myAlarm
-  private final Map<String, List<AnalysisError>> myScheduledFilePathToErrors = new THashMap<String, List<AnalysisError>>();
+  private final Map<String, List<AnalysisError>> myScheduledFilePathToErrors = new THashMap<>();
   private final Alarm myAlarm;
 
   private final Runnable myUpdateRunnable = new Runnable() {
@@ -68,7 +68,7 @@ public class DartProblemsView {
 
       final Map<String, List<AnalysisError>> filePathToErrors;
       synchronized (myLock) {
-        filePathToErrors = new THashMap<String, List<AnalysisError>>(myScheduledFilePathToErrors);
+        filePathToErrors = new THashMap<>(myScheduledFilePathToErrors);
         myScheduledFilePathToErrors.clear();
       }
 

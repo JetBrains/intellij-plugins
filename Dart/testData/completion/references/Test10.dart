@@ -1,3 +1,0 @@
-printTest() {
-  <caret>
-}

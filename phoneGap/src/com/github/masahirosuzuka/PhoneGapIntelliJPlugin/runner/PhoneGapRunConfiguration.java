@@ -79,7 +79,7 @@ public class PhoneGapRunConfiguration extends LocatableConfigurationBase {
   public boolean myPassParent = true;
 
   @NotNull
-  public Map<String, String> myEnvs = new LinkedHashMap<String, String>();
+  public Map<String, String> myEnvs = new LinkedHashMap<>();
 
   public boolean isPassParent() {
     return myPassParent;

@@ -56,12 +56,12 @@ class LibrariesData {
   private static PersistentHashMap<String, SortResult> createLibrarySetsCache(File cacheDir) throws IOException {
     final File file = new File(cacheDir, NAME_PREFIX + "librarySets");
     try {
-      return new PersistentHashMap<String, SortResult>(file, EnumeratorStringDescriptor.INSTANCE, new LibrarySetDataExternalizer());
+      return new PersistentHashMap<>(file, EnumeratorStringDescriptor.INSTANCE, new LibrarySetDataExternalizer());
     }
     catch (IOException e) {
       LogMessageUtil.LOG.info(e);
       clearCache(cacheDir);
-      return new PersistentHashMap<String, SortResult>(file, EnumeratorStringDescriptor.INSTANCE, new LibrarySetDataExternalizer());
+      return new PersistentHashMap<>(file, EnumeratorStringDescriptor.INSTANCE, new LibrarySetDataExternalizer());
     }
   }
 
@@ -105,7 +105,7 @@ class LibrariesData {
       int size = in.readInt();
       final THashMap<CharSequence, Definition> map;
       if (size != 0) {
-        map = new THashMap<CharSequence, Definition>(size, AbcTranscoder.HASHING_STRATEGY);
+        map = new THashMap<>(size, AbcTranscoder.HASHING_STRATEGY);
         while (size-- > 0) {
           map.put(in.readUTF(), null);
         }

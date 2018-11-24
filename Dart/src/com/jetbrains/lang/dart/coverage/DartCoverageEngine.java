@@ -121,7 +121,7 @@ public class DartCoverageEngine extends CoverageEngine {
   @NotNull
   @Override
   public Set<String> getQualifiedNames(@NotNull PsiFile sourceFile) {
-    Set<String> qualifiedNames = new HashSet<String>();
+    Set<String> qualifiedNames = new HashSet<>();
     qualifiedNames.add(getQName(sourceFile));
     return qualifiedNames;
   }

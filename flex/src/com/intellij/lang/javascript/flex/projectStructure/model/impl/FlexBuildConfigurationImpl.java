@@ -133,7 +133,7 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
     if (myRLMs.isEmpty()) return Collections.emptyList();
 
     final List<String> entries = StringUtil.split(myRLMs, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-    final ArrayList<RLMInfo> result = new ArrayList<RLMInfo>(entries.size());
+    final ArrayList<RLMInfo> result = new ArrayList<>(entries.size());
     for (String entry : entries) {
       final List<String> parts = StringUtil.split(entry, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
       assert parts.size() == 3 : entry;
@@ -345,11 +345,8 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
   @Nullable
   public Sdk getSdk() {
     final SdkEntry sdkEntry = myDependencies.getSdkEntry();
-    return sdkEntry == null ? null : ContainerUtil.find(FlexSdkUtils.getFlexAndFlexmojosSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return sdkEntry.getName().equals(sdk.getName());
-      }
-    });
+    return sdkEntry == null ? null : ContainerUtil.find(FlexSdkUtils.getFlexAndFlexmojosSdks(),
+                                                        sdk -> sdkEntry.getName().equals(sdk.getName()));
   }
 
   public boolean isTempBCForCompilation() {

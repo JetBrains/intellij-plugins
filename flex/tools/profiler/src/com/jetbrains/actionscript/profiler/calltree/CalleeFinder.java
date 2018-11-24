@@ -14,7 +14,7 @@ class CalleeFinder {
   * Find nodes with <code>frameName == frames[0]</code>. Node's call stack contains all <code>frames</code> in order.
   */
   static List<CallTreeNode> findCallsByFrameName(CallTreeNode root, FrameInfo[] frames) {
-    ArrayList<CallTreeNode> result = new ArrayList<CallTreeNode>();
+    ArrayList<CallTreeNode> result = new ArrayList<>();
     fillCallsByFrameName(root, ArrayUtil.reverseArray(frames), result);
     return result;
   }

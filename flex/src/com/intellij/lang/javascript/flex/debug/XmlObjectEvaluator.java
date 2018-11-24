@@ -35,7 +35,7 @@ public class XmlObjectEvaluator {
     private final XValue myValue;
     private final XFullValueEvaluator.XFullValueEvaluationCallback myCallback;
     private final FakeCompositeNode myParent;
-    private final List<FakeCompositeNode> myChildren = new ArrayList<FakeCompositeNode>();
+    private final List<FakeCompositeNode> myChildren = new ArrayList<>();
 
     private static final String XML_MARKER = " class='XML@";
     private static final String XMLLIST_MARKER = " class='XMLList'";

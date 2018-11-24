@@ -16,9 +16,9 @@ class TimeMapBuilder {
   * @return pair <cumulative time map, self time map>
   */
   static Pair<Map<FrameInfo, Long>, Map<FrameInfo, Long>> buildTimeMaps(CallTreeNode root, List<CallTreeNode> calls) {
-    Map<FrameInfo, Long> countMap = new THashMap<FrameInfo, Long>();
-    Map<FrameInfo, Long> selfCountMap = new THashMap<FrameInfo, Long>();
-    THashSet<CallTreeNode> trackedCalls = new THashSet<CallTreeNode>(calls);
+    Map<FrameInfo, Long> countMap = new THashMap<>();
+    Map<FrameInfo, Long> selfCountMap = new THashMap<>();
+    THashSet<CallTreeNode> trackedCalls = new THashSet<>(calls);
 
     for (CallTreeNode node : root.getChildren()) {
       fillTimeMaps(node, countMap, selfCountMap, trackedCalls.contains(node), trackedCalls);

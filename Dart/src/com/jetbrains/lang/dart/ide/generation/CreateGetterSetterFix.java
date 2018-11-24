@@ -20,36 +20,21 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
     GETTER(DartBundle.message("dart.fix.getter.none.found")) {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
-        return name.startsWith("_") && ContainerUtil.find(componentList, new Condition<DartComponent>() {
-          @Override
-          public boolean value(DartComponent component) {
-            return component.isGetter() && DartPresentableUtil.setterGetterName(name).equals(component.getName());
-          }
-        }) == null;
+        return name.startsWith("_") && ContainerUtil.find(componentList, component -> component.isGetter() && DartPresentableUtil.setterGetterName(name).equals(component.getName())) == null;
       }
     },
 
     SETTER(DartBundle.message("dart.fix.setter.none.found")) {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
-        return name.startsWith("_") && ContainerUtil.find(componentList, new Condition<DartComponent>() {
-          @Override
-          public boolean value(DartComponent component) {
-            return component.isSetter() && DartPresentableUtil.setterGetterName(name).equals(component.getName());
-          }
-        }) == null;
+        return name.startsWith("_") && ContainerUtil.find(componentList, component -> component.isSetter() && DartPresentableUtil.setterGetterName(name).equals(component.getName())) == null;
       }
     },
 
     GETTERSETTER(DartBundle.message("dart.fix.gettersetter.none.found")) {
       @Override
       boolean accept(final String name, List<DartComponent> componentList) {
-        return name.startsWith("_") && ContainerUtil.find(componentList, new Condition<DartComponent>() {
-          @Override
-          public boolean value(DartComponent component) {
-            return (component.isGetter() || component.isSetter()) && DartPresentableUtil.setterGetterName(name).equals(component.getName());
-          }
-        }) == null;
+        return name.startsWith("_") && ContainerUtil.find(componentList, component -> (component.isGetter() || component.isSetter()) && DartPresentableUtil.setterGetterName(name).equals(component.getName())) == null;
       }
     };
 

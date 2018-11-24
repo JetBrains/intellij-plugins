@@ -42,7 +42,7 @@ public class FlashPlayerTrustUtil {
 
   public static void updateTrustedStatus(final Module module, final FlexBuildConfiguration bc,
                                          final boolean isDebug, final boolean isTrusted) {
-    final Collection<String> paths = new ArrayList<String>();
+    final Collection<String> paths = new ArrayList<>();
 
     try {
       paths.add(new File(PathUtil.getParentPath(bc.getActualOutputFilePath())).getCanonicalPath());
@@ -116,7 +116,7 @@ public class FlashPlayerTrustUtil {
   private static String[] removeNestedPaths(final String[] paths) {
     if (paths.length < 2) return paths;
 
-    final Collection<String> result = new ArrayList<String>(paths.length);
+    final Collection<String> result = new ArrayList<>(paths.length);
 
     for (int i = 0; i < paths.length; i++) {
       final String path = paths[i];

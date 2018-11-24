@@ -73,12 +73,7 @@ public class DartExtractMethodHandler implements RefactoringActionHandler {
 
     final Scope scope = findScope(elements);
 
-    controlFlow.filterParams(new Condition<DartComponentName>() {
-      @Override
-      public boolean value(DartComponentName name) {
-        return !scope.containsDeclaration(name);
-      }
-    });
+    controlFlow.filterParams(name -> !scope.containsDeclaration(name));
 
     doRefactoringInWriteAction(project, editor, elements, controlFlow, scope);
   }

@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -31,7 +32,6 @@ import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
-import com.intellij.util.Consumer;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +87,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
   private static final Map<String, String> DOCUMENTED_ATTRIBUTES;
   static {
-    DOCUMENTED_ATTRIBUTES = new THashMap<String, String>();
+    DOCUMENTED_ATTRIBUTES = new THashMap<>();
     DOCUMENTED_ATTRIBUTES.put("Event", "event:");
     DOCUMENTED_ATTRIBUTES.put("Style", "style:");
     DOCUMENTED_ATTRIBUTES.put("Effect", "effect:");
@@ -330,7 +330,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   public static PsiElement findTopLevelNavigationElement(JSQualifiedNamedElement element) {
     if (element.getName() == null) return element;
 
-    final Ref<JSQualifiedNamedElement> withAsdoc = new Ref<JSQualifiedNamedElement>();
+    final Ref<JSQualifiedNamedElement> withAsdoc = new Ref<>();
     final PsiElement sourceElement =
       JSPsiImplUtils.findTopLevelNavigatableElementWithSource(element, candidate -> {
         if (withAsdoc.isNull()) {
@@ -504,7 +504,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
     List<String> urls = findUrlsForClass(clazz);
     if (anchor != null) {
-      List<String> anchored = new ArrayList<String>(urls.size());
+      List<String> anchored = new ArrayList<>(urls.size());
       for (String url : urls) {
         anchored.add(url + "#" + anchor);
       }
@@ -822,8 +822,8 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
   @Nullable
   private static JSAttributeNameValuePair findNamedAttribute(JSClass clazz, final String type, final String name) {
-    final Ref<JSAttributeNameValuePair> attribute = new Ref<JSAttributeNameValuePair>();
-    JSResolveUtil.processMetaAttributesForClass(clazz, new JSResolveUtil.MetaDataProcessor() {
+    final Ref<JSAttributeNameValuePair> attribute = new Ref<>();
+    ActionScriptResolveUtil.processMetaAttributesForClass(clazz, new ActionScriptResolveUtil.MetaDataProcessor() {
       public boolean process(@NotNull JSAttribute jsAttribute) {
         if (type.equals(jsAttribute.getName())) {
           final JSAttributeNameValuePair jsAttributeNameValuePair = jsAttribute.getValueByName("name");
@@ -892,7 +892,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
     }
     else if (parent instanceof JSFile) {
       if (parent.getContext() != null) {
-        final String mxmlPackage = JSResolveUtil.findPackageForMxml(parent);
+        final String mxmlPackage = ActionScriptResolveUtil.findPackageForMxml(parent);
         if (mxmlPackage != null) {
           builder.append(mxmlPackage).append(mxmlPackage.length() > 0 ? "." : "").append(parent.getContext().getContainingFile().getName())
             .append("\n");

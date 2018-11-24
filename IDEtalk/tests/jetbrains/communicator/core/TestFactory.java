@@ -34,7 +34,7 @@ import java.util.Set;
  * @author Kir
  */
 public class TestFactory {
-  private static final Set<File> ourFiles = new HashSet<File>();
+  private static final Set<File> ourFiles = new HashSet<>();
 
   private TestFactory() {
   }

@@ -1,9 +1,5 @@
 package org.jetbrains.plugins.ruby.motion.run;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -11,25 +7,15 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
-import com.jetbrains.cidr.execution.debugger.backend.DBUserException;
 import com.jetbrains.cidr.execution.debugger.backend.LLValue;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrDebuggerTypesHelper;
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrMemberValue;
-import com.jetbrains.cidr.execution.debugger.evaluation.CidrPhysicalValue;
-import com.jetbrains.cidr.execution.debugger.evaluation.EvaluationContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.ruby.motion.RubyMotionSymbolProvider;
-import org.jetbrains.plugins.ruby.motion.RubyMotionUtil;
-import org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl;
-import org.jetbrains.plugins.ruby.motion.symbols.StructSymbol;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.resolve.scope.ScopeVariable;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RPsiElement;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RubyPsiUtil;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.holders.RContainer;
-
-import java.util.Collections;
 
 /**
 * @author Dennis.Ushakov
@@ -82,22 +68,6 @@ class MotionDebuggerTypesHelper extends CidrDebuggerTypesHelper {
   @Override
   public XSourcePosition resolveProperty(@NotNull CidrMemberValue value, @Nullable String dynamicTypeName) {
     return null;
-  }
-
-  @Override
-  public boolean isStructType(@NotNull CidrPhysicalValue value, EvaluationContext context) throws ExecutionException, DBUserException {
-    if (super.isStructType(value, context)) return true;
-
-    final String type = value.getType();
-    final Module module = RubyMotionUtil.getInstance().getModuleWithMotionSupport(myProcess.getProject());
-    if (module == null) return false;
-    final Symbol symbol = ApplicationManager.getApplication().runReadAction(new Computable<Symbol>() {
-      @Override
-      public Symbol compute() {
-        return RubyMotionSymbolProvider.findClassOrStruct(module, ((RubyMotionUtilImpl)RubyMotionUtil.getInstance()).getFrameworks(module), Collections.singletonList(type));
-      }
-    });
-    return symbol instanceof StructSymbol;
   }
 
   @Nullable

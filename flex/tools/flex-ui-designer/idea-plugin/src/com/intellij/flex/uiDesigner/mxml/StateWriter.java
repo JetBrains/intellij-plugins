@@ -40,8 +40,8 @@ class StateWriter {
   private int STATIC_INSTANCE_REFERENCE_IN_DEFERRED_PARENT_INSTANCE;
   int ADD_ITEMS;
 
-  private final ArrayList<State> states = new ArrayList<State>();
-  private final Map<String, List<State>> nameToState = new THashMap<String, List<State>>();
+  private final ArrayList<State> states = new ArrayList<>();
+  private final Map<String, List<State>> nameToState = new THashMap<>();
   private BaseWriter writer;
 
   private SetPropertyOrStyle pendingFirstSetProperty;
@@ -108,7 +108,7 @@ class StateWriter {
   private void addNameToStateMap(String name, State state) {
     List<State> states = nameToState.get(name);
     if (states == null) {
-      states = new ArrayList<State>(5);
+      states = new ArrayList<>(5);
       states.add(state);
       nameToState.put(name, states);
     }
@@ -229,7 +229,7 @@ class StateWriter {
     final List<State> filteredStates;
     if (context instanceof DynamicObjectContext) {
       final ArrayList<State> includeInStates = ((DynamicObjectContext)context).includeInStates;
-      filteredStates = new ArrayList<State>(states.size());
+      filteredStates = new ArrayList<>(states.size());
       for (State state : states) {
         if (includeInStates.contains(state)) {
           filteredStates.add(state);

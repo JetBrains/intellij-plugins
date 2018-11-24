@@ -78,7 +78,7 @@ public class CfmlParser implements PsiParser {
 
   @NotNull
   public ASTNode parse(final IElementType root, final PsiBuilder builder) {
-    Stack<Tag> tagNamesStack = new Stack<Tag>();
+    Stack<Tag> tagNamesStack = new Stack<>();
     // builder.setDebugMode(true);
     final PsiBuilder.Marker marker = builder.mark();
     // parse component

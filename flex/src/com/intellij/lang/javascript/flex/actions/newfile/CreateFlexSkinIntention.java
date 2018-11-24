@@ -100,8 +100,8 @@ public class CreateFlexSkinIntention extends CreateMxmlFileIntentionBase {
   }
 
   private static Collection<String> getSkinStates(final JSClass jsClass) {
-    final Collection<String> skinStates = new ArrayList<String>();
-    appendSkinStates(skinStates, jsClass, new THashSet<JSClass>());
+    final Collection<String> skinStates = new ArrayList<>();
+    appendSkinStates(skinStates, jsClass, new THashSet<>());
     return skinStates;
   }
 

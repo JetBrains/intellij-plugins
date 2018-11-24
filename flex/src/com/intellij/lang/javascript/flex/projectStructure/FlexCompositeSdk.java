@@ -111,7 +111,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
     return new RootProvider() {
       @NotNull
       public String[] getUrls(@NotNull final OrderRootType rootType) {
-        final Collection<String> result = new HashSet<String>();
+        final Collection<String> result = new HashSet<>();
         forAllSdks(sdk -> {
           result.addAll(Arrays.asList(sdk.getRootProvider().getUrls(rootType)));
           return true;
@@ -121,7 +121,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
       @NotNull
       public VirtualFile[] getFiles(@NotNull final OrderRootType rootType) {
-        final Collection<VirtualFile> result = new HashSet<VirtualFile>();
+        final Collection<VirtualFile> result = new HashSet<>();
         forAllSdks(sdk -> {
           result.addAll(Arrays.asList(sdk.getRootProvider().getFiles(rootType)));
           return true;
@@ -183,12 +183,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       cache = false;
     }
 
-    List<Sdk> result = ContainerUtil.findAll(allSdks, new Condition<Sdk>() {
-      @Override
-      public boolean value(final Sdk sdk) {
-        return ArrayUtil.contains(sdk.getName(), myNames);
-      }
-    });
+    List<Sdk> result = ContainerUtil.findAll(allSdks, sdk -> ArrayUtil.contains(sdk.getName(), myNames));
 
     Sdk[] resultArray = result.toArray(new Sdk[result.size()]);
     if (cache) {

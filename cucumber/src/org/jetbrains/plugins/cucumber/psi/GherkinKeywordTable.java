@@ -14,11 +14,11 @@ import java.util.*;
  * @author Roman.Chernyatchik
  */
 public class GherkinKeywordTable {
-  private Map<IElementType, Collection<String>> myType2KeywordsTable = new HashMap<IElementType, Collection<String>>();
+  private Map<IElementType, Collection<String>> myType2KeywordsTable = new HashMap<>();
 
   public GherkinKeywordTable() {
     for (IElementType type : GherkinTokenTypes.KEYWORDS.getTypes()) {
-      myType2KeywordsTable.put(type, new ArrayList<String>());
+      myType2KeywordsTable.put(type, new ArrayList<>());
     }
   }
 
@@ -37,7 +37,7 @@ public class GherkinKeywordTable {
     if (GherkinTokenTypes.KEYWORDS.contains(type)) {
       Collection<String> keywords = getKeywords(type);
       if (keywords == null) {
-        keywords = new ArrayList<String>(1);
+        keywords = new ArrayList<>(1);
         myType2KeywordsTable.put(type, keywords);
       }
       keywords.add(keyword);
@@ -55,7 +55,7 @@ public class GherkinKeywordTable {
   }
 
   public Collection<String> getScenarioLikeKeywords() {
-    final Set<String> keywords = new HashSet<String>();
+    final Set<String> keywords = new HashSet<>();
 
     final Collection<String> scenarios = getKeywords(GherkinTokenTypes.SCENARIO_KEYWORD);
     assert scenarios != null;

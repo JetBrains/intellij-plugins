@@ -34,7 +34,7 @@ abstract public class DartMoveTest extends LightPlatformCodeInsightFixtureTestCa
   //Both names are relative to root directory
   private void doTest(final String[] toMove, final String targetDirName) throws Exception {
     myFixture.copyDirectoryToProject(getTestName(true) + "/before", getTestName(true));
-    Collection<PsiElement> files = new ArrayList<PsiElement>();
+    Collection<PsiElement> files = new ArrayList<>();
     for (String s : toMove) {
       final VirtualFile child = myFixture.findFileInTempDir(getTestName(true) + "/" + s);
       assertNotNull("Neither class nor file " + s + " not found", child);

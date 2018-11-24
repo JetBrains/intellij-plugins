@@ -15,7 +15,7 @@ import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.*;
  * @author yole
  */
 public class GherkinSyntaxHighlighter extends SyntaxHighlighterBase {
-  private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<IElementType, TextAttributesKey>();
+  private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<>();
 
   private final GherkinKeywordProvider myKeywordProvider;
 

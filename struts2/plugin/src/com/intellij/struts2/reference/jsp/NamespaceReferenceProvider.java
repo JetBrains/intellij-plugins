@@ -74,7 +74,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
     @NotNull
     public ResolveResult[] multiResolve(final boolean incompleteCode) {
       final String namespace = myElement.getValue();
-      final List<ResolveResult> resolveResults = new SmartList<ResolveResult>();
+      final List<ResolveResult> resolveResults = new SmartList<>();
       for (final StrutsPackage strutsPackage : strutsModel.getStrutsPackages()) {
         if (Comparing.equal(namespace, strutsPackage.searchNamespace())) {
           final XmlTag packageTag = strutsPackage.getXmlTag();

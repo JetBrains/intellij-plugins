@@ -8,6 +8,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.indexing.DataIndexer;
 import com.intellij.util.indexing.FileContent;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -19,21 +20,21 @@ import java.util.Map;
 public class AngularAttributeIndexer implements DataIndexer<String, AngularNamedItemDefinition, FileContent> {
   private final String myAttributeName;
 
-  public AngularAttributeIndexer(String attributeName) {
+  public AngularAttributeIndexer(@NotNull final String attributeName) {
     myAttributeName = attributeName;
   }
 
   @NotNull
   @Override
   public Map<String, AngularNamedItemDefinition> map(@NotNull FileContent inputData) {
-    final Map<String, AngularNamedItemDefinition> map = new HashMap<String, AngularNamedItemDefinition>();
+    final Map<String, AngularNamedItemDefinition> map = new HashMap<>();
     final PsiFile file = inputData.getPsiFile();
     if (file instanceof XmlFile) {
       file.accept(
         new XmlRecursiveElementWalkingVisitor() {
           @Override
           public void visitXmlAttribute(XmlAttribute attribute) {
-            if (myAttributeName.equals(attribute.getName())) {
+            if (myAttributeName.equals(DirectiveUtil.normalizeAttributeName(attribute.getName()))) {
               final XmlAttributeValue element = attribute.getValueElement();
               if (element == null) {
                 map.put("", new AngularNamedItemDefinition("", attribute.getTextRange().getStartOffset()));

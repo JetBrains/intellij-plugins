@@ -1,0 +1,27 @@
+GherkinFile:ruby8793.feature
+  GherkinFeature:feature
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('feature')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:foo
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('foo')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:boo
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('boo')
+        PsiWhiteSpace('\n    ')
+        GherkinPystring
+          PsiElement(PYSTRING_QUOTES)('"""')
+          PsiElement(PYSTRING_TEXT)('\n    class PeopleControllerTest < ActionController::TestCase\n    end\n    ')
+          PsiElement(PYSTRING_QUOTES)('"""')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:I put the caret at "caret"
+        PsiElement(STEP_KEYWORD)('And')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('I put the caret at "caret"')

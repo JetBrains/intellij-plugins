@@ -252,7 +252,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     }
 
     try {
-      final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
+      final Ref<VirtualFile> fileRef = new Ref<>();
       final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<IOException>() {
         public IOException compute() {
           try {

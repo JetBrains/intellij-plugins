@@ -16,7 +16,7 @@ public class ProfilingManager {
   private final int myPort;
   private ProfilingConnection myConnection;
 
-  private final LinkedBlockingQueue<Runnable> myAsyncExecutionQueue = new LinkedBlockingQueue<Runnable>();
+  private final LinkedBlockingQueue<Runnable> myAsyncExecutionQueue = new LinkedBlockingQueue<>();
 
   public ProfilingManager(int port) {
     myPort = port;

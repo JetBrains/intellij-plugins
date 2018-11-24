@@ -41,8 +41,4 @@ public class ActionScriptAutoImportOptionsProvider implements AutoImportOptionsP
   public void reset() {
     myOnTheFlyCheckBox.setSelected(isAddUnambiguousImportsOnTheFly());
   }
-
-  @Override
-  public void disposeUIResources() {
-  }
 }

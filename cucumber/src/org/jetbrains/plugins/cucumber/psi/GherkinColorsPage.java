@@ -54,14 +54,12 @@ public class GherkinColorsPage implements ColorSettingsPage {
   };
 
   // Empty still
-  private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<String, TextAttributesKey>();
+  private static final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();
   static {
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("th", GherkinHighlighter.TABLE_HEADER_CELL);
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("outline_param", GherkinHighlighter.OUTLINE_PARAMETER_SUBSTITUTION);
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("regexp_param", GherkinHighlighter.REGEXP_PARAMETER);
   }
-
-  private static final ColorDescriptor[] COLORS = new ColorDescriptor[0];
 
   @Nullable
   public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
@@ -85,7 +83,7 @@ public class GherkinColorsPage implements ColorSettingsPage {
 
   @NotNull
   public ColorDescriptor[] getColorDescriptors() {
-    return COLORS;
+    return ColorDescriptor.EMPTY_ARRAY;
   }
 
   @NotNull

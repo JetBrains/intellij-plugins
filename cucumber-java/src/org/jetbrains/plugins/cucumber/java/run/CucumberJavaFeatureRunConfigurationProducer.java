@@ -27,18 +27,14 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
   protected NullableComputable<String> getStepsGlue(@NotNull final PsiElement element) {
     final PsiFile file = element.getContainingFile();
     if (file instanceof GherkinFile) {
-      return new NullableComputable<String>() {
-        @Nullable
-        @Override
-        public String compute() {
-          final Set<String> glues = getHookGlue(element);
-          final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
-          for (CucumberJvmExtensionPoint extension : extensions) {
-            glues.addAll(extension.getGlues((GherkinFile)file, glues));
-          }
-
-          return StringUtil.join(glues, " ");
+      return () -> {
+        final Set<String> glues = getHookGlue(element);
+        final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
+        for (CucumberJvmExtensionPoint extension : extensions) {
+          glues.addAll(extension.getGlues((GherkinFile)file, glues));
         }
+
+        return StringUtil.join(glues, " ");
       };
     }
 

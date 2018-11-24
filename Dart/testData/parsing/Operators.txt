@@ -22,7 +22,7 @@ Dart File
                     PsiElement(IDENTIFIER)('other')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 VAR_DECLARATION_LIST
@@ -259,7 +259,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -323,7 +323,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -345,7 +345,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -369,7 +369,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -394,7 +394,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -419,7 +419,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -455,7 +455,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -474,7 +474,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -493,7 +493,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -512,7 +512,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -531,7 +531,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -556,7 +556,7 @@ Dart File
                     PsiElement(IDENTIFIER)('y')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 <empty list>
@@ -613,7 +613,7 @@ Dart File
             PsiElement(()('(')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 PREFIX_EXPRESSION

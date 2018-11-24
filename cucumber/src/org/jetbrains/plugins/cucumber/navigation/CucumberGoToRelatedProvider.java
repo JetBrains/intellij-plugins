@@ -38,7 +38,7 @@ public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
   public List<? extends GotoRelatedItem> getItems(@NotNull PsiElement psiElement) {
     final PsiFile file = psiElement.getContainingFile();
     if (file instanceof GherkinFile) {
-      final List<GherkinStep> steps = new ArrayList<GherkinStep>();
+      final List<GherkinStep> steps = new ArrayList<>();
       final GherkinFile gherkinFile = (GherkinFile)file;
       final GherkinFeature[] features = gherkinFile.getFeatures();
       for (GherkinFeature feature : features) {
@@ -48,8 +48,8 @@ public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
         }
       }
       final CucumberStepsIndex index = CucumberStepsIndex.getInstance(file.getProject());
-      final List<PsiFile> resultFiles = new ArrayList<PsiFile>();
-      final List<GotoRelatedItem> result = new ArrayList<GotoRelatedItem>();
+      final List<PsiFile> resultFiles = new ArrayList<>();
+      final List<GotoRelatedItem> result = new ArrayList<>();
       for (GherkinStep step : steps) {
         AbstractStepDefinition stepDef = index.findStepDefinition(gherkinFile, step);
         final PsiElement stepDefMethod = stepDef != null ? stepDef.getElement() : null;

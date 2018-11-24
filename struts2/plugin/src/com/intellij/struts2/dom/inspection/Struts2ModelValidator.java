@@ -60,7 +60,7 @@ public class Struts2ModelValidator extends ValidatorBase {
       }
     };
 
-    final Set<VirtualFile> files = new THashSet<VirtualFile>();
+    final Set<VirtualFile> files = new THashSet<>();
     for (final VirtualFile file : context.getCompileScope().getFiles(StdFileTypes.XML, false)) {
       final Module module = context.getModuleByFile(file);
       if (module != null &&
@@ -70,7 +70,7 @@ public class Struts2ModelValidator extends ValidatorBase {
           final StrutsModel model = strutsManager.getModelByFile((XmlFile)psiFile);
           if (model != null) {
             for (final XmlFile configFile : model.getConfigFiles()) {
-              ContainerUtil.addIfNotNull(configFile.getVirtualFile(), files);
+              ContainerUtil.addIfNotNull(files, configFile.getVirtualFile());
             }
           }
         }

@@ -46,7 +46,7 @@ public class CucumberJavaExtension extends AbstractCucumberJavaExtension {
       return Collections.emptyList();
     }
 
-    final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
+    final List<AbstractStepDefinition> result = new ArrayList<>();
     final Query<PsiClass> stepDefAnnotations = AnnotatedElementsSearch.searchPsiClasses(stepDefAnnotationClass, dependenciesScope);
     for (PsiClass annotationClass : stepDefAnnotations) {
       if (annotationClass.isAnnotationType()) {

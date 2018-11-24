@@ -58,7 +58,7 @@ public class AnyApplication implements ConfigurationType {
   }
 
   private static class AnyApplicationConfiguration extends RunConfigurationBase implements ModuleRunProfile {
-    private static final Module[] EMPTY_MODULES = new Module[0];
+    private static final Module[] EMPTY_MODULES = Module.EMPTY_ARRAY;
 
     protected AnyApplicationConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
       super(project, factory, name);

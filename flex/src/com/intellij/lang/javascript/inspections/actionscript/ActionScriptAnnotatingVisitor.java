@@ -43,7 +43,6 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -57,7 +56,6 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTagChild;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -254,7 +252,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
       if (resolved instanceof JSClass) {
         boolean correctClass = false;
-        final Collection<String> resolvedBaseClasses = new ArrayList<String>();
+        final Collection<String> resolvedBaseClasses = new ArrayList<>();
         final GlobalSearchScope scope = JSResolveUtil.getResolveScope(attributeNameValuePair);
 
         for (String baseClassFqn : StringUtil.split(baseClassFqns, ",")) {
@@ -300,7 +298,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   public static void checkActionScriptImplementedMethods(final JSClass jsClass, final ErrorReportingClient reportingClient) {
-    final JSResolveUtil.CollectMethodsToImplementProcessor implementedMethodProcessor = new ImplementedMethodProcessor(jsClass) {
+    final JSCollectMembersToImplementProcessor implementedMethodProcessor = new JSImplementedMethodProcessor(jsClass) {
       ImplementMethodsFix implementMethodsFix = null;
 
       protected void addNonimplementedFunction(final JSFunction function) {
@@ -386,7 +384,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         }
       }
     };
-    JSResolveUtil.processInterfaceMethods(jsClass, implementedMethodProcessor);
+    JSResolveUtil.processInterfaceMembers(jsClass, implementedMethodProcessor);
   }
 
   @Override
@@ -431,8 +429,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         final String qName = clazz.getQualifiedName();
         final boolean hasOverride = attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.OVERRIDE);
 
-        final Ref<JSFunction> set = new Ref<JSFunction>();
-        boolean b = JSResolveUtil.iterateType(node, parent, qName, new JSResolveUtil.OverrideHandler() {
+        final Ref<JSFunction> set = new Ref<>();
+        boolean b = JSResolveUtil.iterateType(node, parent, qName, new JSOverrideHandler() {
           public boolean process(@NotNull final List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
             //noinspection StringEquality
             if (qName == className || qName != null && qName.equals(className)) return true;
@@ -477,7 +475,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
             }
             return false;
           }
-        });
+        }, true);
 
         if (b && hasOverride) {
           final ASTNode astNode = attributeList.getNode().findChildByType(JSTokenTypes.OVERRIDE_KEYWORD);
@@ -676,7 +674,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       });
     }
 
-    final Set<JSNamedElement> elements = new THashSet<JSNamedElement>();
+    final Set<JSNamedElement> elements = new THashSet<>();
 
     for (JSSourceElement statement : packageStatement.getStatements()) {
       if (statement instanceof JSNamedElement && !(statement instanceof JSImportStatement)) {
@@ -1046,16 +1044,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       final JSExpression[] params = callExpression.getArguments();
 
       if (params.length >= 2 && PsiTreeUtil.isAncestor(params[1], nameIdentifier, true)) {
-        return new CreateJSEventMethod(nameIdentifier.getText(), new Computable<String>() {
-          @Override
-          public String compute() {
-            PsiElement responsibleElement = null;
-            if (params[0] instanceof JSReferenceExpression) {
-              responsibleElement = ((JSReferenceExpression)params[0]).getQualifier();
-            }
-
-            return responsibleElement == null ? FlexCommonTypeNames.FLASH_EVENT_FQN : responsibleElement.getText();
+        return new CreateJSEventMethod(nameIdentifier.getText(), () -> {
+          PsiElement responsibleElement = null;
+          if (params[0] instanceof JSReferenceExpression) {
+            responsibleElement = ((JSReferenceExpression)params[0]).getQualifier();
           }
+
+          return responsibleElement == null ? FlexCommonTypeNames.FLASH_EVENT_FQN : responsibleElement.getText();
         });
       }
     }

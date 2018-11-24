@@ -34,7 +34,7 @@ public class GherkinTableRowImpl extends GherkinPsiElementBase implements Gherki
   // ToDo: Andrey Vokin, remove code duplication
   @NotNull
   public static <T extends PsiElement> List<T> getChildrenByFilter(final PsiElement psiElement, final Class<T> c) {
-    LinkedList<T> list = new LinkedList<T>();
+    LinkedList<T> list = new LinkedList<>();
     for (PsiElement element : psiElement.getChildren()) {
       if (c.isInstance(element)) {
         //noinspection unchecked

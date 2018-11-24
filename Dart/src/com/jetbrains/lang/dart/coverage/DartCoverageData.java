@@ -38,7 +38,7 @@ public class DartCoverageData {
 
   @NotNull
   public Map<String, SortedMap<Integer, Integer>> getMergedDartFileCoverageData() {
-    Map<String, SortedMap<Integer, Integer>> mergedCoverageData = new HashMap<String, SortedMap<Integer, Integer>>();
+    Map<String, SortedMap<Integer, Integer>> mergedCoverageData = new HashMap<>();
     List<DartFileCoverageData> coverageData = getCoverage();
     if (coverageData != null) {
       for (DartFileCoverageData item : coverageData) {
@@ -47,7 +47,7 @@ public class DartCoverageData {
           continue;
         }
         if (!mergedCoverageData.containsKey(source)) {
-          mergedCoverageData.put(source, new TreeMap<Integer, Integer>());
+          mergedCoverageData.put(source, new TreeMap<>());
         }
 
         SortedMap<Integer, Integer> fileData = mergedCoverageData.get(source);

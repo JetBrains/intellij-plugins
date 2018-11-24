@@ -3,6 +3,7 @@ package com.dmarcotte.handlebars.parsing;
 import com.dmarcotte.handlebars.HbLanguage;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
+import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.psi.tree.TokenSet;
 
 public class HbTokenTypes {
@@ -68,9 +69,11 @@ public class HbTokenTypes {
   public static final IElementType INVALID = new HbElementType("INVALID", "hb.parsing.element.expected.invalid");
   public static final IElementType HASH = new HbCompositeElementType("HASH");
 
-  public static final IFileElementType FILE = new IFileElementType("FILE", HbLanguage.INSTANCE);
+  public static final IFileElementType FILE = new IStubFileElementType<>("FILE", HbLanguage.INSTANCE);
 
   public static final TokenSet WHITESPACES = TokenSet.create(WHITE_SPACE);
   public static final TokenSet COMMENTS = TokenSet.create(COMMENT, COMMENT_CONTENT);
   public static final TokenSet STRING_LITERALS = TokenSet.create(STRING);
+
+  public static final TokenSet TAGS = TokenSet.create(OPEN_PARTIAL_BLOCK_STACHE, MUSTACHE, OPEN_INVERSE_BLOCK_STACHE, OPEN_BLOCK_STACHE);
 }

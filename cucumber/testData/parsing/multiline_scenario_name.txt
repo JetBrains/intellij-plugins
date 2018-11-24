@@ -1,0 +1,16 @@
+GherkinFile:multiline_scenario_name.feature
+  GherkinFeature:Fee
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('Fee')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:Foo
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('Foo')
+      PsiWhiteSpace('\n            ')
+      PsiElement(TEXT)('and bar')
+      PsiWhiteSpace('\n            ')
+      PsiElement(TEXT)('and baz')

@@ -80,7 +80,7 @@ public class RubyMotionCompletionProvider extends RubyCompletionProvider {
       offset += split[0].length();
 
       final boolean insertParentheses = CodeStyleSettingsManager.getSettings(context.getProject()).PARENTHESES_AROUND_METHOD_ARGUMENTS;
-      final List<TextRange> argRanges = new ArrayList<TextRange>(split.length);
+      final List<TextRange> argRanges = new ArrayList<>(split.length);
       document.insertString(offset, insertParentheses ? "(" : " ");
       offset++;
       int offsetBefore = offset;

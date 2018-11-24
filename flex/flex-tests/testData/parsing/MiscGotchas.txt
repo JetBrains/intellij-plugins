@@ -143,7 +143,7 @@ JSFile:MiscGotchas.js2
         PsiElement(JS:IDENTIFIER)('A8')
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace('\n  ')
-    JSClass
+    ActionScriptClass
       JSAttributeList
         <empty list>
       PsiElement(JS:CLASS_KEYWORD)('class')
@@ -291,7 +291,7 @@ JSFile:MiscGotchas.js2
         PsiElement(JS:IDENTIFIER)('x')
     PsiElement(JS:SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
-  JSClass
+  ActionScriptClass
     JSAttributeList
       JSAttribute
         PsiElement(JS:LBRACKET)('[')

@@ -63,12 +63,7 @@ public class DartRenamePsiElementProcessor extends RenamePsiElementProcessor {
       final DartClass dartClass = PsiTreeUtil.getParentOfType(parent, DartClass.class, true);
       final DartComponent superMethod = ContainerUtil.find(
         DartResolveUtil.findNamedSuperComponents(dartClass),
-        new Condition<DartComponent>() {
-          @Override
-          public boolean value(DartComponent component) {
-            return StringUtil.equals(component.getName(), ((DartComponent)parent).getName());
-          }
-        }
+        component -> StringUtil.equals(component.getName(), ((DartComponent)parent).getName())
       );
       if (superMethod != null) {
         return superMethod.getComponentName();

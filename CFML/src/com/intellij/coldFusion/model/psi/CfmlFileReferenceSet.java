@@ -90,7 +90,7 @@ public class CfmlFileReferenceSet extends FileReferenceSet implements PlatformIc
     @NotNull
     public Object[] getVariants() {
 
-      Collection<Object> variants = new LinkedList<Object>();
+      Collection<Object> variants = new LinkedList<>();
       String text = getElement().getNode().getText();
       if (StringUtil.startsWithChar(text, '\"') && text.endsWith("\"")) {
         text = text.substring(1, text.length() - 1);
@@ -144,7 +144,7 @@ public class CfmlFileReferenceSet extends FileReferenceSet implements PlatformIc
   @NotNull
   @Override
   public Collection<PsiFileSystemItem> computeDefaultContexts() {
-    ArrayList<PsiFileSystemItem> contexts = new ArrayList<PsiFileSystemItem>();
+    ArrayList<PsiFileSystemItem> contexts = new ArrayList<>();
     if (StringUtil.startsWithChar(getPathString(), '/') || StringUtil.startsWithChar(getPathString(), '\\')) {
       PsiReference firstFileReference = getElement().getReferences()[0];
       if ((firstFileReference instanceof FileReference)) {

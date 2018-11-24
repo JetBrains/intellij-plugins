@@ -118,7 +118,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
     MessageSocketManager messageSocketManager = new MessageSocketManager(this, DesignerApplicationManager.APP_DIR);
     Disposer.register(DesignerApplicationManager.getApplication(), messageSocketManager);
 
-    final List<String> arguments = new ArrayList<String>();
+    final List<String> arguments = new ArrayList<>();
     arguments.add(Integer.toString(messageSocketManager.listen()));
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       arguments.add("-p");
@@ -126,7 +126,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
     }
 
     AdlProcessHandler adlProcessHandler = null;
-    final Ref<Boolean> found = new Ref<Boolean>(true);
+    final Ref<Boolean> found = new Ref<>(true);
     for (AdlRunConfiguration adlRunConfiguration : adlRunConfigurations) {
       found.set(true);
       adlRunConfiguration.arguments = arguments;
@@ -249,7 +249,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
       return Collections.singletonList(createTestAdlRunConfiguration());
     }
 
-    final List<Sdk> sdks = new ArrayList<Sdk>();
+    final List<Sdk> sdks = new ArrayList<>();
     for (Sdk sdk : FlexSdkUtils.getFlexAndFlexmojosSdks()) {
       if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") >= 0) {
         sdks.add(sdk);
@@ -259,7 +259,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
     Collections.sort(sdks, (o1, o2) -> StringUtil.compareVersionNumbers(o2.getVersionString(), o1.getVersionString()));
 
     final String installedRuntime = findInstalledRuntime();
-    final List<AdlRunConfiguration> result = new ArrayList<AdlRunConfiguration>(sdks.size());
+    final List<AdlRunConfiguration> result = new ArrayList<>(sdks.size());
     for (Sdk sdk : sdks) {
       final String adlPath = FlexSdkUtils.getAdlPath(sdk);
       if (!checkAdl(adlPath)) {

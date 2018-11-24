@@ -72,7 +72,7 @@ public abstract class AbstractCucumberJavaExtension extends AbstractCucumberExte
 
     List<AbstractStepDefinition> stepDefs = loadStepsFor(featureFile, module);
 
-    Set<PsiFile> result = new HashSet<PsiFile>();
+    Set<PsiFile> result = new HashSet<>();
     for (AbstractStepDefinition stepDef : stepDefs) {
       PsiElement stepDefElement = stepDef.getElement();
       if (stepDefElement != null) {

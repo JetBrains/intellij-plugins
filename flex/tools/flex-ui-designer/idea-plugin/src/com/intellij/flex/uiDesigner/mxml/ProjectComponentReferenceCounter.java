@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ProjectComponentReferenceCounter {
   public final TIntArrayList total = new TIntArrayList();
-  public final List<XmlFile> unregistered = new ArrayList<XmlFile>();
+  public final List<XmlFile> unregistered = new ArrayList<>();
 
   public boolean hasUnregistered() {
     return !unregistered.isEmpty();

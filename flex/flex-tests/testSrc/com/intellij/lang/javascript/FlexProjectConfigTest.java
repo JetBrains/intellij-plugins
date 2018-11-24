@@ -16,12 +16,9 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.ModuleTestCase;
-import com.intellij.util.Consumer;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +37,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    Disposer.dispose(myTestRootDisposable);
+    Disposer.dispose(getTestRootDisposable());
     super.tearDown();
   }
 
@@ -104,7 +101,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
     FlexTestUtils.modifyConfigs(myProject, editor -> {
       ModifiableFlexBuildConfiguration module1Config = editor.getConfigurations(myModule)[0];
-      editor.setEntries(module1Config.getDependencies(), new ArrayList<ModifiableDependencyEntry>());
+      editor.setEntries(module1Config.getDependencies(), new ArrayList<>());
     });
     assertFalse(doesDepend(myModule, module2));
     assertFalse(doesDepend(module2, myModule));
@@ -174,19 +171,16 @@ public class FlexProjectConfigTest extends ModuleTestCase {
 
   @Nullable
   private static OrderEntry findLibraryEntry(Module module, final String libraryId) {
-    return ContainerUtil.find(ModuleRootManager.getInstance(module).getOrderEntries(), new Condition<OrderEntry>() {
-      @Override
-      public boolean value(OrderEntry orderEntry) {
-        if (!(orderEntry instanceof LibraryOrderEntry)) {
-          return false;
-        }
-        Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
-        if (!(library instanceof LibraryEx)) {
-          return false;
-        }
-
-        return libraryId == ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
+    return ContainerUtil.find(ModuleRootManager.getInstance(module).getOrderEntries(), orderEntry -> {
+      if (!(orderEntry instanceof LibraryOrderEntry)) {
+        return false;
       }
+      Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
+      if (!(library instanceof LibraryEx)) {
+        return false;
+      }
+
+      return libraryId == ((FlexLibraryProperties)((LibraryEx)library).getProperties()).getId();
     });
   }
 

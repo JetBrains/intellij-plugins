@@ -11,8 +11,8 @@ import java.util.Map;
  */
 public class FrameInfoBuilder {
   private final String[] suffixes = {"$", "$cinit()"};
-  private final Map<String, FrameInfo> cache = new THashMap<String, FrameInfo>();
-  private final Map<FrameInfo, FrameInfo> cacheInstances = new THashMap<FrameInfo, FrameInfo>();
+  private final Map<String, FrameInfo> cache = new THashMap<>();
+  private final Map<FrameInfo, FrameInfo> cacheInstances = new THashMap<>();
   private final int UNKNOWN_LINE = -1;
 
   FrameInfo[] buildInstances(String[] frames) {

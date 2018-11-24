@@ -14,6 +14,11 @@ public class HbFormatterSampleFileTest extends HbFormatterTest {
     doFileBasedTest();
   }
 
+  public void testHbTagHashAlignment()
+    throws Exception {
+    doFileBasedTest();
+  }
+
   /**
    * Test out formatting with a non-HTML template data language
    *

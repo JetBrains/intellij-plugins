@@ -18,8 +18,8 @@ public interface ConstantValueConverterClassContributor {
    * Extend possible resolving to class.
    */
   ExtensionPointName<ConstantValueConverterClassContributor> EP_NAME =
-      new ExtensionPointName<ConstantValueConverterClassContributor>(
-          "com.intellij.struts2.constantValueClassContributor");
+    new ExtensionPointName<>(
+      "com.intellij.struts2.constantValueClassContributor");
 
   /**
    * Performs the actual conversion.

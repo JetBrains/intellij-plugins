@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.google.common.base.Charsets;
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.flex.uiDesigner.abc.AbcTranscoder;
 import com.intellij.flex.uiDesigner.io.IOUtil;
@@ -14,6 +13,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -32,7 +32,7 @@ final class LibraryUtil {
       ZipEntry entry;
       while ((entry = zipIn.getNextEntry()) != null) {
         if (catalogReader == null && entry.getName().equals("catalog.xml")) {
-          final InputStreamReader reader = new InputStreamReader(zipIn, Charsets.UTF_8);
+          final InputStreamReader reader = new InputStreamReader(zipIn, StandardCharsets.UTF_8);
           try {
             catalogReader = new MyCharArrayReader(FileUtil.adaptiveLoadText(reader));
           }
@@ -56,7 +56,7 @@ final class LibraryUtil {
 
     assert catalogReader != null;
     assert swfIn != null;
-    return new Pair<CharArrayReader, ByteArrayInputStream>(catalogReader, swfIn);
+    return new Pair<>(catalogReader, swfIn);
   }
 
   @TestOnly
@@ -66,7 +66,7 @@ final class LibraryUtil {
     File file = new File(DebugPathManager.getTestDataPath() + "/lib/playerglobal", name);
     assert file.exists();
     try {
-      return new LightVirtualFile(name, XmlFileType.INSTANCE, IOUtil.getCharSequence(file), Charsets.UTF_8, 0);
+      return new LightVirtualFile(name, XmlFileType.INSTANCE, IOUtil.getCharSequence(file), StandardCharsets.UTF_8, 0);
     }
     catch (IOException e) {
       throw new RuntimeException(e);
@@ -78,7 +78,7 @@ final class LibraryUtil {
   }
 
   public static Set<CharSequence> getDefinitions(Reader reader) {
-    final THashSet<CharSequence> set = new THashSet<CharSequence>(512, AbcTranscoder.HASHING_STRATEGY);
+    final THashSet<CharSequence> set = new THashSet<>(512, AbcTranscoder.HASHING_STRATEGY);
     NanoXmlUtil.parse(reader, new NanoXmlUtil.IXMLBuilderAdapter() {
       private boolean processingDef;
 

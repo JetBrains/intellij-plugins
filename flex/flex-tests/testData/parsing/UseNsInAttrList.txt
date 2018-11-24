@@ -4,7 +4,7 @@ JSFile:UseNsInAttrList.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n')
-    JSClass
+    ActionScriptClass
       JSAttributeList
         JSAttribute
           PsiElement(JS:LBRACKET)('[')

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 class TestDocumentProblemManager extends DocumentProblemManager {
-  private static final Set<ProblemDescriptor> EMPTY_EXPECTED_PROBLEMS = new THashSet<ProblemDescriptor>();
+  private static final Set<ProblemDescriptor> EMPTY_EXPECTED_PROBLEMS = new THashSet<>();
 
   private static Set<ProblemDescriptor> expectedProblems = EMPTY_EXPECTED_PROBLEMS;
 

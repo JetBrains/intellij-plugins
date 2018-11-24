@@ -37,7 +37,7 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
       public Map<String, Void> map(@NotNull FileContent inputData) {
         final XmlFile file = (XmlFile)inputData.getPsiFile();
 
-        final Map<String, Void> result = new HashMap<String, Void>();
+        final Map<String, Void> result = new HashMap<>();
         for (JSClass clazz : XmlBackedJSClassImpl.getClasses(file)) {
           JSReferenceList supers = getSupers(clazz);
           if (supers != null) {
@@ -86,7 +86,7 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
   public static Collection<JSClass> searchClassInheritors(ID<String, Void> indexId, String name, Project project, final GlobalSearchScope scope) {
     final Collection<VirtualFile> files = FileBasedIndex.getInstance().getContainingFiles(indexId, name, scope);
     final PsiManager psiManager = PsiManager.getInstance(project);
-    Collection<JSClass> classes = new ArrayList<JSClass>(files.size());
+    Collection<JSClass> classes = new ArrayList<>(files.size());
     for (VirtualFile file : files) {
       PsiFile psifile = psiManager.findFile(file);
       if (!(psifile instanceof XmlFile)) continue;

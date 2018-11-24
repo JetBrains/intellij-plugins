@@ -34,7 +34,7 @@ public class GherkinScenarioOutlineImpl extends GherkinStepsHolderBase implement
 
   @NotNull
   public List<GherkinExamplesBlock> getExamplesBlocks() {
-    List<GherkinExamplesBlock> result = new ArrayList<GherkinExamplesBlock>();
+    List<GherkinExamplesBlock> result = new ArrayList<>();
     final ASTNode[] nodes = getNode().getChildren(EXAMPLES_BLOCK_FILTER);
     for (ASTNode node : nodes) {
       result.add((GherkinExamplesBlock) node.getPsi());

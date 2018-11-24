@@ -1,6 +1,5 @@
 package org.angularjs.index;
 
-import com.intellij.ProjectTopics;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
@@ -12,12 +11,12 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.roots.ProjectRootModificationTracker;
+import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileAdapter;
-import com.intellij.openapi.vfs.VirtualFileEvent;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -48,15 +47,14 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 43;
-  private static final Key<NotNullLazyValue<ModificationTracker>> TRACKER = Key.create("angular.js.tracker");
+  public static final int BASE_VERSION = 47;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
-  public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = element -> new JSResolveResult(element);
+  public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = JSResolveResult::new;
 
   public static JSImplicitElement resolve(final Project project, final StubIndexKey<String, JSImplicitElementProvider> index, final String lookupKey) {
-    final Ref<JSImplicitElement> result = new Ref<JSImplicitElement>(null);
+    final Ref<JSImplicitElement> result = new Ref<>(null);
     final Processor<JSImplicitElement> processor = element -> {
       if (element.getName().equals(lookupKey) && (index == AngularInjectionDelimiterIndex.KEY ||
                                                   AngularJSIndexingHandler.isAngularRestrictions(element.getTypeString()))) {
@@ -108,7 +106,7 @@ public class AngularIndexUtil {
       files = filtered;
     }
 
-    final List<JSImplicitElement> elements = new ArrayList<JSImplicitElement>();
+    final List<JSImplicitElement> elements = new ArrayList<>();
     for (VirtualFile file : files) {
       final List<AngularNamedItemDefinition> values = instance.getValues(INDEX, id, GlobalSearchScope.fileScope(project, file));
       for (AngularNamedItemDefinition value : values) {
@@ -120,15 +118,15 @@ public class AngularIndexUtil {
         }
       }
     }
-    final List<ResolveResult> list = ContainerUtil.map(elements, element -> new JSResolveResult(element));
+    final List<ResolveResult> list = ContainerUtil.map(elements, JS_IMPLICIT_TO_RESOLVE_RESULT);
     return list.toArray(new ResolveResult[list.size()]);
   }
 
   public static Collection<String> getAllKeys(final ID<String, ?> index, final Project project) {
     final String indexId = index.toString();
     final Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>> key =
-      ConcurrencyUtil.cacheOrGet(ourCacheKeys, indexId, Key.<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>create("angularjs.index." + indexId));
-    final Pair<Project, ID<String, ?>> pair = Pair.<Project, ID<String, ?>>create(project, index);
+      ConcurrencyUtil.cacheOrGet(ourCacheKeys, indexId, Key.create("angularjs.index." + indexId));
+    final Pair<Project, ID<String, ?>> pair = Pair.create(project, index);
     return CachedValuesManager.getManager(project).getParameterizedCachedValue(project, key, PROVIDER, false, pair);
   }
 
@@ -144,34 +142,22 @@ public class AngularIndexUtil {
 
   private static int getAngularJSVersion(final Project project) {
     if (DumbService.isDumb(project)) return -1;
-    NotNullLazyValue<ModificationTracker> tracker = project.getUserData(TRACKER);
-    if (tracker == null) {
-      tracker = new AtomicNotNullLazyValue<ModificationTracker>() {
-        @NotNull
-        @Override
-        protected ModificationTracker compute() {
-          return new AngularModificationTracker(project);
-        }
-      };
-      tracker = ((UserDataHolderEx)project).putUserDataIfAbsent(TRACKER, tracker);
-    }
 
-    final NotNullLazyValue<ModificationTracker> finalTracker = tracker;
-    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<Integer>() {
-      @Nullable
-      @Override
-      public Result<Integer> compute() {
-        int version = -1;
-        PsiElement resolve;
-        if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ngFor]")) != null) {
-          version = 20;
-        } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
-          version = 13;
-        } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-model")) != null) {
-          version = 12;
-        }
-        return Result.create(version, resolve != null ? resolve.getContainingFile() : finalTracker.getValue());
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      int version = -1;
+      PsiElement resolve;
+      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "[ngFor]")) != null) {
+        version = 20;
+      } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
+        version = 13;
+      } else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-model")) != null) {
+        version = 12;
       }
+      if (resolve != null) {
+        return CachedValueProvider.Result.create(version, resolve.getContainingFile());
+      }
+      return CachedValueProvider.Result
+        .create(version, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, ProjectRootModificationTracker.getInstance(project));
     });
   }
 
@@ -195,37 +181,15 @@ public class AngularIndexUtil {
         id instanceof StubIndexKey ? stubIndex.getAllKeys((StubIndexKey<String, ?>)id, project) :
         fileIndex.getAllKeys(id, project);
 
-      return CachedValueProvider.Result.<Collection<String>>create(ContainerUtil.filter(allKeys, new Condition<String>() {
-        @Override
-        public boolean value(String key) {
-          return id instanceof StubIndexKey ?
-                 !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
-                                            element -> false) :
-                 !fileIndex.processValues(id, key, null, new FileBasedIndex.ValueProcessor() {
-                   @Override
-                   public boolean process(VirtualFile file, Object value) {
-                     return false;
-                   }
-                 }, scope);
-        }
-      }), PsiManager.getInstance(project).getModificationTracker());
-    }
-  }
-
-  private static class AngularModificationTracker extends SimpleModificationTracker {
-    public AngularModificationTracker(final Project project) {
-      VirtualFileManager.getInstance().addVirtualFileListener(new VirtualFileAdapter() {
-        @Override
-        public void fileCreated(@NotNull VirtualFileEvent event) {
-          incModificationCount();
-        }
-      }, project);
-      project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-        @Override
-        public void rootsChanged(ModuleRootEvent event) {
-          incModificationCount();
-        }
-      });
+      return CachedValueProvider.Result.<Collection<String>>create(ContainerUtil.filter(allKeys, key -> id instanceof StubIndexKey ?
+                                                                                                    !stubIndex.processElements((StubIndexKey<String, PsiElement>)id, key, project, scope, PsiElement.class,
+                                        element -> false) :
+                                                                                                    !fileIndex.processValues(id, key, null, new FileBasedIndex.ValueProcessor() {
+               @Override
+               public boolean process(VirtualFile file, Object value) {
+                 return false;
+               }
+             }, scope)), PsiManager.getInstance(project).getModificationTracker());
     }
   }
 }

@@ -69,7 +69,7 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
   @NotNull
   public Set<InterceptorOrStackBase> getAllInterceptorsAndStacks() {
-    final Set<InterceptorOrStackBase> interceptorOrStackBases = new HashSet<InterceptorOrStackBase>();
+    final Set<InterceptorOrStackBase> interceptorOrStackBases = new HashSet<>();
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
       final List<InterceptorStack> interceptorList = strutsPackage.getInterceptorStacks();
       interceptorOrStackBases.addAll(interceptorList);
@@ -82,11 +82,7 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
   @NotNull
   public List<Action> findActionsByName(@NotNull @NonNls final String name,
                                         @Nullable @NonNls final String namespace) {
-    return ContainerUtil.findAll(getActionsForNamespace(namespace), new Condition<Action>() {
-      public boolean value(final Action action) {
-        return action.matchesPath(name);
-      }
-    });
+    return ContainerUtil.findAll(getActionsForNamespace(namespace), action -> action.matchesPath(name));
   }
 
   @NotNull
@@ -96,7 +92,7 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
   private List<Action> findActionsByClassInner(final PsiClass clazz,
                                                final boolean skipOnFirst) {
-    final List<Action> actionResultList = new SmartList<Action>();
+    final List<Action> actionResultList = new SmartList<>();
 
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
       for (final Action action : strutsPackage.getActions()) {
@@ -119,7 +115,7 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
   }
 
   public List<Action> getActionsForNamespace(@Nullable @NonNls final String namespace) {
-    final List<Action> actionResultList = new SmartList<Action>();
+    final List<Action> actionResultList = new SmartList<>();
 
     for (final StrutsPackage strutsPackage : getStrutsPackages()) {
       if (namespace == null ||

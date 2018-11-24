@@ -21,8 +21,8 @@ class AbcMerger extends AbcTranscoder {
   private final FileOutputStream out;
 
   // old id to new
-  private final TIntObjectHashMap<SymbolInfo> currentSymbolsInfo = new TIntObjectHashMap<SymbolInfo>();
-  private final ArrayList<SymbolInfo> symbols = new ArrayList<SymbolInfo>();
+  private final TIntObjectHashMap<SymbolInfo> currentSymbolsInfo = new TIntObjectHashMap<>();
+  private final ArrayList<SymbolInfo> symbols = new ArrayList<>();
   private int symbolCounter;
 
   @Nullable

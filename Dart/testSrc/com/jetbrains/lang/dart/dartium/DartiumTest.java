@@ -12,7 +12,7 @@ public class DartiumTest extends TestCase {
   private static void doTest(@Nullable final String dartFlagsBefore,
                              final boolean checkedMode,
                              @Nullable final String expectedDartFlagsAfter) {
-    final Map<String, String> envVars = new THashMap<String, String>();
+    final Map<String, String> envVars = new THashMap<>();
     if (dartFlagsBefore != null) {
       envVars.put("DART_FLAGS", dartFlagsBefore);
     }

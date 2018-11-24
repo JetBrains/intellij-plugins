@@ -1,11 +1,11 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import com.google.common.base.Charsets;
 import org.jetbrains.annotations.TestOnly;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
 public class DataBuffer {
   protected final int offset;
@@ -101,7 +101,7 @@ public class DataBuffer {
   @SuppressWarnings("UnusedDeclaration")
   @TestOnly
   public String readString(int length) {
-    return new String(data, offset + position, length, Charsets.UTF_8);
+    return new String(data, offset + position, length, StandardCharsets.UTF_8);
   }
 
   public void skip(int length) {

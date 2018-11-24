@@ -28,10 +28,11 @@ package org.osmorc.facet.ui;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileSystem;
 import com.intellij.psi.PsiFile;
-import static org.easymock.classextension.EasyMock.*;
+import org.junit.Test;
+
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)

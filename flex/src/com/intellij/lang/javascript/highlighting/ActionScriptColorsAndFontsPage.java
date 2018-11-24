@@ -54,7 +54,7 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
       new AttributesDescriptor(JSBundle.message("javascript.static.member.variable"), ECMAL4Highlighter.ECMAL4_STATIC_MEMBER_VARIABLE)
     };
 
-  private static @NonNls final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<String, TextAttributesKey>();
+  private static @NonNls final Map<String, TextAttributesKey> ADDITIONAL_HIGHLIGHT_DESCRIPTORS = new HashMap<>();
   static {
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("meta", ECMAL4Highlighter.ECMAL4_METADATA);
     ADDITIONAL_HIGHLIGHT_DESCRIPTORS.put("keyword", ECMAL4Highlighter.ECMAL4_KEYWORD);

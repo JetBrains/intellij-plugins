@@ -61,7 +61,7 @@ public class MovieSymbolTranscoder extends SymbolTranscoderBase {
   }
 
   private PlacedObject transcode() throws IOException {
-    placedObjects = new TIntObjectHashMap<PlacedObject>();
+    placedObjects = new TIntObjectHashMap<>();
 
     int spriteId = -1;
 
@@ -105,7 +105,7 @@ public class MovieSymbolTranscoder extends SymbolTranscoderBase {
       throw new IOException("Can't find symbol");
     }
 
-    usedPlacedObjects = new ArrayList<PlacedObject>(placedObjects.size());
+    usedPlacedObjects = new ArrayList<>(placedObjects.size());
     bounds = null;
     final PlacedObject exportedSymbol = placedObjects.get(spriteId);
     exportedSymbol.used = true;

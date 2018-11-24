@@ -38,10 +38,10 @@ public class MarkdownPreviewSettingsForm implements MarkdownPreviewSettings.Hold
                                  }
                                  return provider.getProviderInfo();
                                });
-    myPreviewPanelModel = new CollectionComboBoxModel<MarkdownHtmlPanelProvider.ProviderInfo>(providerInfos, providerInfos.get(0));
+    myPreviewPanelModel = new CollectionComboBoxModel<>(providerInfos, providerInfos.get(0));
     myPreviewProvider = new ComboBox(myPreviewPanelModel);
 
-    mySplitLayoutModel = new EnumComboBoxModel<SplitFileEditor.SplitEditorLayout>(SplitFileEditor.SplitEditorLayout.class);
+    mySplitLayoutModel = new EnumComboBoxModel<>(SplitFileEditor.SplitEditorLayout.class);
     myDefaultSplitLayout = new ComboBox(mySplitLayoutModel);
 
     myLastItem = myPreviewProvider.getSelectedItem();

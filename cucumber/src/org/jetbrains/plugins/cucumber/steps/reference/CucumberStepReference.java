@@ -79,8 +79,8 @@ public class CucumberStepReference implements PsiPolyVariantReference {
   @NotNull
   @Override
   public ResolveResult[] multiResolve(boolean incompleteCode) {
-    final List<ResolveResult> result = new ArrayList<ResolveResult>();
-    final List<PsiElement> resolvedElements = new ArrayList<PsiElement>();
+    final List<ResolveResult> result = new ArrayList<>();
+    final List<PsiElement> resolvedElements = new ArrayList<>();
 
     final CucumberJvmExtensionPoint[] extensionList = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
     for (CucumberJvmExtensionPoint e : extensionList) {

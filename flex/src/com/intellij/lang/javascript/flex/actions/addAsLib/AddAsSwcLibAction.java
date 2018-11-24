@@ -56,7 +56,7 @@ public class AddAsSwcLibAction extends AnAction {
 
     //final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
 
-    final List<VirtualFile> roots = new ArrayList<VirtualFile>();
+    final List<VirtualFile> roots = new ArrayList<>();
     for (VirtualFile file : files) {
       if (file.isDirectory()) {
         for (VirtualFile child : file.getChildren()) {

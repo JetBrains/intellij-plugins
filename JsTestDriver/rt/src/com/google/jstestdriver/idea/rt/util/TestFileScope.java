@@ -59,7 +59,7 @@ public class TestFileScope {
     if (myAll) {
       return Collections.singletonList("all");
     }
-    List<String> tests = new ArrayList<String>();
+    List<String> tests = new ArrayList<>();
     for (Map.Entry<String, Set<String>> entry : myMethodsByCaseMap.entrySet()) {
       String testCaseName = entry.getKey();
       Set<String> testMethodNames = entry.getValue();
@@ -88,7 +88,7 @@ public class TestFileScope {
     if (myAll) {
       return Collections.singletonList("all");
     }
-    List<String> tests = new ArrayList<String>();
+    List<String> tests = new ArrayList<>();
     for (Map.Entry<String, Set<String>> entry : myMethodsByCaseMap.entrySet()) {
       String testCaseName = entry.getKey();
       Set<String> testMethodNames = entry.getValue();
@@ -130,7 +130,7 @@ public class TestFileScope {
     if (myAll) {
       throw new RuntimeException("Can't serialize for all tests");
     }
-    List<String> testCaseStrings = new ArrayList<String>(myMethodsByCaseMap.size());
+    List<String> testCaseStrings = new ArrayList<>(myMethodsByCaseMap.size());
     for (Map.Entry<String, Set<String>> entry : myMethodsByCaseMap.entrySet()) {
       Set<String> testMethods = entry.getValue();
       if (testMethods == null) {
@@ -149,7 +149,7 @@ public class TestFileScope {
   @NotNull
   public static TestFileScope deserialize(@NotNull String s) {
     List<String> testCases = EscapeUtils.split(s, TEST_CASE_SEPARATOR);
-    Map<String, Set<String>> methodsByCaseMap = new HashMap<String, Set<String>>();
+    Map<String, Set<String>> methodsByCaseMap = new HashMap<>();
     for (String testCase : testCases) {
       List<String> comps = EscapeUtils.split(testCase, CASE_AND_METHOD_SEPARATOR);
       if (comps.size() > 0) {
@@ -160,7 +160,7 @@ public class TestFileScope {
         }
         else if (comps.size() == 2) {
           List<String> list = EscapeUtils.split(comps.get(1), TEST_METHOD_SEPARATOR);
-          methods = new HashSet<String>(list);
+          methods = new HashSet<>(list);
         }
         else {
           // illegal situation

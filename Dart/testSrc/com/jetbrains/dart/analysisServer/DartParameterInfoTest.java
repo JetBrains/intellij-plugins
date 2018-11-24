@@ -36,7 +36,7 @@ public class DartParameterInfoTest extends CodeInsightFixtureTestCase {
     Object[] items = createContext.getItemsToShow();
     assertTrue(items != null);
     assertTrue(items.length > 0);
-    MockParameterInfoUIContext context = new MockParameterInfoUIContext<PsiElement>(elt);
+    MockParameterInfoUIContext context = new MockParameterInfoUIContext<>(elt);
     parameterInfoHandler.updateUI((DartFunctionDescription)items[0], context);
     assertEquals(infoText, parameterInfoHandler.getParametersListPresentableText());
 

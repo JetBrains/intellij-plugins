@@ -49,7 +49,7 @@ public class DartIconProvider extends IconProvider {
     return null;
   }
 
-  private static boolean isFolderNearPubspecYaml(final @Nullable VirtualFile folder, final @NotNull String folderName) {
+  public static boolean isFolderNearPubspecYaml(final @Nullable VirtualFile folder, final @NotNull String folderName) {
     if (folder != null && folder.isDirectory() && folder.isInLocalFileSystem() && folderName.equals(folder.getName())) {
       final VirtualFile parentFolder = folder.getParent();
       final VirtualFile pubspecYamlFile = parentFolder != null ? parentFolder.findChild(PUBSPEC_YAML) : null;

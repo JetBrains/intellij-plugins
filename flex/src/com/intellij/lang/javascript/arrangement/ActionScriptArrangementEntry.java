@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.arrangement;
 
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
-import com.intellij.lang.javascript.generation.JavaScriptGenerateEventHandler;
+import com.intellij.lang.javascript.generation.ActionScriptGenerateEventHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
@@ -128,7 +128,7 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
         if (resolve instanceof JSClass &&
             (FlexCommonTypeNames.FLASH_EVENT_FQN.equals(((JSClass)resolve).getQualifiedName()) ||
              FlexCommonTypeNames.STARLING_EVENT_FQN.equals(((JSClass)resolve).getQualifiedName()) ||
-             JavaScriptGenerateEventHandler.isEventClass((JSClass)resolve))) {
+             ActionScriptGenerateEventHandler.isEventClass((JSClass)resolve))) {
           return true;
         }
       }

@@ -76,7 +76,7 @@ public class FlexCompilationUtils {
   static void deleteCacheForFile(final String filePath) throws IOException {
     final VirtualFile cacheFile = LocalFileSystem.getInstance().findFileByPath(filePath + ".cache");
     if (cacheFile != null) {
-      final Ref<IOException> exceptionRef = new Ref<IOException>();
+      final Ref<IOException> exceptionRef = new Ref<>();
 
       ApplicationManager.getApplication().invokeAndWait(new Runnable() {
         @Override
@@ -107,7 +107,7 @@ public class FlexCompilationUtils {
                                    final List<VirtualFile> configFiles,
                                    final Module module,
                                    final FlexBuildConfiguration bc) {
-    final List<String> command = new ArrayList<String>(compilerCommand);
+    final List<String> command = new ArrayList<>(compilerCommand);
     for (VirtualFile configFile : configFiles) {
       command.add("-load-config=" + configFile.getPath());
     }
@@ -274,7 +274,7 @@ public class FlexCompilationUtils {
 
     if (!FlexSdkUtils.isAirSdkWithoutFlex(sdk) && StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.8") >= 0) {
       final List<String> rsls = getRequiredRsls(compileInfoMessages);
-      final Collection<File> filesToRefresh = new THashSet<File>();
+      final Collection<File> filesToRefresh = new THashSet<>();
 
       final String rslBaseDir = sdk.getHomePath() + "/frameworks/rsls/";
       final String outputPath = PathUtil.getParentPath(bc.getActualOutputFilePath());
@@ -298,7 +298,7 @@ public class FlexCompilationUtils {
   }
 
   private static List<String> getRequiredRsls(final List<String> compileInfoMessages) {
-    final List<String> rsls = new ArrayList<String>();
+    final List<String> rsls = new ArrayList<>();
 
     boolean rslListStarted = false;
 
@@ -343,7 +343,7 @@ public class FlexCompilationUtils {
       throw new FlexCompilerException(FlexCommonBundle.message("output.folder.does.not.exist", outputFolderPath));
     }
 
-    final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
+    final Ref<FlexCompilerException> exceptionRef = new Ref<>();
     ApplicationManager.getApplication().invokeAndWait(new Runnable() {
       @Override
       public void run() {
@@ -403,7 +403,7 @@ public class FlexCompilationUtils {
 
   private static String replaceMacros(final String wrapperText, final String outputFileName, final String targetPlayer,
                                       final @Nullable JSClass mainClass) {
-    final Map<String, String> replacementMap = new THashMap<String, String>();
+    final Map<String, String> replacementMap = new THashMap<>();
 
     replacementMap.put(FlexCommonUtils.SWF_MACRO, outputFileName);
     replacementMap.put(FlexCommonUtils.TITLE_MACRO, outputFileName);
@@ -417,7 +417,7 @@ public class FlexCompilationUtils {
     replacementMap.put(FlexCommonUtils.VERSION_MINOR_MACRO, versionParts.size() >= 2 ? versionParts.get(1) : "0");
     replacementMap.put(FlexCommonUtils.VERSION_REVISION_MACRO, versionParts.size() >= 3 ? versionParts.get(2) : "0");
 
-    final Ref<JSAttribute> swfMetadataRef = new Ref<JSAttribute>();
+    final Ref<JSAttribute> swfMetadataRef = new Ref<>();
 
     final PsiFile psiFile = mainClass == null ? null : mainClass.getContainingFile();
 
@@ -484,7 +484,7 @@ public class FlexCompilationUtils {
 
   private static void generateAirDescriptor(final Module module, final FlexBuildConfiguration bc, final String descriptorFileName,
                                             final boolean android, final boolean ios) throws FlexCompilerException {
-    final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
+    final Ref<FlexCompilerException> exceptionRef = new Ref<>();
 
     final Runnable runnable = () -> {
       final Sdk sdk = bc.getSdk();
@@ -531,7 +531,7 @@ public class FlexCompilationUtils {
   }
 
   public static Collection<VirtualFile> getANEFiles(final ModuleRootModel moduleRootModel, final Dependencies dependencies) {
-    final Collection<VirtualFile> result = new ArrayList<VirtualFile>();
+    final Collection<VirtualFile> result = new ArrayList<>();
 
     for (DependencyEntry entry : dependencies.getEntries()) {
       if (entry instanceof ModuleLibraryEntry) {
@@ -564,7 +564,7 @@ public class FlexCompilationUtils {
 
   public static String[] getAirExtensionIDs(final ModuleRootModel moduleRootModel, final Dependencies dependencies) {
     final Collection<VirtualFile> aneFiles = getANEFiles(moduleRootModel, dependencies);
-    final Collection<String> extensionIDs = new ArrayList<String>();
+    final Collection<String> extensionIDs = new ArrayList<>();
     for (VirtualFile aneFile : aneFiles) {
       final String extensionId = getExtensionId(aneFile);
       ContainerUtil.addIfNotNull(extensionIDs, extensionId);
@@ -638,7 +638,7 @@ public class FlexCompilationUtils {
       throw new FlexCompilerException(FlexCommonBundle.message("output.folder.does.not.exist", outputFolderPath));
     }
 
-    final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
+    final Ref<FlexCompilerException> exceptionRef = new Ref<>();
 
     ApplicationManager.getApplication().invokeAndWait(() -> ApplicationManager.getApplication().runWriteAction(() -> {
       try {

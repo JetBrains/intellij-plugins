@@ -98,7 +98,7 @@ public class DartVmServiceStackFrame extends XStackFrame {
     myDebugProcess.getVmServiceWrapper().getObject(myIsolateId, thisVar.getValue().getClassRef().getId(), new GetObjectConsumer() {
       @Override
       public void received(Obj classObj) {
-        final SmartList<FieldRef> staticFields = new SmartList<FieldRef>();
+        final SmartList<FieldRef> staticFields = new SmartList<>();
         for (FieldRef fieldRef : ((ClassObj)classObj).getFields()) {
           if (fieldRef.isStatic()) {
             staticFields.add(fieldRef);

@@ -15,7 +15,8 @@ import java.util.Set;
  * @author nik
  */
 public class ErrorProneJavaBackendCompiler implements BackendCompiler {
-  private Project myProject;
+  public static final String COMPILER_ID = "error-prone";//duplicates ErrorProneJavaCompilingTool.COMPILER_ID from JPS part
+  private final Project myProject;
 
   public ErrorProneJavaBackendCompiler(Project project) {
     myProject = project;
@@ -24,7 +25,7 @@ public class ErrorProneJavaBackendCompiler implements BackendCompiler {
   @NotNull
   @Override
   public String getId() {
-    return "error-prone";
+    return COMPILER_ID;
   }
 
   @NotNull

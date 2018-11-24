@@ -28,7 +28,7 @@ import static com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProc
 public class DartCommandLineBreakpointHandler extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> {
   private final DartCommandLineDebugProcess myDebugProcess;
   private final MultiMap<XLineBreakpoint<?>, VmBreakpoint> myXBreakpointToVmBreakpoints = MultiMap.createSet();
-  private final Set<XLineBreakpoint<?>> myXBreakpoints = new THashSet<XLineBreakpoint<?>>();
+  private final Set<XLineBreakpoint<?>> myXBreakpoints = new THashSet<>();
 
   public DartCommandLineBreakpointHandler(@NotNull final DartCommandLineDebugProcess debugProcess) {
     super(DartLineBreakpointType.class);

@@ -19,7 +19,7 @@ public class CucumberPsiTreeListener extends PsiTreeChangeAdapter {
   private Map<PsiElement, ChangesWatcher> changesWatchersMap;
 
   public CucumberPsiTreeListener() {
-    changesWatchersMap = new HashMap<PsiElement, ChangesWatcher>();
+    changesWatchersMap = new HashMap<>();
   }
 
   public void addChangesWatcher(final PsiElement parent, final ChangesWatcher changesWatcher) {

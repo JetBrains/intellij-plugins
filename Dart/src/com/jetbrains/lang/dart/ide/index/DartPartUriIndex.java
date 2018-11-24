@@ -57,7 +57,7 @@ public class DartPartUriIndex extends FileBasedIndexExtension<String, List<Strin
       @Override
       public List<String> read(@NotNull DataInput in) throws IOException {
         final int size = DataInputOutputUtil.readINT(in);
-        final List<String> result = new ArrayList<String>(size);
+        final List<String> result = new ArrayList<>(size);
         for (int i = 0; i < size; ++i) {
           result.add(IOUtil.readUTF(in));
         }
@@ -78,7 +78,7 @@ public class DartPartUriIndex extends FileBasedIndexExtension<String, List<Strin
   }
 
   public static List<String> getPartUris(@NotNull final Project project, @NotNull final VirtualFile virtualFile) {
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
     for (List<String> list : FileBasedIndex.getInstance().getValues(DART_PATH_INDEX, virtualFile.getName(),
                                                                     GlobalSearchScope.fileScope(project, virtualFile))) {
       result.addAll(list);

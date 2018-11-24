@@ -41,8 +41,8 @@ public class CucumberStepsIndex {
   }
 
   public CucumberStepsIndex(final Project project) {
-    myExtensionMap = new HashMap<BDDFrameworkType, CucumberJvmExtensionPoint>();
-    myExtensionData = new HashMap<CucumberJvmExtensionPoint, Object>();
+    myExtensionMap = new HashMap<>();
+    myExtensionData = new HashMap<>();
 
     for (CucumberJvmExtensionPoint e : Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME)) {
       myExtensionMap.put(e.getStepFileType(), e);
@@ -113,7 +113,7 @@ public class CucumberStepsIndex {
     }
 
     Map<Class<? extends AbstractStepDefinition>, AbstractStepDefinition> definitionsByClass =
-      new java.util.HashMap<Class<? extends AbstractStepDefinition>, AbstractStepDefinition>();
+      new java.util.HashMap<>();
     List<AbstractStepDefinition> allSteps = loadStepsFor(featureFile, module);
     for (AbstractStepDefinition stepDefinition : allSteps) {
       if (stepDefinition.matches(step.getSubstitutedName()) && stepDefinition.supportsStep(step)) {
@@ -145,7 +145,7 @@ public class CucumberStepsIndex {
   // ToDo: use binary search here
   public List<AbstractStepDefinition> findStepDefinitionsByPattern(@NotNull final String pattern, @NotNull final Module module) {
     final List<AbstractStepDefinition> allSteps = loadStepsFor(null, module);
-    final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
+    final List<AbstractStepDefinition> result = new ArrayList<>();
     for (AbstractStepDefinition stepDefinition : allSteps) {
       final String elementText = stepDefinition.getCucumberRegex();
       if (elementText != null && elementText.equals(pattern)) {
@@ -163,7 +163,7 @@ public class CucumberStepsIndex {
 
   @NotNull
   public List<PsiFile> gatherStepDefinitionsFilesFromDirectory(@NotNull final PsiDirectory dir, final boolean writableOnly) {
-    final List<PsiFile> result = new ArrayList<PsiFile>();
+    final List<PsiFile> result = new ArrayList<>();
 
     // find step definitions in current folder
     for (PsiFile file : dir.getFiles()) {
@@ -182,7 +182,7 @@ public class CucumberStepsIndex {
   }
 
   private List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
-    ArrayList<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
+    ArrayList<AbstractStepDefinition> result = new ArrayList<>();
 
     for (CucumberJvmExtensionPoint extension : myExtensionMap.values()) {
       result.addAll(extension.loadStepsFor(featureFile, module));
@@ -191,7 +191,7 @@ public class CucumberStepsIndex {
   }
 
   public Set<Pair<PsiFile, BDDFrameworkType>> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
-    Set<Pair<PsiFile, BDDFrameworkType>> result = new HashSet<Pair<PsiFile, BDDFrameworkType>>();
+    Set<Pair<PsiFile, BDDFrameworkType>> result = new HashSet<>();
     for (CucumberJvmExtensionPoint ep : myExtensionMap.values()) {
       // Skip if framework file creation support is optional
       if ((ep instanceof OptionalStepDefinitionExtensionPoint) &&

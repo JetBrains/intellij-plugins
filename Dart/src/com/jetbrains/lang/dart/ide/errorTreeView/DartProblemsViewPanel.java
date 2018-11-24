@@ -78,7 +78,7 @@ public class DartProblemsViewPanel extends JPanel implements DataProvider, CopyP
 
   @NotNull
   private TableView<DartProblem> createTable() {
-    final TableView<DartProblem> table = new TableView<DartProblem>(new DartProblemsTableModel(myProject, myFilter));
+    final TableView<DartProblem> table = new TableView<>(new DartProblemsTableModel(myProject, myFilter));
 
     table.addKeyListener(new KeyAdapter() {
       @Override

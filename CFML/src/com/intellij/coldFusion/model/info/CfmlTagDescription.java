@@ -26,8 +26,8 @@ import java.util.Set;
  */
 public class CfmlTagDescription {
   private String myDescription = "";
-  private Collection<CfmlAttributeDescription> myAttributes = new LinkedList<CfmlAttributeDescription>();
-  private Set<String> myAttributesNames = new HashSet<String>();
+  private Collection<CfmlAttributeDescription> myAttributes = new LinkedList<>();
+  private Set<String> myAttributesNames = new HashSet<>();
   private boolean myIsSingle = false;
   private boolean myIsEndTagRequired = true;
   private String myName;

@@ -56,7 +56,7 @@ public class AddOnlineUserP2PCommand implements P2PCommand {
                             selfAddress.getHostAddress(),
                             StringUtil.toXMLSafeString(StringUtil.getMyUsername()),
                             myPort,
-                            new Vector<String>(projects),
+                            new Vector<>(projects),
                             presence.toVector()
     );
   }

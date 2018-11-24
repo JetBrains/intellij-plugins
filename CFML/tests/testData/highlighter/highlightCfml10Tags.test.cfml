@@ -212,7 +212,7 @@ URL Decoded: #urldecoded#<br/>
 <style>
   .myDiv
   {
-    background-color : #encodeForCSS(form.bgcolor)<error descr="Illegal character: # (U+0023)">#</error>;
+    background-color : #encodeForCSS(form.bgcolor)#;
     /* Encode the input to avoid any malicious code execution.*/
   }
 </style>

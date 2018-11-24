@@ -23,7 +23,7 @@ import org.jetbrains.io.InfoMap;
 import java.util.List;
 
 public class DocumentFactoryManager {
-  private final InfoMap<VirtualFile, DocumentInfo> files = new InfoMap<VirtualFile, DocumentInfo>();
+  private final InfoMap<VirtualFile, DocumentInfo> files = new InfoMap<>();
 
   public DocumentFactoryManager() {
     ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getApplication())

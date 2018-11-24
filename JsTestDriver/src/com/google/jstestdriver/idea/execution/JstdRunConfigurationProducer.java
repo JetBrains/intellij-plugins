@@ -90,7 +90,7 @@ public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdR
                                                   ConfigurationContext context,
                                                   Ref<PsiElement> sourceElement) {
     Project project = configuration.getProject();
-    if (project == null || !JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
+    if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
       return false;
     }
     RunConfiguration original = context.getOriginalConfiguration(null);
@@ -124,7 +124,7 @@ public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdR
   @Override
   public boolean isConfigurationFromContext(JstdRunConfiguration configuration, ConfigurationContext context) {
     Project project = configuration.getProject();
-    if (project == null || !JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
+    if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
       return false;
     }
     JstdRunSettings patternRunSettings = buildRunSettingsContext(context.getLocation());

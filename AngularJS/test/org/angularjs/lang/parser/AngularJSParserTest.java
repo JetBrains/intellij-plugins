@@ -39,7 +39,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
   public void runSingle() throws Throwable {
     final Throwable[] throwables = new Throwable[1];
 
-    Runnable runnable = () -> {
+    invokeTestRunnable(() -> {
       try {
         System.setProperty("angular.js.parse.message.format", "true");
         doSingleTest(myFileSuffix, myTestDataPath);
@@ -48,9 +48,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
         System.clearProperty("angular.js.parse.message.format");
         throwables[0] = e;
       }
-    };
-
-    invokeTestRunnable(runnable);
+    });
 
     if (throwables[0] != null) {
       throw throwables[0];

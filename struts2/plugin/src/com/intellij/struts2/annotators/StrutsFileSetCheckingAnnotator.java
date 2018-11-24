@@ -173,7 +173,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
       final Set<StrutsFileSet> strutsFileSets = strutsFacet.getConfiguration().getFileSets();
       final BaseListPopupStep<StrutsFileSet> step =
         new BaseListPopupStep<StrutsFileSet>(StrutsBundle.message("annotators.fileset.fix.choose.fileset"),
-                                             new ArrayList<StrutsFileSet>(strutsFileSets)) {
+                                             new ArrayList<>(strutsFileSets)) {
 
           public Icon getIconFor(final StrutsFileSet aValue) {
             return StrutsIcons.STRUTS_CONFIG_FILE;

@@ -30,7 +30,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.ide.marker.DartServerOverrideMarkerProvider;
+import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -113,7 +113,7 @@ public class DartServerGotoSuperHandler implements LanguageCodeInsightActionHand
 
     // find the DartComponent
     final Location itemLocation = itemElement.getLocation();
-    final DartComponent itemComponent = DartServerOverrideMarkerProvider.findDartComponent(project, itemLocation);
+    final DartComponent itemComponent = DartHierarchyUtil.findDartComponent(project, itemLocation);
     if (itemComponent != null) {
       supers.add(itemComponent);
     }

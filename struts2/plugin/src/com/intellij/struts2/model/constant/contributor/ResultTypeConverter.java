@@ -63,11 +63,7 @@ class ResultTypeConverter extends DelimitedListConverter<ResultType> {
     final List<ResultType> resultTypes = ContainerUtil.concat(strutsModel.getStrutsPackages(),
                                                               RESULT_TYPE_GETTER);
 
-    return ContainerUtil.find(resultTypes, new Condition<ResultType>() {
-      public boolean value(final ResultType resultType) {
-        return Comparing.strEqual(s, resultType.getName().getStringValue());
-      }
-    });
+    return ContainerUtil.find(resultTypes, resultType -> Comparing.strEqual(s, resultType.getName().getStringValue()));
   }
 
   @Override

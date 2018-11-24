@@ -20,7 +20,7 @@ Dart File
                     PsiElement(IDENTIFIER)('x')
             PsiElement())(')')
           FUNCTION_BODY
-            BLOCK
+            LAZY_PARSEABLE_BLOCK
               PsiElement({)('{')
               STATEMENTS
                 VAR_DECLARATION_LIST
@@ -31,34 +31,28 @@ Dart File
                         PsiElement(IDENTIFIER)('y')
                 PsiErrorElement:',', ';' or '=' expected, got '??='
                   <empty list>
-        PsiElement(??=)('??=')
-        INCOMPLETE_DECLARATION
-          TYPE
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('x')
-        PsiErrorElement:'(', '.', <, <qualified reference expression>, IDENTIFIER, get, operator or set expected, got ';'
-          PsiElement(;)(';')
+              PsiElement(??=)('??=')
+              PsiElement(IDENTIFIER)('x')
+              PsiElement(;)(';')
+              PsiElement(})('}')
+        METHOD_DECLARATION
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('n')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            PsiElement())(')')
+          FUNCTION_BODY
+            LAZY_PARSEABLE_BLOCK
+              PsiElement({)('{')
+              STATEMENTS
+                REFERENCE_EXPRESSION
+                  SUPER_EXPRESSION
+                    PsiElement(super)('super')
+                  PsiElement(?.)('?.')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('hashCode')
+                PsiElement(;)(';')
+              PsiElement(})('}')
       PsiElement(})('}')
-  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
-    COMPONENT_NAME
-      ID
-        PsiElement(IDENTIFIER)('n')
-    FORMAL_PARAMETER_LIST
-      PsiElement(()('(')
-      PsiElement())(')')
-    FUNCTION_BODY
-      BLOCK
-        PsiElement({)('{')
-        STATEMENTS
-          REFERENCE_EXPRESSION
-            SUPER_EXPRESSION
-              PsiElement(super)('super')
-            PsiElement(?.)('?.')
-            REFERENCE_EXPRESSION
-              ID
-                PsiElement(IDENTIFIER)('hashCode')
-          PsiElement(;)(';')
-        PsiElement(})('}')
-  PsiErrorElement:'}' unexpected
-    PsiElement(})('}')

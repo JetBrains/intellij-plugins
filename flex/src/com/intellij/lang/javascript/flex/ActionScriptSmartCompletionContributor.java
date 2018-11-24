@@ -21,10 +21,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSContext;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
@@ -63,7 +60,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   public List<?> getSmartCompletionVariants(final @NotNull JSReferenceExpression location) {
     final PsiElement parent = location.getParent();
 
-    List<Object> variants = new ArrayList<Object>();
+    List<Object> variants = new ArrayList<>();
     if (parent instanceof JSArgumentList &&
         ((JSArgumentList)parent).getArguments()[0] == location &&
         location.getQualifier() == null
@@ -74,8 +71,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         final JSReferenceExpression expression = (JSReferenceExpression)calledExpr;
         @NonNls final String s = expression.getReferencedName();
 
-        if ("addEventListener".equals(s) ||
-            "removeEventListener".equals(s) ||
+        if (ActionScriptResolveUtil.ADD_EVENT_LISTENER_METHOD.equals(s) ||
+            ActionScriptResolveUtil.REMOVE_EVENT_LISTENER_METHOD.equals(s) ||
             "willTrigger".equals(s) ||
             "hasEventListener".equals(s)
           ) {
@@ -91,17 +88,20 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       JSClass clazz = expectedClassType.resolveClass();
 
       if (clazz != null && !JSGenericTypeImpl.isGenericActionScriptVectorType(expectedClassType)) {
-        final Set<String> processedCandidateNames = new THashSet<String>(50);
+        final Set<String> processedCandidateNames = new THashSet<>(50);
         Query<JSClass> query;
 
         if (clazz.isInterface()) {
           query = JSClassSearch.searchInterfaceImplementations(clazz, true, location.getResolveScope());
         }
         else {
-          LookupElement lookupItem = JSLookupUtilImpl
-            .createPrioritizedLookupItem(clazz, clazz.getName(), JSLookupPriority.SMART_PRIORITY + 1, false, true);
+          final String name = clazz.getName();
+          if (name != null) {
+            LookupElement lookupItem = JSLookupUtilImpl
+              .createPrioritizedLookupItem(clazz, name, JSLookupPriority.MATCHED_TYPE_PRIORITY, false, true);
 
-          variants.add(lookupItem);
+            variants.add(lookupItem);
+          }
           processedCandidateNames.add(clazz.getQualifiedName());
           query = JSClassSearch.searchClassInheritors(clazz, true, location.getResolveScope());
         }
@@ -199,7 +199,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   protected void processClasses(PsiElement parentInOriginalTree, final SinkResolveProcessor<?> processor) {
     final Project project = parentInOriginalTree.getProject();
     final GlobalSearchScope resolveScope = JSResolveUtil.getResolveScope(parentInOriginalTree);
-    final LinkedHashSet<String> qualifiedNames = new LinkedHashSet<String>();
+    final LinkedHashSet<String> qualifiedNames = new LinkedHashSet<>();
     JSPackageIndex.processElementsInScopeRecursive("", new JSPackageIndex.PackageQualifiedElementsProcessor() {
       @Override
       public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
@@ -225,7 +225,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     String packageName = place != null ? JSResolveUtil.getPackageNameFromPlace(place) : "";
 
     for (JSClass result : all) {
-      if (JSResolveUtil.hasExcludeClassMetadata(result)) continue;
+      if (ActionScriptResolveUtil.hasExcludeClassMetadata(result)) continue;
       if (!JSResolveUtil.isAccessibleFromCurrentPackage(result, packageName, place)) continue;
       if (!processedCandidateNames.add(result.getQualifiedName())) continue;
       variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(result, result.getName(), JSLookupPriority.SMART_PRIORITY, false, true));
@@ -252,8 +252,8 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
   public static Map<String, String> getEventsMap(JSClass clazzToProcess) {
     if (clazzToProcess == null) return Collections.emptyMap();
 
-    final Map<String, String> eventsMap = new THashMap<String, String>();
-    class EventsDataCollector extends ResolveProcessor implements JSResolveUtil.MetaDataProcessor {
+    final Map<String, String> eventsMap = new THashMap<>();
+    class EventsDataCollector extends ResolveProcessor implements ActionScriptResolveUtil.MetaDataProcessor {
 
       public EventsDataCollector() {
         super(null);
@@ -288,7 +288,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       @Override
       public boolean execute(@NotNull PsiElement element, @NotNull ResolveState state) {
         if (element instanceof JSClass) {
-          JSResolveUtil.processMetaAttributesForClass(element, this, true);
+          ActionScriptResolveUtil.processMetaAttributesForClass(element, this, true);
         }
         return true;
       }
@@ -307,7 +307,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           protected void process(JSFile file) {
             for (PsiElement element : file.getChildren()) {
               if (element instanceof JSAttributeList) {
-                JSResolveUtil.processAttributeList(eventsDataCollector, null, (JSAttributeList)element, true, true);
+                ActionScriptResolveUtil.processAttributeList(eventsDataCollector, null, (JSAttributeList)element, true, true);
               }
             }
           }
@@ -364,7 +364,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     private final PsiElement myExpr;
     private final List<Object> myVariants;
     private final ResolveState state = new ResolveState();
-    private Map<String, String> myEventsMap = new THashMap<String, String>();
+    private Map<String, String> myEventsMap = new THashMap<>();
 
     public MyEventSubclassesProcessor(final PsiElement expr, final List<Object> variants) {
       super(null);
@@ -429,7 +429,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         setToProcessMembers(true);
         setTypeContext(false);
 
-        final Set<String> visited = new THashSet<String>();
+        final Set<String> visited = new THashSet<>();
         for (JSClass cls : JSClassSearch.searchClassInheritors((JSClass)eventClass1, true, expression.getResolveScope()).findAll()) {
           if (!visited.add(cls.getQualifiedName())) continue;
           process(cls);
@@ -443,7 +443,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         setToProcessMembers(true);
         setTypeContext(false);
 
-        final Set<String> visited = new THashSet<String>();
+        final Set<String> visited = new THashSet<>();
         for (JSClass cls : JSClassSearch.searchClassInheritors((JSClass)eventClass2, true, expression.getResolveScope()).findAll()) {
           if (!visited.add(cls.getQualifiedName())) continue;
           process(cls);

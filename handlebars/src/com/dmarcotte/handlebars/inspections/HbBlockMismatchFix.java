@@ -63,12 +63,8 @@ class HbBlockMismatchFix implements IntentionAction {
 
     if (psiElement instanceof PsiWhiteSpace) psiElement = PsiTreeUtil.prevLeaf(psiElement);
 
-    HbBlockMustache blockMustache = (HbBlockMustache)PsiTreeUtil.findFirstParent(psiElement, true, new Condition<PsiElement>() {
-      @Override
-      public boolean value(PsiElement psiElement) {
-        return psiElement instanceof HbBlockMustache;
-      }
-    });
+    HbBlockMustache blockMustache = (HbBlockMustache)PsiTreeUtil.findFirstParent(psiElement, true,
+                                                                                 psiElement1 -> psiElement1 instanceof HbBlockMustache);
 
     if (blockMustache == null) {
       return;

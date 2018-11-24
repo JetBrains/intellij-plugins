@@ -41,7 +41,7 @@ import java.util.Set;
 public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider implements TemplateLanguageFileViewProvider {
 
   private static final THashSet<Language> ourRelevantLanguages =
-    new THashSet<Language>(Arrays.asList(StdLanguages.HTML, CfmlLanguage.INSTANCE));
+    new THashSet<>(Arrays.asList(StdLanguages.HTML, CfmlLanguage.INSTANCE));
 
 
   public CfmlFileViewProvider(final PsiManager manager, final VirtualFile virtualFile, final boolean physical) {

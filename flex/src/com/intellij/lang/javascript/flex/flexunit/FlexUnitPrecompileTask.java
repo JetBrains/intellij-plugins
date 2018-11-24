@@ -74,7 +74,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
       return true;
     }
 
-    final Ref<Boolean> isDumb = new Ref<Boolean>(false);
+    final Ref<Boolean> isDumb = new Ref<>(false);
     final RuntimeConfigurationException validationError =
       ApplicationManager.getApplication().runReadAction(new NullableComputable<RuntimeConfigurationException>() {
         public RuntimeConfigurationException compute() {
@@ -127,9 +127,9 @@ public class FlexUnitPrecompileTask implements CompileTask {
     params.setPort(flexUnitPort);
     params.setSocketPolicyPort(socketPolicyPort);
 
-    final Ref<Module> moduleRef = new Ref<Module>();
-    final Ref<FlexBuildConfiguration> bcRef = new Ref<FlexBuildConfiguration>();
-    final Ref<FlexUnitSupport> supportRef = new Ref<FlexUnitSupport>();
+    final Ref<Module> moduleRef = new Ref<>();
+    final Ref<FlexBuildConfiguration> bcRef = new Ref<>();
+    final Ref<FlexUnitSupport> supportRef = new Ref<>();
 
     ApplicationManager.getApplication().runReadAction(() -> {
       if (DumbService.getInstance(myProject).isDumb()) return;
@@ -163,12 +163,12 @@ public class FlexUnitPrecompileTask implements CompileTask {
     final boolean flexUnit4;
     switch (params.getScope()) {
       case Class: {
-        final Ref<Boolean> isFlexUnit1Suite = new Ref<Boolean>();
-        final Ref<Boolean> isSuite = new Ref<Boolean>();
+        final Ref<Boolean> isFlexUnit1Suite = new Ref<>();
+        final Ref<Boolean> isSuite = new Ref<>();
         Set<String> customRunners = ApplicationManager.getApplication().runReadAction(new NullableComputable<Set<String>>() {
           public Set<String> compute() {
             if (DumbService.getInstance(myProject).isDumb()) return null;
-            Set<String> result = new THashSet<String>();
+            Set<String> result = new THashSet<>();
             final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
             collectCustomRunners(result, clazz, support, null);
             isFlexUnit1Suite.set(support.isFlexUnit1SuiteSubclass(clazz));
@@ -192,7 +192,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
         Set<String> customRunners = ApplicationManager.getApplication().runReadAction(new NullableComputable<Set<String>>() {
           public Set<String> compute() {
             if (DumbService.getInstance(myProject).isDumb()) return null;
-            Set<String> result = new THashSet<String>();
+            Set<String> result = new THashSet<>();
             final JSClass clazz = (JSClass)ActionScriptClassResolver.findClassByQNameStatic(params.getClassName(), moduleScope);
             collectCustomRunners(result, clazz, support, null);
             return result;
@@ -215,14 +215,14 @@ public class FlexUnitPrecompileTask implements CompileTask {
             public Collection<Pair<String, Set<String>>> compute() {
               if (DumbService.getInstance(myProject).isDumb()) return null;
 
-              final Collection<Pair<String, Set<String>>> result = new ArrayList<Pair<String, Set<String>>>();
+              final Collection<Pair<String, Set<String>>> result = new ArrayList<>();
               JSPackageIndex
                 .processElementsInScopeRecursive(params.getPackageName(), new JSPackageIndex.PackageQualifiedElementsProcessor() {
                   public boolean process(String qualifiedName, JSPackageIndexInfo.Kind kind, boolean isPublic) {
                     if (kind == JSPackageIndexInfo.Kind.CLASS) {
                       PsiElement clazz = ActionScriptClassResolver.findClassByQNameStatic(qualifiedName, moduleScope);
                       if (clazz instanceof JSClass && support.isTestClass((JSClass)clazz, false)) {
-                        Set<String> customRunners = new THashSet<String>();
+                        Set<String> customRunners = new THashSet<>();
                         collectCustomRunners(customRunners, (JSClass)clazz, support, null);
                         result.add(Pair.create(((JSClass)clazz).getQualifiedName(), customRunners));
                       }
@@ -333,7 +333,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     final String customRunner = FlexUnitSupport.getCustomRunner(testClass);
     if (!StringUtil.isEmptyOrSpaces(customRunner)) result.add(customRunner);
     if (flexUnitSupport.isSuite(testClass)) {
-      if (seen == null) seen = new THashSet<JSClass>();
+      if (seen == null) seen = new THashSet<>();
       seen.add(testClass);
       for (JSClass referencedClass : flexUnitSupport.getSuiteTestClasses(testClass)) {
         collectCustomRunners(result, referencedClass, flexUnitSupport, seen);

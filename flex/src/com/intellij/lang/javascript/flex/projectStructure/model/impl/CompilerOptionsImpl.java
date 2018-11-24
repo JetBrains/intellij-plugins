@@ -29,7 +29,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
 
   private final EventDispatcher<CompilerOptionsListener> myDispatcher = EventDispatcher.create(CompilerOptionsListener.class);
 
-  private final Map<String, String> myOptions = new THashMap<String, String>();
+  private final Map<String, String> myOptions = new THashMap<>();
   private @NotNull ResourceFilesMode myResourceFilesMode = ResourceFilesMode.All;
   private @NotNull String myFilesToIncludeInSWC = "";
   private @NotNull String myAdditionalConfigFilePath = "";
@@ -183,7 +183,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
   public static class State {
     @Property(surroundWithTag = false)
     @MapAnnotation(surroundKeyWithTag = false, surroundValueWithTag = false)
-    public Map<String, String> options = new THashMap<String, String>();
+    public Map<String, String> options = new THashMap<>();
     public ResourceFilesMode resourceFilesMode = ResourceFilesMode.All;
     public String filesToIncludeInSWC = "";
     public String additionalConfigFilePath = "";

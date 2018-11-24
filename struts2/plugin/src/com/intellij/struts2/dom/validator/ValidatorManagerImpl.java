@@ -96,7 +96,7 @@ public class ValidatorManagerImpl extends ValidatorManager {
 
         final List<ValidatorConfig> defaultValidators = fileElement.getRootElement().getValidatorConfigs();
 
-        final List<ValidatorConfig> allValidatorConfigs = new ArrayList<ValidatorConfig>(defaultValidators);
+        final List<ValidatorConfig> allValidatorConfigs = new ArrayList<>(defaultValidators);
         allValidatorConfigs.addAll(validatorConfigs); // custom overrides defaults
         return allValidatorConfigs;
       }
@@ -144,12 +144,9 @@ public class ValidatorManagerImpl extends ValidatorManager {
         DomService.getInstance().getFileElements(Validators.class, clazz.getProject(), searchScope);
 
     final List<DomFileElement<Validators>> filtered =
-        ContainerUtil.filter(validationRoots, new Condition<DomFileElement<Validators>>() {
-          @Override
-          public boolean value(final DomFileElement<Validators> validatorDomFileElement) {
-            final String fileName = validatorDomFileElement.getFile().getName();
-            return StringUtil.startsWith(fileName, clazz.getName());
-          }
+        ContainerUtil.filter(validationRoots, validatorDomFileElement -> {
+          final String fileName = validatorDomFileElement.getFile().getName();
+          return StringUtil.startsWith(fileName, clazz.getName());
         });
 
     return ContainerUtil.map(filtered, validatorsDomFileElement -> validatorsDomFileElement.getFile());

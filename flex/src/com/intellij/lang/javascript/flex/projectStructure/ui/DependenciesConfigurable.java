@@ -62,7 +62,6 @@ import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
 import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
-import com.intellij.util.Function;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
@@ -635,7 +634,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private static final TableCellRenderer LINKAGE_TYPE_RENDERER = new DefaultTableCellRenderer() {
-    private ComboBoxTableRenderer<LinkageType> myComboBoxTableRenderer = new ComboBoxTableRenderer<LinkageType>(null);
+    private ComboBoxTableRenderer<LinkageType> myComboBoxTableRenderer = new ComboBoxTableRenderer<>(null);
 
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       final Object tableItem = ((EditableTreeTable)table).getItemAt(row);
@@ -758,12 +757,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     mySdkCombo.setSetupButton(myNewButton, myProject, sdksModel, new JdkComboBox.NoneJdkComboBoxItem(), null,
                               FlexBundle.message("set.up.sdk.title"));
-    mySdkCombo.setEditButton(myEditButton, myProject, new NullableComputable<Sdk>() {
-      @Nullable
-      public Sdk compute() {
-        return mySdkCombo.getSelectedJdk();
-      }
-    });
+    mySdkCombo.setEditButton(myEditButton, myProject, (NullableComputable<Sdk>)() -> mySdkCombo.getSelectedJdk());
 
     mySdkLabel.setLabelFor(mySdkCombo);
 
@@ -894,7 +888,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       @Override
       public void moduleRemoved(Module module) {
         // TODO return if module == this module
-        Set<MyTableItem> itemsToRemove = new HashSet<MyTableItem>();
+        Set<MyTableItem> itemsToRemove = new HashSet<>();
         // 1st-level nodes are always visible
         // 2nd-level nodes cannot refer to BC
         for (int row = 0; row < myTable.getRowCount(); row++) {
@@ -1139,7 +1133,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private void removeSelection() {
     TableUtil.stopEditing(myTable);
     int[] selectedRows = myTable.getSelectedRows();
-    Set<MyTableItem> itemsToRemove = new HashSet<MyTableItem>(selectedRows.length);
+    Set<MyTableItem> itemsToRemove = new HashSet<>(selectedRows.length);
     for (int row : selectedRows) {
       itemsToRemove.add(myTable.getItemAt(row));
     }
@@ -1248,12 +1242,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     List<MyTableItem> items = myTable.getItems();
-    items = ContainerUtil.filter(items, new Condition<MyTableItem>() {
-      @Override
-      public boolean value(MyTableItem item) {
-        return !(item instanceof SdkItem || item instanceof SdkEntryItem);
-      }
-    });
+    items = ContainerUtil.filter(items, item -> !(item instanceof SdkItem || item instanceof SdkEntryItem));
 
     DependencyEntry[] entries = myDependencies.getEntries();
     if (items.size() != entries.length) return true;
@@ -1278,7 +1267,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     List<MyTableItem> items = myTable.getItems();
-    List<ModifiableDependencyEntry> newEntries = new ArrayList<ModifiableDependencyEntry>();
+    List<ModifiableDependencyEntry> newEntries = new ArrayList<>();
     for (MyTableItem item : items) {
       ModifiableDependencyEntry entry = item.apply(myDependencies);
       if (entry != null) {
@@ -1384,12 +1373,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
         Module module = bcEntry.findModule();
         CompositeConfigurable configurable =
-          module != null ? ContainerUtil.find(configurator.getBCConfigurables(module), new Condition<CompositeConfigurable>() {
-            @Override
-            public boolean value(CompositeConfigurable configurable) {
-              return configurable.getDisplayName().equals(bcEntry.getBcName());
-            }
-          }) : null;
+          module != null ? ContainerUtil.find(configurator.getBCConfigurables(module),
+                                              configurable1 -> configurable1.getDisplayName().equals(bcEntry.getBcName())) : null;
         if (configurable == null) {
           item = new BCItem(bcEntry.getModuleName(), bcEntry.getBcName());
         }
@@ -1500,15 +1485,17 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private void createUIComponents() {
-    mySdkCombo = new JdkComboBox(mySkdsModel,
-                                 Conditions.<SdkTypeId>oneOf(FlexSdkType2.getInstance(), FlexmojosSdkType.getInstance()),
-                                 Conditions.<SdkTypeId>is(FlexSdkType2.getInstance()));
+    final Condition<SdkTypeId> sdkTypeFilter = Conditions.oneOf(FlexSdkType2.getInstance(), FlexmojosSdkType.getInstance());
+    Condition<Sdk> sdkCondition =
+      JdkComboBox.getSdkFilter(sdkTypeFilter);
+
+    mySdkCombo = new JdkComboBox(mySkdsModel, sdkTypeFilter, sdkCondition, Conditions.is(FlexSdkType2.getInstance()), false);
   }
 
   private void initPopupActions() {
     if (myPopupActions == null) {
       int actionIndex = 1;
-      final List<AddItemPopupAction> actions = new ArrayList<AddItemPopupAction>();
+      final List<AddItemPopupAction> actions = new ArrayList<>();
       actions.add(new AddBuildConfigurationDependencyAction(actionIndex++));
       actions.add(new AddFilesAction(actionIndex++));
       actions.add(new AddSharedLibraryAction(actionIndex++));
@@ -1523,7 +1510,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public void run() {
-      final Collection<FlexBCConfigurable> dependencies = new ArrayList<FlexBCConfigurable>();
+      final Collection<FlexBCConfigurable> dependencies = new ArrayList<>();
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof BCItem) {
@@ -1536,18 +1523,15 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
       ChooseBuildConfigurationDialog d = ChooseBuildConfigurationDialog.createForApplicableBCs(
         FlexBundle.message("add.bc.dependency.dialog.title"), FlexBundle.message("add.dependency.bc.dialog.label"), myProject, false,
-        new Condition<FlexBCConfigurable>() {
-          @Override
-          public boolean value(final FlexBCConfigurable configurable) {
-            if (dependencies.contains(configurable) || configurable.isParentFor(DependenciesConfigurable.this)) {
-              return false;
-            }
-
-            if (!BCUtils.isApplicableForDependency(myNature, configurable.getOutputType())) {
-              return false;
-            }
-            return true;
+        configurable -> {
+          if (dependencies.contains(configurable) || configurable.isParentFor(DependenciesConfigurable.this)) {
+            return false;
           }
+
+          if (!BCUtils.isApplicableForDependency(myNature, configurable.getOutputType())) {
+            return false;
+          }
+          return true;
         });
 
       if (d == null) {
@@ -1579,7 +1563,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public void run() {
       // TODO we can have problems if we add the same library twice for one module?
-      final Collection<Library> usedLibraries = new ArrayList<Library>();
+      final Collection<Library> usedLibraries = new ArrayList<>();
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof ModuleLibraryItem) {
@@ -1589,12 +1573,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           }
         }
       }
-      Condition<Library> filter = new Condition<Library>() {
-        @Override
-        public boolean value(Library library) {
-          return usedLibraries.contains(library);
-        }
-      };
+      Condition<Library> filter = library -> usedLibraries.contains(library);
 
       LibraryTable.ModifiableModel modifiableModel = myConfigEditor.getLibraryModel(myDependencies);
       LibraryTable.ModifiableModel librariesModelWrapper = new LibraryTableModifiableModelWrapper(modifiableModel, filter);
@@ -1626,7 +1605,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     public void run() {
-      final Collection<Library> usedLibraries = new HashSet<Library>();
+      final Collection<Library> usedLibraries = new HashSet<>();
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof SharedLibraryItem) {
@@ -1637,11 +1616,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }
 
-      ChooseLibrariesDialog d = new ChooseLibrariesDialog(new Condition<Library>() {
-        public boolean value(final Library library) {
-          return !usedLibraries.contains(library);
-        }
-      });
+      ChooseLibrariesDialog d = new ChooseLibrariesDialog(library -> !usedLibraries.contains(library));
       if (!d.showAndGet()) {
         return;
       }
@@ -1819,7 +1794,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     @NotNull
     public Iterator<Library> getLibraryIterator() {
-      return new FilteringIterator<Library, Library>(myDelegate.getLibraryIterator(), myLibraryFilter);
+      return new FilteringIterator<>(myDelegate.getLibraryIterator(), myLibraryFilter);
     }
 
     @Override

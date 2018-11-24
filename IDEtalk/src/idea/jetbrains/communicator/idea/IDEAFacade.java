@@ -232,7 +232,7 @@ public class IDEAFacade implements IDEFacade {
   @Override
   public String[] getProjects() {
     Project[] projects = ProjectManager.getInstance().getOpenProjects();
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
     for (Project project : projects) {
       result.add(project.getName());
     }
@@ -298,7 +298,7 @@ public class IDEAFacade implements IDEFacade {
 
   @Override
   public Change[] getDiff(Object[] src, Object[] dest) {
-    List<MyChangeAdapter> result = new ArrayList<MyChangeAdapter>();
+    List<MyChangeAdapter> result = new ArrayList<>();
     Diff.Change change;
     try {
       change = Diff.buildChanges(src, dest);

@@ -110,7 +110,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
           if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(descriptor.getType())) {
             // drop quotes
             String text = element.getText().substring(1, length - 1);
-            final List<PsiReference> references = new ArrayList<PsiReference>();
+            final List<PsiReference> references = new ArrayList<>();
             new ArrayAttributeValueProcessor() {
               @Override
               protected void processElement(int start, int end) {
@@ -537,7 +537,7 @@ public class MxmlReferenceContributor extends PsiReferenceContributor {
   }
 
   private static PsiReference[] buildStateRefs(PsiElement element, boolean stateGroupsOnly) {
-    SmartList<PsiReference> refs = new SmartList<PsiReference>();
+    SmartList<PsiReference> refs = new SmartList<>();
     StringTokenizer t = new StringTokenizer(StringUtil.unquoteString(element.getText()), FlexReferenceContributor.DELIMS);
 
     while (t.hasMoreElements()) {

@@ -20,7 +20,7 @@ import java.util.*;
  * @author yole
  */
 public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
-  private static final Set<String> ourMethodsWithPropertyReferences = new THashSet<String>(
+  private static final Set<String> ourMethodsWithPropertyReferences = new THashSet<>(
     Arrays.asList("findResourceBundleWithResource", "getString", "getObject", "getClass", "getStringArray", "getNumber", "getInt",
                   "getUint", "getBoolean"));
 
@@ -31,7 +31,7 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
 
     JSReferenceExpression invokedMethod = JSUtils.getMethodNameIfInsideCall(parent);
 
-    List<PsiReference> result = new ArrayList<PsiReference>();
+    List<PsiReference> result = new ArrayList<>();
     if (invokedMethod != null) {
       String invokedMethodName;
       boolean justResourceBundleRef = false;

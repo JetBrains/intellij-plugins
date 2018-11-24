@@ -8,7 +8,6 @@ import org.jetbrains.plugins.ruby.motion.RubyMotionUtilImpl;
  */
 public class RubyMotionSettingsHolder extends RubyProjectSettings {
   private RubyMotionUtilImpl.ProjectType myProjectType;
-  private boolean myUseCalabash;
 
   public RubyMotionUtilImpl.ProjectType getProjectType() {
     return myProjectType;
@@ -16,13 +15,5 @@ public class RubyMotionSettingsHolder extends RubyProjectSettings {
 
   public void setProjectType(RubyMotionUtilImpl.ProjectType projectType) {
     myProjectType = projectType;
-  }
-
-  public boolean isUseCalabash() {
-    return myUseCalabash;
-  }
-
-  public void setUseCalabash(boolean useCalabash) {
-    myUseCalabash = useCalabash;
   }
 }

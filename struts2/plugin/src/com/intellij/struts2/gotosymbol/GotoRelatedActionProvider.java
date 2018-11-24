@@ -69,8 +69,8 @@ public class GotoRelatedActionProvider extends GotoRelatedProvider {
 
     final List<PsiFile> allFiles = containingFile.getViewProvider().getAllFiles();
 
-    final Set<Action> actions = new HashSet<Action>();
-    final List<GotoRelatedItem> items = new ArrayList<GotoRelatedItem>();
+    final Set<Action> actions = new HashSet<>();
+    final List<GotoRelatedItem> items = new ArrayList<>();
     strutsModel.processActions(action -> {
       for (final Result result : action.getResults()) {
 

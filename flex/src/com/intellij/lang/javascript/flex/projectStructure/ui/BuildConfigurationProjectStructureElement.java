@@ -106,7 +106,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
       // actually this if-condition is always true because real model doesn't report FlexUnitOutputFolderProblem
       if (!(problem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem)) {
         PlaceInProjectStructure place =
-          new PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement.this, problem.tabName, problem.locationOnTab);
+          new PlaceInBuildConfiguration(this, problem.tabName, problem.locationOnTab);
         final ProjectStructureProblemType problemType = problem.severity == ProjectStructureProblemType.Severity.ERROR
           ? ProjectStructureProblemType.error(problem.errorId)
           : ProjectStructureProblemType.warning(problem.errorId);
@@ -127,12 +127,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         if (module == null) {
           errorMessage = FlexBundle.message("bc.problem.dependency.module.not.found", moduleName);
         }
-        else if (ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexBuildConfiguration>() {
-          @Override
-          public boolean value(final ModifiableFlexBuildConfiguration configuration) {
-            return bcName.equals(configuration.getName());
-          }
-        }) == null) {
+        else if (ContainerUtil.find(editor.getConfigurations(module), configuration -> bcName.equals(configuration.getName())) == null) {
           errorMessage = FlexBundle.message("bc.problem.dependency.bc.not.found", bcName, moduleName);
         }
 
@@ -252,7 +247,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     assert editor != null;
     final ModulesConfigurator modulesConfigurator = myContext.getModulesConfigurator();
 
-    final List<ProjectStructureElementUsage> usages = new ArrayList<ProjectStructureElementUsage>();
+    final List<ProjectStructureElementUsage> usages = new ArrayList<>();
     for (DependencyEntry dependencyEntry : myBc.getDependencies().getEntries()) {
       if (dependencyEntry instanceof SharedLibraryEntry) {
         String libraryName = ((SharedLibraryEntry)dependencyEntry).getLibraryName();
@@ -277,12 +272,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         Module module = modulesConfigurator.getModule(bcEntry.getModuleName());
         if (module != null) {
           final ModifiableFlexBuildConfiguration bc =
-            ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexBuildConfiguration>() {
-              @Override
-              public boolean value(final ModifiableFlexBuildConfiguration configuration) {
-                return bcEntry.getBcName().equals(configuration.getName());
-              }
-            });
+            ContainerUtil.find(editor.getConfigurations(module), configuration -> bcEntry.getBcName().equals(configuration.getName()));
           if (bc != null) {
             usages.add(new UsageInBcDependencies(this, new BuildConfigurationProjectStructureElement(bc, module, myContext)) {
               @Override

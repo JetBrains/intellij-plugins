@@ -15,7 +15,7 @@ import java.util.List;
 public class ProblemsHolder {
   private static final Logger LOG = Logger.getInstance(ProblemsHolder.class.getName());
 
-  private final List<ProblemDescriptor> problems = new ArrayList<ProblemDescriptor>();
+  private final List<ProblemDescriptor> problems = new ArrayList<>();
 
   private VirtualFile currentFile;
   private boolean logDisabled;

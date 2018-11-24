@@ -367,7 +367,7 @@ Dart File
                         RegExpCharImpl: <[>
                           PsiElement(CHARACTER)('[')
                         RegExpCharImpl: <\]>
-                          PsiElement(CHARACTER)('\]')
+                          PsiElement(ESC_CHARACTER)('\]')
                         RegExpCharImpl: <{>
                           PsiElement(LBRACE)('{')
                         RegExpCharImpl: <}>

@@ -93,7 +93,7 @@ public class MxmlTagNameReference extends TagNameReference {
   private static void removeNamespaceDeclarationIfNotUsed(final SchemaPrefix schemaPrefix) {
     if (schemaPrefix == null) return;
 
-    final Ref<Boolean> hasUsagesRef = new Ref<Boolean>(false);
+    final Ref<Boolean> hasUsagesRef = new Ref<>(false);
     ReferencesSearch.search(schemaPrefix, GlobalSearchScope.fileScope(schemaPrefix.getContainingFile()))
       .forEach(reference -> {
         final TextRange range = schemaPrefix.getTextRange();

@@ -61,7 +61,7 @@ public abstract class FlexCompilationTask {
   }
 
   protected List<VirtualFile> createConfigFiles() throws IOException {
-    final ArrayList<VirtualFile> configFiles = new ArrayList<VirtualFile>(2);
+    final ArrayList<VirtualFile> configFiles = new ArrayList<>(2);
     configFiles.add(CompilerConfigGenerator.getOrCreateConfigFile(myModule, myBC));
 
     final String additionalConfigFilePath = myBC.getCompilerOptions().getAdditionalConfigFilePath();

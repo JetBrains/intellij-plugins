@@ -66,7 +66,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
       return Collections.emptyList();
     }
 
-    final List<RLMInfo> result = new ArrayList<RLMInfo>();
+    final List<RLMInfo> result = new ArrayList<>();
     //noinspection unchecked
     for (final Element moduleElement : (Iterable<Element>)modulesElement.getChildren()) {
       if (moduleElement.getChildren().size() > 0) {

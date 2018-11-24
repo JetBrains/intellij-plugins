@@ -126,7 +126,7 @@ public class CfmlHighlighter extends LayeredLexerEditorHighlighter {
     );
 
     static {
-      keys2 = new HashMap<IElementType, TextAttributesKey>();
+      keys2 = new HashMap<>();
 
       fillMap(keys2, CfmlTokenTypes.BRACKETS, CFML_BRACKETS);
       fillMap(keys2, CfmlTokenTypes.STRING_ELEMENTS, CFML_STRING);

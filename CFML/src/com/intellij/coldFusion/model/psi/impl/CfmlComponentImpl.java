@@ -129,7 +129,7 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
 
   // TODO
   public CfmlComponent[] getImplementedInterfaces() {
-    return new CfmlComponent[0];
+    return CfmlComponent.EMPTY_ARRAY;
   }
 
   public CfmlComponent getSuper() {

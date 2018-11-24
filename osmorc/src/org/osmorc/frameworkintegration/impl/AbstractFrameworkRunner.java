@@ -127,7 +127,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
 
     params.setUseDynamicVMOptions(!myBundles.isEmpty());
 
-    params.getVMParametersList().addAll(HttpConfigurable.convertArguments(HttpConfigurable.getJvmPropertiesList(false, null)));
+    HttpConfigurable.getInstance().getJvmProperties(false, null).forEach(p -> params.getVMParametersList().addProperty(p.first, p.second));
     params.getVMParametersList().addParametersString(myRunConfiguration.getVmParameters());
 
     String additionalProgramParams = myRunConfiguration.getProgramParameters();

@@ -88,7 +88,7 @@ public final class DesignerTests {
       }
 
       rootModel.addContentEntry(sourceDir).addSourceFolder(sourceDir, false);
-      final List<String> libs = new ArrayList<String>();
+      final List<String> libs = new ArrayList<>();
       if (moduleInitializer != null) {
         moduleInitializer.fun(rootModel, sourceDir, libs);
       }
@@ -114,7 +114,7 @@ public final class DesignerTests {
       VirtualFile fromFile = fromFiles[i];
       VirtualFile toP = toDir;
       if (rootSpecified) {
-        final List<String> fromParents = new ArrayList<String>(4);
+        final List<String> fromParents = new ArrayList<>(4);
         VirtualFile fromP = fromFile.getParent();
         if (!Comparing.equal(fromP, rawProjectRoot)) {
           do {

@@ -1,0 +1,15 @@
+GherkinFile:multiline_feature_description.feature
+  GherkinFeature:As someone I want something else
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace('\n  ')
+    GherkinFeatureHeader
+      PsiElement(TEXT)('As someone')
+      PsiWhiteSpace('\n  ')
+      PsiElement(TEXT)('I want something else')
+    PsiWhiteSpace('\n\n  ')
+    GherkinScenario:Foo
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('Foo')

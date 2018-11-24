@@ -81,6 +81,8 @@ public class DartAnalysisServerService {
 
   public static final String MIN_SDK_VERSION = "1.12";
 
+  private static final long UPDATE_FILES_TIMEOUT = 300;
+
   private static final long CHECK_CANCELLED_PERIOD = 10;
   private static final long SEND_REQUEST_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long EDIT_FORMAT_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
@@ -109,21 +111,23 @@ public class DartAnalysisServerService {
   @NotNull private String mySdkVersion = "";
   @Nullable private String mySdkHome = null;
   private final DartServerRootsHandler myRootsHandler = new DartServerRootsHandler();
-  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<String, Long>();
-  private final List<String> myVisibleFiles = new ArrayList<String>();
-  private final Set<Document> myChangedDocuments = new THashSet<Document>();
+  private final FileOffsetsManager myOffsetsManager = new FileOffsetsManager();
+  private final Map<String, Long> myFilePathWithOverlaidContentToTimestamp = new THashMap<>();
+  private final List<String> myVisibleFiles = new ArrayList<>();
+  private final Set<Document> myChangedDocuments = new THashSet<>();
+  private final Alarm myUpdateFilesAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, ApplicationManager.getApplication());
 
-  @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<CompletionInfo>();
-  @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<SearchResultsSet>();
+  @NotNull private final Queue<CompletionInfo> myCompletionInfos = new LinkedList<>();
+  @NotNull private final Queue<SearchResultsSet> mySearchResultSets = new LinkedList<>();
 
   @NotNull private final DartServerData myServerData = new DartServerData(myRootsHandler);
 
   @NotNull private final AtomicBoolean myServerBusy = new AtomicBoolean(false);
   @NotNull private final Alarm myShowServerProgressAlarm = new Alarm();
 
-  @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<String>();
+  @NotNull private final Set<String> myFilePathsWithErrors = new THashSet<>();
   // how many files with errors are in this folder (recursively)
-  @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<String>();
+  @NotNull private final TObjectIntHashMap<String> myFolderPathsWithErrors = new TObjectIntHashMap<>();
 
   private final AnalysisServerListener myAnalysisServerListener = new AnalysisServerListenerAdapter() {
 
@@ -163,11 +167,16 @@ public class DartAnalysisServerService {
     }
 
     @Override
-    public void flushedResults(List<String> filePaths) {
+    public void flushedResults(@NotNull final List<String> _filePaths) {
+      final List<String> filePaths = new ArrayList<>(_filePaths);
+      for (String path : _filePaths) {
+        filePaths.add(FileUtil.toSystemIndependentName(path));
+      }
+
       myServerData.onFlushedResults(filePaths);
 
       for (String filePath : filePaths) {
-        onErrorsUpdated(FileUtil.toSystemIndependentName(filePath), AnalysisError.EMPTY_LIST);
+        onErrorsUpdated(filePath, AnalysisError.EMPTY_LIST);
       }
     }
 
@@ -178,7 +187,7 @@ public class DartAnalysisServerService {
                                    @NotNull final List<CompletionSuggestion> completions,
                                    final boolean isLast) {
       synchronized (myCompletionInfos) {
-        myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, isLast));
+        myCompletionInfos.add(new CompletionInfo(completionId, completions, isLast));
         myCompletionInfos.notifyAll();
       }
     }
@@ -270,8 +279,49 @@ public class DartAnalysisServerService {
           }
         }
       }
+
+      myUpdateFilesAlarm.cancelAllRequests();
+      myUpdateFilesAlarm.addRequest(DartAnalysisServerService.this::updateFilesContent, UPDATE_FILES_TIMEOUT);
     }
   };
+
+  /**
+   * Must use it each time right after reading any offset or length from any class from org.dartlang.analysis.server.protocol package
+   */
+  public int getConvertedOffset(@Nullable final VirtualFile file, final int originalOffset) {
+    if (originalOffset <= 0 || file == null) return originalOffset;
+    return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())
+           ? originalOffset
+           : myOffsetsManager.getConvertedOffset(file, originalOffset);
+  }
+
+  /**
+   * Must use it right before sending any offsets and lengths to the AnalysisServer
+   */
+  private int getOriginalOffset(@Nullable final VirtualFile file, final int convertedOffset) {
+    if (file == null) return convertedOffset;
+
+    return myFilePathWithOverlaidContentToTimestamp.containsKey(file.getPath())
+           ? convertedOffset
+           : myOffsetsManager.getOriginalOffset(file, convertedOffset);
+  }
+
+  public int[] getConvertedOffsets(@NotNull final VirtualFile file, final int[] _offsets) {
+    final int[] offsets = new int[_offsets.length];
+    for (int i = 0; i < _offsets.length; i++) {
+      offsets[i] = getConvertedOffset(file, _offsets[i]);
+    }
+    return offsets;
+  }
+
+  public int[] getConvertedLengths(@NotNull final VirtualFile file, final int[] _offsets, final int[] _lengths) {
+    final int[] offsets = getConvertedOffsets(file, _offsets);
+    final int[] lengths = new int[_lengths.length];
+    for (int i = 0; i < _lengths.length; i++) {
+      lengths[i] = getConvertedOffset(file, _offsets[i] + _lengths[i]) - offsets[i];
+    }
+    return lengths;
+  }
 
   void addDocumentListener() {
     // by design document listener must not be already registered, next line is for the safety only
@@ -351,8 +401,8 @@ public class DartAnalysisServerService {
     if (sdk == null) return;
 
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    final SortedSet<String> folderPaths = new TreeSet<String>();
-    final Collection<String> rootsToAddToLib = new THashSet<String>();
+    final SortedSet<String> folderPaths = new TreeSet<>();
+    final Collection<String> rootsToAddToLib = new THashSet<>();
 
     for (final String path : filePaths) {
       if (path != null) {
@@ -375,14 +425,10 @@ public class DartAnalysisServerService {
 
     final Processor<? super PsiFileSystemItem> falseProcessor = (Processor<PsiFileSystemItem>)item -> false;
 
-    final Condition<Module> moduleFilter = new Condition<Module>() {
-      @Override
-      public boolean value(final Module module) {
-        return DartSdkGlobalLibUtil.isDartSdkEnabled(module) &&
-               !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
-                                                 falseProcessor, module.getModuleContentScope(), project, null);
-      }
-    };
+    final Condition<Module> moduleFilter = module -> DartSdkGlobalLibUtil.isDartSdkEnabled(module) &&
+                                                     !FilenameIndex.processFilesByName(PubspecYamlUtil.PUBSPEC_YAML, false,
+                                                                                       falseProcessor, module.getModuleContentScope(),
+                                                                                       project, null);
 
     final DartFileListener.DartLibInfo libInfo = new DartFileListener.DartLibInfo(true);
     libInfo.addRoots(rootsToAddToLib);
@@ -507,7 +553,7 @@ public class DartAnalysisServerService {
 
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
-      final List<String> newVisibleFiles = new ArrayList<String>();
+      final List<String> newVisibleFiles = new ArrayList<>();
 
       for (Project project : myRootsHandler.getTrackedProjects()) {
         for (VirtualFile file : FileEditorManager.getInstance(project).getSelectedFiles()) {
@@ -541,7 +587,7 @@ public class DartAnalysisServerService {
 
   public void updateFilesContent() {
     if (myServer != null) {
-      ApplicationManager.getApplication().runReadAction(() -> doUpdateFilesContent());
+      ApplicationManager.getApplication().runReadAction(this::doUpdateFilesContent);
     }
   }
 
@@ -553,16 +599,18 @@ public class DartAnalysisServerService {
       return;
     }
 
-    final Map<String, Object> filesToUpdate = new THashMap<String, Object>();
+    myUpdateFilesAlarm.cancelAllRequests();
+
+    final Map<String, Object> filesToUpdate = new THashMap<>();
     ApplicationManager.getApplication().assertReadAccessAllowed();
     synchronized (myLock) {
-      final Set<String> oldTrackedFiles = new THashSet<String>(myFilePathWithOverlaidContentToTimestamp.keySet());
+      final Set<String> oldTrackedFiles = new THashSet<>(myFilePathWithOverlaidContentToTimestamp.keySet());
 
       final FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
 
       // some documents in myChangedDocuments may be updated by external change, suxh as switch branch, that's why we track them,
       // getUnsavedDocuments() is not enough, we must make sure that overlaid content is sent for for myChangedDocuments as well (to trigger DAS notifications)
-      final Set<Document> documents = new THashSet<Document>(myChangedDocuments);
+      final Set<Document> documents = new THashSet<>(myChangedDocuments);
       myChangedDocuments.clear();
       ContainerUtil.addAll(documents, fileDocumentManager.getUnsavedDocuments());
 
@@ -587,7 +635,7 @@ public class DartAnalysisServerService {
       }
 
       if (LOG.isDebugEnabled()) {
-        final Set<String> overlaid = new THashSet<String>(filesToUpdate.keySet());
+        final Set<String> overlaid = new THashSet<>(filesToUpdate.keySet());
         for (String removeOverlaid : oldTrackedFiles) {
           overlaid.remove(FileUtil.toSystemDependentName(removeOverlaid));
         }
@@ -700,8 +748,8 @@ public class DartAnalysisServerService {
   }
 
   @NotNull
-  public List<HoverInformation> analysis_getHover(@NotNull final String _filePath, final int offset) {
-    final String filePath = FileUtil.toSystemDependentName(_filePath);
+  public List<HoverInformation> analysis_getHover(@NotNull final VirtualFile file, final int _offset) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final List<HoverInformation> result = Lists.newArrayList();
 
     final AnalysisServer server = myServer;
@@ -710,6 +758,7 @@ public class DartAnalysisServerService {
     }
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
     server.analysis_getHover(filePath, offset, new GetHoverConsumer() {
       @Override
       public void computedHovers(HoverInformation[] hovers) {
@@ -730,7 +779,7 @@ public class DartAnalysisServerService {
 
   @Nullable
   public List<DartServerData.DartNavigationRegion> analysis_getNavigation(@NotNull final VirtualFile file,
-                                                                          final int offset,
+                                                                          final int _offset,
                                                                           final int length) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<List<DartServerData.DartNavigationRegion>> resultRef = Ref.create();
@@ -743,13 +792,14 @@ public class DartAnalysisServerService {
     final CountDownLatch latch = new CountDownLatch(1);
     LOG.debug("analysis_getNavigation(" + filePath + ")");
 
+    final int offset = getOriginalOffset(file, _offset);
     server.analysis_getNavigation(filePath, offset, length, new GetNavigationConsumer() {
       @Override
       public void computedNavigation(final List<NavigationRegion> regions) {
-        final List<DartServerData.DartNavigationRegion> dartRegions = new ArrayList<DartServerData.DartNavigationRegion>(regions.size());
+        final List<DartServerData.DartNavigationRegion> dartRegions = new ArrayList<>(regions.size());
         for (NavigationRegion region : regions) {
           if (region.getLength() > 0) {
-            dartRegions.add(new DartServerData.DartNavigationRegion(region));
+            dartRegions.add(DartServerData.createDartNavigationRegion(file, region));
           }
         }
 
@@ -780,8 +830,8 @@ public class DartAnalysisServerService {
   }
 
   @NotNull
-  public List<SourceChange> edit_getAssists(@NotNull final String _filePath, final int offset, final int length) {
-    final String filePath = FileUtil.toSystemDependentName(_filePath);
+  public List<SourceChange> edit_getAssists(@NotNull final VirtualFile file, final int _offset, final int _length) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final List<SourceChange> results = Lists.newArrayList();
 
     final AnalysisServer server = myServer;
@@ -790,6 +840,8 @@ public class DartAnalysisServerService {
     }
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
+    final int length = getOriginalOffset(file, _offset + _length) - offset;
     server.edit_getAssists(filePath, offset, length, new GetAssistsConsumer() {
       @Override
       public void computedSourceChanges(List<SourceChange> sourceChanges) {
@@ -809,14 +861,15 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public List<AnalysisErrorFixes> edit_getFixes(@NotNull final String _filePath, final int offset) {
-    final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<List<AnalysisErrorFixes>>();
+  public List<AnalysisErrorFixes> edit_getFixes(@NotNull final VirtualFile file, final int _offset) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<List<AnalysisErrorFixes>> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
     server.edit_getFixes(filePath, offset, new GetFixesConsumer() {
       @Override
       public void computedFixes(final List<AnalysisErrorFixes> fixes) {
@@ -835,16 +888,17 @@ public class DartAnalysisServerService {
     return resultRef.get();
   }
 
-  public void search_findElementReferences(@NotNull final String _filePath,
-                                           final int offset,
+  public void search_findElementReferences(@NotNull final VirtualFile file,
+                                           final int _offset,
                                            @NotNull final Consumer<SearchResult> consumer) {
-    final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<String> searchIdRef = new Ref<String>();
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<String> searchIdRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return;
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
     server.search_findElementReferences(filePath, offset, true, new FindElementReferencesConsumer() {
       @Override
       public void computedElementReferences(String searchId, Element element) {
@@ -895,7 +949,7 @@ public class DartAnalysisServerService {
   }
 
   @NotNull
-  public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final VirtualFile file, final int offset, final boolean superOnly) {
+  public List<TypeHierarchyItem> search_getTypeHierarchy(@NotNull final VirtualFile file, final int _offset, final boolean superOnly) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final List<TypeHierarchyItem> results = Lists.newArrayList();
 
@@ -905,6 +959,7 @@ public class DartAnalysisServerService {
     }
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
     server.search_getTypeHierarchy(filePath, offset, superOnly, new GetTypeHierarchyConsumer() {
       @Override
       public void computedHierarchy(List<TypeHierarchyItem> hierarchyItems) {
@@ -924,9 +979,9 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public String completion_getSuggestions(@NotNull final String _filePath, final int offset) {
-    final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<String> resultRef = new Ref<String>();
+  public String completion_getSuggestions(@NotNull final VirtualFile file, final int _offset) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<String> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) {
@@ -934,6 +989,7 @@ public class DartAnalysisServerService {
     }
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
     server.completion_getSuggestions(filePath, offset, new GetSuggestionsConsumer() {
       @Override
       public void computedCompletionId(@NotNull final String completionId) {
@@ -953,17 +1009,19 @@ public class DartAnalysisServerService {
   }
 
   @Nullable
-  public FormatResult edit_format(@NotNull final String _filePath,
-                                  final int selectionOffset,
-                                  final int selectionLength,
+  public FormatResult edit_format(@NotNull final VirtualFile file,
+                                  final int _selectionOffset,
+                                  final int _selectionLength,
                                   final int lineLength) {
-    final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<FormatResult> resultRef = new Ref<FormatResult>();
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<FormatResult> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final int selectionOffset = getOriginalOffset(file, _selectionOffset);
+    final int selectionLength = getOriginalOffset(file, _selectionOffset + _selectionLength) - selectionOffset;
     server.edit_format(filePath, selectionOffset, selectionLength, lineLength, new FormatConsumer() {
       @Override
       public void computedFormat(final List<SourceEdit> edits, final int selectionOffset, final int selectionLength) {
@@ -994,17 +1052,19 @@ public class DartAnalysisServerService {
   }
 
   public boolean edit_getRefactoring(String kind,
-                                     String _filePath,
-                                     int offset,
-                                     int length,
+                                     VirtualFile file,
+                                     int _offset,
+                                     int _length,
                                      boolean validateOnly,
                                      RefactoringOptions options,
                                      GetRefactoringConsumer consumer) {
-    final String filePath = FileUtil.toSystemDependentName(_filePath);
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
 
     final AnalysisServer server = myServer;
     if (server == null) return false;
 
+    final int offset = getOriginalOffset(file, _offset);
+    final int length = getOriginalOffset(file, _offset + _length) - offset;
     server.edit_getRefactoring(kind, filePath, offset, length, validateOnly, options, consumer);
     return true;
   }
@@ -1012,7 +1072,7 @@ public class DartAnalysisServerService {
   @Nullable
   public SourceFileEdit edit_organizeDirectives(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
+    final Ref<SourceFileEdit> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -1052,7 +1112,7 @@ public class DartAnalysisServerService {
   @Nullable
   public SourceFileEdit edit_sortMembers(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<SourceFileEdit> resultRef = new Ref<SourceFileEdit>();
+    final Ref<SourceFileEdit> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -1116,7 +1176,7 @@ public class DartAnalysisServerService {
     synchronized (myLock) {
       if (myServer == null) return;
 
-      final Map<String, List<String>> subscriptions = new THashMap<String, List<String>>();
+      final Map<String, List<String>> subscriptions = new THashMap<>();
       subscriptions.put(AnalysisService.HIGHLIGHTS, myVisibleFiles);
       subscriptions.put(AnalysisService.NAVIGATION, myVisibleFiles);
       subscriptions.put(AnalysisService.OVERRIDES, myVisibleFiles);
@@ -1135,7 +1195,7 @@ public class DartAnalysisServerService {
   @Nullable
   public String execution_createContext(@NotNull final String _filePath) {
     final String filePath = FileUtil.toSystemDependentName(_filePath);
-    final Ref<String> resultRef = new Ref<String>();
+    final Ref<String> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -1182,7 +1242,7 @@ public class DartAnalysisServerService {
     }
 
     final String filePath = _filePath != null ? FileUtil.toSystemDependentName(_filePath) : null;
-    final Ref<String> resultRef = new Ref<String>();
+    final Ref<String> resultRef = new Ref<>();
 
     final AnalysisServer server = myServer;
     if (server == null) return null;
@@ -1248,7 +1308,7 @@ public class DartAnalysisServerService {
 
       String serverArgsRaw = "";
       serverArgsRaw += " --useAnalysisHighlight2";
-      serverArgsRaw += " --file-read-mode=normalize-eol-always";
+      //serverArgsRaw += " --file-read-mode=normalize-eol-always";
       try {
         serverArgsRaw += " " + Registry.stringValue("dart.server.additional.arguments");
       }
@@ -1322,7 +1382,7 @@ public class DartAnalysisServerService {
   }
 
   public void restartServer() {
-    final Set<Project> projects = new THashSet<Project>(myRootsHandler.getTrackedProjects());
+    final Set<Project> projects = new THashSet<>(myRootsHandler.getTrackedProjects());
 
     stopServer();
 
@@ -1350,6 +1410,7 @@ public class DartAnalysisServerService {
       }
 
       stopShowingServerProgress();
+      myUpdateFilesAlarm.cancelAllRequests();
 
       myServerSocket = null;
       myServer = null;
@@ -1359,7 +1420,7 @@ public class DartAnalysisServerService {
       myChangedDocuments.clear();
       myServerData.clearData();
 
-      final List<Project> projects = new ArrayList<Project>(myRootsHandler.getTrackedProjects());
+      final List<Project> projects = new ArrayList<>(myRootsHandler.getTrackedProjects());
       myRootsHandler.reset();
 
       ApplicationManager.getApplication().invokeLater(() -> clearAllErrors(projects), ModalityState.NON_MODAL);
@@ -1463,20 +1524,14 @@ public class DartAnalysisServerService {
   }
 
   private static class CompletionInfo {
-    @NotNull final String myCompletionId;
-    final int myReplacementOffset;
-    final int myReplacementLength;
-    @NotNull final List<CompletionSuggestion> myCompletions;
-    final boolean isLast;
+    @NotNull private final String myCompletionId;
+    @NotNull private final List<CompletionSuggestion> myCompletions;
+    private final boolean isLast;
 
     public CompletionInfo(@NotNull final String completionId,
-                          final int replacementOffset,
-                          final int replacementLength,
                           @NotNull final List<CompletionSuggestion> completions,
                           boolean isLast) {
       this.myCompletionId = completionId;
-      this.myReplacementOffset = replacementOffset;
-      this.myReplacementLength = replacementLength;
       this.myCompletions = completions;
       this.isLast = isLast;
     }

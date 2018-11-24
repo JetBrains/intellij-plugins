@@ -126,7 +126,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
   protected void doOKAction() {
     final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = myBCTree.getSelectedBCs();
 
-    final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new THashMap<Module, ModifiableRootModel>();
+    final Map<Module, ModifiableRootModel> moduleToModifiableModelMap = new THashMap<>();
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCs) {
       moduleToModifiableModelMap.put(moduleAndBC.first, ModuleRootManager.getInstance(moduleAndBC.first).getModifiableModel());
     }
@@ -211,7 +211,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
                                                                     final FlexProjectConfigurationEditor flexConfigEditor,
                                                                     final Module module,
                                                                     final ModifiableFlexBuildConfiguration bc) {
-    final Set<VirtualFile> result = new THashSet<VirtualFile>(roots);
+    final Set<VirtualFile> result = new THashSet<>(roots);
 
     final DependencyEntry[] entries = bc.getDependencies().getEntries();
     for (DependencyEntry entry : entries) {

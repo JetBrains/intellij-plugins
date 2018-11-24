@@ -69,7 +69,7 @@ public class PubspecYamlReferenceContributor extends PsiReferenceContributor {
         public Collection<PsiFileSystemItem> computeDefaultContexts() {
           if (isAbsolutePathReference()) {
             final VirtualFile[] roots = ManagingFS.getInstance().getLocalRoots();
-            final Collection<PsiFileSystemItem> result = new SmartList<PsiFileSystemItem>();
+            final Collection<PsiFileSystemItem> result = new SmartList<>();
             for (VirtualFile root : roots) {
               ContainerUtil.addIfNotNull(result, element.getManager().findDirectory(root));
             }

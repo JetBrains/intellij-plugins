@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
@@ -20,12 +19,11 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.css.CssFile;
+import com.intellij.psi.css.StylesheetFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.Consumer;
 import com.intellij.util.ui.update.Update;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
@@ -55,7 +53,7 @@ final class IncrementalDocumentSynchronizer extends Update {
     }
 
     // todo we don't support incremental update for CSS
-    if (event.getFile() instanceof CssFile) {
+    if (event.getFile() instanceof StylesheetFile) {
       return true;
     }
 
@@ -78,7 +76,7 @@ final class IncrementalDocumentSynchronizer extends Update {
       xmlFile = (XmlFile)event.getFile();
     }
     else {
-      assert event.getFile() instanceof CssFile;
+      assert event.getFile() instanceof StylesheetFile;
       styleChanged();
       return;
     }

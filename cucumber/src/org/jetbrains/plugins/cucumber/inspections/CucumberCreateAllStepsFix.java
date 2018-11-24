@@ -38,7 +38,7 @@ public class CucumberCreateAllStepsFix extends CucumberCreateStepFixBase {
       return;
     }
 
-    final Set<String> createdStepDefPatterns = new HashSet<String>();
+    final Set<String> createdStepDefPatterns = new HashSet<>();
     final GherkinFile gherkinFile = (GherkinFile)probableGherkinFile;
     for (GherkinFeature feature : gherkinFile.getFeatures()) {
       for (GherkinStepsHolder stepsHolder : feature.getScenarios()) {

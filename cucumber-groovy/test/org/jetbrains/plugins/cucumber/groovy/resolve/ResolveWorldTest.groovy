@@ -7,7 +7,6 @@ import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
  * @author Max Medvedev
  */
 class ResolveWorldTest extends GrCucumberLightTestCase {
-  final String basePath = null
 
   void testResolveCustomWorldInHook() {
     assertResolveToMethod('''\

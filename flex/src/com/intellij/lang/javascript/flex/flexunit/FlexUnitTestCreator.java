@@ -118,7 +118,7 @@ public class FlexUnitTestCreator implements TestCreator {
                                       : "[After]\npublic override function tearDown():void{\nsuper.tearDown();\n}"
                                     : "");
 
-    final Set<String> processedNames = new THashSet<String>(); // because getters and setters have same name
+    final Set<String> processedNames = new THashSet<>(); // because getters and setters have same name
     for (final JSMemberInfo info : selectedMemberInfos) {
       final String name = info.getMember().getName();
       if (!processedNames.contains(name)) {

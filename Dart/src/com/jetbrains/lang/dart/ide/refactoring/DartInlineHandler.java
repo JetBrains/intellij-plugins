@@ -71,10 +71,10 @@ public class DartInlineHandler extends InlineActionHandler {
     // create refactoring
     final ServerRefactoring refactoring;
     if (ElementKind.LOCAL_VARIABLE.equals(context.kind)) {
-      refactoring = new ServerInlineLocalRefactoring(context.filePath, context.offset, 0);
+      refactoring = new ServerInlineLocalRefactoring(context.virtualFile, context.offset, 0);
     }
     else {
-      refactoring = new ServerInlineMethodRefactoring(context.filePath, context.offset, 0);
+      refactoring = new ServerInlineMethodRefactoring(context.virtualFile, context.offset, 0);
     }
     // validate initial status
     {
@@ -137,7 +137,6 @@ public class DartInlineHandler extends InlineActionHandler {
       return null;
     }
     final VirtualFile virtualFile = psiFile.getVirtualFile();
-    final String filePath = virtualFile.getPath();
     // prepare navigation regions
     final int offset = editor.getCaretModel().getOffset();
     final List<DartNavigationRegion> navigationRegions = DartAnalysisServerService.getInstance().getNavigation(virtualFile);
@@ -146,7 +145,7 @@ public class DartInlineHandler extends InlineActionHandler {
       if (region.getOffset() <= offset && offset <= region.getOffset() + region.getLength()) {
         final List<DartNavigationTarget> targets = region.getTargets();
         final String kind = targets.get(0).getKind();
-        return new InlineRefactoringContext(virtualFile, filePath, offset, kind);
+        return new InlineRefactoringContext(virtualFile, offset, kind);
       }
     }
     // fail
@@ -171,13 +170,11 @@ public class DartInlineHandler extends InlineActionHandler {
 
 class InlineRefactoringContext {
   final VirtualFile virtualFile;
-  final String filePath;
   final String kind;
   final int offset;
 
-  InlineRefactoringContext(VirtualFile virtualFile, String filePath, int offset, String kind) {
+  InlineRefactoringContext(VirtualFile virtualFile, int offset, String kind) {
     this.virtualFile = virtualFile;
-    this.filePath = filePath;
     this.kind = kind;
     this.offset = offset;
   }

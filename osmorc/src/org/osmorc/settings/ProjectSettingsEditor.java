@@ -62,11 +62,6 @@ public class ProjectSettingsEditor implements SearchableConfigurable {
   }
 
   @Override
-  public Runnable enableSearch(String option) {
-    return null;
-  }
-
-  @Override
   public JComponent createComponent() {
     component = new ProjectSettingsEditorComponent(myProject);
     return component.getMainPanel();

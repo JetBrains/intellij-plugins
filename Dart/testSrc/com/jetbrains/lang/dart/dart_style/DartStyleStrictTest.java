@@ -10,7 +10,7 @@ import java.util.Set;
 public class DartStyleStrictTest extends DartStyleTest {
 
   /** The set of tests that are known to fail only in strict mode. */
-  private static final Set<String> KNOWN_TO_FAIL_STRICT = new THashSet<String>();
+  private static final Set<String> KNOWN_TO_FAIL_STRICT = new THashSet<>();
 
   static {
     KNOWN_TO_FAIL_STRICT.add("comments/classes.unit:110  remove blank line before beginning of body");
@@ -43,7 +43,7 @@ public class DartStyleStrictTest extends DartStyleTest {
    * Run a test defined in "*.unit" or "*.stmt" file inside directory <code>dirName</code>.
    */
   protected void runTestInDirectory(String dirName) throws Exception {
-    Set<String> fail = new THashSet<String>();
+    Set<String> fail = new THashSet<>();
     fail.addAll(KNOWN_TO_FAIL);
     fail.addAll(KNOWN_TO_FAIL_STRICT);
     runTestInDirectory(dirName, fail);

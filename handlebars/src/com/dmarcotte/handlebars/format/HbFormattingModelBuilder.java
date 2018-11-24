@@ -13,6 +13,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.DocumentBasedFormattingModel;
 import com.intellij.psi.formatter.FormattingDocumentModelImpl;
+import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.formatter.xml.HtmlPolicy;
 import com.intellij.psi.formatter.xml.SyntheticBlock;
 import com.intellij.psi.templateLanguages.SimpleTemplateLanguageFormattingModelBuilder;
@@ -23,11 +24,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.intellij.psi.formatter.WrappingUtil.getWrapType;
+
 /**
  * Template aware formatter which provides formatting for Handlebars/Mustache syntax and delegates formatting
  * for the templated language to that languages formatter
  */
 public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBuilder {
+
+
   @Override
   public TemplateLanguageBlock createTemplateLanguageBlock(@NotNull ASTNode node,
                                                            @Nullable Wrap wrap,
@@ -35,7 +40,10 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
                                                            @Nullable List<DataLanguageBlockWrapper> foreignChildren,
                                                            @NotNull CodeStyleSettings codeStyleSettings) {
     final FormattingDocumentModelImpl documentModel = FormattingDocumentModelImpl.createOn(node.getPsi().getContainingFile());
-    return new HandlebarsBlock(this, codeStyleSettings, node, foreignChildren, new HtmlPolicy(codeStyleSettings, documentModel));
+    HtmlPolicy policy = new HtmlPolicy(codeStyleSettings, documentModel);
+    return HbTokenTypes.TAGS.contains(node.getElementType()) ?
+           new HandlebarsTagBlock(node, wrap, alignment, this, codeStyleSettings, foreignChildren, policy) :
+           new HandlebarsBlock(node, wrap, alignment, this, codeStyleSettings, foreignChildren, policy);
   }
 
   /**
@@ -73,20 +81,86 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
    * Do format my model!
    *
    * @return false all the time to tell the {@link com.intellij.formatting.templateLanguages.TemplateLanguageFormattingModelBuilder}
-   *         to not-not format our model (i.e. yes please!  Format away!)
+   * to not-not format our model (i.e. yes please!  Format away!)
    */
   @Override
   public boolean dontFormatMyModel() {
     return false;
   }
 
+  private static class HandlebarsTagBlock extends HandlebarsBlock {
+    @NotNull
+    private final Alignment myChildAttributeAlignment;
+
+
+    HandlebarsTagBlock(@NotNull ASTNode node,
+                       Wrap wrap,
+                       Alignment alignment,
+                       @NotNull TemplateLanguageBlockFactory blockFactory,
+                       @NotNull CodeStyleSettings settings,
+                       @Nullable List<DataLanguageBlockWrapper> foreignChildren,
+                       HtmlPolicy htmlPolicy) {
+      super(node, wrap, alignment, blockFactory, settings, foreignChildren, htmlPolicy);
+
+      myChildAttributeAlignment = Alignment.createAlignment();
+    }
+
+    @NotNull
+    @Override
+    public ChildAttributes getChildAttributes(int newChildIndex) {
+      if (newChildIndex > 0) {
+        List<Block> blocks = getSubBlocks();
+        if (blocks.size() > newChildIndex - 1) {
+          Block prevBlock = blocks.get(newChildIndex - 1);
+          if (prevBlock instanceof AbstractBlock) {
+            ASTNode node = ((AbstractBlock)prevBlock).getNode();
+            if (isAttribute(node) ||
+                node.getElementType() == HbTokenTypes.MUSTACHE_NAME) {
+              return new ChildAttributes(null, prevBlock.getAlignment());
+            }
+          }
+        }
+      }
+
+      return super.getChildAttributes(newChildIndex);
+    }
+
+    @Override
+    protected Alignment createChildAlignment(ASTNode child) {
+      if (isAttribute(child)) {
+        return myChildAttributeAlignment;
+      }
+      return super.createChildAlignment(child);
+    }
+
+    @Override
+    protected Wrap createChildWrap(ASTNode child) {
+      if (isAttribute(child)) {
+        return Wrap.createWrap(getWrapType(myHtmlPolicy.getAttributesWrap()), false);
+      }
+      return null;
+    }
+  }
+
+  private static boolean isAttribute(ASTNode child) {
+    IElementType type = child.getElementType();
+    return type == HbTokenTypes.PARAM || type == HbTokenTypes.HASH;
+  }
+
   private static class HandlebarsBlock extends TemplateLanguageBlock {
 
-    private HtmlPolicy myHtmlPolicy;
+    @NotNull
+    protected final HtmlPolicy myHtmlPolicy;
 
-    HandlebarsBlock(@NotNull TemplateLanguageBlockFactory blockFactory, @NotNull CodeStyleSettings settings,
-                    @NotNull ASTNode node, @Nullable List<DataLanguageBlockWrapper> foreignChildren, HtmlPolicy htmlPolicy) {
-      super(blockFactory, settings, node, foreignChildren);
+
+    HandlebarsBlock(@NotNull ASTNode node,
+                    Wrap wrap,
+                    Alignment alignment,
+                    @NotNull TemplateLanguageBlockFactory blockFactory,
+                    @NotNull CodeStyleSettings settings,
+                    @Nullable List<DataLanguageBlockWrapper> foreignChildren,
+                    @NotNull HtmlPolicy htmlPolicy) {
+      super(node, wrap, alignment, blockFactory, settings, foreignChildren);
       myHtmlPolicy = htmlPolicy;
     }
 
@@ -162,6 +236,10 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
         return Indent.getNoneIndent();
       }
 
+      if (isAttribute(myNode)) {
+        return null;
+      }
+
       if (HbPsiUtil.isNonRootStatementsElement(myNode.getPsi())) {
         // we're computing the indent for a non-root STATEMENTS:
         //      if it's not contained in a foreign block, indent!
@@ -172,7 +250,7 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
 
         // otherwise, only indent if our foreign parent isn't indenting us
         if (foreignBlockParent.getNode() instanceof XmlTag) {
-          XmlTag xmlTag = (XmlTag) foreignBlockParent.getNode();
+          XmlTag xmlTag = (XmlTag)foreignBlockParent.getNode();
           if (!myHtmlPolicy.indentChildrenOf(xmlTag)) {
             // no indent from xml parent, add our own
             return Indent.getNormalIndent();
@@ -198,23 +276,13 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
       DataLanguageBlockWrapper foreignParent = getForeignBlockParent(true);
       if (foreignParent != null) {
         if (foreignParent.getNode() instanceof XmlTag
-            && !myHtmlPolicy.indentChildrenOf((XmlTag) foreignParent.getNode())) {
+            && !myHtmlPolicy.indentChildrenOf((XmlTag)foreignParent.getNode())) {
           return Indent.getNoneIndent();
         }
         return Indent.getNormalIndent();
       }
 
       return Indent.getNoneIndent();
-    }
-
-    /**
-     * TODO implement alignment for "stacked" mustache content.  i.e.:
-     * {{foo bar="baz"
-     * bat="bam"}} <- note the alignment here
-     */
-    @Override
-    public Alignment getAlignment() {
-      return null;
     }
 
     @Override
@@ -230,14 +298,13 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
     }
 
     /**
-     * TODO if/when we implement alignment, update this method to do alignment properly
      * <p/>
      * This method handles indent and alignment on Enter.
      */
     @NotNull
     @Override
     public ChildAttributes getChildAttributes(int newChildIndex) {
-      /**
+      /*
        * We indent if we're in a BLOCK_WRAPPER (note that this works nicely since Enter can only be invoked
        * INSIDE a block (i.e. after the open block 'stache).
        *
@@ -253,10 +320,10 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
               (myNode.getElementType() != HbTokenTypes.STATEMENTS || myNode.getTreeNext() instanceof PsiErrorElement))) {
         return new ChildAttributes(Indent.getNormalIndent(), null);
       }
-      else {
-        return new ChildAttributes(Indent.getNoneIndent(), null);
-      }
+
+      return new ChildAttributes(Indent.getNoneIndent(), null);
     }
+
 
     /**
      * Returns this block's first "real" foreign block parent if it exists, and null otherwise.  (By "real" here, we mean that this method
@@ -270,9 +337,10 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
 
       while (parent != null) {
         if (parent instanceof DataLanguageBlockWrapper && !(((DataLanguageBlockWrapper)parent).getOriginal() instanceof SyntheticBlock)) {
-          foreignBlockParent = (DataLanguageBlockWrapper) parent;
+          foreignBlockParent = (DataLanguageBlockWrapper)parent;
           break;
-        } else if (immediate && parent instanceof HandlebarsBlock) {
+        }
+        else if (immediate && parent instanceof HandlebarsBlock) {
           break;
         }
         parent = parent.getParent();

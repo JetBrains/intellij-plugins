@@ -57,10 +57,10 @@ public class FlexBCConfigurator {
   }
 
   private final BidirectionalMap<ModifiableFlexBuildConfiguration, CompositeConfigurable> myConfigurablesMap =
-    new BidirectionalMap<ModifiableFlexBuildConfiguration, CompositeConfigurable>();
+    new BidirectionalMap<>();
 
   private final BidirectionalMap<ModifiableFlexBuildConfiguration, String> myBCToOutputPathMap =
-    new BidirectionalMap<ModifiableFlexBuildConfiguration, String>();
+    new BidirectionalMap<>();
 
   private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
 
@@ -99,11 +99,7 @@ public class FlexBCConfigurator {
         public Library findSourceLibraryForLiveName(final String name, final String level) {
           final LibrariesModifiableModel model =
             ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
-          return ContainerUtil.find(model.getLibraries(), new Condition<Library>() {
-            public boolean value(final Library library) {
-              return name.equals(model.getLibraryEditor(library).getModel().getName());
-            }
-          });
+          return ContainerUtil.find(model.getLibraries(), library -> name.equals(model.getLibraryEditor(library).getModel().getName()));
         }
 
         public Library findSourceLibrary(final String name, final String level) {
@@ -146,7 +142,7 @@ public class FlexBCConfigurator {
 
     final ModifiableFlexBuildConfiguration[] configurations = myConfigEditor.getConfigurations(module);
 
-    List<CompositeConfigurable> configurables = new ArrayList<CompositeConfigurable>(configurations.length);
+    List<CompositeConfigurable> configurables = new ArrayList<>(configurations.length);
 
     for (final ModifiableFlexBuildConfiguration bc : configurations) {
       CompositeConfigurable configurable = myConfigurablesMap.get(bc);
@@ -243,12 +239,7 @@ public class FlexBCConfigurator {
 
     // config editor will handle event and update modifiable model on its own, we just need to update configurables
     Collection<ModifiableFlexBuildConfiguration> configsToRemove =
-      ContainerUtil.findAll(myConfigurablesMap.keySet(), new Condition<ModifiableFlexBuildConfiguration>() {
-        @Override
-        public boolean value(ModifiableFlexBuildConfiguration bc) {
-          return myConfigEditor.getModule(bc) == module;
-        }
-      });
+      ContainerUtil.findAll(myConfigurablesMap.keySet(), bc -> myConfigEditor.getModule(bc) == module);
 
     final ProjectStructureDaemonAnalyzer daemonAnalyzer =
       ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getContext().getDaemonAnalyzer();
@@ -427,7 +418,7 @@ public class FlexBCConfigurator {
   }
 
   private Collection<String> getUsedNames(final Module module) {
-    final Collection<String> result = new LinkedList<String>();
+    final Collection<String> result = new LinkedList<>();
     for (final ModifiableFlexBuildConfiguration configuration : myConfigEditor.getConfigurations(module)) {
       result.add(myConfigurablesMap.get(configuration).getDisplayName());
     }
@@ -456,7 +447,7 @@ public class FlexBCConfigurator {
   }
 
   public boolean canBeRemoved(ModifiableFlexBuildConfiguration[] configurations) {
-    Map<Module, Integer> module2ConfigCount = new HashMap<Module, Integer>();
+    Map<Module, Integer> module2ConfigCount = new HashMap<>();
     for (ModifiableFlexBuildConfiguration bc : configurations) {
       Module module = myConfigEditor.getModule(bc);
       Integer count = module2ConfigCount.get(module);

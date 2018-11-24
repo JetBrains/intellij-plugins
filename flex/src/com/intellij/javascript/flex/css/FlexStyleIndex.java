@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSClassStub;
 import com.intellij.openapi.project.Project;
@@ -150,7 +151,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
       @Override
       @NotNull
       public Map<String, Set<FlexStyleIndexInfo>> map(@NotNull FileContent inputData) {
-        final THashMap<String, Set<FlexStyleIndexInfo>> map = new THashMap<String, Set<FlexStyleIndexInfo>>();
+        final THashMap<String, Set<FlexStyleIndexInfo>> map = new THashMap<>();
         if (JavaScriptSupportLoader.isFlexMxmFile(inputData.getFileName())) {
           PsiFile file = inputData.getPsiFile();
           VirtualFile virtualFile = inputData.getFile();
@@ -185,7 +186,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
   }
 
   private static void indexAttributes(PsiElement element, final String classQName, final boolean inClass, final Map<String, Set<FlexStyleIndexInfo>> map) {
-    JSResolveUtil.processMetaAttributesForClass(element, new JSResolveUtil.MetaDataProcessor() {
+    ActionScriptResolveUtil.processMetaAttributesForClass(element, new ActionScriptResolveUtil.MetaDataProcessor() {
       @Override
       public boolean process(@NotNull JSAttribute jsAttribute) {
         String attrName = jsAttribute.getName();

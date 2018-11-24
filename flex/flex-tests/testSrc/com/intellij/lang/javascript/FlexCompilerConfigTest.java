@@ -15,7 +15,6 @@ import com.intellij.lang.javascript.flex.build.CompilerConfigGenerator;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -35,7 +34,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
@@ -294,7 +292,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
 
           @NotNull
           public VirtualFile[] getFiles(@NotNull final OrderRootType rootType) {
-            return new VirtualFile[0];
+            return VirtualFile.EMPTY_ARRAY;
           }
         };
       }
@@ -323,7 +321,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
   }
 
   private static Map<String, String> createMap(String... keysAndValues) {
-    final Map<String, String> result = new THashMap<String, String>();
+    final Map<String, String> result = new THashMap<>();
     for (int i = 0; i < keysAndValues.length; i++) {
       //noinspection AssignmentToForLoopParameter
       result.put(keysAndValues[i], keysAndValues[++i]);
@@ -496,7 +494,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
     doTest("4.5.1.21328", tempBc, Factory.createCompilerOptions(), Factory.createCompilerOptions(), "_1", null);
 
     tempBc.setMainClass(FlexCommonUtils.FLEX_UNIT_LAUNCHER);
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, String> map = new HashMap<>();
     map.put("$FLEX_UNIT_TEMP_FOLDER$", FlexUnitPrecompileTask.getPathToFlexUnitTempDirectory(myProject));
     map.put("$FLEX_DIR$", PathUtil.getParentPath(PathUtil.getParentPath(FlexTestUtils.getTestDataPath(""))));
 

@@ -30,8 +30,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,18 +40,12 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   private static final String ADD_RUBY_SDK = "Add Ruby SDK...";
   private static final int COMBO_WIDTH = PlatformUtils.isRubyMine() ? 320 : 150;
 
-  public static final Condition<Sdk> IS_PURE_RBENV_SDK = new Condition<Sdk>() {
-    @Override
-    public boolean value(Sdk sdk) {
-      return !RbenvGemsetManager.getInstance().isGemsetSdk(sdk);
-    }
-  };
+  public static final Condition<Sdk> IS_PURE_RBENV_SDK = sdk -> !RbenvGemsetManager.isGemsetSdk(sdk);
 
   private final RubyMotionSettingsHolder mySettingsHolder;
   private ComboBox myRubyInterpreterComboBox;
   private JPanel myContentPane;
   private ComboBox myProjectType;
-  private JCheckBox myUseCalabash;
   private JLabel myRubyLabel;
   private JLabel myProjectTypeLabel;
 
@@ -92,23 +84,14 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
         }
       }
     });
-    myUseCalabash.setSelected(mySettingsHolder.isUseCalabash());
-    myUseCalabash.addPropertyChangeListener(new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent event) {
-        mySettingsHolder.setUseCalabash(myUseCalabash.isSelected());
-      }
-    });
 
     myProjectTypeLabel.setDisplayedMnemonic('T');
-    myProjectType.setModel(new EnumComboBoxModel<RubyMotionUtilImpl.ProjectType>(RubyMotionUtilImpl.ProjectType.class));
+    myProjectType.setModel(new EnumComboBoxModel<>(RubyMotionUtilImpl.ProjectType.class));
     myProjectType.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent event) {
         final RubyMotionUtilImpl.ProjectType projectType = (RubyMotionUtilImpl.ProjectType)myProjectType.getSelectedItem();
         mySettingsHolder.setProjectType(projectType);
-        myUseCalabash.setSelected(projectType == RubyMotionUtilImpl.ProjectType.IOS);
-        myUseCalabash.setEnabled(projectType == RubyMotionUtilImpl.ProjectType.IOS);
       }
     });
     myProjectType.setSelectedIndex(0);
@@ -136,7 +119,7 @@ public class RubyMotionGeneratorTab extends TabbedSettingsEditorTab {
   }
 
   private void refreshSdkList() {
-    List<Sdk> sdkList = new ArrayList<Sdk>();
+    List<Sdk> sdkList = new ArrayList<>();
     for (Sdk sdk : ProjectJdkTable.getInstance().getSdksOfType(RubySdkType.getInstance())) {
       final RubyRemoteInterpreterManager manager = RubyRemoteInterpreterManager.getInstance();
       if (!RubySdkUtil.isRuby18(sdk) && !manager.isRemoteSdk(sdk)) {

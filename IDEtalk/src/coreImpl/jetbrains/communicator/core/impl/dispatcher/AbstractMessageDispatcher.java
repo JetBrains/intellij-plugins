@@ -43,7 +43,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
   private final MyEventListener myEventListener;
 
   private final Object myUser2MessagesLock = new Object();
-  private final Map<User,List<Message>> myUser2Messages = new HashMap<User, List<Message>>();
+  private final Map<User,List<Message>> myUser2Messages = new HashMap<>();
   private final EventBroadcaster myEventBroadcaster;
   private boolean myDispatching;
 
@@ -169,7 +169,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
     synchronized (myUser2MessagesLock) {
       List<Message> result = myUser2Messages.get(user);
       if (result == null) {
-        result = new ArrayList<Message>(5);
+        result = new ArrayList<>(5);
         myUser2Messages.put(user, result);
       }
       return result;

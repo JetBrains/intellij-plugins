@@ -16,7 +16,7 @@ abstract class AbstractDumpProcessor implements FlexByteCodeInformationProcessor
   protected @NonNls StringBuilder sb = new StringBuilder();
   private boolean firstMetaDataMember;
 
-  final Set<String> classNameTable = new THashSet<String>();
+  final Set<String> classNameTable = new THashSet<>();
 
   String getResult() { return sb.toString(); }
 

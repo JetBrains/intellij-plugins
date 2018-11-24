@@ -56,12 +56,9 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
 
     new JamSimpleReferenceConverter<StrutsPackage>() {
 
-      private final Condition<StrutsPackage> EXTENDABLE_STRUTS_PACKAGE_CONDITION = new Condition<StrutsPackage>() {
-        public boolean value(final StrutsPackage strutsPackage) {
-          return StringUtil.isNotEmpty(strutsPackage.getName().getStringValue()) &&
-                 StringUtil.isNotEmpty(strutsPackage.getNamespace().getStringValue());
-        }
-      };
+      private final Condition<StrutsPackage> EXTENDABLE_STRUTS_PACKAGE_CONDITION =
+        strutsPackage -> StringUtil.isNotEmpty(strutsPackage.getName().getStringValue()) &&
+                       StringUtil.isNotEmpty(strutsPackage.getNamespace().getStringValue());
 
       @Override
       public StrutsPackage fromString(@Nullable final String s, final JamStringAttributeElement<StrutsPackage> context) {
@@ -74,11 +71,8 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
           return null;
         }
 
-        return ContainerUtil.find(strutsModel.getStrutsPackages(), new Condition<StrutsPackage>() {
-          public boolean value(final StrutsPackage strutsPackage) {
-            return Comparing.equal(strutsPackage.getName().getStringValue(), s);
-          }
-        });
+        return ContainerUtil.find(strutsModel.getStrutsPackages(),
+                                  strutsPackage -> Comparing.equal(strutsPackage.getName().getStringValue(), s));
       }
 
       @Override
@@ -108,10 +102,10 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
     new JamAnnotationMeta(ANNOTATION_NAME).addAttribute(VALUE_ATTRIBUTE);
 
   public static final JamClassMeta<JamParentPackage> META_CLASS =
-    new JamClassMeta<JamParentPackage>(JamParentPackage.class).addAnnotation(PARENT_PACKAGE_META);
+    new JamClassMeta<>(JamParentPackage.class).addAnnotation(PARENT_PACKAGE_META);
 
   public static final JamPackageMeta<JamParentPackage> META_PACKAGE =
-    new JamPackageMeta<JamParentPackage>(JamParentPackage.class)
+    new JamPackageMeta<>(JamParentPackage.class)
       .addAnnotation(PARENT_PACKAGE_META);
 
   @JamPsiConnector

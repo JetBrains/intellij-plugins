@@ -84,7 +84,7 @@ public class FlexCompilerConfigFileUtil {
           NanoXmlUtil.parse(configFile.getInputStream(), builder);
         }
 
-        final Collection<NamespacesInfo> namespacesInfos = new ArrayList<NamespacesInfo>();
+        final Collection<NamespacesInfo> namespacesInfos = new ArrayList<>();
         final Collection<String> includedInSwcNamespaces = builder.getIncludedNamespaces();
         for (Pair<String, String> namespaceAndManifest : builder.getNamespacesAndManifests()) {
           namespacesInfos.add(new NamespacesInfo(namespaceAndManifest.first, namespaceAndManifest.second,

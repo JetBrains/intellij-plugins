@@ -1,0 +1,48 @@
+GherkinFile:multiline_args.feature
+  GherkinFeature:undefined multiline args
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('undefined multiline args')
+    PsiWhiteSpace('\n\n  ')
+    GherkinScenario:pystring
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('pystring')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:a pystring
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('a pystring')
+        PsiWhiteSpace('\n    ')
+        GherkinPystring
+          PsiElement(PYSTRING_QUOTES)('"""')
+          PsiElement(PYSTRING_TEXT)('\n      example\n    ')
+          PsiElement(PYSTRING_QUOTES)('"""')
+    PsiWhiteSpace('\n\n  ')
+    GherkinScenario:table
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('table')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:a table
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('a table')
+        PsiWhiteSpace('\n      ')
+        GherkinTable
+          GherkinTableHeaderRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('table')
+            PsiWhiteSpace(' ')
+            PsiElement(PIPE)('|')
+          PsiWhiteSpace('\n      ')
+          GherkinTableRow
+            PsiElement(PIPE)('|')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('example')
+            PsiElement(PIPE)('|')

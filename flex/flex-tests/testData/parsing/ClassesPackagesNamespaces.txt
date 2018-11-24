@@ -46,7 +46,7 @@ JSFile:ClassesPackagesNamespaces.js2
         PsiElement(JS:IDENTIFIER)('Sprite')
       PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace('\n\n   ')
-    JSClass
+    ActionScriptClass
       JSAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')
@@ -89,7 +89,7 @@ JSFile:ClassesPackagesNamespaces.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n  ')
-    JSClass
+    ActionScriptClass
       JSDocComment
         PsiElement(JS:DOC_COMMENT_START)('/**')
         PsiWhiteSpace(' ')
@@ -209,7 +209,7 @@ JSFile:ClassesPackagesNamespaces.js2
       PsiWhiteSpace('\n  ')
       PsiElement(JS:RBRACE)('}')
     PsiWhiteSpace('\n  ')
-    JSClass
+    ActionScriptClass
       JSAttributeList
         <empty list>
       PsiElement(JS:CLASS_KEYWORD)('class')
@@ -521,7 +521,7 @@ JSFile:ClassesPackagesNamespaces.js2
     PsiWhiteSpace('\n')
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  JSClass
+  ActionScriptClass
     JSDocComment
       PsiElement(JS:DOC_COMMENT_START)('/**')
       PsiWhiteSpace('\n ')
@@ -583,7 +583,7 @@ JSFile:ClassesPackagesNamespaces.js2
     PsiWhiteSpace('\n  \n')
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  JSClass
+  ActionScriptClass
     JSAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
@@ -604,7 +604,7 @@ JSFile:ClassesPackagesNamespaces.js2
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
-  JSClass
+  ActionScriptClass
     JSAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
@@ -630,7 +630,7 @@ JSFile:ClassesPackagesNamespaces.js2
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
-  JSClass
+  ActionScriptClass
     JSAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
@@ -663,7 +663,7 @@ JSFile:ClassesPackagesNamespaces.js2
     PsiElement(JS:LBRACE)('{')
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n')
-  JSClass
+  ActionScriptClass
     JSAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')

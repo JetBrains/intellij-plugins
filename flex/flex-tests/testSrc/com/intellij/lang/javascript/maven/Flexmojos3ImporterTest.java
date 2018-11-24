@@ -592,7 +592,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
   private void commonTestForRbSwcPlaceholders(String... compiledLocales) throws Exception {
     final String LIB_PATH_TEMPLATE =
       "jar://" + getRepositoryPath() + "/com/adobe/flex/framework/framework/3.2.0.3958/framework-3.2.0.3958-{0}.rb.swc!/";
-    final List<String> expectedLibPaths = new ArrayList<String>();
+    final List<String> expectedLibPaths = new ArrayList<>();
     final String localesConfiguration;
     if (compiledLocales.length == 0) {
       localesConfiguration = "";
@@ -1004,7 +1004,7 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
   private void checkBCOnBCDependencies(final String moduleName, final String... dependencyModuleNames) {
     final Module module = ModuleManager.getInstance(myProject).findModuleByName(moduleName);
     final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(moduleName);
-    final List<String> realDependencyModuleNames = new ArrayList<String>();
+    final List<String> realDependencyModuleNames = new ArrayList<>();
     for (DependencyEntry entry : bc.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
         assertEquals(((BuildConfigurationEntry)entry).getModuleName(), ((BuildConfigurationEntry)entry).getBcName());

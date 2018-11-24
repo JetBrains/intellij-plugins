@@ -29,8 +29,8 @@ public class ColoredSortableTreeTable extends BaseSortableTreeTable {
   @Nullable
   private final ProjectFileIndex projectFileIndex;
 
-  private final Map<String, Color> qName2ColorCache = new THashMap<String, Color>();
-  private final Map<String, Color> path2ColorCache = new THashMap<String, Color>();
+  private final Map<String, Color> qName2ColorCache = new THashMap<>();
+  private final Map<String, Color> path2ColorCache = new THashMap<>();
 
   public ColoredSortableTreeTable(ColumnInfo[] columns, @Nullable Project project) {
     super(columns);

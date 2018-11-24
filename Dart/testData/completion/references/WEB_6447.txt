@@ -1,5 +1,0 @@
-BASIC 1 EQUALS
-DateTime
-DateTime.fromMillisecondsSinceEpoch
-DateTime.utc
-DateTime.now

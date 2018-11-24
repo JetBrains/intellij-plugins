@@ -27,11 +27,11 @@ public class KarmaProcessOutputManager {
   private static final String SUFFIX = "]\n";
 
   private final ProcessHandler myProcessHandler;
-  private final Deque<Pair<String, Key>> myArchivedTexts = new ArrayDeque<Pair<String, Key>>();
+  private final Deque<Pair<String, Key>> myArchivedTexts = new ArrayDeque<>();
   private int myArchivedTextsLength = 0;
   private boolean myArchiveTextsTruncated = false;
-  private final List<ArchivedOutputListener> myOutputListeners = new CopyOnWriteArrayList<ArchivedOutputListener>();
-  private final List<StreamEventListener> myStdOutStreamEventListeners = new CopyOnWriteArrayList<StreamEventListener>();
+  private final List<ArchivedOutputListener> myOutputListeners = new CopyOnWriteArrayList<>();
+  private final List<StreamEventListener> myStdOutStreamEventListeners = new CopyOnWriteArrayList<>();
   private final List<Pair<String, Key>> myStdOutCurrentLineChunks = ContainerUtil.newArrayList();
   private final Consumer<String> myStdOutLineConsumer;
 

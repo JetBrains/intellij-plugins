@@ -14,7 +14,7 @@ import java.util.Collection;
 public class FlexXmlBackedSymbolContributor implements ChooseByNameContributor {
   @NotNull
   public String[] getNames(Project project, boolean includeNonProjectItems) {
-    Collection<String> result = new THashSet<String>();
+    Collection<String> result = new THashSet<>();
     result.addAll(FlexXmlBackedMembersIndex.getSymbolNames(project));
     JavaScriptClassContributor.collectAllMxmlClassesNames(project, result);
     return ArrayUtil.toStringArray(result);
@@ -22,7 +22,7 @@ public class FlexXmlBackedSymbolContributor implements ChooseByNameContributor {
 
   @NotNull
   public NavigationItem[] getItemsByName(String name, final String pattern, Project project, boolean includeNonProjectItems) {
-    Collection<NavigationItem> result = new THashSet<NavigationItem>();
+    Collection<NavigationItem> result = new THashSet<>();
     result.addAll(FlexXmlBackedMembersIndex.getItemsByName(name, project));
     for (NavigationItem item : JavaScriptClassContributor.getItemsByNameStatic(name, project, includeNonProjectItems)) {
       if (item instanceof XmlBackedJSClassImpl) {

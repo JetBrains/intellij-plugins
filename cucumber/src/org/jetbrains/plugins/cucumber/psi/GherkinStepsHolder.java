@@ -16,7 +16,4 @@ public interface GherkinStepsHolder extends GherkinPsiElement, GherkinSuppressio
   GherkinStep[] getSteps();
 
   GherkinTag[] getTags();
-
-  @Nullable
-  String getScenarioTitle();
 }

@@ -24,7 +24,7 @@ public class FlexUnitEmptySuiteInspection extends FlexUnitSuiteInspectionBase {
 
 
   protected void visitSuite(JSClass aClass, @NotNull ProblemsHolder holder, FlexUnitSupport support) {
-    if (support.isFlexUnit1SuiteSubclass(aClass) || support.isFlexUnit1SuiteSubclass(aClass)) return;
+    if (support.isFlexUnit1SuiteSubclass(aClass) || support.isFlexUnit1Subclass(aClass)) return;
     if (FlexUnitSupport.SUITE_RUNNER.equals(FlexUnitSupport.getCustomRunner(aClass)) && support.getSuiteTestClasses(aClass).isEmpty()) {
       final ASTNode nameIdentifier = aClass.findNameIdentifier();
       if (nameIdentifier != null) {

@@ -10,9 +10,9 @@ import java.util.Map;
  */
 public interface FlexBuildConfigurationChangeListener {
   Topic<FlexBuildConfigurationChangeListener> TOPIC =
-    new Topic<FlexBuildConfigurationChangeListener>("Flash build configuration changed",
-                                                    FlexBuildConfigurationChangeListener.class,
-                                                    Topic.BroadcastDirection.NONE);
+    new Topic<>("Flash build configuration changed",
+                FlexBuildConfigurationChangeListener.class,
+                Topic.BroadcastDirection.NONE);
 
   void buildConfigurationsRenamed(Map<Pair<String, String>, String> renames);
 }

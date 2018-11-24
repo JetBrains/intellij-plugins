@@ -1,3 +1,0 @@
-BASIC 1 INCLUDES
-bar
-baz

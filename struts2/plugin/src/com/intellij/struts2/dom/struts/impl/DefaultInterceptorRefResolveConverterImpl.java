@@ -40,7 +40,7 @@ public class DefaultInterceptorRefResolveConverterImpl extends DefaultIntercepto
 
   @NotNull
   public Collection<? extends InterceptorStack> getVariants(final ConvertContext context) {
-    final List<InterceptorStack> results = new SmartList<InterceptorStack>();
+    final List<InterceptorStack> results = new SmartList<>();
     final Processor<StrutsPackage> processor = strutsPackage -> {
       results.addAll(strutsPackage.getInterceptorStacks());
       return true;
@@ -58,14 +58,9 @@ public class DefaultInterceptorRefResolveConverterImpl extends DefaultIntercepto
       return null;
     }
 
-    final Condition<InterceptorStack> nameCondition = new Condition<InterceptorStack>() {
-      @Override
-      public boolean value(final InterceptorStack interceptorStack) {
-        return name.equals(interceptorStack.getName().getStringValue());
-      }
-    };
+    final Condition<InterceptorStack> nameCondition = interceptorStack -> name.equals(interceptorStack.getName().getStringValue());
 
-    final Ref<InterceptorStack> resolveResult = new Ref<InterceptorStack>();
+    final Ref<InterceptorStack> resolveResult = new Ref<>();
     final Processor<StrutsPackage> processor = strutsPackage -> {
       final InterceptorStack result = ContainerUtil.find(strutsPackage.getInterceptorStacks(), nameCondition);
       if (result != null) {

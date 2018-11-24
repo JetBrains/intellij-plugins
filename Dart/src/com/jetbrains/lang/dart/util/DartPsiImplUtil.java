@@ -4,8 +4,11 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveState;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.*;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
@@ -135,13 +138,8 @@ public class DartPsiImplUtil {
     CachedValue<PsiElement> cachedValue = dartType.getUserData(DART_TYPE_CACHED_RESOLVE_RESULT_KEY);
 
     if (cachedValue == null) {
-      cachedValue = CachedValuesManager.getManager(dartType.getProject()).createCachedValue(new CachedValueProvider<PsiElement>() {
-        @NotNull
-        @Override
-        public Result<PsiElement> compute() {
-          return new Result<PsiElement>(doResolveTypeReference(dartType), PsiModificationTracker.MODIFICATION_COUNT);
-        }
-      }, false);
+      cachedValue = CachedValuesManager.getManager(dartType.getProject()).createCachedValue(
+        () -> new CachedValueProvider.Result<>(doResolveTypeReference(dartType), PsiModificationTracker.MODIFICATION_COUNT), false);
 
       dartType.putUserData(DART_TYPE_CACHED_RESOLVE_RESULT_KEY, cachedValue);
     }
@@ -155,7 +153,7 @@ public class DartPsiImplUtil {
     if (typeName.indexOf('.') != -1) {
       return ((DartReference)expression).resolve();
     }
-    List<DartComponentName> result = new ArrayList<DartComponentName>();
+    List<DartComponentName> result = new ArrayList<>();
     final DartResolveProcessor dartResolveProcessor = new DartResolveProcessor(result, typeName);
 
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(dartType.getContainingFile());
@@ -205,8 +203,8 @@ public class DartPsiImplUtil {
   }
 
   @Nullable
-  public static DartBlock getBlock(DartFunctionBody functionBody) {
-    return PsiTreeUtil.getChildOfType(functionBody, DartBlock.class);
+  public static IDartBlock getBlock(DartFunctionBody functionBody) {
+    return PsiTreeUtil.getChildOfType(functionBody, IDartBlock.class);
   }
 
   public static boolean isConstantObjectExpression(@NotNull final DartNewExpression newExpression) {
@@ -222,5 +220,35 @@ public class DartPsiImplUtil {
   @Nullable
   public static DartArguments getArguments(@NotNull final DartCallExpression callExpression) {
     return PsiTreeUtil.findChildOfType(callExpression, DartArguments.class);
+  }
+
+  @Nullable
+  public static DartExpression getCondition(@NotNull DartPsiCompositeElement ifStatement) {
+    return PsiTreeUtil.findChildOfType(ifStatement, DartExpression.class);
+  }
+
+  @Nullable
+  public static PsiElement getThenBranch(@NotNull DartIfStatement ifStatement) {
+    return getBranchAfter(getCondition(ifStatement));
+  }
+
+  @Nullable
+  public static PsiElement getElseBranch(@NotNull DartIfStatement ifStatement) {
+    return getBranchAfter(getThenBranch(ifStatement));
+  }
+
+  @Nullable
+  private static PsiElement getBranchAfter(@Nullable PsiElement child) {
+    return PsiTreeUtil.skipSiblingsForward(child, LeafPsiElement.class, PsiWhiteSpace.class, PsiComment.class);
+  }
+
+  @Nullable
+  public static PsiElement getDoBody(@NotNull DartDoWhileStatement doStatement) {
+    return getBranchAfter(doStatement);
+  }
+
+  @Nullable
+  public static PsiElement getWhileBody(@NotNull DartWhileStatement whileStatement) {
+    return getBranchAfter(getCondition(whileStatement));
   }
 }

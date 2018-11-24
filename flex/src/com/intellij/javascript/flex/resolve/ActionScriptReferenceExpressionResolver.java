@@ -122,7 +122,8 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
         return localProcessor.getResultsAsResolveResults();
       }
     } else {
-      final QualifiedItemProcessor<ResolveResultSink> processor = new QualifiedItemProcessor<ResolveResultSink>(new ResolveResultSink(myRef, myReferencedName), myContainingFile);
+      final QualifiedItemProcessor<ResolveResultSink> processor =
+        new QualifiedItemProcessor<>(new ResolveResultSink(myRef, myReferencedName), myContainingFile);
       processor.setTypeContext(JSResolveUtil.isExprInTypeContext(myRef));
       JSTypeEvaluator.evaluateTypes(myQualifier, myContainingFile, processor);
 

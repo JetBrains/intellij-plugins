@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class ParamNameConverter extends BeanPropertyPathConverterBase {
 
   public static final ExtensionPointName<ParamNameCustomConverter> EP_NAME =
-    new ExtensionPointName<ParamNameCustomConverter>("com.intellij.struts2.paramNameCustomConverter");
+    new ExtensionPointName<>("com.intellij.struts2.paramNameCustomConverter");
 
   /**
    * Provides custom "name" resolving. Replaces the basic bean property resolving.

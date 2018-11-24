@@ -68,7 +68,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionTest
                                   urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
     super.setUp();
-    myEditorsToRelease = new ArrayList<Editor>();
+    myEditorsToRelease = new ArrayList<>();
   }
 
   @Override
@@ -131,7 +131,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionTest
   }
 
   private static void assertContains(LookupElement[] items, boolean contains, String... expected) {
-    Collection<String> c = new HashSet<String>(Arrays.asList(expected));
+    Collection<String> c = new HashSet<>(Arrays.asList(expected));
     for (LookupElement item : items) {
       final String s = item.getLookupString();
       final boolean removed = c.remove(s);

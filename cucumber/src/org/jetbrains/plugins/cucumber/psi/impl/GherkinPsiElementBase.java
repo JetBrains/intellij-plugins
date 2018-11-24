@@ -5,12 +5,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinPsiElement;
 import org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes;
@@ -32,13 +29,6 @@ public abstract class GherkinPsiElementBase extends ASTWrapperPsiElement impleme
     final ASTNode node = getNode();
     final ASTNode[] children = node.getChildren(TEXT_FILTER);
     return StringUtil.join(children, astNode -> astNode.getText(), " ").trim();
-  }
-
-  @Nullable
-  public PsiElement getShortDescriptionText() {
-    final ASTNode node = getNode();
-    final ASTNode[] children = node.getChildren(TEXT_FILTER);
-    return children.length > 0 ? children[0].getPsi() : null;
   }
 
   @Override

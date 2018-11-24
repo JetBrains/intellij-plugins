@@ -21,8 +21,8 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   private static final Logger LOG = Logger.getInstance(JsonGherkinKeywordProvider.class.getName());
 
   private final GherkinKeywordList myEmptyKeywordList = new GherkinKeywordList();
-  private final Map<String, GherkinKeywordList> myLanguageKeywords = new HashMap<String, GherkinKeywordList>();
-  private final Set<String> myAllStepKeywords = new HashSet<String>();
+  private final Map<String, GherkinKeywordList> myLanguageKeywords = new HashMap<>();
+  private final Set<String> myAllStepKeywords = new HashSet<>();
 
   private static GherkinKeywordProvider myKeywordProvider;
 

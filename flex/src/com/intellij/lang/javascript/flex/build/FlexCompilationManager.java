@@ -43,9 +43,9 @@ public class FlexCompilationManager {
     myCompileContext = context;
     myMaxParallelCompilations = FlexCompilerProjectConfiguration.getInstance(context.getProject()).MAX_PARALLEL_COMPILATIONS;
     myTasksAmount = compilationTasks.size();
-    myNotStartedTasks = new LinkedList<FlexCompilationTask>(compilationTasks);
-    myInProgressTasks = new LinkedList<FlexCompilationTask>();
-    myFinishedTasks = new LinkedList<FlexCompilationTask>();
+    myNotStartedTasks = new LinkedList<>(compilationTasks);
+    myInProgressTasks = new LinkedList<>();
+    myFinishedTasks = new LinkedList<>();
     myCompilationFinished = false;
     myCompilerDependenciesCache = FlexCompilerHandler.getInstance(context.getProject()).getCompilerDependenciesCache();
   }
@@ -162,7 +162,7 @@ public class FlexCompilationManager {
           addMessage(task, CompilerMessageCategory.INFORMATION, FlexCommonBundle.message("compilation.successful"), null, -1, -1);
 
           final String prefix = getMessagePrefix(task);
-          final List<String> taskMessages = new ArrayList<String>();
+          final List<String> taskMessages = new ArrayList<>();
           for (CompilerMessage message : myCompileContext.getMessages(CompilerMessageCategory.INFORMATION)) {
             if (message.getMessage().startsWith(prefix)) {
               taskMessages.add(message.getMessage().substring(prefix.length()));
@@ -195,7 +195,7 @@ public class FlexCompilationManager {
   }
 
   private Collection<FlexCompilationTask> cancelNotStartedDependentTasks(final FlexCompilationTask failedTask) {
-    final Collection<FlexCompilationTask> tasksToCancel = new LinkedList<FlexCompilationTask>();
+    final Collection<FlexCompilationTask> tasksToCancel = new LinkedList<>();
     appendAndCancelNotStartedDependentTasks(tasksToCancel, failedTask);
 
     if (BCUtils.canHaveRLMsAndRuntimeStylesheets(failedTask.getBC())) {
@@ -207,7 +207,7 @@ public class FlexCompilationManager {
 
   private void appendAndCancelNotStartedDependentTasks(final Collection<FlexCompilationTask> cancelledTasks,
                                                        final FlexCompilationTask task) {
-    final Collection<FlexCompilationTask> tasksToCancel = new ArrayList<FlexCompilationTask>();
+    final Collection<FlexCompilationTask> tasksToCancel = new ArrayList<>();
 
     for (FlexCompilationTask notStartedTask : myNotStartedTasks) {
       //noinspection ConstantConditions
@@ -337,7 +337,7 @@ public class FlexCompilationManager {
 
   static VirtualFile refreshAndFindFileInWriteAction(final String outputFilePath, final String... possibleBaseDirs) {
     final LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
-    final Ref<VirtualFile> outputFileRef = new Ref<VirtualFile>();
+    final Ref<VirtualFile> outputFileRef = new Ref<>();
 
     final Application app = ApplicationManager.getApplication();
     app.invokeAndWait(() -> outputFileRef.set(app.runWriteAction(new NullableComputable<VirtualFile>() {

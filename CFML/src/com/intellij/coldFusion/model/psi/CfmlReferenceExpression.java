@@ -200,7 +200,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       processVariantsInner(processor);
     }
     final ResolveResult[] variantsResults = processor.getVariants(ResolveResult.EMPTY_ARRAY);
-    List<ResolveResult> results = new ArrayList<ResolveResult>();
+    List<ResolveResult> results = new ArrayList<>();
     for (ResolveResult variantsResult : variantsResults) {
       if (variantsResult.getElement() != null) {
         PsiElement parentRef = variantsResult.getElement().getParent();
@@ -283,7 +283,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
   @NotNull
   public Object[] getVariants() {
     final CfmlVariantsProcessor<PsiNamedElement> processor = new CfmlVariantsProcessor<PsiNamedElement>(this, getParent(), null) {
-      Set<String> myVariablesNames = new HashSet<String>();
+      Set<String> myVariablesNames = new HashSet<>();
 
       protected PsiNamedElement execute(final PsiNamedElement element, final boolean error) {
         if (element instanceof CfmlVariable) {
@@ -304,7 +304,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     };
     processVariantsInner(processor);
     PsiNamedElement[] variants = processor.getVariants(PsiNamedElement.EMPTY_ARRAY);
-    HashSet<LookupElement> result = new HashSet<LookupElement>();
+    HashSet<LookupElement> result = new HashSet<>();
     for (PsiNamedElement namedElement : variants) {
       if (namedElement instanceof CfmlProperty) {
         final String capitalizedName = StringUtil.capitalize(StringUtil.notNullize(namedElement.getName()));

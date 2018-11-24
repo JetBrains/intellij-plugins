@@ -14,6 +14,8 @@
 
 package com.jetbrains.lang.dart.ide.refactoring;
 
+import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,18 +28,19 @@ public class ServerExtractLocalVariableRefactoring extends ServerRefactoring {
   private final ExtractLocalVariableOptions options = new ExtractLocalVariableOptions("name", true);
   private ExtractLocalVariableFeedback feedback;
 
-  public ServerExtractLocalVariableRefactoring(String file, int offset, int length) {
+  public ServerExtractLocalVariableRefactoring(VirtualFile file, int offset, int length) {
     super("Extract Local Variable", RefactoringKind.EXTRACT_LOCAL_VARIABLE, file, offset, length);
   }
 
   @NotNull
-  public int[] getCoveringExpressionLengths() {
-    return feedback.getCoveringExpressionLengths();
+  public int[] getCoveringExpressionOffsets() {
+    return DartAnalysisServerService.getInstance().getConvertedOffsets(getFile(), feedback.getCoveringExpressionOffsets());
   }
 
   @NotNull
-  public int[] getCoveringExpressionOffsets() {
-    return feedback.getCoveringExpressionOffsets();
+  public int[] getCoveringExpressionLengths() {
+    return DartAnalysisServerService.getInstance()
+      .getConvertedLengths(getFile(), feedback.getCoveringExpressionOffsets(), feedback.getCoveringExpressionLengths());
   }
 
   @NotNull
@@ -45,18 +48,14 @@ public class ServerExtractLocalVariableRefactoring extends ServerRefactoring {
     return toStringArray(feedback.getNames());
   }
 
-  public int getOccurrences() {
-    return feedback.getOffsets().length;
+  @NotNull
+  public int[] getOccurrencesOffsets() {
+    return DartAnalysisServerService.getInstance().getConvertedOffsets(getFile(), feedback.getOffsets());
   }
 
   @NotNull
   public int[] getOccurrencesLengths() {
-    return feedback.getLengths();
-  }
-
-  @NotNull
-  public int[] getOccurrencesOffsets() {
-    return feedback.getOffsets();
+    return DartAnalysisServerService.getInstance().getConvertedLengths(getFile(), feedback.getOffsets(), feedback.getLengths());
   }
 
   @Override

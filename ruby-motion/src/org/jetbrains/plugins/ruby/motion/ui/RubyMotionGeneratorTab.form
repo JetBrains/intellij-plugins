@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.plugins.ruby.motion.ui.RubyMotionGeneratorTab">
-  <grid id="27dc6" binding="myContentPane" custom-create="true" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="myContentPane" custom-create="true" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
@@ -16,7 +16,7 @@
       </component>
       <vspacer id="46e56">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <component id="c0cc" class="javax.swing.JLabel" binding="myRubyLabel">
@@ -42,14 +42,6 @@
           <horizontalAlignment value="10"/>
           <labelFor value="553d"/>
           <text resource-bundle="org/jetbrains/plugins/ruby/RBundle" key="ruby.motion.wizard.tab.project.generator.project.type"/>
-        </properties>
-      </component>
-      <component id="24613" class="javax.swing.JCheckBox" binding="myUseCalabash">
-        <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text resource-bundle="org/jetbrains/plugins/ruby/RBundle" key="ruby.motion.wizard.tab.project.generator.use.calabash"/>
         </properties>
       </component>
     </children>

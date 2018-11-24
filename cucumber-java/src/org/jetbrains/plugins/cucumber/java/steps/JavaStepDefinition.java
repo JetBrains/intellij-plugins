@@ -25,7 +25,7 @@ public class JavaStepDefinition extends AbstractStepDefinition {
     PsiElement element = getElement();
     if (element instanceof PsiMethod) {
       PsiParameter[] parameters = ((PsiMethod)element).getParameterList().getParameters();
-      ArrayList<String> result = new ArrayList<String>();
+      ArrayList<String> result = new ArrayList<>();
       for (PsiParameter parameter : parameters) {
         result.add(parameter.getName());
       }

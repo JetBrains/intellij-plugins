@@ -10,11 +10,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
-import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.ModificationTracker;
@@ -28,14 +26,8 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.PairConsumer;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.xdebugger.XDebuggerManager;
-import com.intellij.xdebugger.XSourcePosition;
-import com.intellij.xdebugger.breakpoints.XBreakpoint;
-import com.intellij.xdebugger.breakpoints.XBreakpointManager;
-import com.jetbrains.lang.dart.ide.runner.DartLineBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibraryPresentationProvider;
@@ -45,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -87,12 +78,8 @@ public class DartProjectComponent extends AbstractProjectComponent {
 
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
-      deleteDartSdkGlobalLibConfiguredInVeryOldIde();
-
       ensureCorrectDartSdkLibName();
       updateDependenciesOnDartSdkLib();
-
-      removeJSBreakpointsInDartFiles(myProject);
 
       DartiumUtil.removeUnsupportedAsyncFlag();
 
@@ -114,7 +101,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
     Library correctlyNamedSdkLib = null;
     boolean mainDartSdkLibIsCorrect = false;
     Library incorrectSdkLibWithCorrectRoots = null;
-    final List<Library> libsToDelete = new SmartList<Library>();
+    final List<Library> libsToDelete = new SmartList<>();
 
     for (final Library library : ApplicationLibraryTable.getApplicationTable().getLibraries()) {
       final String libraryName = library.getName();
@@ -182,12 +169,12 @@ public class DartProjectComponent extends AbstractProjectComponent {
     if (!haveIncorrectModuleDependencies()) return;
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      final Collection<ModifiableRootModel> modelsToCommit = new SmartList<ModifiableRootModel>();
+      final Collection<ModifiableRootModel> modelsToCommit = new SmartList<>();
 
       for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
         boolean hasCorrectDependency = false;
         boolean needsCorrectDependency = false;
-        final List<OrderEntry> orderEntriesToRemove = new SmartList<OrderEntry>();
+        final List<OrderEntry> orderEntriesToRemove = new SmartList<>();
 
         final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
 
@@ -258,36 +245,6 @@ public class DartProjectComponent extends AbstractProjectComponent {
     return false;
   }
 
-  private static void removeJSBreakpointsInDartFiles(final Project project) {
-    final XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();
-    final Collection<XBreakpoint<?>> toRemove = new ArrayList<XBreakpoint<?>>();
-
-    for (XBreakpoint<?> breakpoint : breakpointManager.getAllBreakpoints()) {
-      final XSourcePosition position = breakpoint.getSourcePosition();
-      if (position != null &&
-          position.getFile().getFileType() == DartFileType.INSTANCE &&
-          !(breakpoint.getType() instanceof DartLineBreakpointType)) {
-        toRemove.add(breakpoint);
-      }
-    }
-
-    if (!toRemove.isEmpty()) {
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        for (XBreakpoint<?> breakpoint : toRemove) {
-          breakpointManager.removeBreakpoint(breakpoint);
-        }
-      });
-    }
-  }
-
-  private static void deleteDartSdkGlobalLibConfiguredInVeryOldIde() {
-    final LibraryEx library = (LibraryEx)ApplicationLibraryTable.getApplicationTable().getLibraryByName("Dart SDK");
-    final PersistentLibraryKind<?> kind = library == null ? null : library.getKind();
-    if (library != null && kind != null && "javaScript".equals(kind.getKindId())) {
-      ApplicationManager.getApplication().runWriteAction(() -> ApplicationLibraryTable.getApplicationTable().removeLibrary(library));
-    }
-  }
-
   public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
     final DartSdk sdk = DartSdk.getDartSdk(module.getProject());
     final boolean excludeRootPackagesFolder = sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "1.12") >= 0;
@@ -343,7 +300,7 @@ public class DartProjectComponent extends AbstractProjectComponent {
                                                        @NotNull final VirtualFile pubspecYamlFile,
                                                        final boolean withDotPubAndBuild,
                                                        final boolean withRootPackagesFolder) {
-    final THashSet<String> newExcludedPackagesUrls = new THashSet<String>();
+    final THashSet<String> newExcludedPackagesUrls = new THashSet<>();
     final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
     final VirtualFile root = pubspecYamlFile.getParent();
 

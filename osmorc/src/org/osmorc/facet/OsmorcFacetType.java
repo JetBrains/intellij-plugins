@@ -46,7 +46,7 @@ import javax.swing.*;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfiguration> {
-  public static final FacetTypeId<OsmorcFacet> ID = new FacetTypeId<OsmorcFacet>("Osmorc");
+  public static final FacetTypeId<OsmorcFacet> ID = new FacetTypeId<>("Osmorc");
 
   public static OsmorcFacetType getInstance() {
     return findInstance(OsmorcFacetType.class);

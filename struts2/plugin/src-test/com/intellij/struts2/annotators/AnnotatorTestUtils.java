@@ -55,7 +55,7 @@ class AnnotatorTestUtils {
 
     final List<PsiElement> targetElements = navigationHandler.getTargetElements();
 
-    final Set<String> foundValues = new HashSet<String>();
+    final Set<String> foundValues = new HashSet<>();
     for (final PsiElement psiElement : targetElements) {
       foundValues.add(resultValueFunction.fun(psiElement));
     }

@@ -229,7 +229,7 @@ class ExpressionBinding extends Binding {
 
     if (qualificatorSupportedForMxmlBinding && qualifier != null) {
       JSReferenceExpression topElement;
-      qualifiers = new ArrayList<String>();
+      qualifiers = new ArrayList<>();
       do {
         qualifiers.add(qualifier.getReferencedName());
         topElement = qualifier;

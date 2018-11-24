@@ -92,7 +92,7 @@ abstract class DocumentTask extends Task.Backgroundable {
       LOG.error(e.getCause());
     }
     else {
-      final Collection<Attachment> attachments = new ArrayList<Attachment>(e.attachments.length);
+      final Collection<Attachment> attachments = new ArrayList<>(e.attachments.length);
       for (Attachment attachment : e.attachments) {
         if (attachment != null) {
           attachments.add(attachment);

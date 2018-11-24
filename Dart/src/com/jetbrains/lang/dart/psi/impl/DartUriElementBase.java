@@ -28,12 +28,7 @@ import java.util.Arrays;
 
 public abstract class DartUriElementBase extends DartPsiCompositeElementImpl implements DartUriElement {
 
-  private static final Condition<PsiFileSystemItem> DART_FILE_OR_DIR_FILTER = new Condition<PsiFileSystemItem>() {
-    @Override
-    public boolean value(final PsiFileSystemItem item) {
-      return item.isDirectory() || item instanceof DartFile;
-    }
-  };
+  private static final Condition<PsiFileSystemItem> DART_FILE_OR_DIR_FILTER = item -> item.isDirectory() || item instanceof DartFile;
 
   public DartUriElementBase(@NotNull final ASTNode node) {
     super(node);
@@ -95,13 +90,8 @@ public abstract class DartUriElementBase extends DartPsiCompositeElementImpl imp
       new FileReferenceSet(uri, this, uriOffset, null, false, true, new FileType[]{DartFileType.INSTANCE}) {
         @Override
         protected Condition<PsiFileSystemItem> getReferenceCompletionFilter() {
-          return new Condition<PsiFileSystemItem>() {
-            @Override
-            public boolean value(final PsiFileSystemItem item) {
-              return item.isDirectory() && !DartUrlResolver.PACKAGES_FOLDER_NAME.equals(item.getName()) ||
-                     item instanceof DartFile && item != containingFile;
-            }
-          };
+          return item -> item.isDirectory() && !DartUrlResolver.PACKAGES_FOLDER_NAME.equals(item.getName()) ||
+                 item instanceof DartFile && item != containingFile;
         }
 
         @Override

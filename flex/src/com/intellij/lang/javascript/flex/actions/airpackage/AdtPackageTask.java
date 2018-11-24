@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.KeyValue;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.PathUtil;
 import com.intellij.util.net.HttpConfigurable;
 
@@ -21,11 +21,11 @@ public abstract class AdtPackageTask extends AdtTask {
 
   protected List<String> createCommandLine() {
     final List<String> command = super.createCommandLine();
-    final List<KeyValue<String, String>> proxySettings = HttpConfigurable.getJvmPropertiesList(false, null);
+    final List<Pair<String, String>> proxySettings = HttpConfigurable.getInstance().getJvmProperties(false, null);
 
     int i = 1; // after java executable
-    for (KeyValue<String, String> proxySetting : proxySettings) {
-      command.add(i++, "-D" + proxySetting.getKey() + "=" + proxySetting.getValue());
+    for (Pair<String, String> proxySetting : proxySettings) {
+      command.add(i++, "-D" + proxySetting.first + "=" + proxySetting.second);
     }
     return command;
   }

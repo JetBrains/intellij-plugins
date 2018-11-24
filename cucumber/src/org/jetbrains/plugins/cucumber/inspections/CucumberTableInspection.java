@@ -89,7 +89,7 @@ public class CucumberTableInspection extends GherkinInspection {
   }
 
   private static Collection<String> collectUsedColumnNames(GherkinScenarioOutline outline) {
-    Set<String> result = new HashSet<String>();
+    Set<String> result = new HashSet<>();
     for (GherkinStep step : outline.getSteps()) {
       result.addAll(step.getParamsSubstitutions());
     }

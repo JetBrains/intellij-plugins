@@ -22,6 +22,7 @@ import com.intellij.xml.util.XmlStringUtil;
 import com.intellij.xml.util.XmlTagUtilBase;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandler;
 import gnu.trove.THashMap;
@@ -150,14 +151,15 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     final UsageViewPresentation presentation = new UsageViewPresentation();
     presentation.setTabText(RefactoringBundle.message("usageView.tabText"));
     presentation.setShowCancelButton(true);
-    presentation.setTargetsNodeText(RefactoringBundle.message("0.to.be.renamed.to.1.2", myRefactoring.getElementKindName(), "", getNewName()));
+    presentation
+      .setTargetsNodeText(RefactoringBundle.message("0.to.be.renamed.to.1.2", myRefactoring.getElementKindName(), "", getNewName()));
     presentation.setNonCodeUsagesString(DartBundle.message("usages.in.comments.to.rename"));
     presentation.setCodeUsagesString(DartBundle.message("usages.in.code.to.rename"));
     presentation.setDynamicUsagesString(DartBundle.message("dynamic.usages.to.rename"));
     presentation.setUsageTypeFilteringAvailable(false);
 
-    final List<UsageTarget> usageTargets = new SmartList<UsageTarget>();
-    final Map<Usage, String> usageToEditIdMap = new THashMap<Usage, String>();
+    final List<UsageTarget> usageTargets = new SmartList<>();
+    final Map<Usage, String> usageToEditIdMap = new THashMap<>();
     fillTargetsAndUsageToEditIdMap(usageTargets, usageToEditIdMap);
 
     final UsageTarget[] targets = usageTargets.toArray(new UsageTarget[usageTargets.size()]);
@@ -180,14 +182,18 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
     final SourceChange change = myRefactoring.getChange();
     assert change != null;
 
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
     final PsiManager psiManager = PsiManager.getInstance(myProject);
+
     for (SourceFileEdit fileEdit : change.getEdits()) {
       final VirtualFile file = AssistUtils.findVirtualFile(fileEdit);
       final PsiFile psiFile = file == null ? null : psiManager.findFile(file);
       if (psiFile == null) continue;
 
       for (SourceEdit sourceEdit : fileEdit.getEdits()) {
-        final TextRange range = TextRange.create(sourceEdit.getOffset(), sourceEdit.getOffset() + sourceEdit.getLength());
+        final int offset = service.getConvertedOffset(file, sourceEdit.getOffset());
+        final int length = service.getConvertedOffset(file, sourceEdit.getOffset() + sourceEdit.getLength()) - offset;
+        final TextRange range = TextRange.create(offset, offset + length);
         final boolean potentialUsage = myRefactoring.getPotentialEdits().contains(sourceEdit.getId());
         final PsiElement usageElement = DartServerFindUsagesHandler.getUsagePsiElement(psiFile, range);
         if (usageElement != null) {
@@ -208,10 +214,10 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
   @NotNull
   private Runnable createRefactoringRunnable(@NotNull final UsageView usageView, @NotNull final Map<Usage, String> usageToEditIdMap) {
     return () -> {
-      final Set<String> excludedIds = new THashSet<String>();
+      final Set<String> excludedIds = new THashSet<>();
 
       // usageView.getExcludedUsages() and usageView.getUsages() doesn't contain deleted usages, that's why we need to start with full set usageToEditIdMap.keySet()
-      final Set<Usage> excludedUsages = new THashSet<Usage>(usageToEditIdMap.keySet());
+      final Set<Usage> excludedUsages = new THashSet<>(usageToEditIdMap.keySet());
       excludedUsages.removeAll(usageView.getUsages());
       excludedUsages.addAll(usageView.getExcludedUsages());
 
@@ -219,7 +225,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
         excludedIds.add(usageToEditIdMap.get(excludedUsage));
       }
 
-      DartRenameDialog.super.doRefactoring(excludedIds);
+      super.doRefactoring(excludedIds);
     };
   }
 }

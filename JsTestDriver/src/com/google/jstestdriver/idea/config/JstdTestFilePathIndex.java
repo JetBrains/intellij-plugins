@@ -100,7 +100,7 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
   @NotNull
   private static Map<String, Void> doIndexConfigFile(@NotNull Reader configFileReader, @NotNull BasePaths initialBasePaths) {
     YamlParser yamlParser = new YamlParser();
-    final Map<String, Void> map = new THashMap<String, Void>();
+    final Map<String, Void> map = new THashMap<>();
     ParsedConfiguration parsedConfiguration = (ParsedConfiguration) yamlParser.parse(configFileReader, initialBasePaths);
     PathResolver pathResolver = new PathResolver(
       parsedConfiguration.getBasePaths(),
@@ -131,7 +131,7 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
 
   @NotNull
   public static List<VirtualFile> findConfigFilesInScope(@NotNull VirtualFile jsTestFile, @NotNull GlobalSearchScope scope) {
-    final List<VirtualFile> jstdConfigs = new ArrayList<VirtualFile>(1);
+    final List<VirtualFile> jstdConfigs = new ArrayList<>(1);
     FileBasedIndex.getInstance().processValues(
       KEY,
       jsTestFile.getPath(),

@@ -47,9 +47,9 @@ public class FlexBuildConfiguration {
   public boolean STATIC_LINK_RUNTIME_SHARED_LIBRARIES = true;
   public boolean USE_LOCALE_SETTINGS = false;
   public String LOCALE = "en_US"; // comma separated if more than one
-  public List<NamespaceAndManifestFileInfo> NAMESPACE_AND_MANIFEST_FILE_INFO_LIST = new ArrayList<NamespaceAndManifestFileInfo>();
-  public List<ConditionalCompilationDefinition> CONDITIONAL_COMPILATION_DEFINITION_LIST = new ArrayList<ConditionalCompilationDefinition>();
-  public List<String> CSS_FILES_LIST = new ArrayList<String>();
+  public List<NamespaceAndManifestFileInfo> NAMESPACE_AND_MANIFEST_FILE_INFO_LIST = new ArrayList<>();
+  public List<ConditionalCompilationDefinition> CONDITIONAL_COMPILATION_DEFINITION_LIST = new ArrayList<>();
+  public List<String> CSS_FILES_LIST = new ArrayList<>();
   public String ADDITIONAL_COMPILER_OPTIONS = "";
   private static final int OUR_CURRENT_VERSION = 3;
   public String PATH_TO_SERVICES_CONFIG_XML = "";

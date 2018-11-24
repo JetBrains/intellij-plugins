@@ -32,7 +32,7 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
   }
 
   public static Collection<JSPsiElementBase> getItemsByName(final String name, PsiElement element) {
-    final Collection<JSPsiElementBase> result = new ArrayList<JSPsiElementBase>();
+    final Collection<JSPsiElementBase> result = new ArrayList<>();
     AngularJSProcessor.process(element, element1 -> {
       if (name.equals(element1.getName())) {
         result.add(element1);

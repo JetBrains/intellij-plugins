@@ -184,7 +184,7 @@ public class P2PTransportTest extends BaseTestCase {
   public void testCanAddUsers() throws Throwable {
     myUserModel.addGroup("Fabrique");
 
-    assertFalse("No users", myTransport.canAddUsers("project", new HashSet<User>()));
+    assertFalse("No users", myTransport.canAddUsers("project", new HashSet<>()));
     assertTrue("Group already exists - can add new users", myTransport.canAddUsers("Fabrique", Arrays.asList(user("foo"), user("bar"))));
 
     assertTrue("Group not exists - new users to new project",
@@ -226,7 +226,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertEquals("Inet address should be set from available online user",
         "localhost", myTransport.getAddress(mockUser).getHostName());
 
-    myTransport.setOnlineUsers(new HashSet<User>());
+    myTransport.setOnlineUsers(new HashSet<>());
     assertNull("Inet address should be reset", myTransport.getAddress(mockUser));
   }
 
@@ -235,7 +235,7 @@ public class P2PTransportTest extends BaseTestCase {
     User mockUser = UserImpl.create("mock", P2PTransport.CODE);
     assertEquals("Sanity check", 0, myTransport.getProjects(mockUser).length);
 
-    Vector<String> projects = new Vector<String>(Arrays.asList("project1", "project2"));
+    Vector<String> projects = new Vector<>(Arrays.asList("project1", "project2"));
     new AddOnlineUserP2PCommand(myTransport.getUserMonitorThread())
         .addOnlineUser("localhost", "mock", 0, projects, null);
 
@@ -243,7 +243,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertEquals("Projects should be set from available online user",
         projects.toString(), Arrays.asList(myTransport.getProjects(mockUser)).toString());
 
-    myTransport.setOnlineUsers(new HashSet<User>());
+    myTransport.setOnlineUsers(new HashSet<>());
     assertEquals("Projects should be reset", 0, myTransport.getProjects(mockUser).length);
   }
 
@@ -259,7 +259,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertEquals("Port should be set from available online user",
         3354, myTransport.getPort(mockUser));
 
-    myTransport.setOnlineUsers(new HashSet<User>());
+    myTransport.setOnlineUsers(new HashSet<>());
     assertEquals("Port should be reset", -1, myTransport.getPort(mockUser));
   }
 
@@ -274,7 +274,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertEquals("User status should be set from available online user",
         PresenceMode.DND, myTransport.getUserPresence(mockUser).getPresenceMode());
 
-    myTransport.setOnlineUsers(new HashSet<User>());
+    myTransport.setOnlineUsers(new HashSet<>());
     assertEquals("Presence should be reset", PresenceMode.UNAVAILABLE, myTransport.getUserPresence(mockUser).getPresenceMode());
   }
 
@@ -293,7 +293,7 @@ public class P2PTransportTest extends BaseTestCase {
   }
 
   public void testSetOnlineUsers_UpdateEvent() throws Exception {
-    myTransport.setOnlineUsers(new HashSet<User>());
+    myTransport.setOnlineUsers(new HashSet<>());
 
     User user = myTransport.createUser("someUser", new OnlineUserInfo(null, 0, null, new UserPresence(PresenceMode.AWAY)));
     myTransport.setOnlineUsers(Collections.singleton(user));
@@ -316,7 +316,7 @@ public class P2PTransportTest extends BaseTestCase {
     addEventListener();
 
     // Set none users
-    myTransport.setOnlineUsers(new HashSet<User>());
+    myTransport.setOnlineUsers(new HashSet<>());
     assertEquals("No online users, no change expected", 0, myEvents.size());
 
     // Got one online user

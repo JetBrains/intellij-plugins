@@ -1,0 +1,24 @@
+GherkinFile:background.feature
+  GherkinFeature:
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario(Background):
+      PsiElement(BACKGROUND_KEYWORD)('Background')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:this
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('this')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:Foo
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('Foo')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:that
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('that')

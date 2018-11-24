@@ -3,9 +3,11 @@ package org.angularjs.editor;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.InjectorMatchingEndFinder;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
@@ -67,16 +69,19 @@ public class AngularJSInjector implements MultiHostInjector {
         int afterStart = startIdx < 0 ? -1 : (startIdx + start.length());
         if (afterStart < 0) return;
         endIndex = afterStart;
-        endIndex = AngularJSInjectorMatchingEndFinder.findMatchingEnd(start, end, text, endIndex);
+        endIndex = InjectorMatchingEndFinder.findMatchingEnd(start, end, text, endIndex);
         endIndex = endIndex > 0 ? endIndex : ElementManipulators.getValueTextRange(context).getEndOffset();
         final PsiElement injectionCandidate = afterStart >= 0 ? context.findElementAt(afterStart) : null;
         if (injectionCandidate != null && injectionCandidate.getNode().getElementType() != XmlTokenType.XML_COMMENT_CHARACTERS &&
            !(injectionCandidate instanceof OuterLanguageElement)) {
           if (afterStart > endIndex) {
-            LOG.error("Braces: " + start + "," + end + "\n" +
-                      "Text: \"" + text + "\"" + "\n" +
-                      "Interval: (" + afterStart + "," + endIndex + ")" + "\n" +
-                      "File: " + context.getContainingFile().getName() + ", language:" + context.getContainingFile().getLanguage());
+            if (ApplicationManager.getApplication().isInternal()) {
+              LOG.error("Braces: " + start + "," + end + "\n" +
+                        "Text: \"" + text + "\"" + "\n" +
+                        "Interval: (" + afterStart + "," + endIndex + ")" + "\n" +
+                        "File: " + context.getContainingFile().getName() + ", language:" + context.getContainingFile().getLanguage());
+            }
+            return;
           }
           registrar.startInjecting(AngularJSLanguage.INSTANCE).
                     addPlace(null, null, (PsiLanguageInjectionHost)context, new TextRange(afterStart, endIndex)).

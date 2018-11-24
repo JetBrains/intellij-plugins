@@ -47,7 +47,7 @@ public abstract class JSCreateMethodActionBase extends NewJSMemberActionBase {
       }
 
       final PsiElement added = JSRefactoringUtil.addMemberToTargetClass(clazz, method);
-      final List<FormatFixer> formatters = new ArrayList<FormatFixer>();
+      final List<FormatFixer> formatters = new ArrayList<>();
       formatters.add(FormatFixer.create(added, FormatFixer.Mode.Reformat));
       formatters.addAll(ECMAScriptImportOptimizer.executeNoFormat(clazz.getContainingFile()));
       FormatFixer.fixAll(FormatFixer.merge(formatters));

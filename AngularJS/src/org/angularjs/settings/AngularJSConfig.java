@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @State(name = "AngularJSConfig", storages = @Storage("other.xml"))
 public class AngularJSConfig implements PersistentStateComponent<AngularJSConfig> {
-  public boolean INSERT_WHITESPACE = false;
+  public boolean INSERT_WHITESPACE;
 
   public static AngularJSConfig getInstance() {
     return ServiceManager.getService(AngularJSConfig.class);

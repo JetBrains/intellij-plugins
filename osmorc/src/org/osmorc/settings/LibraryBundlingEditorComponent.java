@@ -128,7 +128,7 @@ public class LibraryBundlingEditorComponent {
         .createPanel(), BorderLayout.CENTER
     );
 
-    myRulesModel = new CollectionListModel<LibraryBundlificationRule>();
+    myRulesModel = new CollectionListModel<>();
     //noinspection unchecked
     myRulesList.setModel(myRulesModel);
     myRulesList.addListSelectionListener(new ListSelectionListener() {

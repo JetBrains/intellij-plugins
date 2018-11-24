@@ -50,12 +50,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     final LookupEx activeLookup = LookupManager.getActiveLookup(getEditor());
     assertNotNull(activeLookup);
 
-    final LookupElement lookup = ContainerUtil.find(activeLookup.getItems(), new Condition<LookupElement>() {
-      @Override
-      public boolean value(LookupElement element) {
-        return lookupToSelect.equals(element.getLookupString());
-      }
-    });
+    final LookupElement lookup = ContainerUtil.find(activeLookup.getItems(), element -> lookupToSelect.equals(element.getLookupString()));
 
     assertNotNull(lookupToSelect + " is not in the completion list", lookup);
 

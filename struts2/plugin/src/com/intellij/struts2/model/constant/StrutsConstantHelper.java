@@ -66,31 +66,29 @@ public class StrutsConstantHelper {
     if (extensions == null) {
       final Project project = psiElement.getProject();
       extensions = CachedValuesManager.getManager(project).createCachedValue(
-          new CachedValueProvider<AtomicNotNullLazyValue<List<String>>>() {
-            public Result<AtomicNotNullLazyValue<List<String>>> compute() {
-              final AtomicNotNullLazyValue<List<String>> lazyValue = new AtomicNotNullLazyValue<List<String>>() {
-                @NotNull
-                @Override
-                protected List<String> compute() {
-                  final List<String> extensions =
-                      ApplicationManager.getApplication().runReadAction(new NullableComputable<List<String>>() {
-                        public List<String> compute() {
-                          return StrutsConstantManager.getInstance(project)
-                                                      .getConvertedValue(psiFile,
-                                                                         StrutsCoreConstantContributor.ACTION_EXTENSION);
-                        }
-                      });
+        () -> {
+          final AtomicNotNullLazyValue<List<String>> lazyValue = new AtomicNotNullLazyValue<List<String>>() {
+            @NotNull
+            @Override
+            protected List<String> compute() {
+              final List<String> extensions1 =
+                  ApplicationManager.getApplication().runReadAction(new NullableComputable<List<String>>() {
+                    public List<String> compute() {
+                      return StrutsConstantManager.getInstance(project)
+                                                  .getConvertedValue(psiFile,
+                                                                     StrutsCoreConstantContributor.ACTION_EXTENSION);
+                    }
+                  });
 
-                  if (extensions == null) {
-                    return Collections.emptyList();
-                  }
+              if (extensions1 == null) {
+                return Collections.emptyList();
+              }
 
-                  return ContainerUtil.map(extensions, DOT_PATH_FUNCTION);
-                }
-              };
-              return Result.create(lazyValue, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+              return ContainerUtil.map(extensions1, DOT_PATH_FUNCTION);
             }
-          }, false);
+          };
+          return CachedValueProvider.Result.create(lazyValue, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+        }, false);
 
       psiFile.putUserData(KEY_ACTION_EXTENSIONS, extensions);
     }

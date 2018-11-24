@@ -35,7 +35,10 @@ import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.ui.*;
+import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.SpeedSearchComparator;
+import com.intellij.ui.TableSpeedSearch;
+import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
@@ -48,18 +51,15 @@ import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.util.OsgiUiUtil;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.text.DefaultFormatterFactory;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Editor for a bundle run configuration.
@@ -70,7 +70,7 @@ import java.util.List;
 public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration> {
   private JTabbedPane root;
   // framework& bundles tab
-  private JComboBox myFrameworkInstances;
+  private JComboBox<FrameworkInstanceDefinition> myFrameworkInstances;
   private JSpinner myFrameworkStartLevel;
   private JSpinner myDefaultStartLevel;
   private JPanel myBundlesPanel;
@@ -100,22 +100,13 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
     myDefaultStartLevel.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 
-    DefaultComboBoxModel model = new DefaultComboBoxModel();
-    //noinspection unchecked
+    DefaultComboBoxModel<FrameworkInstanceDefinition> model = new DefaultComboBoxModel<>();
     model.addElement(null);
     for (FrameworkInstanceDefinition instance : ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions()) {
-      //noinspection unchecked
       model.addElement(instance);
     }
-    //noinspection unchecked
     myFrameworkInstances.setModel(model);
-    myFrameworkInstances.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        onFrameworkChange();
-      }
-    });
-    //noinspection unchecked
+    myFrameworkInstances.addActionListener((e) -> onFrameworkChange());
     myFrameworkInstances.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[project default]"));
 
     myBundlesTable.setModel(new RunConfigurationTableModel());
@@ -126,18 +117,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     myBundlesTable.setAutoCreateRowSorter(true);
     myBundlesPanel.add(
       ToolbarDecorator.createDecorator(myBundlesTable)
-        .setAddAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton button) {
-            onAddClick();
-          }
-        })
-        .setRemoveAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton button) {
-            onRemoveClick();
-          }
-        })
+        .setAddAction((b) -> onAddClick())
+        .setRemoveAction((b) -> onRemoveClick())
         .disableUpDownActions()
         .createPanel(), BorderLayout.CENTER
     );
@@ -154,12 +135,9 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     });
     new TableSpeedSearch(myBundlesTable).setComparator(new SpeedSearchComparator(false));
 
-    myOsmorcControlledDir.addChangeListener(new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent e) {
-        boolean isUserDefined = !myOsmorcControlledDir.isSelected();
-        myWorkingDirField.setEnabled(isUserDefined);
-      }
+    myOsmorcControlledDir.addChangeListener((e) -> {
+      boolean isUserDefined = !myOsmorcControlledDir.isSelected();
+      myWorkingDirField.setEnabled(isUserDefined);
     });
 
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
@@ -223,7 +201,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   }
 
   private void onRemoveClick() {
-    int[] indices = myBundlesTable.getSelectedRows();
+    int[] indices = IntStream.of(myBundlesTable.getSelectedRows()).map(myBundlesTable::convertRowIndexToModel).sorted().toArray();
     RunConfigurationTableModel model = getTableModel();
     for (int i = indices.length - 1; i >= 0; i--) {
       model.removeBundleAt(indices[i]);
@@ -231,7 +209,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   }
 
   @Override
-  protected void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+  protected void resetEditorFrom(@NotNull OsgiRunConfiguration osgiRunConfiguration) {
     myRunConfiguration = osgiRunConfiguration;
     myVmOptions.setText(osgiRunConfiguration.getVmParameters());
     myProgramParameters.setText(osgiRunConfiguration.getProgramParameters());
@@ -277,7 +255,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   }
 
   @Override
-  protected void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+  protected void applyEditorTo(@NotNull OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
     osgiRunConfiguration.setBundlesToDeploy(getBundlesToRun());
     osgiRunConfiguration.setVmParameters(myVmOptions.getText());
     osgiRunConfiguration.setProgramParameters(myProgramParameters.getText());
@@ -309,7 +287,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     private final List<SelectedBundle> mySelectedBundles;
 
     public RunConfigurationTableModel() {
-      mySelectedBundles = new ArrayList<SelectedBundle>();
+      mySelectedBundles = new ArrayList<>();
     }
 
     @Override

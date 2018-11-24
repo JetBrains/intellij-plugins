@@ -4,7 +4,7 @@ JSFile:NoReferenceBeforeQuotedAttributeValue.js2
     PsiWhiteSpace(' ')
     PsiElement(JS:LBRACE)('{')
     PsiWhiteSpace('\n')
-    JSClass
+    ActionScriptClass
       JSAttributeList
         PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')

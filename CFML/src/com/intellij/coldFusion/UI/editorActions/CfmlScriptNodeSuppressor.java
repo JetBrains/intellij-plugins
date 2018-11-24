@@ -38,7 +38,7 @@ public class CfmlScriptNodeSuppressor implements TreeStructureProvider, DumbAwar
 
   @NotNull
   public Collection<AbstractTreeNode> modify(@NotNull AbstractTreeNode parent, @NotNull Collection<AbstractTreeNode> children, ViewSettings settings) {
-    ArrayList<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
+    ArrayList<AbstractTreeNode> result = new ArrayList<>();
     for (AbstractTreeNode child : children) {
       if (child.getValue() instanceof PsiFile) {
         VirtualFile file = ((PsiFile)child.getValue()).getVirtualFile();

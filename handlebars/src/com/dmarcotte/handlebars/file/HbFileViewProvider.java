@@ -90,7 +90,7 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
   @NotNull
   @Override
   public Set<Language> getLanguages() {
-    return new THashSet<Language>(Arrays.asList(new Language[]{myBaseLanguage, getTemplateDataLanguage()}));
+    return new THashSet<>(Arrays.asList(new Language[]{myBaseLanguage, getTemplateDataLanguage()}));
   }
 
   @Override

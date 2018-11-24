@@ -110,7 +110,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
       ));
       myListItemByTestTypeMap = createListItemByTestTypeMap(testTypeListItems);
 
-      myTestTypeContentRunSettingsSection = new OneOfRunSettingsSection<TestTypeListItem>(testTypeListItems);
+      myTestTypeContentRunSettingsSection = new OneOfRunSettingsSection<>(testTypeListItems);
       panel.add(myTestTypeContentRunSettingsSection.getComponent(creationContext), new GridBagConstraints(
         0, 1,
         2, 1,
@@ -153,7 +153,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
     private static @NotNull Map<TestType, TestTypeListItem> createListItemByTestTypeMap(
       @NotNull List<TestTypeListItem> testTypeListItems
     ) {
-      EnumMap<TestType, TestTypeListItem> map = new EnumMap<TestType, TestTypeListItem>(TestType.class);
+      EnumMap<TestType, TestTypeListItem> map = new EnumMap<>(TestType.class);
       for (TestTypeListItem testTypeListItem : testTypeListItems) {
         map.put(testTypeListItem.getTestType(), testTypeListItem);
       }

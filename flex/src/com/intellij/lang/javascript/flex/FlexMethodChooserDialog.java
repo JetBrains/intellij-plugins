@@ -24,7 +24,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
     return method1.getName().compareToIgnoreCase(method2.getName());
   };
 
-  private final SortedListModel<JSFunction> myListModel = new SortedListModel<JSFunction>(METHOD_NAME_COMPARATOR);
+  private final SortedListModel<JSFunction> myListModel = new SortedListModel<>(METHOD_NAME_COMPARATOR);
   private final JList myList = new JBList(myListModel);
   private final JPanel myWholePanel = new JPanel(new BorderLayout());
 

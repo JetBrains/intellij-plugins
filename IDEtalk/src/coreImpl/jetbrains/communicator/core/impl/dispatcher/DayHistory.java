@@ -25,14 +25,14 @@ import java.util.*;
  * @author Kir
 */
 class DayHistory {
-  private final Map<User, List<LocalMessage>> myData = new HashMap<User, List<LocalMessage>>();
+  private final Map<User, List<LocalMessage>> myData = new HashMap<>();
   private transient Date myOldestDate;
   private transient boolean myHasFullHistory;
 
   private List<LocalMessage> getMessages(User user) {
     List<LocalMessage> list = myData.get(user);
     if (list == null) {
-      list = new ArrayList<LocalMessage>();
+      list = new ArrayList<>();
       myData.put(user, list);
     }
     return list;

@@ -1,0 +1,78 @@
+GherkinFile:scenario_outline.feature
+  GherkinFeature:Cucumber stock keeping
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('Cucumber stock keeping')
+    PsiWhiteSpace('\n  ')
+    GherkinScenarioOutline:eating
+      PsiElement(SCENARIO_OUTLINE_KEYWORD)('Scenario Outline')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('eating')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:there are <start> cucumbers
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('there are')
+        PsiWhiteSpace(' ')
+        PsiElement(STEP_PARAMETER_BRACE)('<')
+        GherkinStepParameter:start
+          PsiElement(STEP_PARAMETER_TEXT)('start')
+        PsiElement(STEP_PARAMETER_BRACE)('>')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('cucumbers')
+      PsiWhiteSpace('\n\n    ')
+      GherkinExamplesBlock:Good
+        PsiElement(EXAMPLES_KEYWORD)('Examples')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('Good')
+        PsiWhiteSpace('\n      ')
+        GherkinTable
+          GherkinTableHeaderRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('start')
+            PsiWhiteSpace(' ')
+            PsiElement(PIPE)('|')
+          PsiWhiteSpace('\n      ')
+          GherkinTableRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace('  ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('12')
+            PsiWhiteSpace('   ')
+            PsiElement(PIPE)('|')
+          PsiWhiteSpace('\n      ')
+          GherkinTableRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace('  ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('20')
+            PsiWhiteSpace('   ')
+            PsiElement(PIPE)('|')
+      PsiWhiteSpace('\n\n    ')
+      GherkinExamplesBlock:Bad
+        PsiElement(EXAMPLES_KEYWORD)('Examples')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('Bad')
+        PsiWhiteSpace('\n      ')
+        GherkinTable
+          GherkinTableHeaderRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('start')
+            PsiWhiteSpace(' ')
+            PsiElement(PIPE)('|')
+          PsiWhiteSpace('\n      ')
+          GherkinTableRow
+            PsiElement(PIPE)('|')
+            PsiWhiteSpace(' ')
+            GherkinTableCellImpl(table cell)
+              PsiElement(TABLE_CELL)('15')
+            PsiWhiteSpace(' ')
+            PsiElement(PIPE)('|')

@@ -24,7 +24,8 @@ import java.util.List;
  * @author yole, Andrey Vokin
  */
 public abstract class AbstractStepDefinition {
-  private static final String ourEscapePattern = "(\\$\\w+|#\\{.+?\\})";
+  private static final java.util.regex.Pattern ESCAPE_PATTERN
+    = java.util.regex.Pattern.compile("(\\$\\w+|#\\{.+?\\})");
 
   private static final String CUCUMBER_START_PREFIX = "\\A";
 
@@ -56,7 +57,7 @@ public abstract class AbstractStepDefinition {
     try {
       final String cucumberRegex = getCucumberRegex();
       if (cucumberRegex == null) return null;
-      final StringBuilder patternText = new StringBuilder(cucumberRegex.replaceAll(ourEscapePattern, "(.*)"));
+      final StringBuilder patternText = new StringBuilder(ESCAPE_PATTERN.matcher(cucumberRegex).replaceAll("(.*)"));
       if (patternText.toString().startsWith(CUCUMBER_START_PREFIX)) {
         patternText.replace(0, CUCUMBER_START_PREFIX.length(), "^");
       }
@@ -138,11 +139,11 @@ public abstract class AbstractStepDefinition {
       return Collections.emptyList();
     }
 
-    final CollectProcessor<PsiReference> consumer = new CollectProcessor<PsiReference>();
+    final CollectProcessor<PsiReference> consumer = new CollectProcessor<>();
     CucumberUtil.findGherkinReferencesToElement(element, regex, consumer, searchScope);
 
     // We use hash to get rid of duplicates
-    final Collection<GherkinStep> results = new HashSet<GherkinStep>(consumer.getResults().size());
+    final Collection<GherkinStep> results = new HashSet<>(consumer.getResults().size());
     for (final PsiReference reference : consumer.getResults()) {
       final PsiElement step = reference.getElement();
       if (step instanceof GherkinStep) {

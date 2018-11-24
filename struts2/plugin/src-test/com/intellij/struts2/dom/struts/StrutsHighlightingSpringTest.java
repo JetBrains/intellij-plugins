@@ -114,7 +114,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
   protected void createSpringFileSet(final String... springXmlPaths) {
     final SpringFacet springFacet = createSpringFacet();
 
-    @NonNls final SpringFileSet fileSet = springFacet.addFileSet("", "default");
+    @NonNls final SpringFileSet fileSet = springFacet.addFileSet("id", "default");
     for (final String springXmlPath : springXmlPaths) {
       myFixture.copyFileToProject(springXmlPath);
       final VirtualFile file = myFixture.getTempDirFixture().getFile(springXmlPath);

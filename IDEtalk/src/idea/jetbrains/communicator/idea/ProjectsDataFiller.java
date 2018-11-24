@@ -45,7 +45,7 @@ public class ProjectsDataFiller {
   private void fillProjectData(Project openProject, final ProjectsData result) {
     VirtualFile[] openFiles = FileEditorManager.getInstance(openProject).getOpenFiles();
 
-    List<VFile> fileInfos = new ArrayList<VFile>(openFiles.length);
+    List<VFile> fileInfos = new ArrayList<>(openFiles.length);
     for (VirtualFile openFile : openFiles) {
       VFile vFile = VFSUtil.createFileFrom(openFile, openProject);
       if (vFile != null) {

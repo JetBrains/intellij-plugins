@@ -53,7 +53,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
                                                                       Project project,
                                                                       boolean allowEmptySelection,
                                                                       Condition<FlexBCConfigurable> filter) {
-    Map<Module, List<FlexBCConfigurable>> treeItems = new HashMap<Module, List<FlexBCConfigurable>>();
+    Map<Module, List<FlexBCConfigurable>> treeItems = new HashMap<>();
     FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     for (Module module : ModuleStructureConfigurable.getInstance(project).getModules()) {
       if (ModuleType.get(module) != FlexModuleType.getInstance()) {
@@ -67,7 +67,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
 
         List<FlexBCConfigurable> list = treeItems.get(module);
         if (list == null) {
-          list = new ArrayList<FlexBCConfigurable>();
+          list = new ArrayList<>();
           treeItems.put(module, list);
         }
         list.add(flexBCConfigurable);
@@ -112,7 +112,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
   @Override
   protected JComponent createCenterPanel() {
     DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-    List<Module> modules = new ArrayList<Module>(myTreeItems.keySet());
+    List<Module> modules = new ArrayList<>(myTreeItems.keySet());
     Collections.sort(modules, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
     for (Module module : modules) {

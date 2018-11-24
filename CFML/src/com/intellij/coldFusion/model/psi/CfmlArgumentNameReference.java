@@ -91,7 +91,7 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     }
     CfmlParameter[] functionParameters = getFunctionParameters();
     if (functionParameters != null) {
-      Collection<ResolveResult> result = new LinkedList<ResolveResult>();
+      Collection<ResolveResult> result = new LinkedList<>();
       String referenceName = getReferenceName();
       for (CfmlParameter param : functionParameters) {
         if (referenceName.equals(param.getName())) {
@@ -132,7 +132,7 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
   @NotNull
   @Override
   public Object[] getVariants() {
-    Collection<LookupElement> result = new LinkedList<LookupElement>();
+    Collection<LookupElement> result = new LinkedList<>();
     Object[] superResult = ArrayUtil.EMPTY_OBJECT_ARRAY;
 
     String functionName = getFunctionName();

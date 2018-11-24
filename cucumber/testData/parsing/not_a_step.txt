@@ -1,0 +1,19 @@
+GherkinFile:not_a_step.feature
+  GherkinFeature:Foo
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('Foo')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:Bar
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('Bar')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:baz
+        PsiElement(STEP_KEYWORD)('Given')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('baz')
+      PsiWhiteSpace('\n    ')
+      PsiElement(TEXT)('IntelliJIdeaRulezzz')

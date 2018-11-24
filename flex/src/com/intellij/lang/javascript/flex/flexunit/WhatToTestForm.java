@@ -225,11 +225,7 @@ public class WhatToTestForm {
         return null;
       }
 
-      FlexMethodChooserDialog dialog = new FlexMethodChooserDialog((JSClass)clazz, new Condition<JSFunction>() {
-        public boolean value(JSFunction jsFunction) {
-          return support.isTestMethod(jsFunction);
-        }
-      }, myMainPanel, myMethodField.getText());
+      FlexMethodChooserDialog dialog = new FlexMethodChooserDialog((JSClass)clazz, jsFunction -> support.isTestMethod(jsFunction), myMainPanel, myMethodField.getText());
 
       if (dialog.showAndGet()) {
         final JSFunction method = dialog.getSelectedMethod();

@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class FoundUsersModelTest extends BaseTestCase {
   public void testNoUsers() throws Exception {
-    FoundUsersModel model = createModel(new ArrayList<User>());
+    FoundUsersModel model = createModel(new ArrayList<>());
     assertNull("Root node - no parent", getRoot(model).getParent());
     assertEquals("No children expected", 0, getRoot(model).getChildCount());
   }

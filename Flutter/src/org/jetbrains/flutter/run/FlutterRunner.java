@@ -68,8 +68,8 @@ public class FlutterRunner extends DartRunner {
     return commandLine;
   }
 
-  protected DartUrlResolver getDartUrlResolver(@NotNull ExecutionEnvironment env, @NotNull VirtualFile contextFileOrDir) {
-    return new FlutterUrlResolver(env.getProject(), contextFileOrDir);
+  protected DartUrlResolver getDartUrlResolver(@NotNull final Project project, @NotNull final VirtualFile contextFileOrDir) {
+    return new FlutterUrlResolver(project, contextFileOrDir);
   }
 
   private static class FlutterUrlResolver extends DartUrlResolverImpl {

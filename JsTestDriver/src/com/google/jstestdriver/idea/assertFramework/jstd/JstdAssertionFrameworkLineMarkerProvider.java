@@ -110,11 +110,11 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
 
   private static LineMarkerInfo createLineMarkerFromElement(@NotNull PsiElement testElement,
                                                             @NotNull final String displayName) {
-    return new LineMarkerInfo<PsiElement>(
+    return new LineMarkerInfo<>(
       testElement,
       testElement.getTextRange(),
       AllIcons.Vcs.Arrow_right,
-      Pass.UPDATE_ALL,
+      Pass.LINE_MARKERS,
       element -> "Execute '" + displayName + "'",
       new GutterIconNavigationHandler<PsiElement>() {
         @Override
@@ -157,12 +157,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
 
   @NotNull
   private static Type[] getAvailableTypes() {
-    List<Type> types = ContainerUtil.filter(Type.values(), new Condition<Type>() {
-      @Override
-      public boolean value(Type type) {
-        return type.isAvailable();
-      }
-    });
+    List<Type> types = ContainerUtil.filter(Type.values(), type -> type.isAvailable());
     return types.toArray(new Type[types.size()]);
   }
 
@@ -198,7 +193,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       @Override
       public Object getData(@NonNls String dataId) {
         if (Location.DATA_KEY.is(dataId)) {
-          return new PsiLocation<PsiElement>(element.getProject(), element);
+          return new PsiLocation<>(element.getProject(), element);
         }
         return dataContext.getData(dataId);
       }

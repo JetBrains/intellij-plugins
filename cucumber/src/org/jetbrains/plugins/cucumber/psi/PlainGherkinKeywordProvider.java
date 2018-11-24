@@ -11,8 +11,8 @@ import java.util.*;
 */
 public class PlainGherkinKeywordProvider implements GherkinKeywordProvider {
   public static GherkinKeywordTable DEFAULT_KEYWORD_TABLE = new GherkinKeywordTable();
-  public static Map<String, IElementType> DEFAULT_KEYWORDS = new HashMap<String, IElementType>();
-  private static final Set<String> ourKeywordsWithNoSpaceAfter = new HashSet<String>();
+  public static Map<String, IElementType> DEFAULT_KEYWORDS = new HashMap<>();
+  private static final Set<String> ourKeywordsWithNoSpaceAfter = new HashSet<>();
 
   static {
     DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.FEATURE_KEYWORD, "Feature");

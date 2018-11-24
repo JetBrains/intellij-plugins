@@ -94,7 +94,7 @@ public class CfmlLangInfo {
       dictionary = SoftReference.dereference(myCFDictionary);
       if (dictionary == null || !Comparing.equal(myCFDictionaryLevel, languageLevel)) {
         dictionary = new CfmlLangDictionary("scopes.txt", languageLevel);
-        myCFDictionary = new SoftReference<CfmlLangDictionary>(dictionary);
+        myCFDictionary = new SoftReference<>(dictionary);
         myCFDictionaryLevel = languageLevel;
       }
     }

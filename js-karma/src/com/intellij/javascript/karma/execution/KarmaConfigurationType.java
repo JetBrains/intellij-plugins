@@ -13,8 +13,9 @@ public class KarmaConfigurationType extends ConfigurationTypeBase {
   public KarmaConfigurationType() {
     super("JavaScriptTestRunnerKarma", "Karma", "Karma", JSKarmaIcons.Karma2);
     addFactory(new ConfigurationFactory(this) {
+      @NotNull
       @Override
-      public RunConfiguration createTemplateConfiguration(Project project) {
+      public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new KarmaRunConfiguration(project, this, "Karma");
       }
 

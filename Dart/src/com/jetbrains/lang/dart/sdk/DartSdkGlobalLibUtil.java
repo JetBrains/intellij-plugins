@@ -129,7 +129,7 @@ public class DartSdkGlobalLibUtil {
   public static void disableDartSdk(@NotNull final Collection<Module> modules) {
     if (modules.isEmpty()) return;
 
-    final List<ModifiableRootModel> models = new SmartList<ModifiableRootModel>();
+    final List<ModifiableRootModel> models = new SmartList<>();
 
     for (final Module module : modules) {
       final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
@@ -145,7 +145,7 @@ public class DartSdkGlobalLibUtil {
   }
 
   public static Collection<Module> getModulesWithDartSdkEnabled(@NotNull final Project project) {
-    final Collection<Module> result = new SmartList<Module>();
+    final Collection<Module> result = new SmartList<>();
 
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
       if (isDartSdkEnabled(module)) {
@@ -158,7 +158,7 @@ public class DartSdkGlobalLibUtil {
 
   public static void enableDartSdkForSpecifiedModulesAndDisableForOthers(@NotNull final Project project,
                                                                          @NotNull final Module[] modulesWithDart) {
-    final List<ModifiableRootModel> modelsToCommit = new SmartList<ModifiableRootModel>();
+    final List<ModifiableRootModel> modelsToCommit = new SmartList<>();
 
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
       final boolean mustHaveDart = ArrayUtil.contains(module, modulesWithDart);

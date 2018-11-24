@@ -97,22 +97,14 @@ public class Flexmojos3Configurator {
     }
 
     final String mainBCName = myModule.getName();
-    final ModifiableFlexBuildConfiguration existingBC = ContainerUtil.find(oldBCs, new Condition<ModifiableFlexBuildConfiguration>() {
-      public boolean value(final ModifiableFlexBuildConfiguration bc) {
-        return mainBCName.equals(bc.getName());
-      }
-    });
+    final ModifiableFlexBuildConfiguration existingBC = ContainerUtil.find(oldBCs, bc -> mainBCName.equals(bc.getName()));
 
     final ModifiableFlexBuildConfiguration mainBC = setupMainBuildConfiguration(existingBC);
 
     final Collection<RLMInfo> rlmInfos = FlexmojosImporter.isFlexApp(myMavenProject) ? getRLMInfos() : Collections.<RLMInfo>emptyList();
     for (final RLMInfo info : rlmInfos) {
       final ModifiableFlexBuildConfiguration existingRlmBC =
-        ContainerUtil.find(oldBCs, new Condition<ModifiableFlexBuildConfiguration>() {
-          public boolean value(final ModifiableFlexBuildConfiguration bc) {
-            return bc.getName().equals(info.myRLMName);
-          }
-        });
+        ContainerUtil.find(oldBCs, bc -> bc.getName().equals(info.myRLMName));
 
       configureRuntimeLoadedModule(mainBC, info, existingRlmBC);
     }
@@ -186,7 +178,7 @@ public class Flexmojos3Configurator {
     setupSdk(mainBC);
 
     final String locales = StringUtil.join(myCompiledLocales, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-    final Map<String, String> options = new THashMap<String, String>(mainBC.getCompilerOptions().getAllOptions());
+    final Map<String, String> options = new THashMap<>(mainBC.getCompilerOptions().getAllOptions());
     options.put("compiler.locale", locales);
     mainBC.getCompilerOptions().setAllOptions(options);
 
@@ -276,13 +268,9 @@ public class Flexmojos3Configurator {
 
         final ModifiableDependencyEntry existingEntry = ContainerUtil
           .find(bc.getDependencies().getModifiableEntries(),
-                new Condition<ModifiableDependencyEntry>() {
-                  public boolean value(final ModifiableDependencyEntry entry) {
-                    return (entry instanceof BuildConfigurationEntry) &&
-                           ((BuildConfigurationEntry)entry).getModuleName().equals(dependencyModuleName) &&
-                           ((BuildConfigurationEntry)entry).getBcName().equals(dependencyModuleName);
-                  }
-                });
+                entry1 -> (entry1 instanceof BuildConfigurationEntry) &&
+                          ((BuildConfigurationEntry)entry1).getModuleName().equals(dependencyModuleName) &&
+                          ((BuildConfigurationEntry)entry1).getBcName().equals(dependencyModuleName));
 
         final LinkageType linkageType = "swc".equals(dependencyMavenProject.getPackaging())
                                         ? FlexUtils.convertLinkageType(scope, isExported)
@@ -380,7 +368,7 @@ public class Flexmojos3Configurator {
    * @return resource bundle placeholder SWCs, i.e. library roots that have no locale classifier (for example framework-3.3.0.4852.rb.swc)
    */
   private static Collection<String> findRbSwcPlaceholderUrls(final Library.ModifiableModel libraryModifiableModel) {
-    final Collection<String> rbSwcPlaceholdersUrls = new ArrayList<String>();
+    final Collection<String> rbSwcPlaceholdersUrls = new ArrayList<>();
     final String[] libraryClassesRoots = libraryModifiableModel.getUrls(OrderRootType.CLASSES);
     final String libName = libraryModifiableModel.getName();
     final String version = libName.substring(libName.lastIndexOf(':') + 1);
@@ -397,7 +385,7 @@ public class Flexmojos3Configurator {
     assert rbSwcPlaceholderUrl.endsWith(RB_SWC_URL_END);
     final String rbSwcUrlCommonPart = rbSwcPlaceholderUrl.substring(0, rbSwcPlaceholderUrl.length() - RB_SWC_URL_END.length());
 
-    final Collection<String> result = new ArrayList<String>();
+    final Collection<String> result = new ArrayList<>();
     List<String> compiledLocales = myCompiledLocales;
     for (final String locale : compiledLocales) {
       result.add(rbSwcUrlCommonPart + "-" + locale + RB_SWC_URL_END);
@@ -528,7 +516,7 @@ public class Flexmojos3Configurator {
       return Collections.emptyList();
     }
 
-    final List<RLMInfo> result = new ArrayList<RLMInfo>();
+    final List<RLMInfo> result = new ArrayList<>();
     //noinspection unchecked
     for (final Element moduleFilePathElement : (Iterable<Element>)moduleFilesElement.getChildren()) {
       final String path = moduleFilePathElement.getTextNormalize();

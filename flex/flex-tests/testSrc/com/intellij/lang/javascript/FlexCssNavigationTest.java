@@ -46,7 +46,7 @@ public class FlexCssNavigationTest extends CodeInsightTestCase {
     }
     assertNotNull(reference);
     if (reference instanceof PsiMultiReference) {
-      targets = new ArrayList<PsiElement>();
+      targets = new ArrayList<>();
       for (PsiReference ref : ((PsiMultiReference)reference).getReferences()) {
         targets.addAll(TargetElementUtil.getInstance().getTargetCandidates(ref));
       }

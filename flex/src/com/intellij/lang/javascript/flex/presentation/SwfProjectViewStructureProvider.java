@@ -170,7 +170,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
       return children;
     }
 
-    List<JSQualifiedNamedElement> elements = new ArrayList<JSQualifiedNamedElement>();
+    List<JSQualifiedNamedElement> elements = new ArrayList<>();
     for (JSSourceElement e : ((JSFile)psiFile).getStatements()) {
       if (e instanceof JSQualifiedNamedElement) {
         String qName = ((JSQualifiedNamedElement)e).getQualifiedName();
@@ -211,8 +211,8 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
                                                             int to,
                                                             Project project,
                                                             ViewSettings settings) {
-    List<AbstractTreeNode> packages = new ArrayList<AbstractTreeNode>();
-    List<AbstractTreeNode> classes = new ArrayList<AbstractTreeNode>();
+    List<AbstractTreeNode> packages = new ArrayList<>();
+    List<AbstractTreeNode> classes = new ArrayList<>();
 
     int subpackageStart = -1;
     String currentSubpackage = null;

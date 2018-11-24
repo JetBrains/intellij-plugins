@@ -8,8 +8,11 @@ import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.mac.foundation.NSWorkspace;
 import com.jetbrains.cidr.AppleScript;
+import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
+import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.plist.Plist;
 import com.jetbrains.cidr.xcode.plist.PlistDriver;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.script.IdeScriptException;
@@ -39,12 +42,25 @@ public class Reveal {
     return result.exists() ? result : null;
   }
 
-  @Nullable
-  public static File getRevealLib() {
+  @Contract("null -> null")
+  public static File getRevealLib(@Nullable AppleSdk sdk) {
+    if (sdk == null) return null;
+
     File bundle = getRevealBundle();
     if (bundle == null) return null;
 
-    File result = new File(bundle, "/Contents/SharedSupport/iOS-Libraries/libReveal.dylib");
+    ApplePlatform platform = sdk.getPlatform();
+    String libraryPath = null;
+
+    if (platform.isIOS()) {
+      libraryPath = "/Contents/SharedSupport/iOS-Libraries/libReveal.dylib";
+    } else if (platform.isTv()) {
+      libraryPath = "/Contents/SharedSupport/tvOS-Libraries/libReveal-tvOS.dylib";
+    }
+
+    if (libraryPath == null) return null;
+
+    File result = new File(bundle, libraryPath);
     return result.exists() ? result : null;
   }
 

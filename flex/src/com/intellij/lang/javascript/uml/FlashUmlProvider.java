@@ -80,7 +80,7 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
 
   @Override
   public DiagramScopeManager<Object> createScopeManager(Project project) {
-    return new DiagramPsiScopeManager<Object>(project);
+    return new DiagramPsiScopeManager<>(project);
   }
 
   @Override

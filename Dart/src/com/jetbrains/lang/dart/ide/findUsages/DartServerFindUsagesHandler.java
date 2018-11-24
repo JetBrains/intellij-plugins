@@ -17,6 +17,8 @@ package com.jetbrains.lang.dart.ide.findUsages;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -33,7 +35,6 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.psi.DartReference;
-import com.jetbrains.lang.dart.util.DartElementLocation;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.SearchResult;
 import org.dartlang.analysis.server.protocol.SearchResultKind;
@@ -59,6 +60,7 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
                                       @NotNull final Processor<UsageInfo> processor,
                                       @NotNull final FindUsagesOptions options) {
     final SearchScope scope = options.searchScope;
+    final DartAnalysisServerService service = DartAnalysisServerService.getInstance();
 
     final ReadActionConsumer<SearchResult> searchResultProcessor = new ReadActionConsumer<SearchResult>() {
       @Override
@@ -75,7 +77,10 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
         final PsiFile psiFile = elementToSearch.getManager().findFile(vFile);
         if (psiFile == null) return;
 
-        final TextRange range = TextRange.create(location.getOffset(), location.getOffset() + location.getLength());
+        final int offset = service.getConvertedOffset(vFile, location.getOffset());
+        final int length = service.getConvertedOffset(vFile, location.getOffset() + location.getLength()) - offset;
+        final TextRange range = TextRange.create(offset, offset + length);
+
         final boolean potentialUsage = result.isPotential();
         final PsiElement usageElement = getUsagePsiElement(psiFile, range);
         final UsageInfo usageInfo = usageElement == null ? null : getUsageInfo(usageElement, range, potentialUsage);
@@ -88,11 +93,16 @@ public class DartServerFindUsagesHandler extends FindUsagesHandler {
       }
     };
 
-    // Send the search request and wait for results.
-    final DartElementLocation elementLocation = DartElementLocation.of(elementToSearch);
-    DartAnalysisServerService.getInstance()
-      .search_findElementReferences(elementLocation.file, elementLocation.offset, searchResultProcessor);
-    // OK
+    final VirtualFile file = ApplicationManager.getApplication().runReadAction(new Computable<VirtualFile>() {
+      @Override
+      public VirtualFile compute() {
+        return elementToSearch.getContainingFile().getVirtualFile();
+      }
+    });
+
+    final int offset = elementToSearch.getTextRange().getStartOffset();
+    service.search_findElementReferences(file, offset, searchResultProcessor);
+
     return true;
   }
 

@@ -91,12 +91,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
   }
 
   private void doTest(String file) throws Exception {
-    doTest(new String[]{file}, ArrayUtil.EMPTY_STRING_ARRAY, new Computable<GlobalSearchScope>() {
-      @Override
-      public GlobalSearchScope compute() {
-        return GlobalSearchScope.allScope(myProject);
-      }
-    }, null, null);
+    doTest(new String[]{file}, ArrayUtil.EMPTY_STRING_ARRAY, () -> GlobalSearchScope.allScope(myProject), null, null);
   }
 
 
@@ -113,7 +108,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
                       Computable<GlobalSearchScope> scopeProvider,
                       @Nullable EnumSet<FlashUmlDependenciesSettingsOption> dependencies,
                       @Nullable String expectedFileNamePrefix) throws Exception {
-    List<VirtualFile> vFiles = new ArrayList<VirtualFile>(files.length);
+    List<VirtualFile> vFiles = new ArrayList<>(files.length);
     for (String file : files) {
       vFiles.add(getVirtualFile(BASE_PATH + file));
     }
@@ -166,7 +161,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
         model.refreshDataModel();
 
         // first limit elements by scope
-        Collection<DiagramNode<Object>> nodesToRemove = new ArrayList<DiagramNode<Object>>();
+        Collection<DiagramNode<Object>> nodesToRemove = new ArrayList<>();
         for (DiagramNode<Object> node : model.getNodes()) {
           if (node.getIdentifyingElement() instanceof JSClass &&
               !scopeProvider.compute().contains(((JSClass)node.getIdentifyingElement()).getContainingFile().getVirtualFile())) {
@@ -244,30 +239,15 @@ public class FlashUmlTest extends CodeInsightTestCase {
   }
 
   private Computable<GlobalSearchScope> projectScopeProvider() {
-    return new Computable<GlobalSearchScope>() {
-      @Override
-      public GlobalSearchScope compute() {
-        return GlobalSearchScope.projectScope(myProject);
-      }
-    };
+    return () -> GlobalSearchScope.projectScope(myProject);
   }
 
   private Computable<GlobalSearchScope> allScopeProvider() {
-    return new Computable<GlobalSearchScope>() {
-      @Override
-      public GlobalSearchScope compute() {
-        return GlobalSearchScope.allScope(myProject);
-      }
-    };
+    return () -> GlobalSearchScope.allScope(myProject);
   }
 
   private Computable<GlobalSearchScope> moduleScopeProvider() {
-    return new Computable<GlobalSearchScope>() {
-      @Override
-      public GlobalSearchScope compute() {
-        return GlobalSearchScope.moduleScope(myModule);
-      }
-    };
+    return () -> GlobalSearchScope.moduleScope(myModule);
   }
 
   public void testMxmlDependencies() throws Exception {

@@ -38,7 +38,7 @@ public class BuiltInFlexCompilerHandler {
   private DataOutputStream myDataOutputStream;
 
   private int commandNumber = 1;
-  private Map<String, Listener> myActiveListeners = new THashMap<String, Listener>();
+  private Map<String, Listener> myActiveListeners = new THashMap<>();
 
   public BuiltInFlexCompilerHandler(final Project project) {
     myProject = project;

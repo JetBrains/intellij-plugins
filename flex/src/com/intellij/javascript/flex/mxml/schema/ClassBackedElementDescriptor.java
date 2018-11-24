@@ -26,6 +26,7 @@ import com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnnotat
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -182,7 +183,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
     getAttributesDescriptors(_context);
     List<XmlElementDescriptor> resultList =
-      new ArrayList<XmlElementDescriptor>(myDescriptors == null ? 0 : myDescriptors.size() + context.getAllDescriptorsSize());
+      new ArrayList<>(myDescriptors == null ? 0 : myDescriptors.size() + context.getAllDescriptorsSize());
     final boolean isComponentTag = MxmlLanguageTagsUtil.isComponentTag(_context);
     boolean includeProperties = (parentDescriptor == this) && !isComponentTag;
 
@@ -207,14 +208,14 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
                                        : context.getDescriptorsWithAllowedDeclaration());
 
       if (JavaScriptSupportLoader.isLanguageNamespace(context.namespace)) {
-        ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.SCRIPT, (XmlTag)null), resultList);
-        ContainerUtil.addIfNotNull(context.getElementDescriptor(CodeContext.REPARENT_TAG_NAME, (XmlTag)null), resultList);
+        ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.SCRIPT, (XmlTag)null));
+        ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(CodeContext.REPARENT_TAG_NAME, (XmlTag)null));
 
         if (contextParent instanceof XmlTag && MxmlLanguageTagsUtil.isComponentTag((XmlTag)contextParent)) {
-          ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.DECLARATIONS, (XmlTag)null), resultList);
-          ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.BINDING, (XmlTag)null), resultList);
-          ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.STYLE, (XmlTag)null), resultList);
-          ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.METADATA, (XmlTag)null), resultList);
+          ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.DECLARATIONS, (XmlTag)null));
+          ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.BINDING, (XmlTag)null));
+          ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.STYLE, (XmlTag)null));
+          ContainerUtil.addIfNotNull(resultList, context.getElementDescriptor(FlexPredefinedTagNames.METADATA, (XmlTag)null));
         }
       }
     }
@@ -442,7 +443,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
     }
 
-    final Collection<AnnotationBackedDescriptor> descriptors = new ArrayList<AnnotationBackedDescriptor>(myDescriptors.values());
+    final Collection<AnnotationBackedDescriptor> descriptors = new ArrayList<>(myDescriptors.values());
 
     if (_context != null && !myPackageToInternalDescriptors.isEmpty()) {
       final String contextPackage = JSResolveUtil.getPackageNameFromPlace(_context);
@@ -482,12 +483,12 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   public void addPredefinedMemberDescriptor(@NotNull AnnotationBackedDescriptor descriptor) {
     if (predefined) {
       if (myDescriptors == null) {
-        myDescriptors = new THashMap<String, AnnotationBackedDescriptor>();
+        myDescriptors = new THashMap<>();
         myPackageToInternalDescriptors = Collections.emptyMap();
       }
       myDescriptors.put(descriptor.getName(), descriptor);
     } else {
-      if (myPredefinedDescriptors == null) myPredefinedDescriptors = new THashMap<String, AnnotationBackedDescriptor>();
+      if (myPredefinedDescriptors == null) myPredefinedDescriptors = new THashMap<>();
       myPredefinedDescriptors.put(descriptor.getName(), descriptor);
     }
   }
@@ -501,8 +502,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       packageToInternalDescriptors = myPackageToInternalDescriptors;
       if (map != null && packageToInternalDescriptors != null) return;
 
-      map = new THashMap<String, AnnotationBackedDescriptor>();
-      packageToInternalDescriptors = new THashMap<String, Map<String, AnnotationBackedDescriptor>>();
+      map = new THashMap<>();
+      packageToInternalDescriptors = new THashMap<>();
       Set<PsiElement> processedElements = null;
 
       if (element instanceof XmlBackedJSClassImpl) {
@@ -517,7 +518,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         final XmlDocument document = ((XmlFile)element).getDocument();
         final XmlTag rootTag = document != null ? document.getRootTag():null;
         final XmlElementDescriptor descriptor = rootTag != null ? rootTag.getDescriptor():null;
-        if (processedElements == null) processedElements = new THashSet<PsiElement>();
+        if (processedElements == null) processedElements = new THashSet<>();
         processedElements.add(element);
 
         element = descriptor != null ? descriptor.getDeclaration():null;
@@ -535,7 +536,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
             if (extendsList != null) {
               final JSClass clazz = (JSClass)jsClass;
               if (visited == null) {
-                visited = new THashSet<JSClass>();
+                visited = new THashSet<>();
               }
               visited.add(clazz);
 
@@ -576,7 +577,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         final String idAttributeValue = idAttribute.getValue();
         final String type = idAttributeAndItsType.second;
         map.put(idAttributeValue,
-                new AnnotationBackedDescriptorImpl(idAttributeValue, ClassBackedElementDescriptor.this, false, type, null, idAttribute));
+                new AnnotationBackedDescriptorImpl(idAttributeValue, this, false, type, null, idAttribute));
         return true;
       });
     }
@@ -736,7 +737,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         if (packageName != null) {
           Map<String, AnnotationBackedDescriptor> descriptorMap = packageToInternalDescriptors.get(packageName);
           if (descriptorMap == null) {
-            descriptorMap = new THashMap<String, AnnotationBackedDescriptor>();
+            descriptorMap = new THashMap<>();
             packageToInternalDescriptors.put(packageName, descriptorMap);
           }
           descriptorMap.put(name, descriptor);
@@ -782,7 +783,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
         Map<String, AnnotationBackedDescriptor> descriptorMap = packageToInternalDescriptors.get(entry.getKey());
         if (descriptorMap == null) {
-          descriptorMap = new THashMap<String, AnnotationBackedDescriptor>();
+          descriptorMap = new THashMap<>();
           packageToInternalDescriptors.put(entry.getKey(), descriptorMap);
         }
         descriptorMap.putAll(entry.getValue());
@@ -821,13 +822,13 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
       if (s.length() > 0 && Character.isLowerCase(s.charAt(0))) {
         if (tag.getAttributeValue(s) != null) {
-          final List<XmlElement> elements = new ArrayList<XmlElement>();
+          final List<XmlElement> elements = new ArrayList<>();
           collectLowerCasedElements(elements, tag.getAttributes());
           collectLowerCasedElements(elements, tag.getSubTags());
 
           XmlUtil.doDuplicationCheckForElements(
             elements.toArray(new XmlElement[elements.size()]),
-            new THashMap<String, XmlElement>(elements.size()), myDuplicationInfoProvider,
+            new THashMap<>(elements.size()), myDuplicationInfoProvider,
             host
           );
 
@@ -948,7 +949,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     final JSClass jsClass = (JSClass)clazz;
     final JSAttributeList attributeList = jsClass.getAttributeList();
     final boolean isFinalClass = attributeList != null && attributeList.hasModifier(JSAttributeList.ModifierType.FINAL);
-    final List<XmlElementDescriptor> result = new ArrayList<XmlElementDescriptor>();
+    final List<XmlElementDescriptor> result = new ArrayList<>();
 
     if (isFinalClass) {
       final String jsClassName = jsClass.getName();
@@ -1163,7 +1164,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   private static boolean doProcess(final PsiElement jsClass, final AttributedItemsProcessor processor) {
-    return JSResolveUtil.processMetaAttributesForClass(jsClass, new JSResolveUtil.MetaDataProcessor() {
+    return ActionScriptResolveUtil.processMetaAttributesForClass(jsClass, new ActionScriptResolveUtil.MetaDataProcessor() {
       @Override
       public boolean process(final @NotNull JSAttribute attr) {
         final String attrName = attr.getName();

@@ -36,8 +36,8 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author yole
  */
 public class CucumberCompletionContributor extends CompletionContributor {
-  private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<String, String>();
-  private static final Map<String, String> INTERPOLATION_PARAMETERS_MAP = new HashMap<String, String>();
+  private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<>();
+  private static final Map<String, String> INTERPOLATION_PARAMETERS_MAP = new HashMap<>();
   static {
     GROUP_TYPE_MAP.put("(.*)", "<string>");
     GROUP_TYPE_MAP.put("(.+)", "<string>");
@@ -104,7 +104,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
   private static void addScenarioKeywords(CompletionResultSet result, PsiFile originalFile, PsiElement originalPosition) {
     final Project project = originalFile.getProject();
     final GherkinKeywordTable table = GherkinKeywordTable.getKeywordsTable(originalFile, project);
-    final List<String> keywords = new ArrayList<String>();
+    final List<String> keywords = new ArrayList<>();
 
     if (!haveBackground(originalFile)) {
       keywords.addAll(table.getBackgroundKeywords());
@@ -221,7 +221,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
           text = text.replaceAll(group.getKey(), group.getValue());
         }
 
-        final List<TextRange> ranges = new ArrayList<TextRange>();
+        final List<TextRange> ranges = new ArrayList<>();
         Matcher m = QUESTION_MARK_PATTERN.matcher(text);
         if (m.find()) {
           text = m.replaceAll("$1");

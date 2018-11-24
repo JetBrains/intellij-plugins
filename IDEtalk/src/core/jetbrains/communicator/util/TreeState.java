@@ -75,7 +75,7 @@ public class TreeState {
   }
 
   private void restoreSelection(JTree tree) {
-    List<TreePath> selectedPaths = new ArrayList<TreePath>();
+    List<TreePath> selectedPaths = new ArrayList<>();
     for (Object o : mySelectedNodes) {
       DefaultMutableTreeNode node = TreeUtils.findNodeWithObject((DefaultMutableTreeNode) tree.getModel().getRoot(), o);
       if (node != null) {

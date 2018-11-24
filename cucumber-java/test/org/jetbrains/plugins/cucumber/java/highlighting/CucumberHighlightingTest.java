@@ -14,11 +14,11 @@ public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
     doTest();
   }
 
+  public void testScenarioParameter() {
+    doTest();
+  }
+
   protected void doTest() {
-    CucumberStepsIndex.getInstance(getProject()).reset();
-    myFixture.enableInspections(new CucumberStepInspection());
-    myFixture.copyDirectoryToProject(getTestName(true), "");
-    myFixture.configureByFile(getTestName(true) + "/test.feature");
     myFixture.testHighlighting(true, true, true);
   }
 
@@ -31,5 +31,10 @@ public class CucumberHighlightingTest extends CucumberJavaCodeInsightTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.allowTreeAccessForAllFiles();
+
+    CucumberStepsIndex.getInstance(getProject()).reset();
+    myFixture.enableInspections(new CucumberStepInspection());
+    myFixture.copyDirectoryToProject(getTestName(true), "");
+    myFixture.configureByFile(getTestName(true) + "/test.feature");
   }
 }

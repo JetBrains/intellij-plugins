@@ -62,6 +62,7 @@
     <editorNotificationProvider implementation="org.intellij.plugins.markdown.ui.preview.javafx.JavaFxCouldBeEnabledNotificationProvider"/>
     <lang.psiStructureViewFactory language="Markdown"
                                   implementationClass="org.intellij.plugins.markdown.structureView.MarkdownStructureViewFactory"/>
+    <stripTrailingSpacesFilterFactory implementation="org.intellij.plugins.markdown.editor.MarkdownStripTrailingSpacesFilterFactory"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.intellij.markdown">

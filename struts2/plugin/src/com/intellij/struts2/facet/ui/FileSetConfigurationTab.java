@@ -74,7 +74,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   private final SimpleTreeBuilder myBuilder;
   private final SimpleNode myRootNode = new SimpleNode() {
     public SimpleNode[] getChildren() {
-      final List<SimpleNode> nodes = new ArrayList<SimpleNode>(myBuffer.size());
+      final List<SimpleNode> nodes = new ArrayList<>(myBuffer.size());
       for (final StrutsFileSet entry : myBuffer) {
         if (!entry.isRemoved()) {
           final FileSetNode setNode = new FileSetNode(entry);
@@ -98,7 +98,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
   private final Module module;
 
   // local config
-  private final Set<StrutsFileSet> myBuffer = new LinkedHashSet<StrutsFileSet>();
+  private final Set<StrutsFileSet> myBuffer = new LinkedHashSet<>();
   private boolean myModified;
 
   public FileSetConfigurationTab(@NotNull final StrutsFacetConfiguration strutsFacetConfiguration,
@@ -357,7 +357,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     }
 
     public SimpleNode[] getChildren() {
-      final List<SimpleNode> nodes = new ArrayList<SimpleNode>();
+      final List<SimpleNode> nodes = new ArrayList<>();
 
       for (final VirtualFilePointer file : mySet.getFiles()) {
         nodes.add(new ConfigFileNode(file, this));

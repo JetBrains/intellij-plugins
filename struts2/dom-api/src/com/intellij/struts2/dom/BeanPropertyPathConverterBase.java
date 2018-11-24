@@ -61,13 +61,13 @@ public abstract class BeanPropertyPathConverterBase extends Converter<List<BeanP
         (GenericAttributeValue<List<BeanProperty>>) convertContext.getInvocationElement();
 
     final PsiReference[] references = createReferences(value, value.getXmlAttributeValue(), convertContext);
-    final ArrayList<BeanProperty> list = new ArrayList<BeanProperty>(references.length);
+    final ArrayList<BeanProperty> list = new ArrayList<>(references.length);
     for (final PsiReference reference : references) {
       final PsiElement resolve = reference.resolve();
       if (resolve instanceof PsiMethod) { // can be non-PsiMethod via ParamNameCustomConverter
         final PsiMethod method = (PsiMethod)resolve;
         final BeanProperty beanProperty = BeanProperty.createBeanProperty(method);
-        ContainerUtil.addIfNotNull(beanProperty, list);
+        ContainerUtil.addIfNotNull(list, beanProperty);
       }
     }
     return list;

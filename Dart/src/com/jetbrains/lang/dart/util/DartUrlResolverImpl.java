@@ -41,9 +41,9 @@ public class DartUrlResolverImpl extends DartUrlResolver {
   @Nullable private final VirtualFile myPubspecYamlFile;
   @Nullable private VirtualFile myPackageRoot;
   // myLivePackageNameToDirMap also contains packages map from .packages file if applicable
-  @NotNull private final Map<String, VirtualFile> myLivePackageNameToDirMap = new THashMap<String, VirtualFile>();
+  @NotNull private final Map<String, VirtualFile> myLivePackageNameToDirMap = new THashMap<>();
   // myPackagesMapFromLib is not empty only if pubspec.yaml file is null
-  @NotNull private final Map<String, List<String>> myPackagesMapFromLib = new THashMap<String, List<String>>();
+  @NotNull private final Map<String, List<String>> myPackagesMapFromLib = new THashMap<>();
 
   public DartUrlResolverImpl(final @NotNull Project project, final @NotNull VirtualFile contextFile) {
     myProject = project;

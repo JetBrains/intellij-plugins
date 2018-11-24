@@ -102,12 +102,7 @@ public class CucumberUtil {
       return true;
     }
 
-    final SearchScope searchScope = CucumberStepSearchUtil.restrictScopeToGherkinFiles(new Computable<SearchScope>() {
-      @Override
-      public SearchScope compute() {
-        return effectiveSearchScope;
-      }
-    });
+    final SearchScope searchScope = CucumberStepSearchUtil.restrictScopeToGherkinFiles(() -> effectiveSearchScope);
 
 
     final short context = (short)(UsageSearchContext.IN_STRINGS | UsageSearchContext.IN_CODE);

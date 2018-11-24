@@ -46,7 +46,7 @@ public class FlashUmlDependencyProvider {
   }
 
   public Collection<Pair<JSClass, FlashUmlRelationship>> computeUsedClasses() {
-    final Collection<Pair<JSClass, FlashUmlRelationship>> result = new ArrayList<Pair<JSClass, FlashUmlRelationship>>();
+    final Collection<Pair<JSClass, FlashUmlRelationship>> result = new ArrayList<>();
     final JSElementVisitor visitor = new JSElementVisitor() {
       JSVariable myVariable;
       JSNewExpression myNewExpression;

@@ -25,11 +25,11 @@ public class GrCucumberLineMarkerProvider implements LineMarkerProvider {
   @Override
   public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
     if (GrCucumberUtil.isStepDefinition(element)) {
-      return new LineMarkerInfo<GrMethodCall>(
+      return new LineMarkerInfo<>(
         ((GrMethodCall)element),
         element.getTextRange().getStartOffset(),
         CucumberIcons.Cucumber,
-        Pass.UPDATE_ALL,
+        Pass.LINE_MARKERS,
         TOOLTIP_PROVIDER,
         null
       );

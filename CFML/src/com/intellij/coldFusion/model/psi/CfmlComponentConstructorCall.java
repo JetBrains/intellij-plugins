@@ -53,7 +53,7 @@ public class CfmlComponentConstructorCall extends CfmlFunctionCallExpression imp
           @Override
           public ResolveResult[] multiResolve(boolean incompleteCode) {
             ResolveResult[] resolveResults = super.multiResolve(incompleteCode);
-            List<CfmlFunction> result = new LinkedList<CfmlFunction>();
+            List<CfmlFunction> result = new LinkedList<>();
             for (ResolveResult resolveResult : resolveResults) {
               PsiElement element = resolveResult.getElement();
               if (element instanceof CfmlComponent) {

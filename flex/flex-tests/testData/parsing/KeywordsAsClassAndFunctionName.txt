@@ -1,5 +1,5 @@
 JSFile:KeywordsAsClassAndFunctionName.js2
-  JSClass
+  ActionScriptClass
     JSAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')
@@ -32,7 +32,7 @@ JSFile:KeywordsAsClassAndFunctionName.js2
     PsiWhiteSpace('\n')
     PsiElement(JS:RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  JSClass
+  ActionScriptClass
     JSAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')

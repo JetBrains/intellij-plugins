@@ -119,9 +119,9 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
     final PsiFile sourceFile = myElement.getContainingFile();
 
-    Collection<String> importsInTargetFile = new HashSet<String>();
-    Collection<String> namespacesInTargetFile = new HashSet<String>();
-    List<FormatFixer> formatters = new ArrayList<FormatFixer>();
+    Collection<String> importsInTargetFile = new HashSet<>();
+    Collection<String> namespacesInTargetFile = new HashSet<>();
+    List<FormatFixer> formatters = new ArrayList<>();
     //JSRefactoringUtil.addRemovalFormatters(mySourceClass, myMembersToMove, Condition.TRUE, Condition.TRUE, postponedFormatters);
 
     JSClass targetClass = myElement instanceof JSClass ? (JSClass)myElement : null;
@@ -129,7 +129,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
       ((JSAttributeListOwner)myElement)), targetClass, false, false);
 
     myElement.setName(myClassName);
-    Collection<UsageInfo> usagesToProcess = new ArrayList<UsageInfo>(Arrays.asList(usages));
+    Collection<UsageInfo> usagesToProcess = new ArrayList<>(Arrays.asList(usages));
     for (Iterator<UsageInfo> i = usagesToProcess.iterator(); i.hasNext();) {
       UsageInfo usage = i.next();
       PsiElement element;
@@ -176,7 +176,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
 
     boolean makePublic = false;
     newClass = newClassPointer.getElement();
-    List<NonCodeUsageInfo> nonCodeUsages = new ArrayList<NonCodeUsageInfo>();
+    List<NonCodeUsageInfo> nonCodeUsages = new ArrayList<>();
     for (UsageInfo usage : usagesToProcess) {
       if (usage instanceof NonCodeUsageInfo) {
         nonCodeUsages.add((NonCodeUsageInfo)usage);
@@ -217,7 +217,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   }
 
   private MultiMap<PsiElement, String> detectConflicts() {
-    MultiMap<PsiElement, String> result = new MultiMap<PsiElement, String>();
+    MultiMap<PsiElement, String> result = new MultiMap<>();
 
     JSVisibilityUtil.Options options = new JSVisibilityUtil.Options();
     options.overridePackage(myElement, myPackageName);

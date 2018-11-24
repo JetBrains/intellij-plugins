@@ -7,7 +7,7 @@ Dart File
       PsiElement(()('(')
       PsiElement())(')')
     FUNCTION_BODY
-      BLOCK
+      LAZY_PARSEABLE_BLOCK
         PsiElement({)('{')
         STATEMENTS
           RETURN_STATEMENT
@@ -24,7 +24,7 @@ Dart File
                       PsiElement(()('(')
                       PsiElement())(')')
                     FUNCTION_EXPRESSION_BODY
-                      BLOCK
+                      LAZY_PARSEABLE_BLOCK
                         PsiElement({)('{')
                         STATEMENTS
                           <empty list>

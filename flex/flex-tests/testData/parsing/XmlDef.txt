@@ -1,5 +1,5 @@
 JSFile:XmlDef.js2
-  JSClass
+  ActionScriptClass
     JSAttributeList
       PsiElement(JS:PUBLIC_KEYWORD)('public')
       PsiWhiteSpace(' ')
@@ -143,7 +143,7 @@ JSFile:XmlDef.js2
         JSProperty
           PsiElement(JS:NAMESPACE_KEYWORD)('namespace')
           PsiElement(JS:COLON)(':')
-          JSFunctionExpression
+          ActionScriptFunctionExpression
             PsiElement(JS:FUNCTION_KEYWORD)('function')
             JSParameterList
               PsiElement(JS:LPAR)('(')

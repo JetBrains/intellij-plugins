@@ -6,7 +6,7 @@ import com.intellij.xdebugger.XExpression;
 import com.intellij.xdebugger.XSourcePosition;
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess;
 import com.jetbrains.cidr.execution.debugger.CidrEvaluatorHelper;
-import com.jetbrains.cidr.execution.debugger.backend.DBCannotEvaluateException;
+import com.jetbrains.cidr.execution.debugger.backend.DebuggerCommandException;
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver;
 import com.jetbrains.cidr.execution.debugger.backend.LLValue;
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +26,9 @@ public class MotionEvaluatorHelper extends CidrEvaluatorHelper {
                                                   @NotNull DebuggerDriver driver,
                                                   @NotNull XExpression expression,
                                                   XSourcePosition sourcePosition,
-                                                  int frameNumber,
-                                                  int threadId) throws ExecutionException, DBCannotEvaluateException {
+                                                  long threadId, int frameIndex) throws ExecutionException, DebuggerCommandException {
     final String stringExpression = expression.getExpression();
-    final LLValue result = driver.evaluate(threadId, frameNumber, stringExpression);
+    final LLValue result = driver.evaluate(threadId, frameIndex, stringExpression);
     return Pair.create(result, stringExpression);
   }
 }

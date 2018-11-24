@@ -17,12 +17,12 @@ public class DartCodeGenerateUtil {
     statement = trimDummy(statement);
     final String function = FUNCTION_PREFIX + statement + FUNCTION_SUFFIX;
     final Pair<String, Integer> pair = wrapFunction(function);
-    return new Pair<String, Integer>(pair.getFirst(), pair.getSecond() + FUNCTION_SUFFIX.length());
+    return new Pair<>(pair.getFirst(), pair.getSecond() + FUNCTION_SUFFIX.length());
   }
 
   public static Pair<String, Integer> wrapFunction(String function) {
     function = trimDummy(function);
-    return new Pair<String, Integer>(CLASS_PREFIX + function + CLASS_SUFFIX, CLASS_SUFFIX.length());
+    return new Pair<>(CLASS_PREFIX + function + CLASS_SUFFIX, CLASS_SUFFIX.length());
   }
 
   private static String trimDummy(String text) {

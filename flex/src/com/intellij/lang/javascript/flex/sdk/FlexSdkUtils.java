@@ -133,7 +133,7 @@ public class FlexSdkUtils {
       return doCreateSdk(sdkType, sdkHomePath);
     }
     else {
-      final Ref<Sdk> sdkRef = new Ref<Sdk>();
+      final Ref<Sdk> sdkRef = new Ref<>();
       ApplicationManager.getApplication().invokeAndWait(() -> sdkRef.set(doCreateSdk(sdkType, sdkHomePath)), ModalityState.defaultModalityState());
       return sdkRef.get();
     }
@@ -255,7 +255,7 @@ public class FlexSdkUtils {
 
   @NotNull
   private static VirtualFile unzip(final String zipFilePath, final String outputDirPath) throws IOException {
-    final Ref<IOException> ioExceptionRef = new Ref<IOException>();
+    final Ref<IOException> ioExceptionRef = new Ref<>();
     final VirtualFile dir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
       public VirtualFile compute() {
         try {
@@ -367,7 +367,7 @@ public class FlexSdkUtils {
 
     final String d32 = FlexCommonUtils.getD32IfNeed(customJavaHomeSet, javaHome);
 
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
 
     result.add(javaExecutable);
     if (StringUtil.isNotEmpty(d32)) result.add(d32);
@@ -454,28 +454,17 @@ public class FlexSdkUtils {
   }
 
   public static List<Sdk> getFlexAndFlexmojosSdks() {
-    return ContainerUtil.filter(getAllSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return sdk.getSdkType() instanceof FlexSdkType2 || sdk.getSdkType() instanceof FlexmojosSdkType;
-      }
-    });
+    return ContainerUtil.filter(getAllSdks(),
+                                sdk -> sdk.getSdkType() instanceof FlexSdkType2 || sdk.getSdkType() instanceof FlexmojosSdkType);
   }
 
   @Nullable
   public static Sdk findFlexOrFlexmojosSdk(final String name) {
-    return ContainerUtil.find(getFlexAndFlexmojosSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return name.equals(sdk.getName());
-      }
-    });
+    return ContainerUtil.find(getFlexAndFlexmojosSdks(), sdk -> name.equals(sdk.getName()));
   }
 
   public static List<Sdk> getFlexSdks() {
-    return ContainerUtil.filter(getAllSdks(), new Condition<Sdk>() {
-      public boolean value(final Sdk sdk) {
-        return sdk.getSdkType() instanceof FlexSdkType2;
-      }
-    });
+    return ContainerUtil.filter(getAllSdks(), sdk -> sdk.getSdkType() instanceof FlexSdkType2);
   }
 
   public static boolean isAirSdkWithoutFlex(final @Nullable Sdk sdk) {

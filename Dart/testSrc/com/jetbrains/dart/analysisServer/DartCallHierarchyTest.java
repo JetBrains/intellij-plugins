@@ -100,7 +100,7 @@ public class DartCallHierarchyTest extends HierarchyViewTestBase {
     }, fileNames);
   }
 
-  PsiElement findReference(PsiElement dartClass, String referenceName) {
+  public static PsiElement findReference(PsiElement dartClass, String referenceName) {
     // Find any reference to the named function or method in the test code.
     PsiElement[] result = new PsiElement[1];
     try {
@@ -179,6 +179,26 @@ public class DartCallHierarchyTest extends HierarchyViewTestBase {
 
   public void testMultiCallees() throws Exception {
     doCallHierarchyTest("A", "a", false, "A.dart", "B.dart", "C.dart");
+  }
+
+  public void testLocalFnInMethod() throws Exception {
+    doCallHierarchyTest(null, "baz", true, "C.dart");
+  }
+
+  public void testLocalFnInFunction() throws Exception {
+    doCallHierarchyTest(null, "baz", true, "C.dart");
+  }
+
+  public void testNamedConstructorCallers() throws Exception {
+    doCallHierarchyTest("X", "z7", true, "A.dart");
+  }
+
+  public void testGetterSetterCallers() throws Exception {
+    doCallHierarchyTest("X", "it", true, "A.dart");
+  }
+
+  public void testFactoryConstructorCallers() throws Exception {
+    doCallHierarchyTest("X", "zz", true, "A.dart");
   }
 
   private static class ExitVisitor extends Error {

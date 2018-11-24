@@ -63,6 +63,10 @@ public class Angular2HTMLParserTest extends ParsingTestCase {
     doTest(true);
   }
 
+  public void testCss() throws Exception {
+    doTest(true);
+  }
+
   public void testWeb20713() throws Exception {
     doTest(true);
   }

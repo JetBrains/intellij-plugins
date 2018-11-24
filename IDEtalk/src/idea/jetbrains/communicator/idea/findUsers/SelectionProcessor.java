@@ -60,7 +60,7 @@ class SelectionProcessor {
     });
 
 
-    Vector<String> groupsItems = new Vector<String>(Arrays.asList(strings));
+    Vector<String> groupsItems = new Vector<>(Arrays.asList(strings));
     Collections.sort(groupsItems);
     groupsItems.add(0, UserModel.AUTO_GROUP);
     myGroups.setModel(new DefaultComboBoxModel(groupsItems));
@@ -70,7 +70,7 @@ class SelectionProcessor {
   }
 
   private void updateGroupSelector() {
-    Set<String> projects = new HashSet<String>();
+    Set<String> projects = new HashSet<>();
     for (User user : getSelectedUsers()) {
       projects.addAll(Arrays.asList(user.getProjects()));
     }
@@ -101,7 +101,7 @@ class SelectionProcessor {
   public Set<User> getSelectedUsers() {
     TreePath[] selectionPaths = myUserTree.getSelectionPaths();
     if (selectionPaths == null) selectionPaths = new TreePath[0];
-    Set<User> result = new HashSet<User>();
+    Set<User> result = new HashSet<>();
     for (TreePath selectionPath : selectionPaths) {
       Object userObject = TreeUtils.getUserObject(selectionPath);
       if (userObject instanceof User) {

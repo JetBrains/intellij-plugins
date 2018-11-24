@@ -64,7 +64,7 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
   private static class MergingBeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     implements EmptyResolveMessageProvider, LocalQuickFixProvider {
 
-    private final List<BeanPropertyPathReference[]> allReferences = new SmartList<BeanPropertyPathReference[]>();
+    private final List<BeanPropertyPathReference[]> allReferences = new SmartList<>();
 
     /**
      * @param element        XML element.
@@ -101,7 +101,7 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
     @NotNull
     @Override
     public Object[] getVariants() {
-      List<Object> variants = new SmartList<Object>();
+      List<Object> variants = new SmartList<>();
       for (BeanPropertyPathReference[] reference : allReferences) {
         for (BeanPropertyPathReference pathReference : reference) {
           Collections.addAll(variants, pathReference.getVariants());
@@ -119,7 +119,7 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
     @Nullable
     @Override
     public LocalQuickFix[] getQuickFixes() {
-      List<LocalQuickFix> quickFixes = new SmartList<LocalQuickFix>();
+      List<LocalQuickFix> quickFixes = new SmartList<>();
       for (BeanPropertyPathReference[] reference : allReferences) {
         for (BeanPropertyPathReference pathReference : reference) {
           final LocalQuickFix[] fixes = pathReference.getQuickFixes();

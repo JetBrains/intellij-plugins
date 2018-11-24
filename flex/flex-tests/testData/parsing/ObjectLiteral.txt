@@ -21,7 +21,7 @@ JSFile:ObjectLiteral.js2
         PsiElement(JS:COMMA)(',')
         PsiWhiteSpace('\n  ')
         JSProperty
-          JSFunctionExpression
+          ActionScriptFunctionExpression
             PsiElement(JS:GET_KEYWORD)('get')
             PsiWhiteSpace(' ')
             PsiElement(JS:IDENTIFIER)('bbb')
@@ -43,7 +43,7 @@ JSFile:ObjectLiteral.js2
         PsiElement(JS:COMMA)(',')
         PsiWhiteSpace('\n  ')
         JSProperty
-          JSFunctionExpression
+          ActionScriptFunctionExpression
             PsiElement(JS:SET_KEYWORD)('set')
             PsiWhiteSpace(' ')
             PsiElement(JS:IDENTIFIER)('bbb')
@@ -62,7 +62,7 @@ JSFile:ObjectLiteral.js2
         JSProperty
           PsiElement(JS:IDENTIFIER)('aaa')
           PsiElement(JS:COLON)(':')
-          JSFunctionExpression
+          ActionScriptFunctionExpression
             PsiElement(JS:FUNCTION_KEYWORD)('function')
             JSParameterList
               PsiElement(JS:LPAR)('(')

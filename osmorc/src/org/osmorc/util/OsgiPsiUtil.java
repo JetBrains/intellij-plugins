@@ -58,14 +58,10 @@ public class OsgiPsiUtil {
 
   @Nullable
   public static PsiClass getActivatorClass(@NotNull final Project project) {
-    return CachedValuesManager.getManager(project).getCachedValue(project, new CachedValueProvider<PsiClass>() {
-      @Nullable
-      @Override
-      public Result<PsiClass> compute() {
-        GlobalSearchScope scope = ProjectScope.getLibrariesScope(project);
-        PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(BundleActivator.class.getName(), scope);
-        return Result.create(aClass, PsiModificationTracker.JAVA_STRUCTURE_MODIFICATION_COUNT);
-      }
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      GlobalSearchScope scope = ProjectScope.getLibrariesScope(project);
+      PsiClass aClass = JavaPsiFacade.getInstance(project).findClass(BundleActivator.class.getName(), scope);
+      return CachedValueProvider.Result.create(aClass, PsiModificationTracker.JAVA_STRUCTURE_MODIFICATION_COUNT);
     });
   }
 

@@ -39,7 +39,7 @@ public class DartSuspendContext extends XSuspendContext {
   @Override
   public XExecutionStack[] getExecutionStacks() {
     if (myExecutionStacks == null) {
-      final ArrayList<DartExecutionStack> stacks = new ArrayList<DartExecutionStack>();
+      final ArrayList<DartExecutionStack> stacks = new ArrayList<>();
 
       myDebugProcess.processAllIsolates(isolate -> {
         if (isolate.getId() == myActiveExecutionStack.getIsolate().getId()) {

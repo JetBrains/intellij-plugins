@@ -204,7 +204,7 @@ public class DartDocUtil {
     }
 
     // 3. Look for multiline doc comment or line doc comments as previous siblings
-    final List<PsiComment> siblingComments = new ArrayList<PsiComment>();
+    final List<PsiComment> siblingComments = new ArrayList<>();
     PsiElement previous = anchorElement;
     while ((previous = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpaces(previous, true)) instanceof PsiComment) {
       if (previous instanceof DartDocComment) {

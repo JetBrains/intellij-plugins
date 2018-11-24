@@ -91,7 +91,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
       Document document = saxBuilder.build(getClass().getResource("servers.xml"));
       Element rootElement = document.getRootElement();
       List children = rootElement.getChildren("item", rootElement.getNamespace());
-      List<String> result = new ArrayList<String>();
+      List<String> result = new ArrayList<>();
       for (Object aChildren : children) {
         Element element = (Element) aChildren;
         result.add(element.getAttributeValue("jid"));

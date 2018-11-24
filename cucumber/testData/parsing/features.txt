@@ -1,0 +1,36 @@
+GherkinFile:features.feature
+  GherkinFeature:
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiWhiteSpace('\n\n  ')
+    GherkinScenario:
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:I type in comment
+        PsiElement(STEP_KEYWORD)('When')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('I type in comment')
+        PsiWhiteSpace('\n    ')
+        GherkinPystring
+          PsiElement(PYSTRING_QUOTES)('"""')
+          PsiElement(PYSTRING_TEXT)('\n    afnd coffmment is plfffacffed aftefffr triple-double-ffsdefquoted string\n    ')
+          PsiElement(PYSTRING_QUOTES)('"""')
+  PsiWhiteSpace('\n\n')
+  GherkinFeature:
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiWhiteSpace('\n  ')
+    GherkinScenario:
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:I type in comment
+        PsiElement(STEP_KEYWORD)('When')
+        PsiWhiteSpace(' ')
+        PsiElement(TEXT)('I type in comment')
+        PsiWhiteSpace('\n    ')
+        GherkinPystring
+          PsiElement(PYSTRING_QUOTES)('"""')
+          PsiElement(PYSTRING_TEXT)('\n    afnd coffmment is plfffacffed aftefffr triple-double-ffsdefquoted string\n    ')
+          PsiElement(PYSTRING_QUOTES)('"""')
+      PsiWhiteSpace('\n\n  ')
+      PsiElement(TEXT)('then italic style is triggered on every character')

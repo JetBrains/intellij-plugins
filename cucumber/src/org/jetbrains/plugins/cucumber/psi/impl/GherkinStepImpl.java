@@ -97,7 +97,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   public List<String> getParamsSubstitutions() {
     synchronized (LOCK) {
       if (mySubstitutions == null) {
-        final ArrayList<String> substitutions = new ArrayList<String>();
+        final ArrayList<String> substitutions = new ArrayList<>();
 
 
         // step name
@@ -164,12 +164,12 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
 
   @Nullable
   public String getSubstitutedName() {
-    List<String> sustitutedNameList = new ArrayList<String>(getSubstitutedNameList(1));
+    List<String> sustitutedNameList = new ArrayList<>(getSubstitutedNameList(1));
     return sustitutedNameList.size() > 0 ? sustitutedNameList.get(0) : getStepName();
   }
 
   public Set<String> getSubstitutedNameList(int maxCount) {
-    final Set<String> result = new HashSet<String>();
+    final Set<String> result = new HashSet<>();
     final GherkinStepsHolder holder = getStepHolder();
     final String stepName = getStepName();
     if (stepName != null) {
@@ -231,7 +231,7 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   @NotNull
   @Override
   public Collection<AbstractStepDefinition> findDefinitions() {
-    final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
+    final List<AbstractStepDefinition> result = new ArrayList<>();
     for (final PsiReference reference : getReferences()) {
       if (reference instanceof CucumberStepReference) {
         result.addAll(((CucumberStepReference)reference).resolveToDefinitions());

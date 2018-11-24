@@ -24,7 +24,7 @@
  */
 package org.osmorc.settings;
 
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -36,7 +36,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import com.intellij.ui.components.JBCheckBox;
 import org.jetbrains.annotations.NotNull;
@@ -47,9 +46,8 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.util.OsgiUiUtil;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
@@ -57,8 +55,8 @@ import java.util.List;
 public class ProjectSettingsEditorComponent {
   private UserActivityWatcher myWatcher;
   private JPanel myMainPanel;
-  private JComboBox myFrameworkInstance;
-  private ComboBox myDefaultManifestFileLocation;
+  private JComboBox<FrameworkInstanceDefinition> myFrameworkInstance;
+  private ComboBox<String> myDefaultManifestFileLocation;
   private TextFieldWithBrowseButton myBundleOutputPath;
   private JButton myApplyToAllButton;
   private JBCheckBox myBndAutoImport;
@@ -70,60 +68,42 @@ public class ProjectSettingsEditorComponent {
   public ProjectSettingsEditorComponent(Project project) {
     myProject = project;
 
-    //noinspection unchecked
     myFrameworkInstance.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[not specified]") {
       @Override
       protected boolean isInstanceDefined(@NotNull FrameworkInstanceDefinition instance) {
-        List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions();
-        for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions) {
-          if (instance.equals(instanceDefinition)) {
-            return true;
-          }
-        }
-        return false;
+        return Stream.of(ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions()).anyMatch(instance::equals);
       }
     });
 
     myWatcher = new UserActivityWatcher();
     myWatcher.register(myMainPanel);
-    myWatcher.addUserActivityListener(new UserActivityListener() {
-      public void stateChanged() {
-        myModified = true;
-      }
-    });
+    myWatcher.addUserActivityListener(() -> myModified = true);
 
     myDefaultManifestFileLocation.setEditable(true);
-    //noinspection unchecked
     myDefaultManifestFileLocation.addItem("META-INF");
 
-    myBundleOutputPath.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        VirtualFile preselect = LocalFileSystem.getInstance().findFileByPath(myBundleOutputPath.getText());
-        if (preselect == null) preselect = myProject.getBaseDir();
-        VirtualFile virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), myProject, preselect);
-        if (virtualFile != null) {
-          myBundleOutputPath.setText(virtualFile.getPath());
-        }
+    myBundleOutputPath.addActionListener((e) -> {
+      VirtualFile preselect = LocalFileSystem.getInstance().findFileByPath(myBundleOutputPath.getText());
+      if (preselect == null) preselect = myProject.getBaseDir();
+      VirtualFile virtualFile = FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), myProject, preselect);
+      if (virtualFile != null) {
+        myBundleOutputPath.setText(virtualFile.getPath());
       }
     });
 
-    myApplyToAllButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          for (Module module : ModuleManager.getInstance(myProject).getModules()) {
-            OsmorcFacet facet = OsmorcFacet.getInstance(module);
-            if (facet != null) {
-              OsmorcFacetConfiguration configuration = facet.getConfiguration();
-              configuration.setJarFileLocation(configuration.getJarFileName(), OutputPathType.OsgiOutputPath);
-            }
+    myApplyToAllButton.addActionListener((e) -> {
+      WriteAction.run(() -> {
+        for (Module module : ModuleManager.getInstance(myProject).getModules()) {
+          OsmorcFacet facet = OsmorcFacet.getInstance(module);
+          if (facet != null) {
+            OsmorcFacetConfiguration configuration = facet.getConfiguration();
+            configuration.setJarFileLocation(configuration.getJarFileName(), OutputPathType.OsgiOutputPath);
           }
-        });
+        }
+      });
 
-        String message = "The output path has been applied to all OSGi facets in the current project.";
-        Messages.showInfoMessage(myProject, message, "Output Path Applied");
-      }
+      String message = "The output path has been applied to all OSGi facets in the current project.";
+      Messages.showInfoMessage(myProject, message, "Output Path Applied");
     });
   }
 
@@ -174,15 +154,13 @@ public class ProjectSettingsEditorComponent {
 
   private void refreshFrameworkInstanceCombobox() {
     myFrameworkInstance.removeAllItems();
-    //noinspection unchecked
     myFrameworkInstance.addItem(null);
 
     List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getActiveFrameworkInstanceDefinitions();
-    final String frameworkInstanceName = mySettings.getFrameworkInstanceName();
+    String frameworkInstanceName = mySettings.getFrameworkInstanceName();
 
     FrameworkInstanceDefinition projectFrameworkInstance = null;
     for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions) {
-      //noinspection unchecked
       myFrameworkInstance.addItem(instanceDefinition);
       if (instanceDefinition.getName().equals(frameworkInstanceName)) {
         projectFrameworkInstance = instanceDefinition;
@@ -193,7 +171,6 @@ public class ProjectSettingsEditorComponent {
     if (projectFrameworkInstance == null && frameworkInstanceName != null) {
       projectFrameworkInstance = new FrameworkInstanceDefinition();
       projectFrameworkInstance.setName(frameworkInstanceName);
-      //noinspection unchecked
       myFrameworkInstance.addItem(projectFrameworkInstance);
     }
     myFrameworkInstance.setSelectedItem(projectFrameworkInstance);

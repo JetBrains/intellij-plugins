@@ -1,5 +1,5 @@
 JSFile:KeywordNsReference.js2
-  JSClass
+  ActionScriptClass
     JSAttributeList
       <empty list>
     PsiElement(JS:CLASS_KEYWORD)('class')

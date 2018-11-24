@@ -1,5 +1,6 @@
 package org.angularjs.index;
 
+import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.StubIndexKey;
@@ -22,18 +23,18 @@ public class AngularModuleIndex extends AngularIndexBase {
     return KEY;
   }
 
+  // todo have common method for angular module call
   public static List<String> findDependenciesInModuleDeclaration(JSCallExpression call) {
     final JSExpression methodExpression = call.getMethodExpression();
     if (methodExpression instanceof JSReferenceExpression &&
-        ((JSReferenceExpression)methodExpression).getQualifier() != null &&
-        AngularJSIndexingHandler.MODULE.equals(((JSReferenceExpression)methodExpression).getReferenceName())) {
+        JSSymbolUtil.isAccurateReferenceExpressionName((JSReferenceExpression)methodExpression, "angular", AngularJSIndexingHandler.MODULE)) {
       final JSExpression[] arguments = call.getArguments();
       if (arguments.length > 1 && arguments[0] instanceof JSLiteralExpression
           && ((JSLiteralExpression) arguments[0]).isQuotedLiteral()
           && arguments[1] instanceof JSArrayLiteralExpression) {
         final JSArrayLiteralExpression array = (JSArrayLiteralExpression)arguments[1];
         final JSExpression[] children = array.getExpressions();
-        final Set<String> dependencies = new HashSet<String>();
+        final Set<String> dependencies = new HashSet<>();
         for (JSExpression child : children) {
           if (child instanceof JSLiteralExpression && ((JSLiteralExpression)child).isQuotedLiteral()) {
             dependencies.add(StringUtil.unquoteString(child.getText()));

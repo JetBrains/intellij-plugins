@@ -6,9 +6,9 @@ import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.impl.PsiTreeChangeEventImpl;
 import com.intellij.psi.impl.PsiTreeChangePreprocessorBase;
 import com.intellij.psi.xml.XmlFile;
-import com.jetbrains.lang.dart.psi.DartBlock;
 import com.jetbrains.lang.dart.psi.DartEmbeddedContent;
 import com.jetbrains.lang.dart.psi.DartFile;
+import com.jetbrains.lang.dart.psi.IDartBlock;
 import org.jetbrains.annotations.NotNull;
 
 public class DartPsiTreeChangePreprocessor extends PsiTreeChangePreprocessorBase {
@@ -32,7 +32,7 @@ public class DartPsiTreeChangePreprocessor extends PsiTreeChangePreprocessorBase
     PsiElement parent = element;
     while (true) {
       if (parent == null || parent instanceof PsiFileSystemItem || parent instanceof DartEmbeddedContent) return false;
-      if (parent instanceof DartBlock) return true;
+      if (parent instanceof IDartBlock) return true;
 
       parent = parent.getParent();
     }

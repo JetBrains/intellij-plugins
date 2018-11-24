@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.psi.annotator;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProgressManager;
@@ -7,6 +8,8 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
@@ -63,6 +66,23 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
         }
       }
       highlightOutlineParams(step, reference);
+    }
+  }
+
+  @Override
+  public void visitScenarioOutline(GherkinScenarioOutline outline) {
+    super.visitScenarioOutline(outline);
+
+    final GherkinStepParameter[] params = PsiTreeUtil.getChildrenOfType(outline, GherkinStepParameter.class);
+    if (params != null) {
+      for (GherkinStepParameter param : params) {
+        highlight(param, GherkinHighlighter.OUTLINE_PARAMETER_SUBSTITUTION);
+      }
+    }
+
+    final ASTNode[] braces = outline.getNode().getChildren(TokenSet.create(GherkinTokenTypes.STEP_PARAMETER_BRACE));
+    for (ASTNode brace : braces) {
+      highlight(brace.getPsi(), GherkinHighlighter.REGEXP_PARAMETER);
     }
   }
 
@@ -169,12 +189,12 @@ public class GherkinAnnotatorVisitor extends GherkinElementVisitor {
 
         final List<GherkinTableCell> headerCells = header.getPsiCells();
         // fetch headers
-        final List<String> headers = new ArrayList<String>(headerCells.size() + 1);
+        final List<String> headers = new ArrayList<>(headerCells.size() + 1);
         for (PsiElement headerCell : headerCells) {
           headers.add(headerCell.getText().trim());
         }
         // filter used substitutions names
-        final List<String> realSubstitutions = new ArrayList<String>(possibleSubstitutions.size() + 1);
+        final List<String> realSubstitutions = new ArrayList<>(possibleSubstitutions.size() + 1);
         for (String substitution : possibleSubstitutions) {
           if (headers.contains(substitution)) {
             realSubstitutions.add(substitution);

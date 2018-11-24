@@ -87,7 +87,7 @@ public class UserMonitorThread extends Thread {
   }
 
   private static MulticastPingThread[] createMulticastThreads(P2PTransport client) {
-    List<MulticastPingThread> result = new ArrayList<MulticastPingThread>();
+    List<MulticastPingThread> result = new ArrayList<>();
     for (InetAddress selfAddress : NetworkUtil.getSelfAddresses()) {
       result.add(new MulticastPingThread(selfAddress, client.getIdeFacade(), client));
     }
@@ -181,7 +181,7 @@ public class UserMonitorThread extends Thread {
   }
 
   private List<MulticastPingThread> getListeningThreads() {
-    List<MulticastPingThread> result = new ArrayList<MulticastPingThread>();
+    List<MulticastPingThread> result = new ArrayList<>();
     for (MulticastPingThread multicastThread : myMulticastThreads) {
       if (multicastThread.isAlive()) {
         result.add(multicastThread);
@@ -250,7 +250,7 @@ public class UserMonitorThread extends Thread {
   void flushOnlineUsers() {
     Set<User> users;
     synchronized (myAvailableUsers) {
-      users = new THashSet<User>(myAvailableUsers);
+      users = new THashSet<>(myAvailableUsers);
     }
     if (LOG.isDebugEnabled()) {
       LOG.debug("Setting online users: \n" + Arrays.toString(users.toArray()));

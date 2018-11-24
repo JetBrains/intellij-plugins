@@ -38,7 +38,7 @@ public class GherkinTableImpl extends GherkinPsiElementBase implements GherkinTa
   }
 
   public List<GherkinTableRow> getDataRows() {
-    List<GherkinTableRow> result = new ArrayList<GherkinTableRow>();
+    List<GherkinTableRow> result = new ArrayList<>();
     final GherkinTableRow[] rows = PsiTreeUtil.getChildrenOfType(this, GherkinTableRow.class);
     if (rows != null) {
       for (GherkinTableRow row : rows) {

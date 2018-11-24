@@ -50,7 +50,7 @@ public class SendMessageDialog extends IdeaDialog {
     setOKButtonText("Send");
     getOKAction().putValue(Action.MNEMONIC_KEY, new Integer((int) 'S'));
 
-    ArrayList<User> users = new ArrayList<User>(Arrays.asList(availableUsers));
+    ArrayList<User> users = new ArrayList<>(Arrays.asList(availableUsers));
     UIUtil.setupUserList(myRecipients, users);
     UIUtil.setDefaultSelection(myRecipients, selectedUsers);
 

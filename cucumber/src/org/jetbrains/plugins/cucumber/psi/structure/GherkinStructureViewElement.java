@@ -25,7 +25,7 @@ public class GherkinStructureViewElement extends PsiTreeElementBase<PsiElement> 
 
   @NotNull
   public Collection<StructureViewTreeElement> getChildrenBase() {
-    List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
+    List<StructureViewTreeElement> result = new ArrayList<>();
     for (PsiElement element : getElement().getChildren()) {
       if (element instanceof GherkinPsiElement &&
           !(element instanceof GherkinFeatureHeaderImpl) &&

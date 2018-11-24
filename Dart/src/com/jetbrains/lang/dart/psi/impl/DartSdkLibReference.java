@@ -83,12 +83,8 @@ public class DartSdkLibReference implements PsiReference {
   public static Object[] getSdkLibUrisAsCompletionVariants(final PsiElement element) {
     // do not suggest dart:lib_from_sdk for 'part of' directive
     if (element.getParent() instanceof DartImportOrExportStatement) {
-      final List<String> result = ContainerUtil.filter(DartLibraryIndex.getAllSdkLibUris(element.getProject()), new Condition<String>() {
-        @Override
-        public boolean value(final String libUrl) {
-          return !libUrl.startsWith(DartUrlResolver.DART_PREFIX + "_");
-        }
-      });
+      final List<String> result = ContainerUtil.filter(DartLibraryIndex.getAllSdkLibUris(element.getProject()),
+                                                       libUrl -> !libUrl.startsWith(DartUrlResolver.DART_PREFIX + "_"));
       return ArrayUtil.toStringArray(result);
     }
 

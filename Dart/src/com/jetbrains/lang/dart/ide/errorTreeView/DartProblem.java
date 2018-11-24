@@ -7,6 +7,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.dartlang.analysis.server.protocol.AnalysisError;
@@ -46,7 +47,8 @@ public class DartProblem {
   }
 
   public int getOffset() {
-    return myAnalysisError.getLocation().getOffset();
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(mySystemIndependentPath);
+    return DartAnalysisServerService.getInstance().getConvertedOffset(file, myAnalysisError.getLocation().getOffset());
   }
 
   @NotNull

@@ -21,10 +21,10 @@ class Traits {
   int flags;
   String protectedNs;
   Multiname interfaces[];
-  Map<String, MemberInfo> names = new LinkedHashMap<String, MemberInfo>();
-  Map<Integer, SlotInfo> slots = new LinkedHashMap<Integer, SlotInfo>();
-  Map<Integer, MethodInfo> methods = new LinkedHashMap<Integer, MethodInfo>();
-  Map<Integer, MemberInfo> members = new LinkedHashMap<Integer, MemberInfo>();
+  Map<String, MemberInfo> names = new LinkedHashMap<>();
+  Map<Integer, SlotInfo> slots = new LinkedHashMap<>();
+  Map<Integer, MethodInfo> methods = new LinkedHashMap<>();
+  Map<Integer, MemberInfo> members = new LinkedHashMap<>();
   BidirectionalMap<String, String> usedNamespacesToNamesMap;
 
   public String toString() {

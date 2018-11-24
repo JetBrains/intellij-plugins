@@ -59,7 +59,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
   @Override
   public User[] findUsers(ProgressIndicator progressIndicator) {
     final String currentProjectId = myIdeFacade.getCurrentProjectId();
-    List<User> users = new ArrayList<User>();
+    List<User> users = new ArrayList<>();
     if (currentProjectId != null) {
       try {
         progressIndicator.setText(StringUtil.getMsg("jabber.findUsers.text"));
@@ -103,7 +103,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
     XStream xStream = new XStream();
     Set<String> keys = (Set<String>) XMLUtil.fromXml(xStream, myIdeFacade.getCacheDir(), "registryQuestions.xml", false);
     if (keys == null) {
-      keys = new HashSet<String>();
+      keys = new HashSet<>();
     }
     String key = jabberUserId + "_" + currentProjectId;
     boolean result = !keys.contains(key);

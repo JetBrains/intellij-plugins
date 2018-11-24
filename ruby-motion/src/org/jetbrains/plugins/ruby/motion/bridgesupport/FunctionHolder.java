@@ -8,7 +8,7 @@ import java.util.Map;
  * @author Dennis.Ushakov
  */
 public class FunctionHolder extends Sealable {
-  private final Map<String, Function> myFunctions = new HashMap<String, Function>();
+  private final Map<String, Function> myFunctions = new HashMap<>();
 
   public Collection<Function> getFunctions() {
     return myFunctions.values();

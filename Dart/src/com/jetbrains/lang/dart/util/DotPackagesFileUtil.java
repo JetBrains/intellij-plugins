@@ -46,7 +46,7 @@ public class DotPackagesFileUtil {
   private static Map<String, String> loadPackagesMap(@NotNull final VirtualFile dotPackagesFile) {
     try {
       final List<String> lines = FileUtil.loadLines(dotPackagesFile.getPath(), "UTF-8");
-      final Map<String, String> result = new THashMap<String, String>();
+      final Map<String, String> result = new THashMap<>();
 
       for (String line : lines) {
         if (line.trim().isEmpty() || line.startsWith("#")) continue;

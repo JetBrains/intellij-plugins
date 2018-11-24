@@ -15,3 +15,15 @@ class MethodSignatureSyntax extends D implements E, F {
   l(int x, y);
   m(int x, int y);
 }
+
+main(a, b,) {
+  main(1, 2,);
+}
+
+foo([a = 5,]) {
+  foo(a = 5,);
+}
+
+foo1(w, {a: 5,}) {
+  foo1(3, a: 5,);
+}

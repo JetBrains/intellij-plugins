@@ -6,6 +6,8 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.*;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
 import com.jetbrains.lang.dart.lexer.DartDocLexer;
+import com.jetbrains.lang.dart.lexer.DartLexer;
+import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
@@ -31,6 +33,8 @@ public interface DartTokenTypesSets {
   IElementType SINGLE_LINE_DOC_COMMENT = new DartElementType("SINGLE_LINE_DOC_COMMENT");
   IElementType MULTI_LINE_COMMENT = new DartElementType("MULTI_LINE_COMMENT");
   IElementType MULTI_LINE_DOC_COMMENT = new DartDocCommentElementType();
+
+  IElementType LAZY_PARSEABLE_BLOCK = new DartLazyParseableBlockElementType();
 
   TokenSet STRINGS = TokenSet.create(RAW_SINGLE_QUOTED_STRING, RAW_TRIPLE_QUOTED_STRING, OPEN_QUOTE, CLOSING_QUOTE, REGULAR_STRING_PART);
   TokenSet WHITE_SPACES = TokenSet.create(WHITE_SPACE);
@@ -146,7 +150,7 @@ public interface DartTokenTypesSets {
     // '-' '!' '~' '++' '--'
     MINUS, NOT, BIN_NOT, PLUS_PLUS, MINUS_MINUS
   );
-  
+
   TokenSet BITWISE_OPERATORS = TokenSet.create(BITWISE_OPERATOR);
   TokenSet FUNCTION_DEFINITION = TokenSet.create(
     FUNCTION_SIGNATURE,
@@ -165,6 +169,12 @@ public interface DartTokenTypesSets {
 
   TokenSet BLOCKS = TokenSet.create(
     BLOCK,
+    LAZY_PARSEABLE_BLOCK
+  );
+
+  TokenSet BLOCKS_EXT = TokenSet.create(
+    BLOCK,
+    LAZY_PARSEABLE_BLOCK,
     CLASS_MEMBERS,
     DART_FILE,
     EMBEDDED_CONTENT
@@ -204,6 +214,31 @@ public interface DartTokenTypesSets {
       }
 
       root.done(this);
+    }
+  }
+
+  class DartLazyParseableBlockElementType extends ILazyParseableElementType {
+    public DartLazyParseableBlockElementType() {
+      super("LAZY_PARSEABLE_BLOCK", DartLanguage.INSTANCE);
+    }
+
+    @Override
+    public ASTNode parseContents(final ASTNode lazyParseableBlock) {
+      final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(lazyParseableBlock.getTreeParent().getPsi().getProject(),
+                                                                               lazyParseableBlock,
+                                                                               new DartLexer(),
+                                                                               getLanguage(),
+                                                                               lazyParseableBlock.getChars());
+      if (isSyncOrAsync(lazyParseableBlock)) {
+        builder.putUserData(DartGeneratedParserUtilBase.INSIDE_SYNC_OR_ASYNC_FUNCTION, true);
+      }
+      new DartParser().parseLight(BLOCK, builder);
+      return builder.getTreeBuilt().getFirstChildNode();
+    }
+
+    private static boolean isSyncOrAsync(@NotNull final ASTNode lazyParseableBlock) {
+      final IElementType type = lazyParseableBlock.getTreeParent().getFirstChildNode().getElementType();
+      return type == SYNC || type == ASYNC;
     }
   }
 

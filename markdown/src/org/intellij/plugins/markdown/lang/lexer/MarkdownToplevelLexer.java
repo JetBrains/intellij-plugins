@@ -31,9 +31,9 @@ public class MarkdownToplevelLexer extends LexerBase {
     myBufferEnd = endOffset;
 
     final ASTNode parsedTree = MarkdownParserManager.parseContent(buffer.subSequence(startOffset, endOffset));
-    myLexemes = new ArrayList<IElementType>();
-    myStartOffsets = new ArrayList<Integer>();
-    myEndOffsets = new ArrayList<Integer>();
+    myLexemes = new ArrayList<>();
+    myStartOffsets = new ArrayList<>();
+    myEndOffsets = new ArrayList<>();
     ASTNodeKt.accept(parsedTree, new LexerBuildingVisitor());
     myLexemeIndex = 0;
   }

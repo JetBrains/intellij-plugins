@@ -39,12 +39,9 @@ public class KarmaBasePathFinder {
     return cachedValuesManager.getCachedValue(
       jsFile,
       myTestFileStructureRegistryKey,
-      new CachedValueProvider<String>() {
-        @Override
-        public Result<String> compute() {
-          String basePath = buildBasePath(jsFile);
-          return Result.create(basePath, jsFile);
-        }
+      () -> {
+        String basePath = buildBasePath(jsFile);
+        return CachedValueProvider.Result.create(basePath, jsFile);
       },
       false
     );

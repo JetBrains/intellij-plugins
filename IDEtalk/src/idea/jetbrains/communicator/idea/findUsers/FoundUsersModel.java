@@ -32,7 +32,7 @@ class FoundUsersModel extends DefaultTreeModel {
   }
 
   private static Map<String,Collection<User>> convertToMap(List<User> foundUsers) {
-    Map<String,Collection<User>> resultMap = new TreeMap<String, Collection<User>>();
+    Map<String,Collection<User>> resultMap = new TreeMap<>();
     for (User user : foundUsers) {
       String[] projects = user.getProjects();
 
@@ -48,9 +48,9 @@ class FoundUsersModel extends DefaultTreeModel {
   private static Collection<User> getUsers(Map<String,Collection<User>> resultMap, String project) {
     Collection<User> users = (resultMap.get(project));
     if (users == null) {
-      users = new TreeSet<User>(new Comparator() {
+      users = new TreeSet<>(new Comparator() {
         public int compare(Object o1, Object o2) {
-          return ((User) o1).getName().compareToIgnoreCase(((User)o2).getName());
+          return ((User)o1).getName().compareToIgnoreCase(((User)o2).getName());
         }
       });
       resultMap.put(project, users);

@@ -11,7 +11,7 @@ public class DartControlFlowUtil {
   public static Set<DartComponentName> getSimpleDeclarations(PsiElement[] children,
                                                              @Nullable PsiElement lastParent,
                                                              boolean stopAtLastParent) {
-    final Set<DartComponentName> result = new THashSet<DartComponentName>();
+    final Set<DartComponentName> result = new THashSet<>();
     boolean addComponentsFlag = true;
     for (PsiElement child : children) {
       if (child == lastParent && stopAtLastParent) {

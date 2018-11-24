@@ -63,7 +63,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
       public Map<String, Void> map(@NotNull FileContent inputData) {
         final XmlFile file = (XmlFile)inputData.getPsiFile();
 
-        final Map<String, Void> result = new HashMap<String, Void>();
+        final Map<String, Void> result = new HashMap<>();
         process(file, element -> {
           String name = getName(element);
           if (name != null) {
@@ -152,7 +152,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
 
   public static Collection<NavigationItem> getItemsByName(final String name, Project project) {
     Collection<VirtualFile> files = FileBasedIndex.getInstance().getContainingFiles(NAME, name, GlobalSearchScope.projectScope(project));
-    final Collection<NavigationItem> result = new ArrayList<NavigationItem>();
+    final Collection<NavigationItem> result = new ArrayList<>();
     for (VirtualFile vFile : files) {
       PsiFile file = PsiManager.getInstance(project).findFile(vFile);
       if (!(file instanceof XmlFile)) {

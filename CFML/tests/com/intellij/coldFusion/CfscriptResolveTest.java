@@ -109,7 +109,7 @@ public class CfscriptResolveTest extends JavaCodeInsightFixtureTestCase {
   }
 
   private void setDefaultState() {
-    Map<String, String> mappings = new HashMap<String, String>();
+    Map<String, String> mappings = new HashMap<>();
     for (VirtualFile root : ProjectRootManager.getInstance(getProject()).getContentRoots()) {
       String directoryName = root.getPresentableUrl() + "/folder/subfolder";
       VirtualFile fileByUrl = LocalFileSystem.getInstance().findFileByPath(directoryName);

@@ -40,12 +40,9 @@ public class BndRunConfigurationEditor extends SettingsEditor<BndRunConfiguratio
     myJrePathEditor.setDefaultJreSelector(DefaultJreSelector.projectSdk(project));
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory
       .createSingleFileNoJarsDescriptor()
-      .withFileFilter(new Condition<VirtualFile>() {
-        @Override
-        public boolean value(VirtualFile file) {
-          String ext = file.getExtension();
-          return BndFileType.BND_RUN_EXT.equals(ext) || BndFileType.BND_EXT.equals(ext);
-        }
+      .withFileFilter(file -> {
+        String ext = file.getExtension();
+        return BndFileType.BND_RUN_EXT.equals(ext) || BndFileType.BND_EXT.equals(ext);
       });
     myChooser.addBrowseFolderListener(OsmorcBundle.message("bnd.run.file.chooser.title"), null, project, descriptor);
   }

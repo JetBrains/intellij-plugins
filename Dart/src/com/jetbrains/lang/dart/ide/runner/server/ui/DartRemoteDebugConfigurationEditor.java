@@ -51,7 +51,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
 
   @Nullable private final DartSdk mySdk;
 
-  private SortedSet<NameAndPath> myComboItems = new TreeSet<NameAndPath>();
+  private SortedSet<NameAndPath> myComboItems = new TreeSet<>();
 
   public DartRemoteDebugConfigurationEditor(@NotNull final Project project) {
     mySdk = DartSdk.getDartSdk(project);

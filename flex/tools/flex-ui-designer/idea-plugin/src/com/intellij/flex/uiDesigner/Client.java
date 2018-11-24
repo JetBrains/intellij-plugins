@@ -45,8 +45,8 @@ public class Client implements Disposable {
   protected final BlockDataOutputStream blockOut = new BlockDataOutputStream();
   protected final AmfOutputStream out = new AmfOutputStream(blockOut);
 
-  private final InfoMap<Module, ModuleInfo> registeredModules = new InfoMap<Module, ModuleInfo>(true);
-  private final InfoMap<Project, ProjectInfo> registeredProjects = new InfoMap<Project, ProjectInfo>();
+  private final InfoMap<Module, ModuleInfo> registeredModules = new InfoMap<>(true);
+  private final InfoMap<Project, ProjectInfo> registeredProjects = new InfoMap<>();
 
   private final ReentrantLock outLock = new ReentrantLock();
 
@@ -213,7 +213,7 @@ public class Client implements Disposable {
   }
 
   public void registerLibrarySet(LibrarySet librarySet) {
-    final List<Library> styleOwners = new ArrayList<Library>();
+    final List<Library> styleOwners = new ArrayList<>();
     for (Library library : librarySet.getLibraries()) {
       if (library.isStyleOwner()) {
         styleOwners.add(library);
@@ -297,7 +297,7 @@ public class Client implements Disposable {
   public AsyncResult<DocumentInfo> renderDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
     VirtualFile virtualFile = psiFile.getVirtualFile();
     final int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder);
-    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
+    final AsyncResult<DocumentInfo> result = new AsyncResult<>();
     if (factoryId == -1) {
       result.setRejected();
       return result;
@@ -503,7 +503,7 @@ public class Client implements Disposable {
         }
 
         DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
-        List<DocumentInfo> rendered = new ArrayList<DocumentInfo>(ids.length);
+        List<DocumentInfo> rendered = new ArrayList<>(ids.length);
         for (int id : ids) {
           rendered.add(documentFactoryManager.getInfo(id));
         }

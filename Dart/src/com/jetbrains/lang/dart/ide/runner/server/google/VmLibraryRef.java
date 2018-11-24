@@ -32,7 +32,7 @@ public class VmLibraryRef implements Comparable<VmLibraryRef> {
       return Collections.emptyList();
     }
 
-    List<VmLibraryRef> result = new ArrayList<VmLibraryRef>();
+    List<VmLibraryRef> result = new ArrayList<>();
 
     for (int i = 0; i < arr.length(); i++) {
       result.add(VmLibraryRef.createFrom(arr.getJSONObject(i)));

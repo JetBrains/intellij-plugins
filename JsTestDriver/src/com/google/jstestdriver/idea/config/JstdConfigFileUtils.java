@@ -47,7 +47,7 @@ public class JstdConfigFileUtils {
   public static final char UNIX_PATH_SEPARATOR = '/';
   public static final char WINDOWS_PATH_SEPARATOR = '\\';
 
-  private static final Set<String> KEYS_WITH_INNER_SEQUENCE = new HashSet<String>(Arrays.asList("load", "test", "exclude", "serve"));
+  private static final Set<String> KEYS_WITH_INNER_SEQUENCE = new HashSet<>(Arrays.asList("load", "test", "exclude", "serve"));
   public static final Set<String> VALID_TOP_LEVEL_KEYS = ContainerUtil.set("server", "plugin", "timeout", "proxy", "gateway");
 
   public static final PsiElementPattern.Capture<PsiElement> CONFIG_FILE_ELEMENT_PATTERN = PlatformPatterns.psiElement().inVirtualFile(

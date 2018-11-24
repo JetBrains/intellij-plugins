@@ -2,11 +2,10 @@ package org.intellij.plugins.markdown.settings;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Attribute;
-import org.intellij.plugins.markdown.util.MarkdownPluginUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public final class MarkdownCssSettings {
   public static final MarkdownCssSettings DEFAULT = new MarkdownCssSettings(false);
@@ -78,12 +77,12 @@ public final class MarkdownCssSettings {
 
   @NotNull
   private static String getPredefinedCssURI(boolean isDarcula) {
+    final String fileName = isDarcula ? "darcula.css" : "default.css";
     try {
-      final String fileName = isDarcula ? "darcula.css" : "default.css";
-      final String path = MarkdownPluginUtil.getMarkdownPluginPath() + "/lib/" + fileName;
-      return new File(path).toURI().toString();
+      final URL resource = MarkdownCssSettings.class.getResource(fileName);
+      return resource != null ? resource.toURI().toString() : "";
     }
-    catch (FileNotFoundException e) {
+    catch (URISyntaxException e) {
       Logger.getInstance(MarkdownCssSettings.class).error(e);
       return "";
     }

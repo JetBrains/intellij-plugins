@@ -143,7 +143,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
           final Collection<FlexBuildConfiguration.RLMInfo> oldRLMs = bc.getRLMs();
-          final Collection<FlexBuildConfiguration.RLMInfo> newRLMs = new ArrayList<FlexBuildConfiguration.RLMInfo>();
+          final Collection<FlexBuildConfiguration.RLMInfo> newRLMs = new ArrayList<>();
           boolean changed = false;
 
           for (FlexBuildConfiguration.RLMInfo rlm : oldRLMs) {
@@ -203,7 +203,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
           final Collection<FlexBuildConfiguration.RLMInfo> oldRLMs = bc.getRLMs();
-          final Collection<FlexBuildConfiguration.RLMInfo> newRLMs = new ArrayList<FlexBuildConfiguration.RLMInfo>();
+          final Collection<FlexBuildConfiguration.RLMInfo> newRLMs = new ArrayList<>();
           boolean changed = false;
 
           for (FlexBuildConfiguration.RLMInfo rlm : oldRLMs) {
@@ -268,7 +268,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
           final Collection<String> cssFiles = bc.getCssFilesToCompile();
           if (cssFiles.isEmpty()) continue;
 
-          final Collection<String> newCssFiles = new ArrayList<String>(cssFiles.size());
+          final Collection<String> newCssFiles = new ArrayList<>(cssFiles.size());
           boolean changed = false;
           for (String cssFile : cssFiles) {
             if (cssFile.equals(oldFilePath)) {

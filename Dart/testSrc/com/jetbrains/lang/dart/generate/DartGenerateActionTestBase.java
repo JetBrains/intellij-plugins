@@ -46,12 +46,12 @@ abstract public class DartGenerateActionTestBase extends LightPlatformCodeInsigh
 
   @Override
   protected void checkResultByText(String message,
-                                   @NotNull String fileText,
+                                   @NotNull String expectedFileText,
                                    boolean ignoreTrailingSpaces,
                                    String filePath) {
 
     //remove all
-    super.checkResultByText(message, fileText.replaceAll("<spaces>", ""), ignoreTrailingSpaces, filePath);
+    super.checkResultByText(message, expectedFileText.replaceAll("<spaces>", ""), ignoreTrailingSpaces, filePath);
   }
 
   protected void configure() {

@@ -92,4 +92,18 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
       "<caret>"
     );
   }
+
+  public void testTagAttributeIndent() {
+    HbConfig.setFormattingEnabled(true);
+    doEnterTest(
+      "{{#ffo fooo=\"1\"<caret>\n" +
+      "}}\n" +
+      "\n" +
+      "{{/ffo}}",
+      "{{#ffo fooo=\"1\"\n" +
+      "       <caret>\n" +
+      "}}\n" +
+      "\n" +
+      "{{/ffo}}");
+  }
 }

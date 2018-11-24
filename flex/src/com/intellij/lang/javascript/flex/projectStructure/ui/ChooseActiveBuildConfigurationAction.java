@@ -80,12 +80,8 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
     final DataContext dataContext = SimpleDataContext.getProjectContext(module.getProject());
     return new PopupFactoryImpl.ActionGroupPopup(FlexBundle.message("choose.build.configuration.popup.title", module.getName()),
-                                                 actionGroup, dataContext, false, false, false, true, null, -1, new Condition<AnAction>() {
-      @Override
-      public boolean value(final AnAction anAction) {
-        return anAction instanceof SelectBcAction && ((SelectBcAction)anAction).getBC() == activeBc;
-      }
-    }, null) {
+                                                 actionGroup, dataContext, false, false, false, true, null, -1,
+                                                 anAction -> anAction instanceof SelectBcAction && ((SelectBcAction)anAction).getBC() == activeBc, null) {
       @Override
       protected ListCellRenderer getListElementRenderer() {
         return new PopupListElementRenderer(this) {

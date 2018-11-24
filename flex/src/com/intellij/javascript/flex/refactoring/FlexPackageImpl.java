@@ -18,6 +18,8 @@ package com.intellij.javascript.flex.refactoring;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.psi.JSNamespace;
+import com.intellij.lang.javascript.psi.JSNamespaceImpl;
 import com.intellij.lang.javascript.psi.JSQualifiedName;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -28,7 +30,6 @@ import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiPackageBase;
 import com.intellij.psi.util.CachedValue;
@@ -38,7 +39,6 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.usageView.UsageViewLongNameLocation;
 import com.intellij.usageView.UsageViewShortNameLocation;
 import com.intellij.usageView.UsageViewTypeLocation;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,18 +65,16 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
 
   protected Collection<PsiDirectory> getAllDirectories(boolean includeLibrarySources) {
     if (myDirectories == null) {
-      CachedValueProvider<Collection<PsiDirectory>> provider = new CachedValueProvider<Collection<PsiDirectory>>() {
-        public Result<Collection<PsiDirectory>> compute() {
-          final PsiManager manager = PsiManager.getInstance(getProject());
-          Collection<PsiDirectory> directories = ContainerUtil.map(DirectoryIndex.getInstance(getProject())
-                                                                     .getDirectoriesByPackageName(getQualifiedName(), true).findAll(),
-                                                                   virtualFile -> manager.findDirectory(virtualFile));
+      CachedValueProvider<Collection<PsiDirectory>> provider = () -> {
+        final PsiManager manager = PsiManager.getInstance(getProject());
+        Collection<PsiDirectory> directories = ContainerUtil.map(DirectoryIndex.getInstance(getProject())
+                                                                   .getDirectoriesByPackageName(getQualifiedName(), true).findAll(),
+                                                                 virtualFile -> manager.findDirectory(virtualFile));
 
-          return Result.create(directories,
-                               PsiModificationTracker.MODIFICATION_COUNT,
-                               ProjectRootManager
-                                 .getInstance(getProject()));
-        }
+        return CachedValueProvider.Result.create(directories,
+                                                 PsiModificationTracker.MODIFICATION_COUNT,
+                                                 ProjectRootManager
+                               .getInstance(getProject()));
       };
       myDirectories =
         CachedValuesManager.getManager(getProject()).createCachedValue(provider, false);
@@ -184,5 +182,11 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
   @Override
   public ClassOrInterface isClassOrInterface() {
     return ClassOrInterface.NONE;
+  }
+
+  @NotNull
+  @Override
+  public JSNamespace getJSNamespace() {
+    return new JSNamespaceImpl(getNamespace(), getJSContext(), isNamespaceExplicitlyDeclared());
   }
 }

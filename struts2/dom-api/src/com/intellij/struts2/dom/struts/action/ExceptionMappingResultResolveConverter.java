@@ -46,7 +46,7 @@ public class ExceptionMappingResultResolveConverter extends ResolvingConverter<H
       return Collections.emptySet();
     }
 
-    final List<HasResultType> variants = new ArrayList<HasResultType>();
+    final List<HasResultType> variants = new ArrayList<>();
     variants.addAll(action.getResults()); // Action-local first
 
     final StrutsPackage strutsPackage = action.getStrutsPackage();

@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -39,7 +40,7 @@ public class FlexIconProvider extends IconProvider {
         }
       }
     } else if (element instanceof JSFileImpl) {
-      final JSNamedElement mainDeclaredElement = JSFileImpl.findMainDeclaredElement((JSFileImpl)element);
+      final JSNamedElement mainDeclaredElement = ActionScriptResolveUtil.findMainDeclaredElement((JSFileImpl)element);
       if (mainDeclaredElement != null) {
         icon = mainDeclaredElement.getIcon(transformedFlags);
       }

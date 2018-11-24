@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class StrutsFacet extends Facet<StrutsFacetConfiguration> {
 
-  public static final FacetTypeId<StrutsFacet> FACET_TYPE_ID = new FacetTypeId<StrutsFacet>("struts2");
+  public static final FacetTypeId<StrutsFacet> FACET_TYPE_ID = new FacetTypeId<>("struts2");
 
   public StrutsFacet(@NotNull final FacetType facetType,
                      @NotNull final Module module,

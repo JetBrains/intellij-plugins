@@ -49,7 +49,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.ui.*;
 import com.intellij.ui.table.JBTable;
-import com.intellij.util.Consumer;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.OutputPathType;
@@ -159,25 +158,11 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
     myAdditionalJarContentsPanel.add(
       ToolbarDecorator.createDecorator(myAdditionalJARContentsTable)
-        .setAddAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton button) {
-            onAddAdditionalJarContent();
-          }
-        })
-        .setRemoveAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton button) {
-            onRemoveAdditionalJarContent();
-        }
-        })
-        .setEditAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton button) {
-            onEditAdditionalJARContent();
-        }
-      })
-        .disableUpDownActions().createPanel(), BorderLayout.CENTER);
+        .setAddAction((b) -> onAddAdditionalJarContent())
+        .setRemoveAction((b) -> onRemoveAdditionalJarContent())
+        .setEditAction((b) -> onEditAdditionalJARContent())
+        .disableUpDownActions()
+        .createPanel(), BorderLayout.CENTER);
 
     myValidatorsManager.registerValidator(new FacetEditorValidator() {
       @NotNull
@@ -232,9 +217,9 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   }
 
   private void onRemoveAdditionalJarContent() {
-    final int row = myAdditionalJARContentsTable.getSelectedRow();
-    final int editingCol = myAdditionalJARContentsTable.getEditingColumn();
-    final int editingRow = myAdditionalJARContentsTable.getEditingRow();
+    int row = myAdditionalJARContentsTable.convertRowIndexToModel(myAdditionalJARContentsTable.getSelectedRow());
+    int editingCol = myAdditionalJARContentsTable.getEditingColumn();
+    int editingRow = myAdditionalJARContentsTable.getEditingRow();
     if (editingCol != -1 && editingRow != -1) {
       TableCellEditor editor = myAdditionalJARContentsTable.getCellEditor(editingRow, editingCol);
       editor.cancelCellEditing();

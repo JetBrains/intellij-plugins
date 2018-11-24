@@ -15,6 +15,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.options.Configurable.NoScroll;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
@@ -66,7 +67,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.*;
 
-public class DartConfigurable implements SearchableConfigurable {
+public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
   private static final String DART_SETTINGS_PAGE_ID = "dart.settings";
   private static final String DART_SETTINGS_PAGE_NAME = DartBundle.message("dart.title");
@@ -101,11 +102,11 @@ public class DartConfigurable implements SearchableConfigurable {
 
   private boolean myDartSupportEnabledInitial;
   private @Nullable DartSdk mySdkInitial;
-  private final @NotNull Collection<Module> myModulesWithDartSdkLibAttachedInitial = new THashSet<Module>();
+  private final @NotNull Collection<Module> myModulesWithDartSdkLibAttachedInitial = new THashSet<>();
 
   private @Nullable WebBrowser myDartiumInitial;
   private ChromeSettings myDartiumSettingsCurrent;
-  private final @NotNull Map<Module, String> myModuleToCustomPackageRootCurrent = new THashMap<Module, String>();
+  private final @NotNull Map<Module, String> myModuleToCustomPackageRootCurrent = new THashMap<>();
 
   public DartConfigurable(final @NotNull Project project) {
     myProject = project;
@@ -128,17 +129,9 @@ public class DartConfigurable implements SearchableConfigurable {
   }
 
   private void initDartSdkAndDartiumControls() {
-    final Computable<ChromeSettings> currentDartiumSettingsRetriever = new Computable<ChromeSettings>() {
-      public ChromeSettings compute() {
-        return myDartiumSettingsCurrent;
-      }
-    };
+    final Computable<ChromeSettings> currentDartiumSettingsRetriever = () -> myDartiumSettingsCurrent;
 
-    final Computable<Boolean> isResettingControlsComputable = new Computable<Boolean>() {
-      public Boolean compute() {
-        return myInReset;
-      }
-    };
+    final Computable<Boolean> isResettingControlsComputable = () -> myInReset;
 
     DartSdkUtil.initDartSdkAndDartiumControls(myProject, mySdkPathComboWithBrowse, myVersionLabel, myDartiumPathComboWithBrowse,
                                               currentDartiumSettingsRetriever, myDartiumSettingsButton, myCheckedModeCheckBox,
@@ -247,10 +240,10 @@ public class DartConfigurable implements SearchableConfigurable {
     });
 
     final ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> bfListener =
-      new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(DartBundle.message("select.custom.package.root"), null,
-                                                                           myCustomPackageRootTextWithBrowse, myProject,
-                                                                           FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                                                           TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+      new ComponentWithBrowseButton.BrowseFolderActionListener<>(DartBundle.message("select.custom.package.root"), null,
+                                                                 myCustomPackageRootTextWithBrowse, myProject,
+                                                                 FileChooserDescriptorFactory.createSingleFolderDescriptor(),
+                                                                 TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
     myCustomPackageRootTextWithBrowse.addBrowseFolderListener(myProject, bfListener);
 
@@ -289,12 +282,6 @@ public class DartConfigurable implements SearchableConfigurable {
   @NotNull
   public String getId() {
     return "dart.settings";
-  }
-
-  @Override
-  @Nullable
-  public Runnable enableSearch(final String option) {
-    return null;
   }
 
   @Override
@@ -675,7 +662,7 @@ public class DartConfigurable implements SearchableConfigurable {
         final TextFieldWithBrowseButton fieldWithBrowse = new TextFieldWithBrowseButton();
         fieldWithBrowse.addBrowseFolderListener(DartBundle.message("select.custom.package.root"), null, myProject,
                                                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
-        myComponent = new CellEditorComponentWithBrowseButton<JTextField>(fieldWithBrowse, this);
+        myComponent = new CellEditorComponentWithBrowseButton<>(fieldWithBrowse, this);
         final String text = value != null ? FileUtil.toSystemDependentName((String)value) : "";
 
         myComponent.getChildComponent().setText(text);
@@ -847,7 +834,7 @@ public class DartConfigurable implements SearchableConfigurable {
   public static Map<String, String> getContentRootPathToCustomPackageRootMap(@NotNull final Module module) {
     final String customPackageRootPath = getCustomPackageRootPath(module);
     if (customPackageRootPath != null) {
-      final Map<String, String> result = new SmartHashMap<String, String>();
+      final Map<String, String> result = new SmartHashMap<>();
       for (String contentRootUrl : ModuleRootManager.getInstance(module).getContentRootUrls()) {
         result.put(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentRootUrl)),
                    FileUtil.toSystemDependentName(customPackageRootPath));

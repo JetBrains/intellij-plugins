@@ -102,7 +102,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   }
 
   private MultiMap<PsiElement, String> detectConflicts(UsageInfo[] usages) {
-    MultiMap<PsiElement, String> conflicts = new MultiMap<PsiElement, String>();
+    MultiMap<PsiElement, String> conflicts = new MultiMap<>();
 
     final Collection<PsiElement> filesToMove = Arrays.asList(myElementsToMove);
     JSVisibilityUtil.Options options = new JSVisibilityUtil.Options();

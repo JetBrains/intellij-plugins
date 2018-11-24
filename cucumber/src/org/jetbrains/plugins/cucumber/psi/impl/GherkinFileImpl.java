@@ -33,7 +33,7 @@ public class GherkinFileImpl extends PsiFileBase implements GherkinFile {
 
   public List<String> getStepKeywords() {
     final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider();
-    List<String> result = new ArrayList<String>();
+    List<String> result = new ArrayList<>();
 
     // find language comment
     final String language = getLocaleLanguage();

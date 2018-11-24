@@ -56,11 +56,6 @@ public class ApplicationSettingsEditor implements SearchableConfigurable {
   }
 
   @Override
-  public Runnable enableSearch(String option) {
-    return null;
-  }
-
-  @Override
   public JComponent createComponent() {
     myComponent = new FrameworkDefinitionsEditorComponent();
     return myComponent.getMainPanel();

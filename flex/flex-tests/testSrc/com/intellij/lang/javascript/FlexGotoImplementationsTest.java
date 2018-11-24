@@ -155,7 +155,7 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
 
     check(expected, implementations);
 
-    final Ref<PsiElement[]> ref = new Ref<PsiElement[]>();
+    final Ref<PsiElement[]> ref = new Ref<>();
     new ShowImplementationsAction() {
 
       @Override
@@ -175,7 +175,7 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
   }
 
   private static void check(String expected, PsiElement[] implementations) {
-    List<String> strings = new ArrayList<String>(implementations.length);
+    List<String> strings = new ArrayList<>(implementations.length);
     for (PsiElement element : implementations) {
       assertTrue("unexpected result item: " + element, element instanceof JSNamedElement);
       strings.add(((JSNamedElement)element).getName());

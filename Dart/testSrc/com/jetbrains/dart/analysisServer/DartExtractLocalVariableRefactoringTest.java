@@ -17,8 +17,8 @@ package com.jetbrains.dart.analysisServer;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.SelectionModel;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
@@ -29,6 +29,8 @@ import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.dartlang.analysis.server.protocol.SourceChange;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureTestCase {
   protected String getBasePath() {
@@ -56,12 +58,22 @@ public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureT
   private ServerExtractLocalVariableRefactoring createRefactoring(String filePath) {
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
     final PsiFile psiFile = myFixture.configureByFile(filePath);
+
+    ApplicationManager.getApplication().runWriteAction(() -> {
+      try {
+        VfsUtil.saveText(psiFile.getVirtualFile(), StringUtil.convertLineSeparators(psiFile.getText(), "\r\n"));
+      }
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    });
+
     myFixture.doHighlighting(); // make sure server is warmed up
     // find the Element to rename
     final SelectionModel selectionModel = getEditor().getSelectionModel();
     int offset = selectionModel.getSelectionStart();
     final int length = selectionModel.getSelectionEnd() - offset;
-    return new ServerExtractLocalVariableRefactoring(getSystemPath(psiFile), offset, length);
+    return new ServerExtractLocalVariableRefactoring(psiFile.getVirtualFile(), offset, length);
   }
 
   private void doTest(String filePath, boolean all) {
@@ -71,7 +83,7 @@ public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureT
     assertNotNull(initialConditions);
     assertTrue(initialConditions.isOK());
     // configure
-    refactoring.setName("test");
+    //refactoring.setName("test");
     refactoring.setExtractAll(all);
     // check final conditions
     final RefactoringStatus finalConditions = refactoring.checkFinalConditions();
@@ -82,7 +94,7 @@ public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureT
     assertNotNull(change);
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
-        AssistUtils.applySourceChange(myFixture.getProject(), change, false);
+        AssistUtils.applySourceChange(myFixture.getProject(), change, true);
       }
       catch (DartSourceEditException e) {
         fail(e.getMessage());
@@ -90,12 +102,5 @@ public class DartExtractLocalVariableRefactoringTest extends CodeInsightFixtureT
     });
     // validate
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
-  }
-
-  @NotNull
-  private static String getSystemPath(PsiFile psiFile) {
-    final VirtualFile virtualFile = psiFile.getVirtualFile();
-    final String path = virtualFile.getPath();
-    return FileUtil.toSystemDependentName(path);
   }
 }

@@ -1,0 +1,54 @@
+GherkinFile:ruby14051.feature
+  GherkinFeature:feature
+    PsiElement(FEATURE_KEYWORD)('Feature')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    PsiElement(TEXT)('feature')
+    PsiWhiteSpace('\n\n  ')
+    GherkinScenario:scenario 1
+      GherkinTag:@s
+        PsiElement(TAG)('@s')
+      PsiWhiteSpace('  ')
+      GherkinTag:@i
+        PsiElement(TAG)('@i')
+      PsiWhiteSpace(' ')
+      GherkinTag:@A
+        PsiElement(TAG)('@A')
+      PsiWhiteSpace('\n  ')
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('scenario 1')
+      PsiWhiteSpace('\n\n    ')
+      GherkinStep:
+        PsiElement(STEP_KEYWORD)('Given')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:
+        PsiElement(STEP_KEYWORD)('And')
+      PsiWhiteSpace('\n    ')
+      GherkinStep:
+        PsiElement(STEP_KEYWORD)('Then')
+    PsiWhiteSpace('\n\n\n  ')
+    GherkinScenario:scenario 2.
+      GherkinTag:@s
+        PsiElement(TAG)('@s')
+      PsiWhiteSpace('  ')
+      GherkinTag:@i
+        PsiElement(TAG)('@i')
+      PsiWhiteSpace(' ')
+      GherkinTag:@A
+        PsiElement(TAG)('@A')
+      PsiWhiteSpace('\n')
+      PsiElement(SCENARIO_KEYWORD)('Scenario')
+      PsiElement(COLON)(':')
+      PsiWhiteSpace(' ')
+      PsiElement(TEXT)('scenario 2.')
+      PsiWhiteSpace('\n\n  ')
+      GherkinStep:
+        PsiElement(STEP_KEYWORD)('Given')
+      PsiWhiteSpace('\n  ')
+      GherkinStep:
+        PsiElement(STEP_KEYWORD)('And')
+      PsiWhiteSpace('\n  ')
+      GherkinStep:
+        PsiElement(STEP_KEYWORD)('Then')

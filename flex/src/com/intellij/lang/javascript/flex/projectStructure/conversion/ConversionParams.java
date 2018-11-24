@@ -50,12 +50,12 @@ public class ConversionParams {
 
   public String projectSdkName;
 
-  private final Collection<Pair<String, String>> myAppModuleAndBCNames = new ArrayList<Pair<String, String>>();
+  private final Collection<Pair<String, String>> myAppModuleAndBCNames = new ArrayList<>();
 
   private final ConversionContext myContext;
-  private final Collection<String> myFacetsToIgnore = new HashSet<String>();
+  private final Collection<String> myFacetsToIgnore = new HashSet<>();
   private Collection<String> myProjectLibrariesNames;
-  private Set<String> myProjectLibrariesToMakeFlex = new HashSet<String>();
+  private Set<String> myProjectLibrariesToMakeFlex = new HashSet<>();
 
   public ConversionParams(ConversionContext context) {
     myContext = context;
@@ -103,8 +103,8 @@ public class ConversionParams {
     final ProjectJdkTable sdkTable = ProjectJdkTable.getInstance();
     final Sdk[] allSdks = sdkTable.getAllJdks();
     final FlexSdkType2 newSdkType = FlexSdkType2.getInstance();
-    Map<String, Sdk> homePathToNewSdk = new HashMap<String, Sdk>();
-    Collection<Sdk> sdksToAdd = new ArrayList<Sdk>();
+    Map<String, Sdk> homePathToNewSdk = new HashMap<>();
+    Collection<Sdk> sdksToAdd = new ArrayList<>();
     for (Sdk sdk : allSdks) {
       if (sdk.getSdkType() == newSdkType && sdk.getHomePath() != null) {
         homePathToNewSdk.put(sdk.getHomePath(), sdk);
@@ -178,12 +178,7 @@ public class ConversionParams {
   @Nullable
   public static Sdk findNewSdk(@NotNull final String homePath) {
     final List<Sdk> sdks = ProjectJdkTable.getInstance().getSdksOfType(FlexSdkType2.getInstance());
-    return ContainerUtil.find(sdks, new Condition<Sdk>() {
-      @Override
-      public boolean value(final Sdk sdk) {
-        return homePath.equals(sdk.getHomePath());
-      }
-    });
+    return ContainerUtil.find(sdks, sdk -> homePath.equals(sdk.getHomePath()));
   }
 
   /**

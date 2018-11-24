@@ -32,10 +32,10 @@ public class MarkdownElementType extends IElementType {
 
   @NotNull
   private static final Map<org.intellij.markdown.IElementType, IElementType> markdownToPlatformTypeMap =
-    new HashMap<org.intellij.markdown.IElementType, IElementType>();
+    new HashMap<>();
   @NotNull
   private static final Map<IElementType, org.intellij.markdown.IElementType> platformToMarkdownTypeMap =
-    new HashMap<IElementType, org.intellij.markdown.IElementType>();
+    new HashMap<>();
 
   public MarkdownElementType(@NotNull @NonNls String debugName) {
     super(debugName, MarkdownLanguage.INSTANCE);

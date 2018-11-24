@@ -12,7 +12,7 @@ class ResponseLineIterator implements Iterator<String> {
   private int current;
 
   ResponseLineIterator(String commandOutput) {
-    lines = new ArrayList<String>();
+    lines = new ArrayList<>();
     StringTokenizer tokenizer = new StringTokenizer(commandOutput, "\r\n");
     while (tokenizer.hasMoreElements()) {
       String s = tokenizer.nextToken().trim();

@@ -83,7 +83,7 @@ public class GherkinBlock implements ASTBlock {
       return Collections.emptyList();
     }
 
-    List<Block> result = new ArrayList<Block>();
+    List<Block> result = new ArrayList<>();
     for (ASTNode child : children) {
       if (child.getElementType() == TokenType.WHITE_SPACE) {
         continue;

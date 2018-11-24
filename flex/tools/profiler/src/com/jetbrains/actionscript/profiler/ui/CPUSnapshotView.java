@@ -208,7 +208,7 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
 
     DefaultMutableTreeNode tracesRoot = (DefaultMutableTreeNode)treeModel.getRoot();
     JTreeUtil.removeChildren(tracesRoot, treeModel);
-    fillTreeModelRoot(tracesRoot, filteredCallTree, countMap, selfCountMap, true, new FrameInfo[0]);
+    fillTreeModelRoot(tracesRoot, filteredCallTree, countMap, selfCountMap, true, FrameInfo.EMPTY_FRAME_INFO_ARRAY);
     treeModel.reload();
   }
 
@@ -219,7 +219,7 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
                                                     boolean backTrace,
                                                     FrameInfo[] frames) {
     final MutableTreeNode root = (MutableTreeNode)node;
-    List<FrameInfo> traces = scopeMatcher.fun(new ArrayList<FrameInfo>(countMap.keySet()));
+    List<FrameInfo> traces = scopeMatcher.fun(new ArrayList<>(countMap.keySet()));
 
     GlobalSearchScope scope = getCurrentScope();
     int index = 0;

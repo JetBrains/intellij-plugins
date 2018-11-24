@@ -31,7 +31,7 @@ public class MarkdownSyntaxHighlighter extends SyntaxHighlighterBase {
 
   protected final Lexer lexer = new MarkdownHighlightingLexer();
 
-  protected static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<IElementType, TextAttributesKey>();
+  protected static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<>();
 
   static {
     safeMap(ATTRIBUTES, MarkdownTokenTypes.TEXT, MarkdownHighlighterColors.TEXT_ATTR_KEY);

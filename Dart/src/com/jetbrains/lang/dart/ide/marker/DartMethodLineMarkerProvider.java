@@ -24,7 +24,6 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.SeparatorPlacement;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -59,12 +58,7 @@ public class DartMethodLineMarkerProvider implements LineMarkerProvider {
     if (isMarkableElement(element)) {
 
       // the method line markers are not nestable, aka, methods inside of methods, are not marked
-      if (PsiTreeUtil.findFirstParent(element, true, new Condition<PsiElement>() {
-        @Override
-        public boolean value(final PsiElement e) {
-          return isMarkableElement(e);
-        }
-      }) != null) {
+      if (PsiTreeUtil.findFirstParent(element, true, e -> isMarkableElement(e)) != null) {
         return null;
       }
 
@@ -88,9 +82,9 @@ public class DartMethodLineMarkerProvider implements LineMarkerProvider {
       }
 
       // finally, create the marker
-      LineMarkerInfo info = new LineMarkerInfo<PsiElement>(markerLocation, markerLocation.getTextRange(), null, Pass.UPDATE_ALL,
-                                                           FunctionUtil.<Object, String>nullConstant(), null,
-                                                           GutterIconRenderer.Alignment.RIGHT);
+      LineMarkerInfo info = new LineMarkerInfo<>(markerLocation, markerLocation.getTextRange(), null, Pass.LINE_MARKERS,
+                                                 FunctionUtil.<Object, String>nullConstant(), null,
+                                                 GutterIconRenderer.Alignment.RIGHT);
       EditorColorsScheme scheme = myColorsManager.getGlobalScheme();
       info.separatorColor = scheme.getColor(CodeInsightColors.METHOD_SEPARATORS_COLOR);
       info.separatorPlacement = SeparatorPlacement.TOP;

@@ -88,8 +88,8 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
   }
 
   public void testSelectorShorthands() throws Throwable {
-    final List<String> names = new ArrayList<String>();
-    final List<Trinity<String, String, Integer>> examples = new ArrayList<Trinity<String, String, Integer>>();
+    final List<String> names = new ArrayList<>();
+    final List<Trinity<String, String, Integer>> examples = new ArrayList<>();
     examples.add(Trinity.create("foo?", "isFoo", 0));
     examples.add(Trinity.create("foo=", "setFoo:", 1));
     examples.add(Trinity.create("[]", "objectForKey:", 1));

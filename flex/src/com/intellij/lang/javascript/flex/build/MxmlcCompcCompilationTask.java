@@ -59,14 +59,14 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
         int read;
         while ((read = reader.read(buf, 0, buf.length)) >= 0) {
           final String output = new String(buf, 0, read);
-          final boolean ok = FlexCompilationUtils.handleCompilerOutput(compilationManager, MxmlcCompcCompilationTask.this, output);
+          final boolean ok = FlexCompilationUtils.handleCompilerOutput(compilationManager, this, output);
           if (!ok) {
             myCompilationFailed = true;
           }
         }
       }
       catch (IOException e) {
-        compilationManager.addMessage(MxmlcCompcCompilationTask.this, CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
+        compilationManager.addMessage(this, CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
         myCompilationFailed = true;
       }
       finally {

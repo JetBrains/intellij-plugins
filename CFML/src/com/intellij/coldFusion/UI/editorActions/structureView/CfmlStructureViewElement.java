@@ -64,7 +64,7 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
   @NotNull
   public Collection<StructureViewTreeElement> getChildrenBase() {
     PsiElement element = getElement();
-    Collection<StructureViewTreeElement> result = new LinkedList<StructureViewTreeElement>();
+    Collection<StructureViewTreeElement> result = new LinkedList<>();
 
     if (element != null && (element instanceof CfmlFile || !(element instanceof CfmlFunction))) {
       collectResultsFromChildren(result, element);

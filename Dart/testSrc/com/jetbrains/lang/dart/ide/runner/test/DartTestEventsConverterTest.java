@@ -16,6 +16,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -266,10 +267,10 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     };
     String[] signals = {
       "suite started next_test.dart",
-      "start (setUpAll)" ,
-      "fail (setUpAll) true" ,
+      "start (setUpAll)",
+      "fail (setUpAll) true",
       "print (setUpAll) test/next_test.dart 4:30  main.<fn>\n",
-      "finish (setUpAll)" ,
+      "finish (setUpAll)",
       "suite finished next_test.dart"
     };
     runTest(events, signals, new int[]{});
@@ -367,14 +368,15 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myNodes = new HashMap<String, DefaultMutableTreeNode>();
+    myNodes = new HashMap<>();
     final ExecutionEnvironment environment = new ExecutionEnvironment();
     myMockResettablePrinter = new MockPrinter(true);
     TestConsoleProperties consoleProperties = createConsoleProperties();
     myConsole = new MyConsoleView(consoleProperties, environment);
     myConsole.initUI();
     myResultsViewer = myConsole.getResultsViewer();
-    myEventsConverter = new DartTestEventsConverter(DartTestRunningState.DART_FRAMEWORK_NAME, consoleProperties);
+    myEventsConverter = new DartTestEventsConverter(DartTestRunningState.DART_FRAMEWORK_NAME, consoleProperties,
+                                                    DartUrlResolver.getInstance(getProject(), getSourceRoot()));
     myEventsProcessor = new DartTestEventsProcessor(consoleProperties.getProject(), DartTestRunningState.DART_FRAMEWORK_NAME);
     myEventsProcessor.addEventsListener(myResultsViewer);
     myEventsConverter.setProcessor(myEventsProcessor);
@@ -426,7 +428,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
   }
 
   private class DartTestEventsProcessor extends GeneralTestEventsProcessor {
-    List<String> signals = new ArrayList<String>();
+    List<String> signals = new ArrayList<>();
 
     public DartTestEventsProcessor(Project project, @NotNull String testFrameworkName) {
       super(project, testFrameworkName);

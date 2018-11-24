@@ -17,9 +17,9 @@ import java.util.*;
  * @author Maxim.Mossienko
 */
 public class CodeContextHolder extends AbstractProjectComponent {
-  private final Set<Module> myModulesWithSdkComponentsHandled = new HashSet<Module>();
-  private final Map<String, Map<Module, CodeContext>> myStandardContexts = new HashMap<String, Map<Module, CodeContext>>();
-  private final Map<String, Map<Module, CodeContext>> myNSToCodeContextMap = new THashMap<String, Map<Module, CodeContext>>();
+  private final Set<Module> myModulesWithSdkComponentsHandled = new HashSet<>();
+  private final Map<String, Map<Module, CodeContext>> myStandardContexts = new HashMap<>();
+  private final Map<String, Map<Module, CodeContext>> myNSToCodeContextMap = new THashMap<>();
   static final CodeContext EMPTY = new CodeContext(null, null);
 
   public CodeContextHolder(Project project) {
@@ -53,7 +53,7 @@ public class CodeContextHolder extends AbstractProjectComponent {
   public synchronized void putCodeContext(@NotNull final String namespace, @NotNull final Module module, @NotNull final CodeContext codeContext) {
     Map<Module, CodeContext> map = myNSToCodeContextMap.get(namespace);
     if (map == null) {
-      map = new THashMap<Module, CodeContext>();
+      map = new THashMap<>();
       myNSToCodeContextMap.put(namespace, map);
     }
     map.put(module, codeContext);
@@ -77,7 +77,7 @@ public class CodeContextHolder extends AbstractProjectComponent {
   }
 
   public synchronized Collection<String> getNamespaces(final Module module) {
-    final List<String> result = new ArrayList<String>();
+    final List<String> result = new ArrayList<>();
     for (final Map.Entry<String, Map<Module, CodeContext>> entry : myStandardContexts.entrySet()) {
       if (entry.getValue().containsKey(module)) {
         result.add(entry.getKey());
@@ -94,7 +94,7 @@ public class CodeContextHolder extends AbstractProjectComponent {
   synchronized void putStandardContext(final String namespace, final Module module, final CodeContext codeContext) {
     Map<Module, CodeContext> map = myStandardContexts.get(namespace);
     if (map == null) {
-      map = new HashMap<Module, CodeContext>();
+      map = new HashMap<>();
       myStandardContexts.put(namespace, map);
     }
     map.put(module, codeContext);

@@ -346,7 +346,7 @@ class Abc {
     }
 
     processor.dumpStat("OPCODE\tSIZE\t% OF " + totalSize + "\n");
-    final Set<Integer> done = new HashSet<Integer>();
+    final Set<Integer> done = new HashSet<>();
     while (true) {
       int max = -1;
       int maxsize = 0;
@@ -481,7 +481,7 @@ class Abc {
       TIntArrayList genericIndices;
     }
     
-    final List<TypeNameInfo> typeNameInfos = new ArrayList<TypeNameInfo>();
+    final List<TypeNameInfo> typeNameInfos = new ArrayList<>();
     
     for (i = 1; i < n; i++) {
       switch (data.readByte()) {
@@ -654,7 +654,7 @@ class Abc {
       if ((m.flags & HAS_ParamNames) != 0) {
         if (param_count > 0) {
           m.paramNames = new String[param_count];
-          Set<String> usedNames = new THashSet<String>(m.paramNames.length);
+          Set<String> usedNames = new THashSet<>(m.paramNames.length);
           for (int k = 0; k < param_count; ++k) {
             final int index = readU32();
             final String name = strings[index];

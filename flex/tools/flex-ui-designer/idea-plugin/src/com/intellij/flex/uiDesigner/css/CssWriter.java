@@ -22,10 +22,11 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.css.*;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTermTypes;
+import com.intellij.psi.css.impl.CssTokenImpl;
 import com.intellij.psi.css.impl.util.CssPsiColorUtil;
+import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +54,7 @@ public class CssWriter {
   @Nullable
   public byte[] write(@NotNull VirtualFile file, @NotNull Module module) {
     Document document = FileDocumentManager.getInstance().getDocument(file);
-    CssFile cssFile = document == null ? null : (CssFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document);
+    StylesheetFile cssFile = document != null ? (StylesheetFile)PsiDocumentManager.getInstance(module.getProject()).getPsiFile(document) : null;
     if (cssFile == null) {
       LOG.warn("CSS file is null for " + file.getName());
       return null;
@@ -69,15 +70,15 @@ public class CssWriter {
   }
 
   @Nullable
-  public byte[] write(@NotNull CssFile cssFile, @NotNull Module module) {
-    problemsHolder.setCurrentFile(cssFile.getVirtualFile());
+  public byte[] write(@NotNull StylesheetFile stylesheetFile, @NotNull Module module) {
+    problemsHolder.setCurrentFile(stylesheetFile.getVirtualFile());
     try {
-      Document document = PsiDocumentManager.getInstance(module.getProject()).getDocument(cssFile);
+      Document document = PsiDocumentManager.getInstance(module.getProject()).getDocument(stylesheetFile);
       if (document == null) {
-        LOG.warn("Document is null for " + cssFile.getName());
+        LOG.warn("Document is null for " + stylesheetFile.getName());
         return null;
       }
-      return write(cssFile, document, module);
+      return write(stylesheetFile, document, module);
     }
     finally {
       problemsHolder.setCurrentFile(null);
@@ -85,10 +86,10 @@ public class CssWriter {
   }
 
   @Nullable
-  private byte[] write(@NotNull CssFile cssFile, @NotNull Document document, @NotNull Module module) {
-    CssStylesheet stylesheet = cssFile.getStylesheet();
+  private byte[] write(@NotNull StylesheetFile stylesheetFile, @NotNull Document document, @NotNull Module module) {
+    CssStylesheet stylesheet = stylesheetFile.getStylesheet();
     if (stylesheet == null) {
-      LOG.warn("Stylesheet is null for " + cssFile.getName());
+      LOG.warn("Stylesheet is null for " + stylesheetFile.getName());
       return null;
     }
 
@@ -413,7 +414,7 @@ public class CssWriter {
 
   private void writeClassReference(FlexStyleIndexInfo info, ASTNode valueNode) throws InvalidPropertyException {
     // ClassReference(null);
-    if (valueNode instanceof XmlToken) {
+    if (valueNode instanceof CssTokenImpl) {
       assert StringUtil.equals(valueNode.getChars(), "null");
       propertyOut.write(Amf3Types.NULL);
     }
@@ -452,7 +453,7 @@ public class CssWriter {
     for (PsiElement child = termList.getFirstChild(); child != null; child = child.getNextSibling()) {
       if (child instanceof CssTerm) {
         PsiElement firstChild = child.getFirstChild();
-        if (firstChild instanceof XmlToken && ((XmlToken)firstChild).getTokenType() == CssElementTypes.CSS_IDENT) {
+        if (firstChild instanceof LeafElement && ((LeafElement)firstChild).getElementType() == CssElementTypes.CSS_IDENT) {
           CharSequence name = firstChild.getNode().getChars();
           @SuppressWarnings("ConstantConditions")
           PsiElement valueElement = child.getLastChild().getFirstChild();

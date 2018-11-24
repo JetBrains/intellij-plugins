@@ -21,10 +21,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class LiveModelController implements ObjectSampleHandler {
   private static final int BYTES_IN_KB = 1000;
 
-  private final List<Sample> cache = new LinkedList<Sample>();
-  private final ConcurrentLinkedQueue<Sample> queue = new ConcurrentLinkedQueue<Sample>();
+  private final List<Sample> cache = new LinkedList<>();
+  private final ConcurrentLinkedQueue<Sample> queue = new ConcurrentLinkedQueue<>();
 
-  private final List<SizeInfoNode> filteredClasses = new ArrayList<SizeInfoNode>();
+  private final List<SizeInfoNode> filteredClasses = new ArrayList<>();
   private GlobalSearchScope scope;
   
   private volatile int allocatedMemorySize = 0;
@@ -119,7 +119,7 @@ public class LiveModelController implements ObjectSampleHandler {
 
   private boolean applyDelete(SortableListTreeTableModel model,
                               DeleteObjectSample sample) {
-    final List<SizeInfoNode> nodesForUpdate = new ArrayList<SizeInfoNode>();
+    final List<SizeInfoNode> nodesForUpdate = new ArrayList<>();
     final String className = sample.className;
     final DefaultMutableTreeNode root = (DefaultMutableTreeNode)model.getRoot();
     SizeInfoNode classNode = findChildByValue(root, className);

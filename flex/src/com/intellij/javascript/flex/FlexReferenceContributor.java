@@ -44,7 +44,7 @@ public class FlexReferenceContributor {
 
       @Override
       protected Map<String, XmlTag> doCompute(PsiFile file) {
-        final Map<String, XmlTag> tags = new THashMap<String, XmlTag>();
+        final Map<String, XmlTag> tags = new THashMap<>();
 
         file.getOriginalFile().accept(new XmlRecursiveElementVisitor() {
           @Override
@@ -107,7 +107,7 @@ public class FlexReferenceContributor {
 
     @NotNull
     public ResolveResult[] multiResolve(boolean incompleteCode) {
-      final List<ResolveResult> result = new ArrayList<ResolveResult>(1);
+      final List<ResolveResult> result = new ArrayList<>(1);
       process(new StateProcessor() {
         public boolean process(@NotNull final XmlTag t, @NotNull String name) {
           result.add(new ResolveResult() {
@@ -138,7 +138,7 @@ public class FlexReferenceContributor {
 
     @NotNull
     public Object[] getVariants() {
-      final Set<String> list = new THashSet<String>();
+      final Set<String> list = new THashSet<>();
 
       process(new StateProcessor() {
         public boolean process(@NotNull XmlTag t, @NotNull String name) {

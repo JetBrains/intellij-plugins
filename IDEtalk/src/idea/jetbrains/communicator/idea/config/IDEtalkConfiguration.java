@@ -53,7 +53,7 @@ public class IDEtalkConfiguration implements Configurable {
   private JSpinner myTimeoutXA;
   private JCheckBox myPlaySoundCheckBox;
 
-  private final Set<Pair<JCheckBox, OptionFlag>> myFlags = new HashSet<Pair<JCheckBox, OptionFlag>>();
+  private final Set<Pair<JCheckBox, OptionFlag>> myFlags = new HashSet<>();
   private final Project myProject;
   private final IDEtalkOptions myOptions;
 

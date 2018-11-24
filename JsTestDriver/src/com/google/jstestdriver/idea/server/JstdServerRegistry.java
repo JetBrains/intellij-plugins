@@ -21,7 +21,7 @@ public class JstdServerRegistry {
   @NotNull
   public Promise<JstdServer> restartServer(@NotNull final JstdServerSettings settings) {
     JstdServer server = myServer;
-    final AsyncPromise<JstdServer> promise = new AsyncPromise<JstdServer>();
+    final AsyncPromise<JstdServer> promise = new AsyncPromise<>();
     if (server != null && server.isProcessRunning()) {
       server.addLifeCycleListener(new JstdServerLifeCycleAdapter() {
         @Override
