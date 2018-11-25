@@ -43,6 +43,9 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     try {
       ExternalResourceManagerEx.getInstanceEx().setDefaultHtmlDoctype(myOldDoctype, myFixture.getProject());
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

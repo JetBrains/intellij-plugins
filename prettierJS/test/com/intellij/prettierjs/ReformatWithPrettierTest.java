@@ -50,6 +50,9 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     try {
       myTestPackagePaths.onTearDown();
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }
