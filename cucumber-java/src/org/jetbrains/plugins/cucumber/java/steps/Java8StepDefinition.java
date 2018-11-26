@@ -11,7 +11,8 @@ public class Java8StepDefinition extends AbstractJavaStepDefinition {
 
   @Nullable
   @Override
-  protected String getCucumberRegexFromElement(PsiElement element) {
+  public String getStepDefinitionText() {
+    PsiElement element = getElement();
     if (!(element instanceof PsiMethodCallExpression)) {
       return null;
     }

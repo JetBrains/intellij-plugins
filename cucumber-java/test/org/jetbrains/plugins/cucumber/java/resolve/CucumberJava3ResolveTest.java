@@ -37,6 +37,12 @@ public class CucumberJava3ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("I ha<caret>ve $10", "iHaveDollars");
   }
 
+  public void testStepResolveJava8CucumberExpressions() {
+    init("stepResolveJava8CucumberExpressions");
+
+    checkReference("the string \"test\" is in the d<caret>ummy repository", "Given");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber3ProjectDescriptor();
