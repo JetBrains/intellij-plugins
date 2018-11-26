@@ -1,17 +1,23 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes;
 
+import com.intellij.codeInsight.completion.PrioritizedLookupElement;
+import com.intellij.codeInsight.completion.XmlAttributeInsertHandler;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.types.JSTypeContext;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
+import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.xml.XmlElement;
-import com.intellij.psi.xml.XmlElementType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -19,6 +25,7 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
@@ -36,10 +43,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import static com.intellij.lang.javascript.psi.types.JSTypeSourceFactory.createTypeSource;
 import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getCustomNgAttrs;
-import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.EVENT;
-import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.TEMPLATE_BINDINGS;
+import static org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeType.*;
 
 public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
 
@@ -56,14 +63,15 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @Nullable
-  public static Angular2AttributeDescriptor create(@NotNull String attributeName, @NotNull List<PsiElement> elements) {
+  public static Angular2AttributeDescriptor create(@NotNull String attributeName,
+                                                   @NotNull List<PsiElement> elements) {
     if (getCustomNgAttrs().contains(attributeName)) {
       return new Angular2AttributeDescriptor(attributeName, null, elements);
     }
     Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attributeName, true);
     if (elements.isEmpty()
-        && (info.elementType == XmlElementType.XML_ATTRIBUTE
-            || info.elementType == TEMPLATE_BINDINGS
+        && (info.type == XML_ATTRIBUTE
+            || info.type == TEMPLATE_BINDINGS
             || (info instanceof Angular2AttributeNameParser.EventInfo
                 && ((Angular2AttributeNameParser.EventInfo)info).eventType == Angular2HtmlEvent.EventType.REGULAR
                 && !info.name.contains(":"))
@@ -71,7 +79,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                 && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY))) {
       return null;
     }
-    if (info.elementType == EVENT) {
+    if (info.type == EVENT) {
       return new Angular2EventHandlerDescriptor(attributeName, info, elements);
     }
     return new Angular2AttributeDescriptor(attributeName, info, elements);
@@ -90,6 +98,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return result;
   }
 
+  private final AttributePriority myPriority;
   private final PsiElement[] myElements;
   private final String myAttributeName;
   private final Angular2AttributeNameParser.AttributeInfo myInfo;
@@ -97,15 +106,31 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   protected Angular2AttributeDescriptor(@NotNull String attributeName,
                                         boolean isInTemplateTag,
                                         @NotNull Collection<PsiElement> elements) {
-    this(attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag), elements);
+    this(attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag),
+         AttributePriority.NORMAL, elements);
   }
 
   protected Angular2AttributeDescriptor(@NotNull String attributeName,
                                         @Nullable Angular2AttributeNameParser.AttributeInfo info,
                                         @NotNull Collection<PsiElement> elements) {
+    this(attributeName, info, AttributePriority.NORMAL, elements);
+  }
+
+  protected Angular2AttributeDescriptor(@NotNull String attributeName,
+                                        boolean isInTemplateTag,
+                                        @NotNull AttributePriority priority,
+                                        @NotNull Collection<PsiElement> elements) {
+    this(attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag), priority, elements);
+  }
+
+  protected Angular2AttributeDescriptor(@NotNull String attributeName,
+                                        @Nullable Angular2AttributeNameParser.AttributeInfo info,
+                                        @NotNull AttributePriority priority,
+                                        @NotNull Collection<PsiElement> elements) {
     myAttributeName = attributeName;
     myElements = elements.toArray(PsiElement.EMPTY_ARRAY);
-    myInfo = info != null && info.elementType != XmlElementType.XML_ATTRIBUTE ? info : null;
+    myInfo = info != null && info.type != XML_ATTRIBUTE ? info : null;
+    myPriority = priority;
   }
 
   @Override
@@ -133,7 +158,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Override
   public boolean isEnumerated() {
-    return false;
+    return getEnumeratedValues().length > 0;
   }
 
   @Override
@@ -147,7 +172,31 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @Override
+  @NotNull
   public String[] getEnumeratedValues() {
+    JSType type = getJSType();
+    if (type != null && myInfo == null) {
+      List<String> values = new ArrayList<>();
+      type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
+      type.accept(new JSRecursiveTypeVisitor() {
+        @Override
+        public void visitJSType(@NotNull JSType type) {
+          if (type instanceof JSPrimitiveLiteralType) {
+            values.add(((JSPrimitiveLiteralType)type).getLiteral().toString());
+          }
+          else if (type instanceof JSBooleanType) {
+            values.add("true");
+            values.add("false");
+          }
+          else {
+            super.visitJSType(type);
+          }
+        }
+      });
+      if (!values.isEmpty()) {
+        return values.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+      }
+    }
     return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
@@ -177,7 +226,47 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Override
   public String getTypeName() {
+    JSType type = getJSType();
+    if (type != null) {
+      try {
+        if ((myInfo instanceof Angular2AttributeNameParser.PropertyBindingInfo
+             && ((Angular2AttributeNameParser.PropertyBindingInfo)myInfo).bindingType == PropertyBindingType.PROPERTY)
+            || type instanceof JSPrimitiveType
+            || isEnumerated()) {
+          return StringUtil.shortenTextWithEllipsis(type.getTypeText(), 25, 0, true);
+        }
+        else if (myInfo instanceof Angular2AttributeNameParser.EventInfo
+                 && ((Angular2AttributeNameParser.EventInfo)myInfo).eventType == Angular2HtmlEvent.EventType.REGULAR) {
+          type = Angular2Processor.getEventVariableType(type);
+          if (type != null) {
+            return type.getTypeText();
+          }
+        }
+      } catch (Exception e) {
+        //ignore
+      }
+    }
     return null;
+  }
+
+  public LookupElement getLookupElement() {
+    LookupElementBuilder element = LookupElementBuilder.create(getName())
+      .withCaseSensitivity(myInfo != null || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
+      .withIcon(getIcon());
+    String typeName = getTypeName();
+    if (!StringUtil.isEmptyOrSpaces(typeName)) {
+      element = element.withTypeText(typeName);
+    }
+    if (shouldCompleteValue()) {
+      element = element.withInsertHandler(XmlAttributeInsertHandler.INSTANCE);
+    }
+    return PrioritizedLookupElement.withPriority(element, myPriority.getValue());
+  }
+
+  private boolean shouldCompleteValue() {
+    JSType type = getJSType();
+    return myInfo != null
+           || (type != null && !(type instanceof JSBooleanType));
   }
 
   public Angular2AttributeNameParser.AttributeInfo getInfo() {
@@ -188,6 +277,21 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @Override
   public Icon getIcon() {
     return AngularJSIcons.Angular2;
+  }
+
+  @Nullable
+  private JSType getJSType() {
+    List<JSType> types = ContainerUtil.mapNotNull(myElements, JSTypeUtils::getTypeOfElement);
+    if (types.size() == 1) {
+      return types.get(0);
+    } else if (types.size() > 1) {
+      if (myInfo != null && myInfo.type == BANANA_BOX_BINDING) {
+        return types.get(0);
+      }
+      return JSCompositeTypeImpl.getCommonType(
+        types, createTypeSource(myElements[0], false), false);
+    }
+    return null;
   }
 
   static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty info) {
@@ -203,13 +307,13 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @NotNull
   private static Angular2AttributeDescriptor createBinding(@NotNull Angular2DirectiveProperty info) {
-    return new Angular2AttributeDescriptor("[" + info.getName() + "]", false,
+    return new Angular2AttributeDescriptor("[" + info.getName() + "]", false, AttributePriority.HIGH,
                                            singletonList(info.getNavigableElement()));
   }
 
   @NotNull
   private static Angular2AttributeDescriptor createBananaBoxBinding(@NotNull Pair<Angular2DirectiveProperty, Angular2DirectiveProperty> info) {
-    return new Angular2AttributeDescriptor("[(" + info.first.getName() + ")]", false,
+    return new Angular2AttributeDescriptor("[(" + info.first.getName() + ")]", false, AttributePriority.HIGH,
                                            ContainerUtil.newArrayList(info.first.getNavigableElement(),
                                                                       info.second.getNavigableElement()));
   }
@@ -217,13 +321,14 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @Nullable
   private static Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
     return isOneTimeBindingProperty(info)
-           ? new Angular2AttributeDescriptor(info.getName(), null, singletonList(info.getNavigableElement()))
+           ? new Angular2AttributeDescriptor(info.getName(), null, AttributePriority.HIGH,
+                                             singletonList(info.getNavigableElement()))
            : null;
   }
 
   @NotNull
   private static Angular2EventHandlerDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
-    return new Angular2EventHandlerDescriptor("(" + info.getName() + ")", false,
+    return new Angular2EventHandlerDescriptor("(" + info.getName() + ")", false, AttributePriority.HIGH,
                                               singletonList(info.getNavigableElement()));
   }
 
@@ -232,5 +337,21 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     if (type == null) return null;
     type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
     return type.transformTypeHierarchy(toApply -> toApply instanceof JSPrimitiveType ? STRING_TYPE : toApply);
+  }
+
+  public enum AttributePriority {
+    LOW(25),
+    NORMAL(50),
+    HIGH(100);
+
+    private final double myValue;
+
+    AttributePriority(double value) {
+      myValue = value;
+    }
+
+    public double getValue() {
+      return myValue;
+    }
   }
 }

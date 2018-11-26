@@ -1,7 +1,9 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -631,7 +633,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testViewChildReferenceContentAssist() {
+  public void testViewChildReferenceCodeCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () ->
       assertEquals(asList("area", "area2"),
                    myFixture.getCompletionVariants("viewChildReference.ts", "package.json"))
@@ -650,7 +652,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testViewChildReferenceContentAssistHTML() {
+  public void testViewChildReferenceCodeCompletionHTML() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () ->
       assertEquals(asList("area", "area2"),
                    myFixture.getCompletionVariants("viewChildReferenceHTML.ts", "viewChildReferenceHTML.html", "package.json"))
@@ -773,7 +775,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNgClassContentAssist() {
+  public void testNgClassCodeCompletion() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("ngClass.html", "ngClass.css", "package.json");
       for (String prefix : asList("{", "[", "")) {
@@ -820,7 +822,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testContentAssistWithNotSelector() {
+  public void testCodeCompletionWithNotSelector() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       configureWithMetadataFiles(myFixture, "router");
       myFixture.configureByFiles("contentAssistWithNotSelector.html");
@@ -828,7 +830,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNoLifecycleHooksInContentAssist() {
+  public void testNoLifecycleHooksInCodeCompletion() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("lifecycleHooks.ts", "package.json");
       myFixture.completeBasic();
@@ -856,11 +858,105 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testNgIfAsContentAssist() {
+  public void testNgIfAsCodeCompletion() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("ngIfAs.ts", "package.json");
       myFixture.completeBasic();
       myFixture.checkResultByFile("ngIfAs.after.ts");
     });
   }
+
+  public void testNoStandardJSEvents() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("flexOrder.html", "package.json");
+      myFixture.completeBasic();
+      assertDoesntContain(myFixture.getLookupElementStrings(), "onclick", "onkeyup");
+    });
+  }
+
+  public void testCodeCompletionItemsTypes() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts", "package.json");
+      myFixture.completeBasic();
+      assertContainsElements(
+        ContainerUtil.mapNotNull(myFixture.getLookupElements(), el -> {
+          LookupElementPresentation presentation = new LookupElementPresentation();
+          el.renderElement(presentation);
+          return presentation.getItemText() + "#" + presentation.getTypeText();
+        }),
+        "plainBoolean#boolean",
+        "[plainBoolean]#boolean",
+        "simpleStringEnum#MyType",
+        "[simpleStringEnum]#MyType",
+        "(my-event)#MyEvent",
+        "(click)#MouseEvent",
+        "(blur)#FocusEvent",
+        "[innerHTML]#string"
+      );
+    });
+  }
+
+  public void testMatchedDirectivesPropertiesPriority() {
+    JSTestUtils.testES6(getProject(), () -> {
+      configureWithMetadataFiles(myFixture,"common", "ionic");
+      myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts");
+      myFixture.completeBasic();
+      assertContainsElements(
+        ContainerUtil.mapNotNull(myFixture.getLookupElements(), el -> {
+          double priority = 0;
+          if (el instanceof PrioritizedLookupElement) {
+            priority = ((PrioritizedLookupElement)el).getPriority();
+          }
+          return el.getLookupString() + "#" + (int)priority;
+        }),
+        "plainBoolean#100",
+        "[plainBoolean]#100",
+        "simpleStringEnum#100",
+        "[simpleStringEnum]#100",
+        "(my-event)#100",
+        "[fooInput]#100",
+        "[bar]#50",
+        "(click)#50",
+        "(blur)#50",
+        "[innerHTML]#50",
+        "*ngIf#50"
+      );
+    });
+  }
+
+  public void testCodeCompletionOneTimeSimpleStringEnum() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attributeTypes.ts", "package.json");
+      myFixture.completeBasic();
+      myFixture.type("simpleS\n");
+      myFixture.completeBasic();
+      assertSameElements(myFixture.getLookupElementStrings(), "off", "polite", "assertive");
+    });
+  }
+
+  public void testCodeCompletionOneTimeBoolean() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attributeTypes.ts", "package.json");
+      myFixture.completeBasic();
+      //test no auto-value completion
+      myFixture.type("plainB\n=");
+      myFixture.completeBasic();
+      //test type
+      assertSameElements(myFixture.getLookupElementStrings(), "true", "false");
+    });
+  }
+
+  public void testCodeCompletionDefaultJSEventType() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts", "package.json");
+      myFixture.completeBasic();
+      myFixture.type("(clic\n$event.");
+      myFixture.completeBasic();
+
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                         "x", "y", "layerX", "layerY", "altKey", "button",
+                         "clientX", "clientY", "isTrusted", "timeStamp");
+    });
+  }
+
 }

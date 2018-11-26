@@ -7,15 +7,16 @@ import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.*;
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider;
 import com.intellij.lang.typescript.resolve.TypeScriptClassResolver;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -32,6 +33,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
+import com.intellij.xml.XmlAttributeDescriptor;
 import one.util.streamex.StreamEx;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.Angular2Language;
@@ -199,6 +201,48 @@ public class Angular2Processor {
                                                   @NotNull PsiElement contributor) {
     return new JSImplicitElementImpl.Builder(name, contributor)
       .setType(JSImplicitElement.Type.Variable).toImplicitElement();
+  }
+
+  @Nullable
+  public static JSType getEventVariableType(@Nullable JSType type) {
+    type = JSTypeUtils.getValuableType(type);
+    if (type != null) {
+      Ref<JSType> result = new Ref<>();
+      type.accept(new JSRecursiveTypeVisitor() {
+
+        @Override
+        public void visitJSGenericType(@NotNull JSType type) {
+          if (type instanceof JSGenericTypeImpl) {
+            List<JSType> arguments = ((JSGenericTypeImpl)type).getArguments();
+            if (arguments.size() == 1) {
+              result.set(arguments.get(0));
+            }
+          }
+        }
+
+        @Override
+        public void visitJSCompositeBaseType(@NotNull JSType type) {
+          super.visitJSCompositeBaseType(type);
+        }
+
+        @Override
+        public void visitJSType(@NotNull JSType type) {
+          if (type instanceof JSCompositeTypeImpl) {
+            super.visitJSType(type);
+          }
+        }
+
+        @Override
+        public void visitJSFunctionType(@NotNull JSType type) {
+          List<JSParameterTypeDecorator> params = ((JSFunctionType)type).getParameters();
+          if (params.size() == 1) {
+            result.set(params.get(0).getType());
+          }
+        }
+      });
+      return result.get();
+    }
+    return null;
   }
 
   private static class Angular2TemplateScopeBuilder extends Angular2HtmlRecursiveElementVisitor {
@@ -501,8 +545,19 @@ public class Angular2Processor {
     @Override
     @NotNull
     public List<JSPsiElementBase> getElements() {
-      return Collections.singletonList(new JSImplicitElementImpl.Builder($EVENT, myEvent).
-        setType(JSImplicitElement.Type.Variable).toImplicitElement());
+
+      XmlAttributeDescriptor descriptor = myEvent.getDescriptor();
+      PsiElement declaration = descriptor != null ? descriptor.getDeclaration() : null;
+      JSType type = null;
+      if (declaration instanceof JSField) {
+        type = ((JSField)declaration).getType();
+      }
+      else if (declaration instanceof JSFunction) {
+        type = ((JSFunction)declaration).getReturnType();
+      }
+      type = getEventVariableType(type);
+      return Collections.singletonList(new JSLocalImplicitElementImpl(
+        $EVENT, type, myEvent, JSImplicitElement.Type.Variable));
     }
   }
 
