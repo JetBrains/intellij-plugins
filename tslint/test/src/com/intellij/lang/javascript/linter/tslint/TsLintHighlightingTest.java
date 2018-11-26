@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLinterInput;
-import com.intellij.lang.javascript.service.JSLanguageServiceQueueImpl;
+import com.intellij.lang.javascript.service.JSLanguageServiceExecutorImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -103,7 +103,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   public void testTimeout() {
     JSLanguageServiceUtil.setTimeout(1, getTestRootDisposable());
     myExpectedGlobalAnnotation =
-      new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceQueueImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
+      new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceExecutorImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
     doTest("clean", "clean/clean.ts", null);
   }
 
