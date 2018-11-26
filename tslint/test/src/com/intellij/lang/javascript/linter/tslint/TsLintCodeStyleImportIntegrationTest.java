@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import org.jetbrains.annotations.NotNull;
 
 public class TsLintCodeStyleImportIntegrationTest extends LinterHighlightingTest {
@@ -39,13 +40,20 @@ public class TsLintCodeStyleImportIntegrationTest extends LinterHighlightingTest
     return "tslint";
   }
 
-  public void testFromConfigFileWithExtends() throws Exception {
+  public void testFromConfigFileWithExtends() {
     myFixture.configureByFile(getTestName(true) + "/" + TslintUtil.TSLINT_JSON);
-    JSTestUtils.testWithTempCodeStyleSettings(getProject(), (settings) -> {
-      myFixture.testAction(new TsLintImportCodeStyleAction());
-      TypeScriptCodeStyleSettings customSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
-      assertFalse(customSettings.USE_SEMICOLON_AFTER_STATEMENT);
-      assertTrue(customSettings.SPACES_WITHIN_IMPORTS);
-    });
+    EditorSettingsExternalizable editorSettings = EditorSettingsExternalizable.getInstance();
+    boolean ensureEofPrevious = editorSettings.isEnsureNewLineAtEOF();
+    try {
+      JSTestUtils.testWithTempCodeStyleSettings(getProject(), (settings) -> {
+        myFixture.testAction(new TsLintImportCodeStyleAction());
+        TypeScriptCodeStyleSettings customSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
+        assertFalse(customSettings.USE_SEMICOLON_AFTER_STATEMENT);
+        assertTrue(customSettings.SPACES_WITHIN_IMPORTS);
+      });
+    }
+    finally {
+      editorSettings.setEnsureNewLineAtEOF(ensureEofPrevious);
+    }
   }
 }

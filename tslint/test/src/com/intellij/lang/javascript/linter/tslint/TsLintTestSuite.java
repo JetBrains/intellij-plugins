@@ -5,12 +5,12 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+  TsLintCodeStyleImportBasicTest.class,
+  TsLintCodeStyleImportIntegrationTest.class,
   TsLintHighlightingTest.class,
   TsLintConfigCompletionTest.class,
   TsLintConfigHighlightingTest.class,
-  TsLintResolveTest.class,
-  TsLintCodeStyleImportBasicTest.class,
-  TsLintCodeStyleImportIntegrationTest.class
+  TsLintResolveTest.class
 })
 public class TsLintTestSuite {
 }
