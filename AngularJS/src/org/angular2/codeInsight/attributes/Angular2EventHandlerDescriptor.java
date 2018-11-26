@@ -16,6 +16,13 @@ public class Angular2EventHandlerDescriptor extends Angular2AttributeDescriptor 
   }
 
   public Angular2EventHandlerDescriptor(@NotNull String attributeName,
+                                        boolean isInTemplateTag,
+                                        AttributePriority priority,
+                                        @NotNull List<PsiElement> elements) {
+    super(attributeName, isInTemplateTag, priority, elements);
+  }
+
+  public Angular2EventHandlerDescriptor(@NotNull String attributeName,
                                         @NotNull Angular2AttributeNameParser.AttributeInfo info,
                                         @NotNull List<PsiElement> elements) {
     super(attributeName, info, elements);
