@@ -759,7 +759,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static String getBindingType(@Nullable JSExpression valueExpr) {
-    if (valueExpr != null && valueExpr instanceof JSLiteralExpression) {
+    if (valueExpr instanceof JSLiteralExpression) {
       String typeStr = ((JSLiteralExpression)valueExpr).getStringValue();
       if (typeStr != null && typeStr.startsWith("@")) {
         return "constString";
