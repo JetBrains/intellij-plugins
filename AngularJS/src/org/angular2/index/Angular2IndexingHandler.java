@@ -8,16 +8,15 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
+import com.intellij.lang.javascript.psi.JSProperty;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
-import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
-import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -29,22 +28,18 @@ import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import one.util.streamex.StreamEx;
-import org.angular2.codeInsight.attributes.Angular2EventHandlerDescriptor;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
-import org.angularjs.codeInsight.AngularJSProcessor;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularSymbolIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -156,34 +151,6 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         sink.occurrence(AngularSymbolIndex.KEY, element.getName());
       }
       else {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  @Override
-  public boolean addTypeFromResolveResult(@NotNull JSTypeEvaluator evaluator,
-                                          @NotNull JSEvaluateContext context, @NotNull PsiElement result) {
-    if (!(result instanceof JSImplicitElement) || !AngularJSProcessor.$EVENT.equals(((JSImplicitElement)result).getName())) {
-      return false;
-    }
-    XmlAttribute parent = ObjectUtils.tryCast(result.getParent(), XmlAttribute.class);
-    Angular2EventHandlerDescriptor descriptor = ObjectUtils.tryCast(parent != null ? parent.getDescriptor() : null,
-                                                                    Angular2EventHandlerDescriptor.class);
-    PsiElement declaration = descriptor != null ? descriptor.getDeclaration() : null;
-    JSType type = null;
-    if (declaration instanceof JSField) {
-      type = ((JSField)declaration).getType();
-    }
-    else if (declaration instanceof JSFunction) {
-      type = ((JSFunction)declaration).getReturnType();
-    }
-    type = JSTypeUtils.getValuableType(type);
-    if (type instanceof JSGenericTypeImpl) {
-      List<JSType> arguments = ((JSGenericTypeImpl)type).getArguments();
-      if (arguments.size() == 1) {
-        evaluator.addType(arguments.get(0), declaration);
         return true;
       }
     }

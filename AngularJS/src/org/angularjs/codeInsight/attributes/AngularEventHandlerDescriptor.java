@@ -12,6 +12,6 @@ import java.util.Collections;
 @Deprecated
 public class AngularEventHandlerDescriptor extends Angular2EventHandlerDescriptor {
   public AngularEventHandlerDescriptor(PsiElement element, String attributeName) {
-    super(attributeName, false, Collections.singletonList(element));
+    super(attributeName, false, null, Collections.singletonList(element));
   }
 }
