@@ -1,10 +1,24 @@
+// Copyright 2000-2019 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.ide.browsers.impl.WebBrowserServiceImpl;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
-import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -101,18 +115,17 @@ public abstract class DartProjectTemplate {
       final Url url = WebBrowserServiceImpl.getDebuggableUrl(PsiManager.getInstance(module.getProject()).findFile(htmlFile));
       if (url == null) return;
 
+      ConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType("JavascriptDebugType");
+      if (configurationType == null) return;
+
       final RunManager runManager = RunManager.getInstance(module.getProject());
-      try {
-        final RunnerAndConfigurationSettings settings =
-          runManager.createRunConfiguration("", JavascriptDebugConfigurationType.getTypeInstance().getFactory());
+      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", configurationType.getConfigurationFactories()[0]);
 
-        ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
-        settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
+      ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
+      settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
 
-        runManager.addConfiguration(settings);
-        runManager.setSelectedConfiguration(settings);
-      }
-      catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
+      runManager.addConfiguration(settings);
+      runManager.setSelectedConfiguration(settings);
     }, module);
   }
 
@@ -125,7 +138,7 @@ public abstract class DartProjectTemplate {
       final DartCommandLineRunConfiguration runConfiguration = (DartCommandLineRunConfiguration)settings.getConfiguration();
       runConfiguration.getRunnerParameters().setFilePath(mainDartFile.getPath());
       runConfiguration.getRunnerParameters()
-        .setWorkingDirectory(DartCommandLineRunnerParameters.suggestDartWorkingDir(module.getProject(), mainDartFile));
+                      .setWorkingDirectory(DartCommandLineRunnerParameters.suggestDartWorkingDir(module.getProject(), mainDartFile));
 
       settings.setName(runConfiguration.suggestedName());
 
