@@ -7,13 +7,19 @@ import {RefDirective} from "./exportAs";
     selector: 'my-comp',
     template: `<my-comp foo <caret>`,
 })
-export class HeroAsyncMessageComponent {
+export class HeroAsyncMessageComponent<T> {
 
     @Input
     plainBoolean: boolean;
 
     @Output("my-event")
     myEvent: EventEmitter<MyEvent>;
+
+    @Output("complex-event")
+    complexEvent: EventEmitter<MyEvent> | ((this: GlobalEventHandlers, ev: MouseEvent) => any) | null;
+
+    @Output
+    problematicOutput: EventEmitter<T>;
 
     @Input
     simpleStringEnum: MyType;

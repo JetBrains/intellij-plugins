@@ -889,6 +889,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         "simpleStringEnum#MyType",
         "[simpleStringEnum]#MyType",
         "(my-event)#MyEvent",
+        "(problematicOutput)#T",
+        "(complex-event)#MyEvent|MouseEvent",
         "(click)#MouseEvent",
         "(blur)#FocusEvent",
         "[innerHTML]#string"
@@ -942,7 +944,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.type("plainB\n=");
       myFixture.completeBasic();
       //test type
-      assertSameElements(myFixture.getLookupElementStrings(), "true", "false");
+      assertSameElements(myFixture.getLookupElementStrings(), "plainBoolean");
     });
   }
 
