@@ -8,7 +8,10 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeUtils;
-import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeContext;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType;
@@ -178,21 +181,15 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     if (type != null && myInfo == null) {
       List<String> values = new ArrayList<>();
       type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
-      type.accept(new JSRecursiveTypeVisitor() {
-        @Override
-        public void visitJSType(@NotNull JSType type) {
-          if (type instanceof JSPrimitiveLiteralType) {
-            values.add(((JSPrimitiveLiteralType)type).getLiteral().toString());
-          }
-          else if (type instanceof JSBooleanType) {
-            values.add("true");
-            values.add("false");
-          }
-          else {
-            super.visitJSType(type);
-          }
+      if (type instanceof JSBooleanType) {
+        return new String[]{myAttributeName};
+      }
+      JSTypeUtils.processExpandedType(subType -> {
+        if (subType instanceof JSStringLiteralTypeImpl) {
+          values.add(((JSStringLiteralTypeImpl)subType).getLiteral());
         }
-      });
+        return true;
+      }, type);
       if (!values.isEmpty()) {
         return values.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
       }
@@ -228,22 +225,18 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   public String getTypeName() {
     JSType type = getJSType();
     if (type != null) {
-      try {
-        if ((myInfo instanceof Angular2AttributeNameParser.PropertyBindingInfo
-             && ((Angular2AttributeNameParser.PropertyBindingInfo)myInfo).bindingType == PropertyBindingType.PROPERTY)
-            || type instanceof JSPrimitiveType
-            || isEnumerated()) {
-          return StringUtil.shortenTextWithEllipsis(type.getTypeText(), 25, 0, true);
+      if ((myInfo instanceof Angular2AttributeNameParser.PropertyBindingInfo
+           && ((Angular2AttributeNameParser.PropertyBindingInfo)myInfo).bindingType == PropertyBindingType.PROPERTY)
+          || type instanceof JSPrimitiveType
+          || isEnumerated()) {
+        return StringUtil.shortenTextWithEllipsis(type.getTypeText(), 25, 0, true);
+      }
+      else if (myInfo instanceof Angular2AttributeNameParser.EventInfo
+               && ((Angular2AttributeNameParser.EventInfo)myInfo).eventType == Angular2HtmlEvent.EventType.REGULAR) {
+        type = Angular2Processor.getEventVariableType(type);
+        if (type != null) {
+          return type.getTypeText();
         }
-        else if (myInfo instanceof Angular2AttributeNameParser.EventInfo
-                 && ((Angular2AttributeNameParser.EventInfo)myInfo).eventType == Angular2HtmlEvent.EventType.REGULAR) {
-          type = Angular2Processor.getEventVariableType(type);
-          if (type != null) {
-            return type.getTypeText();
-          }
-        }
-      } catch (Exception e) {
-        //ignore
       }
     }
     return null;
@@ -284,7 +277,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     List<JSType> types = ContainerUtil.mapNotNull(myElements, JSTypeUtils::getTypeOfElement);
     if (types.size() == 1) {
       return types.get(0);
-    } else if (types.size() > 1) {
+    }
+    else if (types.size() > 1) {
       if (myInfo != null && myInfo.type == BANANA_BOX_BINDING) {
         return types.get(0);
       }
