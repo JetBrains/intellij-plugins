@@ -3,7 +3,6 @@ package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
@@ -27,6 +26,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.XmlInvalidIdInspection;
@@ -880,8 +880,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.completeBasic();
       assertContainsElements(
         ContainerUtil.mapNotNull(myFixture.getLookupElements(), el -> {
-          LookupElementPresentation presentation = new LookupElementPresentation();
-          el.renderElement(presentation);
+          TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
           return presentation.getItemText() + "#" + presentation.getTypeText();
         }),
         "plainBoolean#boolean",

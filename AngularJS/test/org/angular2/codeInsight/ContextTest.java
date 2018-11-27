@@ -29,10 +29,6 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     return AngularTestUtil.resolveReference(signature, myFixture);
   }
 
-  private void assertUnresolvedReference(@NotNull String signature) {
-    AngularTestUtil.assertUnresolvedReference(signature, myFixture);
-  }
-
   public void testInlineTemplateCompletion2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
                                         () -> myFixture.testCompletion("component.ts", "component.after.ts", "package.json"));
@@ -236,15 +232,15 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("overriddenMethods.ts", "package.json");
       myFixture.completeBasic();
-      assertEquals(StreamEx.of(myFixture.getLookupElements()).map(el -> {
-        TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
-        return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
-      }).sorted().toList(), newArrayList(
-        "bar#null# TodoCmp (overriddenMethods.ts)",
-        "bar#string#()",
-        "bar#string#(test: boolean)",
-        "bar#string#(test: string)",
-        "foo#string# (TodoCmp)"));
+      assertEquals(newArrayList("bar#null# TodoCmp (overriddenMethods.ts)",
+                                "bar#string#()",
+                                "bar#string#(test: boolean)",
+                                "bar#string#(test: string)",
+                                "foo#string# (TodoCmp)"),
+                   StreamEx.of(myFixture.getLookupElements()).map(el -> {
+                     TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
+                     return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
+                   }).sorted().toList());
     });
   }
 }
