@@ -88,7 +88,7 @@ public class Angular2ParserTest extends LightPlatformCodeInsightTestCase impleme
 
       final Angular2ParserDefinition definition = new Angular2ParserDefinition();
       final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(getProject(), psiFile.getNode());
-      final ASTNode root = definition.createParser(getProject()).parse(Angular2ElementTypes.FILE, builder);
+      final ASTNode root = definition.createParser(getProject()).parse(Angular2ParserDefinition.FILE, builder);
 
       result.append(DebugUtil.psiToString(root.getPsi(), false, false));
     }

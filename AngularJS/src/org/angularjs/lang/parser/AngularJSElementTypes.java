@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
  * @author Dennis.Ushakov
  */
 public interface AngularJSElementTypes {
-  IFileElementType FILE = JSFileElementType.create(AngularJSLanguage.INSTANCE);
   IElementType REPEAT_EXPRESSION = new AngularJSElementType("REPEAT_EXPRESSION") {
     @NotNull
     @Override

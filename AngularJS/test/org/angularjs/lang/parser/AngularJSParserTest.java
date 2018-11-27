@@ -59,7 +59,7 @@ public class AngularJSParserTest extends LightPlatformCodeInsightTestCase implem
       if (result.length() > 0) result.append("------\n");
       final AngularJSParserDefinition definition = new AngularJSParserDefinition();
       final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(definition, new AngularJSLexer(), line);
-      final ASTNode root = definition.createParser(getProject()).parse(AngularJSElementTypes.FILE, builder);
+      final ASTNode root = definition.createParser(getProject()).parse(AngularJSParserDefinition.FILE, builder);
       result.append(DebugUtil.psiToString(root.getPsi(), false, false));
     }    
 

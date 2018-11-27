@@ -16,7 +16,6 @@ import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.util.PsiTreeUtil
 
 object VueElementTypes {
-  val FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INSTANCE)
   val EMBEDDED_JS: JSEmbeddedContentElementType = object : JSEmbeddedContentElementType(VueJSLanguage.INSTANCE, "VueJS") {
     override fun createStripperLexer(baseLanguage: Language): Lexer? = null
   }

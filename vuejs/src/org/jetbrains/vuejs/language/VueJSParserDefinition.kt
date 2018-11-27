@@ -4,6 +4,7 @@ import com.intellij.lang.PsiParser
 import com.intellij.lang.javascript.JSFlexAdapter
 import com.intellij.lang.javascript.JavascriptParserDefinition
 import com.intellij.lang.javascript.settings.JSRootConfiguration
+import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IFileElementType
@@ -12,6 +13,8 @@ import com.intellij.psi.tree.IFileElementType
  * @author Irina.Chernushina on 7/21/2017.
  */
 class VueJSParserDefinition : JavascriptParserDefinition() {
+  private val FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INSTANCE)
+
   override fun createParser(project: Project?): PsiParser {
     return PsiParser({ root, builder ->
                        VueJSLanguage.VueJSParser(builder).parseVue(root)
@@ -24,6 +27,6 @@ class VueJSParserDefinition : JavascriptParserDefinition() {
   }
 
   override fun getFileNodeType(): IFileElementType {
-    return VueElementTypes.FILE
+    return FILE
   }
 }

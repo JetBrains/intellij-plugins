@@ -5,10 +5,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.JSStubElementType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
-import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlElementType;
 import org.angular2.lang.html.Angular2HtmlLanguage;
@@ -21,8 +19,6 @@ import java.util.function.Function;
 import static com.intellij.psi.tree.TokenSet.create;
 
 public interface Angular2HtmlElementTypes extends XmlElementType, Angular2HtmlTokenTypes {
-
-  IFileElementType FILE = JSFileElementType.create(Angular2HtmlLanguage.INSTANCE);
 
   IElementType EXPANSION_FORM = new Angular2ElementType("NG:EXPANSION_FORM", Angular2HtmlExpansionFormImpl::new);
   IElementType EXPANSION_FORM_CASE = new Angular2ElementType("NG:EXPANSION_FORM_CASE", Angular2HtmlExpansionFormCaseImpl::new);

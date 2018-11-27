@@ -7,10 +7,8 @@ import com.intellij.lang.javascript.psi.JSStubElementType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.types.JSExpressionElementType;
-import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.impl.*;
@@ -23,8 +21,6 @@ import static com.intellij.lang.javascript.JSKeywordSets.IDENTIFIER_NAMES;
 import static com.intellij.lang.javascript.JSTokenTypes.STRING_LITERAL;
 
 public interface Angular2ElementTypes extends JSElementTypes {
-
-  IFileElementType FILE = JSFileElementType.create(Angular2Language.INSTANCE);
 
   Angular2PropertyElementType PROPERTY = new Angular2PropertyElementType();
 

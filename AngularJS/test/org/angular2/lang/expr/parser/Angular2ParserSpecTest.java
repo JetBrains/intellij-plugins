@@ -627,7 +627,7 @@ public class Angular2ParserSpecTest {
 
       final Angular2ParserDefinition definition = new Angular2ParserDefinition();
       final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(getProject(), psiFile.getNode());
-      return definition.createParser(getProject()).parse(Angular2ElementTypes.FILE, builder);
+      return definition.createParser(getProject()).parse(Angular2ParserDefinition.FILE, builder);
     });
   }
 
