@@ -12,11 +12,13 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
-import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.typescript.library.TypeScriptLibraryProvider;
 import com.intellij.lang.typescript.resolve.TypeScriptClassResolver;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -205,44 +207,31 @@ public class Angular2Processor {
 
   @Nullable
   public static JSType getEventVariableType(@Nullable JSType type) {
-    type = JSTypeUtils.getValuableType(type);
-    if (type != null) {
-      Ref<JSType> result = new Ref<>();
-      type.accept(new JSRecursiveTypeVisitor() {
-
-        @Override
-        public void visitJSGenericType(@NotNull JSType type) {
-          if (type instanceof JSGenericTypeImpl) {
-            List<JSType> arguments = ((JSGenericTypeImpl)type).getArguments();
-            if (arguments.size() == 1) {
-              result.set(arguments.get(0));
-            }
-          }
-        }
-
-        @Override
-        public void visitJSCompositeBaseType(@NotNull JSType type) {
-          super.visitJSCompositeBaseType(type);
-        }
-
-        @Override
-        public void visitJSType(@NotNull JSType type) {
-          if (type instanceof JSCompositeTypeImpl) {
-            super.visitJSType(type);
-          }
-        }
-
-        @Override
-        public void visitJSFunctionType(@NotNull JSType type) {
-          List<JSParameterTypeDecorator> params = ((JSFunctionType)type).getParameters();
-          if (params.size() == 1) {
-            result.set(params.get(0).getType());
-          }
-        }
-      });
-      return result.get();
+    if (type == null) {
+      return null;
     }
-    return null;
+    List<JSType> result = new ArrayList<>();
+    JSTypeUtils.processExpandedType(subType -> {
+      if (subType instanceof JSGenericTypeImpl) {
+        List<JSType> arguments = ((JSGenericTypeImpl)subType).getArguments();
+        if (arguments.size() == 1) {
+          result.add(arguments.get(0));
+        }
+        return false;
+      }
+      else if (subType instanceof JSFunctionType) {
+        List<JSParameterTypeDecorator> params = ((JSFunctionType)subType).getParameters();
+        if (params.size() == 1) {
+          result.add(params.get(0).getType());
+        }
+        return false;
+      }
+      return true;
+    }, type);
+    if (result.isEmpty()) {
+      return null;
+    }
+    return JSCompositeTypeImpl.getCommonType(result, type.getSource(), false);
   }
 
   private static class Angular2TemplateScopeBuilder extends Angular2HtmlRecursiveElementVisitor {
