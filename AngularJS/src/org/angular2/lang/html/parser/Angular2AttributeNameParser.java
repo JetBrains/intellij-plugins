@@ -3,7 +3,6 @@ package org.angular2.lang.html.parser;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.xml.XmlElementType;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
 import org.angular2.lang.html.psi.PropertyBindingType;
@@ -20,7 +19,7 @@ public class Angular2AttributeNameParser {
   @NotNull
   public static AttributeInfo parseBound(@NotNull String name) {
     AttributeInfo info = parse(name, true);
-    return info.type != AttributeType.XML_ATTRIBUTE ? info :
+    return info.type != Angular2AttributeType.REGULAR ? info :
            new PropertyBindingInfo(info.name, false, PROPERTY);
   }
 
@@ -60,7 +59,7 @@ public class Angular2AttributeNameParser {
     else if (name.startsWith("@")) {
       return new PropertyBindingInfo(name.substring(1), false, ANIMATION);
     }
-    return new AttributeInfo(name, AttributeType.XML_ATTRIBUTE);
+    return new AttributeInfo(name, Angular2AttributeType.REGULAR);
   }
 
   @NotNull
@@ -118,7 +117,7 @@ public class Angular2AttributeNameParser {
 
   @NotNull
   private static AttributeInfo parseTemplateBindings(@NotNull String name) {
-    return new AttributeInfo(name, AttributeType.TEMPLATE_BINDINGS);
+    return new AttributeInfo(name, Angular2AttributeType.TEMPLATE_BINDINGS);
   }
 
   @NotNull
@@ -146,44 +145,23 @@ public class Angular2AttributeNameParser {
   @NotNull
   private static AttributeInfo parseVariable(@NotNull String varName, boolean isInTemplateTag) {
     if (!isInTemplateTag) {
-      return new AttributeInfo(varName, AttributeType.XML_ATTRIBUTE, "\"let-\" is only supported on ng-template elements.");
+      return new AttributeInfo(varName, Angular2AttributeType.REGULAR, "\"let-\" is only supported on ng-template elements.");
     }
     else if (varName.contains("-")) {
-      return new AttributeInfo(varName, AttributeType.XML_ATTRIBUTE, "\"-\" is not allowed in variable names");
+      return new AttributeInfo(varName, Angular2AttributeType.REGULAR, "\"-\" is not allowed in variable names");
     }
-    return new AttributeInfo(varName, AttributeType.VARIABLE);
+    return new AttributeInfo(varName, Angular2AttributeType.VARIABLE);
   }
 
   @NotNull
   private static AttributeInfo parseReference(@NotNull String refName) {
     if (refName.contains("-")) {
-      return new AttributeInfo(refName, AttributeType.XML_ATTRIBUTE, "\"-\" is not allowed in reference names");
+      return new AttributeInfo(refName, Angular2AttributeType.REGULAR, "\"-\" is not allowed in reference names");
     }
     else if (refName.isEmpty()) {
-      return new AttributeInfo("", AttributeType.XML_ATTRIBUTE);
+      return new AttributeInfo("", Angular2AttributeType.REGULAR);
     }
-    return new AttributeInfo(refName, AttributeType.REFERENCE);
-  }
-
-  public enum AttributeType {
-
-    REFERENCE(Angular2HtmlElementTypes.REFERENCE),
-    XML_ATTRIBUTE(XmlElementType.XML_ATTRIBUTE),
-    VARIABLE(Angular2HtmlElementTypes.VARIABLE),
-    BANANA_BOX_BINDING(Angular2HtmlElementTypes.BANANA_BOX_BINDING),
-    PROPERTY_BINDING(Angular2HtmlElementTypes.PROPERTY_BINDING),
-    EVENT(Angular2HtmlElementTypes.EVENT),
-    TEMPLATE_BINDINGS(Angular2HtmlElementTypes.TEMPLATE_BINDINGS);
-
-    private final IElementType myElementType;
-
-    AttributeType(IElementType elementType) {
-      myElementType = elementType;
-    }
-
-    IElementType getElementType() {
-      return myElementType;
-    }
+    return new AttributeInfo(refName, Angular2AttributeType.REFERENCE);
   }
 
   public static class AttributeInfo {
@@ -198,13 +176,13 @@ public class Angular2AttributeNameParser {
     @NotNull
     @Deprecated
     public final IElementType elementType;
-    public final AttributeType type;
+    public final Angular2AttributeType type;
 
-    public AttributeInfo(@NotNull String name, @NotNull AttributeType type) {
+    public AttributeInfo(@NotNull String name, @NotNull Angular2AttributeType type) {
       this(name, type, null);
     }
 
-    public AttributeInfo(@NotNull String name, @NotNull AttributeType type, @Nullable String error) {
+    public AttributeInfo(@NotNull String name, @NotNull Angular2AttributeType type, @Nullable String error) {
       this.name = name;
       this.error = error;
       this.type = type;
@@ -216,6 +194,10 @@ public class Angular2AttributeNameParser {
       return otherInfo != null
              && name.equals(otherInfo.name)
              && type == otherInfo.type;
+    }
+
+    public String getFullName() {
+      return name;
     }
 
     @Override
@@ -230,7 +212,7 @@ public class Angular2AttributeNameParser {
     public final PropertyBindingType bindingType;
 
     public PropertyBindingInfo(@NotNull String name, boolean bananaBoxBinding, @NotNull PropertyBindingType bindingType) {
-      super(name, bananaBoxBinding ? AttributeType.BANANA_BOX_BINDING : AttributeType.PROPERTY_BINDING);
+      super(name, bananaBoxBinding ? Angular2AttributeType.BANANA_BOX_BINDING : Angular2AttributeType.PROPERTY_BINDING);
       this.bindingType = bindingType;
     }
 
@@ -239,6 +221,22 @@ public class Angular2AttributeNameParser {
       return otherInfo instanceof PropertyBindingInfo
              && bindingType == ((PropertyBindingInfo)otherInfo).bindingType
              && super.isEquivalent(otherInfo);
+    }
+
+    @Override
+    public String getFullName() {
+      switch (this.bindingType) {
+        case ANIMATION:
+          return "animate-" + name;
+        case ATTRIBUTE:
+          return "attr." + name;
+        case STYLE:
+          return "style." + name;
+        case CLASS:
+          return "class." + name;
+        default:
+          return name;
+      }
     }
 
     @Override
@@ -256,7 +254,7 @@ public class Angular2AttributeNameParser {
     public final EventType eventType;
 
     public EventInfo(@NotNull String name) {
-      super(name, AttributeType.EVENT);
+      super(name, Angular2AttributeType.EVENT);
       eventType = EventType.REGULAR;
       animationPhase = null;
     }
@@ -266,7 +264,7 @@ public class Angular2AttributeNameParser {
     }
 
     public EventInfo(@NotNull String name, @NotNull AnimationPhase animationPhase, @Nullable String error) {
-      super(name, AttributeType.EVENT, error);
+      super(name, Angular2AttributeType.EVENT, error);
       this.animationPhase = animationPhase;
       this.eventType = EventType.ANIMATION;
     }
@@ -277,6 +275,22 @@ public class Angular2AttributeNameParser {
              && eventType == ((EventInfo)otherInfo).eventType
              && animationPhase == ((EventInfo)otherInfo).animationPhase
              && super.isEquivalent(otherInfo);
+    }
+
+    @Override
+    public String getFullName() {
+      if (eventType == EventType.ANIMATION) {
+        if (animationPhase != null) {
+          switch (animationPhase) {
+            case DONE:
+              return "@" + name + ".done";
+            case START:
+              return "@" + name + ".start";
+            default:
+          }
+        }
+      }
+      return "@" + name;
     }
 
     @Override

@@ -897,9 +897,9 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testMatchedDirectivesPropertiesPriority() {
+  public void testMatchedDirectivesProperties() {
     JSTestUtils.testES6(getProject(), () -> {
-      configureWithMetadataFiles(myFixture,"common", "ionic");
+      configureWithMetadataFiles(myFixture,"common", "forms");
       myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts");
       myFixture.completeBasic();
       assertContainsElements(
@@ -908,20 +908,24 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
           if (el instanceof PrioritizedLookupElement) {
             priority = ((PrioritizedLookupElement)el).getPriority();
           }
-          return el.getLookupString() + "#" + (int)priority;
+          TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
+
+          return (presentation.isItemTextBold() ? "!" : "") + el.getLookupString() + "#" + (int)priority;
         }),
-        "plainBoolean#100",
-        "[plainBoolean]#100",
-        "simpleStringEnum#100",
-        "[simpleStringEnum]#100",
-        "(my-event)#100",
-        "[fooInput]#100",
+        "!plainBoolean#100",
+        "![plainBoolean]#100",
+        "!simpleStringEnum#100",
+        "![simpleStringEnum]#100",
+        "!(my-event)#100",
+        "![fooInput]#100",
+        "![disabled]#100",
         "[bar]#50",
         "(click)#50",
         "(blur)#50",
         "[innerHTML]#50",
         "*ngIf#50"
       );
+      assertDoesntContain(myFixture.getLookupElementStrings(), "[ngModel]", "ngModel", "(ngModelChange)");
     });
   }
 

@@ -44,6 +44,7 @@ import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
+import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.angular2.lang.html.psi.*;
 import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl;
 import org.jetbrains.annotations.NonNls;
@@ -127,7 +128,7 @@ public class Angular2Processor {
       }
       if (attribute instanceof XmlAttribute) {
         AttributeInfo info = Angular2AttributeNameParser.parse(((XmlAttribute)attribute).getName(), true);
-        if (info.type == Angular2AttributeNameParser.AttributeType.EVENT) {
+        if (info.type == Angular2AttributeType.EVENT) {
           scopes.add(new Angular2EventScope(((XmlAttribute)attribute)));
         }
       }

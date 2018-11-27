@@ -7,6 +7,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.PsiElement;
@@ -25,15 +26,21 @@ import com.intellij.xml.XmlExtension;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.codeInsight.attributes.Angular2AttributeNameVariantsBuilder;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.EventInfo;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
+import org.angular2.lang.html.parser.Angular2AttributeType;
+import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -111,25 +118,25 @@ public class Angular2CompletionContributor extends CompletionContributor {
         final PsiFile file = tag.getContainingFile();
         final XmlExtension extension = XmlExtension.getExtension(file);
 
-        Set<String> providedElements = new HashSet<>();
-        Set<String> existingProperties = StreamEx.of(attributes)
+        Set<String> providedAttributes = StreamEx.of(attributes)
           .map(attr -> attr.getDescriptor())
           .select(Angular2AttributeDescriptor.class)
-          .map(Angular2CompletionContributor::getBoundPropertyName)
+          .flatCollection(Angular2CompletionContributor::getRelatedAttributes)
           .toSet();
         for (XmlAttributeDescriptor descriptor : descriptors) {
-          if (descriptor instanceof Angular2AttributeDescriptor
-              && !existingProperties.contains(getBoundPropertyName((Angular2AttributeDescriptor)descriptor))
-              && isValidVariant(attribute, descriptor, attributes, extension)) {
-            LookupElement element = ((Angular2AttributeDescriptor)descriptor).getLookupElement();
-            providedElements.addAll(element.getAllLookupStrings());
-            result.addElement(element);
+          if (descriptor instanceof Angular2AttributeDescriptor) {
+            if (!providedAttributes.contains(descriptor.getName())
+                && isValidVariant(attribute, descriptor, attributes, extension)) {
+              LookupElement element = ((Angular2AttributeDescriptor)descriptor).getLookupElement();
+              providedAttributes.add(element.getLookupString());
+              result.addElement(element);
+            }
           }
         }
         result.runRemainingContributors(parameters, toPass -> {
           for (String str : toPass.getLookupElement().getAllLookupStrings()) {
             if (str.startsWith("on") //do not propose regular events
-                || providedElements.contains(str)) {
+                || providedAttributes.contains(str)) {
               return;
             }
           }
@@ -139,18 +146,45 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
   }
 
-  @Nullable
-  private static String getBoundPropertyName(@NotNull Angular2AttributeDescriptor descriptor) {
+  @NotNull
+  private static Collection<String> getRelatedAttributes(@NotNull Angular2AttributeDescriptor descriptor) {
     Angular2AttributeNameParser.AttributeInfo info = descriptor.getInfo();
     if (info == null) {
-      return descriptor.getName();
+      return Collections.singleton(descriptor.getName());
     }
-    else if (info.type == Angular2AttributeNameParser.AttributeType.BANANA_BOX_BINDING
-             || (info.type == Angular2AttributeNameParser.AttributeType.PROPERTY_BINDING
-                 && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY)) {
-      return info.name;
+    else if (info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
+      return ContainerUtil.concat(
+        Angular2AttributeNameVariantsBuilder.forTypes(
+          info.name, true, true,
+          Angular2AttributeType.REGULAR,
+          Angular2AttributeType.PROPERTY_BINDING,
+          Angular2AttributeType.BANANA_BOX_BINDING),
+        Angular2AttributeNameVariantsBuilder.forTypes(
+          info.name + "Change", true, true,
+          Angular2AttributeType.EVENT));
     }
-    return null;
+    else if (info instanceof PropertyBindingInfo
+             && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY) {
+      return Angular2AttributeNameVariantsBuilder.forTypes(
+        info.name, true, true,
+        Angular2AttributeType.REGULAR,
+        Angular2AttributeType.PROPERTY_BINDING,
+        Angular2AttributeType.BANANA_BOX_BINDING);
+    }
+    else if (info instanceof EventInfo
+             && (((EventInfo)info).eventType == Angular2HtmlEvent.EventType.REGULAR)
+             && info.name.endsWith("Change")) {
+      return ContainerUtil.concat(
+        Angular2AttributeNameVariantsBuilder.forTypes(
+          StringUtil.trimEnd(info.name, "Change"), true, true,
+          Angular2AttributeType.BANANA_BOX_BINDING),
+        Angular2AttributeNameVariantsBuilder.forTypes(
+          info.name, true, true,
+          Angular2AttributeType.EVENT));
+    }
+    return Angular2AttributeNameVariantsBuilder.forTypes(
+      info.getFullName(), true, true,
+      info.type);
   }
 
   private static <T extends PsiElement> PatternCondition<T> language(@NotNull Language language) {
