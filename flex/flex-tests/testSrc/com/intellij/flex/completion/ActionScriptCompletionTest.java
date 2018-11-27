@@ -5,7 +5,6 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javaee.ExternalResourceManagerExImpl;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
@@ -25,6 +24,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThrowableRunnable;
 
@@ -346,15 +346,15 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public final void testInsertImportAmbiguous1() throws Exception {
     final LookupElement[] items = doTest("");
-    assertQNames(items, "bar.ClassA", "foo.ClassA");
-    selectItem(items[0]);
+    assertQNames(items, "foo.ClassA", "bar.ClassA");
+    selectItem(items[1]);
     checkResultByFile(getBasePath() + getTestName(false) + "_after2.js2");
   }
 
   public final void testInsertImportAmbiguous2() throws Exception {
     final LookupElement[] items = doTest("");
-    assertQNames(items, "bar.ClassA", "foo.ClassA");
-    selectItem(items[0]);
+    assertQNames(items, "foo.ClassA", "bar.ClassA");
+    selectItem(items[1]);
     checkResultByFile(getBasePath() + getTestName(false) + "_after2.js2");
   }
 
@@ -688,10 +688,10 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("");
     assertNotNull(myItems);
     assertEquals(2, myItems.length);
-    assertLookupElement(myItems[0], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
-    assertLookupElement(myItems[1], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
+    assertLookupElement(myItems[0], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
+    assertLookupElement(myItems[1], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
 
-    selectItem(myItems[1]);
+    selectItem(myItems[0]);
     checkResultByFile(getBasePath() + getTestName(false) + "_2_after.js2");
   }
 
@@ -1255,8 +1255,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
         m.setActiveBuildConfiguration(m.findConfigurationByName(myBcName));
         defaultTest();
         for (LookupElement item : myItems) {
-          final LookupElementPresentation p = new LookupElementPresentation();
-          item.renderElement(p);
+          final TestLookupElementPresentation p = TestLookupElementPresentation.renderReal(item);
           assertEquals(myExpectedTypeText, p.getTypeText());
         }
       }
