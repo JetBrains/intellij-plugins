@@ -21,6 +21,7 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
@@ -30,8 +31,6 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angular2.lang.html.psi.Angular2HtmlVariable;
-import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
-import org.angular2.lang.selector.Angular2SelectorMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -105,33 +104,21 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return getAttributeDescriptor(attrName, xmlTag, this::getAttributeDescriptors);
   }
 
-  public static Set<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag) {
+  public static List<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag) {
     return getApplicableDirectives(xmlTag, new HashSet<>());
   }
 
-  private static Set<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag,
+  private static List<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag,
                                                                 @NotNull Set<Angular2Directive> directiveCandidates) {
     directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), xmlTag.getName()));
     directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), ""));
-
-    Angular2SelectorMatcher<Angular2Directive> matcher = new Angular2SelectorMatcher<>();
-    directiveCandidates.forEach(d -> matcher.addSelectables(d.getSelector().getSimpleSelectors(), d));
-
-    boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
-    Set<Angular2Directive> matchedDirectives = new HashSet<>();
-    Angular2DirectiveSimpleSelector tagInfo = Angular2DirectiveSimpleSelector.createElementCssSelector(xmlTag);
-    matcher.match(tagInfo, (selector, directive) -> {
-      if (!directive.isTemplate() || isTemplateTag) {
-        matchedDirectives.add(directive);
-      }
-    });
-    return matchedDirectives;
+    return Angular2TagDescriptorsProvider.matchDirectives(xmlTag, directiveCandidates);
   }
 
   @NotNull
   public static Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag) {
     Set<Angular2Directive> directiveCandidates = new HashSet<>();
-    Set<Angular2Directive> matchedDirectives = getApplicableDirectives(xmlTag, directiveCandidates);
+    List<Angular2Directive> matchedDirectives = getApplicableDirectives(xmlTag, directiveCandidates);
 
     boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
     List<XmlAttributeDescriptor> result = new ArrayList<>();
