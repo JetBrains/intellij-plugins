@@ -245,7 +245,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   public LookupElement getLookupElement() {
     LookupElementBuilder element = LookupElementBuilder.create(getName())
       .withCaseSensitivity(myInfo != null || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
-      .withIcon(getIcon());
+      .withIcon(getIcon())
+      .withBoldness(myPriority == AttributePriority.HIGH);
     String typeName = getTypeName();
     if (!StringUtil.isEmptyOrSpaces(typeName)) {
       element = element.withTypeText(typeName);
