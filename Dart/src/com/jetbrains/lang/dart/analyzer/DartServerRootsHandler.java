@@ -92,6 +92,10 @@ public class DartServerRootsHandler {
                 newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedUrl)));
               }
             }
+
+            for (String excludedPackageSymlinkUrl : excludedPackageSymlinkUrls) {
+              newExcludedRoots.add(FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(excludedPackageSymlinkUrl)));
+            }
           }
         }
       }
