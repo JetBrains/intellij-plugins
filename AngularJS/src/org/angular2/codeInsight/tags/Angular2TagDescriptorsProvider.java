@@ -25,10 +25,7 @@ import org.angular2.lang.selector.Angular2SelectorMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
   private static final String NG_CONTAINER = "ng-container";
@@ -91,6 +88,13 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     if (directiveCandidates.isEmpty()) {
       return null;
     }
+    List<Angular2Directive> matchedDirectives = matchDirectives(xmlTag, directiveCandidates);
+    return new Angular2TagDescriptor(tagName, (matchedDirectives.isEmpty() ? directiveCandidates : matchedDirectives).get(0).getSelector()
+      .getPsiElementForElement(tagName));
+  }
+
+  @NotNull
+  public static List<Angular2Directive> matchDirectives(@NotNull XmlTag xmlTag, @NotNull Collection<Angular2Directive> directiveCandidates) {
     Angular2SelectorMatcher<Angular2Directive> matcher = new Angular2SelectorMatcher<>();
     directiveCandidates.forEach(d -> matcher.addSelectables(d.getSelector().getSimpleSelectors(), d));
 
@@ -102,8 +106,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
         matchedDirectives.add(directive);
       }
     });
-    return new Angular2TagDescriptor(tagName, (matchedDirectives.isEmpty() ? directiveCandidates : matchedDirectives).get(0).getSelector()
-      .getPsiElementForElement(tagName));
+    return matchedDirectives;
   }
 
   @NotNull

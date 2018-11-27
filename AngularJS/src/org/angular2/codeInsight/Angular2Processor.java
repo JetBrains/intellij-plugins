@@ -23,7 +23,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -235,13 +234,13 @@ public class Angular2Processor {
     return JSCompositeTypeImpl.getCommonType(result, type.getSource(), false);
   }
 
-  private static class Angular2TemplateScopeBuilder extends Angular2HtmlRecursiveElementVisitor {
+  private static class Angular2BaseScopeBuilder extends Angular2HtmlRecursiveElementVisitor {
 
     @NotNull
     private final PsiFile myTemplateFile;
     private final Stack<Angular2TemplateScope> scopes = new Stack<>();
 
-    private Angular2TemplateScopeBuilder(@NotNull PsiFile templateFile) {
+    Angular2BaseScopeBuilder(@NotNull PsiFile templateFile) {
       myTemplateFile = templateFile;
       scopes.add(new Angular2TemplateScope(templateFile, null));
     }
@@ -253,20 +252,32 @@ public class Angular2Processor {
       return scopes.peek();
     }
 
-    private Angular2TemplateScope currentScope() {
+    Angular2TemplateScope currentScope() {
       return scopes.peek();
     }
 
-    private void popScope() {
+    void popScope() {
       scopes.pop();
     }
 
-    private void pushScope(@NotNull XmlTag tag) {
+    void pushScope(@NotNull XmlTag tag) {
       scopes.push(new Angular2TemplateScope(tag, currentScope()));
     }
 
-    private void addElement(@NotNull JSPsiElementBase element) {
+    void addElement(@NotNull JSPsiElementBase element) {
       currentScope().add(element);
+    }
+
+    @NotNull
+    Angular2TemplateScope prevScope() {
+      return scopes.get(scopes.size() - 2);
+    }
+  }
+
+  private static class Angular2TemplateScopeBuilder extends Angular2BaseScopeBuilder {
+
+    Angular2TemplateScopeBuilder(@NotNull PsiFile templateFile) {
+      super(templateFile);
     }
 
     @Override
@@ -301,11 +312,6 @@ public class Angular2Processor {
       }
     }
 
-    @NotNull
-    private Angular2TemplateScope prevScope() {
-      return scopes.get(scopes.size() - 2);
-    }
-
     @Override
     public void visitVariable(Angular2HtmlVariable variable) {
       addElement(createVariable(variable.getVariableName(), variable));
@@ -323,43 +329,17 @@ public class Angular2Processor {
     }
   }
 
-  private static class Angular2ForeignTemplateScopeBuilder extends XmlRecursiveElementVisitor {
+  private static class Angular2ForeignTemplateScopeBuilder extends Angular2BaseScopeBuilder {
 
-    @NotNull
-    private final PsiFile myTemplateFile;
-    private final Stack<Angular2TemplateScope> scopes = new Stack<>();
-
-    private Angular2ForeignTemplateScopeBuilder(@NotNull PsiFile templateFile) {
-      myTemplateFile = templateFile;
-      scopes.add(new Angular2TemplateScope(templateFile, null));
-    }
-
-    @NotNull
-    public Angular2TemplateScope getTopLevelScope() {
-      myTemplateFile.accept(this);
-      assert scopes.size() == 1;
-      return scopes.peek();
-    }
-
-    private Angular2TemplateScope currentScope() {
-      return scopes.peek();
-    }
-
-    private void popScope() {
-      scopes.pop();
-    }
-
-    private void pushScope(@NotNull XmlTag tag) {
-      scopes.push(new Angular2TemplateScope(tag, currentScope()));
-    }
-
-    private void addElement(@NotNull JSPsiElementBase element) {
-      currentScope().add(element);
+    Angular2ForeignTemplateScopeBuilder(@NotNull PsiFile templateFile) {
+      super(templateFile);
     }
 
     @Override
     public void visitXmlTag(XmlTag tag) {
-      boolean isTemplateTag = Stream.of(tag.getChildren()).anyMatch(Angular2HtmlTemplateBindings.class::isInstance)
+      boolean isTemplateTag = StreamEx.of(tag.getChildren())
+                                .select(XmlAttribute.class)
+                                .anyMatch(attr -> attr.getName().startsWith("*"))
                               || isTemplateTag(tag.getName());
       if (isTemplateTag) {
         pushScope(tag);
@@ -401,11 +381,6 @@ public class Angular2Processor {
       else {
         currentScope().add(var);
       }
-    }
-
-    @NotNull
-    private Angular2TemplateScope prevScope() {
-      return scopes.get(scopes.size() - 2);
     }
 
     public void addVariable(@NotNull XmlAttribute attribute, @NotNull AttributeInfo info) {
