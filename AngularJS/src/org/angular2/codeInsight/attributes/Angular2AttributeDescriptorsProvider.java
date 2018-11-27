@@ -9,11 +9,14 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
@@ -228,9 +231,26 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   @NotNull
+  public static List<String> getStandardTagEventAttributeNames(@NotNull XmlTag xmlTag) {
+    HtmlElementDescriptorImpl descriptor = ObjectUtils.tryCast(xmlTag.getDescriptor(), HtmlElementDescriptorImpl.class);
+    if (descriptor != null) {
+      return ContainerUtil.mapNotNull(descriptor.getDefaultAttributeDescriptors(xmlTag), attrDescriptor -> {
+        String name = attrDescriptor.getName();
+        if (name.startsWith("on")) {
+          return name;
+        }
+        return null;
+      });
+    }
+    return Collections.emptyList();
+  }
+
+  @NotNull
   public static Collection<XmlAttributeDescriptor> getStandardPropertyAndEventDescriptors(@NotNull XmlTag xmlTag) {
     return CachedValuesManager.getCachedValue(xmlTag, STANDARD_PROPERTIES_KEY, () -> {
       Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag.getName()));
+      allowedElementProperties.addAll(ContainerUtil.map(
+        getStandardTagEventAttributeNames(xmlTag), eventName -> EVENT.buildName(eventName.substring(2))));
       JSType tagClass = Angular2Processor.getHtmlElementClassType(xmlTag, xmlTag.getName());
       List<XmlAttributeDescriptor> result = new ArrayList<>();
       Set<Object> dependencies = new HashSet<>();
