@@ -346,15 +346,15 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public final void testInsertImportAmbiguous1() throws Exception {
     final LookupElement[] items = doTest("");
-    assertQNames(items, "foo.ClassA", "bar.ClassA");
-    selectItem(items[1]);
+    assertQNames(items, "bar.ClassA", "foo.ClassA");
+    selectItem(items[0]);
     checkResultByFile(getBasePath() + getTestName(false) + "_after2.js2");
   }
 
   public final void testInsertImportAmbiguous2() throws Exception {
     final LookupElement[] items = doTest("");
-    assertQNames(items, "foo.ClassA", "bar.ClassA");
-    selectItem(items[1]);
+    assertQNames(items, "bar.ClassA", "foo.ClassA");
+    selectItem(items[0]);
     checkResultByFile(getBasePath() + getTestName(false) + "_after2.js2");
   }
 
@@ -688,10 +688,10 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("");
     assertNotNull(myItems);
     assertEquals(2, myItems.length);
-    assertLookupElement(myItems[0], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
-    assertLookupElement(myItems[1], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
+    assertLookupElement(myItems[0], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
+    assertLookupElement(myItems[1], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
 
-    selectItem(myItems[0]);
+    selectItem(myItems[1]);
     checkResultByFile(getBasePath() + getTestName(false) + "_2_after.js2");
   }
 
