@@ -3,9 +3,10 @@ package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.ide.browsers.impl.WebBrowserServiceImpl;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
-import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
@@ -102,18 +103,17 @@ public abstract class DartProjectTemplate {
       final Url url = WebBrowserServiceImpl.getDebuggableUrl(PsiManager.getInstance(module.getProject()).findFile(htmlFile));
       if (url == null) return;
 
+      ConfigurationType configurationType = ConfigurationTypeUtil.findConfigurationType("JavascriptDebugType");
+      if (configurationType == null) return;
+
       final RunManager runManager = RunManager.getInstance(module.getProject());
-      try {
-        final RunnerAndConfigurationSettings settings =
-          runManager.createConfiguration("", JavascriptDebugConfigurationType.getTypeInstance());
+      final RunnerAndConfigurationSettings settings = runManager.createConfiguration("", configurationType.getClass());
 
-        ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
-        settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
+      ((JavaScriptDebugConfiguration)settings.getConfiguration()).setUri(url.toDecodedForm());
+      settings.setName(((JavaScriptDebugConfiguration)settings.getConfiguration()).suggestedName());
 
-        runManager.addConfiguration(settings);
-        runManager.setSelectedConfiguration(settings);
-      }
-      catch (Throwable t) {/* ClassNotFound in IDEA Community or if JS Debugger plugin disabled */}
+      runManager.addConfiguration(settings);
+      runManager.setSelectedConfiguration(settings);
     }, module);
   }
 
