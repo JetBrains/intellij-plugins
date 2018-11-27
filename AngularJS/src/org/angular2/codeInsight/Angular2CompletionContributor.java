@@ -26,6 +26,7 @@ import com.intellij.xml.XmlExtension;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeNameVariantsBuilder;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
@@ -133,9 +134,10 @@ public class Angular2CompletionContributor extends CompletionContributor {
             }
           }
         }
+        Set<String> standardHtmlEvents = new HashSet<>(Angular2AttributeDescriptorsProvider.getStandardTagEventAttributeNames(tag));
         result.runRemainingContributors(parameters, toPass -> {
           for (String str : toPass.getLookupElement().getAllLookupStrings()) {
-            if (str.startsWith("on") //do not propose regular events
+            if (standardHtmlEvents.contains(str)
                 || providedAttributes.contains(str)) {
               return;
             }
