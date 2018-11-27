@@ -39,6 +39,7 @@ import java.util.function.Function;
 
 import static java.util.Collections.singletonList;
 import static org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates;
+import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
 
@@ -183,18 +184,18 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
             boolean added = false;
             Angular2DirectiveProperty property;
             if ((property = inOuts.get(attrName)) != null) {
-              addAttribute.accept("[(" + attrName + ")]", property.getNavigableElement());
+              addAttribute.accept(BANANA_BOX_BINDING.buildName(attrName), property.getNavigableElement());
               added = true;
             }
             if ((property = inputs.get(attrName)) != null) {
-              addAttribute.accept("[" + attrName + "]", property.getNavigableElement());
+              addAttribute.accept(PROPERTY_BINDING.buildName(attrName), property.getNavigableElement());
               added = true;
               if (Angular2AttributeDescriptor.isOneTimeBindingProperty(property)) {
                 addAttribute.accept(attrName, property.getNavigableElement());
               }
             }
             if ((property = outputs.get(attrName)) != null) {
-              addAttribute.accept("(" + attrName + ")", property.getNavigableElement());
+              addAttribute.accept(EVENT.buildName(attrName), property.getNavigableElement());
               added = true;
             }
             if (!added) {
@@ -247,10 +248,10 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
             dependencies.add(propertyDeclaration.getContainingFile());
             String name;
             if (property.getMemberName().startsWith("on")) {
-              name = "(" + property.getMemberName().substring(2) + ")";
+              name = EVENT.buildName(property.getMemberName().substring(2));
             }
             else {
-              name = "[" + property.getMemberName() + "]";
+              name = PROPERTY_BINDING.buildName(property.getMemberName());
             }
             if (allowedElementProperties.remove(name)) {
               result.add(Angular2AttributeDescriptor.create(name, propertyDeclaration));
@@ -279,14 +280,14 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     xmlTag.acceptChildren(new Angular2HtmlElementVisitor() {
       @Override
       public void visitVariable(Angular2HtmlVariable variable) {
-        result
-          .add(new Angular2AttributeDescriptor(variable.getName(), isInTemplateTag, singletonList(variable.getNameElement())));
+        result.add(new Angular2AttributeDescriptor(variable.getName(), isInTemplateTag,
+                                                   singletonList(variable.getNameElement())));
       }
 
       @Override
       public void visitReference(Angular2HtmlReference reference) {
-        result.add(
-          new Angular2AttributeDescriptor(reference.getName(), isInTemplateTag, singletonList(reference.getNameElement())));
+        result.add(new Angular2AttributeDescriptor(reference.getName(), isInTemplateTag,
+                                                   singletonList(reference.getNameElement())));
       }
     });
     return result;

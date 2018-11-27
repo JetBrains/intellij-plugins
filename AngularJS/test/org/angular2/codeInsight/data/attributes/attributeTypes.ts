@@ -5,7 +5,7 @@ import {RefDirective} from "./exportAs";
 
 @Component({
     selector: 'my-comp',
-    template: `<my-comp foo <caret>`,
+    template: `<my-comp bindon-ngModel="" foo <caret>`,
 })
 export class HeroAsyncMessageComponent<T> {
 
