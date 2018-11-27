@@ -11,12 +11,14 @@ import com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnota
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLinterInput;
 import com.intellij.lang.javascript.service.JSLanguageServiceExecutorImpl;
+import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.LineSeparator;
+import org.apache.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 
@@ -46,6 +48,11 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   @Override
   protected String getPackageName() {
     return "tslint";
+  }
+  @Override
+  protected void setUp() throws Exception {
+    JSLanguageServiceQueue.LOGGER.setLevel(Level.TRACE);
+    super.setUp();
   }
 
   @Override
