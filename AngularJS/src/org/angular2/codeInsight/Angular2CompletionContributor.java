@@ -22,13 +22,17 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlExtension;
+import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -108,8 +112,14 @@ public class Angular2CompletionContributor extends CompletionContributor {
         final XmlExtension extension = XmlExtension.getExtension(file);
 
         Set<String> providedElements = new HashSet<>();
+        Set<String> existingProperties = StreamEx.of(attributes)
+          .map(attr -> attr.getDescriptor())
+          .select(Angular2AttributeDescriptor.class)
+          .map(Angular2CompletionContributor::getBoundPropertyName)
+          .toSet();
         for (XmlAttributeDescriptor descriptor : descriptors) {
           if (descriptor instanceof Angular2AttributeDescriptor
+              && !existingProperties.contains(getBoundPropertyName((Angular2AttributeDescriptor)descriptor))
               && isValidVariant(attribute, descriptor, attributes, extension)) {
             LookupElement element = ((Angular2AttributeDescriptor)descriptor).getLookupElement();
             providedElements.addAll(element.getAllLookupStrings());
@@ -127,6 +137,20 @@ public class Angular2CompletionContributor extends CompletionContributor {
         });
       }
     }
+  }
+
+  @Nullable
+  private static String getBoundPropertyName(@NotNull Angular2AttributeDescriptor descriptor) {
+    Angular2AttributeNameParser.AttributeInfo info = descriptor.getInfo();
+    if (info == null) {
+      return descriptor.getName();
+    }
+    else if (info.type == Angular2AttributeNameParser.AttributeType.BANANA_BOX_BINDING
+             || (info.type == Angular2AttributeNameParser.AttributeType.PROPERTY_BINDING
+                 && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY)) {
+      return info.name;
+    }
+    return null;
   }
 
   private static <T extends PsiElement> PatternCondition<T> language(@NotNull Language language) {
