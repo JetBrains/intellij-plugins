@@ -49,7 +49,7 @@ import java.util.function.Function;
 import static com.intellij.lang.javascript.psi.types.JSTypeSourceFactory.createTypeSource;
 import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getCustomNgAttrs;
-import static org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeType.*;
+import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
 
@@ -73,7 +73,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     }
     Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attributeName, true);
     if (elements.isEmpty()
-        && (info.type == XML_ATTRIBUTE
+        && (info.type == REGULAR
             || info.type == TEMPLATE_BINDINGS
             || (info instanceof Angular2AttributeNameParser.EventInfo
                 && ((Angular2AttributeNameParser.EventInfo)info).eventType == Angular2HtmlEvent.EventType.REGULAR
@@ -132,7 +132,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                         @NotNull Collection<PsiElement> elements) {
     myAttributeName = attributeName;
     myElements = elements.toArray(PsiElement.EMPTY_ARRAY);
-    myInfo = info != null && info.type != XML_ATTRIBUTE ? info : null;
+    myInfo = info != null && info.type != REGULAR ? info : null;
     myPriority = priority;
   }
 
@@ -191,7 +191,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
         return true;
       }, type);
       if (!values.isEmpty()) {
-        return values.toArray(ArrayUtil.EMPTY_STRING_ARRAY);
+        return ArrayUtil.toStringArray(values);
       }
     }
     return ArrayUtil.EMPTY_STRING_ARRAY;
@@ -302,13 +302,13 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @NotNull
   private static Angular2AttributeDescriptor createBinding(@NotNull Angular2DirectiveProperty info) {
-    return new Angular2AttributeDescriptor("[" + info.getName() + "]", false, AttributePriority.HIGH,
+    return new Angular2AttributeDescriptor(PROPERTY_BINDING.buildName(info.getName()), false, AttributePriority.HIGH,
                                            singletonList(info.getNavigableElement()));
   }
 
   @NotNull
   private static Angular2AttributeDescriptor createBananaBoxBinding(@NotNull Pair<Angular2DirectiveProperty, Angular2DirectiveProperty> info) {
-    return new Angular2AttributeDescriptor("[(" + info.first.getName() + ")]", false, AttributePriority.HIGH,
+    return new Angular2AttributeDescriptor(BANANA_BOX_BINDING.buildName(info.first.getName()), false, AttributePriority.HIGH,
                                            ContainerUtil.newArrayList(info.first.getNavigableElement(),
                                                                       info.second.getNavigableElement()));
   }
@@ -323,7 +323,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @NotNull
   private static Angular2EventHandlerDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
-    return new Angular2EventHandlerDescriptor("(" + info.getName() + ")", false, AttributePriority.HIGH,
+    return new Angular2EventHandlerDescriptor(EVENT.buildName(info.getName()), false, AttributePriority.HIGH,
                                               singletonList(info.getNavigableElement()));
   }
 
