@@ -232,7 +232,8 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("overriddenMethods.ts", "package.json");
       myFixture.completeBasic();
-      assertEquals(newArrayList("bar#null# TodoCmp (overriddenMethods.ts)",
+      assertEquals(newArrayList("$any#any#(arg: any)",
+                                "bar#null# TodoCmp (overriddenMethods.ts)",
                                 "bar#string#()",
                                 "bar#string#(test: boolean)",
                                 "bar#string#(test: string)",
