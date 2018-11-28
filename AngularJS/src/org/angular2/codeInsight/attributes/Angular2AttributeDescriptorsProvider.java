@@ -63,6 +63,19 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
           return d;
         }
       }
+      for (Angular2AdditionalAttributesProvider provider :
+        Angular2AdditionalAttributesProvider.ADDITIONAL_ATTRIBUTES_PROVIDER_EP.getExtensionList()) {
+        for (String prefix : provider.getPrefixes(false)) {
+          if (attrName.startsWith(prefix)) {
+            for (Angular2AttributeDescriptor d : provider.getDescriptors(xmlTag, false)) {
+              if (attrName.equals(d.getName())
+                  || info.isEquivalent(d.getInfo())) {
+                return d;
+              }
+            }
+          }
+        }
+      }
     }
     return Angular2AttributeDescriptor.create(attrName);
   }
@@ -109,7 +122,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   private static List<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag,
-                                                                @NotNull Set<Angular2Directive> directiveCandidates) {
+                                                                 @NotNull Set<Angular2Directive> directiveCandidates) {
     directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), xmlTag.getName()));
     directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), ""));
     return Angular2TagDescriptorsProvider.matchDirectives(xmlTag, directiveCandidates);

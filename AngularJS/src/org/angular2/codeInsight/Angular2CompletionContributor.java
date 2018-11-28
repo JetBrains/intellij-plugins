@@ -3,18 +3,21 @@ package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.resolve.HtmlCssClassOrIdReference;
+import com.intellij.psi.impl.source.html.dtd.HtmlAttributeDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlAttributeReference;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
@@ -24,11 +27,10 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlExtension;
+import icons.AngularJSIcons;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
-import org.angular2.codeInsight.attributes.Angular2AttributeNameVariantsBuilder;
+import org.angular2.codeInsight.attributes.*;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
@@ -41,12 +43,14 @@ import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.codeInsight.completion.XmlAttributeReferenceCompletionProvider.isValidVariant;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
+import static com.intellij.patterns.StandardPatterns.character;
+import static com.intellij.patterns.StandardPatterns.string;
+import static com.intellij.util.containers.ContainerUtil.newArrayList;
+import static com.intellij.util.containers.ContainerUtil.newHashSet;
 
 public class Angular2CompletionContributor extends CompletionContributor {
 
@@ -54,7 +58,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
   private static final JSLookupPriority NG_PRIVATE_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY_EXOTIC;
   private static final JSLookupPriority NG_$ANY_PRIORITY = JSLookupPriority.TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES;
 
-  private static final Set<String> NG_LIFECYCLE_HOOKS = ContainerUtil.newHashSet(
+  private static final Set<String> NG_LIFECYCLE_HOOKS = newHashSet(
     "ngOnChanges", "ngOnInit", "ngDoCheck", "ngOnDestroy", "ngAfterContentInit",
     "ngAfterContentChecked", "ngAfterViewInit", "ngAfterViewChecked");
 
@@ -125,14 +129,15 @@ public class Angular2CompletionContributor extends CompletionContributor {
       final XmlElementDescriptor parentDescriptor = tag.getDescriptor();
       if (parentDescriptor != null) {
         final XmlAttribute[] attributes = tag.getAttributes();
-        XmlAttributeDescriptor[] descriptors = parentDescriptor.getAttributesDescriptors(tag);
+        List<XmlAttributeDescriptor> descriptors = newArrayList(parentDescriptor.getAttributesDescriptors(tag));
+        addAdditionalAttributesDescriptor(parameters, result, tag, descriptors);
 
         final PsiFile file = tag.getContainingFile();
         final XmlExtension extension = XmlExtension.getExtension(file);
 
         Set<String> providedAttributes = StreamEx.of(attributes)
           .map(attr -> attr.getDescriptor())
-          .select(Angular2AttributeDescriptor.class)
+          .nonNull()
           .flatCollection(Angular2CompletionContributor::getRelatedAttributes)
           .toSet();
         for (XmlAttributeDescriptor descriptor : descriptors) {
@@ -145,6 +150,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
             }
           }
         }
+
         Set<String> standardHtmlEvents = new HashSet<>(Angular2AttributeDescriptorsProvider.getStandardTagEventAttributeNames(tag));
         result.runRemainingContributors(parameters, toPass -> {
           for (String str : toPass.getLookupElement().getAllLookupStrings()) {
@@ -159,43 +165,111 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
   }
 
+  private static void addAdditionalAttributesDescriptor(@NotNull CompletionParameters parameters,
+                                                        @NotNull CompletionResultSet result,
+                                                        @NotNull XmlTag tag,
+                                                        @NotNull List<XmlAttributeDescriptor> descriptors) {
+    final Set<Character> notAllowedChars = newHashSet('=', '\'', '\"', '<', '>', '/', '\0');
+    ElementPattern<Character> htmlAttributeNamePattern =
+      character().without(new PatternCondition<Character>("htmlAttributeNameForbiddenChars") {
+        @Override
+        public boolean accepts(@NotNull Character character, ProcessingContext context) {
+          return Character.isWhitespace(character) || notAllowedChars.contains(character);
+        }
+      });
+    String prefix = CompletionUtil.findIdentifierPrefix(parameters.getPosition().getContainingFile(),
+                                                        parameters.getOffset(), htmlAttributeNamePattern, htmlAttributeNamePattern);
+
+    for (Angular2AdditionalAttributesProvider provider :
+      Angular2AdditionalAttributesProvider.ADDITIONAL_ATTRIBUTES_PROVIDER_EP.getExtensionList()) {
+      boolean prefixMatched = false;
+      List<String> prefixes = provider.getPrefixes(true);
+      for (String providerPrefix : prefixes) {
+        prefixMatched = prefix.startsWith(providerPrefix);
+        if (prefixMatched) {
+          break;
+        }
+      }
+      if (prefixMatched) {
+        descriptors.addAll(provider.getDescriptors(tag, true));
+      }
+      else {
+        result.restartCompletionOnPrefixChange(string().oneOf(prefixes));
+        result.addElement(LookupElementBuilder.create(prefixes.get(0))
+                            .withLookupStrings(prefixes)
+                            .withIcon(AngularJSIcons.Angular2)
+                            .withInsertHandler(new InsertHandler<LookupElement>() {
+                              @Override
+                              public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
+                                context.setLaterRunnable(() -> CodeCompletionHandlerBase.createHandler(CompletionType.BASIC)
+                                  .invokeCompletion(context.getProject(), context.getEditor()));
+                              }
+                            }));
+      }
+    }
+  }
+
   @NotNull
-  private static Collection<String> getRelatedAttributes(@NotNull Angular2AttributeDescriptor descriptor) {
-    Angular2AttributeNameParser.AttributeInfo info = descriptor.getInfo();
-    if (info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
-      return ContainerUtil.concat(
-        Angular2AttributeNameVariantsBuilder.forTypes(
+  private static Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor) {
+    if (descriptor instanceof Angular2AttributeDescriptor) {
+      Angular2AttributeNameParser.AttributeInfo info = ((Angular2AttributeDescriptor)descriptor).getInfo();
+      if (info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
+        return ContainerUtil.concat(
+          Angular2AttributeNameVariantsBuilder.forTypes(
+            info.name, true, true,
+            Angular2AttributeType.REGULAR,
+            Angular2AttributeType.PROPERTY_BINDING,
+            Angular2AttributeType.BANANA_BOX_BINDING),
+          Angular2AttributeNameVariantsBuilder.forTypes(
+            info.name + "Change", true, true,
+            Angular2AttributeType.EVENT));
+      }
+      else if ((info instanceof PropertyBindingInfo
+               && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY)
+               || info.type == Angular2AttributeType.REGULAR) {
+        return Angular2AttributeNameVariantsBuilder.forTypes(
           info.name, true, true,
           Angular2AttributeType.REGULAR,
           Angular2AttributeType.PROPERTY_BINDING,
-          Angular2AttributeType.BANANA_BOX_BINDING),
-        Angular2AttributeNameVariantsBuilder.forTypes(
-          info.name + "Change", true, true,
-          Angular2AttributeType.EVENT));
-    }
-    else if ((info instanceof PropertyBindingInfo
-              && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY)
-             || info.type == Angular2AttributeType.REGULAR) {
+          Angular2AttributeType.BANANA_BOX_BINDING);
+      }
+      else if (info instanceof PropertyBindingInfo
+               && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.ATTRIBUTE) {
+        String attrName = info.name;
+        return ContainerUtil.concat(
+          Collections.singletonList(attrName),
+          Angular2AttributeNameVariantsBuilder.forTypes(
+            Angular2AttrAdditionalAttributesProvider.PREFIX + attrName, true, true,
+            Angular2AttributeType.PROPERTY_BINDING)
+        );
+      }
+      else if (info instanceof EventInfo
+               && (((EventInfo)info).eventType == Angular2HtmlEvent.EventType.REGULAR)
+               && info.name.endsWith("Change")) {
+        return ContainerUtil.concat(
+          Angular2AttributeNameVariantsBuilder.forTypes(
+            StringUtil.trimEnd(info.name, "Change"), true, true,
+            Angular2AttributeType.BANANA_BOX_BINDING),
+          Angular2AttributeNameVariantsBuilder.forTypes(
+            info.name, true, true,
+            Angular2AttributeType.EVENT));
+      }
       return Angular2AttributeNameVariantsBuilder.forTypes(
-        info.name, true, true,
-        Angular2AttributeType.REGULAR,
-        Angular2AttributeType.PROPERTY_BINDING,
-        Angular2AttributeType.BANANA_BOX_BINDING);
+        info.getFullName(), true, true,
+        info.type);
     }
-    else if (info instanceof EventInfo
-             && (((EventInfo)info).eventType == Angular2HtmlEvent.EventType.REGULAR)
-             && info.name.endsWith("Change")) {
-      return ContainerUtil.concat(
-        Angular2AttributeNameVariantsBuilder.forTypes(
-          StringUtil.trimEnd(info.name, "Change"), true, true,
-          Angular2AttributeType.BANANA_BOX_BINDING),
-        Angular2AttributeNameVariantsBuilder.forTypes(
-          info.name, true, true,
-          Angular2AttributeType.EVENT));
+    else if (descriptor instanceof HtmlAttributeDescriptorImpl) {
+      String attrName = descriptor.getName();
+      if (!attrName.startsWith("on")) {
+        return ContainerUtil.concat(
+          Collections.singletonList(attrName),
+          Angular2AttributeNameVariantsBuilder.forTypes(
+            Angular2AttrAdditionalAttributesProvider.PREFIX + attrName, true, true,
+            Angular2AttributeType.PROPERTY_BINDING)
+        );
+      }
     }
-    return Angular2AttributeNameVariantsBuilder.forTypes(
-      info.getFullName(), true, true,
-      info.type);
+    return Collections.emptyList();
   }
 
   private static <T extends PsiElement> PatternCondition<T> language(@NotNull Language language) {

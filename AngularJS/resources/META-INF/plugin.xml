@@ -29,6 +29,10 @@
   <depends optional="true" config-file="css-support.xml">com.intellij.css</depends>
   <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>
 
+  <extensionPoints>
+    <extensionPoint qualifiedName="org.angular2.additionalAttributesProvider" interface="org.angular2.codeInsight.attributes.Angular2AdditionalAttributesProvider"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <codeInsight.template.postfixTemplateProvider language="AngularJS"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
@@ -193,6 +197,10 @@
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2AnalysisHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="Angular2" implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.angular2">
+    <additionalAttributesProvider implementation="org.angular2.codeInsight.attributes.Angular2AttrAdditionalAttributesProvider" />
   </extensions>
 
   <actions>
