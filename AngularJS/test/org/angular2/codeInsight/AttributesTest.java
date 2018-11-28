@@ -926,7 +926,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         "(click)#50",
         "(blur)#50",
         "[innerHTML]#50",
-        "*ngIf#50"
+        "*ngIf#50",
+        "[attr.#0"
       );
       assertDoesntContain(myFixture.getLookupElementStrings(), "[ngModel]", "ngModel", "(ngModelChange)", "[matchedPlainBoolean]");
     });
@@ -966,4 +967,16 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
                              "clientX", "clientY", "isTrusted", "timeStamp");
     });
   }
+
+  public void testAttrCompletions() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attrTest.ts", "package.json");
+      myFixture.completeBasic();
+      myFixture.type("att\n");
+      myFixture.type("acc\n");
+      PsiElement element = AngularTestUtil.resolveReference("[attr.ac<caret>cesskey]", myFixture);
+      assertEquals("common.rnc", element.getContainingFile().getName());
+    });
+  }
+
 }
