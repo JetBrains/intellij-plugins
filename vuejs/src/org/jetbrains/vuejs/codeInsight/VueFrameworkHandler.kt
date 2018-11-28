@@ -145,6 +145,16 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val obj = property.parent as JSObjectLiteralExpression
 
     val out = outData ?: JSElementIndexingDataImpl()
+    //Bootstrap-vue components
+    if (property.containingFile.name == "index.js" && property.parent is JSObjectLiteralExpression) {
+      val parent = PsiTreeUtil.findFirstParent(property, Condition {
+        return@Condition it is JSVarStatement && it.variables.first().name == "components"
+      })
+      if (parent != null) {
+        val componentName = property.name ?: ""
+        out.addImplicitElement(createImplicitElement(componentName, property, VueComponentsIndex.JS_KEY))
+      }
+    }
     if (MIXINS == property.name && property.value is JSArrayLiteralExpression) {
       (property.value as JSArrayLiteralExpression).expressions
         .forEach {
