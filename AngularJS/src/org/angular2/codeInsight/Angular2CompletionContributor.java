@@ -6,6 +6,7 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
+import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
@@ -48,8 +49,10 @@ import static com.intellij.codeInsight.completion.XmlAttributeReferenceCompletio
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 public class Angular2CompletionContributor extends CompletionContributor {
+
   private static final JSLookupPriority NG_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY;
   private static final JSLookupPriority NG_PRIVATE_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY_EXOTIC;
+  private static final JSLookupPriority NG_$ANY_PRIORITY = JSLookupPriority.TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES;
 
   private static final Set<String> NG_LIFECYCLE_HOOKS = ContainerUtil.newHashSet(
     "ngOnChanges", "ngOnInit", "ngDoCheck", "ngOnDestroy", "ngAfterContentInit",
@@ -92,7 +95,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
         if (name != null && !NG_LIFECYCLE_HOOKS.contains(name)
             && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, null))) {
           result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(
-            element, name, Angular2DecoratorUtil.isPrivateMember(element) ? NG_PRIVATE_VARIABLE_PRIORITY : NG_VARIABLE_PRIORITY, false,
+            element, name, calcPriority(element), false,
             false));
         }
       });
@@ -102,6 +105,15 @@ public class Angular2CompletionContributor extends CompletionContributor {
       ((HtmlCssClassOrIdReference)ref).addCompletions(parameters, result);
       result.stopHere();
     }
+  }
+
+  private static JSLookupPriority calcPriority(JSPsiElementBase element) {
+    if (Angular2Processor.$ANY.equals(element.getName())) {
+      return NG_$ANY_PRIORITY;
+    }
+    return Angular2DecoratorUtil.isPrivateMember(element)
+           ? NG_PRIVATE_VARIABLE_PRIORITY
+           : NG_VARIABLE_PRIORITY;
   }
 
   private static void addAttributeNameCompletions(@NotNull final CompletionParameters parameters,

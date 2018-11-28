@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
@@ -12,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFieldImpl;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import one.util.streamex.StreamEx;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -27,10 +27,6 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
   @NotNull
   private PsiElement resolveReference(@NotNull String signature) {
     return AngularTestUtil.resolveReference(signature, myFixture);
-  }
-
-  private void assertUnresolvedReference(@NotNull String signature) {
-    AngularTestUtil.assertUnresolvedReference(signature, myFixture);
   }
 
   public void testInlineTemplateCompletion2TypeScript() {
@@ -236,16 +232,16 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("overriddenMethods.ts", "package.json");
       myFixture.completeBasic();
-      assertEquals(StreamEx.of(myFixture.getLookupElements()).map(el -> {
-        LookupElementPresentation presentation = new LookupElementPresentation();
-        el.renderElement(presentation);
-        return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
-      }).sorted().toList(), newArrayList(
-        "bar#null# TodoCmp (overriddenMethods.ts)",
-        "bar#string#()",
-        "bar#string#(test: boolean)",
-        "bar#string#(test: string)",
-        "foo#string# (TodoCmp)"));
+      assertEquals(newArrayList("$any#any#(arg: any)",
+                                "bar#null# TodoCmp (overriddenMethods.ts)",
+                                "bar#string#()",
+                                "bar#string#(test: boolean)",
+                                "bar#string#(test: string)",
+                                "foo#string# (TodoCmp)"),
+                   StreamEx.of(myFixture.getLookupElements()).map(el -> {
+                     TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
+                     return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
+                   }).sorted().toList());
     });
   }
 }

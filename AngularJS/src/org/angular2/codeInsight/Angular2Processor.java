@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitParameterStructure;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
@@ -58,6 +59,7 @@ public class Angular2Processor {
   private static volatile Map<String, String> TAG_TO_CLASS;
 
   public static final String $EVENT = "$event";
+  public static final String $ANY = "$any";
 
   public static boolean isTemplateTag(@Nullable String tagName) {
     return "ng-template".equalsIgnoreCase(tagName)
@@ -118,6 +120,7 @@ public class Angular2Processor {
       scopes.add(new Angular2ComponentScope(clazz));
     }
     scopes.add(Objects.requireNonNull(rootTemplateScope.findBestMatchingTemplateScope(hostElement)));
+    scopes.add(new Angular2$AnyScope(element.getContainingFile()));
 
     if (element != hostElement) {
       PsiElement attribute = hostElement;
@@ -444,6 +447,28 @@ public class Angular2Processor {
 
     @NotNull
     public abstract List<JSPsiElementBase> getElements();
+  }
+
+  private static class Angular2$AnyScope extends Angular2Scope {
+
+    private final JSImplicitElement $any;
+
+    private Angular2$AnyScope(PsiElement context) {
+      super(null);
+      $any = new JSImplicitElementImpl.Builder($ANY, context)
+        .setTypeString("any")
+        .setParameters(Collections.singletonList(
+          new JSImplicitParameterStructure("arg", "any", false, false, true)
+        ))
+        .setType(JSImplicitElement.Type.Function)
+        .toImplicitElement();
+    }
+
+    @NotNull
+    @Override
+    public List<JSPsiElementBase> getElements() {
+      return Collections.singletonList($any);
+    }
   }
 
   private static class Angular2TemplateScope extends Angular2Scope {

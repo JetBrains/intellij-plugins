@@ -835,7 +835,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("lifecycleHooks.ts", "package.json");
       myFixture.completeBasic();
-      assertEquals(ContainerUtil.sorted(myFixture.getLookupElementStrings()), ContainerUtil.newArrayList("testOne", "testTwo", "testing"));
+      assertEquals(ContainerUtil.sorted(myFixture.getLookupElementStrings()),
+                   ContainerUtil.newArrayList("$any", "testOne", "testTwo", "testing"));
     });
   }
 
@@ -901,7 +902,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testMatchedDirectivesProperties() {
     JSTestUtils.testES6(getProject(), () -> {
-      configureWithMetadataFiles(myFixture,"common", "forms");
+      configureWithMetadataFiles(myFixture, "common", "forms");
       myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts");
       myFixture.completeBasic();
       assertContainsElements(
@@ -961,9 +962,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.completeBasic();
 
       assertContainsElements(myFixture.getLookupElementStrings(),
-                         "x", "y", "layerX", "layerY", "altKey", "button",
-                         "clientX", "clientY", "isTrusted", "timeStamp");
+                             "x", "y", "layerX", "layerY", "altKey", "button",
+                             "clientX", "clientY", "isTrusted", "timeStamp");
     });
   }
-
 }
