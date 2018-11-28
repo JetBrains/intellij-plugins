@@ -42,6 +42,7 @@ import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
 
 const val VUE: String = "vue"
 const val VUETIFY: String = "vuetify"
+const val BOOTSTRAP_VUE: String = "bootstrap-vue"
 @Suppress("PropertyName")
 const val GLOBAL: String = "global"
 const val LOCAL: String = "local"

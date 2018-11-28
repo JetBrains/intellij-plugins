@@ -876,6 +876,17 @@ $script""")
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, listOf("affix", "alert", "auto-complete", "avatar"))
   }
 
+  fun testBootstrapVueCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"bootstrap-vue\": \"latest\"")
+    myFixture.copyDirectoryToProject("../libs/bootstrap-vue/node_modules", "./node_modules")
+    myFixture.configureByText("BoostrapVue.vue",
+                              """
+<template><<caret></template>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, listOf("b-form", "b-form-row", "b-form-text", "b-form-invalid-feedback"))
+  }
+
   fun testWrongPropsNotInCompletion() {
     myFixture.configureByText("WrongPropsNotInCompletion.vue", """
 <template>
