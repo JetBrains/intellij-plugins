@@ -200,10 +200,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       }
     }
-    attrsFromSelectors.entrySet().forEach(e -> {
-      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(e.getKey(), isTemplateTag);
-      result.add(new Angular2AttributeDescriptor(e.getKey(), info, e.getValue()));
-    });
+    attrsFromSelectors.entrySet().forEach(e -> result.add(
+      new Angular2AttributeDescriptor(e.getKey(), isTemplateTag, e.getValue())));
     return result;
   }
 

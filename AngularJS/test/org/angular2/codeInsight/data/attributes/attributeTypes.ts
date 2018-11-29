@@ -5,12 +5,15 @@ import {RefDirective} from "./exportAs";
 
 @Component({
     selector: 'my-comp',
-    template: `<my-comp bindon-ngModel="" foo <caret>`,
+    template: `<my-comp matchedPlainBoolean bindon-ngModel="" foo <caret>`,
 })
 export class HeroAsyncMessageComponent<T> {
 
     @Input
     plainBoolean: boolean;
+
+    @Input
+    matchedPlainBoolean: boolean;
 
     @Output("my-event")
     myEvent: EventEmitter<MyEvent>;
