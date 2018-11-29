@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
@@ -174,9 +175,12 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testIntermediateFoldersWithPackageJson2() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.configureByFiles("inner/event.html", "inner/package.json", "inner/event.ts");
+      PsiFile[] files = myFixture.configureByFiles("inner/event.html", "inner/package.json", "inner/event.ts",
+                                                   "inner2/event.html", "inner2/package.json", "inner2/event.ts");
       int offsetBySignature = findOffsetBySignature("callAnonymous<caret>Api()", myFixture.getFile());
       assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
+      myFixture.openFileInEditor(files[3].getViewProvider().getVirtualFile());
+      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
     });
   }
 
