@@ -14,14 +14,11 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.vuejs.index.BOOTSTRAP_VUE
-import org.jetbrains.vuejs.index.GLOBAL_BINDING_MARK
-import org.jetbrains.vuejs.index.VUETIFY
-import org.jetbrains.vuejs.index.getVueIndexData
+import org.jetbrains.vuejs.index.*
 
 class VueComponentsCache {
   companion object {
-    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY, BOOTSTRAP_VUE)
+    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY, BOOTSTRAP_VUE, SHARDS_VUE)
 
     // returns module: (component: (navigation-element, isGlobal))
     fun getAllComponentsGroupedByModules(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean):
@@ -126,7 +123,7 @@ class VueComponentsCache {
 
     private fun packageJsonForLibraryAndHasVue(it: VirtualFile) = JSLibraryUtil.isProbableLibraryFile(it) &&
                                                                   (PackageJsonUtil.getOrCreateData(it).containsOneOfDependencyOfAnyType(
-                                                                    "vue-loader", "vue-latest", "vue"))
+                                                                    "vue-loader", "vue-latest", "vue", "vue-template-compiler"))
   }
 
   class ComponentsData(val map: Map<String, Pair<PsiElement, Boolean>>,
