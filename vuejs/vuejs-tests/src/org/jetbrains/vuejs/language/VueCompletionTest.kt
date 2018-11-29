@@ -887,6 +887,17 @@ $script""")
     UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, listOf("b-form", "b-form-row", "b-form-text", "b-form-invalid-feedback"))
   }
 
+  fun testShardsVueCompletion() {
+    createPackageJsonWithVueDependency(myFixture, "\"shards-vue\": \"latest\"")
+    myFixture.copyDirectoryToProject("../libs/shards-vue/node_modules", "./node_modules")
+    myFixture.configureByText("ShardsVue.vue",
+                              """
+<template><<caret></template>
+""")
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, listOf("d-alert", "DAlert"))
+  }
+
   fun testWrongPropsNotInCompletion() {
     myFixture.configureByText("WrongPropsNotInCompletion.vue", """
 <template>
