@@ -7212,72 +7212,72 @@ public class DartParser implements PsiParser, LightPsiParser {
     return r || p;
   }
 
-  final static Parser argument_list_part_recover_parser_ = new Parser() {
+  static final Parser argument_list_part_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return argument_list_part_recover(b, l + 1);
     }
   };
-  final static Parser argument_list_recover_parser_ = new Parser() {
+  static final Parser argument_list_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return argument_list_recover(b, l + 1);
     }
   };
-  final static Parser class_member_recover_parser_ = new Parser() {
+  static final Parser class_member_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return class_member_recover(b, l + 1);
     }
   };
-  final static Parser default_formal_parameter_recover_parser_ = new Parser() {
+  static final Parser default_formal_parameter_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return default_formal_parameter_recover(b, l + 1);
     }
   };
-  final static Parser expression_recover_parser_ = new Parser() {
+  static final Parser expression_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return expression_recover(b, l + 1);
     }
   };
-  final static Parser for_loops_parts_recover_parser_ = new Parser() {
+  static final Parser for_loops_parts_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return for_loops_parts_recover(b, l + 1);
     }
   };
-  final static Parser map_literal_entry_recover_parser_ = new Parser() {
+  static final Parser map_literal_entry_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return map_literal_entry_recover(b, l + 1);
     }
   };
-  final static Parser not_paren_or_comma_recover_parser_ = new Parser() {
+  static final Parser not_paren_or_comma_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return not_paren_or_comma_recover(b, l + 1);
     }
   };
-  final static Parser not_paren_recover_parser_ = new Parser() {
+  static final Parser not_paren_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return not_paren_recover(b, l + 1);
     }
   };
-  final static Parser parenthesesRecovery_parser_ = new Parser() {
+  static final Parser parenthesesRecovery_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return parenthesesRecovery(b, l + 1);
     }
   };
-  final static Parser simple_scope_recover_parser_ = new Parser() {
+  static final Parser simple_scope_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return simple_scope_recover(b, l + 1);
     }
   };
-  final static Parser super_call_or_field_initializer_recover_parser_ = new Parser() {
+  static final Parser super_call_or_field_initializer_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return super_call_or_field_initializer_recover(b, l + 1);
     }
   };
-  final static Parser top_level_recover_parser_ = new Parser() {
+  static final Parser top_level_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return top_level_recover(b, l + 1);
     }
   };
-  final static Parser type_parameter_recover_parser_ = new Parser() {
+  static final Parser type_parameter_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return type_parameter_recover(b, l + 1);
     }
