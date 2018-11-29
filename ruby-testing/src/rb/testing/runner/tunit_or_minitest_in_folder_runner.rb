@@ -128,11 +128,13 @@ def drb_launch_tests(drb_runner, test_scripts, test_scripts_names, test_names)
 
   require 'rubygems'
   require 'rake'
-  puts (sh(*cmdline) do |ok, res|
+  
+  result = sh(*cmdline) do |ok, res|
     unless ok
       puts "Exit code: #{res.exitstatus}"
     end
-  end)
+  end
+  puts result
 end
 
 def get_test_scripts(names)
