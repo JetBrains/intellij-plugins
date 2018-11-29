@@ -154,9 +154,9 @@ public class AssistUtils {
   }
 
   @NotNull
-  public static Map<VirtualFile, SourceFileEdit> getContentFilesChanges(@NotNull final Project project,
-                                                                        @NotNull final SourceChange sourceChange,
-                                                                        @NotNull final Set<String> excludedIds)
+  private static Map<VirtualFile, SourceFileEdit> getContentFilesChanges(@NotNull final Project project,
+                                                                         @NotNull final SourceChange sourceChange,
+                                                                         @NotNull final Set<String> excludedIds)
     throws DartSourceEditException {
 
     final Map<VirtualFile, SourceFileEdit> map = Maps.newHashMap();
@@ -178,10 +178,13 @@ public class AssistUtils {
       if (file == null) {
         throw new DartSourceEditException("Failed to edit file, file not found: " + fileEdit.getFile());
       }
-      if (!isInContent(project, file)) {
-        throw new DartSourceEditException("Can't edit file outside of the project content: " + fileEdit.getFile());
+
+      if (isInContent(project, file)) {
+        map.put(file, fileEdit);
       }
-      map.put(file, fileEdit);
+    }
+    if (map.isEmpty() && !fileEdits.isEmpty()) {
+      throw new DartSourceEditException("None of the files were in this project content: " + fileEdits.get(0).getFile());
     }
     return map;
   }
@@ -331,7 +334,7 @@ public class AssistUtils {
     private final String normalizedReplacement;
 
     SourceEditInfo(int originalOffset, int convertedOffset, int originalLength, int convertedLength,
-                          String originalReplacement, String normalizedReplacement) {
+                   String originalReplacement, String normalizedReplacement) {
       this.originalOffset = originalOffset;
       resultingOriginalOffset = originalOffset;
       this.convertedOffset = convertedOffset;
