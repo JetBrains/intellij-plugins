@@ -198,7 +198,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
       })
       if (!hasVuetify(allComponents)) return
-      elements.addAll(vuetifyUnresolvedComponentsWithPascalCase().map {
+      elements.addAll(VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.map {
         LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText(VUETIFY, true)
       })
     }
@@ -304,12 +304,10 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "v-toolbar-items",
       "v-toolbar-title"
     )
-    fun vuetifyUnresolvedComponentsWithPascalCase(): MutableIterable<String> {
-      val pascalCaseComponents = VUETIFY_UNRESOLVED_COMPONENTS.map {
-        toAsset(it).capitalize()
-      }
-      return ContainerUtil.concat(VUETIFY_UNRESOLVED_COMPONENTS, pascalCaseComponents)
-    }
+    val VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE: MutableIterable<String> = ContainerUtil.concat(VUETIFY_UNRESOLVED_COMPONENTS,
+                                                                                                       VUETIFY_UNRESOLVED_COMPONENTS.map {
+                                                                                                         toAsset(it).capitalize()
+                                                                                                       })
   }
 }
 
