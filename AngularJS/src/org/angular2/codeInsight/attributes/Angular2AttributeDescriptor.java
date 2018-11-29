@@ -69,7 +69,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   public static Angular2AttributeDescriptor create(@NotNull String attributeName,
                                                    @NotNull List<PsiElement> elements) {
     if (getCustomNgAttrs().contains(attributeName)) {
-      return new Angular2AttributeDescriptor(attributeName, null, elements);
+      return new Angular2AttributeDescriptor(attributeName, false, elements);
     }
     Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attributeName, true);
     if (elements.isEmpty()
@@ -101,9 +101,13 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return result;
   }
 
+  @NotNull
   private final AttributePriority myPriority;
+  @NotNull
   private final PsiElement[] myElements;
+  @NotNull
   private final String myAttributeName;
+  @NotNull
   private final Angular2AttributeNameParser.AttributeInfo myInfo;
 
   protected Angular2AttributeDescriptor(@NotNull String attributeName,
@@ -114,7 +118,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   protected Angular2AttributeDescriptor(@NotNull String attributeName,
-                                        @Nullable Angular2AttributeNameParser.AttributeInfo info,
+                                        @NotNull Angular2AttributeNameParser.AttributeInfo info,
                                         @NotNull Collection<PsiElement> elements) {
     this(attributeName, info, AttributePriority.NORMAL, elements);
   }
@@ -127,12 +131,12 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   protected Angular2AttributeDescriptor(@NotNull String attributeName,
-                                        @Nullable Angular2AttributeNameParser.AttributeInfo info,
+                                        @NotNull Angular2AttributeNameParser.AttributeInfo info,
                                         @NotNull AttributePriority priority,
                                         @NotNull Collection<PsiElement> elements) {
     myAttributeName = attributeName;
     myElements = elements.toArray(PsiElement.EMPTY_ARRAY);
-    myInfo = info != null && info.type != REGULAR ? info : null;
+    myInfo = info;
     myPriority = priority;
   }
 
@@ -178,7 +182,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   public String[] getEnumeratedValues() {
     JSType type = getJSType();
-    if (type != null && myInfo == null) {
+    if (type != null && myInfo.type == REGULAR) {
       List<String> values = new ArrayList<>();
       type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
       if (type instanceof JSBooleanType) {
@@ -210,7 +214,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @Nullable
   @Override
   public String handleTargetRename(@NotNull @NonNls String newTargetName) {
-    if (myInfo != null) {
+    if (myInfo.type != REGULAR) {
       int start = myAttributeName.lastIndexOf(myInfo.name);
       return myAttributeName.substring(0, start)
              + newTargetName
@@ -244,7 +248,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   public LookupElement getLookupElement() {
     LookupElementBuilder element = LookupElementBuilder.create(getName())
-      .withCaseSensitivity(myInfo != null || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
+      .withCaseSensitivity(myInfo.type != REGULAR || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
       .withIcon(getIcon())
       .withBoldness(myPriority == AttributePriority.HIGH);
     String typeName = getTypeName();
@@ -259,10 +263,11 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   private boolean shouldCompleteValue() {
     JSType type = getJSType();
-    return myInfo != null
+    return myInfo.type != REGULAR
            || (type != null && !(type instanceof JSBooleanType));
   }
 
+  @NotNull
   public Angular2AttributeNameParser.AttributeInfo getInfo() {
     return myInfo;
   }
@@ -280,7 +285,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       return types.get(0);
     }
     else if (types.size() > 1) {
-      if (myInfo != null && myInfo.type == BANANA_BOX_BINDING) {
+      if (myInfo.type == BANANA_BOX_BINDING) {
         return types.get(0);
       }
       return JSCompositeTypeImpl.getCommonType(
@@ -316,7 +321,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @Nullable
   private static Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
     return isOneTimeBindingProperty(info)
-           ? new Angular2AttributeDescriptor(info.getName(), null, AttributePriority.HIGH,
+           ? new Angular2AttributeDescriptor(info.getName(), false, AttributePriority.HIGH,
                                              singletonList(info.getNavigableElement()))
            : null;
   }

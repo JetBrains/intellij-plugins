@@ -41,7 +41,6 @@ import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -151,10 +150,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
   @NotNull
   private static Collection<String> getRelatedAttributes(@NotNull Angular2AttributeDescriptor descriptor) {
     Angular2AttributeNameParser.AttributeInfo info = descriptor.getInfo();
-    if (info == null) {
-      return Collections.singleton(descriptor.getName());
-    }
-    else if (info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
+    if (info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
       return ContainerUtil.concat(
         Angular2AttributeNameVariantsBuilder.forTypes(
           info.name, true, true,
@@ -165,8 +161,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
           info.name + "Change", true, true,
           Angular2AttributeType.EVENT));
     }
-    else if (info instanceof PropertyBindingInfo
-             && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY) {
+    else if ((info instanceof PropertyBindingInfo
+              && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY)
+             || info.type == Angular2AttributeType.REGULAR) {
       return Angular2AttributeNameVariantsBuilder.forTypes(
         info.name, true, true,
         Angular2AttributeType.REGULAR,
