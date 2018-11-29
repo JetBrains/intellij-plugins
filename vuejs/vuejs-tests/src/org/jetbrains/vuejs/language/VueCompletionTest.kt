@@ -833,10 +833,10 @@ $script""")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_017/node_modules", "./node_modules")
     myFixture.configureByText("VuetifyCompletion.vue",
 """
-<template><v-<caret></template>
+<template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS.toList()
+    val vuetifyComponents = VueTagProvider.vuetifyUnresolvedComponentsWithPascalCase().toList()
     assertContainsElements(myFixture.lookupElementStrings!!, listOf("v-list", "v-list-group", "v-list-tile", "v-list-tile-action"))
     assertContainsElements(myFixture.lookupElementStrings!!, vuetifyComponents)
   }
@@ -846,10 +846,10 @@ $script""")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_137/node_modules", "./node_modules")
     myFixture.configureByText("VuetifyCompletion.vue",
                               """
-<template><v-<caret></template>
+<template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS.toList()
+    val vuetifyComponents = VueTagProvider.vuetifyUnresolvedComponentsWithPascalCase().toList()
     assertContainsElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents, listOf("v-alert")))
   }
 
@@ -858,10 +858,10 @@ $script""")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_1210/node_modules", "./node_modules")
     myFixture.configureByText("VuetifyCompletion.vue",
                               """
-<template><v-<caret></template>
+<template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS.toList()
+    val vuetifyComponents = VueTagProvider.vuetifyUnresolvedComponentsWithPascalCase().toList()
     assertContainsElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents, listOf("v-btn")))
   }
 
