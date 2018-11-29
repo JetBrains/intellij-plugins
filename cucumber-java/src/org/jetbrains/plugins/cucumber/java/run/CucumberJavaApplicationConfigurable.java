@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.application.options.ModuleDescriptionsComboBox;
@@ -15,8 +16,8 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaCodeFragment;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiMethodUtil;
+import com.intellij.ui.EditorTextField;
 import com.intellij.ui.EditorTextFieldWithBrowseButton;
 import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.RawCommandLineEditor;
@@ -26,24 +27,21 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class CucumberJavaApplicationConfigurable extends SettingsEditor<CucumberJavaRunConfiguration> implements PanelWithAnchor {
   private final Project myProject;
-  private JComponent myAnchor;
   private final ConfigurationModuleSelector myModuleSelector;
+  private final Module myModuleContext;
 
-  private LabeledComponent<EditorTextFieldWithBrowseButton> myMainClass;
   private JPanel myWholePanel;
+  private LabeledComponent<EditorTextFieldWithBrowseButton> myMainClass;
   private LabeledComponent<ModuleDescriptionsComboBox> myModule;
   private LabeledComponent<RawCommandLineEditor> myGlue;
   private LabeledComponent<TextFieldWithBrowseButton> myFeatureOrFolder;
   private CommonJavaParametersPanel myCommonProgramParameters;
   private LabeledComponent<ShortenCommandLineModeCombo> myShortenClasspathModeCombo;
   private JrePathEditor myJrePathEditor;
-
-  private final Module myModuleContext;
+  private JComponent myAnchor;
 
   public CucumberJavaApplicationConfigurable(Project project) {
     myProject = project;
@@ -51,31 +49,23 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
     myModuleSelector = new ConfigurationModuleSelector(project, moduleComponent);
     myJrePathEditor.setDefaultJreSelector(DefaultJreSelector.fromModuleDependencies(moduleComponent, false));
 
-    ClassBrowser.createApplicationClassBrowser(project, myModuleSelector).setField(myMainClass.getComponent());
+    new ClassBrowser.AppClassBrowser<EditorTextField>(project, myModuleSelector).setField(myMainClass.getComponent());
     myModuleContext = myModuleSelector.getModule();
 
-
-    final ActionListener fileToRunActionListener = new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
-        fileChooserDescriptor.setTitle(CucumberJavaBundle.message("run.configuration.form.choose.file.or.folder.title"));
-        fileChooserDescriptor.putUserData(LangDataKeys.MODULE_CONTEXT, myModuleContext);
-        VirtualFile file = FileChooser.chooseFile(fileChooserDescriptor, myProject, null);
-        if (file != null) {
-          setFeatureOrFolder(file.getPresentableUrl());
-        }
+    myFeatureOrFolder.getComponent().getButton().addActionListener(e -> {
+      FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor();
+      fileChooserDescriptor.setTitle(CucumberJavaBundle.message("run.configuration.form.choose.file.or.folder.title"));
+      fileChooserDescriptor.putUserData(LangDataKeys.MODULE_CONTEXT, myModuleContext);
+      VirtualFile file = FileChooser.chooseFile(fileChooserDescriptor, myProject, null);
+      if (file != null) {
+        setFeatureOrFolder(file.getPresentableUrl());
       }
-    };
-    myFeatureOrFolder.getComponent().getButton().addActionListener(fileToRunActionListener);
+    });
 
     myAnchor = UIUtil.mergeComponentsWithAnchor(myMainClass, myGlue, myFeatureOrFolder, myModule, myCommonProgramParameters);
-
     myJrePathEditor.setAnchor(myModule.getLabel());
     myShortenClasspathModeCombo.setAnchor(myModule.getLabel());
     myShortenClasspathModeCombo.setComponent(new ShortenCommandLineModeCombo(myProject, myJrePathEditor, moduleComponent));
-
-    myGlue.getComponent().setDialogCaption(CucumberJavaBundle.message("run.configuration.form.glue.title"));
   }
 
   public void setFeatureOrFolder(String path) {
@@ -84,17 +74,14 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
 
   private void createUIComponents() {
     myMainClass = new LabeledComponent<>();
-    myMainClass.setComponent(new EditorTextFieldWithBrowseButton(myProject, true, new JavaCodeFragment.VisibilityChecker() {
-      @Override
-      public Visibility isDeclarationVisible(PsiElement declaration, PsiElement place) {
-        if (declaration instanceof PsiClass) {
-          final PsiClass aClass = (PsiClass)declaration;
-          if (ConfigurationUtil.MAIN_CLASS.value(aClass) && PsiMethodUtil.findMainMethod(aClass) != null) {
-            return Visibility.VISIBLE;
-          }
+    myMainClass.setComponent(new EditorTextFieldWithBrowseButton(myProject, true, (declaration, place) -> {
+      if (declaration instanceof PsiClass) {
+        PsiClass aClass = (PsiClass)declaration;
+        if (ConfigurationUtil.MAIN_CLASS.value(aClass) && PsiMethodUtil.findMainMethod(aClass) != null) {
+          return JavaCodeFragment.VisibilityChecker.Visibility.VISIBLE;
         }
-        return Visibility.NOT_VISIBLE;
       }
+      return JavaCodeFragment.VisibilityChecker.Visibility.NOT_VISIBLE;
     }));
   }
 

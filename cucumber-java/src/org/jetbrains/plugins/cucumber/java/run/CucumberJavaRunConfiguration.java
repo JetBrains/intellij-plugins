@@ -156,7 +156,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
     }
     else if (StringUtil.isEmpty(getGlue())) {
-      throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.mustnt.be.empty"));
+      throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.must.not.be.empty"));
     }
 
     String programParameters = getProgramParameters();

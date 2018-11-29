@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.ExecutionBundle;
@@ -194,7 +195,7 @@ public class WhatToTestForm {
     myMethodField = null;
   }
 
-  private class MethodChooserActionListener extends BrowseModuleValueActionListener {
+  private class MethodChooserActionListener extends BrowseModuleValueActionListener<JTextField> {
     protected MethodChooserActionListener(final Project project) {
       super(project);
       setField(myMethodField);
