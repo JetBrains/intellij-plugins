@@ -126,7 +126,7 @@ class VueComponentsCache {
 
     private fun packageJsonForLibraryAndHasVue(it: VirtualFile) = JSLibraryUtil.isProbableLibraryFile(it) &&
                                                                   (PackageJsonUtil.getOrCreateData(it).containsOneOfDependencyOfAnyType(
-                                                                    arrayOf("vue-loader", "vue-latest", "vue")))
+                                                                    "vue-loader", "vue-latest", "vue"))
   }
 
   class ComponentsData(val map: Map<String, Pair<PsiElement, Boolean>>,
