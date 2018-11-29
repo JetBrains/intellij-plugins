@@ -637,7 +637,7 @@ private newExpressionWithKeyword ::= ('new' | 'const') type ('.' referenceExpres
 throwExpression ::= 'throw' expression
 
 // todo get rid of all Wrappers and WITHOUT_CASCADE user data, implement expression parsing according to the spec and Grammar-Kit docs
-literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | <<mapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
+literalExpression ::= NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | <<mapLiteralExpressionWrapper>> | <<setLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 symbolLiteralExpression ::= '#' ('void' | userDefinableOperator | simpleQualifiedReferenceExpression) {pin=1}
@@ -652,6 +652,8 @@ longTemplateEntry ::= LONG_TEMPLATE_ENTRY_START expression LONG_TEMPLATE_ENTRY_E
 listLiteralExpression ::= 'const'? typeArguments? '[' (expressionList ','?)? ']'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 mapLiteralExpression ::= 'const'? typeArguments? '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
+{mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+setLiteralExpression ::= 'const'? typeArguments? '{' (expression (',' expression)* ','? )? '}'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 mapLiteralEntry ::= expression ':' expression {recoverWhile="map_literal_entry_recover"}

@@ -111,6 +111,7 @@ public interface DartTokenTypes {
   IElementType RETURN_STATEMENT = new DartElementType("RETURN_STATEMENT");
   IElementType RETURN_TYPE = new DartElementType("RETURN_TYPE");
   IElementType SETTER_DECLARATION = new DartElementType("SETTER_DECLARATION");
+  IElementType SET_LITERAL_EXPRESSION = new DartElementType("SET_LITERAL_EXPRESSION");
   IElementType SHIFT_EXPRESSION = new DartElementType("SHIFT_EXPRESSION");
   IElementType SHIFT_OPERATOR = new DartElementType("SHIFT_OPERATOR");
   IElementType SHORT_TEMPLATE_ENTRY = new DartElementType("SHORT_TEMPLATE_ENTRY");
@@ -580,6 +581,9 @@ public interface DartTokenTypes {
       }
       else if (type == SETTER_DECLARATION) {
         return new DartSetterDeclarationImpl(node);
+      }
+      else if (type == SET_LITERAL_EXPRESSION) {
+        return new DartSetLiteralExpressionImpl(node);
       }
       else if (type == SHIFT_EXPRESSION) {
         return new DartShiftExpressionImpl(node);

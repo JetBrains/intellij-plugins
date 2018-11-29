@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.lang.PsiBuilder;
@@ -49,6 +50,14 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
     final Boolean cascadeData = builder_.getUserData(WITHOUT_CASCADE);
     builder_.putUserData(WITHOUT_CASCADE, null);
     final boolean result = DartParser.mapLiteralExpression(builder_, level_);
+    builder_.putUserData(WITHOUT_CASCADE, cascadeData);
+    return result;
+  }
+
+  public static boolean setLiteralExpressionWrapper(PsiBuilder builder_, int level_) {
+    final Boolean cascadeData = builder_.getUserData(WITHOUT_CASCADE);
+    builder_.putUserData(WITHOUT_CASCADE, null);
+    final boolean result = DartParser.setLiteralExpression(builder_, level_);
     builder_.putUserData(WITHOUT_CASCADE, cascadeData);
     return result;
   }
