@@ -9,18 +9,20 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.testFramework.LightVirtualFileBase;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2LangUtil {
 
-  private static final Key<ParameterizedCachedValue<Boolean, VirtualFile>> ANGULAR2_CONTEXT_KEY = new Key<>("angular2.isContext");
+  private static final Key<CachedValue<Boolean>> ANGULAR2_CONTEXT_KEY = new Key<>("angular2.isContext");
 
   public static boolean isAngular2Context(@NotNull PsiElement context) {
     if (!context.isValid()) {
@@ -54,9 +56,13 @@ public class Angular2LangUtil {
     if (context.getParent() == null) {
       return false;
     }
-    return CachedValuesManager.getManager(project).getParameterizedCachedValue(project, ANGULAR2_CONTEXT_KEY, dir ->
-      new CachedValueProvider.Result<>(isAngular2ContextDir(project, dir),
-                                       PackageJsonFileManager.getInstance(project).getModificationTracker()), false, context.getParent());
+    PsiDirectory dir = PsiManager.getInstance(project).findDirectory(context.getParent());
+    if (dir == null) {
+      return false;
+    }
+    return CachedValuesManager.getCachedValue(dir, ANGULAR2_CONTEXT_KEY, () -> new CachedValueProvider.Result<>(
+      isAngular2ContextDir(dir),
+      PackageJsonFileManager.getInstance(project).getModificationTracker()));
   }
 
   /**
@@ -70,8 +76,9 @@ public class Angular2LangUtil {
     return false;
   }
 
-  private static boolean isAngular2ContextDir(Project project, VirtualFile dir) {
-    PackageJsonFileManager manager = PackageJsonFileManager.getInstance(project);
+  private static boolean isAngular2ContextDir(@NotNull PsiDirectory psiDir) {
+    VirtualFile dir = psiDir.getVirtualFile();
+    PackageJsonFileManager manager = PackageJsonFileManager.getInstance(psiDir.getProject());
     String dirPath = ObjectUtils.notNull(dir.getCanonicalPath(), dir::getPath) + "/";
     for (VirtualFile config : manager.getValidPackageJsonFiles()) {
       if (dirPath.startsWith(ObjectUtils.notNull(config.getParent().getCanonicalPath(), dir::getPath) + "/")) {
