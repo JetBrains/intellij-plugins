@@ -95,3 +95,38 @@ class MapLiteralSyntax {
              };
   }
 }
+
+/*
+context                  expression            runtime type and const-ness
+*/
+var v1                 = {};                // LinkedHashMap<dynamic, dynamic>
+var v2                 = <int, int>{};      // LinkedHashMap<int, int>
+var v3                 = <int>{};           // LinkedHashSet<int>
+var v4                 = {1: 1};            // LinkedHashMap<int, int>
+var v5                 = {1};               // LinkedHashSet<int>
+
+Iterable<int> v6       = {};                // LinkedHashSet<int>
+Map<int, int> v7       = {};                // LinkedHashMap<int, int>
+Object v8              = {};                // LinkedHashMap<dynamic, dynamic>
+Iterable<num> v9       = {1};               // LinkedHashSet<num>
+Iterable<num> v10      = <int>{};           // LinkedHashSet<int>
+LinkedHashSet<int> v11 = {};                // LinkedHashSet<int>
+
+const v12              = {};                // const Map<dynamic, dynamic>
+const v13              = {1};               // const Set<int>
+const Set v14          = {};                // const Set<dynamic>
+Set v15                = const {4};         // const Set<dynamic>
+
+// Compile-time error, overrides `==`.
+// const _             = {Duration(seconds: 1)};
+// const _             = {2.3};
+
+var v16                = {1, 2, 3, 2, 1};   // LinkedHashSet<int>
+var l16                = v16.toList();        // -> <int>[1, 2, 3]
+// Compile-time error, contains equal elements
+// const _             = {1, 2, 3, 2, 1};
+
+var l18                = const {1, 2};      // const Set<int>
+
+var a = {a ? b : c : d ? e : f};
+var b = {a ? b : c , d ? e : f};
