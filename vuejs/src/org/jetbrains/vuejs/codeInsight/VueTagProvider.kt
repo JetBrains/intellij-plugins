@@ -27,6 +27,7 @@ import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
+import com.intellij.util.containers.ContainerUtil
 import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import icons.VuejsIcons
@@ -197,7 +198,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
         LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
       })
       if (!hasVuetify(allComponents)) return
-      elements.addAll(VUETIFY_UNRESOLVED_COMPONENTS.map {
+      elements.addAll(vuetifyUnresolvedComponentsWithPascalCase().map {
         LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText(VUETIFY, true)
       })
     }
@@ -257,7 +258,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "component",
       "slot"
     )
-    val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
+    private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
       //grid components
       "v-flex",
       "v-spacer",
@@ -303,6 +304,12 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "v-toolbar-items",
       "v-toolbar-title"
     )
+    fun vuetifyUnresolvedComponentsWithPascalCase(): MutableIterable<String> {
+      val pascalCaseComponents = VUETIFY_UNRESOLVED_COMPONENTS.map {
+        toAsset(it).capitalize()
+      }
+      return ContainerUtil.concat(VUETIFY_UNRESOLVED_COMPONENTS, pascalCaseComponents)
+    }
   }
 }
 
