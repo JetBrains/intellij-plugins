@@ -836,7 +836,7 @@ $script""")
 <template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.vuetifyUnresolvedComponentsWithPascalCase().toList()
+    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toList()
     assertContainsElements(myFixture.lookupElementStrings!!, listOf("v-list", "v-list-group", "v-list-tile", "v-list-tile-action"))
     assertContainsElements(myFixture.lookupElementStrings!!, vuetifyComponents)
   }
@@ -849,7 +849,7 @@ $script""")
 <template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.vuetifyUnresolvedComponentsWithPascalCase().toList()
+    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toList()
     assertContainsElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents, listOf("v-alert")))
   }
 
@@ -861,7 +861,7 @@ $script""")
 <template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.vuetifyUnresolvedComponentsWithPascalCase().toList()
+    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toList()
     assertContainsElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents, listOf("v-btn")))
   }
 
