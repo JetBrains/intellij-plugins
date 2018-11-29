@@ -927,7 +927,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         "[innerHTML]#50",
         "*ngIf#50"
       );
-      assertDoesntContain(myFixture.getLookupElementStrings(), "[ngModel]", "ngModel", "(ngModelChange)");
+      assertDoesntContain(myFixture.getLookupElementStrings(), "[ngModel]", "ngModel", "(ngModelChange)", "[matchedPlainBoolean]");
     });
   }
 
