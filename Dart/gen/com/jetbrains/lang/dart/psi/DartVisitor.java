@@ -443,6 +443,11 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitSetLiteralExpression(@NotNull DartSetLiteralExpression o) {
+    visitExpression(o);
+    // visitReference(o);
+  }
+
   public void visitSetterDeclaration(@NotNull DartSetterDeclaration o) {
     visitComponent(o);
   }
