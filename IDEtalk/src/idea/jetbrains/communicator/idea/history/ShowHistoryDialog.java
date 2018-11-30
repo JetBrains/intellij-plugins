@@ -22,8 +22,8 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.text.DateFormatUtil;
 import jetbrains.communicator.core.dispatcher.LocalMessage;
@@ -116,7 +116,7 @@ public class ShowHistoryDialog extends IdeaDialog {
 
   @Override
   protected void dispose() {
-    myConsole.dispose();
+    Disposer.dispose(myConsole);
     super.dispose();
   }
 

@@ -135,6 +135,9 @@ public class AppTest extends AppTestBase {
         callClientAssert("close");
       }
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       DesignerApplicationManager.getInstance().disposeApplication();
       StringRegistry.getInstance().reset();

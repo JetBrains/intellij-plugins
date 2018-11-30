@@ -31,6 +31,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
       HbConfig.setAutoGenerateCloseTagEnabled(myPrevAutoCloseSetting);
       formatterTestSettings.tearDown();
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

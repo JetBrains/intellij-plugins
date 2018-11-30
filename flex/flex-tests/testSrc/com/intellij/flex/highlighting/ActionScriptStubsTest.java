@@ -49,6 +49,9 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     try {
       myPsiFiles.clear();
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

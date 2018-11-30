@@ -46,6 +46,9 @@ public abstract class RubyMotionLightFixtureTestCase extends RubyLightFixtureTes
     try {
       RubyVMOptions.resetForcedLanguageLevel();
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

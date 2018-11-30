@@ -21,6 +21,9 @@ public class HbFormatOnEnterTest extends HbActionHandlerTest implements HbFormat
     try {
       HbConfig.setFormattingEnabled(myPrevFormatSetting);
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

@@ -99,16 +99,6 @@ abstract class MxmlTestBase extends AppTestBase {
     }
   }
 
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      System.out.print("\npassed " + passedCounter + " tests.\n");
-    }
-    finally {
-      super.tearDown();
-    }
-  }
-
   private class MyTester implements Tester {
     @Override
     public void test(VirtualFile file, XmlFile xmlFile, final VirtualFile originalFile) throws Exception {

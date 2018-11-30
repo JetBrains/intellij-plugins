@@ -39,6 +39,9 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     try {
       Disposer.dispose(getTestRootDisposable());
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

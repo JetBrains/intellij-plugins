@@ -181,6 +181,9 @@ public class MxmlTest extends MxmlTestBase {
     try {
       TestDocumentProblemManager.setExpectedProblems(null);
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

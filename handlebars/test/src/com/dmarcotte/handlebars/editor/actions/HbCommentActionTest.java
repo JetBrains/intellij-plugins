@@ -192,6 +192,9 @@ public class HbCommentActionTest extends HbActionHandlerTest {
     try {
       HbConfig.setCommenterLanguage(myPrevCommenterLang);
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

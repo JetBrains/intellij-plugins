@@ -47,6 +47,9 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
     try {
       formatterTestSettings.tearDown();
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

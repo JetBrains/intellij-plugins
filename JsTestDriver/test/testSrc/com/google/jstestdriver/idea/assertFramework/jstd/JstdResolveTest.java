@@ -50,6 +50,9 @@ public class JstdResolveTest extends ResolveTestCase {
         removeLibrary(getProject());
       }
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

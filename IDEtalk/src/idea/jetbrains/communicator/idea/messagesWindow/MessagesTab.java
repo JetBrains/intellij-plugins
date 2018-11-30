@@ -5,6 +5,7 @@ import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.DocumentAdapter;
@@ -147,7 +148,7 @@ public class MessagesTab implements Disposable {
   public void dispose() {
     myLocalMessageDispatcher.getBroadcaster().removeListener(myListener);
     myInput.getDocument().removeDocumentListener(myButtonsUpdater);
-    myConsoleView.dispose();
+    Disposer.dispose(myConsoleView);
   }
 
   public void requestFocus() {

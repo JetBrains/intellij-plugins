@@ -219,6 +219,9 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
         client.closeProject(myProject);
       }
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

@@ -21,6 +21,9 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
     try {
       HbConfig.setFormattingEnabled(myPrevFormatSetting);
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

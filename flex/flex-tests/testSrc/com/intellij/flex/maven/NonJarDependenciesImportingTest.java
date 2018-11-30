@@ -18,6 +18,9 @@ public class NonJarDependenciesImportingTest extends MavenImportingTestCase {
         WriteAction.run(() -> ProjectJdkTable.getInstance().removeJdk(sdk));
       }
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

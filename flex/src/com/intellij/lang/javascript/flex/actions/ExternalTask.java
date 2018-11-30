@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,7 +144,7 @@ public abstract class ExternalTask {
 
                 if (message.trim().endsWith("password:")) {
                   final OutputStream outputStream = myProcess.getOutputStream();
-                  outputStream.write("\n".getBytes());
+                  outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
                   outputStream.flush();
                 }
                 else {

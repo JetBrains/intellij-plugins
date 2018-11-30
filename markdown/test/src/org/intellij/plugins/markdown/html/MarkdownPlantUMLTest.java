@@ -35,6 +35,9 @@ public class MarkdownPlantUMLTest extends LightPlatformCodeInsightFixtureTestCas
     try {
       myFixture.tearDown();
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       myFixture = null;
       super.tearDown();

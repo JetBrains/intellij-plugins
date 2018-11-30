@@ -42,6 +42,9 @@ public abstract class FlexmojosImporterTestBase extends MavenImportingTestCase {
         WriteAction.run(() -> ProjectJdkTable.getInstance().removeJdk(sdk));
       }
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

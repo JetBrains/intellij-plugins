@@ -50,6 +50,9 @@ public class OgnlCodeInsightSanityTest extends LightCodeInsightFixtureTestCase {
     try {
       WriteAction.run(() -> FileTypeManager.getInstance().removeAssociatedExtension(OgnlFileType.INSTANCE, EXTENSION));
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

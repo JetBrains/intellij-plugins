@@ -93,6 +93,9 @@ public class FlashBuilderImportTest extends IdeaTestCase {
         myFlashBuilderProjectDir = null;
       }
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

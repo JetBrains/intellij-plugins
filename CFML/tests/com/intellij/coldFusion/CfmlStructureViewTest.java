@@ -92,7 +92,7 @@ public class CfmlStructureViewTest extends CfmlCodeInsightFixtureTestCase {
     AbstractTreeStructure jsTreeStructure = new SmartTreeStructure(getProject(), structureViewModel);
 
     Object[] items = jsTreeStructure.getChildElements(jsTreeStructure.getRootElement());
-    structureViewModel.dispose();
+    Disposer.dispose(structureViewModel);
     Disposer.dispose(structureView);
     return items;
   }

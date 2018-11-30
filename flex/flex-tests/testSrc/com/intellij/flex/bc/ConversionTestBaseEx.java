@@ -72,6 +72,9 @@ public abstract class ConversionTestBaseEx extends ConversionTestBase {
         PathMacros.getInstance().removeMacro(PROJECT_VAR);
       }
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

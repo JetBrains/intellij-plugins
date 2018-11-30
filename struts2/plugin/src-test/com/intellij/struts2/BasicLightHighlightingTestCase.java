@@ -113,13 +113,16 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
     try {
       performTearDown();
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       // clear existing StrutsFacet configuration before running next test
       final StrutsFacet existing = StrutsFacet.getInstance(myModule);
       if (existing != null) {
         existing.getConfiguration().getFileSets().clear();
       }
-
+      ;
       super.tearDown();
     }
   }

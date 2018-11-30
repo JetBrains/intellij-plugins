@@ -4,6 +4,7 @@ import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
@@ -45,7 +46,7 @@ public class CucumberStructureViewCucumberTest extends CodeInsightFixtureTestCas
     final StructureViewModel structureViewModel = builder.createStructureViewModel(getEditor());
 
     Object[] children = structureViewModel.getRoot().getChildren();
-    structureViewModel.dispose();
+    Disposer.dispose(structureViewModel);
     return children;
   }
 

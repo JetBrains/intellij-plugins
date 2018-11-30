@@ -25,6 +25,9 @@ public class RenameTest extends LightPlatformMultiFileFixtureTestCase {
     try {
       Messages.setTestDialog(TestDialog.DEFAULT);
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }

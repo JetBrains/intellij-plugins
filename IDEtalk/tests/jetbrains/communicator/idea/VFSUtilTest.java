@@ -75,6 +75,9 @@ public class VFSUtilTest extends PlatformTestCase {
         FileUtil.delete(file);
       }
     }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
     finally {
       super.tearDown();
     }
