@@ -48,8 +48,9 @@ public class Angular2LangUtil {
     while (context instanceof LightVirtualFileBase) {
       context = ((LightVirtualFileBase)context).getOriginalFile();
     }
-    PsiDirectory psiDir = ObjectUtils.doIfNotNull(context != null ? context.getParent() : null,
-                                                  dir -> PsiManager.getInstance(project).findDirectory(dir));
+    PsiDirectory psiDir = ObjectUtils.doIfNotNull(
+      context != null ? context.getParent() : null,
+      dir -> dir.isValid() ? PsiManager.getInstance(project).findDirectory(dir) : null);
     if (psiDir == null) {
       return false;
     }
