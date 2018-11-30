@@ -34,9 +34,11 @@ public class Angular2HtmlBoundAttributeImpl extends XmlAttributeImpl implements 
 
   protected AttributeInfo getAttributeInfo() {
     AttributeInfo info = Angular2AttributeNameParser.parseBound(getName());
-    if(info.elementType != getElementType()) {
+    if (info.elementType != getElementType()) {
       LOG.error("Element type mismatch on attribute info. Expected " + getElementType()
-                + ", but got " + info.elementType +". Error for " + toString(), new Throwable());
+                + ", but got " + info.elementType + ". Error for " +
+                StringUtil.trimEnd(getClass().getSimpleName(), "Impl") + " <" + getName() + ">",
+                new Throwable());
     }
     return info;
   }
