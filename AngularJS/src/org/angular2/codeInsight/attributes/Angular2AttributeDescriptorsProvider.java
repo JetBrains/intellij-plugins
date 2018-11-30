@@ -47,21 +47,19 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
                                                               @NotNull Function<XmlTag, XmlAttributeDescriptor[]> attrDescrProvider) {
-    if (attrName == null || (xmlTag != null && DumbService.isDumb(xmlTag.getProject()))) {
+    if (attrName == null || xmlTag == null || DumbService.isDumb(xmlTag.getProject())) {
       return null;
     }
-    if (xmlTag != null) {
-      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrName, true);
-      for (XmlAttributeDescriptor d : attrDescrProvider.apply(xmlTag)) {
-        if (d instanceof Angular2AttributeDescriptor) {
-          if (attrName.equals(d.getName())
-              || info.isEquivalent(((Angular2AttributeDescriptor)d).getInfo())) {
-            return d;
-          }
-        }
-        else if (attrName.equalsIgnoreCase(d.getName())) {
+    Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrName, true);
+    for (XmlAttributeDescriptor d : attrDescrProvider.apply(xmlTag)) {
+      if (d instanceof Angular2AttributeDescriptor) {
+        if (attrName.equals(d.getName())
+            || info.isEquivalent(((Angular2AttributeDescriptor)d).getInfo())) {
           return d;
         }
+      }
+      else if (attrName.equalsIgnoreCase(d.getName())) {
+        return d;
       }
     }
     return Angular2AttributeDescriptor.create(attrName);
@@ -109,7 +107,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   private static List<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag,
-                                                                @NotNull Set<Angular2Directive> directiveCandidates) {
+                                                                 @NotNull Set<Angular2Directive> directiveCandidates) {
     directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), xmlTag.getName()));
     directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), ""));
     return Angular2TagDescriptorsProvider.matchDirectives(xmlTag, directiveCandidates);
