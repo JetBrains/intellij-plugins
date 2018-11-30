@@ -45,23 +45,16 @@ public class Angular2LangUtil {
         && "disabled".equals(System.getProperty("angular.js"))) {
       return false;
     }
-    if (context instanceof LightVirtualFileBase) {
-      while (context instanceof LightVirtualFileBase) {
-        context = ((LightVirtualFileBase)context).getOriginalFile();
-      }
-      if (context == null) {
-        return false;
-      }
+    while (context instanceof LightVirtualFileBase) {
+      context = ((LightVirtualFileBase)context).getOriginalFile();
     }
-    if (context.getParent() == null) {
+    PsiDirectory psiDir = ObjectUtils.doIfNotNull(context != null ? context.getParent() : null,
+                                                  dir -> PsiManager.getInstance(project).findDirectory(dir));
+    if (psiDir == null) {
       return false;
     }
-    PsiDirectory dir = PsiManager.getInstance(project).findDirectory(context.getParent());
-    if (dir == null) {
-      return false;
-    }
-    return CachedValuesManager.getCachedValue(dir, ANGULAR2_CONTEXT_KEY, () -> new CachedValueProvider.Result<>(
-      isAngular2ContextDir(dir),
+    return CachedValuesManager.getCachedValue(psiDir, ANGULAR2_CONTEXT_KEY, () -> new CachedValueProvider.Result<>(
+      isAngular2ContextDir(psiDir),
       PackageJsonFileManager.getInstance(project).getModificationTracker()));
   }
 
