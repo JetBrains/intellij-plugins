@@ -47,7 +47,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
                                                               @NotNull Function<XmlTag, XmlAttributeDescriptor[]> attrDescrProvider) {
-    if (attrName == null) {
+    if (attrName == null || (xmlTag != null && DumbService.isDumb(xmlTag.getProject()))) {
       return null;
     }
     if (xmlTag != null) {
