@@ -18,6 +18,7 @@ import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
 import org.angularjs.AngularTestUtil;
 
 import static org.angularjs.AngularTestUtil.findOffsetBySignature;
@@ -188,6 +189,14 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
       myFixture.configureByFiles("event_private.html", "package.json", "event_private.import.ts");
       checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+    });
+  }
+
+  public void testUnclosedTemplateAttribute() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("unclosedTemplate.html", "package.json");
+      assertInstanceOf(myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getParent(),
+                       Angular2HtmlTemplateBindings.class);
     });
   }
 }

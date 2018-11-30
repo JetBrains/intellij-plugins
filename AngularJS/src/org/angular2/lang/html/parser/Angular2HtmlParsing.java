@@ -190,7 +190,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
           break;
         }
 
-        if (tt == INTERPOLATION_EXPR) {
+        if (tt == INTERPOLATION_EXPR && attributeElementType == XML_ATTRIBUTE) {
           attributeElementType = PROPERTY_BINDING;
         }
 
