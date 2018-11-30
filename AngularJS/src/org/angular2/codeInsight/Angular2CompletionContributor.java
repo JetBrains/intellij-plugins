@@ -111,7 +111,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
   }
 
-  private static JSLookupPriority calcPriority(JSPsiElementBase element) {
+  private static JSLookupPriority calcPriority(@NotNull JSPsiElementBase element) {
     if (Angular2Processor.$ANY.equals(element.getName())) {
       return NG_$ANY_PRIORITY;
     }

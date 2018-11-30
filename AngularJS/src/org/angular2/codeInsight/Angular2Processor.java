@@ -450,7 +450,7 @@ public class Angular2Processor {
 
     private final JSImplicitElement $any;
 
-    private Angular2$AnyScope(PsiElement context) {
+    private Angular2$AnyScope(@NotNull PsiElement context) {
       super(null);
       $any = new JSImplicitElementImpl.Builder($ANY, context)
         .setTypeString("any")
