@@ -51,7 +51,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       if (!globalComponents.isEmpty()) return multiDefinitionDescriptor(globalComponents)
 
       // keep this last in case in future we would be able to normally resolve into these components
-      if (VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS.contains(normalized) || VUETIFY_UNRESOLVED_COMPONENTS.contains(normalized)) {
+      if (VUE_FRAMEWORK_COMPONENTS.contains(normalized) || VUETIFY_UNRESOLVED_COMPONENTS.contains(normalized)) {
         return VueElementDescriptor(JSImplicitElementImpl(normalized, tag))
       }
     }
@@ -253,10 +253,6 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "slot",
       "transition",
       "transition-group"
-    )
-    private val VUE_FRAMEWORK_UNRESOLVABLE_COMPONENTS = setOf(
-      "component",
-      "slot"
     )
     private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
       //grid components
