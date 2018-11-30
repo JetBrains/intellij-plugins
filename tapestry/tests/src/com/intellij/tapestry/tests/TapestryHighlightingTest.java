@@ -10,6 +10,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
+import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.util.containers.ContainerUtil;
 
@@ -44,16 +45,16 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
 
   public void testTmlTagNameUsingSubpackage() {
     addComponentToProject("other.Count");
-    doTest(true);
+    ExpectedHighlightingData.expectedDuplicatedHighlighting(() -> doTest(true));
   }
 
   public void testTmlAttrName() {
     addComponentToProject("Count");
-    doTest(true);
+    ExpectedHighlightingData.expectedDuplicatedHighlighting(() -> doTest(true));
   }
 
   public void testTmlAttrNameInHtmlTag() {
-    doTest(true, new DeprecatedClassUsageInspection());
+    ExpectedHighlightingData.expectedDuplicatedHighlighting(() -> doTest(true, new DeprecatedClassUsageInspection()));
   }
 
   public void testHtml5() {
@@ -90,7 +91,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
 
   public void testHtmlTagNameInHtmlParentTag() {
     addComponentToProject("Count");
-    doTest(true);
+    ExpectedHighlightingData.expectedDuplicatedHighlighting(() -> doTest(true));
   }
 
   public void testHtmlTagNameInHtmlParentTagError() {
@@ -101,7 +102,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
   public void testTmlIfWithElse() {
     addComponentToProject("If");
     addComponentToProject("TestComp");
-    doTest(true);
+    ExpectedHighlightingData.expectedDuplicatedHighlighting(() -> doTest(true));
   }
 
   public void testAbstractComponent() {
@@ -123,7 +124,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
   }
 
   public void testNewSchema() {
-    doTest(true);
+    ExpectedHighlightingData.expectedDuplicatedHighlighting(() -> doTest(true));
   }
 
   public void testPropertyReferences() {
