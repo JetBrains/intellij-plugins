@@ -4,26 +4,29 @@ package org.angular2.codeInsight.refs;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.ElementManipulators;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceProvider;
-import com.intellij.psi.impl.source.html.HtmlFileImpl;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.ObjectUtils;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ProcessingContext;
-import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
+import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
+import org.angular2.lang.html.parser.Angular2AttributeType;
+import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor;
+import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angularjs.codeInsight.refs.AngularJSReferenceBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiPredicate;
 
 public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
 
@@ -49,17 +52,15 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
     @Override
     public PsiElement resolveInner() {
       Ref<PsiElement> result = new Ref<>();
-      final HtmlFileImpl template = getTemplate();
-      if (template != null) {
-        final String refName = myElement.getStringValue();
-        if (refName != null) {
-          Angular2Processor.process(template, (el) -> {
-            if (el instanceof Angular2HtmlReferenceVariable
-                && refName.equals(el.getName())) {
-              result.set(el);
-            }
-          });
-        }
+      final String refName = myElement.getStringValue();
+      if (refName != null) {
+        processVariables((name, psi) -> {
+          if (refName.equals(name)) {
+            result.set(psi);
+            return false;
+          }
+          return true;
+        });
       }
       return result.get();
     }
@@ -67,23 +68,53 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public Object[] getVariants() {
-      final HtmlFileImpl template = getTemplate();
+      final List<PsiElement> result = new ArrayList<>();
+      final Set<String> names = new HashSet<>();
+      processVariables((name, psi) -> {
+        if (names.add(name)) result.add(psi);
+        return true;
+      });
+      return result.toArray();
+    }
+
+    private void processVariables(BiPredicate<String, PsiElement> processor) {
+      final PsiFile template = getTemplate();
       if (template != null) {
-        final List<JSVariable> result = new ArrayList<>();
-        Angular2Processor.process(template, (el) ->
-          ObjectUtils.consumeIfCast(el, Angular2HtmlReferenceVariable.class, result::add));
-        return result.toArray();
+        if (template.getLanguage().is(Angular2HtmlLanguage.INSTANCE)) {
+          template.accept(new Angular2HtmlRecursiveElementWalkingVisitor() {
+            @Override
+            public void visitReference(Angular2HtmlReference reference) {
+              JSVariable refVar = reference.getVariable();
+              if (refVar != null && !processor.test(refVar.getName(), refVar)) {
+                stopWalking();
+              }
+            }
+          });
+        }
+        else {
+          template.accept(new XmlRecursiveElementWalkingVisitor() {
+            @Override
+            public void visitXmlAttribute(XmlAttribute attribute) {
+              AttributeInfo info = Angular2AttributeNameParser.parse(attribute.getName(), false);
+              if (info.type == Angular2AttributeType.REFERENCE) {
+                JSLocalImplicitElementImpl refVar = new JSLocalImplicitElementImpl(info.name, "any", attribute);
+                if (!processor.test(info.name, refVar)) {
+                  stopWalking();
+                }
+              }
+            }
+          });
+        }
       }
-      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     @Nullable
-    private HtmlFileImpl getTemplate() {
+    private PsiFile getTemplate() {
       final TypeScriptClass cls = PsiTreeUtil.getContextOfType(getElement(), TypeScriptClass.class);
       if (cls != null) {
         Angular2Component component = Angular2EntitiesProvider.getComponent(cls);
         if (component != null) {
-          return component.getHtmlTemplate();
+          return component.getTemplateFile();
         }
       }
       return null;

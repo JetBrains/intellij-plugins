@@ -5,7 +5,7 @@ import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.source.html.HtmlFileImpl;
+import com.intellij.psi.PsiFile;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
@@ -20,7 +20,7 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
     Angular2Component component;
     if (symbol instanceof Angular2DirectiveSelectorPsiElement
         && (component = Angular2EntitiesProvider.findComponent((Angular2DirectiveSelectorPsiElement)symbol)) != null) {
-      HtmlFileImpl htmlFile = component.getHtmlTemplate();
+      PsiFile htmlFile = component.getTemplateFile();
       if (htmlFile != null) {
         return new PsiElement[]{htmlFile};
       }

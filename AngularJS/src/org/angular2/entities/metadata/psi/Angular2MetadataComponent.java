@@ -14,7 +14,7 @@ public class Angular2MetadataComponent extends Angular2MetadataDirectiveBase<Ang
 
   @Nullable
   @Override
-  public HtmlFileImpl getHtmlTemplate() {
+  public HtmlFileImpl getTemplateFile() {
     return null;
   }
 

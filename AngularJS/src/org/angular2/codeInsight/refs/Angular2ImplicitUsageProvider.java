@@ -12,8 +12,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -38,7 +38,7 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
       if (cls instanceof TypeScriptClass && Angular2LangUtil.isAngular2Context(element)) {
         Angular2Component component = Angular2EntitiesProvider.getComponent(cls);
         if (component != null) {
-          HtmlFileImpl template = component.getHtmlTemplate();
+          PsiFile template = component.getTemplateFile();
           if (template != null) {
             return isReferencedInTemplate(element, template);
           }
@@ -49,7 +49,7 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
     return false;
   }
 
-  private static boolean isReferencedInTemplate(@NotNull PsiElement node, @NotNull HtmlFileImpl template) {
+  private static boolean isReferencedInTemplate(@NotNull PsiElement node, @NotNull PsiFile template) {
     Processor<PsiReference> processor = reference ->
       reference instanceof PsiElement &&
       (JSResolveUtil.isSelfReference((PsiElement)reference) ||
