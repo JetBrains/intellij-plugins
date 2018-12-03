@@ -7,7 +7,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.PsiElement;
@@ -33,10 +32,8 @@ import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser.EventInfo;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
-import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
 
@@ -150,36 +147,16 @@ public class Angular2CompletionContributor extends CompletionContributor {
   @NotNull
   private static Collection<String> getRelatedAttributes(@NotNull Angular2AttributeDescriptor descriptor) {
     Angular2AttributeNameParser.AttributeInfo info = descriptor.getInfo();
-    if (info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
-      return ContainerUtil.concat(
-        Angular2AttributeNameVariantsBuilder.forTypes(
-          info.name, true, true,
-          Angular2AttributeType.REGULAR,
-          Angular2AttributeType.PROPERTY_BINDING,
-          Angular2AttributeType.BANANA_BOX_BINDING),
-        Angular2AttributeNameVariantsBuilder.forTypes(
-          info.name + "Change", true, true,
-          Angular2AttributeType.EVENT));
-    }
-    else if ((info instanceof PropertyBindingInfo
-              && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY)
-             || info.type == Angular2AttributeType.REGULAR) {
+    if (info.type == Angular2AttributeType.BANANA_BOX_BINDING
+        || info.type == Angular2AttributeType.REGULAR
+        || (info instanceof PropertyBindingInfo
+            && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY)
+    ) {
       return Angular2AttributeNameVariantsBuilder.forTypes(
         info.name, true, true,
         Angular2AttributeType.REGULAR,
         Angular2AttributeType.PROPERTY_BINDING,
         Angular2AttributeType.BANANA_BOX_BINDING);
-    }
-    else if (info instanceof EventInfo
-             && (((EventInfo)info).eventType == Angular2HtmlEvent.EventType.REGULAR)
-             && info.name.endsWith("Change")) {
-      return ContainerUtil.concat(
-        Angular2AttributeNameVariantsBuilder.forTypes(
-          StringUtil.trimEnd(info.name, "Change"), true, true,
-          Angular2AttributeType.BANANA_BOX_BINDING),
-        Angular2AttributeNameVariantsBuilder.forTypes(
-          info.name, true, true,
-          Angular2AttributeType.EVENT));
     }
     return Angular2AttributeNameVariantsBuilder.forTypes(
       info.getFullName(), true, true,
