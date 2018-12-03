@@ -13,4 +13,7 @@ export class Home {
     @ViewChild("anotherRefUsedInTS")
     view2:any;
 
+    @ViewChild("innerRef")
+    view3:any;
+
 }

@@ -635,7 +635,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testViewChildReferenceCodeCompletion() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () ->
-      assertEquals(asList("area", "area2"),
+      assertEquals(asList("area", "area2", "area3"),
                    myFixture.getCompletionVariants("viewChildReference.ts", "package.json"))
     );
   }
