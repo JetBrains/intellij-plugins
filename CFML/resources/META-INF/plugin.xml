@@ -90,7 +90,7 @@
     <internalFileTemplate name="ColdFusion Script Component"/>
     <internalFileTemplate name="ColdFusion Script Interface"/>
 
-    <stubElementTypeHolder class="com.intellij.coldFusion.model.parsers.CfmlElementTypes"/>
+    <stubElementTypeHolder class="com.intellij.coldFusion.model.psi.stubs.CfmlStubElementTypes"/>
     <stubIndex implementation="com.intellij.coldFusion.model.psi.stubs.CfmlComponentIndex"/>
     <stubIndex implementation="com.intellij.coldFusion.model.psi.stubs.CfmlInheritanceIndex"/>
     <stubIndex implementation="com.intellij.coldFusion.model.psi.stubs.CfmlInterfaceIndex"/>
