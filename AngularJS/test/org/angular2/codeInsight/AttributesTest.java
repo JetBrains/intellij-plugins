@@ -920,6 +920,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         "!simpleStringEnum#100",
         "![simpleStringEnum]#100",
         "!(my-event)#100",
+        "!(ngModelChange)#100",
         "![fooInput]#100",
         "![disabled]#100",
         "[bar]#50",
@@ -929,7 +930,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         "*ngIf#50",
         "[attr.#0"
       );
-      assertDoesntContain(myFixture.getLookupElementStrings(), "[ngModel]", "ngModel", "(ngModelChange)", "[matchedPlainBoolean]");
+      assertDoesntContain(myFixture.getLookupElementStrings(), "[ngModel]", "ngModel", "[matchedPlainBoolean]");
     });
   }
 
