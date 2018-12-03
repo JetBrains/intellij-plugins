@@ -595,8 +595,7 @@ public class AirPackageUtil {
 
                                             @Override
                                             protected boolean checkMessages() {
-                                              return myMessages.isEmpty() ||
-                                                     myMessages.size() == 1 && StringUtil.containsIgnoreCase(myMessages.get(0), "success");
+                                              return myMessages.isEmpty() || StringUtil.containsIgnoreCase(myMessages.get(0), "success");
                                             }
                                           }, FlexBundle.message("installing.0", apkPath.substring(apkPath.lastIndexOf('/') + 1)),
                                           FlexBundle.message("install.android.application.title"));
