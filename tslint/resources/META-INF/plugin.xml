@@ -41,7 +41,10 @@
     <ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>
   </extensions>
   <actions>
-    <action class="com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction" id="TsLintFileFixAction"/>
+    <action class="com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction" id="TsLintFileFixAction">
+      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
     <action id="TslintImportCodeStyleAction"
             class="com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction" 
             text="Apply TSLint Code Style Rules">
