@@ -20,6 +20,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.*
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
+import com.intellij.javascript.nodejs.npm.NpmManager
 import com.intellij.javascript.nodejs.npm.NpmUtil
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmCommand
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
@@ -192,7 +193,14 @@ class VueCreateProjectProcess(private val folder: Path,
     val localInterpreter = NodeJsLocalInterpreter.cast(interpreter)
 
     indicator.text = "Installing packages to create a new Vue project..."
-    val installCommandLine = NpmUtil.createNpmCommandLine(null, folder, interpreter, NpmCommand.ADD, listOf("ij-rpc-client"))
+    val npmPkg = NpmManager.getInstance(ProjectManager.getInstance().defaultProject).getPackage(interpreter)
+    val installCommandLine : GeneralCommandLine
+    if (npmPkg != null && npmPkg.isValid) {
+      installCommandLine = NpmUtil.createNpmCommandLine(folder, interpreter, npmPkg, NpmCommand.ADD, listOf("ij-rpc-client"))
+    }
+    else {
+      installCommandLine = NpmUtil.createNpmCommandLine(null, folder, interpreter, NpmCommand.ADD, listOf("ij-rpc-client"))
+    }
     val output = CapturingProcessHandler(installCommandLine).runProcess(TimeUnit.MINUTES.toMillis(5).toInt(), true)
     if (output.exitCode != 0) {
       return reportError("Can not install 'ij-rpc-client': " + output.stderr)
