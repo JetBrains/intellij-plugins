@@ -17,6 +17,7 @@ val TslintRulesSet: Set<TsLintSimpleRule<out Any>> = setOf(ImportDestructuringSp
                                                            NamedFunctionSpacesRule(),
                                                            WhitespaceTypeRule(),
                                                            AnonymousFunctionSpacesRule(),
+                                                           AsyncFunctionSpacesRule(),
                                                            WhitespaceIfRule(),
                                                            WhitespaceForRule(),
                                                            WhitespaceWhileRule(),
@@ -247,6 +248,17 @@ class AnonymousFunctionSpacesRule : FunctionSpacesRule() {
   }
 
   override fun getCode(): String = "anonymous"
+}
+class AsyncFunctionSpacesRule : FunctionSpacesRule() {
+  override fun getCode(): String = "asyncArrow"
+
+  override fun getSettingsValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings): Boolean {
+    return codeStyleSettings.SPACE_BEFORE_ASYNC_ARROW_LPAREN
+  }
+
+  override fun setValue(languageSettings: CommonCodeStyleSettings, codeStyleSettings: JSCodeStyleSettings, value: Boolean) {
+    codeStyleSettings.SPACE_BEFORE_ASYNC_ARROW_LPAREN = value
+  }
 }
 
 class WhitespaceTypeRule : MergedArrayRule("whitespace") {
