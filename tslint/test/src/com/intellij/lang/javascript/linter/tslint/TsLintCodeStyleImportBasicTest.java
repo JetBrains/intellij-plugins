@@ -100,6 +100,46 @@ public class TsLintCodeStyleImportBasicTest extends LightPlatformCodeInsightFixt
       Assert.assertTrue(tsSettings.FORCE_SEMICOLON_STYLE);
     });
   }
+
+  public void testWithOptionsObject() {
+    doTestJson("{\n" +
+               "  \"rules\": {\n" +
+               "    \"space-before-function-paren\": [true, {\"anonymous\": \"never\"}]\n" +
+               "  }\n" +
+               "}\n", (settings) -> {
+      TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
+      Assert.assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
+    });
+  }
+
+  public void testWithSeverityAndOptionsObject() {
+    doTestJson("{\n" +
+               "  \"rules\": {\n" +
+               "    \"space-before-function-paren\": {\n" +
+               "      \"severity\": \"error\",\n" +
+               "      \"options\": { \"anonymous\": \"never\" }\n" +
+               "    }\n" +
+               "  }\n" +
+               "}\n", (settings) -> {
+      TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
+      Assert.assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
+    });
+  }
+
+  public void testWithSeverityAndOptionsObjectInArray() {
+    doTestJson("{\n" +
+               "  \"rules\": {\n" +
+               "    \"space-before-function-paren\": {\n" +
+               "      \"severity\": \"error\",\n" +
+               "      \"options\": [{ \"anonymous\": \"never\" }\n" +
+               "      ]\n" +
+               "    }\n" +
+               "  }\n" +
+               "}\n", (settings) -> {
+      TypeScriptCodeStyleSettings tsSettings = settings.getCustomSettings(TypeScriptCodeStyleSettings.class);
+      Assert.assertFalse(tsSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH);
+    });
+  }
   
   public void testWithSeverityAndStringArrayOption() {
     doTestJson("{\n" +

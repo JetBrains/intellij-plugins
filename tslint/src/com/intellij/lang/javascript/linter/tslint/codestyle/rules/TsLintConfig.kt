@@ -138,40 +138,37 @@ class TslintJsonOption(private val element: Any?) {
     if (element is List<*>) {
       return element.drop(1).mapNotNull { it as? String }
     }
-    if (element is Map<*, *>) {
-      return asStringArrayOrSingleString(element["options"])
-    }
-
-    return emptyList()
+    return asStringArrayOrSingleString(getOptionsElement())
   }
 
   fun getNumberValue(): Int? {
-    if (element is List<*> && element.size > 1 && element[1] is Number) {
-      return (element[1] as Number).toInt()
-    }
-    if (element is Map<*, *>) {
-      val optionsValue = element["options"]
-      if (optionsValue is Number) {
-        return optionsValue.toInt()
-      }
-      if (optionsValue is List<*> && optionsValue.size > 0 && optionsValue[0] is Number) {
-        return (optionsValue[0] as Number).toInt()
-      }
-    }
-
-    return null
+    return asInt(getOptionsElement())
   }
 
   fun getStringMapValue(): Map<String, String> {
+    return asStringMap(getOptionsElement())
+  }
+
+  private fun getOptionsElement(): Any? {
     if (this.element is List<*> && this.element.size > 1) {
-      return asStringMap(this.element[1])
+      return this.element[1]
     }
     if (this.element is Map<*, *>) {
-      return asStringMap(this.element["options"])
+      val optionsElement = this.element["options"]
+      if (optionsElement is List<*> && optionsElement.size == 1) {
+        return optionsElement[0]
+      }
+      return optionsElement
     }
-
-    return emptyMap()
+    return null
   }
+}
+
+private fun asInt(element: Any?): Int? {
+  if (element is Number) {
+    return element.toInt()
+  }
+  return null
 }
 
 private fun asStringMap(element: Any?): Map<String, String> {
