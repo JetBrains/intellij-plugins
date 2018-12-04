@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.ProjectTopics;
@@ -15,7 +16,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.io.URLUtil;
-import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.DartStartupActivity;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import gnu.trove.THashSet;
@@ -115,7 +116,7 @@ public class DartServerRootsHandler {
       FilenameIndex.getVirtualFilesByName(module.getProject(), PUBSPEC_YAML, module.getModuleContentScope());
 
     for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
-      result.addAll(DartProjectComponent.getExcludedPackageSymlinkUrls(module.getProject(), pubspecYamlFile));
+      result.addAll(DartStartupActivity.getExcludedPackageSymlinkUrls(module.getProject(), pubspecYamlFile));
     }
 
     return result;

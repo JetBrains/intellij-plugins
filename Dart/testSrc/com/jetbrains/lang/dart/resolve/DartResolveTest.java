@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
-import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.DartStartupActivity;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
@@ -54,7 +54,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
       final VirtualFile inTest = myFixture.addFileToProject("DartProject1/test/inTest.dart", "").getVirtualFile();
       final VirtualFile inExample = myFixture.addFileToProject("DartProject1/example/inExample.dart", "").getVirtualFile();
 
-      DartProjectComponent.excludeBuildAndPackagesFolders(myModule, pubspec);
+      DartStartupActivity.excludeBuildAndPackagesFolders(myModule, pubspec);
 
       //doTestResolveScope(/*inExcluded,*/ null, null, true);
       doTestResolveScope(new VirtualFile[]{inSdk1, inSdk2},

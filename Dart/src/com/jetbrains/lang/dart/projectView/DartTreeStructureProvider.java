@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.projectView;
 
 import com.intellij.ide.projectView.PresentationData;
@@ -80,7 +81,7 @@ public class DartTreeStructureProvider implements TreeStructureProvider, DumbAwa
       });
     }
 
-    // root/packages/ThisProject and root/packages/PathPackage folders are excluded in dart projects (see DartProjectComponent.excludeBuildAndPackagesFolders),
+    // root/packages/ThisProject and root/packages/PathPackage folders are excluded in dart projects (see DartStartupActivity.excludeBuildAndPackagesFolders),
     // this provider adds location string tho these nodes in Project View like "ThisProject (ThisProject/lib)"
     final Project project = parentNode.getProject();
     final VirtualFile packagesDir = parentNode instanceof PsiDirectoryNode && project != null

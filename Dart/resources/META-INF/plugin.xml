@@ -20,12 +20,6 @@
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
   <depends optional="true" config-file="dart-coverage.xml">com.intellij.modules.coverage</depends>
 
-  <project-components>
-    <component>
-      <implementation-class>com.jetbrains.lang.dart.DartProjectComponent</implementation-class>
-    </component>
-  </project-components>
-
   <resource-bundle>com.jetbrains.lang.dart.DartBundle</resource-bundle>
 
   <extensionPoints>
@@ -230,6 +224,7 @@
     <editorSmartKeysConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
 
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartDumbAwareStartupActivity"/>
+    <postStartupActivity implementation="com.jetbrains.lang.dart.DartStartupActivity"/>
 
     <editorAppearanceConfigurable instance="com.jetbrains.lang.dart.analyzer.DartEditorAppearanceConfigurable"/>
     <search.optionContributor implementation="com.jetbrains.lang.dart.DartSearchableOptionContributor"/>

@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.CommonBundle;
@@ -32,7 +33,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.DartProjectComponent;
+import com.jetbrains.lang.dart.DartStartupActivity;
 import com.jetbrains.lang.dart.ide.actions.DartPubGetAction;
 import com.jetbrains.lang.dart.psi.PubspecYamlReferenceContributor;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -180,7 +181,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
         final VirtualFile otherPubspec = myContentRoot.findChild(PubspecYamlUtil.PUBSPEC_YAML);
         if (otherPubspec != null) {
           // exclude before indexing started
-          DartProjectComponent.excludeBuildAndPackagesFolders(myModule, otherPubspec);
+          DartStartupActivity.excludeBuildAndPackagesFolders(myModule, otherPubspec);
 
           final AnAction pubGetAction = ActionManager.getInstance().getAction("Dart.pub.get");
           if (pubGetAction instanceof DartPubGetAction) {
@@ -201,7 +202,7 @@ public class DartPathPackageReferenceInspection extends LocalInspectionTool {
 
       final VirtualFile yamlFile = DartResolveUtil.getRealVirtualFile(psiFile);
       if (yamlFile != null && PubspecYamlUtil.PUBSPEC_YAML.equals(yamlFile.getName())) {
-        DartProjectComponent.excludeBuildAndPackagesFolders(myModule, yamlFile);
+        DartStartupActivity.excludeBuildAndPackagesFolders(myModule, yamlFile);
       }
     }
 

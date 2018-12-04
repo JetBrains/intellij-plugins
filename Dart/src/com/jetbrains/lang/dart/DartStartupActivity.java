@@ -2,12 +2,11 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.ProjectTopics;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.startup.StartupManager;
+import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -29,37 +28,29 @@ import java.util.Set;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
-public class DartProjectComponent implements ProjectComponent {
-
-  @NotNull private final Project myProject;
-
-  protected DartProjectComponent(@NotNull Project project) {
-    myProject = project;
+public class DartStartupActivity implements StartupActivity {
+  @Override
+  public void runActivity(@NotNull Project project) {
     VirtualFileManager.getInstance().addVirtualFileListener(new DartFileListener(project), project);
 
     project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
       public void rootsChanged(@NotNull ModuleRootEvent event) {
-        DartFileListener.scheduleDartPackageRootsUpdate(myProject);
+        DartFileListener.scheduleDartPackageRootsUpdate(project);
       }
     });
-  }
 
-  @Override
-  public void projectOpened() {
-    StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
-      final Collection<VirtualFile> pubspecYamlFiles =
-        FilenameIndex.getVirtualFilesByName(myProject, PUBSPEC_YAML, GlobalSearchScope.projectScope(myProject));
+    final Collection<VirtualFile> pubspecYamlFiles =
+      FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project));
 
-      for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
-        final Module module = ModuleUtilCore.findModuleForFile(pubspecYamlFile, myProject);
-        if (module != null && FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, module.getModuleContentScope())) {
-          excludeBuildAndPackagesFolders(module, pubspecYamlFile);
-        }
+    for (VirtualFile pubspecYamlFile : pubspecYamlFiles) {
+      final Module module = ModuleUtilCore.findModuleForFile(pubspecYamlFile, project);
+      if (module != null && FileTypeIndex.containsFileOfType(DartFileType.INSTANCE, module.getModuleContentScope())) {
+        excludeBuildAndPackagesFolders(module, pubspecYamlFile);
       }
+    }
 
-      DartFileListener.scheduleDartPackageRootsUpdate(myProject);
-    });
+    DartFileListener.scheduleDartPackageRootsUpdate(project);
   }
 
   public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {
