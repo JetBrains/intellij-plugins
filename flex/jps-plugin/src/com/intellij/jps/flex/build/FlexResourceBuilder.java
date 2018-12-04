@@ -14,6 +14,7 @@ import org.jetbrains.jps.builders.BuildRootDescriptor;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.FileProcessor;
 import org.jetbrains.jps.incremental.CompileContext;
+import org.jetbrains.jps.incremental.FSOperations;
 import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.incremental.TargetBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
@@ -113,7 +114,7 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
     try {
       for (String targetPath : targetPaths) {
         final File targetFile = new File(targetPath);
-        FileUtil.copyContent(file, targetFile);
+        FSOperations.copy(file, targetFile);
         outputConsumer.registerOutputFile(targetFile, Collections.singletonList(file.getPath()));
       }
     }
