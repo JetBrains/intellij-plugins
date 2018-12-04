@@ -24,7 +24,6 @@ public class KarmaServerRestarter {
 
   private final AtomicInteger myActiveRunners = new AtomicInteger(0);
   private final AtomicBoolean myConfigChanged = new AtomicBoolean(false);
-  private boolean myRestartRequested = false;
 
   public KarmaServerRestarter(@NotNull File configurationFile, @NotNull Disposable parentDisposable) {
     listenForConfigurationFileChanges(configurationFile, parentDisposable);
@@ -60,11 +59,6 @@ public class KarmaServerRestarter {
   }
 
   public boolean isRestartRequired() {
-    return myActiveRunners.get() == 0 && (myRestartRequested || myConfigChanged.get());
+    return myActiveRunners.get() == 0 && myConfigChanged.get();
   }
-
-  public void requestRestart() {
-    myRestartRequested = true;
-  }
-
 }

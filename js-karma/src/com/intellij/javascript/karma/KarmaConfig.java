@@ -21,7 +21,6 @@ import java.util.Locale;
 public class KarmaConfig {
 
   private static final Logger LOG = Logger.getInstance(KarmaConfig.class);
-  private static final String AUTO_WATCH = "autoWatch";
   private static final String BASE_PATH = "basePath";
   private static final String BROWSERS = "browsers";
   private static final String PROTOCOL = "protocol";
@@ -30,7 +29,6 @@ public class KarmaConfig {
   private static final String DEBUG_INFO = "debugInfo";
   private static final String REMOTE_DEBUGGING_PORT = "--remote-debugging-port";
 
-  private final boolean myAutoWatch;
   private final List<String> myBrowsers;
   private final String myBasePath;
   private final String myProtocol;
@@ -38,24 +36,18 @@ public class KarmaConfig {
   private final String myUrlRoot;
   private final int myRemoteDebuggingPort;
 
-  public KarmaConfig(boolean autoWatch,
-                     @NotNull String basePath,
+  public KarmaConfig(@NotNull String basePath,
                      @NotNull List<String> browsers,
                      @NotNull String protocol,
                      @NotNull String hostname,
                      @NotNull String urlRoot,
                      int remoteDebuggingPort) {
-    myAutoWatch = autoWatch;
     myBasePath = basePath;
     myBrowsers = ImmutableList.copyOf(browsers);
     myProtocol = protocol;
     myHostname = hostname;
     myUrlRoot = urlRoot;
     myRemoteDebuggingPort = remoteDebuggingPort;
-  }
-
-  public boolean isAutoWatch() {
-    return myAutoWatch;
   }
 
   @NotNull
@@ -97,7 +89,6 @@ public class KarmaConfig {
     if (jsonElement.isJsonObject()) {
       JsonObject rootObject = jsonElement.getAsJsonObject();
 
-      boolean autoWatch = JsonUtil.getChildAsBoolean(rootObject, AUTO_WATCH, false);
       List<String> browsers = parseBrowsers(rootObject);
       String basePath = parseBasePath(jsonElement, rootObject, configurationFileDir, interpreter);
       String protocol = ObjectUtils.notNull(JsonUtil.getChildAsString(rootObject, PROTOCOL), "http:");
@@ -106,7 +97,7 @@ public class KarmaConfig {
       JsonObject debugInfoObj = JsonUtil.getChildAsObject(rootObject, DEBUG_INFO);
       int remoteDebuggingPort = debugInfoObj != null ? JsonUtil.getChildAsInteger(debugInfoObj, REMOTE_DEBUGGING_PORT, -1) : -1;
 
-      return new KarmaConfig(autoWatch, basePath, browsers, protocol, hostname, urlRoot, remoteDebuggingPort);
+      return new KarmaConfig(basePath, browsers, protocol, hostname, urlRoot, remoteDebuggingPort);
     }
     return null;
   }

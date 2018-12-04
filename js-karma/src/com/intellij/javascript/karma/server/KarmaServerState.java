@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -103,11 +102,6 @@ public class KarmaServerState {
 
   public boolean areBrowsersReady() {
     return myBrowsersReady.get();
-  }
-
-  @NotNull
-  public Collection<CapturedBrowser> getCapturedBrowsers() {
-    return myCapturedBrowsers.values();
   }
 
   public int getServerPort() {

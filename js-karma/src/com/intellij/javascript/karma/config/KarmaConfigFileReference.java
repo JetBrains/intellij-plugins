@@ -31,10 +31,6 @@ public class KarmaConfigFileReference extends FileReference {
     return myPatternUsed;
   }
 
-  public boolean isPatternUsed() {
-    return myPatternUsed;
-  }
-
   public enum FileType { FILE, DIRECTORY }
 
 }

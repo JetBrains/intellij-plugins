@@ -64,7 +64,6 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
   }
 
 
-  @Override
   @Nullable
   public Future<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage) {
     String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());

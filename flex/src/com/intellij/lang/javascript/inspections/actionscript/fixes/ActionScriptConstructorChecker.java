@@ -36,7 +36,7 @@ public class ActionScriptConstructorChecker extends JSConstructorChecker {
   }
 
   @Override
-  protected void checkInstanceMemberAccesses(@NotNull JSFunction constructor, @NotNull JSClass clazz) {
+  protected void checkInstanceMemberAccesses(@NotNull JSFunction constructor) {
 
   }
 

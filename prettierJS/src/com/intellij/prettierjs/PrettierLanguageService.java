@@ -17,9 +17,6 @@ public interface PrettierLanguageService {
                               @NotNull NodePackage prettierPackage,
                               @Nullable TextRange range);
 
-  @Nullable
-  Future<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage);
-
   @NotNull
   static PrettierLanguageServiceImpl getInstance(@NotNull Project project) {
     return ((PrettierLanguageServiceImpl)ServiceManager.getService(project, PrettierLanguageService.class));

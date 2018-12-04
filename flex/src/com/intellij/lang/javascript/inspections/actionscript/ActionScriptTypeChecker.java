@@ -48,7 +48,6 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   @Override
   public boolean checkExpressionIsAssignableToVariable(JSVariable p,
                                                        final JSExpression expr,
-                                                       PsiFile containingFile,
                                                        @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
                                                        boolean allowChangeVariableTypeFix) {
     final JSType type = p.getType();

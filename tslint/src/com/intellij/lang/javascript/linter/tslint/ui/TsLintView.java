@@ -38,7 +38,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
     myProject = project;
     myConfigFileView = new JSLinterConfigFileView(project, CONFIG_TEXTS, null);
     myConfigFileView.setAdditionalConfigFilesProducer(() -> TslintUtil.findAllConfigsInScope(project));
-    myNodeModuleConfigurationView = new NodeModuleConfigurationView(project, "tslint", "TSLint", null);
+    myNodeModuleConfigurationView = new NodeModuleConfigurationView(project, "tslint", null);
   }
 
   @Nullable
