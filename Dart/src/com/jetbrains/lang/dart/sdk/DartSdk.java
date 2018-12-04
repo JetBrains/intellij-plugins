@@ -1,7 +1,9 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Key;
@@ -55,11 +57,11 @@ public class DartSdk {
       cachedValue = CachedValuesManager.getManager(project).createCachedValue(() -> {
         final DartSdk sdk = findDartSdkAmongLibraries(ProjectLibraryTable.getInstance(project).getLibraries());
         if (sdk == null) {
-          return new CachedValueProvider.Result<>(null, DartProjectComponent.getProjectRootsModificationTracker(project));
+          return new CachedValueProvider.Result<>(null, ProjectRootManager.getInstance(project));
         }
 
         List<Object> dependencies = new ArrayList<>(3);
-        dependencies.add(DartProjectComponent.getProjectRootsModificationTracker(project));
+        dependencies.add(ProjectRootManager.getInstance(project));
         ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/version"));
         ContainerUtil.addIfNotNull(dependencies, LocalFileSystem.getInstance().findFileByPath(sdk.getHomePath() + "/lib/core/core.dart"));
 

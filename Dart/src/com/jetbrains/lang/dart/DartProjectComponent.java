@@ -15,8 +15,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.ModificationTracker;
-import com.intellij.openapi.util.SimpleModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -43,7 +41,7 @@ import java.util.Set;
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartProjectComponent implements ProjectComponent {
-  private final SimpleModificationTracker myProjectRootsModificationTracker = new SimpleModificationTracker();
+
   @NotNull private final Project myProject;
 
   protected DartProjectComponent(@NotNull Project project) {
@@ -53,22 +51,9 @@ public class DartProjectComponent implements ProjectComponent {
     project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
       public void rootsChanged(@NotNull ModuleRootEvent event) {
-        myProjectRootsModificationTracker.incModificationCount();
         DartFileListener.scheduleDartPackageRootsUpdate(myProject);
       }
     });
-  }
-
-  @NotNull
-  public static ModificationTracker getProjectRootsModificationTracker(@NotNull final Project project) {
-    if (project.isDefault()) {
-      return ModificationTracker.NEVER_CHANGED;
-    }
-
-    // standard ProjectRootManager (that is a ModificationTracker itself) doesn't work as its modificationCount is not incremented when library root is deleted
-    final DartProjectComponent component = project.getComponent(DartProjectComponent.class);
-    assert component != null;
-    return component.myProjectRootsModificationTracker;
   }
 
   @Override
