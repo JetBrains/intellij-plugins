@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uml;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
@@ -35,7 +36,6 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -45,7 +45,6 @@ import com.intellij.testFramework.SkipInHeadlessEnvironment;
 import com.intellij.uml.UmlGraphBuilderFactory;
 import com.intellij.uml.core.actions.ShowDiagramBase;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.JDOMCompare;
 import com.intellij.util.JdomKt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
@@ -58,6 +57,7 @@ import java.util.*;
 
 import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
 import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
+import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
 @SkipInHeadlessEnvironment
 public class FlashUmlTest extends CodeInsightTestCase {
@@ -216,12 +216,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
     UmlDataModelDumper.dump(actual, provider, model);
     actual.getDocument().getRootElement().setAttribute("origin", actualOriginFqn);
 
-    String difference = JDOMCompare.diffElements(expected, actual.getDocument().getRootElement());
-    if (difference != null) {
-      // this will fail if structure is different
-      assertEquals(expectedDataFileName + ": " + difference, JDOMUtil.writeElement(expected),
-                   JDOMUtil.writeElement(actual.getDocument().getRootElement()).trim());
-    }
+    assertThat(actual.getDocument().getRootElement()).isEqualTo(expected);
   }
 
   public void testClasses() throws Exception {
