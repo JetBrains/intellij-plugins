@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.importer;
 
 import com.intellij.lang.javascript.JSFlexAdapter;
-import com.intellij.lang.javascript.JSTokenTypes;
+import com.intellij.lang.javascript.JSKeywordSets;
 import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.util.text.StringUtil;
@@ -42,7 +42,7 @@ class AS3InterfaceDumper extends AbstractDumpProcessor {
       if(memberInfo.name.name.indexOf(Abc.$CINIT) >= 0) return false;
       if (!StringUtil.isJavaIdentifier(memberInfo.name.name)) return false;
 
-      if (!JSTokenTypes.IDENTIFIER_TOKENS_SET.contains(identifierType(memberInfo.name.name)) ) {
+      if (!JSKeywordSets.IDENTIFIER_TOKENS_SET.contains(identifierType(memberInfo.name.name)) ) {
         return false;
       }
       if (isInterface) {
