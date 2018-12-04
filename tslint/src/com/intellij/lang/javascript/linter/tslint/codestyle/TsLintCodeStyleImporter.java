@@ -87,11 +87,16 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
                                                        @NotNull NodeJsInterpreter interpreter,
                                                        @NotNull NodePackage linterPackage) throws ExecutionException {
 
+    String configFilePath = configPsi.getVirtualFile().getPath();
     List<String> parameters =
       ContainerUtil.list(getPluginDirectory(TsLintImportCodeStyleAction.class, "js/convert-tslint-config.js").getAbsolutePath(),
                          linterPackage.getSystemDependentPath(),
-                         configPsi.getVirtualFile().getPath());
-    return TsLintConfigWrapper.Companion.getConfigFromText(runToolWithArguments(configPsi, interpreter, parameters));
+                         configFilePath);
+    String text = runToolWithArguments(configPsi, interpreter, parameters);
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(String.format("TSLint: computed effective config for file %s:\n%s", configFilePath, text));
+    }
+    return TsLintConfigWrapper.Companion.getConfigFromText(text);
   }
 
   @NotNull
