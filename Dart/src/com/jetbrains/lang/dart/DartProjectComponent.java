@@ -2,7 +2,6 @@
 package com.jetbrains.lang.dart;
 
 import com.intellij.ProjectTopics;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -10,9 +9,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
@@ -23,19 +19,15 @@ import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.runner.client.DartiumUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
-import com.jetbrains.lang.dart.sdk.DartSdkUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
@@ -59,10 +51,6 @@ public class DartProjectComponent implements ProjectComponent {
   @Override
   public void projectOpened() {
     StartupManager.getInstance(myProject).runWhenProjectIsInitialized(() -> {
-      removeGlobalDartSdkLib();
-
-      convertOrderEntriesTargetingGlobalDartSdkLib();
-
       DartiumUtil.resetDartiumFlags();
 
       final Collection<VirtualFile> pubspecYamlFiles =
@@ -77,107 +65,6 @@ public class DartProjectComponent implements ProjectComponent {
 
       DartFileListener.scheduleDartPackageRootsUpdate(myProject);
     });
-  }
-
-  private void removeGlobalDartSdkLib() {
-    for (final Library library : ApplicationLibraryTable.getApplicationTable().getLibraries()) {
-      if (DartSdk.DART_SDK_LIB_NAME.equals(library.getName())) {
-        final DartSdk oldGlobalSdk = DartSdk.getSdkByLibrary(library);
-        if (oldGlobalSdk != null) {
-          DartSdkUtil.updateKnownSdkPaths(myProject, oldGlobalSdk.getHomePath());
-        }
-
-        ApplicationManager.getApplication().runWriteAction(() -> ApplicationLibraryTable.getApplicationTable().removeLibrary(library));
-        return;
-      }
-    }
-  }
-
-  private void convertOrderEntriesTargetingGlobalDartSdkLib() {
-    final DartSdk correctSdk = DartSdk.getDartSdk(myProject);
-    if (correctSdk != null) return; // already converted
-
-    // for performance reasons avoid taking write action and modifiable models if not needed
-    if (!hasIncorrectModuleDependencies()) return;
-
-    final String sdkPath = DartSdkUtil.getFirstKnownDartSdkPath();
-    if (sdkPath == null) return;
-
-    ApplicationManager.getApplication().runWriteAction(() -> {
-      DartSdkLibUtil.ensureDartSdkConfigured(myProject, sdkPath);
-
-      final Collection<ModifiableRootModel> modelsToCommit = new SmartList<>();
-
-      for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
-        boolean hasCorrectDependency = false;
-        boolean needsCorrectDependency = false;
-        final List<OrderEntry> orderEntriesToRemove = new SmartList<>();
-
-        final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
-
-        for (final OrderEntry orderEntry : model.getOrderEntries()) {
-          if (isOldGlobalDartSdkLibEntry(orderEntry)) {
-            needsCorrectDependency = true;
-            orderEntriesToRemove.add(orderEntry);
-          }
-          else if (DartSdkLibUtil.isDartSdkOrderEntry(orderEntry)) {
-            hasCorrectDependency = true;
-          }
-        }
-
-
-        if (needsCorrectDependency && !hasCorrectDependency || !orderEntriesToRemove.isEmpty()) {
-          if (needsCorrectDependency && !hasCorrectDependency) {
-            model.addInvalidLibrary(DartSdk.DART_SDK_LIB_NAME, LibraryTablesRegistrar.PROJECT_LEVEL);
-          }
-
-          for (OrderEntry entry : orderEntriesToRemove) {
-            model.removeOrderEntry(entry);
-          }
-
-          modelsToCommit.add(model);
-        }
-        else {
-          model.dispose();
-        }
-      }
-
-      commitModifiableModels(myProject, modelsToCommit);
-    });
-  }
-
-  public static void commitModifiableModels(@NotNull final Project project, @NotNull final Collection<ModifiableRootModel> modelsToCommit) {
-    if (!modelsToCommit.isEmpty()) {
-      try {
-        ModifiableModelCommitter.multiCommit(modelsToCommit, ModuleManager.getInstance(project).getModifiableModel());
-      }
-      finally {
-        for (ModifiableRootModel model : modelsToCommit) {
-          if (!model.isDisposed()) {
-            model.dispose();
-          }
-        }
-      }
-    }
-  }
-
-  private boolean hasIncorrectModuleDependencies() {
-    for (final Module module : ModuleManager.getInstance(myProject).getModules()) {
-      for (final OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-        if (isOldGlobalDartSdkLibEntry(orderEntry)) return true;
-      }
-    }
-
-    return false;
-  }
-
-  private static boolean isOldGlobalDartSdkLibEntry(OrderEntry orderEntry) {
-    if (orderEntry instanceof LibraryOrderEntry &&
-        LibraryTablesRegistrar.APPLICATION_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
-        DartSdk.DART_SDK_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
-      return true;
-    }
-    return false;
   }
 
   public static void excludeBuildAndPackagesFolders(final @NotNull Module module, final @NotNull VirtualFile pubspecYamlFile) {

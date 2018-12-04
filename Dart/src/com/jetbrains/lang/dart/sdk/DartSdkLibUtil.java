@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -8,6 +9,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
@@ -20,7 +22,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.SmartList;
-import com.jetbrains.lang.dart.DartProjectComponent;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import org.jetbrains.annotations.NotNull;
 
@@ -271,7 +272,7 @@ public class DartSdkLibUtil {
       models.add(modifiableModel);
     }
 
-    DartProjectComponent.commitModifiableModels(modules.iterator().next().getProject(), models);
+    commitModifiableModels(modules.iterator().next().getProject(), models);
   }
 
   public static Collection<Module> getModulesWithDartSdkEnabled(@NotNull final Project project) {
@@ -317,12 +318,28 @@ public class DartSdkLibUtil {
       }
     }
 
-    DartProjectComponent.commitModifiableModels(project, modelsToCommit);
+    commitModifiableModels(project, modelsToCommit);
   }
 
   public static boolean isDartSdkOrderEntry(@NotNull final OrderEntry orderEntry) {
     return orderEntry instanceof LibraryOrderEntry &&
            LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
            DartSdk.DART_SDK_LIB_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
+  }
+
+  private static void commitModifiableModels(@NotNull final Project project,
+                                             @NotNull final Collection<ModifiableRootModel> modelsToCommit) {
+    if (!modelsToCommit.isEmpty()) {
+      try {
+        ModifiableModelCommitter.multiCommit(modelsToCommit, ModuleManager.getInstance(project).getModifiableModel());
+      }
+      finally {
+        for (ModifiableRootModel model : modelsToCommit) {
+          if (!model.isDisposed()) {
+            model.dispose();
+          }
+        }
+      }
+    }
   }
 }
