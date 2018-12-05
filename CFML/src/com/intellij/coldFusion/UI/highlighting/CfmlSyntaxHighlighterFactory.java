@@ -6,7 +6,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.sql.dialects.SqlDialectMappings;
-import com.intellij.sql.highlighting.SqlSyntaxHighlighter;
+import com.intellij.sql.editor.SqlSyntaxHighlighter;
 import org.jetbrains.annotations.NotNull;
 
 public class CfmlSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
