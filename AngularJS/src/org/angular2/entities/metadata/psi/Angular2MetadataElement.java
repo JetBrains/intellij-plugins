@@ -8,7 +8,7 @@ import org.angular2.lang.metadata.psi.MetadataElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class Angular2MetadataElement<Stub extends Angular2MetadataElementStub> extends MetadataElement<Stub> {
+public abstract class Angular2MetadataElement<Stub extends Angular2MetadataElementStub<?>> extends MetadataElement<Stub> {
 
   public Angular2MetadataElement(@NotNull Stub element) {
     super(element);

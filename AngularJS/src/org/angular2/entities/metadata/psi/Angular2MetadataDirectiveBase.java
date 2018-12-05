@@ -22,7 +22,7 @@ import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
 
-public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2MetadataDirectiveStubBase>
+public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2MetadataDirectiveStubBase<?>>
   extends Angular2MetadataDeclaration<Stub>
   implements Angular2Directive {
 
@@ -90,7 +90,6 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
                 Collections.unmodifiableCollection(outputs));
   }
 
-  @SuppressWarnings("unchecked")
   private Pair<Map<String, String>, Map<String, String>> getAllMappings() {
     Map<String, String> inputs = new HashMap<>();
     Map<String, String> outputs = new HashMap<>();
@@ -108,7 +107,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
     return pair(inputs, outputs);
   }
 
-  private void collectProperties(Map<String, String> mappings, JSRecordType classType, List<Angular2DirectiveProperty> result) {
+  private void collectProperties(Map<String, String> mappings, JSRecordType classType, List<? super Angular2DirectiveProperty> result) {
     mappings.forEach((String k, String v) -> result.add(createProperty(k, v, classType)));
   }
 

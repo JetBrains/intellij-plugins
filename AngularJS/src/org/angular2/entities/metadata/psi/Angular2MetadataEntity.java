@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.util.ObjectUtils.notNull;
 
-public class Angular2MetadataEntity<Stub extends Angular2MetadataEntityStub> extends Angular2MetadataClassBase<Stub> implements
+public class Angular2MetadataEntity<Stub extends Angular2MetadataEntityStub<?>> extends Angular2MetadataClassBase<Stub> implements
                                                                                                                      Angular2Entity {
 
   public Angular2MetadataEntity(@NotNull Stub element) {

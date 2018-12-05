@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class MetadataElementType<Stub extends MetadataElementStub> extends IStubElementType<Stub, MetadataElement<Stub>> {
+public class MetadataElementType<Stub extends MetadataElementStub<?>> extends IStubElementType<Stub, MetadataElement<Stub>> {
 
-  @NotNull private final MetadataStubConstructor<Stub> myStubConstructor;
+  @NotNull private final MetadataStubConstructor<? extends Stub> myStubConstructor;
   @NotNull private final MetadataElementConstructor<Stub> myPsiConstructor;
 
   public MetadataElementType(@NotNull String debugName,
                              Language language,
-                             @NotNull MetadataStubConstructor<Stub> stubConstructor,
+                             @NotNull MetadataStubConstructor<? extends Stub> stubConstructor,
                              @NotNull MetadataElementConstructor<Stub> psiConstructor) {
     super(debugName, language);
     myStubConstructor = stubConstructor;
@@ -60,11 +60,11 @@ public class MetadataElementType<Stub extends MetadataElementStub> extends IStub
     stub.index(sink);
   }
 
-  public interface MetadataStubConstructor<Stub extends MetadataElementStub> {
+  public interface MetadataStubConstructor<Stub extends MetadataElementStub<?>> {
     Stub construct(StubInputStream stream, StubElement parent) throws IOException;
   }
 
-  public interface MetadataElementConstructor<Stub extends MetadataElementStub> {
+  public interface MetadataElementConstructor<Stub extends MetadataElementStub<?>> {
     MetadataElement<Stub> construct(@NotNull Stub stub);
   }
 }

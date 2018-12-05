@@ -28,10 +28,10 @@ public interface Angular2MetadataElementTypes {
   MetadataElementType<Angular2MetadataComponentStub> COMPONENT =
     new Angular2MetadataElementType<>("COMPONENT", Angular2MetadataComponentStub::new, Angular2MetadataComponent::new);
 
-  final class Angular2MetadataElementType<Stub extends Angular2MetadataElementStub> extends MetadataElementType<Stub> {
+  final class Angular2MetadataElementType<Stub extends Angular2MetadataElementStub<?>> extends MetadataElementType<Stub> {
 
     public Angular2MetadataElementType(@NotNull String debugName,
-                                       @NotNull MetadataStubConstructor<Stub> stubConstructor,
+                                       @NotNull MetadataStubConstructor<? extends Stub> stubConstructor,
                                        @NotNull MetadataElementConstructor<Stub> psiConstructor) {
       super(debugName, MetadataJsonLanguage.INSTANCE, stubConstructor, psiConstructor);
     }

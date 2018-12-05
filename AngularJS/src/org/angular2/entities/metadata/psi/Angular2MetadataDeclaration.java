@@ -7,7 +7,7 @@ import org.angular2.entities.metadata.stubs.Angular2MetadataEntityStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2MetadataDeclaration<Stub extends Angular2MetadataEntityStub>
+public class Angular2MetadataDeclaration<Stub extends Angular2MetadataEntityStub<?>>
   extends Angular2MetadataEntity<Stub> implements Angular2Declaration {
 
   public Angular2MetadataDeclaration(@NotNull Stub element) {

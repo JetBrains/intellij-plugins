@@ -15,18 +15,14 @@ import org.angular2.lang.metadata.stubs.MetadataElementStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public abstract class MetadataElement<Stub extends MetadataElementStub> extends FakePsiElement implements StubBasedPsiElement<Stub> {
+public abstract class MetadataElement<Stub extends MetadataElementStub<?>> extends FakePsiElement implements StubBasedPsiElement<Stub> {
 
   private final Stub myStub;
   private final AtomicNotNullLazyValue<PsiElement[]> children = new AtomicNotNullLazyValue<PsiElement[]>() {
     @NotNull
     @Override
     protected PsiElement[] compute() {
-      //noinspection unchecked
-      return ContainerUtil.map2Array((List<StubElement>)getStub().getChildrenStubs(),
-                                     PsiElement.class, s -> s.getPsi());
+      return ContainerUtil.map2Array(getStub().getChildrenStubs(), PsiElement.class, s -> s.getPsi());
     }
   };
 
