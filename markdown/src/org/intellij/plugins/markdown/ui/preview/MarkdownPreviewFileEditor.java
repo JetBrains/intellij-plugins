@@ -229,8 +229,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
       return;
     }
 
-    myPooledAlarm.cancelAllRequests();
-    myPooledAlarm.addRequest(() -> updateHtml(true), 0);
+    updateHtmlPooled();
   }
 
   @Override
