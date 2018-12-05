@@ -3,9 +3,6 @@ package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSElementTypes;
-import com.intellij.lang.javascript.psi.JSStubElementType;
-import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.types.JSExpressionElementType;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
@@ -20,9 +17,7 @@ import java.util.function.Function;
 import static com.intellij.lang.javascript.JSKeywordSets.IDENTIFIER_NAMES;
 import static com.intellij.lang.javascript.JSTokenTypes.STRING_LITERAL;
 
-public interface Angular2ElementTypes extends JSElementTypes {
-
-  Angular2PropertyElementType PROPERTY = new Angular2PropertyElementType();
+public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElementTypes {
 
   IElementType PIPE_EXPRESSION = new Angular2ExpressionElementType("NG:PIPE_EXPRESSION", Angular2PipeExpressionImpl::new);
   IElementType PIPE_ARGUMENTS_LIST = new Angular2ExpressionElementType("NG:PIPE_ARGUMENTS_LIST", Angular2PipeArgumentsListImpl::new);
@@ -41,7 +36,6 @@ public interface Angular2ElementTypes extends JSElementTypes {
   IElementType TEMPLATE_BINDING_STATEMENT = new Angular2ElementType("NG:TEMPLATE_BINDING_STATEMENT", (type) -> {
     throw new UnsupportedOperationException("Use createTemplateBindingStatement method instead");
   });
-  JSStubElementType<JSVariableStub<JSVariable>, JSVariable> TEMPLATE_BINDING_VARIABLE = new Angular2TemplateVariableElementType();
 
   TokenSet PROPERTY_NAMES = TokenSet.orSet(IDENTIFIER_NAMES, TokenSet.create(STRING_LITERAL));
 

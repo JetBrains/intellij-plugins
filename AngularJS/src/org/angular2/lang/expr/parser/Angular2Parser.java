@@ -16,6 +16,7 @@ import com.intellij.util.Consumer;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.*;
+import static org.angular2.lang.expr.parser.Angular2StubElementTypes.PROPERTY;
 
 public class Angular2Parser
   extends

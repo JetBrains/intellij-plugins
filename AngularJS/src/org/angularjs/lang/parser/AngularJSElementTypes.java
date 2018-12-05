@@ -1,13 +1,8 @@
 package org.angularjs.lang.parser;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.lang.javascript.types.JSEmbeddedContentElementType;
-import com.intellij.lang.javascript.types.JSFileElementType;
-import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.ICompositeElementType;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.IFileElementType;
 import org.angularjs.lang.AngularJSLanguage;
 import org.angularjs.lang.psi.AngularJSFilterExpression;
 import org.angularjs.lang.psi.AngularJSMessageFormatExpression;
@@ -53,13 +48,6 @@ public interface AngularJSElementTypes {
   IElementType MESSAGE_FORMAT_OPTION = new IElementType("MESSAGE_FORMAT_OPTION", AngularJSLanguage.INSTANCE);
   IElementType MESSAGE_FORMAT_SELECTION_KEYWORD = new IElementType("MESSAGE_FORMAT_SELECTION_KEYWORD", AngularJSLanguage.INSTANCE);
 
-  IElementType EMBEDDED_CONTENT = new JSEmbeddedContentElementType(AngularJSLanguage.INSTANCE, "ANG_") {
-    @Override
-    protected Lexer createStripperLexer(Language baseLanguage) {
-      return null;
-    }
-  };
-  
   abstract class AngularJSElementType extends IElementType implements ICompositeElementType {
 
     public AngularJSElementType(@NotNull String debugName) {

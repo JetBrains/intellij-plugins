@@ -68,7 +68,6 @@
     <lang.documentationProvider language="HTML" implementationClass="org.angularjs.AngularJSDocumentationProvider" />
     <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" order="first"/>
     <lang.parserDefinition language="AngularJS" implementationClass="org.angularjs.lang.parser.AngularJSParserDefinition"/>
-    <stubElementTypeHolder class="org.angularjs.lang.parser.AngularJSElementTypes"/>
     <lang.syntaxHighlighterFactory language="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighterFactory"/>
     <psi.referenceContributor implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
     <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter" />
@@ -148,7 +147,7 @@
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
     <todoIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlTodoIndexer"/>
     <xml.fileNSInfoProvider implementation="org.angular2.lang.html.Angular2HtmlNSInfoProvider"/>
-    <stubElementTypeHolder class="org.angular2.lang.html.parser.Angular2HtmlElementTypes"/>
+    <stubElementTypeHolder class="org.angular2.lang.html.parser.Angular2HtmlStubElementTypes"/>
     <lang.formatter language="Angular2Html" implementationClass="org.angular2.lang.html.Angular2HtmlFormattingModelBuilder"/>
     <gotoDeclarationHandler implementation="org.angular2.editor.Angular2GotoDeclarationHandler" order="first"/>
     <typeDeclarationProvider implementation="org.angular2.editor.Angular2TypeDeclarationProvider" order="first"/>
@@ -159,7 +158,7 @@
     <codeInsight.template.postfixTemplateProvider language="Angular2"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
     <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
-    <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2ElementTypes"/>
+    <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2StubElementTypes"/>
     <completion.contributor language="any" implementationClass="org.angular2.codeInsight.Angular2CompletionContributor"
                             id="Angular2CompletionContributor"
                             order="before JSPatternBasedCompletionContributor, before JSCompletionContributor, before xmlNonFirst"/>
@@ -169,7 +168,7 @@
     <renamePsiElementProcessor implementation="org.angular2.refactoring.Angular2PipeRenameProcessor" order="first"/>
 
     <!-- Angular2 metadata JSON contributions -->
-    <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes"/>
+    <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="METADATA_JSON:"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataPipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataEntityClassNameIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataDirectiveIndex"/>

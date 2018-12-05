@@ -7,12 +7,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IStubFileElementType;
 import org.angular2.entities.metadata.stubs.Angular2MetadataNodeModuleStub;
 import org.angular2.lang.metadata.MetadataJsonFileType;
+import org.angular2.lang.metadata.MetadataJsonLanguage;
+import org.angular2.lang.metadata.psi.MetadataStubFileElementType;
 import org.angular2.lang.metadata.stubs.MetadataFileStubImpl;
 import org.jetbrains.annotations.NotNull;
 
 public final class Angular2MetadataFileType extends MetadataJsonFileType {
 
   public static final Angular2MetadataFileType INSTANCE = new Angular2MetadataFileType();
+  private static final IStubFileElementType<MetadataFileStubImpl> FILE = new MetadataStubFileElementType(MetadataJsonLanguage.INSTANCE);
 
   private static final String METADATA_SUFFIX = ".metadata.json";
   private static final String D_TS_SUFFIX = ".d.ts";
@@ -43,7 +46,7 @@ public final class Angular2MetadataFileType extends MetadataJsonFileType {
 
   @Override
   public IStubFileElementType getFileElementType() {
-    return Angular2MetadataElementTypes.FILE;
+    return FILE;
   }
 
   @Override
