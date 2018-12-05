@@ -27,7 +27,6 @@ import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -45,12 +44,6 @@ public class TsLintFileFixAction extends JSLinterFixAction {
   public TsLintFileFixAction() {
     super(TsLintBundle.message("tslint.framework.title"),
           TsLintBundle.message("tslint.action.fix.all.problem.title"), null);
-  }
-
-  @Override
-  public void update(@NotNull AnActionEvent e) {
-    super.update(e);
-    e.getPresentation().setText(JSBundle.message("javascript.linter.action.fix.problems.file.text", TsLintBundle.message("tslint.framework.title")));
   }
 
   @Override

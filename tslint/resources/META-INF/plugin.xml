@@ -42,8 +42,8 @@
   </extensions>
   <actions>
     <action class="com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction" id="TsLintFileFixAction">
-      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorPopupMenu" anchor="after" relative-to-action="Javascript.Linters.EsLint.Fix"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="Javascript.Linters.EsLint.Fix"/>
     </action>
     <action id="TslintImportCodeStyleAction"
             class="com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction" 
