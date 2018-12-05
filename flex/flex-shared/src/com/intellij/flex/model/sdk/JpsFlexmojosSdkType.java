@@ -23,6 +23,11 @@ public class JpsFlexmojosSdkType extends JpsSdkType<JpsSimpleElement<JpsFlexmojo
   private static final String ADL_PATH_ELEMENT_NAME = "AdlPath";
   private static final String AIR_RUNTIME_PATH_ELEMENT_NAME = "AirRuntimePath";
 
+  @Override
+  public String getPresentableName() {
+    return "Flexmojos SDK";
+  }
+
   public static JpsSdkPropertiesSerializer<JpsSimpleElement<JpsFlexmojosSdkProperties>> createSdkPropertiesSerializer() {
     return new JpsSdkPropertiesSerializer<JpsSimpleElement<JpsFlexmojosSdkProperties>>(ID, INSTANCE) {
       @Override

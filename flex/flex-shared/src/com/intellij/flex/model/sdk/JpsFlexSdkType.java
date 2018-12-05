@@ -12,6 +12,11 @@ public class JpsFlexSdkType extends JpsSdkType<JpsDummyElement> {
   public static final String ID = "Flex SDK Type (new)";
   public static final JpsFlexSdkType INSTANCE = new JpsFlexSdkType();
 
+  @Override
+  public String getPresentableName() {
+    return "Flex/AIR SDK";
+  }
+
   public static JpsSdkPropertiesSerializer<JpsDummyElement> createJpsSdkPropertiesSerializer() {
     return new JpsSdkPropertiesSerializer<JpsDummyElement>(ID, INSTANCE) {
       @Override
