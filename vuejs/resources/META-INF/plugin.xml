@@ -109,7 +109,7 @@ The IDE uses its own TypeScript support instead of the TypeScript language servi
   <extensions defaultExtensionNs="JavaScript">
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider" />
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.VueIndexedFileTypeProvider"/>
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler" version="1"/>
     <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueInspectionFilter"/>
     <inheritedLanguagesConfigurableProvider language="VueJS"
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>

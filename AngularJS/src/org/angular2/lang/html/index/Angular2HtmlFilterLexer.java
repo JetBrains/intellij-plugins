@@ -3,9 +3,9 @@ package org.angular2.lang.html.index;
 
 import com.intellij.lang.Language;
 import com.intellij.lang.html.HTMLLanguage;
+import com.intellij.lang.javascript.JSExtendedLanguagesTokenSetProvider;
 import com.intellij.lang.javascript.JSKeywordSets;
 import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.findUsages.JSWordsScanner;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.impl.cache.CacheUtil;
@@ -54,7 +54,7 @@ public class Angular2HtmlFilterLexer extends BaseFilterLexer {
   );
 
   private static final TokenSet SKIP_WORDS = orSet(
-    JSWordsScanner.SKIP_WORDS_SCAN_SET,
+    JSExtendedLanguagesTokenSetProvider.SKIP_WORDS_SCAN_SET,
     XmlFilterLexer.NO_WORDS_TOKEN_SET,
     create(
       Angular2HtmlTokenTypes.INTERPOLATION_START,
