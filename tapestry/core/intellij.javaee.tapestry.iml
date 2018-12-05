@@ -46,7 +46,9 @@
     <orderEntry type="module" module-name="intellij.javaee.web" exported="" />
     <orderEntry type="module" module-name="intellij.java.compiler" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.impl" exported="" />
-    <orderEntry type="module" module-name="intellij.tools.content" exported="" />
+    <orderEntry type="module" module-name="intellij.jsp.base" />
+    <orderEntry type="module" module-name="intellij.platform.ide.impl" />
+    <orderEntry type="module" module-name="intellij.java.impl" />
     <orderEntry type="module" module-name="intellij.xml.impl" exported="" />
     <orderEntry type="module" module-name="intellij.javaee.web.impl" />
     <orderEntry type="module" module-name="intellij.java.compiler.impl" />
