@@ -1,20 +1,14 @@
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.JSStatementMoverTestBase;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.annotations.NotNull;
-
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class ActionScriptStatementMoverTest extends JSStatementMoverTestBase {
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "statementMover/");
     super.setUp();
   }
 

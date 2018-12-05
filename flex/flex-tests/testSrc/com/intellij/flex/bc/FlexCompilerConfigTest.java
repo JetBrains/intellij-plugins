@@ -20,7 +20,6 @@ import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.CompilerConfigGenerator;
@@ -59,9 +58,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
-
 public class FlexCompilerConfigTest extends PlatformTestCase {
 
   private static final String[] SDK_3_ROOTS = new String[]{
@@ -83,8 +79,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
 
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "compilerConfig");
     super.setUp();
   }
 

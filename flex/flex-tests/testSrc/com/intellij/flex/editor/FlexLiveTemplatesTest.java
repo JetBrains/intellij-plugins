@@ -8,8 +8,6 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.impl.TemplateSettings;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
-import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.JSLiveTemplatesTestBase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -17,13 +15,9 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.util.Consumer;
 
 import java.util.List;
-
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
 
@@ -39,9 +33,7 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
 
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
   }
 

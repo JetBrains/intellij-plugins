@@ -2,17 +2,12 @@ package com.intellij.flex.generate;
 
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.annotations.NonNls;
-
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class ActionScriptGenerateTest extends JSDaemonAnalyzerTestCase {
   @NonNls
@@ -20,8 +15,7 @@ public class ActionScriptGenerateTest extends JSDaemonAnalyzerTestCase {
 
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
   }
 

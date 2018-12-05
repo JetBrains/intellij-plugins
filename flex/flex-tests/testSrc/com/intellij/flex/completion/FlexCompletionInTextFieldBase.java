@@ -3,8 +3,6 @@ package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
-import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.BaseJSCompletionInTextFieldTest;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.completion.JSKeywordsCompletionProvider;
@@ -15,16 +13,12 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTextFieldTest {
 
@@ -56,9 +50,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
   }
 
   protected void checkTextFieldCompletion(JSExpressionCodeFragment fragment,

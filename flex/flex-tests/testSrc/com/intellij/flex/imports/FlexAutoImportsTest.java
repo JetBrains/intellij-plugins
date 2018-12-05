@@ -6,8 +6,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.flex.util.FlexModuleFixtureBuilder;
 import com.intellij.flex.util.FlexModuleFixtureBuilderImpl;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
-import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
@@ -15,7 +13,6 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
@@ -23,9 +20,6 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.util.containers.ContainerUtil;
 
 import java.util.List;
-
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFixtureBuilder> {
   private static final String EXPECTED_RESULT_FILE_SUFFIX = "expected";
@@ -40,9 +34,7 @@ public class FlexAutoImportsTest extends CodeInsightFixtureTestCase<FlexModuleFi
 
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
 
     IdeaTestFixtureFactory.getFixtureFactory().registerFixtureBuilder(FlexModuleFixtureBuilder.class, FlexModuleFixtureBuilderImpl.class);
     super.setUp();

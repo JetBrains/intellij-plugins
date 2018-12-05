@@ -4,6 +4,7 @@ import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -54,8 +55,7 @@ public class FlashBuilderImportTest extends IdeaTestCase {
 
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
     WriteAction.run(() -> myFlashBuilderProjectDir = prepareFlashBuilderProjectDir());
   }

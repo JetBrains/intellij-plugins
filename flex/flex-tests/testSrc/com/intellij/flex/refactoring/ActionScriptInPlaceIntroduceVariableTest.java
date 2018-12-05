@@ -2,14 +2,9 @@ package com.intellij.flex.refactoring;
 
 import com.intellij.flex.base.FlexInplaceIntroduceVariableTestCase;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import org.jetbrains.annotations.NotNull;
-
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class ActionScriptInPlaceIntroduceVariableTest extends FlexInplaceIntroduceVariableTestCase {
 
@@ -26,8 +21,7 @@ public class ActionScriptInPlaceIntroduceVariableTest extends FlexInplaceIntrodu
 
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "refactoring/introduceVariable/");
     super.setUp();
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }

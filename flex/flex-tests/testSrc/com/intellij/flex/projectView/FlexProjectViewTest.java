@@ -4,16 +4,11 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.projectView.ProjectView;
 import com.intellij.ide.projectView.impl.AbstractProjectViewPSIPane;
 import com.intellij.ide.projectView.impl.ProjectViewImpl;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.projectView.BaseProjectViewTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 // this is to make sure that testMxmlWithCss() is not the first one, otherwise it sometimes fails on buildserver because of too long class loading
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -24,8 +19,7 @@ public class FlexProjectViewTest extends BaseProjectViewTestCase {
 
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
   }
 

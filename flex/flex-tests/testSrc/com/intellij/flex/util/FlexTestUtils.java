@@ -8,6 +8,8 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
+import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -67,6 +69,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
+import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
+
 public class FlexTestUtils {
 
   @NotNull
@@ -76,7 +81,6 @@ public class FlexTestUtils {
       final String testDataPath = FileUtil.toSystemIndependentName(dir.getAbsolutePath());
       if (testDataPath.endsWith("/flex/flex-tests/testData")) {
         // started from 'flex-plugin' project
-        VfsRootAccess.allowRootAccess(testDataPath);
         return testDataPath + "/" + relativePath;
       }
     }
@@ -90,7 +94,6 @@ public class FlexTestUtils {
     if (dir.isDirectory()) {
       // started from 'flex-plugin' project
       final String path = FileUtil.toCanonicalPath(dir.getAbsolutePath());
-      VfsRootAccess.allowRootAccess(path);
       return path + "/" + version;
     }
 
@@ -192,6 +195,7 @@ public class FlexTestUtils {
         }
       }
 
+      VfsRootAccess.allowRootAccess(parent, flexSdkRootPath);
       final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
       final Sdk sdk1 = new ProjectJdkImpl(sdkType.suggestSdkName(null, flexSdkRootPath), sdkType, flexSdkRootPath, "");
       sdkType.setupSdkPaths(sdk1);
@@ -625,5 +629,11 @@ public class FlexTestUtils {
                                 @Nullable final String sourcesZipFileName,
                                 @Nullable final String asdocRoot) {
     addFlexLibrary(false, module, libraryName, true, path, swcFileName, sourcesZipFileName, asdocRoot);
+  }
+
+  public static void allowFlexVfsRootsFor(@NotNull Disposable disposable, @NotNull String relativeTestPath) {
+    VfsRootAccess.allowRootAccess(disposable, getTestDataPath(relativeTestPath),
+                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
+                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
   }
 }

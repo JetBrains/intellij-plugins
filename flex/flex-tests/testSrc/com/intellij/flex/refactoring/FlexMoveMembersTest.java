@@ -1,8 +1,8 @@
 package com.intellij.flex.refactoring;
 
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
-import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
+import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
+import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersProcessor;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -13,14 +13,11 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersDialog;
 import com.intellij.lang.javascript.refactoring.moveMembers.JSMoveMembersOptions;
-import com.intellij.javascript.flex.refactoring.moveMembers.ActionScriptMoveMembersProcessor;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.util.Conditions;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.MultiFileTestCase;
@@ -30,9 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
-
 public class FlexMoveMembersTest extends MultiFileTestCase {
 
   private static final String VISIBILITY_AS_IS = null;
@@ -41,9 +35,8 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
 
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
+
     super.setUp();
   }
 

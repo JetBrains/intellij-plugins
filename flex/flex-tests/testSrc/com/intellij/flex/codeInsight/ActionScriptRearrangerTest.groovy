@@ -1,21 +1,16 @@
 package com.intellij.flex.codeInsight
 
 import com.intellij.flex.util.FlexTestUtils
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor
 import com.intellij.lang.actionscript.arrangement.ActionScriptRearranger
 import com.intellij.lang.javascript.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.codeStyle.arrangement.AbstractRearrangerTest
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens
 import org.jetbrains.annotations.NonNls
 
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
-
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath
 
 class ActionScriptRearrangerTest extends AbstractRearrangerTest {
 
@@ -25,8 +20,7 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
   }
 
   protected void setUp() {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))))
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp()
 
     def sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this), myFixture.getProjectDisposable())

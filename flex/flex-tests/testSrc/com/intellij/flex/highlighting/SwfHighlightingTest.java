@@ -47,8 +47,7 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   @Override
   protected void setUp() throws Exception {
-    VfsRootAccess.allowRootAccess(getTestRootDisposable(),
-                                  urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), FlexHighlightingTest.BASE_PATH);
     super.setUp();
     myAfterCommitRunnable = null;
   }

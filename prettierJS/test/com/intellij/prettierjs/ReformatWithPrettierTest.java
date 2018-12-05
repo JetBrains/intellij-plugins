@@ -21,17 +21,16 @@ import org.junit.Assert;
 
 public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
 
-  private NodeLinterPackageTestPaths myTestPackagePaths;
-
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
 
-    myTestPackagePaths = ensureNpmPackage("prettier");
-    NodeJsLocalInterpreter interpreter = new NodeJsLocalInterpreter(myTestPackagePaths.getNodePath().toString());
+    NodeLinterPackageTestPaths testPackagePaths = ensureNpmPackage("prettier");
+    Disposer.register(myFixture.getProjectDisposable(), testPackagePaths);
+    NodeJsLocalInterpreter interpreter = new NodeJsLocalInterpreter(testPackagePaths.getNodePath().toString());
     NodeJsInterpreterManager.getInstance(myFixture.getProject()).setInterpreterRef(interpreter.toRef());
-    NodePackage nodePackage = new NodePackage(myTestPackagePaths.getPackagePath().toString());
+    NodePackage nodePackage = new NodePackage(testPackagePaths.getPackagePath().toString());
     PrettierConfiguration.getInstance(getProject()).update(interpreter.toRef(), nodePackage);
     boolean debug = JSLanguageServiceQueue.LOGGER.isDebugEnabled();
     JSLanguageServiceQueue.LOGGER.setLevel(Level.TRACE);
@@ -43,19 +42,6 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
   protected boolean shouldRunTest() {
     //skip tests requiring npm package under teamcity for now.
     return !IS_UNDER_TEAMCITY;
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    try {
-      myTestPackagePaths.onTearDown();
-    }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
   }
 
   public void testWithoutConfig() {
