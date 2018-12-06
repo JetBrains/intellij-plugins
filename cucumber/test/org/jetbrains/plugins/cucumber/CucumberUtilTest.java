@@ -42,6 +42,8 @@ public class CucumberUtilTest {
   public void testIsCucumberExpression() {
     assertTrue(isCucumberExpression("def {int}"));
     assertFalse(isCucumberExpression("def {int"));
+    assertFalse(isCucumberExpression("def \\d{1}"));
+    assertFalse(isCucumberExpression("def \\d{1,2}"));
     assertFalse(isCucumberExpression("text"));
     assertFalse(isCucumberExpression("text (\\d)"));
   }

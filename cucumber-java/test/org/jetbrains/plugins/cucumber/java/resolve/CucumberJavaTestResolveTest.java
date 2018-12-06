@@ -13,6 +13,14 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
   public void testNavigationFromStepToStepDef03() {
     doTest("stepResolve_01", "my change sh<caret>ould be 4", "my_change_should_be_");
   }
+  
+  public void testStepDefinitionWithMatchCount() {
+    doTest("stepResolve_01", "I set numb<caret>er to 50", "I_set_number_to");
+  }
+
+  public void testStepDefinitionWithMatchDiapason() {
+    doTest("stepResolve_01", "I set val<caret>ue to 50", "I_set_value_to");
+  }
 
   public void testNavigationWithQuotes01() {
     doTest("stepResolve_02", "I subtract 5 fr<caret>om 9", "I_subtract_from");

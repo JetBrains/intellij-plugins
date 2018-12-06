@@ -344,10 +344,20 @@ public class CucumberUtil {
    * {string} or defined by user). This methods helps to distinguish these two cases
    */
   public static boolean isCucumberExpression(@NotNull String stepDefinitionPattern) {
+    if (stepDefinitionPattern.startsWith("^") && stepDefinitionPattern.endsWith("$")) {
+      return false;
+    }
     final boolean[] containsParameterTypes = {false};
     processParameterTypesInCucumberExpression(stepDefinitionPattern, textRange -> {
-      containsParameterTypes[0] = true;
-      return false;
+      if (textRange.getLength() < 2) {
+        // at least "{}" expected here
+        return true;
+      }
+      String parameterTypeCandidate = stepDefinitionPattern.substring(textRange.getStartOffset() + 1, textRange.getEndOffset() - 1);
+      if (!StringUtil.isNotNegativeNumber(parameterTypeCandidate) && !parameterTypeCandidate.contains(",")) {
+        containsParameterTypes[0] = true;
+      }
+      return true;
     });
 
     return containsParameterTypes[0];

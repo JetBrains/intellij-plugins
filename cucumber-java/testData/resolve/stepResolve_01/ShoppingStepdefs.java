@@ -35,6 +35,14 @@ public class ShoppingStepdefs {
   public void my_test_step() {
   }
 
+  @When("I set number to (\\d{2})")
+  public void I_set_number_to(Integer nr) {
+  }
+
+  @When("I set value to (\\d{2,10})")
+  public void I_set_value_to(Integer nr) {
+  }
+
   public static class Grocery {
     public String name;
     public int price;

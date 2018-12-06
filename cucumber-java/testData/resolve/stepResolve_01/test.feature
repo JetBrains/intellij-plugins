@@ -10,3 +10,5 @@ Feature: Shopping
     Then my change should be 4
     And my test step
     And my another test step
+    When I set number to 50
+    When I set value to 50
