@@ -1,0 +1,6 @@
+<div *ngIf="userList | async as users; else loading">
+  <user-profile *ngFor="let user of users{caret}; count as count; index as i" [user]="user">
+    User {{i}} of {{count}}
+  </user-profile>  
+</div>   
+<ng-template #loading>Loading...</ng-template>  

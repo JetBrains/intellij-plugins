@@ -1,0 +1,26 @@
+﻿#AutomaticCompletion:
+# 23 ITEMS #
+
+*ngFor
+*ngIf
+*ngSwitch
++ formArrayName
++ formControl
++ formControlName
++ formGroup
++ formGroupName
++ hideWhen
++ ion-button
++ ion-fab
++ ion-item
++ ion-text
++ menuClose
++ menuToggle
++ navPop
++ navPush
++ radio-group
+root
+rootParams
++ showWhen
+swipeBackEnabled
++ virtualScroll

@@ -1,0 +1,8 @@
+  <h2> My Heroes </h2>
+    <ul class="heroes">
+      <li *ngFor ="let zzz of heroes; let i = index; let kk3 = index; trackBy: a"
+        [class.selected]="zzz === selectedHero"
+        (click) = "onSelect(zzz)" >
+        <span class="badge" >{{zzz.id}}</span> {{zzz.name}} {{i + kk3}}
+      </li>
+    </ul>

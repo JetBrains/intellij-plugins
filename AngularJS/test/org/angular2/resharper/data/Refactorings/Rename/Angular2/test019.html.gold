@@ -1,0 +1,1 @@
+<li *ngFor="let x in foo" [class.zzz]="true" [style.background-color]></li>    

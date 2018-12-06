@@ -1,0 +1,15 @@
+@Component({
+  selector: 'my-app',
+  template: `
+      <input #zzz placeholder="phone number">
+      <button (click)="callPhone(zzz.value)">Call</button>
+
+      <input ref-fax placeholder="fax number">
+      <button (click)="callFax(fax.value)">Fax</button>
+  `
+})
+export class AppComponent {
+  title = 'Tour of Heroes';
+  heroes = [];
+  selectedHero = { firstName: "eee" }
+}

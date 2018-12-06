@@ -1,0 +1,12 @@
+﻿#AutomaticCompletion:
+# 9 ITEMS #
+
++ count
++ even
++ first
+heroes (in test004.js)
++ index
++ last
++ odd
+selectedHero (in test004.js)
+title (in test004.js)

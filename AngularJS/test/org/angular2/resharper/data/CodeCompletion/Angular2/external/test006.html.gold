@@ -1,0 +1,14 @@
+﻿#AutomaticCompletion:
+# 11 ITEMS #
+
+*ngSwitch
+aria-selected
+aria-setsize
+aria-sort
+showWhen
++ small
++ solid
+spellcheck
++ strong
+style
+virtualScroll

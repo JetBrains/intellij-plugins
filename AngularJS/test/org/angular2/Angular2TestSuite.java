@@ -20,6 +20,7 @@ import org.angular2.navigation.GotoSymbolTest;
 import org.angular2.refactoring.AngularChangeSignatureTest;
 import org.angular2.refactoring.DirectiveRenameTest;
 import org.angular2.refactoring.RenameTest;
+import org.angular2.resharper.Angular2ReSharperTestSuite;
 import org.angular2.service.Angular2ServiceTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -55,6 +56,7 @@ import org.junit.runners.Suite;
   NgMaterialTest.class,
   Angular2ServiceTest.class,
   GotoSymbolTest.class,
+  Angular2ReSharperTestSuite.class,
 })
 public class Angular2TestSuite {
 }
