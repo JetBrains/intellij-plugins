@@ -33,6 +33,10 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
   public void testWordSymbolWithAZ() {
     doTest("stepResolve_w", "plast<caret>ic", "payment_mode");
   }
+  
+  public void testCaseSensitivity() {
+    doTest("stepResolve_w", "sensit<caret>ivity", null);
+  }
 
   public void testJavaSeveralStepAnnotation() {
     doTest("stepResolve_01", "my anot<caret>her test step", "my_test_step");

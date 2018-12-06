@@ -68,7 +68,7 @@ public abstract class AbstractStepDefinition {
           patternText.replace(patternText.length() - CUCUMBER_END_SUFFIX.length(), patternText.length(), "$");
         }
 
-        myRegex = Pattern.compile(patternText.toString(), Pattern.CASE_INSENSITIVE);
+        myRegex = Pattern.compile(patternText.toString(), isCaseSensitive() ? 0 : Pattern.CASE_INSENSITIVE);
         myRegexText = cucumberRegex;
       }
       return myRegex;
@@ -85,6 +85,10 @@ public abstract class AbstractStepDefinition {
 
   @Nullable
   protected abstract String getCucumberRegexFromElement(PsiElement element);
+  
+  protected boolean isCaseSensitive() {
+    return true;
+  }
 
   @Override
   public boolean equals(Object o) {
