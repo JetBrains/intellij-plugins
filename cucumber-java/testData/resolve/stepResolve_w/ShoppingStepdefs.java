@@ -13,4 +13,8 @@ public class ShoppingStepdefs {
   @When("^способ оплаты (\\w*)$")
   public void payment_mode(String payMethod) throws Throwable {
   }
+  
+  @When("^Case Sensitivity Check$")
+  public void caseSensitivityCheck() throws Throwable {
+  }
 }
