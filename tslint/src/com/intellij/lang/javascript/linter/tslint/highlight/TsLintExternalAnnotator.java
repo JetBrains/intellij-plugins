@@ -164,7 +164,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
   @Override
   protected void cleanNotification(@NotNull TsLinterInput collectedInfo) {
-    JSLinterEditorNotificationPanel.clearNotification(collectedInfo.getProject(), getInspectionClass(), collectedInfo.getVirtualFile());
+    JSLinterEditorPanelCreator.clearNotification(collectedInfo.getProject(), getInspectionClass(), collectedInfo.getVirtualFile());
   }
 
   public boolean saveConfigFileAndReturnSkipProcessing(@NotNull Project project,
