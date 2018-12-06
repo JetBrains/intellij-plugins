@@ -22,6 +22,7 @@ import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.npm.NpmManager
 import com.intellij.javascript.nodejs.npm.NpmUtil
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.buildTools.npm.rc.NpmCommand
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.Disposable
@@ -51,7 +52,7 @@ class VueCreateProjectProcess(private val folder: Path,
                               private val projectName: String,
                               private val templateName: String,
                               private val interpreterRef: NodeJsInterpreterRef,
-                              private val packagePath: String,
+                              private val vuePackage: NodePackage,
                               parentDisposable: Disposable?) : Disposable {
   companion object {
     private const val DOMAIN = "vue-create-project"
@@ -106,7 +107,7 @@ class VueCreateProjectProcess(private val folder: Path,
       @Suppress("unused")
       fun notifyStarted() {
         logProgress("notify started")
-        val packagePath = Paths.get(packagePath)
+        val packagePath = Paths.get(vuePackage.systemDependentPath)
         rpcServer.send(DOMAIN, "start", packagePath.parent.normalize().toString(), packagePath.fileName.toString(), templateName, projectName)
       }
     }), false, serverDisposer)
