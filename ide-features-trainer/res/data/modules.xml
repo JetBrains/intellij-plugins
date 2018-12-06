@@ -13,5 +13,7 @@
     <module name="modules/swift/Refactorings.xml"/>
     <module name="modules/swift/Code Generation.xml"/>
     <module name="modules/swift/RunDebugTest.xml"/>
+    <!--Ruby-->
+    <module name="modules/ruby/EditorBasics.xml"/>
 </modules>
 
