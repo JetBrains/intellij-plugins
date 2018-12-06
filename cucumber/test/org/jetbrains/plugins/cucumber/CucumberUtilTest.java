@@ -40,4 +40,16 @@ public class CucumberUtilTest {
     String actual = replaceNotNecessaryTextTemplateByRegexp("I have {short}  cucumber(s) in my belly");
     assertEquals("I have {short}  cucumber(?:s)? in my belly", actual);
   }
+  
+  @Test
+  public void testGetTheBiggestWordToSearchByIndex() {
+    String actual = CucumberUtil.getTheBiggestWordToSearchByIndex("I have cucumber(s) text");
+    assertEquals("have", actual);
+    
+    actual = CucumberUtil.getTheBiggestWordToSearchByIndex("I have cucumber/gherkin value");
+    assertEquals("value", actual);
+    
+    actual = CucumberUtil.getTheBiggestWordToSearchByIndex("I have cucumber\\d");
+    assertEquals("have", actual);
+  }
 }
