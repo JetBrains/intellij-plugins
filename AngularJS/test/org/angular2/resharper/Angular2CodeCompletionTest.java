@@ -2,40 +2,32 @@
 package org.angular2.resharper;
 
 import com.intellij.lang.resharper.ReSharperTestUtil;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PsiTestUtil;
-import org.angularjs.AngularTestUtil;
+import com.intellij.testFramework.TestDataPath;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
+@TestDataPath("$R#_COMPLETION_TEST_ROOT/Angular2")
 public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestBase {
 
-  public static final String SUB_PATH = "Angular2";
-
-  private static final String[] TESTS_TO_SKIP = new String[]{
-    "external/test001",
+  private static final Set<String> TESTS_TO_SKIP = ContainerUtil.newHashSet(
     "external/test002",
     "external/test003",
     "external/test004",
     "external/test005",
     "external/test006",
     "test004",
+    "test005",
     "test006",
     "test007",
-    "test008",
-  };
-
-  @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
-  public static List<String> data(@NotNull Class<?> klass) throws Exception {
-    return ReSharperTestUtil.getTestParamsFromSubPath(SUB_PATH, BASE_PATH, null,
-                                                      AngularTestUtil.getBaseTestDataPath(klass));
-  }
-
-  @Override
-  protected String getBasePath() {
-    return ReSharperTestUtil.getRelativeTestPath(SUB_PATH, BASE_PATH);
-  }
+    "test008"
+  );
 
   @NotNull
   private VirtualFile getNodeModules() {
@@ -46,26 +38,22 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
   }
 
   @Override
-  protected void doTest() throws Exception {
-    if (getName().startsWith("external")) {
-      PsiTestUtil.addSourceContentToRoots(myModule, getNodeModules());
-    }
-    super.doTest();
+  protected boolean isExcluded(@NotNull String testName) {
+    return TESTS_TO_SKIP.contains(testName);
   }
 
   @Override
-  public void tearDown() throws Exception {
-    try {
-      if (getName().startsWith("external")) {
-        PsiTestUtil.removeContentEntry(myModule, getNodeModules());
-      }
+  protected void doSingleTest(@NotNull String testFile, @NotNull String path) throws Exception {
+    if (getName().startsWith("external")) {
+      WriteAction.runAndWait(() -> {
+        VirtualFile nodeModules = getNodeModules();
+        PsiTestUtil.addSourceContentToRoots(myModule, nodeModules);
+        Disposer.register(myFixture.getTestRootDisposable(),
+                          () -> PsiTestUtil.removeContentEntry(myModule, nodeModules));
+      });
     }
-    catch (Throwable e) {
-      addSuppressedException(e);
-    }
-    finally {
-      super.tearDown();
-    }
+    myFixture.copyFileToProject("../../package.json", "package.json");
+    super.doSingleTest(testFile, path);
   }
 
   @Override
@@ -75,10 +63,5 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
       extraFiles.add("external/module.ts");
     }
     return extraFiles;
-  }
-
-  @Override
-  protected String[] getItemsToSkip() {
-    return TESTS_TO_SKIP;
   }
 }
