@@ -13,20 +13,16 @@
 // limitations under the License.
 package com.intellij.flex.codeInsight;
 
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javascript.flex.documentation.FlexDocumentationProvider;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.javascript.JSAbstractDocumentationTest;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.WebModuleType;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -34,12 +30,10 @@ import com.intellij.openapi.vfs.ex.http.HttpFileSystem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.descriptor.CssPropertyDescriptorStub;
 import com.intellij.psi.css.impl.util.CssDocumentationProvider;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.testFramework.LightProjectDescriptor;
 
 public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   private static final String BASE_PATH = "/as_documentation/";
-
-  private Runnable myAfterCommitRunnable = null;
 
   @Override
   protected String getBasePath() {
@@ -57,41 +51,29 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    boolean hasFlex = JSTestUtils.testMethodHasOption(getClass(), getTestName(false), JSTestOption.WithFlexSdk, JSTestOption.WithFlexFacet);
-    return hasFlex ? FlexModuleType.getInstance() : WebModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   @Override
   protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
-    myAfterCommitRunnable = null;
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
   }
 
   @Override
   protected void tearDown() throws Exception {
-    myAfterCommitRunnable = null;
     super.tearDown();
   }
 
-  @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
-  private PsiElement getDocElementForLookupItem(DocumentationProvider provider, String fileName) throws Exception {
-    configureByFile(BASE_PATH + fileName);
-    PsiElement originalElement = myFile.findElementAt(myEditor.getCaretModel().getOffset());
-    return provider.getDocumentationElementForLookupItem(myPsiManager, originalElement.getText(), originalElement);
-  }
-
-  @Override
-  protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
-    super.doCommitModel(rootModel);
-    if (myAfterCommitRunnable != null) {
-      myAfterCommitRunnable.run();
-    }
+  private PsiElement getDocElementForLookupItem(DocumentationProvider provider, String fileName) {
+    myFixture.configureByFile(BASE_PATH + fileName);
+    PsiElement originalElement = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
+    return provider.getDocumentationElementForLookupItem(getPsiManager(), originalElement.getText(), originalElement);
   }
 
   @Override
@@ -141,32 +123,37 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMxmlDoc() {
+    setUpJdk();
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMxmlDoc2() {
+    setUpJdk();
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMxmlDoc3() {
+    setUpJdk();
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMxmlDoc4() {
+    setUpJdk();
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testMxmlDoc5() throws Exception {
+  public void testMxmlDoc5() {
     PsiElement element = getDocElementForLookupItem(new CssDocumentationProvider(), getTestName(false) + ".mxml");
     assertNull(element);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMxmlDoc6() {
+    setUpJdk();
     doTest(getTestName(false), "mxml");
   }
 
@@ -176,7 +163,8 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexCssSelector() throws Exception {
+  public void testFlexCssSelector() {
+    setUpJdk();
     DocumentationProvider cssDocumentationProvider = new CssDocumentationProvider();
     PsiElement docElement = getDocElementForLookupItem(cssDocumentationProvider, getTestName(false) + ".css");
     assertInstanceOf(docElement, JSClass.class);
@@ -184,18 +172,16 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssSelectorMultiDocumentation() {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
-    doTest(getTestName(false), "css");
+    testWithLibrary("MyLib1.swc", "MyLib1_src.zip", null, () -> doTest(getTestName(false), "css"));
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexCssSelectorMultiDocumentationInLookup() throws Exception {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib1.swc", "MyLib1_src.zip", null);
-    String doc = testOne(new CssDocumentationProvider(), getTestName(false) + ".css");
-    assertTrue(doc.indexOf("p1.MyClass") >= 0);
-    assertTrue(doc.indexOf("p2.MyClass") >= 0);
+  public void testFlexCssSelectorMultiDocumentationInLookup() {
+    testWithLibrary("MyLib1.swc", "MyLib1_src.zip", null, () -> {
+      String doc = testOne(new CssDocumentationProvider(), getTestName(false) + ".css");
+      assertTrue(doc.contains("p1.MyClass"));
+      assertTrue(doc.contains("p2.MyClass"));
+    });
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
@@ -213,7 +199,8 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexCssProperty() throws Exception {
+  public void testFlexCssProperty() {
+    setUpJdk();
     DocumentationProvider cssDocumentationProvider = new CssDocumentationProvider();
     PsiElement docElement = getDocElementForLookupItem(cssDocumentationProvider, getTestName(false) + ".css");
     assertInstanceOf(docElement, JSAttributeNameValuePair.class);
@@ -221,109 +208,104 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
   public void testFlexCssPropertyMultiDocumentation() {
+    setUpJdk();
     doTest(getTestName(false), "css");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexCssPropertyMultiDocumentationInLookup() throws Exception {
+  public void testFlexCssPropertyMultiDocumentationInLookup() {
+    setUpJdk();
     DocumentationProvider cssDocProvider = new CssDocumentationProvider();
     String doc = testOne(cssDocProvider, getTestName(false) + ".css", new CssPropertyDescriptorStub("borderColor"));
     assertNotNull(doc);
-    assertTrue("Container's borderColor property missing", doc.indexOf("Container") >= 0);
-    assertTrue("Button's borderColor property missing", doc.indexOf("Button") >= 0);
-    assertTrue("UIComponent's borderColor property missing", doc.indexOf("UIComponent") >= 0);
+    assertTrue("Container's borderColor property missing", doc.contains("Container"));
+    assertTrue("Button's borderColor property missing", doc.contains("Button"));
+    assertTrue("UIComponent's borderColor property missing", doc.contains("UIComponent"));
   }
 
-  public void testQuickNavigateInfo() throws Exception {
+  public void testQuickNavigateInfo() {
     final String testName = getTestName(false);
     doNavigateTest(testName, "js2", "public class xxx.AAA extends ZZZ<br>implements yyy.XXX");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testQuickNavigateInfoWithMxml() throws Exception {
+  public void testQuickNavigateInfoWithMxml() {
+    setUpJdk();
     doNavigateTest(getTestName(false), "mxml", "flash.display.Sprite<br>Event mouseDown" + file("MockFlex.as"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testQuickNavigateInfoWithMxml2() throws Exception {
+  public void testQuickNavigateInfoWithMxml2() {
     doNavigateTest(getTestName(false), "mxml", "id xxx", false);
   }
 
-  public void testQuickNavigateInfo_2() throws Exception {
+  public void testQuickNavigateInfo_2() {
     doNavigateTest(getTestName(false), "js2", "public var xxx.AAA.ttt:* = new Object");
   }
 
-  public void testQuickNavigateInfo_3() throws Exception {
+  public void testQuickNavigateInfo_3() {
     doNavigateTest(getTestName(false), "js2", "public static function xxx.<a href=\"psi_element://AAA\">AAA</a>.yyy(p:Object):AAA");
   }
 
-  public void testQuickNavigateInfo_4() throws Exception {
+  public void testQuickNavigateInfo_4() {
     doNavigateTest(getTestName(false), "js2", "(property) public static function xxx.AAA.yyy:Object");
   }
 
-  public void testQuickNavigateInfo_5() throws Exception {
+  public void testQuickNavigateInfo_5() {
     doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
   }
 
-  public void testQuickNavigateInfo_5_2() throws Exception {
+  public void testQuickNavigateInfo_5_2() {
     doNavigateTest(getTestName(false), "js2", "public function xxx.getTimer()");
   }
 
-  public void testQuickNavigateInfo_6() throws Exception {
+  public void testQuickNavigateInfo_6() {
     doNavigateTest(getTestName(false), "js2", "testData.documentation<br>namespace XXX = \"\"", false);
   }
 
-  public void testQuickNavigateInfo_7() throws Exception {
+  public void testQuickNavigateInfo_7() {
     doNavigateTest(getTestName(false), "js2", "xxx static const Foo.XXX = &quot;111&quot;");
   }
 
-  public void testQuickNavigateInfo_9() throws Exception {
+  public void testQuickNavigateInfo_9() {
     doNavigateTest(getTestName(false), "js2",
                    "var xxx:int");
   }
 
-  public void testQuickNavigateInfo_10() throws Exception {
+  public void testQuickNavigateInfo_10() {
     doNavigateTest(getTestName(false), "js2",
                    "var xxx:Vector.&lt;int&gt; = new Vector.&lt;int&gt;()");
   }
 
-  public void testQuickNavigateInfo_11() throws Exception {
+  public void testQuickNavigateInfo_11() {
     doNavigateTest(getTestName(false), "js2",
                    "function foo():Vector.&lt;int&gt;");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testSeeAlso() {
+    setUpJdk();
     doTestWithLinkNavigationCheck("as", 6);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testWithLibrary1() {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", null);
-    doTest(getTestName(false), "as");
+    testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> doTest(getTestName(false), "as"));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testWithLibrary2() {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", null);
-    doTest(getTestName(false), "as");
+    testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> doTest(getTestName(false), "as"));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
   public void testWithAsDoc1() {
-    myAfterCommitRunnable = () -> FlexTestUtils
-      .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip");
-
-    doTest(getTestName(false), "as", "WithAsDoc", true, Check.Content);
+    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> doTest(getTestName(false), "as", "WithAsDoc", true, Check.Content));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
   public void testWithAsDoc2() {
-    myAfterCommitRunnable = () -> FlexTestUtils
-      .addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip");
-    doTest(getTestName(false), "mxml", "WithAsDoc", true, Check.Content);
+    testWithLibrary("LibWithAsdoc.swc", null, "LibWithAsdoc_docs.zip", () -> doTest(getTestName(false), "mxml", "WithAsDoc", true, Check.Content));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
@@ -359,6 +341,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
   public void testExternalDoc1() {
+    setUpJdk();
     String fullName = BASE_PATH + getTestName(false);
     final String[] files = {fullName + ".mxml"};
 
@@ -463,17 +446,27 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     doTest(new String[]{testName, testName + "_2"}, "as", testName);
   }
 
-  public void testQuickNavigateInfoFromSource() throws Exception {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, "MyLib.swc", "MyLib_src.zip", null);
-    final String testName = getTestName(false);
-    doNavigateTest(testName, "js2", "public function LibraryMain.someMethod(param:int):int" + file("LibraryMain.as"));
+  public void testQuickNavigateInfoFromSource() {
+    testWithLibrary("MyLib.swc", "MyLib_src.zip", null, () -> {
+      final String testName = getTestName(false);
+      doNavigateTest(testName, "js2", "public function LibraryMain.someMethod(param:int):int" + file("LibraryMain.as"));
+    });
+  }
+
+  private void testWithLibrary(String swc, String sources, String docs, Runnable test) {
+    FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, swc, sources, docs);
+    try {
+      test.run();
+    } finally {
+      FlexTestUtils.removeLibrary(myModule, "TestLib");
+    }
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
   public void testGenericType() {
+    setUpJdk();
     final String testName = getTestName(false);
-    FlexTestUtils.addASDocToSdk(getModule(), getClass(), testName);
+    FlexTestUtils.addASDocToSdk(myModule, getClass(), testName);
     doTest(new String[]{testName}, "as", testName);
   }
 

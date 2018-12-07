@@ -636,4 +636,13 @@ public class FlexTestUtils {
                                   urlToPath(convertFromUrl(FlexSchemaHandler.class.getResource("z.xsd"))),
                                   urlToPath(convertFromUrl(FlexStylesIndexableSetContributor.class.getResource("FlexStyles.as"))));
   }
+
+  public static void removeLibrary(Module module, String libraryName) {
+    ModifiableRootModel moduleModifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+    WriteAction.run(() -> {
+      LibraryTable table = moduleModifiableModel.getModuleLibraryTable();
+      table.removeLibrary(table.getLibraryByName(libraryName));
+      moduleModifiableModel.commit();
+    });
+  }
 }
