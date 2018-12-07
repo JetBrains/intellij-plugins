@@ -40,6 +40,12 @@ public interface AnalysisServer {
   public void addAnalysisServerListener(AnalysisServerListener listener);
 
   /**
+   * Add the given listener to the list of listeners that will receive notification when
+   * requests are made by an analysis server client.
+   */
+  public void addRequestListener(RequestListener listener);
+
+  /**
    * Add the given listener to the list of listeners that will receive every response from
    * the analysis server.
    */
@@ -685,6 +691,12 @@ public interface AnalysisServer {
    * @param listener the listener to be removed
    */
   public void removeAnalysisServerListener(AnalysisServerListener listener);
+
+  /**
+   * Remove the given listener from the list of listeners that will receive notification when
+   * requests are made by an analysis server client.
+   */
+  public void removeRequestListener(RequestListener listener);
 
   /**
    * Remove the given listener from the list of listeners that will receive every response from

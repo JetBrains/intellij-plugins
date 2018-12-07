@@ -184,6 +184,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @NotNull private final List<AnalysisServerListener> myAdditionalServerListeners = new SmartList<>();
+  @NotNull private final List<RequestListener> myRequestListeners = new SmartList<>();
   @NotNull private final List<ResponseListener> myResponseListeners = new SmartList<>();
 
   private static final String ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY =
@@ -564,6 +565,24 @@ public class DartAnalysisServerService implements Disposable {
     myAdditionalServerListeners.remove(serverListener);
     if (myServer != null) {
       myServer.removeAnalysisServerListener(serverListener);
+    }
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void addRequestListener(@NotNull final RequestListener requestListener) {
+    if (!myRequestListeners.contains(requestListener)) {
+      myRequestListeners.add(requestListener);
+      if (myServer != null && isServerProcessActive()) {
+        myServer.addRequestListener(requestListener);
+      }
+    }
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void removeRequestListener(@NotNull final RequestListener requestListener) {
+    myRequestListeners.remove(requestListener);
+    if (myServer != null) {
+      myServer.removeRequestListener(requestListener);
     }
   }
 
@@ -1795,6 +1814,9 @@ public class DartAnalysisServerService implements Disposable {
         for (AnalysisServerListener listener : myAdditionalServerListeners) {
           startedServer.addAnalysisServerListener(listener);
         }
+        for (RequestListener listener : myRequestListeners) {
+          startedServer.addRequestListeners(listener);
+        }
         for (ResponseListener listener : myResponseListeners) {
           startedServer.addResponseListener(listener);
         }
@@ -1891,6 +1913,9 @@ public class DartAnalysisServerService implements Disposable {
         myServer.removeAnalysisServerListener(myAnalysisServerListener);
         for (AnalysisServerListener listener : myAdditionalServerListeners) {
           myServer.removeAnalysisServerListener(listener);
+        }
+        for (RequestListener listener : myRequestListeners) {
+          myServer.removeRequestListener(listener);
         }
         for (ResponseListener listener : myResponseListeners) {
           myServer.removeResponseListener(listener);
