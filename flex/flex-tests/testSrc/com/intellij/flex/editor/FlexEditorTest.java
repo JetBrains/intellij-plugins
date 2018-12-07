@@ -2,15 +2,12 @@ package com.intellij.flex.editor;
 
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.*;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.formatter.ECMA4CodeStyleSettings;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.formatter.xml.XmlCodeStyleSettings;
 import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.annotations.NotNull;
 
 public class FlexEditorTest extends JSBaseEditorTestCase {
   @Override
@@ -26,13 +23,7 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return new LightProjectDescriptor() {
-      @NotNull
-      @Override
-      public ModuleType getModuleType() {
-        return FlexModuleType.getInstance();
-      }
-    };
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   protected void doGtTestWithJSSupportLoaderAndFlex() {
@@ -110,7 +101,7 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   }
 
   public void testReformatInjectedProblem() {
-    JSTestUtils.registerScriptTagInjector(getProject(), JavaScriptSupportLoader.ECMA_SCRIPT_L4, getTestRootDisposable());
+    JSTestUtils.registerScriptTagInjector(getProject(), JavaScriptSupportLoader.ECMA_SCRIPT_L4, myFixture.getTestRootDisposable());
     doFormatterTest("mxml");
   }
 

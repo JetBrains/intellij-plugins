@@ -11,10 +11,9 @@ import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSLiveTemplatesTestBase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.editor.CaretModel;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.Consumer;
 
 import java.util.List;
@@ -37,14 +36,13 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     super.setUp();
   }
 
-  @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   public void testClassName() throws Exception {
@@ -96,8 +94,9 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
   }
 
   public void testFlexIter() throws Exception {
+    myFixture.setCaresAboutInjection(false);
     final String[] expectedLookupVariants = {"arguments", "paramObj", "localArr", "someGetter", "privateStaticVec", "publicString"};
-    doTest("iter", "mxml", createLookupSelectingSegmentHandler(myProject, 0, "privateStaticVec", expectedLookupVariants));
+    doTest("iter", "mxml", createLookupSelectingSegmentHandler(getProject(), 0, "privateStaticVec", expectedLookupVariants));
   }
 
   public void testFlexItin() throws Exception {
@@ -106,13 +105,14 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
 
   public void testFlexItar() throws Exception {
     final String[] expectedLookupVariants = {"object", "arguments"};
-    doTest("itar", "as", createLookupSelectingSegmentHandler(myProject, 1, "object", expectedLookupVariants));
+    doTest("itar", "as", createLookupSelectingSegmentHandler(getProject(), 1, "object", expectedLookupVariants));
   }
 
   public void testArrayVarNotDuplicatesIndexVarName() throws Exception {
+    myFixture.setCaresAboutInjection(false);
     doTest("itar", "mxml", segmentIndex -> {
       if (segmentIndex == 2) {
-        type("int");
+        myFixture.type("int");
       }
     });
   }
@@ -120,19 +120,21 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
   public void testFlexRitar() throws Exception {
     doTest("ritar", "as", segmentIndex -> {
       if (segmentIndex == 2) {
-        type("ISomething");
+        myFixture.type("ISomething");
       }
     });
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testPickVectorTypeInFlexIter() throws Exception {
-    doTest("iter", "as", createLookupSelectingSegmentHandler(myProject, 0, "bar"));
+    doTest("iter", "as", createLookupSelectingSegmentHandler(getProject(), 0, "bar"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testPickVectorTypeInMxmlIter() throws Exception {
-    doTest("iter", "mxml", createLookupSelectingSegmentHandler(myProject, 0, "vec"));
+    myFixture.setCaresAboutInjection(false);
+    setUpJdk();
+    doTest("iter", "mxml", createLookupSelectingSegmentHandler(getProject(), 0, "vec"));
   }
 
   public void testPublicVar() throws Exception {
@@ -153,19 +155,19 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
 
   public void testPublicFunctionWithTypingInMxml() throws Exception {
     doTest("pf", "mxml", segmentIndex -> {
-      final CaretModel caretModel = getEditor().getCaretModel();
+      final CaretModel caretModel = myFixture.getEditor().getCaretModel();
 
       switch (segmentIndex) {
         case 0:
-          type("functionName");
+          myFixture.type("functionName");
           caretModel.moveToOffset(caretModel.getOffset() + 1);
           break;
         case 1:
-          type("param:Object");
+          myFixture.type("param:Object");
           caretModel.moveToOffset(caretModel.getOffset() + 1);
           break;
         case 2:
-          type("String");
+          myFixture.type("String");
           caretModel.moveToOffset(caretModel.getOffset() + 1);
           break;
       }
@@ -186,13 +188,13 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     doTest("prsf", "as", segmentIndex -> {
       switch (segmentIndex) {
         case 0:
-          type("functionName");
+          myFixture.type("functionName");
           break;
         case 1:
-          type("param:Object");
+          myFixture.type("param:Object");
           break;
         case 2:
-          type("String");
+          myFixture.type("String");
           break;
       }
     });
