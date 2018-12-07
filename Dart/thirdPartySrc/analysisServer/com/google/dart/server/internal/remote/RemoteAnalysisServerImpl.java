@@ -95,6 +95,8 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    */
   private final BroadcastAnalysisServerListener listener = new BroadcastAnalysisServerListener();
 
+  private final List<RequestListener> requestListenerList = new ArrayList<>();
+
   private final List<ResponseListener> responseListenerList = new ArrayList<>();
 
   private final List<AnalysisServerStatusListener> statusListenerList = new ArrayList<AnalysisServerStatusListener>();
@@ -153,6 +155,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   @Override
   public void addAnalysisServerListener(AnalysisServerListener listener) {
     this.listener.addListener(listener);
+  }
+
+  @Override
+  public void addRequestListener(RequestListener listener) {
+    synchronized (requestListenerList) {
+      if (!requestListenerList.contains(listener)) {
+        requestListenerList.add(listener);
+      }
+    }
   }
 
   @Override
@@ -435,6 +446,14 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     this.listener.removeListener(listener);
   }
 
+  @Override
+  public void removeRequestListener(RequestListener listener) {
+    synchronized (requestListenerList) {
+      requestListenerList.remove(listener);
+    }
+  }
+
+  @Override
   @Override
   public void removeResponseListener(ResponseListener listener) {
     synchronized (responseListenerList) {
@@ -764,6 +783,15 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     }
   }
 
+  private void notifyRequestListeners(JsonObject request) {
+    synchronized (requestListenerList) {
+      List<RequestListener> listeners = ImmutableList.copyOf(requestListenerList);
+      for (RequestListener listener : listeners) {
+        listener.onRequest(request);
+      }
+    }
+  }
+
   private void notifyResponseListeners(JsonObject response) {
     synchronized (responseListenerList) {
       List<ResponseListener> listeners = ImmutableList.copyOf(responseListenerList);
@@ -783,6 +811,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   @Override
   public void sendRequestToServer(String id, JsonObject request) {
     sendRequestToServer(id, request, new LocalConsumer(request));
+    notifyRequestListeners(request);
   }
 
   /**
