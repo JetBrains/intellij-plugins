@@ -3,7 +3,7 @@ package BBB {
 
   class C extends B {
     function aaa() {
-      fi<ref>eld = 1;
+      fi<caret>eld = 1;
     }
   }
 }

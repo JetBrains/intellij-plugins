@@ -5,7 +5,7 @@ class A extends C {
   var field;
 
   function aaa() {
-    super.fi<ref>eld
+    super.fi<caret>eld
   }
 }
 

@@ -2,5 +2,5 @@ import xxx.A
 z.aaa = 1;
 
 function fff() {
-  A.a<ref>aa = 1;
+  A.a<caret>aa = 1;
 }

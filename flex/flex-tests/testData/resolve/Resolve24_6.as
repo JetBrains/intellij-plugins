@@ -11,4 +11,4 @@ package {
     }
 }
 
-var test:ResolveTest = new Resolve<ref>Test("s", 1);
+var test:ResolveTest = new Resolve<caret>Test("s", 1);

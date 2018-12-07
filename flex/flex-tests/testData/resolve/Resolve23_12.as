@@ -4,7 +4,7 @@ package AAA {
   }
 }
 package AAA {
-  class C extends <ref>B {
+  class C extends <caret>B {
   }
 }
 

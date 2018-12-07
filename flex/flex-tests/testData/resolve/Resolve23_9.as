@@ -9,7 +9,7 @@ package BBB {
 
   class C extends A {
     function aaa() {
-      fi<ref>eld = 1;
+      fi<caret>eld = 1;
     }
   }
 }

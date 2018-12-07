@@ -1,5 +1,5 @@
 package xxx.zzz {
-  class AAA extends fff.yyy.A<ref>AA {
+  class AAA extends fff.yyy.A<caret>AA {
 
   }
 }

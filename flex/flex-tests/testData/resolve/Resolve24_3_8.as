@@ -4,7 +4,7 @@ package foo2 {
   }
   class CCC extends ZZZ {
     function yyy() {
-        x<ref>xx
+        x<caret>xx
     }
   }
 }

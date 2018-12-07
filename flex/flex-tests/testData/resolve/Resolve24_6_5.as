@@ -6,4 +6,4 @@ package {
     }
 }
 
-var test:ResolveTest5 = new Resolve<ref>Test5("s", 1);
+var test:ResolveTest5 = new Resolve<caret>Test5("s", 1);

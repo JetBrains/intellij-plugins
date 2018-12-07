@@ -7,9 +7,9 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSLocalVariable;
 import com.intellij.lang.javascript.psi.JSNamedElement;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.Processor;
@@ -48,7 +48,7 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
     };
   }
 
-  public void testResolveInClassDynamic() throws Exception {
+  public void testResolveInClassDynamic() {
     String fileText = "public class T {\n" +
                       "  public function m() : String {\n" +
                       "    return \"m\";\n" +
@@ -56,104 +56,104 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
                       "\n" +
                       "  public function test() : String {\n" +
                       "    function foo():String {\n" +
-                      "      return this.<ref>m();\n" +
+                      "      return this.<caret>m();\n" +
                       "    }\n" +
                       "    return foo();\n" +
                       "  }\n" +
                       "}\n" +
                       "function m() {}";
 
-    JSReferenceExpression ref = (JSReferenceExpression)configureByFileText(fileText, "sample.js2");
+    PsiPolyVariantReference ref = configureByFileText(fileText);
     ResolveResult[] results = ref.multiResolve(false);
     assertEquals(2, results.length);
   }
 
-  public void testResolveIt() throws Exception {
+  public void testResolveIt() {
     String fileText = "package {\n" +
                       "\n" +
                       "public class Test {\n" +
                       "  public function Test() {\n" +
-                      "    var describeType:XML = describe<ref>Type(Test);\n" +
+                      "    var describeType:XML = describe<caret>Type(Test);\n" +
                       "  }\n" +
                       "}\n" +
                       "function describeType(x) {}";
 
-    JSReferenceExpression ref = (JSReferenceExpression)configureByFileText(fileText, "sample.js2");
+    PsiPolyVariantReference ref = configureByFileText(fileText);
     assertTrue(ref.resolve() instanceof JSLocalVariable);
   }
 
-  public void testResolveInClass() throws Exception {
+  public void testResolveInClass() {
     String fileText = "class A { function get aaa() {} function foo() {\n" +
-                      "  var aaa = a<ref>aa;\n}" +
+                      "  var aaa = a<caret>aa;\n}" +
                       "}";
 
-    JSReferenceExpression ref = (JSReferenceExpression)configureByFileText(fileText, "sample.js2");
+    PsiPolyVariantReference ref = configureByFileText(fileText);
     assertTrue(ref.resolve() instanceof JSFunction);
   }
 
-  public void testObjectProperties() throws Exception {
+  public void testObjectProperties() {
     String fileText = "package {\n" +
                       "public class Foo {\n" +
                       "    function bar() {" +
                       "        var x:Object = {};\n" +
-                      "        x.toStri<ref>ng();\n" +
+                      "        x.toStri<caret>ng();\n" +
                       "    }\n" +
                       "}\n" +
                       "}";
-    JSReferenceExpression ref = (JSReferenceExpression)configureByFileText(fileText, "sample.as");
+    PsiPolyVariantReference ref = configureByFileText(fileText);
     final PsiElement resolved = ref.resolve();
     assertNotNull(resolved);
   }
 
-  public void testResolveOfGetProperty() throws Exception {
+  public void testResolveOfGetProperty() {
     String fileText = "class A { public function get foo() : String { return \"foo\"; } }\n" +
                       "function zzz() {\n" +
                       "var a : A;\n" +
-                      "a.f<ref>oo" +
+                      "a.f<caret>oo" +
                       "}";
 
-    PsiReference ref = configureByFileText(fileText, "sample.js2");
+    PsiReference ref = configureByFileText(fileText);
     PsiElement resolved = ref.resolve();
     assertTrue(resolved instanceof JSFunction);
   }
 
-  public void testResolve23_4() throws Exception {
+  public void testResolve23_4() {
     doMultipleResolveTestForFile(buildResolveHandler("A", JSClass.class), getTestName(false) + ".as");
   }
 
-  public void testResolve23_5() throws Exception {
+  public void testResolve23_5() {
     doMultipleResolveTestForFile(buildResolveHandler("C", JSClass.class), getTestName(false) + ".as");
   }
 
-  public void testResolve23_6() throws Exception {
+  public void testResolve23_6() {
     doMultipleResolveTestForFile(buildResolveHandler("C", JSClass.class), getTestName(false) + ".as");
   }
 
-  public void testResolve23_7() throws Exception {
+  public void testResolve23_7() {
     doMultipleResolveTestForFile(buildResolveHandler("E", JSClass.class), getTestName(false) + ".as");
   }
 
-  public void testResolve23_8() throws Exception {
+  public void testResolve23_8() {
     doMultipleResolveTestForFile(buildResolveHandler("A", JSClass.class), getTestName(false) + ".as");
   }
 
-  public void testResolve23_9() throws Exception {
+  public void testResolve23_9() {
     doMultipleResolveTestForFile(buildResolveHandler("A", JSClass.class), getTestName(false) + ".as");
   }
 
-  public void testResolve23_10() throws Exception {
+  public void testResolve23_10() {
     final String testName = getTestName(false);
     doMultipleResolveTestForFile(buildResolveHandler("A", JSClass.class), testName + ".as", testName + "_2.as", testName + "_3.as");
   }
 
-  public void testResolve23_11() throws Exception {
+  public void testResolve23_11() {
     doMultipleResolveTestForFile(resolveResults -> {
       checkResolvedToClass(resolveResults);
       return false;
     }, getTestName(false) + ".as");
   }
 
-  public void testResolve23_12() throws Exception {
+  public void testResolve23_12() {
     doMultipleResolveTestForFile(resolveResults -> {
       checkResolvedToClass(resolveResults);
       return false;
@@ -161,15 +161,15 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
   }
 
 
-  public void testResolve24() throws Exception {
+  public void testResolve24() {
     doMultipleResolveTestForFile(buildResolveHandler("A", JSClass.class), getTestName(false) + ".as");
   }
 
-  public void testResolve24_2() throws Exception {
+  public void testResolve24_2() {
     doMultipleResolveTestForFile(buildResolveHandler("A", JSClass.class), getTestName(false) + ".as");
   }
 
-  public void testResolve24_3() throws Exception {
+  public void testResolve24_3() {
     final String testName = getTestName(false);
     doMultipleResolveTestForFile(buildResolveHandler("A", JSClass.class), testName + ".as", testName + "_2.as");
 
@@ -181,17 +181,17 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
     doMultipleResolveTestForFile(buildResolveHandler("foo.CCC", JSClass.class, false, true), testName + "_9.as");
   }
 
-  //public void testResolve24_4() throws Exception  {
+  //public void testResolve24_4()  {
   //  final String testName = getTestName(false);
   //  doMultipleResolveTestForFile(buildResolveHandler("Object", JSClass.class), testName +".as");
   //}
 
-  //public void testResolve24_5() throws Exception  {
+  //public void testResolve24_5()  {
   //  final String testName = getTestName(false);
   //  doMultipleResolveTestForFile(buildResolveHandler("Object", JSClass.class), testName +".as");
   //}
 
-  public void testResolve24_6() throws Exception {
+  public void testResolve24_6() {
     final String testName = getTestName(false);
     doMultipleResolveTestForFile(buildResolveHandler("ResolveTest", JSFunction.class), testName + ".as");
     doMultipleResolveTestForFile(buildResolveHandler("ResolveTest3", JSFunction.class), testName + "_4.as");
@@ -200,14 +200,14 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
     doMultipleResolveTestForFile(buildResolveHandler("ResolveTest4", JSClass.class), testName + "_4_2.as");
   }
 
-  public void testResolve24_7() throws Exception {
+  public void testResolve24_7() {
     final String testName = getTestName(false);
     doMultipleResolveTestForFile(createProcessor("BazBar"), testName + ".as");
     doMultipleResolveTestForFile(createProcessor("BazBar2"), testName + "_2.as", testName + "_3.as");
   }
 
   @JSTestOptions({JSTestOption.WithIndex})
-  public void testResolve26() throws Exception {
+  public void testResolve26() {
     String fileText = "dynamic class Object {}\n" +
                       "package {\n" +
                       "\timport flash.display.Sprite;\n" +
@@ -219,24 +219,24 @@ public class ActionScriptResolveTest extends BaseJSResolveTestCase {
                       "}\n" +
                       "\n" +
                       "interface ItfA {\n" +
-                      "    function f():It<ref>fB;\n" +
+                      "    function f():It<caret>fB;\n" +
                       "}\n" +
                       "interface ItfB {}";
-    PsiReference ref = configureByFileText(fileText, "sample.js2");
+    PsiReference ref = configureByFileText(fileText);
 
     PsiElement resolved = ref.resolve();
     assertTrue(resolved instanceof JSClass);
   }
 
-  public void testResolveVectorMember() throws Exception {
+  public void testResolveVectorMember() {
     String fileText = "package {\n" +
                       "public class Vector$object {\n" +
                       "    function reverse():Vector$object {}\n" +
                       "}\n" +
                       "}\n" +
                       "var x:Vector.<int>\n" +
-                      "x.rev<ref>erse()";
-    JSReferenceExpression ref = (JSReferenceExpression)configureByFileText(fileText, "sample.as");
+                      "x.rev<caret>erse()";
+    PsiPolyVariantReference ref = configureByFileText(fileText);
     final PsiElement resolved = ref.resolve();
     assertNotNull(resolved);
   }

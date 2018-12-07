@@ -5,6 +5,6 @@ package aaa {
 
   function xxx() {
     var z:C;
-    z.pro<ref>totype
+    z.pro<caret>totype
   }
 }

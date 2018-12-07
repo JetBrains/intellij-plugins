@@ -2,7 +2,7 @@ class A {
   var field;
 
   function aaa() {
-    this.fi<ref>eld
+    this.fi<caret>eld
   }
 }
 

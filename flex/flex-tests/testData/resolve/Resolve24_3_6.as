@@ -3,7 +3,7 @@ package foo {
   dynamic class CCC {
     var xxx;
     function yyy() {
-        xx<ref>x
+        xx<caret>x
     }
   }
 }

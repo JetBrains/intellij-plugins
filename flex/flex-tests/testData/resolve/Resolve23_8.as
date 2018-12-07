@@ -1,6 +1,6 @@
 class A {
   function aaa() {
-    fi<ref>eld
+    fi<caret>eld
   }
   var field;
 }

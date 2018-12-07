@@ -10,7 +10,7 @@ package {
         }
 
         public static function xxx() {
-          var test:ResolveTest3 = new Resolve<ref>Test3("s", 1);
+          var test:ResolveTest3 = new Resolve<caret>Test3("s", 1);
         }
     }
 }

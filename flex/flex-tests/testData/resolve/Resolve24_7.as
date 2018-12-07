@@ -3,7 +3,7 @@ package {
         function BazBar() {}
         public static function foo():void {}
         public static function bar():void {
-            Baz<ref>Bar.foo();
+            Baz<caret>Bar.foo();
         }
     }
 }

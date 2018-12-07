@@ -8,6 +8,6 @@ package aaa {
 
   function xxx() {
     var z;
-    z.a<ref>aa
+    z.a<caret>aa
   }
 }

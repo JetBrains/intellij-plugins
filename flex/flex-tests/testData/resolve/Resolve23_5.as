@@ -3,7 +3,7 @@ class C {
 }
 class A extends C {
   function aaa() {
-    this.fi<ref>eld
+    this.fi<caret>eld
   }
 }
 

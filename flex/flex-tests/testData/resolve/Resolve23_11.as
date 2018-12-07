@@ -6,7 +6,7 @@ package AAA {
 package BBB {
   import AAA.B;
 
-  class C extends <ref>B {
+  class C extends <caret>B {
   }
 }
 

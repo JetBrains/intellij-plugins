@@ -1,5 +1,5 @@
 package xxx {
-  class BBB extends yyy.B<ref>BB {
+  class BBB extends yyy.B<caret>BB {
 
   }
 }

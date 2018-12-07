@@ -15,7 +15,7 @@ z.aaa = 1;
 
 function fff() {
   var x:C;
-  x.a<ref>aa = 1;
+  x.a<caret>aa = 1;
 }
 
 package xxx {

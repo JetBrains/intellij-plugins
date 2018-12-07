@@ -5,7 +5,7 @@ package {
         private var i:int;
 
         public static function xxx() {
-          var test:ResolveTest4 = new Resolve<ref>Test4("s", 1);
+          var test:ResolveTest4 = new Resolve<caret>Test4("s", 1);
         }
     }
 }

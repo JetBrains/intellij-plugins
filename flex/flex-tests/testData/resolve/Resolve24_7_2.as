@@ -1,1 +1,1 @@
-Baz<ref>Bar2.foo();
+Baz<caret>Bar2.foo();

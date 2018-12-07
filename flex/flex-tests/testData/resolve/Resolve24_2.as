@@ -21,5 +21,5 @@ z.aaa = 1;
 import zzz.C;
 
 function fff() {
-  A.a<ref>aa = 1;
+  A.a<caret>aa = 1;
 }
