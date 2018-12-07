@@ -340,30 +340,6 @@ public class CucumberUtil {
   }
 
   /**
-   * Step definition could be defined by regular expression or by Cucumber Expression (text with predefined patterns {int}, {float}, {word},
-   * {string} or defined by user). This methods helps to distinguish these two cases
-   */
-  public static boolean isCucumberExpression(@NotNull String stepDefinitionPattern) {
-    if (stepDefinitionPattern.startsWith("^") && stepDefinitionPattern.endsWith("$")) {
-      return false;
-    }
-    final boolean[] containsParameterTypes = {false};
-    processParameterTypesInCucumberExpression(stepDefinitionPattern, textRange -> {
-      if (textRange.getLength() < 2) {
-        // at least "{}" expected here
-        return true;
-      }
-      String parameterTypeCandidate = stepDefinitionPattern.substring(textRange.getStartOffset() + 1, textRange.getEndOffset() - 1);
-      if (!StringUtil.isNotNegativeNumber(parameterTypeCandidate) && !parameterTypeCandidate.contains(",")) {
-        containsParameterTypes[0] = true;
-      }
-      return true;
-    });
-
-    return containsParameterTypes[0];
-  }
-
-  /**
    * Accepts each element and checks if it has reference to some other element
    */
   private static class MyReferenceCheckingProcessor implements TextOccurenceProcessor {

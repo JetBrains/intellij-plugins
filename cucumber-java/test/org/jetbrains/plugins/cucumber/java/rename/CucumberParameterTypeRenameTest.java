@@ -27,6 +27,6 @@ public class CucumberParameterTypeRenameTest extends CucumberCodeInsightTestCase
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumberProjectDescriptor();
+    return CucumberJavaTestUtil.createCucumber3ProjectDescriptor();
   }
 }
