@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.ParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
-import static org.jetbrains.plugins.cucumber.CucumberUtil.isCucumberExpression;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getAllParameterTypes;
 
 public class JavaStepDefinition extends AbstractJavaStepDefinition {
@@ -31,7 +31,7 @@ public class JavaStepDefinition extends AbstractJavaStepDefinition {
     final Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (module != null) {
       ParameterTypeManager parameterTypes = getAllParameterTypes(module);
-      if (!isCucumberExpression(definitionText)) {
+      if (!CucumberJavaVersionUtil.isCucumber3OrMore(element)) {
         return definitionText;
       }
       return buildRegexpFromCucumberExpression(definitionText, parameterTypes);

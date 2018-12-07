@@ -31,6 +31,8 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 import java.util.Collection;
 import java.util.Set;
 
+import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.*;
+
 public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfigurationProducerBase<CucumberJavaRunConfiguration> implements Cloneable {
   public static final String FORMATTER_OPTIONS_1_0 = " --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
   public static final String FORMATTER_OPTIONS_1_2 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome";
@@ -38,14 +40,6 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   public static final String FORMATTER_OPTIONS_3 = " --plugin org.jetbrains.plugins.cucumber.java.run.CucumberJvm3SMFormatter";
   public static final String CUCUMBER_1_0_MAIN_CLASS = "cucumber.cli.Main";
   public static final String CUCUMBER_1_1_MAIN_CLASS = "cucumber.api.cli.Main";
-  public static final String CUCUMBER_1_2_PLUGIN_CLASS = "cucumber.api.Plugin";
-  public static final String CUCUMBER_2_CLASS_MARKER = "cucumber.api.formatter.Formatter";
-  public static final String CUCUMBER_3_CLASS_MARKER = "cucumber.runner.TestCase";
-
-  private static final String CUCUMBER_CORE_VERSION_3 = "3";
-  private static final String CUCUMBER_CORE_VERSION_2 = "2";
-  private static final String CUCUMBER_CORE_VERSION_1_2 = "1.2";
-  private static final String CUCUMBER_CORE_VERSION_1_0 = "1";
 
   public static final Set<String> HOOK_ANNOTATION_NAMES = ContainerUtil.newHashSet("cucumber.annotation.Before",
                                                                                    "cucumber.annotation.After",
@@ -105,7 +99,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
         cucumberCoreVersion = CUCUMBER_CORE_VERSION_1_0;
       } else {
         mainClassName = CUCUMBER_1_1_MAIN_CLASS;
-        cucumberCoreVersion = getCucumberCoreVersion(location);
+        cucumberCoreVersion = getCucumberCoreVersion(module, module.getProject());
       }
 
       configuration.setCucumberCoreVersion(cucumberCoreVersion);
@@ -210,18 +204,6 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
         CucumberJavaUtil.addGlue(packageName, packages);
       }
     }
-  }
-
-  @NotNull
-  private static String getCucumberCoreVersion(@NotNull Location location) {
-    if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_3_CLASS_MARKER)) {
-      return CUCUMBER_CORE_VERSION_3;
-    } else if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_2_CLASS_MARKER)) {
-      return CUCUMBER_CORE_VERSION_2;
-    } else if (LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_1_2_PLUGIN_CLASS))  {
-      return CUCUMBER_CORE_VERSION_1_2;
-    }
-    return CUCUMBER_CORE_VERSION_3;
   }
 
   @NotNull
