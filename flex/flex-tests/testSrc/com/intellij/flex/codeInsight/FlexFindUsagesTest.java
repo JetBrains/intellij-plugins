@@ -1,5 +1,6 @@
 package com.intellij.flex.codeInsight;
 
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.actionscript.psi.impl.ActionScriptVariableImpl;
 import com.intellij.lang.javascript.JSAbstractFindUsagesTest;
@@ -7,17 +8,16 @@ import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.psi.PsiReference;
+import com.intellij.testFramework.LightProjectDescriptor;
 
 import java.util.Arrays;
 
 public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   @Override
   protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
   }
 
   @Override
@@ -27,37 +27,32 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   @Override
   protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("");
+    return FlexTestUtils.getTestDataPath("") + getBasePath();
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
-  @Override
-  protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
-  }
-
-  public void testFindConstructorUsages() throws Exception {
+  public void testFindConstructorUsages() {
     PsiReference[] references = findElementAtCaret("ConstructorUsages.js2");
     assertEquals("Constructor references", 1, references.length);
   }
 
-  public void testFindClassUsages() throws Exception {
+  public void testFindClassUsages() {
     PsiReference[] references = findElementAtCaret("ClassUsages.js2");
     assertEquals("Class references", 3, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testFindMxmlComponentsFileReferences() throws Exception {
+  public void testFindMxmlComponentsFileReferences() {
     PsiReference[] references = findElementAtCaret("18.mxml", "C18_2.mxml", "18_3.mxml", "18_4.as");
     assertEquals("Mxml component files references", 5, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testFindMxmlComponentsFileReferences_2() throws Exception {
+  public void testFindMxmlComponentsFileReferences_2() {
     PsiReference[] references;
 
     references = findElementAtCaret("18.as", "C18_2.mxml", "18_3.mxml", "18_4.as");
@@ -65,52 +60,53 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testFindMxmlComponentsFileReferences2() throws Exception {
+  public void testFindMxmlComponentsFileReferences2() {
     PsiReference[] references = findElementAtCaret("19.mxml", "19_2.as", "19_3.mxml");
     assertEquals("Mxml component files references", 4, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testFindParameterWith$InMxmlComponent() throws Exception {
+  public void testFindParameterWith$InMxmlComponent() {
     PsiReference[] references = findElementAtCaret("20.mxml");
     assertEquals("Parameter with $ in mxml component", 2, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testFindImplementationMethodWhenSearchingFromInterface() throws Exception {
+  public void testFindImplementationMethodWhenSearchingFromInterface() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
     assertEquals("Find implementation method when searching for", 2, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testFindPrivateVarInMxml() throws Exception {
+  public void testFindPrivateVarInMxml() {
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
     PsiReference[] references = findElementAtCaret("21.mxml");
     assertEquals("Mxml component private variable", 3, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testFindSetterUsagesInMxml() throws Exception {
+  public void testFindSetterUsagesInMxml() {
     String s = getTestName(false);
     PsiReference[] references = findElementAtCaret(s + ".mxml", s + "_2.mxml");
     assertEquals("Setter usages", 6, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testFindGetterUsagesInMxml() throws Exception {
+  public void testFindGetterUsagesInMxml() {
     String s = getTestName(false);
     PsiReference[] references = findElementAtCaret(s + ".mxml", s + "_2.mxml");
     assertEquals("Getter usages", 3, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testFindPackageRefs() throws Exception {
+  public void testFindPackageRefs() {
     String testName = getTestName(false);
     PsiReference[] references = findElementAtCaret(testName + ".mxml", testName + "_2.as");
     assertEquals("Package refs", 5, references.length);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testMixJsAndJs2() throws Exception {
+  public void testMixJsAndJs2() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_8_5, getProject(), () -> {
     String testName = getTestName(false);
     PsiReference[] references = findElementAtCaret(testName + ".js2", testName + ".mxml", testName + ".js");
@@ -119,7 +115,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testMixJsAndJs2_2() throws Exception {
+  public void testMixJsAndJs2_2() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.JS_1_6, getProject(), () -> {
       String testName = getTestName(false);
       PsiReference[] references = findElementAtCaret(testName + ".js", testName + ".mxml", testName + ".js2");
@@ -128,48 +124,48 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testNoDynamicUsages() throws Exception {
+  public void testNoDynamicUsages() {
     String testName = getTestName(false);
     PsiReference[] references = findElementAtCaret(testName + ".js2");
     assertEquals(3, references.length);
   }
 
-  public void testSuperCall() throws Exception {
+  public void testSuperCall() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
     assertEquals(2, references.length);
   }
 
-  public void testSuperCall2() throws Exception {
+  public void testSuperCall2() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
     assertEquals(2, references.length);
   }
 
-  public void testBaseMethod() throws Exception {
+  public void testBaseMethod() {
     final PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
     assertEquals(1, references.length);
   }
 
-  public void testInheritorCall() throws Exception {
+  public void testInheritorCall() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
     assertEquals(1, references.length);
   }
 
-  public void testInheritorCall2() throws Exception {
+  public void testInheritorCall2() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
     assertEquals(2, references.length);
   }
 
-  public void testReferenceInStringLiteral() throws Exception {
+  public void testReferenceInStringLiteral() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as", getTestName(false) + "_2.mxml");
     assertEquals(0, references.length);
   }
 
-  public void testASGenericsAndDollarsInName() throws Exception {
+  public void testASGenericsAndDollarsInName() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as");
     assertEquals(1, references.length);
   }
 
-  public void testUnrelatedUnqualifiedDefinition() throws Exception {
+  public void testUnrelatedUnqualifiedDefinition() {
     PsiReference[] references = findElementAtCaret(getTestName(false) + ".as"); // IDEA-189640
     assertEquals(1, references.length);
     assertInstanceOf(references[0].getElement().getParent(), ActionScriptVariableImpl.class);
