@@ -9,8 +9,8 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.formatter.xml.XmlCodeStyleSettings;
-
-import java.util.concurrent.Callable;
+import com.intellij.testFramework.LightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
 
 public class FlexEditorTest extends JSBaseEditorTestCase {
   @Override
@@ -25,120 +25,120 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return new LightProjectDescriptor() {
+      @NotNull
+      @Override
+      public ModuleType getModuleType() {
+        return FlexModuleType.getInstance();
+      }
+    };
   }
 
-  protected void doGtTestWithJSSupportLoaderAndFlex() throws Exception {
+  protected void doGtTestWithJSSupportLoaderAndFlex() {
     doTestWithJSSupportLoaderAndFlex('>');
   }
 
-  protected void doTestWithJSSupportLoaderAndFlex(final char ch) throws Exception {
-    doTestWithJSSupportLoaderAndFlex(() -> {
-      doTypingTest("mxml", String.valueOf(ch));
-      return null;
-    });
+  protected void doTestWithJSSupportLoaderAndFlex(final char ch) {
+    doTestWithJSSupportLoaderAndFlex(() -> doTypingTest("mxml", String.valueOf(ch)));
   }
 
-  protected void doTestWithJSSupportLoaderAndFlex(final Callable<Void> call) throws Exception {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), this.getClass(), getTestRootDisposable());
-    call.call();
+  protected void doTestWithJSSupportLoaderAndFlex(final Runnable run) {
+    FlexTestUtils.setupFlexSdk(myFixture.getModule(), getTestName(false), this.getClass(), myFixture.getTestRootDisposable());
+    run.run();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testInsertQuoteInMxml() throws Exception {
-    doTestWithJSSupportLoaderAndFlex(() -> {
-      doInsertQuoteTest("mxml", '\'');
-      return null;
-    });
+  public void testInsertQuoteInMxml() {
+    doTestWithJSSupportLoaderAndFlex(() -> doInsertQuoteTest("mxml", '\''));
   }
 
-  public void testInsertDeleteBracket() throws Exception {
+  public void testInsertDeleteBracket() {
     _testInsertDeleteBracket("mxml");
   }
 
-  public void testEnter3_5() throws Exception {
+  public void testEnter3_5() {
     doEnterTestForExtension("js2");
   }
 
-  public void testEnter3_6() throws Exception {
+  public void testEnter3_6() {
     doEnterTestForExtension("js2");
   }
 
-  public void testEnter3_8() throws Exception {
+  public void testEnter3_8() {
     doEnterTestForExtension("js2");
   }
 
-  public void testEnter3_10() throws Exception {
+  public void testEnter3_10() {
     doEnterTestForExtension("js2");
   }
 
-  public void testEnter3_11() throws Exception {
+  public void testEnter3_11() {
     doEnterTestForExtension("js2");
   }
 
-  public void testEnter3_12() throws Exception {
+  public void testEnter3_12() {
     doEnterTestForExtension("js2");
   }
 
-  public void testEnter3_22() throws Exception {
+  public void testEnter3_22() {
     doEnterTestForExtension("as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testEnter3_3InXml() throws Exception {
+  public void testEnter3_3InXml() {
     doEnterTestForExtension("mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testEnter3_4InXml() throws Exception {
+  public void testEnter3_4InXml() {
     doEnterTestForExtension("mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testEnter3_5InXml() throws Exception {
+  public void testEnter3_5InXml() {
     doEnterTestForExtension("mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testEnter3_6InXml() throws Exception {
+  public void testEnter3_6InXml() {
     doEnterTestForExtension("mxml");
   }
 
-  public void testEnter8() throws Exception {
+  public void testEnter8() {
     doEnterTest(getTestName(false), "js2");
   }
 
-  public void testReformatInjectedProblem() throws Exception {
-    JSTestUtils.registerScriptTagInjector(myProject, JavaScriptSupportLoader.ECMA_SCRIPT_L4, getTestRootDisposable());
+  public void testReformatInjectedProblem() {
+    JSTestUtils.registerScriptTagInjector(getProject(), JavaScriptSupportLoader.ECMA_SCRIPT_L4, getTestRootDisposable());
     doFormatterTest("mxml");
   }
 
-  public void testReformatInjectedProblem2() throws Exception {
+  public void testReformatInjectedProblem2() {
     doFormatterTest("mxml");
   }
 
-  public void testReformatInjectedProblem3() throws Exception {
+  public void testReformatInjectedProblem3() {
     doFormatterTest("mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testInsertCdataOnGt() throws Exception {
+  public void testInsertCdataOnGt() {
     doGtTestWithJSSupportLoaderAndFlex();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testInsertCdataOnGt2() throws Exception {
+  public void testInsertCdataOnGt2() {
     doGtTestWithJSSupportLoaderAndFlex();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testInsertCdataOnGt3() throws Exception {
+  public void testInsertCdataOnGt3() {
     doGtTestWithJSSupportLoaderAndFlex();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testInsertCdataOnGt4() throws Exception {
+  public void testInsertCdataOnGt4() {
     final CodeStyleSettings codeSettings = CodeStyleSettingsManager.getSettings(getProject());
     final XmlCodeStyleSettings xmlSettings = codeSettings.getCustomSettings(XmlCodeStyleSettings.class);
     int currWsAroundCData = xmlSettings.XML_WHITE_SPACE_AROUND_CDATA;
@@ -147,33 +147,35 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     xmlSettings.XML_WHITE_SPACE_AROUND_CDATA = currWsAroundCData;
   }
 
-  public void testInsertPairRBrace() throws Exception {
+  public void testInsertPairRBrace() {
     doTestWithJSSupportLoaderAndFlex('{');
   }
 
-  public void testInsertPairRBrace2() throws Exception {
-    doTestWithJSSupportLoaderAndFlex('{');
-  }
-
-  @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testInsertPairRBrace3() throws Exception {
+  public void testInsertPairRBrace2() {
     doTestWithJSSupportLoaderAndFlex('{');
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testInsertRBraceOnEnter() throws Exception {
+  public void testInsertPairRBrace3() {
+    doTestWithJSSupportLoaderAndFlex('{');
+  }
+
+  @JSTestOptions({JSTestOption.WithJsSupportLoader})
+  public void testInsertRBraceOnEnter() {
     doTestWithJSSupportLoaderAndFlex('\n');
   }
 
-  public void testOvertypeRBrace() throws Exception {
+  public void testOvertypeRBrace() {
+    myFixture.setCaresAboutInjection(false);
     doTestWithJSSupportLoaderAndFlex('}');
   }
 
-  public void testOvertypeRBrace2() throws Exception {
+  public void testOvertypeRBrace2() {
+    myFixture.setCaresAboutInjection(false);
     doTestWithJSSupportLoaderAndFlex('}');
   }
 
-  public void testInsertBraceOnEnter() throws Exception {
+  public void testInsertBraceOnEnter() {
     _testInsertBraceOnEnter("", "js2");
     _testInsertBraceOnEnter("2", "js2");
 
@@ -188,14 +190,14 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     }
   }
 
-  public void testSmartEnterFunction() throws Exception {
+  public void testSmartEnterFunction() {
     final String testName = getTestName(false);
     doSmartEnterTest(testName + "_6", "js2");
     doSmartEnterTest(testName + "InInterfaceWithoutSemicolon", "js2");
     doSmartEnterTest(testName + "InInterfaceWithoutParameterList", "js2");
   }
 
-  public void testSmartEnterStatement() throws Exception {
+  public void testSmartEnterStatement() {
     final String testName = getTestName(false);
     doSmartEnterTest(testName + "_6", "js2");
     doSmartEnterTest(testName + "_14_5", "js2");
@@ -204,60 +206,57 @@ public class FlexEditorTest extends JSBaseEditorTestCase {
     doSmartEnterTest(testName + "_14_8", "js2");
   }
 
-  public void testSmartEnterClass() throws Exception {
+  public void testSmartEnterClass() {
     doSmartEnterTest(getTestName(false), "js2");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader})
-  public void testSmartEnterFunctionInInjected() throws Exception {
+  public void testSmartEnterFunctionInInjected() {
     doSmartEnterTest(getTestName(false), "mxml");
   }
 
-  public void testCopyReference() throws Exception {
+  public void testCopyReference() {
     performCopyRefAndPasteTest();
   }
 
-  public void testCopyReference_2() throws Exception {
+  public void testCopyReference_2() {
     performCopyRefAndPasteTest();
   }
 
-  public void testCopyReference2() throws Exception {
+  public void testCopyReference2() {
     performCopyRefAndPasteTest();
   }
 
-  public void testCopyReference3() throws Exception {
+  public void testCopyReference3() {
     performCopyRefAndPasteTest();
   }
 
-  public void testCopyReference4() throws Exception {
-    performCopyRefAndPasteTest();
-  }
-
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testCopyReference5() throws Exception {
-    doTestWithJSSupportLoaderAndFlex(() -> {
-      performCopyRefAndPasteTest();
-      return null;
-    });
-  }
-
-  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testCopyReference6() throws Exception {
+  public void testCopyReference4() {
     performCopyRefAndPasteTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testCopyReferenceInMxml() throws Exception {
+  public void testCopyReference5() {
+    doTestWithJSSupportLoaderAndFlex(this::performCopyRefAndPasteTest);
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  public void testCopyReference6() {
+    performCopyRefAndPasteTest();
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  public void testCopyReferenceInMxml() {
     performCopyRefAndPasteTest("mxml");
   }
 
-  public void testGotoNextPrevMethod() throws Exception {
-    configureByFile(getTestName(false) + ".js2");
+  public void testGotoNextPrevMethod() {
+    myFixture.configureByFile(getTestName(false) + ".js2");
     doTestNextPrevMethod();
   }
 
-  public void testGotoNextPrevMethod2() throws Exception {
-    configureByFile(getTestName(false) + ".mxml");
+  public void testGotoNextPrevMethod2() {
+    myFixture.configureByFile(getTestName(false) + ".mxml");
     doTestNextPrevMethod();
   }
 }
