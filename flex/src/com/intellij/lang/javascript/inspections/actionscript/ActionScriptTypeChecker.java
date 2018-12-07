@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -12,9 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
 import com.intellij.lang.javascript.validation.JSProblemReporter;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
@@ -25,7 +22,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.PropertyKey;
@@ -48,11 +44,10 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   @Override
   public boolean checkExpressionIsAssignableToVariable(JSVariable p,
                                                        final JSExpression expr,
-                                                       @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
-                                                       boolean allowChangeVariableTypeFix) {
+                                                       @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey) {
     final JSType type = p.getType();
     boolean isAssignable =
-      checkExpressionIsAssignableToTypeAndReportError(expr, type, p, problemKey, allowChangeVariableTypeFix ? p : null, null, true);
+      checkExpressionIsAssignableToTypeAndReportError(expr, type, p, problemKey, null, true);
 
     PsiElement _fun;
     if (isAssignable &&
@@ -154,24 +149,6 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
         return Pair.create(buildParameterInfosForExpected(function, expectedParameterList.getParameters()), false);
       }
     };
-  }
-
-  @Override
-  protected void registerExpressionNotAssignableToType(JSExpression expr,
-                                                       PsiElement typeOwner,
-                                                       String message,
-                                                       ProblemHighlightType problemHighlightType,
-                                                       LocalQuickFix... fixes) {
-    if (typeOwner != null &&
-        typeOwner.getParent() instanceof JSParameterList &&
-        expr.getParent() instanceof JSArgumentList) {
-      JSFunction method = (JSFunction)typeOwner.getParent().getParent();
-      if (!(JSResolveUtil.getExpressionJSType(expr) instanceof JSVoidType)) {
-        JSFunction topMethod = JSInheritanceUtil.findTopMethods(method).iterator().next();
-        fixes = ArrayUtil.append(fixes, new JSChangeSignatureFix(topMethod, (JSArgumentList)expr.getParent()));
-      }
-    }
-    myReporter.registerProblem(expr, message, problemHighlightType, fixes);
   }
 
   private static boolean isAddEventListenerMethod(final JSFunction method) {

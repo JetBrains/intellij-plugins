@@ -70,7 +70,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
                                           @NotNull JSGenericTypeEvaluationFunction function) {
     if (p instanceof JSParameter) {
       return myTypeChecker.checkExpressionIsAssignableToVariable((JSParameter)p, expression,
-                                                                 "javascript.argument.type.mismatch", false);
+                                                                 "javascript.argument.type.mismatch");
     }
     return true;
   }
