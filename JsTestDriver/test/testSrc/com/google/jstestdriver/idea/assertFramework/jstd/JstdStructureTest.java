@@ -5,7 +5,6 @@ import com.intellij.javascript.testFramework.AbstractJsPsiTestCase;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.psi.PsiElement;
-import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,43 +12,43 @@ import java.util.List;
 
 public class JstdStructureTest extends AbstractJsPsiTestCase {
 
-  public void testEmptyAsyncTestCase() throws Exception {
+  public void testEmptyAsyncTestCase() {
     validateJsFile();
   }
 
-  public void testEmptyTestCase() throws Exception {
+  public void testEmptyTestCase() {
     validateJsFile();
   }
 
-  public void testSingleObjectLiteralTest() throws Exception {
+  public void testSingleObjectLiteralTest() {
     validateJsFile();
   }
 
-  public void testMultipleObjectLiteralTests() throws Exception {
+  public void testMultipleObjectLiteralTests() {
     validateJsFile();
   }
 
-  public void testMultipleTestCases() throws Exception {
+  public void testMultipleTestCases() {
     validateJsFile();
   }
 
-  public void testPrototypeTestCase() throws Exception {
+  public void testPrototypeTestCase() {
     validateJsFile();
   }
 
-  public void testPrototypeTestCase1() throws Exception {
+  public void testPrototypeTestCase1() {
     validateJsFile();
   }
 
-  public void testMixObjectLiteralAndPrototypeMethodTests_with_var() throws Exception {
+  public void testMixObjectLiteralAndPrototypeMethodTests_with_var() {
     validateJsFile();
   }
 
-  public void testMixObjectLiteralAndPrototypeMethodTests_without_var() throws Exception {
+  public void testMixObjectLiteralAndPrototypeMethodTests_without_var() {
     validateJsFile();
   }
 
-  public void testTestCaseNameResolve() throws Exception {
+  public void testTestCaseNameResolve() {
     validateJsFile();
   }
 
@@ -70,7 +69,7 @@ public class JstdStructureTest extends AbstractJsPsiTestCase {
   @NotNull
   private static JstdTestFileStructure buildJsTestFileStructureByJsFile(@NotNull JSFile jsFile) {
     JstdTestFileStructure jsTestFileStructure = JstdTestFileStructureBuilder.getInstance().buildTestFileStructure(jsFile);
-    Assert.assertTrue(jsTestFileStructure.getJsFile() == jsFile);
+    assertSame(jsTestFileStructure.getJsFile(), jsFile);
     return jsTestFileStructure;
   }
 
@@ -80,35 +79,35 @@ public class JstdStructureTest extends AbstractJsPsiTestCase {
     for (MarkedTestCaseStructure markedTestCaseStructure : markedTestCaseStructures) {
       JstdTestCaseStructure testCaseStructure = jsTestFileStructure.getTestCaseStructureByName(markedTestCaseStructure.getName());
       if (testCaseStructure == null) {
-        Assert.fail("TestCase with name '" + markedTestCaseStructure.getName() + "' is not found in jsTestFileStructure!");
+        fail("TestCase with name '" + markedTestCaseStructure.getName() + "' is not found in jsTestFileStructure!");
       }
       matchTestCase(markedTestCaseStructure, testCaseStructure);
     }
     if (markedTestCaseStructures.size() != jsTestFileStructure.getTestCaseCount()) {
-      Assert.fail("Marked testCases count is " + markedTestCaseStructures.size()
+      fail("Marked testCases count is " + markedTestCaseStructures.size()
                                           + ", but built testCases count is " + jsTestFileStructure.getTestCaseCount());
     }
   }
 
   private static void matchTestCase(@NotNull MarkedTestCaseStructure markedTestCaseStructure, @NotNull JstdTestCaseStructure testCaseStructure) {
-    Assert.assertEquals(testCaseStructure.getName(), markedTestCaseStructure.getName());
-    Assert.assertTrue(testCaseStructure.getEnclosingCallExpression() == markedTestCaseStructure.getPsiElement());
+    assertEquals(testCaseStructure.getName(), markedTestCaseStructure.getName());
+    assertSame(testCaseStructure.getEnclosingCallExpression(), markedTestCaseStructure.getPsiElement());
     List<MarkedTestStructure> markedTestStructures = markedTestCaseStructure.getMarkedTestStructures();
     for (MarkedTestStructure markedTestStructure : markedTestStructures) {
       JstdTestStructure testStructure = testCaseStructure.getTestStructureByName(markedTestStructure.getName());
       if (testStructure == null) {
-        Assert.fail("Test '" + markedTestStructure.getName() + "' is not found in test-case '" + testCaseStructure.getName() + "'!");
+        fail("Test '" + markedTestStructure.getName() + "' is not found in test-case '" + testCaseStructure.getName() + "'!");
       }
       matchTest(markedTestStructure, testStructure);
     }
     if (markedTestStructures.size() != testCaseStructure.getTestCount()) {
-      Assert.fail("Marked test count is " + markedTestStructures.size()
+      fail("Marked test count is " + markedTestStructures.size()
                                           + ", but built tests count is " + testCaseStructure.getTestCount());
     }
   }
 
   private static void matchTest(@NotNull MarkedTestStructure markedTestStructure, @NotNull JstdTestStructure testStructure) {
-    Assert.assertEquals("Build test name is not equal to the marked one", markedTestStructure.getName(), testStructure.getName());
+    assertEquals("Build test name is not equal to the marked one", markedTestStructure.getName(), testStructure.getName());
     String testName = testStructure.getName();
     JSProperty markedJsProperty = markedTestStructure.getPropertyPsiElement();
     if (markedJsProperty != null) {
@@ -132,6 +131,6 @@ public class JstdStructureTest extends AbstractJsPsiTestCase {
       throw new RuntimeException("Test is '" + testName + "', psiElement is null for type '" + type + "'");
     }
     String foundDescription = formatTestReferenceDescription(testName, type, foundPsiElement);
-    Assert.assertTrue("Expected " + markedDescription + ", but found " + foundDescription, markedPsiElement == foundPsiElement);
+    assertSame("Expected " + markedDescription + ", but found " + foundDescription, markedPsiElement, foundPsiElement);
   }
 }
