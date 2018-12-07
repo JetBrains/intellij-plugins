@@ -14,8 +14,6 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaUtil.getAllParameterTypes;
@@ -57,15 +55,5 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
       return result;
     }
     return Collections.emptyList();
-  }
-
-  @Override
-  public boolean matches(@NotNull String stepName) {
-    Pattern pattern = getPattern();
-    if (pattern != null) {
-        Matcher m = pattern.matcher(stepName);
-        return m.matches();
-    }
-    return false;
   }
 }
