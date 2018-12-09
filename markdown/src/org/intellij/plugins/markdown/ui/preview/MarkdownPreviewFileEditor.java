@@ -353,6 +353,7 @@ public class MarkdownPreviewFileEditor extends UserDataHolderBase implements Fil
     myHtmlPanelWrapper.add(myPanel.getComponent(), BorderLayout.CENTER);
     myHtmlPanelWrapper.repaint();
     updatePanelCssSettings(myPanel, settings.getMarkdownCssSettings());
+    myLastRenderedHtml = "";
     updateHtmlPooled();
   }
 
