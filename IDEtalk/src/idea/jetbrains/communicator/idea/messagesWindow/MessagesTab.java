@@ -195,13 +195,8 @@ public class MessagesTab implements Disposable {
     myInput.setText("");
   }
 
-  public void attachTo(Content content) {
-    content.setDisposer(new com.intellij.openapi.Disposable(){
-      @Override
-      public void dispose() {
-        MessagesTab.this.dispose();
-      }
-    });
+  public void attachTo(@NotNull Content content) {
+    content.setDisposer(() -> dispose());
     content.putUserData(KEY, this);
     myContent = content;
   }
