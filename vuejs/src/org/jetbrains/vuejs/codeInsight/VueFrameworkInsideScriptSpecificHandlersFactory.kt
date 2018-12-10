@@ -9,7 +9,10 @@ import com.intellij.lang.javascript.frameworks.JSFrameworkSpecificHandlersFactor
 import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptTypeAlias
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
-import com.intellij.lang.javascript.psi.types.*
+import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl
+import com.intellij.lang.javascript.psi.types.JSContextualUnionTypeImpl
+import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl
+import com.intellij.lang.javascript.psi.types.JSTypeSource
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
@@ -86,7 +89,7 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
                       }
                       .mapNotNull { (it.element as? TypeScriptTypeAlias)?.typeDeclaration }.firstOrNull() ?: return null
 
-    var typeFromTypeScript = TypeScriptTypeParser.buildTypeFromTypeScript(typeAlias)
+    var typeFromTypeScript = typeAlias.jsType
     if (typeFromTypeScript is JSCompositeTypeImpl) {
       typeFromTypeScript = JSContextualUnionTypeImpl.getContextualUnionType(typeFromTypeScript.types, typeFromTypeScript.source)
     }
