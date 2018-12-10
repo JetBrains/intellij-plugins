@@ -50,7 +50,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <action id="ReformatWithPrettierAction"
             class="com.intellij.prettierjs.ReformatWithPrettierAction" text="Reformat with Prettier"
             description="Reformat with Prettier">
-      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorPopupReformatMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
       <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift P"/>
       <keyboard-shortcut keymap="Mac OS X" first-keystroke="meta alt shift P" />
@@ -58,7 +58,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     </action>
     <action id="PrettierImportCodeStyleAction" class="com.intellij.prettierjs.PrettierImportCodeStyleAction"
             text="Apply Prettier Code Style Rules">
-      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorPopupReformatMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
     </action>
   </actions>

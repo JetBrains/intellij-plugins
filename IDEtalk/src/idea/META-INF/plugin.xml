@@ -141,12 +141,12 @@
     <action id="IDEtalk.SendCodePointer" class="jetbrains.communicator.idea.actions.SendToAction"
       text="Send Code Pointer"
       description="Send code pointer to a user">
-      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="SmartCopyGroup" anchor="last"/>
       </action>
     <action id="IDEtalk.ShowDiff" class="jetbrains.communicator.idea.actions.ShowRemoteDiffAction"
       text="Show Diff With User"
       description="Show differences for the file with remote user">
-      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorPopupGitVcsMenu" anchor="last"/>
       </action>
 
   </actions>

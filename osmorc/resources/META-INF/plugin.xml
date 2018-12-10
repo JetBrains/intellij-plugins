@@ -214,7 +214,7 @@
             description="Resolves requirements and updates '-runbundles' directive"
             class="org.jetbrains.osgi.bnd.resolve.ResolveAction">
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-      <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+      <add-to-group group-id="EditorPopupExecutionMenu" anchor="last"/>
     </action>
 
     <group id="osmorc.viewGeneratedManifests" text="View Generated Manifest" popup="true"

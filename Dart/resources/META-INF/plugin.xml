@@ -252,7 +252,7 @@
     <action id="Dart.DartStyle" class="com.jetbrains.lang.dart.ide.actions.DartStyleAction"
             text="Reformat Code with dartfmt" description="Format your Dart code using dartfmt (the Dart Style formatter)">
       <add-to-group group-id="CodeFormatGroup" anchor="last"/>
-      <add-to-group group-id="EditorPopupMenu" relative-to-action="EditorPopupMenu1" anchor="after"/>
+      <add-to-group group-id="EditorPopupReformatMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenuModifyGroup" anchor="before" relative-to-action="$Delete"/>
     </action>
     <action id="Dart.DartSortMembers" class="com.jetbrains.lang.dart.ide.actions.DartSortMembersAction"
@@ -296,7 +296,7 @@
       <action id="Dart.build" class="com.jetbrains.lang.dart.ide.actions.DartPubBuildAction" text="Pub: Build..."
               description="Run 'webdev build' (Dart 2) or 'pub build' (Dart 1)"/>
       <separator/>
-      <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+      <add-to-group group-id="EditorPopupLanguageMenu" anchor="first"/>
       <add-to-group group-id="ProjectViewPopupMenu" relative-to-action="CutCopyPasteGroup" anchor="before"/>
     </group>
     <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction" text="Pub: Repair Cache..."
