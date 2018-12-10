@@ -17,11 +17,11 @@ package com.intellij.flex.intentions;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.lang.javascript.BaseJSIntentionTestCase2;
+import com.intellij.lang.javascript.BaseJSIntentionTestCase;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import org.jetbrains.annotations.NotNull;
 
-public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase2 {
+public class ImportJSClassIntentionTest extends BaseJSIntentionTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();

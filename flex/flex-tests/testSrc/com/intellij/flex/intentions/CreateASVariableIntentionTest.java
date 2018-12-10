@@ -2,14 +2,14 @@ package com.intellij.flex.intentions;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.BaseJSIntentionTestCase2;
+import com.intellij.lang.javascript.BaseJSIntentionTestCase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase2 {
+public class CreateASVariableIntentionTest extends BaseJSIntentionTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
