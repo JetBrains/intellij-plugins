@@ -13,16 +13,11 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel
-import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.javascript.typescript.TypeScriptHighlightingTest
-import com.intellij.lang.typescript.inspections.TypeScriptValidateJSTypesInspection
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.profile.codeInspection.InspectionProfileManager
 
 /**
  * @author Irina.Chernushina on 10/24/2017.
@@ -654,35 +649,10 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
       return mutableListOf()
     }
 
-    val rollback = ContextCreator().createContext(project)
-    try {
-      return super.doTestWithExplicitAssertOnRecursion(false, checkWeakWarnings, *fileNames)
-    }
-    finally {
-      rollback()
-    }
+    return super.doTestWithExplicitAssertOnRecursion(false, checkWeakWarnings, *fileNames)
   }
 
   private fun skipTest() = !whitelist.contains(getTestName(false))
-
-  companion object {
-    private class ContextCreator {
-      private val inspections = arrayOf(TypeScriptValidateJSTypesInspection().shortName/*,
-                                        TypeScriptUnresolvedVariableInspection().shortName*/)
-      private val was: MutableMap<HighlightDisplayKey, HighlightDisplayLevel> = mutableMapOf()
-
-      fun createContext(project: Project): () -> Unit {
-        val manager = InspectionProfileManager.getInstance(project)
-        val profile = manager.currentProfile
-        inspections.forEach {
-          val key = HighlightDisplayKey.find(it)
-          was.put(key, profile.getToolDefaultState(it, project).level)
-          profile.setErrorLevel(key, HighlightDisplayLevel.ERROR, project)
-        }
-        return { was.forEach { profile.setErrorLevel(it.key, it.value, project) } }
-      }
-    }
-  }
 
   override fun findVirtualFile(filePath: String): VirtualFile {
     val original = super.findVirtualFile(filePath)
