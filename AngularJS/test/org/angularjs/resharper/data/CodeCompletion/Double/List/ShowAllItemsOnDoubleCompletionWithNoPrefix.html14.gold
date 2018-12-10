@@ -1,0 +1,146 @@
+﻿# 144 ITEMS #
+
++ ng-app
++ ng-bind
++ ng-bind-html
++ ng-bind-template
++ ng-class
++ ng-class-even
++ ng-class-odd
++ ng-click
++ ng-cloak
++ ng-controller
++ ng-dblclick
++ ng-form
++ ng-hide
++ ng-if
++ ng-include
++ ng-init
++ ng-jq
++ ng-keydown
++ ng-keypress
++ ng-keyup
++ ng-model-options
++ ng-mousedown
++ ng-mouseenter
++ ng-mouseleave
++ ng-mousemove
++ ng-mouseover
++ ng-mouseup
++ ng-non-bindable
++ ng-options
++ ng-pluralize
++ ng-repeat
++ ng-show
++ ng-style
++ ng-switch
++ ng-transclude
++ data-ng-app
++ data-ng-bind
++ data-ng-bind-html
++ data-ng-bind-template
++ data-ng-class
++ data-ng-class-even
++ data-ng-class-odd
++ data-ng-click
++ data-ng-cloak
++ data-ng-controller
++ data-ng-dblclick
++ data-ng-form
++ data-ng-hide
++ data-ng-if
++ data-ng-include
++ data-ng-init
++ data-ng-jq
++ data-ng-keydown
++ data-ng-keypress
++ data-ng-keyup
++ data-ng-model-options
++ data-ng-mousedown
++ data-ng-mouseenter
++ data-ng-mouseleave
++ data-ng-mousemove
++ data-ng-mouseover
++ data-ng-mouseup
++ data-ng-non-bindable
++ data-ng-options
++ data-ng-pluralize
++ data-ng-repeat
++ data-ng-show
++ data-ng-style
++ data-ng-switch
++ data-ng-transclude
++ x-ng-app
++ x-ng-bind
++ x-ng-bind-html
++ x-ng-bind-template
++ x-ng-class
++ x-ng-class-even
++ x-ng-class-odd
++ x-ng-click
++ x-ng-cloak
++ x-ng-controller
++ x-ng-dblclick
++ x-ng-form
++ x-ng-hide
++ x-ng-if
++ x-ng-include
++ x-ng-init
++ x-ng-jq
++ x-ng-keydown
++ x-ng-keypress
++ x-ng-keyup
++ x-ng-model-options
++ x-ng-mousedown
++ x-ng-mouseenter
++ x-ng-mouseleave
++ x-ng-mousemove
++ x-ng-mouseover
++ x-ng-mouseup
++ x-ng-non-bindable
++ x-ng-options
++ x-ng-pluralize
++ x-ng-repeat
++ x-ng-show
++ x-ng-style
++ x-ng-switch
++ x-ng-transclude
+accesskey
+align
+class
+contenteditable
+contextmenu
+data-ng-…
+dir
+draggable
+hidden
+id
+itemid
+itemprop
+itemref
+itemscope
+itemtype
+lang
+ng-…
+onclick
+ondblclick
+onkeydown
+onkeypress
+onkeyup
+onmousedown
+onmousemove
+onmouseout
+onmouseover
+onmouseup
+onscroll
+ontouchcancel
+ontouchend
+ontouchmove
+ontouchstart
+onwheel
+spellcheck
+style
+tabindex
+title
+translate
+x-ng-…

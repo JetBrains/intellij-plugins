@@ -1,0 +1,35 @@
+﻿# 33 ITEMS #
+
++ ng-app
++ ng-bind
++ ng-bind-html
++ ng-bind-template
++ ng-class
++ ng-class-even
++ ng-class-odd
++ ng-click
++ ng-cloak
++ ng-controller
++ ng-dblclick
++ ng-form
++ ng-hide
++ ng-if
++ ng-include
++ ng-init
++ ng-keydown
++ ng-keypress
++ ng-keyup
++ ng-model-options
++ ng-mousedown
++ ng-mouseenter
++ ng-mouseleave
++ ng-mousemove
++ ng-mouseover
++ ng-mouseup
++ ng-non-bindable
++ ng-pluralize
++ ng-repeat
++ ng-show
++ ng-style
++ ng-switch
++ ng-transclude
