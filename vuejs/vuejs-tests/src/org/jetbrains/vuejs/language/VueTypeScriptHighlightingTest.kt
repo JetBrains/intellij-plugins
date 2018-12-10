@@ -703,4 +703,9 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
   override fun testIntermediateResultsNotCachedForRecursiveTypes() {
     LOG.info("Skipping muted test")
   }
+
+  override fun testNoChangeSignatureFixWithVoidValue() {
+    //test uses editor after overridden method returns (so no editor is configured)
+    LOG.info("Skipping muted test")
+  }
 }
