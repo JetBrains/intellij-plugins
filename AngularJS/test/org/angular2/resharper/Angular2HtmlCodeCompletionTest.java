@@ -37,8 +37,8 @@ public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionT
   }
 
   @Override
-  protected boolean isExcluded(@NotNull String testName) {
-    return TESTS_TO_SKIP.contains(testName);
+  protected boolean isExcluded() {
+    return TESTS_TO_SKIP.contains(getName());
   }
 
   @Override

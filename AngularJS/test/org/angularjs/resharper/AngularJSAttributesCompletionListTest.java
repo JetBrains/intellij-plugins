@@ -3,7 +3,6 @@ package org.angularjs.resharper;
 
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -21,7 +20,7 @@ public class AngularJSAttributesCompletionListTest extends AngularJSBaseCompleti
   );
 
   @Override
-  protected boolean isExcluded(@NotNull String testName) {
-    return IGNORED_TESTS.contains(testName);
+  protected boolean isExcluded() {
+    return IGNORED_TESTS.contains(getName());
   }
 }

@@ -14,7 +14,7 @@ public class Angular2BananaFixTest extends ReSharperIntentionTestCase {
   }
 
   @Override
-  protected boolean isExcluded(@NotNull String testName) {
+  protected boolean isExcluded() {
     return true;
   }
 

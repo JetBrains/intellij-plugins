@@ -63,8 +63,8 @@ public class Angular2EntitiesRenameTest extends ReSharperParameterizedTestCase {
   }
 
   @Override
-  protected boolean isExcluded(@NotNull String testName) {
-    return TESTS_TO_SKIP.contains(testName);
+  protected boolean isExcluded() {
+    return TESTS_TO_SKIP.contains(getName());
   }
 
   @Override
