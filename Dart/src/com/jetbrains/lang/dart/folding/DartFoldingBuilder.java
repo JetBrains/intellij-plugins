@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.folding;
 
 import com.intellij.codeInsight.folding.CodeFoldingSettings;
@@ -27,6 +28,12 @@ import java.util.List;
 public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAware {
 
   private static final String SMILEY = "<~>";
+
+  @Override
+  protected boolean isCustomFoldingRoot(@NotNull ASTNode node) {
+    IElementType type = node.getElementType();
+    return type == DartTokenTypesSets.DART_FILE || type == DartTokenTypes.CLASS_BODY || type == DartTokenTypes.FUNCTION_BODY;
+  }
 
   @Override
   protected void buildLanguageFoldRegions(@NotNull final List<FoldingDescriptor> descriptors,
