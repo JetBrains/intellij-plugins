@@ -13,25 +13,23 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
-import com.intellij.codeInspection.LocalInspectionTool
-import com.intellij.lang.javascript.BaseJSIntentionTestCase
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
 import com.intellij.openapi.application.PathManager
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 
-class VueCreateTsVariableTest : BaseJSIntentionTestCase() {
-  override fun getBasePath(): String {
-    return "" // not used
-  }
+class VueCreateTsVariableTest : LightPlatformCodeInsightFixtureTestCase() {
 
-  override fun configureLocalInspectionTools(): Array<LocalInspectionTool> {
-    return arrayOf(JSUnresolvedVariableInspection(), TypeScriptUnresolvedVariableInspection())
+  override fun setUp() {
+    super.setUp()
+    myFixture.enableInspections(JSUnresolvedVariableInspection(), TypeScriptUnresolvedVariableInspection())
   }
 
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/intentions/createVariable"
 
-  fun testAll() {
-    doTestAll()
+  fun testCreateVariableWorksInVueTs() {
+    myFixture.configureByFile("before.vue")
+    myFixture.launchAction(myFixture.findSingleIntention("Create Field 'name2'"))
+    myFixture.checkResultByFile("after.vue")
   }
-
 }
