@@ -72,7 +72,8 @@ public class TsLintErrorFixAction extends BaseIntentionAction implements HighPri
            && editor.getDocument().getModificationStamp() == myModificationStamp
            && myError.getFixInfo() != null
            ///to choose top-level file if fix ('e.g. "quotes"') is invoked on string with injection.
-           && file == myPsiFilePointer.getElement();
+           && file == myPsiFilePointer.getElement()
+           && !StringUtil.equals(myError.getCode(), "linebreak-style");
   }
 
   @Override
