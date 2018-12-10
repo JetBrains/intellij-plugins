@@ -9,6 +9,7 @@ import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.psi.CfmlCompositeElementType;
 import com.intellij.coldFusion.model.psi.impl.CfmlComponentImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagComponentImpl;
+import com.intellij.coldFusion.model.psi.stubs.CfmlStubElementTypes;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
@@ -27,9 +28,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CfmlParserDefinition implements ParserDefinition {
 
-  private static final TokenSet myCommentTypes =
-    TokenSet.create(CfmlTokenTypes.COMMENT, CfscriptTokenTypes.COMMENT, CfmlTokenTypes.VAR_ANNOTATION);
-
   @Override
   @NotNull
   public Lexer createLexer(Project project) {
@@ -43,7 +41,7 @@ public class CfmlParserDefinition implements ParserDefinition {
 
   @Override
   public IFileElementType getFileNodeType() {
-    return CfmlElementTypes.CFML_FILE;
+    return CfmlStubElementTypes.CFML_FILE;
   }
 
   @Override
@@ -55,7 +53,7 @@ public class CfmlParserDefinition implements ParserDefinition {
   @Override
   @NotNull
   public TokenSet getCommentTokens() {
-    return myCommentTypes;
+    return TokenSet.create(CfmlTokenTypes.COMMENT, CfscriptTokenTypes.COMMENT, CfmlTokenTypes.VAR_ANNOTATION);
   }
 
   @Override
@@ -77,10 +75,10 @@ public class CfmlParserDefinition implements ParserDefinition {
     if (type instanceof CfmlCompositeElementType) {
       return ((CfmlCompositeElementType)type).createPsiElement(node);
     }
-    else if (type == CfmlElementTypes.COMPONENT_DEFINITION) {
+    else if (type == CfmlStubElementTypes.COMPONENT_DEFINITION) {
       return new CfmlComponentImpl(node);
     }
-    else if (type == CfmlElementTypes.COMPONENT_TAG) {
+    else if (type == CfmlStubElementTypes.COMPONENT_TAG) {
       return new CfmlTagComponentImpl(node);
     }
     throw new AssertionError("Unknown type: " + type);
