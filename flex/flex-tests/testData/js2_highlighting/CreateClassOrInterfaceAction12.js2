@@ -1,8 +1,6 @@
-import foo.Foo;
-
 // "Create Class 'Foo'" "true"
 class C {
   static function foo() {
-    new Fo<caret>o("1","2");
+    new <error descr="Unresolved type Foo">F<caret>oo</error>("1","2");
   }
 }

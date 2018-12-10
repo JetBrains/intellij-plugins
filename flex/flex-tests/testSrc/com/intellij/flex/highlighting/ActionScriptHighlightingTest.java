@@ -21,8 +21,6 @@ import com.intellij.flex.parser.FlexImporterTest;
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.highlighter.HighlighterFactory;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
-import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
@@ -62,7 +60,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
@@ -81,9 +78,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
@@ -1204,6 +1198,11 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testCreateClassOrInterfaceAction11() throws Exception {
     doCreateClassOrInterfaceTestWithCheck("Abc", false);
+  }
+  
+  @JSTestOptions(JSTestOption.WithFlexSdk)
+  public void testCreateClassOrInterfaceAction12() throws Exception {
+    doCreateClassOrInterfaceTestWithCheck("Foo", true);
   }
 
   private void doCreateClassOrInterfaceTest(final String name,
