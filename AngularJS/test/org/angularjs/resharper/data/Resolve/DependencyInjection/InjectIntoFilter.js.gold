@@ -1,0 +1,13 @@
+﻿module.value('greet', function(name) {
+    return 'Hello ' + name;
+});
+
+module.filter('myFilter', function(greet) {
+    return function(text) {
+        return text && |greet|(0)(text) || text;
+    }
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter greet : any (Function/
+(name: any) => any (number/string))

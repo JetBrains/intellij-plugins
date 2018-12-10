@@ -1,0 +1,68 @@
+﻿// Provider declared as a named function
+// $get is simple function
+module.controller('c1', function($cacheFactory, $cacheFactoryProvider) {
+    var get = |$cacheFactoryProvider|(0).|get|(1);
+    |$cacheFactory|(2).|info|(3)();
+});
+
+// Provider declared as a named function
+// $get method is injected function
+module.controller('c2', function($anchorScroll, $anchorScrollProvider) {
+    |$anchorScrollProvider|(4).|disableAutoScrolling|(5)();
+    |$anchorScroll|(6)('#foo');
+});
+
+// Provider defined as an injected function, assigned to a variable
+module.controller('c3', function($animate, $animateProvider) {
+    |$animateProvider|(7).|register|(8)('thing', function() {
+        return {};
+    });
+    |$animate|(9).|on|(10)('enter', container,
+       function callback(element, phase) {
+         // cool we detected an enter animation within the container
+       }
+    );
+});
+
+// Get method return value dependent on injected value
+module.controller('c4', function($templateCache) {
+    var x = |$templateCache|(11).|remove|(12)('templateId.html');
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter $cacheFactoryProvider : any ($cacheFactory/
+void)
+1: result=DYNAMIC_OK declaredElem=property get : any
+2: result=OK declaredElem=parameter $cacheFactory : any ((cacheId: any, options: any) => any ({put; get; remove; removeAll; destroy; info; })/
+Function)
+3: result=DYNAMIC_OK declaredElem=property info : any (() => any)
+4: result=OK declaredElem=parameter $anchorScrollProvider : any ($anchorScroll/
+void)
+5: result=DYNAMIC_OK declaredElem=property disableAutoScrolling : any (() => void)
+6: result=OK declaredElem=parameter $anchorScroll : any ((hash: any) => void/
+Function)
+7: result=OK declaredElem=parameter $animateProvider : any ($animate/
+void)
+8: result=DYNAMIC_OK declaredElem=property register : any ((name: string, factory: any (Function)) => void)
+9: result=OK declaredElem=parameter $animate : any ({
+    on; 
+    off; 
+    pin; 
+    enabled; 
+    cancel; 
+    enter; 
+    move; 
+    leave; 
+    addClass; 
+    ...
+})
+10: result=DYNAMIC_OK declaredElem=property on : any (() => void)
+11: result=OK declaredElem=parameter $templateCache : any ({
+    put; 
+    get; 
+    remove; 
+    removeAll; 
+    destroy; 
+    info; 
+})
+12: result=DYNAMIC_OK declaredElem=property remove : any ((key: string) => void)

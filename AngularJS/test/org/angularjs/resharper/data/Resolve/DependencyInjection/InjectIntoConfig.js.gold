@@ -1,0 +1,8 @@
+﻿module.constant('myConstant', 'stuff');
+
+module.config(function(myConstant) {
+    var p = |myConstant|(0);
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter myConstant : any (string)

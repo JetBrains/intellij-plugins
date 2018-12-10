@@ -17,8 +17,7 @@ import org.junit.runners.Parameterized;
 import java.io.File;
 import java.util.*;
 
-@TestDataPath("List")
-public class AngularJSBaseCompletionTest extends ReSharperCompletionTestCase {
+public abstract class AngularJSBaseCompletionTest extends ReSharperCompletionTestCase {
 
   private static final Map<String, String> VERSIONS = ContainerUtil.<String,String>immutableMapBuilder()
     .put("12","angular.1.2.28.js")

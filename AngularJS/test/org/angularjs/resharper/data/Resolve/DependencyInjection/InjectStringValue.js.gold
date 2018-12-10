@@ -1,0 +1,8 @@
+﻿module.value('myValue', 'hello world');
+
+module.controller('myController', function(myValue) {
+    return |myValue|(0);
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter myValue : any (string)

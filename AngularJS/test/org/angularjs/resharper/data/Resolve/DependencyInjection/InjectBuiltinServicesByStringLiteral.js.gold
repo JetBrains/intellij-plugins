@@ -1,0 +1,17 @@
+﻿module.controller('myController', [ '$log', '$logProvider', function(l, lp) {
+    |lp|(0).|debugEnabled|(1)(true);
+    |l|(2).|debug|(3)('hello');
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter lp : any ($log/
+void)
+1: result=DYNAMIC_OK declaredElem=property debugEnabled : any ((flag?: boolean) => any (debugEnabled/void/...))
+2: result=OK declaredElem=parameter l : any ({
+    log; 
+    info; 
+    warn; 
+    error; 
+    debug; 
+})
+3: result=DYNAMIC_OK declaredElem=property debug : any (() => void)

@@ -1,0 +1,8 @@
+﻿module.constant('myConstant', 42);
+
+module.controller('myController', function(myConstant) {
+    return |myConstant|(0) * 2;
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter myConstant : any (number)

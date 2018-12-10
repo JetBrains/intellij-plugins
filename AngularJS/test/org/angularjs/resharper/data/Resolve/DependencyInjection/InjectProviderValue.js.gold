@@ -1,0 +1,24 @@
+﻿module.provider('greeter', function() {
+    var salutation = 'hello';
+    this.setSalutation = function(s) {
+        salutation = s;
+    }
+
+    function Greeter(a) {
+        this.greet = function() {
+            return salutation + ' ' + s;
+        }
+    }
+
+    this.$get = function(a) {
+        return new Greeter(a);
+    }
+});
+
+module.controller('myController', function(greeter) {
+    |greeter|(0).|greet|(1)();
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter greeter : any (void)
+1: result=DYNAMIC_OK declaredElem=property greet : any (() => any (number/string))

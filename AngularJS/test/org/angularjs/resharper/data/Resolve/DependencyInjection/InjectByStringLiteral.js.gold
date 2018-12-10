@@ -1,0 +1,33 @@
+﻿module.value('myValue', 42);
+
+module.factory('myFactory', function() {
+    return {
+        'sayHi': function(name) {
+            return 'Hi ' + name;
+        }
+    }
+});
+
+module.service('myService', function() {
+    this.sayHello = function(name) {
+        return 'Hi ' + name;
+    }
+    this.sayGoodbye = function(name) {
+        return 'Bye ' + name;
+    }
+});
+
+module.controller('myController', [ 'myValue', 'myFactory', 'myService', function(v, f, s) {
+    var p = |v|(0) * 2;
+    |f|(1).|sayHi|(2)('Matt');
+    |s|(3).|sayHello|(4)('Matt');
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter v : any (number)
+1: result=OK declaredElem=parameter f : any ({
+    sayHi; 
+})
+2: result=DYNAMIC_OK declaredElem=property sayHi : any ((name: any) => any (number/string))
+3: result=OK declaredElem=parameter s : any (void)
+4: result=DYNAMIC_OK declaredElem=property sayHello : any ((name: any) => any (number/string))

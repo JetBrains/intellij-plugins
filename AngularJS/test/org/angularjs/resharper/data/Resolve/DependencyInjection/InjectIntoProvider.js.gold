@@ -1,0 +1,25 @@
+﻿module.constant('defaultSalutation', 'hello');
+
+module.provider('greeter', function(defaultSalutation) {
+    var salutation = |defaultSalutation|(0);
+    this.setSalutation = function(s) {
+        salutation = s;
+    }
+
+    function Greeter(a) {
+        this.greet = function() {
+            return salutation + ' ' + s;
+        }
+    }
+
+    this.$get = function(a) {
+        return new Greeter(a);
+    }
+});
+
+module.controller('myController', function(greeter) {
+    greeter.greet();
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter defaultSalutation : any (string)

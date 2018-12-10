@@ -1,0 +1,11 @@
+﻿module.value('myValueFunc', function(name) {
+    return "Hello " + name;
+});
+
+module.controller('myController', function(myValueFunc) {
+    return |myValueFunc|(0)('Matt');
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter myValueFunc : any (Function/
+(name: any) => any (number/string))

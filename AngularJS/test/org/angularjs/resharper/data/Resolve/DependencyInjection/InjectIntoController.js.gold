@@ -1,0 +1,17 @@
+﻿module.factory('myFactory', function() {
+    return {
+        'sayHello': function(name) {
+            return 'Hi ' + name;
+        }
+    }
+});
+
+module.controller('myController', function(myFactory) {
+    |myFactory|(0).|sayHello|(1)('Matt');
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter myFactory : any ({
+    sayHello; 
+})
+1: result=DYNAMIC_OK declaredElem=property sayHello : any ((name: any) => any (number/string))

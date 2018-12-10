@@ -1,0 +1,22 @@
+﻿module.factory('myFactory', function() {
+    return {
+        'sayHello': function(name) {
+            return 'Hi ' + name;
+        }
+    }
+});
+
+module.directive('myDirective', function(myFactory) {
+    function link(scope, element, attrs) {
+        scope.greeting = |myFactory|(0).|sayHello|(1)('Matt');
+    }
+    return {
+        link: link
+    };
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter myFactory : any ({
+    sayHello; 
+})
+1: result=DYNAMIC_OK declaredElem=property sayHello : any ((name: any) => any (number/string))

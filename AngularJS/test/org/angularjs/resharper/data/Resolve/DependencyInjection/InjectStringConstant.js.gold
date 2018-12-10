@@ -1,0 +1,8 @@
+﻿module.constant('myConstant', 'hello world');
+
+module.controller('myController', function(myConstant) {
+    return |myConstant|(0);
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter myConstant : any (string)

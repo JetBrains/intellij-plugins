@@ -1,0 +1,16 @@
+﻿module.service('myService', function() {
+    this.sayHello = function(name) {
+        return 'Hi ' + name;
+    }
+    this.sayGoodbye = function(name) {
+        return 'Bye ' + name;
+    }
+});
+
+module.controller('myController', function(myService) {
+    |myService|(0).|sayHello|(1)('Matt');
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter myService : any (void)
+1: result=DYNAMIC_OK declaredElem=property sayHello : any ((name: any) => any (number/string))

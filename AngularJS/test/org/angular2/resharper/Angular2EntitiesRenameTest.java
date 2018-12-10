@@ -48,8 +48,7 @@ public class Angular2EntitiesRenameTest extends ReSharperParameterizedTestCase {
   @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
   @com.intellij.testFramework.Parameterized.Parameters(name = "{0}")
   public static List<String> testNames(@NotNull Class<?> klass) throws Exception {
-    return ReSharperTestUtil.getTestParamsFromSubPath(
-      "", "/", null, callFindTestData(klass))
+    return ReSharperTestUtil.getTestParamsFromSubPath(callFindTestData(klass))
       .stream()
       .map(name -> StringUtil.split(name, ".").get(0))
       .distinct()

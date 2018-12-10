@@ -1,0 +1,16 @@
+﻿module.constant('defaultGreeting', 'Hi');
+
+module.factory('myFactory', function(defaultGreeting) {
+    return {
+        'sayHello': function(name) {
+            return |defaultGreeting|(0) + ' ' + name;
+        }
+    }
+});
+
+module.controller('myController', function(myFactory) {
+    myFactory.sayHello('Matt');
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter defaultGreeting : any (string)

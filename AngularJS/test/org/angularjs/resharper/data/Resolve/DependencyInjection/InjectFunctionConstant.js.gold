@@ -1,0 +1,11 @@
+﻿module.constant('myConstantFunc', function(name) {
+    return "Hello " + name;
+});
+
+module.controller('myController', function(myConstantFunc) {
+    return |myConstantFunc|(0)('Matt');
+});
+
+------------------------------------------------
+0: result=OK declaredElem=parameter myConstantFunc : any (Function/
+(name: any) => any (number/string))
