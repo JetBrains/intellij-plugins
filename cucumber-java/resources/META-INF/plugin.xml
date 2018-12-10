@@ -43,6 +43,7 @@
     <multiHostInjector implementation="org.jetbrains.plugins.cucumber.java.CucumberJavaInjector"/>
     <psi.referenceContributor implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaReferenceContributor"/>
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaPomDeclarationSearcher"/>
+    <fileBasedIndex implementation="org.jetbrains.plugins.cucumber.java.CucumberJava8StepIndex"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
