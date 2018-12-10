@@ -13,10 +13,22 @@ import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class CucumberJavaTestUtil {
   public static final String RELATED_TEST_DATA_PATH = "/contrib/cucumber-java/testData/";
 
-  public static DefaultLightProjectDescriptor createCucumberProjectDescriptor() {
+  public static DefaultLightProjectDescriptor createCucumber1ProjectDescriptor() {
+    return new DefaultLightProjectDescriptor() {
+      @Override
+      public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
+        attachCucumberCore1(model);
+        attachStandardCucumberLibraries(module, model);
+      }
+    };
+  }
+
+  public static DefaultLightProjectDescriptor createCucumber2ProjectDescriptor() {
     return new DefaultLightProjectDescriptor() {
       @Override
       public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
@@ -63,8 +75,13 @@ public class CucumberJavaTestUtil {
     PsiTestUtil.addLibrary(module, model, "cucumber-java8", PathManager.getHomePath() + "/community/lib", "cucumber-java8-1.2.4.jar");
   }
   
-  protected static void attachCucumberCore2(@NotNull ModifiableRootModel model) {
+  private static void attachCucumberCore1(@NotNull ModifiableRootModel model) {
     PsiTestUtil.addProjectLibrary(model, "cucumber-core", IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-core"));
+  }
+  
+  protected static void attachCucumberCore2(@NotNull ModifiableRootModel model) {
+    List<String> libraryClassesRootPaths = IntelliJProjectConfiguration.getProjectLibraryClassesRootPaths("cucumber-core:2.0.1");
+    PsiTestUtil.addProjectLibrary(model, "cucumber-core", libraryClassesRootPaths);
   }
 
   private static void attachCucumberCore3(@NotNull ModifiableRootModel model) {

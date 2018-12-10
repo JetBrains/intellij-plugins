@@ -6,10 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 
-public class JavaStepDefinition extends AbstractJavaStepDefinition {
+public class JavaAnnotatedStepDefinition extends AbstractJavaStepDefinition {
   private final String myAnnotationClassName;
 
-  public JavaStepDefinition(@NotNull PsiElement stepDef, @NotNull String annotationClassName) {
+  public JavaAnnotatedStepDefinition(@NotNull PsiElement stepDef, @NotNull String annotationClassName) {
     super(stepDef);
     myAnnotationClassName = annotationClassName;
   }

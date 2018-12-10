@@ -41,6 +41,10 @@ public class CucumberJavaVersionUtil {
     return result.getValue();
   }
   
+  public static boolean isCucumber2OrMore(@NotNull Module module) {
+    return VersionComparatorUtil.compare(getCucumberCoreVersion(module, module.getProject()), CUCUMBER_CORE_VERSION_2) >= 0;
+  }
+
   public static boolean isCucumber3OrMore(@NotNull PsiElement context) {
     Module module = ModuleUtilCore.findModuleForPsiElement(context);
     return VersionComparatorUtil.compare(getCucumberCoreVersion(module, context.getProject()), CUCUMBER_CORE_VERSION_3) >= 0;

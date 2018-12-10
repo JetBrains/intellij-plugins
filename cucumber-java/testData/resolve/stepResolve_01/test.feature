@@ -12,3 +12,4 @@ Feature: Shopping
     And my another test step
     When I set number to 50
     When I set value to 50
+    When The test should pass to this

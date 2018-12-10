@@ -43,6 +43,10 @@ public class ShoppingStepdefs {
   public void I_set_value_to(Integer nr) {
   }
 
+  @When("test should pass")
+  public void test_should_pass(Integer nr) {
+  }
+
   public static class Grocery {
     public String name;
     public int price;

@@ -3,7 +3,7 @@ package org.jetbrains.plugins.cucumber.java.resolve;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
 
-public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
+public class CucumberJava2ResolveTest extends BaseCucumberJavaResolveTest {
   public void testNavigationFromStepToStepDef01() {
     doTest("stepResolve_01", "I p<caret>ay 25", "i_pay");
   }
@@ -56,6 +56,14 @@ public class CucumberJavaTestResolveTest extends BaseCucumberJavaResolveTest {
 
   public void testNegativeLookBehind() {
     doTest("negativeLookBehind", "c<caret>a", "step_method");
+  }
+
+  /**
+   * @see CucumberJava1ResolveTest#testExactStepMatching()
+   */
+  public void testNotExactStepMatching() {
+    init("stepResolve_01");
+    checkReference("test sho<caret>uld pass", "test_should_pass");
   }
 
   @Override

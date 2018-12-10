@@ -28,6 +28,6 @@ public abstract class BaseCucumberJavaResolveTest extends CucumberResolveTest {
 
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
-    return CucumberJavaTestUtil.createCucumberProjectDescriptor();
+    return CucumberJavaTestUtil.createCucumber2ProjectDescriptor();
   }
 }
