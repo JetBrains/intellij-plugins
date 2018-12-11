@@ -1,12 +1,12 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.flex.base.FlexInplaceIntroduceVariableTestCase;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.lang.javascript.refactoring.introduceVariable.JSInplaceIntroduceVariableTestCase;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-public class ActionScriptInPlaceIntroduceVariableTest extends FlexInplaceIntroduceVariableTestCase {
+public class ActionScriptInPlaceIntroduceVariableTest extends JSInplaceIntroduceVariableTestCase {
 
   @NotNull
   @Override
@@ -15,15 +15,15 @@ public class ActionScriptInPlaceIntroduceVariableTest extends FlexInplaceIntrodu
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   @Override
   protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "refactoring/introduceVariable/");
     super.setUp();
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "refactoring/introduceVariable/");
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   public void testInplaceBasicAS() throws Exception {
@@ -34,11 +34,11 @@ public class ActionScriptInPlaceIntroduceVariableTest extends FlexInplaceIntrodu
     doTest(getTestName(false), ".as");
   }
 
-  public void testInplaceWithNamespace() throws Exception {
+  public void testInplaceWithNamespace() {
     String name1 = "test1/" + getTestName(false) + "1";
     String name2 = "test2/" + getTestName(false) + "2";
-    configureByFiles(null, name2 + ".as", name1 + ".as");
+    myFixture.configureByFiles(name2 + ".as", name1 + ".as");
     performActionIntroduce();
-    checkResultByFile(getTestName(false) + "2_after.as");
+    myFixture.checkResultByFile(getTestName(false) + "2_after.as");
   }
 }

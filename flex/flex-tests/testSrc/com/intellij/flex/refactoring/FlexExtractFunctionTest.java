@@ -1,34 +1,34 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.flex.base.FlexExtractFunctionBaseTest;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.extractMethod.DefaultJSExtractFunctionSettings;
+import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionBaseTest;
 import com.intellij.lang.javascript.refactoring.extractMethod.JSExtractFunctionSettings;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 
-public class FlexExtractFunctionTest extends FlexExtractFunctionBaseTest {
+public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("refactoring/flexExtractFunction/");
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   @Override
   protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "refactoring/flexExtractFunction/");
     super.setUp();
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "refactoring/flexExtractFunction/");
+    FlexTestUtils.setupFlexSdk(myFixture.getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   public void testExpressionInClass() throws Exception {
@@ -63,7 +63,7 @@ public class FlexExtractFunctionTest extends FlexExtractFunctionBaseTest {
     doTest(
       () -> {
         JSExtractFunctionSettings.ParametersInfo parametersInfo = new JSExtractFunctionSettings.ParametersInfo();
-        JSVariable var = PsiTreeUtil.getParentOfType(myFile.findElementAt(myEditor.getCaretModel().getOffset()), JSVariable.class);
+        JSVariable var = PsiTreeUtil.getParentOfType(myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset()), JSVariable.class);
         assertNotNull(var);
         parametersInfo.variables.add(var);
         parametersInfo.variableOptions.put(var, new JSExtractFunctionSettings.ParameterInfo(var.getName() + "2", true, null, 0));
@@ -161,11 +161,11 @@ public class FlexExtractFunctionTest extends FlexExtractFunctionBaseTest {
     doTest("created", "mxml");
   }
 
-  public void testScopeOptions3() throws Exception {
+  public void testScopeOptions3() {
     doTestWithScopeSelection(scopes -> ContainerUtil.getFirstItem(scopes), "js2");
   }
 
-  public void testScopeOptionsMxml() throws Exception {
+  public void testScopeOptionsMxml() {
     doTestWithScopeSelection(scopes -> ContainerUtil.getFirstItem(scopes), "mxml");
   }
 }
