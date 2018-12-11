@@ -22,8 +22,6 @@ import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.indexing.FileBasedIndex;
 
-import java.io.File;
-
 public class FlexRenameTest extends JSAbstractRenameTest {
 
   @Override
@@ -230,8 +228,8 @@ public class FlexRenameTest extends JSAbstractRenameTest {
       "yyy2",
       testName + "_after.mxml",
       false,
-      testName + File.separatorChar + "foo" + File.separatorChar + testName + ".mxml",
-      testName + File.separatorChar + "foo" + File.separatorChar + testName + "_2.as"
+      testName + "/foo/" + testName + ".mxml",
+      testName + "/foo/" + testName + "_2.as"
     );
     assertEquals(6, findRenamedRefsToReferencedElementAtCaret().length);
   }
@@ -243,9 +241,9 @@ public class FlexRenameTest extends JSAbstractRenameTest {
       "yyy2",
       testName + "_after.as",
       false,
-      testName + File.separatorChar + "foo" + File.separatorChar + testName + ".as",
-      testName + File.separatorChar + "foo" + File.separatorChar + testName + "_2.as",
-      testName + File.separatorChar + "foo" + File.separatorChar + testName + "_3.mxml"
+      testName + "/foo/" + testName + ".as",
+      testName + "/foo/" + testName + "_2.as",
+      testName + "/foo/" + testName + "_3.mxml"
     );
     assertEquals(9, findRenamedRefsToReferencedElementAtCaret().length);
   }
