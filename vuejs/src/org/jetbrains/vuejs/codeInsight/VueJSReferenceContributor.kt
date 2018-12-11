@@ -1,12 +1,8 @@
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
-import com.intellij.lang.javascript.psi.JSFunction
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSReferenceExpression
-import com.intellij.lang.javascript.psi.JSThisExpression
+import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils.isArrowFunction
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl
 import com.intellij.lang.javascript.psi.resolve.CachingPolyReferenceBase
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
@@ -40,7 +36,7 @@ class VueJSReferenceContributor : PsiReferenceContributor() {
 
             val pair = findScriptWithExport(element) ?: return false
             // lexical this for arrow functions => must be in-place
-            val isArrowFunction = isArrowFunction(function)
+            val isArrowFunction = function is JSFunctionExpression && function.isArrowFunction
             return isAncestor(pair.first, element, true) && (!isArrowFunction || isAncestor(pair.second, element, true))
           }
 
