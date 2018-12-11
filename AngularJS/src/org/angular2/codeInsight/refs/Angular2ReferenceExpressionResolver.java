@@ -2,7 +2,7 @@
 package org.angular2.codeInsight.refs;
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
-import com.intellij.lang.javascript.ecmascript6.TypeScriptCallExpressionResolver;
+import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -52,7 +52,7 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     if (!incompleteCode) {
       ResolveResult[] results = expression.multiResolve(true);
       //expected type evaluator uses incomplete = true results so we have to cache it and reuse inside incomplete = false
-      return new TypeScriptCallExpressionResolver(((JSCallExpression)expression.getParent())).chooseSignatures(results);
+      return new JSTypeSignatureChooser(((JSCallExpression)expression.getParent())).chooseOverload(results);
     }
     assert myReferencedName != null;
     final Angular2Pipe pipe = Angular2EntitiesProvider.findPipe(myParent.getProject(), myReferencedName);

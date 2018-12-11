@@ -2,11 +2,10 @@
 package org.angular2.lang.expr.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.javascript.psi.JSArgumentList;
-import com.intellij.lang.javascript.psi.JSExpression;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
+import com.intellij.lang.javascript.psi.types.JSLazyContextualType;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ObjectUtils;
@@ -16,9 +15,11 @@ import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.PIPE_ARGUMENTS_LIST;
 
-public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angular2PipeExpression {
+public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angular2PipeExpression, JSCallLikeExpressionCommon {
 
   public Angular2PipeExpressionImpl(IElementType elementType) {
     super(elementType);
@@ -44,6 +45,12 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
   @Override
   public String getName() {
     return ObjectUtils.doIfNotNull(getNameReference(), JSReferenceExpression::getReferenceName);
+  }
+
+  @NotNull
+  @Override
+  public List<JSType> getContextualArgumentTypes() {
+    return JSLazyContextualType.mapAsContextualArguments(getArguments());
   }
 
   @Override

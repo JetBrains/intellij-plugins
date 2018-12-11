@@ -46,7 +46,7 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
       val keys = getForAllKeys(GlobalSearchScope.projectScope(expression.project), VueStoreIndex.KEY)
       if (keys.isEmpty()) return null
       val map = mutableListOf<JSStringLiteralTypeImpl>()
-      val expressionText = expression.methodExpression.text!!
+      val expressionText = expression.methodExpression!!.text!!
       when {
         expressionText.endsWith("dispatch") || expressionText == "mapActions" -> processVuex(keys, map, VueStoreUtils.ACTION)
         expressionText == "commit" || expressionText == "mapMutations" -> processVuex(keys, map, VueStoreUtils.MUTATION)
