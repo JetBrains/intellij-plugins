@@ -1,13 +1,11 @@
 package com.intellij.flex.refactoring;
 
 import com.intellij.execution.RunManager;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
-import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.json.JsonLanguage;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.*;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.index.JSPackageIndex;
@@ -16,47 +14,33 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.refactoring.rename.JSInplaceRenameHandler;
 import com.intellij.lang.refactoring.NamesValidator;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.indexing.FileBasedIndex;
 
 import java.io.File;
 
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
-
 public class FlexRenameTest extends JSAbstractRenameTest {
 
   @Override
   protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
-  }
-
-  @Override
-  protected String getBasePath() {
-    return "/flex_rename/";
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override
   protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("");
+    return FlexTestUtils.getTestDataPath("") + "/flex_rename/";
   }
 
   @Override
-  protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
-  }
-
-  @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   public void testRenameBundleRef() throws Exception {
@@ -80,7 +64,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testJSFunction() throws Exception {
     String testName = getTestName(false);
     doTest("JSFunctionNew", testName + "_after.js2", testName + ".js2");
-    assertEquals("JSFunctionNew.js2", myFile.getName());
+    assertEquals("JSFunctionNew.js2", myFixture.getFile().getName());
   }
 
   public void testJSFunction2() throws Exception {
@@ -92,7 +76,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testJSVariable() throws Exception {
     String testName = getTestName(false);
     doTest("JSVariableNew", testName + "_after.js2", testName + ".js2");
-    assertEquals("JSVariableNew.js2", myFile.getName());
+    assertEquals("JSVariableNew.js2", myFixture.getFile().getName());
   }
 
   public void testJSVariable2() throws Exception {
@@ -183,18 +167,18 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testInlineFunRename() throws Exception {
+  public void testInlineFunRename() {
     String name = getTestName(false);
-    configureByFile(getBasePath() + name + ".mxml");
+    myFixture.configureByFile(getBasePath() + name + ".mxml");
 
     PsiElement target = findTarget();
     CodeInsightTestUtil.doInlineRename(
       new JSInplaceRenameHandler(),
       "creationCompleteHandler2",
-      InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myEditor, myFile),
+      InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myFixture.getEditor(), myFixture.getFile()),
       target
     );
-    checkResultByFile(getBasePath() + name + "_after.mxml");
+    myFixture.checkResultByFile((getBasePath() + name + "_after.mxml"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
@@ -207,9 +191,8 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testClassRename() throws Exception {
     final String name = getTestName(false);
     doTest("ClassRename2", name + "_after.as", name + ".as", getTestName(false) + "_2.as");
-    myFile = myPsiManager.findFile(myFile.getVirtualFile());
     assertEquals(4, findRenamedRefsToReferencedElementAtCaret().length);
-    assertEquals(0, JSDaemonAnalyzerTestCase.filterUnwantedInfos(doHighlighting(), true, false, false).size());
+    assertEquals(0, JSDaemonAnalyzerTestCase.filterUnwantedInfos(myFixture.doHighlighting(), true, false, false).size());
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
@@ -244,7 +227,6 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testRenamePackageRefs2() throws Exception {
     String testName = getTestName(false);
     doTest(
-      new File(getTestDataPath() + getBasePath() + testName),
       "yyy2",
       testName + "_after.mxml",
       false,
@@ -258,7 +240,6 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testRenamePackageRefs3() throws Exception {
     String testName = getTestName(false);
     doTest(
-      new File(getTestDataPath() + getBasePath() + testName),
       "yyy2",
       testName + "_after.as",
       false,
@@ -280,7 +261,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testRenamePackageRefs5() throws Exception {
     String testName = getTestName(false);
     doTest("yyy", testName + "_after.as", testName + ".as", testName + "_2.as");
-    FileBasedIndex.getInstance().ensureUpToDate(JSPackageIndex.INDEX_ID, myProject, null);
+    FileBasedIndex.getInstance().ensureUpToDate(JSPackageIndex.INDEX_ID, myFixture.getProject(), null);
     assertEquals(8, findRenamedRefsToReferencedElementAtCaret().length);
   }
 
@@ -320,22 +301,17 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     doTest("_yyy", name + "_after.js2", name + ".js2");
   }
 
-  public void testRenameClassTwoTimes() throws Exception {
+  public void testRenameClassTwoTimes() {
     final String name = getTestName(false);
-    VirtualFile file = getVirtualFile(getBasePath() + name + "/mytest/foo/" + name + "_2.js2");
-    VirtualFile[] files = {
-      getVirtualFile(getBasePath() + name + "/mytest/boo/" + name + ".js2"), file
-    };
-
-    configureByFiles(new File(getTestDataPath() + getBasePath() + name), files);
+    myFixture.configureByFiles(name + "/mytest/boo/" + name + ".js2", name + "/mytest/foo/" + name + "_2.js2");
     int referencesCount = findRenamedRefsToReferencedElementAtCaret().length;
     performDialogRename(defaultParameters().withName(name + "_3"));
-    checkResultByFile(getBasePath() + name + "_after.js2");
+    myFixture.checkResultByFile(getBasePath() + name + "_after.js2");
 
     assertEquals(referencesCount, findRenamedRefsToReferencedElementAtCaret().length);
 
     performDialogRename(defaultParameters().withName(name + "_4"));
-    checkResultByFile(getBasePath() + name + "_after2.js2");
+    myFixture.checkResultByFile(name + "_after2.js2");
     PsiReference[] refs = findRenamedRefsToReferencedElementAtCaret();
     assertEquals(referencesCount, refs.length);
 
@@ -377,20 +353,20 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   public void testNamesValidator() {
     final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptFileType.INSTANCE.getLanguage());
-    assertTrue(namesValidator.isIdentifier("zzz", myProject));
+    assertTrue(namesValidator.isIdentifier("zzz", myFixture.getProject()));
 
-    assertTrue(!namesValidator.isIdentifier("\"zzz\"", myProject));
-    assertTrue(namesValidator.isKeyword("function", myProject));
+    assertTrue(!namesValidator.isIdentifier("\"zzz\"", myFixture.getProject()));
+    assertTrue(namesValidator.isKeyword("function", myFixture.getProject()));
 
-    assertTrue(!namesValidator.isIdentifier("zzz<=", myProject));
+    assertTrue(!namesValidator.isIdentifier("zzz<=", myFixture.getProject()));
 
     final NamesValidator ecmaL4NamesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
-    assertTrue(ecmaL4NamesValidator.isKeyword("private", myProject));
-    assertTrue(ecmaL4NamesValidator.isKeyword("namespace", myProject));
-    assertTrue(ecmaL4NamesValidator.isIdentifier("namespace", myProject));
+    assertTrue(ecmaL4NamesValidator.isKeyword("private", myFixture.getProject()));
+    assertTrue(ecmaL4NamesValidator.isKeyword("namespace", myFixture.getProject()));
+    assertTrue(ecmaL4NamesValidator.isIdentifier("namespace", myFixture.getProject()));
 
     final NamesValidator jsonNamesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JsonLanguage.INSTANCE);
-    assertTrue(jsonNamesValidator.isIdentifier("aaa.bbb", myProject));
+    assertTrue(jsonNamesValidator.isIdentifier("aaa.bbb", myFixture.getProject()));
   }
 
   public void testAmbiguity1() throws Exception {
@@ -427,7 +403,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testRunConfigUpdatedOnMethodRename() throws Exception {
-    final RunManager runManager = RunManager.getInstance(myProject);
+    final RunManager runManager = RunManager.getInstance(myFixture.getProject());
     FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "", "SomeTest",
                                "testSomething",
@@ -440,7 +416,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testConfigUpdatedOnClassRename() throws Exception {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.setMainClass("foo.bar.SomeClass"));
 
-    final RunManager runManager = RunManager.getInstance(myProject);
+    final RunManager runManager = RunManager.getInstance(myFixture.getProject());
     FlexTestUtils.createFlexUnitRunConfig(runManager, "Own name", myModule, FlexUnitRunnerParameters.Scope.Method, "", "foo.bar.SomeClass",
                                           "testSomething",
                                           false);
@@ -465,7 +441,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
   public void testConfigUpdatedOnPackageRename() throws Exception {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.setMainClass("foo.bar.SomeClass"));
 
-    final RunManager runManager = RunManager.getInstance(myProject);
+    final RunManager runManager = RunManager.getInstance(myFixture.getProject());
     FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
                                           "foo.bar.SomeClass", "testSomething",
                                           true);
@@ -486,7 +462,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testRunConfigUpdatedOnBcRename() {
-    final RunManager runManager = RunManager.getInstance(myProject);
+    final RunManager runManager = RunManager.getInstance(myFixture.getProject());
     FlexTestUtils.createFlexUnitRunConfig(runManager, "SomeTest.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
                                           "SomeTest", "testSomething",
                                           true);
@@ -518,28 +494,28 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", true, false, false, name + ".as");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
-    assertEquals("Bar.as", myFile.getName());
+    assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
   public void testLiteralReference7() throws Exception {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", true, true, false, name + ".as");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
-    assertEquals("Bar.as", myFile.getName());
+    assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
   public void testLiteralReference8() throws Exception {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", false, false, false, name + ".as");
     assertEquals(1, findRenamedRefsToReferencedElementAtCaret().length);
-    assertEquals("Bar.as", myFile.getName());
+    assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
   public void testLiteralReference9() throws Exception {
     final String name = getTestName(false);
     doTest("Bar", name + "_after.as", false, true, false, name + ".as");
     assertEquals(2, findRenamedRefsToReferencedElementAtCaret().length);
-    assertEquals("Bar.as", myFile.getName());
+    assertEquals("Bar.as", myFixture.getFile().getName());
   }
 
   public void testLiteralReference10() throws Exception {
@@ -558,7 +534,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     final String name = getTestName(false);
     doTest(name + "Renamed", name + "_after.css", name + ".css", name + ".as");
 
-    final PsiReference newReference = myFile.findReferenceAt(myEditor.getCaretModel().getOffset());
+    final PsiReference newReference = myFixture.getFile().findReferenceAt(myFixture.getEditor().getCaretModel().getOffset());
     final PsiElement newResolve = newReference == null ? null : newReference.resolve();
     assertTrue(newResolve instanceof JSClass &&
                "bar.RenameFlexClassReferencedInCssRenamed".equals(((JSClass)newResolve).getQualifiedName()));
@@ -566,7 +542,7 @@ public class FlexRenameTest extends JSAbstractRenameTest {
 
   @Override
   protected PsiElement findTarget() {
-    return ObjectUtils.coalesce(super.findTarget(), myFile);
+    return ObjectUtils.coalesce(super.findTarget(), myFixture.getFile());
   }
 
   @Override
@@ -584,34 +560,23 @@ public class FlexRenameTest extends JSAbstractRenameTest {
     doTest(defaultParameters().withName(newName).substitute(substituteElement).withFiles(fileNames));
   }
 
-  protected void doTest(File root, final String newName, String fileNameAfter, boolean substituteElement, String... fileNames)
+  protected void doTest(final String newName, String fileNameAfter, boolean substituteElement, String... fileNames)
     throws Exception {
-    doTest(root, newName, fileNameAfter, substituteElement, false, false, fileNames);
+    doTest(newName, fileNameAfter, substituteElement, false, false, fileNames);
   }
 
   protected void doTest(final String newName,
                         final String fileNameAfter,
                         final boolean substituteElement,
-                        final boolean searchInCommentsAndStrings,
-                        final boolean searchForTextOccurrences,
-                        final String... fileNames) throws Exception {
-    doTest(null, newName, fileNameAfter, substituteElement, searchInCommentsAndStrings, searchForTextOccurrences, fileNames);
-  }
-
-  protected void doTest(final File root,
-                        final String newName,
-                        final String fileNameAfter,
-                        final boolean substituteElement,
                         final boolean searchInCommentsAndStrings, //true by default
                         final boolean searchForTextOccurrences, //false by default
                         final String... fileNames) throws Exception {
-    configureByFiles(root, toVirtualFiles(fileNames));
-
+    myFixture.configureByFiles(fileNames);
     performDialogRename(defaultParameters()
                           .withName(newName)
                           .substitute(substituteElement)
                           .searchForTextOccurrences(searchForTextOccurrences)
                           .searchInCommentsAndStrings(searchInCommentsAndStrings));
-    checkResultByFile(getBasePath() + fileNameAfter);
+    myFixture.checkResultByFile(fileNameAfter);
   }
 }
