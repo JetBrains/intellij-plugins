@@ -25,7 +25,8 @@ public class GenModuleXml {
     private final static String MODULE_XML_VER_ATTR = "version";
     public final static String MODULE_ID_ATTR = "id";
     private final static String MODULE_XML_VERSION = "0.3";
-    public final static String MODULE_LESSON_ELEMENT = "lesson";
+    public final static String MODULE_XML_LESSON_ELEMENT = "lesson";
+    public final static String MODULE_KT_LESSON_ELEMENT = "lesson-kt"; // Kotlin-described lesson
     public final static String MODULE_ANSWER_PATH_ATTR = "answerPath";
     public final static String MODULE_DESCRIPTION_ATTR = "description";
     public final static String MODULE_SDK_TYPE = "sdkType";
@@ -33,6 +34,9 @@ public class GenModuleXml {
 
     public final static String MODULE_LESSONS_PATH_ATTR = "lessonsPath";
     public final static String MODULE_LESSON_FILENAME_ATTR = "filename";
+    public final static String MODULE_LESSON_IMPLEMENTATION_ATTR = "implementationClass";
+    public final static String MODULE_LESSON_LANGUAGE_ATTR = "lang";
+    public final static String MODULE_LESSON_SAMPLE_ATTR = "sample";
     public final static String MODULE_LESSON_SOLUTION = "solution";
 
     @Deprecated
@@ -52,7 +56,7 @@ public class GenModuleXml {
             if (dir.listFiles() == null) return;
             for (File file : dir.listFiles()) {
                 if (file.isFile()) {
-                    Element lesson = new Element(MODULE_LESSON_ELEMENT);
+                    Element lesson = new Element(MODULE_XML_LESSON_ELEMENT);
                     lesson.setAttribute(MODULE_LESSON_FILENAME_ATTR, file.getName());
                     doc.getRootElement().addContent(lesson);
                 }
