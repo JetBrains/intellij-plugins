@@ -5,6 +5,7 @@ import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.modules.NodeModuleUtil;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ServiceManager;
@@ -107,7 +108,7 @@ public class PrettierConfiguration {
     if (myProject.isDefault() || myProject.getBasePath() == null) {
       return null;
     }
-    final PackageJsonData data = PackageJsonUtil.getTopLevelPackageJsonData(myProject);
+    final PackageJsonData data = JSLinterUtil.getTopLevelPackageJsonData(myProject);
     if (data != null && data.isDependencyOfAnyType(PrettierUtil.PACKAGE_NAME)) {
       final String basePath = FileUtil.toSystemDependentName(myProject.getBasePath());
       return new NodePackage((basePath.endsWith(File.separator) ? basePath : (basePath + File.separator))

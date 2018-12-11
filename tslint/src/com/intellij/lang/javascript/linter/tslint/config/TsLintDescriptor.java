@@ -2,10 +2,10 @@ package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterDescriptor;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
+import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.codestyle.TsLintCodeStyleImporter;
 import com.intellij.openapi.application.ApplicationManager;
@@ -48,14 +48,14 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
 
   @Override
   public boolean enable(@NotNull Project project) {
-    final PackageJsonData packageJson = PackageJsonUtil.getTopLevelPackageJsonData(project);
+    final PackageJsonData packageJson = JSLinterUtil.getTopLevelPackageJsonData(project);
     // skip if there is tslint-language-service
     if (packageJson != null && packageJson.getAllDependencies().contains("tslint-language-service")) return false;
     return super.enable(project);
   }
 
   @Override
-  public void postEnable(@NotNull Project project, @NotNull JSLinterGuesser.EnableCase enableCase) {
+  public void importSettings(@NotNull Project project, @NotNull JSLinterGuesser.EnableCase enableCase) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     VirtualFile config = findDistinctConfigInContentRoots(project, Arrays.asList(TslintUtil.CONFIG_FILE_NAMES));
     if (config == null) return;
