@@ -1,5 +1,3 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 // Provider declared as a named function
 // $get is simple function
 module.controller('c1', function($cacheFactory, $cacheFactoryProvider) {

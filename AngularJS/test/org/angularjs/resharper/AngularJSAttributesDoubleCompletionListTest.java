@@ -10,8 +10,8 @@ import java.util.Set;
 public class AngularJSAttributesDoubleCompletionListTest extends AngularJSBaseCompletionTest {
 
   private static final Set<String> IGNORED_TESTS = ContainerUtil.newHashSet(
-    "ShowAllItemsOnDoubleCompletionWithNoPrefix",
-    "ShowMatchingItemsOnDoubleCompletionWithPrefix"
+    "ShowAllItemsOnDoubleCompletionWithNoPrefix", //no support for x- and data- prefixes
+    "ShowMatchingItemsOnDoubleCompletionWithPrefix" //no support for x- and data- prefixes
 
   );
 
