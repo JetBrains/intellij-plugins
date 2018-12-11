@@ -1,11 +1,11 @@
 package com.jetbrains.lang.dart.highlight;
 
-import com.intellij.ide.highlighter.HtmlFileHighlighter;
-import com.intellij.ide.highlighter.XmlFileHighlighter;
+import com.intellij.ide.highlighter.EmbeddedTokenHighlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.containers.MultiMap;
 import com.jetbrains.lang.dart.lexer.DartLexer;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
-public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
+public class DartSyntaxHighlighter extends SyntaxHighlighterBase implements EmbeddedTokenHighlighter {
   private static final Map<IElementType, TextAttributesKey> ATTRIBUTES = new HashMap<>();
 
   static {
@@ -59,9 +59,6 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
     ATTRIBUTES.put(MULTI_LINE_DOC_COMMENT, DartSyntaxHighlighterColors.DOC_COMMENT);
 
     ATTRIBUTES.put(BAD_CHARACTER, DartSyntaxHighlighterColors.BAD_CHARACTER);
-
-    HtmlFileHighlighter.registerEmbeddedTokenAttributes(ATTRIBUTES, null);
-    XmlFileHighlighter.registerEmbeddedTokenAttributes(ATTRIBUTES, null);
   }
 
   @Override
@@ -75,4 +72,13 @@ public class DartSyntaxHighlighter extends SyntaxHighlighterBase {
   public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
     return pack(ATTRIBUTES.get(tokenType));
   }
+
+  @NotNull
+  @Override
+  public MultiMap<IElementType, TextAttributesKey> getEmbeddedTokenAttributes() {
+    MultiMap<IElementType, TextAttributesKey> map = MultiMap.create();
+    map.putAllValues(ATTRIBUTES);
+    return map;
+  }
+
 }

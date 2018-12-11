@@ -15,8 +15,7 @@
 
 package com.intellij.lang.ognl.highlight;
 
-import com.intellij.ide.highlighter.HtmlFileHighlighter;
-import com.intellij.ide.highlighter.XmlFileHighlighter;
+import com.intellij.ide.highlighter.EmbeddedTokenHighlighter;
 import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.lang.ognl.psi.OgnlTokenGroups;
 import com.intellij.lexer.Lexer;
@@ -27,6 +26,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.StringEscapesTokenTypes;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * @author Yann C&eacute;bron
  */
-public class OgnlHighlighter extends SyntaxHighlighterBase {
+public class OgnlHighlighter extends SyntaxHighlighterBase implements EmbeddedTokenHighlighter {
 
   private static final Map<IElementType, TextAttributesKey> keys1;
 
@@ -131,8 +131,14 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
 
     keys1.put(OgnlTypes.LBRACE, BRACES);
     keys1.put(OgnlTypes.RBRACE, BRACES);
-
-    XmlFileHighlighter.registerEmbeddedTokenAttributes(keys1, null);
-    HtmlFileHighlighter.registerEmbeddedTokenAttributes(keys1, null);
   }
+
+  @NotNull
+  @Override
+  public MultiMap<IElementType, TextAttributesKey> getEmbeddedTokenAttributes() {
+    MultiMap<IElementType, TextAttributesKey> map = MultiMap.create();
+    map.putAllValues(keys1);
+    return map;
+  }
+
 }

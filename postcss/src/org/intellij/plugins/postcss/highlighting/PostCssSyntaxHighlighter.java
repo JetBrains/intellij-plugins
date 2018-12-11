@@ -1,13 +1,12 @@
 package org.intellij.plugins.postcss.highlighting;
 
-import com.intellij.ide.highlighter.HtmlFileHighlighter;
-import com.intellij.ide.highlighter.XmlFileHighlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.util.CssHighlighter;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.containers.MultiMap;
 import org.intellij.plugins.postcss.lexer.PostCssHighlightingLexer;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.jetbrains.annotations.NotNull;
@@ -93,9 +92,14 @@ public class PostCssSyntaxHighlighter extends CssHighlighter {
     mapping.put(PostCssTokenTypes.LT, OPERATORS);
     mapping.put(PostCssTokenTypes.LE, OPERATORS);
     mapping.put(PostCssTokenTypes.GE, OPERATORS);
+  }
 
-    HtmlFileHighlighter.registerEmbeddedTokenAttributes(mapping, null);
-    XmlFileHighlighter.registerEmbeddedTokenAttributes(mapping, null);
+  @NotNull
+  @Override
+  public MultiMap<IElementType, TextAttributesKey> getEmbeddedTokenAttributes() {
+    MultiMap<IElementType, TextAttributesKey> map = MultiMap.create();
+    map.putAllValues(mapping);
+    return map;
   }
 
   @NotNull

@@ -36,5 +36,7 @@
 
     <spellchecker.support language="OGNL"
                           implementationClass="com.intellij.lang.ognl.spellchecker.OgnlSpellcheckingStrategy"/>
+
+    <embeddedTokenHighlighter implementation="com.intellij.lang.ognl.highlight.OgnlHighlighter"/>
   </extensions>
 </idea-plugin>
