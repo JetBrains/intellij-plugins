@@ -25,7 +25,7 @@ object DataLoader {
       return !LIVE_DATA_PATH.isEmpty()
     }
 
-  private fun getResourceAsStream(pathFromData: String): InputStream {
+  fun getResourceAsStream(pathFromData: String): InputStream {
     val fullPath =
         LIVE_DATA_PATH + DATA_PATH + pathFromData
     return if (liveMode) {
