@@ -9,8 +9,11 @@ import training.learn.lesson.LessonManager
 
 typealias LessonContext = Triple<KLesson, Editor, Project>
 
-class KLesson(override val name: String, override var module: Module, override val lang: String, val lessonContent: Triple<KLesson, Editor, Project>.() -> Unit) : Lesson {
+abstract class KLesson(final override val name  : String,
+                             override var module: Module,
+                             override val lang  : String) : Lesson {
 
+  abstract val lessonContent: LessonContext.() -> Unit
   override val id: String = name
   override var passed = false
   override var isOpen = false
@@ -18,7 +21,9 @@ class KLesson(override val name: String, override var module: Module, override v
 }
 
 fun KModule.lesson(lessonName: String, lang: String, lessonContent: LessonContext.() -> Unit): KLesson {
-  return KLesson(lessonName, this, lang, lessonContent)
+  return object : KLesson(lessonName, this, lang) {
+    override val lessonContent: LessonContext.() -> Unit = lessonContent
+  }
 }
 
 fun LessonContext.complete(text: String? = null) {

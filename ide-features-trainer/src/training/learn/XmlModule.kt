@@ -11,7 +11,11 @@ import training.learn.interfaces.Module
 import training.learn.interfaces.ModuleType
 import training.learn.lesson.Scenario
 import training.learn.lesson.XmlLesson
+import training.learn.lesson.kimpl.KLesson
+import training.learn.lesson.kimpl.LessonSample
+import training.learn.lesson.kimpl.parseLessonSample
 import training.util.DataLoader
+import training.util.DataLoader.getResourceAsStream
 import training.util.GenModuleXml
 import training.util.GenModuleXml.*
 import java.io.IOException
@@ -100,25 +104,54 @@ class XmlModule(override val name: String, moduleXmlPath: String, private val ro
       val lessonsPath = modulePath + root.getAttribute(MODULE_LESSONS_PATH_ATTR).value
 
       for (lessonElement in root.children) {
-        if (lessonElement.name != MODULE_LESSON_ELEMENT)
-          throw BadModuleException("XmlModule file is corrupted or cannot be read properly")
-
-        val lessonFilename = lessonElement.getAttributeValue(MODULE_LESSON_FILENAME_ATTR)
-        val lessonPath = lessonsPath + lessonFilename
-        try {
-          val scenario = Scenario(lessonPath)
-          val lesson = XmlLesson(scenario = scenario, lang = scenario.lang, module = this)
-          allLessons.add(lesson)
-        } catch (e: JDOMException) {
-          //XmlLesson file is corrupted
-          throw BadLessonException("Probably lesson file is corrupted: $lessonPath JDOMException:$e")
-        } catch (e: IOException) {
-          //XmlLesson file cannot be read
-          throw BadLessonException("Probably lesson file cannot be read: " + lessonPath)
+        when (lessonElement.name) {
+          MODULE_XML_LESSON_ELEMENT -> addXmlLesson(lessonElement, lessonsPath)
+          MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath)
+          else -> throw BadModuleException("XmlModule file is corrupted or cannot be read properly")
         }
       }
     }
     lessons = filterLessonsByCurrentLang()
+  }
+
+  private fun addXmlLesson(lessonElement: Element, lessonsPath: String) {
+    val lessonFilename = lessonElement.getAttributeValue(MODULE_LESSON_FILENAME_ATTR)
+    val lessonPath = lessonsPath + lessonFilename
+    try {
+      val scenario = Scenario(lessonPath)
+      val lesson = XmlLesson(scenario = scenario, lang = scenario.lang, module = this)
+      allLessons.add(lesson)
+    } catch (e: JDOMException) {
+      //XmlLesson file is corrupted
+      throw BadLessonException("Probably lesson file is corrupted: $lessonPath JDOMException:$e")
+    } catch (e: IOException) {
+      //XmlLesson file cannot be read
+      throw BadLessonException("Probably lesson file cannot be read: " + lessonPath)
+    }
+  }
+
+  private fun addKtLesson(lessonElement: Element, lessonsPath: String) {
+    val lessonImplementation = lessonElement.getAttributeValue(MODULE_LESSON_IMPLEMENTATION_ATTR)
+    val lessonSampleName = lessonElement.getAttributeValue(MODULE_LESSON_SAMPLE_ATTR)
+
+    val lesson : Any
+    if (lessonSampleName != null) {
+      val lessonLanguage = lessonElement.getAttributeValue(MODULE_LESSON_LANGUAGE_ATTR)
+      val lessonConstructor = Class.forName(lessonImplementation).
+          getDeclaredConstructor(Module::class.java, String::class.java, LessonSample::class.java)
+
+      val content = getResourceAsStream(lessonsPath + lessonSampleName).readBytes().toString(Charsets.UTF_8)
+      val sample = parseLessonSample(content)
+      lesson = lessonConstructor.newInstance(this, lessonLanguage, sample)
+    }
+    else {
+      val lessonConstructor = Class.forName(lessonImplementation).
+          getDeclaredConstructor(Module::class.java)
+      lesson = lessonConstructor.newInstance(this)
+    }
+    if (lesson !is KLesson)
+      throw BadLessonException("Field " + MODULE_LESSON_IMPLEMENTATION_ATTR + " should specify reference to existed class")
+    allLessons.add(lesson)
   }
 
   override fun equals(other: Any?): Boolean {
