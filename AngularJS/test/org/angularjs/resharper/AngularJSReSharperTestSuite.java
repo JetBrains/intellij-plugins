@@ -8,7 +8,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   AngularJSAttributesCompletionListTest.class,
-  AngularJSAttributesDoubleCompletionListTest.class
+  AngularJSAttributesDoubleCompletionListTest.class,
+  AngularJSResolveTest.class
 })
 public class AngularJSReSharperTestSuite {
 }
