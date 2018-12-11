@@ -52,7 +52,7 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     if (!incompleteCode) {
       ResolveResult[] results = expression.multiResolve(true);
       //expected type evaluator uses incomplete = true results so we have to cache it and reuse inside incomplete = false
-      return new TypeScriptCallExpressionResolver(expression.getParent()).chooseSignatures(results);
+      return new TypeScriptCallExpressionResolver(((JSCallExpression)expression.getParent())).chooseSignatures(results);
     }
     assert myReferencedName != null;
     final Angular2Pipe pipe = Angular2EntitiesProvider.findPipe(myParent.getProject(), myReferencedName);
