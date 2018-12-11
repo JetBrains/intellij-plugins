@@ -23,7 +23,7 @@ public abstract class Angular2ReSharperCompletionTestBase extends TypeScriptReSh
 
   protected List<String> doGetExtraFiles() {
     List<String> extraFiles = new ArrayList<>();
-    String basePath = getBasePath() + getName() + ".";
+    String basePath = "/" + getName() + ".";
     for (String ext : new String[]{"ts", "html"}) {
       if (ReSharperTestUtil.fetchVirtualFile(getTestDataPath(), basePath + ext + ".gold", getTestRootDisposable(), false) == null
           && ReSharperTestUtil.fetchVirtualFile(getTestDataPath(), basePath + ext, getTestRootDisposable(), false) != null) {

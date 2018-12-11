@@ -1,8 +1,11 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.resharper;
 
+import com.intellij.codeInsight.completion.PrioritizedLookupElement;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -12,15 +15,20 @@ import java.util.Set;
 public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionTestBase {
 
   private static final Set<String> TESTS_TO_SKIP = ContainerUtil.newHashSet(
-    "test001",
+    "test001", // differences in standard HTML attributes
     "test002",
     "test003",
     "test004",
     "test005",
     "test006",
-    "test007",
+    "test007", // differences in standard HTML attributes
     "test008",
     "test009",
+    "test012",
+    "test013"
+  );
+
+  private static final Set<String> HIGH_PRIORITY_ONLY = ContainerUtil.newHashSet(
     "test010",
     "test011",
     "test012",
@@ -46,4 +54,35 @@ public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionT
     myFixture.copyFileToProject("../../package.json", "package.json");
     super.doSingleTest(testFile, path);
   }
+
+  @Override
+  protected boolean shouldSkipItem(@NotNull LookupElement element) {
+    if (HIGH_PRIORITY_ONLY.contains(getName())) {
+      return !(element instanceof PrioritizedLookupElement)
+             || ((PrioritizedLookupElement)element).getPriority() < Angular2AttributeDescriptor.AttributePriority.HIGH.getValue();
+    }
+    if (IGNORED_ELEMENT_ATTRS.contains(element.getLookupString())) {
+      return true;
+    }
+    return super.shouldSkipItem(element);
+  }
+
+  private static final Set<String> IGNORED_ELEMENT_ATTRS = ContainerUtil.newHashSet(
+    "[accessKey]", "[classList]", "[className]", "[contentEditable]", "[dir]", "[draggable]", "[hidden]", "[id]", "[innerHTML]",
+    "[innerText]", "[lang]", "[outerHTML]", "[outerText]", "[scrollLeft]", "[scrollTop]", "[slot]", "[spellcheck]", "[style]", "[tabIndex]",
+    "[textContent]", "[title]", "[translate]", "[type]", "[value]", "[charset]", "[coords]", "[download]", "[hash]", "[host]", "[hostname]",
+    "[href]", "[hreflang]", "[name]", "[password]", "[pathname]", "[ping]", "[port]", "[protocol]", "[referrerPolicy]", "[rel]", "[rev]",
+    "[search]", "[shape]", "[target]", "[text]", "[username]", "(abort)", "(autocomplete)", "(autocompleteerror)", "(auxclick)",
+    "(beforecopy)", "(beforecut)", "(beforepaste)", "(blur)", "(cancel)", "(canplay)", "(canplaythrough)", "(change)", "(click)", "(close)",
+    "(contextmenu)", "(copy)", "(cuechange)", "(cut)", "(dblclick)", "(drag)", "(dragend)", "(dragenter)", "(dragexit)", "(dragleave)",
+    "(dragover)", "(dragstart)", "(drop)", "(durationchange)", "(emptied)", "(ended)", "(error)", "(focus)", "(gotpointercapture)",
+    "(input)", "(invalid)", "(keydown)", "(keypress)", "(keyup)", "(load)", "(loadeddata)", "(loadedmetadata)", "(loadstart)",
+    "(lostpointercapture)", "(message)", "(mousedown)", "(mouseenter)", "(mouseleave)", "(mousemove)", "(mouseout)", "(mouseover)",
+    "(mouseup)", "(mousewheel)", "(mozfullscreenchange)", "(mozfullscreenerror)", "(mozpointerlockchange)", "(mozpointerlockerror)",
+    "(paste)", "(pause)", "(play)", "(playing)", "(pointercancel)", "(pointerdown)", "(pointerenter)", "(pointerleave)", "(pointermove)",
+    "(pointerout)", "(pointerover)", "(pointerup)", "(progress)", "(ratechange)", "(reset)", "(resize)", "(scroll)", "(search)", "(seeked)",
+    "(seeking)", "(select)", "(selectstart)", "(show)", "(sort)", "(stalled)", "(submit)", "(suspend)", "(timeupdate)", "(toggle)",
+    "(volumechange)", "(waiting)", "(webglcontextcreationerror)", "(webglcontextlost)", "(webglcontextrestored)",
+    "(webkitfullscreenchange)", "(webkitfullscreenerror)", "(wheel)"
+  );
 }
