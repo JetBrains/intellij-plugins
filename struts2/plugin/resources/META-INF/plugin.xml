@@ -121,7 +121,7 @@
         implementation="com.intellij.struts2.spellchecker.Struts2BundledDictionaryProvider"/>
 
     <!-- struts.xml -->
-    <dom.fileDescription implementation="com.intellij.struts2.dom.struts.Struts2DomFileDescription"/>
+    <dom.fileMetaData implementation="com.intellij.struts2.dom.struts.Struts2DomFileDescription" rootTagName="struts" stubVersion="1"/>
 
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.action.Action"
                         implementationClass="com.intellij.struts2.dom.struts.impl.ActionImpl"/>
@@ -208,7 +208,7 @@
 
 
     <!-- validation.xml/validator-config.xml -->
-    <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorDomFileDescription"/>
+    <dom.fileMetaData implementation="com.intellij.struts2.dom.validator.ValidatorDomFileDescription" rootTagName="validators"/>
 
     <dom.implementation interfaceClass="com.intellij.struts2.dom.validator.FieldValidator"
                         implementationClass="com.intellij.struts2.dom.validator.impl.FieldValidatorImpl"/>
@@ -225,7 +225,7 @@
     <projectService serviceInterface="com.intellij.struts2.dom.validator.ValidatorManager"
                     serviceImplementation="com.intellij.struts2.dom.validator.ValidatorManagerImpl"/>
 
-    <dom.fileDescription implementation="com.intellij.struts2.dom.validator.ValidatorConfigDomFileDescription"/>
+    <dom.fileMetaData implementation="com.intellij.struts2.dom.validator.ValidatorConfigDomFileDescription" rootTagName="validators"/>
 
     <xmlStructureViewBuilderProvider
         implementation="com.intellij.struts2.structure.ValidationStructureViewBuilderProvider"/>

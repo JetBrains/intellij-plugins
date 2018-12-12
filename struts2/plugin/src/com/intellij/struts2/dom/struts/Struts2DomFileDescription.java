@@ -45,13 +45,4 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
     return StrutsIcons.STRUTS_CONFIG_FILE;
   }
 
-  @Override
-  public boolean hasStubs() {
-    return true;
-  }
-
-  @Override
-  public int getStubVersion() {
-    return 1;
-  }
 }
