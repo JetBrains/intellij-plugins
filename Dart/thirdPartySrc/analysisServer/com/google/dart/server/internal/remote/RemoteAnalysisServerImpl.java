@@ -454,7 +454,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  @Override
   public void removeResponseListener(ResponseListener listener) {
     synchronized (responseListenerList) {
       responseListenerList.remove(listener);
