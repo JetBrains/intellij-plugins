@@ -31,7 +31,9 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
   fun text(text: String) {
     val wrappedText = "<root><text>$text</text></root>"
     val textAsElement = SAXBuilder().build(wrappedText.byteInputStream()).rootElement.getChild("text")
-    LessonManager.getInstance(this.lesson).addMessages(Message.convert(textAsElement)) //support old format
+    ApplicationManager.getApplication().invokeLater {
+      LessonManager.getInstance(this.lesson).addMessages(Message.convert(textAsElement)) //support old format
+    }
   }
 
   fun copyCode(code: String) {
