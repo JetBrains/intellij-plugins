@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-final class FlashRunConfigurationProducer extends LazyRunConfigurationProducer<FlashRunConfiguration> {
+public final class FlashRunConfigurationProducer extends LazyRunConfigurationProducer<FlashRunConfiguration> {
   @NotNull
   @Override
   public ConfigurationFactory getConfigurationFactory() {
