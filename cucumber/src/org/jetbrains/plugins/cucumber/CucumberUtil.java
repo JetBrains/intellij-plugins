@@ -170,6 +170,57 @@ public class CucumberUtil {
   }
 
   /**
+   * Processes unescaped slashes "/" (Alternative text) and pipes "|"
+   * and not-necessary groups "(s)"in Cucumber Expressions.
+   * From Cucumber's point of view the following code:
+   * <pre>
+   *   {@code Then 'I print a word(s) red/blue using slash'...}
+   * </pre>
+   * converted into regexp:
+   * <pre>
+   *   {@code       I print a word(?:s)? (red|blue) using slash}
+   * </pre>
+   *
+   * All pipes should be escaped.
+   *
+   * @see <a href="https://docs.cucumber.io/cucumber/cucumber-expressions/">Cucumber Expressions</a>
+   */
+  public static String processExpressionOrOperator(@NotNull String cucumberExpression) {
+    StringBuilder result = new StringBuilder();
+    int i = 0;
+    boolean inGroup = false;
+    while (i < cucumberExpression.length()) {
+      char c = cucumberExpression.charAt(i);
+      if (c == '/') {
+        if (!inGroup) {
+          int j = result.length() - 1;
+          while (j >= 0 && !Character.isWhitespace(result.charAt(j))) {
+            j--;
+          }
+          result.insert(j + 1, '(');
+          inGroup = true;
+        }
+        result.append('|');
+      } else if (c == '|') {
+        result.append("\\|");
+      } else {
+        if (inGroup && Character.isWhitespace(c)) {
+          result.append(')');
+          inGroup = false;
+        }
+        result.append(c);
+      }
+
+      i++;
+    }
+    if (inGroup) {
+      result.append(')');
+    }
+
+    return result.toString();
+  } 
+   
+  /**
    * Replaces ParameterType-s injected into step definition.
    * Step definition {@code provided {int} cucumbers } will be presented by regexp {@code ([+-]?\d+) customers }
    * @param parameterTypeManager provides mapping from ParameterTypes name to its value
@@ -178,9 +229,9 @@ public class CucumberUtil {
   @NotNull
   public static String buildRegexpFromCucumberExpression(@NotNull String cucumberExpression,
                                                          @NotNull ParameterTypeManager parameterTypeManager) {
-
     cucumberExpression = escapeCucumberExpression(cucumberExpression);
     cucumberExpression = replaceNotNecessaryTextTemplateByRegexp(cucumberExpression);
+    cucumberExpression = processExpressionOrOperator(cucumberExpression);
     String escapedCucumberExpression = cucumberExpression;
 
     List<Pair<TextRange, String>> parameterTypeValues = new ArrayList<>();
@@ -202,6 +253,8 @@ public class CucumberUtil {
       int endOffset = rangeAndValue.first.getEndOffset();
       result.replace(startOffset, endOffset, "(" + value + ")");
     }
+    result.insert(0, '^');
+    result.append('$');
     return result.toString();
   }
 
