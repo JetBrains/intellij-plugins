@@ -3,7 +3,9 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.RunManager;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -21,13 +23,16 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class FlashRunConfigurationProducer extends RunConfigurationProducer<FlashRunConfiguration> {
-  public FlashRunConfigurationProducer() {
-    super(FlashRunConfigurationType.class);
+final class FlashRunConfigurationProducer extends LazyRunConfigurationProducer<FlashRunConfiguration> {
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return ConfigurationTypeUtil.findConfigurationType(FlashRunConfigurationType.class);
   }
 
   @Override

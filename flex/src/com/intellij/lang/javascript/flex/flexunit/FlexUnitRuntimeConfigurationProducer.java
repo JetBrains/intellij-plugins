@@ -2,7 +2,9 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -27,11 +29,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FlexUnitRuntimeConfigurationProducer extends RunConfigurationProducer<FlexUnitRunConfiguration> {
-  public FlexUnitRuntimeConfigurationProducer() {
-    super(FlexUnitRunConfigurationType.class);
+public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigurationProducer<FlexUnitRunConfiguration> {
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return ConfigurationTypeUtil.findConfigurationType(FlexUnitRunConfigurationType.class);
   }
 
   @Override

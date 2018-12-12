@@ -7,7 +7,9 @@ import com.intellij.coldFusion.model.files.CfmlFileViewProvider;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.ide.scratch.ScratchFileType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeManager;
@@ -25,13 +27,15 @@ import org.jetbrains.annotations.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class CfmlRunConfigurationProducer extends RunConfigurationProducer<CfmlRunConfiguration> {
+final class CfmlRunConfigurationProducer extends LazyRunConfigurationProducer<CfmlRunConfiguration> {
   private static final Logger LOG = Logger.getInstance("#com.intellij.coldFusion.UI.runner.CfmlRunConfigurationProducer");
   public final static String WWW_ROOT = "wwwroot";
   public final static String DEFAULT_HOST = "http://localhost:8500";
 
-  public CfmlRunConfigurationProducer() {
-    super(CfmlRunConfigurationType.class);
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return ConfigurationTypeUtil.findConfigurationType(CfmlRunConfigurationType.class);
   }
 
   @Override
