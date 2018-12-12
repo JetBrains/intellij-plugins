@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module name="Editor Basics" lessonsPath="EditorBasics/" version="0.3" id="basics" fileType="SCRATCH"  description="Learn how to select, comment, delete, duplicate and move lines. And also how to move and collapse blocks of code">
-  <lesson filename="01.Select.xml" lang="JAVA"/>
+  <lesson-kt sample="01.Select.java.sample" implementationClass="training.learn.lesson.general.SelectLesson" lang="JAVA"/>
   <lesson filename="02.Comment.xml" lang="JAVA"/>
   <lesson filename="03.Delete.xml" lang="JAVA"/>
   <lesson filename="04.Duplicate.xml" lang="JAVA"/>
