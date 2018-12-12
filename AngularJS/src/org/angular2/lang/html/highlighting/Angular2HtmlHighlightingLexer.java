@@ -6,7 +6,6 @@ import com.intellij.lexer.*;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlTokenType;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.highlighting.Angular2SyntaxHighlighter;
@@ -14,7 +13,10 @@ import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.lexer.Angular2HtmlLexer;
 import org.angular2.lang.html.lexer._Angular2HtmlLexer;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
 
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
 import static org.angular2.lang.html.lexer.Angular2HtmlLexer.Angular2HtmlMergingLexer.*;
@@ -22,8 +24,10 @@ import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
 
-  private static final TokenSet NG_EL_ATTRIBUTES = TokenSet.create(EVENT, BANANA_BOX_BINDING,
-                                                                   PROPERTY_BINDING, TEMPLATE_BINDINGS);
+  private static final EnumSet<Angular2AttributeType> NG_EL_ATTRIBUTES = EnumSet.of(Angular2AttributeType.EVENT,
+                                                                                    Angular2AttributeType.BANANA_BOX_BINDING,
+                                                                                    Angular2AttributeType.PROPERTY_BINDING,
+                                                                                    Angular2AttributeType.TEMPLATE_BINDINGS);
 
   static final IElementType EXPRESSION_WHITE_SPACE = new IElementType("NG:EXPRESSION_WHITE_SPACE", Angular2Language.INSTANCE);
   static final IElementType EXPANSION_FORM_CONTENT = new IElementType("NG:EXPANSION_FORM_CONTENT", Angular2HtmlLanguage.INSTANCE);
@@ -60,12 +64,13 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
 
     final int state = getState();
     // we need to convert attribute names according to their function
-    if (tokenType == XML_NAME && (state & BASE_STATE_MASK) == _Angular2HtmlLexer.TAG_ATTRIBUTES) {
+    if (tokenType == XML_NAME && (state & BASE_STATE_MASK) == _Angular2HtmlLexer.TAG_ATTRIBUTES
+        && (seenScript == seenAttribute)) {
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(getTokenText(), true);
-      if (info.elementType != XML_ATTRIBUTE) {
-        seenScript = NG_EL_ATTRIBUTES.contains(info.elementType);
+      if (info.type != Angular2AttributeType.REGULAR) {
+        seenScript = NG_EL_ATTRIBUTES.contains(info.type);
         seenAttribute = true;
-        return info.elementType;
+        return info.type.getElementType();
       }
       seenScript = false;
     }

@@ -135,6 +135,27 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
     doTest("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}");
   }
 
+  public void testScriptSrc() {
+    doTest("<body>\n" +
+           "<script src=\"\">var i</script>\n" +
+           "foo\n" +
+           "</body>");
+  }
+
+  public void testScript() {
+    doTest("<body>\n" +
+           "<script>var i</script>\n" +
+           "foo\n" +
+           "</body>");
+  }
+
+  public void testScriptAngularAttr() {
+    doTest("<body>\n" +
+           "<script (foo)=\"\">var i</script>\n" +
+           "foo\n" +
+           "</body>");
+  }
+
   @Override
   protected void doTest(@NonNls String text) {
     super.doTest(text);
