@@ -1803,7 +1803,7 @@ public class DartAnalysisServerService implements Disposable {
           startedServer.addAnalysisServerListener(listener);
         }
         for (RequestListener listener : myRequestListeners) {
-          startedServer.addRequestListeners(listener);
+          startedServer.addRequestListener(listener);
         }
         for (ResponseListener listener : myResponseListeners) {
           startedServer.addResponseListener(listener);
