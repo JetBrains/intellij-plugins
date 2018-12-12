@@ -1,9 +1,11 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.JavaRunConfigurationExtensionManager;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.junit.JavaRunConfigurationProducerBase;
 import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.openapi.module.Module;
@@ -50,8 +52,10 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
                                                                                    "cucumber.api.java.Before",
                                                                                    "cucumber.api.java.After");
 
-  protected CucumberJavaRunConfigurationProducer() {
-    super(CucumberJavaRunConfigurationType.getInstance());
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return CucumberJavaRunConfigurationType.getInstance().getConfigurationFactories()[0];
   }
 
   @Nullable
