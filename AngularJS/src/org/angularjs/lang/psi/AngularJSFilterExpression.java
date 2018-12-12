@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSCallExpressionImpl;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
-import com.intellij.lang.javascript.psi.types.JSLazyContextualType;
+import com.intellij.lang.javascript.psi.types.JSLazyExpressionType;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.IElementType;
@@ -32,8 +32,8 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
 
   @NotNull
   @Override
-  public List<JSType> getContextualArgumentTypes() {
-    return JSLazyContextualType.mapAsContextualArguments(getArguments());
+  public List<JSType> getArgumentTypes(boolean contextual) {
+    return JSLazyExpressionType.mapAsArguments(getArguments(), contextual);
   }
 
   @Override
