@@ -53,6 +53,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings.TypeScriptCompilerVersionType.EMBEDDED;
 import static com.intellij.lang.typescript.compiler.TypeScriptLanguageServiceAnnotatorCheckerProvider.checkServiceIsAvailable;
 
 public class Angular2LanguageService extends TypeScriptServerServiceImpl {
@@ -236,14 +237,18 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   }
 
   public static boolean isEnabledAngularService(@NotNull PsiElement element) {
-    return AngularSettings.get(element.getProject()).isUseService() &&
-           Angular2LangUtil.isAngular2Context(element) &&
-           getServiceDirectory(element.getProject()) != null;
+    return isEnabledAngularService(element.getProject()) &&
+           Angular2LangUtil.isAngular2Context(element);
   }
 
   public static boolean isEnabledAngularService(Project project, @NotNull VirtualFile file) {
+    return isEnabledAngularService(project) &&
+           Angular2LangUtil.isAngular2Context(project, file);
+  }
+
+  private static boolean isEnabledAngularService(Project project) {
     return AngularSettings.get(project).isUseService() &&
-           Angular2LangUtil.isAngular2Context(project, file) &&
+           TypeScriptCompilerSettings.getSettings(project).getVersionType() != EMBEDDED &&
            getServiceDirectory(project) != null;
   }
 
