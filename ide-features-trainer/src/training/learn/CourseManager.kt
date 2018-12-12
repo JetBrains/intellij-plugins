@@ -20,7 +20,6 @@ import training.learn.exceptons.NoSdkException
 import training.learn.exceptons.OldJdkException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
-import training.lessons.java.EditorBasicsModule
 import training.util.GenModuleXml
 import java.util.*
 import kotlin.collections.HashMap
@@ -41,7 +40,6 @@ class CourseManager internal constructor() {
 
   init {
     initXmlModules()
-    initKotlinModules()
   }
 
   fun clearModules() {
@@ -59,10 +57,6 @@ class CourseManager internal constructor() {
       }
     }
     mergeModules()
-  }
-
-  private fun initKotlinModules() {
-    modules.add(EditorBasicsModule())
   }
 
   private fun mergeModules() {
