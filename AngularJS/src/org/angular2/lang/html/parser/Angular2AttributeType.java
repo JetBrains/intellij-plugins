@@ -45,7 +45,7 @@ public enum Angular2AttributeType {
     return myPrefix + name + mySuffix;
   }
 
-  IElementType getElementType() {
+  public IElementType getElementType() {
     return myElementType;
   }
 }
