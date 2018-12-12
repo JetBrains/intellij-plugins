@@ -49,6 +49,7 @@
     <css.elementDescriptorProvider implementation="org.intellij.plugins.postcss.descriptors.PostCssElementDescriptorProvider"/>
     <psi.referenceContributor implementation="org.intellij.plugins.postcss.references.PostCssReferenceContributor"/>
     <lang.findUsagesProvider language="PostCSS" implementationClass="org.intellij.plugins.postcss.usages.PostCssFindUsagesProvider"/>
+    <idIndexer filetype="PostCSS" implementationClass="org.intellij.plugins.postcss.usages.PostCssIdIndexer"/>
 
     <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex"/>
     <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex"/>
