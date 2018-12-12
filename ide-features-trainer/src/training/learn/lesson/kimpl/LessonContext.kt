@@ -17,6 +17,13 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
     LessonManager.getInstance(lesson).passExercise()
   }
 
+  fun triggerTask(action: String, taskContent: TaskContext.(action: String) -> Unit) {
+    task {
+      taskContent(action)
+      trigger(action)
+    }
+  }
+
   fun complete() {
     lesson.pass()
     LessonManager.getInstance(lesson).passLesson(project, editor)

@@ -4,6 +4,7 @@ import com.intellij.find.FindManager
 import com.intellij.find.FindResult
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.command.undo.DocumentReferenceManager
@@ -15,6 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.DocumentUtil
 import org.jdom.input.SAXBuilder
+import training.check.Check
 import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
@@ -66,15 +68,41 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
   }
 
   fun trigger(actionId: String) {
-    val recorder = ActionsRecorder(project, editor.document)
-    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
-    this.triggerFutures.add(recorder.futureAction(actionId))
+    triggers(actionId)
   }
 
   fun triggers(vararg actionIds: String) {
     val recorder = ActionsRecorder(project, editor.document)
     LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
     this.triggerFutures.add(recorder.futureListActions(actionIds.toList()))
+  }
+
+  fun check(check: Check) {
+    val recorder = ActionsRecorder(project, editor.document)
+    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
+    check.set(project, editor)
+    check.before()
+    this.checkFutures.add(recorder.futureCheck { check.check() })
+  }
+
+  fun <T : Any> check(calculateState: () -> T, checkState: (T, T) -> Boolean) {
+    check(object : Check {
+      lateinit var state: T
+
+      override fun before() {
+        state = calculateReadAction()
+      }
+
+      override fun check(): Boolean = checkState(state, calculateReadAction())
+
+      override fun set(project: Project?, editor: Editor?) {
+        // do nothing
+      }
+
+      override fun listenAllKeys(): Boolean = false
+
+      private fun calculateReadAction() = ReadAction.compute<T, RuntimeException> { calculateState() }
+    })
   }
 
   fun action(id: String): String {
