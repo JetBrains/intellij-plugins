@@ -55,6 +55,11 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
     return JavaVersion.current().feature >= 9;
   }
 
+  @Override
+  public boolean isCompilerTreeAPISupported() {
+    return isUnderJava9();
+  }
+
   @NotNull
   @Override
   public List<File> getAdditionalClasspath() {
