@@ -8,7 +8,8 @@ import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.javascript.testFramework.JstdRunElement;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
@@ -31,8 +32,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdRunConfiguration> {
-
+public final class JstdRunConfigurationProducer extends LazyRunConfigurationProducer<JstdRunConfiguration> {
   private static final Logger LOG = Logger.getInstance(JstdRunConfigurationProducer.class);
 
   private static final JstdRunSettingsProvider[] RUN_SETTINGS_PROVIDERS = {
@@ -42,8 +42,10 @@ public class JstdRunConfigurationProducer extends RunConfigurationProducer<JstdR
       new JsFileRunSettingsProvider()
   };
 
-  public JstdRunConfigurationProducer() {
-    super(JstdConfigurationType.getInstance());
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return JstdConfigurationType.getInstance().getConfigurationFactories()[0];
   }
 
   private static void logTakenTime(String actionName, long startTimeNano, String... args) {

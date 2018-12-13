@@ -1,7 +1,9 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
@@ -22,9 +24,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DartTestRunConfigurationProducer extends RunConfigurationProducer<DartTestRunConfiguration> {
-  public DartTestRunConfigurationProducer() {
-    super(DartTestRunConfigurationType.getInstance());
+public final class DartTestRunConfigurationProducer extends LazyRunConfigurationProducer<DartTestRunConfiguration> {
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return DartTestRunConfigurationType.getInstance().getConfigurationFactories()[0];
   }
 
   @Override

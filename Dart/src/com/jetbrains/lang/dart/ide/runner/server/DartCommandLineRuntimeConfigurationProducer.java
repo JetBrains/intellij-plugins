@@ -1,7 +1,9 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.execution.actions.LazyRunConfigurationProducer;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -17,9 +19,11 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DartCommandLineRuntimeConfigurationProducer extends RunConfigurationProducer<DartCommandLineRunConfiguration> {
-  public DartCommandLineRuntimeConfigurationProducer() {
-    super(DartCommandLineRunConfigurationType.getInstance());
+public final class DartCommandLineRuntimeConfigurationProducer extends LazyRunConfigurationProducer<DartCommandLineRunConfiguration> {
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return DartCommandLineRunConfigurationType.getInstance().getConfigurationFactories()[0];
   }
 
   @Override
