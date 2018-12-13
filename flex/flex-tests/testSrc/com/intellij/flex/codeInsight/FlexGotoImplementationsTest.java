@@ -1,10 +1,10 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
-import com.intellij.codeInsight.hint.actions.ShowImplementationsAction;
+import com.intellij.codeInsight.ShowImplementationsTestUtil;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -14,19 +14,15 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.util.ArrayUtil;
@@ -156,22 +152,8 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
 
     check(expected, implementations);
 
-    final Ref<PsiElement[]> ref = new Ref<>();
-    new ShowImplementationsAction() {
-
-      @Override
-      protected void showImplementations(@NotNull PsiElement[] impls,
-                                         @NotNull Project project,
-                                         String text,
-                                         Editor editor,
-                                         PsiFile file,
-                                         PsiElement element,
-                                         boolean invokedFromEditor,
-                                         boolean invokedByShortcut) {
-        ref.set(impls);
-      }
-    }.performForContext(DataManager.getInstance().getDataContext());
-    implementations = ArrayUtil.remove(ref.get(), base);
+    PsiElement[] result = ShowImplementationsTestUtil.getImplementations();
+    implementations = ArrayUtil.remove(result, base);
     check(expected, implementations);
   }
 
