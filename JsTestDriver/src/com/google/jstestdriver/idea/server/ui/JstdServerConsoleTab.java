@@ -81,12 +81,8 @@ public class JstdServerConsoleTab {
   public void showServerStartupError(@NotNull Throwable error) {
     myConsoleView.clear();
     StringWriter buffer = new StringWriter();
-    PrintWriter printer = new PrintWriter(buffer);
-    try {
+    try (PrintWriter printer = new PrintWriter(buffer)) {
       error.printStackTrace(printer);
-    }
-    finally {
-      printer.close();
     }
     myConsoleView.print(buffer.getBuffer().toString(), ConsoleViewContentType.ERROR_OUTPUT);
   }
