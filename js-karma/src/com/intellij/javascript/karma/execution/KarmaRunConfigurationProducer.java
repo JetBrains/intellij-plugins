@@ -3,6 +3,7 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.javascript.karma.scope.KarmaScopeKind;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.testFramework.JsTestElementPath;
@@ -29,9 +30,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 
-public class KarmaRunConfigurationProducer extends JsTestRunConfigurationProducer<KarmaRunConfiguration> {
+public final class KarmaRunConfigurationProducer extends JsTestRunConfigurationProducer<KarmaRunConfiguration> {
   public KarmaRunConfigurationProducer() {
-    super(KarmaConfigurationType.getInstance(), Collections.singletonList(KarmaUtil.KARMA_PACKAGE_NAME));
+    super(Collections.singletonList(KarmaUtil.KARMA_PACKAGE_NAME));
+  }
+
+  @NotNull
+  @Override
+  public ConfigurationFactory getConfigurationFactory() {
+    return KarmaConfigurationType.getInstance();
   }
 
   private boolean isTestRunnerPackageAvailableFor(@NotNull PsiElement element, @NotNull ConfigurationContext context) {
