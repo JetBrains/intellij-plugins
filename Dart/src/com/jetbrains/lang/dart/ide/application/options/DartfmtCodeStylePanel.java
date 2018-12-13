@@ -32,12 +32,14 @@ public class DartfmtCodeStylePanel extends CodeStyleAbstractPanel {
   @Override
   public void setModel(@Nullable CodeStyleSchemesModel model) {
     super.setModel(model);
-    model.addListener(new CodeStyleSchemesModelListener() {
-      @Override
-      public void afterCurrentSettingsChanged() {
-        updateRightMarginLabel();
-      }
-    });
+    if (model != null) {
+      model.addListener(new CodeStyleSchemesModelListener() {
+        @Override
+        public void afterCurrentSettingsChanged() {
+          updateRightMarginLabel();
+        }
+      });
+    }
   }
 
   private static DartCodeStyleSettings getDartCodeStyleSettings(@NotNull final CodeStyleSettings settings) {
