@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.formatting.Block;
@@ -32,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import static com.intellij.lang.parser.GeneratedParserUtilBase.DUMMY_BLOCK;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 
@@ -71,6 +60,10 @@ public class DartSpacingProcessor {
     final IElementType type1 = node1.getElementType();
     final ASTNode node2 = ((AbstractBlock)child2).getNode();
     final IElementType type2 = node2.getElementType();
+
+    if (elementType == DUMMY_BLOCK || type1 == DUMMY_BLOCK || type2 == DUMMY_BLOCK) {
+      return Spacing.createSpacing(0, 1, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
 
     if (type2 == SINGLE_LINE_COMMENT && !isDirectlyPrecededByNewline(node2)) {
       // line comment after code on the same line: do not add line break here, it may be used to ignore warning
@@ -1002,7 +995,7 @@ public class DartSpacingProcessor {
     boolean mustSplit = false;
     boolean mustStopAtNextMethod = false;
     List<TextRange> ranges = new ArrayList<>();
-    for (ASTNode node: calls.list) {
+    for (ASTNode node : calls.list) {
       if (doesMessageHaveArguments(node)) {
         if (mustStopAtNextMethod) {
           return Spacing.createDependentLFSpacing(0, 0, ranges, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
