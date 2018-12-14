@@ -845,6 +845,52 @@ Dart File
                         PsiElement(,)(',')
                         PsiElement())(')')
                       PsiElement(;)(';')
+                      ASSERT_STATEMENT
+                        PsiElement(assert)('assert')
+                        PsiElement(()('(')
+                        LITERAL_EXPRESSION
+                          PsiElement(NUMBER)('1')
+                        PsiElement(,)(',')
+                        LITERAL_EXPRESSION
+                          PsiElement(NUMBER)('1')
+                        PsiElement())(')')
+                      PsiElement(;)(';')
+                      ASSERT_STATEMENT
+                        PsiElement(assert)('assert')
+                        PsiElement(()('(')
+                        ADDITIVE_EXPRESSION
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)(''')
+                            PsiElement(REGULAR_STRING_PART)('message')
+                            PsiElement(CLOSING_QUOTE)(''')
+                          ADDITIVE_OPERATOR
+                            PsiElement(+)('+')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('1')
+                        PsiElement(,)(',')
+                        ADDITIVE_EXPRESSION
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)(''')
+                            PsiElement(REGULAR_STRING_PART)('message')
+                            PsiElement(CLOSING_QUOTE)(''')
+                          ADDITIVE_OPERATOR
+                            PsiElement(+)('+')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('1')
+                        PsiElement())(')')
+                      PsiElement(;)(';')
+                      ASSERT_STATEMENT
+                        PsiElement(assert)('assert')
+                        PsiElement(()('(')
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('b')
+                        PsiElement(,)(',')
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('someObject')
+                        PsiElement())(')')
+                      PsiElement(;)(';')
                     PsiElement(})('}')
               PsiElement(})('}')
         METHOD_DECLARATION

@@ -54,6 +54,9 @@ class Baz extends Kuk implements A, B, C {
       assert(a b c);
       assert(a + b, "error");
       assert(a, "error",);
+      assert(1, 1);
+      assert('message' + 1, 'message' + 1);
+      assert(b, someObject);
     }
   }
 
