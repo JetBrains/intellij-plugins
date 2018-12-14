@@ -177,7 +177,7 @@ public class DartProblemsPresentationHelper {
     }
     else {
       final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
-                                  ? DartBuildFileUtil.findPackageRootBuildFile(myProject, myCurrentFile, false)
+                                  ? DartBuildFileUtil.findPackageRootBuildFile(myProject, myCurrentFile)
                                   : PubspecYamlUtil.findPubspecYamlFile(myProject, myCurrentFile);
       if (pubspec == null) {
         packageRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(myCurrentFile, false);

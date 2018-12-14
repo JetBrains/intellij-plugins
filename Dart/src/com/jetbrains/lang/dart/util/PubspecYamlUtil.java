@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PairConsumer;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,7 +50,9 @@ public class PubspecYamlUtil {
     VirtualFile current = contextFile;
     VirtualFile parent = contextFile.isDirectory() ? contextFile : contextFile.getParent();
 
-    while (parent != null && (LIB_DIR_NAME.equals(current.getName()) || fileIndex.isInContent(parent))) {
+    boolean isPackageScopedAnalysis = DartAnalysisServerService.getInstance(project).isPackageScopedAnalysis();
+
+    while (parent != null && (LIB_DIR_NAME.equals(current.getName()) || isPackageScopedAnalysis || fileIndex.isInContent(parent))) {
       current = parent;
       final VirtualFile file = parent.findChild(PUBSPEC_YAML);
       if (file != null && !file.isDirectory()) {

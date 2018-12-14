@@ -19,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,12 +37,13 @@ public class DartBuildFileUtil {
    * When doConsiderNonProjectFiles is true, a VirtualFile can be returned even if the passed VirtualFile is not in the project context.
    */
   @Nullable
-  public static VirtualFile findPackageRootBuildFile(@NotNull final Project project, @NotNull final VirtualFile contextFile,
-                                                     final boolean doConsiderNonProjectFiles) {
+  public static VirtualFile findPackageRootBuildFile(@NotNull final Project project, @NotNull final VirtualFile contextFile) {
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     VirtualFile parent = contextFile.isDirectory() ? contextFile : contextFile.getParent();
 
-    while (parent != null && (doConsiderNonProjectFiles || projectFileIndex.isInContent(parent))) {
+    boolean isPackageScopedAnalysis = DartAnalysisServerService.getInstance(project).isPackageScopedAnalysis();
+
+    while (parent != null && (isPackageScopedAnalysis || projectFileIndex.isInContent(parent))) {
       final VirtualFile file = parent.findChild(BUILD_FILE_NAME);
       if (file != null && !file.isDirectory()) {
         final VirtualFile parent2 = parent.getParent();

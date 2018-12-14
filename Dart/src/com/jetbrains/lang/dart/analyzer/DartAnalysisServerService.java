@@ -352,6 +352,10 @@ public class DartAnalysisServerService implements Disposable {
     return i == 0 ? Integer.MAX_VALUE : i;
   }
 
+  public boolean isPackageScopedAnalysis() {
+    return myRootsHandler.myScopedAnalysisMode == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage;
+  }
+
   private void startShowingServerProgress() {
     if (!myHaveShownInitialProgress) {
       myHaveShownInitialProgress = true;

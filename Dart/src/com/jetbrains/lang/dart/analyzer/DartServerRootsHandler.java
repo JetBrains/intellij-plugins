@@ -37,7 +37,7 @@ public class DartServerRootsHandler {
   private final List<String> myIncludedRoots = new SmartList<>();
   private final List<String> myExcludedRoots = new SmartList<>();
 
-  private DartProblemsViewSettings.ScopedAnalysisMode myScopedAnalysisMode = DartProblemsViewSettings.ScopedAnalysisMode.All;
+  DartProblemsViewSettings.ScopedAnalysisMode myScopedAnalysisMode = DartProblemsViewSettings.ScopedAnalysisMode.All;
 
   @Nullable private VirtualFile myCurrentFile;
 
@@ -188,7 +188,7 @@ public class DartServerRootsHandler {
 
     // TODO(jwren) follow up to extract method with duplicate code (from DartProblemsPresentationHelper)
     final VirtualFile pubspec = Registry.is("dart.projects.without.pubspec", false)
-                                ? DartBuildFileUtil.findPackageRootBuildFile(myProject, vFile, true)
+                                ? DartBuildFileUtil.findPackageRootBuildFile(myProject, vFile)
                                 : PubspecYamlUtil.findPubspecYamlFile(myProject, vFile);
 
     // temp var to make sure that value is initialized
