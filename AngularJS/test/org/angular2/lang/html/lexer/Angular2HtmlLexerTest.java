@@ -1,39 +1,38 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.html.lexer;
 
-import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.extensions.ExtensionPoint;
-import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.extensions.ExtensionsArea;
 import com.intellij.testFramework.LexerTestCase;
+import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
+import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
+import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NonNls;
 
-import java.lang.reflect.Modifier;
-
 public class Angular2HtmlLexerTest extends LexerTestCase {
+  private IdeaProjectTestFixture myFixture;
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
+
+    // needed for various XML extension points registration
+    TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName());
+    myFixture = projectBuilder.getFixture();
+    myFixture.setUp();
   }
 
-  protected <T> void registerExtensionPoint(final ExtensionPointName<T> extensionPointName, final Class<T> aClass) {
-    registerExtensionPoint(Extensions.getRootArea(), extensionPointName, aClass);
-  }
-
-  protected <T> void registerExtensionPoint(final ExtensionsArea area, final ExtensionPointName<T> extensionPointName,
-                                            final Class<? extends T> aClass) {
-    final String name = extensionPointName.getName();
-    if (!area.hasExtensionPoint(name)) {
-      ExtensionPoint.Kind kind = aClass.isInterface() || (aClass.getModifiers() & Modifier.ABSTRACT) != 0
-                                 ? ExtensionPoint.Kind.INTERFACE
-                                 : ExtensionPoint.Kind.BEAN_CLASS;
-      area.registerExtensionPoint(name, aClass.getName(), kind);
+  @Override
+  protected void tearDown() throws Exception {
+    try {
+      myFixture.tearDown();
+    }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
+    finally {
+      super.tearDown();
     }
   }
 
