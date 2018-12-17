@@ -29,11 +29,14 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.*;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
@@ -42,7 +45,9 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
+import static com.intellij.openapi.util.Pair.pair;
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
 
 /**
@@ -164,6 +169,23 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
   }
 
   protected abstract void setupParameters(@NotNull JavaParameters parameters) throws ConfigurationException;
+
+  protected Map<Integer, Pair<List<String>, List<String>>> collectBundles() {
+    Map<Integer, Pair<List<String>, List<String>>> bundles = new TreeMap<>();
+
+    for (SelectedBundle bundle : myBundles) {
+      String bundlePath = bundle.getBundlePath();
+      if (bundlePath == null) continue;
+
+      String bundleUrl = toFileUri(bundlePath);
+      int startLevel = getBundleStartLevel(bundle);
+      Pair<List<String>, List<String>> lists = bundles.computeIfAbsent(startLevel, k -> pair(new SmartList<>(), new SmartList<>()));
+      boolean start = bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundlePath);
+      (start ? lists.first : lists.second).add(bundleUrl);
+    }
+
+    return bundles;
+  }
 
   protected int getBundleStartLevel(@NotNull SelectedBundle bundle) {
     return bundle.isDefaultStartLevel() ? myRunConfiguration.getDefaultStartLevel() : bundle.getStartLevel();

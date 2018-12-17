@@ -27,21 +27,18 @@ package org.osmorc.frameworkintegration.impl.concierge;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
-import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
-
-import static com.intellij.openapi.util.Pair.pair;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Concierge specific implementation of {@link AbstractFrameworkRunner}.
@@ -64,19 +61,7 @@ public class ConciergeRunner extends AbstractFrameworkRunner {
     try (PrintWriter writer = new PrintWriter(new FileWriter(myArgFile))) {
       // bundles and start levels
 
-      Map<Integer, Pair<List<String>, List<String>>> bundles = new TreeMap<>();
-
-      for (SelectedBundle bundle : myBundles) {
-        String bundlePath = bundle.getBundlePath();
-        if (bundlePath == null) continue;
-
-        String bundleUrl = toFileUri(bundlePath);
-        int startLevel = getBundleStartLevel(bundle);
-        Pair<List<String>, List<String>> lists = bundles.computeIfAbsent(startLevel, k -> pair(new SmartList<>(), new SmartList<>()));
-        boolean start = bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundlePath);
-        (start ? lists.first : lists.second).add(bundleUrl);
-      }
-
+      Map<Integer, Pair<List<String>, List<String>>> bundles = collectBundles();
       for (Integer startLevel : bundles.keySet()) {
         writer.println("-initlevel " + startLevel);
         Pair<List<String>, List<String>> lists = bundles.get(startLevel);

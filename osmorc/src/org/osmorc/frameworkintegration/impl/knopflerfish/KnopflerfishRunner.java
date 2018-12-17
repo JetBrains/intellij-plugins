@@ -26,15 +26,13 @@ package org.osmorc.frameworkintegration.impl.knopflerfish;
 
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.ParametersList;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
+import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
-import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Knopflerfish specific implementation of {@link org.osmorc.frameworkintegration.FrameworkRunner}.
@@ -70,45 +68,19 @@ public class KnopflerfishRunner extends AbstractFrameworkRunner {
 
     // bundles and start levels
 
-    MultiMap<Integer, String> startBundles = new MultiMap<>();
-    List<String> installBundles = ContainerUtil.newSmartList();
-
-    for (SelectedBundle bundle : myBundles) {
-      String bundlePath = bundle.getBundlePath();
-      if (bundlePath == null) continue;
-      boolean isFragment = CachingBundleInfoProvider.isFragmentBundle(bundlePath);
-
-      if (bundle.isStartAfterInstallation() && !isFragment) {
-        int startLevel = getBundleStartLevel(bundle);
-        startBundles.putValue(startLevel, bundlePath);
-      }
-      else {
-        installBundles.add(bundlePath);
-      }
-    }
-
-    if (!installBundles.isEmpty()) {
-      int defaultStartLevel = myRunConfiguration.getDefaultStartLevel();
-      programParameters.addAll("-initlevel", String.valueOf(defaultStartLevel));
-      for (String bundle : installBundles) {
-        programParameters.addAll("-install", bundle);
-      }
-    }
-
-    for (Integer startLevel : startBundles.keySet()) {
+    Map<Integer, Pair<List<String>, List<String>>> bundles = collectBundles();
+    for (Integer startLevel : bundles.keySet()) {
       programParameters.addAll("-initlevel", String.valueOf(startLevel));
-      for (String bundle : startBundles.get(startLevel)) {
-        programParameters.addAll("-install", bundle);
-      }
+      Pair<List<String>, List<String>> lists = bundles.get(startLevel);
+      for (String bundle : lists.first) programParameters.addAll("-install", bundle);
+      for (String bundle : lists.second) programParameters.addAll("-install", bundle);
+    }
+
+    for (Integer startLevel : bundles.keySet()) {
+      for (String bundle : bundles.get(startLevel).first) programParameters.addAll("-start", bundle);
     }
 
     int frameworkStartLevel = getFrameworkStartLevel();
     programParameters.addAll("-startlevel", String.valueOf(frameworkStartLevel));
-
-    for (Integer startLevel : startBundles.keySet()) {
-      for (String bundle : startBundles.get(startLevel)) {
-        programParameters.addAll("-start", bundle);
-      }
-    }
   }
 }

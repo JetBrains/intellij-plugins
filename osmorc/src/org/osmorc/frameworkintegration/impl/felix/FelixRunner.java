@@ -26,16 +26,14 @@ package org.osmorc.frameworkintegration.impl.felix;
 
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.ParametersList;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
-import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Felix specific implementation of {@link org.osmorc.frameworkintegration.FrameworkRunner}.
@@ -55,29 +53,11 @@ public class FelixRunner extends AbstractFrameworkRunner {
 
     // bundles and start levels
 
-    MultiMap<Integer, String> startBundles = new MultiMap<>();
-    List<String> installBundles = ContainerUtil.newSmartList();
-
-    for (SelectedBundle bundle : myBundles) {
-      String bundlePath = bundle.getBundlePath();
-      if (bundlePath == null) continue;
-      boolean isFragment = CachingBundleInfoProvider.isFragmentBundle(bundlePath);
-
-      String bundleUrl = toFileUri(bundlePath);
-      if (bundle.isStartAfterInstallation() && !isFragment) {
-        int startLevel = getBundleStartLevel(bundle);
-        startBundles.putValue(startLevel, bundleUrl);
-      }
-      else {
-        installBundles.add(bundleUrl);
-      }
-    }
-
-    for (Integer startLevel : startBundles.keySet()) {
-      vmParameters.addProperty("felix.auto.start." + startLevel, StringUtil.join(startBundles.get(startLevel), " "));
-    }
-    if (!installBundles.isEmpty()) {
-      vmParameters.addProperty("felix.auto.install.1", StringUtil.join(installBundles, " "));
+    Map<Integer, Pair<List<String>, List<String>>> bundles = collectBundles();
+    for (Integer startLevel : bundles.keySet()) {
+      Pair<List<String>, List<String>> lists = bundles.get(startLevel);
+      vmParameters.addProperty("felix.auto.start." + startLevel, StringUtil.join(lists.first, " "));
+      vmParameters.addProperty("felix.auto.install." + startLevel, StringUtil.join(lists.first, " "));
     }
 
     int startLevel = getFrameworkStartLevel();
