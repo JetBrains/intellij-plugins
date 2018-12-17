@@ -25,75 +25,87 @@
 package org.osmorc.frameworkintegration.impl.concierge;
 
 import com.intellij.execution.configurations.JavaParameters;
-import com.intellij.execution.configurations.ParametersList;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.MultiMap;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.util.List;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
+
+import static com.intellij.openapi.util.Pair.pair;
 
 /**
- * Concierge specific implementation of {@link org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner}.
+ * Concierge specific implementation of {@link AbstractFrameworkRunner}.
  *
  * @author <a href="mailto:al@chilibi.org">Alain Greppin</a>
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class ConciergeRunner extends AbstractFrameworkRunner {
-  static final String MAIN_CLASS = "ch.ethz.iks.concierge.framework.Framework";
+  static final String MAIN_CLASS = "org.eclipse.concierge.Concierge";
+
+  private File myArgFile;
 
   /**
-   * See <a href="http://concierge.sourceforge.net/properties.html">Concierge Startup Properties</a>.
+   * @see <a href="https://www.eclipse.org/concierge/documentation.php">Eclipse Concierge Documentation</a>.
    */
   @Override
   protected void setupParameters(@NotNull JavaParameters parameters) {
-    ParametersList vmParameters = parameters.getVMParametersList();
+    myArgFile = new File(myWorkingDir, "concierge" + new Random().nextInt(Integer.MAX_VALUE) + ".xargs");
 
-    // bundles and start levels
+    try (PrintWriter writer = new PrintWriter(new FileWriter(myArgFile))) {
+      // bundles and start levels
 
-    MultiMap<Integer, String> startBundles = new MultiMap<>();
-    List<String> installBundles = ContainerUtil.newSmartList();
+      Map<Integer, Pair<List<String>, List<String>>> bundles = new TreeMap<>();
 
-    for (SelectedBundle bundle : myBundles) {
-      String bundlePath = bundle.getBundlePath();
-      if (bundlePath == null) continue;
-      boolean isFragment = CachingBundleInfoProvider.isFragmentBundle(bundlePath);
+      for (SelectedBundle bundle : myBundles) {
+        String bundlePath = bundle.getBundlePath();
+        if (bundlePath == null) continue;
 
-      String bundleUrl = toFileUri(bundlePath);
-      if (bundle.isStartAfterInstallation() && !isFragment) {
+        String bundleUrl = toFileUri(bundlePath);
         int startLevel = getBundleStartLevel(bundle);
-        startBundles.putValue(startLevel, bundleUrl);
+        Pair<List<String>, List<String>> lists = bundles.computeIfAbsent(startLevel, k -> pair(new SmartList<>(), new SmartList<>()));
+        boolean start = bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundlePath);
+        (start ? lists.first : lists.second).add(bundleUrl);
       }
-      else {
-        installBundles.add(bundleUrl);
+
+      for (Integer startLevel : bundles.keySet()) {
+        writer.println("-initlevel " + startLevel);
+        Pair<List<String>, List<String>> lists = bundles.get(startLevel);
+        for (String bundle : lists.first) writer.println("-istart " + bundle);
+        for (String bundle : lists.second) writer.println("-install " + bundle);
+      }
+
+      writer.println("-Dorg.osgi.framework.startlevel.beginning=" + getFrameworkStartLevel());
+
+      // framework-specific options
+
+      writer.println("-Dorg.osgi.framework.storage.clean=onFirstInit");
+
+      if (GenericRunProperties.isDebugMode(myAdditionalProperties)) {
+        writer.println("-Dorg.eclipse.concierge.debug=true");
       }
     }
-
-    for (Integer startLevel : startBundles.keySet()) {
-      vmParameters.addProperty("osgi.auto.start." + startLevel, StringUtil.join(startBundles.get(startLevel), " "));
-    }
-    if (!installBundles.isEmpty()) {
-      vmParameters.addProperty("osgi.auto.install", StringUtil.join(installBundles, " "));
-    }
-
-    int startLevel = getFrameworkStartLevel();
-    vmParameters.addProperty("osgi.startlevel.framework", String.valueOf(startLevel));
-
-    int defaultStartLevel = myRunConfiguration.getDefaultStartLevel();
-    vmParameters.addProperty("osgi.startlevel.bundle", String.valueOf(defaultStartLevel));
-
-    // framework-specific options
-
-    vmParameters.addProperty("osgi.init", "true");
-
-    if (GenericRunProperties.isDebugMode(myAdditionalProperties)) {
-      vmParameters.addProperty("ch.ethz.iks.concierge.debug", "true");
+    catch (IOException e) {
+      FileUtil.delete(myArgFile);
+      throw new ConfigurationException("Cannot create .xargs file " + myArgFile, e);
     }
 
     parameters.setMainClass(MAIN_CLASS);
+    parameters.getProgramParametersList().add(myArgFile.getPath());
+  }
+
+  @Nullable
+  @Override
+  public File getArgumentFile() {
+    return myArgFile;
   }
 }

@@ -58,8 +58,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
   protected FrameworkInstanceManager myInstanceManager;
   protected Map<String, String> myAdditionalProperties;
   protected List<SelectedBundle> myBundles;
-
-  private File myWorkingDir;
+  protected File myWorkingDir;
 
   @Override
   public JavaParameters createJavaParameters(@NotNull OsgiRunConfiguration runConfiguration,
@@ -148,12 +147,23 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
 
     // framework-specific options
 
-    setupParameters(params);
+    try {
+      setupParameters(params);
+    }
+    catch (ConfigurationException e) {
+      throw new CantRunException(e.getMessage(), e.getCause());
+    }
 
     return params;
   }
 
-  protected abstract void setupParameters(@NotNull JavaParameters parameters);
+  protected static class ConfigurationException extends RuntimeException {
+    public ConfigurationException(String message, Throwable cause) {
+      super(message, cause);
+    }
+  }
+
+  protected abstract void setupParameters(@NotNull JavaParameters parameters) throws ConfigurationException;
 
   protected int getBundleStartLevel(@NotNull SelectedBundle bundle) {
     return bundle.isDefaultStartLevel() ? myRunConfiguration.getDefaultStartLevel() : bundle.getStartLevel();

@@ -25,8 +25,6 @@
 package org.osmorc.frameworkintegration.impl.concierge;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.run.ui.SelectedBundle;
@@ -39,22 +37,9 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
 public class ConciergeInstanceManager extends AbstractFrameworkInstanceManager {
-  private static final String[] BUNDLE_DIRS = {"", "bundles"};
-  private static final Pattern SYSTEM_BUNDLE = Pattern.compile("concierge.*\\.jar");
-  private static final Pattern SHELL_BUNDLE = Pattern.compile("shell.*\\.jar");
-
-  @Nullable
-  @Override
-  public String getVersion(@NotNull FrameworkInstanceDefinition instance) {
-    Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
-    if (bundles.size() == 1) {
-      String path = bundles.iterator().next().getBundlePath();
-      if (path != null) {
-        return CachingBundleInfoProvider.getBundleAttribute(path, "PproApp-Version");
-      }
-    }
-    return null;
-  }
+  private static final String[] BUNDLE_DIRS = {"framework", "bundles"};
+  private static final Pattern SYSTEM_BUNDLE = Pattern.compile("org.eclipse.concierge-[^-]+\\.jar");
+  private static final Pattern SHELL_BUNDLE = Pattern.compile("org.eclipse.concierge.shell-.+\\.jar");
 
   @NotNull
   @Override

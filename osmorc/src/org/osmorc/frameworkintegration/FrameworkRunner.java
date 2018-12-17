@@ -28,9 +28,11 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -42,4 +44,12 @@ import java.util.List;
 public interface FrameworkRunner extends Disposable {
   JavaParameters createJavaParameters(@NotNull OsgiRunConfiguration runConfiguration,
                                       @NotNull List<SelectedBundle> bundles) throws ExecutionException;
+
+  /**
+   * Returns a temporary file created by the runner for passing parameters to a framework (if used).
+   * The IDE will highlight the path to the file in a run console, and delete it when execution ends.
+   */
+  default @Nullable File getArgumentFile() {
+    return null;
+  }
 }

@@ -26,8 +26,11 @@ package org.osmorc.run;
 
 import com.intellij.execution.CantRunException;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
+import com.intellij.execution.filters.ArgumentFileFilter;
+import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -49,6 +52,7 @@ import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.make.BundleCompiler;
 import org.osmorc.run.ui.SelectedBundle;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -62,6 +66,7 @@ public class OsgiRunState extends JavaCommandLineState {
 
   private final OsgiRunConfiguration myRunConfiguration;
   private final FrameworkRunner myRunner;
+  private final ArgumentFileFilter myArgFileFilter = new ArgumentFileFilter();
 
   public OsgiRunState(@NotNull ExecutionEnvironment environment, @NotNull OsgiRunConfiguration configuration) throws ExecutionException {
     super(environment);
@@ -76,11 +81,26 @@ public class OsgiRunState extends JavaCommandLineState {
       throw new CantRunException("Internal error: missing integrator for " + instance);
     }
     myRunner = integrator.createFrameworkRunner();
+
+    addConsoleFilters(myArgFileFilter);
   }
 
   @Override
   protected JavaParameters createJavaParameters() throws ExecutionException {
     return myRunner.createJavaParameters(myRunConfiguration, getSelectedBundles());
+  }
+
+  @Override
+  protected GeneralCommandLine createCommandLine() throws ExecutionException {
+    GeneralCommandLine commandLine = super.createCommandLine();
+
+    File argFile = myRunner.getArgumentFile();
+    if (argFile != null) {
+      myArgFileFilter.setPath(argFile.getPath());
+      OSProcessHandler.deleteFileOnTermination(commandLine, argFile);
+    }
+
+    return commandLine;
   }
 
   /**
