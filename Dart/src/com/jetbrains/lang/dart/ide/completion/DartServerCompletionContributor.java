@@ -141,7 +141,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
   }
 
   private static boolean isRightAfterBadIdentifier(@NotNull CharSequence text, int offset) {
-    if (offset == 0) return false;
+    if (offset == 0 || offset >= text.length()) return false;
 
     int currentOffset = offset - 1;
     if (!Character.isJavaIdentifierPart(text.charAt(currentOffset))) return false;
