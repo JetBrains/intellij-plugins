@@ -556,7 +556,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testDuplicates() throws Throwable {
-    ExpectedHighlightingData.expectedDuplicatedHighlightingThrowable(this::defaultTest);
+    defaultTest();
   }
 
   public void testDuplicatesSmall() throws Exception {
