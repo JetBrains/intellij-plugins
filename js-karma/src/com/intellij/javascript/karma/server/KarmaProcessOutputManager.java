@@ -53,6 +53,13 @@ public class KarmaProcessOutputManager {
   }
 
   private void processStandardOutput(@NotNull String text, @NotNull Key type) {
+    if (handleLineAsEvent(text)) {
+      for (Pair<String, Key> chunk : myStdOutCurrentLineChunks) {
+        addText(chunk.getFirst(), chunk.getSecond());
+      }
+      myStdOutCurrentLineChunks.clear();
+      return;
+    }
     int lineStartInd = 0;
     int newLineInd = text.indexOf(NEW_LINE, lineStartInd);
     while (newLineInd != -1) {
