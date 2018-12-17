@@ -53,7 +53,10 @@ public class GherkinPsiUtil {
         if (start >= 0 && end >= 0) {
           int rangeStart = substitution.getOffsetInOutlineStep(start);
           int rangeEnd = substitution.getOffsetInOutlineStep(end);
-          parameterRanges.add(new TextRange(rangeStart, rangeEnd).shiftRight(shiftOffset));
+          TextRange range = new TextRange(rangeStart, rangeEnd).shiftRight(shiftOffset);
+          if (!parameterRanges.contains(range)) {
+            parameterRanges.add(range);
+          }
         }
       }
     }
