@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.application.options.IndentOptionsEditor;
+import com.intellij.application.options.codeStyle.properties.AbstractCodeStylePropertyMapper;
+import com.intellij.application.options.codeStyle.properties.LanguageCodeStylePropertyMapper;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -203,6 +205,18 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                    @NotNull CommonCodeStyleSettings.IndentOptions indentOptions) {
     commonSettings.BLANK_LINES_AFTER_PACKAGE = 0;
     commonSettings.initIndentOptions();
+  }
+
+  @NotNull
+  @Override
+  public AbstractCodeStylePropertyMapper getPropertyMapper(@NotNull CodeStyleSettings settings) {
+    return new LanguageCodeStylePropertyMapper(settings, getLanguage()) {
+      @NotNull
+      @Override
+      public String getLanguageDomainId() {
+        return "actionscript";
+      }
+    };
   }
 
   public final static String GENERAL_CODE_SAMPLE =
