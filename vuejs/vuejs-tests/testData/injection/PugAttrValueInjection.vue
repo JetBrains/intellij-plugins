@@ -2,6 +2,7 @@
   ul
     li(ref="someRef")
     li(slot="someSlot")
+    li(slot-scope="someSlot")
 
     li(v-text="someText")
     li(v-html="someHtml")

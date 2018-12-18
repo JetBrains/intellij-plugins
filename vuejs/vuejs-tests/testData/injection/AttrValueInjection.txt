@@ -41,6 +41,26 @@ HtmlFile:AttrValueInjection.vue
         XmlToken:XML_NAME('div')
         XmlToken:XML_TAG_END('>')
       XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:div
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('div')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('slot-scope')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+            XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('someSlotScope')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+            JSFile:AttrValueInjection.vue
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('someSlotScope')
+        XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('div')
+        XmlToken:XML_TAG_END('>')
+      XmlText
         PsiWhiteSpace('\n\n  ')
       HtmlTag:div
         XmlToken:XML_START_TAG_START('<')

@@ -47,6 +47,29 @@ HtmlFile:PugAttrValueInjection.vue
                     JSLiteralExpression
                       PsiElement(JS:STRING_LITERAL)('"someSlot"')
               PsiElement(RPAREN)(')')
+            PsiElement(INDENT)('\n    ')
+            JadeTagImpl(TAG)
+              XmlToken:XML_TAG_NAME('li')
+              PsiElement(LPAREN)('(')
+              PsiElement(JADE_PSEUDO_WHITESPACE)
+                <empty list>
+              JadeAttributeImpl(XML_ATTRIBUTE)
+                XmlToken:XML_NAME('slot-scope')
+                PsiElement(EQ)('=')
+                PsiElement(XML_ATTRIBUTE_VALUE)
+                  JSInJadeEmbeddedContentImpl:EMBEDDED_EXPRESSION
+                    JSLiteralExpression
+                      PsiElement(JS:STRING_LITERAL)('"someSlot"')
+                      JSFile:PugAttrValueInjection.vue
+                        JSReferenceExpression
+                          PsiElement(JS:IDENTIFIER)('someSlot')
+                    JSFile:PugAttrValueInjection.vue
+                      JSReferenceExpression
+                        PsiElement(JS:IDENTIFIER)('someSlot')
+                  JSFile:PugAttrValueInjection.vue
+                    JSReferenceExpression
+                      PsiElement(JS:IDENTIFIER)('someSlot')
+              PsiElement(RPAREN)(')')
               PsiElement(EOL)('\n')
             PsiElement(INDENT)('\n    ')
             JadeTagImpl(TAG)

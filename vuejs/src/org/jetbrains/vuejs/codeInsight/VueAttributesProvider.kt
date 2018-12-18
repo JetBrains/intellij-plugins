@@ -15,7 +15,6 @@ package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
-import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.meta.PsiPresentableMetaData
@@ -41,7 +40,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
     // "v-on" is not included because it can't be used as is, it must be followed by a colon and an event, this is supported separately
     val DEFAULT: Set<String> = setOf("v-text", "v-html", "v-show", "v-if", "v-else", "v-else-if", "v-for",
                                      "v-bind", "v-model", "v-pre", "v-cloak", "v-once",
-                                     "slot", "ref")
+                                     "slot", "ref", "slot-scope")
     val HAVE_NO_PARAMS: Set<String> = setOf("v-else", "v-once", "v-pre", "v-cloak", SCOPED_ATTR, MODULE_ATTR, FUNCTIONAL_ATTR)
 
     fun isInjectJS(attrName: String): Boolean {

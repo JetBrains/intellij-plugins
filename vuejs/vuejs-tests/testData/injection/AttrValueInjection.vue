@@ -1,6 +1,7 @@
 <template>
   <div ref="someRef"></div>
   <div slot="someSlot"></div>
+  <div slot-scope="someSlotScope"></div>
 
   <div v-text="someText"></div>
   <div v-html="someHtml"></div>
