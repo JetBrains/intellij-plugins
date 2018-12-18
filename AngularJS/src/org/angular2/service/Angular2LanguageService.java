@@ -12,6 +12,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerService;
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl;
+import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCacheImpl;
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.TypeScriptCompletionsRequestArgs;
 import com.intellij.lang.typescript.compiler.ui.TypeScriptServerServiceSettings;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
@@ -208,6 +209,26 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     return super.createLanguageServiceQueue();
   }
 
+  @Override
+  @NotNull
+  protected TypeScriptLanguageServiceCacheImpl createLSCache() {
+    return new TypeScriptLanguageServiceCacheImpl(myProject) {
+      @Nullable
+      @Override
+      protected TypeScriptConfig getConfigForFile(VirtualFile virtualFile) {
+        if (virtualFile.getFileType() instanceof XmlLikeFileType) {
+          VirtualFile tsFile = findSiblingTsFile(virtualFile);
+          if (tsFile != null) return super.getConfigForFile(tsFile);
+          
+          return getNearestConfig(virtualFile);
+        }
+        
+        return super.getConfigForFile(virtualFile);
+      }
+    };
+  }
+
+
   @Nullable
   @Override
   protected String getConfigForFile(@NotNull VirtualFile file) {
@@ -216,16 +237,20 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
         if (myProject.isDisposed()) return null;
         VirtualFile tsFile = findSiblingTsFile(file);
         //we can have .spec.json and .app.json on the same level so let's use linked ts-file config if possible
-        if (tsFile != null) return super.getConfigForFile(file);
+        if (tsFile != null) return super.getConfigForFile(tsFile);
 
-        Collection<TypeScriptConfig> allConfigs = TypeScriptConfigService.Provider.getConfigFiles(myProject);
-        TypeScriptConfig config = TypeScriptConfigUtil.getNearestParentConfig(file, allConfigs);
+        TypeScriptConfig config = getNearestConfig(file);
 
         return config == null ? null : TypeScriptCompilerConfigUtil.normalizeNameAndPath(config.getConfigFile());
       });
     }
 
     return super.getConfigForFile(file);
+  }
+
+  private TypeScriptConfig getNearestConfig(@NotNull VirtualFile file) {
+    Collection<TypeScriptConfig> allConfigs = TypeScriptConfigService.Provider.getConfigFiles(myProject);
+    return TypeScriptConfigUtil.getNearestParentConfig(file, allConfigs);
   }
 
   @Nullable
