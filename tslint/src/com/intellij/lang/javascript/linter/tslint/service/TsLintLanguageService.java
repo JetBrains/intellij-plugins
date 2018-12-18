@@ -40,12 +40,6 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     super(project);
   }
 
-  @NotNull
-  @Override
-  protected String getProcessName() {
-    return "TSLint";
-  }
-
   public final Future<List<TsLinterError>> highlight(@Nullable VirtualFile virtualFile,
                                                      @Nullable VirtualFile config,
                                                      @Nullable String content) {

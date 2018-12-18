@@ -25,7 +25,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiElement;
@@ -201,7 +200,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   protected JSLanguageServiceQueue createLanguageServiceQueue() {
     TypeScriptCompilerService defaultService = TypeScriptCompilerService.getDefaultService(myProject);
     if (defaultService.isServiceCreated()) {
-      JSLanguageServiceQueue.LOGGER.info("Dispose default service by " + getProcessName());
+      JSLanguageServiceQueue.LOGGER.info("Dispose default service by " + getDebugName());
       //dispose old service
       TransactionGuard.submitTransaction(this, () -> defaultService.terminateStartedProcess(false, true));
     }
