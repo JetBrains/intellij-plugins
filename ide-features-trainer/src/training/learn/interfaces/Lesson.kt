@@ -19,6 +19,9 @@ interface Lesson {
 
   val lessonListeners: MutableList<LessonListener>
 
+  val existedFile : String?
+    get() = null
+
   fun addLessonListener(lessonListener: LessonListener) {
     lessonListeners.add(lessonListener)
   }

@@ -57,7 +57,9 @@ class LessonManager {
     val moduleName = module.name
     UiManager.setModuleNameOnLearnPanels(moduleName)
     UiManager.initLessonOnLearnPanels(cLesson)
-    clearEditor(editor)
+    if (cLesson.existedFile == null) {
+      clearEditor(editor)
+    }
     clearLessonPanel()
 
     if (mouseListenerHolder != null) mouseListenerHolder!!.restoreMouseActions(editor)
