@@ -312,6 +312,13 @@ class OpenLessonAction : AnAction() {
         val languageByID = findLanguageByID(myLanguage)
         val extensionFile = languageByID!!.associatedFileType!!.defaultExtension
 
+        val existedFile = lesson.existedFile
+        if (existedFile != null) {
+          val root = ProjectRootManager.getInstance(learnProject).contentRoots[0]
+          val file: VirtualFile? = root.findFileByRelativePath(existedFile)
+          return file!!
+        }
+
         val fileName = lesson.module.sanitizedName + "." + extensionFile
 
         var lessonVirtualFile: VirtualFile? = null
