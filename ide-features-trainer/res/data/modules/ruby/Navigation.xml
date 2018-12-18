@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="Navigation" lessonsPath="Navigation/" version="0.3" id="ruby.navigation" fileType="PROJECT" description="Jump to source, declaration/implementation, file structure and next/prev occurrences navigation">
+    <lesson-kt implementationClass="training.learn.lesson.ruby.RubyNavigationLesson"/>
+</module>
