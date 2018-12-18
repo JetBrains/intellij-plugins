@@ -109,7 +109,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
         findRestParameterExpectedType(param);
       }
       else {
-        myResult = param.getType();
+        myResult = param.getSimpleType();
       }
     }
   }

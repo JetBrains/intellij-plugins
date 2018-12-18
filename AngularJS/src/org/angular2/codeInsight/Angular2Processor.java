@@ -225,7 +225,7 @@ public class Angular2Processor {
       else if (subType instanceof JSFunctionType) {
         List<JSParameterTypeDecorator> params = ((JSFunctionType)subType).getParameters();
         if (params.size() == 1) {
-          result.add(params.get(0).getType());
+          result.add(params.get(0).getSimpleType());
         }
         return false;
       }
