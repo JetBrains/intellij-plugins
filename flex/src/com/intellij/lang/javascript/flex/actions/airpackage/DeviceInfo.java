@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
@@ -73,7 +74,7 @@ public class DeviceInfo {
       protected boolean checkMessages() {
         // List of attached devices:
         // Handle<Tab>DeviceClass<Tab>DeviceUUID<Tab><Tab><Tab><Tab><Tab>DeviceName
-        // 3<Tab>iPad    <Tab>cf701a789380b6ca3d563c9959a2bf383b58b702<Tab>iPad
+        // 3<Tab>iPad    <Tab>00008020-001XXXXXXXXXXXXX<Tab>iPad
         // 2<Tab>iPod    <Tab>5da6555aea609c405f554b53a4a85853202b92de<Tab>JetBrains's iPod
 
         if (myMessages.size() < 3) return true;
@@ -104,7 +105,7 @@ public class DeviceInfo {
 
           while (tokenizer.hasMoreTokens()) {
             final String token = tokenizer.nextToken();
-            if (token.length() == 40) {
+            if (token.length() >= 24) {
               deviceId = token;
               break;
             }
