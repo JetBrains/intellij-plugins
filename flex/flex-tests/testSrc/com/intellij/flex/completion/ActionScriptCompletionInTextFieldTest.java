@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinDialog;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
@@ -24,6 +25,7 @@ import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.ArrayUtil;
@@ -179,6 +181,8 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     });
 
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(myModule);
+    FlexBuildConfiguration old = manager.getActiveConfiguration();
+    Disposer.register(myFixture.getTestRootDisposable(), () ->  manager.setActiveBuildConfiguration(old));
     manager.setActiveBuildConfiguration(manager.findConfigurationByName(activeBcName));
 
     final GlobalSearchScope scope =
