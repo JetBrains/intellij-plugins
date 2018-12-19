@@ -18,9 +18,7 @@ import com.intellij.flex.util.FlexUnitLibs;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.javascript.flex.css.FlexCSSDialect;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
-import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.css.CssDialect;
 import com.intellij.lang.css.CssDialectMappings;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -76,7 +74,6 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssBundle;
 import com.intellij.psi.css.inspections.CssInvalidElementInspection;
@@ -124,8 +121,6 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 import static com.intellij.codeInsight.daemon.impl.HighlightInfoFilter.EXTENSION_POINT_NAME;
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
 
 public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   @NonNls static final String BASE_PATH = "flex_highlighting";
@@ -1148,7 +1143,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @Override
-  protected Collection<HighlightInfo> defaultTest() throws IOException {
+  protected Collection<HighlightInfo> defaultTest() {
     return doTestFor(true, getTestName(false) + ".mxml");
   }
 

@@ -5,62 +5,50 @@ import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.injected.editor.EditorWindow;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
-import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
-import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.javascript.*;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProfilingUtil;
-import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.*;
 
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
+import static com.intellij.flex.completion.ActionScriptCompletionTest.JAVA_PROJECT_DESCRIPTOR;
 
 public class FlexCompletionTest extends BaseJSCompletionTestCase {
   static final String BASE_PATH = "/flex_completion/";
 
   @NonNls private static final String MXML_EXTENSION = "mxml";
-
-  protected Runnable myAfterCommitRunnable = null;
 
   protected Runnable myCompletionPerformer = null;
 
@@ -77,23 +65,17 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Override
-  protected String getBasePath() {
-    return BASE_PATH;
-  }
-
-  @Override
   protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("");
+    return FlexTestUtils.getTestDataPath(BASE_PATH);
   }
 
   @Override
   protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
-    myAfterCommitRunnable = null;
-
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
+    CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
     myCompletionPerformer = () -> super.complete();
+    setUpJdk();
   }
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -105,16 +87,15 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     return JSTestUtils.getTestMethod(getClass(), getTestName(false)).getAnnotation(NeedsJavaModule.class) != null;
   }
 
-  @Override
   protected void setUpJdk() {
-    if (!needsJavaModule()) {
-      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
-    }
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return needsJavaModule() ?
+           JAVA_PROJECT_DESCRIPTOR :
+           FlexProjectDescriptor.DESCRIPTOR;
   }
 
   @Override
@@ -125,47 +106,24 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
 
-  @Override
-  protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
-    super.doCommitModel(rootModel);
-    FlexTestUtils.setupFlexLib(getProject(), getClass(), getTestName(false));
-    if (myAfterCommitRunnable != null) {
-      myAfterCommitRunnable.run();
-    }
-  }
-
-
   private Runnable createMultiCompletionPerformerWithVariantsCheck() {
     return createMultiCompletionPerformerWithVariantsCheck(true);
   }
 
   private Runnable createMultiCompletionPerformerWithVariantsCheck(final boolean strict) {
     return () -> {
-      final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(myProject, getEditor().getDocument());
+      final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(getProject(), myFixture.getEditor().getDocument());
       for (Map.Entry<Integer, String> entry : map.entrySet()) {
-        myItems = null;
-        getEditor().getCaretModel().moveToOffset(entry.getKey());
-
-        Editor savedEditor = myEditor;
-        PsiFile savedFile = myFile;
-
-        PsiFile injectedPsi = InjectedLanguageUtil.findInjectedPsiNoCommit(myFile, myEditor.getCaretModel().getOffset());
-        if (injectedPsi != null) {
-          myEditor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(myEditor, myFile);
-          myFile = injectedPsi;
-        }
+        myFixture.getEditor().getCaretModel().moveToOffset(entry.getKey());
 
         super.complete();
 
-        myEditor = savedEditor;
-        myFile = savedFile;
-
         final String[] expected = entry.getValue().length() == 0 ? new String[]{} : entry.getValue().split(",");
 
-        final String[] variants = new String[myItems == null ? 0 : myItems.length];
-        if (myItems != null && myItems.length > 0) {
-          for (int i = 0; i < myItems.length; i++) {
-            variants[i] = myItems[i].getLookupString();
+        final String[] variants = new String[myFixture.getLookupElements() == null ? 0 : myFixture.getLookupElements().length];
+        if (myFixture.getLookupElements() != null && myFixture.getLookupElements().length > 0) {
+          for (int i = 0; i < myFixture.getLookupElements().length; i++) {
+            variants[i] = myFixture.getLookupElements()[i].getLookupString();
           }
         }
 
@@ -187,90 +145,90 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompletionInMxml() throws Exception {
+  public final void testCompletionInMxml() {
     defaultTest();
     //    doTest("_2", MXML_EXTENSION);
     //    doTest("_3", MXML_EXTENSION);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public final void testCompleteInsertsQualifiedNameInItemRenderer() throws Exception {
+  public final void testCompleteInsertsQualifiedNameInItemRenderer() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testSkinClassAsAttributeWithSpaces() throws Exception {
+  public final void testSkinClassAsAttributeWithSpaces() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testSkinClassAsSubTag() throws Exception {
+  public final void testSkinClassAsSubTag() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public final void testCompleteInsertsQualifiedNameInEventType() throws Exception {
+  public final void testCompleteInsertsQualifiedNameInEventType() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testSimpleCompleteInAddEventListener() throws Exception {
+  public final void testSimpleCompleteInAddEventListener() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompletionInMxml2() throws Exception {
+  public final void testCompletionInMxml2() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompletionInMxml3() throws Exception {
+  public final void testCompletionInMxml3() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCompleteBeforeVariable() throws Exception {
+  public void testCompleteBeforeVariable() {
     doTest("", "as");
   }
 
-  public void testCompleteBeforeVariable2() throws Exception {
+  public void testCompleteBeforeVariable2() {
     doTest("", "as");
     LookupElement[] elements = doTest("_2", "as");
     assertTrue(elements != null && elements.length > 0);
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet}, selectLookupItem = 0)
-  public final void testCompletionInMxml4() throws Exception {
+  public final void testCompletionInMxml4() {
     defaultTest();
   }
 
   @Override
-  protected LookupElement[] defaultTest() throws Exception {
+  protected LookupElement[] defaultTest() {
     return doTest("", MXML_EXTENSION);
   }
 
-  public final void testCompletionInMxml5() throws Exception {
+  public final void testCompletionInMxml5() {
     withNoAbsoluteReferences(() -> defaultTest());
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompletionInMxml6() throws Exception {
+  public final void testCompletionInMxml6() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompletionInMxml7() throws Exception {
+  public final void testCompletionInMxml7() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompletionInMxml8() throws Exception {
+  public final void testCompletionInMxml8() {
     LookupElement[] items = doTest("", MXML_EXTENSION);
     assertNotNull(items);
     assertTrue(items.length < 50);
@@ -286,496 +244,466 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void testCompletionInMxml9() throws Exception {
+  public final void testCompletionInMxml9() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void testCompletionInMxml10() throws Exception {
+  public final void testCompletionInMxml10() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
-  public void testMxmlColorAttributeValueCompletion1() throws Exception {
+  public void testMxmlColorAttributeValueCompletion1() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testMxmlColorAttributeValueCompletion2() throws Exception {
+  public void testMxmlColorAttributeValueCompletion2() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testMxmlColorAttributeValueCompletion3() throws Exception {
+  public void testMxmlColorAttributeValueCompletion3() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testMxmlColorAttributeValueCompletion4() throws Exception {
+  public void testMxmlColorAttributeValueCompletion4() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
-  public void testMxmlColorAttributeValueCompletion5() throws Exception {
+  public void testMxmlColorAttributeValueCompletion5() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void testStateNameCompletion() throws Exception {
+  public final void testStateNameCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompletionOfMethodOfCustomComponent() throws Exception {
+  public final void testCompletionOfMethodOfCustomComponent() {
     final String testName = getTestName(false);
 
-    final VirtualFile[] vFiles =
-      new VirtualFile[]{getVirtualFile(getBasePath() + testName + ".mxml"), getVirtualFile(getBasePath() + testName + "_2.mxml")};
-    doTestForFiles(vFiles, "", MXML_EXTENSION);
+    doTestForFiles(new String[]{testName + ".mxml", testName + "_2.mxml"}, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompletionOfPackageLocalClass() throws Exception {
+  public final void testCompletionOfPackageLocalClass() {
     final String testName = getTestName(false);
 
-    doTestForFiles(new VirtualFile[]{getVirtualFile(BASE_PATH + testName + "/aaa/" + testName + ".mxml"),
-                     getVirtualFile(BASE_PATH + testName + "/aaa/" + testName + ".as"),}, "", "mxml",
-                   new File(getTestDataPath() + getBasePath() + File.separatorChar + testName));
+    VirtualFile directory = myFixture.copyDirectoryToProject(testName, "");
+    myFixture.configureFromExistingVirtualFile(directory.findFileByRelativePath("/aaa/" + testName + ".mxml"));
+    complete();
+    checkResultByFile("", "mxml", null);
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompletionOfMxmlInAnotherDirectory() throws Exception {
+  public final void testCompletionOfMxmlInAnotherDirectory() {
     final String testName = getTestName(false);
-
-    doTestForFiles(new VirtualFile[]{getVirtualFile(BASE_PATH + testName + "/" + testName + ".as"),
-                     getVirtualFile(BASE_PATH + testName + "/aaa/" + testName + ".mxml")}, "", "as",
-                   new File(getTestDataPath() + getBasePath() + File.separatorChar + testName));
+    VirtualFile directory = myFixture.copyDirectoryToProject(testName, "");
+    myFixture.configureFromExistingVirtualFile(directory.findFileByRelativePath(testName + ".as"));
+    complete();
+    checkResultByFile("", "as", null);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public final void testCompleteAfterThisInMxml() throws Exception {
+  public final void testCompleteAfterThisInMxml() {
     defaultTest();
   }
 
-  public final void testCompleteAfterThisInMxml2() throws Exception {
+  public final void testCompleteAfterThisInMxml2() {
     defaultTest();
   }
 
-  public final void testCompleteAfterThisInMxml3() throws Exception {
+  public final void testCompleteAfterThisInMxml3() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletionInMxml() throws Exception {
+  public final void testSmartCompletionInMxml() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletionInMxml_2() throws Exception {
+  public final void testSmartCompletionInMxml_2() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletionInMxml_3() throws Exception {
+  public final void testSmartCompletionInMxml_3() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletionInMxml_4() throws Exception {
+  public final void testSmartCompletionInMxml_4() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletionInMxml_5() throws Exception {
+  public final void testSmartCompletionInMxml_5() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletionInMxml_6() throws Exception {
+  public final void testSmartCompletionInMxml_6() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testClassRefInSkinClass() throws Exception {
+  public final void testClassRefInSkinClass() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void testCompleteAnnotationParameter() throws Exception {
+  public final void testCompleteAnnotationParameter() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCompleteWithoutQualifier() throws Exception {
+  public final void testCompleteWithoutQualifier() {
     defaultTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader})
   @NeedsJavaModule
-  public void testCompleteStyleNameInString() throws Exception {
-    doTestForFiles(new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"),
-      getVirtualFile(getBasePath() + getTestName(false) + ".as")}, "", MXML_EXTENSION);
+  public void testCompleteStyleNameInString() {
+    doTestForFiles(new String[]{getTestName(false) + ".mxml",
+      getTestName(false) + ".as"}, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testReplaceChar() throws Exception {
-    configureByFile(BASE_PATH + getTestName(false) + ".as");
+  public final void testReplaceChar() {
+    myFixture.configureByFile(getTestName(false) + ".as");
     complete();
-    assertNotNull(myItems);
-    selectItem(myItems[0], Lookup.REPLACE_SELECT_CHAR);
-    checkResultByFile(BASE_PATH + getTestName(false) + "_after.as");
+    assertNotNull(myFixture.getLookupElements());
+    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]);
+    myFixture.type(Lookup.REPLACE_SELECT_CHAR);
+    myFixture.checkResultByFile(getTestName(false) + "_after.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public final void testEnumeratedCompletionInMxml() throws Exception {
+  public final void testEnumeratedCompletionInMxml() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCustomComponentCompletionInMxml() throws Exception {
-    final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"),
-      getVirtualFile(getBasePath() + getTestName(false) + ".as")};
-    doTestForFiles(vFiles, "", MXML_EXTENSION);
+  public final void testCustomComponentCompletionInMxml() {
+    doTestForFiles(new String[] {getTestName(false) + ".mxml", getTestName(false) + ".as"}, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.ClassNameCompletion})
-  public final void testCustomComponentCompletionInMxml2() throws Exception {
-    final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"),
-      getVirtualFile(getBasePath() + getTestName(false) + ".as")};
-    doTestForFiles(vFiles, "", MXML_EXTENSION);
+  public final void testCustomComponentCompletionInMxml2() {
+    doTestForFiles(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".as"}, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCustomComponentCompletionInMxml6() throws Exception {
-    final VirtualFile[] vFiles =
-      new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".as"), getVirtualFile(getBasePath() + "MyComponent.mxml")};
-    doTestForFiles(vFiles, "", "as");
+  public final void testCustomComponentCompletionInMxml6() {
+    doTestForFiles(new String[]{getTestName(false) + ".as", "MyComponent.mxml"}, "", "as");
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.ClassNameCompletion},
     selectLookupItem = 0)
-  public final void testCustomComponentCompletionInMxml3() throws Exception {
-    final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml")};
-    doTestForFiles(vFiles, "", MXML_EXTENSION);
+  public final void testCustomComponentCompletionInMxml3() {
+    doTestForFiles(new String[]{getTestName(false) + ".mxml"}, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.ClassNameCompletion})
-  public final void testCustomComponentCompletionInMxml4() throws Exception {
-    final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"),};
-    doTestForFiles(vFiles, "", MXML_EXTENSION);
+  public final void testCustomComponentCompletionInMxml4() {
+    doTestForFiles(new String[]{getTestName(false) + ".mxml"}, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testCompleteResourceReferences() throws Exception {
-    final VirtualFile[] vFiles =
-      new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"), getVirtualFile(getBasePath() + "test.properties"),};
-    doTestForFiles(vFiles, "", MXML_EXTENSION);
+  public void testCompleteResourceReferences() {
+    doTestForFiles(new String[]{getTestName(false) + ".mxml", "test.properties"}, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCustomComponentCompletionInMxml5() throws Exception {
-    final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml")};
-    doTestForFiles(vFiles, "", MXML_EXTENSION);
+  public final void testCustomComponentCompletionInMxml5() {
+    doTestForFiles(new String[]{getTestName(false) + ".mxml"}, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testCustomComponentCompletionInMxml7() throws Exception {
-    final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"),
-      getVirtualFile(getBasePath() + getTestName(false) + "_2.mxml")};
-    doTestForFiles(vFiles, "", MXML_EXTENSION);
+  public final void testCustomComponentCompletionInMxml7() {
+    doTestForFiles(new String[]{getTestName(false) + ".mxml", getTestName(false) + "_2.mxml"}, "", MXML_EXTENSION);
   }
 
-  public final void testCompleteInFileName() throws Exception {
+  public final void testCompleteInFileName() {
     withNoAbsoluteReferences(() -> doTest("", "as"));
   }
 
-  public final void testNoComplete() throws Exception {
+  public final void testNoComplete() {
     defaultTest();
   }
 
-  public final void testAs2Completion() throws Exception {
+  public final void testAs2Completion() {
     doTest("", "as");
   }
 
-  public final void testAs2Completion2() throws Exception {
-    VirtualFile[] files =
-      new VirtualFile[]{getVirtualFile(BASE_PATH + getTestName(false) + ".as"), getVirtualFile(BASE_PATH + getTestName(false) + "_2.as")};
-    doTestForFiles(files);
+  public final void testAs2Completion2() {
+    doTestForFiles(getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
-  public final void testAs2Completion3() throws Exception {
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + getTestName(false) + ".as")};
-    doTestForFiles(files);
+  public final void testAs2Completion3() {
+    doTestForFiles(getTestName(false) + ".as");
   }
 
   @JSTestOptions(selectLookupItem = 0)
-  public final void testAs2Completion4() throws Exception {
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + getTestName(false) + ".as")};
-    doTestForFiles(files);
+  public final void testAs2Completion4() {
+    doTestForFiles(getTestName(false) + ".as");
   }
 
-  public final void testAs2Completion5() throws Exception {
-    VirtualFile[] files =
-      new VirtualFile[]{getVirtualFile(BASE_PATH + getTestName(false) + ".as"), getVirtualFile(BASE_PATH + getTestName(false) + "_2.as"),};
-    doTestForFiles(files);
+  public final void testAs2Completion5() {
+    doTestForFiles(getTestName(false) + ".as", getTestName(false) + "_2.as");
   }
 
-  public final void testAs2Completion5_3() throws Exception {
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + getTestName(false) + ".as")};
-    doTestForFiles(files, "", "as");
+  public final void testAs2Completion5_3() {
+    doTestForFiles(new String[]{getTestName(false) + ".as"}, "", "as");
   }
 
   @JSTestOptions(
     {JSTestOption.WithLoadingAndSavingCaches})
-  public final void testAs2Completion6() throws Exception {
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + getTestName(false) + ".as")};
-    doTestForFiles(files);
+  public final void testAs2Completion6() {
+    doTestForFiles(getTestName(false) + ".as");
   }
 
   @JSTestOptions(
     {JSTestOption.WithLoadingAndSavingCaches})
-  public final void testAs2Completion6_2() throws Exception {
-    VirtualFile[] files;
-
+  public final void testAs2Completion6_2() {
     final String testName = getTestName(false);
-    files = new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".as"),
-      getVirtualFile(BASE_PATH + testName.substring(0, testName.length() - 2) + "_3.as")};
-    doTestForFiles(files, "", "as");
+    doTestForFiles(new String[]{testName + ".as", testName.substring(0, testName.length() - 2) + "_3.as"}, "", "as");
   }
 
-  public final void testPickupArrayElementType() throws Exception {
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + getTestName(false) + ".as")};
-    doTestForFiles(files);
+  public final void testPickupArrayElementType() {
+    doTestForFiles(getTestName(false) + ".as");
   }
 
-  public final void testPickupArrayElementType2() throws Exception {
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + getTestName(false) + ".as")};
-    doTestForFiles(files);
+  public final void testPickupArrayElementType2() {
+    doTestForFiles(getTestName(false) + ".as");
   }
 
   // Looks like tested functionality has never worked in run time, previously test passed because of a trick in base test class
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void _testInsertImportForStaticField() throws Exception {
+  public final void _testInsertImportForStaticField() {
     final String testName = getTestName(false);
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + "_2.as")};
-    doTestForFiles(files, "", "mxml");
+    doTestForFiles(new String[]{testName + ".mxml", testName + "_2.as"}, "", "mxml");
   }
 
   // Looks like tested functionality has never worked in run time, previously test passed because of a trick in base test class
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void _testInsertImportForStaticField_3() throws Exception {
+  public final void _testInsertImportForStaticField_3() {
     final String testName = getTestName(false);
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"),
-      getVirtualFile(BASE_PATH + testName.substring(0, testName.length() - 2) + "_2.as")};
-    doTestForFiles(files, "", "mxml");
+    doTestForFiles(new String[]{testName + ".mxml", testName.substring(0, testName.length() - 2) + "_2.as"}, "", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void testSuggestOnlyInterfaces() throws Exception {
+  public final void testSuggestOnlyInterfaces() {
     final String testName = getTestName(false);
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + "_2.as")};
-    doTestForFiles(files, "", "mxml");
+    doTestForFiles(new String[]{testName + ".mxml", testName + "_2.as"}, "", "mxml");
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
-  public final void testSuggestOnlyDescendants() throws Exception {
+  public final void testSuggestOnlyDescendants() {
     final String testName = getTestName(false);
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + "_2.as")};
+    String[] files = new String[]{testName + ".mxml",testName + "_2.as"};
     doTestForFiles(files, "", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void testSuggestOnlyDescendants2() throws Exception {
+  public final void testSuggestOnlyDescendants2() {
     final String testName = getTestName(false);
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + "_2.as")};
+    String[] files = new String[]{testName + ".mxml",testName + "_2.as"};
     doTestForFiles(files, "", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void testSuggestOnlyDescendants3() throws Exception {
+  public final void testSuggestOnlyDescendants3() {
     final String testName = getTestName(false);
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + "_2.as")};
+    String[] files = new String[]{testName + ".mxml",testName + "_2.as"};
     doTestForFiles(files, "", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void testSuggestOnlyDescendants4() throws Exception {
+  public final void testSuggestOnlyDescendants4() {
     final String testName = getTestName(false);
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + "_2.as")};
+    String[] files = new String[]{testName + ".mxml",testName + "_2.as"};
     doTestForFiles(files, "", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public final void testCompleteInComponent() throws Exception {
+  public final void testCompleteInComponent() {
     final String testName = getTestName(false);
-    VirtualFile[] files =
-      new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + "_2.mxml")};
+    String[] files =
+      new String[]{testName + ".mxml",testName + "_2.mxml"};
     doTestForFiles(files, "", "mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testRemoteObject() throws Exception {
+  public void testRemoteObject() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testRemoteObject_2() throws Exception {
+  public void testRemoteObject_2() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testCompleteOnlyPackages() throws Exception {
+  public void testCompleteOnlyPackages() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testCompleteOnlyPackages_2() throws Exception {
+  public void testCompleteOnlyPackages_2() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testCompleteOnlyPackages_3() throws Exception {
+  public void testCompleteOnlyPackages_3() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testCompleteOnlyPackages_4() throws Exception {
+  public void testCompleteOnlyPackages_4() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testCompleteOnlyPackages_5() throws Exception {
+  public void testCompleteOnlyPackages_5() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testInheritorCompletion() throws Exception {
+  public void testInheritorCompletion() {
     final String testName = getTestName(false);
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + ".as")};
+    String[] files = new String[]{testName + ".mxml",testName + ".as"};
     doTestForFiles(files, "", MXML_EXTENSION);
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testInheritorCompletion2() throws Exception {
+  public void testInheritorCompletion2() {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testOnlyMembersCompletion() throws Exception {
-    final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"),
-      getVirtualFile(getBasePath() + getTestName(false) + ".as")};
+  public void testOnlyMembersCompletion() {
+    final String[] vFiles = new String[]{getTestName(false) + ".mxml",
+      getTestName(false) + ".as"};
     LookupElement[] elements = doTestForFiles(vFiles, "", "mxml");
     assertEquals(1, elements.length);
     assertEquals("tabs", elements[0].getLookupString());
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testOnlyMembersCompletion2() throws Exception {
-    VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"),
-      getVirtualFile(getBasePath() + getTestName(false) + ".as")};
+  public void testOnlyMembersCompletion2() {
+    String[] vFiles = new String[]{getTestName(false) + ".mxml",
+      getTestName(false) + ".as"};
     LookupElement[] elements = doTestForFiles(vFiles, "", "mxml");
     assertNull(elements);
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testOnlyMembersCompletion2_2() throws Exception {
-    VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"),
-      getVirtualFile(getBasePath() + "OnlyMembersCompletion2.as")};
+  public void testOnlyMembersCompletion2_2() {
+    String[] vFiles = new String[]{getTestName(false) + ".mxml",
+      "OnlyMembersCompletion2.as"};
     doTestForFiles(vFiles, "", "mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCompleteBindingAttr() throws Exception {
+  public void testCompleteBindingAttr() {
     doTest("", "mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testImportedMember() throws Exception {
-    final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(getBasePath() + getTestName(false) + ".mxml"),
-      getVirtualFile(getBasePath() + getTestName(false) + "_2.mxml"), getVirtualFile(getBasePath() + getTestName(false) + "_2_script.as")};
+  public void testImportedMember() {
+    final String[] vFiles = new String[]{getTestName(false) + ".mxml",
+      getTestName(false) + "_2.mxml",getTestName(false) + "_2_script.as"};
     doTestForFiles(vFiles, "", "mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testPackagesInCompilerConfig() throws Exception {
+  public void testPackagesInCompilerConfig() {
     doTest("", "xml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testClassesInCompilerConfig() throws Exception {
+  public void testClassesInCompilerConfig() {
     doTest("", "xml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testComponentFromManifestCompletion() throws Exception {
+  public void testComponentFromManifestCompletion() {
     final String name = getTestName(false);
 
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
-      final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
+      final String manifest = getTestDataPath() + "/" + "/" + name + "_manifest.xml";
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest));
     });
 
-    VirtualFile[] files = new VirtualFile[]{getVirtualFile(BASE_PATH + name + ".mxml"), getVirtualFile(BASE_PATH + name + "_other.as")};
+    String[] files = new String[]{name + ".mxml",name + "_other.as"};
     doTestForFiles(files, "", MXML_EXTENSION);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testComponentFromManifestCompletionWithNamespaceAutoInsert() throws Exception {
+  public void testComponentFromManifestCompletionWithNamespaceAutoInsert() {
     final String name = getTestName(false);
 
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
-      final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
+      final String manifest = getTestDataPath() + "/" + "/" + name + "_manifest.xml";
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace",
                                                                      "schema://www.MyNamespace.com/2010\t" + manifest));
     });
 
     final String testName = getTestName(false);
-    VirtualFile[] files =
-      new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + "_other.as")};
+    String[] files =
+      new String[]{testName + ".mxml",testName + "_other.as"};
     doTestForFiles(files, "", MXML_EXTENSION);
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testInlineComponent() throws Exception {
+  public void testInlineComponent() {
     doTest("", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testNamedInlineComponent() throws Exception {
+  public void testNamedInlineComponent() {
     doTest("", "mxml");
   }
 
   @JSTestOptions(value = {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk}, selectLookupItem = 0)
-  public void testNamedInlineComponent2() throws Exception {
+  public void testNamedInlineComponent2() {
     doTest("", "mxml");
+    FileDocumentManager.getInstance().saveAllDocuments();
     LookupElement[] elements = doTest("", "mxml");
     assertEquals(3, elements.length);
     assertEquals("MyEditor", elements[0].getLookupString());
@@ -784,37 +712,38 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testAssetFromAnotherSourceRoot() throws Exception {
+  public void testAssetFromAnotherSourceRoot() {
     final String testName = getTestName(false);
-    final VirtualFile secondSourceRoot = getVirtualFile(BASE_PATH + testName);
+    final VirtualFile secondSourceRoot = VfsUtil.findFileByIoFile(new File(getTestDataPath() + testName), false);
     PsiTestUtil.addSourceRoot(myModule, secondSourceRoot);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> PsiTestUtil.removeContentEntry(myModule, secondSourceRoot));
     withNoAbsoluteReferences(() -> doTest("", "mxml"));
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCompleteStandardMxmlImport() throws Exception {
+  public void testCompleteStandardMxmlImport() {
     doTest("", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCompleteUIComponentInItemRenderer() throws Exception {
+  public void testCompleteUIComponentInItemRenderer() {
     doTest("", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCompleteComponentsInUIComponent() throws Exception {
+  public void testCompleteComponentsInUIComponent() {
     doTest("", "mxml");
     doTest("_2", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testResourceBundleFromSdk() throws Exception {
+  public void testResourceBundleFromSdk() {
     final String testName = getTestName(false);
 
-    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(getModule());
+    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(myModule);
     final SdkModificator sdkModificator = flexSdk.getSdkModificator();
     final VirtualFile swcFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + getBasePath() + "/" + testName + ".swc");
+      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + testName + ".swc");
     sdkModificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(swcFile), OrderRootType.CLASSES);
     sdkModificator.commitChanges();
 
@@ -823,110 +752,111 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testResourceBundleFromLib() throws Exception {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils
-        .addFlexLibrary(false, myModule, "Lib", false, getTestDataPath() + getBasePath(), getTestName(false) + ".swc", null,
+  public void testResourceBundleFromLib() {
+    FlexTestUtils.addFlexLibrary(false, myModule, "Lib", false, getTestDataPath(), getTestName(false) + ".swc", null,
                         null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "Lib"));
     doTest("", "as");
     doTest("", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testIgnoreClassesFromOnlyLibSources() throws Exception {
+  public void testIgnoreClassesFromOnlyLibSources() {
     final String testName = getTestName(false);
 
-    myAfterCommitRunnable = () -> FlexTestUtils
-      .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
+    FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
                   null);
+    //Disposer.register(myFixture.getTestRootDisposable(), () -> );
 
-    assertNull(doTest("_1", "as"));
-    assertNull(doTest("_2", "as"));
-    assertNull(doTest("_3", "as"));
+
+    assertEmpty(doTest("_1", "as"));
+    assertEmpty(doTest("_2", "as"));
+    assertEmpty(doTest("_3", "as"));
+    FlexTestUtils.removeLibrary(myModule, "library");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testIgnoreClassesFromOnlySdkSources() throws Exception {
+  public void testIgnoreClassesFromOnlySdkSources() {
     final String testName = getTestName(false);
 
     final VirtualFile srcFile =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + "_sdk_src/");
+      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + testName + "_sdk_src/");
 
     final Sdk flexSdk = FlexUtils.getSdkForActiveBC(myModule);
     final SdkModificator modificator = flexSdk.getSdkModificator();
     modificator.addRoot(srcFile, OrderRootType.SOURCES);
     modificator.commitChanges();
 
-    assertNull(doTest("_1", MXML_EXTENSION));
-    assertNull(doTest("_2", MXML_EXTENSION));
-    assertNull(doTest("_3", MXML_EXTENSION));
+    assertEmpty(doTest("_1", MXML_EXTENSION));
+    assertEmpty(doTest("_2", MXML_EXTENSION));
+    assertEmpty(doTest("_3", MXML_EXTENSION));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportInsertPosition1() throws Exception {
+  public void testImportInsertPosition1() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportInsertPosition2() throws Exception {
+  public void testImportInsertPosition2() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportInsertPosition3() throws Exception {
+  public void testImportInsertPosition3() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportInsertPosition4() throws Exception {
+  public void testImportInsertPosition4() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportInsertPosition5() throws Exception {
+  public void testImportInsertPosition5() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportInsertPosition6() throws Exception {
+  public void testImportInsertPosition6() {
     mxmlTest();
   }
 
-  private void mxmlTest() throws Exception {
+  private void mxmlTest() {
     doTest("", MXML_EXTENSION);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportInsertPosition7() throws Exception {
+  public void testImportInsertPosition7() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportInsertPosition8() throws Exception {
+  public void testImportInsertPosition8() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testImportInsertPosition9() throws Exception {
+  public void testImportInsertPosition9() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testDoNotCompleteMembersInType() throws Exception {
+  public void testDoNotCompleteMembersInType() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testDoNotCompleteMembersInType2() throws Exception {
+  public void testDoNotCompleteMembersInType2() {
     mxmlTest();
   }
 
-  public void testDoNotCompleteMembersInType3() throws Exception {
+  public void testDoNotCompleteMembersInType3() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testTwoCompletions() throws Exception {
+  public void testTwoCompletions() {
     myCompletionPerformer = () -> {
       super.complete();
       super.complete();
@@ -935,18 +865,18 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testObsoleteContext() throws Exception {
+  public void testObsoleteContext() {
     myCompletionPerformer = () -> {
-      final int offset = myEditor.getCaretModel().getOffset();
+      final int offset = myFixture.getEditor().getCaretModel().getOffset();
 
       super.complete();
 
-      assertEquals("\n" + "    var v = myButtonOne;\n" + "  ", getEditor().getDocument().getText());
+      assertEquals("\n" + "    var v = myButtonOne;\n" + "  ", myFixture.getEditor().getDocument().getText());
 
-      replace("myButtonOne", "myButton", getEditor());
-      replace("myButtonOne", "myButtonTwo", ((EditorWindow)myEditor).getDelegate());
+      replace("myButtonOne", "myButton", myFixture.getEditor());
+      replace("myButtonOne", "myButtonTwo", ((EditorWindow)myFixture.getEditor()).getDelegate());
 
-      myEditor.getCaretModel().moveToOffset(offset);
+      myFixture.getEditor().getCaretModel().moveToOffset(offset);
 
       super.complete();
     };
@@ -956,27 +886,26 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   private static void replace(final String original, final String replacement, final Editor editor) {
     final int offset = editor.getDocument().getText().indexOf(original);
     assertTrue(offset != -1);
-    ApplicationManager.getApplication()
-      .runWriteAction(() -> editor.getDocument().replaceString(offset, offset + original.length(), replacement));
+    WriteCommandAction.runWriteCommandAction(editor.getProject(), () -> editor.getDocument().replaceString(offset, offset + original.length(), replacement));
 
     PsiDocumentManager.getInstance(editor.getProject()).commitDocument(editor.getDocument());
 
-    //getEditor().getCaretModel().moveToOffset(offset + original.length());
+    //myFixture.getEditor().getCaretModel().moveToOffset(offset + original.length());
     //
     //for (int i = 0; i < original.length(); i++) {
-    //  JSBaseEditorTestCase.performTypingAction(getEditor(), JSBaseEditorTestCase.BACKSPACE_FAKE_CHAR);
+    //  JSBaseEditorTestCase.performTypingAction(myFixture.getEditor(), JSBaseEditorTestCase.BACKSPACE_FAKE_CHAR);
     //}
     //
     //for (int i = 0; i < replacement.length(); i++) {
-    //  JSBaseEditorTestCase.performTypingAction(getEditor(), replacement.charAt(i));
+    //  JSBaseEditorTestCase.performTypingAction(myFixture.getEditor(), replacement.charAt(i));
     //}
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testConditionalCompilationConstantsInAs() throws Exception {
+  public void testConditionalCompilationConstantsInAs() {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
       bc.getCompilerOptions()
-        .setAdditionalConfigFilePath(getTestDataPath() + "/" + getBasePath() + "/" + getTestName(false) + "_custom_config.xml");
+        .setAdditionalConfigFilePath(getTestDataPath() + "/" + "/" + getTestName(false) + "_custom_config.xml");
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", ""));
     });
     // following is ignored because overridden at bc level
@@ -988,7 +917,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testConditionalCompilationConstantsInMxml() throws Exception {
+  public void testConditionalCompilationConstantsInMxml() {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", "CONFIG1::defined1\t\nCONFIG1::defined2\t-1"));
       bc.getCompilerOptions().setAdditionalOptions("-compiler.define=CONFIG2::defined3,true");
@@ -999,48 +928,47 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testPredefinedTagsInsideRootTagWithDefaultProperty() throws Exception {
+  public void testPredefinedTagsInsideRootTagWithDefaultProperty() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
   @JSTestOptions(value = {JSTestOption.WithFlexFacet}, selectLookupItem = 0)
-  public void testInFlex3RootTag() throws Exception {
+  public void testInFlex3RootTag() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testPredefinedTagsInsideNonContainerRootTag() throws Exception {
+  public void testPredefinedTagsInsideNonContainerRootTag() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testPredefinedTagsInsideNotRootTagWithDefaultProperty() throws Exception {
+  public void testPredefinedTagsInsideNotRootTagWithDefaultProperty() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testXmlSourceAndFormatAttrs() throws Exception {
+  public void testXmlSourceAndFormatAttrs() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testXmlListInXmlListCollection() throws Exception {
+  public void testXmlListInXmlListCollection() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testNoCompletionInFxPrivate() throws Exception {
+  public void testNoCompletionInFxPrivate() {
     myCompletionPerformer = () -> {
-      final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(myProject, getEditor().getDocument());
+      final LinkedHashMap<Integer, String> map = JSTestUtils.extractPositionMarkers(getProject(), myFixture.getEditor().getDocument());
       for (Map.Entry<Integer, String> entry : map.entrySet()) {
-        myItems = null;
-        getEditor().getCaretModel().moveToOffset(entry.getKey());
+        myFixture.getEditor().getCaretModel().moveToOffset(entry.getKey());
         super.complete();
-        assertNull(myItems);
+        assertEmpty(myFixture.getLookupElements());
       }
     };
 
@@ -1048,56 +976,55 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk, JSTestOption.WithJsSupportLoader})
-  public void testFxLibraryAndFxDefinition() throws Exception {
+  public void testFxLibraryAndFxDefinition() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public final void testMxmlFieldReference() throws Exception {
+  public final void testMxmlFieldReference() {
     final String testName = getTestName(false);
 
-    doTestForFiles(new VirtualFile[]{getVirtualFile(BASE_PATH + testName + "/aaa/" + testName + ".mxml")}, "", "mxml",
-                   new File(getTestDataPath() + getBasePath() + File.separatorChar + testName));
+    doTestForFiles(new String[]{testName + "/aaa/" + testName + ".mxml"}, "", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testMatchingClassFromSomePackage() throws Exception {
+  public final void testMatchingClassFromSomePackage() {
     final String testName = getTestName(false);
 
-    VirtualFile[] vFiles =
-      new VirtualFile[]{getVirtualFile(getBasePath() + testName + ".mxml"), getVirtualFile(getBasePath() + testName + ".as")};
+    String[] vFiles =
+      new String[]{testName + ".mxml",testName + ".as"};
     doTestForFiles(vFiles, "", "mxml");
   }
 
   @JSTestOptions(selectLookupItem = 0)
-  public void testCompletionDoesNotCorruptCode() throws Exception {
+  public void testCompletionDoesNotCorruptCode() {
     doTest("", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testDoNotSuggestFlex3NamespaceInFlex4Context() throws Exception {
+  public void testDoNotSuggestFlex3NamespaceInFlex4Context() {
     commonFlex3NamespaceInFlex4Context("library://ns.adobe.com/flex/mx", "mx.containers.*");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testSuggestClassInAllSuitableNamespaces() throws Exception {
+  public void testSuggestClassInAllSuitableNamespaces() {
     commonFlex3NamespaceInFlex4Context("http://www.adobe.com/2006/mxml", "mx.containers.*", "library://ns.adobe.com/flex/mx");
   }
 
   private void commonFlex3NamespaceInFlex4Context(final String namespaceToSelect, final String... otherExpectedNamespaces)
-    throws Exception {
-    configureByFile(BASE_PATH + getTestName(false) + ".mxml");
+    {
+    myFixture.configureByFile(getTestName(false) + ".mxml");
     complete();
 
     final String[] expectedNamespaces = ArrayUtil.mergeArrays(new String[]{namespaceToSelect}, otherExpectedNamespaces);
 
-    assertEquals(expectedNamespaces.length, myItems.length);
-    final String[] namespaces = new String[myItems.length];
+    assertEquals(expectedNamespaces.length, myFixture.getLookupElements().length);
+    final String[] namespaces = new String[myFixture.getLookupElements().length];
     LookupElement selectedElement = null;
 
-    for (int i = 0; i < myItems.length; i++) {
-      final LookupElement lookupElement = myItems[i];
+    for (int i = 0; i < myFixture.getLookupElements().length; i++) {
+      final LookupElement lookupElement = myFixture.getLookupElements()[i];
       final LookupElementPresentation presentation = new LookupElementPresentation();
       lookupElement.renderElement(presentation);
 
@@ -1111,56 +1038,57 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
     assertSameElements(namespaces, expectedNamespaces);
     assertNotNull(selectedElement);
-    selectItem(selectedElement, Lookup.REPLACE_SELECT_CHAR);
-    checkResultByFile(BASE_PATH + getTestName(false) + "_after.mxml");
+    myFixture.getLookup().setCurrentItem(selectedElement);
+    myFixture.type(Lookup.REPLACE_SELECT_CHAR);
+    myFixture.checkResultByFile(getTestName(false) + "_after.mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testSuggestCorrectPrefix() throws Exception {
+  public void testSuggestCorrectPrefix() {
     final String testName = getTestName(false);
 
     doTestForFiles(new String[]{testName + ".mxml", testName + "_other.as"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testEnumeratedMetadataAttributeValue() throws Exception {
+  public void testEnumeratedMetadataAttributeValue() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testTypeAttributeOfEventMetadata() throws Exception {
+  public void testTypeAttributeOfEventMetadata() {
     doTest("", "as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testImplicitImport() throws Exception {
+  public void testImplicitImport() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testNoApplicationPropertyCompletionInsideFxDeclarations() throws Exception {
+  public void testNoApplicationPropertyCompletionInsideFxDeclarations() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testNonVisualComponentInsideFxDeclarations() throws Exception {
+  public void testNonVisualComponentInsideFxDeclarations() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testIdAttribute() throws Exception {
+  public void testIdAttribute() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testPropertySpecifiedByMxmlIdAttribute() throws Exception {
+  public void testPropertySpecifiedByMxmlIdAttribute() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_other.mxml"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testPropertySpecifiedByMxmlIdAttributeInParent() throws Exception {
+  public void testPropertySpecifiedByMxmlIdAttributeInParent() {
     final String testName = getTestName(false);
     doTestForFiles(
       new String[]{testName + ".mxml", testName + "_other.mxml", testName + "_otherSuper.as", testName + "_otherSuperSuper.mxml"},
@@ -1168,121 +1096,122 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxgComponentCompletion() throws Exception {
+  public void testFxgComponentCompletion() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml", "CommonFxgComponent.fxg"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxgAttributeCompletion() throws Exception {
+  public void testFxgAttributeCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     doTestForFiles(new String[]{getTestName(false) + ".mxml", "CommonFxgComponent.fxg"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxgSubTagCompletion() throws Exception {
+  public void testFxgSubTagCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     doTestForFiles(new String[]{getTestName(false) + ".mxml", "CommonFxgComponent.fxg"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxgClassCompletion() throws Exception {
+  public void testFxgClassCompletion() {
     doTestForFiles(new String[]{getTestName(false) + ".mxml", "CommonFxgComponent.fxg"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxgClassMembersCompletion() throws Exception {
+  public void testFxgClassMembersCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     doTestForFiles(new String[]{getTestName(false) + ".as", "CommonFxgComponent.fxg"}, "as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxComponent() throws Exception {
+  public void testFxComponent() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxComponentChildren() throws Exception {
+  public void testFxComponentChildren() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxReparent() throws Exception {
+  public void testFxReparent() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testStaticBlock() throws Exception {
+  public void testStaticBlock() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testStaticBlock2() throws Exception {
+  public void testStaticBlock2() {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testRootTagCompletion() throws Exception {
+  public void testRootTagCompletion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testRootTagReferencingToThisMxmlItself() throws Exception {
+  public void testRootTagReferencingToThisMxmlItself() {
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testInsideTagWithDefaultPropertyOfObjectType() throws Exception {
+  public void testInsideTagWithDefaultPropertyOfObjectType() {
     mxmlTest();
     // need to check that it was really mx:DataGridColumn completion, but not incomplete DataGridColumn completion from mx.controls.dataGridClasses.* namespace
-    assertNull(myItems);
+    assertNull(myFixture.getLookupElements());
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testInsideTagWithDefaultPropertyOfAnyType() throws Exception {
+  public void testInsideTagWithDefaultPropertyOfAnyType() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_other.as"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testIdAndPredefinedAttributes() throws Exception {
+  public void testIdAndPredefinedAttributes() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testLanguageTagsInInlineRenderer() throws Exception {
+  public void testLanguageTagsInInlineRenderer() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public final void testBindingCompletion() throws Exception {
+  public final void testBindingCompletion() {
     mxmlTest();
-    assertEquals(2, myItems.length);
-    assertEquals("BaseListData", myItems[0].getLookupString());
-    assertEquals("TreeListData", myItems[1].getLookupString());
-    selectItem(myItems[0]);
+    assertEquals(2, myFixture.getLookupElements().length);
+    assertEquals("BaseListData", myFixture.getLookupElements()[0].getLookupString());
+    assertEquals("TreeListData", myFixture.getLookupElements()[1].getLookupString());
+    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]);
+    myFixture.type('\n');
     checkResultByFile("_after2", MXML_EXTENSION, null);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testMobileApplicationChildren() throws Exception {
+  public final void testMobileApplicationChildren() {
     mxmlTest();
-    assertNull(myItems);
+    assertNull(myFixture.getLookupElements());
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public final void testInternalPropertiesInMxml() throws Exception {
+  public final void testInternalPropertiesInMxml() {
     final String testName = getTestName(false);
-    doTestForFiles(new VirtualFile[]{getVirtualFile(BASE_PATH + testName + ".mxml"), getVirtualFile(BASE_PATH + testName + "_other.as")},
+    doTestForFiles(new String[]{testName + ".mxml",testName + "_other.as"},
                    "", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testMxmlIdValueSuggestion() throws Exception {
+  public final void testMxmlIdValueSuggestion() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
@@ -1303,32 +1232,27 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testParentGetter() throws Exception {
+  public void testParentGetter() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_2.mxml"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testVectorAttributes() throws Exception {
+  public final void testVectorAttributes() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     mxmlTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testLowercasedMxml() throws Exception {
+  public void testLowercasedMxml() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", Character.toLowerCase(testName.charAt(0)) + testName.substring(1) + "_other.mxml"},
                    "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexLib, JSTestOption.WithSmartCompletion})
-  public void testNonApplicableInheritors() throws Exception {
-    FlexTestUtils.modifyConfigs(myProject, editor -> {
-      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-      final ModifiableFlexBuildConfiguration bc2 = editor.copyConfiguration(bc1, BuildConfigurationNature.DEFAULT);
-      bc2.setName("bc 2");
-      bc2.getDependencies().getModifiableEntries().clear();
-    });
+  public void testNonApplicableInheritors() {
+    FlexTestUtils.addFlexLibrary(false, myModule, "Flex Lib", true, getTestDataPath() + "../flexlib", "flexlib.swc", null, null);
 
     LookupElement[] elements = doTest("", "as");
 
@@ -1337,8 +1261,10 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("Base64Image", elements[1].getLookupString());
     assertEquals("ImageMap", elements[2].getLookupString());
 
-    final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(myModule);
-    manager.setActiveBuildConfiguration(manager.findConfigurationByName("bc 2"));
+    FlexTestUtils.modifyConfigs(getProject(), editor -> {
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      bc1.getDependencies().getModifiableEntries().clear();
+    });
 
     elements = doTest("", "as");
 
@@ -1346,7 +1272,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("Image", elements[0].getLookupString());
   }
 
-  private static void withNoAbsoluteReferences(ThrowableRunnable<Exception> r) throws Exception {
+  private static void withNoAbsoluteReferences(Runnable r) {
     boolean b = ReferenceSupport.ALLOW_ABSOLUTE_REFERENCES_IN_TESTS;
     ReferenceSupport.ALLOW_ABSOLUTE_REFERENCES_IN_TESTS = false;
     try {
@@ -1358,55 +1284,54 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testDoNotSuggestClassesWithoutDefaultConstructor() throws Exception {
+  public void testDoNotSuggestClassesWithoutDefaultConstructor() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_other.as"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testMxmlFromOtherPackage() throws Exception {
+  public void testMxmlFromOtherPackage() {
     final String testName = getTestName(false);
-    doTestForFiles(new VirtualFile[]
-                     {getVirtualFile(getBasePath() + testName + ".mxml"),
-                       getVirtualFile(getBasePath() + testName + "/" + "CustomButton.mxml")},
-                   "", "mxml", new File(getTestDataPath() + getBasePath()));
+    doTestForFiles(new String[]
+                     {testName + ".mxml", testName + "/" + "CustomButton.mxml"},
+                   "", "mxml");
   }
 
-  public void testFontFaceProperties() throws Exception {
+  public void testFontFaceProperties() {
     defaultTest();
-    checkWeHaveInCompletion(myItems, "embedAsCFF", "advancedAntiAliasing");
+    checkWeHaveInCompletion(myFixture.getLookupElements(), "embedAsCFF", "advancedAntiAliasing");
   }
 
-  public void testKeywords() throws Exception {
+  public void testKeywords() {
     defaultTest();
-    checkWeHaveInCompletion(myItems, "for", "if");
+    checkWeHaveInCompletion(myFixture.getLookupElements(), "for", "if");
   }
 
-  public void testPropertyKey() throws Exception {
+  public void testPropertyKey() {
     final String testName = getTestName(false);
     doTestForFiles(new String[]{testName + ".mxml", testName + "_2.properties"}, "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testStateGroups() throws Exception {
+  public void testStateGroups() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(true);
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public final void testStarlingEvent() throws Exception {
+  public final void testStarlingEvent() {
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck(false);
     doTest("", "as");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public final void testNoDuplicateVariants() throws Exception {
+  public final void testNoDuplicateVariants() {
     doTest("", "as");
   }
 
-  public void testVectorObject() throws Exception {
-    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
-    FlexTestUtils.modifyConfigs(myProject, editor -> {
+  public void testVectorObject() {
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, myFixture.getTestRootDisposable());
+    FlexTestUtils.modifyConfigs(getProject(), editor -> {
       ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
       FlexTestUtils.setSdk(bc1, sdk45);
     });
@@ -1415,17 +1340,16 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertTrue(getBoldStatus(elements[0]));
   }
 
-  public void testCompletionPerformance() throws Exception {
-    myAfterCommitRunnable = () -> {
-      FlexTestUtils.addFlexLibrary(false, myModule, "playerglobal", false, getTestDataPath() + getBasePath(), "playerglobal.swc",
+  public void testCompletionPerformance() {
+    FlexTestUtils.addFlexLibrary(false, myModule, "playerglobal", false, getTestDataPath(), "playerglobal.swc",
                                    null, null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "playerglobal"));
 
-      final PsiElement clazz = ActionScriptClassResolver
-        .findClassByQNameStatic("flash.display3D.textures.CubeTexture", GlobalSearchScope.moduleWithLibrariesScope(myModule));
-      clazz.getNode(); // this is required to switch from stubs to AST for library.swf from playerglobal.swc
-    };
+    //final PsiElement clazz = ActionScriptClassResolver
+      //  .findClassByQNameStatic("flash.display3D.textures.CubeTexture", GlobalSearchScope.moduleWithLibrariesScope(myModule));
+      //clazz.getNode(); // this is required to switch from stubs to AST for library.swf from playerglobal.swc
 
-    configureByFile(BASE_PATH + getTestName(false) + ".as");
+    myFixture.configureByFile(getTestName(false) + ".as");
 
     final boolean doProfiling = false;
     if (doProfiling) ProfilingUtil.startCPUProfiling();
@@ -1440,17 +1364,23 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public void testOnlyValidPackageNamesInCompletion() {
-    configureByText(ActionScriptFileType.INSTANCE, "var a: String = new <caret>");
+    myFixture.configureByText(ActionScriptFileType.INSTANCE, "var a: String = new <caret>");
 
     VirtualFile srcRoot = ModuleRootManager.getInstance(myModule).getSourceRoots(false)[0];
-    createChildDirectory(srcRoot, ".idea");
-    createChildDirectory(srcRoot, ".foo");
-    createChildDirectory(srcRoot, "a b");
-    createChildDirectory(srcRoot, "###");
-    createChildDirectory(srcRoot, "abc123");
+    WriteCommandAction.runWriteCommandAction(getProject(), ()-> {
+      try {
+        srcRoot.createChildDirectory(null, ".idea");
+        srcRoot.createChildDirectory(null, ".foo");
+        srcRoot.createChildDirectory(null, "a b");
+        srcRoot.createChildDirectory(null, "###");
+        srcRoot.createChildDirectory(null, "abc123");
+      } catch (IOException e) {
+        throw new Error(e);
+      }
+    });
 
     complete();
-    List<String> items = ContainerUtil.map(myItems, (e) -> e.getLookupString());
+    List<String> items = ContainerUtil.map(myFixture.getLookupElements(), (e) -> e.getLookupString());
     assertDoesntContain(items, "", "\"\"", "a b", "###");
     assertContainsElements(items, "abc123");
   }

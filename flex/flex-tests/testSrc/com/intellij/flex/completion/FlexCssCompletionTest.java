@@ -4,27 +4,22 @@ import com.intellij.codeInsight.completion.CodeCompletionHandlerBase;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSCompletionTestCase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.css.codeStyle.CssCodeStyleSettings;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.testFramework.LightProjectDescriptor;
 
 public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
-  protected Runnable myAfterCommitRunnable = null;
-
   @Override
   protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
-    myAfterCommitRunnable = null;
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
 
     CodeStyleSettings globalSettings = CodeStyleSettingsManager.getSettings(getProject());
     CssCodeStyleSettings settings = globalSettings.getCustomSettings(CssCodeStyleSettings.class);
@@ -33,37 +28,17 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Override
-  protected void tearDown() throws Exception {
-    myAfterCommitRunnable = null;
-    super.tearDown();
-  }
-
-  @Override
-  protected void doCommitModel(@NotNull ModifiableRootModel rootModel) {
-    super.doCommitModel(rootModel);
-    if (myAfterCommitRunnable != null) {
-      myAfterCommitRunnable.run();
-    }
-  }
-
-  @Override
-  protected String getBasePath() {
-    return FlexCompletionTest.BASE_PATH;
-  }
-
-  @Override
   protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("");
+    return FlexTestUtils.getTestDataPath(FlexCompletionTest.BASE_PATH);
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
-  @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override
@@ -72,32 +47,36 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssPropertyCompletion() throws Exception {
+  public void testCssPropertyCompletion() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssPropertyCompletion1() throws Exception {
+  public void testCssPropertyCompletion1() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssPropertyCompletion2() throws Exception {
+  public void testCssPropertyCompletion2() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssPropertyCompletion3() throws Exception {
+  public void testCssPropertyCompletion3() {
+    setUpJdk();
     doTest("", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testHtmlCssCompletion() throws Exception {
+  public void testHtmlCssCompletion() {
     doTest("", "html");
   }
 
   /*@JSTestOptions({WithJsSupportLoader, WithFlexFacet})
-  public void testHtmlCssCompletion1() throws Exception {
+  public void testHtmlCssCompletion1() {
     final VirtualFile[] files= new VirtualFile[]{
       getVirtualFile(getBasePath() + getTestName(false) + ".css"),
       getVirtualFile(getBasePath() + "HtmlFileReferringToCss.html")
@@ -106,50 +85,55 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }*/
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssSelectorCompletion() throws Exception {
+  public void testCssSelectorCompletion() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssSelectorAfterPipeCompletion() throws Exception {
+  public void testCssSelectorAfterPipeCompletion() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssSelectorCompletion1() throws Exception {
+  public void testCssSelectorCompletion1() {
+    setUpJdk();
     doTest("", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssColorValueCompletion() throws Exception {
+  public void testCssColorValueCompletion() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssEnumValueCompletion() throws Exception {
+  public void testCssEnumValueCompletion() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCssClassCompletion() throws Exception {
+  public void testCssClassCompletion() {
     doTest("", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testDifferentStyleDeclarations1() throws Exception {
+  public void testDifferentStyleDeclarations1() {
     addDifferentStyleDeclarationsLibrary();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testDifferentStyleDeclarations2() throws Exception {
+  public void testDifferentStyleDeclarations2() {
     addDifferentStyleDeclarationsLibrary();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testDifferentStyleDeclarations3() throws Exception {
-    addDifferentStyleDeclarationsLibrary();
+  public void testDifferentStyleDeclarations3() {
+    setUpJdk();
     addDifferentStyleDeclarationsLibrary();
     LookupElement[] items = doTest("");
     assertNotNull(items);
@@ -161,65 +145,67 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testDifferentStyleDeclarations4() throws Exception {
+  public void testDifferentStyleDeclarations4() {
     addDifferentStyleDeclarationsLibrary();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testDifferentStyleDeclarations5() throws Exception {
+  public void testDifferentStyleDeclarations5() {
     addDifferentStyleDeclarationsLibrary();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testDifferentStyleDeclarations6() throws Exception {
+  public void testDifferentStyleDeclarations6() {
     addDifferentStyleDeclarationsLibrary();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testDifferentStyleDeclarations7() throws Exception {
+  public void testDifferentStyleDeclarations7() {
     addDifferentStyleDeclarationsLibrary();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testMetadataStyle() throws Exception {
-    String prefix = this.getBasePath() + getTestName(false);
-    final VirtualFile[] vFiles = new VirtualFile[]{getVirtualFile(prefix + "." + "css"), getVirtualFile(prefix + "." + "mxml")};
-    doTestForFiles(vFiles, "", "css");
+  public void testMetadataStyle() {
+    String prefix = getTestName(false);
+    doTestForFiles(new String[]{prefix + "." + "css", prefix + "." + "mxml"}, "", "css");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void _testClassReferenceCompletion() throws Exception {
-    configureByFiles(null, FlexCompletionTest.BASE_PATH + getTestName(false) + ".css");
-    new CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(myProject, myEditor);
-    checkResultByFile(FlexCompletionTest.BASE_PATH + getTestName(false) + "_after.css");
+  public void _testClassReferenceCompletion() {
+    myFixture.configureByFiles(FlexCompletionTest.BASE_PATH + getTestName(false) + ".css");
+    new CodeCompletionHandlerBase(CompletionType.BASIC).invokeCompletion(getProject(), myFixture.getEditor());
+    myFixture.checkResultByFile(FlexCompletionTest.BASE_PATH + getTestName(false) + "_after.css");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testSelectorAfterNamespacePrefix1() throws Exception {
+  public void testSelectorAfterNamespacePrefix1() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testSelectorAfterNamespacePrefix2() throws Exception {
+  public void testSelectorAfterNamespacePrefix2() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testPropertyUnderSelectorWithNamespace1() throws Exception {
+  public void testPropertyUnderSelectorWithNamespace1() {
+    setUpJdk();
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testPropertyUnderSelectorWithNamespace2() throws Exception {
+  public void testPropertyUnderSelectorWithNamespace2() {
     doTest("");
   }
 
   private void addDifferentStyleDeclarationsLibrary() {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getBasePath(), "DifferentStyleDeclarations.swc", null, null);
+    FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath(), "DifferentStyleDeclarations.swc", null, null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "Lib"));
   }
 }

@@ -5,26 +5,29 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.javaee.ExternalResourceManagerExImpl;
 import com.intellij.lang.javascript.BaseJSCompletionTestCase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThrowableRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -35,6 +38,13 @@ import java.util.Arrays;
 @SuppressWarnings({"ALL"})
 public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
+  public static final LightProjectDescriptor JAVA_PROJECT_DESCRIPTOR = new LightProjectDescriptor() {
+    @NotNull
+    @Override
+    public ModuleType getModuleType() {
+      return StdModuleTypes.JAVA;
+    }
+  };
 
   {
     mySmartCompletionTests.addAll(Arrays.asList(
@@ -50,8 +60,9 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @Override
   public void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
+    CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
   }
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -61,24 +72,24 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("");
+    return FlexTestUtils.getTestDataPath(getBasePath());
   }
 
   private boolean needsJavaModule() {
     return JSTestUtils.getTestMethod(getClass(), getTestName(false)).getAnnotation(NeedsJavaModule.class) != null;
   }
 
-  @Override
   protected void setUpJdk() {
-    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     if (!needsJavaModule()) {
-      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
     }
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return needsJavaModule() ?
+           JAVA_PROJECT_DESCRIPTOR :
+           FlexProjectDescriptor.DESCRIPTOR;
   }
 
   public final void testBasic() throws Exception {
@@ -126,22 +137,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions(selectLookupItem = 0)
   public final void testKeywordsInContext() throws Exception {
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + getTestName(false) + ".js2"),
-      getVirtualFile(BASE_PATH + getTestName(false) + "_2.js2"),
-    };
-    final LookupElement[] lookupElements = doTestForFiles(files);
+    final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
     assertEquals("extends", lookupElements[0].getLookupString());
     assertTrue(getBoldStatus(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
   }
 
   public final void testKeywordsInContext2() throws Exception {
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + getTestName(false) + ".js2"),
-      getVirtualFile(BASE_PATH + getTestName(false) + "_2.js2"),
-    };
-    final LookupElement[] lookupElements = doTestForFiles(files);
+    final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
     assertEquals("public", lookupElements[0].getLookupString());
     assertTrue(getBoldStatus(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
@@ -165,23 +168,19 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions(value = JSTestOption.WithLoadingAndSavingCaches)
   public final void testVarTypePickedUp2() throws Exception {
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + getTestName(false) + ".js2"),
-      getVirtualFile(BASE_PATH + getTestName(false) + "_2.js2"),
-    };
-    doTestForFiles(files);
+    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
   public final void testCustomMeta() throws Exception {
     String testName = getTestName(false);
-    configureByFiles(null, BASE_PATH + testName + ".js2", BASE_PATH + testName + ".dtd");
-    final VirtualFile relativeFile = VfsUtil.findRelativeFile(testName + ".dtd", myFile.getVirtualFile());
+    myFixture.configureByFiles(testName + ".js2", testName + ".dtd");
+    final VirtualFile relativeFile = VfsUtil.findRelativeFile(testName + ".dtd", myFixture.getFile().getVirtualFile());
     ExternalResourceManagerExImpl.registerResourceTemporarily(JSAttributeImpl.URN_FLEX_META, relativeFile.getPath(), getTestRootDisposable());
 
     complete();
     checkResultByFile("", getExtension());
 
-    configureByFiles(null, BASE_PATH + testName + "2.js2");
+    myFixture.configureByFiles(testName + "2.js2");
     complete();
     checkResultByFile("2", getExtension());
   }
@@ -199,11 +198,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public final void testFuncTypePickedUp3() throws Exception {
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + getTestName(false) + ".js2"),
-      getVirtualFile(BASE_PATH + getTestName(false) + "_2.js2"),
-    };
-    doTestForFiles(files);
+    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
   public final void testFuncTypePickedUp4() throws Exception {
@@ -221,6 +216,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public final void testCompleteAfterThis2() throws Exception {
     doTest("");
     mySmartCompletionTests.remove(getTestName(false));
+    FileDocumentManager.getInstance().saveAllDocuments();
     doTest("");
   }
 
@@ -264,8 +260,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public final void testCompleteNS4() throws Exception {
     doTest("");
-    assertNotNull(myItems);
-    assertEquals("MyNamespace", myItems[0].getLookupString());
+    assertNotNull(myFixture.getLookupElements());
+    assertEquals("MyNamespace", myFixture.getLookupElementStrings().get(0));
   }
 
   public final void testCompleteType4() throws Exception {
@@ -323,11 +319,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public final void testInsertImport() throws Exception {
     final String testName = getTestName(false);
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + testName + ".js2"),
-      getVirtualFile(BASE_PATH + testName + "_2.js2")
-    };
-    doTestForFiles(files);
+    doTestForFiles(testName + ".js2", testName + "_2.js2");
   }
 
   public final void testInsertImport2() throws Exception {
@@ -341,15 +333,17 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public final void testInsertImportAmbiguous1() throws Exception {
     final LookupElement[] items = doTest("");
     assertQNames(items, "bar.ClassA", "foo.ClassA");
-    selectItem(items[0]);
-    checkResultByFile(getBasePath() + getTestName(false) + "_after2.js2");
+    myFixture.getLookup().setCurrentItem(items[0]);
+    myFixture.type('\n');
+    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   public final void testInsertImportAmbiguous2() throws Exception {
     final LookupElement[] items = doTest("");
     assertQNames(items, "bar.ClassA", "foo.ClassA");
-    selectItem(items[0]);
-    checkResultByFile(getBasePath() + getTestName(false) + "_after2.js2");
+    myFixture.getLookup().setCurrentItem(items[0]);
+    myFixture.type('\n');
+    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   public final void testInsertImportAmbiguous3() throws Exception {
@@ -367,18 +361,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public final void testInsertImportAmbiguous6() throws Exception {
     final LookupElement[] items = doTest("");
     assertQNames(items, "ClassA", "bar.ClassA");
-    selectItem(items[0]);
-    checkResultByFile(getBasePath() + getTestName(false) + "_after2.js2");
+    myFixture.getLookup().setCurrentItem(items[0]);
+    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   // Looks like tested functionality has never worked in run time, previously test passed because of a trick in base test class
   public final void _testInsertImportForStaticField() throws Exception {
     final String testName = getTestName(false);
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + testName + ".js2"),
-      getVirtualFile(BASE_PATH + testName + "_2.js2")
-    };
-    doTestForFiles(files);
+    doTestForFiles(testName + ".js2", testName + "_2.js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
@@ -405,17 +395,17 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public final void testVarTypePickedUp3() throws Exception {
     doTest("");
-    assertNotNull(myItems);
+    assertNotNull(myFixture.getLookupElements());
   }
 
   public final void testVarTypePickedUp4() throws Exception {
     doTest("");
-    assertNotNull(myItems);
+    assertNotNull(myFixture.getLookupElements());
   }
 
   public final void testVarTypePickedUp5() throws Exception {
     doTest("");
-    assertNotNull(myItems);
+    assertNotNull(myFixture.getLookupElements());
   }
 
   @JSTestOptions(selectLookupItem = 0)
@@ -433,25 +423,23 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions(value = JSTestOption.WithLoadingAndSavingCaches)
   public final void testCompletePackage4() throws Exception {
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + getTestName(false) + ".js2"),
-      getVirtualFile(BASE_PATH + getTestName(false) + "_2.js2")
-    };
-    doTestForFiles(files);
+    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public final void testCompleteType() throws Exception {
+    setUpJdk();
     doTest("");
-    assertEquals("*", myItems[0].getLookupString());
-    assertEquals("MyClass", myItems[1].getLookupString());
-    assertEquals("Array", myItems[14].getLookupString());
-    assertEquals("int", myItems[58].getLookupString());
-    assertTrue(myItems.length < 110);
+    assertEquals("*", myFixture.getLookupElements()[0].getLookupString());
+    assertEquals("MyClass", myFixture.getLookupElements()[1].getLookupString());
+    assertEquals("Array", myFixture.getLookupElements()[14].getLookupString());
+    assertEquals("int", myFixture.getLookupElements()[58].getLookupString());
+    assertTrue(myFixture.getLookupElements().length < 110);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public final void testCompleteType2() throws Exception {
+    setUpJdk();
     doTest("");
   }
 
@@ -460,24 +448,17 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public final void testCompleteTypeInNew() throws Exception {
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + getTestName(false) + ".js2"),
-      getVirtualFile(BASE_PATH + getTestName(false) + "_2.js2")
-    };
-    doTestForFiles(files);
+    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public final void testCompleteTypeInNew2() throws Exception {
+    setUpJdk();
     doTest("");
   }
 
   public final void testCompleteBeforeLocalVar() throws Exception {
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + getTestName(false) + ".js2"),
-      getVirtualFile(BASE_PATH + getTestName(false) + "_2.js2")
-    };
-    doTestForFiles(files);
+    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
   public final void testNoCompletionForDHTML() throws Exception {
@@ -529,7 +510,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @JSTestOptions(JSTestOption.WithSmartCompletion)
   public final void testCompletionInXmlTag() throws Exception {
     LookupElement[] items = doTest("");
-    assertNull(items);
+    assertEmpty(items);
   }
 
   public void testGenerics() throws Exception {
@@ -616,8 +597,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @NeedsJavaModule
   public void testCompleteStyleNameInString() throws Exception {
-    final String base = BASE_PATH + getTestName(false);
-    doTestForFiles(new VirtualFile[]{getVirtualFile(base + ".js2"), getVirtualFile(base + "_2.js2")});
+    final String base = getTestName(false);
+    doTestForFiles(base + ".js2", base + "_2.js2");
   }
 
   public void testCompleteAfterUnknownVariable() throws Exception {
@@ -653,12 +634,11 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     try {
       final String testName = getTestName(false);
 
-      configureByFiles(null, new VirtualFile[]{
-        getVirtualFile(BASE_PATH + testName + ".js2")
-      });
+      myFixture.configureByFile(testName + ".js2");
       complete();
-      selectItem(myItems[0], ';');
-      checkResultByFile(BASE_PATH + testName + "_after.js2");
+      myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]);
+      myFixture.type(';');
+      myFixture.checkResultByFile(testName + "_after.js2");
     }
     finally {
       CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = old;
@@ -666,11 +646,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public final void testIncludedMemberTypePickedUp() throws Exception {
-    VirtualFile files[] = new VirtualFile[]{
-      getVirtualFile(BASE_PATH + getTestName(false) + ".js2"),
-      getVirtualFile(BASE_PATH + getTestName(false) + "_included.js2")
-    };
-    doTestForFiles(files);
+    doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_included.js2");
   }
 
   @JSTestOptions(selectLookupItem = 0)
@@ -680,21 +656,22 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public final void testCompleteAmbiguousClass() throws Exception {
     doTest("");
-    assertNotNull(myItems);
-    assertEquals(2, myItems.length);
-    assertLookupElement(myItems[0], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
-    assertLookupElement(myItems[1], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
+    assertNotNull(myFixture.getLookupElements());
+    assertEquals(2, myFixture.getLookupElements().length);
+    assertLookupElement(myFixture.getLookupElements()[0], "ClassA", " (com.bar)", "CompleteAmbiguousClass.js2");
+    assertLookupElement(myFixture.getLookupElements()[1], "ClassA", " (com.foo)", "CompleteAmbiguousClass.js2");
 
-    selectItem(myItems[1]);
-    checkResultByFile(getBasePath() + getTestName(false) + "_2_after.js2");
+    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[1]);
+    myFixture.type('\n');
+    myFixture.checkResultByFile(getTestName(false) + "_2_after.js2");
   }
 
   public final void testCompleteStaticFunction() throws Exception {
     doTest("");
-    assertNotNull(myItems);
-    assertEquals(2, myItems.length);
-    assertLookupElement(myItems[0], "getXXX", "() (test)", "Class");
-    assertLookupElement(myItems[1], "getYYY", "() (test2)", "Class");
+    assertNotNull(myFixture.getLookupElements());
+    assertEquals(2, myFixture.getLookupElements().length);
+    assertLookupElement(myFixture.getLookupElements()[0], "getXXX", "() (test)", "Class");
+    assertLookupElement(myFixture.getLookupElements()[1], "getYYY", "() (test2)", "Class");
   }
 
   public final void testCompleteStaticFunction2() throws Exception {
@@ -707,10 +684,10 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public void testNamesakeConstructors() throws Exception {
     doTest("");
-    assertNotNull(myItems);
-    assertEquals(2, myItems.length);
-    assertEquals("Test", myItems[0].getLookupString());
-    assertEquals("Test", myItems[1].getLookupString());
+    assertNotNull(myFixture.getLookupElements());
+    assertEquals(2, myFixture.getLookupElements().length);
+    assertEquals("Test", myFixture.getLookupElements()[0].getLookupString());
+    assertEquals("Test", myFixture.getLookupElements()[1].getLookupString());
   }
 
   public void testUnambiguousConstructor() throws Exception {
@@ -720,13 +697,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public void testAmbiguousConstructor() throws Exception {
     doTest("");
 
-    assertNotNull(myItems);
-    assertEquals(2, myItems.length);
-    assertLookupElement(myItems[0], "MyClass", " (bar)", "AmbiguousConstructor.js2");
-    assertLookupElement(myItems[1], "MyClass", " (foo)", "AmbiguousConstructor.js2");
+    assertNotNull(myFixture.getLookupElements());
+    assertEquals(2, myFixture.getLookupElements().length);
+    assertLookupElement(myFixture.getLookupElements()[0], "MyClass", " (bar)", "AmbiguousConstructor.js2");
+    assertLookupElement(myFixture.getLookupElements()[1], "MyClass", " (foo)", "AmbiguousConstructor.js2");
 
-    selectItem(myItems[0]);
-    checkResultByFile(getBasePath() + getTestName(false) + "_after2.js2");
+    myFixture.getLookup().setCurrentItem(myFixture.getLookupElements()[0]);
+    myFixture.type('\n');
+    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   public void testStaticField() throws Exception {
@@ -782,6 +760,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
   public final void testEventName() throws Exception {
+    setUpJdk();
     doTest("");
     doTest("_2");
     doTest("_3");
@@ -832,12 +811,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion, JSTestOption.WithFlexFacet})
   public final void testSmartCompletion2_2() throws Exception {
+    setUpJdk();
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
   public final void testSmartCompletion2_3() throws Exception {
     // TODO consider parseInt() returning Number etc expect to appear. + 2_36 and 2_36_2. see JSTypeUtils.typeCanBeAssignedWithoutCoercion
+    setUpJdk();
     defaultTest();
   }
 
@@ -923,10 +904,12 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testSmartCompletion2_20() throws Exception {
+    setUpJdk();
     LookupElement[] lookupElements = defaultTest();
     assertEquals(2, lookupElements.length);
     assertEquals("<Boolean>[]", lookupElements[0].getLookupString());
-    selectItem(lookupElements[1]);
+    myFixture.getLookup().setCurrentItem(lookupElements[1]);
+    myFixture.type('\n');
     checkResultByFile("_2", "js2");
   }
 
@@ -1121,19 +1104,13 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testNoJs() throws Exception {
     String testName = getTestName(false);
-    final VirtualFile[] vFiles = new VirtualFile[]{
-      getVirtualFile(getBasePath() + testName + ".js2"), getVirtualFile(getBasePath() + testName + ".js")
-    };
-    doTestForFiles(vFiles, "", "js2");
+    doTestForFiles(new String[] {testName + ".js2", testName + ".js"}, "", "js2");
   }
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testCompleteInRHSOfAsBinOp() throws Exception {
     String testName = getTestName(false);
-    final VirtualFile[] vFiles = new VirtualFile[]{
-      getVirtualFile(getBasePath() + testName + ".js2"), getVirtualFile(getBasePath() + testName + "_2.js2")
-    };
-    doTestForFiles(vFiles, "", "js2");
+    doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
   }
 
   public final void testCompleteStaticConst() throws Exception {
@@ -1152,10 +1129,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testNoInaccessibleCompletion() throws Exception {
     String testName = getTestName(false);
-    final VirtualFile[] vFiles = new VirtualFile[]{
-      getVirtualFile(getBasePath() + testName + ".js2"), getVirtualFile(getBasePath() + testName + "_2.js2")
-    };
-    doTestForFiles(vFiles, "", "js2");
+    doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
   }
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
@@ -1180,35 +1154,40 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testCompleteWithTab() throws Exception {
     LookupElement[] lookupElements = defaultTest();
-    selectItem(lookupElements[0], Lookup.REPLACE_SELECT_CHAR);
-    checkResultByFile(BASE_PATH + getTestName(false) + "_after2.js2");
+    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    myFixture.type(Lookup.REPLACE_SELECT_CHAR);
+    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testCompleteWithCompleteStatement() throws Exception {
     LookupElement[] lookupElements = defaultTest();
-    selectItem(lookupElements[0], Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
-    checkResultByFile(BASE_PATH + getTestName(false) + "_after2.js2");
+    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    myFixture.type(Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
+    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testCompleteWithCompleteStatement2() throws Exception {
     LookupElement[] lookupElements = defaultTest();
-    selectItem(lookupElements[0], Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
-    checkResultByFile(BASE_PATH + getTestName(false) + "_after2.js2");
+    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    myFixture.type(Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
+    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
   public final void testCompleteWithCompleteStatement2_2() throws Exception {
     LookupElement[] lookupElements = defaultTest();
-    selectItem(lookupElements[0], Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
-    checkResultByFile(BASE_PATH + getTestName(false) + "_after2.js2");
+    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    myFixture.type(Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
+    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   public final void testCompleteNearParen() throws Exception {
     LookupElement[] lookupElements = defaultTest();
-    selectItem(lookupElements[0]);
-    checkResultByFile(BASE_PATH + getTestName(false) + "_after2.js2");
+    myFixture.getLookup().setCurrentItem(lookupElements[0]);
+    myFixture.type('\n');
+    myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
   @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
@@ -1216,13 +1195,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions(value = {JSTestOption.WithFlexSdk})
   public final void testQualifiedReference() throws Exception {
+    setUpJdk();
     defaultTest();
   }
 
   public void testTwoSdks() throws Exception {
-    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
-    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, getTestRootDisposable());
-    FlexTestUtils.modifyConfigs(myProject, new Consumer<FlexProjectConfigurationEditor>() {
+    final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, myFixture.getTestRootDisposable());
+    final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, myFixture.getTestRootDisposable());
+    FlexTestUtils.modifyConfigs(getProject(), new Consumer<FlexProjectConfigurationEditor>() {
       @Override
       public void consume(final FlexProjectConfigurationEditor editor) {
         ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
@@ -1248,7 +1228,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
       public void run() throws Exception {
         m.setActiveBuildConfiguration(m.findConfigurationByName(myBcName));
         defaultTest();
-        for (LookupElement item : myItems) {
+        for (LookupElement item : myFixture.getLookupElements()) {
           final TestLookupElementPresentation p = TestLookupElementPresentation.renderReal(item);
           assertEquals(myExpectedTypeText, p.getTypeText());
         }
@@ -1267,10 +1247,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public void testSameParameterName2() throws Exception {
     String testName = getTestName(false);
-    final VirtualFile[] vFiles = new VirtualFile[]{
-      getVirtualFile(getBasePath() + testName + ".js2"), getVirtualFile(getBasePath() + testName + "_2.js2")
-    };
-    final LookupElement[] lookupElements = doTestForFiles(vFiles, "", "js2");
+    final LookupElement[] lookupElements = doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
     assertStartsWith(lookupElements, "x", "a");
   }
 

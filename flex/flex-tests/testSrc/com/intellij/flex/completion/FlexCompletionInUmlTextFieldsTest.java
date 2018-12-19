@@ -11,28 +11,30 @@ import com.intellij.util.ArrayUtil;
 public class FlexCompletionInUmlTextFieldsTest extends FlexCompletionInTextFieldBase {
   @Override
   protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("");
+    return FlexTestUtils.getTestDataPath(BASE_PATH);
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testCreateUmlFieldType() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testCreateUmlFieldType() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     PsiFile fragment =
-      JSCreateFieldDialog.createTypeField(myProject, JSCreateFieldDialog.getTypeFieldScope(myModule, myProject)).getPsiFile();
+      JSCreateFieldDialog.createTypeField(getProject(), JSCreateFieldDialog.getTypeFieldScope(myModule, getProject())).getPsiFile();
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", getTestName(false) + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testCreateUmlFieldInitializer() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testCreateUmlFieldInitializer() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     JSExpressionCodeFragment fragment =
       JSCreateFieldDialog.createInitializerCodeFragment(createFakeClass());
     String[] included = DEFALUT_VALUES;
     // TODO classes should be removed from completion list
     included = ArrayUtil.mergeArrays(included, "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher");
     String[] excluded = new String[]{"public", "function", "while"};
-    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
   }
 }

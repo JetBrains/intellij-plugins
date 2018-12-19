@@ -2,17 +2,17 @@
 package com.intellij.flex.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.BaseJSCompletionInTextFieldTest;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.completion.JSKeywordsCompletionProvider;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,13 +28,12 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
     ArrayUtil.mergeArrays(JSKeywordsCompletionProvider.TYPE_LITERAL_VALUES, "NaN", "Infinity");
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
-  @Override
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override
@@ -57,25 +56,26 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
                                           String[] included,
                                           String[] excluded,
                                           @Nullable String choose,
-                                          String file) throws Exception {
+                                          String file) {
     doTestTextFieldFromFile(fragment, file);
-    assertContains(myItems, true, included);
-    assertContains(myItems, false, excluded);
+    assertContains(myFixture.getLookupElements(), true, included);
+    assertContains(myFixture.getLookupElements(), false, excluded);
     if (choose != null) {
       boolean found = false;
-      for (LookupElement item : myItems) {
+      for (LookupElement item : myFixture.getLookupElements()) {
         if (choose.equals(item.getLookupString())) {
-          selectItem(item);
+          myFixture.getLookup().setCurrentItem(item);
+          myFixture.type('\n');
           found = true;
           break;
         }
       }
       assertTrue("Item '" + choose + "' not found in lookup", found);
-      checkResultByFile(BASE_PATH + getTestName(false) + "_after.txt");
+      myFixture.checkResultByFile(getTestName(false) + "_after.txt");
     }
   }
 
-  private static void assertContains(LookupElement[] items, boolean contains, String... expected) {
+  static void assertContains(LookupElement[] items, boolean contains, String... expected) {
     Collection<String> c = new HashSet<>(Arrays.asList(expected));
     for (LookupElement item : items) {
       final String s = item.getLookupString();
@@ -91,7 +91,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
 
   protected JSClass createFakeClass() {
     return JSPsiImplUtils.findClass((JSFile)JSChangeUtil
-      .createJSTreeFromText(myProject, "package {class Foo { function a() {}} }", JavaScriptSupportLoader.ECMA_SCRIPT_L4)
+      .createJSTreeFromText(getProject(), "package {class Foo { function a() {}} }", JavaScriptSupportLoader.ECMA_SCRIPT_L4)
       .getPsi().getContainingFile());
   }
 }

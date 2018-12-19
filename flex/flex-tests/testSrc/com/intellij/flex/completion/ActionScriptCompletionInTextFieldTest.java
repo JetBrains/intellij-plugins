@@ -24,18 +24,15 @@ import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
 
 public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
 
   @Override
   protected String getTestDataPath() {
-    return FlexTestUtils.getTestDataPath("");
+    return FlexTestUtils.getTestDataPath(BASE_PATH);
   }
 
   private JSFunction createFakeFunction() {
@@ -43,140 +40,130 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testChangeSignatureReturnType() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testChangeSignatureReturnType() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     JSFunction function = createFakeFunction();
     JSExpressionCodeFragment fragment =
       JSChangeSignatureDialog.createReturnTypeCodeFragment(new JSMethodDescriptor(function, false).getReturnType(), function,
                                                            JavaScriptSupportLoader.ECMA_SCRIPT_L4);
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
-    checkTextFieldCompletion(fragment, included, excluded, "Z111", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion(fragment, included, excluded, "Z111", getTestName(false) + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testChangeSignatureParameterTypeCell() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testChangeSignatureParameterTypeCell() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     JSExpressionCodeFragment fragment = JSParameterTableModel.createParameterTypeCellFragment("", createFakeFunction());
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
-    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testChangeSignatureDefaultValueCell() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testChangeSignatureDefaultValueCell() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     JSExpressionCodeFragment fragment = JSParameterTableModel.createDefaultValueCellFragment("", createFakeClass());
     String[] included = DEFALUT_VALUES;
     // TODO classes should be removed from completion list
     included = ArrayUtil.mergeArrays(included, "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher");
     String[] excluded = new String[]{"public", "function", "while"};
-    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testChangeSignatureInitializerCell() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testChangeSignatureInitializerCell() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     JSExpressionCodeFragment fragment = JSParameterTableModel.createInitializerCellFragment("", createFakeClass());
     String[] included = DEFALUT_VALUES;
     // TODO classes should be removed from completion list
     included = ArrayUtil.mergeArrays(included, "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher");
     String[] excluded = new String[]{"public", "function", "while"};
-    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion(fragment, included, excluded, "EventDispatcher", getTestName(false) + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testPackageNameCombo() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testPackageNameCombo() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     PsiFile fragment =
-      JSReferenceEditor.forPackageName("", myProject, "", GlobalSearchScope.projectScope(myProject), "").getPsiFile();
+      JSReferenceEditor.forPackageName("", getProject(), "", GlobalSearchScope.projectScope(getProject()), "").getPsiFile();
     String[] included = new String[]{"com"};
     String[] excluded = new String[]{"public", "function", "while", "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "com", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "com", getTestName(false) + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testPackageNameCombo2() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testPackageNameCombo2() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     PsiFile fragment =
-      JSReferenceEditor.forPackageName("", myProject, "", GlobalSearchScope.projectScope(myProject), "").getPsiFile();
+      JSReferenceEditor.forPackageName("", getProject(), "", GlobalSearchScope.projectScope(getProject()), "").getPsiFile();
     String[] included = new String[]{"foo"};
     String[] excluded = new String[]{"public", "function", "while", "Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "foo", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "foo", getTestName(false) + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testCreateFlexSkinHostComponent() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testCreateFlexSkinHostComponent() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     PsiFile fragment = CreateFlexSkinDialog.createHostComponentCombo("", myModule).getPsiFile();
     String[] included = new String[]{"Z111", "Z222"};
     // TODO primitive types (and e.g. not subclasses of SkinnableComponent?) should be removed from completion list
     String[] excluded = new String[]{"public", "function", "while", "Z333", "EventDispatcher", "int", "String", "uint", "Number"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", getTestName(false) + ".txt");
   }
 
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testIntroduceConstantTargetClass() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testIntroduceConstantTargetClass() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     // scope calculated same way as in constructor of JSIntroduceConstantDialog
-    Module module = ModuleUtilCore.findModuleForPsiElement(myFile);
+    Module module = ModuleUtilCore.findModuleForPsiElement(myFixture.getFile());
     GlobalSearchScope targetClassScope =
-      module != null ? GlobalSearchScope.moduleWithDependenciesScope(module) : GlobalSearchScope.projectScope(myProject);
+      module != null ? GlobalSearchScope.moduleWithDependenciesScope(module) : GlobalSearchScope.projectScope(getProject());
     PsiFile fragment =
-      JSIntroduceConstantDialog.createTargetClassField(myProject, "", targetClassScope).getPsiFile();
+      JSIntroduceConstantDialog.createTargetClassField(getProject(), "", targetClassScope).getPsiFile();
     String[] included = new String[]{"Z111", "Z222", "com"};
     String[] excluded = new String[]{"EventDispatcher", "int", "String", "uint", "Number", "public", "function", "while"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", getTestName(false) + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMoveMembersTargetClass() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testMoveMembersTargetClass() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     PsiFile fragment =
-      ActionScriptMoveMembersDialog.createTargetClassField(myProject, "", ActionScriptMoveMembersDialog.getScope(myProject), myFile).getPsiFile();
+      ActionScriptMoveMembersDialog.createTargetClassField(getProject(), "", ActionScriptMoveMembersDialog.getScope(getProject()), myFixture.getFile()).getPsiFile();
     String[] included = new String[]{"Z111", "Z222"};
     String[] excluded = new String[]{"EventDispatcher", "int", "String", "uint", "Number", "public", "function", "while"};
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", BASE_PATH + getTestName(false) + ".txt");
+    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z222", getTestName(false) + ".txt");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMoveMembersTargetInnerClass() throws Exception {
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.js2");
+  public void testMoveMembersTargetInnerClass() {
+    setUpJdk();
+    myFixture.configureByFiles(getTestName(false) + "_2.js2");
     PsiFile fragment =
-      ActionScriptMoveMembersDialog.createTargetClassField(myProject, "", ActionScriptMoveMembersDialog.getScope(myProject), myFile).getPsiFile();
+      ActionScriptMoveMembersDialog.createTargetClassField(getProject(), "", ActionScriptMoveMembersDialog.getScope(getProject()), myFixture.getFile()).getPsiFile();
     String[] included = new String[]{"Inner"};
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, ArrayUtil.EMPTY_STRING_ARRAY, "Inner",
-                             BASE_PATH + getTestName(false) + ".txt");
-  }
-
-  @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testComponentFromIndependentModule() throws Exception {
-    final Module module2 = doCreateRealModule("module2");
-    final VirtualFile contentRoot =
-      LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + getTestName(false) + "_module2");
-    PsiTestUtil.addSourceRoot(module2, contentRoot);
-
-    configureByFiles(null, BASE_PATH + getTestName(false) + "_2.mxml");
-
-    PsiFile fragment =
-      JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.moduleScope(myModule), null, null, "").getPsiFile();
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, new String[]{"ComponentFromIndependentModule_2"}, new String[]{"C1"}, null,
-                             BASE_PATH + getTestName(false) + ".txt");
-
-    fragment =
-      JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.moduleScope(module2), null, null, "").getPsiFile();
-    checkTextFieldCompletion((JSExpressionCodeFragment)fragment, new String[]{"C1"}, new String[]{"ComponentFromIndependentModule_2"}, null,
-                             BASE_PATH + getTestName(false) + ".txt");
+                             getTestName(false) + ".txt");
   }
 
   private void doTestCustomScope(String activeBcName, String selectedBcName, int numberOfVariants) {
     String filename = getTestName(false).replaceAll("\\d+", "");
-    configureByFiles(null, BASE_PATH + filename + "_2.mxml", BASE_PATH + filename + "_3.mxml");
+    myFixture.configureByFiles(filename + "_2.mxml", filename + "_3.mxml");
 
-    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
+    final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, myFixture.getTestRootDisposable());
 
-    FlexTestUtils.modifyConfigs(myProject, e -> {
+    FlexTestUtils.modifyConfigs(getProject(), e -> {
       {
         final ModifiableFlexBuildConfiguration bc = e.getConfigurations(myModule)[0];
         bc.setName("Flex");
@@ -197,18 +184,13 @@ public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextF
     final GlobalSearchScope scope =
       FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, manager.findConfigurationByName(selectedBcName), false);
     PublicInheritorFilter filter =
-      new PublicInheritorFilter(myProject, FlashRunConfigurationForm.SPRITE_CLASS_NAME, scope, true);
+      new PublicInheritorFilter(getProject(), FlashRunConfigurationForm.SPRITE_CLASS_NAME, scope, true);
 
     PsiFile fragment =
-      JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.moduleScope(myModule), null, filter, "").getPsiFile();
+      JSReferenceEditor.forClassName("", getProject(), null, GlobalSearchScope.moduleScope(myModule), null, filter, "").getPsiFile();
 
-    doTestTextFieldFromFile((JSExpressionCodeFragment)fragment, BASE_PATH + filename + ".txt");
-    if (numberOfVariants == 0) {
-      assertNull(myItems);
-    }
-    else {
-      assertEquals(numberOfVariants, myItems.length);
-    }
+    doTestTextFieldFromFile((JSExpressionCodeFragment)fragment, filename + ".txt");
+    assertEquals(numberOfVariants, myFixture.getLookupElements().length);
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
