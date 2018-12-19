@@ -296,6 +296,16 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     @Override
+    public void requestError(RequestError error) {
+      if (RequestErrorCode.SERVER_ERROR.equals(error.getCode())) {
+        serverError(false, error.getMessage(), error.getStackTrace());
+      }
+      else {
+        LOG.info(getShortErrorMessage("unknown", null, error));
+      }
+    }
+
+    @Override
     public void serverError(boolean isFatal, @Nullable String message, @Nullable String stackTrace) {
       if (message == null) message = "<no error message>";
       if (stackTrace == null) stackTrace = "<no stack trace>";
