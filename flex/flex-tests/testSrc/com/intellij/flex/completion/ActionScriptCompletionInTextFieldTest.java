@@ -1,5 +1,6 @@
 package com.intellij.flex.completion;
 
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -28,9 +29,16 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
 
 public class ActionScriptCompletionInTextFieldTest extends FlexCompletionInTextFieldBase {
+  private static final LightProjectDescriptor DESCRIPTOR = new FlexProjectDescriptor();
+
+  @Override
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return DESCRIPTOR;
+  }
 
   @Override
   protected String getTestDataPath() {
