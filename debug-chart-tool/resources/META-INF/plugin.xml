@@ -1,0 +1,28 @@
+<idea-plugin>
+  <id>com.intellij.cidr.charts</id>
+  <name>Charts Support</name>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+    Signal processing helper: display charts from memory
+</ul>]]></description>
+
+
+  <depends>com.intellij.modules.clion</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <toolWindow id="Signal" anchor="bottom" factoryClass="com.jetbrains.plugins.cidr.debugger.chart.ChartTool"/>
+  </extensions>
+
+  <project-components>
+  </project-components>
+
+  <actions>
+  </actions>
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.plugins.cidr.debugger.chart.ChartToolPersistence</implementation-class>
+    </component>
+  </project-components>
+
+</idea-plugin>
