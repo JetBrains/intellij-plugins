@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.psi.JSReturnStatement;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
-import com.intellij.lang.javascript.validation.fixes.ChangeTypeFix;
+import com.intellij.lang.javascript.validation.fixes.JSChangeTypeFix;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ public class FlexUnitMethodReturnTypeInspection extends FlexUnitMethodInspection
 
         LocalQuickFix[] fix = canFix(method)
                               ? new LocalQuickFix[]{
-          new ChangeTypeFix(method, "void", "javascript.fix.set.method.return.type")} : LocalQuickFix.EMPTY_ARRAY;
+          new JSChangeTypeFix(method, "void", "javascript.fix.set.method.return.type")} : LocalQuickFix.EMPTY_ARRAY;
         holder.registerProblem(nameIdentifier.getPsi(), FlexBundle.message("flexunit.inspection.testmethodreturntype.message"),
                                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fix);
       }
