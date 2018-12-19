@@ -181,6 +181,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     final DefaultActionGroup group = new DefaultActionGroup();
 
     addReanalyzeActions(group);
+    group.addAction(new AnalysisServerSettingsAction());
     group.addSeparator();
 
     addAutoScrollToSourceAction(group);
@@ -256,31 +257,49 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   }
 
   private void showFiltersPopup() {
-    final DartProblemsFilterForm form = new DartProblemsFilterForm();
-    form.reset(myPresentationHelper);
-
-    form.addListener(new DartProblemsFilterForm.FilterListener() {
+    final DartProblemsFilterForm filterForm = new DartProblemsFilterForm();
+    filterForm.reset(myPresentationHelper);
+    filterForm.addListener(new DartProblemsFilterForm.FilterListener() {
       @Override
       public void filtersChanged() {
-        myPresentationHelper.updateFromUI(form);
+        myPresentationHelper.updateFromFilterSettingsUI(filterForm);
         fireGroupingOrFilterChanged();
       }
 
       @Override
       public void filtersResetRequested() {
         myPresentationHelper.resetAllFilters();
-        form.reset(myPresentationHelper);
+        filterForm.reset(myPresentationHelper);
         fireGroupingOrFilterChanged();
       }
     });
 
+    createAndShowPopup("Dart Problems Filter", filterForm.getMainPanel());
+  }
+
+  private void showAnalysisServerSettingsPopup() {
+    final DartAnalysisServerSettingsForm serverSettingsForm = new DartAnalysisServerSettingsForm(myProject);
+    serverSettingsForm.reset(myPresentationHelper);
+
+    serverSettingsForm.addListener(new DartAnalysisServerSettingsForm.ServerSettingsListener() {
+      @Override
+      public void settingsChanged() {
+        myPresentationHelper.updateFromServerSettingsUI(serverSettingsForm);
+        DartAnalysisServerService.getInstance(myProject).ensureAnalysisRootsUpToDate();
+      }
+    });
+
+    createAndShowPopup(DartBundle.message("analysis.server.settings.title"), serverSettingsForm.getMainPanel());
+  }
+
+  private void createAndShowPopup(@NotNull final String title, @NotNull final JPanel jPanel) {
     final Rectangle visibleRect = myTable.getVisibleRect();
     final Point tableTopLeft = new Point(myTable.getLocationOnScreen().x + visibleRect.x, myTable.getLocationOnScreen().y + visibleRect.y);
 
     JBPopupFactory.getInstance()
-      .createComponentPopupBuilder(form.getMainPanel(), form.getMainPanel())
+      .createComponentPopupBuilder(jPanel, null)
       .setProject(myProject)
-      .setTitle("Dart Problems Filter")
+      .setTitle(title)
       .setMovable(true)
       .setRequestFocus(true)
       .createPopup().show(RelativePoint.fromScreen(tableTopLeft));
@@ -382,6 +401,24 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     @Override
     public void actionPerformed(@NotNull final AnActionEvent e) {
       showFiltersPopup();
+    }
+  }
+
+  private class AnalysisServerSettingsAction extends DumbAwareAction implements Toggleable {
+    AnalysisServerSettingsAction() {
+      super(DartBundle.message("analysis.server.settings"), DartBundle.message("analysis.server.settings.description"),
+            AllIcons.General.GearPlain);
+    }
+
+    @Override
+    public void update(@NotNull final AnActionEvent e) {
+      final boolean asByDefault = myPresentationHelper.getScopedAnalysisMode() == DartProblemsViewSettings.SCOPED_ANALYSIS_MODE_DEFAULT;
+      e.getPresentation().putClientProperty(Toggleable.SELECTED_PROPERTY, !asByDefault);
+    }
+
+    @Override
+    public void actionPerformed(@NotNull final AnActionEvent e) {
+      showAnalysisServerSettingsPopup();
     }
   }
 }

@@ -1,6 +1,8 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.registry.Registry;
@@ -56,11 +58,15 @@ public class DartProblemsPresentationHelper {
     assert (!areFiltersApplied());
   }
 
-  public void updateFromUI(@NotNull final DartProblemsFilterForm form) {
+  public void updateFromFilterSettingsUI(@NotNull final DartProblemsFilterForm form) {
     mySettings.showErrors = form.isShowErrors();
     mySettings.showWarnings = form.isShowWarnings();
     mySettings.showHints = form.isShowHints();
     mySettings.fileFilterMode = form.getFileFilterMode();
+  }
+
+  public void updateFromServerSettingsUI(@NotNull final DartAnalysisServerSettingsForm form) {
+    mySettings.scopedAnalysisMode = form.getScopeAnalysisMode();
   }
 
   public boolean areFiltersApplied() {
@@ -116,6 +122,15 @@ public class DartProblemsPresentationHelper {
     return mySettings.fileFilterMode;
   }
 
+  DartProblemsViewSettings.ScopedAnalysisMode getScopedAnalysisMode() {
+    return mySettings.scopedAnalysisMode;
+  }
+
+  @Nullable
+  VirtualFile getCurrentFile() {
+    return myCurrentFile;
+  }
+
   public boolean shouldShowProblem(@NotNull final DartProblem problem) {
     if (!isShowErrors() && AnalysisErrorSeverity.ERROR.equals(problem.getSeverity())) return false;
     if (!isShowWarnings() && AnalysisErrorSeverity.WARNING.equals(problem.getSeverity())) return false;
@@ -167,7 +182,7 @@ public class DartProblemsPresentationHelper {
                                   ? DartBuildFileUtil.findPackageRootBuildFile(myProject, myCurrentFile)
                                   : PubspecYamlUtil.findPubspecYamlFile(myProject, myCurrentFile);
       if (pubspec == null) {
-        packageRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(myCurrentFile, false);
+        packageRoot = ProjectFileIndex.getInstance(myProject).getContentRootForFile(myCurrentFile, false);
       }
       else {
         packageRoot = pubspec.getParent();

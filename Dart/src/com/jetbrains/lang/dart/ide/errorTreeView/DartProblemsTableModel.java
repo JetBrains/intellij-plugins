@@ -20,8 +20,8 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 class DartProblemsTableModel extends ListTableModel<DartProblem> {
 
@@ -269,14 +269,15 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
   private DartProblem addErrorsAndReturnReplacementForSelection(@NotNull final Map<String, List<AnalysisError>> filePathToErrors,
                                                                 @Nullable final DartProblem oldSelectedProblem) {
     DartProblem newSelectedProblem = null;
+    final DartProblemsViewSettings.ScopedAnalysisMode scopedAnalysisMode = myPresentationHelper.getScopedAnalysisMode();
 
     final List<DartProblem> problemsToAdd = new ArrayList<>();
     for (Map.Entry<String, List<AnalysisError>> entry : filePathToErrors.entrySet()) {
       final String filePath = entry.getKey();
       final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(filePath);
-      final List<AnalysisError> errors = vFile != null && ProjectFileIndex.getInstance(myProject).isInContent(vFile)
-                                         ? entry.getValue()
-                                         : AnalysisError.EMPTY_LIST;
+      final boolean fileOk = vFile != null && (scopedAnalysisMode != DartProblemsViewSettings.ScopedAnalysisMode.All ||
+                                               ProjectFileIndex.getInstance(myProject).isInContent(vFile));
+      final List<AnalysisError> errors = fileOk ? entry.getValue() : AnalysisError.EMPTY_LIST;
 
       for (AnalysisError analysisError : errors) {
         if (DartAnnotator.shouldIgnoreMessageFromDartAnalyzer(filePath, analysisError.getLocation().getFile())) {

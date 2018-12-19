@@ -8,8 +8,6 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.*;
 import com.intellij.notification.impl.NotificationSettings;
 import com.intellij.notification.impl.NotificationsConfigurationImpl;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.*;
@@ -36,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -113,9 +110,6 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
       ToolWindowEx toolWindowEx = (ToolWindowEx)myToolWindow;
       toolWindowEx.setTitleActions(new AnalysisServerFeedbackAction());
-      ArrayList<AnAction> gearActions = new ArrayList<>();
-      gearActions.add(new AnalysisServerDiagnosticsAction());
-      toolWindowEx.setAdditionalGearActions(new DefaultActionGroup(gearActions));
 
       myPanel.setToolWindowUpdater(new ToolWindowUpdater() {
         @Override
@@ -166,6 +160,14 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
 
   public static DartProblemsView getInstance(@NotNull final Project project) {
     return ServiceManager.getService(project, DartProblemsView.class);
+  }
+
+  public DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode() {
+    return myPresentationHelper.getScopedAnalysisMode();
+  }
+
+  public VirtualFile getCurrentFile() {
+    return myPresentationHelper.getCurrentFile();
   }
 
   @SuppressWarnings("unused")
@@ -256,13 +258,24 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     }
   }
 
+  /**
+   * Unlike {@link #setCurrentFile(VirtualFile)} this method may be called not from the EDT
+   */
+  public void setInitialCurrentFileBeforeServerStart(@Nullable final VirtualFile file) {
+    myPresentationHelper.setCurrentFile(file);
+  }
+
   public void setCurrentFile(@Nullable final VirtualFile file) {
+    ApplicationManager.getApplication().assertIsDispatchThread();
+
     if (myPresentationHelper.setCurrentFile(file) &&
         myPresentationHelper.getFileFilterMode() != DartProblemsViewSettings.FileFilterMode.All) {
       if (myPanel != null) {
         myPanel.fireGroupingOrFilterChanged();
       }
     }
+
+    DartAnalysisServerService.getInstance(myProject).ensureAnalysisRootsUpToDate();
   }
 
   public void updateErrorsForFile(@NotNull final String filePath, @NotNull final List<AnalysisError> errors) {

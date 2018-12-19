@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -9,10 +10,7 @@ import com.intellij.lang.annotation.AnnotationSession;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -31,7 +29,6 @@ import com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterColors;
 import com.jetbrains.lang.dart.psi.DartSymbolLiteralExpression;
 import com.jetbrains.lang.dart.psi.DartTernaryExpression;
 import com.jetbrains.lang.dart.sdk.DartSdk;
-import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import gnu.trove.THashMap;
 import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.dartlang.analysis.server.protocol.HighlightRegionType;
@@ -155,11 +152,7 @@ public class DartAnnotator implements Annotator {
     if (sdk == null || !DartAnalysisServerService.isDartSdkVersionSufficient(sdk)) return false;
 
     // server can highlight files from Dart SDK, packages and from modules with enabled Dart support
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-    if (fileIndex.isInLibraryClasses(file)) return true;
-
-    final Module module = fileIndex.getModuleForFile(file);
-    return module != null && DartSdkLibUtil.isDartSdkEnabled(module);
+    return DartAnalysisServerService.getInstance(project).isInIncludedRoots(file);
   }
 
   public static boolean shouldIgnoreMessageFromDartAnalyzer(@NotNull final String filePath,

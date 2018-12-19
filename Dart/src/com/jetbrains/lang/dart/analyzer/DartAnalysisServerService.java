@@ -757,11 +757,21 @@ public class DartAnalysisServerService implements Disposable {
     UIUtil.invokeLaterIfNeeded(() -> {
       if (myProject.isDisposed()) return;
 
-      final VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
-      if (files.length > 0) {
-        DartProblemsView.getInstance(myProject).setCurrentFile(files[0]);
-      }
+      DartProblemsView.getInstance(myProject).setCurrentFile(getCurrentOpenFile());
     });
+  }
+
+  public boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {
+    return myRootsHandler.isInIncludedRoots(vFile);
+  }
+
+  @Nullable
+  private VirtualFile getCurrentOpenFile() {
+    final VirtualFile[] files = FileEditorManager.getInstance(myProject).getSelectedFiles();
+    if (files.length > 0) {
+      return files[0];
+    }
+    return null;
   }
 
   void updateVisibleFiles() {
@@ -869,7 +879,11 @@ public class DartAnalysisServerService implements Disposable {
     }
   }
 
-  public boolean updateRoots(@NotNull final List<String> includedRoots, @NotNull final List<String> excludedRoots) {
+  public void ensureAnalysisRootsUpToDate() {
+    myRootsHandler.updateRoots();
+  }
+
+  boolean setAnalysisRoots(@NotNull final List<String> includedRoots, @NotNull final List<String> excludedRoots) {
     AnalysisServer server = myServer;
     if (server == null) {
       return false;
@@ -1878,6 +1892,7 @@ public class DartAnalysisServerService implements Disposable {
     synchronized (myLock) {
       if (myServer == null || !sdk.getHomePath().equals(mySdkHome) || !sdk.getVersion().equals(mySdkVersion) || !myServer.isSocketOpen()) {
         stopServer();
+        DartProblemsView.getInstance(myProject).setInitialCurrentFileBeforeServerStart(getCurrentOpenFile());
         startServer(sdk);
 
         if (myServer != null) {
@@ -2097,10 +2112,10 @@ public class DartAnalysisServerService implements Disposable {
     private final boolean isLast;
 
     CompletionInfo(@NotNull final String completionId,
-                          int replacementOffset,
-                          int originalReplacementLength,
-                          @NotNull final List<CompletionSuggestion> completions,
-                          boolean isLast) {
+                   int replacementOffset,
+                   int originalReplacementLength,
+                   @NotNull final List<CompletionSuggestion> completions,
+                   boolean isLast) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
       this.myOriginalReplacementLength = originalReplacementLength;
