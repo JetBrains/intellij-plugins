@@ -162,8 +162,11 @@ public class DartProblemsView implements PersistentStateComponent<DartProblemsVi
     return ServiceManager.getService(project, DartProblemsView.class);
   }
 
-  public DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode() {
-    return myPresentationHelper.getScopedAnalysisMode();
+  public static DartProblemsViewSettings.ScopedAnalysisMode getScopeAnalysisMode(@NotNull final Project project) {
+    if (!DartAnalysisServerService.getInstance(project).isServerProcessActive()) {
+      return DartProblemsViewSettings.SCOPED_ANALYSIS_MODE_DEFAULT;
+    }
+    return getInstance(project).myPresentationHelper.getScopedAnalysisMode();
   }
 
   public VirtualFile getCurrentFile() {

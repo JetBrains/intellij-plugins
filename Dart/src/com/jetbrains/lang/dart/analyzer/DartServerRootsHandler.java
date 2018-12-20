@@ -78,11 +78,11 @@ public class DartServerRootsHandler {
     final List<String> newIncludedRoots = new SmartList<>();
     final List<String> newExcludedRoots = new SmartList<>();
 
-    final DartProblemsView problemsView = DartProblemsView.getInstance(myProject);
-    final boolean isPackageScopedAnalysis = problemsView.getScopeAnalysisMode() == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage;
+    final boolean isPackageScopedAnalysis =
+      DartProblemsView.getScopeAnalysisMode(myProject) == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage;
 
     if (isPackageScopedAnalysis) {
-      final VirtualFile currentFile = problemsView.getCurrentFile();
+      final VirtualFile currentFile = DartProblemsView.getInstance(myProject).getCurrentFile();
       if (currentFile == null || ProjectFileIndex.getInstance(myProject).isInLibraryClasses(currentFile)) {
         return; // keep server roots as is until another file is open
       }
@@ -127,7 +127,7 @@ public class DartServerRootsHandler {
   boolean isInIncludedRoots(@Nullable final VirtualFile vFile) {
     if (vFile == null) return false;
 
-    final DartProblemsViewSettings.ScopedAnalysisMode scopedAnalysisMode = DartProblemsView.getInstance(myProject).getScopeAnalysisMode();
+    final DartProblemsViewSettings.ScopedAnalysisMode scopedAnalysisMode = DartProblemsView.getScopeAnalysisMode(myProject);
     if (scopedAnalysisMode == DartProblemsViewSettings.ScopedAnalysisMode.All) {
       final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
       if (fileIndex.isInLibraryClasses(vFile)) return true;

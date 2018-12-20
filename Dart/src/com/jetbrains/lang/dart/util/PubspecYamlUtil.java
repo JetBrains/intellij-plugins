@@ -53,7 +53,7 @@ public class PubspecYamlUtil {
     VirtualFile parent = contextFile.isDirectory() ? contextFile : contextFile.getParent();
 
     boolean isPackageScopedAnalysis =
-      DartProblemsView.getInstance(project).getScopeAnalysisMode() == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage;
+      DartProblemsView.getScopeAnalysisMode(project) == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage;
 
     while (parent != null && (LIB_DIR_NAME.equals(current.getName()) || isPackageScopedAnalysis || fileIndex.isInContent(parent))) {
       current = parent;
