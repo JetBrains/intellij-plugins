@@ -16,7 +16,7 @@ public class Angular2TooltipActionProvider extends TypeScriptAnnotationTooltipAc
   @Override
   protected boolean isAcceptableContext(@NotNull PsiFile psiFile) {
     Project project = psiFile.getProject();
-    
+
     return psiFile.getLanguage() instanceof Angular2HtmlLanguage &&
            AngularSettings.get(project).isUseService() &&
            TypeScriptCompilerSettings.getSettings(project).useService();

@@ -22,7 +22,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.index.Angular2IndexingHandler;
-import org.angular2.lang.html.parser.Angular2HtmlElementTypes;
+import org.angular2.lang.html.parser.Angular2HtmlStubElementTypes;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   }
 
   public Angular2HtmlReferenceVariableImpl(JSVariableStub<JSVariable> stub) {
-    super(stub, Angular2HtmlElementTypes.REFERENCE_VARIABLE);
+    super(stub, Angular2HtmlStubElementTypes.REFERENCE_VARIABLE);
   }
 
   @Nullable

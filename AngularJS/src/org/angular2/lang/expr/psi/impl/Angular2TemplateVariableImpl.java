@@ -12,7 +12,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.angular2.lang.expr.parser.Angular2ElementTypes;
+import org.angular2.lang.expr.parser.Angular2StubElementTypes;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
   }
 
   public Angular2TemplateVariableImpl(JSVariableStub<JSVariable> stub) {
-    super(stub, Angular2ElementTypes.TEMPLATE_BINDING_VARIABLE);
+    super(stub, Angular2StubElementTypes.TEMPLATE_BINDING_VARIABLE);
   }
 
   @Nullable
