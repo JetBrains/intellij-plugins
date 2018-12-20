@@ -66,7 +66,7 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
 
   public void testStructType() {
     defaultConfigure();
-    final RType type = RubyTestUtil.getCoveringIdentifierType(findPsiBySignature("tra<caret>nsform"));
+    final RType type = getExpressionType("tra<caret>nsform");
     assertInstanceOf(type, RSymbolType.class);
     assertNotNull(type.getMemberForName("tx", SymbolFilterFactory.EMPTY_FILTER, null));
     assertNotNull(type.getMemberForName("tx=", SymbolFilterFactory.EMPTY_FILTER, null));
@@ -74,16 +74,14 @@ public class RubyMotionCodeInsightTest extends RubyMotionLightFixtureTestCase {
 
   public void testSelectorType() {
     defaultConfigure();
-    final RType type = RubyTestUtil.getCoveringReferenceType(findPsiBySignature("UIView.al<caret>loc"));
-    assertInstanceOf(type, RSymbolType.class);
-    assertEquals("UIView", ((RSymbolType)type).getSymbol().getName());
+
+    assertTypeBirthClass(findReferenceBySignature("UIView.al<caret>loc"), "UIView");
   }
 
   public void testSelectorChainType() {
     defaultConfigure();
-    final RType type = RubyTestUtil.getCoveringReferenceType(findPsiBySignature("UIView.alloc.initWith<caret>Frame"));
-    assertInstanceOf(type, RSymbolType.class);
-    assertEquals("UIView", ((RSymbolType)type).getSymbol().getName());
+
+    assertTypeBirthClass(findReferenceBySignature("UIView.alloc.initWith<caret>Frame"), "UIView");
   }
 
   public void testCompletion() throws Throwable {
