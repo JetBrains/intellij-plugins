@@ -114,28 +114,29 @@ public class Angular2DecoratorUtil {
   @Nullable
   public static JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
     JSObjectLiteralExpression objectLiteralExpression = null;
-    for (PsiElement child: getStubChildrenOfTypeAsList(decorator, PsiElement.class)) {
+    for (PsiElement child : getStubChildrenOfTypeAsList(decorator, PsiElement.class)) {
       if (child instanceof JSCallExpression) {
         StubElement<?> callStub = child instanceof StubBasedPsiElement ? ((StubBasedPsiElement)child).getStub() : null;
         if (callStub != null) {
-          for (StubElement callChildStub: callStub.getChildrenStubs()) {
+          for (StubElement callChildStub : callStub.getChildrenStubs()) {
             PsiElement callChild = callChildStub.getPsi();
             if (callChild instanceof JSObjectLiteralExpression) {
               objectLiteralExpression = (JSObjectLiteralExpression)callChild;
               break;
             }
           }
-        } else {
+        }
+        else {
           objectLiteralExpression = tryCast(ArrayUtil.getFirstElement(((JSCallExpression)child).getArguments()),
                                             JSObjectLiteralExpression.class);
         }
         break;
-      } else if (child instanceof JSObjectLiteralExpression) {
+      }
+      else if (child instanceof JSObjectLiteralExpression) {
         objectLiteralExpression = (JSObjectLiteralExpression)child;
         break;
       }
     }
     return doIfNotNull(objectLiteralExpression, expr -> expr.findProperty(name));
   }
-
 }

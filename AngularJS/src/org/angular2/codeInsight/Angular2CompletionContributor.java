@@ -211,9 +211,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
     if (descriptor instanceof Angular2AttributeDescriptor) {
       Angular2AttributeNameParser.AttributeInfo info = ((Angular2AttributeDescriptor)descriptor).getInfo();
       if (info.type == Angular2AttributeType.BANANA_BOX_BINDING
-               || info.type == Angular2AttributeType.REGULAR
-               || (info instanceof PropertyBindingInfo
-                   && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY)
+          || info.type == Angular2AttributeType.REGULAR
+          || (info instanceof PropertyBindingInfo
+              && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY)
       ) {
         return Angular2AttributeNameVariantsBuilder.forTypes(
           info.name, true, true,

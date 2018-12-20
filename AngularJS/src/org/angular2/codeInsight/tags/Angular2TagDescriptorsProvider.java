@@ -94,7 +94,8 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
   }
 
   @NotNull
-  public static List<Angular2Directive> matchDirectives(@NotNull XmlTag xmlTag, @NotNull Collection<Angular2Directive> directiveCandidates) {
+  public static List<Angular2Directive> matchDirectives(@NotNull XmlTag xmlTag,
+                                                        @NotNull Collection<Angular2Directive> directiveCandidates) {
     Angular2SelectorMatcher<Angular2Directive> matcher = new Angular2SelectorMatcher<>();
     directiveCandidates.forEach(d -> matcher.addSelectables(d.getSelector().getSimpleSelectors(), d));
 

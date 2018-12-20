@@ -37,14 +37,15 @@ object SchematicsLoader {
       try {
         myLogErrors.set(logErrors)
         (if (includeHidden) ourGistHiddenList else ourGist).getFileData(project, cli)
-      } finally {
+      }
+      finally {
         myLogErrors.set(true)
       }
     }
   )
 }
 
-private var myLogErrors: ThreadLocal<Boolean> = ThreadLocal.withInitial{true}
+private var myLogErrors: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
 
 private var ourGist = GistManager.getInstance().newVirtualFileGist(
   "AngularBlueprints", 3, SchematicsExternalizer()
@@ -147,7 +148,8 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
         LOG.error("Error while loading schematics info.\n"
                   + shortenOutput(output.stderr),
                   Attachment("err-output", output.stderr))
-      } else {
+      }
+      else {
         LOG.info("Error while loading schematics info.\n"
                  + shortenOutput(output.stderr))
       }
@@ -159,7 +161,8 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
               + shortenOutput(output.stderr),
               Attachment("err-output", output.stderr),
               Attachment("std-output", output.stdout))
-  } else {
+  }
+  else {
     LOG.info("Error while loading schematics info.\n"
              + shortenOutput(output.stderr))
   }
