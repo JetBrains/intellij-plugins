@@ -95,8 +95,12 @@ public class Angular2DecoratorUtil {
   @StubUnsafe
   @Nullable
   public static String getPropertyValue(@Nullable ES6Decorator decorator, @NotNull String name) {
-    final JSProperty selector = getProperty(decorator, name);
-    final JSExpression value = selector != null ? selector.getValue() : null;
+    return getExpressionStringValue(doIfNotNull(getProperty(decorator, name), JSProperty::getValue));
+  }
+
+  @StubUnsafe
+  @Nullable
+  public static String getExpressionStringValue(@Nullable JSExpression value) {
     if (value instanceof JSBinaryExpression) {
       return JSInjectionController.getConcatenationText(value);
     }

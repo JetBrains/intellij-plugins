@@ -19,7 +19,7 @@ public class GotoSymbolTest extends LightPlatformCodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return AngularTestUtil.getBaseTestDataPath(getClass()) + getTestName(true);
+    return AngularTestUtil.getBaseTestDataPath(getClass()) + "symbol/" + getTestName(true);
   }
 
   public void testElementSelector() {
