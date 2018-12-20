@@ -11,27 +11,20 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Log4J" level="project" />
     <orderEntry type="module-library" exported="">
-      <library>
+      <library name="commons-chain" type="repository">
+        <properties maven-id="commons-chain:commons-chain:1.2" />
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/commons-chain.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/commons-chain/commons-chain/1.2/commons-chain-1.2.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
-      <library>
+      <library name="maven-model-2.0.7" type="repository">
+        <properties maven-id="org.apache.maven:maven-model:2.0.7" />
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/maven-model.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="plexus-utils" type="repository">
-        <properties maven-id="org.codehaus.plexus:plexus-utils:1.4.1" />
-        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/2.0.7/maven-model-2.0.7.jar!/" />
           <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/1.4.1/plexus-utils-1.4.1.jar!/" />
         </CLASSES>
         <JAVADOC />
