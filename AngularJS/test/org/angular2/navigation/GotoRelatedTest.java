@@ -5,6 +5,7 @@ import com.intellij.ide.actions.GotoRelatedSymbolAction;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,6 +30,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
 
 @RunWith(com.intellij.testFramework.Parameterized.class)
@@ -101,6 +103,7 @@ public class GotoRelatedTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  @NotNull
   private List<String> getStringifiedRelatedItems() {
     return GotoRelatedSymbolAction.getItems(myFixture.getFile(), myFixture.getEditor(), null)
       .stream()
@@ -116,12 +119,13 @@ public class GotoRelatedTest extends LightPlatformCodeInsightFixtureTestCase {
                + name + " "
                + notNull(item.getCustomContainerName(), location) + " <"
                + presentation.getPresentableText() + ", "
-               + presentation.getLocationString() + ">";
+               + doIfNotNull(presentation.getLocationString(), FileUtil::toSystemIndependentName) + ">";
       })
       .collect(Collectors.toList());
   }
 
-  private static ItemPresentation getPresentation(PsiElement element) {
+  @NotNull
+  private static ItemPresentation getPresentation(@NotNull PsiElement element) {
     if (element instanceof NavigationItem) {
       return ((NavigationItem)element).getPresentation();
     }
