@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.util;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -77,6 +78,7 @@ public class DartTestLocationProvider implements SMTestLocator, DumbAware {
   private static Location<PsiElement> getLocationByLineAndColumn(@NotNull final PsiFile file, final int line, final int column) {
     final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     if (document == null) return null;
+    if (line >= document.getLineCount()) return null;
 
     final int offset = document.getLineStartOffset(line) + column;
     final PsiElement element = file.findElementAt(offset);
