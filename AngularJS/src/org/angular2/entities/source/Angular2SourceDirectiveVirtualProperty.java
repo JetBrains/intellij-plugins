@@ -2,24 +2,21 @@
 package org.angular2.entities.source;
 
 import com.intellij.lang.javascript.psi.JSElement;
-import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
+public class Angular2SourceDirectiveVirtualProperty implements Angular2DirectiveProperty {
 
-public class Angular2SourceDirectiveProperty implements Angular2DirectiveProperty {
-
-  private final JSRecordType.PropertySignature mySignature;
+  private final TypeScriptClass myOwner;
   private final String myName;
 
-  public Angular2SourceDirectiveProperty(@NotNull JSRecordType.PropertySignature signature, @NotNull String bindingName) {
-    mySignature = signature;
+  public Angular2SourceDirectiveVirtualProperty(@NotNull TypeScriptClass owner, @NotNull String bindingName) {
+    myOwner = owner;
     myName = bindingName;
-    assert mySignature.getMemberSource().getSingleElement() != null;
   }
 
   @NotNull
@@ -31,18 +28,18 @@ public class Angular2SourceDirectiveProperty implements Angular2DirectivePropert
   @Nullable
   @Override
   public JSType getType() {
-    return mySignature.getType();
+    return null;
   }
 
   @Override
   public boolean isVirtual() {
-    return false;
+    return true;
   }
 
   @NotNull
   @Override
   public JSElement getSourceElement() {
-    return Objects.requireNonNull((JSElement)mySignature.getMemberSource().getSingleElement());
+    return myOwner;
   }
 
   @Override
