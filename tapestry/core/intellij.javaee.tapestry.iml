@@ -20,17 +20,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library name="maven-model-2.0.7" type="repository">
-        <properties maven-id="org.apache.maven:maven-model:2.0.7" />
-        <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/org/apache/maven/maven-model/2.0.7/maven-model-2.0.7.jar!/" />
-          <root url="jar://$MAVEN_REPOSITORY$/org/codehaus/plexus/plexus-utils/1.4.1/plexus-utils-1.4.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
+    <orderEntry type="library" name="maven-model" level="project" />
     <orderEntry type="library" exported="" name="Velocity" level="project" />
     <orderEntry type="library" exported="" name="CGLIB" level="project" />
     <orderEntry type="module" module-name="intellij.platform.ide" exported="" />
