@@ -1,26 +1,25 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.flex.base.FlexChangeSignatureTestBase;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.lang.javascript.JSChangeSignatureTestBase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSParameterInfo;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.testFramework.PsiTestUtil;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexChangeSignatureTest extends FlexChangeSignatureTestBase {
+public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
   @Override
   public void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
     super.setUp();
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+
   }
 
   @Override
@@ -40,15 +39,9 @@ public class FlexChangeSignatureTest extends FlexChangeSignatureTestBase {
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
-
-  @Override
-  protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
-  }
-
 
   public void testAddParam1() {
     doTest("bar", JSAttributeList.AccessType.PUBLIC, "int",
@@ -219,8 +212,8 @@ public class FlexChangeSignatureTest extends FlexChangeSignatureTestBase {
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testNoPropagateToSdkInheritor() {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
+    FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "Lib"));
     doDefaultTest((rootDir, rootAfter) -> {
       assertPropagationCandidates(new String[]{"bar", "listener"});
       performRefactoring("abc", JSAttributeList.AccessType.PACKAGE_LOCAL, "");
@@ -267,17 +260,6 @@ public class FlexChangeSignatureTest extends FlexChangeSignatureTestBase {
   public void testEventHandlerCall() {
     doTest("", JSAttributeList.AccessType.PACKAGE_LOCAL, "void",
            new JSParameterInfo("i", "int", "", "1000", -1));
-  }
-
-  public void testAnonymousFunction6() {
-    myAfterCommitRunnable = () -> WriteAction.run(() -> {
-      String root = getTestRoot() + getTestName(false) + "/module2";
-      Module module2 = ModuleManager.getInstance(myProject).newModule(getTestDataPath() + root, getModuleType().getId());
-      myModulesToDispose.add(module2);
-      PsiTestUtil.addSourceRoot(module2, getVirtualFile(root));
-      FlexTestUtils.addFlexModuleDependency(module2, myModule);
-    });
-    doTestInaccessible();
   }
 
   public void testPropagateToFunctionExpression() {

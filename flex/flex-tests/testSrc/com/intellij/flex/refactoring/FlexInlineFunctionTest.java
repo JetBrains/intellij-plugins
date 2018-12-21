@@ -1,14 +1,15 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.flex.base.FlexInlineVarOrFunctionTestBase;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.lang.javascript.refactoring.JSInlineVarOrFunctionTestBase;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.testFramework.LightProjectDescriptor;
 
-public class FlexInlineFunctionTest extends FlexInlineVarOrFunctionTestBase {
+public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
 
   @Override
   protected String getTestDataPath() {
@@ -16,16 +17,16 @@ public class FlexInlineFunctionTest extends FlexInlineVarOrFunctionTestBase {
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   @Override
   protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "as_refactoring/inlineFunction/");
 
     super.setUp();
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "as_refactoring/inlineFunction/");
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   private void defaultTest() throws Exception {
@@ -127,8 +128,8 @@ public class FlexInlineFunctionTest extends FlexInlineVarOrFunctionTestBase {
   }
 
   public void testMethodFromExternalLibrary() {
-    myAfterCommitRunnable =
-      () -> FlexTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
+    FlexTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "library"));
 
     shouldFail("Can not inline function defined in external library");
   }

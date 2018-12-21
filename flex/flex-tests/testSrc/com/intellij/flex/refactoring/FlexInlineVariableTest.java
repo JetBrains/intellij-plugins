@@ -1,29 +1,28 @@
 package com.intellij.flex.refactoring;
 
-import com.intellij.flex.base.FlexInlineVarOrFunctionTestBase;
+import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.lang.javascript.refactoring.JSInlineVarOrFunctionTestBase;
+import com.intellij.testFramework.LightProjectDescriptor;
 
-public class FlexInlineVariableTest extends FlexInlineVarOrFunctionTestBase {
+public class FlexInlineVariableTest extends JSInlineVarOrFunctionTestBase {
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("as_refactoring/inlineVariable/");
   }
 
   @Override
-  protected ModuleType getModuleType() {
-    return FlexModuleType.getInstance();
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return FlexProjectDescriptor.DESCRIPTOR;
   }
 
   @Override
   protected void setUp() throws Exception {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "as_refactoring/inlineVariable/");
-
     super.setUp();
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
+    FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "as_refactoring/inlineVariable/");
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   private void ecmaTest() throws Exception {
