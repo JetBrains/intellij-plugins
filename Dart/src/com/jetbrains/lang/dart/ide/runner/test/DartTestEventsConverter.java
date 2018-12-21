@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.test;
 
 import com.google.gson.*;
@@ -427,7 +428,8 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     String location = "unknown";
     String loc;
 
-    final VirtualFile file = item.getUrl() == null ? null : myUrlResolver.findFileByDartUrl(item.getUrl());
+    final boolean badUrl = item.getUrl() == null || item.getUrl().endsWith(".dart.js");
+    final VirtualFile file = badUrl ? null : myUrlResolver.findFileByDartUrl(item.getUrl());
     if (file != null) {
       loc = FILE_URL_PREFIX + file.getPath();
     }
@@ -439,8 +441,14 @@ public class DartTestEventsConverter extends OutputToGeneralTestEventsConverter 
     }
 
     if (loc != null) {
+      if (badUrl) {
+        loc += ",-1,-1";
+      }
+      else {
+        loc += "," + item.getLine() + "," + item.getColumn();
+      }
       String nameList = GSON.toJson(item.nameList(), DartTestLocationProvider.STRING_LIST_TYPE);
-      location = loc + "," + item.getLine() + "," + item.getColumn() + "," + nameList;
+      location = loc + "," + nameList;
     }
 
     messageBuilder.addAttribute("locationHint", location);
