@@ -294,9 +294,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return null;
   }
 
-  static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty info) {
-    return info.getType() != null
-           && expandStringLiteralTypes(info.getType()).isDirectlyAssignableType(STRING_TYPE, null);
+  static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty property) {
+    return property.isVirtual()
+           || (property.getType() != null
+               && expandStringLiteralTypes(property.getType()).isDirectlyAssignableType(STRING_TYPE, null));
   }
 
   private static <T> void addDirectiveDescriptors(@NotNull Collection<T> list,

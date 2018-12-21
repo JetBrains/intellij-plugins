@@ -94,8 +94,10 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     Map<String, String> inputMap = readPropertyMappings(Angular2DecoratorUtil.INPUTS_PROP);
     Map<String, String> outputMap = readPropertyMappings(Angular2DecoratorUtil.OUTPUTS_PROP);
 
+    TypeScriptClass clazz = getTypeScriptClass();
+
     TypeScriptTypeParser
-      .buildTypeFromClass(getTypeScriptClass(), false)
+      .buildTypeFromClass(clazz, false)
       .getProperties()
       .forEach(prop -> {
         for (JSAttributeListOwner el : getPropertySources(prop.getMemberSource().getSingleElement())) {
@@ -103,6 +105,11 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
           processProperty(prop, el, outputMap, Angular2DecoratorUtil.OUTPUT_DEC, outputs);
         }
       });
+
+    inputMap.keySet().forEach(
+      input -> inputs.put(input, new Angular2SourceDirectiveVirtualProperty(clazz, input)));
+    outputMap.keySet().forEach(
+      output -> outputs.put(output, new Angular2SourceDirectiveVirtualProperty(clazz, output)));
 
     return pair(Collections.unmodifiableCollection(inputs.values()),
                 Collections.unmodifiableCollection(outputs.values()));
@@ -145,7 +152,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
                                       @NotNull Map<String, String> mappings,
                                       @NotNull String decorator,
                                       @NotNull Map<String, Angular2DirectiveProperty> result) {
-    String bindingName = mappings.get(property.getMemberName());
+    String bindingName = mappings.remove(property.getMemberName());
     if (bindingName == null && field.getAttributeList() != null) {
       bindingName = Arrays.stream(field.getAttributeList().getDecorators())
         .filter(d -> decorator.equals(d.getDecoratorName()))
