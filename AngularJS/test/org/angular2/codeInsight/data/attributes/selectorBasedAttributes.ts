@@ -11,6 +11,8 @@ import {Component, Directive, Input, Output} from 'angular2/core';
              myOutput="foo" [myOutput]="foo" (myOutput)="foo" [(myOutput)]="foo"
              myInOut="foo" [myInOut]="foo" (myInOut)="foo" [(myInOut)]="foo"
              myInOutChange="foo" [myInOutChange]="foo" (myInOutChange)="foo" [(myInOutChange)]="foo"
+             fake="foo" [fake]="foo" (fake)="foo" [(fake)]="foo"
+             fakeChange="foo" [fakeChange]="foo" (fakeChange)="foo" [(fakeChange)]="foo"
         ></div>
 `,
 })
@@ -21,7 +23,9 @@ export class HeroAsyncMessageComponent {
 }
 
 @Directive({
-    selector: '[myInput],[mySimpleBindingInput],[myOutput],[myInOut],[myPlain]'
+    selector: '[myInput],[mySimpleBindingInput],[myOutput],[myInOut],[myPlain],[fake],[fakeChange]',
+    inputs: ['fake'],
+    outputs: ['fakeChange']
 })
 export class TestDirective {
     @Input

@@ -590,6 +590,16 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testVirtualInOuts() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      configureWithMetadataFiles(myFixture, "ionic");
+      myFixture.configureByFiles("ionic.html");
+      myFixture.type("ion-item ");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "fakeInput", "[fakeInput]", "(fakeOutput)");
+    });
+  }
+
   public void testSelectorListSpaces() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("spaces.html", "package.json", "spaces.ts");
@@ -683,14 +693,18 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
                              "(myOutput)",
                              "[mySimpleBindingInput]", "mySimpleBindingInput",
                              "myPlain",
-                             "[myInOut]", "[(myInOut)]");
+                             "[myInOut]", "[(myInOut)]",
+                             "fake", "[fake]", "[(fake)]",
+                             "(fakeChange)");
       assertDoesntContain(myFixture.getLookupElementStrings(),
                           "myInput", "(myInput)", "[(myInput)]",
                           "myOutput", "[myOutput]", "[(myOutput)]",
                           "(mySimpleBindingInput)", "[(mySimpleBindingInput)]",
                           "[myPlain]", "(myPlain)", "[(myPlain)]",
                           "(myInOut)", "myInOut",
-                          "myInOutChange", "(myInOutChange)", "[myInOutChange]", "[(myInOutChange)]");
+                          "myInOutChange", "(myInOutChange)", "[myInOutChange]", "[(myInOutChange)]",
+                          "(fake)",
+                          "fakeChange, [fakeChange], [(fakeChange)]");
     });
   }
 
@@ -714,6 +728,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
         .put("myOutput", "xxpx")
         .put("myInOut", "xpxp")
         .put("myInOutChange", "xxpx")
+        .put("fake", "ccxc")
+        .put("fakeChange", "xxcx")
         .build().entrySet()) {
 
         String name = attr.getKey();
@@ -740,8 +756,13 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
               assert ref.resolve() instanceof Angular2DirectiveSelectorPsiElement :
                 messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " + ref.resolve();
               break;
+            case 'c':
+              assertNotNull(messageStart + " should have reference", ref);
+              assert ref.resolve() instanceof TypeScriptClass :
+                messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " + ref.resolve();
+              break;
             default:
-              throw new IllegalStateException("wrong char" + checks.charAt(i));
+              throw new IllegalStateException("wrong char: " + checks.charAt(i));
           }
         }
       }
@@ -977,5 +998,4 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertEquals("common.rnc", element.getContainingFile().getName());
     });
   }
-
 }

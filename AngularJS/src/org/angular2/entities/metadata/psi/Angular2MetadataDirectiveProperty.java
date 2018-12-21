@@ -34,6 +34,11 @@ public class Angular2MetadataDirectiveProperty implements Angular2DirectivePrope
     return signature != null ? signature.getType() : null;
   }
 
+  @Override
+  public boolean isVirtual() {
+    return signature == null;
+  }
+
   @NotNull
   @Override
   public PsiElement getSourceElement() {

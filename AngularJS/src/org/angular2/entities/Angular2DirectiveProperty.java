@@ -12,4 +12,6 @@ public interface Angular2DirectiveProperty extends Angular2Element {
 
   @Nullable
   JSType getType();
+
+  boolean isVirtual();
 }
