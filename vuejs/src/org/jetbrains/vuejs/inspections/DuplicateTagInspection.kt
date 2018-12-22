@@ -20,11 +20,11 @@ class DuplicateTagInspection : LocalInspectionTool() {
     return object : XmlElementVisitor() {
       override fun visitXmlTag(tag: XmlTag?) {
         if (tag?.language != VueLanguage.INSTANCE) return
-        if ("template" != tag?.name && !HtmlUtil.isScriptTag(tag)) return
-        val parent = tag?.parent as? XmlDocument ?: return
+        if ("template" != tag.name && !HtmlUtil.isScriptTag(tag)) return
+        val parent = tag.parent as? XmlDocument ?: return
         PsiTreeUtil.getChildrenOfType(parent, XmlTag::class.java)!!
-          .filter { it != tag && it.name == tag?.name }
-          .forEach { holder.registerProblem(tag!!, "Duplicate ${tag.name} tag", DeleteTagFix(tag)) }
+          .filter { it != tag && it.name == tag.name }
+          .forEach { holder.registerProblem(tag, "Duplicate ${tag.name} tag", DeleteTagFix(tag)) }
       }
     }
   }
