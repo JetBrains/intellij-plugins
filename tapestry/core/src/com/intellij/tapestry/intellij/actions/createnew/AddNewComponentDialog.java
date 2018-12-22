@@ -12,6 +12,7 @@ import com.intellij.tapestry.intellij.util.IdeaUtils;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * Dialog to create a new component.
@@ -58,7 +59,7 @@ public class AddNewComponentDialog extends JDialog {
                 _classSourceDirectoryCombo.setSelectedItem(folderWrapper);
         }
 
-        java.util.List<WebRoot> webRoots = IdeaUtils.findWebRoots(module);
+        List<WebRoot> webRoots = IdeaUtils.findWebRoots(module);
         for (WebRoot webRoot : webRoots) {
             if (webRoot.getFile() == null)
                 continue;
@@ -118,7 +119,7 @@ public class AddNewComponentDialog extends JDialog {
     /**
      * A wrapper class for the root folder.
      */
-    class RootFolderWrapper {
+    static class RootFolderWrapper {
 
         SourceFolder _javaRootFolder;
         WebRoot _webRootFolder;

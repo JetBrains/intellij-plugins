@@ -27,12 +27,8 @@ public class CfmlReferenceContributor extends PsiReferenceContributor {
 
   public static final PsiElementPattern.Capture<PsiComment> CFMLJAVALOADER_COMMENT =
     psiElement(PsiComment.class).inFile(psiElement(CfmlFile.class)).withText(string().contains(CfmlFile.CFMLJAVALOADER_MARKER));
-  /*
-  public static final PsiElementPattern.Capture<PsiComment> CFMLVARIABLE_COMMENT =
-    psiElement(PsiComment.class).inFile(psiElement(CfmlFile.class)).withText(string().contains(CfmlFile.CFMLVARIABLE_MARKER));
-    */
 
-  private class VariableReferenceProvider extends PsiReferenceProvider {
+  private static class VariableReferenceProvider extends PsiReferenceProvider {
     @Override
     @NotNull
     public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
@@ -66,7 +62,7 @@ public class CfmlReferenceContributor extends PsiReferenceContributor {
     registerImplicitVariableProvider(registrar);
   }
 
-  private void registerImplicitVariableProvider(PsiReferenceRegistrar registrar) {
+  private static void registerImplicitVariableProvider(PsiReferenceRegistrar registrar) {
     // reference to java types
     registrar.registerReferenceProvider(CFMLVARIABLE_COMMENT, new PsiReferenceProvider() {
       @Override

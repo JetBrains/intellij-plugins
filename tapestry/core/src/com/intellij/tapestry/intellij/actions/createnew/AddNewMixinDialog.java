@@ -62,7 +62,7 @@ public class AddNewMixinDialog extends JDialog {
     /**
      * A wrapper class for the root folder.
      */
-    class RootFolderWrapper {
+    static class RootFolderWrapper {
 
         SourceFolder _javaRootFolder;
         WebRoot _webRootFolder;
