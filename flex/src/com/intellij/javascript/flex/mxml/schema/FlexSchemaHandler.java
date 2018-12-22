@@ -25,7 +25,10 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.*;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.ParameterizedCachedValue;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -78,18 +81,15 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
       ParameterizedCachedValue<XmlFile, Module> reference = descriptors.get(uri);
       if (reference == null) {
         reference = CachedValuesManager.getManager(module.getProject())
-          .createParameterizedCachedValue(new ParameterizedCachedValueProvider<XmlFile, Module>() {
-            @Override
-            public CachedValueProvider.Result<XmlFile> compute(Module module) {
-              final URL resource = FlexSchemaHandler.class.getResource("z.xsd");
-              final VirtualFile fileByURL = VfsUtil.findFileByURL(resource);
+          .createParameterizedCachedValue(module1 -> {
+            final URL resource = FlexSchemaHandler.class.getResource("z.xsd");
+            final VirtualFile fileByURL = VfsUtil.findFileByURL(resource);
 
-              XmlFile result = (XmlFile)PsiManager.getInstance(module.getProject()).findFile(fileByURL).copy();
-              result.putUserData(FlexMxmlNSDescriptor.NS_KEY, uri);
-              result.putUserData(FlexMxmlNSDescriptor.MODULE_KEY, module);
+            XmlFile result = (XmlFile)PsiManager.getInstance(module1.getProject()).findFile(fileByURL).copy();
+            result.putUserData(FlexMxmlNSDescriptor.NS_KEY, uri);
+            result.putUserData(FlexMxmlNSDescriptor.MODULE_KEY, module1);
 
-              return new CachedValueProvider.Result<>(result, PsiModificationTracker.MODIFICATION_COUNT);
-            }
+            return new CachedValueProvider.Result<>(result, PsiModificationTracker.MODIFICATION_COUNT);
           }, false);
 
         descriptors.put(uri, reference);

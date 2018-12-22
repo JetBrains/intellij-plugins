@@ -34,7 +34,6 @@ import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,7 +136,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
 
   @NotNull
   private static Type[] getAvailableTypes() {
-    List<Type> types = ContainerUtil.filter(Type.values(), type -> type.isAvailable());
+    List<Type> types = ContainerUtil.filter(Type.values(), Type::isAvailable);
     return types.toArray(new Type[0]);
   }
 
@@ -168,15 +167,11 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
 
   private static DataContext createDataContext(@NotNull Editor editor, @NotNull final PsiElement element) {
     final DataContext dataContext = DataManager.getInstance().getDataContext(editor.getComponent());
-    return new DataContext() {
-      @Nullable
-      @Override
-      public Object getData(@NotNull @NonNls String dataId) {
-        if (Location.DATA_KEY.is(dataId)) {
-          return new PsiLocation<>(element.getProject(), element);
-        }
-        return dataContext.getData(dataId);
+    return dataId -> {
+      if (Location.DATA_KEY.is(dataId)) {
+        return new PsiLocation<>(element.getProject(), element);
       }
+      return dataContext.getData(dataId);
     };
   }
 

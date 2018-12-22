@@ -21,7 +21,6 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -82,7 +81,9 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.*;
@@ -770,12 +771,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     };
     sdksModel.addListener(listener);
-    Disposer.register(myDisposable, new Disposable() {
-      @Override
-      public void dispose() {
-        sdksModel.removeListener(listener);
-      }
-    });
+    Disposer.register(myDisposable, () -> sdksModel.removeListener(listener));
 
     mySdkCombo.setSetupButton(myNewButton, myProject, sdksModel, new JdkComboBox.NoneJdkComboBoxItem(), null,
                               FlexBundle.message("set.up.sdk.title"));
@@ -783,14 +779,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     mySdkLabel.setLabelFor(mySdkCombo);
 
-    mySdkCombo.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(final ActionEvent e) {
-        if (myFreeze) {
-          return;
-        }
-        updateOnSelectedSdkChange();
+    mySdkCombo.addActionListener(e -> {
+      if (myFreeze) {
+        return;
       }
+      updateOnSelectedSdkChange();
     });
 
     myComponentSetCombo.setModel(new DefaultComboBoxModel(ComponentSet.values()));
@@ -858,20 +851,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     myTablePanel.add(
       ToolbarDecorator.createDecorator(myTable)
-        .setAddAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton button) {
-            addItem(button);
-          }
-        }).setAddActionName(FlexBundle.message("add.dependency.action.name"))
-        .setRemoveAction(new AnActionButtonRunnable() {
-          @Override
-          public void run(AnActionButton anActionButton) {
-            removeSelection();
-          }
-        }).setEditAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
+        .setAddAction(this::addItem).setAddActionName(FlexBundle.message("add.dependency.action.name"))
+        .setRemoveAction(anActionButton -> removeSelection()).setEditAction(button -> {
           MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
           if (item instanceof SharedLibraryItem) {
             editLibrary((SharedLibraryItem)item);
@@ -879,24 +860,17 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           if (item instanceof ModuleLibraryItem) {
             editLibrary(((ModuleLibraryItem)item));
           }
-        }
-      }).setRemoveActionUpdater(new AnActionButtonUpdater() {
-        @Override
-        public boolean isEnabled(@NotNull AnActionEvent e) {
+        }).setRemoveActionUpdater(e -> {
           if (myTable.getSelectedRowCount() == 0) return false;
           for (int row : myTable.getSelectedRows()) {
             MyTableItem item = myTable.getItemAt(row);
             if (item instanceof SdkItem || item instanceof SdkEntryItem) return false;
           }
           return true;
-        }
-      }).setEditActionUpdater(new AnActionButtonUpdater() {
-        @Override
-        public boolean isEnabled(@NotNull AnActionEvent e) {
+        }).setEditActionUpdater(e -> {
           MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
           return item != null && item.canEdit();
-        }
-      }).disableUpDownActions().createPanel(), BorderLayout.CENTER);
+        }).disableUpDownActions().createPanel(), BorderLayout.CENTER);
 
     new DoubleClickListener() {
       @Override
@@ -976,16 +950,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }, myDisposable);
 
-    myConfigEditor.addModulesModelChangeListener(new FlexProjectConfigurationEditor.ModulesModelChangeListener() {
-      @Override
-      public void modulesModelsChanged(Collection<Module> modules) {
-        FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
-        for (Module module : modules) {
-          for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
-            FlexBCConfigurable flexBCConfigurable = FlexBCConfigurable.unwrap(configurable);
-            if (flexBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
-              resetTable(myDependencies.getSdkEntry(), true);
-            }
+    myConfigEditor.addModulesModelChangeListener(modules -> {
+      FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+      for (Module module : modules) {
+        for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
+          FlexBCConfigurable flexBCConfigurable = FlexBCConfigurable.unwrap(configurable);
+          if (flexBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
+            resetTable(myDependencies.getSdkEntry(), true);
           }
         }
       }
@@ -994,14 +965,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     UserActivityWatcher watcher = new UserActivityWatcher();
     watcher.register(myMainPanel);
     myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
-    watcher.addUserActivityListener(new UserActivityListener() {
-      @Override
-      public void stateChanged() {
-        if (myFreeze) {
-          return;
-        }
-        myUserActivityDispatcher.getMulticaster().stateChanged();
+    watcher.addUserActivityListener(() -> {
+      if (myFreeze) {
+        return;
       }
+      myUserActivityDispatcher.getMulticaster().stateChanged();
     }, myDisposable);
   }
 
@@ -1109,12 +1077,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     };
 
-    LibraryTableModifiableModelProvider provider = new LibraryTableModifiableModelProvider() {
-      @Override
-      public LibraryTable.ModifiableModel getModifiableModel() {
-        return myConfigEditor.getLibraryModel(myDependencies);
-      }
-    };
+    LibraryTableModifiableModelProvider provider = () -> myConfigEditor.getLibraryModel(myDependencies);
 
     StructureConfigurableContext context = ModuleStructureConfigurable.getInstance(myProject).getContext();
     EditExistingLibraryDialog dialog =
@@ -1612,7 +1575,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           }
         }
       }
-      Condition<Library> filter = library -> usedLibraries.contains(library);
+      Condition<Library> filter = usedLibraries::contains;
 
       LibraryTable.ModifiableModel modifiableModel = myConfigEditor.getLibraryModel(myDependencies);
       LibraryTable.ModifiableModel librariesModelWrapper = new LibraryTableModifiableModelWrapper(modifiableModel, filter);
