@@ -212,7 +212,9 @@ function IntellijReporter(config, fileList, formatError, globalEmitter, injector
 
   this.onRunComplete = function (browsers, results) {
     logManager.attachToAnything(tree);
-    tree.configFileNode.finishIfStarted();
+    if (tree != null) {
+      tree.configFileNode.finishIfStarted();
+    }
     tree = null;
   };
 }
