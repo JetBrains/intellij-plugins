@@ -43,7 +43,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.*;
 
-import static com.intellij.flex.completion.ActionScriptCompletionTest.JAVA_PROJECT_DESCRIPTOR;
+import static com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase.JAVA_1_7;
 
 public class FlexCompletionTest extends BaseJSCompletionTestCase {
   static final String BASE_PATH = "/flex_completion/";
@@ -94,7 +94,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return needsJavaModule() ?
-           JAVA_PROJECT_DESCRIPTOR :
+           JAVA_1_7 :
            FlexProjectDescriptor.DESCRIPTOR;
   }
 

@@ -18,8 +18,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,7 +25,6 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThrowableRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -35,17 +32,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 
+import static com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase.JAVA_1_7;
+
 @SuppressWarnings({"ALL"})
 public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
-  public static final LightProjectDescriptor JAVA_PROJECT_DESCRIPTOR = new LightProjectDescriptor() {
-    @NotNull
-    @Override
-    public ModuleType getModuleType() {
-      return StdModuleTypes.JAVA;
-    }
-  };
-
   {
     mySmartCompletionTests.addAll(Arrays.asList(
       "VarTypePickedUp", "VarTypePickedUp2", "FuncTypePickedUp", "FuncTypePickedUp2", "FuncTypePickedUp3", "CompleteAfterThis",
@@ -88,7 +79,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return needsJavaModule() ?
-           JAVA_PROJECT_DESCRIPTOR :
+           JAVA_1_7 :
            FlexProjectDescriptor.DESCRIPTOR;
   }
 
