@@ -48,12 +48,6 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     return "tslint";
   }
 
-  @Override
-  protected boolean shouldEnableInspection() {
-    final String name = getTestName(false);
-    return !"NoConfig".equals(name) && !"BadConfig".equals(name);
-  }
-
   public void testOne() {
     doTest("one", "one/one.ts", null);
   }
