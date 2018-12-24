@@ -42,7 +42,7 @@ public class MxmlImplicitImports {
     new PredefinedImportSet(ArrayUtil.append(commonImplicitImports, "flash.filters.*"));
 
   private static @NonNls final ScopedImportSet flex4ImplicitImports = new PredefinedImportSet(
-    ArrayUtil.mergeArrays(commonImplicitImports, new String[]{"mx.filters.*", "mx.core.IFlexModuleFactory"}));
+    ArrayUtil.mergeArrays(commonImplicitImports, "mx.filters.*", "mx.core.IFlexModuleFactory"));
 
   public static boolean resolveTypeNameUsingImplicitImports(final ResolveProcessor resolveProcessor, @NotNull PsiNamedElement scope) {
     final PsiElement context = scope.getContext();

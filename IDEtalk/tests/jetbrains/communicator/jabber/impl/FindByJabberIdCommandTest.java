@@ -54,7 +54,7 @@ public class FindByJabberIdCommandTest extends BaseTestCase {
 
   public void testNotEnteredId() {
     //noinspection SSBasedInspection
-    myJabberUI.expects(once()).method("getFindByIdData").with(eq(Arrays.asList(new String[0])))
+    myJabberUI.expects(once()).method("getFindByIdData").with(eq(Arrays.asList()))
         .will(returnValue("someGroup:  "));
     setupConnection(true);
 
@@ -65,12 +65,12 @@ public class FindByJabberIdCommandTest extends BaseTestCase {
     myUserModel.addGroup("bbb");
     myUserModel.addGroup("aaa");
 
-    myJabberUI.expects(once()).method("getFindByIdData").with(eq(Arrays.asList(new String[] {"aaa", "bbb"})))
+    myJabberUI.expects(once()).method("getFindByIdData").with(eq(Arrays.asList("aaa", "bbb")))
         .will(returnValue("someGroup:kir@localhost, \nsashka@localhost"));
     setupConnection(true);
 
     myJabberFacade.expects(once()).method("addUsers").with(eq("someGroup"),eq(
-        Arrays.asList(new String[]{"kir@localhost","sashka@localhost"})));
+        Arrays.asList("kir@localhost", "sashka@localhost")));
 
     myCommand.execute();
   }

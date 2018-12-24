@@ -93,7 +93,7 @@ public class UserModelImplTest extends BaseTestCase {
 
   public void testGrouping() {
     String[] groups = myUserModel.getGroups();
-    assertEquals("Wrong groups", Arrays.asList(new Object[]{"group1", "group2"}),
+    assertEquals("Wrong groups", Arrays.asList("group1", "group2"),
         Arrays.asList(groups));
   }
 
@@ -110,7 +110,7 @@ public class UserModelImplTest extends BaseTestCase {
     myListener.assertLog("No events expected - already in model", "");
 
     String[] groups = myUserModel.getGroups();
-    assertEquals("Wrong groups", Arrays.asList(new Object[]{"group1", "group15", "group2"}),
+    assertEquals("Wrong groups", Arrays.asList("group1", "group15", "group2"),
         Arrays.asList(groups));
   }
 
@@ -126,7 +126,7 @@ public class UserModelImplTest extends BaseTestCase {
     assertTrue("Do not contain users, can be removed", myUserModel.removeGroup("added1"));
     assertTrue("Contains users, removed including users", myUserModel.removeGroup("group1"));
 
-    assertEquals("Wrong groups after deletion", Arrays.asList(new Object[]{"added2", "group2"}),
+    assertEquals("Wrong groups after deletion", Arrays.asList("added2", "group2"),
         Arrays.asList(myUserModel.getGroups()));
   }
 
@@ -136,7 +136,7 @@ public class UserModelImplTest extends BaseTestCase {
       myUserModel.removeUser(user);
     }
 
-    assertEquals("Implicit group should remain", Arrays.asList(new Object[]{"group1", "group2"}),
+    assertEquals("Implicit group should remain", Arrays.asList("group1", "group2"),
         Arrays.asList(myUserModel.getGroups()));
   }
 
@@ -181,7 +181,7 @@ public class UserModelImplTest extends BaseTestCase {
     myUserModel.renameGroup("new group", "new group1");
 
     assertEquals("Wrong groups after rename",
-        Arrays.asList(new Object[]{"group1", "group2", "new group1"}),
+        Arrays.asList("group1", "group2", "new group1"),
         Arrays.asList(myUserModel.getGroups()));
   }
 

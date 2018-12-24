@@ -197,7 +197,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
   }
 
   private void addUser(String userId) {
-    myFacade.addUsers("aGroup", Arrays.asList(new String[]{userId}));
+    myFacade.addUsers("aGroup", Arrays.asList(userId));
 
     waitForEvent();
   }
@@ -511,7 +511,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
   }
 
   public void testSendMessage2NonExistingUser() {
-    myFacade.addUsers("grp", Arrays.asList(new String[]{"some@fake.user"}));
+    myFacade.addUsers("grp", Arrays.asList("some@fake.user"));
     new WaitFor(TIMEOUT) {
       @Override
       protected boolean condition() {
