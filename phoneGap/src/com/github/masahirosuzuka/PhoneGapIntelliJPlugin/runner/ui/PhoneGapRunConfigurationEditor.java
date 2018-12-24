@@ -183,7 +183,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           final String currentText = myTarget.getTargetsField().getText();
           final Set<String> targets = ContainerUtil.newLinkedHashSet(PhoneGapTargets.listTargets(targetsProvider, command));
-          if (!StringUtil.isEmpty(currentText) && !targets.contains(currentText)) {
+          if (!StringUtil.isEmpty(currentText)) {
             targets.add(currentText);
           }
 

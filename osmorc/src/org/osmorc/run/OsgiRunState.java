@@ -146,11 +146,9 @@ public class OsgiRunState extends JavaCommandLineState {
                 }
               }
               else {
-                if (selectedBundles.contains(selectedBundle)) {
-                  // if the user selected a dependency as runnable library, we need to replace the dependency with
-                  // the runnable library part
-                  selectedBundles.remove(selectedBundle);
-                }
+                // if the user selected a dependency as runnable library, we need to replace the dependency with
+                // the runnable library part
+                selectedBundles.remove(selectedBundle);
                 selectedBundles.add(selectedBundle);
               }
             }

@@ -95,7 +95,7 @@ public class ResourceCollector {
         scanner.addDefaultExcludes();
         scanner.scan();
 
-        List<String> includedFiles = Arrays.asList(scanner.getIncludedFiles());
+        String[] includedFiles = scanner.getIncludedFiles();
 
         for (Object includedFile : includedFiles) {
           String name = (String)includedFile;

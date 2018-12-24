@@ -220,9 +220,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
           .findOrderEntry((ModuleLibraryEntry)entry, flexConfigEditor.getModifiableRootModel(module));
         if (orderEntry != null) {
           for (VirtualFile file : orderEntry.getRootFiles(OrderRootType.CLASSES)) {
-            if (result.contains(file)) {
-              result.remove(file);
-            }
+            result.remove(file);
           }
         }
       }
@@ -230,9 +228,7 @@ public class AddAsSwcLibDialog extends DialogWrapper {
         final Library library = FlexProjectRootsUtil.findOrderEntry(module.getProject(), (SharedLibraryEntry)entry);
         if (library != null) {
           for (VirtualFile file : library.getFiles(OrderRootType.CLASSES)) {
-            if (result.contains(file)) {
-              result.remove(file);
-            }
+            result.remove(file);
           }
         }
       }
