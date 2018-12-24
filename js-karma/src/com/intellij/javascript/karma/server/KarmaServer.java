@@ -232,10 +232,10 @@ public class KarmaServer {
       commandLine.addParameter("--browsers=" + browsers);
       commandLineFolder.addLastParameterFrom(commandLine);
     }
-    setIntellijParameter(commandLine, "user-config", configurator.convertLocalPathToRemote(serverSettings.getConfigurationFilePath()));
+    setIntellijParameter(commandLine, "user_config", configurator.convertLocalPathToRemote(serverSettings.getConfigurationFilePath()));
     if (coveragePeer != null) {
       String coverageDir = configurator.convertLocalPathToRemote(coveragePeer.getCoverageTempDir().getAbsolutePath());
-      setIntellijParameter(commandLine, "coverage-temp-dir", coverageDir);
+      setIntellijParameter(commandLine, "coverage_temp_dir", coverageDir);
       if (angularCli) {
         commandLine.addParameter("--code-coverage");
         commandLineFolder.addLastParameterFrom(commandLine);

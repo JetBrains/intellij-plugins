@@ -17,7 +17,7 @@ function getRequiredParam(name) {
 }
 
 function getUserConfigFilePath() {
-  return getRequiredParam('user-config')
+  return getRequiredParam('user_config')
 }
 
 function isDebug() {
@@ -25,7 +25,7 @@ function isDebug() {
 }
 
 function getCoverageTempDirPath() {
-  return getParam('coverage-temp-dir')
+  return getParam('coverage_temp_dir')
 }
 
 function isWithCoverage() {
