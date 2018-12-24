@@ -40,25 +40,25 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
 
   override fun findExpectedType(parent: JSExpression, expectedTypeKind: JSExpectedTypeKind): JSType? {
     val language = DialectDetector.languageOfElement(parent)
-    if (hasVuex(parent.project)) {
-      val expression = PsiTreeUtil.getParentOfType(parent, JSCallExpression::class.java)
-      if (expression == null || expression.methodExpression == null) return null
-      val keys = getForAllKeys(GlobalSearchScope.projectScope(expression.project), VueStoreIndex.KEY)
-      if (keys.isEmpty()) return null
-      val map = mutableListOf<JSStringLiteralTypeImpl>()
-      val expressionText = expression.methodExpression!!.text!!
-      when {
-        expressionText.endsWith("dispatch") || expressionText == "mapActions" -> processVuex(keys, map, VueStoreUtils.ACTION)
-        expressionText == "commit" || expressionText == "mapMutations" -> processVuex(keys, map, VueStoreUtils.MUTATION)
-        expressionText.endsWith("getters") || expressionText == "mapGetters" -> processVuex(keys, map, VueStoreUtils.GETTER)
-        expressionText == "mapState" -> processVuex(keys, map, VueStoreUtils.STATE)
-      }
-      if (map.isEmpty()) return null
-      return JSCompositeTypeImpl(map[0].source, map)
-    }
     if (VueFileType.INSTANCE == parent.containingFile?.fileType && isInsideScript(parent) && VueJSLanguage.INSTANCE != language) {
       val obj = parent as? JSObjectLiteralExpression
-      obj?.parent as? ES6ExportDefaultAssignment ?: return null
+      if (obj?.parent !is ES6ExportDefaultAssignment) {
+        if (!hasVuex(parent.project)) return null
+        val expression = PsiTreeUtil.getParentOfType(parent, JSCallExpression::class.java)
+        if (expression == null || expression.methodExpression == null) return null
+        val keys = getForAllKeys(GlobalSearchScope.projectScope(expression.project), VueStoreIndex.KEY)
+        if (keys.isEmpty()) return null
+        val map = mutableListOf<JSStringLiteralTypeImpl>()
+        val expressionText = expression.methodExpression!!.text!!
+        when {
+          expressionText.endsWith("dispatch") || expressionText == "mapActions" -> processVuex(keys, map, VueStoreUtils.ACTION)
+          expressionText == "commit" || expressionText == "mapMutations" -> processVuex(keys, map, VueStoreUtils.MUTATION)
+          expressionText.endsWith("getters") || expressionText == "mapGetters" -> processVuex(keys, map, VueStoreUtils.GETTER)
+          expressionText == "mapState" -> processVuex(keys, map, VueStoreUtils.STATE)
+        }
+        if (map.isEmpty()) return null
+        return JSCompositeTypeImpl(map[0].source, map)
+      }
       return createExportedObjectLiteralTypeEvaluator(obj)
     }
     return null
