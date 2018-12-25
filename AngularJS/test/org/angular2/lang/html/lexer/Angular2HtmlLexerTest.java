@@ -4,9 +4,9 @@ package org.angular2.lang.html.lexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.testFramework.LexerTestCase;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
-import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NonNls;
 
@@ -18,8 +18,8 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
     super.setUp();
 
     // needed for various XML extension points registration
-    TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName());
-    myFixture = projectBuilder.getFixture();
+    myFixture = IdeaTestFixtureFactory.getFixtureFactory()
+      .createLightFixtureBuilder(LightProjectDescriptor.EMPTY_PROJECT_DESCRIPTOR).getFixture();
     myFixture.setUp();
   }
 
