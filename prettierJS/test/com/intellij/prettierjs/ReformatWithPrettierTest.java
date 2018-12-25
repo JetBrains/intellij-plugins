@@ -1,41 +1,31 @@
 package com.intellij.prettierjs;
 
-import com.intellij.javascript.debugger.NodeJsAppRule;
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.linter.InstallNpmModules;
-import com.intellij.lang.javascript.linter.NodeLinterPackageTestPaths;
-import com.intellij.lang.javascript.service.JSLanguageServiceQueue;
+import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.intellij.util.containers.ContainerUtil;
-import org.apache.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 
-public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
+public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
+
+  @Override
+  protected String getMainPackageName() {
+    return PrettierUtil.PACKAGE_NAME;
+  }
+
+  @Override
+  protected String getRootDirName() {
+    return "Prettier";
+  }
 
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
-
-    NodeLinterPackageTestPaths testPackagePaths = ensureNpmPackage("prettier");
-    Disposer.register(myFixture.getProjectDisposable(), testPackagePaths);
-    NodeJsLocalInterpreter interpreter = new NodeJsLocalInterpreter(testPackagePaths.getNodePath().toString());
-    NodeJsInterpreterManager.getInstance(myFixture.getProject()).setInterpreterRef(interpreter.toRef());
-    NodePackage nodePackage = new NodePackage(testPackagePaths.getPackagePath().toString());
-    PrettierConfiguration.getInstance(getProject()).update(interpreter.toRef(), nodePackage);
-    boolean debug = JSLanguageServiceQueue.LOGGER.isDebugEnabled();
-    JSLanguageServiceQueue.LOGGER.setLevel(Level.TRACE);
-    Disposer.register(getTestRootDisposable(),
-                      () -> JSLanguageServiceQueue.LOGGER.setLevel(debug ? Level.DEBUG : Level.ERROR));
+    PrettierConfiguration.getInstance(getProject()).update(getNodeInterpreter(), getNodePackage());
   }
 
   @Override
@@ -52,7 +42,7 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     //test that parser is autodetected
     doReformatFile("ts");
   }
-  
+
   public void testTypeScriptWithEmptyConfig() {
     //test that parser is autodetected
     doReformatFile("ts");
@@ -101,7 +91,7 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     myFixture.configureByFile(fileNamePrefix + extensionWithDot);
     myFixture.testAction(new ReformatWithPrettierAction((new ReformatWithPrettierAction.ErrorHandler() {
       @Override
-      public void showError(@NotNull Project project, @Nullable Editor editor, 
+      public void showError(@NotNull Project project, @Nullable Editor editor,
                             @NotNull String text, @Nullable Runnable onLinkClick) {
         throw new RuntimeException(text);
       }
@@ -115,21 +105,6 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     myFixture.checkResultByFile(dirName + "/" + fileNamePrefix + "_after" + extensionWithDot);
   }
 
-  private NodeLinterPackageTestPaths ensureNpmPackage(String packageName) {
-    try {
-      final NodeJsAppRule nodeJsAppRule = new NodeJsAppRule("6.10.2");
-      nodeJsAppRule.executeBefore();
-      final InstallNpmModules npmModules = new InstallNpmModules(nodeJsAppRule, ContainerUtil.list(packageName));
-      npmModules.run();
-
-      return new NodeLinterPackageTestPaths(getProject(), packageName, npmModules.getNpmPath(), npmModules.getNodePath(),
-                                            npmModules.getLintersFolder());
-    }
-    catch (Throwable throwable) {
-      throw new RuntimeException(throwable);
-    }
-  }
-
   private static void assertError(Condition<String> checkException, Runnable runnable) {
     try {
       runnable.run();
@@ -138,6 +113,5 @@ public class ReformatWithPrettierTest extends CodeInsightFixtureTestCase {
     catch (Exception e) {
       Assert.assertTrue("Expected condition to be valid for exception: " + e.getMessage(), checkException.value(e.getMessage()));
     }
-
   }
 }

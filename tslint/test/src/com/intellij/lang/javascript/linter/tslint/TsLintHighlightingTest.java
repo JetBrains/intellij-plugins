@@ -22,6 +22,7 @@ import org.junit.Assert;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -135,7 +136,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
       Arrays.stream(myFixture.completeBasic()).map(lookup -> StringUtil.unquoteString(lookup.getLookupString()))
         .collect(Collectors.toSet());
 
-    final Path rulesDir = myNodeLinterPackageTestPaths.getPackagePath().resolve("lib").resolve("rules");
+    final Path rulesDir = Paths.get(getNodePackage().getSystemDependentPath()).resolve("lib").resolve("rules");
     Assert.assertTrue(Files.exists(rulesDir));
     final Set<String> fromDir = Files.list(rulesDir).map(path -> path.toFile().getName())
       .filter(name -> name.endsWith("Rule.js"))
