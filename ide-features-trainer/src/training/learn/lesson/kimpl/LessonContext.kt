@@ -4,6 +4,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import training.commands.kotlin.TaskContext
 import training.learn.lesson.LessonManager
+import kotlin.concurrent.thread
 
 class LessonContext(val lesson: KLesson, val editor: Editor, val project: Project) {
   /**
@@ -12,6 +13,13 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
   fun task(taskContent: TaskContext.() -> Unit) {
     val taskContext = TaskContext(lesson, editor, project)
     taskContext.apply(taskContent)
+
+    if (TaskContext.inTestMode) {
+      thread(name = "TestLearningPlugin") {
+        taskContext.testActions.forEach { it.run() }
+      }
+    }
+
     taskContext.checkFutures.all { it.get() }
     taskContext.triggerFutures.forEach { it.get() }
     LessonManager.getInstance(lesson).passExercise()
