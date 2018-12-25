@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -12,7 +13,7 @@ public class DartServerStatementCompletionTest extends CodeInsightFixtureTestCas
   public void setUp() throws Exception {
     super.setUp();
     DartTestUtils.configureDartSdk(myModule, myFixture.getTestRootDisposable(), true);
-    DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest(getProject());
+    DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest();
     ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 

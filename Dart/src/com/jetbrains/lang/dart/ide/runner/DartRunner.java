@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.execution.ExecutionException;
@@ -63,7 +64,7 @@ public class DartRunner extends GenericProgramRunner {
 
       final RunProfile runConfig = env.getRunProfile();
       if (runConfig instanceof DartRunConfigurationBase &&
-          DartAnalysisServerService.getInstance(env.getProject()).serverReadyForRequest(env.getProject())) {
+          DartAnalysisServerService.getInstance(env.getProject()).serverReadyForRequest()) {
         final String path = ((DartRunConfigurationBase)runConfig).getRunnerParameters().getFilePath();
         assert path != null; // already checked
         dasExecutionContextId = DartAnalysisServerService.getInstance(env.getProject()).execution_createContext(path);

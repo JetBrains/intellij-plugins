@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -56,7 +57,7 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
     if (module == null || !DartSdkLibUtil.isDartSdkEnabled(module)) return Collections.emptyList();
     if (!ProjectFileIndex.getInstance(project).isInContent(vFile)) return Collections.emptyList();
     final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
-    if (!das.serverReadyForRequest(project)) return Collections.emptyList();
+    if (!das.serverReadyForRequest()) return Collections.emptyList();
 
     das.updateFilesContent();
 

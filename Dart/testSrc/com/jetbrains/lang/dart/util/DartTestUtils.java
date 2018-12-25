@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.Disposable;
@@ -150,13 +138,13 @@ public class DartTestUtils {
       try {
         final List<OrderEntry> entriesToRemove = new SmartList<>();
 
-        for (OrderEntry orderEntry: modifiableModel.getOrderEntries()) {
+        for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
           if (orderEntry instanceof LibraryOrderEntry) {
             entriesToRemove.add(orderEntry);
           }
         }
 
-        for (OrderEntry orderEntry: entriesToRemove) {
+        for (OrderEntry orderEntry : entriesToRemove) {
           modifiableModel.removeOrderEntry(orderEntry);
         }
 
@@ -185,9 +173,9 @@ public class DartTestUtils {
   public static VirtualFile configureNavigation(@NotNull PsiTestCase test,
                                                 @NotNull VirtualFile testRoot,
                                                 @NotNull final VirtualFile... vFiles) {
-    DartAnalysisServerService.getInstance(test.getProject()).serverReadyForRequest(test.getProject());
+    DartAnalysisServerService.getInstance(test.getProject()).serverReadyForRequest();
     // Trigger navigation requests for each file that needs to have navigation data during resolution.
-    for (VirtualFile vFile: vFiles) {
+    for (VirtualFile vFile : vFiles) {
       String name = vFile.getName();
       VirtualFile testFile = testRoot.findChild(name);
       if (testFile == null) TestCase.fail();

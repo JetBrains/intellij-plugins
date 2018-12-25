@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -23,7 +24,7 @@ public class RestartDartAnalysisServerAction extends DumbAwareAction {
     if (project != null) {
       DartAnalysisServerService.getInstance(project).restartServer();
       // The list of projects was probably lost when the server crashed. Prime it with the current project to get the server restarted.
-      DartAnalysisServerService.getInstance(project).serverReadyForRequest(project);
+      DartAnalysisServerService.getInstance(project).serverReadyForRequest();
     }
   }
 

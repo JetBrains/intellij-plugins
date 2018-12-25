@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.openapi.editor.Document;
@@ -54,7 +55,7 @@ public class DartPostFormatProcessor implements PostFormatProcessor {
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     if (module == null || !DartSdkLibUtil.isDartSdkEnabled(module)) return false;
     if (!ProjectFileIndex.getInstance(project).isInContent(vFile)) return false;
-    if (!DartAnalysisServerService.getInstance(project).serverReadyForRequest(project)) return false;
+    if (!DartAnalysisServerService.getInstance(project).serverReadyForRequest()) return false;
 
     return true;
   }

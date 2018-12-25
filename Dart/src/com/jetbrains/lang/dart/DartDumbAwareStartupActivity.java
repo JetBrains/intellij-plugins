@@ -1,3 +1,4 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart;
 
 import com.intellij.openapi.application.ReadAction;
@@ -26,7 +27,7 @@ public class DartDumbAwareStartupActivity implements StartupActivity, DumbAware 
 
     for (final Module module : ModuleManager.getInstance(project).getModules()) {
       if (DartSdkLibUtil.isDartSdkEnabled(module)) {
-        ReadAction.run(() -> DartAnalysisServerService.getInstance(project).serverReadyForRequest(project));
+        ReadAction.run(() -> DartAnalysisServerService.getInstance(project).serverReadyForRequest());
         break;
       }
     }

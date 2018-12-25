@@ -173,7 +173,7 @@ public class DartAnnotator implements Annotator {
 
       final VirtualFile vFile = element.getContainingFile().getVirtualFile();
       final DartAnalysisServerService service = DartAnalysisServerService.getInstance(element.getProject());
-      if (canBeAnalyzedByServer(element.getProject(), vFile) && service.serverReadyForRequest(element.getProject())) {
+      if (canBeAnalyzedByServer(element.getProject(), vFile) && service.serverReadyForRequest()) {
         service.updateFilesContent();
 
         if (ApplicationManager.getApplication().isUnitTestMode()) {

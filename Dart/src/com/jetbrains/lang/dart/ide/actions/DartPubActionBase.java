@@ -209,7 +209,7 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
                 VfsUtil.markDirtyAndRefresh(true, true, true, pubspecYamlFile.getParent());
 
                 if (DartSdkLibUtil.isDartSdkEnabled(module)) {
-                  DartAnalysisServerService.getInstance(module.getProject()).serverReadyForRequest(module.getProject());
+                  DartAnalysisServerService.getInstance(module.getProject()).serverReadyForRequest();
                 }
               }
             });
@@ -345,10 +345,10 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
     private StopProcessAction stopProcessAction;
 
     PubToolWindowContentInfo(@NotNull final Module module,
-                                    @NotNull final VirtualFile pubspecYamlFile,
-                                    @NotNull final GeneralCommandLine command,
-                                    @NotNull final String actionTitle,
-                                    @NotNull final ConsoleView console) {
+                             @NotNull final VirtualFile pubspecYamlFile,
+                             @NotNull final GeneralCommandLine command,
+                             @NotNull final String actionTitle,
+                             @NotNull final ConsoleView console) {
       this.module = module;
       this.pubspecYamlFile = pubspecYamlFile;
       this.command = command;
