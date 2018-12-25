@@ -14,10 +14,6 @@ public final class DartIcons {
     return IconLoader.getIcon(path, DartIcons.class);
   }
 
-  private static Icon load(String path, Class<?> clazz) {
-    return IconLoader.getIcon(path, clazz);
-  }
-
   public static final Icon Dart_13 = load("/icons/dart_13.svg"); // 13x13
   public static final Icon Dart_16 = load("/icons/dart_16.svg"); // 16x16
   public static final Icon Dart_file = load("/icons/dart_file.svg"); // 16x16
@@ -26,9 +22,4 @@ public final class DartIcons {
   public static final Icon Observatory = load("/icons/observatory.svg"); // 16x16
   public static final Icon PubServeToolWindow = load("/icons/pubServeToolWindow.svg"); // 13x13
   public static final Icon Warning_point = load("/icons/warning_point.svg"); // 6x6
-
-  /** @deprecated to be removed in IDEA 2019 - use AllIcons.RunConfigurations.Junit */
-  @SuppressWarnings("unused")
-  @Deprecated
-  public static final Icon TestNode = load("/runConfigurations/junit.svg", com.intellij.icons.AllIcons.class);
 }
