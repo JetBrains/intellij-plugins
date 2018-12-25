@@ -2,6 +2,11 @@ package training.commands.kotlin
 
 import com.intellij.find.FindManager
 import com.intellij.find.FindResult
+import com.intellij.ide.DataManager
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
@@ -14,6 +19,7 @@ import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.util.DocumentUtil
 import org.jdom.input.SAXBuilder
 import training.check.Check
@@ -26,6 +32,8 @@ import java.util.concurrent.CompletableFuture
 class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project) {
   val checkFutures: MutableList<CompletableFuture<Boolean>> = mutableListOf()
   val triggerFutures: MutableList<CompletableFuture<Boolean>> = mutableListOf()
+
+  val testActions: MutableList<Runnable> = mutableListOf()
 
   /**
    * Write a text to the learn panel (panel with a learning tasks).
@@ -75,6 +83,23 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
     val recorder = ActionsRecorder(project, editor.document)
     LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
     this.triggerFutures.add(recorder.futureListActions(actionIds.toList()))
+
+    testActions(*actionIds)
+  }
+
+  fun testActions(vararg actionIds: String) {
+    testActions.add(Runnable {
+      val app = ApplicationManager.getApplication()
+      for (actionId in actionIds) {
+        val action = ActionManager.getInstance().getAction(actionId)
+        DataManager.getInstance().dataContextFromFocusAsync.onSuccess { dataContext ->
+          app.invokeAndWait {
+            val event = AnActionEvent.createFromAnAction(action, null, ActionPlaces.UNKNOWN, dataContext)
+            ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
+          }
+        }
+      }
+    })
   }
 
   fun check(check: Check) {
@@ -104,6 +129,13 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
       private fun calculateReadAction() = ReadAction.compute<T, RuntimeException> { calculateState() }
     })
   }
+
+  fun typeForTest(text : String) {
+    testActions.add(Runnable {
+      GuiTestUtil.typeText(text)
+    })
+  }
+
 
   fun action(id: String): String {
     return "<action>$id</action>"
@@ -141,5 +173,9 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
     } else {
       app.invokeLater({ runnable() }, ModalityState.defaultModalityState())
     }
+  }
+
+  companion object {
+    @Volatile var inTestMode : Boolean = false
   }
 }
