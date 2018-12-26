@@ -74,6 +74,6 @@ public class TslintUtil {
 
   @Nullable
   public static VirtualFile lookupConfig(@NotNull VirtualFile virtualFile) {
-    return JSLinterConfigFileUtil.lookupFileByName(virtualFile, CONFIG_FILE_NAMES);
+    return JSLinterConfigFileUtil.findFileUpToFileSystemRoot(virtualFile, CONFIG_FILE_NAMES);
   }
 }

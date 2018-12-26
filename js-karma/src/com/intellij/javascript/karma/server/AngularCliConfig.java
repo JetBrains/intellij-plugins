@@ -135,7 +135,7 @@ public class AngularCliConfig {
   public static AngularCliConfig findProjectConfig(@NotNull File workingDirectory) {
     VirtualFile root = LocalFileSystem.getInstance().findFileByIoFile(workingDirectory);
     if (root == null) return null;
-    VirtualFile config = JSLinterConfigFileUtil.lookupFileByName(root, new String[]{
+    VirtualFile config = JSLinterConfigFileUtil.findFileUpToFileSystemRoot(root, new String[]{
       "angular.json",
       ".angular.json",
       "angular-cli.json",
