@@ -7,12 +7,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.*;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CucumberJavaVersionUtil {
+  public static final String CUCUMBER_CORE_VERSION_4 = "4";
   public static final String CUCUMBER_CORE_VERSION_3 = "3";
   public static final String CUCUMBER_CORE_VERSION_2 = "2";
   public static final String CUCUMBER_CORE_VERSION_1_2 = "1.2";
@@ -21,6 +25,7 @@ public class CucumberJavaVersionUtil {
   private static final String CUCUMBER_1_2_PLUGIN_CLASS = "cucumber.api.Plugin";
   private static final String CUCUMBER_2_CLASS_MARKER = "cucumber.api.formatter.Formatter";
   private static final String CUCUMBER_3_CLASS_MARKER = "cucumber.runner.TestCase";
+  public static final String CUCUMBER_4_CLASS_MARKER = "cucumber.api.event.ConcurrentEventListener";
 
   /**
    * Computes and caches version of attached Cucumber Java library.
@@ -56,6 +61,9 @@ public class CucumberJavaVersionUtil {
       module != null ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, true) : GlobalSearchScope.projectScope(project);
     
     JavaPsiFacade facade = JavaPsiFacade.getInstance(project);
+    if (facade.findClass(CUCUMBER_4_CLASS_MARKER, scope) != null) {
+      return CUCUMBER_CORE_VERSION_4;
+    }
     if (facade.findClass(CUCUMBER_3_CLASS_MARKER, scope) != null) {
       return CUCUMBER_CORE_VERSION_3;
     } else if (facade.findClass(CUCUMBER_2_CLASS_MARKER, scope) != null) {
