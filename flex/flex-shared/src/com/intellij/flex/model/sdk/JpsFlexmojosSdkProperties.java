@@ -11,7 +11,6 @@ public class JpsFlexmojosSdkProperties {
   private String myAirRuntimePath = "";
 
   public JpsFlexmojosSdkProperties(final Collection<String> flexCompilerClasspath, final String adlPath, final String airRuntimePath) {
-    myFlexCompilerClasspath.clear();
     myFlexCompilerClasspath.addAll(flexCompilerClasspath);
 
     myAdlPath = adlPath;
