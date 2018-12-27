@@ -645,6 +645,7 @@ Vue.component('global-comp-literal', {
         hello: "not working",
     }
 </script>""")
+    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection())
     myFixture.checkHighlighting(true, false, true)
   }
 

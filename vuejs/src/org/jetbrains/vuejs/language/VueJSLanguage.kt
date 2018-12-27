@@ -39,7 +39,7 @@ class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6, Jav
         }
       } else if (isIdentifierToken(builder.tokenType)) {
         val statement = builder.mark()
-        buildTokenElement(JSStubElementTypes.VARIABLE)
+        buildTokenElement(VueElementTypes.V_FOR_VARIABLE)
         statement.done(JSStubElementTypes.VAR_STATEMENT)
       } else {
         builder.error("identifier(s) expected")
@@ -67,7 +67,7 @@ class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6, Jav
       val varStatement = builder.mark()
       var cnt = 3
       while (isIdentifierToken(builder.tokenType) && cnt > 0) {
-        buildTokenElement(JSStubElementTypes.VARIABLE)
+        buildTokenElement(VueElementTypes.V_FOR_VARIABLE)
         --cnt
         if (cnt == 0 || builder.tokenType != JSTokenTypes.COMMA) break
         else {
