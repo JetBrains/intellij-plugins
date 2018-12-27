@@ -1166,6 +1166,21 @@ import BComponent from 'b-component'
     myFixture.configureByText("foo.xml", "<component><foo/></component>".trimMargin())
     myFixture.checkHighlighting()
   }
+
+  fun testSemanticHighlighting() {
+    myFixture.configureByText("c-component.vue", """
+<script lang="ts">
+namespace <info descr="moduleName">space</info> {
+    export class <info descr="class">SpaceInterface</info> {
+    }
+    var <info descr="static field">i</info>:<info descr="class">SpaceInterface</info>;
+}
+import <info descr="class">SpaceInterface</info> = <info descr="moduleName">space</info>.<info descr="class">SpaceInterface</info>;
+var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</info>;
+</script>
+""")
+    myFixture.checkHighlighting(false, true, true)
+  }
 }
 
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
