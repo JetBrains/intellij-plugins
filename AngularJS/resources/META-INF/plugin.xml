@@ -112,7 +112,7 @@
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
     <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection" displayName="Angular CLI Add Dependency"
                      groupName="Angular" enabledByDefault="true" level="WARNING" language="JSON"/>
-    <directoryProjectGenerator implementation="org.angular2.cli.AngularCLIProjectGenerator"/>
+    <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
                                   order="after PlatformProjectConfigurator"/>

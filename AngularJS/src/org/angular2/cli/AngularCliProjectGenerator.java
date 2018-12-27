@@ -44,10 +44,10 @@ import java.util.regex.Pattern;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
+public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
   public static final String PACKAGE_NAME = "@angular/cli";
-  private static final Logger LOG = Logger.getInstance(AngularCLIProjectGenerator.class);
+  private static final Logger LOG = Logger.getInstance(AngularCliProjectGenerator.class);
   private static final Pattern NPX_PACKAGE_PATTERN =
     Pattern.compile("npx --package @angular/cli(?:@([0-9]+\\.[0-9]+\\.[0-9a-zA-Z-.]+))? ng");
   private static final Pattern VALID_NG_APP_NAME = Pattern.compile("[a-zA-Z][0-9a-zA-Z]*(-[a-zA-Z][0-9a-zA-Z]*)*");
@@ -124,7 +124,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
   @NotNull
   @Override
   protected Filter[] filters(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return new Filter[]{new AngularCLIFilter(project, baseDir.getParent().getPath())};
+    return new Filter[]{new AngularCliFilter(project, baseDir.getParent().getPath())};
   }
 
   @NotNull
@@ -285,8 +285,8 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
           if (localFile != null) {
             localFile = localFile.getParent().getParent().getParent();
             try {
-              options = SchematicsLoader.INSTANCE
-                .load(ProjectManager.getInstance().getDefaultProject(), localFile, true, false)
+              options = AngularCliSchematicsRegistryService.getInstance()
+                .getSchematics(ProjectManager.getInstance().getDefaultProject(), localFile, true, false)
                 .stream()
                 .filter(s -> "ng-new".equals(s.getName()))
                 .findFirst()

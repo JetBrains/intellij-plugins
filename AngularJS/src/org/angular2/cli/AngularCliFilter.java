@@ -14,11 +14,11 @@ import java.util.List;
 /**
  * @author Dennis.Ushakov
  */
-public class AngularCLIFilter extends AbstractFileHyperlinkFilter implements DumbAware {
+public class AngularCliFilter extends AbstractFileHyperlinkFilter implements DumbAware {
   private static final String CREATE = "create ";
   private static final String UPDATE = "update ";
 
-  public AngularCLIFilter(Project project, String baseDir) {
+  public AngularCliFilter(Project project, String baseDir) {
     super(project, baseDir);
   }
 

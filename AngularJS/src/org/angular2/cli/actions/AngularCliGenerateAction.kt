@@ -26,8 +26,6 @@ import com.intellij.ui.*
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.ListWithFilter
 import com.intellij.util.Function
-import com.intellij.util.gist.GistManager
-import com.intellij.util.gist.GistManagerImpl
 import com.intellij.util.ui.EmptyIcon
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
@@ -95,7 +93,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
       }
 
       override fun actionPerformed(e: AnActionEvent) {
-        GistManager.getInstance().invalidateData()
+        AngularCliSchematicsRegistryService.getInstance().clearProjectSchematicsCache()
         updateList(list, model, project, cli)
       }
     }
@@ -162,7 +160,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     list.setPaintBusy(true)
     model.clear()
     ApplicationManager.getApplication().executeOnPooledThread {
-      val schematics = SchematicsLoader.load(project, cli)
+      val schematics = AngularCliSchematicsRegistryService.getInstance().getSchematics(project, cli)
       ApplicationManager.getApplication().invokeLater {
         schematics.forEach {
           model.add(it)
@@ -229,12 +227,12 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return
 
     val modules: MutableList<CompletionModuleInfo> = mutableListOf()
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, cli, false, node)
+    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, false, node)
 
     val module = modules.firstOrNull() ?: return
 
-    val filter = AngularCLIFilter(project, cli.path)
-    AngularCLIProjectGenerator.generate(node, NodePackage(module.virtualFile?.path!!),
+    val filter = AngularCliFilter(project, cli.path)
+    AngularCliProjectGenerator.generate(node, NodePackage(module.virtualFile?.path!!),
                                         Function<NodePackage, String> { pkg -> pkg.findBinFile()?.absolutePath },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
                                         null, arrayOf(filter), "generate", schematic.name, *arguments)

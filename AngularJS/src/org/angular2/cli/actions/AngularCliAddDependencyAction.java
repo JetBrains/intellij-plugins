@@ -48,8 +48,8 @@ import com.intellij.util.gist.GistManager;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
-import org.angular2.cli.AngularCLIFilter;
-import org.angular2.cli.AngularCLIProjectGenerator;
+import org.angular2.cli.AngularCliFilter;
+import org.angular2.cli.AngularCliProjectGenerator;
 import org.angular2.cli.AngularCliSchematicsRegistryService;
 import org.angular2.cli.AngularCliUtil;
 import org.jetbrains.annotations.NotNull;
@@ -226,7 +226,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       }
 
       List<CompletionModuleInfo> modules = new ArrayList<>();
-      NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, cli,
+      NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli,
                                                false, node);
       if (modules.isEmpty() || modules.get(0).getVirtualFile() == null) {
         throw new ExecutionException("Angular CLI package is not installed.");
@@ -238,7 +238,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
         cli, VfsUtilCore.virtualToIoFile(cli),
         project, () -> GistManager.getInstance().invalidateData(),
         "Installing " + packageSpec + " for " + cli.getName(),
-        new Filter[]{new AngularCLIFilter(project, cli.getPath())},
+        new Filter[]{new AngularCliFilter(project, cli.getPath())},
         "add", packageSpec);
       if (proposeLatestVersionIfNeeded) {
         handler.addProcessListener(new ProcessAdapter() {

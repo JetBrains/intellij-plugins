@@ -4,15 +4,24 @@ package org.angular2.cli;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.javascript.nodejs.packageJson.NpmRegistryService;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SimpleModificationTracker;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
@@ -28,6 +37,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.notNull;
+
 public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematicsRegistryService {
 
   private static final String USER_AGENT = "JetBrains IDE";
@@ -38,11 +50,16 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
   private static final int CACHE_EXPIRY = 25 * 60 * 1000; //25 mins
   private static final ExecutorService ourExecutorService =
     AppExecutorUtil.createBoundedApplicationPoolExecutor("Angular CLI Schematics Registry Pool", 5);
+  private static final Key<com.intellij.psi.util.CachedValue<List<Schematic>>> SCHEMATICS_PUBLIC =
+    new Key<>("angular.cli.schematics.public");
+  private static final Key<com.intellij.psi.util.CachedValue<List<Schematic>>> SCHEMATICS_ALL = new Key<>("angular.cli.schematics.all");
+  private static final SimpleModificationTracker SCHEMATICS_CACHE_TRACKER = new SimpleModificationTracker();
 
   private final CachedValue<List<NodePackageBasicInfo>> myNgAddPackages = new CachedValue<>(
     AngularCliSchematicsRegistryServiceImpl::fetchPackagesSupportingNgAdd);
   private final Map<String, Pair<Boolean, Long>> myLocalNgAddPackages = ContainerUtil.newConcurrentMap();
   private final Map<String, CachedValue<Boolean>> myNgAddSupportedCache = ContainerUtil.newConcurrentMap();
+
 
   @NotNull
   @Override
@@ -89,6 +106,26 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
       LOG.info("Failed to retrieve schematics info for " + version.getPackageDir().getName(), e);
     }
     return false;
+  }
+
+  @NotNull
+  @Override
+  public List<Schematic> getSchematics(@NotNull Project project,
+                                       @NotNull VirtualFile cliFolder,
+                                       boolean includeHidden,
+                                       boolean logErrors) {
+    return notNull(doIfNotNull(
+      ReadAction.compute(() -> PsiManager.getInstance(project).findDirectory(cliFolder)),
+      cliDir -> CachedValuesManager.getCachedValue(cliDir, includeHidden ? SCHEMATICS_ALL : SCHEMATICS_PUBLIC, () ->
+        CachedValueProvider.Result.create(
+          SchematicsLoaderKt.doLoad(cliDir.getProject(), cliDir.getVirtualFile(), includeHidden, logErrors),
+          NodeModulesDirectoryManager.getInstance(cliDir.getProject()).getNodeModulesDirChangeTracker(),
+          SCHEMATICS_CACHE_TRACKER))), Collections.emptyList());
+  }
+
+  @Override
+  public void clearProjectSchematicsCache() {
+    SCHEMATICS_CACHE_TRACKER.incModificationCount();
   }
 
   @NotNull

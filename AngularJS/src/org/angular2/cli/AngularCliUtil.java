@@ -74,7 +74,7 @@ public class AngularCliUtil {
       return false;
     }
     List<CompletionModuleInfo> modules = new ArrayList<>();
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, cli,
+    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli,
                                              false, node);
     return !modules.isEmpty() && modules.get(0).getVirtualFile() != null;
   }
