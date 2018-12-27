@@ -15,6 +15,7 @@ package tools;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.intellij.idea.IdeaTestApplication;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
@@ -31,7 +32,7 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.HttpRequests;
-import org.angularjs.cli.AngularCliSchematicsRegistryServiceImpl;
+import org.angular2.cli.AngularCliSchematicsRegistryServiceImpl;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -53,17 +54,21 @@ import java.util.stream.Stream;
 @SuppressWarnings({"UseOfSystemOutOrSystemErr", "CallToPrintStackTrace"})
 public class GenerateNgAddCompatibleList {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     try {
       setUpApplication();
       generate();
-    } finally {
+    }
+    catch (Throwable t) {
+      t.printStackTrace();
+    }
+    finally {
       System.exit(0);
     }
   }
 
   public static void generate() throws Exception {
-    Map<String, NodePackageBasicInfo> angularPkgs = ContainerUtil.newHashMap();
+    Map<String, NodePackageBasicInfo> angularPkgs = ContainerUtil.newConcurrentMap();
     NpmRegistryService service = new NpmRegistryServiceImpl();
 
     ApplicationImpl app = (ApplicationImpl)ApplicationManager.getApplication();
@@ -71,9 +76,29 @@ public class GenerateNgAddCompatibleList {
     f.setAccessible(true);
     f.setBoolean(app, false);
 
-    Consumer<NodePackageBasicInfo> addPkg = pkg -> angularPkgs.putIfAbsent(pkg.getName(), pkg);
-    System.out.println("Loading list of Angular packages.");
+    Consumer<NodePackageBasicInfo> addPkg = pkg -> angularPkgs.merge(pkg.getName(), pkg, (p1, p2) -> {
+      if (!StringUtil.equals(p1.getDescription(), p2.getDescription())) {
+        System.err.println("Different descriptions for " +
+                           p1.getName() +
+                           " (keeping the first one):\n- " +
+                           p1.getDescription() +
+                           "\n- " +
+                           p2.getDescription());
+      }
+      return p1;
+    });
+    System.out.println("Current directory: " + new File(".").getCanonicalPath());
+    System.out.println("Reading existing list of packages");
 
+    JsonObject root = (JsonObject)new JsonParser().parse(new FileReader("contrib/AngularJS/resources/org/angular2/cli/ng-packages.json"));
+    if (root.get("ng-add") != null) {
+      ((JsonObject)root.get("ng-add")).entrySet()
+        .forEach(e -> addPkg.consume(new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString())));
+    }
+    int fromFile = angularPkgs.size();
+    System.out.println("Read " + fromFile + " packages.");
+
+    System.out.println("Loading list of Angular packages through search.");
     Stream.of("angular schematics", "angular components", "angular").parallel().forEach(search -> {
       try {
         service.findPackages(
@@ -85,7 +110,7 @@ public class GenerateNgAddCompatibleList {
       }
     });
 
-    System.out.println("\nFound " + angularPkgs.size() + " Angular packages.");
+    System.out.println("\nFound additional " + (angularPkgs.size() - fromFile) + " Angular packages.");
 
     AtomicInteger progress = new AtomicInteger();
 
@@ -149,7 +174,7 @@ public class GenerateNgAddCompatibleList {
       }
       return null;
     }).filter(info -> info != null).collect(
-      Collectors.toMap(NodePackageBasicInfo::getName, NodePackageBasicInfo::getDescription));
+      Collectors.toMap(NodePackageBasicInfo::getName, info -> StringUtil.notNullize(info.getDescription())));
 
     ngAddPkgs = ContainerUtil.newTreeMap(ngAddPkgs);
 
@@ -176,9 +201,9 @@ public class GenerateNgAddCompatibleList {
       System.setProperty(PathManager.PROPERTY_SYSTEM_PATH, tmpPath.toString() + "/system");
       System.setProperty(PathManager.PROPERTY_CONFIG_PATH, tmpPath.toString() + "/config");
       IdeaTestApplication.getInstance();
-    } catch (Throwable t) {
+    }
+    catch (Throwable t) {
       //ignore
     }
   }
-
 }

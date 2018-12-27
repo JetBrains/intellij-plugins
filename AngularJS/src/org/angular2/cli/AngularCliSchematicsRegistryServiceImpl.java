@@ -138,7 +138,7 @@ public class AngularCliSchematicsRegistryServiceImpl extends AngularCliSchematic
     }
     catch (IOException e) {
       LOG.info("Failed to load current list of ng-add compatible packages.", e);
-      try (InputStream is = AngularCliSchematicsRegistryServiceImpl.class.getResourceAsStream("ng-packages.json")) {
+      try (InputStream is = AngularCliSchematicsRegistryServiceImpl.class.getResourceAsStream("../../angularjs/cli/ng-packages.json")) {
         return readNgAddPackages(FileUtil.loadTextAndClose(new InputStreamReader(is, StandardCharsets.UTF_8)));
       }
       catch (Exception e1) {
