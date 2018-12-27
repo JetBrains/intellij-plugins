@@ -3,6 +3,7 @@ package org.angular2.entities.source;
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.javascript.psi.JSArrayLiteralExpression;
+import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -81,6 +82,16 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
       PsiFile file;
       if (!directRefs && (file = Angular2InjectionUtils.getFirstInjectedFile(expression)) != null) {
         return file;
+      }
+      if (expression instanceof JSCallExpression) {
+        JSExpression[] args = ((JSCallExpression)expression).getArguments();
+        if (args.length == 1) {
+          expression = args[0];
+          directRefs = true;
+        }
+        else {
+          return null;
+        }
       }
       for (PsiReference ref : expression.getReferences()) {
         PsiElement el = ref.resolve();

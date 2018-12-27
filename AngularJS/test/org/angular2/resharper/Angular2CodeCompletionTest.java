@@ -22,10 +22,7 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
     "external/test004",
     "external/test005",
     "external/test006",
-    "test004",
-    "test006",
-    "test007",
-    "test008"
+    "test004"
   );
 
   @NotNull

@@ -2,11 +2,10 @@
 import {Component} from '@angular/core';
 
 import Styles from "./app.component.2.sass";
-import template from "./app.component.html";
 
 @Component({
     selector: 'app-root',
-    template,
+    template: require("./app.component.html"),
     styleUrls: ['./app.component.css'],
     styles: [`
         inline1 {

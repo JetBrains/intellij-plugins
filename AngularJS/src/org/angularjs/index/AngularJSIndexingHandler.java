@@ -1,9 +1,6 @@
 package org.angularjs.index;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.ecmascript6.psi.ES6FromClause;
-import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
-import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.javascript.JSDocTokenTypes;
 import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
@@ -45,6 +42,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.*;
 import com.intellij.util.containers.BidirectionalMap;
 import gnu.trove.THashSet;
+import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2LangUtil;
 import org.angularjs.codeInsight.AngularJSReferenceExpressionResolver;
 import org.angularjs.codeInsight.DirectiveUtil;
@@ -57,8 +55,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
-
-import static com.intellij.util.ObjectUtils.doIfNotNull;
 
 /**
  * @author Dennis.Ushakov
@@ -697,17 +693,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static boolean processTemplateProperty(@NotNull JSProperty property, @NotNull JSElementIndexingData data) {
-    if (property.getValue() instanceof JSReferenceExpression
+    JSExpression expression = property.getValue();
+    if ((expression instanceof JSReferenceExpression
+         || expression instanceof JSCallExpression)
         && isControllerProperty(property)) {
-      for (PsiElement resolvedElement : AngularIndexUtil.resolveLocally((JSReferenceExpression)property.getValue())) {
-        if (resolvedElement instanceof ES6ImportedBinding) {
-          ES6FromClause from = doIfNotNull(((ES6ImportedBinding)resolvedElement).getDeclaration(),
-                                           ES6ImportDeclaration::getFromClause);
-          if (from != null) {
-            return indexComponentTemplateRef(property, doIfNotNull(from.getReferenceText(), StringUtil::unquoteString), data);
-          }
-        }
-      }
+      return indexComponentTemplateRef(property, Angular2IndexingHandler.getExprReferencedFileUrl(expression), data);
     }
     return false;
   }

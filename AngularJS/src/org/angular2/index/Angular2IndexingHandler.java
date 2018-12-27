@@ -60,6 +60,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   public static final String STYLE_URLS = "styleUrls";
   public static final String STYLES = "styles";
 
+  public static final String REQUIRE = "require";
+
   private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
   private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
   private static final String ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di";
@@ -317,7 +319,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Nullable
-  private static String getExprReferencedFileUrl(@Nullable JSExpression expression) {
+  public static String getExprReferencedFileUrl(@Nullable JSExpression expression) {
     if (expression instanceof JSReferenceExpression) {
       for (PsiElement resolvedElement : AngularIndexUtil.resolveLocally((JSReferenceExpression)expression)) {
         if (resolvedElement instanceof ES6ImportedBinding) {
@@ -327,6 +329,20 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
             return doIfNotNull(from.getReferenceText(), StringUtil::unquoteString);
           }
         }
+      }
+    }
+    else if (expression instanceof JSCallExpression) {
+      JSReferenceExpression referenceExpression = ObjectUtils.tryCast(
+        ((JSCallExpression)expression).getMethodExpression(), JSReferenceExpression.class);
+      JSExpression[] arguments = ((JSCallExpression)expression).getArguments();
+      if (arguments.length == 1
+          && arguments[0] instanceof JSLiteralExpression
+          && (((JSLiteralExpression)arguments[0]).isQuotedLiteral())
+          && referenceExpression != null
+          && referenceExpression.getQualifier() == null
+          && REQUIRE.equals(referenceExpression.getReferenceName())
+      ) {
+        return ((JSLiteralExpression)arguments[0]).getStringValue();
       }
     }
     return null;

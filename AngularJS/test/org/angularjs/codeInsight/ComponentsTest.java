@@ -75,4 +75,12 @@ public class ComponentsTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "vm");
   }
+
+  public void testTemplateReferencedThroughRequire() {
+    myFixture.configureByFiles("heroDetail.html", "editableField.html", "editableField.js", "heroDetail.require.js", "angular.js");
+    AngularTestUtil.moveToOffsetBySignature("\"<caret>vm.delete()\"", myFixture);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "vm");
+  }
+
 }
