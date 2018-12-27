@@ -20,7 +20,7 @@ import java.util.*
 object MarkdownUtil {
   private val LOG = Logger.getInstance(MarkdownUtil::class.java)
 
-  fun md5(buffer: String, @NonNls key: String): String {
+  fun md5(buffer: String?, @NonNls key: String): String {
     var md5: MessageDigest? = null
     try {
       md5 = MessageDigest.getInstance("MD5")
@@ -29,7 +29,7 @@ object MarkdownUtil {
       LOG.error("Cannot find 'md5' algorithm; ", e)
     }
 
-    Objects.requireNonNull<MessageDigest>(md5).update(buffer.toByteArray(StandardCharsets.UTF_8))
+    Objects.requireNonNull<MessageDigest>(md5).update(buffer?.toByteArray(StandardCharsets.UTF_8))
     val code = md5!!.digest(key.toByteArray(StandardCharsets.UTF_8))
     val bi = BigInteger(code).abs()
     return bi.abs().toString(16)
