@@ -1,0 +1,290 @@
+<?xml version="1.0"?>
+<!--
+
+    ADOBE SYSTEMS INCORPORATED
+    Copyright 2008 Adobe Systems Incorporated
+    All Rights Reserved.
+
+    NOTICE: Adobe permits you to use, modify, and distribute this file
+    in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<!--
+
+    Spark Components
+
+-->
+<componentPackage>
+
+	<!-- Flex4 Framework -->
+    <component id="AddAction" class="spark.effects.AddAction"/>
+    <component id="Animate" class="spark.effects.Animate"/>
+    <component id="AnimateColor" class="spark.effects.AnimateColor"/>
+    <component id="AnimateFilter" class="spark.effects.AnimateFilter"/>
+    <component id="AnimateTransitionShader" class="spark.effects.AnimateTransitionShader"/>
+    <component id="AnimateTransform" class="spark.effects.AnimateTransform"/>
+    <component id="AnimateTransform3D" class="spark.effects.AnimateTransform3D"/>
+    <component id="Animation" class="spark.effects.animation.Animation"/>
+    <component id="Application" class="spark.components.Application"/>
+    <component id="ArrayCollection" class="mx.collections.ArrayCollection" lookupOnly="true"/>
+    <component id="ArrayList" class="mx.collections.ArrayList" lookupOnly="true"/>
+    <component id="AsyncListView" class="mx.collections.AsyncListView" lookupOnly="true"/>
+    <component id="BasicLayout" class="spark.layouts.BasicLayout"/>
+    <component id="BevelFilter" class="spark.filters.BevelFilter"/>
+    <component id="BitmapImage" class="spark.primitives.BitmapImage"/>
+    <component id="Block" class="spark.layouts.supportClasses.Block"/>
+    <component id="BlurFilter" class="spark.filters.BlurFilter"/>
+    <component id="BorderContainer" class="spark.components.BorderContainer"/>
+    <component id="Bounce" class="spark.effects.easing.Bounce"/>
+    <component id="Button" class="spark.components.Button"/>
+    <component id="ButtonBar" class="spark.components.ButtonBar"/>
+    <component id="ButtonBarButton" class="spark.components.ButtonBarButton"/>
+    <component id="ButtonBarHorizontalLayout" class="spark.components.supportClasses.ButtonBarHorizontalLayout"/>
+    <component id="ButtonBase" class="spark.components.supportClasses.ButtonBase"/>
+    <component id="CallAction" class="spark.effects.CallAction"/>
+    <component id="CellPosition" class="spark.components.gridClasses.CellPosition"/>
+    <component id="CellRegion" class="spark.components.gridClasses.CellRegion"/>
+    <component id="CheckBox" class="spark.components.CheckBox"/>
+    <component id="ColorMatrixFilter" class="spark.filters.ColorMatrixFilter"/>
+    <component id="ColorTransform" class="flash.geom.ColorTransform" lookupOnly="true"/>
+    <component id="ColumnAlign" class="spark.layouts.ColumnAlign"/>
+    <component id="GridColumnHeaderGroup" class="spark.components.GridColumnHeaderGroup"/>
+    <component id="ComboBox" class="spark.components.ComboBox"/>
+    <component id="ComboBoxGridItemEditor" class="spark.components.gridClasses.ComboBoxGridItemEditor" />
+    <component id="ConstraintColumn" class="mx.containers.utilityClasses.ConstraintColumn" lookupOnly="true"/>
+    <component id="ConstraintLayout" class="spark.layouts.ConstraintLayout"/>
+    <component id="ConstraintRow" class="mx.containers.utilityClasses.ConstraintRow" lookupOnly="true"/>
+    <component id="ContentCache" class="spark.core.ContentCache"/> 
+    <component id="ConvolutionFilter" class="spark.filters.ConvolutionFilter"/>
+    <component id="CrossFade" class="spark.effects.CrossFade"/>
+	<component id="CurrencyFormatter" class="spark.formatters.CurrencyFormatter"/>
+	<component id="CurrencyValidator" class="spark.validators.CurrencyValidator"/>
+	<component id="DataGrid" class="spark.components.DataGrid"/>    
+    <component id="DataGroup" class="spark.components.DataGroup"/>
+    <component id="DataRenderer" class="spark.components.DataRenderer"/>
+	<component id="DateTimeFormatter" class="spark.formatters.DateTimeFormatter"/>
+    <component id="DefaultGridHeaderRenderer" class="spark.skins.spark.DefaultGridHeaderRenderer"/>
+    <component id="DefaultGridItemRenderer" class="spark.skins.spark.DefaultGridItemRenderer"/>
+    <component id="DisplacementMapFilter" class="spark.filters.DisplacementMapFilter"/>
+    <component id="DropDownList" class="spark.components.DropDownList"/>
+    <component id="DropLocation" class="spark.layouts.supportClasses.DropLocation"/>
+    <component id="DropShadowFilter" class="spark.filters.DropShadowFilter"/>
+    <component id="DynamicStreamingVideoSource" class="spark.components.mediaClasses.DynamicStreamingVideoSource"/>
+    <component id="DynamicStreamingVideoItem" class="spark.components.mediaClasses.DynamicStreamingVideoItem"/>
+    <component id="Elastic" class="spark.effects.easing.Elastic"/>
+    <component id="Ellipse" class="spark.primitives.Ellipse"/>
+    <component id="Fade" class="spark.effects.Fade"/>
+    <component id="Form" class="spark.components.Form"/>
+    <component id="FormHeading" class="spark.components.FormHeading"/>
+    <component id="FormItem" class="spark.components.FormItem"/>
+    <component id="FormItemLayout" class="spark.layouts.FormItemLayout"/>
+    <component id="FormLayout" class="spark.layouts.FormLayout"/>
+    <component id="FilledElement" class="spark.primitives.supportClasses.FilledElement"/>
+    <component id="GlowFilter" class="spark.filters.GlowFilter"/>
+    <component id="GradientBevelFilter" class="spark.filters.GradientBevelFilter"/>
+    <component id="GradientFilter" class="spark.filters.GradientFilter"/>
+    <component id="GradientGlowFilter" class="spark.filters.GradientGlowFilter"/>
+    <component id="Graphic" class="spark.primitives.Graphic"/>
+    <component id="GraphicElement" class="spark.primitives.supportClasses.GraphicElement"/>
+    <component id="Grid" class="spark.components.Grid"/>
+    <component id="GridColumn" class="spark.components.gridClasses.GridColumn"/>
+    <component id="GridItemEditor" class="spark.components.gridClasses.GridItemEditor" />
+    <component id="GridItemRenderer" class="spark.components.gridClasses.GridItemRenderer"/>
+    <component id="GridLayer" class="spark.components.gridClasses.GridLayer"/>
+    <component id="Group" class="spark.components.Group"/>
+    <component id="GroupBase" class="spark.components.supportClasses.GroupBase"/>
+    <component id="HGroup" class="spark.components.HGroup"/>
+    <component id="HorizontalLayout" class="spark.layouts.HorizontalLayout"/>
+    <component id="HSBInterpolator" class="spark.effects.interpolation.HSBInterpolator"/>
+    <component id="HScrollBar" class="spark.components.HScrollBar"/>
+    <component id="HSlider" class="spark.components.HSlider"/>
+    <component id="Image" class="spark.components.Image"/> 
+    <component id="ItemRenderer" class="spark.components.supportClasses.ItemRenderer"/>
+    <component id="Keyframe" class="spark.effects.animation.Keyframe"/>
+    <component id="Label" class="spark.components.Label"/>
+    <component id="LastOperationStatus" class="spark.globalization.LastOperationStatus"/>
+    <component id="LayoutBase" class="spark.layouts.supportClasses.LayoutBase"/>
+    <component id="Line" class="spark.primitives.Line"/>
+    <component id="Linear" class="spark.effects.easing.Linear"/>
+	<component id="List" class="spark.components.List"/>
+    <component id="ListBase" class="spark.components.supportClasses.ListBase"/>
+    <component id="MaskType" class="spark.core.MaskType"/>
+    <component id="MatchingCollator" class="spark.globalization.MatchingCollator"/>
+    <component id="Matrix" class="flash.geom.Matrix" lookupOnly="true"/>
+    <component id="Matrix3D" class="flash.geom.Matrix3D" lookupOnly="true"/>
+    <component id="Module" class="spark.modules.Module"/>
+    <component id="ModuleLoader" class="spark.modules.ModuleLoader"/>
+    <component id="MotionPath" class="spark.effects.animation.MotionPath"/>
+    <component id="Move" class="spark.effects.Move"/>
+    <component id="MovieClipSWFLoader" class="mx.controls.MovieClipSWFLoader" lookupOnly="true"/>
+    <component id="Move3D" class="spark.effects.Move3D"/>
+    <component id="MultiDPIBitmapSource" class="spark.utils.MultiDPIBitmapSource"/>
+    <component id="MultiValueInterpolator" class="spark.effects.interpolation.MultiValueInterpolator"/>
+    <component id="MuteButton" class="spark.components.mediaClasses.MuteButton"/>
+    <component id="NavigatorContent" class="spark.components.NavigatorContent"/>
+    <component id="NumberFormatter" class="spark.formatters.NumberFormatter"/>
+    <component id="NumberInterpolator" class="spark.effects.interpolation.NumberInterpolator"/>
+    <component id="NumberValidator" class="spark.validators.NumberValidator"/>
+    <component id="NumericDataProvider" class="spark.collections.NumericDataProvider"/>
+    <component id="NumericStepper" class="spark.components.NumericStepper"/>
+    <component id="Panel" class="spark.components.Panel"/>
+    <component id="Path" class="spark.primitives.Path"/>
+	<component id="PopUpAnchor" class="spark.components.PopUpAnchor"/>
+ 	<component id="PopUpPosition" class="spark.components.PopUpPosition"/>
+    <component id="Power" class="spark.effects.easing.Power"/>
+	<component id="RadioButton" class="spark.components.RadioButton"/>
+    <component id="RadioButtonGroup" class="spark.components.RadioButtonGroup"/>
+    <component id="Range" class="spark.components.supportClasses.Range"/>
+    <component id="Rect" class="spark.primitives.Rect"/>
+    <component id="RectangularDropShadow" class="spark.primitives.RectangularDropShadow"/>
+    <component id="RemoveAction" class="spark.effects.RemoveAction"/>
+    <component id="Resize" class="spark.effects.Resize"/>
+    <component id="RGBInterpolator" class="spark.effects.interpolation.RGBInterpolator"/>
+    <component id="RichEditableText" class="spark.components.RichEditableText"/>
+    <component id="RichText" class="spark.components.RichText"/>
+    <component id="Rotate" class="spark.effects.Rotate"/>
+    <component id="Rotate3D" class="spark.effects.Rotate3D"/>
+    <component id="RowAlign" class="spark.layouts.RowAlign"/>
+    <component id="Scale" class="spark.effects.Scale"/>
+    <component id="Scale3D" class="spark.effects.Scale3D"/>
+    <component id="ScrollBarBase" class="spark.components.supportClasses.ScrollBarBase"/>
+    <component id="Scroller" class="spark.components.Scroller"/>
+    <component id="ScrollerLayout" class="spark.components.supportClasses.ScrollerLayout"/>
+    <component id="ScrubBar" class="spark.components.mediaClasses.ScrubBar"/>
+    <component id="SetAction" class="spark.effects.SetAction"/>
+    <component id="ShaderFilter" class="spark.filters.ShaderFilter"/>
+    <component id="SimpleMotionPath" class="spark.effects.animation.SimpleMotionPath"/>
+    <component id="Sine" class="spark.effects.easing.Sine"/>
+    <component id="Skin" class="spark.components.supportClasses.Skin"/>
+    <component id="SkinnableComponent" class="spark.components.supportClasses.SkinnableComponent"/>
+    <component id="SkinnableContainer" class="spark.components.SkinnableContainer"/>
+    <component id="SkinnableContainerBase" class="spark.components.supportClasses.SkinnableContainerBase"/>
+    <component id="SkinnableDataContainer" class="spark.components.SkinnableDataContainer"/>
+    <component id="SkinnablePopUpContainer" class="spark.components.SkinnablePopUpContainer"/>
+    <component id="SkinnableTextBase" class="spark.components.supportClasses.SkinnableTextBase"/>
+    <component id="SliderBase" class="spark.components.supportClasses.SliderBase"/>
+    <component id="Sort" class="spark.collections.Sort"/>
+    <component id="SortField" class="spark.collections.SortField"/>
+    <component id="SortingCollator" class="spark.globalization.SortingCollator"/>
+    <component id="Spacer" class="mx.controls.Spacer" lookupOnly="true"/>
+    <component id="SparkButtonSkin" class="spark.skins.SparkButtonSkin"/>
+    <component id="SparkSkin" class="spark.skins.SparkSkin"/>
+    <component id="Spinner" class="spark.components.Spinner"/>
+    <component id="SpriteVisualElement" class="spark.core.SpriteVisualElement"/>
+    <component id="StringTools" class="spark.globalization.StringTools"/>
+    <component id="StrokedElement" class="spark.primitives.supportClasses.StrokedElement"/>
+    <component id="SWFLoader" class="mx.controls.SWFLoader" lookupOnly="true"/>
+    <component id="TabBar" class="spark.components.TabBar"/>
+    <component id="TextArea" class="spark.components.TextArea"/>
+    <component id="DefaultGridItemEditor" class="spark.components.gridClasses.DefaultGridItemEditor" />
+    <component id="TextBase" class="spark.components.supportClasses.TextBase"/>
+    <component id="TextInput" class="spark.components.TextInput"/>
+    <component id="TextSelectionHighlighting" class="spark.components.TextSelectionHighlighting"/>
+    <component id="TextUtil" class="spark.utils.TextUtil"/>
+    <component id="TileGroup" class="spark.components.TileGroup"/>
+    <component id="TileLayout" class="spark.layouts.TileLayout"/>
+    <component id="TileOrientation" class="spark.layouts.TileOrientation"/>
+    <component id="Timeline" class="spark.effects.animation.Timeline"/>
+    <component id="TitleWindow" class="spark.components.TitleWindow"/>
+    <component id="ToggleButton" class="spark.components.ToggleButton"/>
+    <component id="ToggleButtonBase" class="spark.components.supportClasses.ToggleButtonBase"/>
+    <component id="TrackBase" class="spark.components.supportClasses.TrackBase"/>
+    <component id="Transform" class="mx.geom.Transform"/>
+    <component id="TransformOffsets" class="mx.geom.TransformOffsets" lookupOnly="true"/>
+    <component id="UITextFieldGridItemRenderer" class="spark.skins.spark.UITextFieldGridItemRenderer"/>
+    <component id="VerticalAlign" class="spark.layouts.VerticalAlign"/>
+    <component id="VerticalLayout" class="spark.layouts.VerticalLayout"/>
+    <component id="VGroup" class="spark.components.VGroup"/>
+    <component id="VideoDisplay" class="spark.components.VideoDisplay"/>
+    <component id="VideoPlayer" class="spark.components.VideoPlayer"/>
+    <component id="VolumeBar" class="spark.components.mediaClasses.VolumeBar"/>
+    <component id="VScrollBar" class="spark.components.VScrollBar"/>
+    <component id="VSlider" class="spark.components.VSlider"/>
+    <component id="Wipe" class="spark.effects.Wipe"/>
+    <component id="XMLListCollection" class="mx.collections.XMLListCollection" lookupOnly="true"/>
+
+    <!-- Special Components -->
+    <component id="State" class="mx.states.State" lookupOnly="true"/>
+	<component id="AddItems" class="mx.states.AddItems" lookupOnly="true"/>
+    <component id="DataItem" class="spark.utils.DataItem"/>
+
+	<!-- airframework -->
+    <component id="TitleBar" class="spark.components.windowClasses.TitleBar" lookupOnly="true"/>   
+    <component id="Window" class="spark.components.Window" lookupOnly="true"/>
+    <component id="WindowedApplication" class="spark.components.WindowedApplication" lookupOnly="true"/>
+
+	<!-- FTE text for MX components -->
+	<component id="FTEDataGridItemRenderer" class="mx.controls.dataGridClasses.FTEDataGridItemRenderer"/>
+    <component id="MXFTETextInput" class="mx.controls.MXFTETextInput"/>
+
+	<!-- Text Layout Framework (TLF) -->
+	<component id="a" class="flashx.textLayout.elements.LinkElement" lookupOnly="true"/>
+	<component id="br" class="flashx.textLayout.elements.BreakElement" lookupOnly="true"/>
+	<component id="div" class="flashx.textLayout.elements.DivElement" lookupOnly="true"/>
+	<component id="img" class="flashx.textLayout.elements.InlineGraphicElement" lookupOnly="true"/>
+        <component id="list" class="flashx.textLayout.elements.ListElement" lookupOnly="true"/>
+        <component id="li" class="flashx.textLayout.elements.ListItemElement" lookupOnly="true"/>
+	<component id="p" class="flashx.textLayout.elements.ParagraphElement" lookupOnly="true"/>
+	<component id="span" class="flashx.textLayout.elements.SpanElement" lookupOnly="true"/>
+	<component id="tab" class="flashx.textLayout.elements.TabElement" lookupOnly="true"/>
+	<component id="tcy" class="flashx.textLayout.elements.TCYElement" lookupOnly="true"/>
+	<component id="ListMarkerFormat" class="flashx.textLayout.formats.ListMarkerFormat" lookupOnly="true"/>			         
+	<component id="g" class="flashx.textLayout.elements.SubParagraphGroupElement" lookupOnly="true"/>
+	<component id="TextFlow" class="flashx.textLayout.elements.TextFlow" lookupOnly="true"/>
+	<component id="TextLayoutFormat" class="flashx.textLayout.formats.TextLayoutFormat" lookupOnly="true"/>
+
+    <!-- rpc -->
+    <component id="AMFChannel" class="mx.messaging.channels.AMFChannel" lookupOnly="true"/>
+    <component id="CallResponder" class="mx.rpc.CallResponder" lookupOnly="true"/>
+    <component id="ChannelSet" class="mx.messaging.ChannelSet" lookupOnly="true"/>
+    <component id="Consumer" class="mx.messaging.Consumer" lookupOnly="true"/>
+    <component id="HTTPChannel" class="mx.messaging.channels.HTTPChannel" lookupOnly="true"/>
+    <component id="HTTPService" class="mx.rpc.http.mxml.HTTPService" lookupOnly="true"/>
+    <component id="Producer" class="mx.messaging.Producer" lookupOnly="true"/>
+    <component id="RemoteObject" class="mx.rpc.remoting.mxml.RemoteObject" lookupOnly="true"/>
+    <component id="RemoteObjectOperation" class="mx.rpc.remoting.mxml.Operation" lookupOnly="true"/>
+    <component id="RTMPChannel" class="mx.messaging.channels.RTMPChannel" lookupOnly="true"/>
+    <component id="SecureAMFChannel" class="mx.messaging.channels.SecureAMFChannel" lookupOnly="true"/>
+    <component id="SecureStreamingAMFChannel" class="mx.messaging.channels.SecureStreamingAMFChannel" lookupOnly="true"/>
+    <component id="SecureHTTPChannel" class="mx.messaging.channels.SecureHTTPChannel" lookupOnly="true"/>
+    <component id="SecureStreamingHTTPChannel" class="mx.messaging.channels.SecureStreamingHTTPChannel" lookupOnly="true"/>
+    <component id="SecureRTMPChannel" class="mx.messaging.channels.SecureRTMPChannel" lookupOnly="true"/>
+    <component id="StreamingAMFChannel" class="mx.messaging.channels.StreamingAMFChannel" lookupOnly="true"/>
+    <component id="StreamingHTTPChannel" class="mx.messaging.channels.StreamingHTTPChannel" lookupOnly="true"/>
+    <component id="WebService" class="mx.rpc.soap.mxml.WebService" lookupOnly="true"/>
+    <component id="WebServiceOperation" class="mx.rpc.soap.mxml.Operation" lookupOnly="true"/>
+
+    <!-- LCDS (formerly known as FDS) -->
+    <component id="DataService" class="mx.data.mxml.DataService" lookupOnly="true"/>
+	
+	<!-- Flex 3 Graphics -->
+    <component id="BitmapFill" class="mx.graphics.BitmapFill" lookupOnly="true"/>
+    <component id="BitmapFillMode" class="mx.graphics.BitmapFillMode" lookupOnly="true"/>
+    <component id="CompoundTransform" class="mx.geom.CompoundTransform" lookupOnly="true"/>
+    <component id="GradientEntry" class="mx.graphics.GradientEntry" lookupOnly="true"/>
+    <component id="LinearGradient" class="mx.graphics.LinearGradient" lookupOnly="true"/>
+    <component id="LinearGradientStroke" class="mx.graphics.LinearGradientStroke" lookupOnly="true"/>
+    <component id="RadialGradient" class="mx.graphics.RadialGradient" lookupOnly="true"/>
+    <component id="RadialGradientStroke" class="mx.graphics.RadialGradientStroke" lookupOnly="true"/>
+    <component id="SolidColor" class="mx.graphics.SolidColor" lookupOnly="true"/>
+    <component id="SolidColorStroke" class="mx.graphics.SolidColorStroke" lookupOnly="true"/>
+    <component id="Stroke" class="mx.graphics.Stroke" lookupOnly="true"/>
+    <component id="Transform" class="mx.geom.Transform" lookupOnly="true"/>
+
+    <!-- Flex 3 Effects -->
+    <component id="Parallel" class="mx.effects.Parallel" lookupOnly="true"/>
+    <component id="Sequence" class="mx.effects.Sequence" lookupOnly="true"/>
+    <component id="Transition" class="mx.states.Transition" lookupOnly="true"/>
+    <component id="Pause" class="mx.effects.Pause" lookupOnly="true"/>
+
+    <!-- Flex 3 Miscellaneous -->
+    <component id="MiniDebugTarget" class="mx.logging.targets.MiniDebugTarget" lookupOnly="true"/>
+    <component id="TraceTarget" class="mx.logging.targets.TraceTarget" lookupOnly="true"/>
+
+	<!-- MXItemRenderer -->
+    <component id="MXItemRenderer" class="mx.controls.listClasses.MXItemRenderer"/>
+    <component id="MXTreeItemRenderer" class="mx.controls.treeClasses.MXTreeItemRenderer"/>
+    <component id="MXDataGridItemRenderer" class="mx.controls.dataGridClasses.MXDataGridItemRenderer"/>
+
+</componentPackage>
