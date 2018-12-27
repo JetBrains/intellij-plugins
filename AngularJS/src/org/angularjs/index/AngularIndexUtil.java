@@ -2,9 +2,7 @@ package org.angularjs.index;
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
-import com.intellij.lang.javascript.psi.JSQualifiedNameImpl;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
@@ -49,7 +47,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 63;
+  public static final int BASE_VERSION = 64;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
@@ -173,6 +171,15 @@ public class AngularIndexUtil {
 
   public static boolean hasFileReference(@NotNull PsiElement element, @NotNull PsiFile file) {
     VirtualFile vf = file.getOriginalFile().getViewProvider().getVirtualFile();
+    if (element instanceof JSCallExpression) {
+      JSExpression[] args = ((JSCallExpression)element).getArguments();
+      if (args.length == 1 && args[0] instanceof JSLiteralExpression) {
+        element = args[0];
+      }
+      else {
+        return false;
+      }
+    }
     for (PsiReference ref : element.getReferences()) {
       PsiElement resolvedElement = ref.resolve();
       PsiFile resolvedFile = null;
