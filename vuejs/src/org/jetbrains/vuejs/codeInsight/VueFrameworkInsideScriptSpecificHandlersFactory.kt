@@ -43,7 +43,7 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
     if (VueFileType.INSTANCE == parent.containingFile?.fileType && isInsideScript(parent) && VueJSLanguage.INSTANCE != language) {
       val obj = parent as? JSObjectLiteralExpression
       if (obj?.parent !is ES6ExportDefaultAssignment) {
-        if (!hasVuex(parent.project)) return null
+        if (!hasVuex(parent)) return null
         val expression = PsiTreeUtil.getParentOfType(parent, JSCallExpression::class.java)
         if (expression == null || expression.methodExpression == null) return null
         val keys = getForAllKeys(GlobalSearchScope.projectScope(expression.project), VueStoreIndex.KEY)
