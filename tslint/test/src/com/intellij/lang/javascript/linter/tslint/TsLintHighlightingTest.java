@@ -86,7 +86,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     final TsLintState.Builder builder = new TsLintState.Builder(configuration.getExtendedState().getState());
     builder.setCustomConfigFileUsed(true).setCustomConfigFilePath(configPath);
     final TsLinterInput input = new TsLinterInput(dataFile, builder.build(), null, null);
-    final JSLinterAnnotationResult<TsLintState> result = new TsLintExternalAnnotator().annotate(input);
+    final JSLinterAnnotationResult result = new TsLintExternalAnnotator().annotate(input);
     Assert.assertNotNull(result.getFileLevelError());
     Assert.assertEquals(expected, result.getFileLevelError().getMessage());
   }

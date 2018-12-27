@@ -108,7 +108,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
   @Nullable
   @Override
-  public JSLinterAnnotationResult<TsLintState> annotate(@NotNull TsLinterInput collectedInfo) {
+  public JSLinterAnnotationResult annotate(@NotNull TsLinterInput collectedInfo) {
     VirtualFile config = collectedInfo.getConfig();
     final JSLinterFileLevelAnnotation interpreterAndPackageError =
       JSLinterUtil.validateInterpreterAndPackage(collectedInfo.getProject(), TsLintDescriptor.PACKAGE_NAME, collectedInfo.getState(),
@@ -152,9 +152,9 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   }
 
   @NotNull
-  private static JSLinterAnnotationResult<TsLintState> createGlobalErrorMessage(@NotNull TsLinterInput collectedInfo,
-                                                                                @Nullable VirtualFile config,
-                                                                                @NotNull String error) {
+  private static JSLinterAnnotationResult createGlobalErrorMessage(@NotNull TsLinterInput collectedInfo,
+                                                                   @Nullable VirtualFile config,
+                                                                   @NotNull String error) {
     final ProcessOutput output = new ProcessOutput();
     output.appendStderr(error);
     final IntentionAction detailsAction = JSLinterUtil.createDetailsAction(collectedInfo.getProject(), collectedInfo.getVirtualFile(),
@@ -195,7 +195,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
   @Override
   public void apply(@NotNull PsiFile file,
-                    @Nullable JSLinterAnnotationResult<TsLintState> annotationResult,
+                    @Nullable JSLinterAnnotationResult annotationResult,
                     @NotNull AnnotationHolder holder) {
     if (annotationResult == null) return;
     TsLintConfigurable configurable = new TsLintConfigurable(file.getProject(), true);
@@ -224,9 +224,9 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     });
 
 
-    new JSLinterAnnotationsBuilder<>(file, annotationResult, holder,
-                                     configurable, TsLintBundle.message("tslint.framework.title") + ": ",
-                                     getInspectionClass(), fixes)
+    new JSLinterAnnotationsBuilder(file, annotationResult, holder,
+                                   configurable, TsLintBundle.message("tslint.framework.title") + ": ",
+                                   getInspectionClass(), fixes)
       .setHighlightingGranularity(HighlightingGranularity.element).apply();
   }
 }
