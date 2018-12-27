@@ -1,4 +1,0 @@
-move 61 38
-down
-up
-assert

@@ -1,7 +1,0 @@
-move 417 255
-down
-up
-move 798 75
-down
-up
-assert
