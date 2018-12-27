@@ -90,7 +90,7 @@ public class FlexTestUtils {
 
   @NotNull
   public static String getPathToCompleteFlexSdk(final String version) {
-    final File dir = new File("../tools/flex-ui-designer/idea-plugin/testData/lib/flex-sdk");
+    final File dir = new File("../flex-tests/testData/flex-sdk");
     if (dir.isDirectory()) {
       // started from 'flex-plugin' project
       final String path = FileUtil.toCanonicalPath(dir.getAbsolutePath());
@@ -98,7 +98,7 @@ public class FlexTestUtils {
     }
 
 
-    return PathManager.getHomePath() + "/contrib/flex/tools/flex-ui-designer/idea-plugin/testData/lib/flex-sdk/" + version;
+    return PathManager.getHomePath() + "/contrib/flex/flex-tests/testData/flex-sdk/" + version;
   }
 
   public static void setupFlexLib(final Project project, final Class clazz, final String testName) {
