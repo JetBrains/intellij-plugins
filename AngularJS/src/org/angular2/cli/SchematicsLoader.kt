@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli
 
-import com.google.gson.GsonBuilder
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.javascript.nodejs.CompletionModuleInfo
@@ -9,76 +8,19 @@ import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.gist.GistManager
-import com.intellij.util.io.DataExternalizer
-import com.intellij.util.io.IOUtil
 import org.angularjs.lang.AngularJSLanguage
-import java.io.DataInput
-import java.io.DataOutput
 import java.io.File
-import java.io.IOException
-
-object SchematicsLoader {
-  fun load(project: Project,
-           cli: VirtualFile): Collection<Schematic> = load(project, cli, false, true)
-
-  fun load(project: Project,
-           cli: VirtualFile,
-           includeHidden: Boolean,
-           logErrors: Boolean): Collection<Schematic> = ApplicationManager.getApplication().runReadAction(
-    Computable {
-      try {
-        myLogErrors.set(logErrors)
-        (if (includeHidden) ourGistHiddenList else ourGist).getFileData(project, cli)
-      }
-      finally {
-        myLogErrors.set(true)
-      }
-    }
-  )
-}
 
 private var myLogErrors: ThreadLocal<Boolean> = ThreadLocal.withInitial { true }
-
-private var ourGist = GistManager.getInstance().newVirtualFileGist(
-  "AngularBlueprints", 3, SchematicsExternalizer()
-) { project, file -> doLoad(project, file, false) }
-private var ourGistHiddenList = GistManager.getInstance().newVirtualFileGist(
-  "AngularSchematicsHidden", 3, SchematicsExternalizer()
-) { project, file -> doLoad(project, file, true) }
-
 private val LOG: Logger = Logger.getInstance("#org.angular2.cli.SchematicsLoader")
 
-private class SchematicsExternalizer : DataExternalizer<List<Schematic>> {
-  override fun save(out: DataOutput, value: List<Schematic>?) {
-    value!!
-    IOUtil.writeUTF(out, GsonBuilder().create().toJson(value))
-  }
-
-  override fun read(`in`: DataInput): List<Schematic> {
-    val json = IOUtil.readUTF(`in`)
-    val result: List<Schematic>
-    try {
-      result = SchematicsJsonParser.parse(json)
-    }
-    catch (e: Throwable) {
-      throw IOException("Failed to load gist: " + e.message, e)
-    }
-    if (result == null) {
-      throw IOException()
-    }
-    return result
-  }
-}
-
-private fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean): List<Schematic> {
+fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean, logErrors: Boolean): List<Schematic> {
+  myLogErrors.set(logErrors)
   val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
   val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return emptyList()
   if (!node.isValid) return emptyList()
@@ -114,9 +56,9 @@ private fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean): 
   return parse.sortedBy { it.name }
 }
 
-fun loadSchematicsInfoJson(node: NodeJsLocalInterpreter,
-                           cli: VirtualFile,
-                           includeHidden: Boolean): String {
+private fun loadSchematicsInfoJson(node: NodeJsLocalInterpreter,
+                                   cli: VirtualFile,
+                                   includeHidden: Boolean): String {
   val directory = JSLanguageServiceUtil.getPluginDirectory(AngularJSLanguage::class.java, "ngCli")
   val utilityExe = "${directory}${File.separator}runner.js"
   val commandLine = GeneralCommandLine(node.interpreterSystemDependentPath, utilityExe, cli.path, "./schematicsInfoProvider.js")
@@ -125,9 +67,9 @@ fun loadSchematicsInfoJson(node: NodeJsLocalInterpreter,
   return grabCommandOutput(commandLine, cli.path)
 }
 
-fun loadBlueprintHelpOutput(node: NodeJsLocalInterpreter, cli: VirtualFile): String {
+private fun loadBlueprintHelpOutput(node: NodeJsLocalInterpreter, cli: VirtualFile): String {
   val modules: MutableList<CompletionModuleInfo> = mutableListOf()
-  NodeModuleSearchUtil.findModulesWithName(modules, AngularCLIProjectGenerator.PACKAGE_NAME, cli, false, node)
+  NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, false, node)
 
   val module = modules.firstOrNull() ?: return ""
   val moduleExe = "${module.virtualFile!!.path}${File.separator}bin${File.separator}ng"
@@ -135,7 +77,7 @@ fun loadBlueprintHelpOutput(node: NodeJsLocalInterpreter, cli: VirtualFile): Str
                            cli.path)
 }
 
-fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): String {
+private fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): String {
   if (workingDir != null) {
     commandLine.withWorkDirectory(workingDir)
   }
@@ -169,14 +111,14 @@ fun grabCommandOutput(commandLine: GeneralCommandLine, workingDir: String?): Str
   return ""
 }
 
-fun shortenOutput(output: String): String {
+private fun shortenOutput(output: String): String {
   return StringUtil.shortenTextWithEllipsis(
     output.replace('\\', '/')
       .replace("(/[^()/:]+)+(/[^()/:]+)(/[^()/:]+)".toRegex(), "/...$1$2$3"),
     750, 0)
 }
 
-const val DEFAULT_OUTPUT: String = """
+internal const val DEFAULT_OUTPUT: String = """
 
   Available blueprints:
     class <name> <options...>

@@ -4,8 +4,11 @@ package org.angular2.cli;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 
 public abstract class AngularCliSchematicsRegistryService {
@@ -38,6 +41,31 @@ public abstract class AngularCliSchematicsRegistryService {
    * json file for ng-add schematic. Values are cached.
    */
   public abstract boolean supportsNgAdd(@NotNull InstalledPackageVersion version);
+
+  /**
+   * Loads schematics available in a particular location. The results are cached
+   * and recalculated on every change of package.json in any node_modules directory.
+   */
+  @NotNull
+  public Collection<Schematic> getSchematics(@NotNull Project project,
+                                             @NotNull VirtualFile cliFolder) {
+    return getSchematics(project, cliFolder, false, true);
+  }
+
+  /**
+   * Loads schematics available in a particular location. The results are cached
+   * and recalculated on every change of package.json in any node_modules directory.
+   */
+  @NotNull
+  public abstract Collection<Schematic> getSchematics(@NotNull Project project,
+                                                      @NotNull VirtualFile cliFolder,
+                                                      boolean includeHidden,
+                                                      boolean logErrors);
+
+  /**
+   * Clears cache for getSchematics method
+   */
+  public abstract void clearProjectSchematicsCache();
 
   @NotNull
   public static AngularCliSchematicsRegistryService getInstance() {
