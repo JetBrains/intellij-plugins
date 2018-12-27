@@ -18,10 +18,10 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.psi.StringEscapesTokenTypes;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.LightPlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
-public class OgnlHighlightingLexerTest extends PlatformTestCase {
+public class OgnlHighlightingLexerTest extends LightPlatformTestCase {
 
   public void testStringLiteralStringEscapeToken() {
     EditorHighlighter highlighter = createHighlighter("\"string\\u2008\"");
