@@ -1,15 +1,14 @@
 package org.intellij.plugins.postcss.editor.breadcrumbs;
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.css.impl.util.editor.CssBreadcrumbsInfoProvider;
 import com.intellij.testFramework.TestDataPath;
+import com.intellij.ui.components.breadcrumbs.Crumb;
+import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
+
+import java.util.List;
 
 @TestDataPath("$CONTENT_ROOT/testData/editor/breadcrumbs/")
 public class PostCssBreadcrumbsTest extends PostCssFixtureTestCase {
-  private static final CssBreadcrumbsInfoProvider BREADCRUMBS_INFO_PROVIDER = new CssBreadcrumbsInfoProvider();
-
   public void testCustomSelector() {
     doTest(":--selector");
   }
@@ -59,12 +58,9 @@ public class PostCssBreadcrumbsTest extends PostCssFixtureTestCase {
   }
 
   private void doTest(String elementInfo) {
-    final PsiFile file = myFixture.configureByFile(getTestName(true) + ".pcss");
-    PsiElement elementAtCaret = file.findElementAt(myFixture.getCaretOffset());
-    while (elementAtCaret != null && !BREADCRUMBS_INFO_PROVIDER.acceptElement(elementAtCaret)) {
-      elementAtCaret = elementAtCaret.getParent();
-    }
-    assertNotNull("Can't find element with breadcrumb", elementAtCaret);
-    assertEquals(elementInfo, BREADCRUMBS_INFO_PROVIDER.getElementInfo(elementAtCaret));
+    myFixture.configureByFile(getTestName(true) + ".pcss");
+    List<Crumb> breadcrumbs = myFixture.getBreadcrumbsAtCaret();
+    assertNotEmpty(breadcrumbs);
+    assertEquals(elementInfo, ContainerUtil.getLastItem(breadcrumbs).getText());
   }
 }
