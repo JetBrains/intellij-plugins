@@ -79,11 +79,6 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
     return centerPanel;
   }
 
-  @Override
-  protected void handleEnableStatusChanged(boolean enabled) {
-    enableCustomConfigPath(enabled);
-  }
-
   @NotNull
   @Override
   protected TsLintState getState() {
@@ -119,10 +114,6 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
       myNodeModuleConfigurationView.setPreferredWidthToComponents();
       myConfigFileView.setPreferredWidthToComponents();
     }
-  }
-
-  private void enableCustomConfigPath(boolean enabled) {
-    myConfigFileView.onEnabledStateChanged(enabled);
   }
 
   private static JSLinterConfigFileTexts getConfigTexts() {
