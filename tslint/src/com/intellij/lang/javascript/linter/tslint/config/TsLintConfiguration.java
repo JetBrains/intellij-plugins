@@ -24,21 +24,12 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   private static final String RULES = "rules";
   private static final String ALLOW_JS = "allowJs";
 
-  private final PathHolder myPathHolder;
   private final JSLinterPackage myPackage;
 
   private TsLintState DEFAULT_STATE;
 
-  public TsLintConfiguration(@NotNull Project project, @NotNull SharedConfigurationPaths paths) {
+  public TsLintConfiguration(@NotNull Project project) {
     super(project);
-    myPathHolder = paths.createPathHolder(new Runnable() {
-      @Override
-      public void run() {
-        final ExtendedLinterState<TsLintState> state = getExtendedState();
-        state.getState().setCustomConfigFilePath(myPathHolder.getPath());
-        setExtendedState(state);
-      }
-    });
     myPackage = new JSLinterPackage(project, "tslint");
   }
 
@@ -49,14 +40,12 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
 
   @Override
   protected void savePrivateSettings(@NotNull TsLintState state) {
-    myPathHolder.setPath(StringUtil.notNullize(state.getCustomConfigFilePath()));
     storeLinterLocalPaths(state);
   }
 
   @NotNull
   @Override
   protected TsLintState loadPrivateSettings(@NotNull TsLintState state) {
-    myPathHolder.setPath(StringUtil.notNullize(state.getCustomConfigFilePath()));
     TsLintState.Builder builder = new TsLintState.Builder(state);
     restoreLinterLocalPaths(builder);
     return builder.build();
