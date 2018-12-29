@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterDescriptor;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
-import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.codestyle.TsLintCodeStyleImporter;
 import com.intellij.openapi.application.ApplicationManager;
@@ -13,9 +12,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import static com.intellij.lang.javascript.linter.JSLinterConfigFileUtil.findDistinctConfigInContentRoots;
 
@@ -47,11 +48,12 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
   }
 
   @Override
-  public boolean enable(@NotNull Project project) {
-    final PackageJsonData packageJson = JSLinterUtil.getTopLevelPackageJsonData(project);
+  public boolean enable(@NotNull Project project, Collection<PackageJsonData> packageJsonFiles) {
     // skip if there is tslint-language-service
-    if (packageJson != null && packageJson.getAllDependencies().contains("tslint-language-service")) return false;
-    return super.enable(project);
+    if (ContainerUtil.or(packageJsonFiles, data -> data.isDependencyOfAnyType("tslint-language-service"))) {
+      return false;
+    }
+    return super.enable(project, packageJsonFiles);
   }
 
   @Override
