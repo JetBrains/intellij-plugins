@@ -110,8 +110,11 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   @Override
   public JSLinterAnnotationResult annotate(@NotNull TsLinterInput collectedInfo) {
     VirtualFile config = collectedInfo.getConfig();
+    final Project project = collectedInfo.getProject();
+    final TsLintState linterState = collectedInfo.getState();
     final JSLinterFileLevelAnnotation interpreterAndPackageError =
-      JSLinterUtil.validateInterpreterAndPackage(collectedInfo.getProject(), TsLintDescriptor.PACKAGE_NAME, collectedInfo.getState(),
+      JSLinterUtil.validateInterpreterAndPackage(project, linterState.getInterpreterRef().resolve(project),
+                                                 linterState.getNodePackage(), TsLintDescriptor.PACKAGE_NAME,
                                                  collectedInfo.getVirtualFile());
     if (interpreterAndPackageError != null) return JSLinterAnnotationResult.create(collectedInfo, interpreterAndPackageError, config);
 

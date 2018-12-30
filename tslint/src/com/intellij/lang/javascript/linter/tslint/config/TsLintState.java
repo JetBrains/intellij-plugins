@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.linter.JSNpmLinterState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,12 +21,13 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
   private final NodePackage myNodePackage;
 
   @Nullable
-  private String myCustomConfigFilePath;
+  private final String myCustomConfigFilePath;
 
   private final boolean myCustomConfigFileUsed;
   @Nullable
   private final String myRulesDirectory;
   private final boolean myAllowJs;
+  private final NodePackageRef myNodePackageRef;
 
   private TsLintState(@NotNull NodeJsInterpreterRef nodePath,
                       @NotNull NodePackage nodePackage,
@@ -38,6 +40,7 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     myNodePackage = nodePackage;
     myRulesDirectory = rulesDirectory;
     myAllowJs = allowJs;
+    myNodePackageRef = NodePackageRef.create(nodePackage);
   }
 
   public boolean isCustomConfigFileUsed() {
@@ -47,10 +50,6 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
   @Nullable
   public String getCustomConfigFilePath() {
     return myCustomConfigFilePath;
-  }
-
-  public void setCustomConfigFilePath(@Nullable String customConfigFilePath) {
-    myCustomConfigFilePath = customConfigFilePath;
   }
 
   @Override
@@ -69,14 +68,21 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
   }
 
   @NotNull
-  @Override
   public NodePackage getNodePackage() {
     return myNodePackage;
   }
 
+  @NotNull
   @Override
-  public TsLintState withLinterPackagePath(@NotNull NodePackage nodePackage) {
-    return new TsLintState(myInterpreterRef, nodePackage, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory, myAllowJs);
+  public NodePackageRef getNodePackageRef() {
+    return myNodePackageRef;
+  }
+
+  @Override
+  public TsLintState withLinterPackage(@NotNull NodePackageRef nodePackage) {
+    NodePackage constantPackage = nodePackage.getConstantPackage();
+    assert constantPackage != null : this.getClass().getSimpleName() + " does not support non-constant package refs";
+    return new Builder(this).setNodePackage(constantPackage).build();
   }
 
   @Override
