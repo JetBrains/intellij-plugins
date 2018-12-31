@@ -189,7 +189,10 @@ public class ActionScriptReferenceExpressionResolver
       processor.allowPartialResults();
     }
 
-    processor.setAddOnlyCompleteMatches(allowOnlyCompleteMatches);
+    processor.setAddOnlyCompleteMatches();
+    if (!allowOnlyCompleteMatches) {
+      processor.allowPartialResults();
+    }
     processor.setSkipDefinitions(inDefinition);
     return true;
   }
