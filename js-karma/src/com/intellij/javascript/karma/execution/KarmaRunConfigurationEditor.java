@@ -21,7 +21,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
-import com.intellij.ui.components.JBTextField;
 import com.intellij.ui.components.fields.ExpandableTextField;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.*;
@@ -46,7 +45,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private final TextFieldWithBrowseButton myWorkingDirComponent;
   private final TextFieldWithHistoryWithBrowseButton myConfigPathField;
   private final EnvironmentVariablesTextFieldWithBrowseButton myEnvVarsComponent;
-  private final JTextField myBrowsers;
+  private final RawCommandLineEditor myKarmaOptionsEditor;
   private final Map<KarmaScopeKind, JRadioButton> myRadioButtonMap = ContainerUtil.newHashMap();
   private final Map<KarmaScopeKind, KarmaScopeView> myScopeKindViewMap = ContainerUtil.newHashMap();
   private final JPanel mySelectedScopeKindPanel;
@@ -56,20 +55,18 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   public KarmaRunConfigurationEditor(@NotNull Project project) {
     myProject = project;
     myNodeInterpreterField = new NodeJsInterpreterField(project, false);
-    myNodeOptionsEditor = createNodeOptionsEditor();
+    myNodeOptionsEditor = createOptionsEditor(null);
     myKarmaPackageField = new NodePackageField(myNodeInterpreterField, KarmaUtil.PKG_DESCRIPTOR, null);
     myWorkingDirComponent = createWorkingDirComponent(project);
     myConfigPathField = createConfigurationFileTextField(project);
     myEnvVarsComponent = new EnvironmentVariablesTextFieldWithBrowseButton();
-    myBrowsers = createBrowsersTextField();
-    JComponent browsersDescription = createBrowsersDescription();
+    myKarmaOptionsEditor = createOptionsEditor("CLI options, e.g. --browsers");
     JPanel scopeKindPanel = createScopeKindRadioButtonPanel();
     mySelectedScopeKindPanel = new JPanel(new BorderLayout());
     myRootComponent = new FormBuilder()
       .setAlignLabelOnRight(false)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.config_file.label"), myConfigPathField)
-      .addLabeledComponent(KarmaBundle.message("runConfiguration.browsers.label"), myBrowsers)
-      .addLabeledComponent("", browsersDescription, 0, false)
+      .addLabeledComponent(KarmaBundle.message("runConfiguration.karmaOptions.label"), myKarmaOptionsEditor)
       .addComponent(new JSeparator(), 8)
       .addLabeledComponent(KarmaBundle.message("runConfiguration.node_interpreter.label"), myNodeInterpreterField, 8)
       .addLabeledComponent("Node o&ptions:", myNodeOptionsEditor)
@@ -83,23 +80,16 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   }
 
   @NotNull
-  private static RawCommandLineEditor createNodeOptionsEditor() {
+  private static RawCommandLineEditor createOptionsEditor(@Nullable String emptyText) {
     RawCommandLineEditor editor = new RawCommandLineEditor();
     JTextField field = editor.getTextField();
     if (field instanceof ExpandableTextField) {
       field.putClientProperty("monospaced", false);
     }
+    if (field instanceof ComponentWithEmptyText && emptyText != null) {
+      ((ComponentWithEmptyText)field).getEmptyText().setText(emptyText);
+    }
     return editor;
-  }
-
-  @NotNull
-  private static JComponent createBrowsersDescription() {
-    Color fgColor = UIUtil.getLabelDisabledForeground();
-    JEditorPane editorPane = SwingHelper.createHtmlViewer(true, UIUtil.getTitledBorderFont(), null, fgColor);
-    SwingHelper.setHtml(editorPane, "overrides <i>browsers</i> setting from the configuration file", fgColor);
-    JPanel panel = SwingHelper.wrapWithHorizontalStretch(editorPane);
-    panel.setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 0));
-    return panel;
   }
 
   @NotNull
@@ -193,14 +183,6 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   }
 
   @NotNull
-  private static JTextField createBrowsersTextField() {
-    JBTextField browsers = new JBTextField();
-    StatusText emptyStatusText = browsers.getEmptyText();
-    emptyStatusText.setText("comma-separated list of browsers (e.g. Chrome,ChromeCanary,Firefox)");
-    return browsers;
-  }
-
-  @NotNull
   private static TextFieldWithHistoryWithBrowseButton createConfigurationFileTextField(@NotNull final Project project) {
     TextFieldWithHistoryWithBrowseButton textFieldWithHistoryWithBrowseButton = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = textFieldWithHistoryWithBrowseButton.getChildComponent();
@@ -237,7 +219,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myNodeOptionsEditor.setText(runSettings.getNodeOptions());
     myKarmaPackageField.setSelected(runConfiguration.getKarmaPackage());
     myConfigPathField.setTextAndAddToHistory(runSettings.getConfigPathSystemDependent());
-    myBrowsers.setText(runSettings.getBrowsers());
+    myKarmaOptionsEditor.setText(runSettings.getKarmaOptions());
     myWorkingDirComponent.setText(runSettings.getWorkingDirectorySystemDependent());
     myEnvVarsComponent.setData(runSettings.getEnvData());
     setScopeKind(runSettings.getScopeKind());
@@ -262,7 +244,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   protected void applyEditorTo(@NotNull KarmaRunConfiguration runConfiguration) {
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
     builder.setConfigPath(PathShortener.getAbsolutePath(myConfigPathField.getChildComponent().getTextEditor()));
-    builder.setBrowsers(StringUtil.notNullize(myBrowsers.getText()));
+    builder.setKarmaOptions(StringUtil.notNullize(myKarmaOptionsEditor.getText()));
     builder.setInterpreterRef(myNodeInterpreterField.getInterpreterRef());
     builder.setNodeOptions(myNodeOptionsEditor.getText());
     builder.setKarmaPackage(myKarmaPackageField.getSelected());

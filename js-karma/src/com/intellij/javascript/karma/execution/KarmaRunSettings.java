@@ -18,7 +18,7 @@ public class KarmaRunSettings {
 
   private final String myConfigPath;
   private final NodePackage myKarmaPackage;
-  private final String myBrowsers;
+  private final String myKarmaOptions;
   private final NodeJsInterpreterRef myInterpreterRef;
   private final String myNodeOptions;
   private final String myWorkingDirectory;
@@ -30,7 +30,7 @@ public class KarmaRunSettings {
   public KarmaRunSettings(@NotNull Builder builder) {
     myConfigPath = FileUtil.toSystemDependentName(builder.myConfigPath);
     myKarmaPackage = builder.myKarmaPackage;
-    myBrowsers = builder.myBrowsers;
+    myKarmaOptions = builder.myKarmaOptions;
     myInterpreterRef = builder.myInterpreterRef;
     myNodeOptions = builder.myNodeOptions;
     myWorkingDirectory = FileUtil.toSystemDependentName(builder.myWorkingDirectory);
@@ -56,8 +56,8 @@ public class KarmaRunSettings {
   }
 
   @NotNull
-  public String getBrowsers() {
-    return myBrowsers;
+  public String getKarmaOptions() {
+    return myKarmaOptions;
   }
 
   @NotNull
@@ -113,22 +113,22 @@ public class KarmaRunSettings {
     KarmaRunSettings that = (KarmaRunSettings)o;
 
     return myConfigPath.equals(that.myConfigPath) &&
-          ComparatorUtil.equalsNullable(myKarmaPackage, that.myKarmaPackage) &&
-          myBrowsers.equals(that.myBrowsers) &&
-          myInterpreterRef.getReferenceName().equals(that.myInterpreterRef.getReferenceName()) &&
-          myNodeOptions.equals(that.myNodeOptions) &&
-          myWorkingDirectory.equals(that.myWorkingDirectory) &&
-          myEnvData.equals(that.myEnvData) &&
-          myScopeKind.equals(that.myScopeKind) &&
-          myTestFilePath.equals(that.myTestFilePath) &&
-          myTestNames.equals(that.myTestNames);
+           ComparatorUtil.equalsNullable(myKarmaPackage, that.myKarmaPackage) &&
+           myKarmaOptions.equals(that.myKarmaOptions) &&
+           myInterpreterRef.getReferenceName().equals(that.myInterpreterRef.getReferenceName()) &&
+           myNodeOptions.equals(that.myNodeOptions) &&
+           myWorkingDirectory.equals(that.myWorkingDirectory) &&
+           myEnvData.equals(that.myEnvData) &&
+           myScopeKind.equals(that.myScopeKind) &&
+           myTestFilePath.equals(that.myTestFilePath) &&
+           myTestNames.equals(that.myTestNames);
   }
 
   @Override
   public int hashCode() {
     int result = myConfigPath.hashCode();
     result = 31 * result + (myKarmaPackage != null ? myKarmaPackage.hashCode() : 0);
-    result = 31 * result + myBrowsers.hashCode();
+    result = 31 * result + myKarmaOptions.hashCode();
     result = 31 * result + myInterpreterRef.getReferenceName().hashCode();
     result = 31 * result + myNodeOptions.hashCode();
     result = 31 * result + myWorkingDirectory.hashCode();
@@ -148,7 +148,7 @@ public class KarmaRunSettings {
 
     private String myConfigPath = "";
     private NodePackage myKarmaPackage = null;
-    private String myBrowsers = "";
+    private String myKarmaOptions = "";
     private NodeJsInterpreterRef myInterpreterRef = NodeJsInterpreterRef.createProjectRef();
     private String myNodeOptions = "";
     private EnvironmentVariablesData myEnvData = EnvironmentVariablesData.DEFAULT;
@@ -161,8 +161,8 @@ public class KarmaRunSettings {
 
     public Builder(@NotNull KarmaRunSettings settings) {
       myConfigPath = settings.getConfigPathSystemDependent();
-      myKarmaPackage = settings.getKarmaPackage();
-      myBrowsers = settings.getBrowsers();
+      myKarmaPackage = settings.myKarmaPackage;
+      myKarmaOptions = settings.myKarmaOptions;
       myInterpreterRef = settings.getInterpreterRef();
       myNodeOptions = settings.myNodeOptions;
       myWorkingDirectory = settings.myWorkingDirectory;
@@ -185,8 +185,8 @@ public class KarmaRunSettings {
     }
 
     @NotNull
-    public Builder setBrowsers(@Nullable String browsers) {
-      myBrowsers = StringUtil.notNullize(browsers);
+    public Builder setKarmaOptions(@Nullable String karmaOptions) {
+      myKarmaOptions = StringUtil.notNullize(karmaOptions);
       return this;
     }
 

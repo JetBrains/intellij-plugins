@@ -21,6 +21,7 @@ public class KarmaRunSettingsSerializationUtil {
   private static final String CONFIG_FILE = "config-file";
   private static final String KARMA_PACKAGE_DIR = "karma-package-dir";
   private static final String WORKING_DIRECTORY = "working-directory";
+  private static final String KARMA_OPTIONS = "karma-options";
   private static final String BROWSERS = "browsers";
   private static final String NODE_INTERPRETER = "node-interpreter";
   private static final String NODE_OPTIONS = "node-options";
@@ -38,7 +39,14 @@ public class KarmaRunSettingsSerializationUtil {
 
     String configPath = StringUtil.notNullize(JDOMExternalizerUtil.readCustomField(element, CONFIG_FILE));
     builder.setConfigPath(configPath);
-    builder.setBrowsers(JDOMExternalizerUtil.readCustomField(element, BROWSERS));
+    String karmaOptions = JDOMExternalizerUtil.readCustomField(element, KARMA_OPTIONS);
+    if (karmaOptions == null) {
+      String browsers = JDOMExternalizerUtil.readCustomField(element, BROWSERS);
+      if (!StringUtil.isEmptyOrSpaces(browsers)) {
+        karmaOptions = "--browsers=" + browsers;
+      }
+    }
+    builder.setKarmaOptions(karmaOptions);
 
     String karmaPackageDir = JDOMExternalizerUtil.readCustomField(element, KARMA_PACKAGE_DIR);
     if (karmaPackageDir != null) {
@@ -98,8 +106,8 @@ public class KarmaRunSettingsSerializationUtil {
                               @NotNull KarmaRunSettings settings,
                               boolean templateRunConfiguration) {
     JDOMExternalizerUtil.writeCustomField(element, CONFIG_FILE, settings.getConfigPathSystemIndependent());
-    if (StringUtil.isNotEmpty(settings.getBrowsers())) {
-      JDOMExternalizerUtil.writeCustomField(element, BROWSERS, settings.getBrowsers());
+    if (StringUtil.isNotEmpty(settings.getKarmaOptions())) {
+      JDOMExternalizerUtil.writeCustomField(element, KARMA_OPTIONS, settings.getKarmaOptions());
     }
     if (settings.getKarmaPackage() != null) {
       JDOMExternalizerUtil.writeCustomField(element, KARMA_PACKAGE_DIR,

@@ -10,12 +10,14 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,11 +47,26 @@ public class KarmaServerState {
 
   public KarmaServerState(@NotNull KarmaServer server, @NotNull File configurationFile) {
     myServer = server;
-    myOverriddenBrowsers = parseBrowsers(server.getServerSettings().getBrowsers());
+    myOverriddenBrowsers = parseBrowsers(findBrowsers(server.getServerSettings().getKarmaOptions()));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_CONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_DISCONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserCapturingFailedEventHandler());
     myServer.registerStreamEventHandler(new ConfigHandler(configurationFile, server.getServerSettings().getNodeInterpreter()));
+  }
+
+  @NotNull
+  private static String findBrowsers(@NotNull String karmaOptions) {
+    String singleOptionPrefix = "--browsers=";
+    List<String> options = ParametersListUtil.parse(karmaOptions);
+    Optional<String> singleOption = options.stream().filter(s -> s.startsWith(singleOptionPrefix)).findFirst();
+    if (singleOption.isPresent()) {
+      return singleOption.get().substring(singleOptionPrefix.length());
+    }
+    int ind = options.indexOf("--browsers");
+    if (ind >= 0 && ind < options.size() - 1) {
+      return options.get(ind + 1);
+    }
+    return "";
   }
 
   @Nullable

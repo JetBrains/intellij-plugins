@@ -227,11 +227,9 @@ public class KarmaServer {
       commandLine.addParameter(KarmaJsSourcesLocator.getInstance().getIntellijConfigFile().getAbsolutePath());
       commandLineFolder.addPlaceholderTexts("karma", "start", userConfigFileName);
     }
-    String browsers = serverSettings.getBrowsers();
-    if (!StringUtil.isEmptyOrSpaces(browsers)) {
-      commandLine.addParameter("--browsers=" + browsers);
-      commandLineFolder.addLastParameterFrom(commandLine);
-    }
+    List<String> karmaOptions = ParametersListUtil.parse(serverSettings.getKarmaOptions());
+    commandLine.addParameters(karmaOptions);
+    commandLineFolder.addPlaceholderTexts(karmaOptions);
     setIntellijParameter(commandLine, "user_config", configurator.convertLocalPathToRemote(serverSettings.getConfigurationFilePath()));
     if (coveragePeer != null) {
       String coverageDir = configurator.convertLocalPathToRemote(coveragePeer.getCoverageTempDir().getAbsolutePath());

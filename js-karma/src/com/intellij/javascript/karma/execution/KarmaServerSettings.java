@@ -15,7 +15,7 @@ public class KarmaServerSettings {
   private final String myNodeOptions;
   private final NodePackage myKarmaPackage;
   private final String myConfigFilePath;
-  private final String myBrowsers;
+  private final String myKarmaOptions;
   private final String myWorkingDirectory;
   private final EnvironmentVariablesData myEnvData;
 
@@ -26,7 +26,7 @@ public class KarmaServerSettings {
     myNodeOptions = builder.myRunSettings.getNodeOptions();
     myKarmaPackage = builder.myKarmaPackage;
     myConfigFilePath = builder.myRunSettings.getConfigPathSystemDependent();
-    myBrowsers = builder.myRunSettings.getBrowsers();
+    myKarmaOptions = builder.myRunSettings.getKarmaOptions();
     myWorkingDirectory = builder.myRunSettings.getWorkingDirectorySystemDependent();
     myEnvData = builder.myRunSettings.getEnvData();
   }
@@ -65,8 +65,8 @@ public class KarmaServerSettings {
   }
 
   @NotNull
-  public String getBrowsers() {
-    return myBrowsers;
+  public String getKarmaOptions() {
+    return myKarmaOptions;
   }
 
   @NotNull
@@ -92,7 +92,7 @@ public class KarmaServerSettings {
            myNodeOptions.equals(that.myNodeOptions) &&
            myKarmaPackage.equals(that.myKarmaPackage) &&
            myConfigFilePath.equals(that.myConfigFilePath) &&
-           myBrowsers.equals(that.myBrowsers) &&
+           myKarmaOptions.equals(that.myKarmaOptions) &&
            myWorkingDirectory.equals(that.myWorkingDirectory) &&
            myEnvData.equals(that.myEnvData);
   }
@@ -105,7 +105,7 @@ public class KarmaServerSettings {
     result = 31 * result + myNodeOptions.hashCode();
     result = 31 * result + myKarmaPackage.hashCode();
     result = 31 * result + myConfigFilePath.hashCode();
-    result = 31 * result + myBrowsers.hashCode();
+    result = 31 * result + myKarmaOptions.hashCode();
     result = 31 * result + myWorkingDirectory.hashCode();
     result = 31 * result + myEnvData.hashCode();
     return result;
