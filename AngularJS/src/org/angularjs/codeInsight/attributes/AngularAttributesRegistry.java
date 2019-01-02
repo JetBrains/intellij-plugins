@@ -28,7 +28,7 @@ public class AngularAttributesRegistry {
   }
 
   @NotNull
-  public static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
+  private static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
                                                             @NotNull String directiveName,
                                                             @NotNull List<PsiElement> declarations) {
     if ("ng-controller".equals(directiveName)) {

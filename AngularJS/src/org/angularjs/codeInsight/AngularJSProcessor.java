@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSNamedTypeFactory;
 import com.intellij.lang.javascript.psi.types.JSRecordTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
@@ -91,14 +92,13 @@ public class AngularJSProcessor {
     }
   }
 
-  private static void processComponentInitializer(final XmlFile file,
+  private static void processComponentInitializer(@NotNull final XmlFile file,
                                                   @NotNull JSObjectLiteralExpression componentInitializer,
                                                   @NotNull Collection<JSPsiElementBase> result) {
 
     result.add(new JSLocalImplicitElementImpl(
       getCtrlVarName(componentInitializer),
-      getComponentScopeType(file, componentInitializer.findProperty(AngularJSIndexingHandler.CONTROLLER),
-                            componentInitializer.findProperty(AngularJSIndexingHandler.BINDINGS)),
+      getComponentScopeType(file, componentInitializer),
       componentInitializer, JSImplicitElement.Type.Class));
   }
 
@@ -112,9 +112,8 @@ public class AngularJSProcessor {
   }
 
   @NotNull
-  private static JSType getComponentScopeType(final XmlFile file,
-                                              @Nullable JSProperty controllerProperty,
-                                              @Nullable JSProperty bindingsProperty) {
+  private static JSType getComponentScopeType(@NotNull final XmlFile file,
+                                              @NotNull JSObjectLiteralExpression componentInitializer) {
     List<JSRecordType.TypeMember> memberList = new ArrayList<>();
     Set<String> names = new HashSet<>();
     Consumer<JSRecordType.PropertySignature> processor = member -> {
@@ -122,8 +121,24 @@ public class AngularJSProcessor {
         memberList.add(member);
       }
     };
-    contributeBindingProperties(bindingsProperty, processor);
-    contributeControllerProperties(controllerProperty, processor);
+
+    JSProperty property;
+    if ((property = componentInitializer.findProperty(AngularJSIndexingHandler.BINDINGS)) != null) {
+      contributeBindingProperties(property, processor);
+    }
+    else if ((property = componentInitializer.findProperty(AngularJSIndexingHandler.BIND_TO_CONTROLLER)) != null) {
+      JSExpression bindToController = property.getValue();
+      if (bindToController instanceof JSObjectLiteralExpression) {
+        contributeBindingProperties(property, processor);
+      }
+      else if (bindToController instanceof JSLiteralExpression
+               && ((JSLiteralExpression)bindToController).getValue() == Boolean.TRUE
+               && (property = componentInitializer.findProperty(AngularJSIndexingHandler.SCOPE)) != null) {
+        contributeBindingProperties(property, processor);
+      }
+    }
+    contributeControllerProperties(componentInitializer.findProperty(AngularJSIndexingHandler.CONTROLLER),
+                                   processor);
     return new JSRecordTypeImpl(
       JSTypeSourceFactory.createTypeSource(file, true), memberList);
   }
@@ -134,7 +149,7 @@ public class AngularJSProcessor {
       JSObjectLiteralExpression bindings = (JSObjectLiteralExpression)bindingsProperty.getValue();
       for (JSProperty binding : bindings.getProperties()) {
         if (binding.getName() != null) {
-          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), null, true));
+          processor.accept(new JSRecordTypeImpl.PropertySignatureImpl(binding.getName(), JSAnyType.get(bindings, true), true));
         }
       }
     }

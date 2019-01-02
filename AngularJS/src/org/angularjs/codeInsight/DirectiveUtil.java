@@ -3,6 +3,7 @@ package org.angularjs.codeInsight;
 
 import com.intellij.json.psi.JsonElement;
 import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -16,6 +17,7 @@ import org.angular2.index.Angular2IndexingHandler;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,10 +26,28 @@ import java.util.Collection;
 import static com.intellij.openapi.util.text.StringUtil.trimEnd;
 import static com.intellij.openapi.util.text.StringUtil.trimStart;
 
-/**
- * @author Dennis.Ushakov
- */
 public class DirectiveUtil {
+
+  public static String getAttributeName(String text, final JSExpression attributeTypeExpr) {
+    if (attributeTypeExpr instanceof JSLiteralExpression) {
+      String typeStr = ((JSLiteralExpression)attributeTypeExpr).getStringValue();
+      if (typeStr != null) {
+        int start;
+        //noinspection StatementWithEmptyBody
+        for (start = 0;
+             start < typeStr.length() && "@=*<&?".indexOf(typeStr.charAt(start)) >= 0;
+             start++);
+        if (start < typeStr.length()) {
+          String attrName = typeStr.substring(start);
+          if (!attrName.isEmpty()) {
+            text = attrName;
+          }
+        }
+      }
+    }
+    return getAttributeName(text);
+  }
+
   public static String getAttributeName(final String text) {
     final String[] split = StringUtil.unquoteString(text).split("(?=[A-Z])");
     for (int i = 0; i < split.length; i++) {
@@ -36,6 +56,7 @@ public class DirectiveUtil {
     return StringUtil.join(split, "-");
   }
 
+  @Contract("null -> null")
   public static String normalizeAttributeName(String name) {
     if (name == null) return null;
     if (name.startsWith("data-")) {

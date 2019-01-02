@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ThreeState;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.angularjs.codeInsight.attributes.AngularAttributesRegistry.createDescriptor;
@@ -81,16 +83,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       if (applicable == ThreeState.YES) {
         result.set(directive);
       }
-      if (applicable == ThreeState.NO && result.get() == PsiUtilCore.NULL_PSI_ELEMENT) {
-        result.set(null);
-      }
-      return !result.isNull();
+      return true;
     });
     return result.get();
   }
 
   @NotNull
-  public static ThreeState isApplicable(Project project, XmlTag tag, JSImplicitElement directive) {
+  private static ThreeState isApplicable(Project project, XmlTag tag, JSImplicitElement directive) {
     if (directive == null) {
       return ThreeState.UNSURE;
     }
@@ -99,11 +98,11 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (restrictions != null) {
       final String[] split = restrictions.split(";", -1);
       final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);
-      final String requiredTag = split[1];
+      final String requiredTagAndAttr = split[1];
       if (!StringUtil.isEmpty(restrict) && !StringUtil.containsIgnoreCase(restrict, "A")) {
         return ThreeState.NO;
       }
-      if (!tagMatches(tag, requiredTag)) {
+      if (!tagAndAttrMatches(tag, requiredTagAndAttr)) {
         return ThreeState.NO;
       }
     }
@@ -111,12 +110,37 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     return ThreeState.YES;
   }
 
+  private static boolean tagAndAttrMatches(XmlTag tag, String requiredTagAndAttr) {
+    List<String> tagAndAttrArr = StringUtil.split(requiredTagAndAttr, "=");
+    if (tagAndAttrArr.isEmpty()) {
+      return true;
+    }
+    if (!tagMatches(tag, tagAndAttrArr.get(0))) {
+      return false;
+    }
+    if (tagAndAttrArr.size() == 1) {
+      return true;
+    }
+    String requiredAttr = DirectiveUtil.getAttributeName(tagAndAttrArr.get(1).trim());
+    if (requiredAttr.isEmpty()) {
+      return true;
+    }
+    for (XmlAttribute attr : tag.getAttributes()) {
+      if (requiredAttr.equals(DirectiveUtil.normalizeAttributeName(attr.getName()))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private static boolean tagMatches(XmlTag tag, String requiredTag) {
     if (StringUtil.isEmpty(requiredTag) || StringUtil.equalsIgnoreCase(requiredTag, "ANY")) {
       return true;
     }
-    for (String s : requiredTag.split(",")) {
-      if (StringUtil.equalsIgnoreCase(tag.getName(), s.trim())) {
+    String tagName = tag.getName();
+    for (String s : StringUtil.split(requiredTag, ",")) {
+      if (StringUtil.equalsIgnoreCase(tagName, s.trim())
+          || StringUtil.equalsIgnoreCase(tagName, DirectiveUtil.getAttributeName(s.trim()))) {
         return true;
       }
     }
@@ -147,7 +171,7 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (xmlTag != null) {
       final Project project = xmlTag.getProject();
       if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject())) return null;
-      
+
       final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
       PsiElement declaration = applicableDirective(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
       if (declaration == PsiUtilCore.NULL_PSI_ELEMENT) {

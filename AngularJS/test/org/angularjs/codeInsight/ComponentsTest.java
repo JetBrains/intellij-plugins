@@ -83,4 +83,11 @@ public class ComponentsTest extends LightPlatformCodeInsightFixtureTestCase {
     assertContainsElements(myFixture.getLookupElementStrings(), "vm");
   }
 
+  public void testSimilarComponents() {
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                HtmlUnknownTagInspection.class);
+    myFixture.configureByFiles("similarComponents.html", "angular.js");
+    myFixture.checkHighlighting(true, false, true);
+  }
+
 }
