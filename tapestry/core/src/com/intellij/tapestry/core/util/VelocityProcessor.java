@@ -2,9 +2,7 @@ package com.intellij.tapestry.core.util;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.RuntimeInstance;
-import org.apache.velocity.runtime.log.NullLogChute;
 
 import java.io.StringWriter;
 import java.util.Map;
@@ -25,7 +23,6 @@ public abstract class VelocityProcessor {
     public static String processClasspathTemplate(String templatePath, Map<String, Object> context) throws RuntimeException {
         try {
             RuntimeInstance ri = new RuntimeInstance();
-            ri.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, new NullLogChute());
             ri.init();
 
             Template template = new Template();
