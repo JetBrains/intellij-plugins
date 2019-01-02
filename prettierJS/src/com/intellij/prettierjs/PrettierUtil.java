@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.google.gson.Gson;
@@ -10,7 +11,6 @@ import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -46,10 +46,10 @@ public class PrettierUtil {
       ContainerUtil.map(CONFIG_FILE_EXTENSIONS, ext -> RC_FILE_NAME + ext),
       JS_CONFIG_FILE_NAME, RC_FILE_NAME
     );
-  
+
   public static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
     ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
-  
+
   public static final SemVer MIN_VERSION = new SemVer("1.8.0", 1, 8, 0);
   private static final Logger LOG = Logger.getInstance(PrettierUtil.class);
   public static final String BRACKET_SPACING = "bracketSpacing";
@@ -107,7 +107,7 @@ public class PrettierUtil {
   }
 
   @NotNull
-  public static Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull VirtualFile[] from, @NotNull Project project) {
+  public static Collection<VirtualFile> lookupPossibleConfigFiles(@NotNull List<VirtualFile> from, @NotNull Project project) {
     HashSet<VirtualFile> results = new HashSet<>();
     VirtualFile baseDir = project.getBaseDir();
     if (baseDir == null) {
@@ -248,10 +248,10 @@ public class PrettierUtil {
 
   public enum TrailingCommaOption {
     none,
-    all, 
+    all,
     es5
   }
-  
+
   public static class Config {
     public static final Config DEFAULT = new Config();
     public final boolean jsxBracketSameLine;
@@ -276,7 +276,7 @@ public class PrettierUtil {
                   @Nullable Boolean singleQuote,
                   @Nullable Integer tabWidth,
                   @Nullable TrailingCommaOption trailingComma,
-                  @Nullable Boolean useTabs, 
+                  @Nullable Boolean useTabs,
                   @Nullable String lineSeparator) {
       this.jsxBracketSameLine = ObjectUtils.coalesce(jsxBracketSameLine, false);
       this.bracketSpacing = ObjectUtils.coalesce(bracketSpacing, true);

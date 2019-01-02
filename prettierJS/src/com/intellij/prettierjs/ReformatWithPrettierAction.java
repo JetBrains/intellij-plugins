@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.codeInsight.actions.FileTreeIterator;
@@ -59,10 +60,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Future;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
@@ -140,8 +138,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     else {
       VirtualFile[] virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.getDataContext());
       if (!ArrayUtil.isEmpty(virtualFiles)) {
-        processVirtualFiles(project, virtualFiles, nodePackage);
-      }  
+        processVirtualFiles(project, Arrays.asList(virtualFiles), nodePackage);
+      }
     }
   }
 
@@ -151,15 +149,14 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     VirtualFile vFile = file.getVirtualFile();
-    if (ReadonlyStatusHandler.getInstance(project)
-      .ensureFilesWritable(vFile)
+    if (ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(Collections.singletonList(vFile))
       .hasReadonlyFiles()) {
       return;
     }
 
     TextRange range = editor.getSelectionModel().hasSelection()
                       ? new TextRange(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd()) : null;
-    ensureConfigsSaved(new VirtualFile[]{vFile}, project);
+    ensureConfigsSaved(Collections.singletonList(vFile), project);
     PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
     ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable = () -> ReadAction.compute(() -> {
       if (!isAcceptableFile(file, nodePackage)) {
@@ -202,7 +199,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
   }
 
-  private static void ensureConfigsSaved(@NotNull VirtualFile[] virtualFiles, @NotNull Project project) {
+  private static void ensureConfigsSaved(@NotNull List<VirtualFile> virtualFiles, @NotNull Project project) {
     FileDocumentManager documentManager = FileDocumentManager.getInstance();
     for (VirtualFile config : PrettierUtil.lookupPossibleConfigFiles(virtualFiles, project)) {
       Document document = documentManager.getCachedDocument(config);
@@ -213,7 +210,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private void processVirtualFiles(@NotNull Project project,
-                                   @NotNull VirtualFile[] virtualFiles,
+                                   @NotNull List<VirtualFile> virtualFiles,
                                    @NotNull NodePackage nodePackage) {
     ReadonlyStatusHandler.OperationStatus readonlyStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(virtualFiles);
     if (readonlyStatus.hasReadonlyFiles()) {
@@ -221,22 +218,22 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     ensureConfigsSaved(virtualFiles, project);
     PsiManager psiManager = PsiManager.getInstance(project);
-    if (virtualFiles.length == 1 && virtualFiles[0].isDirectory()) {
-      PsiDirectory psiDirectory = psiManager.findDirectory(virtualFiles[0]);
+    if (virtualFiles.size() == 1 && virtualFiles.get(0).isDirectory()) {
+      PsiDirectory psiDirectory = psiManager.findDirectory(virtualFiles.get(0));
       if (psiDirectory == null) {
         return;
       }
       processFileIterator(project, new FileTreeIterator(psiDirectory), nodePackage, false);
     }
     else {
-      processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, Arrays.asList(virtualFiles))), 
+      processFileIterator(project, new FileTreeIterator(PsiUtilCore.toPsiFiles(psiManager, virtualFiles)),
                           nodePackage, true);
     }
   }
 
   private void processFileIterator(@NotNull Project project,
                                    @NotNull final FileTreeIterator fileIterator,
-                                   @NotNull NodePackage nodePackage, 
+                                   @NotNull NodePackage nodePackage,
                                    boolean reportSkippedFiles) {
     PrettierLanguageService service = PrettierLanguageService.getInstance(project);
     Map<PsiFile, PrettierLanguageService.FormatResult> results = executeUnderProgress(project, indicator -> ReadAction.compute(() -> {
@@ -300,7 +297,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   private static PrettierLanguageService.FormatResult performRequestForFile(@NotNull Project project,
                                                                             @NotNull NodePackage nodePackage,
                                                                             @NotNull PrettierLanguageService service,
-                                                                            @NotNull PsiFile currentFile, 
+                                                                            @NotNull PsiFile currentFile,
                                                                             @Nullable TextRange range) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
     VirtualFile currentVFile = currentFile.getVirtualFile();
@@ -403,7 +400,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     PrettierLanguageServiceImpl languageService = PrettierLanguageService.getInstance(project);
     PrettierLanguageService.SupportedFilesInfo supportedFiles = JSLanguageServiceUtil.awaitFuture(languageService.getSupportedFiles(nodePackage), REQUEST_TIMEOUT);
     if (supportedFiles != null) {
-      
+
       String nameWithoutExtension = virtualFile.getNameWithoutExtension();
       if (StringUtil.isEmpty(nameWithoutExtension)) {
         nameWithoutExtension = virtualFile.getName();
@@ -414,7 +411,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     return false;
   }
 
-  
+
 
   public interface ErrorHandler {
     ErrorHandler DEFAULT = new DefaultErrorHandler();
@@ -423,7 +420,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                    @Nullable Editor editor,
                    @NotNull String text,
                    @Nullable Runnable onLinkClick);
-    
+
     default void showErrorWithDetails(@NotNull Project project,
                                       @Nullable Editor editor,
                                       @NotNull String text,
