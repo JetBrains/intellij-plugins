@@ -212,7 +212,7 @@ public class AngularIndexUtil {
 
   public static String convertRestrictions(final Project project, String restrictions) {
     if (AngularJSIndexingHandler.DEFAULT_RESTRICTIONS.equals(restrictions)) {
-      return getAngularJSVersion(project) >= 13 ? "AE" : "A";
+      return getAngularJSVersion(project) >= 13 ? "E" : "_";
     }
     return restrictions;
   }

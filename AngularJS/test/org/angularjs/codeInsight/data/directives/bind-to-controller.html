@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+  <script>
+    var angular;
+    angular.module('youtrack.newFeaturesPopup')
+        .directive('createTitlesId1', function() {
+          return {
+            restrict: 'A',
+            scope: {
+              ids: '=createTitlesId1',
+              anotherProp: "@"
+            },
+            templateUrl: "./bind-to-controller-1.html",
+            bindToController: true
+          };
+        })
+        .directive('createTitlesId2', function() {
+          return {
+            restrict: 'A',
+            scope: {
+              anotherProp: "@"
+            },
+            bindToController: {
+              ids: '=createTitlesId2'
+            },
+            templateUrl: "./bind-to-controller-2.html",
+            controllerAs: 'vm'
+          };
+        })
+
+  </script>
+
+  <div
+      create-titles-id1="test"
+      another-prop="this is string"
+      <warning descr="Attribute bad-prop is not allowed here">bad-prop</warning>="">
+  </div>
+  <div
+      create-titles-id2="test"
+      another-prop="this is string"
+      <warning descr="Attribute bad-prop is not allowed here">bad-prop</warning>="">
+  </div>
+
+
+</body>
+</html>

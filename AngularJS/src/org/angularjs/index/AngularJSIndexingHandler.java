@@ -28,11 +28,11 @@ import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.psi.util.JSTreeUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.CompositeElement;
 import com.intellij.psi.stubs.IndexSink;
@@ -65,6 +65,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final Map<String, Function<String, String>> NAME_CONVERTERS = new HashMap<>();
   private static final Map<String, Function<PsiElement, String>> DATA_CALCULATORS = new HashMap<>();
   private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_PROPERTY_PROCESSORS = new HashMap<>();
+  private static final Map<String, PairProcessor<JSProperty, JSElementIndexingData>> CUSTOM_INDIRECT_PROPERTY_PROCESSORS = new HashMap<>();
   private final static Map<String, Function<String, List<String>>> POLY_NAME_CONVERTERS = new HashMap<>();
   private final static Map<String, Processor<JSArgumentList>> ARGUMENT_LIST_CHECKERS = new HashMap<>();
 
@@ -74,6 +75,8 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   public static final String DIRECTIVE = "directive";
   public static final String COMPONENT = "component";
   public static final String BINDINGS = "bindings";
+  public static final String SCOPE = "scope";
+  public static final String BIND_TO_CONTROLLER = "bindToController";
   public static final String TEMPLATE_URL = "templateUrl";
   public static final String TEMPLATE = "template";
   public static final String CONTROLLER_AS = "controllerAs";
@@ -84,6 +87,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final String END_SYMBOL = "endSymbol";
   public static final String DEFAULT_RESTRICTIONS = "D";
   public static final String WHEN = "when";
+  private static final String RESTRICT_PROP = "restrict";
 
   private static final String[] ALL_INTERESTING_METHODS;
   private static final BidirectionalMap<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXES;
@@ -139,8 +143,14 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
     }
 
-    CUSTOM_PROPERTY_PROCESSORS.put(COMPONENT, AngularJSIndexingHandler::bindingsProcessor);
+    CUSTOM_PROPERTY_PROCESSORS.put(COMPONENT, (property, data) -> processScopedProperty(property, data, BINDINGS, true));
+    CUSTOM_INDIRECT_PROPERTY_PROCESSORS.put(DIRECTIVE, (property, data) -> {
+      boolean result = processScopedProperty(property, data, SCOPE, false);
+      return processScopedProperty(property, data, BIND_TO_CONTROLLER, false) || result;
+    });
     NAME_CONVERTERS.put(BINDINGS, NAME_CONVERTERS.get(DIRECTIVE));
+    NAME_CONVERTERS.put(SCOPE, NAME_CONVERTERS.get(DIRECTIVE));
+    NAME_CONVERTERS.put(BIND_TO_CONTROLLER, NAME_CONVERTERS.get(DIRECTIVE));
 
     final PairProcessor<JSProperty, JSElementIndexingData> processor = createRouterParametersProcessor();
     CUSTOM_PROPERTY_PROCESSORS.put(WHEN, processor);
@@ -213,6 +223,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
             final Function<PsiElement, String> calculator = DATA_CALCULATORS.get(command);
             final String data = calculator != null ? calculator.fun(argument) : null;
             final String argumentText = unquote(argument);
+            if (data != null && data.startsWith("D;")) {
+              addImplicitElements(argument, command, index, argumentText, "A" + data.substring(1), outIndexingData);
+            }
             addImplicitElements(argument, command, index, argumentText, data, outIndexingData);
           }
         }
@@ -293,24 +306,28 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       property, localOutData = (outData == null ? new JSElementIndexingDataImpl() : outData))) {
       return localOutData;
     }
-    final Pair<JSCallExpression, Integer> pair = findImmediatelyWrappingCall(property);
-    if (pair == null) return outData;
-    final JSCallExpression callExpression = pair.getFirst();
-    final int level = pair.getSecond();
+    Trinity<JSCallExpression, Integer, Boolean> wrappingCall = findWrappingCall(property);
+    if (wrappingCall == null) {
+      return outData;
+    }
+    final JSCallExpression callExpression = wrappingCall.first;
+    final int level = wrappingCall.second;
+    boolean immediate = wrappingCall.third;
 
     final JSExpression methodExpression = callExpression.getMethodExpression();
     if (!(methodExpression instanceof JSReferenceExpression) || ((JSReferenceExpression)methodExpression).getQualifier() == null) {
       return outData;
     }
     final String command = ((JSReferenceExpression)methodExpression).getReferenceName();
-    final PairProcessor<JSProperty, JSElementIndexingData> customProcessor = CUSTOM_PROPERTY_PROCESSORS.get(command);
+    final PairProcessor<JSProperty, JSElementIndexingData> customProcessor =
+      immediate ? CUSTOM_PROPERTY_PROCESSORS.get(command) : CUSTOM_INDIRECT_PROPERTY_PROCESSORS.get(command);
     if (customProcessor != null && customProcessor.process(property,
                                                            (localOutData =
                                                               (outData == null ? new JSElementIndexingDataImpl() : outData)))) {
       return localOutData;
     }
     // for 'standard' properties, keep indexing only for properties - immediate children of function calls parameters
-    if (level > 1) return outData;
+    if (level > 1 || !immediate) return outData;
 
     final PsiElement parent = property.getParent();
     final StubIndexKey<String, JSImplicitElementProvider> index = INDEXERS.get(command);
@@ -323,9 +340,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Nullable
-  private static Pair<JSCallExpression, Integer> findImmediatelyWrappingCall(@NotNull JSProperty property) {
+  private static Trinity<JSCallExpression, Integer, Boolean> findWrappingCall(@NotNull JSProperty property) {
     PsiElement current = property.getParent();
     int level = 0;
+    boolean immediate = true;
     while (current instanceof JSElement) {
       if (current instanceof JSProperty) {
         current = current.getParent();
@@ -336,9 +354,22 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         current = current.getParent();
         continue;
       }
+      else if (current instanceof JSReturnStatement) {
+        immediate = false;
+        JSFunction function = PsiTreeUtil.getParentOfType(current, JSFunction.class);
+        if (function instanceof JSFunctionExpression) {
+          current = function.getParent();
+        }
+        else {
+          return null;
+        }
+      }
+      if (current instanceof JSArrayLiteralExpression) {
+        current = current.getParent();
+      }
       if (current instanceof JSArgumentList) {
         final PsiElement callExpression = current.getParent();
-        if (callExpression instanceof JSCallExpression) return Pair.create((JSCallExpression)callExpression, level);
+        if (callExpression instanceof JSCallExpression) return Trinity.create((JSCallExpression)callExpression, level, immediate);
       }
       return null;
     }
@@ -387,9 +418,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         final boolean directive = ngdocValue.contains(DIRECTIVE);
         final boolean component = ngdocValue.contains(COMPONENT);
         if (directive || component) {
-          final String restrictions = calculateRestrictions(commentLines, directive ? DEFAULT_RESTRICTIONS : "E");
+          final List<Pair<String, String>> restrictions = calculateRestrictions(commentLines, name, directive ? DEFAULT_RESTRICTIONS : "E");
           if (outData == null) outData = new JSElementIndexingDataImpl();
-          addImplicitElements(comment, directive ? DIRECTIVE : COMPONENT, AngularDirectivesDocIndex.KEY, name, restrictions, outData);
+          for (Pair<String, String> p : restrictions) {
+            addImplicitElements(comment, directive ? DIRECTIVE : COMPONENT, AngularDirectivesDocIndex.KEY, p.first, p.second, outData);
+          }
         }
         else if (ngdocValue.contains(FILTER)) {
           if (outData == null) outData = new JSElementIndexingDataImpl();
@@ -400,11 +433,12 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return outData;
   }
 
-  private static String calculateRestrictions(final String[] commentLines, String defaultRestrictions) {
+  private static List<Pair<String, String>> calculateRestrictions(final String[] commentLines,
+                                                                  String directiveName,
+                                                                  String defaultRestrictions) {
     String restrict = defaultRestrictions;
     String tag = "";
-    String param = "";
-    StringBuilder attributes = new StringBuilder();
+    List<Pair<String, String>> result = new SmartList<>();
     for (String line : commentLines) {
       restrict = getParamValue(restrict, line, RESTRICT);
       tag = getParamValue(tag, line, ELEMENT);
@@ -412,13 +446,32 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
       if (start >= 0) {
         final JSDocumentationUtils.DocTag docTag = JSDocumentationUtils.getDocTag(line.substring(start));
         if (docTag != null) {
-          param = docTag.matchValue != null ? docTag.matchValue : param;
-          if (attributes.length() > 0) attributes.append(",");
-          attributes.append(docTag.matchName);
+          for (String paramName : StringUtil.split(docTag.matchName, "|")) {
+            if (restrict.equals(DEFAULT_RESTRICTIONS) || restrict.contains("A")) {
+              result.add(Pair.pair(paramName, "A;" + tag + (directiveName.equals(paramName) ? "" : "=" + directiveName) + ";"
+                                              + (docTag.matchValue != null ? docTag.matchValue : "") + ";"));
+            }
+            if (restrict.contains("E")) {
+              result.add(Pair.pair(paramName, "A;" + directiveName + ";"
+                                              + (docTag.matchValue != null ? docTag.matchValue : "") + ";"));
+            }
+          }
         }
       }
     }
-    return restrict + ";" + tag + ";" + param.trim() + ";" + attributes.toString().trim();
+    if (restrict.contains("E")) {
+      result.add(Pair.pair(directiveName, "E;" + tag + ";;"));
+    }
+    else if (result.isEmpty()) {
+      if (restrict.equals(DEFAULT_RESTRICTIONS)) {
+        result.add(Pair.pair(directiveName, "A;" + tag + ";;"));
+      }
+      result.add(Pair.pair(directiveName, restrict + ";" + tag + ";;"));
+    }
+    else if (restrict.equals(DEFAULT_RESTRICTIONS)) {
+      result.add(Pair.pair(directiveName, "D;" + tag + ";;"));
+    }
+    return result;
   }
 
   public static boolean isAngularRestrictions(@Nullable String restrictions) {
@@ -500,7 +553,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
   private static String calculateRestrictions(PsiElement element, String defaultRestrictions) {
     final Ref<String> restrict = Ref.create(defaultRestrictions);
-    final Ref<String> scope = Ref.create("");
     final PsiElement function = findFunction(element);
     if (function != null) {
       function.accept(new JSRecursiveElementVisitor() {
@@ -508,21 +560,16 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
         public void visitJSProperty(JSProperty node) {
           final String name = node.getName();
           final JSExpression value = node.getValue();
-          if ("restrict".equals(name)) {
+          if (RESTRICT_PROP.equals(name)) {
             if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
               final String unquoted = unquote(value);
               if (unquoted != null) restrict.set(unquoted);
             }
           }
-          else if ("scope".equals(name)) {
-            if (value instanceof JSObjectLiteralExpression) {
-              scope.set(StringUtil.join(((JSObjectLiteralExpression)value).getProperties(), PsiNamedElement::getName, ","));
-            }
-          }
         }
       });
     }
-    return restrict.get().trim() + ";;;" + scope.get();
+    return restrict.get().trim() + ";;;";
   }
 
   private static PsiElement findFunction(PsiElement element) {
@@ -689,7 +736,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static boolean isControllerProperty(@NotNull JSProperty property) {
     PsiElement parent = property.getParent();
     return (parent instanceof JSObjectLiteralExpression) &&
-           ((JSObjectLiteralExpression)parent).findProperty(CONTROLLER) != null;
+           (((JSObjectLiteralExpression)parent).findProperty(CONTROLLER) != null
+            || ((JSObjectLiteralExpression)parent).findProperty(BINDINGS) != null
+            || ((JSObjectLiteralExpression)parent).findProperty(SCOPE) != null);
   }
 
   private static boolean processTemplateProperty(@NotNull JSProperty property, @NotNull JSElementIndexingData data) {
@@ -726,11 +775,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     return true;
   }
 
-  private static boolean bindingsProcessor(JSProperty property, JSElementIndexingData data) {
+  private static boolean processScopedProperty(JSProperty property, JSElementIndexingData data, String propertyName, boolean isComponent) {
     PsiElement parent = property.getParent();
     if (parent instanceof JSObjectLiteralExpression && parent.getParent() instanceof JSProperty &&
-        BINDINGS.equals(((JSProperty)parent.getParent()).getName())) {
-      Pair<JSCallExpression, Integer> call = findImmediatelyWrappingCall(property);
+        propertyName.equals(((JSProperty)parent.getParent()).getName())) {
+      Trinity<JSCallExpression, Integer, Boolean> call = findWrappingCall(property);
       assert call != null;
       JSExpression[] arguments = call.first.getArguments();
       if (arguments.length < 2 ||
@@ -738,14 +787,32 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           !((JSLiteralExpression)arguments[0]).isQuotedLiteral()) {
         return false;
       }
+      String name = DirectiveUtil.getAttributeName(StringUtil.notNullize(unquote(arguments[0])));
+      String restrictions = getRestrictions(parent, isComponent ? "E" : "D");
 
-      final String componentName = unquote(arguments[0]);
-      addImplicitElements(property, BINDINGS, AngularDirectivesDocIndex.KEY, DirectiveUtil.getAttributeName(property.getName()),
-                          "A;" + (componentName != null ? DirectiveUtil.getAttributeName(componentName) : "") + ";" +
-                          getBindingType(property.getValue()) + ";", data);
+      String attributeName = DirectiveUtil.getAttributeName(property.getName(), property.getValue());
+
+      if (restrictions.contains("E") || restrictions.equals("D")) {
+        addImplicitElements(property, attributeName, AngularDirectivesDocIndex.KEY, attributeName,
+                            "A;" + name + ";" + getBindingType(property.getValue()) + ";",
+                            data);
+      }
+      if (restrictions.contains("A") || restrictions.equals("D")) {
+        addImplicitElements(property, attributeName, AngularDirectivesDocIndex.KEY, attributeName,
+                            "A;ANY" + (attributeName.equals(name) ? "" : "=" + name) + ";" + getBindingType(property.getValue()) + ";",
+                            data);
+      }
       return true;
     }
     return false;
+  }
+
+  private static String getRestrictions(PsiElement parent, String defaultRestrictions) {
+    JSExpression restrict = ObjectUtils.doIfNotNull(((JSObjectLiteralExpression)parent).findProperty(RESTRICT_PROP), JSProperty::getValue);
+    if (restrict instanceof JSLiteralExpression && ((JSLiteralExpression)restrict).isQuotedLiteral()) {
+      return StringUtil.notNullize(unquote(restrict), defaultRestrictions);
+    }
+    return defaultRestrictions;
   }
 
   private static String getBindingType(@Nullable JSExpression valueExpr) {

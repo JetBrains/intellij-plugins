@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+  <script>
+    angular.module('myModule').component('componentOne', {
+      templateUrl: 'components/component-one.html',
+      bindings: {
+        someBinding: '<'
+      },
+      controller: [function () {
+      }]
+    });
+
+    angular.module('myModule').component('componentTwo', {
+      templateUrl: 'components/component-two.html',
+      bindings: {
+        someBinding: '<'
+      },
+      controller: [function () {
+      }]
+    });
+  </script>
+  <component-one some-binding="$ctrl.someValue" <warning descr="Attribute non-existent-one is not allowed here">non-existent-one</warning>="">
+  </component-one>
+  <component-two some-binding="$ctrl.someValue" <warning descr="Attribute non-existent-one is not allowed here">non-existent-one</warning>="">
+  </component-two>
+</body>
+</html>

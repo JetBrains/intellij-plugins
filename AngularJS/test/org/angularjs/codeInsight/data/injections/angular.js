@@ -70,7 +70,7 @@
 /**
  * @ngdoc directive
  * @name ng.directive:ngIf
- * @param {expression} ngRepeat The expression indicating how to enumerate a collection. These
+ * @param {expression} ngIf The expression indicating how to enumerate a collection. These
  *   formats are currently supported:
  */
 angular.directive({ngModel: ngModelDirective})

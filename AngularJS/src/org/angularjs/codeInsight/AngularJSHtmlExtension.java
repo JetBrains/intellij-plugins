@@ -14,7 +14,9 @@ import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
 import org.angular2.lang.html.psi.PropertyBindingType;
 import org.angular2.lang.html.psi.impl.Angular2HtmlBananaBoxBindingImpl;
+import org.angularjs.codeInsight.tags.AngularJSTagDescriptor;
 import org.angularjs.index.AngularIndexUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -25,6 +27,12 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
   public boolean isAvailable(PsiFile file) {
     return (super.isAvailable(file) && AngularIndexUtil.hasAngularJS(file.getProject()))
            || (file.getFileType() == Angular2HtmlFileType.INSTANCE && Angular2LangUtil.isAngular2Context(file));
+  }
+
+  @Override
+  public boolean isSelfClosingTagAllowed(@NotNull XmlTag tag) {
+    return tag.getDescriptor() instanceof AngularJSTagDescriptor
+           || super.isSelfClosingTagAllowed(tag);
   }
 
   @Override
