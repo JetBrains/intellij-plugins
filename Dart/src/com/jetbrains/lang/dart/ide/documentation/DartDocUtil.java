@@ -1,5 +1,5 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.documentation;
-
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
@@ -64,6 +64,7 @@ public class DartDocUtil {
     return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, null, false);
   }
 
+  @NotNull
   public static String generateDoc(@Nullable final String signature,
                                    final boolean signatureIsHtml,
                                    @Nullable final String docText,
@@ -320,7 +321,7 @@ public class DartDocUtil {
     }
   }
 
-  private static void appendClassSignature(final StringBuilder builder, final DartClass dartClass) {
+  private static void appendClassSignature(final StringBuilder builder, @NotNull final DartClass dartClass) {
     if (dartClass.isEnum()) {
       builder.append("enum <b>").append(dartClass.getName()).append("</b>");
       return;
@@ -351,7 +352,7 @@ public class DartDocUtil {
     }
   }
 
-  private static void appendDartTypeList(final StringBuilder builder, final List<DartType> dartTypes) {
+  private static void appendDartTypeList(final StringBuilder builder, @NotNull final List<DartType> dartTypes) {
     for (Iterator<DartType> iter = dartTypes.iterator(); iter.hasNext(); ) {
       appendDartType(builder, iter.next());
       if (iter.hasNext()) {
@@ -382,7 +383,9 @@ public class DartDocUtil {
     appendFunctionSignature(builder, function, returnString);
   }
 
-  private static void appendFunctionSignature(final StringBuilder builder, final DartComponent function, final String returnType) {
+  private static void appendFunctionSignature(@NotNull final StringBuilder builder,
+                                              @NotNull final DartComponent function,
+                                              final String returnType) {
     builder.append("<b>").append(function.getName()).append("</b>");
     if (!function.isGetter()) {
       builder.append('(');
