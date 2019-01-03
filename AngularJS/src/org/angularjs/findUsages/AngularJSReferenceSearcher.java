@@ -36,8 +36,11 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
     final Angular2Pipe pipe;
     final PsiElement element = queryParameters.getElementToSearch();
     if ((directive = DirectiveUtil.getDirective(element)) != null) {
-      queryParameters.getOptimizer().searchWord(directive.getName(), queryParameters.getEffectiveSearchScope(),
-                                                true, directive);
+      for (String attrName : DirectiveUtil.getAttributeNameVariations(directive.getName())) {
+        queryParameters.getOptimizer().searchWord(attrName, queryParameters.getEffectiveSearchScope(), false, directive);
+        queryParameters.getOptimizer().searchWord("x-" + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
+        queryParameters.getOptimizer().searchWord("data-" + attrName, queryParameters.getEffectiveSearchScope(), false, directive);
+      }
     }
     else if ((pipe = Angular2EntitiesProvider.getPipe(element)) != null) {
       for (PsiElement el : pipe.getTransformMethods()) {

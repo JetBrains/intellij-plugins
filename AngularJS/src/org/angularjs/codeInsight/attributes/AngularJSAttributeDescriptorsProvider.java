@@ -12,13 +12,13 @@ import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ThreeState;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularDirectivesIndex;
 import org.angularjs.index.AngularIndexUtil;
+import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,33 +66,38 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
                                @NotNull Map<String, XmlAttributeDescriptor> result,
                                @NotNull String directiveName,
                                @NotNull PsiElement declaration) {
-    result.put(directiveName, createDescriptor(project, directiveName, declaration));
-    if ("ng-repeat".equals(directiveName)) {
-      result.put(directiveName + "-start", createDescriptor(project, directiveName + "-start", declaration));
-      result.put(directiveName + "-end", createDescriptor(project, directiveName + "-end", declaration));
+    result.put(directiveName, createDescriptor(project, DirectiveUtil.getAttributeName(directiveName), declaration));
+    if ("ngRepeat".equals(directiveName)) {
+      result.put("ngRepeatStart", createDescriptor(project, "ng-repeat-start", declaration));
+      result.put("ngRepeatEnd", createDescriptor(project, "ng-repeat-end", declaration));
     }
   }
 
-  private static PsiElement applicableDirective(Project project,
-                                                String directiveName,
-                                                XmlTag tag,
-                                                final StubIndexKey<String, JSImplicitElementProvider> index) {
+  private static PsiElement applicableDirective(@NotNull Project project,
+                                                @NotNull String directiveName,
+                                                @NotNull XmlTag tag,
+                                                @NotNull final StubIndexKey<String, JSImplicitElementProvider> index) {
     Ref<PsiElement> result = Ref.create(PsiUtilCore.NULL_PSI_ELEMENT);
     AngularIndexUtil.multiResolve(project, index, directiveName, (directive) -> {
-      ThreeState applicable = isApplicable(project, tag, directive);
-      if (applicable == ThreeState.YES) {
+      // Ensure this is our element
+      if (directive == null
+          || (!AngularJSIndexingHandler.ANGULAR_DIRECTIVES_INDEX_USER_STRING.equals(directive.getUserString())
+              && !AngularJSIndexingHandler.ANGULAR_DIRECTIVES_DOC_INDEX_USER_STRING.equals(directive.getUserString()))) {
+        return true;
+      }
+      if (isApplicable(project, tag, directive)) {
         result.set(directive);
+        return false;
+      }
+      else {
+        result.set(null);
       }
       return true;
     });
     return result.get();
   }
 
-  @NotNull
-  private static ThreeState isApplicable(Project project, XmlTag tag, JSImplicitElement directive) {
-    if (directive == null) {
-      return ThreeState.UNSURE;
-    }
+  private static boolean isApplicable(@NotNull Project project, @NotNull XmlTag tag, @NotNull JSImplicitElement directive) {
 
     final String restrictions = directive.getTypeString();
     if (restrictions != null) {
@@ -100,28 +105,27 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       final String restrict = AngularIndexUtil.convertRestrictions(project, split[0]);
       final String requiredTagAndAttr = split[1];
       if (!StringUtil.isEmpty(restrict) && !StringUtil.containsIgnoreCase(restrict, "A")) {
-        return ThreeState.NO;
+        return false;
       }
       if (!tagAndAttrMatches(tag, requiredTagAndAttr)) {
-        return ThreeState.NO;
+        return false;
       }
     }
-
-    return ThreeState.YES;
+    return true;
   }
 
-  private static boolean tagAndAttrMatches(XmlTag tag, String requiredTagAndAttr) {
-    List<String> tagAndAttrArr = StringUtil.split(requiredTagAndAttr, "=");
-    if (tagAndAttrArr.isEmpty()) {
+  private static boolean tagAndAttrMatches(XmlTag tag, String requiredTagAndDirective) {
+    List<String> tagAndDirectiveSplit = StringUtil.split(requiredTagAndDirective, "=");
+    if (tagAndDirectiveSplit.isEmpty()) {
       return true;
     }
-    if (!tagMatches(tag, tagAndAttrArr.get(0))) {
+    if (!tagMatches(tag, tagAndDirectiveSplit.get(0))) {
       return false;
     }
-    if (tagAndAttrArr.size() == 1) {
+    if (tagAndDirectiveSplit.size() == 1) {
       return true;
     }
-    String requiredAttr = DirectiveUtil.getAttributeName(tagAndAttrArr.get(1).trim());
+    String requiredAttr = tagAndDirectiveSplit.get(1).trim();
     if (requiredAttr.isEmpty()) {
       return true;
     }
@@ -137,10 +141,11 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
     if (StringUtil.isEmpty(requiredTag) || StringUtil.equalsIgnoreCase(requiredTag, "ANY")) {
       return true;
     }
-    String tagName = tag.getName();
+    String normalizedTag = DirectiveUtil.normalizeAttributeName(tag.getName());
     for (String s : StringUtil.split(requiredTag, ",")) {
-      if (StringUtil.equalsIgnoreCase(tagName, s.trim())
-          || StringUtil.equalsIgnoreCase(tagName, DirectiveUtil.getAttributeName(s.trim()))) {
+      String requirement = s.trim();
+      if (StringUtil.equals(normalizedTag, requirement)
+          || StringUtil.equalsIgnoreCase(tag.getName(), requirement)) {
         return true;
       }
     }
@@ -158,7 +163,8 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
 
   private static boolean isForm(XmlTag parent) {
     final String name = parent.getName();
-    return "form".equalsIgnoreCase(name) || "ng-form".equalsIgnoreCase(name);
+    return "form".equalsIgnoreCase(name)
+           || DirectiveUtil.normalizeAttributeName(name).equals("ngForm");
   }
 
   @Nullable
@@ -172,13 +178,13 @@ public class AngularJSAttributeDescriptorsProvider implements XmlAttributeDescri
       final Project project = xmlTag.getProject();
       if (!AngularIndexUtil.hasAngularJS(xmlTag.getProject())) return null;
 
-      final String attributeName = DirectiveUtil.normalizeAttributeName(attrName);
-      PsiElement declaration = applicableDirective(project, attributeName, xmlTag, AngularDirectivesDocIndex.KEY);
+      final String directiveName = DirectiveUtil.normalizeAttributeName(attrName);
+      PsiElement declaration = applicableDirective(project, directiveName, xmlTag, AngularDirectivesDocIndex.KEY);
       if (declaration == PsiUtilCore.NULL_PSI_ELEMENT) {
-        declaration = applicableDirective(project, attributeName, xmlTag, AngularDirectivesIndex.KEY);
+        declaration = applicableDirective(project, directiveName, xmlTag, AngularDirectivesIndex.KEY);
       }
       if (isApplicable(declaration)) {
-        return createDescriptor(project, attributeName, declaration);
+        return createDescriptor(project, attrName, declaration);
       }
     }
     return null;

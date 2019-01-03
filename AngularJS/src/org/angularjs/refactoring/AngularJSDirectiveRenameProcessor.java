@@ -35,13 +35,25 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
   }
 
   @Override
-  public void renameElement(@NotNull PsiElement element, @NotNull String newName, @NotNull UsageInfo[] usages, @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
+  public void renameElement(@NotNull PsiElement element,
+                            @NotNull String newName,
+                            @NotNull UsageInfo[] usages,
+                            @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     final PsiNamedElement directive = (PsiNamedElement)element;
-    final String attributeName = DirectiveUtil.getAttributeName(newName);
+    final String attributeName;
+    final String directiveName;
+    if (newName.contains("-")) {
+      attributeName = newName;
+      directiveName = DirectiveUtil.normalizeAttributeName(newName);
+    }
+    else {
+      attributeName = DirectiveUtil.getAttributeName(newName);
+      directiveName = newName;
+    }
     for (UsageInfo usage : usages) {
       RenameUtil.rename(usage, attributeName);
     }
-    directive.setName(DirectiveUtil.attributeToDirective(element, newName));
+    directive.setName(directiveName);
     if (listener != null) {
       listener.elementRenamed(element);
     }
@@ -49,12 +61,15 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
 
   @NotNull
   @Override
-  public RenameDialog createRenameDialog(@NotNull Project project, @NotNull final PsiElement element, PsiElement nameSuggestionContext, Editor editor) {
-    final String directiveName = DirectiveUtil.attributeToDirective(element, ((PsiNamedElement)element).getName());
+  public RenameDialog createRenameDialog(@NotNull Project project,
+                                         @NotNull final PsiElement element,
+                                         PsiElement nameSuggestionContext,
+                                         Editor editor) {
+    final String directiveName = ((PsiNamedElement)element).getName();
     return new RenameDialog(project, element, nameSuggestionContext, editor) {
       @Override
       public String[] getSuggestedNames() {
-        return new String[] {directiveName};
+        return new String[]{directiveName};
       }
 
       @Override
@@ -71,7 +86,7 @@ public class AngularJSDirectiveRenameProcessor extends JSDefaultRenameProcessor 
       JSImplicitElement directive = DirectiveUtil.getDirective(element);
       if (directive != null) {
         if (location instanceof UsageViewTypeLocation) return "directive";
-        return DirectiveUtil.attributeToDirective(directive, directive.getName());
+        return directive.getName();
       }
       return null;
     }

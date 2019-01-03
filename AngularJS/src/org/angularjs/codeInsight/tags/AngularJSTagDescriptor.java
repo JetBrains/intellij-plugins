@@ -24,17 +24,8 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
-import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
-import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import static com.intellij.xml.XmlAttributeDescriptor.EMPTY;
 
 /**
  * @author Dennis.Ushakov
@@ -70,18 +61,7 @@ public class AngularJSTagDescriptor implements XmlElementDescriptor {
 
   @Override
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    final JSImplicitElement declaration = getDeclaration();
-    final String string = Objects.requireNonNull(declaration.getTypeString());
-    final String attributes = string.split(";", -1)[3];
-    final String[] split = attributes.split(",");
-    final List<XmlAttributeDescriptor> result = new ArrayList<>();
-    if (split.length != 1 || !split[0].isEmpty()) {
-      for (String aSplit : split) {
-        result.add(new AnyXmlAttributeDescriptor(DirectiveUtil.getAttributeName(aSplit)));
-      }
-    }
-    result.addAll(Arrays.asList(HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)));
-    return result.toArray(EMPTY);
+    return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
   }
 
   @Nullable

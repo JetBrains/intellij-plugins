@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlElement;
-import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.index.AngularDirectivesDocIndex;
 import org.angularjs.index.AngularIndexUtil;
 
@@ -41,17 +40,17 @@ public class AngularJSDocumentationProvider extends DocumentationProviderEx {
       JSDocTag ngdocTag = null;
       JSDocTag nameTag = null;
       for (JSDocTag tag : ((JSDocComment)element).getTags()) {
-        if ("ngdoc".equals(tag.getName())) ngdocTag = tag;
+        if ("ngdoc".equals(tag.getName())) {
+          ngdocTag = tag;
+        }
         else if ("name".equals(tag.getName())) nameTag = tag;
       }
       if (ngdocTag != null && nameTag != null) {
         final JSDocTagValue nameValue = nameTag.getValue();
         String name = nameValue != null ? nameValue.getText() : null;
         if (name != null) name = name.substring(name.indexOf(':') + 1);
-
-        if (name != null && AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.KEY, DirectiveUtil.getAttributeName(name)) != null) {
-          final String directiveName = DirectiveUtil.attributeToDirective(null, name);
-          return Collections.singletonList("https://docs.angularjs.org/api/ng/directive/" + directiveName);
+        if (name != null && AngularIndexUtil.resolve(element.getProject(), AngularDirectivesDocIndex.KEY, name) != null) {
+          return Collections.singletonList("https://docs.angularjs.org/api/ng/directive/" + name);
         }
       }
     }

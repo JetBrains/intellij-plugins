@@ -24,6 +24,8 @@ import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static org.angularjs.codeInsight.DirectiveUtil.normalizeAttributeName;
+
 /**
  * @author Dennis.Ushakov
  */
@@ -31,8 +33,8 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
   private static final PsiElementPattern.Capture<JSLiteralExpression> TEMPLATE_PATTERN = literalInProperty("templateUrl");
   private static final PsiElementPattern.Capture<JSLiteralExpression> CONTROLLER_PATTERN = literalInProperty("controller");
   public static final PsiElementPattern.Capture<PsiElement> UI_VIEW_PATTERN = uiViewPattern();
-  public static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = xmlAttributePattern("ui-sref");
-  public static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ng-app");
+  public static final PsiElementPattern.Capture<XmlAttributeValue> UI_VIEW_REF = xmlAttributePattern("uiSref");
+  public static final PsiElementPattern.Capture<XmlAttributeValue> NG_APP_REF = xmlAttributePattern("ngApp");
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_PATTERN = modulePattern();
   public static final PsiElementPattern.Capture<JSLiteralExpression> MODULE_DEPENDENCY_PATTERN = moduleDependencyPattern();
 
@@ -47,7 +49,8 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
             final PsiLanguageInjectionHost host = InjectedLanguageUtil.findInjectionHost(original);
             if (host instanceof XmlAttributeValue) {
               final PsiElement parent = host.getParent();
-              return parent instanceof XmlAttribute && "ng-include".equals(((XmlAttribute)parent).getName());
+              return parent instanceof XmlAttribute
+                     && "ngInclude".equals(normalizeAttributeName(((XmlAttribute)parent).getName()));
             }
           }
         }
@@ -225,13 +228,13 @@ public class AngularJSReferencesContributor extends PsiReferenceContributor {
     }));
   }
 
-  private static PsiElementPattern.Capture<XmlAttributeValue> xmlAttributePattern(@NotNull final String attributeName) {
+  private static PsiElementPattern.Capture<XmlAttributeValue> xmlAttributePattern(@NotNull final String directiveName) {
     return PlatformPatterns.psiElement(XmlAttributeValue.class).and(new FilterPattern(new ElementFilter() {
       @Override
       public boolean isAcceptable(Object element, @Nullable PsiElement context) {
         final XmlAttributeValue attributeValue = (XmlAttributeValue)element;
         final PsiElement parent = attributeValue.getParent();
-        if (parent instanceof XmlAttribute && attributeName.equals(((XmlAttribute)parent).getName())) {
+        if (parent instanceof XmlAttribute && directiveName.equals(normalizeAttributeName(((XmlAttribute)parent).getName()))) {
           return AngularIndexUtil.hasAngularJS(attributeValue.getProject());
         }
         return false;

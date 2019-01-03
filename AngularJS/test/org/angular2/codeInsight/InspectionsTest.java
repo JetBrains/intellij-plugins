@@ -19,8 +19,8 @@ public class InspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testUnusedSymbol() {
     JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class);
-      myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class);
+      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
+                                  JSUnusedLocalSymbolsInspection.class);
       myFixture.configureByFiles("unused.ts", "unused.html", "package.json");
       myFixture.checkHighlighting();
     });
@@ -28,8 +28,8 @@ public class InspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testUnusedSetter() {
     JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class);
-      myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class);
+      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
+                                  JSUnusedLocalSymbolsInspection.class);
       myFixture.configureByFiles("unusedSetter.ts", "unusedSetter.html", "package.json");
       myFixture.checkHighlighting();
     });
@@ -53,9 +53,18 @@ public class InspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testUnusedReference() {
     JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class);
-      myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class);
+      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
+                                  JSUnusedLocalSymbolsInspection.class);
       myFixture.configureByFiles("unusedReference.html", "unusedReference.ts", "package.json");
+      myFixture.checkHighlighting();
+    });
+  }
+
+  public void testId() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class,
+                                  JSUnusedGlobalSymbolsInspection.class);
+      myFixture.configureByFiles("object.ts");
       myFixture.checkHighlighting();
     });
   }

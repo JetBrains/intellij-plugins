@@ -36,6 +36,7 @@ import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,15 +48,16 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dennis.Ushakov
  */
 public class AngularIndexUtil {
-  public static final int BASE_VERSION = 64;
+  public static final int BASE_VERSION = 65;
   private static final ConcurrentMap<String, Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>>> ourCacheKeys =
     ContainerUtil.newConcurrentMap();
   private static final AngularKeysProvider PROVIDER = new AngularKeysProvider();
   public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = JSResolveResult::new;
 
-  public static JSImplicitElement resolve(final Project project,
-                                          final StubIndexKey<? super String, JSImplicitElementProvider> index,
-                                          final String lookupKey) {
+  @Nullable
+  public static JSImplicitElement resolve(@NotNull final Project project,
+                                          @NotNull final StubIndexKey<? super String, JSImplicitElementProvider> index,
+                                          @NotNull final String lookupKey) {
     final Ref<JSImplicitElement> result = new Ref<>(null);
     final Processor<JSImplicitElement> processor = element -> {
       result.set(element);
@@ -69,10 +71,10 @@ public class AngularIndexUtil {
     return result.get();
   }
 
-  public static void multiResolve(Project project,
-                                  final StubIndexKey<? super String, JSImplicitElementProvider> index,
-                                  final String lookupKey,
-                                  final Processor<? super JSImplicitElement> processor) {
+  public static void multiResolve(@NotNull Project project,
+                                  @NotNull final StubIndexKey<? super String, JSImplicitElementProvider> index,
+                                  @NotNull final String lookupKey,
+                                  @NotNull final Processor<? super JSImplicitElement> processor) {
     final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     StubIndex.getInstance().processElements(
       index, lookupKey, project, scope, JSImplicitElementProvider.class, provider -> {
@@ -95,6 +97,7 @@ public class AngularIndexUtil {
     );
   }
 
+  @NotNull
   public static ResolveResult[] multiResolveAngularNamedDefinitionIndex(@NotNull final Project project,
                                                                         @NotNull final ID<? super String, AngularNamedItemDefinition> INDEX,
                                                                         @NotNull final String id,
@@ -127,7 +130,8 @@ public class AngularIndexUtil {
     return list.toArray(ResolveResult.EMPTY_ARRAY);
   }
 
-  public static Collection<String> getAllKeys(final ID<String, ?> index, final Project project) {
+  @NotNull
+  public static Collection<String> getAllKeys(@NotNull final ID<String, ?> index, @NotNull final Project project) {
     final String indexId = index.getName();
     final Key<ParameterizedCachedValue<Collection<String>, Pair<Project, ID<String, ?>>>> key =
       ConcurrencyUtil.cacheOrGet(ourCacheKeys, indexId, Key.create("angularjs.index." + indexId));
@@ -135,7 +139,7 @@ public class AngularIndexUtil {
     return CachedValuesManager.getManager(project).getParameterizedCachedValue(project, key, PROVIDER, false, pair);
   }
 
-  public static boolean hasAngularJS(final Project project) {
+  public static boolean hasAngularJS(@NotNull final Project project) {
     if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
     return getAngularJSVersion(project) > 0;
   }
@@ -144,21 +148,21 @@ public class AngularIndexUtil {
    * @deprecated Kept for compatibility with NativeScript. Use Angular2LangUtil.isAngular2Context().
    */
   @Deprecated
-  public static boolean hasAngularJS2(final Project project) {
+  public static boolean hasAngularJS2(@NotNull final Project project) {
     if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
     return Angular2LangUtil.isAngular2Context(project);
   }
 
-  private static int getAngularJSVersion(final Project project) {
+  private static int getAngularJSVersion(@NotNull final Project project) {
     if (DumbService.isDumb(project) || NoAccessDuringPsiEvents.isInsideEventProcessing()) return -1;
 
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       int version = -1;
       PsiElement resolve;
-      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-messages")) != null) {
+      if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngMessages")) != null) {
         version = 13;
       }
-      else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ng-model")) != null) {
+      else if ((resolve = resolve(project, AngularDirectivesIndex.KEY, "ngModel")) != null) {
         version = 12;
       }
       if (resolve != null) {
@@ -210,7 +214,8 @@ public class AngularIndexUtil {
     return Collections.emptyList();
   }
 
-  public static String convertRestrictions(final Project project, String restrictions) {
+  @NotNull
+  public static String convertRestrictions(@NotNull final Project project, @NotNull String restrictions) {
     if (AngularJSIndexingHandler.DEFAULT_RESTRICTIONS.equals(restrictions)) {
       return getAngularJSVersion(project) >= 13 ? "E" : "_";
     }

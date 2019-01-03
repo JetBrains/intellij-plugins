@@ -18,10 +18,10 @@ import java.util.Map;
  * @author Irina.Chernushina on 3/17/2016.
  */
 public class AngularAttributeIndexer implements DataIndexer<String, AngularNamedItemDefinition, FileContent> {
-  private final String myAttributeName;
+  private final String myDirectiveName;
 
-  public AngularAttributeIndexer(@NotNull final String attributeName) {
-    myAttributeName = attributeName;
+  public AngularAttributeIndexer(@NotNull final String directiveName) {
+    myDirectiveName = directiveName;
   }
 
   @NotNull
@@ -34,7 +34,7 @@ public class AngularAttributeIndexer implements DataIndexer<String, AngularNamed
         new XmlRecursiveElementWalkingVisitor() {
           @Override
           public void visitXmlAttribute(XmlAttribute attribute) {
-            if (myAttributeName.equals(DirectiveUtil.normalizeAttributeName(attribute.getName()))) {
+            if (myDirectiveName.equals(DirectiveUtil.normalizeAttributeName(attribute.getName()))) {
               final XmlAttributeValue element = attribute.getValueElement();
               if (element == null) {
                 map.put("", new AngularNamedItemDefinition("", attribute.getTextRange().getStartOffset()));

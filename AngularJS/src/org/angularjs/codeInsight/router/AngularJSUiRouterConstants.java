@@ -5,5 +5,5 @@ package org.angularjs.codeInsight.router;
  */
 public class AngularJSUiRouterConstants {
   public final static String controllerAs = "controllerAs";
-  public static final String uiView = "ui-view";
+  public static final String uiView = "uiView";
 }
