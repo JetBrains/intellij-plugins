@@ -41,8 +41,8 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
   }
 
   private static void addLookupItem(Language language, List<LookupElement> elements, JSImplicitElement directive) {
-    LookupElementBuilder element = LookupElementBuilder.create(directive).
-      withIcon(AngularJSIcons.Angular2);
+    LookupElementBuilder element = LookupElementBuilder.create(directive, DirectiveUtil.getAttributeName(directive.getName()))
+      .withIcon(AngularJSIcons.Angular2);
     if (language.isKindOf(XMLLanguage.INSTANCE)) {
       element = element.withInsertHandler(XmlTagInsertHandler.INSTANCE);
     }
@@ -57,16 +57,16 @@ public class AngularJSTagDescriptorsProvider implements XmlElementDescriptorProv
       return null;
     }
 
-    final String tagName = xmlTag.getName();
-    String directiveName = DirectiveUtil.normalizeAttributeName(tagName);
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
 
+    final String tagName = xmlTag.getName();
+    String directiveName = DirectiveUtil.normalizeAttributeName(tagName);
+
     JSImplicitElement directive = DirectiveUtil.getTagDirective(directiveName, project);
-    if (DirectiveUtil.isAngular2Directive(directive) && !directive.getName().equals(tagName)) {
-      // we've found directive via normalized name for Angular, it should not work
+    if (DirectiveUtil.isAngular2Directive(directive)) {
+      // we've found a directive for Angular 2+
       directive = null;
     }
-    return directive != null ? new AngularJSTagDescriptor(directiveName, directive) : null;
+    return directive != null ? new AngularJSTagDescriptor(tagName, directive) : null;
   }
-
 }

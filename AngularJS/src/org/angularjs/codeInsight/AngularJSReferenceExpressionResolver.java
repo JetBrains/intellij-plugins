@@ -65,7 +65,9 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
       }
       final JSBinaryExpression as = PsiTreeUtil.getParentOfType(myRef, JSBinaryExpression.class);
       if (isAsExpression(as)) {
-        if (PsiTreeUtil.isAncestor(PsiTreeUtil.getChildOfType(as, JSDefinitionExpression.class), myRef, true)) return new JSResolveResult[]{new JSResolveResult(myRef)};
+        if (PsiTreeUtil.isAncestor(PsiTreeUtil.getChildOfType(as, JSDefinitionExpression.class), myRef, true)) {
+          return new JSResolveResult[]{new JSResolveResult(myRef)};
+        }
       }
       JSClass clazz = myRef.getQualifier() == null ? Angular2IndexingHandler.findComponentClass(myRef) : null;
       if (clazz != null && DialectDetector.isTypeScript(clazz)) {
@@ -82,12 +84,14 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
       if (resolve != null) {
         return new JSResolveResult[]{new JSResolveResult(resolve)};
       }
-    } else if (AngularJSFilterExpression.isFilterNameRef(myRef, myParent)) {
+    }
+    else if (AngularJSFilterExpression.isFilterNameRef(myRef, myParent)) {
       final PsiElement resolve = AngularIndexUtil.resolve(myParent.getProject(), AngularFilterIndex.KEY, myReferencedName);
       if (resolve != null) {
-        return new JSResolveResult[] {new JSResolveResult(resolve)};
+        return new JSResolveResult[]{new JSResolveResult(resolve)};
       }
-    } else if (myQualifier == null) {
+    }
+    else if (myQualifier == null) {
       final Collection<JSPsiElementBase> localVariables = getItemsByName(myReferencedName, myRef);
       if (!localVariables.isEmpty()) {
         return ContainerUtil.map2Array(localVariables, JSResolveResult.class, item -> new JSResolveResult(item));
@@ -105,7 +109,7 @@ public class AngularJSReferenceExpressionResolver extends JSReferenceExpressionR
     final PsiElement hostParent = host instanceof XmlAttributeValueImpl ? host.getParent() : null;
     final String normalized = hostParent instanceof XmlAttribute ?
                               DirectiveUtil.normalizeAttributeName(((XmlAttribute)hostParent).getName()) : null;
-    return "ng-controller".equals(normalized);
+    return "ngController".equals(normalized);
   }
 
   public static boolean isAsExpression(PsiElement parent) {

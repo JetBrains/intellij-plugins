@@ -37,11 +37,15 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
 
   @Override
   public boolean isRequiredAttributeImplicitlyPresent(XmlTag tag, String attrName) {
+    //AngularJS
+    String ngAttr = DirectiveUtil.normalizeAttributeName("ng-" + attrName);
     for (XmlAttribute attribute : tag.getAttributes()) {
-      if (("ng-" + attrName).equals(DirectiveUtil.normalizeAttributeName(attribute.getName()))) {
+      if (ngAttr.equals(DirectiveUtil.normalizeAttributeName(attribute.getName()))) {
         return true;
       }
     }
+
+    //Angular 2+
     Ref<Boolean> result = new Ref<>();
     tag.acceptChildren(new Angular2HtmlElementVisitor() {
       @Override

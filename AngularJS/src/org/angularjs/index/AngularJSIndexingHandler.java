@@ -93,6 +93,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final BidirectionalMap<String, StubIndexKey<String, JSImplicitElementProvider>> INDEXES;
   public static final String AS_CONNECTOR_WITH_SPACES = " as ";
 
+  public static final String ANGULAR_DIRECTIVES_DOC_INDEX_USER_STRING = "addi";
   public static final String ANGULAR_DIRECTIVES_INDEX_USER_STRING = "adi";
   public static final String ANGULAR_FILTER_INDEX_USER_STRING = "afi";
 
@@ -111,7 +112,6 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     DATA_CALCULATORS.put(DIRECTIVE, element -> calculateRestrictions(element, DEFAULT_RESTRICTIONS));
 
     INDEXERS.put(COMPONENT, AngularDirectivesIndex.KEY);
-    NAME_CONVERTERS.put(COMPONENT, NAME_CONVERTERS.get(DIRECTIVE));
     DATA_CALCULATORS.put(COMPONENT, element -> calculateRestrictions(element, "E"));
 
     INDEXERS.put(CONTROLLER, AngularControllerIndex.KEY);
@@ -128,7 +128,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
     INDEXES = new BidirectionalMap<>();
     INDEXES.put("aci", AngularControllerIndex.KEY);
-    INDEXES.put("addi", AngularDirectivesDocIndex.KEY);
+    INDEXES.put(ANGULAR_DIRECTIVES_DOC_INDEX_USER_STRING, AngularDirectivesDocIndex.KEY);
     INDEXES.put(ANGULAR_DIRECTIVES_INDEX_USER_STRING, AngularDirectivesIndex.KEY);
     INDEXES.put(ANGULAR_FILTER_INDEX_USER_STRING, AngularFilterIndex.KEY);
     INDEXES.put("aidi", AngularInjectionDelimiterIndex.KEY);
@@ -526,21 +526,21 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     };
 
     final Function<String, List<String>> variants = POLY_NAME_CONVERTERS.get(command);
-    final Function<String, String> converter = command != null ? NAME_CONVERTERS.get(command) : null;
-    final String name = converter != null ? converter.fun(defaultName) : defaultName;
 
     if (variants != null) {
-      final List<String> strings = variants.fun(name);
+      final List<String> strings = variants.fun(defaultName);
       for (String string : strings) {
         adder.consume(new JSImplicitElementImpl.Builder(string, elementProvider));
       }
     }
     else {
-      adder.consume(new JSImplicitElementImpl.Builder(JSQualifiedNameImpl.fromQualifiedName(name), elementProvider));
+      adder.consume(new JSImplicitElementImpl.Builder(JSQualifiedNameImpl.fromQualifiedName(defaultName), elementProvider));
     }
 
+    final Function<String, String> converter = command != null ? NAME_CONVERTERS.get(command) : null;
+    final String name = converter != null ? converter.fun(defaultName) : defaultName;
     if (!StringUtil.equals(defaultName, name)) {
-      JSImplicitElementImpl.Builder symbolElementBuilder = new JSImplicitElementImpl.Builder(defaultName, elementProvider)
+      JSImplicitElementImpl.Builder symbolElementBuilder = new JSImplicitElementImpl.Builder(name, elementProvider)
         .setType(elementProvider instanceof JSDocComment ? JSImplicitElement.Type.Tag : JSImplicitElement.Type.Class)
         .setTypeString(value);
       final List<String> symbolKeys = INDEXES.getKeysByValue(AngularSymbolIndex.KEY);
@@ -777,8 +777,9 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
 
   private static boolean processScopedProperty(JSProperty property, JSElementIndexingData data, String propertyName, boolean isComponent) {
     PsiElement parent = property.getParent();
-    if (parent instanceof JSObjectLiteralExpression && parent.getParent() instanceof JSProperty &&
-        propertyName.equals(((JSProperty)parent.getParent()).getName())) {
+    if (parent instanceof JSObjectLiteralExpression && parent.getParent() instanceof JSProperty
+        && propertyName.equals(((JSProperty)parent.getParent()).getName())
+        && property.getName() != null) {
       Trinity<JSCallExpression, Integer, Boolean> call = findWrappingCall(property);
       assert call != null;
       JSExpression[] arguments = call.first.getArguments();
@@ -787,10 +788,10 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
           !((JSLiteralExpression)arguments[0]).isQuotedLiteral()) {
         return false;
       }
-      String name = DirectiveUtil.getAttributeName(StringUtil.notNullize(unquote(arguments[0])));
+      String name = StringUtil.notNullize(unquote(arguments[0]));
       String restrictions = getRestrictions(parent, isComponent ? "E" : "D");
 
-      String attributeName = DirectiveUtil.getAttributeName(property.getName(), property.getValue());
+      String attributeName = DirectiveUtil.getPropertyAlias(property.getName(), property.getValue());
 
       if (restrictions.contains("E") || restrictions.equals("D")) {
         addImplicitElements(property, attributeName, AngularDirectivesDocIndex.KEY, attributeName,

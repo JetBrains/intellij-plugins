@@ -12,9 +12,6 @@ import org.angularjs.index.AngularModuleIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * @author Dennis.Ushakov
  */
@@ -22,22 +19,15 @@ public class AngularAttributesRegistry {
 
   @NotNull
   public static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
-                                                            @NotNull String directiveName,
+                                                            @NotNull String attributeName,
                                                             @Nullable PsiElement declaration) {
-    return createDescriptor(project, directiveName, declaration != null ? Collections.singletonList(declaration) : Collections.emptyList());
-  }
-
-  @NotNull
-  private static AngularAttributeDescriptor createDescriptor(@Nullable final Project project,
-                                                            @NotNull String directiveName,
-                                                            @NotNull List<PsiElement> declarations) {
-    if ("ng-controller".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularControllerIndex.KEY, declarations);
+    if ("ngController".equals(DirectiveUtil.normalizeAttributeName(attributeName))) {
+      return new AngularAttributeDescriptor(project, attributeName, AngularControllerIndex.KEY, declaration);
     }
-    if ("ng-app".equals(directiveName)) {
-      return new AngularAttributeDescriptor(project, directiveName, AngularModuleIndex.KEY, declarations);
+    if ("ngApp".equals(DirectiveUtil.normalizeAttributeName(attributeName))) {
+      return new AngularAttributeDescriptor(project, attributeName, AngularModuleIndex.KEY, declaration);
     }
-    return new AngularAttributeDescriptor(project, directiveName, null, declarations);
+    return new AngularAttributeDescriptor(project, attributeName, null, declaration);
   }
 
   public static boolean isAngularExpressionAttribute(XmlAttribute parent) {
@@ -55,8 +45,7 @@ public class AngularAttributesRegistry {
 
   @NotNull
   private static String getType(XmlAttribute parent) {
-    final String attributeName = DirectiveUtil.normalizeAttributeName(parent.getName());
-    XmlAttributeDescriptor descriptor = AngularJSAttributeDescriptorsProvider.getDescriptor(attributeName, parent.getParent());
+    XmlAttributeDescriptor descriptor = AngularJSAttributeDescriptorsProvider.getDescriptor(parent.getName(), parent.getParent());
     final PsiElement directive = descriptor != null ? descriptor.getDeclaration() : null;
     if (directive instanceof JSImplicitElement) {
       final String restrict = ((JSImplicitElement)directive).getTypeString();
@@ -97,5 +86,4 @@ public class AngularAttributesRegistry {
   public static boolean isBindingAttribute(String name, Project project) {
     return name.startsWith("[") && name.endsWith("]") && AngularIndexUtil.hasAngularJS2(project);
   }
-
 }

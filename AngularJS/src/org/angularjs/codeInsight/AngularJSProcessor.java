@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static org.angularjs.codeInsight.DirectiveUtil.normalizeAttributeName;
 import static org.angularjs.index.AngularIndexUtil.hasFileReference;
 import static org.angularjs.index.AngularJSIndexingHandler.unquote;
 
@@ -267,11 +268,15 @@ public class AngularJSProcessor {
                                             PsiLanguageInjectionHost declarationContainer,
                                             PsiLanguageInjectionHost elementContainer) {
     PsiElement parent = declarationContainer.getParent();
-    if (parent instanceof XmlAttribute && "ng-repeat-start".equals(((XmlAttribute)parent).getName())) {
+    if (parent instanceof XmlAttribute && "ngRepeatStart".equals(normalizeAttributeName(((XmlAttribute)parent).getName(), false))) {
       XmlTagChild next = declarationTag.getNextSiblingInTag();
       while (next != null) {
         if (PsiTreeUtil.isAncestor(next, elementContainer, true)) return true;
-        if (next instanceof XmlTag && ((XmlTag)next).getAttribute("ng-repeat-end") != null) break;
+        if (next instanceof XmlTag
+            && ContainerUtil.find(((XmlTag)next).getAttributes(),
+                                  attr -> "ngRepeatEnd".equals(normalizeAttributeName(attr.getName(), false))) != null) {
+          break;
+        }
         next = next.getNextSiblingInTag();
       }
     }

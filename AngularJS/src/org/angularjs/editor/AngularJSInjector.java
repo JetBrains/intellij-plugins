@@ -16,6 +16,8 @@ import com.intellij.psi.impl.source.xml.XmlTextImpl;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.NullableFunction;
+import com.intellij.util.containers.ContainerUtil;
+import org.angularjs.codeInsight.DirectiveUtil;
 import org.angularjs.codeInsight.attributes.AngularAttributesRegistry;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularInjectionDelimiterIndex;
@@ -32,9 +34,9 @@ public class AngularJSInjector implements MultiHostInjector {
   public static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
     .delimitersFactory(AngularJSLanguage.INSTANCE.getDisplayName(),
                        (project, key) -> {
-                               final JSImplicitElement element = AngularIndexUtil.resolve(project, AngularInjectionDelimiterIndex.KEY, key);
-                               return element != null ? Pair.create(element.getTypeString(), element) : null;
-                             });
+                         final JSImplicitElement element = AngularIndexUtil.resolve(project, AngularInjectionDelimiterIndex.KEY, key);
+                         return element != null ? Pair.create(element.getTypeString(), element) : null;
+                       });
 
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
@@ -74,7 +76,9 @@ public class AngularJSInjector implements MultiHostInjector {
 
   private static boolean nonBindable(@NotNull final XmlTextImpl xmlText) {
     final XmlTag parentTag = xmlText.getParentTag();
-    return parentTag != null && (parentTag.getAttribute("ngNonBindable") != null || parentTag.getAttribute("ng-non-bindable") != null);
+    return parentTag != null && ContainerUtil.find(parentTag.getAttributes(),
+                                                   attr -> "ngNonBindable".equals(DirectiveUtil.normalizeAttributeName(attr.getName()))) !=
+                                null;
   }
 
   @NotNull

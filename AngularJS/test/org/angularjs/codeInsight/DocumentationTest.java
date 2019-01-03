@@ -4,7 +4,6 @@ import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -35,7 +34,7 @@ public class DocumentationTest extends LightPlatformCodeInsightFixtureTestCase {
 
     final PsiElement targetElement = DocumentationManager.getInstance(getProject()).findTargetElement(editor, file);
     assertNotNull(targetElement);
-    assertEquals("ng-controller", SymbolPresentationUtil.getSymbolPresentableText(targetElement)); // WEB-16957
+    assertEquals("ngController", SymbolPresentationUtil.getSymbolPresentableText(targetElement)); // WEB-16957
     assertDocumentation(targetElement, originalElement);
   }
 
