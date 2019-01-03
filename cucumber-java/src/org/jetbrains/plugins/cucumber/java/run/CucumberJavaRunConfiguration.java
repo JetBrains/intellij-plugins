@@ -135,20 +135,17 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
     String cucumberJvmFormatterClassPath = PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class);
     result.add(cucumberJvmFormatterClassPath);
-    if (VersionComparatorUtil.compare(getCucumberCoreVersion(), "4") >= 0) {
-      if (cucumberJvmFormatterClassPath.endsWith(".jar")) {
-        result.add(cucumberJvmFormatterClassPath.replace(".jar", "4.jar"));
-      } else {
-        // Running IDEA from sources
-        result.add(cucumberJvmFormatterClassPath + "4");
-      }
-    }
-    if (VersionComparatorUtil.compare(getCucumberCoreVersion(), "3") >= 0) {
-      if (cucumberJvmFormatterClassPath.endsWith(".jar")) {
-        result.add(cucumberJvmFormatterClassPath.replace(".jar", "3.jar"));
-      } else {
-        // Running IDEA from sources
-        result.add(cucumberJvmFormatterClassPath + "3");
+
+    // Attach SM formatter's folder/jar for Cucumber v3/v4
+    String cucumberCoreVersion = getCucumberCoreVersion();
+    for (int i = 4; i >= 3; i--) {
+      if (VersionComparatorUtil.compare(cucumberCoreVersion, String.valueOf(i)) >= 0) {
+        if (cucumberJvmFormatterClassPath.endsWith(".jar")) {
+          result.add(cucumberJvmFormatterClassPath.replace(".jar", i + ".jar"));
+        } else {
+          // Running IDEA from sources
+          result.add(cucumberJvmFormatterClassPath + i);
+        }
       }
     }
 
