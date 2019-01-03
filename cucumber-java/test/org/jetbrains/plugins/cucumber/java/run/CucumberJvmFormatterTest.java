@@ -46,6 +46,7 @@ public class CucumberJvmFormatterTest {
       "##teamcity[enteredTheMatrix timestamp = '<time>']\n" +
       "##teamcity[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '<time>']\n" +
       "##teamcity[testSuiteStarted timestamp = '<time>' locationHint = 'file://feature|'' name = 'feature|'']\n" +
+      "##teamcity[customProgressStatus type = 'testStarted' timestamp = '<time>']\n" +
       "##teamcity[testSuiteStarted timestamp = '<time>' locationHint = 'file://feature|':1' name = 'scenario']\n" +
       "##teamcity[testStarted timestamp = '<time>' locationHint = 'java:test://org.jetbrains.plugins.cucumber.java.run.CucumberJava2Mock/simulateRun' captureStandardOutput = 'true' name = 'Hook: before']\n" +
       "##teamcity[testFinished timestamp = '<time>' duration = '0' name = 'Hook: before']\n" +
@@ -57,6 +58,7 @@ public class CucumberJvmFormatterTest {
       "##teamcity[testStarted timestamp = '<time>' locationHint = 'file:///features/my.feature:5' captureStandardOutput = 'true' name = '\\bstep with \"special|\' symbols']\n" +
       "##teamcity[testFinished timestamp = '<time>' duration = '0' name = '\\bstep with \"special|\' symbols']\n" +
       "##teamcity[testSuiteFinished timestamp = '<time>' name = 'scenario']\n" +
+      "##teamcity[customProgressStatus type = 'testFinished' timestamp = '<time>']\n" +
       "##teamcity[testSuiteFinished timestamp = '<time>' name = 'feature|'']\n",
       output);
   }
