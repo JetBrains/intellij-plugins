@@ -212,14 +212,16 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   private static String getSMFormatterOptions(@NotNull String cucumberCoreVersion) {
     if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_1_0)) {
       return FORMATTER_OPTIONS_1_0;
-    } else if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_1_2)) {
+    }
+    if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_1_2)) {
       return FORMATTER_OPTIONS_1_2;
-    } else if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_2)) {
+    }
+    if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_2)) {
       return FORMATTER_OPTIONS_2;
-    } else if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_4)) {
-      return FORMATTER_OPTIONS_4;
-    } else {
+    }
+    if (cucumberCoreVersion.equals(CUCUMBER_CORE_VERSION_3)) {
       return FORMATTER_OPTIONS_3;
     }
+    return FORMATTER_OPTIONS_4;
   }
 }
