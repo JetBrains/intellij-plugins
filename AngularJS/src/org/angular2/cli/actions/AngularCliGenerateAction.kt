@@ -95,7 +95,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
       }
 
       override fun actionPerformed(e: AnActionEvent) {
-        (GistManager.getInstance() as GistManagerImpl).invalidateData()
+        GistManager.getInstance().invalidateData()
         updateList(list, model, project, cli)
       }
     }

@@ -45,7 +45,6 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.speedSearch.ListWithFilter;
 import com.intellij.util.gist.GistManager;
-import com.intellij.util.gist.GistManagerImpl;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -237,7 +236,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
         node, new NodePackage(Objects.requireNonNull(module.getVirtualFile()).getPath()),
         pkg -> Objects.requireNonNull(pkg.findBinFile()).getAbsolutePath(),
         cli, VfsUtilCore.virtualToIoFile(cli),
-        project, () -> ((GistManagerImpl)GistManager.getInstance()).invalidateData(),
+        project, () -> GistManager.getInstance().invalidateData(),
         "Installing " + packageSpec + " for " + cli.getName(),
         new Filter[]{new AngularCLIFilter(project, cli.getPath())},
         "add", packageSpec);

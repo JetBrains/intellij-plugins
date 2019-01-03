@@ -248,7 +248,7 @@ public class AngularCLIProjectGenerator extends NpmPackageProjectGenerator {
           }
         };
       }
-      ((GistManagerImpl)GistManager.getInstance()).invalidateData();
+      GistManager.getInstance().invalidateData();
       settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand("Additional parameters:"), myOptionsTextField);
       getPackageField().addSelectionListener(this::nodePackageChanged);
       nodePackageChanged(getPackageField().getSelected());
