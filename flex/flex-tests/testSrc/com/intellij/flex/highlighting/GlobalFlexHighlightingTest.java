@@ -4,9 +4,6 @@ import com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitorBasedInspecti
 import com.intellij.codeInspection.ex.InspectionToolRegistrar;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.flex.util.FlexTestUtils;
-import com.intellij.lang.javascript.JSTestOption;
-import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.testFramework.InspectionTestCase;
 
 import java.util.List;
@@ -16,20 +13,6 @@ public class GlobalFlexHighlightingTest extends InspectionTestCase {
   protected void setUp() throws Exception {
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "global_inspections");
     super.setUp();
-  }
-
-  @Override
-  protected Sdk getTestProjectJdk() {
-    return getTestProjectSdk();
-  }
-
-  @Override
-  protected Sdk getTestProjectSdk() {
-    final JSTestUtils.TestDescriptor testDescriptor = new JSTestUtils.TestDescriptor(this);
-    if (JSTestUtils.testMethodHasOption(testDescriptor, JSTestOption.WithFlexSdk)) {
-      return FlexTestUtils.getSdk(testDescriptor, getTestRootDisposable());
-    }
-    return super.getTestProjectSdk();
   }
 
   public void testAvailability() {
