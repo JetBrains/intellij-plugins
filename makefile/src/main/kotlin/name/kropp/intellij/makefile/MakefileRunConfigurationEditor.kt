@@ -11,7 +11,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.ui.*
-import com.intellij.ui.components.*
 import com.intellij.ui.components.fields.ExpandableTextField
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
@@ -85,16 +84,12 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
 
 
   // copied & converted to Kotlin from com.intellij.execution.ui.CommonProgramParametersPanel
-  protected fun createComponentWithMacroBrowse(textAccessor: TextFieldWithBrowseButton): JComponent {
+  private fun createComponentWithMacroBrowse(textAccessor: TextFieldWithBrowseButton): JComponent {
     val button = FixedSizeButton(textAccessor)
-    button.icon = AllIcons.RunConfigurations.Variables
+    button.icon = AllIcons.Actions.ListFiles
     button.addActionListener {
-      val list = JBList(PathMacros.getInstance().userMacroNames)
-      JBPopupFactory.getInstance().createListPopupBuilder(list).setItemChoosenCallback {
-        val value = list.selectedValue
-        if (value is String) {
-          textAccessor.text = "$$value$"
-        }
+      JBPopupFactory.getInstance().createPopupChooserBuilder(PathMacros.getInstance().userMacroNames.toList()).setItemChosenCallback { item: String ->
+        textAccessor.text = "$$item$"
       }.setMovable(false).setResizable(false).createPopup().showUnderneathOf(button)
     }
 
