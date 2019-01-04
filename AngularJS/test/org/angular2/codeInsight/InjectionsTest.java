@@ -7,6 +7,8 @@ import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
+import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
@@ -197,6 +199,15 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("unclosedTemplate.html", "package.json");
       assertInstanceOf(myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getParent(),
                        Angular2HtmlTemplateBindings.class);
+    });
+  }
+
+  public void testMultiPartTemplateString() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
+                                  JSUnusedLocalSymbolsInspection.class);
+      myFixture.configureByFiles("multipart-template-string.ts", "package.json");
+      myFixture.checkHighlighting(true, false, true);
     });
   }
 }
