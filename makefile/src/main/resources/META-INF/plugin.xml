@@ -13,7 +13,7 @@ Introducing Makefile tool window: all project Makefiles in a single window.
 The plugin now also builds an index of all targets, which improves performance in many cases.
 ]]></change-notes>
 
-  <idea-version since-build="181.0"/>
+  <idea-version since-build="183.0"/>
 
   <depends>com.intellij.modules.lang</depends>
 

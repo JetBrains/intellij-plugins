@@ -14,7 +14,7 @@ import com.intellij.util.getOrCreate
 import org.jdom.Element
 import java.io.File
 
-class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurationFactory, name: String) : LocatableConfigurationBase(project, factory, name) {
+class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurationFactory, name: String) : LocatableConfigurationBase<RunProfileState>(project, factory, name) {
   var filename = ""
   var target = ""
   var workingDirectory = ""
@@ -84,7 +84,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
     val macrosRegex = Regex("""\$([^\\$]*)\$""")
     val match = macrosRegex.matchEntire(str)
     if (match != null) {
-      return PathMacros.getInstance().getValue(match.groupValues[1])
+      return PathMacros.getInstance().getValue(match.groupValues[1]) ?: return str
     }
     return str
   }

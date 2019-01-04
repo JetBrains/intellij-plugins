@@ -12,7 +12,8 @@ class MakefileTargetReference(private val prerequisite: MakefilePrerequisite) : 
   override fun getRangeInElement() = TextRange.create(0, element.textLength)
   override fun bindToElement(element: PsiElement): PsiElement? = null
 
-  override fun isReferenceTo(element: PsiElement?): Boolean {
+  override fun isReferenceTo(element: PsiElement
+  ): Boolean {
     if (element is MakefileTarget) {
       return element.matches(prerequisite.text)
     }
