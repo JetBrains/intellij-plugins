@@ -64,7 +64,7 @@ class MakefileRunConfiguration(project: Project, factory: MakefileRunConfigurati
         params.addParametersString(arguments)
         params.addAll("-f", filename)
         if (!target.isEmpty()) {
-          params.add(target)
+          params.addParametersString(target)
         }
         val workDirectory = if (workingDirectory.isNotEmpty()) resolveMacros(workingDirectory) else File(filename).parent
         val cmd = GeneralCommandLine()

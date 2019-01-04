@@ -33,7 +33,7 @@ class MakefileRunConfigurationEditor(private val project: Project) : SettingsEdi
         .setHorizontalGap(UIUtil.DEFAULT_HGAP)
         .setVerticalGap(UIUtil.DEFAULT_VGAP)
         .addLabeledComponent("&Makefile", filenameField)
-        .addLabeledComponent("&Target", targetField)
+        .addLabeledComponent("&Targets", targetField)
         .addComponent(LabeledComponent.create(argumentsField, "&Arguments"))
         .addLabeledComponent("&Working Directory", createComponentWithMacroBrowse(workingDirectoryField))
         .addComponent(environmentVarsComponent)
