@@ -965,6 +965,16 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testCodeCompletionOneTimeSimpleStringEnumSetter() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attributeTypes.ts", "package.json");
+      myFixture.completeBasic();
+      myFixture.type("setterSi\n");
+      myFixture.completeBasic();
+      assertSameElements(myFixture.getLookupElementStrings(), "off", "polite", "assertive");
+    });
+  }
+
   public void testCodeCompletionOneTimeBoolean() {
     JSTestUtils.testES6(getProject(), () -> {
       myFixture.configureByFiles("attributeTypes.ts", "package.json");
