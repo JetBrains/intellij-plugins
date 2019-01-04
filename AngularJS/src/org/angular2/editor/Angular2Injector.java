@@ -6,13 +6,10 @@ import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSInjectionBracesUtil;
+import com.intellij.lang.javascript.JSInjectionController;
 import com.intellij.lang.javascript.inject.JSFormattableInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlText;
@@ -47,20 +44,21 @@ public class Angular2Injector implements MultiHostInjector {
         || !Angular2LangUtil.isAngular2Context(context)) {
       return;
     }
-    if (context instanceof JSLiteralExpressionImpl
-        && ((JSLiteralExpressionImpl)context).isQuotedLiteral()) {
-      if (injectIntoDirectiveProperty(registrar, context, parent, "template", Angular2HtmlLanguage.INSTANCE, null)
+    if (context instanceof JSLiteralExpression
+        && ((JSLiteralExpression)context).isQuotedLiteral()) {
+      JSLiteralExpression literalExpression = (JSLiteralExpression)context;
+      if (injectIntoDirectiveProperty(registrar, literalExpression, parent, "template", Angular2HtmlLanguage.INSTANCE, null)
           || (parent instanceof JSArrayLiteralExpression
-              && injectIntoDirectiveProperty(registrar, context, ObjectUtils.tryCast(parent.getParent(), JSProperty.class),
+              && injectIntoDirectiveProperty(registrar, literalExpression, ObjectUtils.tryCast(parent.getParent(), JSProperty.class),
                                              "styles", CSSLanguage.INSTANCE, null))
-          || injectIntoEmbeddedLiteral(registrar, context, parent)) {
+          || injectIntoEmbeddedLiteral(registrar, literalExpression, parent)) {
         return;
       }
       if (parent instanceof JSProperty && parent.getParent() instanceof JSObjectLiteralExpression) {
         final String name = ((JSProperty)parent).getName();
         final String fileExtension;
-        if (name != null && (fileExtension = getExpressionFileExtension(context.getTextLength(), name, true)) != null) {
-          injectIntoDirectiveProperty(registrar, context, parent.getParent().getParent(), "host", Angular2Language.INSTANCE,
+        if (name != null && (fileExtension = getExpressionFileExtension(literalExpression.getTextLength(), name, true)) != null) {
+          injectIntoDirectiveProperty(registrar, literalExpression, parent.getParent().getParent(), "host", Angular2Language.INSTANCE,
                                       fileExtension);
         }
       }
@@ -71,7 +69,7 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
   private static boolean injectIntoEmbeddedLiteral(@NotNull MultiHostRegistrar registrar,
-                                                   @NotNull PsiElement context,
+                                                   @NotNull JSLiteralExpression context,
                                                    @NotNull PsiElement parent) {
     if (parent instanceof JSEmbeddedContent) {
       final XmlAttribute attribute = PsiTreeUtil.getParentOfType(parent, XmlAttribute.class);
@@ -121,7 +119,7 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
   private static boolean injectIntoDirectiveProperty(@NotNull MultiHostRegistrar registrar,
-                                                     @NotNull PsiElement context,
+                                                     @NotNull JSLiteralExpression context,
                                                      @Nullable PsiElement parent,
                                                      @NotNull String propertyName,
                                                      @NotNull Language language,
@@ -135,7 +133,7 @@ public class Angular2Injector implements MultiHostInjector {
 
 
   private static boolean injectIntoDecoratorExpr(@NotNull MultiHostRegistrar registrar,
-                                                 @NotNull PsiElement context,
+                                                 @NotNull JSLiteralExpression context,
                                                  @Nullable PsiElement parent,
                                                  @NotNull Predicate<String> decoratorNameAcceptor,
                                                  @NotNull Language language,
@@ -154,11 +152,8 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
 
-  private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context, @NotNull Language language,
+  private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull JSLiteralExpression context, @NotNull Language language,
                              @Nullable String extension) {
-    TextRange range = ElementManipulators.getValueTextRange(context);
-    registrar.startInjecting(language, extension)
-      .addPlace(null, null, (PsiLanguageInjectionHost)context, range)
-      .doneInjecting();
+    JSInjectionController.injectInQuotedLiteral(registrar, language, extension, context, null, null);
   }
 }
