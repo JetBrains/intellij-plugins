@@ -25,6 +25,12 @@ public class MakefilePrerequisiteImpl extends MakefilePrerequisiteMixin implemen
     else super.accept(visitor);
   }
 
+  @Override
+  @Nullable
+  public MakefileFunction getFunction() {
+    return PsiTreeUtil.getChildOfType(this, MakefileFunction.class);
+  }
+
   public MakefilePrerequisiteImpl updateText(String newText) {
     return MakefilePsiImplUtil.updateText(this, newText);
   }

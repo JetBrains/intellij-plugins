@@ -788,14 +788,14 @@ public class MakefileParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // identifier|variable_usage
+  // identifier|variable_usage|function
   public static boolean prerequisite(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "prerequisite")) return false;
-    if (!nextTokenIs(b, "<prerequisite>", IDENTIFIER, VARIABLE_USAGE)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, PREREQUISITE, "<prerequisite>");
     r = consumeToken(b, IDENTIFIER);
     if (!r) r = consumeToken(b, VARIABLE_USAGE);
+    if (!r) r = function(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

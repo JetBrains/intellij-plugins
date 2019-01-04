@@ -46,7 +46,7 @@ FILENAME_CHARACTER=[^:=!?#\ \r\n\t]
 VARIABLE_USAGE_EXPR="$("[^ )]*")"
 CONDITION_CHARACTER=[^#\r\n]
 
-%state PREREQUISITES ELSE INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS FUNCTION EXPORT EXPORTVAR
+%state PREREQUISITES ELSE INCLUDES SOURCE DEFINE DEFINEBODY CONDITIONALS FUNCTION FUNCTION_PREREQ EXPORT EXPORTVAR
 
 %%
 
@@ -54,18 +54,18 @@ CONDITION_CHARACTER=[^#\r\n]
 {COMMENT}              { return COMMENT; }
 ^{MACRO}               { return MACRO; }
 
-{ERROR}                { yybegin(FUNCTION); return FUNCTION_ERROR; }
-{WARNING}              { yybegin(FUNCTION); return FUNCTION_WARNING; }
-{INFO}                 { yybegin(FUNCTION); return FUNCTION_INFO; }
-{SHELL}                { yybegin(FUNCTION); return FUNCTION_SHELL; }
-{WILDCARD}             { yybegin(FUNCTION); return FUNCTION_WILDCARD; }
-{PATHSUBST}            { yybegin(FUNCTION); return FUNCTION_PATHSUBST; }
-
 <FUNCTION> {
   ")"           { yybegin(YYINITIAL); return FUNCTION_END; }
   [^$)]*        { return FUNCTION_PARAM_TEXT; }
   {VARIABLE_USAGE_EXPR} { return VARIABLE_USAGE; }
   {EOL}         { yybegin(YYINITIAL); return EOL; }
+}
+
+<FUNCTION_PREREQ> {
+  ")"           { yybegin(PREREQUISITES); return FUNCTION_END; }
+  [^$)]*        { return FUNCTION_PARAM_TEXT; }
+  {VARIABLE_USAGE_EXPR} { return VARIABLE_USAGE; }
+  {EOL}         { yybegin(PREREQUISITES); return EOL; }
 }
 
 <YYINITIAL> {
@@ -108,6 +108,12 @@ CONDITION_CHARACTER=[^#\r\n]
 }
 
 <PREREQUISITES> {
+    {ERROR}                 { yybegin(FUNCTION_PREREQ); return FUNCTION_ERROR; }
+    {WARNING}               { yybegin(FUNCTION_PREREQ); return FUNCTION_WARNING; }
+    {INFO}                  { yybegin(FUNCTION_PREREQ); return FUNCTION_INFO; }
+    {SHELL}                 { yybegin(FUNCTION_PREREQ); return FUNCTION_SHELL; }
+    {WILDCARD}              { yybegin(FUNCTION_PREREQ); return FUNCTION_WILDCARD; }
+    {PATHSUBST}             { yybegin(FUNCTION_PREREQ); return FUNCTION_PATHSUBST; }
     "override"              { yybegin(YYINITIAL); return KEYWORD_OVERRIDE; }
     "export"                { yybegin(YYINITIAL); return KEYWORD_EXPORT; }
     "private"               { yybegin(YYINITIAL); return KEYWORD_PRIVATE; }

@@ -81,7 +81,7 @@ public interface MakefileTypes {
   class Factory {
     public static PsiElement createElement(ASTNode node) {
       IElementType type = node.getElementType();
-       if (type == BLOCK) {
+      if (type == BLOCK) {
         return new MakefileBlockImpl(node);
       }
       else if (type == COMMAND) {
