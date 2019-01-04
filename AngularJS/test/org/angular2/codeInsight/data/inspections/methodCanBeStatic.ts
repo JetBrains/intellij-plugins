@@ -1,5 +1,5 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import {Component, View} from '@angular/core';
+import {Component, Input, View} from '@angular/core';
 
 @Component({
     selector: 'home',
@@ -15,4 +15,20 @@ export class Home {
         console.log("foobar")
     }
 
+    set input(value: string) {
+
+    }
+
+    @Input
+    get input(): string {
+        return "foo";
+    }
+
+    set unused(val: string) {
+
+    }
+
+    get <warning descr="Method can be static">unused</warning>(): string {
+        return "foo"
+    }
 }

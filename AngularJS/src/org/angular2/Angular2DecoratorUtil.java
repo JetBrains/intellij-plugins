@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.StubElement;
@@ -52,8 +51,8 @@ public class Angular2DecoratorUtil {
 
   @StubSafe
   @Nullable
-  public static ES6Decorator findDecorator(@NotNull JSClass cls, @NotNull String... names) {
-    JSAttributeList list = cls.getAttributeList();
+  public static ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, @NotNull String... names) {
+    JSAttributeList list = attributeListOwner.getAttributeList();
     if (list == null || names.length == 0) {
       return null;
     }
@@ -70,8 +69,8 @@ public class Angular2DecoratorUtil {
 
   @StubSafe
   @Nullable
-  public static ES6Decorator findDecorator(@NotNull JSClass cls, @NotNull String name) {
-    JSAttributeList list = cls.getAttributeList();
+  public static ES6Decorator findDecorator(@NotNull JSAttributeListOwner attributeListOwner, @NotNull String name) {
+    JSAttributeList list = attributeListOwner.getAttributeList();
     if (list == null) {
       return null;
     }
