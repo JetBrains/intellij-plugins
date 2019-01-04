@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -19,6 +20,7 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
@@ -30,6 +32,18 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
 
   @Override
   public boolean isImplicitUsage(PsiElement element) {
+    if (element instanceof TypeScriptFunction) {
+      if (((TypeScriptFunction)element).isSetProperty()
+          || ((TypeScriptFunction)element).isGetProperty()) {
+        Ref<JSFunction> theOtherOne = new Ref<>();
+        Angular2ReferenceExpressionResolver.findPropertyAccessor(
+          (TypeScriptFunction)element, ((TypeScriptFunction)element).isGetProperty(), theOtherOne::set);
+        if (!theOtherOne.isNull() && Angular2DecoratorUtil.findDecorator(
+          theOtherOne.get(), Angular2DecoratorUtil.INPUT_DEC, Angular2DecoratorUtil.OUTPUT_DEC) != null) {
+          return true;
+        }
+      }
+    }
     if (element instanceof TypeScriptFunction
         || ((element instanceof TypeScriptField
              || element instanceof TypeScriptParameterImpl)
@@ -44,7 +58,6 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
           }
         }
       }
-      return false;
     }
     return false;
   }
