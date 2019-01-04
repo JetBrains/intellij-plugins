@@ -27,6 +27,11 @@ export class HeroAsyncMessageComponent<T> {
     @Input
     simpleStringEnum: MyType;
 
+    @Input
+    set setterSimpleStringEnum(value: MyType) {
+
+    }
+
     doIt(dir: RefDirective) {
 
     }

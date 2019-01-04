@@ -5,9 +5,7 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.completion.XmlAttributeInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.lang.javascript.psi.JSPsiElementBase;
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeContext;
@@ -280,7 +278,15 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Nullable
   private JSType getJSType() {
-    List<JSType> types = ContainerUtil.mapNotNull(myElements, JSTypeUtils::getTypeOfElement);
+    List<JSType> types = ContainerUtil.mapNotNull(myElements, element -> {
+      if (element instanceof JSFunction) {
+        JSParameterListElement[] params = ((JSFunction)element).getParameters();
+        if (((JSFunction)element).isSetProperty() && params.length == 1) {
+          return params[0].getSimpleType();
+        }
+      }
+      return JSTypeUtils.getTypeOfElement(element);
+    });
     if (types.size() == 1) {
       return types.get(0);
     }
