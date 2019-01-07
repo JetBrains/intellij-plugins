@@ -1,9 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes;
 
-import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.angular2.lang.html.parser.Angular2AttributeType;
@@ -12,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-import static com.intellij.util.containers.ContainerUtil.emptyList;
 import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 public class Angular2AttrAdditionalAttributesProvider implements Angular2AdditionalAttributesProvider {
@@ -29,16 +26,12 @@ public class Angular2AttrAdditionalAttributesProvider implements Angular2Additio
 
   @Override
   public List<Angular2AttributeDescriptor> getDescriptors(XmlTag tag, boolean forCompletion) {
-    HtmlElementDescriptorImpl descriptor = ObjectUtils.tryCast(tag.getDescriptor(), HtmlElementDescriptorImpl.class);
-    if (descriptor != null) {
-      return ContainerUtil.mapNotNull(descriptor.getDefaultAttributeDescriptors(tag), descr -> {
-        if (!descr.getName().startsWith("on")) {
-          return new Angular2BoundHtmlAttributeDescriptor(descr);
-        }
-        return null;
-      });
-    }
-    return emptyList();
+    return ContainerUtil.mapNotNull(Angular2AttributeDescriptorsProvider.getDefaultAttributeDescriptors(tag), descr -> {
+      if (!descr.getName().startsWith("on")) {
+        return new Angular2BoundHtmlAttributeDescriptor(descr);
+      }
+      return null;
+    });
   }
 
   private static class Angular2BoundHtmlAttributeDescriptor extends Angular2AttributeDescriptor {
