@@ -2,10 +2,10 @@
 package org.angular2.editor;
 
 import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
@@ -31,7 +31,7 @@ public class Angular2TypeDeclarationProvider implements TypeDeclarationProvider 
   @Nullable
   @Override
   public String getActionText(@NotNull DataContext context) {
-    PsiElement symbol = context.getData(CommonDataKeys.PSI_ELEMENT);
+    PsiElement symbol = Angular2InjectionUtils.getTargetElementFromContext(context);
     if (symbol instanceof Angular2DirectiveSelectorPsiElement
         && Angular2EntitiesProvider.findComponent((Angular2DirectiveSelectorPsiElement)symbol) != null) {
       return "Component &Template";
