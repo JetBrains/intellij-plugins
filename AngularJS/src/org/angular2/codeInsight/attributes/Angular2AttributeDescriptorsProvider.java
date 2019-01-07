@@ -10,6 +10,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
+import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -228,17 +229,13 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
   @NotNull
   public static List<String> getStandardTagEventAttributeNames(@NotNull XmlTag xmlTag) {
-    HtmlElementDescriptorImpl descriptor = ObjectUtils.tryCast(xmlTag.getDescriptor(), HtmlElementDescriptorImpl.class);
-    if (descriptor != null) {
-      return ContainerUtil.mapNotNull(descriptor.getDefaultAttributeDescriptors(xmlTag), attrDescriptor -> {
-        String name = attrDescriptor.getName();
-        if (name.startsWith("on")) {
-          return name;
-        }
-        return null;
-      });
-    }
-    return Collections.emptyList();
+    return ContainerUtil.mapNotNull(getDefaultAttributeDescriptors(xmlTag), attrDescriptor -> {
+      String name = attrDescriptor.getName();
+      if (name.startsWith("on")) {
+        return name;
+      }
+      return null;
+    });
   }
 
   @NotNull
@@ -307,5 +304,17 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       }
     });
     return result;
+  }
+
+  @NotNull
+  public static XmlAttributeDescriptor[] getDefaultAttributeDescriptors(@NotNull XmlTag tag) {
+    HtmlElementDescriptorImpl descriptor = ObjectUtils.tryCast(tag.getDescriptor(), HtmlElementDescriptorImpl.class);
+    if (descriptor == null) {
+      descriptor = ObjectUtils.tryCast(HtmlNSDescriptorImpl.guessTagForCommonAttributes(tag), HtmlElementDescriptorImpl.class);
+      if (descriptor == null) {
+        return XmlAttributeDescriptor.EMPTY;
+      }
+    }
+    return ObjectUtils.notNull(descriptor.getDefaultAttributeDescriptors(tag), XmlAttributeDescriptor.EMPTY);
   }
 }
