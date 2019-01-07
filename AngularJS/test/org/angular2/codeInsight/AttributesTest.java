@@ -82,7 +82,10 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testEventHandlersStandardCompletion2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("event.html", "package.json");
+      myFixture.configureByFiles("event.html", "custom.ts", "package.json");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(), "(mouseover)");
+      AngularTestUtil.moveToOffsetBySignature("<some-tag <caret>>", myFixture);
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "(mouseover)");
     });
@@ -993,6 +996,17 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testAttrCompletions() {
     JSTestUtils.testES6(getProject(), () -> {
       myFixture.configureByFiles("attrTest.ts", "package.json");
+      myFixture.completeBasic();
+      myFixture.type("att\n");
+      myFixture.type("acc\n");
+      PsiElement element = AngularTestUtil.resolveReference("[attr.ac<caret>cesskey]", myFixture);
+      assertEquals("common.rnc", element.getContainingFile().getName());
+    });
+  }
+
+  public void testAttrCompletionsCustomTag() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attrTestCustom.ts", "package.json");
       myFixture.completeBasic();
       myFixture.type("att\n");
       myFixture.type("acc\n");
