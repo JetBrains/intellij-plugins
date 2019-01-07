@@ -97,24 +97,20 @@ public class Angular2EntitiesProvider {
     return findMetadataEntity(project, name, Angular2MetadataPipe.class, Angular2MetadataPipeIndex.KEY);
   }
 
-  @Nullable
-  public static Angular2Component findComponent(@NotNull Angular2DirectiveSelectorPsiElement selector) {
-    List<Angular2Directive> candidates;
+  @NotNull
+  public static List<Angular2Directive> findDirectives(@NotNull Angular2DirectiveSelectorPsiElement selector) {
     if (selector.isElementSelector()) {
-      candidates = findElementDirectivesCandidates(selector.getProject(), selector.getName());
+      return findElementDirectivesCandidates(selector.getProject(), selector.getName());
     }
     else if (selector.isAttributeSelector()) {
-      candidates = findAttributeDirectivesCandidates(selector.getProject(), selector.getName());
+      return findAttributeDirectivesCandidates(selector.getProject(), selector.getName());
     }
-    else {
-      candidates = Collections.emptyList();
-    }
-    for (Angular2Directive directive : candidates) {
-      if (directive.isComponent()) {
-        return (Angular2Component)directive;
-      }
-    }
-    return null;
+    return  Collections.emptyList();
+  }
+
+  @Nullable
+  public static Angular2Component findComponent(@NotNull Angular2DirectiveSelectorPsiElement selector) {
+    return (Angular2Component)ContainerUtil.find(findDirectives(selector), Angular2Directive::isComponent);
   }
 
   @NotNull
