@@ -1,0 +1,52 @@
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angular2;
+
+import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.util.ObjectUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+public class Angular2InjectionUtils {
+
+  public static PsiFile getFirstInjectedFile(@Nullable JSExpression expression) {
+    if (expression != null) {
+      List<Pair<PsiElement, TextRange>> injections =
+        InjectedLanguageManager.getInstance(expression.getProject()).getInjectedPsiFiles(expression);
+      if (injections != null) {
+        for (Pair<PsiElement, TextRange> injection : injections) {
+          if (injection.getFirst() instanceof PsiFile) {
+            return (PsiFile)injection.getFirst();
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static PsiElement getTargetElementFromContext(@NotNull DataContext context) {
+    Editor editor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(
+      context.getData(CommonDataKeys.EDITOR), context.getData(CommonDataKeys.PSI_FILE));
+    Project project = context.getData(CommonDataKeys.PROJECT);
+    if (project == null || editor == null) {
+      return null;
+    }
+    return ObjectUtils.tryCast(FileEditorManagerEx.getInstanceEx(project)
+      .getData(CommonDataKeys.PSI_ELEMENT.getName(), editor, editor.getCaretModel().getCurrentCaret()),
+      PsiElement.class);
+  }
+
+}
