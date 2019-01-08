@@ -15,6 +15,7 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
+import com.intellij.junit4.ExpectedPatterns;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
@@ -132,6 +133,9 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   private String[] getSMRunnerPaths() {
     List<String> result = new ArrayList<>();
+
+    String rtClassPath = PathUtil.getJarPathForClass(ExpectedPatterns.class);
+    result.add(rtClassPath);
 
     String cucumberJvmFormatterClassPath = PathUtil.getJarPathForClass(CucumberJvmSMFormatter.class);
     result.add(cucumberJvmFormatterClassPath);

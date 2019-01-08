@@ -48,5 +48,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="intellij.junit.rt" />
   </component>
 </module>
