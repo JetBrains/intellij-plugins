@@ -587,7 +587,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testComplexSelectorList2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       configureWithMetadataFiles(myFixture, "ionic");
-      myFixture.configureByFiles("ionic.html");
+      myFixture.configureByFiles("div.html");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "ion-item");
     });
@@ -596,7 +596,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testVirtualInOuts() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       configureWithMetadataFiles(myFixture, "ionic");
-      myFixture.configureByFiles("ionic.html");
+      myFixture.configureByFiles("div.html");
       myFixture.type("ion-item ");
       myFixture.completeBasic();
       assertContainsElements(myFixture.getLookupElementStrings(), "fakeInput", "[fakeInput]", "(fakeOutput)");
@@ -1007,7 +1007,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.completeBasic();
       myFixture.type("att\n");
       myFixture.type("acc\n");
-      PsiElement element = AngularTestUtil.resolveReference("[attr.ac<caret>cesskey]", myFixture);
+      PsiElement element = AngularTestUtil.resolveReference("[attr.ac<caret>cesskey]=\"\"", myFixture);
       assertEquals("common.rnc", element.getContainingFile().getName());
     });
   }
@@ -1016,10 +1016,115 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testES6(getProject(), () -> {
       myFixture.configureByFiles("attrTestCustom.ts", "package.json");
       myFixture.completeBasic();
-      myFixture.type("att\n");
+      myFixture.type("[attr.");
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "about]", "accesskey]",
+                             "id]", "style]", "title]",
+                             "aria-atomic]");
+      assertDoesntContain(myFixture.getLookupElementStrings(),
+                          "innerHTML]");
       myFixture.type("acc\n");
-      PsiElement element = AngularTestUtil.resolveReference("[attr.ac<caret>cesskey]", myFixture);
+      PsiElement element = AngularTestUtil.resolveReference("[attr.ac<caret>cesskey]=\"\"", myFixture);
       assertEquals("common.rnc", element.getContainingFile().getName());
+    });
+  }
+
+  public void testAttrCompletions2() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("div.html", "package.json");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "[attr.");
+      myFixture.type("att\n");
+      assertEquals("[attr.]", myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getText());
+      myFixture.type("aat\n");
+      PsiElement element = AngularTestUtil.resolveReference("[attr.aria-atomic<caret>]=\"\"", myFixture);
+      assertEquals("aria.rnc", element.getContainingFile().getName());
+    });
+  }
+
+  public void testCanonicalCompletion() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("div.html", "package.json");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "bind-", "bindon-", "on-", "ref-");
+      myFixture.type("bind-");
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "tabIndex", "innerHTML");
+      myFixture.type("iH\n");
+      PsiElement element = AngularTestUtil.resolveReference("bind-inner<caret>HTML", myFixture);
+      assertEquals("lib.dom.d.ts", element.getContainingFile().getName());
+    });
+  }
+
+  public void testAttrCompletionsCanonical() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attrTest.ts", "package.json");
+      myFixture.completeBasic();
+      myFixture.type("bind-");
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "attr.");
+      myFixture.type("at\naat\n");
+      PsiElement element = AngularTestUtil.resolveReference("bind-attr.aria-atomic<caret>=\"\"", myFixture);
+      assertEquals("aria.rnc", element.getContainingFile().getName());
+    });
+  }
+
+  public void testExtKeyEvent() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attrTest.ts", "package.json");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "(keyup.", "(keydown.");
+      myFixture.type("keyd.\n");
+      assertEquals("(keydown.)", myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getText());
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "meta.", "control.", "shift.", "alt.", "escape)", "home)", "f11)");
+      myFixture.type("alt.");
+      assertEquals("(keydown.alt.)", myFixture.getFile().findElementAt(myFixture.getCaretOffset()).getText());
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "meta.", "control.", "escape)", "home)", "f11)");
+      assertDoesntContain(myFixture.getLookupElementStrings(),
+                          "alt.");
+      myFixture.type("ins\n");
+      PsiElement element = AngularTestUtil.resolveReference("(keydown.alt.<caret>insert)=\"\"", myFixture);
+      assertEquals("core-scripting.rnc", element.getContainingFile().getName());
+    });
+  }
+
+  public void testExtKeyEventCanonical() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("attrTest.ts", "package.json");
+      myFixture.completeBasic();
+      myFixture.type("on-");
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "keyup.", "keydown.");
+      myFixture.type("keyu.\n");
+      assertEquals("on-keyup.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1).getText());
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "meta.", "control.", "shift.", "alt.", "escape", "home");
+      myFixture.type("alt.");
+      assertEquals("on-keyup.alt.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1).getText());
+      assertContainsElements(myFixture.getLookupElementStrings(),
+                             "meta.", "control.", "escape", "home");
+      assertDoesntContain(myFixture.getLookupElementStrings(),
+                          "alt.");
+      myFixture.type("m.\n");
+      assertEquals("on-keyup.alt.meta.", myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1).getText());
+      assertDoesntContain(myFixture.getLookupElementStrings(),
+                          "alt.", "meta.");
+      myFixture.type("esc\n");
+      PsiElement element = AngularTestUtil.resolveReference("on-keyup.alt.meta.<caret>escape=\"\"", myFixture);
+      assertEquals("core-scripting.rnc", element.getContainingFile().getName());
+    });
+  }
+
+  public void testExtKeyEventsInspections() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.configureByFiles("extKeyEvents.html", "custom.ts", "package.json");
+      myFixture.checkHighlighting(true, false, true);
     });
   }
 }

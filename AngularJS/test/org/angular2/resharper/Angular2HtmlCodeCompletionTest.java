@@ -15,17 +15,13 @@ import java.util.Set;
 public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionTestBase {
 
   private static final Set<String> TESTS_TO_SKIP = ContainerUtil.newHashSet(
-    "test001", // differences in standard HTML attributes
-    "test002",
-    "test003",
-    "test004",
-    "test005",
-    "test006",
-    "test007", // differences in standard HTML attributes
-    "test008",
-    "test009",
-    "test012",
-    "test013"
+    "test003", // missing [style. support
+    "test004", // missing [style. support
+    "test005", // missing [class. support
+    "test006", // missing [class. support
+    "test007", // differences in standard HTML attributes and missing *directive items
+    "test008", // MathML items in content assist
+    "test009"  // missing [class. and [style. support
   );
 
   private static final Set<String> HIGH_PRIORITY_ONLY = ContainerUtil.newHashSet(
@@ -61,7 +57,8 @@ public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionT
       return !(element instanceof PrioritizedLookupElement)
              || ((PrioritizedLookupElement)element).getPriority() < Angular2AttributeDescriptor.AttributePriority.HIGH.getValue();
     }
-    if (IGNORED_ELEMENT_ATTRS.contains(element.getLookupString())) {
+    if (IGNORED_ELEMENT_ATTRS.contains(element.getLookupString())
+        || element.getLookupString().contains("aria-")) {
       return true;
     }
     return super.shouldSkipItem(element);
@@ -83,6 +80,20 @@ public class Angular2HtmlCodeCompletionTest extends Angular2ReSharperCompletionT
     "(pointerout)", "(pointerover)", "(pointerup)", "(progress)", "(ratechange)", "(reset)", "(resize)", "(scroll)", "(search)", "(seeked)",
     "(seeking)", "(select)", "(selectstart)", "(show)", "(sort)", "(stalled)", "(submit)", "(suspend)", "(timeupdate)", "(toggle)",
     "(volumechange)", "(waiting)", "(webglcontextcreationerror)", "(webglcontextlost)", "(webglcontextrestored)",
-    "(webkitfullscreenchange)", "(webkitfullscreenerror)", "(wheel)"
+    "(webkitfullscreenchange)", "(webkitfullscreenerror)", "(wheel)",
+    //RDFa Datatypes
+    "about", "about]",
+    "prefix", "prefix]",
+    "property", "property]",
+    "typeof", "typeof]",
+    "vocab", "vocab]",
+    "content", "content]",
+    "datatype", "datatype]",
+    "rel", "rel]",
+    "resource", "resource]",
+    "rev", "rev]",
+    "inlist", "inlist]",
+    //XML stuff
+    "base", "base]"
   );
 }

@@ -5,6 +5,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.xml.XmlElementType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum Angular2AttributeType {
 
@@ -21,7 +22,10 @@ public enum Angular2AttributeType {
   private final String mySuffix;
   private final String myCanonicalPrefix;
 
-  Angular2AttributeType(IElementType elementType, String prefix, String suffix, String canonicalPrefix) {
+  Angular2AttributeType(@NotNull IElementType elementType,
+                        @NotNull String prefix,
+                        @NotNull String suffix,
+                        @Nullable String canonicalPrefix) {
     myElementType = elementType;
     myPrefix = prefix;
     mySuffix = suffix;
@@ -45,7 +49,13 @@ public enum Angular2AttributeType {
     return myPrefix + name + mySuffix;
   }
 
+  @NotNull
   public IElementType getElementType() {
     return myElementType;
   }
+
+  public String getCanonicalPrefix() {
+    return myCanonicalPrefix;
+  }
+
 }

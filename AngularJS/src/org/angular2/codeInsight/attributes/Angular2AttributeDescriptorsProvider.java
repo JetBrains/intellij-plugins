@@ -63,20 +63,14 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         return d;
       }
     }
-    for (Angular2AdditionalAttributesProvider provider :
-      Angular2AdditionalAttributesProvider.ADDITIONAL_ATTRIBUTES_PROVIDER_EP.getExtensionList()) {
-      for (String prefix : provider.getPrefixes(false)) {
-        if (attrName.startsWith(prefix)) {
-          for (Angular2AttributeDescriptor d : provider.getDescriptors(xmlTag, false)) {
-            if (attrName.equals(d.getName())
-                || info.isEquivalent(d.getInfo())) {
-              return d;
-            }
-          }
-        }
+    for (Angular2AttributesProvider provider :
+      Angular2AttributesProvider.ANGULAR_ATTRIBUTES_PROVIDER_EP.getExtensionList()) {
+      Angular2AttributeDescriptor descriptor = provider.getDescriptor(xmlTag, attrName, info);
+      if (descriptor != null) {
+        return descriptor;
       }
     }
-    return Angular2AttributeDescriptor.create(attrName);
+    return null;
   }
 
   public static List<String> getCustomNgAttrs() {

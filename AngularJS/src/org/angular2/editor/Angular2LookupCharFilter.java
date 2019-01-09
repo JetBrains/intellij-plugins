@@ -15,7 +15,7 @@ public class Angular2LookupCharFilter extends CharFilter {
   @Nullable
   @Override
   public Result acceptChar(char c, int prefixLength, Lookup lookup) {
-    if (c == '(' || c == ')' || c == '[' || c == ']' || c == '*' || c == '#' || c == '@') {
+    if (c == '(' || c == ')' || c == '[' || c == ']' || c == '*' || c == '#' || c == '@' || c == '.') {
       final PsiFile file = lookup.getPsiFile();
       if (file instanceof XmlFile && Angular2LangUtil.isAngular2Context(file)) {
         return Result.ADD_TO_PREFIX;

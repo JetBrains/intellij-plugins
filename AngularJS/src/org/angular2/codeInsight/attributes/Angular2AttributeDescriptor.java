@@ -1,8 +1,8 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes;
 
+import com.intellij.codeInsight.completion.PrefixMatcher;
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
-import com.intellij.codeInsight.completion.XmlAttributeInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.javascript.psi.*;
@@ -21,7 +21,6 @@ import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
@@ -40,11 +39,15 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static com.intellij.lang.javascript.psi.types.JSTypeSourceFactory.createTypeSource;
+import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.ObjectUtils.notNull;
+import static com.intellij.util.containers.ContainerUtil.*;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getCustomNgAttrs;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
@@ -55,7 +58,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Nullable
   public static Angular2AttributeDescriptor create(@NotNull String attributeName) {
-    return create(attributeName, Collections.emptyList());
+    return create(attributeName, emptyList());
   }
 
   @Nullable
@@ -89,7 +92,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   public static List<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive, boolean isTemplateTagContext) {
     if (directive.isTemplate() && !isTemplateTagContext) {
-      return Collections.emptyList();
+      return emptyList();
     }
     List<XmlAttributeDescriptor> result = new ArrayList<>();
     addDirectiveDescriptors(directive.getInOuts(), Angular2AttributeDescriptor::createBananaBoxBinding, result);
@@ -244,19 +247,39 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return null;
   }
 
-  public LookupElement getLookupElement() {
-    LookupElementBuilder element = LookupElementBuilder.create(getName())
+  public Pair<LookupElement, String> getLookupElementWithPrefix(@NotNull PrefixMatcher prefixMatcher) {
+    LookupElementInfo info = buildElementInfo(prefixMatcher);
+    String currentPrefix = prefixMatcher.getPrefix();
+    Pair<String, String> hide = notNull(find(info.hidePrefixesAndSuffixes,
+                                             pair -> currentPrefix.startsWith(pair.first)),
+                                        () -> pair("", ""));
+    String name = StringUtil.trimStart(info.elementName, hide.first);
+    LookupElementBuilder element = LookupElementBuilder.create(name)
+      .withPresentableText(StringUtil.trimEnd(name, hide.second))
       .withCaseSensitivity(myInfo.type != REGULAR || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
       .withIcon(getIcon())
-      .withBoldness(myPriority == AttributePriority.HIGH);
+      .withBoldness(myPriority == AttributePriority.HIGH)
+      .withInsertHandler(new Angular2AttributeInsertHandler(shouldCompleteValue()));
+    if (info.lookupStrings != null) {
+      element = element.withLookupStrings(map(info.lookupStrings, str -> StringUtil.trimStart(str, hide.first)));
+    }
     String typeName = getTypeName();
     if (!StringUtil.isEmptyOrSpaces(typeName)) {
       element = element.withTypeText(typeName);
     }
-    if (shouldCompleteValue()) {
-      element = element.withInsertHandler(XmlAttributeInsertHandler.INSTANCE);
+    return pair(PrioritizedLookupElement.withPriority(element, myPriority.getValue()),
+                currentPrefix.substring(hide.first.length()));
+  }
+
+  protected LookupElementInfo buildElementInfo(@NotNull PrefixMatcher prefixMatcher) {
+    String canonicalPrefix = myInfo.type.getCanonicalPrefix();
+    if (canonicalPrefix != null && prefixMatcher.getPrefix().startsWith(canonicalPrefix)) {
+      return new LookupElementInfo(Objects.requireNonNull(myInfo.type.buildName(myInfo.getFullName(), true)),
+                                   singletonList(pair(canonicalPrefix, "")),
+                                   myInfo.type == EVENT ? newArrayList(getName(), "on" + myInfo.getFullName()) : null);
     }
-    return PrioritizedLookupElement.withPriority(element, myPriority.getValue());
+    return new LookupElementInfo(getName(), emptyList(),
+                                 myInfo.type == EVENT ? newArrayList(getName(), "on" + myInfo.getFullName()) : null);
   }
 
   private boolean shouldCompleteValue() {
@@ -278,7 +301,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Nullable
   private JSType getJSType() {
-    List<JSType> types = ContainerUtil.mapNotNull(myElements, element -> {
+    List<JSType> types = mapNotNull(myElements, element -> {
       if (element instanceof JSFunction) {
         JSParameterListElement[] params = ((JSFunction)element).getParameters();
         if (((JSFunction)element).isSetProperty() && params.length == 1) {
@@ -321,8 +344,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   private static Angular2AttributeDescriptor createBananaBoxBinding(@NotNull Pair<Angular2DirectiveProperty, Angular2DirectiveProperty> info) {
     return new Angular2AttributeDescriptor(BANANA_BOX_BINDING.buildName(info.first.getName()), false, AttributePriority.HIGH,
-                                           ContainerUtil.newArrayList(info.first.getNavigableElement(),
-                                                                      info.second.getNavigableElement()));
+                                           newArrayList(info.first.getNavigableElement(),
+                                                        info.second.getNavigableElement()));
   }
 
   @Nullable
@@ -347,6 +370,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   public enum AttributePriority {
+    NONE(0),
     LOW(25),
     NORMAL(50),
     HIGH(100);
@@ -359,6 +383,20 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
     public double getValue() {
       return myValue;
+    }
+  }
+
+  protected static class LookupElementInfo {
+    public final String elementName;
+    public final List<Pair<String, String>> hidePrefixesAndSuffixes;
+    public final List<String> lookupStrings;
+
+    public LookupElementInfo(@NotNull String elementName,
+                             @NotNull List<Pair<String, String>> hidePrefixesAndSuffixes,
+                             @Nullable List<String> lookupStrings) {
+      this.elementName = elementName;
+      this.hidePrefixesAndSuffixes = hidePrefixesAndSuffixes;
+      this.lookupStrings = lookupStrings;
     }
   }
 }

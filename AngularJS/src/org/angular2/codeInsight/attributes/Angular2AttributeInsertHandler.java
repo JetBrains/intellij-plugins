@@ -1,0 +1,53 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angular2.codeInsight.attributes;
+
+import com.intellij.codeInsight.completion.InsertHandler;
+import com.intellij.codeInsight.completion.InsertionContext;
+import com.intellij.codeInsight.completion.XmlAttributeInsertHandler;
+import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.lang.html.HTMLLanguage;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
+
+import static com.intellij.util.containers.ContainerUtil.newHashSet;
+
+public class Angular2AttributeInsertHandler implements InsertHandler<LookupElement> {
+
+
+  private static final Set<Character> HTML_ATTR_NOT_ALLOWED_CHARS = newHashSet('=', '\'', '\"', '<', '>', '/', '\0');
+
+  private final boolean myShouldCompleteValue;
+
+  public Angular2AttributeInsertHandler(boolean value) {
+    myShouldCompleteValue = value;
+  }
+
+  @Override
+  public void handleInsert(@NotNull InsertionContext context, @NotNull LookupElement item) {
+    final Editor editor = context.getEditor();
+    final Document document = editor.getDocument();
+    final int caretOffset = editor.getCaretModel().getOffset();
+
+    CharSequence text = document.getCharsSequence();
+    int deleteOffset = caretOffset;
+    boolean isHtml = context.getFile().getLanguage().isKindOf(HTMLLanguage.INSTANCE);
+    while (deleteOffset < text.length()) {
+      char ch = text.charAt(deleteOffset);
+      if (Character.isWhitespace(ch)
+          || HTML_ATTR_NOT_ALLOWED_CHARS.contains(ch)
+          || (!isHtml && !Character.isLetterOrDigit(ch))) {
+        break;
+      }
+      deleteOffset++;
+    }
+    if (deleteOffset > caretOffset) {
+      document.deleteString(caretOffset, deleteOffset);
+    }
+    if (myShouldCompleteValue) {
+      XmlAttributeInsertHandler.INSTANCE.handleInsert(context, item);
+    }
+  }
+}

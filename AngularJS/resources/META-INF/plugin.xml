@@ -30,7 +30,7 @@
   <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>
 
   <extensionPoints>
-    <extensionPoint qualifiedName="org.angular2.additionalAttributesProvider" interface="org.angular2.codeInsight.attributes.Angular2AdditionalAttributesProvider"/>
+    <extensionPoint qualifiedName="org.angular2.attributesProvider" interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -199,7 +199,9 @@
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
-    <additionalAttributesProvider implementation="org.angular2.codeInsight.attributes.Angular2AttrAdditionalAttributesProvider" />
+    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BoundHtmlAttributesProvider" />
+    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2ExtendedKeyEventAttributesProvider"/>
+    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
   </extensions>
 
   <actions>

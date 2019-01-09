@@ -15,12 +15,11 @@ import static org.angular2.lang.html.psi.PropertyBindingType.*;
 
 public class Angular2AttributeNameParser {
 
-
   @NotNull
   public static AttributeInfo parseBound(@NotNull String name) {
     AttributeInfo info = parse(name, true);
     return info.type != Angular2AttributeType.REGULAR ? info :
-           new PropertyBindingInfo(info.name, false, PROPERTY);
+           new PropertyBindingInfo(info.name, info.isCanonical, false, PROPERTY);
   }
 
   @NotNull
@@ -39,10 +38,10 @@ public class Angular2AttributeNameParser {
       return parsePropertyBindingShort(name.substring(1, name.length() - 1), false);
     }
     else if (name.startsWith("on-")) {
-      return parseEvent(name.substring(3));
+      return parseEvent(name.substring(3), true);
     }
     else if (name.startsWith("(") && name.endsWith(")")) {
-      return parseEvent(name.substring(1, name.length() - 1));
+      return parseEvent(name.substring(1, name.length() - 1), false);
     }
     else if (name.startsWith("*")) {
       return parseTemplateBindings(name.substring(1));
@@ -51,15 +50,15 @@ public class Angular2AttributeNameParser {
       return parseVariable(name.substring(4), isInTemplateTag);
     }
     else if (name.startsWith("#")) {
-      return parseReference(name.substring(1));
+      return parseReference(name.substring(1), false);
     }
     else if (name.startsWith("ref-")) {
-      return parseReference(name.substring(4));
+      return parseReference(name.substring(4), true);
     }
     else if (name.startsWith("@")) {
-      return new PropertyBindingInfo(name.substring(1), false, ANIMATION);
+      return new PropertyBindingInfo(name.substring(1), false, false, ANIMATION);
     }
-    return new AttributeInfo(name, Angular2AttributeType.REGULAR);
+    return new AttributeInfo(name, false, Angular2AttributeType.REGULAR);
   }
 
   @NotNull
@@ -73,36 +72,36 @@ public class Angular2AttributeNameParser {
   @NotNull
   private static AttributeInfo parsePropertyBindingShort(@NotNull String name, boolean bananaBoxBinding) {
     if (!bananaBoxBinding && name.startsWith("@")) {
-      return new PropertyBindingInfo(name.substring(1), false, ANIMATION);
+      return new PropertyBindingInfo(name.substring(1), false, false, ANIMATION);
     }
-    return parsePropertyBindingRest(name, bananaBoxBinding);
+    return parsePropertyBindingRest(name, false, bananaBoxBinding);
   }
 
   @NotNull
   private static AttributeInfo parsePropertyBindingCanonical(@NotNull String name, boolean bananaBoxBinding) {
     if (!bananaBoxBinding && name.startsWith("animate-")) {
-      return new PropertyBindingInfo(name.substring(8), false, ANIMATION);
+      return new PropertyBindingInfo(name.substring(8), true, false, ANIMATION);
     }
-    return parsePropertyBindingRest(name, bananaBoxBinding);
+    return parsePropertyBindingRest(name, true, bananaBoxBinding);
   }
 
   @NotNull
-  private static AttributeInfo parsePropertyBindingRest(@NotNull String name, boolean bananaBoxBinding) {
+  private static AttributeInfo parsePropertyBindingRest(@NotNull String name, boolean isCanonical, boolean bananaBoxBinding) {
     if (name.startsWith("attr.")) {
-      return new PropertyBindingInfo(name.substring(5), bananaBoxBinding, ATTRIBUTE);
+      return new PropertyBindingInfo(name.substring(5), isCanonical, bananaBoxBinding, ATTRIBUTE);
     }
     if (name.startsWith("class.")) {
-      return new PropertyBindingInfo(name.substring(6), bananaBoxBinding, CLASS);
+      return new PropertyBindingInfo(name.substring(6), isCanonical, bananaBoxBinding, CLASS);
     }
     if (name.startsWith("style.")) {
-      return new PropertyBindingInfo(name.substring(6), bananaBoxBinding, STYLE);
+      return new PropertyBindingInfo(name.substring(6), isCanonical, bananaBoxBinding, STYLE);
     }
-    return new PropertyBindingInfo(name, bananaBoxBinding, PROPERTY);
+    return new PropertyBindingInfo(name, isCanonical, bananaBoxBinding, PROPERTY);
   }
 
 
   @NotNull
-  private static AttributeInfo parseEvent(@NotNull String name) {
+  private static AttributeInfo parseEvent(@NotNull String name, boolean isCanonical) {
     if (name.startsWith("@")) {
       name = name.substring(1);
     }
@@ -110,33 +109,33 @@ public class Angular2AttributeNameParser {
       name = name.substring(8);
     }
     else {
-      return new EventInfo(name);
+      return new EventInfo(name, isCanonical);
     }
-    return parseAnimationEvent(name);
+    return parseAnimationEvent(name, isCanonical);
   }
 
   @NotNull
   private static AttributeInfo parseTemplateBindings(@NotNull String name) {
-    return new AttributeInfo(name, Angular2AttributeType.TEMPLATE_BINDINGS);
+    return new AttributeInfo(name, false, Angular2AttributeType.TEMPLATE_BINDINGS);
   }
 
   @NotNull
-  private static AttributeInfo parseAnimationEvent(@NotNull String name) {
+  private static AttributeInfo parseAnimationEvent(@NotNull String name, boolean isCanonical) {
     int dot = name.indexOf('.');
     if (dot < 0) {
-      return new EventInfo(name, AnimationPhase.INVALID,
+      return new EventInfo(name, isCanonical, AnimationPhase.INVALID,
                            "The animation trigger output event (@" + name +
                            ") is missing its phase value name (start or done are currently supported)");
     }
     String phase = name.substring(dot + 1).toLowerCase(Locale.ENGLISH);
     name = name.substring(0, dot);
     if ("done".equals(phase)) {
-      return new EventInfo(name, AnimationPhase.DONE);
+      return new EventInfo(name, isCanonical, AnimationPhase.DONE);
     }
     else if ("start".equals(phase)) {
-      return new EventInfo(name, AnimationPhase.START);
+      return new EventInfo(name, isCanonical, AnimationPhase.START);
     }
-    return new EventInfo(name, AnimationPhase.INVALID,
+    return new EventInfo(name, isCanonical, AnimationPhase.INVALID,
                          "The provided animation output phase value '" + phase +
                          "' for '@" + name.substring(0, dot) +
                          "' is not supported (use start or done))");
@@ -145,23 +144,23 @@ public class Angular2AttributeNameParser {
   @NotNull
   private static AttributeInfo parseVariable(@NotNull String varName, boolean isInTemplateTag) {
     if (!isInTemplateTag) {
-      return new AttributeInfo(varName, Angular2AttributeType.REGULAR, "\"let-\" is only supported on ng-template elements.");
+      return new AttributeInfo(varName, false, Angular2AttributeType.REGULAR, "\"let-\" is only supported on ng-template elements.");
     }
     else if (varName.contains("-")) {
-      return new AttributeInfo(varName, Angular2AttributeType.REGULAR, "\"-\" is not allowed in variable names");
+      return new AttributeInfo(varName, false, Angular2AttributeType.REGULAR, "\"-\" is not allowed in variable names");
     }
-    return new AttributeInfo(varName, Angular2AttributeType.VARIABLE);
+    return new AttributeInfo(varName, false, Angular2AttributeType.VARIABLE);
   }
 
   @NotNull
-  private static AttributeInfo parseReference(@NotNull String refName) {
+  private static AttributeInfo parseReference(@NotNull String refName, boolean isCanonical) {
     if (refName.contains("-")) {
-      return new AttributeInfo(refName, Angular2AttributeType.REGULAR, "\"-\" is not allowed in reference names");
+      return new AttributeInfo(refName, false, Angular2AttributeType.REGULAR, "\"-\" is not allowed in reference names");
     }
     else if (refName.isEmpty()) {
-      return new AttributeInfo("", Angular2AttributeType.REGULAR);
+      return new AttributeInfo("", false, Angular2AttributeType.REGULAR);
     }
-    return new AttributeInfo(refName, Angular2AttributeType.REFERENCE);
+    return new AttributeInfo(refName, isCanonical, Angular2AttributeType.REFERENCE);
   }
 
   public static class AttributeInfo {
@@ -176,16 +175,19 @@ public class Angular2AttributeNameParser {
     @NotNull
     @Deprecated
     public final IElementType elementType;
+    @NotNull
     public final Angular2AttributeType type;
+    public final boolean isCanonical;
 
-    public AttributeInfo(@NotNull String name, @NotNull Angular2AttributeType type) {
-      this(name, type, null);
+    public AttributeInfo(@NotNull String name, boolean isCanonical, @NotNull Angular2AttributeType type) {
+      this(name, isCanonical, type, null);
     }
 
-    public AttributeInfo(@NotNull String name, @NotNull Angular2AttributeType type, @Nullable String error) {
+    public AttributeInfo(@NotNull String name, boolean isCanonical, @NotNull Angular2AttributeType type, @Nullable String error) {
       this.name = name;
       this.error = error;
       this.type = type;
+      this.isCanonical = isCanonical;
       //noinspection deprecation
       this.elementType = type.getElementType();
     }
@@ -211,8 +213,11 @@ public class Angular2AttributeNameParser {
     @NotNull
     public final PropertyBindingType bindingType;
 
-    public PropertyBindingInfo(@NotNull String name, boolean bananaBoxBinding, @NotNull PropertyBindingType bindingType) {
-      super(name, bananaBoxBinding ? Angular2AttributeType.BANANA_BOX_BINDING : Angular2AttributeType.PROPERTY_BINDING);
+    public PropertyBindingInfo(@NotNull String name,
+                               boolean isCanonical,
+                               boolean bananaBoxBinding,
+                               @NotNull PropertyBindingType bindingType) {
+      super(name, isCanonical, bananaBoxBinding ? Angular2AttributeType.BANANA_BOX_BINDING : Angular2AttributeType.PROPERTY_BINDING);
       this.bindingType = bindingType;
     }
 
@@ -253,18 +258,18 @@ public class Angular2AttributeNameParser {
     @NotNull
     public final EventType eventType;
 
-    public EventInfo(@NotNull String name) {
-      super(name, Angular2AttributeType.EVENT);
+    public EventInfo(@NotNull String name, boolean isCanonical) {
+      super(name, isCanonical, Angular2AttributeType.EVENT);
       eventType = EventType.REGULAR;
       animationPhase = null;
     }
 
-    public EventInfo(@NotNull String name, @NotNull AnimationPhase animationPhase) {
-      this(name, animationPhase, null);
+    public EventInfo(@NotNull String name, boolean isCanonical, @NotNull AnimationPhase animationPhase) {
+      this(name, isCanonical, animationPhase, null);
     }
 
-    public EventInfo(@NotNull String name, @NotNull AnimationPhase animationPhase, @Nullable String error) {
-      super(name, Angular2AttributeType.EVENT, error);
+    public EventInfo(@NotNull String name, boolean isCanonical, @NotNull AnimationPhase animationPhase, @Nullable String error) {
+      super(name, isCanonical, Angular2AttributeType.EVENT, error);
       this.animationPhase = animationPhase;
       this.eventType = EventType.ANIMATION;
     }
@@ -289,8 +294,9 @@ public class Angular2AttributeNameParser {
             default:
           }
         }
+        return "@" + name;
       }
-      return "@" + name;
+      return name;
     }
 
     @Override
