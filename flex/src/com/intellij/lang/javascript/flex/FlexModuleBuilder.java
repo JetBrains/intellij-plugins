@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.execution.RunManager;
@@ -37,6 +37,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -113,7 +114,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
   }
 
   @Override
-  public void setupRootModel(final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
+  public void setupRootModel(@NotNull final ModifiableRootModel modifiableRootModel) throws ConfigurationException {
     final ContentEntry contentEntry = doAddContentEntry(modifiableRootModel);
     if (contentEntry == null) return;
 
