@@ -82,7 +82,9 @@ def drb_launch_tests(drb_runner, test_scripts, test_scripts_names, test_names)
   if drb_runner.end_with?('spring')
     test_name_pattern = get_test_name_pattern(test_names)
 
-    if Gem.loaded_specs['rails'].version >= Gem::Version.create('4')
+    rails = Gem.loaded_specs['rails']
+    version = rails.version if rails
+    if version && version >= Gem::Version.create('4')
       cmdline << 'rake'
       cmdline << 'test'
 
@@ -128,7 +130,7 @@ def drb_launch_tests(drb_runner, test_scripts, test_scripts_names, test_names)
 
   require 'rubygems'
   require 'rake'
-  
+
   result = sh(*cmdline) do |ok, res|
     unless ok
       puts "Exit code: #{res.exitstatus}"
