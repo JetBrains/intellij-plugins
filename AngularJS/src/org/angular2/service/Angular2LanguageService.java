@@ -23,8 +23,6 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -66,22 +64,23 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   public static final Key<ParameterizedCachedValue<Collection<VirtualFile>, Project>> NG_SERVICE_PATH_KEY =
     Key.create("CACHED_NG_SERVICE_PATH");
-  private final Condition<VirtualFile> myFileFilter;
 
   public Angular2LanguageService(@NotNull Project project,
 
                                  @NotNull TypeScriptCompilerSettings settings) {
     super(project, settings, "Angular Console");
+  }
 
-    myFileFilter = Conditions
-      .or(super.getAcceptableFilesFilter(), (el) -> {
-        if (el != null && el.isInLocalFileSystem() && isAcceptableFile(el)) {
-          VirtualFile config = TypeScriptConfigUtil.getNearestParentConfig(el);
-          return config != null;
-        }
+  @Override
+  protected boolean isAcceptableNonTsFile(@NotNull Project project, @NotNull TypeScriptConfigService service, @NotNull VirtualFile virtualFile) {
+    if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true;
 
-        return false;
-      });
+    if (isAcceptableHtmlFile(virtualFile)) {
+      VirtualFile config = TypeScriptConfigUtil.getNearestParentConfig(virtualFile);
+      return config != null;
+    }
+
+    return false;
   }
 
   @Nullable
@@ -148,7 +147,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @NotNull
   @Override
   protected Collection<JSLanguageServiceCacheableCommand> createGetErrCommand(@NotNull VirtualFile file, @NotNull String path) {
-    if (isAcceptableFile(file)) {
+    if (isAcceptableHtmlFile(file)) {
       String configFile = getConfigForFile(file);
       if (configFile == null) return ContainerUtil.emptyList();
       Angular2GetHtmlErrCommand error = new Angular2GetHtmlErrCommand(path);
@@ -158,9 +157,9 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     return super.createGetErrCommand(file, path);
   }
 
-  private static boolean isAcceptableFile(@NotNull VirtualFile file) {
+  private static boolean isAcceptableHtmlFile(@NotNull VirtualFile file) {
     FileType type = file.getFileType();
-    
+
     return type == Angular2HtmlFileType.INSTANCE || type == HtmlFileType.INSTANCE;
   }
 
@@ -179,12 +178,6 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     return "Angular";
   }
 
-  @NotNull
-  @Override
-  public Condition<VirtualFile> getAcceptableFilesFilter() {
-    return myFileFilter;
-  }
-
   @Override
   @NotNull
   protected JSLanguageServiceSimpleCommand createCompletionCommand(@NotNull TypeScriptCompletionsRequestArgs args,
@@ -198,7 +191,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @NotNull
   @Override
   protected JSLanguageServiceCommand createProjectCommand(@NotNull VirtualFile file, @NotNull String path) {
-    return isAcceptableFile(file) ? new Angular2GetProjectHtmlErrCommand(path) : super.createProjectCommand(file, path);
+    return isAcceptableHtmlFile(file) ? new Angular2GetProjectHtmlErrCommand(path) : super.createProjectCommand(file, path);
   }
 
   @Nullable
@@ -221,13 +214,13 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
       @Nullable
       @Override
       protected TypeScriptConfig getConfigForFile(VirtualFile virtualFile) {
-        if (isAcceptableFile(virtualFile)) {
+        if (isAcceptableHtmlFile(virtualFile)) {
           VirtualFile tsFile = findSiblingTsFile(virtualFile);
           if (tsFile != null) return super.getConfigForFile(tsFile);
-          
+
           return getNearestConfig(virtualFile);
         }
-        
+
         return super.getConfigForFile(virtualFile);
       }
     };
@@ -237,7 +230,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @Nullable
   @Override
   protected String getConfigForFile(@NotNull VirtualFile file) {
-    if (isAcceptableFile(file)) {
+    if (isAcceptableHtmlFile(file)) {
       return ReadAction.compute(() -> {
         if (myProject.isDisposed()) return null;
         VirtualFile tsFile = findSiblingTsFile(file);
