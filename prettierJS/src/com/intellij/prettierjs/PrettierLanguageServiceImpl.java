@@ -36,6 +36,7 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
         for (VFileEvent event : events) {
           if (!(event instanceof VFileContentChangeEvent) || PrettierUtil.isConfigFileOrPackageJson(event.getFile())) {
             myFlushConfigCache = true;
+            break;
           }
         }
       }
