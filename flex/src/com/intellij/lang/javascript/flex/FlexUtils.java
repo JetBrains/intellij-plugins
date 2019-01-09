@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -49,6 +50,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
+import com.intellij.util.xml.NanoXmlBuilder;
 import com.intellij.util.xml.NanoXmlUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -177,8 +179,7 @@ public class FlexUtils {
       resultMap.put(element, new ArrayList<>());
     }
 
-    NanoXmlUtil.parse(xmlInputStream, new NanoXmlUtil.IXMLBuilderAdapter() {
-
+    NanoXmlUtil.parse(xmlInputStream, new NanoXmlBuilder() {
       private String currentElement = "";
       private final StringBuilder currentElementContent = new StringBuilder();
 
@@ -227,8 +228,7 @@ public class FlexUtils {
   public static String findXMLElement(@NotNull final InputStream xmlInputStream, final String xmlElement) {
     final Ref<String> result = new Ref<>();
 
-    NanoXmlUtil.parse(xmlInputStream, new NanoXmlUtil.IXMLBuilderAdapter() {
-
+    NanoXmlUtil.parse(xmlInputStream, new NanoXmlBuilder() {
       private String currentElement = "";
       private final StringBuilder xmlElementContent = new StringBuilder();
 
@@ -241,7 +241,7 @@ public class FlexUtils {
       public void endElement(final String name, final String nsPrefix, final String nsURI) throws Exception {
         if (xmlElement.equals(currentElement)) {
           result.set(xmlElementContent.toString());
-          stop();
+          NanoXmlBuilder.stop();
         }
         assert currentElement.endsWith("<" + name + ">");
         currentElement = currentElement.substring(0, currentElement.length() - (name.length() + 2));

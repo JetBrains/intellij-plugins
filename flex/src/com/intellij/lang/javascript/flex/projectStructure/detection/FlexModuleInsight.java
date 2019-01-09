@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.detection;
 
 import com.intellij.ide.util.importProject.ModuleDescriptor;
@@ -12,6 +13,7 @@ import com.intellij.lexer.Lexer;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.xml.NanoXmlBuilder;
 import com.intellij.util.xml.NanoXmlUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,7 +89,7 @@ public class FlexModuleInsight extends ModuleInsight {
       while ((e = zip.getNextEntry()) != null) {
         if (!e.isDirectory() && "catalog.xml".equals(e.getName())) {
           InputStreamReader reader = new InputStreamReader(zip, StandardCharsets.UTF_8);
-          NanoXmlUtil.parse(reader, new NanoXmlUtil.IXMLBuilderAdapter() {
+          NanoXmlUtil.parse(reader, new NanoXmlBuilder() {
             private boolean processingDef;
 
             @Override
