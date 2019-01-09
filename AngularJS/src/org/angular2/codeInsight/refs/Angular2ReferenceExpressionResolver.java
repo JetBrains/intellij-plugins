@@ -107,7 +107,7 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
   public static void findPropertyAccessor(@NotNull TypeScriptFunction function,
                                           boolean isSetter,
                                           @NotNull Consumer<? super JSFunction> processor) {
-    TypeScriptClass parent = (TypeScriptClass)function.getParent();
+    TypeScriptClass parent = ObjectUtils.tryCast(function.getParent(), TypeScriptClass.class);
     String name = function.getName();
     if (name != null && parent != null) {
       JSClassUtils.processClassesInHierarchy(parent, true, (cls, typeSubst, isInterface) -> {
