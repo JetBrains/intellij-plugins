@@ -17,8 +17,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static org.angular2.service.Angular2LanguageService.isEnabledAngularService;
+
 public class Angular2LanguageServiceProvider implements JSLanguageServiceProvider {
   private final AtomicNotNullLazyValue<Angular2LanguageService> myLanguageService;
+  private final Project myProject;
 
   public Angular2LanguageServiceProvider(Project project) {
     myLanguageService =
@@ -28,6 +31,7 @@ public class Angular2LanguageServiceProvider implements JSLanguageServiceProvide
 
         return service;
       });
+    myProject = project;
   }
 
   @NotNull
@@ -46,6 +50,6 @@ public class Angular2LanguageServiceProvider implements JSLanguageServiceProvide
   @Override
   public boolean isCandidate(@NotNull VirtualFile file) {
     FileType type = file.getFileType();
-    return TypeScriptLanguageServiceProvider.isJavaScriptOrTypeScriptFileType(type) || type == HtmlFileType.INSTANCE;
+    return (TypeScriptLanguageServiceProvider.isJavaScriptOrTypeScriptFileType(type) || type == HtmlFileType.INSTANCE);
   }
 }

@@ -39,9 +39,7 @@ public class Angular2HighlightingPassFactory extends JSLanguageServiceHighlighti
   @Override
   protected boolean isAcceptablePsiFile(@NotNull PsiFile file) {
     //fast check
-    if (!(super.isAcceptablePsiFile(file) || file instanceof HtmlFileImpl)) {
-      return false;
-    }
+    if (!(file instanceof HtmlFileImpl)) return false;
 
     VirtualFile virtualFile = file.getVirtualFile();
 

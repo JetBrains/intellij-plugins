@@ -192,7 +192,6 @@
     <!-- Angular 2 Expression language contributions -->
     <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler"/>
     <LanguageServiceProvider implementation="org.angular2.service.Angular2LanguageServiceProvider"/>
-    <LanguageServiceFilter implementation="org.angular2.service.Angular2LanguageServiceFilter"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2AnalysisHandlersFactory"/>

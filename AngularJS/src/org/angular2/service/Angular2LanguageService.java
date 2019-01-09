@@ -263,9 +263,9 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
            Angular2LangUtil.isAngular2Context(element);
   }
 
-  public static boolean isEnabledAngularService(Project project, @NotNull VirtualFile file) {
+  public static boolean isEnabledAngularService(Project project, @NotNull VirtualFile context) {
     return isEnabledAngularService(project) &&
-           Angular2LangUtil.isAngular2Context(project, file);
+           Angular2LangUtil.isAngular2Context(project, context);
   }
 
   private static boolean isEnabledAngularService(Project project) {
@@ -285,5 +285,10 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   protected List<JSAnnotationError> parseGetErrorResult(@NotNull JSLanguageServiceAnswer answer, String path) {
     return ContainerUtil.filter(super.parseGetErrorResult(answer, path), error -> !error.getDescription()
       .startsWith("ng: Parser Error:"));
+  }
+
+  @Override
+  public boolean isServiceEnabled(@NotNull VirtualFile context) {
+    return super.isServiceEnabled(context) && isEnabledAngularService(myProject, context);
   }
 }
