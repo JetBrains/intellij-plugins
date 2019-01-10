@@ -112,6 +112,8 @@ class CfmlTypedHandlerTest : CfmlCodeInsightFixtureTestCase() {
 
   fun testPureCfmlCloseTag() = doTest('/')
 
+  fun testCfmlComplexCloseTag() = doTest('/') // IDEA-205139 regression test
+
 
   private fun doTest(typed: Char) {
     myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)))

@@ -14,6 +14,7 @@
 package com.intellij.coldFusion.model.psi
 
 import com.intellij.coldFusion.model.CfmlLanguage
+import com.intellij.coldFusion.model.CfmlUtil.getCfmlLangInfo
 import com.intellij.coldFusion.model.files.CfmlFileViewProvider
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes
@@ -83,7 +84,9 @@ object CfmlTagUtil {
     else null
   }
 
-  fun isUnclosedTag(cfmlTag: CfmlTag): Boolean {
+  private fun isUnclosedTag(cfmlTag: CfmlTag): Boolean {
+    val tagDescription = getCfmlLangInfo(cfmlTag.project).tagAttributes[cfmlTag.tagName] ?: return false
+    if (tagDescription.isSingle) return false
     return getEndTagNameElement(cfmlTag) == null
   }
 
