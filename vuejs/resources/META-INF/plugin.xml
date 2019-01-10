@@ -106,6 +106,12 @@ The IDE uses its own TypeScript support instead of the TypeScript language servi
       <add-to-group group-id="IntroduceActionsGroup" anchor="last"/>
     </action>
   </actions>
+
+  <project-components>
+    <component>
+      <implementation-class>org.jetbrains.vuejs.typescript.service.VueTypeScriptServiceHighlightingPassFactory</implementation-class>
+    </component>
+  </project-components>
   <extensions defaultExtensionNs="JavaScript">
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider" />
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.VueIndexedFileTypeProvider"/>
@@ -119,5 +125,6 @@ The IDE uses its own TypeScript support instead of the TypeScript language servi
     <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.codeInsight.VueAnalysisHandlersFactory" language="VueJS"/>
     <smartCompletionContributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueInsideTemplateCompletionContributor"/>
     <tsImportResolver implementation="org.jetbrains.vuejs.typescript.VueTypeScriptImportsResolverProvider" order="first"/>
+    <LanguageServiceProvider order="first" implementation="org.jetbrains.vuejs.typescript.service.VueLanguageServiceProvider"/>
   </extensions>
 </idea-plugin>

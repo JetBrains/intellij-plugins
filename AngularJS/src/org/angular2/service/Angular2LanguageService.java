@@ -85,7 +85,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
 
   @Nullable
   @Override
-  protected JSLanguageServiceProtocol createProtocol(Consumer<?> readyConsumer, @NotNull String tsServicePath) {
+  protected JSLanguageServiceProtocol createProtocol(@NotNull Consumer<?> readyConsumer, @NotNull String tsServicePath) {
     ApplicationManager.getApplication().assertReadAccessAllowed();
     VirtualFile directory = getServiceDirectory(myProject);
     if (directory == null) {

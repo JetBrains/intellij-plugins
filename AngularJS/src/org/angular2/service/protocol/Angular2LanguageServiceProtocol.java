@@ -35,7 +35,7 @@ public class Angular2LanguageServiceProtocol extends TypeScriptServiceStandardOu
   public Angular2InitialStateObject createState() {
     Angular2InitialStateObject state = new Angular2InitialStateObject();
     fillState(state);
-    state.pluginName = "angular 2 language service";
+    state.pluginName = "ngTypeScript";
     File directory = JSLanguageServiceUtil.getPluginDirectory(AngularJSLanguage.class, NG_LANGUAGE_SERVICE);
     state.typescriptPluginPath = LocalFilePath.create(TypeScriptUtil.getTypeScriptCompilerFolderFile().getAbsolutePath()
                                                       + File.separator + "typescript" + File.separator);
