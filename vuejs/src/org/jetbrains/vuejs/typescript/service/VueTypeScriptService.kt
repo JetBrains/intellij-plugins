@@ -84,6 +84,8 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
   }
 
   override fun canHighlight(file: PsiFile): Boolean {
+    if (super.canHighlight(file)) return true
+    
     val fileType = file.fileType
     if (fileType != VueFileType.INSTANCE) return false
 
