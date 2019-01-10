@@ -86,6 +86,12 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
     doHighlightText(expectedErrorCount = 2)
   }
 
+  @Test
+  fun testWithFunctionalExpression() {
+    prepareWithDatabase()
+    doHighlightText()
+  }
+
   private fun doHighlightText(expectedErrorCount: Int = 0) {
     myFixture.doHighlighting()
     waitCodeAnalysis(5_000)

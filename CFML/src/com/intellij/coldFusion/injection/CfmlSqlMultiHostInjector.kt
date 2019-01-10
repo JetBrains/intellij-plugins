@@ -162,25 +162,30 @@ class CfmlSqlMultiHostInjector(project: Project) : MultiHostInjector {
 
   //If an SQL query is split by a CfmlExpression we trying to resolve it or substitute with a dummy text 'parameter from expression'
   private fun getSuffixForCfmlExpression(sibling: LeafPsiElement): String? {
+    val nextSibling = sibling.nextSibling
     if (sibling.node.elementType == CfmlTokenTypes.START_EXPRESSION
-        && sibling.nextSibling != null
-        && sibling.nextSibling is CfmlReferenceExpression
-        && sibling.nextSibling.nextSibling != null
-        && sibling.nextSibling.nextSibling.node.elementType == CfmlTokenTypes.END_EXPRESSION) {
-      val cfmlReferenceExpression = sibling.nextSibling as CfmlReferenceExpression
-      val psiElement = cfmlReferenceExpression.resolve()
-      if (psiElement != null && psiElement is CfmlAssignmentExpression.AssignedVariable) {
-        val rightHandExpr = psiElement.rightHandExpr
-        //if resolved expression is integer literal
-        if (rightHandExpr is CfmlLiteralExpressionType && rightHandExpr.node?.elementType == CfmlElementTypes.INTEGER_LITERAL) {
-          return rightHandExpr.text
+        && nextSibling != null
+        && (nextSibling is CfmlReferenceExpression || nextSibling is CfmlFunctionCallExpression)
+        && nextSibling.nextSibling != null
+        && nextSibling.nextSibling.node.elementType == CfmlTokenTypes.END_EXPRESSION) {
+      if (nextSibling is CfmlReferenceExpression) {
+        val psiElement = nextSibling.resolve()
+        if (psiElement != null && psiElement is CfmlAssignmentExpression.AssignedVariable) {
+          val rightHandExpr = psiElement.rightHandExpr
+          //if resolved expression is integer literal
+          if (rightHandExpr is CfmlLiteralExpressionType && rightHandExpr.node?.elementType == CfmlElementTypes.INTEGER_LITERAL) {
+            return rightHandExpr.text
+          }
+          //if resolved expression is a string literal
+          if (rightHandExpr?.node?.elementType is CfmlStringLiteralExpressionType) {
+            return rightHandExpr.text
+          }
         }
-        //if resolved expression is a string literal
-        if (rightHandExpr?.node?.elementType is CfmlStringLiteralExpressionType) {
-          return rightHandExpr.text
-        }
+        return "'parameter from expression'"
+      } else if (nextSibling is CfmlFunctionCallExpression) { //if next sibling is CfmlFunctionalExpression
+        //todo: add resolution for a function call here IDEA-205188
+        return "'parameter from Functional Expression'"
       }
-      return "'parameter from expression'"
     }
     return null
   }
