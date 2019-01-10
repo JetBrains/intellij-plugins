@@ -10,8 +10,8 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScript
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
-import com.intellij.lang.typescript.compiler.ui.TypeScriptServerServiceSettings
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -26,6 +26,9 @@ import org.jetbrains.vuejs.codeInsight.findModule
 import org.jetbrains.vuejs.index.hasVue
 import org.jetbrains.vuejs.typescript.service.protocol.VueTypeScriptServiceProtocol
 
+/**
+ * We need to modify "original" file content by removing all content excluding ts code
+ */
 fun getModifiedVueDocumentText(project: Project, document: Document): String? {
   val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
   if (psiFile == null) return null
@@ -37,20 +40,27 @@ fun getModifiedVueDocumentText(project: Project, document: Document): String? {
 
   val lineNumber = document.getLineNumber(textRange.startOffset)
   val newLines = StringUtil.repeat("\n", lineNumber)
+  val currentLineStart = textRange.startOffset - document.getLineStartOffset(lineNumber)
 
-  val spaceCount = textRange.startOffset - newLines.length
-  val fakeBefore = StringUtil.repeat(" ", spaceCount)
+  if (currentLineStart < 0) return null
+
+  val spacesCurrentLine = StringUtil.repeat(" ", currentLineStart)
+
+  val startSpaceCount = textRange.startOffset - newLines.length - currentLineStart
+  if (startSpaceCount < 0) return null
+  val fakeBefore = StringUtil.repeat(" ", startSpaceCount)
 
   val afterSpaces = document.textLength - textRange.endOffset - 1
+  if (afterSpaces < 0) return null
+
   val fakeAfter = StringUtil.repeat(" ", afterSpaces)
 
-  val result = fakeBefore + newLines + text.text + "\n" + fakeAfter
+  val result = fakeBefore + newLines + spacesCurrentLine + text.text + "\n" + fakeAfter
 
   assert(result.length == document.textLength)
 
   return result
 }
-
 
 class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSettings) :
   TypeScriptServerServiceImpl(project, settings, "Vue Console") {
@@ -85,7 +95,7 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
 
   override fun canHighlight(file: PsiFile): Boolean {
     if (super.canHighlight(file)) return true
-    
+
     val fileType = file.fileType
     if (fileType != VueFileType.INSTANCE) return false
 
