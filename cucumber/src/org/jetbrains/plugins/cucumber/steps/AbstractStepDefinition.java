@@ -1,5 +1,7 @@
 package org.jetbrains.plugins.cucumber.steps;
 
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.SmartPointerManager;
@@ -27,6 +29,7 @@ public abstract class AbstractStepDefinition {
   private static final String CUCUMBER_START_PREFIX = "\\A";
 
   private static final String CUCUMBER_END_SUFFIX = "\\z";
+  private static final int TIME_TO_CHECK_STEP_BY_REGEXP_MILLIS = 300;
 
   private final SmartPsiElementPointer<PsiElement> myElementPointer;
 
@@ -42,7 +45,17 @@ public abstract class AbstractStepDefinition {
 
   public boolean matches(@NotNull String stepName) {
     final Pattern pattern = getPattern();
-    return pattern != null && pattern.matcher(stepName).find();
+    if (pattern == null) {
+      return false;
+    }
+
+    CharSequence stepChars = StringUtil.newBombedCharSequence(stepName, TIME_TO_CHECK_STEP_BY_REGEXP_MILLIS);
+    try {
+      return pattern.matcher(stepChars).find();
+    }
+    catch (ProcessCanceledException ignore) {
+      return false;
+    }
   }
 
   @Nullable
@@ -128,7 +141,7 @@ public abstract class AbstractStepDefinition {
    * Checks if step definition supports rename.
    * @param newName if null -- check if definition supports renaming at all (regardless new name).
    *                If not null -- check if it can be renamed to the new (provided) name.
-   * @return true if rename is supportged
+   * @return true if rename is supported
    */
   public boolean supportsRename(@Nullable final String newName) {
     return true;

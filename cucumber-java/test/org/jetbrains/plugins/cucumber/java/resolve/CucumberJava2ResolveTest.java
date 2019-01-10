@@ -62,6 +62,10 @@ public class CucumberJava2ResolveTest extends BaseCucumberJavaResolveTest {
     doTest("negativeLookBehind", "c<caret>a", "step_method");
   }
 
+  public void testTimeout() {
+    doTest("complexRegex", "wit<caret>h", null);
+  }
+
   /**
    * @see CucumberJava1ResolveTest#testExactStepMatching()
    */
