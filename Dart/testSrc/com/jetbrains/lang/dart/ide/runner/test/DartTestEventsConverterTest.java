@@ -513,7 +513,7 @@ public class DartTestEventsConverterTest extends BaseSMTRunnerTestCase {
     }
 
     @Override
-    public void onTestsReporterAttached() {
+    public void onTestsReporterAttached(@NotNull final TestDurationStrategy rootTestDurationStrategy) {
     }
 
     @Override
