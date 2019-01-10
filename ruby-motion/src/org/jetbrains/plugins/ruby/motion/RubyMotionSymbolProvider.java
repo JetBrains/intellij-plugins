@@ -49,7 +49,7 @@ public class RubyMotionSymbolProvider extends RubySymbolProviderBase {
   @Override
   public Symbol findSymbol(@NotNull Symbol anchor,
                            @NotNull FQN fqn,
-                           TypeSet types,
+                           @NotNull TypeSet types,
                            @Nullable PsiElement invocationPoint) {
     if (!RubyMotionUtil.getInstance().hasMacRubySupport(invocationPoint)) return null;
 
