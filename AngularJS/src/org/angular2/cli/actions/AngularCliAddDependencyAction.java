@@ -234,7 +234,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       CompletionModuleInfo module = modules.get(0);
       ProcessHandler handler = NpmPackageProjectGenerator.generate(
         node, new NodePackage(Objects.requireNonNull(module.getVirtualFile()).getPath()),
-        pkg -> Objects.requireNonNull(pkg.findBinFile()).getAbsolutePath(),
+        pkg -> Objects.requireNonNull(pkg.findBinFile("ng", null)).getAbsolutePath(),
         cli, VfsUtilCore.virtualToIoFile(cli),
         project, () -> GistManager.getInstance().invalidateData(),
         "Installing " + packageSpec + " for " + cli.getName(),
