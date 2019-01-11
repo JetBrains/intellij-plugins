@@ -29,10 +29,30 @@ public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
   public String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("") + "/convertToLocal";
   }
-  
+
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testAll() {
-    doTestAll();
+  public void testConvertToLocal_() throws Exception {
+    doCompositeNameBeforeAfterTest("as", false);
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  public void testConvertToLocal_1() throws Exception {
+    doCompositeNameBeforeAfterTest("as", false);
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  public void testConvertToLocal_2() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  public void testConvertToLocal_3() throws Exception {
+    doCompositeNameBeforeAfterTest("as", false);
+  }
+
+  @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
+  public void testConvertToLocal_4() throws Exception {
+    doCompositeNameBeforeAfterTest("as", false);
   }
 }
 
