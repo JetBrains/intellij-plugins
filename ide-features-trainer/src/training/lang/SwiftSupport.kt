@@ -20,12 +20,11 @@ class SwiftSupport : AbstractLangSupport() {
     override fun importLearnProject(): Project? {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-    override fun applyProjectSdk(project: Project) {
-    }
+    
     override fun applyToProjectAfterConfigure(): (Project) -> Unit = {
     }
 
-    override fun checkSdk(sdk: Sdk?) {}
+    override fun checkSdk(sdk: Sdk?, project: Project) {}
 
     override fun createProject(projectName: String, projectToClose: Project?): Project? {
         return ProjectUtils.importOrOpenProject("/learnProjects/"+ApplicationNamesInfo.getInstance().fullProductName.toLowerCase() + "_swift/LearnProjectSwift", "LearnProject")

@@ -124,7 +124,7 @@ class CourseManager internal constructor() {
   @Throws(InvalidSdkException::class, NoJavaModuleException::class)
   fun checkEnvironment(project: Project) {
     val sdk = ProjectRootManager.getInstance(project).projectSdk
-    LangManager.getInstance().getLangSupport().checkSdk(sdk)
+    LangManager.getInstance().getLangSupport().checkSdk(sdk, project)
   }
 
   fun findLesson(lessonName: String): Lesson? {
