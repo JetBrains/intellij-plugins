@@ -43,10 +43,12 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
     return BASE_PATH;
   }
 
+
   public void testSimpleVue() throws Exception {
     doTestWithCopyDirectory();
   }
 
+  @TypeScriptVersion(TypeScriptVersions.TS28)
   public void testSimpleCompletion() throws Exception {
     JSTestUtils.testES6(myProject, () -> checkBaseStringQualifiedCompletionWithTemplates(() -> doTestWithCopyDirectory()));
   }
