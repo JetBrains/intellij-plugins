@@ -6,7 +6,7 @@ import training.learn.LearnBundle
 /**
 * @author Sergey Karashevich
 */
-class NoSdkException : Exception {
+class NoSdkException : InvalidSdkException {
 
     constructor(type: String) : super("Cannot start learning: the $type SDK is not specified") {}
 

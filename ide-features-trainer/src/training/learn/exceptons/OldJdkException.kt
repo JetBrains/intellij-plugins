@@ -5,7 +5,7 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 /**
  * Created by karashevich on 09/09/15.
  */
-class OldJdkException : Exception {
+class OldJdkException : InvalidSdkException {
 
   constructor(s: String) : super(s) {}
 

@@ -5,7 +5,6 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel
@@ -65,13 +64,13 @@ class PythonLangSupport : AbstractLangSupport() {
 
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {}
 
-  override fun checkSdkCompatibility(sdk: Sdk, sdkTypeId: SdkTypeId) {
-    if (sdkTypeId is PythonSdkType) {
+  override fun checkSdk(sdk: Sdk?) {
+    checkSdkPresence(sdk)
+    if (sdk!!.sdkType is PythonSdkType) {
       if (!isNoOlderThan27(sdk)) throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")
     }
     else throw NoSdkException()
   }
-
 
   fun addToSdkList() {
   }

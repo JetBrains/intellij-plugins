@@ -85,7 +85,9 @@ class JavaLangSupport : AbstractLangSupport() {
     return newJdk
   }
 
-  override fun checkSdkCompatibility(sdk: Sdk, sdkTypeId: SdkTypeId) {
+  override fun checkSdk(sdk: Sdk?) {
+    checkSdkPresence(sdk)
+    val sdkTypeId = sdk!!.sdkType
     if (sdkTypeId is JavaSdk) {
       val version = sdkTypeId.getVersion(sdk)
       if (version != null && !version.isAtLeast(JavaSdkVersion.JDK_1_6)) throw InvalidSdkException("Please use at least JDK 1.6 or IDEA SDK with corresponding JDK")

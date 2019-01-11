@@ -16,16 +16,14 @@
 package training.lang
 
 import com.intellij.ide.impl.ProjectUtil
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.wm.ToolWindowAnchor
+import training.learn.exceptons.NoSdkException
 import java.io.File
 
 abstract class AbstractLangSupport : LangSupport {
   override val defaultProjectName:String
     get() = "LearnProject"
-
-  override fun needToCheckSDK(): Boolean {
-    return true
-  }
 
   override fun getProjectFilePath(projectName: String): String {
     return ProjectUtil.getBaseDir() + File.separator + projectName
@@ -33,6 +31,12 @@ abstract class AbstractLangSupport : LangSupport {
 
   override fun getToolWindowAnchor(): ToolWindowAnchor {
     return ToolWindowAnchor.LEFT
+  }
+
+  protected fun checkSdkPresence(sdk: Sdk?) {
+    if (sdk == null) {
+      throw NoSdkException()
+    }
   }
 
 }
