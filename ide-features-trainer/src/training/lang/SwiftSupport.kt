@@ -3,7 +3,6 @@ package training.lang
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.projectRoots.SdkTypeId
 import com.intellij.openapi.wm.ToolWindowAnchor
 import training.project.ProjectUtils
 
@@ -25,11 +24,9 @@ class SwiftSupport : AbstractLangSupport() {
     }
     override fun applyToProjectAfterConfigure(): (Project) -> Unit = {
     }
-    override fun checkSdkCompatibility(sdk: Sdk, sdkTypeId: SdkTypeId) {
-    }
-    override fun needToCheckSDK(): Boolean {
-        return false
-    }
+
+    override fun checkSdk(sdk: Sdk?) {}
+
     override fun createProject(projectName: String, projectToClose: Project?): Project? {
         return ProjectUtils.importOrOpenProject("/learnProjects/"+ApplicationNamesInfo.getInstance().fullProductName.toLowerCase() + "_swift/LearnProjectSwift", "LearnProject")
     }
