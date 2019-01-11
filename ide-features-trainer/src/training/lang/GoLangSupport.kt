@@ -21,9 +21,7 @@ class GoLangSupport : AbstractLangSupport() {
   override val FILE_EXTENSION: String
     get() = "go"
 
-  override fun checkSdk(sdk: Sdk?) {}
-
-  override fun applyProjectSdk(project: Project): Unit { }
+  override fun checkSdk(sdk: Sdk?, project: Project) {}
 
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = {}
 
