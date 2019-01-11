@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "untitled16": {
+      "root": "",
+      "sourceRoot": "src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "targets": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/untitled16",
+            "index": "complex-cli-index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.app.json",
+            "styles": [
+              "complex-cli.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "untitled16"
+}

@@ -8,7 +8,9 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -16,13 +18,18 @@ import static com.intellij.util.containers.ContainerUtil.newHashSet;
 
 public class Angular2AttributeInsertHandler implements InsertHandler<LookupElement> {
 
-
   private static final Set<Character> HTML_ATTR_NOT_ALLOWED_CHARS = newHashSet('=', '\'', '\"', '<', '>', '/', '\0');
 
+  private final boolean myShouldRemoveLeftover;
   private final boolean myShouldCompleteValue;
+  private final String myAddSuffix;
 
-  public Angular2AttributeInsertHandler(boolean value) {
-    myShouldCompleteValue = value;
+  public Angular2AttributeInsertHandler(boolean shouldRemoveLeftover,
+                                        boolean shouldCompleteValue,
+                                        @Nullable String addSuffix) {
+    myShouldRemoveLeftover = shouldRemoveLeftover;
+    myShouldCompleteValue = shouldCompleteValue;
+    myAddSuffix = addSuffix;
   }
 
   @Override
@@ -31,23 +38,31 @@ public class Angular2AttributeInsertHandler implements InsertHandler<LookupEleme
     final Document document = editor.getDocument();
     final int caretOffset = editor.getCaretModel().getOffset();
 
-    CharSequence text = document.getCharsSequence();
-    int deleteOffset = caretOffset;
-    boolean isHtml = context.getFile().getLanguage().isKindOf(HTMLLanguage.INSTANCE);
-    while (deleteOffset < text.length()) {
-      char ch = text.charAt(deleteOffset);
-      if (Character.isWhitespace(ch)
-          || HTML_ATTR_NOT_ALLOWED_CHARS.contains(ch)
-          || (!isHtml && !Character.isLetterOrDigit(ch))) {
-        break;
+    if (myShouldRemoveLeftover) {
+      int deleteOffset = caretOffset;
+      boolean isHtml = context.getFile().getLanguage().isKindOf(HTMLLanguage.INSTANCE);
+      final CharSequence text = document.getCharsSequence();
+      while (deleteOffset < text.length()) {
+        char ch = text.charAt(deleteOffset);
+        if (Character.isWhitespace(ch)
+            || HTML_ATTR_NOT_ALLOWED_CHARS.contains(ch)
+            || (!isHtml && !Character.isLetterOrDigit(ch))) {
+          break;
+        }
+        deleteOffset++;
       }
-      deleteOffset++;
-    }
-    if (deleteOffset > caretOffset) {
-      document.deleteString(caretOffset, deleteOffset);
+      if (deleteOffset > caretOffset) {
+        document.deleteString(caretOffset, deleteOffset);
+      }
     }
     if (myShouldCompleteValue) {
       XmlAttributeInsertHandler.INSTANCE.handleInsert(context, item);
+    }
+    if (myAddSuffix != null) {
+      final CharSequence text = document.getCharsSequence();
+      if (!CharArrayUtil.regionMatches(text, caretOffset, myAddSuffix)) {
+        document.insertString(caretOffset, myAddSuffix);
+      }
     }
   }
 }

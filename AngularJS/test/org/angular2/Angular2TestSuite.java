@@ -3,6 +3,7 @@ package org.angular2;
 
 import org.angular2.cli.BlueprintListTest;
 import org.angular2.codeInsight.*;
+import org.angular2.css.CssClassTest;
 import org.angular2.editor.ComponentDeclarationNavigationTest;
 import org.angular2.formatting.FormattingTest;
 import org.angular2.inspections.EmptyEventHandlerInspectionTest;
@@ -58,6 +59,7 @@ import org.junit.runners.Suite;
   Angular2ServiceTest.class,
   GotoSymbolTest.class,
   GotoRelatedTest.class,
+  CssClassTest.class,
   Angular2ReSharperTestSuite.class,
 })
 public class Angular2TestSuite {

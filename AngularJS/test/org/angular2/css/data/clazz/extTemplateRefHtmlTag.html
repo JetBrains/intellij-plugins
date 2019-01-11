@@ -1,0 +1,9 @@
+<html>
+<div #myDiv (click)="onCompletedButton()" [todo]="myDiv">
+  <div [ngClass]="{'current':i == (wordIndex | async)}">{{todo}}</div>
+  <todo-cmp (click)="deleteTodo" [todo]="!myInput?.isValid" (window:resize)="">aaa</todo-cmp>
+  <div *ngFor="let something of items" class="inDa<caret>Class foo2">
+    {{something.}}
+  </div>
+</div>
+</html>

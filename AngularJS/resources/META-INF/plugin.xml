@@ -30,17 +30,20 @@
   <depends optional="true" config-file="ui-router-diagram.xml">com.intellij.diagram</depends>
 
   <extensionPoints>
-    <extensionPoint qualifiedName="org.angular2.attributesProvider" interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"/>
+    <extensionPoint qualifiedName="org.angular2.attributesProvider"
+                    interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
     <codeInsight.template.postfixTemplateProvider language="AngularJS"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
 
-    <lang.surroundDescriptor language="AngularJS" implementationClass="org.angularjs.refactoring.surround.AngularJSExpressionSurroundDescriptor"/>
+    <lang.surroundDescriptor language="AngularJS"
+                             implementationClass="org.angularjs.refactoring.surround.AngularJSExpressionSurroundDescriptor"/>
 
-    <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider" order="first"/>
-    <xml.tagNameProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" />
+    <xml.attributeDescriptorsProvider implementation="org.angularjs.codeInsight.attributes.AngularJSAttributeDescriptorsProvider"
+                                      order="first"/>
+    <xml.tagNameProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider"/>
     <xml.elementDescriptorProvider implementation="org.angularjs.codeInsight.tags.AngularJSTagDescriptorsProvider" order="last"/>
     <xml.xmlExtension implementation="org.angularjs.codeInsight.AngularJSHtmlExtension" order="first" id="AngularJS"/>
 
@@ -65,12 +68,12 @@
     <fileBasedIndex implementation="org.angularjs.index.AngularAppIndex"/>
 
     <gotoSymbolContributor implementation="org.angularjs.navigation.AngularGotoSymbolContributor"/>
-    <lang.documentationProvider language="HTML" implementationClass="org.angularjs.AngularJSDocumentationProvider" />
+    <lang.documentationProvider language="HTML" implementationClass="org.angularjs.AngularJSDocumentationProvider"/>
     <lang.documentationProvider language="JavaScript" implementationClass="org.angularjs.AngularJSDocumentationProvider" order="first"/>
     <lang.parserDefinition language="AngularJS" implementationClass="org.angularjs.lang.parser.AngularJSParserDefinition"/>
     <lang.syntaxHighlighterFactory language="AngularJS" implementationClass="org.angularjs.lang.AngularJSSyntaxHighlighterFactory"/>
     <psi.referenceContributor implementation="org.angularjs.codeInsight.refs.AngularJSReferencesContributor"/>
-    <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter" />
+    <highlightErrorFilter implementation="org.angularjs.lang.AngularJSErrorFilter"/>
     <annotator language="AngularJS" implementationClass="org.angularjs.codeInsight.AngularJSMessageFormatAnnotator"/>
     <annotator language="AngularJS" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <fileTypeFactory implementation="org.angularjs.AngularJSFileFactory"/>
@@ -110,7 +113,8 @@
                         serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
     <javascript.rename.extension implementation="org.angular2.refactoring.Angular2RenameExtension"/>
-    <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection" displayName="Angular CLI Add Dependency"
+    <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection"
+                     displayName="Angular CLI Add Dependency"
                      groupName="Angular" enabledByDefault="true" level="WARNING" language="JSON"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
@@ -135,14 +139,16 @@
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
     <lang.parserDefinition language="Angular2Html" implementationClass="org.angular2.lang.html.parser.Angular2HtmlParserDefinition"/>
-    <lang.syntaxHighlighterFactory language="Angular2Html" implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="Angular2Html"
+                                   implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
     <lang.substitutor language="HTML" implementationClass="org.angular2.lang.html.Angular2HtmlLanguageSubstitutor"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
     <localInspection implementationClass="org.angular2.inspections.EmptyEventHandlerInspection" displayName="Empty Event Handler"
                      groupName="Angular" enabledByDefault="true" level="WARNING" language="Angular2Html"/>
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2ServiceCompletionContributor"
                             id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
-    <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider" order="first"/>
+    <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"
+                                      order="first"/>
     <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider"/>
     <xml.elementDescriptorProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider" order="last"/>
     <idIndexer filetype="Angular2Html" implementationClass="org.angular2.lang.html.index.Angular2HtmlIdIndexer"/>
@@ -162,7 +168,7 @@
     <stubElementTypeHolder class="org.angular2.lang.expr.parser.Angular2StubElementTypes"/>
     <completion.contributor language="any" implementationClass="org.angular2.codeInsight.Angular2CompletionContributor"
                             id="Angular2CompletionContributor"
-                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor, before xmlNonFirst"/>
+                            order="before JSPatternBasedCompletionContributor, before JSCompletionContributor, before xmlNonFirst, before cssClassOrIdReferenceCompletionContributor"/>
     <lang.braceMatcher language="Angular2" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
     <annotator language="Angular2" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <implicitUsageProvider implementation="org.angular2.codeInsight.refs.Angular2ImplicitUsageProvider"/>
@@ -195,11 +201,12 @@
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2AnalysisHandlersFactory"/>
-    <inheritedLanguagesConfigurableProvider language="Angular2" implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
+    <inheritedLanguagesConfigurableProvider language="Angular2"
+                                            implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
-    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BoundHtmlAttributesProvider" />
+    <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BoundHtmlAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2ExtendedKeyEventAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
   </extensions>

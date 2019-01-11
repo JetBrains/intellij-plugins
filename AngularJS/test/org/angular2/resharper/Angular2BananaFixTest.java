@@ -15,7 +15,7 @@ public class Angular2BananaFixTest extends ReSharperIntentionTestCase {
 
   @Override
   protected boolean isExcluded() {
-    return true;
+    return true; //no fix
   }
 
   @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")

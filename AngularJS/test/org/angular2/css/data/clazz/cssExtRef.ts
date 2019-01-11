@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import {Component, Input, Output, View} from 'angular2/core';
 import {EventEmitter} from "events";
 
@@ -11,13 +11,7 @@ import {EventEmitter} from "events";
     <div *ngFor="let something of items" class="inDa<caret>Class foo2">
     {{something.}}
 </div>
-  </div>`,
-    styles:[`
-    .inDaClass {
-    
-    }
-`]
-})
+  </div>`})
 export class TodoCmp {
     items:string[];
     private other:string[];

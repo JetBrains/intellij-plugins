@@ -1,5 +1,5 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.angular2.codeInsight.refs;
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angular2.css.refs;
 
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
@@ -16,16 +16,25 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Angular2CssClassInLiteralReferenceProvider extends PsiReferenceProvider {
+public class Angular2CssClassInLiteralOrIdentifierReferenceProvider extends PsiReferenceProvider {
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     String text = null;
+    int offset;
     if (element instanceof JSLiteralExpression) {
       text = ((JSLiteralExpression)element).getStringValue();
+      offset = 1;
     }
     else if (element.getNode().getElementType() == JSTokenTypes.STRING_LITERAL) {
       text = StringUtil.unquoteString(element.getText());
+      offset = 1;
+    }
+    else {
+      if (element.getNode().getElementType() == JSTokenTypes.IDENTIFIER) {
+        text = element.getText();
+      }
+      offset = 0;
     }
     if (text == null) {
       return PsiReference.EMPTY_ARRAY;
@@ -34,7 +43,7 @@ public class Angular2CssClassInLiteralReferenceProvider extends PsiReferenceProv
     CssResolveUtil.consumeClassNames(text, element, (token, range) -> {
       CssElementDescriptorProvider descriptorProvider = CssDescriptorsUtil.findDescriptorProvider(element);
       assert descriptorProvider != null;
-      range = range.shiftRight(1);
+      range = range.shiftRight(offset);
       result.add(descriptorProvider.getStyleReference(
         element, range.getStartOffset(), range.getEndOffset(), true));
     });

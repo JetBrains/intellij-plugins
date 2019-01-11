@@ -39,7 +39,6 @@ import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -526,28 +525,6 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
-  public void testCssExternalReference20() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("cssExtRef.ts", "package.json", "css.css");
-      PsiElement resolve = resolveReference("inDa<caret>Class");
-      assertEquals("css.css", resolve.getContainingFile().getName());
-    });
-  }
-
-  public void testCssInternalReference20() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("cssIntRef.ts", "package.json");
-      resolveReference("inDa<caret>Class");
-    });
-  }
-
-  public void testCssInternalReferenceWithHtmlTag20() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("cssIntRefHtmlTag.ts", "package.json");
-      resolveReference("inDa<caret>Class");
-    });
-  }
-
   public void testCaseCompletion2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("case.html", "ng_for_of.ts", "package.json");
@@ -795,29 +772,6 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
           assertContainsElements(myFixture.getLookupElementStrings(), "foo");
           assertDoesntContain(myFixture.getLookupElementStrings(), "split", "length", "type");
         }
-      }
-    });
-  }
-
-  public void testNgClassCodeCompletion() {
-    JSTestUtils.testES6(myFixture.getProject(), () -> {
-      myFixture.configureByFiles("ngClass.html", "ngClass.css", "package.json");
-      for (String prefix : asList("{", "[", "")) {
-        AngularTestUtil.moveToOffsetBySignature("=\"" + prefix + "'foo1 b<caret>'", myFixture);
-        myFixture.completeBasic();
-        assertEquals(ContainerUtil.set("bar", "boo"), new HashSet<>(myFixture.getLookupElementStrings()));
-      }
-    });
-  }
-
-  public void testNgClassReferences() {
-    JSTestUtils.testES6(myFixture.getProject(), () -> {
-      myFixture.configureByFiles("ngClass.html", "ngClass.css", "package.json");
-      for (String prefix : asList("{", "[", "")) {
-        AngularTestUtil.resolveReference("=\"" + prefix + "'fo<caret>o b", myFixture);
-        AngularTestUtil.resolveReference("=\"" + prefix + "'foo b<caret>ar", myFixture);
-        AngularTestUtil.assertUnresolvedReference("=\"" + prefix + "'f<caret>oo1 ", myFixture);
-        AngularTestUtil.assertUnresolvedReference("=\"" + prefix + "'foo1 b<caret>", myFixture);
       }
     });
   }

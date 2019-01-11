@@ -44,6 +44,11 @@ fun load(project: Project, context: VirtualFile): AngularCliConfig {
 }
 
 interface AngularCliConfig {
+
+  fun getIndexHtmlFile(): VirtualFile?
+
+  fun getGlobalStyleSheets(): Collection<VirtualFile>
+
   /**
    * @return root folders according to apps -> root in .angular-cli.json; usually it is a single 'src' folder.
    */
@@ -63,6 +68,9 @@ interface AngularCliConfig {
 }
 
 private class AngularCliEmptyConfig : AngularCliConfig {
+  override fun getIndexHtmlFile(): VirtualFile? = null
+
+  override fun getGlobalStyleSheets(): Collection<VirtualFile> = emptyList()
 
   override fun getRootDirs(): Collection<VirtualFile> = emptyList()
 
@@ -83,17 +91,33 @@ private class AngularCliJsonFileConfig(angularCliJson: VirtualFile, text: CharSe
   private val myStylePreprocessorIncludePaths: List<String>
   private val myKarmaConfigPath: String?
   private val myProtractorConfigPath: String?
+  private val myIndexHtmlPath: String?
+  private val myStyles: List<String>?
 
   init {
     val ngCliConfig = GsonBuilder().setLenient().create().fromJson(CharSequenceReader(text), AngularCli::class.java)
     val allProjects = ContainerUtil.concat(ngCliConfig.apps, ngCliConfig.projects.values.toList())
     myRootPaths = allProjects.mapNotNull { it.rootPath }.fold(ArrayList()) { acc, root -> acc.add(root); acc; }
-    myStylePreprocessorIncludePaths = ContainerUtil.concat(
-      allProjects.mapNotNull { it.stylePreprocessorOptions?.includePaths },
-      allProjects.mapNotNull { it.targets?.build?.options?.stylePreprocessorOptions?.includePaths }
-    ).fold(ArrayList()) { acc, list -> acc.addAll(list); acc; }
+    myStylePreprocessorIncludePaths = allProjects.mapNotNull {
+      (it.targets?.build?.options?.stylePreprocessorOptions ?: it.stylePreprocessorOptions)?.includePaths
+    }.fold(ArrayList()) { acc, list -> acc.addAll(list); acc; }
     myKarmaConfigPath = allProjects.mapNotNull { it.targets?.test?.options?.karmaConfig }.firstOrNull()
     myProtractorConfigPath = allProjects.mapNotNull { it.targets?.e2e?.options?.protractorConfig }.firstOrNull()
+    myIndexHtmlPath = allProjects.mapNotNull { it.targets?.build?.options?.index ?: it.index }.firstOrNull()
+    myStyles = allProjects.mapNotNull { it.targets?.build?.options?.styles ?: it.styles }.firstOrNull()
+  }
+
+  private fun resolveFile(filePath: String?): VirtualFile? {
+    return myAngularCliJson.parent.findFileByRelativePath(filePath ?: return null)
+           ?: getRootDirs().mapNotNull { it.findFileByRelativePath(filePath) }.firstOrNull()
+  }
+
+  override fun getIndexHtmlFile(): VirtualFile? {
+    return resolveFile(myIndexHtmlPath)
+  }
+
+  override fun getGlobalStyleSheets(): Collection<VirtualFile> {
+    return (myStyles ?: return emptyList()).mapNotNull { resolveFile(it) }
   }
 
   override fun getRootDirs(): Collection<VirtualFile> {
@@ -134,14 +158,26 @@ private class AngularCli {
   val projects: Map<String, AngularCliProject> = HashMap()
 }
 
-private class AngularCliProject {
-  @SerializedName("root")
-  @Expose
-  val rootPath: String? = null
+private open class AngularCliBuildOptionsBase {
 
   @SerializedName("stylePreprocessorOptions")
   @Expose
   val stylePreprocessorOptions: AngularCliStylePreprocessorOptions? = null
+
+  @SerializedName("index")
+  @Expose
+  val index: String? = null
+
+  @SerializedName("styles")
+  @Expose
+  val styles: List<String>? = null
+
+}
+
+private class AngularCliProject : AngularCliBuildOptionsBase() {
+  @SerializedName("root")
+  @Expose
+  val rootPath: String? = null
 
   @SerializedName("targets", alternate = ["architect"])
   @Expose
@@ -193,11 +229,7 @@ private class AngularCliBuild {
   val options: AngularCliBuildOptions? = null
 }
 
-private class AngularCliBuildOptions {
-  @SerializedName("stylePreprocessorOptions")
-  @Expose
-  val stylePreprocessorOptions: AngularCliStylePreprocessorOptions? = null
-}
+private class AngularCliBuildOptions : AngularCliBuildOptionsBase()
 
 private class AngularCliStylePreprocessorOptions {
   @SerializedName("includePaths")

@@ -56,6 +56,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   private static final JSType STRING_TYPE = new JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE);
 
+  private static final Collection<String> ONE_TIME_BINDING_EXCLUDES = newArrayList("ngClass");
+
   @Nullable
   public static Angular2AttributeDescriptor create(@NotNull String attributeName) {
     return create(attributeName, emptyList());
@@ -259,7 +261,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       .withCaseSensitivity(myInfo.type != REGULAR || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
       .withIcon(getIcon())
       .withBoldness(myPriority == AttributePriority.HIGH)
-      .withInsertHandler(new Angular2AttributeInsertHandler(shouldCompleteValue()));
+      .withInsertHandler(new Angular2AttributeInsertHandler(true, shouldCompleteValue(), null));
     if (info.lookupStrings != null) {
       element = element.withLookupStrings(map(info.lookupStrings, str -> StringUtil.trimStart(str, hide.first)));
     }
@@ -324,9 +326,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty property) {
-    return property.isVirtual()
-           || (property.getType() != null
-               && expandStringLiteralTypes(property.getType()).isDirectlyAssignableType(STRING_TYPE, null));
+    return !ONE_TIME_BINDING_EXCLUDES.contains(property.getName())
+           && (property.isVirtual()
+               || (property.getType() != null
+                   && expandStringLiteralTypes(property.getType()).isDirectlyAssignableType(STRING_TYPE, null)));
   }
 
   private static <T> void addDirectiveDescriptors(@NotNull Collection<T> list,

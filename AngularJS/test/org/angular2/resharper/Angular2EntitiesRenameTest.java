@@ -28,21 +28,19 @@ import java.util.stream.Collectors;
 public class Angular2EntitiesRenameTest extends ReSharperParameterizedTestCase {
 
   private static final Set<String> TESTS_TO_SKIP = ContainerUtil.newHashSet(
-    "test019",
-    "test021",
-    "test023",
-    "test024",
-    "test025",
-    "test026",
-    "test027",
-    "test028",
-    "test029",
-    "test030",
-    "test031",
-    "test032",
-    "test039",
-    "test041",
-    "test043"
+    "test023", //insufficient input/output refactoring support
+    "test024", //insufficient input/output refactoring support
+    "test025", //insufficient input/output refactoring support
+    "test026", //insufficient input/output refactoring support
+    "test027", //insufficient input/output refactoring support
+    "test028", //insufficient input/output refactoring support
+    "test029", //insufficient input/output refactoring support
+    "test030", //insufficient input/output refactoring support
+    "test031", //insufficient input/output refactoring support
+    "test032", //insufficient input/output refactoring support
+    "test039", //insufficient input/output refactoring support
+    "test041", //insufficient input/output refactoring support
+    "test043"  //insufficient input/output refactoring support
   );
 
   @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")

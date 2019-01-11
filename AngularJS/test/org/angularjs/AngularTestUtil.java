@@ -4,6 +4,7 @@ package org.angularjs;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -47,6 +48,7 @@ public class AngularTestUtil {
   }
 
   public static void moveToOffsetBySignature(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
+    PsiDocumentManager.getInstance(fixture.getProject()).commitAllDocuments();
     int offset = AngularTestUtil.findOffsetBySignature(signature, fixture.getFile());
     fixture.getEditor().getCaretModel().moveToOffset(offset);
   }
