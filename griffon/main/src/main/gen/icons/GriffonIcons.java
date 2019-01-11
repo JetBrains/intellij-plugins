@@ -14,6 +14,12 @@ public final class GriffonIcons {
     return IconLoader.getIcon(path, GriffonIcons.class);
   }
 
-  public static final Icon Griffon = load("/icons/griffon.svg"); // 16x16
-  public static final Icon GriffonToolWindow = load("/icons/griffonToolWindow.svg"); // 13x13
+  /**
+   * 16x16
+   */
+  public static final Icon Griffon = load("/icons/griffon.svg");
+  /**
+   * 13x13
+   */
+  public static final Icon GriffonToolWindow = load("/icons/griffonToolWindow.svg");
 }

@@ -14,12 +14,36 @@ public final class FlexSharedIcons {
     return IconLoader.getIcon(path, FlexSharedIcons.class);
   }
 
-  public static final Icon Bc_desktop_as = load("/images/bc-desktop-as.svg"); // 16x16
-  public static final Icon Bc_desktop_flex = load("/images/bc-desktop-flex.svg"); // 16x16
-  public static final Icon Bc_desktop = load("/images/bc-desktop.svg"); // 16x16
-  public static final Icon Bc_mobile_as = load("/images/bc-mobile-as.svg"); // 16x16
-  public static final Icon Bc_mobile_flex = load("/images/bc-mobile-flex.svg"); // 16x16
-  public static final Icon Bc_mobile = load("/images/bc-mobile.svg"); // 16x16
-  public static final Icon Bc_web_as = load("/images/bc-web-as.svg"); // 16x16
-  public static final Icon Bc_web_flex = load("/images/bc-web-flex.svg"); // 16x16
+  /**
+   * 16x16
+   */
+  public static final Icon Bc_desktop_as = load("/images/bc-desktop-as.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon Bc_desktop_flex = load("/images/bc-desktop-flex.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon Bc_desktop = load("/images/bc-desktop.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon Bc_mobile_as = load("/images/bc-mobile-as.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon Bc_mobile_flex = load("/images/bc-mobile-flex.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon Bc_mobile = load("/images/bc-mobile.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon Bc_web_as = load("/images/bc-web-as.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon Bc_web_flex = load("/images/bc-web-flex.svg");
 }

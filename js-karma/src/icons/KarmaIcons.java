@@ -17,5 +17,8 @@ public final class KarmaIcons {
     return IconLoader.getIcon(path, KarmaIcons.class);
   }
 
-  public static final Icon Karma2 = load("/icons/karma2.svg"); // 16x16
+  /**
+   * 16x16
+   */
+  public static final Icon Karma2 = load("/icons/karma2.svg");
 }

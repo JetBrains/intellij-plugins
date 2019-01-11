@@ -14,5 +14,8 @@ public final class OgnlIcons {
     return IconLoader.getIcon(path, OgnlIcons.class);
   }
 
-  public static final Icon Action_small = load("/icons/action_small.png"); // 10x10
+  /**
+   * 10x10
+   */
+  public static final Icon Action_small = load("/icons/action_small.png");
 }

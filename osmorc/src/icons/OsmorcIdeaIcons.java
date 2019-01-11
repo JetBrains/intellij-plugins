@@ -14,8 +14,20 @@ public final class OsmorcIdeaIcons {
     return IconLoader.getIcon(path, OsmorcIdeaIcons.class);
   }
 
-  public static final Icon Bnd = load("/icons/bnd.svg"); // 16x16
-  public static final Icon BndLaunch = load("/icons/bndLaunch.svg"); // 16x16
-  public static final Icon BndTest = load("/icons/bndTest.svg"); // 16x16
-  public static final Icon Osgi = load("/icons/osgi.svg"); // 16x16
+  /**
+   * 16x16
+   */
+  public static final Icon Bnd = load("/icons/bnd.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon BndLaunch = load("/icons/bndLaunch.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon BndTest = load("/icons/bndTest.svg");
+  /**
+   * 16x16
+   */
+  public static final Icon Osgi = load("/icons/osgi.svg");
 }
