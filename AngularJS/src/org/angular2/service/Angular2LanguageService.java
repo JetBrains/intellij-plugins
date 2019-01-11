@@ -284,7 +284,7 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @Override
   protected List<JSAnnotationError> parseGetErrorResult(@NotNull JSLanguageServiceAnswer answer, String path) {
     return ContainerUtil.filter(super.parseGetErrorResult(answer, path), error -> !error.getDescription()
-      .startsWith("ng: Parser Error:"));
+      .startsWith("Angular: Parser Error:"));
   }
 
   @Override
