@@ -4,12 +4,14 @@ import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.openapi.wm.ex.IdeFrameEx
 import com.intellij.openapi.wm.impl.IdeFrameImpl
 import training.lang.LangSupport
 import training.learn.dialogs.LearnProjectWarningDialog
+import training.learn.exceptons.NoSdkException
 import java.io.File
 import java.lang.Boolean.TRUE
 
@@ -33,7 +35,15 @@ object NewLearnProjectUtil {
     val newProject: Project =
         langSupport.createProject(projectName, projectToClose) ?: return projectToClose
 
-    langSupport.applyProjectSdk(newProject)
+    try {
+      val sdkForProject = langSupport.getSdkForProject(newProject)
+      if (sdkForProject != null) {
+        langSupport.applyProjectSdk(sdkForProject, newProject)
+      }
+    }
+    catch (e: NoSdkException) {
+      Messages.showMessageDialog(newProject, e.localizedMessage, LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
+    }
 
     if (!unitTestMode) newProject.save()
 

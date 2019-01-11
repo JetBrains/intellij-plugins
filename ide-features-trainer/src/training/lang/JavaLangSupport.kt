@@ -32,11 +32,11 @@ class JavaLangSupport : AbstractLangSupport() {
   override val FILE_EXTENSION: String
     get() = "java"
 
-  override fun applyProjectSdk(project: Project): Unit {
-    val projectSdk = getJavaSdkInWA()
-    if (projectSdk != null) {
-      CommandProcessor.getInstance().executeCommand(project, { ApplicationManager.getApplication().runWriteAction { NewProjectUtil.applyJdkToProject(project, projectSdk) } }, null, null)
+  override fun applyProjectSdk(sdk: Sdk, project: Project) {
+    val applySdkAction = {
+      ApplicationManager.getApplication().runWriteAction { NewProjectUtil.applyJdkToProject(project, sdk) }
     }
+    CommandProcessor.getInstance().executeCommand(project, applySdkAction, null, null)
   }
 
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = { newProject ->
@@ -46,12 +46,12 @@ class JavaLangSupport : AbstractLangSupport() {
 
 
   //Java SDK and project configuration staff
-
-  private fun getJavaSdkInWA() =
-      if (ApplicationManager.getApplication().isUnitTestMode)
-        ApplicationManager.getApplication().runWriteAction({ getJavaSdk() } as Computable<Sdk>)
-      else
-        getJavaSdk()
+  override fun getSdkForProject(project: Project): Sdk? {
+    return if (ApplicationManager.getApplication().isUnitTestMode)
+      ApplicationManager.getApplication().runWriteAction({ getJavaSdk() } as Computable<Sdk>)
+    else
+      getJavaSdk()
+  }
 
   private fun getJavaSdk(): Sdk {
 
@@ -85,7 +85,7 @@ class JavaLangSupport : AbstractLangSupport() {
     return newJdk
   }
 
-  override fun checkSdk(sdk: Sdk?) {
+  override fun checkSdk(sdk: Sdk?, project: Project) {
     checkSdkPresence(sdk)
     val sdkTypeId = sdk!!.sdkType
     if (sdkTypeId is JavaSdk) {
