@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.codeInsight.completion.vuex
 
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
@@ -21,11 +20,11 @@ object VueStoreUtils {
   fun hasVuex(context: PsiElement): Boolean {
     val project = context.project
     if (!hasVue(project)) return false
-    val vFile = context.containingFile?.originalFile?.virtualFile ?: return false
-    val projectFileIndex = ProjectFileIndex.getInstance(project)
-    val module = projectFileIndex.getModuleForFile(vFile) ?: return false
-    return CachedValuesManager.getManager(project).getCachedValue(module) {
-      val packageJson = PackageJsonUtil.findUpPackageJson(vFile)
+    val psiFile = context.containingFile?.originalFile
+    if (psiFile == null) return false
+    return CachedValuesManager.getManager(project).getCachedValue(psiFile) {
+      val vFile = psiFile.virtualFile ?: null
+      val packageJson = if (vFile != null) PackageJsonUtil.findUpPackageJson(vFile) else null
       val packageJsonData = if (packageJson != null) PackageJsonUtil.getOrCreateData(packageJson) else null
       val hasVuex = packageJsonData != null && packageJsonData.isDependencyOfAnyType(VUEX)
       CachedValueProvider.Result.create(hasVuex, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
