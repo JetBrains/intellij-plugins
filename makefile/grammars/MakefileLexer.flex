@@ -176,6 +176,7 @@ CONDITION_CHARACTER=[^#\r\n]
 
 <DEFINEBODY> {
     "endef"                { yybegin(YYINITIAL); return KEYWORD_ENDEF; }
+    ({SPACES}|\t)+{COMMENT}              { return COMMENT; }
     {BACKSLASHCRLF}        { return SPLIT; }
     {VARIABLE_VALUE}       { return VARIABLE_VALUE_LINE; }
     {EOL}                  { return WHITE_SPACE; }
