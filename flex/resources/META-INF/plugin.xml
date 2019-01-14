@@ -83,10 +83,8 @@
 
     <codeInsight.implementMethod language="JavaScript"
                                  implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandlerForFlex"/>
-    <codeInsight.delegateMethods language="JavaScript"
-                                 implementationClass="com.intellij.lang.javascript.generation.ActionScriptGenerateDelegatesHandler"/>
     <codeInsight.delegateMethods language="Mxml"
-                                 implementationClass="com.intellij.lang.javascript.generation.ActionScriptGenerateDelegatesHandler"/>
+                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
     <projectImportBuilder implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImporter"/>
     <projectImportProvider implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImportProvider"/>
     <projectOpenProcessor id="FlashBuilderOpenProcessor"
