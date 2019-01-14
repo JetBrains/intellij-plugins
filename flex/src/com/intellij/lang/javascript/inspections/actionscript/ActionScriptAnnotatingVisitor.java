@@ -1181,6 +1181,11 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
+  protected boolean needsInitializer(JSParameterListElement parameter) {
+    return !parameter.isRest();
+  }
+
+  @Override
   protected void validateRestParameterType(JSParameterListElement parameter) {
     PsiElement typeElement = parameter.getTypeElement();
     if (typeElement != null && !"Array".equals(typeElement.getText())) {

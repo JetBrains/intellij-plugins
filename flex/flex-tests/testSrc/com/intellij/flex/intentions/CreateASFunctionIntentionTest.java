@@ -33,8 +33,138 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
-  public void testAll() {
-    doTestAll();
+  public void testCreateFunctionAS() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+  
+  public void testCreateFunctionAS_2() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  @JSTestOptions(JSTestOption.WithFlexFacet)
+  public void testCreateFunctionAS_2Mxml() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
+  }
+
+  @JSTestOptions(JSTestOption.WithFlexFacet)
+  public void testCreateFunctionAS_2_2() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
+  }
+
+  public void testCreateFunctionAS_3() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  @JSTestOptions(JSTestOption.WithFlexFacet)
+  public void testCreateFunctionAS_3Mxml() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
+  }
+
+  public void testCreateFunctionAS_4() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_4Mxml() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
+  }
+
+  public void testCreateFunctionAS_5() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  @JSTestOptions(JSTestOption.WithFlexFacet)
+  public void testCreateFunctionAS_5Mxml() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
+  }
+
+  public void testCreateFunctionAS_6() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  @JSTestOptions(JSTestOption.WithFlexFacet)
+  public void testCreateFunctionAS_6Mxml() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
+  }
+
+  public void testCreateFunctionAS_7() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
+  }
+
+  public void testCreateFunctionAS_7_2() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_8() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  @JSTestOptions(JSTestOption.WithFlexFacet)
+  public void testCreateFunctionAS_8Mxml() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
+  }
+
+  public void testCreateFunctionAS_9() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_10() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_11() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_12() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_13() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_14() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_15() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_16() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_17() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_18() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_19() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_19_2() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_20() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_21() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_22() throws Exception {
+    doCompositeNameBeforeAfterTest("js2", false);
+  }
+
+  public void testCreateFunctionAS_Mxml() throws Exception {
+    doCompositeNameBeforeAfterTest("mxml", false);
   }
 
   public void testCreateConstructor() {
