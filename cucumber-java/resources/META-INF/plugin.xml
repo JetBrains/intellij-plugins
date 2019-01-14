@@ -20,6 +20,7 @@
       ]]>
    </description>
   <depends>gherkin</depends>
+  <depends>JUnit</depends>
   <idea-version since-build="136.0"/>
   <vendor>JetBrains</vendor>
 
