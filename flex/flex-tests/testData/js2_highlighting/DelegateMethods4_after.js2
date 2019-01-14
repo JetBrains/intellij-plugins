@@ -4,6 +4,10 @@ package {
      static var foobar : MyClass;
 
 
+     public static function bar():void {
+         foobar.bar();
+     }
+
      public function get prop():* {
          return foobar.prop;
      }
@@ -14,10 +18,6 @@ package {
 
      public static function foo():MyClass {
          return foobar.foo();
-     }
-
-     public static function bar():void {
-         foobar.bar();
      }
 
      public static function bar2():void {
