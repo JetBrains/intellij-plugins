@@ -16,8 +16,10 @@ class RubyNavigationLesson(module: Module) : KLesson("Basic Navigation", module,
       triggerTask("GotoClass") {
         text("Try to find a class with ${action(it)}")
       }
-      triggerTask("QuickImplementations") {
-        text("Write 'Us' and press ${action(it)} to see the definition of the selected class")
+      task {
+        text("Write 'Us' and press ${action("QuickImplementations")} to see the definition of the selected class")
+        typeForTest("Us")
+        trigger("QuickImplementations")
       }
       complete()
     }
