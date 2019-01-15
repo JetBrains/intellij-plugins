@@ -18,9 +18,19 @@ if (!provider) {
 /**/
 
 import {SchematicsProvider} from "./schematicsProvider";
-import {Option} from "@angular/cli/models/interface";
 import * as path from "path";
 import * as fs from "fs";
+
+interface Option {
+    name?: string,
+    default?: any,
+    description?: string,
+    type?: string,
+    isRequired?: boolean,
+    isVisible?: boolean,
+    enum?: string[],
+    format?: string,
+}
 
 interface SchematicsInfo {
     description?: string;
@@ -91,27 +101,41 @@ function getCollectionSchematics(collectionName: string): SchematicsInfo[] {
     }
     try {
         const schematicInfos: any[] = schematicNames
-            .map(name => provider.getSchematic(collection, name).description)
+            .map(name => {
+                try {
+                    return provider.getSchematic(collection, name).description
+                } catch (e) {
+                    return {
+                        name,
+                        error: "" + e.message
+                    }
+                }
+            })
             //`ng-add` schematics should be executed only with `ng add`
-            .filter(info => (info.name !== "ng-add" || includeHidden) && info.schemaJson !== undefined);
+            .filter(info => (info.name !== "ng-add" || includeHidden) && (info.schemaJson !== undefined || info.error));
 
         const newFormat = schematicInfos
-            .map(info => info.schemaJson.properties)
+            .map(info => info.schemaJson ? info.schemaJson.properties : {})
             .map(prop => Object.keys(prop).map(k => prop[k]))
             .reduce((a, b) => a.concat(b), [])
             .find(prop => prop.$default)
 
         return schematicInfos.map(info => {
-            const required = info.schemaJson.required || [];
+            const required = (info.schemaJson && info.schemaJson.required) || [];
             return {
                 description: info.description,
                 name: (collectionName === defaultCollectionName ? "" : collectionName + ":") + info.name,
                 hidden: info.hidden,
-                options: filterProps(info.schemaJson,
-                    (key, prop) => newFormat ? prop.$default === undefined : required.indexOf(key) < 0)
-                    .concat(coreOptions()),
-                arguments: filterProps(info.schemaJson,
-                    (key, prop) => newFormat ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0)
+                error: info.error,
+                options: info.schemaJson
+                    ? filterProps(info.schemaJson,
+                        (key, prop) => newFormat ? prop.$default === undefined : required.indexOf(key) < 0)
+                        .concat(coreOptions())
+                    : undefined,
+                arguments: info.schemaJson
+                    ? filterProps(info.schemaJson,
+                        (key, prop) => newFormat ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0)
+                    : undefined
             }
         })
     } catch (e) {
@@ -132,8 +156,7 @@ function listAllSchematics(collection: any) {
         //   unless it is from another collection.
         if (!schematic.extends || schematic.factory) {
             schematics.push(key);
-        }
-        else if (schematic.extends && schematic.extends.indexOf(':') !== -1) {
+        } else if (schematic.extends && schematic.extends.indexOf(':') !== -1) {
             schematics.push(key);
         }
     }
