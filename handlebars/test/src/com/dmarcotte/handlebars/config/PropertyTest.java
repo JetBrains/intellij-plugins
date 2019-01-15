@@ -3,6 +3,8 @@ package com.dmarcotte.handlebars.config;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,12 +23,14 @@ public class PropertyTest {
     // expectedNumberOfPropertyFields represents the number of enum entries plus that static members, plus one for the $VALUES that every enum gets
     int expectedNumberOfPropertyFields = 9;
 
+    Field[] fields = Property.class.getDeclaredFields();
     Assert.assertEquals("Declared properties in enum \"" +
                         Property.class.getSimpleName() +
                         "\" have changed!  Ensure that changes are backwards compatible " +
-                        "and com.dmarcotte.handlebars.config.PropertyTest2 has been updated appropriately.\n",
+                        "and " + PropertyNameTest.class.getName() + " has been updated appropriately.\n" +
+                        "Fields: " + Arrays.toString(fields),
                         expectedNumberOfPropertyFields,
-                        Property.class.getDeclaredFields().length);
+                        fields.length);
   }
 
   @Test
