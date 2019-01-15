@@ -34,7 +34,9 @@ abstract class SingleLineCommentLesson(module: Module, lang: String) :
       task {
         text("Select several lines with ${action("EditorDownWithSelection")} " +
             "and then comment them with ${action("CommentByLineComment")}.")
-        triggers("EditorDownWithSelection", "CommentByLineComment")
+        trigger("EditorDownWithSelection")
+        testActions("EditorDownWithSelection", "EditorDownWithSelection")
+        trigger("CommentByLineComment")
         check({countCommentedLines()}, { before, now -> now >= before + 2 } )
       }
       complete()
