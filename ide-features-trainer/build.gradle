@@ -22,12 +22,12 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 intellij {
-    version 'IU-182.5107.41'
+    version 'IU-183.5153.4'
     //to check compatibility for Python and Go
     plugins = [
-            'Pythonid:2018.2.182.5107.16',
-            'org.jetbrains.plugins.go:182.4505.32.913',
-            'org.jetbrains.plugins.ruby:2018.2.20181017'
+            'Pythonid:2018.3.183.5153.8',
+            'org.jetbrains.plugins.go:183.4886.37.1581',
+            'org.jetbrains.plugins.ruby:2018.3.20181220'
     ]
     intellij.updateSinceUntilBuild = false
 }
