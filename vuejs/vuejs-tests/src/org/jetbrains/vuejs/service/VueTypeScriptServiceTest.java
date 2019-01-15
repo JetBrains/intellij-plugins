@@ -44,6 +44,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   }
 
 
+  @TypeScriptVersion(TypeScriptVersions.TS28)
   public void testSimpleVue() throws Exception {
     doTestWithCopyDirectory();
   }
