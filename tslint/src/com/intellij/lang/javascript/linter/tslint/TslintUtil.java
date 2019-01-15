@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,6 +36,11 @@ public class TslintUtil {
   public static final String TSLINT_JSON = "tslint.json";
 
   public static final String[] CONFIG_FILE_NAMES = new String[]{TSLINT_JSON, "tslint.yaml", "tslint.yml"};
+
+  public static boolean isMultiRootEnabled() {
+    //noinspection UnresolvedPropertyKey IDEA-199936
+    return Registry.is("tslint.enable.multiroot");
+  }
 
   public static boolean isConfigFile(@NotNull VirtualFile file) {
     if (!file.isValid() || file.isDirectory()) {

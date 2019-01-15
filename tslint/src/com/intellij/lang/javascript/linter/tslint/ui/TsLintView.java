@@ -1,8 +1,10 @@
 package com.intellij.lang.javascript.linter.tslint.ui;
 
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
+import com.intellij.javascript.nodejs.util.NodePackageField;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.JSLinterBaseView;
-import com.intellij.lang.javascript.linter.NodeModuleConfigurationView;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.ui.JSLinterConfigFileTexts;
@@ -12,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
@@ -28,8 +31,9 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   private static final JSLinterConfigFileTexts CONFIG_TEXTS = getConfigTexts();
 
   private final Project myProject;
-  private final NodeModuleConfigurationView myNodeModuleConfigurationView;
   private final JSLinterConfigFileView myConfigFileView;
+  private final NodeJsInterpreterField myNodeInterpreterField;
+  private final NodePackageField myNodePackageField;
   private TextFieldWithBrowseButton myRules;
   private JBCheckBox myAllowJs;
 
@@ -38,7 +42,10 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
     myProject = project;
     myConfigFileView = new JSLinterConfigFileView(project, CONFIG_TEXTS, null);
     myConfigFileView.setAdditionalConfigFilesProducer(() -> TslintUtil.findAllConfigsInScope(project));
-    myNodeModuleConfigurationView = new NodeModuleConfigurationView(project, "tslint", null);
+    myNodeInterpreterField = new NodeJsInterpreterField(project, false);
+    myNodePackageField = AutodetectLinterPackage.createNodePackageField(ContainerUtil.list(TslintUtil.PACKAGE_NAME),
+                                                                        myNodeInterpreterField, myConfigFileView,
+                                                                        TslintUtil.isMultiRootEnabled());
   }
 
   @Nullable
@@ -59,8 +66,8 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
       .setHorizontalGap(UIUtil.DEFAULT_HGAP)
       .setVerticalGap(UIUtil.DEFAULT_VGAP)
       .setFormLeftIndent(UIUtil.DEFAULT_HGAP)
-      .addLabeledComponent("&Node interpreter:", myNodeModuleConfigurationView.getNodeInterpreterField())
-      .addLabeledComponent("TSLint package:", myNodeModuleConfigurationView.getPackageField());
+      .addLabeledComponent("&Node interpreter:", myNodeInterpreterField)
+      .addLabeledComponent("TSLint package:", myNodePackageField);
 
     JPanel panel = FormBuilder.createFormBuilder()
       .setAlignLabelOnRight(true)
@@ -83,8 +90,8 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   @Override
   protected TsLintState getState() {
     final TsLintState.Builder builder = new TsLintState.Builder()
-      .setNodePath(myNodeModuleConfigurationView.getNodeInterpreterField().getInterpreterRef())
-      .setNodePackage(myNodeModuleConfigurationView.getPackageField().getSelected())
+      .setNodePath(myNodeInterpreterField.getInterpreterRef())
+      .setNodePackageRef(myNodePackageField.getSelectedRef())
       .setCustomConfigFileUsed(myConfigFileView.isCustomConfigFileUsed())
       .setCustomConfigFilePath(myConfigFileView.getCustomConfigFilePath())
       .setAllowJs(myAllowJs.isSelected());
@@ -96,8 +103,8 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
 
   @Override
   protected void setState(@NotNull TsLintState state) {
-    myNodeModuleConfigurationView.getNodeInterpreterField().setInterpreterRef(state.getInterpreterRef());
-    myNodeModuleConfigurationView.getPackageField().setSelected(state.getNodePackage());
+    myNodeInterpreterField.setInterpreterRef(state.getInterpreterRef());
+    myNodePackageField.setSelectedRef(state.getNodePackageRef());
 
     myConfigFileView.setCustomConfigFileUsed(state.isCustomConfigFileUsed());
     myConfigFileView.setCustomConfigFilePath(StringUtil.notNullize(state.getCustomConfigFilePath()));
@@ -111,7 +118,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
 
   private void resizeOnSeparateDialog() {
     if (isFullModeDialog()) {
-      myNodeModuleConfigurationView.setPreferredWidthToComponents();
+      myNodeInterpreterField.setPreferredWidthToFitText();
       myConfigFileView.setPreferredWidthToComponents();
     }
   }

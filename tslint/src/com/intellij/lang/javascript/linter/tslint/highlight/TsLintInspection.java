@@ -5,7 +5,7 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
-import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
+import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
@@ -42,7 +42,7 @@ public final class TsLintInspection extends JSLinterInspection {
 
   @Override
   protected void ensureServiceStopped(@NotNull Project project) {
-    TsLintLanguageService.getService(project).terminateStartedProcess(false);
+    TslintLanguageServiceManager.getInstance(project).terminateServices();
   }
 
   @NotNull

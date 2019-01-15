@@ -2,21 +2,26 @@ package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
 import com.intellij.idea.RareLogger;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.util.NodePackage;
+import com.intellij.lang.javascript.linter.ExtendedLinterState;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
+import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLintOutputJsonParser;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.service.commands.TsLintFixErrorsCommand;
 import com.intellij.lang.javascript.linter.tslint.service.commands.TsLintGetErrorsCommand;
-import com.intellij.lang.javascript.linter.tslint.service.protocol.TsLintLanguageServiceProtocol;
 import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceAnswer;
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceInitialState;
+import com.intellij.lang.javascript.service.protocol.JSLanguageServiceNodeStdProtocolBase;
 import com.intellij.lang.javascript.service.protocol.LocalFilePath;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
@@ -30,14 +35,18 @@ import java.util.concurrent.Future;
 
 public final class TsLintLanguageService extends JSLanguageServiceBase {
   @NotNull private final static Logger LOG = RareLogger.wrap(Logger.getInstance("#com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService"), false);
+  @NotNull private final VirtualFile myWorkingDirectory;
+  @NotNull private final NodePackage myNodePackage;
 
-  @NotNull
-  public static TsLintLanguageService getService(@NotNull Project project) {
-    return ServiceManager.getService(project, TsLintLanguageService.class);
+  public TsLintLanguageService(@NotNull Project project, @NotNull NodePackage nodePackage, @NotNull VirtualFile workingDirectory) {
+    super(project);
+    myWorkingDirectory = workingDirectory;
+    myNodePackage = nodePackage;
   }
 
-  public TsLintLanguageService(@NotNull Project project) {
-    super(project);
+  @NotNull
+  public NodePackage getNodePackage() {
+    return myNodePackage;
   }
 
   public final Future<List<TsLinterError>> highlight(@Nullable VirtualFile virtualFile,
@@ -163,15 +172,56 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
   @Override
   protected final JSLanguageServiceQueue createLanguageServiceQueue() {
-    TsLintLanguageServiceProtocol protocol = new TsLintLanguageServiceProtocol(myProject, (el) -> {
-    });
-
-    return new JSLanguageServiceQueueImpl(myProject, protocol, myProcessConnector, myDefaultReporter,
+    return new JSLanguageServiceQueueImpl(myProject, new Protocol(myNodePackage, myWorkingDirectory, myProject), myProcessConnector, myDefaultReporter,
                                           new JSLanguageServiceDefaultCacheData());
   }
 
   @Override
   protected final boolean needInitToolWindow() {
     return false;
+  }
+
+  private static class Protocol extends JSLanguageServiceNodeStdProtocolBase {
+    private final NodePackage myNodePackage;
+    private final VirtualFile myWorkingDirectory;
+
+    private Protocol(@NotNull NodePackage nodePackage, @NotNull VirtualFile workingDirectory, @NotNull Project project) {
+      super("tslint", project, Consumer.EMPTY_CONSUMER);
+      myNodePackage = nodePackage;
+      myWorkingDirectory = workingDirectory;
+    }
+
+    @Nullable
+    @Override
+    protected NodeJsInterpreter getInterpreter() {
+      ExtendedLinterState<TsLintState> state = TsLintConfiguration.getInstance(myProject).getExtendedState();
+      return JSLanguageServiceUtil.getInterpreterIfValid(state.getState().getInterpreterRef().resolve(myProject));
+    }
+
+    @Override
+    protected String getWorkingDirectory() {
+      return JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(myWorkingDirectory);
+    }
+
+    @Override
+    protected JSLanguageServiceInitialState createState() {
+      InitialState result = new InitialState();
+      ExtendedLinterState<TsLintState> extendedState = TsLintConfiguration.getInstance(myProject).getExtendedState();
+      result.tslintPackagePath = LocalFilePath.create(myNodePackage.getSystemDependentPath());
+      result.additionalRootDirectory = LocalFilePath.create(extendedState.getState().getRulesDirectory());
+      result.pluginName = "tslint";
+      result.pluginPath = LocalFilePath.create(
+        JSLanguageServiceUtil.getPluginDirectory(getClass(), "js/languageService/tslint-plugin-provider.js").getAbsolutePath());
+      return result;
+    }
+
+    @Override
+    public void dispose() {
+    }
+  }
+
+  private static class InitialState extends JSLanguageServiceInitialState {
+    LocalFilePath tslintPackagePath;
+    LocalFilePath additionalRootDirectory;
   }
 }

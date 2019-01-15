@@ -1,11 +1,12 @@
 package com.intellij.lang.javascript.linter.tslint.ui;
 
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterBaseView;
 import com.intellij.lang.javascript.linter.JSLinterConfigurable;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
-import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
+import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.text.SemVer;
@@ -50,12 +51,13 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
   public void apply() throws ConfigurationException {
     super.apply();
     final TsLintState state = getExtendedState(TsLintConfiguration.class).getState();
-    if (!state.getNodePackage().isEmptyPath() && state.isAllowJs()) {
-      if (!checkPackageVersionForJs(state.getNodePackage().getVersion())) {
+    NodePackage nodePackage = state.getNodePackageRef().getConstantPackage();
+    if (nodePackage != null && !nodePackage.isEmptyPath() && state.isAllowJs()) {
+      if (!checkPackageVersionForJs(nodePackage.getVersion())) {
         throw new ConfigurationException("Linting JavaScript is not supported for this version of TSLint.");
       }
     }
-    TsLintLanguageService.getService(myProject).terminateStartedProcess(false);
+    TslintLanguageServiceManager.getInstance(myProject).terminateServices();
   }
 
   private static boolean checkPackageVersionForJs(@Nullable SemVer semVer) {

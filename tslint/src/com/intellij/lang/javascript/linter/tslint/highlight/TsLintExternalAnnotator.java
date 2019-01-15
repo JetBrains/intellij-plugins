@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.fix.TsLintErrorFixAction;
 import com.intellij.lang.javascript.linter.tslint.fix.TsLintFileFixAction;
 import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
+import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.util.JSUtils;
@@ -109,16 +110,24 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
   @Nullable
   @Override
   public JSLinterAnnotationResult annotate(@NotNull TsLinterInput collectedInfo) {
+    return TslintLanguageServiceManager.getInstance(collectedInfo.getProject())
+      .useService(collectedInfo.getVirtualFile(), collectedInfo.getState().getNodePackageRef(),
+                  service -> annotateWithService(collectedInfo, service));
+  }
+
+  @Nullable
+  private JSLinterAnnotationResult annotateWithService(@NotNull TsLinterInput collectedInfo, @Nullable TsLintLanguageService service) {
     VirtualFile config = collectedInfo.getConfig();
     final Project project = collectedInfo.getProject();
     final TsLintState linterState = collectedInfo.getState();
+    if (service == null) {
+      return null;
+    }
     final JSLinterFileLevelAnnotation interpreterAndPackageError =
       JSLinterUtil.validateInterpreterAndPackage(project, linterState.getInterpreterRef().resolve(project),
-                                                 linterState.getNodePackage(), TsLintDescriptor.PACKAGE_NAME,
+                                                 service.getNodePackage(), TsLintDescriptor.PACKAGE_NAME,
                                                  collectedInfo.getVirtualFile());
     if (interpreterAndPackageError != null) return JSLinterAnnotationResult.create(collectedInfo, interpreterAndPackageError, config);
-
-    TsLintLanguageService service = TsLintLanguageService.getService(collectedInfo.getProject());
 
     final Future<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
     final List<TsLinterError> result;

@@ -1,8 +1,9 @@
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
-import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.JSLinterConfiguration;
+import com.intellij.lang.javascript.linter.JSLinterInspection;
+import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -30,7 +31,7 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
 
   public TsLintConfiguration(@NotNull Project project) {
     super(project);
-    myPackage = new JSLinterPackage(project, "tslint");
+    myPackage = new JSLinterPackage(project, "tslint", TslintUtil.isMultiRootEnabled());
   }
 
   @NotNull
@@ -102,13 +103,11 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   private void restoreLinterLocalPaths(TsLintState.Builder builder) {
     myPackage.readOrDetect();
     builder.setNodePath(myPackage.getInterpreter());
-    NodePackage constantPackage = myPackage.getPackage().getConstantPackage();
-    assert constantPackage != null : "TSLint does not support non-constant node package refs";
-    builder.setNodePackage(constantPackage);
+    builder.setNodePackageRef(myPackage.getPackage());
   }
 
   private void storeLinterLocalPaths(TsLintState state) {
-    myPackage.force(state.getInterpreterRef(), state.getNodePackage());
+    myPackage.force(state.getInterpreterRef(), state.getNodePackageRef());
   }
 
   @NotNull

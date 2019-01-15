@@ -38,13 +38,13 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
   }
 
   @Override
-  public boolean hasConfigFiles(@NotNull Project project) {
-    return TslintUtil.hasConfigFiles(project);
+  public boolean supportsMultipleRoots() {
+    return TslintUtil.isMultiRootEnabled();
   }
 
   @Override
-  public boolean usesLanguageService() {
-    return true;
+  public boolean hasConfigFiles(@NotNull Project project) {
+    return TslintUtil.hasConfigFiles(project);
   }
 
   @Override

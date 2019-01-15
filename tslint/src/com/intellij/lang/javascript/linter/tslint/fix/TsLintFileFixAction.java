@@ -25,7 +25,7 @@ import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
-import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
+import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -65,17 +65,23 @@ public class TsLintFileFixAction extends JSLinterFixAction {
     return new Task.Backgroundable(project, TsLintBundle.message("tslint.action.background.title"), true) {
       @Override
       public void run(@NotNull ProgressIndicator indicator) {
-        TsLintLanguageService service = TsLintLanguageService.getService(project);
+        TslintLanguageServiceManager languageServiceManager = TslintLanguageServiceManager.getInstance(project);
         TsLintState state = TsLintConfiguration.getInstance(project).getExtendedState().getState();
         for (VirtualFile file : filesToProcess) {
           indicator.setText("Processing file " + file.getCanonicalPath());
-          final Future<List<TsLinterError>> future = ReadAction.compute(() -> service.highlightAndFix(file, state));
-          try {
-            JSLanguageServiceUtil.awaitLanguageService(future, service);
-          }
-          catch (ExecutionException e) {
-            JSLinterGuesser.NOTIFICATION_GROUP.createNotification("TSLint: " + e.getMessage(), MessageType.ERROR).notify(project);
-          }
+          languageServiceManager.useService(file, state.getNodePackageRef(), service -> {
+            if (service == null) {
+              return null;
+            }
+            final Future<List<TsLinterError>> future = ReadAction.compute(() -> service.highlightAndFix(file, state));
+            try {
+              JSLanguageServiceUtil.awaitLanguageService(future, service);
+            }
+            catch (ExecutionException e) {
+              JSLinterGuesser.NOTIFICATION_GROUP.createNotification("TSLint: " + e.getMessage(), MessageType.ERROR).notify(project);
+            }
+            return null;
+          });
         }
 
         completeCallback.run();
