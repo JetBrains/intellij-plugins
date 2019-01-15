@@ -75,23 +75,38 @@ function getCollectionSchematics(collectionName) {
     }
     try {
         var schematicInfos = schematicNames
-            .map(function (name) { return provider.getSchematic(collection, name).description; })
+            .map(function (name) {
+            try {
+                return provider.getSchematic(collection, name).description;
+            }
+            catch (e) {
+                return {
+                    name: name,
+                    error: "" + e.message
+                };
+            }
+        })
             //`ng-add` schematics should be executed only with `ng add`
-            .filter(function (info) { return (info.name !== "ng-add" || includeHidden) && info.schemaJson !== undefined; });
+            .filter(function (info) { return (info.name !== "ng-add" || includeHidden) && (info.schemaJson !== undefined || info.error); });
         var newFormat_1 = schematicInfos
-            .map(function (info) { return info.schemaJson.properties; })
+            .map(function (info) { return info.schemaJson ? info.schemaJson.properties : {}; })
             .map(function (prop) { return Object.keys(prop).map(function (k) { return prop[k]; }); })
             .reduce(function (a, b) { return a.concat(b); }, [])
             .find(function (prop) { return prop.$default; });
         return schematicInfos.map(function (info) {
-            var required = info.schemaJson.required || [];
+            var required = (info.schemaJson && info.schemaJson.required) || [];
             return {
                 description: info.description,
                 name: (collectionName === defaultCollectionName ? "" : collectionName + ":") + info.name,
                 hidden: info.hidden,
-                options: filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default === undefined : required.indexOf(key) < 0; })
-                    .concat(coreOptions()),
-                arguments: filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0; })
+                error: info.error,
+                options: info.schemaJson
+                    ? filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default === undefined : required.indexOf(key) < 0; })
+                        .concat(coreOptions())
+                    : undefined,
+                arguments: info.schemaJson
+                    ? filterProps(info.schemaJson, function (key, prop) { return newFormat_1 ? prop.$default !== undefined && prop.$default.$source === "argv" : required.indexOf(key) >= 0; })
+                    : undefined
             };
         });
     }
