@@ -96,6 +96,7 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
       myCustomConfigFileUsed = state.isCustomConfigFileUsed();
       myCustomConfigFilePath = state.getCustomConfigFilePath();
       myInterpreterRef = state.getInterpreterRef();
+      myNodePackageRef = state.getNodePackageRef();
       myRulesDirectory = state.getRulesDirectory();
       myAllowJs = state.isAllowJs();
     }
