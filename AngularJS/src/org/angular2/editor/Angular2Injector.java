@@ -9,10 +9,12 @@ import com.intellij.lang.javascript.JSInjectionBracesUtil;
 import com.intellij.lang.javascript.JSInjectionController;
 import com.intellij.lang.javascript.inject.JSFormattableInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlText;
+import com.intellij.util.NullableFunction;
 import com.intellij.util.ObjectUtils;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
@@ -28,6 +30,10 @@ import java.util.function.Predicate;
 import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
 
 public class Angular2Injector implements MultiHostInjector {
+
+  public static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
+    .delimitersFactory(Angular2Language.INSTANCE.getDisplayName(),
+                       (project, key) -> /* no support for custom delimiters*/ null);
 
   @NotNull
   @Override
@@ -88,9 +94,10 @@ public class Angular2Injector implements MultiHostInjector {
   }
 
   private static void injectInterpolations(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
+    final Pair<String, String> braces = BRACES_FACTORY.fun(context);
+    if (braces == null) return;
     JSInjectionBracesUtil.injectInXmlTextByDelimiters(registrar, context, Angular2Language.INSTANCE,
-                                                      JSInjectionBracesUtil.DEFAULT_START, JSInjectionBracesUtil.DEFAULT_END,
-                                                      INTERPOLATION);
+                                                      braces.first, braces.second, INTERPOLATION);
   }
 
   @Nullable
