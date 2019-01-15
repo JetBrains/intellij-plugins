@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -676,7 +676,12 @@ public class AirPackageUtil {
         if (device.DEVICE_NAME != null) {
           presentableName.append('\'').append(device.DEVICE_NAME).append("' ");
         }
-        presentableName.append('(').append(device.DEVICE_ID, 0, 6).append("...").append(device.DEVICE_ID.substring(36)).append(')');
+        presentableName
+          .append('(')
+          .append(device.DEVICE_ID, 0, 6)
+          .append("...")
+          .append(device.DEVICE_ID.substring(device.DEVICE_ID.length() - 6))
+          .append(')');
 
         if (device.DEVICE_ID.equals(preferredId)) {
           preferredPresentableName = presentableName.toString();
