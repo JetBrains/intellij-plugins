@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.refactoring.introduce;
 
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
@@ -70,7 +71,7 @@ public abstract class DartIntroduceTestBase extends LightPlatformCodeInsightFixt
     myFixture.configureByFile(name + getFileExtension());
     final boolean enabled = myFixture.getEditor().getSettings().isVariableInplaceRenameEnabled();
     try {
-      TemplateManagerImpl.setTemplateTesting(getProject(), myFixture.getTestRootDisposable());
+      TemplateManagerImpl.setTemplateTesting(myFixture.getTestRootDisposable());
       myFixture.getEditor().getSettings().setVariableInplaceRenameEnabled(true);
 
       DartIntroduceHandler handler = createHandler();
