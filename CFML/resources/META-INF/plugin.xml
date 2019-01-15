@@ -36,7 +36,7 @@
     <lang.psiStructureViewFactory language="CFML"
                                   implementationClass="com.intellij.coldFusion.UI.editorActions.structureView.CfmlStructureViewProvider"/>
     <!--<fileBasedIndex implementation="com.intellij.coldFusion.model.files.CfmlFileIndex"/>-->
-    <typedHandler implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlTypedHandler"/>
+    <typedHandler implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlTypedHandler" order="first"/>/>
     <backspaceHandlerDelegate
         implementation="com.intellij.coldFusion.UI.editorActions.typedHandlers.CfmlBackspaceHandler"/>
     <!--
