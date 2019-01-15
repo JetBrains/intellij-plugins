@@ -17,7 +17,6 @@ import com.intellij.coldFusion.model.CfmlLanguage
 import com.intellij.coldFusion.model.CfmlUtil.getCfmlLangInfo
 import com.intellij.coldFusion.model.files.CfmlFileViewProvider
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes
-import com.intellij.coldFusion.model.parsers.CfmlElementTypes
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -62,20 +61,6 @@ object CfmlTagUtil {
   }
 
   /**
-   * returns a sibling CfmlTag if it is not closed; null it opposite case.
-   */
-  fun getUnclosedTagFromPrevSiblings(psiElement: PsiElement): CfmlTag? {
-    fun getPreviousCfmlTagSibling(_psiElement: PsiElement): PsiElement? = PsiTreeUtil.findSiblingBackward(_psiElement, CfmlElementTypes.TAG,
-                                                                                                          null)
-    var currentCfmlPsiElement: PsiElement? = psiElement
-    while (currentCfmlPsiElement != null) {
-      currentCfmlPsiElement = getPreviousCfmlTagSibling(currentCfmlPsiElement)
-      if (currentCfmlPsiElement is CfmlTag && isUnclosedTag(currentCfmlPsiElement)) return currentCfmlPsiElement
-    }
-    return null
-  }
-
-  /**
    * returns a parent CfmlTag if it is not closed; null it opposite case.
    */
   fun getUnclosedParentTag(cfmlElement: PsiElement): CfmlTag? {
@@ -84,7 +69,7 @@ object CfmlTagUtil {
     else null
   }
 
-  private fun isUnclosedTag(cfmlTag: CfmlTag): Boolean {
+  fun isUnclosedTag(cfmlTag: CfmlTag): Boolean {
     val tagDescription = getCfmlLangInfo(cfmlTag.project).tagAttributes[cfmlTag.tagName] ?: return false
     if (tagDescription.isSingle) return false
     return getEndTagNameElement(cfmlTag) == null

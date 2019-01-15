@@ -24,8 +24,10 @@ import com.intellij.coldFusion.model.CfmlUtil
 import com.intellij.coldFusion.model.files.CfmlFile
 import com.intellij.coldFusion.model.files.CfmlFileViewProvider
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes
+import com.intellij.coldFusion.model.parsers.CfmlElementTypes.TEMPLATE_TEXT
 import com.intellij.coldFusion.model.psi.CfmlTag
 import com.intellij.coldFusion.model.psi.CfmlTagUtil
+import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.lang.ASTNode
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.editor.Editor
@@ -34,12 +36,11 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiFile
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlTokenType
+import com.intellij.sql.type
 import com.intellij.util.SystemProperties
 
 class CfmlTypedHandler : TypedHandlerDelegate() {
@@ -110,9 +111,10 @@ class CfmlTypedHandler : TypedHandlerDelegate() {
     val prevXmlLeaf: ASTNode = xmlElement.node ?: return Result.CONTINUE
 
     //is prevXmlLeaf is a XML_END_TAG_START in a mixed CFML and XML case file or (||) current symbol is the closing tag for a pure CFML
-    if ("</" == prevXmlLeaf.text && prevXmlLeaf.elementType === XmlTokenType.XML_END_TAG_START || CfmlTagUtil.isClosingTag(provider, offset)) {
+    if ("</" == prevXmlLeaf.text && prevXmlLeaf.elementType === XmlTokenType.XML_END_TAG_START || CfmlTagUtil.isClosingTag(provider,
+                                                                                                                           offset)) {
       val cfmlElement = provider.findElementAt(offset - 1, CfmlLanguage::class.java) ?: return Result.CONTINUE
-      val cfmlTag = findOpeningCfmlTag(cfmlElement) ?: return Result.CONTINUE
+      val cfmlTag = findOpeningCfmlTag(cfmlElement, offset) ?: return Result.CONTINUE
       if (!cfmlTag.tagName.isNullOrEmpty()) {
         EditorModificationUtil.insertStringAtCaret(editor, "${cfmlTag.tagName}>", false)
         autoIndent(editor)
@@ -122,8 +124,31 @@ class CfmlTypedHandler : TypedHandlerDelegate() {
     return Result.CONTINUE
   }
 
-  private fun findOpeningCfmlTag(cfmlElement: PsiElement): CfmlTag? {
-    return CfmlTagUtil.getUnclosedTagFromPrevSiblings(cfmlElement) ?: CfmlTagUtil.getUnclosedParentTag(cfmlElement)
+  private fun findOpeningCfmlTag(cfmlElement: PsiElement, offset: Int): CfmlTag? {
+
+    var cfmlPsiElement: PsiElement? = cfmlElement
+    while (cfmlPsiElement != null) {
+      //we've found an opened xml tag here; let's delegate completion to the XmlTypedHandler (IDEA-205201)
+      if (cfmlPsiElement.type == TEMPLATE_TEXT && hasUnclosedXmlTag(cfmlElement, offset)) return null
+      cfmlPsiElement = cfmlPsiElement.getPreviousCfmlTag()
+      if (cfmlPsiElement is CfmlTag && CfmlTagUtil.isUnclosedTag(cfmlPsiElement)) return cfmlPsiElement
+    }
+    return CfmlTagUtil.getUnclosedParentTag(cfmlElement)
+  }
+
+  private fun PsiElement.getPreviousCfmlTag(): PsiElement? = PsiTreeUtil.getPrevSiblingOfType(this, CfmlTag::class.java)
+
+  /**
+   * returns true if cfmlElement contains unclosed XmlTag in range from cfmlElement startOffset till caretOffset
+   */
+  private fun hasUnclosedXmlTag(cfmlElement: PsiElement, caretOffset: Int): Boolean {
+    val startOffset = cfmlElement.textOffset
+    val htmlPsi = cfmlElement.containingFile.viewProvider.allFiles.firstOrNull { it.fileType is HtmlFileType } ?: return false
+    return SyntaxTraverser.psiTraverser()
+      .withRoot(htmlPsi)
+      .traverse()
+      .filter { it is XmlTag && (it.textOffset in startOffset..caretOffset) }
+      .any { it.lastChild.type != XmlTokenType.XML_TAG_END }
   }
 
   companion object {

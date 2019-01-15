@@ -54,7 +54,6 @@ class CfmlTypedHandlerTest : CfmlCodeInsightFixtureTestCase() {
   // public void testLiveTemplate() throws Throwable { doTest('\t'); }
 
   // IDEA-148357, until we calculate properly where we should insert double pounds
-
   fun testSharpCompletion() = doTest('#')
 
   fun testInnerSharpCompletion() = doTest('#')
@@ -109,6 +108,12 @@ class CfmlTypedHandlerTest : CfmlCodeInsightFixtureTestCase() {
   fun testHtmlMixedCloseTag2() = doTest('/')
 
   fun testHtmlMixedCloseTag3() = doTest('/')
+
+  //IDEA-205201
+  fun testHtmlMixedCloseTag4() = doTest('/')
+
+  //IDEA-205201
+  fun testHtmlMixedCloseTag5() = doTest('/')
 
   fun testPureCfmlCloseTag() = doTest('/')
 
