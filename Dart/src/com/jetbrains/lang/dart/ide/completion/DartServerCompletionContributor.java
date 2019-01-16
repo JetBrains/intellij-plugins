@@ -322,8 +322,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
     final String lookupString = suggestion.getCompletion();
     LookupElementBuilder lookup = LookupElementBuilder.create(lookupObject, lookupString);
 
-    if (suggestion.getDisplayText() != null) {
-      lookup = lookup.withPresentableText(suggestion.getDisplayText());
+    String displayText = suggestion.getDisplayText();
+    if (displayText != null) {
+      lookup = lookup.withPresentableText(displayText);
     }
 
     // keywords are bold
@@ -448,6 +449,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
           });
         }
       }
+    }
+
+    // If this is a class, try to show which package it's coming from.
+    if (element != null && element.getKind().equals(ElementKind.CLASS) && suggestion.getElementUri() != null) {
+      lookup = lookup.appendTailText(" (" + suggestion.getElementUri() + ")", true /* grayed */);
     }
 
     // Use selection offset / length.
