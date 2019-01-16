@@ -307,7 +307,6 @@ class OpenLessonAction : AnAction() {
 
       override fun compute(): VirtualFile {
         val learnProject = CourseManager.instance.learnProject!!
-        val sourceRootFile = ProjectRootManager.getInstance(learnProject).contentSourceRoots[0]
         val myLanguage = lesson.lang
         val languageByID = findLanguageByID(myLanguage)
         val extensionFile = languageByID!!.associatedFileType!!.defaultExtension
@@ -335,6 +334,7 @@ class OpenLessonAction : AnAction() {
         }
         if (lessonVirtualFile == null) {
           try {
+            val sourceRootFile = ProjectRootManager.getInstance(learnProject).contentSourceRoots[0]
             lessonVirtualFile = sourceRootFile.createChildData(this, fileName)
           } catch (e: IOException) {
             e.printStackTrace()
