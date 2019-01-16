@@ -10,10 +10,10 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.HtmlXmlExtension;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.html.Angular2HtmlFileType;
+import org.angular2.lang.html.psi.Angular2HtmlBananaBoxBinding;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
 import org.angular2.lang.html.psi.PropertyBindingType;
-import org.angular2.lang.html.psi.impl.Angular2HtmlBananaBoxBindingImpl;
 import org.angularjs.codeInsight.tags.AngularJSTagDescriptor;
 import org.angularjs.index.AngularIndexUtil;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +54,7 @@ public class AngularJSHtmlExtension extends HtmlXmlExtension {
       }
 
       @Override
-      public void visitBananaBoxBinding(Angular2HtmlBananaBoxBindingImpl bananaBoxBinding) {
+      public void visitBananaBoxBinding(Angular2HtmlBananaBoxBinding bananaBoxBinding) {
         checkBinding(bananaBoxBinding.getBindingType(), bananaBoxBinding.getPropertyName());
       }
 

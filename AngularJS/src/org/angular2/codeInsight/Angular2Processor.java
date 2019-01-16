@@ -46,7 +46,6 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.angular2.lang.html.psi.*;
-import org.angular2.lang.html.psi.impl.Angular2HtmlTemplateBindingsImpl;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -321,7 +320,7 @@ public class Angular2Processor {
     }
 
     @Override
-    public void visitTemplateBindings(Angular2HtmlTemplateBindingsImpl bindings) {
+    public void visitTemplateBindings(Angular2HtmlTemplateBindings bindings) {
       if (bindings.getBindings() != null) {
         for (Angular2TemplateBinding b : bindings.getBindings().getBindings()) {
           if (b.keyIsVar() && b.getVariableDefinition() != null) {
