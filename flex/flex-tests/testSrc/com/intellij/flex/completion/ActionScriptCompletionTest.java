@@ -12,16 +12,19 @@ import com.intellij.lang.javascript.BaseJSCompletionTestCase;
 import com.intellij.lang.javascript.JSTestOption;
 import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.JSTestUtils;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThrowableRunnable;
@@ -31,8 +34,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
-
-import static com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase.JAVA_1_7;
 
 @SuppressWarnings({"ALL"})
 public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
@@ -54,6 +55,22 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
     CamelHumpMatcher.forceStartMatching(myFixture.getTestRootDisposable());
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    FlexTestUtils.modifyConfigs(getProject(), new Consumer<FlexProjectConfigurationEditor>() {
+      @Override
+      public void consume(final FlexProjectConfigurationEditor editor) {
+        if (ModuleType.get(myModule) == FlexModuleType.getInstance()) {
+          for (ModifiableFlexBuildConfiguration bc : editor.getConfigurations(myModule)) {
+            bc.getDependencies().setSdkEntry(null);
+          }
+        }
+      }
+    });
+
+    super.tearDown();
   }
 
   @Retention(RetentionPolicy.RUNTIME)
@@ -79,7 +96,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return needsJavaModule() ?
-           JAVA_1_7 :
+           LightCodeInsightFixtureTestCase.JAVA_1_7 :
            FlexProjectDescriptor.DESCRIPTOR;
   }
 
