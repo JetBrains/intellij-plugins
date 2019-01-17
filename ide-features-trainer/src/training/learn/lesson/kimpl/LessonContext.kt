@@ -31,4 +31,11 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
       trigger(action)
     }
   }
+
+  fun prepareSample(sample: LessonSample) {
+    task {
+      copyCode(sample.text)
+      caret(sample.getInfo(START_TAG).startOffset)
+    }
+  }
 }
