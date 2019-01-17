@@ -15,18 +15,16 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
-import com.intellij.util.Consumer;
 import com.intellij.util.ThrowableRunnable;
 
 import java.lang.annotation.ElementType;
@@ -35,7 +33,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 
-@SuppressWarnings({"ALL"})
 public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
   {
@@ -59,23 +56,26 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    FlexTestUtils.modifyConfigs(getProject(), new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor editor) {
+    try {
+      FlexTestUtils.modifyConfigs(getProject(), editor -> {
         if (ModuleType.get(myModule) == FlexModuleType.getInstance()) {
           for (ModifiableFlexBuildConfiguration bc : editor.getConfigurations(myModule)) {
             bc.getDependencies().setSdkEntry(null);
           }
         }
-      }
-    });
-
-    super.tearDown();
+      });
+    }
+    catch (Throwable e) {
+      addSuppressedException(e);
+    }
+    finally {
+      super.tearDown();
+    }
   }
 
   @Retention(RetentionPolicy.RUNTIME)
-  @Target({ElementType.METHOD})
-  public @interface NeedsJavaModule {
+  @Target(ElementType.METHOD)
+  @interface NeedsJavaModule {
   }
 
   @Override
@@ -100,14 +100,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
            FlexProjectDescriptor.DESCRIPTOR;
   }
 
-  public final void testBasic() throws Exception {
+  public final void testBasic() {
     doTest("");
     doTest("_2");
     doTest("_3");
     doTest("_4");
   }
 
-  public final void testBoldForClassMembers() throws Exception {
+  public final void testBoldForClassMembers() {
     LookupElement[] elements = doTest("");
     assertNotNull(elements);
     assertEquals("____", elements[0].getLookupString());
@@ -130,59 +130,59 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("param", elements[1].getLookupString());
     assertTrue(getBoldStatus(elements[1]));
 
-    assertTrue(!getBoldStatus(elements[4]));
+    assertFalse(getBoldStatus(elements[4]));
     assertEquals("Bar", elements[4].getLookupString());
   }
 
-  public final void testKeywords() throws Exception {
+  public final void testKeywords() {
     doTest("");
   }
 
-  public final void testKeywords2() throws Exception {
+  public final void testKeywords2() {
     final LookupElement[] elements = doTest("");
     checkWeHaveInCompletion(elements, "return", "function", "if");
   }
 
   @JSTestOptions(selectLookupItem = 0)
-  public final void testKeywordsInContext() throws Exception {
+  public final void testKeywordsInContext() {
     final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
     assertEquals("extends", lookupElements[0].getLookupString());
     assertTrue(getBoldStatus(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
   }
 
-  public final void testKeywordsInContext2() throws Exception {
+  public final void testKeywordsInContext2() {
     final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
     assertEquals("public", lookupElements[0].getLookupString());
     assertTrue(getBoldStatus(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
   }
 
-  public void testKeywordsInContext3() throws Exception {
+  public void testKeywordsInContext3() {
     final LookupElement[] lookupElements = defaultTest();
     assertStartsWith(lookupElements, "zzz");
     checkWeHaveInCompletion(lookupElements, "true", "null", "new");
   }
 
-  public void testKeywordsInContext4() throws Exception {
+  public void testKeywordsInContext4() {
     defaultTest();
   }
 
-  @JSTestOptions(value = JSTestOption.WithLoadingAndSavingCaches)
-  public final void testVarTypePickedUp() throws Exception {
+  @JSTestOptions(JSTestOption.WithLoadingAndSavingCaches)
+  public final void testVarTypePickedUp() {
     doTest("");
     doTest("_2");
   }
 
-  @JSTestOptions(value = JSTestOption.WithLoadingAndSavingCaches)
-  public final void testVarTypePickedUp2() throws Exception {
+  @JSTestOptions(JSTestOption.WithLoadingAndSavingCaches)
+  public final void testVarTypePickedUp2() {
     doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  public final void testCustomMeta() throws Exception {
+  public final void testCustomMeta() {
     String testName = getTestName(false);
     myFixture.configureByFiles(testName + ".js2", testName + ".dtd");
-    final VirtualFile relativeFile = VfsUtil.findRelativeFile(testName + ".dtd", myFixture.getFile().getVirtualFile());
+    final VirtualFile relativeFile = VfsUtilCore.findRelativeFile(testName + ".dtd", myFixture.getFile().getVirtualFile());
     ExternalResourceManagerExImpl.registerResourceTemporarily(JSAttributeImpl.URN_FLEX_META, relativeFile.getPath(), getTestRootDisposable());
 
     complete();
@@ -193,152 +193,152 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     checkResultByFile("2", getExtension());
   }
 
-  public final void testCompleteAttrName() throws Exception {
+  public final void testCompleteAttrName() {
     defaultTest();
   }
 
-  public final void testFuncTypePickedUp() throws Exception {
+  public final void testFuncTypePickedUp() {
     doTest("");
   }
 
-  public final void testFuncTypePickedUp2() throws Exception {
+  public final void testFuncTypePickedUp2() {
     doTest("");
   }
 
-  public final void testFuncTypePickedUp3() throws Exception {
+  public final void testFuncTypePickedUp3() {
     doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  public final void testFuncTypePickedUp4() throws Exception {
+  public final void testFuncTypePickedUp4() {
     doTest("");
   }
 
-  public final void testFuncTypePickedUp5() throws Exception {
+  public final void testFuncTypePickedUp5() {
     doTest("");
   }
 
-  public final void testCompleteAfterThis() throws Exception {
+  public final void testCompleteAfterThis() {
     doTest("");
   }
 
-  public final void testCompleteAfterThis2() throws Exception {
+  public final void testCompleteAfterThis2() {
     doTest("");
     mySmartCompletionTests.remove(getTestName(false));
     FileDocumentManager.getInstance().saveAllDocuments();
     doTest("");
   }
 
-  public final void testCompleteAfterThis3() throws Exception {
+  public final void testCompleteAfterThis3() {
     doTest("");
   }
 
-  public final void testCompleteAfterType() throws Exception {
+  public final void testCompleteAfterType() {
     doTest("");
   }
 
-  public final void testCompleteAfterThis4() throws Exception {
+  public final void testCompleteAfterThis4() {
     doTest("");
   }
 
-  public final void testCompleteAfterSuper() throws Exception {
+  public final void testCompleteAfterSuper() {
     doTest("");
   }
 
-  public final void testCompleteWithoutQualifier() throws Exception {
+  public final void testCompleteWithoutQualifier() {
     doTest("");
     doTest("_2");
     doTest("_3");
   }
 
-  public final void testNoComplete() throws Exception {
+  public final void testNoComplete() {
     doTest("");
   }
 
-  public final void testCompleteNS() throws Exception {
+  public final void testCompleteNS() {
     doTest("");
   }
 
-  public final void testCompleteNS2() throws Exception {
+  public final void testCompleteNS2() {
     doTest("");
   }
 
-  public final void testCompleteNS3() throws Exception {
+  public final void testCompleteNS3() {
     doTest("");
   }
 
-  public final void testCompleteNS4() throws Exception {
+  public final void testCompleteNS4() {
     doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals("MyNamespace", myFixture.getLookupElementStrings().get(0));
   }
 
-  public final void testCompleteType4() throws Exception {
+  public final void testCompleteType4() {
     doTest("");
     doTest("_2");
   }
 
-  public final void testCompleteType5() throws Exception {
+  public final void testCompleteType5() {
     doTest("");
   }
 
-  public final void testCompleteType6() throws Exception {
+  public final void testCompleteType6() {
     doTest("");
   }
 
-  public final void testCompleteType7() throws Exception {
+  public final void testCompleteType7() {
     doTest("");
   }
 
-  public final void testCompleteType7_2() throws Exception {
+  public final void testCompleteType7_2() {
     doTest("");
   }
 
-  public final void testCompleteType7_3() throws Exception {
+  public final void testCompleteType7_3() {
     doTest("");
   }
 
-  public final void testCompleteType7_4() throws Exception {
+  public final void testCompleteType7_4() {
     doTest("");
   }
 
-  public final void testCompleteType8() throws Exception {
+  public final void testCompleteType8() {
     doTest("");
   }
 
-  public final void testCompleteType9() throws Exception {
+  public final void testCompleteType9() {
     doTest("");
   }
 
-  public final void testCompleteFunInAddEventListener() throws Exception {
+  public final void testCompleteFunInAddEventListener() {
     doTest("");
   }
 
-  public final void testCompleteAttributes() throws Exception {
+  public final void testCompleteAttributes() {
     doTest("");
   }
 
-  public final void testCompleteClassName() throws Exception {
+  public final void testCompleteClassName() {
     doTest("");
   }
 
-  public final void testCompleteConstructorName() throws Exception {
+  public final void testCompleteConstructorName() {
     doTest("");
   }
 
-  public final void testInsertImport() throws Exception {
+  public final void testInsertImport() {
     final String testName = getTestName(false);
     doTestForFiles(testName + ".js2", testName + "_2.js2");
   }
 
-  public final void testInsertImport2() throws Exception {
+  public final void testInsertImport2() {
     doTest("");
   }
 
-  public final void testInsertImport3() throws Exception {
+  public final void testInsertImport3() {
     doTest("");
   }
 
-  public final void testInsertImportAmbiguous1() throws Exception {
+  public final void testInsertImportAmbiguous1() {
     final LookupElement[] items = doTest("");
     assertQNames(items, "bar.ClassA", "foo.ClassA");
     myFixture.getLookup().setCurrentItem(items[0]);
@@ -346,7 +346,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
-  public final void testInsertImportAmbiguous2() throws Exception {
+  public final void testInsertImportAmbiguous2() {
     final LookupElement[] items = doTest("");
     assertQNames(items, "bar.ClassA", "foo.ClassA");
     myFixture.getLookup().setCurrentItem(items[0]);
@@ -354,19 +354,19 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
-  public final void testInsertImportAmbiguous3() throws Exception {
+  public final void testInsertImportAmbiguous3() {
     doTest("");
   }
 
-  public final void testInsertImportAmbiguous4() throws Exception {
+  public final void testInsertImportAmbiguous4() {
     doTest("");
   }
 
-  public final void testInsertImportAmbiguous5() throws Exception {
+  public final void testInsertImportAmbiguous5() {
     doTest("");
   }
 
-  public final void testInsertImportAmbiguous6() throws Exception {
+  public final void testInsertImportAmbiguous6() {
     final LookupElement[] items = doTest("");
     assertQNames(items, "ClassA", "bar.ClassA");
     myFixture.getLookup().setCurrentItem(items[0]);
@@ -374,13 +374,13 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   // Looks like tested functionality has never worked in run time, previously test passed because of a trick in base test class
-  public final void _testInsertImportForStaticField() throws Exception {
+  public final void _testInsertImportForStaticField() {
     final String testName = getTestName(false);
     doTestForFiles(testName + ".js2", testName + "_2.js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
-  public final void testConstTypePickedUp() throws Exception {
+  public final void testConstTypePickedUp() {
     final LookupElement[] items = doTest("");
     assertNotNull(items);
     assertEquals("addNamespace", items[0].getLookupString());
@@ -388,7 +388,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
-  public final void testConstTypePickedUp2() throws Exception {
+  public final void testConstTypePickedUp2() {
     final LookupElement[] items = doTest("");
     assertNotNull(items);
     assertEquals("attribute", items[0].getLookupString());
@@ -397,45 +397,45 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("children", items[3].getLookupString());
   }
 
-  public final void testConstrTypePickedUp() throws Exception {
+  public final void testConstrTypePickedUp() {
     doTest("");
   }
 
-  public final void testVarTypePickedUp3() throws Exception {
-    doTest("");
-    assertNotNull(myFixture.getLookupElements());
-  }
-
-  public final void testVarTypePickedUp4() throws Exception {
+  public final void testVarTypePickedUp3() {
     doTest("");
     assertNotNull(myFixture.getLookupElements());
   }
 
-  public final void testVarTypePickedUp5() throws Exception {
+  public final void testVarTypePickedUp4() {
+    doTest("");
+    assertNotNull(myFixture.getLookupElements());
+  }
+
+  public final void testVarTypePickedUp5() {
     doTest("");
     assertNotNull(myFixture.getLookupElements());
   }
 
   @JSTestOptions(selectLookupItem = 0)
-  public final void testCompletePackage() throws Exception {
+  public final void testCompletePackage() {
     doTest("");
   }
 
-  public final void testCompletePackage2() throws Exception {
+  public final void testCompletePackage2() {
     doTest("");
   }
 
-  public final void testCompletePackage3() throws Exception {
+  public final void testCompletePackage3() {
     doTest("");
   }
 
-  @JSTestOptions(value = JSTestOption.WithLoadingAndSavingCaches)
-  public final void testCompletePackage4() throws Exception {
+  @JSTestOptions(JSTestOption.WithLoadingAndSavingCaches)
+  public final void testCompletePackage4() {
     doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
-  public final void testCompleteType() throws Exception {
+  @JSTestOptions(JSTestOption.WithFlexSdk)
+  public final void testCompleteType() {
     setUpJdk();
     doTest("");
     assertEquals("*", myFixture.getLookupElements()[0].getLookupString());
@@ -445,198 +445,198 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertTrue(myFixture.getLookupElements().length < 110);
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
-  public final void testCompleteType2() throws Exception {
+  @JSTestOptions(JSTestOption.WithFlexSdk)
+  public final void testCompleteType2() {
     setUpJdk();
     doTest("");
   }
 
-  public final void testCompleteType3() throws Exception {
+  public final void testCompleteType3() {
     doTest("");
   }
 
-  public final void testCompleteTypeInNew() throws Exception {
+  public final void testCompleteTypeInNew() {
     doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  @JSTestOptions({JSTestOption.WithFlexSdk})
-  public final void testCompleteTypeInNew2() throws Exception {
+  @JSTestOptions(JSTestOption.WithFlexSdk)
+  public final void testCompleteTypeInNew2() {
     setUpJdk();
     doTest("");
   }
 
-  public final void testCompleteBeforeLocalVar() throws Exception {
+  public final void testCompleteBeforeLocalVar() {
     doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
   }
 
-  public final void testNoCompletionForDHTML() throws Exception {
+  public final void testNoCompletionForDHTML() {
     doTest("", "js2");
     doTest("_2", "js2");
   }
 
-  public final void testNoCompletionForKeywordsInInlineMxml() throws Exception {
+  public final void testNoCompletionForKeywordsInInlineMxml() {
     doTest("", "js2");
   }
 
-  public final void testECMACompletion() throws Exception {
+  public final void testECMACompletion() {
     doTest("", "js2");
   }
 
-  public final void testECMACompletion2() throws Exception {
+  public final void testECMACompletion2() {
     doTest("", "js2");
     doTest("_2", "js2");
   }
 
-  public final void testCompleteVarInNsPlace() throws Exception {
+  public final void testCompleteVarInNsPlace() {
     doTest("", "js2");
     doTest("_2", "js2");
     doTest("_3", "js2");
   }
 
-  public final void testCompleteFunction() throws Exception {
+  public final void testCompleteFunction() {
     doTest("", "js2");
   }
 
-  public final void testNoTypeAtNsPosition() throws Exception {
+  public final void testNoTypeAtNsPosition() {
     doTest("", "js2");
     doTest("_2", "js2");
     doTest("_3", "js2");
   }
 
-  public final void testNoKeywordAtPosition() throws Exception {
+  public final void testNoKeywordAtPosition() {
     doTest("", "js2");
   }
 
-  public final void testNoKeywordAtPosition2() throws Exception {
+  public final void testNoKeywordAtPosition2() {
     doTest("", "js2");
   }
 
-  public final void testCompleteKeyword() throws Exception {
+  public final void testCompleteKeyword() {
     doTest("", "js2");
   }
 
   @JSTestOptions(JSTestOption.WithSmartCompletion)
-  public final void testCompletionInXmlTag() throws Exception {
+  public final void testCompletionInXmlTag() {
     LookupElement[] items = doTest("");
     assertEmpty(items);
   }
 
-  public void testGenerics() throws Exception {
+  public void testGenerics() {
     doTest("");
   }
 
-  public void testGenerics2() throws Exception {
+  public void testGenerics2() {
     doTest("");
   }
 
-  public void testGenerics2_2() throws Exception {
+  public void testGenerics2_2() {
     doTest("");
   }
 
-  public void testPrivateMethodCompletion() throws Exception {
+  public void testPrivateMethodCompletion() {
     doTest("");
   }
 
-  public void testPrivateMethodCompletion_2() throws Exception {
+  public void testPrivateMethodCompletion_2() {
     doTest("");
   }
 
-  public void testPrivateMethodCompletion_3() throws Exception {
+  public void testPrivateMethodCompletion_3() {
     doTest("");
   }
 
-  public void testProtectedMethodCompletion() throws Exception {
+  public void testProtectedMethodCompletion() {
     doTest("");
   }
 
-  public void testProtectedMethodCompletion_2() throws Exception {
+  public void testProtectedMethodCompletion_2() {
     doTest("");
   }
 
-  public void testProtectedMethodCompletion_3() throws Exception {
+  public void testProtectedMethodCompletion_3() {
     doTest("");
   }
 
-  public void testProtectedMethodCompletion_4() throws Exception {
+  public void testProtectedMethodCompletion_4() {
     doTest("");
   }
 
-  public void testCompleteInReferenceList() throws Exception {
+  public void testCompleteInReferenceList() {
     doTest("");
   }
 
-  public void testCompleteInReferenceList_2() throws Exception {
+  public void testCompleteInReferenceList_2() {
     doTest("");
   }
 
-  public void testCompleteInReferenceList_3() throws Exception {
+  public void testCompleteInReferenceList_3() {
     doTest("");
   }
 
-  public void testCompleteInReferenceList_4() throws Exception {
+  public void testCompleteInReferenceList_4() {
     doTest("");
   }
 
-  public void testCompleteInReferenceList_5() throws Exception {
+  public void testCompleteInReferenceList_5() {
     doTest("");
   }
 
-  public void testStaticConstCompletion() throws Exception {
+  public void testStaticConstCompletion() {
     doTest("");
   }
 
-  public void testCompleteAfterCast() throws Exception {
+  public void testCompleteAfterCast() {
     doTest("");
   }
 
-  public void testInternalKeywordCompletion() throws Exception {
+  public void testInternalKeywordCompletion() {
     doTest("");
   }
 
-  public void testProtectedKeywordCompletion() throws Exception {
+  public void testProtectedKeywordCompletion() {
     doTest("");
   }
 
   @JSTestOptions(selectLookupItem = 0)
-  public void testCompleteOverriddenName() throws Exception {
+  public void testCompleteOverriddenName() {
     final LookupElement[] elements = doTest("");
     assertEquals(2, elements.length);
   }
 
   @NeedsJavaModule
-  public void testCompleteStyleNameInString() throws Exception {
+  public void testCompleteStyleNameInString() {
     final String base = getTestName(false);
     doTestForFiles(base + ".js2", base + "_2.js2");
   }
 
-  public void testCompleteAfterUnknownVariable() throws Exception {
+  public void testCompleteAfterUnknownVariable() {
     doTest("");
   }
 
-  public void testCompleteTopLevelPackage() throws Exception {
+  public void testCompleteTopLevelPackage() {
     doTest("");
   }
 
-  public void testCompleteInsertProperty() throws Exception {
+  public void testCompleteInsertProperty() {
     doTest("");
   }
 
-  public void testSkipClassWithExcludedAnnotation() throws Exception {
+  public void testSkipClassWithExcludedAnnotation() {
     doTest("");
   }
 
-  public final void testJSDoc() throws Exception {
+  public final void testJSDoc() {
     doTest("");
     doTest("_2");
   }
 
-  public final void testCompleteSkipsUnopenedNamespaces() throws Exception {
+  public final void testCompleteSkipsUnopenedNamespaces() {
     doTest("");
     doTest("_2");
     doTest("_3");
   }
 
-  public void testCompleteWithSemicolon() throws Exception {
+  public void testCompleteWithSemicolon() {
     boolean old = CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION;
     CodeInsightSettings.getInstance().AUTOCOMPLETE_ON_CODE_COMPLETION = false;
     try {
@@ -653,16 +653,16 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     }
   }
 
-  public final void testIncludedMemberTypePickedUp() throws Exception {
+  public final void testIncludedMemberTypePickedUp() {
     doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_included.js2");
   }
 
   @JSTestOptions(selectLookupItem = 0)
-  public final void testSOE() throws Exception {
+  public final void testSOE() {
     defaultTest();
   }
 
-  public final void testCompleteAmbiguousClass() throws Exception {
+  public final void testCompleteAmbiguousClass() {
     doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals(2, myFixture.getLookupElements().length);
@@ -674,7 +674,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     myFixture.checkResultByFile(getTestName(false) + "_2_after.js2");
   }
 
-  public final void testCompleteStaticFunction() throws Exception {
+  public final void testCompleteStaticFunction() {
     doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals(2, myFixture.getLookupElements().length);
@@ -682,15 +682,15 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertLookupElement(myFixture.getLookupElements()[1], "getYYY", "() (test2)", "Class");
   }
 
-  public final void testCompleteStaticFunction2() throws Exception {
+  public final void testCompleteStaticFunction2() {
     doTest("");
   }
 
-  public final void testCompleteClassWithConstructor() throws Exception {
+  public final void testCompleteClassWithConstructor() {
     doTest("");
   }
 
-  public void testNamesakeConstructors() throws Exception {
+  public void testNamesakeConstructors() {
     doTest("");
     assertNotNull(myFixture.getLookupElements());
     assertEquals(2, myFixture.getLookupElements().length);
@@ -698,11 +698,11 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("Test", myFixture.getLookupElements()[1].getLookupString());
   }
 
-  public void testUnambiguousConstructor() throws Exception {
+  public void testUnambiguousConstructor() {
     doTest("");
   }
 
-  public void testAmbiguousConstructor() throws Exception {
+  public void testAmbiguousConstructor() {
     doTest("");
 
     assertNotNull(myFixture.getLookupElements());
@@ -715,26 +715,26 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
-  public void testStaticField() throws Exception {
+  public void testStaticField() {
     doTest("");
   }
 
-  public void testParentClassField() throws Exception {
+  public void testParentClassField() {
     doTest("");
   }
 
-  public void testClassHierarchyMembersOrder() throws Exception {
+  public void testClassHierarchyMembersOrder() {
     final LookupElement[] lookupElements = doTest("");
     assertStartsWith(lookupElements, "zbb", "zzz", "zaa", "constructor");
     checkWeHaveInCompletion(lookupElements, "toSource");
   }
 
-  public void testClassHierarchyMembersOrder2() throws Exception {
+  public void testClassHierarchyMembersOrder2() {
     final LookupElement[] lookupElements = doTest("");
     assertStartsWith(lookupElements, "e", "param", "Extended", "a", "Base", "zbb", "zzz", "Object", "zaa", "constructor");
   }
 
-  public void testUseKeyword() throws Exception {
+  public void testUseKeyword() {
     doTest("");
   }
 
@@ -743,31 +743,32 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     return "js2";
   }
 
+  @Override
   protected String getBasePath() {
     return BASE_PATH;
   }
 
-  private void assertQNames(LookupElement[] items, String... qnames) {
+  private static void assertQNames(LookupElement[] items, String... qnames) {
     assertEquals(qnames.length, items.length);
     for (int i = 0; i < items.length; i++) {
       assertEquals(qnames[i], getQName(items[i]));
     }
   }
 
-  private String getQName(LookupElement item) {
+  private static String getQName(LookupElement item) {
     return ((JSQualifiedNamedElement)item.getObject()).getQualifiedName();
   }
 
-  public final void testMoveCursorInsideConstructor() throws Exception {
+  public final void testMoveCursorInsideConstructor() {
     doTest("");
   }
 
-  public final void testCompleteConst() throws Exception {
+  public final void testCompleteConst() {
     doTest("");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
-  public final void testEventName() throws Exception {
+  public final void testEventName() {
     setUpJdk();
     doTest("");
     doTest("_2");
@@ -776,142 +777,142 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     doTest("_5");
   }
 
-  public void testConditionalCompileBlock() throws Exception {
+  public void testConditionalCompileBlock() {
     doTest("");
   }
 
-  public void testStaticBlock() throws Exception {
+  public void testStaticBlock() {
     doTest("");
   }
 
-  public void testStaticBlock2() throws Exception {
+  public void testStaticBlock2() {
     doTest("");
   }
 
-  public void testPrefix() throws Exception {
+  public void testPrefix() {
     doTest("");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion_2() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion_2() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion_3() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion_3() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion_4() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion_4() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion, JSTestOption.WithFlexFacet})
-  public final void testSmartCompletion2_2() throws Exception {
+  @JSTestOptions({JSTestOption.WithSmartCompletion, JSTestOption.WithFlexFacet})
+  public final void testSmartCompletion2_2() {
     setUpJdk();
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_3() throws Exception {
+  public final void testSmartCompletion2_3() {
     // TODO consider parseInt() returning Number etc expect to appear. + 2_36 and 2_36_2. see JSTypeUtils.typeCanBeAssignedWithoutCoercion
     setUpJdk();
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_4() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_4() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_5() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_5() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_6() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_6() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_7() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_7() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_8() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_8() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_9() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_9() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_10() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_10() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_11() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_11() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_12() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_12() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_13() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_13() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_14() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_14() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_15() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_15() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_16() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_16() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_17() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_17() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_18() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_18() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_19() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_19() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_20() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_20() {
     setUpJdk();
     LookupElement[] lookupElements = defaultTest();
     assertEquals(2, lookupElements.length);
@@ -921,305 +922,302 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     checkResultByFile("_2", "js2");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_21() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_21() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_22() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_22() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_23() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_23() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_24() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_24() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_25() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_25() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_26() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_26() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_27() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_27() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_27_2() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_27_2() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_28() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_28() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_29() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_29() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion, JSTestOption.WithFlexSdk})
-  public final void testSmartCompletion2_30() throws Exception {
+  @JSTestOptions({JSTestOption.WithSmartCompletion, JSTestOption.WithFlexSdk})
+  public final void testSmartCompletion2_30() {
     LookupElement[] lookupElements = defaultTest();
     for (LookupElement l : lookupElements) {
       assertFalse("toString".equals(l.getLookupString()));
     }
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_31() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_31() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_32() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_32() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_33() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_33() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_34() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_34() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_35() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_35() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_36() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_36() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_36_2() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_36_2() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_37() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_37() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_38() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_38() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_38_2() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_38_2() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_38_3() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_38_3() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_39() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_39() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_40() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_40() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSmartCompletion2_41() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSmartCompletion2_41() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSuggestInterfaceAfterIs() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSuggestInterfaceAfterIs() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testVectorReverse() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testVectorReverse() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testNoGetterSetterWhenFunExpectedType() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testNoGetterSetterWhenFunExpectedType() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSuggestIntOrUintWhenNumberExpected() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSuggestIntOrUintWhenNumberExpected() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testSuggestAnyInRestParameter() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testSuggestAnyInRestParameter() {
     defaultTest();
   }
 
-  public final void testCompleteFunName() throws Exception {
+  public final void testCompleteFunName() {
     defaultTest();
   }
 
-  public final void testCompleteFunName2() throws Exception {
+  public final void testCompleteFunName2() {
     defaultTest();
   }
 
-  public final void testNoComplete2() throws Exception {
+  public final void testNoComplete2() {
     defaultTest();
   }
 
-  public final void testCompleteClassBeforeVar() throws Exception {
+  public final void testCompleteClassBeforeVar() {
     defaultTest();
   }
 
-  public final void testNoCompleteFinalClassInExtends() throws Exception {
+  public final void testNoCompleteFinalClassInExtends() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testCompleteInNew() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testCompleteInNew() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testNoInheritor() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testNoInheritor() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testVectorAfterNew() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testVectorAfterNew() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testNoJs() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testNoJs() {
     String testName = getTestName(false);
     doTestForFiles(new String[] {testName + ".js2", testName + ".js"}, "", "js2");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testCompleteInRHSOfAsBinOp() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testCompleteInRHSOfAsBinOp() {
     String testName = getTestName(false);
     doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
   }
 
-  public final void testCompleteStaticConst() throws Exception {
+  public final void testCompleteStaticConst() {
     defaultTest();
   }
 
-  public final void testCompleteNoDuplicates() throws Exception {
+  public final void testCompleteNoDuplicates() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testCompleteInCase() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testCompleteInCase() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testNoInaccessibleCompletion() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testNoInaccessibleCompletion() {
     String testName = getTestName(false);
     doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testNoInaccessibleCompletion2() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testNoInaccessibleCompletion2() {
     defaultTest();
   }
 
-  public final void testNoKeywordsInLiteral() throws Exception { defaultTest(); }
+  public final void testNoKeywordsInLiteral() { defaultTest(); }
 
-  public final void testNoKeywordsInLiteral_2() throws Exception { defaultTest(); }
+  public final void testNoKeywordsInLiteral_2() { defaultTest(); }
 
-  public final void testNoKeywordsInComments() throws Exception { defaultTest(); }
+  public final void testNoKeywordsInComments() { defaultTest(); }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testNoParens() throws Exception { defaultTest(); }
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testNoParens() { defaultTest(); }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testCompleteTypeInAs() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testCompleteTypeInAs() {
     defaultTest();
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testCompleteWithTab() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testCompleteWithTab() {
     LookupElement[] lookupElements = defaultTest();
     myFixture.getLookup().setCurrentItem(lookupElements[0]);
     myFixture.type(Lookup.REPLACE_SELECT_CHAR);
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testCompleteWithCompleteStatement() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testCompleteWithCompleteStatement() {
     LookupElement[] lookupElements = defaultTest();
     myFixture.getLookup().setCurrentItem(lookupElements[0]);
     myFixture.type(Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testCompleteWithCompleteStatement2() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testCompleteWithCompleteStatement2() {
     LookupElement[] lookupElements = defaultTest();
     myFixture.getLookup().setCurrentItem(lookupElements[0]);
     myFixture.type(Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testCompleteWithCompleteStatement2_2() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testCompleteWithCompleteStatement2_2() {
     LookupElement[] lookupElements = defaultTest();
     myFixture.getLookup().setCurrentItem(lookupElements[0]);
     myFixture.type(Lookup.COMPLETE_STATEMENT_SELECT_CHAR);
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
-  public final void testCompleteNearParen() throws Exception {
+  public final void testCompleteNearParen() {
     LookupElement[] lookupElements = defaultTest();
     myFixture.getLookup().setCurrentItem(lookupElements[0]);
     myFixture.type('\n');
     myFixture.checkResultByFile(getTestName(false) + "_after2.js2");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public final void testDetectExprType() throws Exception { defaultTest(); }
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public final void testDetectExprType() { defaultTest(); }
 
-  @JSTestOptions(value = {JSTestOption.WithFlexSdk})
-  public final void testQualifiedReference() throws Exception {
+  @JSTestOptions(JSTestOption.WithFlexSdk)
+  public final void testQualifiedReference() {
     setUpJdk();
     defaultTest();
   }
 
-  public void testTwoSdks() throws Exception {
+  public void testTwoSdks() {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, myFixture.getTestRootDisposable());
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, myFixture.getTestRootDisposable());
-    FlexTestUtils.modifyConfigs(getProject(), new Consumer<FlexProjectConfigurationEditor>() {
-      @Override
-      public void consume(final FlexProjectConfigurationEditor editor) {
-        ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
-        bc1.setName("1");
-        FlexTestUtils.setSdk(bc1, sdk45);
-        ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
-        bc2.setName("2");
-        FlexTestUtils.setSdk(bc2, sdk46);
-      }
+    FlexTestUtils.modifyConfigs(getProject(), editor -> {
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      bc1.setName("1");
+      FlexTestUtils.setSdk(bc1, sdk45);
+      ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+      bc2.setName("2");
+      FlexTestUtils.setSdk(bc2, sdk46);
     });
     final FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(myModule);
 
@@ -1233,7 +1231,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
       }
 
       @Override
-      public void run() throws Exception {
+      public void run() {
         m.setActiveBuildConfiguration(m.findConfigurationByName(myBcName));
         defaultTest();
         for (LookupElement item : myFixture.getLookupElements()) {
@@ -1248,56 +1246,56 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     new TestZZ("1", sdk45.getName()).run();
   }
 
-  public void testSameParameterName() throws Exception {
+  public void testSameParameterName() {
     LookupElement[] lookupElements = doTest("", "js2");
     assertStartsWith(lookupElements, "x", "a");
   }
 
-  public void testSameParameterName2() throws Exception {
+  public void testSameParameterName2() {
     String testName = getTestName(false);
     final LookupElement[] lookupElements = doTestForFiles(new String[] {testName + ".js2", testName + "_2.js2"}, "", "js2");
     assertStartsWith(lookupElements, "x", "a");
   }
 
-  @JSTestOptions(value = {JSTestOption.WithSmartCompletion})
-  public void testSameParameterName3() throws Exception {
+  @JSTestOptions(JSTestOption.WithSmartCompletion)
+  public void testSameParameterName3() {
     final LookupElement[] lookupElements = defaultTest();
     assertStartsWith(lookupElements, "x");
     checkNoCompletion(lookupElements, "a");
   }
 
-  public void testTypeContext() throws Exception {
+  public void testTypeContext() {
     final LookupElement[] lookupElements = defaultTest();
     assertStartsWith(lookupElements, "W", "Z");
     checkWeHaveInCompletion(lookupElements, "A", "Array");
   }
 
-  public void testNullInIfStatement() throws Exception {
+  public void testNullInIfStatement() {
     final LookupElement[] lookupElements = defaultTest();
     checkWeHaveInCompletion(lookupElements, "null", "true", "false", "this");
     checkNoCompletion(lookupElements, "function", "interface", "extends", "static", "var", "const", "break", "try", "return", "in", "throw",
                       "void", "int");
   }
 
-  public void testFinalClass() throws Exception {
+  public void testFinalClass() {
     final LookupElement[] lookupElements = defaultTest();
     checkWeHaveInCompletion(lookupElements, "final");
   }
 
-  public void testNoKeywordsInImportStatement() throws Exception {
+  public void testNoKeywordsInImportStatement() {
     final LookupElement[] lookupElements = defaultTest();
     checkNoCompletion(lookupElements, "function", "interface", "extends", "static", "var", "const", "break", "try", "return", "in", "throw",
                       "void", "use", "package", "override");
   }
 
-  public void testNoKeywordsInReturnType() throws Exception {
+  public void testNoKeywordsInReturnType() {
     final LookupElement[] lookupElements = defaultTest();
     checkNoCompletion(lookupElements, "function", "interface", "extends", "static", "var", "const", "break", "try", "return", "in", "throw",
                       "use", "package", "override");
   }
 
   @NeedsJavaModule
-  public void testObjectVariants() throws Exception {
+  public void testObjectVariants() {
     final LookupElement[] elements = defaultTest();
     checkWeHaveInCompletion(elements, "hasOwnProperty", "length", "isPrototypeOf", "toString");
   }
