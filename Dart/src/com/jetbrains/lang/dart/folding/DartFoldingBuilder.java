@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.UnfairTextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
@@ -54,7 +55,8 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         PsiComment.class,
         DartStringLiteralExpression.class,
         DartMapLiteralExpression.class,
-        DartNewExpression.class});
+        DartNewExpression.class,
+        DartCallExpression.class});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
     foldClassBodies(descriptors, dartFile);                                            // 5. Class body
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
@@ -65,6 +67,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
   }
 
   @Override
+  @NotNull
   protected String getLanguagePlaceholderText(@NotNull final ASTNode node, @NotNull final TextRange range) {
     final IElementType elementType = node.getElementType();
     final PsiElement psiElement = node.getPsi();
@@ -301,17 +304,30 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     for (PsiElement psiElement : psiElements) {
       if (psiElement instanceof DartNewExpression) {
         DartNewExpression dartNewExpression = (DartNewExpression)psiElement;
-        DartArguments dartArguments = dartNewExpression.getArguments();
-        if (dartArguments == null || dartArguments.getArgumentList() == null) continue;
-
-        DartArgumentList dartArgumentList = dartArguments.getArgumentList();
-        if (dartArgumentList.getExpressionList().isEmpty() && dartArgumentList.getNamedArgumentList().isEmpty()) continue;
-
-        descriptors.add(new FoldingDescriptor(dartArguments, dartArguments.getTextRange()));
+        foldNonEmptyDartArguments(descriptors, dartNewExpression.getArguments());
+      }
+      else if (psiElement instanceof DartCallExpression) {
+        DartCallExpression dartCallExpression = (DartCallExpression)psiElement;
+        // test for capitalization test
+        final String methodName = dartCallExpression.getExpression().getText();
+        if (StringUtil.isCapitalized(methodName)) {
+          foldNonEmptyDartArguments(descriptors, dartCallExpression.getArguments());
+        }
       }
     }
   }
 
+  private static void foldNonEmptyDartArguments(@NotNull final List<FoldingDescriptor> descriptors,
+                                                @Nullable final DartArguments dartArguments) {
+    if (dartArguments == null || dartArguments.getArgumentList() == null) return;
+
+    DartArgumentList dartArgumentList = dartArguments.getArgumentList();
+    if (dartArgumentList.getExpressionList().isEmpty() && dartArgumentList.getNamedArgumentList().isEmpty()) return;
+
+    descriptors.add(new FoldingDescriptor(dartArguments, dartArguments.getTextRange()));
+  }
+
+  @NotNull
   private static String multilineStringPlaceholder(@NotNull final ASTNode node) {
     ASTNode child = node.getFirstChildNode();
     if (child == null) return "...";
