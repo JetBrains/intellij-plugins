@@ -80,6 +80,7 @@ class RubyLessonsGuiTestCase : GuiTestCase() {
   }
 
   private fun openLearnProject() {
+    CourseManager.instance.showGotMessage = false
     welcomeFrame {
       actionLink("Learn IntelliJ IDEA").click()
       dialog {

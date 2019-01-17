@@ -154,6 +154,8 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
     showToolStripes()
 
     val toolWindowAnchor = LangManager.getInstance().getLangSupport().getToolWindowAnchor()
+
+    if (!CourseManager.instance.showGotMessage) return
     GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"),
         LearnBundle.message("learn.tool.window.quick.access.message", toolWindowAnchor))
         .setCallback({ if (toolStripesAreHiddenDefault) hideToolStripes() })
