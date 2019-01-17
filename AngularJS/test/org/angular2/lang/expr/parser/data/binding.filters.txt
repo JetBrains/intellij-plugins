@@ -1,8 +1,9 @@
 ASTWrapperPsiElement(FILE)
   Angular2Binding
     Angular2PipeExpression
-      JSLiteralExpression
-        PsiElement(JS:NUMERIC_LITERAL)('1')
+      Angular2PipeLeftSideArgument
+        JSLiteralExpression
+          PsiElement(JS:NUMERIC_LITERAL)('1')
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
@@ -14,8 +15,9 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   Angular2Binding
     Angular2PipeExpression
-      JSLiteralExpression
-        PsiElement(JS:STRING_LITERAL)(''abcd'')
+      Angular2PipeLeftSideArgument
+        JSLiteralExpression
+          PsiElement(JS:STRING_LITERAL)(''abcd'')
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
@@ -32,21 +34,23 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   Angular2Binding
     Angular2PipeExpression
-      Angular2PipeExpression
-        JSLiteralExpression
-          PsiElement(JS:STRING_LITERAL)(''abcd'')
-        PsiWhiteSpace(' ')
-        PsiElement(JS:OR)('|')
-        PsiWhiteSpace(' ')
-        Angular2PipeReferenceExpression
-          PsiElement(JS:IDENTIFIER)('substring')
-        Angular2PipeArgumentsList
-          PsiElement(JS:COLON)(':')
-          JSLiteralExpression
-            PsiElement(JS:NUMERIC_LITERAL)('1')
-          PsiElement(JS:COLON)(':')
-          JSLiteralExpression
-            PsiElement(JS:NUMERIC_LITERAL)('3')
+      Angular2PipeLeftSideArgument
+        Angular2PipeExpression
+          Angular2PipeLeftSideArgument
+            JSLiteralExpression
+              PsiElement(JS:STRING_LITERAL)(''abcd'')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          Angular2PipeReferenceExpression
+            PsiElement(JS:IDENTIFIER)('substring')
+          Angular2PipeArgumentsList
+            PsiElement(JS:COLON)(':')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('1')
+            PsiElement(JS:COLON)(':')
+            JSLiteralExpression
+              PsiElement(JS:NUMERIC_LITERAL)('3')
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
@@ -69,8 +73,9 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         Angular2PipeExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('name')
+          Angular2PipeLeftSideArgument
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('name')
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')
@@ -83,8 +88,9 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   Angular2Binding
     Angular2PipeExpression
-      JSReferenceExpression
-        PsiElement(JS:IDENTIFIER)('name')
+      Angular2PipeLeftSideArgument
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('name')
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')
@@ -98,17 +104,18 @@ ASTWrapperPsiElement(FILE)
 ASTWrapperPsiElement(FILE)
   Angular2Binding
     Angular2PipeExpression
-      JSBinaryExpression
-        JSReferenceExpression
+      Angular2PipeLeftSideArgument
+        JSBinaryExpression
           JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('book')
-          PsiElement(JS:DOT)('.')
-          PsiElement(JS:IDENTIFIER)('title')
-        PsiWhiteSpace(' ')
-        PsiElement(JS:OROR)('||')
-        PsiWhiteSpace(' ')
-        JSLiteralExpression
-          PsiElement(JS:STRING_LITERAL)(''No Title'')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('book')
+            PsiElement(JS:DOT)('.')
+            PsiElement(JS:IDENTIFIER)('title')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OROR)('||')
+          PsiWhiteSpace(' ')
+          JSLiteralExpression
+            PsiElement(JS:STRING_LITERAL)(''No Title'')
       PsiWhiteSpace(' ')
       PsiElement(JS:OR)('|')
       PsiWhiteSpace(' ')

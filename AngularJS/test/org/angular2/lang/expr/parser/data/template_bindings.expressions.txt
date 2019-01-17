@@ -232,23 +232,25 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:IDENTIFIER)('of')
       PsiWhiteSpace(' ')
       Angular2PipeExpression
-        Angular2PipeExpression
-          JSReferenceExpression
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('todoService')
-            PsiElement(JS:DOT)('.')
-            PsiElement(JS:IDENTIFIER)('todos')
-          PsiWhiteSpace(' ')
-          PsiElement(JS:OR)('|')
-          PsiWhiteSpace(' ')
-          Angular2PipeReferenceExpression
-            PsiElement(JS:IDENTIFIER)('started')
-          PsiWhiteSpace(' ')
-          Angular2PipeArgumentsList
-            PsiElement(JS:COLON)(':')
+        Angular2PipeLeftSideArgument
+          Angular2PipeExpression
+            Angular2PipeLeftSideArgument
+              JSReferenceExpression
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('todoService')
+                PsiElement(JS:DOT)('.')
+                PsiElement(JS:IDENTIFIER)('todos')
             PsiWhiteSpace(' ')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('status')
+            PsiElement(JS:OR)('|')
+            PsiWhiteSpace(' ')
+            Angular2PipeReferenceExpression
+              PsiElement(JS:IDENTIFIER)('started')
+            PsiWhiteSpace(' ')
+            Angular2PipeArgumentsList
+              PsiElement(JS:COLON)(':')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('status')
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
@@ -280,20 +282,22 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <expressions, false, null>
       PsiElement(JS:DOT)('.')
       Angular2PipeExpression
-        Angular2PipeExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('todos')
-          PsiWhiteSpace(' ')
-          PsiElement(JS:OR)('|')
-          PsiWhiteSpace(' ')
-          Angular2PipeReferenceExpression
-            PsiElement(JS:IDENTIFIER)('started')
-          PsiWhiteSpace(' ')
-          Angular2PipeArgumentsList
-            PsiElement(JS:COLON)(':')
+        Angular2PipeLeftSideArgument
+          Angular2PipeExpression
+            Angular2PipeLeftSideArgument
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('todos')
             PsiWhiteSpace(' ')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('status')
+            PsiElement(JS:OR)('|')
+            PsiWhiteSpace(' ')
+            Angular2PipeReferenceExpression
+              PsiElement(JS:IDENTIFIER)('started')
+            PsiWhiteSpace(' ')
+            Angular2PipeArgumentsList
+              PsiElement(JS:COLON)(':')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('status')
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
@@ -325,20 +329,22 @@ ASTWrapperPsiElement(FILE)
     Angular2TemplateBinding <expressions, false, null>
       PsiElement(JS:DOT)('.')
       Angular2PipeExpression
-        Angular2PipeExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('todos')
-          PsiWhiteSpace(' ')
-          PsiElement(JS:OR)('|')
-          PsiWhiteSpace(' ')
-          Angular2PipeReferenceExpression
-            PsiElement(JS:IDENTIFIER)('started')
-          PsiWhiteSpace(' ')
-          Angular2PipeArgumentsList
-            PsiElement(JS:COLON)(':')
+        Angular2PipeLeftSideArgument
+          Angular2PipeExpression
+            Angular2PipeLeftSideArgument
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('todos')
             PsiWhiteSpace(' ')
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('status')
+            PsiElement(JS:OR)('|')
+            PsiWhiteSpace(' ')
+            Angular2PipeReferenceExpression
+              PsiElement(JS:IDENTIFIER)('started')
+            PsiWhiteSpace(' ')
+            Angular2PipeArgumentsList
+              PsiElement(JS:COLON)(':')
+              PsiWhiteSpace(' ')
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('status')
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')
@@ -412,8 +418,9 @@ ASTWrapperPsiElement(FILE)
       JSParenthesizedExpression
         PsiElement(JS:LPAR)('(')
         Angular2PipeExpression
-          JSReferenceExpression
-            PsiElement(JS:IDENTIFIER)('ops$')
+          Angular2PipeLeftSideArgument
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('ops$')
           PsiWhiteSpace(' ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')

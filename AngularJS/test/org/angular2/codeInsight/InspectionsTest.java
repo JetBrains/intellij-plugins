@@ -3,10 +3,7 @@ package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
-import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
+import com.intellij.lang.javascript.inspections.*;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import org.angularjs.AngularTestUtil;
@@ -64,7 +61,16 @@ public class InspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testES6(getProject(), () -> {
       myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class,
                                   JSUnusedGlobalSymbolsInspection.class);
-      myFixture.configureByFiles("object.ts");
+      myFixture.configureByFiles("object.ts", "package.json");
+      myFixture.checkHighlighting();
+    });
+  }
+
+  public void testPipeAndArgResolution() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.enableInspections(JSUnresolvedVariableInspection.class,
+                                  JSUnresolvedFunctionInspection.class);
+      myFixture.configureByFiles("pipeAndArgResolution.html", "lowercase_pipe.ts", "package.json");
       myFixture.checkHighlighting();
     });
   }

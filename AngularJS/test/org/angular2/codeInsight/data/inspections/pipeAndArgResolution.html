@@ -1,0 +1,7 @@
+{{ <weak_warning descr="Unresolved variable or type unknownVar">unknownVar</weak_warning> | <weak_warning descr="Unresolved pipe myPipe">myPipe</weak_warning> }}
+{{ knownVar | <weak_warning descr="Unresolved pipe myPipe">myPipe</weak_warning> }}
+{{ knownVar | lowercase : knownVar : <weak_warning descr="Unresolved variable or type unknownVar">unknownVar</weak_warning> }}
+{{ knownVar | lowercase }}
+<div [attr]="<weak_warning descr="Unresolved variable or type unknownVar">unknownVar</weak_warning> | <weak_warning descr="Unresolved pipe fooPipe">fooPipe</weak_warning>"></div>
+<div [attr]="knownVar | <weak_warning descr="Unresolved pipe fooPipe">fooPipe</weak_warning>"></div>
+<div #knownVar></div>

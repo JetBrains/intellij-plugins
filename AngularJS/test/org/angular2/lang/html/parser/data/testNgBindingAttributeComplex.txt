@@ -28,10 +28,11 @@ HtmlFile:test.html
                       JSParenthesizedExpression
                         PsiElement(JS:LPAR)('(')
                         Angular2PipeExpression
-                          JSReferenceExpression
-                            PsiElement(JS:IDENTIFIER)('wordIndex')
-                          PsiErrorElement:action expressions cannot contain pipes
-                            <empty list>
+                          Angular2PipeLeftSideArgument
+                            JSReferenceExpression
+                              PsiElement(JS:IDENTIFIER)('wordIndex')
+                            PsiErrorElement:action expressions cannot contain pipes
+                              <empty list>
                           PsiWhiteSpace(' ')
                           PsiElement(JS:OR)('|')
                           PsiWhiteSpace(' ')

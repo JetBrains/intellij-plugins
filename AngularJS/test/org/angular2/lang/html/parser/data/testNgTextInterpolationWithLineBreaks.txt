@@ -6,20 +6,22 @@ HtmlFile:test.html
     ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
       Angular2Interpolation
         Angular2PipeExpression
-          Angular2PipeExpression
-            JSReferenceExpression
-              PsiElement(JS:IDENTIFIER)('todo')
-            PsiWhiteSpace('\n            ')
-            PsiElement(JS:OR)('|')
-            PsiWhiteSpace(' ')
-            Angular2PipeReferenceExpression
-              PsiElement(JS:IDENTIFIER)('started')
-            PsiWhiteSpace(' ')
-            Angular2PipeArgumentsList
-              PsiElement(JS:COLON)(':')
+          Angular2PipeLeftSideArgument
+            Angular2PipeExpression
+              Angular2PipeLeftSideArgument
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('todo')
+              PsiWhiteSpace('\n            ')
+              PsiElement(JS:OR)('|')
               PsiWhiteSpace(' ')
-              JSReferenceExpression
-                PsiElement(JS:IDENTIFIER)('status')
+              Angular2PipeReferenceExpression
+                PsiElement(JS:IDENTIFIER)('started')
+              PsiWhiteSpace(' ')
+              Angular2PipeArgumentsList
+                PsiElement(JS:COLON)(':')
+                PsiWhiteSpace(' ')
+                JSReferenceExpression
+                  PsiElement(JS:IDENTIFIER)('status')
           PsiWhiteSpace('\n            ')
           PsiElement(JS:OR)('|')
           PsiWhiteSpace(' ')

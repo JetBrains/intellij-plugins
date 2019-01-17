@@ -311,7 +311,9 @@ public class Angular2Parser
 
     public boolean parsePipe() {
       PsiBuilder.Marker pipe = builder.mark();
+      PsiBuilder.Marker firstParam = builder.mark();
       if (!parseAssignmentExpressionChecked()) {
+        firstParam.drop();
         pipe.drop();
         return false;
       }
@@ -323,6 +325,7 @@ public class Angular2Parser
         else if (myIsAction) {
           builder.error("action expressions cannot contain pipes");
         }
+        firstParam.done(PIPE_LEFT_SIDE_ARGUMENT);
         builder.advanceLexer();
         if (builder.getTokenType() == IDENTIFIER
             || KEYWORDS.contains(builder.getTokenType())) {
@@ -342,8 +345,10 @@ public class Angular2Parser
         }
         params.done(PIPE_ARGUMENTS_LIST);
         pipe.done(PIPE_EXPRESSION);
-        pipe = pipe.precede();
+        firstParam = pipe.precede();
+        pipe = firstParam.precede();
       }
+      firstParam.drop();
       pipe.drop();
       return true;
     }

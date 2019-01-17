@@ -101,8 +101,9 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:IDENTIFIER)('of')
       PsiWhiteSpace(' ')
       Angular2PipeExpression
-        JSReferenceExpression
-          PsiElement(JS:IDENTIFIER)('userObservable')
+        Angular2PipeLeftSideArgument
+          JSReferenceExpression
+            PsiElement(JS:IDENTIFIER)('userObservable')
         PsiWhiteSpace(' ')
         PsiElement(JS:OR)('|')
         PsiWhiteSpace(' ')

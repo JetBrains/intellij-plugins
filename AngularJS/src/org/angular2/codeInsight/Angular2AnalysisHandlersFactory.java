@@ -15,6 +15,7 @@ import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
@@ -80,6 +81,14 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
             }
           });
         }
+      }
+
+      @Override
+      protected Ref<String> createUnresolvedCallReferenceMessage(JSReferenceExpression methodExpression, boolean isNewExpression) {
+        if (methodExpression instanceof Angular2PipeReferenceExpression) {
+          return Ref.create("Unresolved pipe " + methodExpression.getReferenceName());
+        }
+        return super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression);
       }
 
       @Override

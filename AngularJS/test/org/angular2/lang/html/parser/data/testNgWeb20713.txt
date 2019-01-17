@@ -15,22 +15,24 @@ HtmlFile:test.html
       ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
         Angular2Interpolation
           Angular2PipeExpression
-            JSParenthesizedExpression
-              PsiElement(JS:LPAR)('(')
-              Angular2PipeExpression
-                JSReferenceExpression
-                  JSReferenceExpression
-                    PsiElement(JS:IDENTIFIER)('viewModel')
-                  PsiElement(JS:DOT)('.')
-                  PsiElement(JS:IDENTIFIER)('lastUpdated$')
-                PsiWhiteSpace(' ')
-                PsiElement(JS:OR)('|')
-                PsiWhiteSpace(' ')
-                Angular2PipeReferenceExpression
-                  PsiElement(JS:IDENTIFIER)('async')
-                Angular2PipeArgumentsList
-                  <empty list>
-              PsiElement(JS:RPAR)(')')
+            Angular2PipeLeftSideArgument
+              JSParenthesizedExpression
+                PsiElement(JS:LPAR)('(')
+                Angular2PipeExpression
+                  Angular2PipeLeftSideArgument
+                    JSReferenceExpression
+                      JSReferenceExpression
+                        PsiElement(JS:IDENTIFIER)('viewModel')
+                      PsiElement(JS:DOT)('.')
+                      PsiElement(JS:IDENTIFIER)('lastUpdated$')
+                  PsiWhiteSpace(' ')
+                  PsiElement(JS:OR)('|')
+                  PsiWhiteSpace(' ')
+                  Angular2PipeReferenceExpression
+                    PsiElement(JS:IDENTIFIER)('async')
+                  Angular2PipeArgumentsList
+                    <empty list>
+                PsiElement(JS:RPAR)(')')
             PsiWhiteSpace(' ')
             PsiElement(JS:OR)('|')
             PsiWhiteSpace(' ')
