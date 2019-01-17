@@ -54,7 +54,7 @@ import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
 
-  private static final JSType STRING_TYPE = new JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE);
+  public static final JSType STRING_TYPE = new JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE);
 
   private static final Collection<String> ONE_TIME_BINDING_EXCLUDES = newArrayList("ngClass");
 
@@ -302,7 +302,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @Nullable
-  private JSType getJSType() {
+  public JSType getJSType() {
     List<JSType> types = mapNotNull(myElements, element -> {
       if (element instanceof JSFunction) {
         JSParameterListElement[] params = ((JSFunction)element).getParameters();

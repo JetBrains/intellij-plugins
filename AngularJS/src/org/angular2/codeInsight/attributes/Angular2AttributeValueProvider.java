@@ -8,6 +8,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
+import com.intellij.xml.util.HtmlUtil;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
@@ -38,12 +39,12 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
   @Override
   public String getCustomAttributeValues(final XmlTag tag, final String attributeName) {
     if (Angular2LangUtil.isAngular2Context(tag)) {
-      if (attributeName.equalsIgnoreCase("class")) {
+      if (attributeName.equalsIgnoreCase(HtmlUtil.CLASS_ATTRIBUTE_NAME)) {
         List<String> result = new SmartList<>();
         String classAttr = null;
         for (XmlAttribute attribute : tag.getAttributes()) {
           String attrName = attribute.getName();
-          if ("class".equalsIgnoreCase(attrName)) {
+          if (HtmlUtil.CLASS_ATTRIBUTE_NAME.equalsIgnoreCase(attrName)) {
             classAttr = attribute.getValue();
           }
           else {
@@ -51,8 +52,8 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
           }
         }
         if (!result.isEmpty()) {
-          ObjectUtils.doIfNotNull(classAttr,result::add);
-          return StringUtil.join(result," ");
+          ObjectUtils.doIfNotNull(classAttr, result::add);
+          return StringUtil.join(result, " ");
         }
         return null;
       }

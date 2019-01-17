@@ -72,7 +72,9 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   }
 
   @Override
-  protected boolean isAcceptableNonTsFile(@NotNull Project project, @NotNull TypeScriptConfigService service, @NotNull VirtualFile virtualFile) {
+  protected boolean isAcceptableNonTsFile(@NotNull Project project,
+                                          @NotNull TypeScriptConfigService service,
+                                          @NotNull VirtualFile virtualFile) {
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true;
 
     if (isAcceptableHtmlFile(virtualFile)) {
@@ -283,8 +285,9 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
   @NotNull
   @Override
   protected List<JSAnnotationError> parseGetErrorResult(@NotNull JSLanguageServiceAnswer answer, String path) {
-    return ContainerUtil.filter(super.parseGetErrorResult(answer, path), error -> !error.getDescription()
-      .startsWith("Angular: Parser Error:"));
+    return ContainerUtil.filter(super.parseGetErrorResult(answer, path),
+                                error -> !error.getDescription().startsWith("Angular: Parser Error:")
+                                         && !error.getDescription().startsWith("ng: Unknown method"));
   }
 
   @Override

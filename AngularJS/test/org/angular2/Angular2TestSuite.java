@@ -6,6 +6,7 @@ import org.angular2.codeInsight.*;
 import org.angular2.css.CssClassTest;
 import org.angular2.editor.ComponentDeclarationNavigationTest;
 import org.angular2.formatting.FormattingTest;
+import org.angular2.inspections.Angular2ExpressionTypeInspectionTest;
 import org.angular2.inspections.EmptyEventHandlerInspectionTest;
 import org.angular2.lang.expr.lexer.Angular2LexerSpecTest;
 import org.angular2.lang.expr.lexer.Angular2LexerTest;
@@ -50,6 +51,7 @@ import org.junit.runners.Suite;
   TagsTest.class,
   FormattingTest.class,
   EmptyEventHandlerInspectionTest.class,
+  Angular2ExpressionTypeInspectionTest.class,
   AngularChangeSignatureTest.class,
   DirectiveRenameTest.class,
   RenameTest.class,

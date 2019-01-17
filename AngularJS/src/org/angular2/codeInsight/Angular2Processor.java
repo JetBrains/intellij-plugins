@@ -30,13 +30,13 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import com.intellij.xml.XmlAttributeDescriptor;
 import one.util.streamex.StreamEx;
+import org.angular2.Angular2InjectionUtils;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
@@ -390,16 +390,11 @@ public class Angular2Processor {
     }
 
     public void addTemplateBindings(@NotNull XmlAttribute attribute) {
-      XmlAttributeValue value = attribute.getValueElement();
-      if (value != null && value.getTextLength() >= 2) {
-        PsiElement injection = InjectedLanguageManager.getInstance(attribute.getProject()).findInjectedElementAt(
-          value.getContainingFile(), value.getTextOffset() + 1);
-        Angular2TemplateBindings bindings = PsiTreeUtil.getParentOfType(injection, Angular2TemplateBindings.class);
-        if (bindings != null) {
-          for (Angular2TemplateBinding b : bindings.getBindings()) {
-            if (b.keyIsVar() && b.getVariableDefinition() != null) {
-              addElement(b.getVariableDefinition());
-            }
+      Angular2TemplateBindings bindings = Angular2InjectionUtils.findInjectedAngularExpression(attribute, Angular2TemplateBindings.class);
+      if (bindings != null) {
+        for (Angular2TemplateBinding b : bindings.getBindings()) {
+          if (b.keyIsVar() && b.getVariableDefinition() != null) {
+            addElement(b.getVariableDefinition());
           }
         }
       }
@@ -452,9 +447,9 @@ public class Angular2Processor {
     private Angular2$AnyScope(@NotNull PsiElement context) {
       super(null);
       $any = new JSImplicitElementImpl.Builder($ANY, context)
-        .setTypeString("any")
+        .setTypeString("*")
         .setParameters(Collections.singletonList(
-          new JSImplicitParameterStructure("arg", "any", false, false, true)
+          new JSImplicitParameterStructure("arg", "*", false, false, true)
         ))
         .setType(JSImplicitElement.Type.Function)
         .toImplicitElement();

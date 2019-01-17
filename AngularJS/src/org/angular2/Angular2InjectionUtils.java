@@ -13,7 +13,11 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ObjectUtils;
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +42,7 @@ public class Angular2InjectionUtils {
 
   @Nullable
   public static PsiElement getTargetElementFromContext(@NotNull DataContext context) {
+    @SuppressWarnings("deprecation")
     Editor editor = InjectedLanguageUtil.getEditorForInjectedLanguageNoCommit(
       context.getData(CommonDataKeys.EDITOR), context.getData(CommonDataKeys.PSI_FILE));
     Project project = context.getData(CommonDataKeys.PROJECT);
@@ -45,8 +50,19 @@ public class Angular2InjectionUtils {
       return null;
     }
     return ObjectUtils.tryCast(FileEditorManagerEx.getInstanceEx(project)
-      .getData(CommonDataKeys.PSI_ELEMENT.getName(), editor, editor.getCaretModel().getCurrentCaret()),
-      PsiElement.class);
+                                 .getData(CommonDataKeys.PSI_ELEMENT.getName(), editor, editor.getCaretModel().getCurrentCaret()),
+                               PsiElement.class);
   }
 
+  @Nullable
+  public static <T extends Angular2EmbeddedExpression> T findInjectedAngularExpression(@NotNull XmlAttribute attribute,
+                                                                                       @NotNull Class<T> expressionClass) {
+    XmlAttributeValue value = attribute.getValueElement();
+    if (value != null && value.getTextLength() >= 2) {
+      PsiElement injection = InjectedLanguageManager.getInstance(attribute.getProject()).findInjectedElementAt(
+        value.getContainingFile(), value.getTextOffset() + 1);
+      return PsiTreeUtil.getParentOfType(injection, expressionClass);
+    }
+    return null;
+  }
 }

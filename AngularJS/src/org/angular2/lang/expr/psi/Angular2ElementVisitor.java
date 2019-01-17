@@ -22,7 +22,7 @@ public class Angular2ElementVisitor extends JSElementVisitor {
   }
 
   public void visitAngular2PipeExpression(Angular2PipeExpression pipe) {
-    visitJSExpression(pipe);
+    visitJSCallExpression(pipe);
   }
 
   public void visitAngular2Quote(Angular2Quote quote) {

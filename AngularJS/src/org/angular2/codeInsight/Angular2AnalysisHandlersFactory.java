@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.*;
 import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,8 +33,10 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
                                                     boolean isNewExpression,
                                                     @NotNull ResolveResult[] resolveResults,
                                                     @NotNull List<LocalQuickFix> quickFixes) {
-        if (methodExpression.getQualifier() != null) return;
-
+        if (methodExpression.getQualifier() != null
+            || methodExpression instanceof Angular2PipeReferenceExpression) {
+          return;
+        }
         JSClass componentClass = Angular2IndexingHandler.findComponentClass(methodExpression);
         if (componentClass != null) {
           SmartPsiElementPointer<JSReferenceExpression> refExpressionPointer = createPointerFor(methodExpression);

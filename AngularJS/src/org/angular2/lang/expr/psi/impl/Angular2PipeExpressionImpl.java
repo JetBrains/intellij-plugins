@@ -30,6 +30,9 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
     if (visitor instanceof Angular2ElementVisitor) {
       ((Angular2ElementVisitor)visitor).visitAngular2PipeExpression(this);
     }
+    else if (visitor instanceof JSElementVisitor) {
+      ((JSElementVisitor)visitor).visitJSCallExpression(this);
+    }
     else {
       super.accept(visitor);
     }
