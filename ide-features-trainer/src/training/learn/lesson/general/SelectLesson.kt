@@ -4,16 +4,13 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
-import training.learn.lesson.kimpl.START_TAG
 
 class SelectLesson(module: Module, lang: String, private val sample: LessonSample) :
     KLesson("Select", module, lang) {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
-      task {
-        copyCode(sample.text)
-        caret(sample.getInfo(START_TAG).startOffset)
-      }
+      prepareSample(sample)
+
       triggerTask("EditorNextWordWithSelection") {
         text("Place the caret before any word. Press ${action(it)} to move the caret to the next word and select everything in between.")
       }
