@@ -209,14 +209,8 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
 
   @NotNull
   @Override
-  public AbstractCodeStylePropertyMapper getPropertyMapper(@NotNull CodeStyleSettings settings) {
-    return new LanguageCodeStylePropertyMapper(settings, getLanguage()) {
-      @NotNull
-      @Override
-      public String getLanguageDomainId() {
-        return "actionscript";
-      }
-    };
+  public String getExternalLanguageId() {
+    return "actionscript";
   }
 
   public final static String GENERAL_CODE_SAMPLE =
