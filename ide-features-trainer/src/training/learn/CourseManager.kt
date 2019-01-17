@@ -34,6 +34,8 @@ class CourseManager internal constructor() {
       return lastFocusedFrame.project
     }
 
+  var showGotMessage = false
+
   private val modulesId2modules: MutableMap<String, Module> = mutableMapOf()
 
   init {
