@@ -19,7 +19,6 @@ import static com.intellij.util.ObjectUtils.notNull;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptor.AttributePriority.NONE;
 import static org.angular2.lang.html.parser.Angular2AttributeType.PROPERTY_BINDING;
 
@@ -31,14 +30,14 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
   private static final String SHORT_PREFIX = "[" + BASE_PREFIX;
   private static final String CANONICAL_PREFIX = CANONICAL_PREFIX_BASE + BASE_PREFIX;
 
-  private static final List<String> PREFIXES = unmodifiableList(newArrayList(SHORT_PREFIX, CANONICAL_PREFIX, BASE_PREFIX));
+  private static final List<String> PREFIXES = immutableList(SHORT_PREFIX, CANONICAL_PREFIX, BASE_PREFIX);
 
   @Override
   public void contributeCompletionResults(@NotNull CompletionResultsConsumer completionResultsConsumer,
                                           @NotNull XmlTag tag,
                                           @NotNull String attributeName) {
-    String prefix;
-    if ((prefix = find(PREFIXES, attributeName::startsWith)) != null) {
+    String prefix = find(PREFIXES, attributeName::startsWith);
+    if (prefix != null) {
       boolean isCanonical = CANONICAL_PREFIX.equals(prefix);
       completionResultsConsumer.addDescriptors(mapNotNull(
         Angular2AttributeDescriptorsProvider.getDefaultAttributeDescriptors(tag), descr -> {
