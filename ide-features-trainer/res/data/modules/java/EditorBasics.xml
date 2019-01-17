@@ -3,7 +3,7 @@
   <lesson-kt sample="01.Select.java.sample" implementationClass="training.learn.lesson.general.SelectLesson" lang="JAVA"/>
   <lesson-kt implementationClass="training.learn.lesson.java.JavaCommentLesson"/>
   <lesson filename="03.Delete.xml" lang="JAVA"/>
-  <lesson filename="04.Duplicate.xml" lang="JAVA"/>
+  <lesson-kt sample="04.Duplicate.java.sample" implementationClass="training.learn.lesson.general.DuplicateLesson" lang="JAVA"/>
   <lesson filename="05.Move.xml" lang="JAVA"/>
   <lesson filename="06.Collapse.xml" lang="JAVA"/>
   <lesson filename="07.MultipleSelections.xml" lang="JAVA"/>
