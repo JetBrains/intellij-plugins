@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.parser;
 
 import com.intellij.flex.util.FlexTestUtils;
@@ -14,7 +15,6 @@ import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-@SuppressWarnings({"ALL"})
 public class FlexImporterTest extends TestCase {
 
   public final void testAbc() throws Exception {
@@ -75,11 +75,15 @@ public class FlexImporterTest extends TestCase {
 
     if (file.getName().endsWith(".swc")) {
       final ZipFile zipFile = new ZipFile(file);
-      final ZipEntry zipEntry = zipFile.getEntry("library.swf");
-      final InputStream inputStream = zipFile.getInputStream(zipEntry);
-      contents = FileUtil.loadBytes(inputStream, (int)zipEntry.getSize());
-      inputStream.close();
-      zipFile.close();
+      try {
+        final ZipEntry zipEntry = zipFile.getEntry("library.swf");
+        final InputStream inputStream = zipFile.getInputStream(zipEntry);
+        contents = FileUtil.loadBytes(inputStream, (int)zipEntry.getSize());
+        inputStream.close();
+      }
+      finally {
+        zipFile.close();
+      }
     }
     else {
       contents = FileUtil.loadFileBytes(file);
