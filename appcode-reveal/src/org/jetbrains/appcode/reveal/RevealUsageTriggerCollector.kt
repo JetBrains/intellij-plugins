@@ -13,14 +13,17 @@
 // limitations under the License.
 package org.jetbrains.appcode.reveal
 
+import com.intellij.internal.statistic.eventLog.FeatureUsageGroup
 import com.intellij.internal.statistic.eventLog.FeatureUsageLogger
 import com.intellij.internal.statistic.utils.createData
 import com.intellij.openapi.project.Project
 
+private val GROUP = FeatureUsageGroup("statistics.appcode.reveal",1)
+
 class RevealUsageTriggerCollector {
   companion object {
     fun trigger(project: Project, feature: String) {
-      FeatureUsageLogger.log("statistics.appcode.reveal", feature, createData(project, null))
+      FeatureUsageLogger.log(GROUP, feature, createData(project, null))
     }
   }
 }
