@@ -13,11 +13,10 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.javascript.typescript.TypeScriptHighlightingTest
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.vuejs.VueFileType
 
 /**
  * @author Irina.Chernushina on 10/24/2017.
@@ -621,45 +620,46 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
 
   override fun doHighlightingWithInvokeFixAndCheckResult(fixName: String?,
                                                          ext: String?,
-                                                         vararg files: String?): MutableCollection<HighlightInfo> {
+                                                         vararg files: String?) {
     LOG.info("Running overridden code for vue")
     if (skipTest()) {
       LOG.info("Skipping muted test")
-      return mutableListOf()
+      return
     }
-    return super.doHighlightingWithInvokeFixAndCheckResult(fixName, ext, *files)
+    super.doHighlightingWithInvokeFixAndCheckResult(fixName, ext, *files)
   }
 
   override fun doTestWithExplicitAssertOnRecursion(assertOnRecursion: Boolean, 
-                                                   checkWeakWarnings: Boolean, vararg fileNames: String?): MutableCollection<HighlightInfo> {
+                                                   checkWeakWarnings: Boolean, vararg fileNames: String?) {
     LOG.info("Running overridden code for vue")
     if (skipTest()) {
       LOG.info("Skipping muted test")
-      return mutableListOf()
+      return
     }
     if (fileNames.size == 1 && fileNames[0]!!.endsWith(".d.ts")) {
       LOG.info("Skipping because only .d.ts file for test")
-      return mutableListOf()
+      return
     }
     if (fileNames.size > 1) {
       LOG.info("Skipping because several files")
-      return mutableListOf()
+      return
     }
 
-    return super.doTestWithExplicitAssertOnRecursion(false, checkWeakWarnings, *fileNames)
+    super.doTestWithExplicitAssertOnRecursion(false, checkWeakWarnings, *fileNames)
   }
 
   private fun skipTest() = !whitelist.contains(getTestName(false))
 
-  override fun findVirtualFile(filePath: String): VirtualFile {
-    val original = super.findVirtualFile(filePath)
-    if (filePath.endsWith(".d.ts")) return original
+  override fun configureEditorFile(name: String?) {
+    val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/$name")
+    val text: Any = VfsUtil.loadText(tsFile!!)
+    myFixture.configureByText(VueFileType.INSTANCE, "<script lang=\"ts\">\n$text\n</script>")
+  }
 
-    val text = VfsUtil.loadText(original)
-    val withoutExtension = filePath.substringBeforeLast("", filePath)
-    val ioFile = createTempFile(withoutExtension.substringAfterLast("/", withoutExtension) + ".vue",
-                                "<script lang=\"ts\">\n" + text + "\n</script>")
-    return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(ioFile)!!
+  override fun checkEditorText(ext: String?) {
+    val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/${getTestName(false)}_after.$ext")
+    val text: Any = VfsUtil.loadText(tsFile!!)
+    myFixture.checkResult("<script lang=\"ts\">\n$text\n</script>")
   }
 
   // these tests need to be ignored with additional code:
