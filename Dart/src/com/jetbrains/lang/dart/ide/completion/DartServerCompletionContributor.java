@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.AutoPopupController;
@@ -363,6 +363,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
       final String returnType = element.getReturnType();
       if (!StringUtils.isEmpty(returnType)) {
         lookup = lookup.withTypeText(returnType, true);
+      }
+
+      // If this is a class, try to show which package it's coming from.
+      if (element.getKind().equals(ElementKind.CLASS) && suggestion.getElementUri() != null) {
+        lookup = lookup.appendTailText(" (" + suggestion.getElementUri() + ")", true);
       }
 
       // icon
