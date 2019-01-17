@@ -2,4 +2,5 @@
 <module name="Editor Basics" lessonsPath="EditorBasics/" version="0.3" id="ruby.basics" fileType="SCRATCH"  description="Learn how to select, comment, delete, duplicate, and move lines in Ruby. Learn how to move and collapse blocks of code.">
   <lesson-kt sample="Selection.rb.sample" implementationClass="training.learn.lesson.general.SelectLesson" lang="ruby"/>
   <lesson-kt implementationClass="training.learn.lesson.ruby.RubyCommentLesson"/>
+  <lesson-kt sample="Duplicate.rb.sample" implementationClass="training.learn.lesson.general.DuplicateLesson" lang="ruby"/>
 </module>
