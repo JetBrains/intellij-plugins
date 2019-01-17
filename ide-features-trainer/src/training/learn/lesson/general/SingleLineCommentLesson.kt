@@ -7,7 +7,6 @@ import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.LessonSample
-import training.learn.lesson.kimpl.START_TAG
 
 abstract class SingleLineCommentLesson(module: Module, lang: String) :
     KLesson("Comment Line", module, lang) {
@@ -20,10 +19,8 @@ abstract class SingleLineCommentLesson(module: Module, lang: String) :
       fun countCommentedLines() : Int =
           calculateComments(PsiDocumentManager.getInstance(project).getPsiFile(editor.document)!!)
 
-      task {
-        copyCode(sample.text)
-        caret(sample.getInfo(START_TAG).startOffset)
-      }
+      prepareSample(sample)
+
       triggerTask("CommentByLineComment") {
         text("Comment out any line with ${action(it)}")
       }
