@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
+// Copyright 2000-2019 JetBrains s.r.o.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -375,6 +375,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
       final String returnType = element.getReturnType();
       if (!StringUtils.isEmpty(returnType)) {
         lookup = lookup.withTypeText(returnType, true);
+      }
+
+      // If this is a class, try to show which package it's coming from.
+      if (element.getKind().equals(ElementKind.CLASS) && suggestion.getElementUri() != null) {
+        lookup = lookup.appendTailText(" (" + suggestion.getElementUri() + ")", true);
       }
 
       // icon
