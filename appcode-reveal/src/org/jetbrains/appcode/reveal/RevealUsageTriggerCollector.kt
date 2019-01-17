@@ -13,16 +13,14 @@
 // limitations under the License.
 package org.jetbrains.appcode.reveal
 
-import com.intellij.internal.statistic.service.fus.collectors.FUSProjectUsageTrigger
-import com.intellij.internal.statistic.service.fus.collectors.ProjectUsageTriggerCollector
+import com.intellij.internal.statistic.eventLog.FeatureUsageLogger
+import com.intellij.internal.statistic.utils.createData
 import com.intellij.openapi.project.Project
 
-class RevealUsageTriggerCollector: ProjectUsageTriggerCollector() {
-  override fun getGroupId(): String = "statistics.appcode.reveal"
-
+class RevealUsageTriggerCollector {
   companion object {
     fun trigger(project: Project, feature: String) {
-      FUSProjectUsageTrigger.getInstance(project).trigger(RevealUsageTriggerCollector::class.java, feature)
+      FeatureUsageLogger.log("statistics.appcode.reveal", feature, createData(project, null))
     }
   }
 }
