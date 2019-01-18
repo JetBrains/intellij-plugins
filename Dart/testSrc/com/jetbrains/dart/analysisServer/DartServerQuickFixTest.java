@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -144,11 +145,12 @@ public class DartServerQuickFixTest extends CodeInsightFixtureTestCase {
   }
 
   public void testQuickFixOrder() {
-    myFixture.configureByText("foo.dart", "<caret>Future f;\nclass Futures{}");
+    myFixture.configureByText("foo.dart", "<caret>ServerSocket f;\nclass ServerSockets{}");
     final List<String> intentions = ContainerUtil.map(myFixture.getAvailableIntentions(), intention -> intention.getText());
     assertOrderedEquals(intentions,
-                        "Import library 'dart:async'",
-                        "Change to 'Futures'",
-                        "Create class 'Future'");
+                        "Import library 'dart:io'",
+                        "Change to 'ServerSockets'",
+                        "Create class 'ServerSocket'",
+                        "Create mixin 'ServerSocket'");
   }
 }

@@ -1,1 +1,1 @@
-class Foo<error descr="A class definition must have a body, even if it is empty.">o</error>
+class Foo<error descr="A class or mixin definition must have a body, even if it is empty.">o</error>

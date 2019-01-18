@@ -13,7 +13,7 @@ main() {
 }
 
 @deprecated
-<weak_warning descr="This function declares a return type of 'int', but doesn't end with a return statement." type="WEAK_WARNING">int</weak_warning> bar(){}
+<weak_warning descr="This function has a return type of 'int', but doesn't end with a return statement." type="WEAK_WARNING">int</weak_warning> bar(){}
 
 // TODO highlighted by IDE engine
 class <warning descr="The class '_Foo' isn't used." type="UNUSED_SYMBOL">_Foo</warning> {
