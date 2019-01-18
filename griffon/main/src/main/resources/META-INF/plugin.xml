@@ -1,6 +1,5 @@
 <idea-plugin>
   <id>org.intellij.griffon</id>
-  <version>1.0</version>
   <name>Griffon</name>
   <description>Plugin for Griffon 1.x framework support</description>
   <vendor>JetBrains</vendor>

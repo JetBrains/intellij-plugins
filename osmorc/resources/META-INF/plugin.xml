@@ -26,7 +26,6 @@
 <idea-plugin>
   <id>Osmorc</id>
   <name>Osmorc</name>
-  <version>1.4.12</version>
   <description><![CDATA[
     <p>Adds support for the development of OSGi-based applications.</p>
 

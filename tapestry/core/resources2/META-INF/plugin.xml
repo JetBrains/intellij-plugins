@@ -2,7 +2,6 @@
 <idea-plugin>
   <name>Tapestry support</name>
   <id>com.intellij.tapestry</id>
-  <version>1.0</version>
   <vendor>JetBrains</vendor>
   <description>Provides Tapestry 5.1 integration.</description>
 

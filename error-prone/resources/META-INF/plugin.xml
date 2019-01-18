@@ -7,7 +7,6 @@
         To use the compiler, go to File | Settings | Compiler | 'Java Compiler' and select 'Javac with error-prone' in 'Use compiler' box.
       ]]>
   </description>
-  <version>999.999</version>
   <depends>com.intellij.modules.java</depends>
   <vendor>JetBrains</vendor>
   <idea-version since-build="134.1425"/>
