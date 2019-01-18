@@ -232,7 +232,7 @@ public class Angular2AttributeNameParser {
     public String getFullName() {
       switch (this.bindingType) {
         case ANIMATION:
-          return "animate-" + name;
+          return (isCanonical ? "animate-" : "@") + name;
         case ATTRIBUTE:
           return "attr." + name;
         case STYLE:

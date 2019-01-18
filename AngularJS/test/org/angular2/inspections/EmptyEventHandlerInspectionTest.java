@@ -16,7 +16,7 @@ public class EmptyEventHandlerInspectionTest extends LightPlatformCodeInsightFix
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(EmptyEventHandlerInspection.class);
+    myFixture.enableInspections(Angular2EmptyEventBindingInspection.class);
   }
 
   public void testSimple() {

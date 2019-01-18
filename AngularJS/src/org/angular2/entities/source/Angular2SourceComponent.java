@@ -16,7 +16,6 @@ import com.intellij.util.SmartList;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
-import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,12 +46,12 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
 
   @Nullable
   private PsiFile findAngularComponentTemplate() {
-    final JSProperty templateUrl = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2IndexingHandler.TEMPLATE_URL);
+    final JSProperty templateUrl = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.TEMPLATE_URL_PROP);
     PsiFile file;
     if (templateUrl != null && (file = getReferencedFile(templateUrl.getValue(), true)) != null) {
       return file;
     }
-    final JSProperty template = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2IndexingHandler.TEMPLATE);
+    final JSProperty template = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.TEMPLATE_PROP);
     if (template != null && (file = getReferencedFile(template.getValue(), false)) != null) {
       return file;
     }
@@ -61,14 +60,14 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
 
   private List<PsiFile> findCssFiles() {
     List<PsiFile> result = new SmartList<>();
-    final JSProperty styleUrls = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2IndexingHandler.STYLE_URLS);
+    final JSProperty styleUrls = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.STYLE_URLS_PROP);
     JSArrayLiteralExpression list;
     if (styleUrls != null && (list = tryCast(styleUrls.getValue(), JSArrayLiteralExpression.class)) != null) {
       for (JSExpression expression : list.getExpressions()) {
         addIfNotNull(result, getReferencedFile(expression, true));
       }
     }
-    final JSProperty styles = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2IndexingHandler.STYLES);
+    final JSProperty styles = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.STYLES_PROP);
     if (styles != null && (list = tryCast(styles.getValue(), JSArrayLiteralExpression.class)) != null) {
       for (JSExpression expression : list.getExpressions()) {
         addIfNotNull(result, getReferencedFile(expression, false));

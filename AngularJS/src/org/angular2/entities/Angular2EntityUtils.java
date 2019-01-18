@@ -11,9 +11,9 @@ import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.source.Angular2SourceEntity;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.ParseException;
 import java.util.*;
 import java.util.function.Consumer;
 

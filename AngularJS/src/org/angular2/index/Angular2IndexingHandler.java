@@ -54,13 +54,10 @@ import static java.util.Collections.emptyList;
 import static org.angular2.Angular2DecoratorUtil.*;
 
 public class Angular2IndexingHandler extends FrameworkIndexingHandler {
-  public static final String TEMPLATE_URL = "templateUrl";
-  public static final String TEMPLATE = "template";
-
-  public static final String STYLE_URLS = "styleUrls";
-  public static final String STYLES = "styles";
 
   public static final String REQUIRE = "require";
+
+  private static final String DEFAULT_COMPONENT_NAME = "ng-component";
 
   private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
   private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
@@ -117,7 +114,11 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         if (data == null) {
           data = new JSElementIndexingDataImpl();
         }
-        addDirective(enclosingClass, data::addImplicitElement, getPropertyValue(decorator, SELECTOR_PROP));
+        String selector = getPropertyValue(decorator, SELECTOR_PROP);
+        if (selector == null && isComponent) {
+          selector = DEFAULT_COMPONENT_NAME;
+        }
+        addDirective(enclosingClass, data::addImplicitElement, selector);
         if (isComponent) {
           addComponentExternalFilesRefs(decorator, "", data::addImplicitElement,
                                         ContainerUtil.packNullables(getTemplateFileUrl(decorator)));
@@ -286,11 +287,11 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   @Nullable
   private static String getTemplateFileUrl(@NotNull ES6Decorator decorator) {
-    String templateUrl = getPropertyValue(decorator, TEMPLATE_URL);
+    String templateUrl = getPropertyValue(decorator, TEMPLATE_URL_PROP);
     if (templateUrl != null) {
       return templateUrl;
     }
-    JSProperty property = getProperty(decorator, TEMPLATE);
+    JSProperty property = getProperty(decorator, TEMPLATE_PROP);
     if (property != null) {
       return getExprReferencedFileUrl(property.getValue());
     }
@@ -312,8 +313,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
         .nonNull()
         .into(result);
 
-    urlsGetts.accept(STYLE_URLS, Angular2DecoratorUtil::getExpressionStringValue);
-    urlsGetts.accept(STYLES, Angular2IndexingHandler::getExprReferencedFileUrl);
+    urlsGetts.accept(STYLE_URLS_PROP, Angular2DecoratorUtil::getExpressionStringValue);
+    urlsGetts.accept(STYLES_PROP, Angular2IndexingHandler::getExprReferencedFileUrl);
 
     return result;
   }

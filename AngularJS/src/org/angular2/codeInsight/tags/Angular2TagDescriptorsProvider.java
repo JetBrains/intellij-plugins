@@ -28,9 +28,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
-  private static final String NG_CONTAINER = "ng-container";
-  private static final String NG_CONTENT = "ng-content";
-  private static final String NG_TEMPLATE = "ng-template";
+  public static final String NG_CONTAINER = "ng-container";
+  public static final String NG_CONTENT = "ng-content";
+  public static final String NG_TEMPLATE = "ng-template";
 
   @Override
   public void addTagNameVariants(@NotNull final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {

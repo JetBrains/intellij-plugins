@@ -34,7 +34,11 @@ public class Angular2DecoratorUtil {
   public static final String EXPORT_AS_PROP = "exportAs";
   public static final String INPUTS_PROP = "inputs";
   public static final String OUTPUTS_PROP = "outputs";
+
+  public static final String TEMPLATE_URL_PROP = "templateUrl";
+  public static final String TEMPLATE_PROP = "template";
   public static final String STYLE_URLS_PROP = "styleUrls";
+  public static final String STYLES_PROP = "styles";
 
   public static boolean isLiteralInNgDecorator(@Nullable PsiElement element, @NotNull String propertyName, String... decoratorNames) {
     if (element instanceof JSLiteralExpression) {
@@ -111,8 +115,7 @@ public class Angular2DecoratorUtil {
 
   @StubSafe
   @Nullable
-  public static JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
-    JSObjectLiteralExpression objectLiteralExpression = null;
+  public static JSObjectLiteralExpression getObjectLiteralInitializer(@Nullable ES6Decorator decorator) {
     for (PsiElement child : getStubChildrenOfTypeAsList(decorator, PsiElement.class)) {
       if (child instanceof JSCallExpression) {
         StubElement<?> callStub = child instanceof StubBasedPsiElement ? ((StubBasedPsiElement)child).getStub() : null;
@@ -120,22 +123,27 @@ public class Angular2DecoratorUtil {
           for (StubElement callChildStub : callStub.getChildrenStubs()) {
             PsiElement callChild = callChildStub.getPsi();
             if (callChild instanceof JSObjectLiteralExpression) {
-              objectLiteralExpression = (JSObjectLiteralExpression)callChild;
-              break;
+              return (JSObjectLiteralExpression)callChild;
             }
           }
         }
         else {
-          objectLiteralExpression = tryCast(ArrayUtil.getFirstElement(((JSCallExpression)child).getArguments()),
-                                            JSObjectLiteralExpression.class);
+          return tryCast(ArrayUtil.getFirstElement(((JSCallExpression)child).getArguments()),
+                         JSObjectLiteralExpression.class);
         }
         break;
       }
       else if (child instanceof JSObjectLiteralExpression) {
-        objectLiteralExpression = (JSObjectLiteralExpression)child;
-        break;
+        return (JSObjectLiteralExpression)child;
       }
     }
-    return doIfNotNull(objectLiteralExpression, expr -> expr.findProperty(name));
+    return null;
+  }
+
+  @StubSafe
+  @Nullable
+  public static JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
+    return doIfNotNull(getObjectLiteralInitializer(decorator),
+                       expr -> expr.findProperty(name));
   }
 }

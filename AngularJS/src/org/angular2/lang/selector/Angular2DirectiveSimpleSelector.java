@@ -2,6 +2,7 @@
 package org.angular2.lang.selector;
 
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
@@ -12,7 +13,6 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -54,7 +54,8 @@ public class Angular2DirectiveSimpleSelector {
     while (matcher.find()) {
       if (matcher.start(1) >= 0) {
         if (inNot) {
-          throw new ParseException("Nesting :not is not allowed in a selector", matcher.start(1));
+          throw new ParseException("Nesting :not is not allowed in a selector",
+                                   new TextRange(matcher.start(1), matcher.end(1)));
         }
         inNot = true;
         current = new Angular2DirectiveSimpleSelector();
@@ -75,7 +76,8 @@ public class Angular2DirectiveSimpleSelector {
       }
       if (matcher.start(8) >= 0) {
         if (inNot) {
-          throw new ParseException("Multiple selectors in :not are not supported", matcher.start(8));
+          throw new ParseException("Multiple selectors in :not are not supported",
+                                   new TextRange(matcher.start(8), matcher.end(8)));
         }
         addResult.accept(cssSelector);
         cssSelector = current = new Angular2DirectiveSimpleSelector();
@@ -97,7 +99,8 @@ public class Angular2DirectiveSimpleSelector {
     while (matcher.find()) {
       if (matcher.start(1) >= 0) {
         if (inNot) {
-          throw new ParseException("Nesting :not is not allowed in a selector", matcher.start(1));
+          throw new ParseException("Nesting :not is not allowed in a selector",
+                                   new TextRange(matcher.start(1), matcher.end(1)));
         }
         inNot = true;
         current = new Angular2DirectiveSimpleSelectorWithRanges();
@@ -118,7 +121,8 @@ public class Angular2DirectiveSimpleSelector {
       }
       if (matcher.start(8) >= 0) {
         if (inNot) {
-          throw new ParseException("Multiple selectors in :not are not supported", matcher.start(8));
+          throw new ParseException("Multiple selectors in :not are not supported",
+                                   new TextRange(matcher.start(8), matcher.end(8)));
         }
         results.add(cssSelector);
         cssSelector = current = new Angular2DirectiveSimpleSelectorWithRanges();
@@ -127,7 +131,6 @@ public class Angular2DirectiveSimpleSelector {
     results.add(cssSelector);
     return results;
   }
-
 
   public static Angular2DirectiveSimpleSelector createElementCssSelector(@NotNull XmlTag element) {
     Angular2DirectiveSimpleSelector cssSelector = new Angular2DirectiveSimpleSelector();
@@ -147,7 +150,6 @@ public class Angular2DirectiveSimpleSelector {
     }
     return cssSelector;
   }
-
 
   String element;
   final List<String> classNames = new SmartList<>();
@@ -281,6 +283,20 @@ public class Angular2DirectiveSimpleSelector {
     @NotNull
     public List<Angular2DirectiveSimpleSelectorWithRanges> getNotSelectors() {
       return notSelectors;
+    }
+  }
+
+  public static class ParseException extends Exception {
+
+    private final TextRange myErrorRange;
+
+    public ParseException(String s, TextRange errorRange) {
+      super(s);
+      myErrorRange = errorRange;
+    }
+
+    public TextRange getErrorRange() {
+      return myErrorRange;
     }
   }
 }

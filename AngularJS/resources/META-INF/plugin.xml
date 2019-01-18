@@ -116,6 +116,12 @@
     <localInspection implementationClass="org.angular2.inspections.AngularCliAddDependencyInspection"
                      displayName="Angular CLI Add Dependency"
                      groupName="Angular" enabledByDefault="true" level="WARNING" language="JSON"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2ComponentTemplatePropertyInspection"
+                     displayName="Component Template Property"
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2DirectiveSelectorInspection"
+                     displayName="Directive Selector Property"
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
@@ -143,12 +149,24 @@
                                    implementationClass="org.angular2.lang.html.highlighting.Angular2HtmlHighlighterFactory"/>
     <lang.substitutor language="HTML" implementationClass="org.angular2.lang.html.Angular2HtmlLanguageSubstitutor" order="first"/>
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
-    <localInspection implementationClass="org.angular2.inspections.EmptyEventHandlerInspection"
+    <localInspection implementationClass="org.angular2.inspections.Angular2EmptyEventBindingInspection"
                      displayName="Empty Event Handler" groupName="Angular" enabledByDefault="true"
-                     level="WARNING" language="Angular2Html"/>
+                     level="ERROR" language="Angular2Html"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2ExpressionTypeInspection"
                      displayName="Expression Result Type" groupName="Angular" enabledByDefault="true"
                      level="WARNING" language="Angular2Html"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2BindingToEventInspection"
+                     displayName="Binding to Event" groupName="Angular" enabledByDefault="true"
+                     level="WARNING" language="Angular2Html"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2NonEmptyNgContentInspection"
+                     displayName="Non Empty &lt;ng-content&gt; Tag" groupName="Angular" enabledByDefault="true"
+                     level="ERROR" language="Angular2Html"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2MultipleTemplateBindingsInspection"
+                     displayName="Multiple Structural Directives" groupName="Angular" enabledByDefault="true"
+                     level="ERROR" language="Angular2Html"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2AnimationTriggerAssignmentInspection"
+                     displayName="Animation Trigger Assignment" groupName="Angular" enabledByDefault="true"
+                     level="ERROR" language="Angular2Html"/>
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2ServiceCompletionContributor"
                             id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"

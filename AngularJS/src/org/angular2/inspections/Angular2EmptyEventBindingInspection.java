@@ -9,20 +9,25 @@ import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
+import org.angular2.lang.expr.psi.Angular2Action;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class EmptyEventHandlerInspection extends LocalInspectionTool {
+public class Angular2EmptyEventBindingInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new Angular2HtmlElementVisitor() {
       @Override
       public void visitEvent(Angular2HtmlEvent event) {
-        if (event.getAction() == null) {
-          holder.registerProblem(event, "Empty event handler attribute", new CreateAttributeQuickFix());
+        Angular2Action action = event.getAction();
+        if (action == null) {
+          holder.registerProblem(event, "Event binding attribute must have a value.", new CreateAttributeQuickFix());
+        }
+        else if (action.getStatements().length == 0 && event.getValueElement() != null) {
+          holder.registerProblem(event.getValueElement(), "Empty expressions in event bindings are not allowed.");
         }
       }
     };
@@ -40,7 +45,7 @@ public class EmptyEventHandlerInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public String getFamilyName() {
-      return "AngularJS";
+      return "Angular";
     }
 
     @Override
