@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight
 
 import com.intellij.flex.util.FlexTestUtils
@@ -20,7 +21,7 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
   }
 
   protected void setUp() {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "")
     super.setUp()
 
     def sdk = FlexTestUtils.getSdk(new JSTestUtils.TestDescriptor(this), myFixture.getProjectDisposable())

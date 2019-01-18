@@ -30,7 +30,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
 
   @Override
   protected void setUp() {
-    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
+    FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "")
 
     super.setUp()
     runInEdtAndWait { FlexTestUtils.setupFlexSdk(myModule, getTestName(false), FlexAutoPopupTest.class, myFixture.getProjectDisposable()) }
