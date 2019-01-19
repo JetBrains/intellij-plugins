@@ -14,6 +14,7 @@
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.javascript.typescript.TypeScriptHighlightingTest
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.vuejs.VueFileType
@@ -652,13 +653,13 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
 
   override fun configureEditorFile(name: String?) {
     val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/$name")
-    val text: Any = VfsUtil.loadText(tsFile!!)
+    val text: Any = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
     myFixture.configureByText(VueFileType.INSTANCE, "<script lang=\"ts\">\n$text\n</script>")
   }
 
   override fun checkEditorText(ext: String?) {
     val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/${getTestName(false)}_after.$ext")
-    val text: Any = VfsUtil.loadText(tsFile!!)
+    val text: Any = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
     myFixture.checkResult("<script lang=\"ts\">\n$text\n</script>")
   }
 
