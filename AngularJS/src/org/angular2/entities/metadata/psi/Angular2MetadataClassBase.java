@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.function.Function;
 
-public class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBase<?>> extends Angular2MetadataElement<Stub> {
+public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataClassStubBase<?>> extends Angular2MetadataElement<Stub> {
   public Angular2MetadataClassBase(@NotNull Stub element) {
     super(element);
   }

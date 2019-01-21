@@ -2,11 +2,13 @@
 package org.angular2.index;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.ecmascript6.psi.ES6FromClause;
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration;
 import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
+import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -35,6 +37,7 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2EntityUtils;
+import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.index.AngularIndexUtil;
@@ -62,9 +65,11 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
   private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
   private static final String ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di";
+  private static final String ANGULAR2_MODULE_INDEX_USER_STRING = "a2mi";
 
   private static final String PIPE_TYPE = "P;;;";
   private static final String DIRECTIVE_TYPE = "D;;;";
+  private static final String MODULE_TYPE = "M;;;";
 
   private static final String STYLESHEET_INDEX_PREFIX = "ss/";
 
@@ -74,6 +79,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     INDEX_MAP.put(ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING, Angular2TemplateUrlIndex.KEY);
     INDEX_MAP.put(ANGULAR2_DIRECTIVE_INDEX_USER_STRING, Angular2SourceDirectiveIndex.KEY);
     INDEX_MAP.put(ANGULAR2_PIPE_INDEX_USER_STRING, Angular2SourcePipeIndex.KEY);
+    INDEX_MAP.put(ANGULAR2_MODULE_INDEX_USER_STRING, null);
     for (String key : INDEX_MAP.keySet()) {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
     }
@@ -91,9 +97,21 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     return type.startsWith(DIRECTIVE_TYPE);
   }
 
+  public static boolean isModule(@NotNull JSImplicitElement element) {
+    return MODULE_TYPE.equals(element.getTypeString());
+  }
+
   @Override
   public int getVersion() {
     return Angular2IndexBase.VERSION;
+  }
+
+  @Override
+  public boolean shouldCreateStubForLiteral(ASTNode node) {
+    if (node.getElementType() == JSElementTypes.ARRAY_LITERAL_EXPRESSION) {
+      return Angular2LangUtil.isAngular2Context(node.getPsi());
+    }
+    return false;
   }
 
   @Nullable
@@ -126,6 +144,12 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
                                         getStylesUrls(decorator));
         }
       }
+      else if (MODULE_DEC.equals(decoratorName)) {
+        if (data == null) {
+          data = new JSElementIndexingDataImpl();
+        }
+        addModule(enclosingClass, data::addImplicitElement);
+      }
     }
     return data;
   }
@@ -152,6 +176,10 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       return false;
     }
     final String userID = element.getUserString();
+    if (ANGULAR2_MODULE_INDEX_USER_STRING.equals(userID)) {
+      // No indexing
+      return true;
+    }
     final StubIndexKey<String, JSImplicitElementProvider> index = userID != null ? INDEX_MAP.get(userID) : null;
     if (index == Angular2SourceDirectiveIndex.KEY) {
       String type = element.toImplicitElement(null).getTypeString();
@@ -200,6 +228,16 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(pipe, pipeClass)
       .setUserString(ANGULAR2_PIPE_INDEX_USER_STRING)
       .setTypeString(PIPE_TYPE)
+      .setType(JSImplicitElement.Type.Class)
+      .toImplicitElement();
+    processor.consume(pipeElement);
+  }
+
+  private static void addModule(@NotNull TypeScriptClass moduleClass,
+                                @NotNull Consumer<JSImplicitElement> processor) {
+    JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder("ng-module", moduleClass)
+      .setUserString(ANGULAR2_MODULE_INDEX_USER_STRING)
+      .setTypeString(MODULE_TYPE)
       .setType(JSImplicitElement.Type.Class)
       .toImplicitElement();
     processor.consume(pipeElement);

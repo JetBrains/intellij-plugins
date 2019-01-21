@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2Module;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class Angular2SourceDeclaration extends Angular2SourceEntity implements Angular2Declaration {
 
@@ -14,9 +13,9 @@ public abstract class Angular2SourceDeclaration extends Angular2SourceEntity imp
     super(decorator, implicitElement);
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public Angular2Module getModule() {
-    throw new UnsupportedOperationException();
+  public Angular2Module[] getAllModules() {
+    return new Angular2Module[0];
   }
 }

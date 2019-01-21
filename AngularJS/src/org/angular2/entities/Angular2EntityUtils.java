@@ -165,7 +165,7 @@ public class Angular2EntityUtils {
       return ((Angular2DirectiveProperty)element).getName();
     }
     else {
-      return element.toString();
+      return element.getClass().getName() + "@" + Integer.toHexString(element.hashCode());
     }
   }
 }

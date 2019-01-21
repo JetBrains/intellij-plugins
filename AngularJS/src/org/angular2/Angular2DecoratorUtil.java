@@ -25,6 +25,7 @@ public class Angular2DecoratorUtil {
   public static final String DIRECTIVE_DEC = "Directive";
   public static final String COMPONENT_DEC = "Component";
   public static final String PIPE_DEC = "Pipe";
+  public static final String MODULE_DEC = "NgModule";
   public static final String INPUT_DEC = "Input";
   public static final String OUTPUT_DEC = "Output";
   public static final String VIEW_CHILD_DEC = "ViewChild";
@@ -34,6 +35,9 @@ public class Angular2DecoratorUtil {
   public static final String EXPORT_AS_PROP = "exportAs";
   public static final String INPUTS_PROP = "inputs";
   public static final String OUTPUTS_PROP = "outputs";
+  public static final String IMPORTS_PROP = "imports";
+  public static final String EXPORTS_PROP = "exports";
+  public static final String DECLARATIONS_PROP = "declarations";
 
   public static final String TEMPLATE_URL_PROP = "templateUrl";
   public static final String TEMPLATE_PROP = "template";

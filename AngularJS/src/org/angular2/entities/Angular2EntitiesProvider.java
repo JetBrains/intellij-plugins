@@ -25,6 +25,7 @@ import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.metadata.psi.Angular2MetadataPipe;
 import org.angular2.entities.source.Angular2SourceComponent;
 import org.angular2.entities.source.Angular2SourceDirective;
+import org.angular2.entities.source.Angular2SourceModule;
 import org.angular2.entities.source.Angular2SourcePipe;
 import org.angular2.index.*;
 import org.angular2.lang.Angular2LangUtil;
@@ -55,6 +56,9 @@ public class Angular2EntitiesProvider {
     if ((result = getPipe(element)) != null) {
       return result;
     }
+    if ((result = getModule(element)) != null) {
+      return result;
+    }
     return null;
   }
 
@@ -78,6 +82,11 @@ public class Angular2EntitiesProvider {
     return PIPE_GETTER.get(element);
   }
 
+  @Nullable
+  public static Angular2Module getModule(@Nullable PsiElement element) {
+    return MODULE_GETTER.get(element);
+  }
+
   @NotNull
   public static List<Angular2Directive> findElementDirectivesCandidates(@NotNull Project project, @NotNull String elementName) {
     return findDirectivesCandidates(project, Angular2EntityUtils.getElementDirectiveIndexName(elementName));
@@ -94,7 +103,12 @@ public class Angular2EntitiesProvider {
     if (pipe != null) {
       return getPipe(pipe);
     }
-    return findMetadataEntity(project, name, Angular2MetadataPipe.class, Angular2MetadataPipeIndex.KEY);
+    Ref<Angular2Pipe> res = new Ref<>();
+    processMetadataEntities(project, name, Angular2MetadataPipe.class, Angular2MetadataPipeIndex.KEY, p -> {
+      res.set(p);
+      return false;
+    });
+    return res.get();
   }
 
   @NotNull
@@ -105,7 +119,7 @@ public class Angular2EntitiesProvider {
     else if (selector.isAttributeSelector()) {
       return findAttributeDirectivesCandidates(selector.getProject(), selector.getName());
     }
-    return  Collections.emptyList();
+    return Collections.emptyList();
   }
 
   @Nullable
@@ -168,22 +182,6 @@ public class Angular2EntitiesProvider {
     return result;
   }
 
-  @Nullable
-  private static <T extends Angular2MetadataEntity> T findMetadataEntity(@NotNull Project project,
-                                                                         @NotNull String name,
-                                                                         @NotNull Class<T> entityClass,
-                                                                         @NotNull StubIndexKey<String, T> key) {
-    Ref<T> res = new Ref<>();
-    StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), entityClass, el -> {
-      if (el.isValid()) {
-        res.set(el);
-        return false;
-      }
-      return true;
-    });
-    return res.get();
-  }
-
   private static <T extends Angular2MetadataEntity> void processMetadataEntities(@NotNull Project project,
                                                                                  @NotNull String name,
                                                                                  @NotNull Class<T> entityClass,
@@ -206,6 +204,9 @@ public class Angular2EntitiesProvider {
 
   private static final EntityGetter<Angular2Pipe> PIPE_GETTER = new EntityGetter<>(
     Angular2Pipe.class, Angular2IndexingHandler::isPipe, Angular2SourcePipe::new, PIPE_DEC);
+
+  private static final EntityGetter<Angular2Module> MODULE_GETTER = new EntityGetter<>(
+    Angular2Module.class, Angular2IndexingHandler::isModule, Angular2SourceModule::new, MODULE_DEC);
 
   private static class EntityGetter<T extends Angular2Entity> {
 
@@ -264,7 +265,8 @@ public class Angular2EntitiesProvider {
       }
       if (element instanceof ES6Decorator) {
         ES6Decorator dec = (ES6Decorator)element;
-        if (!ArrayUtil.contains(dec.getDecoratorName(), myDecoratorNames)) {
+        if (!ArrayUtil.contains(dec.getDecoratorName(), myDecoratorNames)
+            || !Angular2LangUtil.isAngular2Context(element)) {
           return null;
         }
         return CachedValuesManager.getCachedValue(dec, () -> {
