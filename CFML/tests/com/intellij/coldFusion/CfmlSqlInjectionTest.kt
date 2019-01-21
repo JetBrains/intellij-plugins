@@ -23,10 +23,8 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.isNullOrEmpty
-import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
 import org.junit.Test
-import kotlin.test.assertTrue
 
 /**
  * @author Sergey Karashevich
@@ -94,7 +92,6 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
 
   private fun doHighlightText(expectedErrorCount: Int = 0) {
     myFixture.doHighlighting()
-    waitCodeAnalysis(5_000)
     var document = myFixture.editor.document
     if (document is DocumentWindow) document = document.delegate
     val highlights = DaemonCodeAnalyzerImpl.getHighlights(document, HighlightSeverity.ERROR, project)
@@ -102,14 +99,6 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
     if (expectedErrorCount == 0) assertTrue("Highlighting errors should be empty, but this file has: $errors", errors.isNullOrEmpty())
     else TestCase.assertEquals("Highlight errors count should be ${expectedErrorCount}, got ${errors.size}", expectedErrorCount,
                                errors.size)
-  }
-
-  private fun waitCodeAnalysis(timeOutMillis: Int) {
-    val stopAt = System.currentTimeMillis() + timeOutMillis
-    while ( daemonCodeAnalyzer.isRunningOrPending) {
-      assertTrue(System.currentTimeMillis() < stopAt, "waiting for daemon code analysis exceeded timeout $timeOutMillis(ms)")
-      UIUtil.dispatchInvocationEvent()
-    }
   }
 
   private fun getElementAtCaret(): PsiElement {
