@@ -8,6 +8,7 @@ import com.intellij.psi.PsiParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.ParameterTypeManager;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
@@ -35,9 +36,11 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
       if (!CucumberJavaVersionUtil.isCucumber3OrMore(element)) {
         return definitionText;
       }
-      
-      ParameterTypeManager parameterTypes = getAllParameterTypes(module);
-      return buildRegexpFromCucumberExpression(definitionText, parameterTypes);
+
+      if (CucumberJavaUtil.isCucumberExpression(definitionText)) {
+        ParameterTypeManager parameterTypes = getAllParameterTypes(module);
+        return buildRegexpFromCucumberExpression(definitionText, parameterTypes);
+      }
     }
 
     return definitionText;

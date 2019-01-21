@@ -27,6 +27,7 @@ import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotationProvider;
 import org.jetbrains.plugins.cucumber.psi.*;
+import sun.util.locale.LocaleUtils;
 
 import java.util.*;
 
@@ -54,6 +55,48 @@ public class CucumberJavaUtil {
     javaParameterTypes.put("long", STANDARD_PARAMETER_TYPES.get("int"));
 
     JAVA_PARAMETER_TYPES = Collections.unmodifiableMap(javaParameterTypes);
+  }
+
+  /**
+   * Checks if expression should be considered as a CucumberExpression or as a RegEx
+   * @see <a href="http://google.com">https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/heuristics.adoc</a>
+   */
+  public static boolean isCucumberExpression(@NotNull String expression) {
+    if (expression.startsWith("^") || expression.endsWith("$")) {
+      return false;
+    }
+    if (expression.length() > 1 && expression.startsWith("/") && expression.endsWith("/")) {
+      return false;
+    }
+
+    boolean inBraces = false;
+    int braceStart = 0;
+    int i = 0;
+    while (i < expression.length()) {
+      char c = expression.charAt(i);
+      if (c == '\\') {
+        i++;
+      }
+      else {
+        if (inBraces) {
+          if (c == ')') {
+            inBraces = false;
+            if (!LocaleUtils.isAlphaNumericString(expression.substring(braceStart + 1, i))) {
+              return false;
+            }
+          }
+        }
+        else {
+          if (c == '(') {
+            braceStart = i;
+            inBraces = true;
+          }
+        }
+      }
+      i++;
+    }
+
+    return true;
   }
 
   private static String getCucumberAnnotationSuffix(@NotNull String name) {
