@@ -10,7 +10,7 @@ import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.START_TAG
 
 abstract class SingleLineCommentLesson(module: Module, lang: String) :
-    KLesson("Single Line Comment", module, lang) {
+    KLesson("Comment Line", module, lang) {
 
   abstract val commentElementType : IElementType
   abstract val sample: LessonSample
