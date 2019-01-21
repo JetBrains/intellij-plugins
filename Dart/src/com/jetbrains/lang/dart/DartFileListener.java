@@ -25,6 +25,7 @@ import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryProperties;
 import com.jetbrains.lang.dart.sdk.DartPackagesLibraryType;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
@@ -277,12 +278,12 @@ public class DartFileListener implements VirtualFileListener {
   }
 
   private static void removeDependencyOnDartPackagesLibrary(@NotNull final Module module) {
+    if (!hasDartPackageLibrary(module)) return;
+
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
     try {
       for (final OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
-        if (orderEntry instanceof LibraryOrderEntry &&
-            LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
-            DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
+        if (isDartPackageLibrary(orderEntry)) {
           modifiableModel.removeOrderEntry(orderEntry);
         }
       }
@@ -298,17 +299,17 @@ public class DartFileListener implements VirtualFileListener {
     }
   }
 
+  private static boolean isDartPackageLibrary(OrderEntry orderEntry) {
+    return orderEntry instanceof LibraryOrderEntry &&
+           LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
+           DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName());
+  }
+
   private static void addDependencyOnDartPackagesLibrary(@NotNull final Module module, @NotNull final Library library) {
+    if (hasDartPackageLibrary(module)) return;
+
     final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
     try {
-      for (final OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
-        if (orderEntry instanceof LibraryOrderEntry &&
-            LibraryTablesRegistrar.PROJECT_LEVEL.equals(((LibraryOrderEntry)orderEntry).getLibraryLevel()) &&
-            DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME.equals(((LibraryOrderEntry)orderEntry).getLibraryName())) {
-          return; // dependency already exists
-        }
-      }
-
       modifiableModel.addLibraryEntry(library);
 
       ApplicationManager.getApplication().runWriteAction(modifiableModel::commit);
@@ -318,6 +319,10 @@ public class DartFileListener implements VirtualFileListener {
         modifiableModel.dispose();
       }
     }
+  }
+
+  private static boolean hasDartPackageLibrary(@NotNull Module module) {
+    return ContainerUtil.exists(ModuleRootManager.getInstance(module).getOrderEntries(), DartFileListener::isDartPackageLibrary);
   }
 
   private static boolean isPathOutsideProjectContent(@NotNull final ProjectFileIndex fileIndex, @NotNull String path) {
