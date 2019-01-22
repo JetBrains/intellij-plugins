@@ -33,17 +33,21 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   protected static final String SYMBOL_TYPE = "__symbolic";
   protected static final String SYMBOL_REFERENCE = "reference";
   protected static final String SYMBOL_PROPERTY = "property";
+  protected static final String SYMBOL_FUNCTION = "function";
 
   protected static final String DECORATORS = "decorators";
   protected static final String CALL = "call";
   protected static final String EXPRESSION = "expression";
   protected static final String ARGUMENTS = "arguments";
   protected static final String MEMBERS = "members";
+  protected static final String STATICS = "statics";
   protected static final String EXTENDS = "extends";
   protected static final String CONSTRUCTOR = "__ctor__";
 
   protected static final String REFERENCE_NAME = "name";
   protected static final String REFERENCE_MODULE = "module";
+
+  protected static final String FUNCTION_VALUE = "value";
 
   protected static final String ARRAY_TYPE = "#array";
   protected static final String OBJECT_TYPE = "#object";
@@ -111,7 +115,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
     return FlagsStructure.EMPTY;
   }
 
-  protected void loadMemberProperty(JsonProperty p) {
+  protected void loadMemberProperty(@NotNull JsonProperty p) {
     createMember(p.getName(), p.getValue());
   }
 

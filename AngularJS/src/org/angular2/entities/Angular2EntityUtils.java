@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
+import one.util.streamex.StreamEx;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.source.Angular2SourceEntity;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
@@ -163,6 +164,22 @@ public class Angular2EntityUtils {
     }
     else if (element instanceof Angular2DirectiveProperty) {
       return ((Angular2DirectiveProperty)element).getName();
+    }
+    else if (element instanceof Angular2Module) {
+      Angular2Module module = (Angular2Module)element;
+      return module.getName() +
+             " <" +
+             sourceKind +
+             " module>: imports=[" +
+             StreamEx.of(module.getImports()).map(Angular2Module::getName).joining(", ") +
+             "]; declarations=[" +
+             StreamEx.of(module.getDeclarations()).map(Angular2Entity::getName).joining(", ") +
+             "]; exports=[" +
+             StreamEx.of(module.getExports()).map(Angular2Entity::getName).joining(", ") +
+             "]; scopeFullyResolved=" +
+             module.isScopeFullyResolved() +
+             "; exportsFullyResolved=" +
+             module.areExportsFullyResolved();
     }
     else {
       return element.getClass().getName() + "@" + Integer.toHexString(element.hashCode());

@@ -15,12 +15,16 @@ public interface Angular2MetadataElementTypes {
     new Angular2MetadataElementType<>("OBJECT", Angular2MetadataObjectStub::new, Angular2MetadataObject::new);
   MetadataElementType<Angular2MetadataReferenceStub> REFERENCE =
     new Angular2MetadataElementType<>("REFERENCE", Angular2MetadataReferenceStub::new, Angular2MetadataReference::new);
+  MetadataElementType<Angular2MetadataFunctionStub> FUNCTION =
+    new Angular2MetadataElementType<>("FUNCTION", Angular2MetadataFunctionStub::new, Angular2MetadataFunction::new);
 
   MetadataElementType<Angular2MetadataClassStub> CLASS =
     new Angular2MetadataElementType<>("CLASS", Angular2MetadataClassStub::new, Angular2MetadataClass::new);
   MetadataElementType<Angular2MetadataNodeModuleStub> NODE_MODULE =
     new Angular2MetadataElementType<>("NODE_MODULE", Angular2MetadataNodeModuleStub::new, Angular2MetadataNodeModule::new);
 
+  MetadataElementType<Angular2MetadataModuleStub> MODULE =
+    new Angular2MetadataElementType<>("MODULE", Angular2MetadataModuleStub::new, Angular2MetadataModule::new);
   MetadataElementType<Angular2MetadataPipeStub> PIPE =
     new Angular2MetadataElementType<>("PIPE", Angular2MetadataPipeStub::new, Angular2MetadataPipe::new);
   MetadataElementType<Angular2MetadataDirectiveStub> DIRECTIVE =

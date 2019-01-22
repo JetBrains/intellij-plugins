@@ -202,6 +202,7 @@
     <stubIndex implementation="org.angular2.index.Angular2MetadataEntityClassNameIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataDirectiveIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataNodeModuleIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2MetadataFunctionIndex"/>
     <fileTypeFactory implementation="org.angular2.entities.metadata.Angular2MetadataFileTypeFactory"/>
     <filetype.stubBuilder filetype="Angular Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonStubBuilder"/>
     <fileType.fileViewProviderFactory filetype="Angular Metadata JSON"

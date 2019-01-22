@@ -6,18 +6,16 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import one.util.streamex.StreamEx;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
 import org.angularjs.AngularTestUtil;
 
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-
-import static com.intellij.util.containers.ContainerUtil.emptyList;
-import static com.intellij.util.containers.ContainerUtil.sorted;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import java.util.Set;
 
 public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
 
@@ -27,44 +25,70 @@ public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testCommonModuleResolution() {
-    List<String> allDeclarations = asList(
-      "AsyncPipe", "CurrencyPipe", "DatePipe", "DecimalPipe", "I18nPluralPipe", "I18nSelectPipe", "JsonPipe", "KeyValuePipe",
-      "LowerCasePipe", "NgClass", "NgComponentOutlet", "NgForOf", "NgIf", "NgPlural", "NgPluralCase", "NgStyle", "NgSwitch",
-      "NgSwitchCase", "NgSwitchDefault", "NgTemplateOutlet", "PercentPipe", "SlicePipe", "TitleCasePipe", "UpperCasePipe");
-    doResolutionTest("common", "common_module.ts", "export class Common<caret>Module",
-                     emptyList(), allDeclarations, allDeclarations, allDeclarations, true, true);
+    doResolutionTest("common",
+                     "common_module.ts",
+                     "export class Common<caret>Module",
+                     "check.txt");
+  }
+
+  public void testCommonModuleResolutionMetadata() {
+    doResolutionTest("common-metadata",
+                     "myModule.ts",
+                     "export class Common<caret>ModuleMetadataTest {",
+                     "check.txt");
   }
 
   public void testRouterModuleResolution() {
-    doResolutionTest("router", "myModule.ts", "class AppRouting<caret>Module {",
-                     singletonList("RouterModule"),
-                     singletonList("MyDirective"),
-                     emptyList(),
-                     asList("MyDirective", "RouterOutlet", "RouterLink", "RouterLinkWithHref", "RouterLinkActive", "EmptyOutletComponent"),
-                     true, true);
+    doResolutionTest("router",
+                     "myModule.ts",
+                     "class AppRouting<caret>Module {",
+                     "check-full.txt");
+  }
+
+  public void testRouterModuleResolutionMetadata() {
+    doResolutionTest("router-metadata",
+                     "myModule.ts",
+                     "class AppRouting<caret>Module {",
+                     "check-full.txt");
   }
 
   public void testRouterModuleResolutionNotFull() {
-    doResolutionTest("router", "myModule.ts", "export class AppRoutingModule<caret>NotFullyResolved {",
-                     singletonList("RouterModule"),
-                     singletonList("MyDirective"),
-                     singletonList("RouterOutlet"),
-                     asList("MyDirective", "RouterOutlet", "RouterLink", "RouterLinkWithHref", "RouterLinkActive", "EmptyOutletComponent"),
-                     true, false);
+    doResolutionTest("router",
+                     "myModule.ts",
+                     "export class AppRoutingModule<caret>NotFullyResolved {",
+                     "check-not-full.txt");
+  }
+
+  public void testRouterModuleResolutionNotFullMetadata() {
+    doResolutionTest("router-metadata",
+                     "myModule.ts",
+                     "export class AppRoutingModule<caret>NotFullyResolved {",
+                     "check-not-full.txt");
   }
 
   public void testBrowserModuleResolutionNotFull() {
-    doResolutionTest("browser", "myModule.ts", "class BrowserModule<caret>Test {",
-                     singletonList("BrowserModule"),
-                     singletonList("MyDirective"),
-                     singletonList("AsyncPipe"),
-                     asList("MyDirective", "AsyncPipe"),
-                     false, false);
+    doResolutionTest("browser",
+                     "myModule.ts",
+                     "class BrowserModule<caret>Test {",
+                     "check.txt");
   }
 
-  private void doResolutionTest(String directory, String moduleFile, String signature,
-                                List<String> imports, List<String> declarations, List<String> exports,
-                                List<String> scope, boolean exportsFullyResolved, boolean scopeFullyResolved) {
+  public void testIonicResolutionMetadata() {
+    doResolutionTest("ionic-metadata",
+                     "myIonicModule.ts",
+                     "export class MyIonic<caret>Module {",
+                     "check-no-common.txt");
+  }
+
+  public void testIonicResolutionMetadataWithCommon() {
+    myFixture.copyDirectoryToProject("common-metadata/common", "/common");
+    doResolutionTest("ionic-metadata",
+                     "myIonicModule.ts",
+                     "export class MyIonic<caret>Module {",
+                     "check-with-common.txt");
+  }
+
+  private void doResolutionTest(String directory, String moduleFile, String signature, String checkFile) {
     VirtualFile testDir = myFixture.copyDirectoryToProject(directory, "/");
     myFixture.openFileInEditor(testDir.findChild(moduleFile));
     int moduleOffset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
@@ -74,23 +98,58 @@ public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
     assert moduleClass != null;
     Angular2Module module = Angular2EntitiesProvider.getModule(moduleClass);
     assert module != null;
-    assertEquals(sorted(imports), toStringList(module.getImports()));
-    assertEquals(sorted(declarations), toStringList(module.getDeclarations()));
-    assertEquals(sorted(exports), toStringList(module.getExports()));
-    assertEquals(sorted(scope), toStringList(module.getDeclarationsInScope()));
-    assert exportsFullyResolved == module.areExportsFullyResolved();
-    assert scopeFullyResolved == module.isScopeFullyResolved();
+
+    StringBuilder result = new StringBuilder();
+    printEntity(0, module, result, new HashSet<>());
+    myFixture.configureByText("__my-check.txt", result.toString());
+    myFixture.checkResultByFile(directory + "/" + checkFile, true);
   }
 
+  private static void printEntity(int level, Angular2Entity entity, StringBuilder result, Set<Angular2Entity> printed) {
+    withIndent(level, result)
+      .append(entity.getName())
+      .append(": ")
+      .append(entity.getClass().getSimpleName())
+      .append('\n');
+    if (entity instanceof Angular2Module) {
+      if (!printed.add(entity)) {
+        withIndent(level + 1, result)
+          .append("<printed above>\n");
+        return;
+      }
+      Angular2Module module = (Angular2Module)entity;
+      level++;
+      printEntityList(level, "imports", module.getImports(), result, printed);
+      printEntityList(level, "declarations", module.getDeclarations(), result, printed);
+      printEntityList(level, "exports", module.getExports(), result, printed);
+      printEntityList(level, "scope", module.getDeclarationsInScope(), result, printed);
+      withIndent(level, result)
+        .append("scope fully resolved: ")
+        .append(module.isScopeFullyResolved())
+        .append('\n');
+      withIndent(level, result)
+        .append("exports fully resolved: ")
+        .append(module.areExportsFullyResolved())
+        .append('\n');
+    }
+  }
 
-  private static List<String> toStringList(List<? extends Angular2Entity> entities) {
-    return StreamEx.of(entities)
-      .map(decl -> decl.getTypeScriptClass())
-      .nonNull()
-      .map(cls -> cls.getNameIdentifier())
-      .nonNull()
-      .map(id -> id.getText())
-      .sorted()
-      .toList();
+  private static void printEntityList(int level,
+                                      String name,
+                                      List<? extends Angular2Entity> entities,
+                                      StringBuilder result,
+                                      Set<Angular2Entity> printed) {
+    withIndent(level, result)
+      .append(name)
+      .append(":\n");
+    ContainerUtil.sorted(entities, Comparator.comparing(Angular2Entity::getName))
+      .forEach(m -> printEntity(level + 1, m, result, printed));
+  }
+
+  private static StringBuilder withIndent(int level, StringBuilder result) {
+    for (int i = 0; i < level; i++) {
+      result.append("  ");
+    }
+    return result;
   }
 }

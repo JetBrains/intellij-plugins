@@ -1,0 +1,28 @@
+BrowserModuleTest: Angular2SourceModule
+  imports:
+    BrowserModule: Angular2SourceModule
+      imports:
+      declarations:
+      exports:
+        CommonModule: Angular2SourceModule
+          imports:
+          declarations:
+            async: Angular2SourcePipe
+          exports:
+            async: Angular2SourcePipe
+          scope:
+            async: Angular2SourcePipe
+          scope fully resolved: false
+          exports fully resolved: false
+      scope:
+      scope fully resolved: true
+      exports fully resolved: false
+  declarations:
+    MyDirective: Angular2SourceDirective
+  exports:
+    async: Angular2SourcePipe
+  scope:
+    MyDirective: Angular2SourceDirective
+    async: Angular2SourcePipe
+  scope fully resolved: false
+  exports fully resolved: false

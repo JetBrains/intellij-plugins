@@ -3,11 +3,9 @@ package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import org.angular2.entities.Angular2EntityUtils;
-import org.angular2.entities.Angular2Module;
 import org.angular2.entities.Angular2Pipe;
 import org.angular2.entities.metadata.stubs.Angular2MetadataPipeStub;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -30,11 +28,5 @@ public class Angular2MetadataPipe extends Angular2MetadataDeclaration<Angular2Me
     return getCachedClassBasedValue(cls -> cls != null
                                            ? Angular2EntityUtils.getPipeTransformMethods(cls)
                                            : Collections.emptyList());
-  }
-
-  @Nullable
-  @Override
-  public Angular2Module getModule() {
-    return null;
   }
 }

@@ -59,8 +59,7 @@ import static org.angular2.Angular2DecoratorUtil.*;
 public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   public static final String REQUIRE = "require";
-
-  private static final String DEFAULT_COMPONENT_NAME = "ng-component";
+  public static final String DEFAULT_COMPONENT_NAME = "ng-component";
 
   private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
   private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";

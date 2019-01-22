@@ -19,7 +19,7 @@ public class Angular2MetadataEntityStub<Psi extends Angular2MetadataEntity> exte
 
   public Angular2MetadataEntityStub(@Nullable String memberName,
                                     @Nullable StubElement parent,
-                                    @Nullable JsonObject source,
+                                    @NotNull JsonObject source,
                                     @NotNull MetadataElementType elementType) {
     super(memberName, parent, source, elementType);
   }

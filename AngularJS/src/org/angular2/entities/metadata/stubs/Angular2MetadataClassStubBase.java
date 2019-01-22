@@ -38,6 +38,7 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       @Override
       protected Map<String, EntityFactory> compute() {
         return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
+          .put(MODULE_DEC, Angular2MetadataModuleStub::createModuleStub)
           .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)
           .put(COMPONENT_DEC, Angular2MetadataComponentStub::createComponentStub)
           .put(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::createDirectiveStub)
@@ -72,15 +73,12 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
 
   public Angular2MetadataClassStubBase(@Nullable String memberName,
                                        @Nullable StubElement parent,
-                                       @Nullable JsonObject source,
+                                       @NotNull JsonObject source,
                                        @NotNull MetadataElementType elementType) {
     super(memberName, parent, elementType);
-    if (source == null) {
-      myInputMappings = Collections.emptyMap();
-      myOutputMappings = Collections.emptyMap();
-      return;
+    if (loadInOuts()) {
+      readTemplateFlag(source);
     }
-    readTemplateFlag(source);
     JsonObject extendsClass = getPropertyValue(source.findProperty(EXTENDS), JsonObject.class);
     if (extendsClass != null) {
       Angular2MetadataReferenceStub.createReferenceStub(EXTENDS_MEMBER, extendsClass, this);
@@ -89,6 +87,10 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     myInputMappings = new HashMap<>();
     MetadataUtils.streamObjectProperty(source.findProperty(MEMBERS))
       .forEach(this::loadMember);
+    MetadataUtils.streamObjectProperty(source.findProperty(STATICS))
+      .filter(prop -> prop.getValue() instanceof JsonObject
+                      && SYMBOL_FUNCTION.equals(readStringPropertyValue(((JsonObject)prop.getValue()).findProperty(SYMBOL_TYPE))))
+      .forEach(this::loadMemberProperty);
   }
 
   public Angular2MetadataClassStubBase(@NotNull StubInputStream stream,
@@ -130,6 +132,10 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     writeStringMap(myOutputMappings, stream);
   }
 
+  protected boolean loadInOuts() {
+    return true;
+  }
+
   @Override
   protected FlagsStructure getFlagsStructure() {
     return FLAGS_STRUCTURE;
@@ -142,7 +148,7 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
                                 && constructor.getText().contains(Angular2EntityUtils.TEMPLATE_REF));
   }
 
-  private void loadMember(JsonProperty property) {
+  private void loadMember(@NotNull JsonProperty property) {
     String name = property.getName();
     JsonArray val = tryCast(property.getValue(), JsonArray.class);
     if (val == null || val.getValueList().size() != 1) {
@@ -152,17 +158,20 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     if (obj == null) {
       return;
     }
-    if (!SYMBOL_PROPERTY.equals(readStringPropertyValue(obj.findProperty(SYMBOL_TYPE)))) {
-      return;
+    String memberSymbol = readStringPropertyValue(obj.findProperty(SYMBOL_TYPE));
+    if (loadInOuts() && SYMBOL_PROPERTY.equals(memberSymbol)) {
+      streamDecorators(obj).forEach(dec -> {
+        if (INPUT_DEC.equals(dec.first)) {
+          addBindingMapping(name, myInputMappings, getDecoratorInitializer(dec.second, JsonStringLiteral.class));
+        }
+        else if (OUTPUT_DEC.equals(dec.first)) {
+          addBindingMapping(name, myOutputMappings, getDecoratorInitializer(dec.second, JsonStringLiteral.class));
+        }
+      });
     }
-    streamDecorators(obj).forEach(dec -> {
-      if (INPUT_DEC.equals(dec.first)) {
-        addBindingMapping(name, myInputMappings, getDecoratorInitializer(dec.second, JsonStringLiteral.class));
-      }
-      else if (OUTPUT_DEC.equals(dec.first)) {
-        addBindingMapping(name, myOutputMappings, getDecoratorInitializer(dec.second, JsonStringLiteral.class));
-      }
-    });
+    else if (SYMBOL_FUNCTION.equals(memberSymbol)) {
+      loadMemberProperty(property);
+    }
   }
 
   private static void addBindingMapping(@NotNull String fieldName,

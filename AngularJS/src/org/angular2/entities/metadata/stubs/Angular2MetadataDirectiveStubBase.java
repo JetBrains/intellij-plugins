@@ -11,6 +11,7 @@ import com.intellij.util.io.StringRef;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
+import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.index.Angular2MetadataDirectiveIndex;
 import org.angular2.lang.metadata.psi.MetadataElementType;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,11 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
                                            @NotNull JsonObject initializer,
                                            @NotNull MetadataElementType elementType) {
     super(memberName, parent, source, elementType);
-    mySelector = StringRef.fromString(readStringPropertyValue(initializer.findProperty(SELECTOR_PROP)));
+    String selector = readStringPropertyValue(initializer.findProperty(SELECTOR_PROP));
+    if (selector == null && this instanceof Angular2MetadataComponentStub) {
+      selector = Angular2IndexingHandler.DEFAULT_COMPONENT_NAME;
+    }
+    mySelector = StringRef.fromString(selector);
     assert mySelector != null;
     myExportAs = StringRef.fromString(readStringPropertyValue(initializer.findProperty(EXPORT_AS_PROP)));
     loadAdditionalBindingMappings(myInputMappings, initializer, Angular2DecoratorUtil.INPUTS_PROP);

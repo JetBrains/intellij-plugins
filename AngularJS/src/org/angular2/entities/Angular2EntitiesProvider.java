@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
@@ -20,9 +21,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
-import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
-import org.angular2.entities.metadata.psi.Angular2MetadataPipe;
+import org.angular2.entities.metadata.psi.*;
 import org.angular2.entities.source.Angular2SourceComponent;
 import org.angular2.entities.source.Angular2SourceDirective;
 import org.angular2.entities.source.Angular2SourceModule;
@@ -80,6 +79,27 @@ public class Angular2EntitiesProvider {
       element = element.getContext();
     }
     return PIPE_GETTER.get(element);
+  }
+
+  @Nullable
+  public static Angular2MetadataFunction findMetadataFunction(@NotNull JSFunction function) {
+    TypeScriptClass parent = ObjectUtils.tryCast(function.getContext(), TypeScriptClass.class);
+    if (function.getName() == null || parent == null) {
+      return null;
+    }
+    Ref<Angular2MetadataFunction> result = new Ref<>();
+    StubIndex.getInstance().processElements(
+      Angular2MetadataFunctionIndex.KEY, function.getName(), function.getProject(),
+      GlobalSearchScope.allScope(function.getProject()),
+      Angular2MetadataFunction.class, (f) -> {
+        Angular2MetadataClassBase parentClass = ObjectUtils.tryCast(f.getContext(), Angular2MetadataClassBase.class);
+        if (parentClass != null && parent.equals(parentClass.getTypeScriptClass())) {
+          result.set(f);
+          return false;
+        }
+        return true;
+      });
+    return result.get();
   }
 
   @Nullable

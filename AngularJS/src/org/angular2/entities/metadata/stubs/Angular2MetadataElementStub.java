@@ -24,6 +24,7 @@ public abstract class Angular2MetadataElementStub<Psi extends MetadataElement> e
         return ContainerUtil.<String, ConstructorFromJsonValue>immutableMapBuilder()
           .put("class", Angular2MetadataClassStubBase::createClassStub)
           .put("reference", Angular2MetadataReferenceStub::createReferenceStub)
+          .put("function", Angular2MetadataFunctionStub::createFunctionStub)
           .put(ARRAY_TYPE, Angular2MetadataArrayStub::new)
           .put(OBJECT_TYPE, Angular2MetadataObjectStub::new)
           .build();

@@ -1,0 +1,36 @@
+AppRoutingModule: Angular2SourceModule
+  imports:
+    RouterModule: Angular2MetadataModule
+      imports:
+      declarations:
+        EmptyOutletComponent: Angular2MetadataComponent
+        RouterLink: Angular2MetadataDirective
+        RouterLinkActive: Angular2MetadataDirective
+        RouterLinkWithHref: Angular2MetadataDirective
+        RouterOutlet: Angular2MetadataDirective
+      exports:
+        EmptyOutletComponent: Angular2MetadataComponent
+        RouterLink: Angular2MetadataDirective
+        RouterLinkActive: Angular2MetadataDirective
+        RouterLinkWithHref: Angular2MetadataDirective
+        RouterOutlet: Angular2MetadataDirective
+      scope:
+        EmptyOutletComponent: Angular2MetadataComponent
+        RouterLink: Angular2MetadataDirective
+        RouterLinkActive: Angular2MetadataDirective
+        RouterLinkWithHref: Angular2MetadataDirective
+        RouterOutlet: Angular2MetadataDirective
+      scope fully resolved: true
+      exports fully resolved: true
+  declarations:
+    MyDirective: Angular2SourceDirective
+  exports:
+  scope:
+    EmptyOutletComponent: Angular2MetadataComponent
+    MyDirective: Angular2SourceDirective
+    RouterLink: Angular2MetadataDirective
+    RouterLinkActive: Angular2MetadataDirective
+    RouterLinkWithHref: Angular2MetadataDirective
+    RouterOutlet: Angular2MetadataDirective
+  scope fully resolved: true
+  exports fully resolved: true
