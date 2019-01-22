@@ -80,4 +80,8 @@ public class ParameterTypeSteps {
   @And("I have ${int}")
   public void iHaveDollars(int arg1) throws Throwable {
   }
+
+  @And("my ' | step \"[\"")
+  public void my_test_step() {
+  }
 }

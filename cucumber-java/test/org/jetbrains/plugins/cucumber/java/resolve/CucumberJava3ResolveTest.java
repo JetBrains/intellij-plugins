@@ -43,6 +43,12 @@ public class CucumberJava3ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("the string \"test\" is in the d<caret>ummy repository", "Given");
   }
 
+  public void testResolveStepDefinitionRequiringEscaping() {
+    init("stepResolve_ParameterType");
+
+    checkReference("| st<caret>ep \"", "my_test_step");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber3ProjectDescriptor();

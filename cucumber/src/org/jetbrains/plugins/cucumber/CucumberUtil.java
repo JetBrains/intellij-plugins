@@ -444,6 +444,7 @@ public class CucumberUtil {
       .replaceAll("\\$", "\\\\\\$")
       .replaceAll("\\^", "\\\\^")
       .replaceAll("\\*", "\\\\*")
-      .replaceAll("\\.", "\\\\.");
+      .replaceAll("\\.", "\\\\.")
+      .replaceAll("\\[", "\\\\[");
   }
 }
