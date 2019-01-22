@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.undo.BasicUndoableAction
 import com.intellij.openapi.command.undo.DocumentReferenceManager
@@ -23,15 +23,13 @@ import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.util.DocumentUtil
 import org.jdom.input.SAXBuilder
 import training.check.Check
-import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
 import training.ui.Message
-import java.util.concurrent.CompletableFuture
 
 class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project) {
-  val checkFutures: MutableList<CompletableFuture<Boolean>> = mutableListOf()
-  val triggerFutures: MutableList<CompletableFuture<Boolean>> = mutableListOf()
+  var myActionId: String? = null
+  var myCheck: Check? = null
 
   val testActions: MutableList<Runnable> = mutableListOf()
 
@@ -76,22 +74,16 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
   }
 
   fun trigger(actionId: String) {
-    triggers(actionId)
-  }
-
-  fun triggers(vararg actionIds: String) {
-    val recorder = ActionsRecorder(project, editor.document)
-    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
-    this.triggerFutures.add(recorder.futureListActions(actionIds.toList()))
-
-    testActions(*actionIds)
+    assert (myActionId == null) { "Allowed no more than one trigger per task" }
+    myActionId = actionId
+    testActions(actionId)
   }
 
   fun testActions(vararg actionIds: String) {
     testActions.add(Runnable {
       val app = ApplicationManager.getApplication()
       for (actionId in actionIds) {
-        val action = ActionManager.getInstance().getAction(actionId)
+        val action = ActionManager.getInstance().getAction(actionId) ?: error("Action $actionId is non found")
         DataManager.getInstance().dataContextFromFocusAsync.onSuccess { dataContext ->
           app.invokeAndWait {
             val event = AnActionEvent.createFromAnAction(action, null, ActionPlaces.UNKNOWN, dataContext)
@@ -102,23 +94,16 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
     })
   }
 
-  fun check(check: Check) {
-    val recorder = ActionsRecorder(project, editor.document)
-    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
-    check.set(project, editor)
-    check.before()
-    this.checkFutures.add(recorder.futureCheck { check.check() })
-  }
-
   fun <T : Any> check(calculateState: () -> T, checkState: (T, T) -> Boolean) {
-    check(object : Check {
-      lateinit var state: T
+    assert (myCheck == null) { "Allowed no more than one check per task" }
+    myCheck = object : Check {
+      var state: T? = null
 
       override fun before() {
-        state = calculateReadAction()
+        state = calculateAction()
       }
 
-      override fun check(): Boolean = checkState(state, calculateReadAction())
+      override fun check(): Boolean = checkState(state!!, calculateAction())
 
       override fun set(project: Project?, editor: Editor?) {
         // do nothing
@@ -126,8 +111,14 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
 
       override fun listenAllKeys(): Boolean = false
 
-      private fun calculateReadAction() = ReadAction.compute<T, RuntimeException> { calculateState() }
-    })
+      // Some checks are needed to be performed in EDT thread
+      // For example, selection information  could not be got (for some magic reason) from another thread
+      // Also we need to commit document
+      private fun calculateAction() = WriteAction.computeAndWait<T, RuntimeException> {
+        PsiDocumentManager.getInstance(project).commitDocument(editor.document)
+        calculateState()
+      }
+    }
   }
 
   fun typeForTest(text : String) {
