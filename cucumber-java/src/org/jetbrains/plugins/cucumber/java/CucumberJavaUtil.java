@@ -27,9 +27,10 @@ import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
 import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotationProvider;
 import org.jetbrains.plugins.cucumber.psi.*;
-import sun.util.locale.LocaleUtils;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
@@ -44,6 +45,12 @@ public class CucumberJavaUtil {
 
   private static final Map<String, String> JAVA_PARAMETER_TYPES;
   public static final String CUCUMBER_EXPRESSIONS_CLASS_MARKER = "io.cucumber.cucumberexpressions.CucumberExpressionGenerator";
+
+  private static final Pattern BEGIN_ANCHOR = Pattern.compile("^\\^.*");
+  private static final Pattern END_ANCHOR = Pattern.compile(".*\\$$");
+  private static final Pattern SCRIPT_STYLE_REGEXP = Pattern.compile("^/(.*)/$");
+  private static final Pattern PARENTHESIS = Pattern.compile("\\(([^)]+)\\)");
+  private static final Pattern ALPHA = Pattern.compile("[a-zA-Z]+");
 
   static {
     Map<String, String> javaParameterTypes = new HashMap<>();
@@ -62,40 +69,26 @@ public class CucumberJavaUtil {
    * @see <a href="http://google.com">https://github.com/cucumber/cucumber/blob/master/cucumber-expressions/java/heuristics.adoc</a>
    */
   public static boolean isCucumberExpression(@NotNull String expression) {
-    if (expression.startsWith("^") || expression.endsWith("$")) {
+    Matcher m = BEGIN_ANCHOR.matcher(expression);
+    if (m.find()) {
       return false;
     }
-    if (expression.length() > 1 && expression.startsWith("/") && expression.endsWith("/")) {
+    m = END_ANCHOR.matcher(expression);
+    if (m.find()) {
       return false;
     }
-
-    boolean inBraces = false;
-    int braceStart = 0;
-    int i = 0;
-    while (i < expression.length()) {
-      char c = expression.charAt(i);
-      if (c == '\\') {
-        i++;
-      }
-      else {
-        if (inBraces) {
-          if (c == ')') {
-            inBraces = false;
-            if (!LocaleUtils.isAlphaNumericString(expression.substring(braceStart + 1, i))) {
-              return false;
-            }
-          }
-        }
-        else {
-          if (c == '(') {
-            braceStart = i;
-            inBraces = true;
-          }
-        }
-      }
-      i++;
+    m = SCRIPT_STYLE_REGEXP.matcher(expression);
+    if (m.find()) {
+      return false;
     }
-
+    m = PARENTHESIS.matcher(expression);
+    if (m.find()) {
+      String insideParenthesis = m.group(1);
+      if (ALPHA.matcher(insideParenthesis).lookingAt()) {
+        return true;
+      }
+      return false;
+    }
     return true;
   }
 
