@@ -2,7 +2,6 @@
 package org.angular2.entities.metadata.psi;
 
 import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2Module;
 import org.angular2.entities.metadata.stubs.Angular2MetadataEntityStub;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,9 +12,4 @@ public abstract class Angular2MetadataDeclaration<Stub extends Angular2MetadataE
     super(element);
   }
 
-  @NotNull
-  @Override
-  public Angular2Module[] getAllModules() {
-    return new Angular2Module[0];
-  }
 }

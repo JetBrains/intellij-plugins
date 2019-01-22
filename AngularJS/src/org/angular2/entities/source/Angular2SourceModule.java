@@ -16,7 +16,9 @@ import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.angular2.Angular2DecoratorUtil.getProperty;
@@ -34,19 +36,19 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
 
   @Override
   @NotNull
-  public List<Angular2Declaration> getDeclarations() {
+  public Set<Angular2Declaration> getDeclarations() {
     return myModuleResolver.getDeclarations();
   }
 
   @Override
   @NotNull
-  public List<Angular2Module> getImports() {
+  public Set<Angular2Module> getImports() {
     return myModuleResolver.getImports();
   }
 
   @Override
   @NotNull
-  public List<Angular2Entity> getExports() {
+  public Set<Angular2Entity> getExports() {
     return myModuleResolver.getExports();
   }
 
@@ -61,12 +63,12 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
   }
 
 
-  private static <T extends Angular2Entity> Pair<List<T>, Boolean> collectSymbols(@NotNull ES6Decorator decorator,
+  private static <T extends Angular2Entity> Pair<Set<T>, Boolean> collectSymbols(@NotNull ES6Decorator decorator,
                                                                                   @NotNull String propertyName,
                                                                                   @NotNull Class<T> symbolClazz) {
     JSProperty property = getProperty(decorator, propertyName);
     if (property == null) {
-      return Pair.pair(Collections.emptyList(), true);
+      return Pair.pair(Collections.emptySet(), true);
     }
     return new SourceSymbolCollector<>(symbolClazz).collect(property.getValue());
   }
@@ -75,14 +77,14 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
 
     private final Stack<PsiElement> myResolveStack = new Stack<>();
     private final Class<T> mySymbolClazz;
-    private final List<T> myResult = new ArrayList<>();
+    private final Set<T> myResult = new HashSet<>();
     private boolean myIsFullyResolved = true;
 
     SourceSymbolCollector(@NotNull Class<T> symbolClazz) {
       mySymbolClazz = symbolClazz;
     }
 
-    public Pair<List<T>, Boolean> collect(@Nullable JSExpression value) {
+    public Pair<Set<T>, Boolean> collect(@Nullable JSExpression value) {
       if (value == null) {
         return Pair.pair(myResult, false);
       }

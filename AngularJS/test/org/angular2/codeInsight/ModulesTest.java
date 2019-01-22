@@ -7,14 +7,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
+import one.util.streamex.StreamEx;
+import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
 import org.angularjs.AngularTestUtil;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -88,9 +91,34 @@ public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
                      "check-with-common.txt");
   }
 
-  private void doResolutionTest(String directory, String moduleFile, String signature, String checkFile) {
+  public void testCommonNgClassModules() {
+    doDeclarationModulesCheckText("common",
+                                  "directives/ng_class.ts",
+                                  "export class Ng<caret>Class ",
+                                  "CommonModule");
+  }
+
+  public void testCommonDatePipeModules() {
+    doDeclarationModulesCheckText("common",
+                                  "pipes/date_pipe.ts",
+                                  "export class Date<caret>Pipe ",
+                                  "CommonModule");
+  }
+
+  public void testAsyncPipeModulesMetadata() {
+    doDeclarationModulesCheckText("common-metadata",
+                                  "common/src/pipes/async_pipe.d.ts",
+                                  "export declare class Async<caret>Pipe ",
+                                  "CommonModule",
+                                  "CommonModuleMetadataTest");
+  }
+
+  private void doResolutionTest(@NotNull String directory,
+                                @NotNull String moduleFile,
+                                @NotNull String signature,
+                                @NotNull String checkFile) {
     VirtualFile testDir = myFixture.copyDirectoryToProject(directory, "/");
-    myFixture.openFileInEditor(testDir.findChild(moduleFile));
+    myFixture.openFileInEditor(testDir.findFileByRelativePath(moduleFile));
     int moduleOffset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
     PsiElement el = myFixture.getFile().findElementAt(moduleOffset);
     assert el != null;
@@ -105,7 +133,30 @@ public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.checkResultByFile(directory + "/" + checkFile, true);
   }
 
-  private static void printEntity(int level, Angular2Entity entity, StringBuilder result, Set<Angular2Entity> printed) {
+  private void doDeclarationModulesCheckText(@NotNull String directory,
+                                             @NotNull String declarationFile,
+                                             @NotNull String signature,
+                                             String... modules) {
+    VirtualFile testDir = myFixture.copyDirectoryToProject(directory, "/");
+    myFixture.openFileInEditor(testDir.findFileByRelativePath(declarationFile));
+    int moduleOffset = AngularTestUtil.findOffsetBySignature(signature, myFixture.getFile());
+    PsiElement el = myFixture.getFile().findElementAt(moduleOffset);
+    assert el != null;
+    TypeScriptClass declarationClass = PsiTreeUtil.getParentOfType(el, TypeScriptClass.class);
+    assert declarationClass != null;
+    Angular2Declaration declaration = (Angular2Declaration)Angular2EntitiesProvider.getEntity(declarationClass);
+    assert declaration != null;
+    assertEquals(ContainerUtil.sorted(Arrays.asList(modules), String::compareToIgnoreCase),
+                 StreamEx.of(declaration.getAllModules())
+                   .map(m -> m.getName())
+                   .sorted(String::compareToIgnoreCase)
+                   .toList());
+  }
+
+  private static void printEntity(int level,
+                                  @NotNull Angular2Entity entity,
+                                  @NotNull StringBuilder result,
+                                  @NotNull Set<Angular2Entity> printed) {
     withIndent(level, result)
       .append(entity.getName())
       .append(": ")
@@ -135,10 +186,10 @@ public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   private static void printEntityList(int level,
-                                      String name,
-                                      List<? extends Angular2Entity> entities,
-                                      StringBuilder result,
-                                      Set<Angular2Entity> printed) {
+                                      @NotNull String name,
+                                      @NotNull Set<? extends Angular2Entity> entities,
+                                      @NotNull StringBuilder result,
+                                      @NotNull Set<Angular2Entity> printed) {
     withIndent(level, result)
       .append(name)
       .append(":\n");
@@ -146,7 +197,8 @@ public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
       .forEach(m -> printEntity(level + 1, m, result, printed));
   }
 
-  private static StringBuilder withIndent(int level, StringBuilder result) {
+  @NotNull
+  private static StringBuilder withIndent(int level, @NotNull StringBuilder result) {
     for (int i = 0; i < level; i++) {
       result.append("  ");
     }

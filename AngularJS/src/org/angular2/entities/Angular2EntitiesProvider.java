@@ -17,10 +17,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import org.angular2.entities.metadata.psi.*;
 import org.angular2.entities.source.Angular2SourceComponent;
 import org.angular2.entities.source.Angular2SourceDirective;
@@ -41,6 +43,7 @@ import static com.intellij.util.containers.ContainerUtil.concat;
 import static com.intellij.util.containers.ContainerUtil.newHashSet;
 import static java.util.stream.Collectors.toMap;
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.index.Angular2IndexingHandler.NG_MODULE_INDEX_NAME;
 
 public class Angular2EntitiesProvider {
 
@@ -169,6 +172,35 @@ public class Angular2EntitiesProvider {
     return element instanceof TypeScriptFunction
            && TRANSFORM_METHOD.equals(((TypeScriptFunction)element).getName())
            && getPipe(element) != null;
+  }
+
+  public static MultiMap<Angular2Declaration, Angular2Module> getDeclarationToModuleMap(@NotNull Project project) {
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      MultiMap<Angular2Declaration, Angular2Module> result = new MultiMap<>();
+      getAllModules(project).forEach(
+        module -> module.getDeclarations().forEach(
+          decl -> result.putValue(decl, module)));
+      return create(result, PsiModificationTracker.MODIFICATION_COUNT);
+    });
+  }
+
+  public static List<Angular2Module> getAllModules(@NotNull Project project) {
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      List<Angular2Module> result = new ArrayList<>();
+      StubIndex.getInstance().processElements(Angular2SourceModuleIndex.KEY, NG_MODULE_INDEX_NAME,
+                                              project, GlobalSearchScope.allScope(project),
+                                              JSImplicitElementProvider.class, (module) -> {
+          ContainerUtil.addIfNotNull(result, getModule(module));
+          return true;
+        });
+      StubIndex.getInstance().processElements(Angular2MetadataModuleIndex.KEY, NG_MODULE_INDEX_NAME,
+                                              project, GlobalSearchScope.allScope(project),
+                                              Angular2MetadataModule.class, (module) -> {
+          result.add(module);
+          return true;
+        });
+      return create(result, PsiModificationTracker.MODIFICATION_COUNT);
+    });
   }
 
   @NotNull

@@ -131,6 +131,7 @@
     <stubIndex implementation="org.angular2.index.Angular2TemplateUrlIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourcePipeIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2SourceDirectiveIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2SourceModuleIndex"/>
     <findUsagesHandlerFactory implementation="org.angularjs.findUsages.AngularJSFindUsagesHandlerFactory" order="before JavaScript"/>
     <psi.referenceContributor implementation="org.angular2.codeInsight.refs.Angular2ReferencesContributor"/>
     <pom.declarationSearcher implementation="org.angular2.codeInsight.refs.Angular2PomDeclarationSearcher"/>
@@ -203,6 +204,7 @@
     <stubIndex implementation="org.angular2.index.Angular2MetadataDirectiveIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataNodeModuleIndex"/>
     <stubIndex implementation="org.angular2.index.Angular2MetadataFunctionIndex"/>
+    <stubIndex implementation="org.angular2.index.Angular2MetadataModuleIndex"/>
     <fileTypeFactory implementation="org.angular2.entities.metadata.Angular2MetadataFileTypeFactory"/>
     <filetype.stubBuilder filetype="Angular Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonStubBuilder"/>
     <fileType.fileViewProviderFactory filetype="Angular Metadata JSON"

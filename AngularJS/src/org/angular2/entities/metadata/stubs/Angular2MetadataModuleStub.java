@@ -4,10 +4,13 @@ package org.angular2.entities.metadata.stubs;
 import com.intellij.json.psi.JsonArray;
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
+import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import org.angular2.entities.metadata.Angular2MetadataElementTypes;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
+import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.index.Angular2MetadataModuleIndex;
 import org.angular2.lang.metadata.stubs.MetadataElementStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,6 +65,13 @@ public class Angular2MetadataModuleStub extends Angular2MetadataEntityStub<Angul
       }
     }
     return null;
+  }
+
+  @Override
+  public void index(@NotNull IndexSink sink) {
+    super.index(sink);
+    sink.occurrence(Angular2MetadataModuleIndex.KEY,
+                    Angular2IndexingHandler.NG_MODULE_INDEX_NAME);
   }
 
   @Override

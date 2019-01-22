@@ -12,9 +12,9 @@ import org.angular2.entities.Angular2ModuleResolver;
 import org.angular2.entities.metadata.stubs.Angular2MetadataModuleStub;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 
@@ -29,19 +29,19 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
 
   @Override
   @NotNull
-  public List<Angular2Declaration> getDeclarations() {
+  public Set<Angular2Declaration> getDeclarations() {
     return myModuleResolver.getDeclarations();
   }
 
   @Override
   @NotNull
-  public List<Angular2Module> getImports() {
+  public Set<Angular2Module> getImports() {
     return myModuleResolver.getImports();
   }
 
   @Override
   @NotNull
-  public List<Angular2Entity> getExports() {
+  public Set<Angular2Entity> getExports() {
     return myModuleResolver.getExports();
   }
 
@@ -55,15 +55,15 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
     return myModuleResolver.areExportsFullyResolved();
   }
 
-  private static <T extends Angular2Entity> Pair<List<T>, Boolean> collectSymbols(Angular2MetadataModule source,
+  private static <T extends Angular2Entity> Pair<Set<T>, Boolean> collectSymbols(Angular2MetadataModule source,
                                                                                   String propertyName,
                                                                                   Class<T> entityClass) {
     StubElement propertyStub = source.getStub().getModuleConfigPropertyValueStub(propertyName);
     if (propertyStub == null) {
-      return Pair.pair(Collections.emptyList(), true);
+      return Pair.pair(Collections.emptySet(), true);
     }
     boolean allResolved = true;
-    List<T> result = new ArrayList<>();
+    Set<T> result = new HashSet<>();
     Stack<PsiElement> toResolve = new Stack<>(propertyStub.getPsi());
     while (!toResolve.empty()) {
       PsiElement element = toResolve.pop();

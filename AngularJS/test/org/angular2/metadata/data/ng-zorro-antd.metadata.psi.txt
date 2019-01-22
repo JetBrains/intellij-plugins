@@ -1,6 +1,6 @@
 MetadataFile:ng-zorro-antd.metadata.json
   ng-zorro-antd <metadata node module>
-    NgZorroAntdModule <metadata module>: imports=[]; declarations=[]; exports=[ɵkc, ɵi, ɵge, ɵjy, ɵju, ɵjs, ɵjq, ɵji, ɵjf, ɵee, ɵjc, ɵiu, ɵil, ɵij, ɵid, ɵhz, ɵbb, ɵhv, ɵhm, ɵhh, ɵhf, ɵgc, ɵfu, ɵfr, ɵfo, ɵfk, ɵfh, ɵff, ɵez, ɵk, ɵes, ɵeq, ɵeo, ɵem, ɵbe, ɵek, ɵei, ɵdx, ɵdv, ɵdr, ɵdo, ɵdl, ɵdj, ɵdg, ɵcz, ɵcx, ɵcu, ɵco, ɵcj, ɵbz, ɵbi, ɵbx, ɵbs, ɵl, ɵa]; scopeFullyResolved=true; exportsFullyResolved=true
+    NgZorroAntdModule <metadata module>: imports=[]; declarations=[]; exports=[ɵa, ɵbb, ɵbe, ɵbi, ɵbs, ɵbx, ɵbz, ɵcj, ɵco, ɵcu, ɵcx, ɵcz, ɵdg, ɵdj, ɵdl, ɵdo, ɵdr, ɵdv, ɵdx, ɵee, ɵei, ɵek, ɵem, ɵeo, ɵeq, ɵes, ɵez, ɵff, ɵfh, ɵfk, ɵfo, ɵfr, ɵfu, ɵgc, ɵge, ɵhf, ɵhh, ɵhm, ɵhv, ɵhz, ɵi, ɵid, ɵij, ɵil, ɵiu, ɵjc, ɵjf, ɵji, ɵjq, ɵjs, ɵju, ɵjy, ɵk, ɵkc, ɵl]; scopeFullyResolved=true; exportsFullyResolved=true
       forRoot <metadata function>
         NgZorroAntdModule <metadata reference>('')
       ___dec.exports <metadata array>
@@ -59,7 +59,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵge <metadata reference>('')
         ɵi <metadata reference>('')
         ɵkc <metadata reference>('')
-    ɵa <metadata module>: imports=[ɵk, ɵi]; declarations=[ɵh, ɵb]; exports=[ɵh, ɵb]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵa <metadata module>: imports=[ɵi, ɵk]; declarations=[ɵb, ɵh]; exports=[ɵb, ɵh]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵb <metadata reference>('')
         ɵh <metadata reference>('')
@@ -91,7 +91,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵd <metadata reference>('')
       ___dec.exports <metadata array>
         ɵd <metadata reference>('')
-    ɵl <metadata module>: imports=[ɵbi, ɵbe, ɵbb]; declarations=[ɵba, ɵy, ɵz, ɵx, ɵw, ɵm]; exports=[ɵba, ɵy, ɵz, ɵx, ɵw]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵl <metadata module>: imports=[ɵbb, ɵbe, ɵbi]; declarations=[ɵba, ɵm, ɵw, ɵx, ɵy, ɵz]; exports=[ɵba, ɵw, ɵx, ɵy, ɵz]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵm <metadata reference>('')
         ɵw <metadata reference>('')
@@ -144,7 +144,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵbc <metadata reference>('')
     ɵbc <metadata module>: imports=[]; declarations=[]; exports=[]; scopeFullyResolved=true; exportsFullyResolved=true('')
     nzI18n <metadata pipe>('')
-    ɵbe <metadata module>: imports=[]; declarations=[ɵbg, ɵbh, ɵbf]; exports=[ɵbg, ɵbh, ɵbf]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵbe <metadata module>: imports=[]; declarations=[ɵbf, ɵbg, ɵbh]; exports=[ɵbf, ɵbg, ɵbh]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵbf <metadata reference>('')
         ɵbh <metadata reference>('')
@@ -160,7 +160,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵbg <metadata component>: selector=nz-radio-group; inputs=[nzDisabled, nzButtonStyle, nzName, nzSize]; outputs=[]; inOuts=[]('')
     ɵbh <metadata component>: selector=[nz-radio-button]; inputs=[nzValue, nzDisabled, nzAutoFocus]; outputs=[]; inOuts=[]
       ɵbf <metadata reference>('')
-    ɵbi <metadata module>: imports=[ɵk, ɵbb]; declarations=[ɵbr, ɵbn, ɵbp, ɵbq, ɵbo, ɵbm, ɵbl, nzSubFilterOptionPipe, nzFilterOptionPipe]; exports=[ɵbn, ɵbq, ɵbo, ɵbm, ɵbl]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵbi <metadata module>: imports=[ɵbb, ɵk]; declarations=[nzFilterOptionPipe, nzSubFilterOptionPipe, ɵbl, ɵbm, ɵbn, ɵbo, ɵbp, ɵbq, ɵbr]; exports=[ɵbl, ɵbm, ɵbn, ɵbo, ɵbq]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵbj <metadata reference>('')
         ɵbk <metadata reference>('')
@@ -192,7 +192,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵbp <metadata component>: selector=[nz-option-li]; inputs=[nzShowActive, nzActiveOption, compareWith, nzOption, nzListOfSelectedValue, nzMode]; outputs=[]; inOuts=[]('')
     ɵbq <metadata component>: selector=nz-option-group; inputs=[nzLabel]; outputs=[]; inOuts=[]('')
     ɵbr <metadata directive>: selector=[nz-select-unselectable]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵbs <metadata module>: imports=[]; declarations=[ɵbw, ɵbv, ɵbu, ɵbt]; exports=[ɵbw, ɵbv, ɵbu, ɵbt]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵbs <metadata module>: imports=[]; declarations=[ɵbt, ɵbu, ɵbv, ɵbw]; exports=[ɵbt, ɵbu, ɵbv, ɵbw]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵbt <metadata reference>('')
         ɵbu <metadata reference>('')
@@ -211,7 +211,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵbv <metadata component>: selector=nz-col; inputs=[nzMd, nzPull, nzXl, nzPush, nzXs, nzLg, nzSpan, nzSm, nzXXl, nzOrder, nzOffset]; outputs=[]; inOuts=[]('')
     ɵbw <metadata directive>: selector=[nz-row]; inputs=[nzType, nzJustify, nzAlign, nzGutter]; outputs=[]; inOuts=[]
       ɵbt <metadata reference>('')
-    ɵbx <metadata module>: imports=[ɵk, ɵi]; declarations=[ɵby]; exports=[ɵby]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵbx <metadata module>: imports=[ɵi, ɵk]; declarations=[ɵby]; exports=[ɵby]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵby <metadata reference>('')
       ___dec.exports <metadata array>
@@ -221,7 +221,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵi <metadata reference>('')
         ɵk <metadata reference>('')
     ɵby <metadata component>: selector=nz-switch; inputs=[nzLoading, nzDisabled, nzControl, nzCheckedChildren, nzUnCheckedChildren, nzSize]; outputs=[]; inOuts=[]('')
-    ɵbz <metadata module>: imports=[ɵk, ɵa]; declarations=[ɵci, ɵch, ɵcc, ɵcb, ɵca]; exports=[ɵci, ɵch, ɵcc, ɵcb, ɵca]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵbz <metadata module>: imports=[ɵa, ɵk]; declarations=[ɵca, ɵcb, ɵcc, ɵch, ɵci]; exports=[ɵca, ɵcb, ɵcc, ɵch, ɵci]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵca <metadata reference>('')
         ɵcb <metadata reference>('')
@@ -249,7 +249,7 @@ MetadataFile:ng-zorro-antd.metadata.json
       ɵcd <metadata reference>('')
     ɵch <metadata directive>: selector=[nz-menu-divider]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵci <metadata component>: selector=[nz-menu-group]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵcj <metadata module>: imports=[ɵk]; declarations=[ɵcn, ɵcm, ɵck]; exports=[ɵcn, ɵcm, ɵck]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵcj <metadata module>: imports=[ɵk]; declarations=[ɵck, ɵcm, ɵcn]; exports=[ɵck, ɵcm, ɵcn]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵck <metadata reference>('')
         ɵcm <metadata reference>('')
@@ -269,7 +269,7 @@ MetadataFile:ng-zorro-antd.metadata.json
       ɵcm <metadata reference>('')
     ɵcm <metadata directive>: selector=input[nzMentionTrigger], textarea[nzMentionTrigger]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵcn <metadata directive>: selector=[nzMentionSuggestion]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵco <metadata module>: imports=[ɵcu]; declarations=[ɵct, ɵcp]; exports=[ɵct, ɵcp]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵco <metadata module>: imports=[ɵcu]; declarations=[ɵcp, ɵct]; exports=[ɵcp, ɵct]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵcp <metadata reference>('')
         ɵct <metadata reference>('')
@@ -297,7 +297,7 @@ MetadataFile:ng-zorro-antd.metadata.json
       ___dec.imports <metadata array>
         @angular/common#CommonModule <metadata reference>('')
     ɵcv <metadata component>: selector=nz-affix; inputs=[nzTarget, nzOffsetBottom, nzOffsetTop]; outputs=[nzChange]; inOuts=[]('')
-    ɵcx <metadata module>: imports=[ɵk, ɵbz, ɵa]; declarations=[ɵcy, ɵcf, ɵcg, ɵcd]; exports=[ɵcf, ɵcg, ɵcd]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵcx <metadata module>: imports=[ɵa, ɵbz, ɵk]; declarations=[ɵcd, ɵcf, ɵcg, ɵcy]; exports=[ɵcd, ɵcf, ɵcg]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵcd <metadata reference>('')
         ɵcg <metadata reference>('')
@@ -315,7 +315,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵbz <metadata reference>('')
         ɵk <metadata reference>('')
     ɵcy <metadata component>: selector=nz-dropdown-context; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵcz <metadata module>: imports=[ɵk]; declarations=[ɵde, ɵdd, ɵdc, ɵdb, ɵda]; exports=[ɵde, ɵdd, ɵdc, ɵdb, ɵda]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵcz <metadata module>: imports=[ɵk]; declarations=[ɵda, ɵdb, ɵdc, ɵdd, ɵde]; exports=[ɵda, ɵdb, ɵdc, ɵdd, ɵde]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵda <metadata reference>('')
         ɵdb <metadata reference>('')
@@ -337,7 +337,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵdd <metadata component>: selector=nz-footer; inputs=[]; outputs=[]; inOuts=[]('')
     ɵde <metadata component>: selector=nz-sider; inputs=[nzCollapsed, nzCollapsible, nzCollapsedWidth, nzWidth, nzReverseArrow, nzBreakpoint, nzTrigger]; outputs=[nzCollapsedChange]; inOuts=[<nzCollapsed,nzCollapsedChange>]('')
     ɵdf <metadata class>('')
-    ɵdg <metadata module>: imports=[]; declarations=[ɵdi, ɵdh]; exports=[ɵdi, ɵdh]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵdg <metadata module>: imports=[]; declarations=[ɵdh, ɵdi]; exports=[ɵdh, ɵdi]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵdh <metadata reference>('')
         ɵdi <metadata reference>('')
@@ -348,7 +348,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/common#CommonModule <metadata reference>('')
     ɵdh <metadata component>: selector=nz-breadcrumb; inputs=[nzAutoGenerate, nzSeparator]; outputs=[]; inOuts=[]('')
     ɵdi <metadata component>: selector=nz-breadcrumb-item; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵdj <metadata module>: imports=[ɵk, ɵbb, ɵbi]; declarations=[ɵdk]; exports=[ɵdk]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵdj <metadata module>: imports=[ɵbb, ɵbi, ɵk]; declarations=[ɵdk]; exports=[ɵdk]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵdk <metadata reference>('')
       ___dec.exports <metadata array>
@@ -360,7 +360,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵbb <metadata reference>('')
         ɵk <metadata reference>('')
     ɵdk <metadata component>: selector=nz-pagination; inputs=[nzPageSizeOptions, nzPageSize, nzShowQuickJumper, nzItemRender, nzShowSizeChanger, nzSimple, nzTotal, nzHideOnSinglePage, nzPageIndex, nzShowTotal, nzInTable, nzSize]; outputs=[nzPageSizeChange, nzPageIndexChange]; inOuts=[<nzPageSize,nzPageSizeChange>, <nzPageIndex,nzPageIndexChange>]('')
-    ɵdl <metadata module>: imports=[ɵk]; declarations=[ɵdn, ɵdm]; exports=[ɵdn, ɵdm]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵdl <metadata module>: imports=[ɵk]; declarations=[ɵdm, ɵdn]; exports=[ɵdm, ɵdn]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵdm <metadata reference>('')
         ɵdn <metadata reference>('')
@@ -372,7 +372,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵk <metadata reference>('')
     ɵdm <metadata component>: selector=nz-steps; inputs=[nzProgressDot, nzStatus, nzDirection, nzCurrent, nzStartIndex, nzSize]; outputs=[]; inOuts=[]('')
     ɵdn <metadata component>: selector=nz-step; inputs=[nzTitle, nzStatus, nzIcon, nzDescription]; outputs=[]; inOuts=[]('')
-    ɵdo <metadata module>: imports=[ɵk]; declarations=[ɵdq, ɵdp]; exports=[ɵdq, ɵdp]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵdo <metadata module>: imports=[ɵk]; declarations=[ɵdp, ɵdq]; exports=[ɵdp, ɵdq]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵdp <metadata reference>('')
         ɵdq <metadata reference>('')
@@ -385,7 +385,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵk <metadata reference>('')
     ɵdp <metadata directive>: selector=[nz-input]; inputs=[nzAutosize, disabled, nzSize]; outputs=[]; inOuts=[]('')
     ɵdq <metadata component>: selector=nz-input-group; inputs=[nzSuffixIcon, nzAddOnAfterIcon, nzCompact, nzSuffix, nzAddOnAfter, nzAddOnBeforeIcon, nzPrefixIcon, nzSearch, nzPrefix, nzSize, nzAddOnBefore]; outputs=[]; inOuts=[]('')
-    ɵdr <metadata module>: imports=[]; declarations=[ɵdt, ɵdu, ɵds]; exports=[ɵdt, ɵdu, ɵds]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵdr <metadata module>: imports=[]; declarations=[ɵds, ɵdt, ɵdu]; exports=[ɵds, ɵdt, ɵdu]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵds <metadata reference>('')
         ɵdu <metadata reference>('')
@@ -411,7 +411,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/forms#FormsModule <metadata reference>('')
         ɵk <metadata reference>('')
     ɵdw <metadata component>: selector=nz-input-number; inputs=[nzMin, nzParser, nzPrecision, nzAutoFocus, nzDisabled, nzPlaceHolder, nzStep, nzSize, nzMax, nzFormatter]; outputs=[]; inOuts=[]('')
-    ɵdx <metadata module>: imports=[ɵee]; declarations=[ɵed, ɵec, ɵeb, ɵea, ɵdy]; exports=[ɵed, ɵec, ɵeb, ɵea, ɵdy]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵdx <metadata module>: imports=[ɵee]; declarations=[ɵdy, ɵea, ɵeb, ɵec, ɵed]; exports=[ɵdy, ɵea, ɵeb, ɵec, ɵed]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵdy <metadata reference>('')
         ɵea <metadata reference>('')
@@ -433,7 +433,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵeb <metadata component>: selector=nz-slider-handle; inputs=[nzVertical, nzValue, nzClassName, nzTipFormatter, nzOffset, nzActive]; outputs=[]; inOuts=[]('')
     ɵec <metadata component>: selector=nz-slider-step; inputs=[nzVertical, nzMarksArray, nzLowerBound, nzUpperBound, nzPrefixCls, nzIncluded]; outputs=[]; inOuts=[]('')
     ɵed <metadata component>: selector=nz-slider-marks; inputs=[nzMin, nzVertical, nzMarksArray, nzLowerBound, nzUpperBound, nzClassName, nzMax, nzIncluded]; outputs=[]; inOuts=[]('')
-    ɵee <metadata module>: imports=[]; declarations=[ɵeh, ɵef]; exports=[ɵeh, ɵef]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵee <metadata module>: imports=[]; declarations=[ɵef, ɵeh]; exports=[ɵef, ɵeh]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵef <metadata reference>('')
         ɵeh <metadata reference>('')
@@ -490,7 +490,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/common#CommonModule <metadata reference>('')
         ɵk <metadata reference>('')
     ɵer <metadata component>: selector=nz-progress; inputs=[nzPercent, nzSuccessPercent, nzStatus, nzType, nzGapDegree, nzGapPosition, nzShowInfo, nzStrokeWidth, nzWidth, nzFormat, nzSize]; outputs=[]; inOuts=[]('')
-    ɵes <metadata module>: imports=[ɵk]; declarations=[ɵey, ɵex, ɵew, ɵev, ɵeu, ɵet]; exports=[ɵey, ɵex, ɵew, ɵev, ɵeu, ɵet]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵes <metadata module>: imports=[ɵk]; declarations=[ɵet, ɵeu, ɵev, ɵew, ɵex, ɵey]; exports=[ɵet, ɵeu, ɵev, ɵew, ɵex, ɵey]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵet <metadata reference>('')
         ɵeu <metadata reference>('')
@@ -515,7 +515,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵew <metadata directive>: selector=[nz-tab-label]; inputs=[disabled]; outputs=[]; inOuts=[]('')
     ɵex <metadata directive>: selector=[nz-tabs-ink-bar]; inputs=[nzPositionMode, nzAnimated]; outputs=[]; inOuts=[]('')
     ɵey <metadata component>: selector=[nz-tab-body]; inputs=[content]; outputs=[]; inOuts=[]('')
-    ɵez <metadata module>: imports=[]; declarations=[ɵfb, ɵfe, ɵfd, ɵfc, ɵfa]; exports=[ɵfb, ɵfe, ɵfd, ɵfc, ɵfa]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵez <metadata module>: imports=[]; declarations=[ɵfa, ɵfb, ɵfc, ɵfd, ɵfe]; exports=[ɵfa, ɵfb, ɵfc, ɵfd, ɵfe]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵfa <metadata reference>('')
         ɵfc <metadata reference>('')
@@ -544,7 +544,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/common#CommonModule <metadata reference>('')
         ɵk <metadata reference>('')
     ɵfg <metadata component>: selector=nz-avatar; inputs=[nzShape, nzIcon, nzText, nzSize, nzSrc]; outputs=[]; inOuts=[]('')
-    ɵfh <metadata module>: imports=[]; declarations=[ɵfj, ɵfi]; exports=[ɵfj, ɵfi]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵfh <metadata module>: imports=[]; declarations=[ɵfi, ɵfj]; exports=[ɵfi, ɵfj]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵfi <metadata reference>('')
         ɵfj <metadata reference>('')
@@ -555,7 +555,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/common#CommonModule <metadata reference>('')
     ɵfi <metadata component>: selector=nz-timeline-item; inputs=[nzColor, nzDot]; outputs=[]; inOuts=[]('')
     ɵfj <metadata component>: selector=nz-timeline; inputs=[nzPending]; outputs=[]; inOuts=[]('')
-    ɵfk <metadata module>: imports=[ɵk, ɵbb, ɵdo, ɵa, ɵdr]; declarations=[ɵfn, ɵfm, ɵfl]; exports=[ɵfl]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵfk <metadata module>: imports=[ɵa, ɵbb, ɵdo, ɵdr, ɵk]; declarations=[ɵfl, ɵfm, ɵfn]; exports=[ɵfl]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵfl <metadata reference>('')
         ɵfm <metadata reference>('')
@@ -573,7 +573,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵfl <metadata component>: selector=nz-transfer; inputs=[nzNotFoundContent, nzCanMove, nzShowSearch, nzTitles, nzRender, nzDataSource, nzFilterOption, nzSearchPlaceholder, nzItemUnit, nzFooter, nzOperations, nzItemsUnit, nzListStyle]; outputs=[nzChange, nzSearchChange, nzSelectChange]; inOuts=[]('')
     ɵfm <metadata component>: selector=nz-transfer-list; inputs=[searchPlaceholder, notFoundContent, footer, itemUnit, itemsUnit, filter, filterOption, titleText, showSearch, dataSource, render, direction]; outputs=[handleSelectAll, handleSelect, filterChange]; inOuts=[<filter,filterChange>]('')
     ɵfn <metadata component>: selector=[nz-transfer-search]; inputs=[value, placeholder]; outputs=[valueClear, valueChanged]; inOuts=[]('')
-    ɵfo <metadata module>: imports=[]; declarations=[ɵfq, ɵfp]; exports=[ɵfq, ɵfp]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵfo <metadata module>: imports=[]; declarations=[ɵfp, ɵfq]; exports=[ɵfp, ɵfq]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵfp <metadata reference>('')
         ɵfq <metadata reference>('')
@@ -584,7 +584,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/common#CommonModule <metadata reference>('')
     ɵfp <metadata component>: selector=nz-carousel; inputs=[nzVertical, nzDotRender, nzEnableSwipe, nzEffect, nzDots, nzAutoPlay, nzAutoPlaySpeed]; outputs=[nzBeforeChange, nzAfterChange]; inOuts=[]('')
     ɵfq <metadata directive>: selector=[nz-carousel-content]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵfr <metadata module>: imports=[ɵk]; declarations=[ɵft, ɵfs]; exports=[ɵft, ɵfs]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵfr <metadata module>: imports=[ɵk]; declarations=[ɵfs, ɵft]; exports=[ɵfs, ɵft]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵfs <metadata reference>('')
         ɵft <metadata reference>('')
@@ -596,7 +596,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵk <metadata reference>('')
     ɵfs <metadata component>: selector=nz-collapse-panel; inputs=[nzHeader, nzDisabled, nzShowArrow, nzActive]; outputs=[nzActiveChange]; inOuts=[<nzActive,nzActiveChange>]('')
     ɵft <metadata component>: selector=nz-collapse; inputs=[nzBordered, nzAccordion]; outputs=[]; inOuts=[]('')
-    ɵfu <metadata module>: imports=[ɵk, ɵbb, ɵeo, ɵdj, ɵcx, ɵdr, ɵbe, ɵbz]; declarations=[ɵgb, ɵga, ɵfz, ɵfy, ɵfw, ɵfv]; exports=[ɵgb, ɵga, ɵfz, ɵfy, ɵfw, ɵfv]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵfu <metadata module>: imports=[ɵbb, ɵbe, ɵbz, ɵcx, ɵdj, ɵdr, ɵeo, ɵk]; declarations=[ɵfv, ɵfw, ɵfy, ɵfz, ɵga, ɵgb]; exports=[ɵfv, ɵfw, ɵfy, ɵfz, ɵga, ɵgb]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵfv <metadata reference>('')
         ɵfw <metadata reference>('')
@@ -629,7 +629,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵfz <metadata component>: selector=thead:not(.ant-table-thead); inputs=[nzSingleSort]; outputs=[nzSortChange]; inOuts=[]('')
     ɵga <metadata directive>: selector=tbody; inputs=[]; outputs=[]; inOuts=[]('')
     ɵgb <metadata directive>: selector=tr; inputs=[nzExpand]; outputs=[]; inOuts=[]('')
-    ɵgc <metadata module>: imports=[ɵk, ɵgd]; declarations=[ɵha, ɵhe, ɵhd, ɵhb, ɵgv, ɵgz, ɵgw, ɵhc]; exports=[ɵhe, ɵhd, ɵhb, ɵha, ɵgv]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵgc <metadata module>: imports=[ɵgd, ɵk]; declarations=[ɵgv, ɵgw, ɵgz, ɵha, ɵhb, ɵhc, ɵhd, ɵhe]; exports=[ɵgv, ɵha, ɵhb, ɵhd, ɵhe]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵhc <metadata reference>('')
         ɵgw <metadata reference>('')
@@ -650,7 +650,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/cdk/overlay#OverlayModule <metadata reference>('')
         ɵgd <metadata reference>('')
         ɵk <metadata reference>('')
-    ɵgd <metadata module>: imports=[ɵge, ɵbb]; declarations=[ɵgu, ɵgt, ɵgs, ɵgr, ɵgq, ɵgp, ɵgo, ɵgn, ɵgm, ɵgl, ɵgk, ɵgj, ɵgi]; exports=[ɵgu, ɵgt, ɵgs, ɵgr, ɵgq, ɵgp, ɵgo, ɵgn, ɵgm, ɵgl, ɵgk, ɵgj, ɵgi]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵgd <metadata module>: imports=[ɵbb, ɵge]; declarations=[ɵgi, ɵgj, ɵgk, ɵgl, ɵgm, ɵgn, ɵgo, ɵgp, ɵgq, ɵgr, ɵgs, ɵgt, ɵgu]; exports=[ɵgi, ɵgj, ɵgk, ɵgl, ɵgm, ɵgn, ɵgo, ɵgp, ɵgq, ɵgr, ɵgs, ɵgt, ɵgu]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵgi <metadata reference>('')
         ɵgj <metadata reference>('')
@@ -684,7 +684,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/forms#FormsModule <metadata reference>('')
         ɵbb <metadata reference>('')
         ɵge <metadata reference>('')
-    ɵge <metadata module>: imports=[ɵk, ɵbb]; declarations=[ɵgh, ɵgg, ɵgf]; exports=[ɵgf, ɵgg]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵge <metadata module>: imports=[ɵbb, ɵk]; declarations=[ɵgf, ɵgg, ɵgh]; exports=[ɵgf, ɵgg]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵgf <metadata reference>('')
         ɵgg <metadata reference>('')
@@ -753,7 +753,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵhj <metadata class>('')
     ɵhk <metadata class>('')
     ɵhl <metadata class>('')
-    ɵhm <metadata module>: imports=[ɵk, ɵbs]; declarations=[ɵhu, ɵht, ɵhs, ɵhr, ɵhq, ɵhp, ɵho, ɵhn]; exports=[ɵhu, ɵht, ɵhs, ɵhr, ɵhq, ɵhp, ɵho, ɵhn]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵhm <metadata module>: imports=[ɵbs, ɵk]; declarations=[ɵhn, ɵho, ɵhp, ɵhq, ɵhr, ɵhs, ɵht, ɵhu]; exports=[ɵhn, ɵho, ɵhp, ɵhq, ɵhr, ɵhs, ɵht, ɵhu]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵhn <metadata reference>('')
         ɵho <metadata reference>('')
@@ -787,7 +787,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵhs <metadata component>: selector=nz-form-explain; inputs=[]; outputs=[]; inOuts=[]('')
     ɵht <metadata component>: selector=nz-form-text; inputs=[]; outputs=[]; inOuts=[]('')
     ɵhu <metadata component>: selector=nz-form-split; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵhv <metadata module>: imports=[ɵbb, ɵff, ɵbs, ɵeo]; declarations=[ɵhy, ɵhx, ɵhw]; exports=[ɵhy, ɵhx, ɵhw]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵhv <metadata module>: imports=[ɵbb, ɵbs, ɵeo, ɵff]; declarations=[ɵhw, ɵhx, ɵhy]; exports=[ɵhw, ɵhx, ɵhy]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵhw <metadata reference>('')
         ɵhx <metadata reference>('')
@@ -805,7 +805,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵhw <metadata component>: selector=nz-list; inputs=[nzLoadMore, nzHeader, nzItemLayout, nzSplit, nzDataSource, nzLoading, nzBordered, nzFooter, nzPagination, nzGrid, nzRenderItem, nzSize]; outputs=[]; inOuts=[]('')
     ɵhx <metadata component>: selector=nz-list-item; inputs=[nzContent, nzExtra, nzActions]; outputs=[]; inOuts=[]('')
     ɵhy <metadata component>: selector=nz-list-item-meta; inputs=[nzTitle, nzAvatar, nzDescription]; outputs=[]; inOuts=[]('')
-    ɵhz <metadata module>: imports=[ɵk, ɵbb, ɵeq, ɵee]; declarations=[ɵic, ɵib, ɵia]; exports=[ɵia]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵhz <metadata module>: imports=[ɵbb, ɵee, ɵeq, ɵk]; declarations=[ɵia, ɵib, ɵic]; exports=[ɵia]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵia <metadata reference>('')
         ɵib <metadata reference>('')
@@ -822,7 +822,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵia <metadata component>: selector=nz-upload; inputs=[nzMultiple, nzFilter, nzDisabled, nzPreview, nzShowButton, nzName, nzFileType, nzFileList, nzHeaders, nzAction, nzShowUploadList, nzType, nzLimit, nzAccept, nzBeforeUpload, nzDirectory, nzRemove, nzData, nzWithCredentials, nzSize, nzCustomRequest, nzListType]; outputs=[nzFileListChange, nzChange]; inOuts=[<nzFileList,nzFileListChange>]('')
     ɵib <metadata component>: selector=[nz-upload-btn]; inputs=[options, classes]; outputs=[]; inOuts=[]('')
     ɵic <metadata component>: selector=nz-upload-list; inputs=[onPreview, locale, icons, onRemove, listType, items]; outputs=[]; inOuts=[]('')
-    ɵid <metadata module>: imports=[]; declarations=[ɵii, ɵih, ɵif, ɵie]; exports=[ɵii, ɵih, ɵif, ɵie]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵid <metadata module>: imports=[]; declarations=[ɵie, ɵif, ɵih, ɵii]; exports=[ɵie, ɵif, ɵih, ɵii]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵie <metadata reference>('')
         ɵif <metadata reference>('')
@@ -854,7 +854,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/forms#FormsModule <metadata reference>('')
         ɵk <metadata reference>('')
     ɵik <metadata component>: selector=nz-tag; inputs=[nzChecked, nzColor, nzMode]; outputs=[nzAfterClose, nzOnClose, nzCheckedChange]; inOuts=[<nzChecked,nzCheckedChange>]('')
-    ɵil <metadata module>: imports=[ɵk]; declarations=[ɵir, ɵim]; exports=[]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵil <metadata module>: imports=[ɵk]; declarations=[ɵim, ɵir]; exports=[]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵim <metadata reference>('')
         ɵir <metadata reference>('')
@@ -870,7 +870,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵis <metadata class>('')
     ɵit <metadata class>
       ɵis <metadata reference>('')
-    ɵiu <metadata module>: imports=[ɵk]; declarations=[ɵiw, ɵiv]; exports=[]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵiu <metadata module>: imports=[ɵk]; declarations=[ɵiv, ɵiw]; exports=[]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵiv <metadata reference>('')
         ɵiw <metadata reference>('')
@@ -901,7 +901,7 @@ MetadataFile:ng-zorro-antd.metadata.json
       ɵef <metadata reference>('')
     ɵje <metadata directive>: selector=[nz-popover]; inputs=[nz-tooltip, nzOverlayClassName, nzOverlayStyle, nzVisible, nzTitle, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       ɵeh <metadata reference>('')
-    ɵjf <metadata module>: imports=[ɵk, ɵbb, ɵa]; declarations=[ɵjh, ɵjg]; exports=[ɵjh, ɵjg]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵjf <metadata module>: imports=[ɵa, ɵbb, ɵk]; declarations=[ɵjg, ɵjh]; exports=[ɵjg, ɵjh]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵjg <metadata reference>('')
         ɵjh <metadata reference>('')
@@ -918,7 +918,7 @@ MetadataFile:ng-zorro-antd.metadata.json
       ɵef <metadata reference>('')
     ɵjh <metadata directive>: selector=[nz-popconfirm]; inputs=[nz-tooltip, nzCancelText, nzOverlayStyle, nzOkText, nzVisible, nzTitle, nzContent, nzPlacement, nzTrigger, nzCondition, nzOverlayClassName, nzOkType, nzMouseEnterDelay, nzMouseLeaveDelay]; outputs=[nzOnConfirm, nzOnCancel, nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       ɵeh <metadata reference>('')
-    ɵji <metadata module>: imports=[ɵk, ɵbc, ɵa, ɵbb]; declarations=[toCssUnit, ɵjj]; exports=[ɵjj]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵji <metadata module>: imports=[ɵa, ɵbb, ɵbc, ɵk]; declarations=[toCssUnit, ɵjj]; exports=[ɵjj]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵjj <metadata reference>('')
         ɵjo <metadata reference>('')
@@ -945,7 +945,7 @@ MetadataFile:ng-zorro-antd.metadata.json
       ___dec.imports <metadata array>
         @angular/common#CommonModule <metadata reference>('')
     ɵjr <metadata component>: selector=nz-back-top; inputs=[nzVisibilityHeight, nzTarget, nzTemplate]; outputs=[nzClick]; inOuts=[]('')
-    ɵjs <metadata module>: imports=[ɵk, ɵdo]; declarations=[ɵjt]; exports=[ɵjt]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵjs <metadata module>: imports=[ɵdo, ɵk]; declarations=[ɵjt]; exports=[ɵjt]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵjt <metadata reference>('')
       ___dec.exports <metadata array>
@@ -957,7 +957,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵdo <metadata reference>('')
         ɵk <metadata reference>('')
     ɵjt <metadata component>: selector=nz-cascader,[nz-cascader]; inputs=[nzLabelProperty, nzDisabled, nzOptions, nzChangeOnSelect, nzTriggerAction, nzShowSearch, nzExpandTrigger, nzPlaceHolder, nzColumnClassName, nzClearText, nzPrefixCls, nzLoadData, nzNotFoundContent, nzAutoFocus, nzShowInput, nzMenuStyle, nzAllowClear, nzMenuClassName, nzLabelRender, nzValueProperty, nzShowArrow, nzChangeOn, nzSize, nzMouseEnterDelay, nzMouseLeaveDelay]; outputs=[nzChange, nzSelect, nzClear, nzSelectionChange, nzVisibleChange]; inOuts=[]('')
-    ɵju <metadata module>: imports=[ɵk]; declarations=[ɵjx, ɵjv]; exports=[ɵjx, ɵjv]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵju <metadata module>: imports=[ɵk]; declarations=[ɵjv, ɵjx]; exports=[ɵjv, ɵjx]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵjv <metadata reference>('')
         ɵjx <metadata reference>('')
@@ -970,7 +970,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵjv <metadata component>: selector=nz-tree; inputs=[nzMultiple, nzDefaultCheckedKeys, nzShowExpand, nzCheckable, nzExpandedKeys, nzDefaultExpandedKeys, nzSelectedKeys, nzShowIcon, nzCheckStrictly, nzHideUnMatched, nzShowLine, nzDefaultSelectedKeys, nzSearchValue, nzDraggable, nzDefaultExpandAll, nzData, nzExpandAll, nzAsyncData, nzCheckedKeys, nzBeforeDrop]; outputs=[nzOnDragOver, nzClick, nzOnDragEnd, nzDblClick, nzExpandedKeysChange, nzCheckedKeysChange, nzOnDrop, nzOnDragLeave, nzOnDragStart, nzCheckBoxChange, nzOnDragEnter, nzSearchValueChange, nzContextMenu, nzSelectedKeysChange, nzExpandChange, nzOnSearchNode]; inOuts=[<nzExpandedKeys,nzExpandedKeysChange>, <nzCheckedKeys,nzCheckedKeysChange>, <nzSearchValue,nzSearchValueChange>, <nzSelectedKeys,nzSelectedKeysChange>]('')
     ɵjw <metadata class>('')
     ɵjx <metadata component>: selector=nz-tree-node; inputs=[nzMultiple, nzShowExpand, nzCheckable, nzTreeTemplate, nzCheckStrictly, nzHideUnMatched, nzShowLine, nzTreeNode, nzSearchValue, nzDraggable, nzDefaultExpandAll, nzExpandAll, nzAsyncData, nzBeforeDrop]; outputs=[nzDragLeave, contextMenu, nzDragEnd, clickNode, nzDrop, clickExpand, clickCheckBox, dblClick, nzDragStart, nzDragOver, nzDragEnter]; inOuts=[]('')
-    ɵjy <metadata module>: imports=[ɵk, ɵju]; declarations=[ɵjz]; exports=[ɵjz]; scopeFullyResolved=false; exportsFullyResolved=true
+    ɵjy <metadata module>: imports=[ɵju, ɵk]; declarations=[ɵjz]; exports=[ɵjz]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵjz <metadata reference>('')
       ___dec.exports <metadata array>

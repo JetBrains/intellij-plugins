@@ -5,27 +5,27 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public interface Angular2Module extends Angular2Entity {
 
   @NotNull
-  List<Angular2Declaration> getDeclarations();
+  Set<Angular2Declaration> getDeclarations();
 
   @NotNull
-  List<Angular2Module> getImports();
+  Set<Angular2Module> getImports();
 
   @NotNull
-  List<Angular2Entity> getExports();
+  Set<Angular2Entity> getExports();
 
   boolean isScopeFullyResolved();
 
   boolean areExportsFullyResolved();
 
   @NotNull
-  default List<Angular2Declaration> getDeclarationsInScope() {
-    List<Angular2Declaration> result = new ArrayList<>(getDeclarations());
+  default Set<Angular2Declaration> getDeclarationsInScope() {
+    Set<Angular2Declaration> result = new HashSet<>(getDeclarations());
     Stack<Angular2Module> moduleStack = new Stack<>(getImports());
     while (!moduleStack.empty()) {
       Angular2Module module = moduleStack.pop();
@@ -45,8 +45,8 @@ public interface Angular2Module extends Angular2Entity {
   }
 
   @NotNull
-  default List<Angular2Pipe> getPipesInScope() {
-    return ContainerUtil.mapNotNull(getDeclarationsInScope(), decl -> {
+  default Set<Angular2Pipe> getPipesInScope() {
+    return ContainerUtil.map2SetNotNull(getDeclarationsInScope(), decl -> {
       if (decl instanceof Angular2Pipe) {
         return (Angular2Pipe)decl;
       }
@@ -55,8 +55,8 @@ public interface Angular2Module extends Angular2Entity {
   }
 
   @NotNull
-  default List<Angular2Directive> getDirectivesInScope() {
-    return ContainerUtil.mapNotNull(getDeclarationsInScope(), decl -> {
+  default Set<Angular2Directive> getDirectivesInScope() {
+    return ContainerUtil.map2SetNotNull(getDeclarationsInScope(), decl -> {
       if (decl instanceof Angular2Directive) {
         return (Angular2Directive)decl;
       }

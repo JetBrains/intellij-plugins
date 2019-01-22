@@ -81,6 +81,7 @@ CommonModuleMetadataTest: Angular2SourceModule
       exports fully resolved: true
   declarations:
     MyDirective: Angular2SourceDirective
+    async: Angular2MetadataPipe
   exports:
     NgIf: Angular2MetadataDirective
     async: Angular2MetadataPipe

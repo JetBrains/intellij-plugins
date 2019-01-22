@@ -171,11 +171,11 @@ public class Angular2EntityUtils {
              " <" +
              sourceKind +
              " module>: imports=[" +
-             StreamEx.of(module.getImports()).map(Angular2Module::getName).joining(", ") +
+             StreamEx.of(module.getImports()).map(Angular2Module::getName).sorted().joining(", ") +
              "]; declarations=[" +
-             StreamEx.of(module.getDeclarations()).map(Angular2Entity::getName).joining(", ") +
+             StreamEx.of(module.getDeclarations()).map(Angular2Entity::getName).sorted().joining(", ") +
              "]; exports=[" +
-             StreamEx.of(module.getExports()).map(Angular2Entity::getName).joining(", ") +
+             StreamEx.of(module.getExports()).map(Angular2Entity::getName).sorted().joining(", ") +
              "]; scopeFullyResolved=" +
              module.isScopeFullyResolved() +
              "; exportsFullyResolved=" +

@@ -70,6 +70,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   private static final String DIRECTIVE_TYPE = "D;;;";
   private static final String MODULE_TYPE = "M;;;";
 
+  public static final String NG_MODULE_INDEX_NAME = "ngModule";
+
   private static final String STYLESHEET_INDEX_PREFIX = "ss/";
 
   private final static Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEX_MAP = new HashMap<>();
@@ -78,7 +80,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     INDEX_MAP.put(ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING, Angular2TemplateUrlIndex.KEY);
     INDEX_MAP.put(ANGULAR2_DIRECTIVE_INDEX_USER_STRING, Angular2SourceDirectiveIndex.KEY);
     INDEX_MAP.put(ANGULAR2_PIPE_INDEX_USER_STRING, Angular2SourcePipeIndex.KEY);
-    INDEX_MAP.put(ANGULAR2_MODULE_INDEX_USER_STRING, null);
+    INDEX_MAP.put(ANGULAR2_MODULE_INDEX_USER_STRING, Angular2SourceModuleIndex.KEY);
     for (String key : INDEX_MAP.keySet()) {
       JSImplicitElement.ourUserStringsRegistry.registerUserString(key);
     }
@@ -175,10 +177,6 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       return false;
     }
     final String userID = element.getUserString();
-    if (ANGULAR2_MODULE_INDEX_USER_STRING.equals(userID)) {
-      // No indexing
-      return true;
-    }
     final StubIndexKey<String, JSImplicitElementProvider> index = userID != null ? INDEX_MAP.get(userID) : null;
     if (index == Angular2SourceDirectiveIndex.KEY) {
       String type = element.toImplicitElement(null).getTypeString();
@@ -234,7 +232,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   private static void addModule(@NotNull TypeScriptClass moduleClass,
                                 @NotNull Consumer<JSImplicitElement> processor) {
-    JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder("ng-module", moduleClass)
+    JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(NG_MODULE_INDEX_NAME, moduleClass)
       .setUserString(ANGULAR2_MODULE_INDEX_USER_STRING)
       .setTypeString(MODULE_TYPE)
       .setType(JSImplicitElement.Type.Class)

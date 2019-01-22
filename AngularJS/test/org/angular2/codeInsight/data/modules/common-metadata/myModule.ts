@@ -15,7 +15,8 @@ export class MyDirective {
        CommonModule
     ],
     declarations: [
-        MyDirective
+        MyDirective,
+        AsyncPipe
     ],
     exports: [
         AsyncPipe,

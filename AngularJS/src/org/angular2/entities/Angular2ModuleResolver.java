@@ -10,7 +10,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static org.angular2.Angular2DecoratorUtil.*;
@@ -29,17 +29,17 @@ public class Angular2ModuleResolver<T extends PsiElement> {
   }
 
   @NotNull
-  public List<Angular2Declaration> getDeclarations() {
+  public Set<Angular2Declaration> getDeclarations() {
     return getResolvedModuleScope().myDeclarations;
   }
 
   @NotNull
-  public List<Angular2Module> getImports() {
+  public Set<Angular2Module> getImports() {
     return getResolvedModuleScope().myImports;
   }
 
   @NotNull
-  public List<Angular2Entity> getExports() {
+  public Set<Angular2Entity> getExports() {
     return getResolvedModuleExports().myExports;
   }
 
@@ -72,8 +72,8 @@ public class Angular2ModuleResolver<T extends PsiElement> {
   }
 
   private static <T> ResolvedModuleScope resolveModuleScope(@NotNull T source, SymbolCollector<T> symbolCollector) {
-    Pair<List<Angular2Declaration>, Boolean> declarations = symbolCollector.collect(source, DECLARATIONS_PROP, Angular2Declaration.class);
-    Pair<List<Angular2Module>, Boolean> imports = symbolCollector.collect(source, IMPORTS_PROP, Angular2Module.class);
+    Pair<Set<Angular2Declaration>, Boolean> declarations = symbolCollector.collect(source, DECLARATIONS_PROP, Angular2Declaration.class);
+    Pair<Set<Angular2Module>, Boolean> imports = symbolCollector.collect(source, IMPORTS_PROP, Angular2Module.class);
     return new ResolvedModuleScope(declarations.first, imports.first,
                                    declarations.second == Boolean.TRUE
                                    && imports.second == Boolean.TRUE
@@ -81,38 +81,38 @@ public class Angular2ModuleResolver<T extends PsiElement> {
   }
 
   private static <T> ResolvedModuleExports resolveModuleExports(@NotNull T source, SymbolCollector<T> symbolCollector) {
-    Pair<List<Angular2Entity>, Boolean> exports = symbolCollector.collect(source, EXPORTS_PROP, Angular2Entity.class);
+    Pair<Set<Angular2Entity>, Boolean> exports = symbolCollector.collect(source, EXPORTS_PROP, Angular2Entity.class);
     return new ResolvedModuleExports(exports.first,
                                      exports.second == Boolean.TRUE);
   }
 
   public interface SymbolCollector<T> {
-    <U extends Angular2Entity> Pair<List<U>, Boolean> collect(@NotNull T source,
+    <U extends Angular2Entity> Pair<Set<U>, Boolean> collect(@NotNull T source,
                                                               @NotNull String propertyName,
                                                               @NotNull Class<U> symbolClazz);
   }
 
   private static class ResolvedModuleScope {
-    final List<Angular2Declaration> myDeclarations;
-    final List<Angular2Module> myImports;
+    final Set<Angular2Declaration> myDeclarations;
+    final Set<Angular2Module> myImports;
     final boolean myIsScopeFullyResolved;
 
-    private ResolvedModuleScope(List<Angular2Declaration> declarations,
-                                List<Angular2Module> imports,
+    private ResolvedModuleScope(Set<Angular2Declaration> declarations,
+                                Set<Angular2Module> imports,
                                 boolean isScopeFullyResolved) {
-      myDeclarations = Collections.unmodifiableList(declarations);
-      myImports = Collections.unmodifiableList(imports);
+      myDeclarations = Collections.unmodifiableSet(declarations);
+      myImports = Collections.unmodifiableSet(imports);
       myIsScopeFullyResolved = isScopeFullyResolved;
     }
   }
 
   private static class ResolvedModuleExports {
-    final List<Angular2Entity> myExports;
+    final Set<Angular2Entity> myExports;
     final boolean myAreExportsFullyResolved;
 
-    private ResolvedModuleExports(List<Angular2Entity> exports,
+    private ResolvedModuleExports(Set<Angular2Entity> exports,
                                   boolean areExportsFullyResolved) {
-      myExports = Collections.unmodifiableList(exports);
+      myExports = Collections.unmodifiableSet(exports);
       myAreExportsFullyResolved = areExportsFullyResolved;
     }
   }
