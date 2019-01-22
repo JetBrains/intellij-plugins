@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.messages.MessageBusConnection
+import training.check.Check
 import java.awt.event.KeyEvent
 import java.util.concurrent.CompletableFuture
 
@@ -38,6 +39,32 @@ class ActionsRecorder(private val project: Project,
     removeListeners(document, ActionManager.getInstance())
     disposed = true
     Disposer.dispose(this)
+  }
+
+  fun futureActionAndCheckAround(actionId: String, check: Check): CompletableFuture<Boolean> {
+    val future: CompletableFuture<Boolean> = CompletableFuture()
+    val actionListener = object : AnActionListener {
+      override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
+        if (actionId == getActionId(action)) {
+          check.before()
+        }
+      }
+
+      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent?) {
+        if (actionId == getActionId(action)) {
+          ApplicationManager.getApplication().invokeLater {
+            if (check.check()) {
+              future.complete(true)
+            }
+          }
+        }
+      }
+
+      override fun beforeEditorTyping(c: Char, dataContext: DataContext) {}
+    }
+    actionListeners.add(actionListener)
+    ActionManager.getInstance().addAnActionListener(actionListener, this)
+    return future
   }
 
   fun futureAction(actionId: String): CompletableFuture<Boolean> {
@@ -146,10 +173,7 @@ class ActionsRecorder(private val project: Project,
       }
 
       override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent?) {
-        val actionId = ActionManager.getInstance().getId(action)
-        val actionClassName = action.javaClass.name
-        val resultId = actionId ?: actionClassName
-        processAction(resultId, project)
+        processAction(getActionId(action), project)
       }
 
       override fun beforeEditorTyping(c: Char, dataContext: DataContext) {}
@@ -169,5 +193,7 @@ class ActionsRecorder(private val project: Project,
     eventDispatchers.clear()
   }
 
+  private fun getActionId(action: AnAction): String =
+      ActionManager.getInstance().getId(action) ?: action.javaClass.name
 }
 
