@@ -120,6 +120,15 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
     return myContext.isJSElementsToApplyEmpty() && super.useVariableType(type);
   }
 
+  /**
+   * @deprecated use {@link #addType(JSType, PsiElement)}
+   */
+
+  @Deprecated
+  protected void addType(@NotNull String type, @Nullable final PsiElement source) {
+    addType(JSNamedType.createType(type, JSTypeSourceFactory.createTypeSource(source, false), JSContext.UNKNOWN), source);
+  }
+  
   @Override
   protected boolean addTypeFromElementResolveResult(@Nullable PsiElement resolveResult) {
     if (resolveResult instanceof JSOffsetBasedImplicitElement && JavaScriptSupportLoader.isFlexMxmFile(resolveResult.getContainingFile())) {
