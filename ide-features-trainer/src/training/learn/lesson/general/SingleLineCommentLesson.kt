@@ -25,15 +25,13 @@ abstract class SingleLineCommentLesson(module: Module, lang: String) :
         text("Comment out any line with ${action(it)}")
       }
       triggerTask("CommentByLineComment") {
+        testActions("EditorUp")
         text("Uncomment the commented line with the same shortcut, ${action(it)}.")
         check({countCommentedLines()}, { _, now -> now == 0 } )
       }
-      task {
-        text("Select several lines with ${action("EditorDownWithSelection")} " +
-            "and then comment them with ${action("CommentByLineComment")}.")
-        trigger("EditorDownWithSelection")
+      triggerTask("CommentByLineComment") {
+        text("Select several lines and then comment them with ${action(it)}.")
         testActions("EditorDownWithSelection", "EditorDownWithSelection")
-        trigger("CommentByLineComment")
         check({countCommentedLines()}, { before, now -> now >= before + 2 } )
       }
     }
