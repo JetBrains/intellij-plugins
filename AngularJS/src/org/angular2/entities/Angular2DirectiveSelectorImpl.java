@@ -53,7 +53,9 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       }
     };
 
-  public Angular2DirectiveSelectorImpl(PsiElement element, String text, Function<Pair<String, Integer>, TextRange> createRange) {
+  public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
+                                       @NotNull String text,
+                                       @NotNull Function<Pair<String, Integer>, TextRange> createRange) {
     mySelectorElement = element;
     myText = text;
     myCreateRange = createRange;
@@ -90,7 +92,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
         }
       }
     }
-    throw new IllegalArgumentException("Element " + elementName + " is not present in the selector: " + getText());
+    return new Angular2DirectiveSelectorPsiElement(mySelectorElement, new TextRange(0, 0), elementName, true);
   }
 
   @Override

@@ -38,8 +38,10 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   public Angular2DirectiveSelector getSelector() {
     return getCachedValue(() -> {
       JSProperty property = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.SELECTOR_PROP);
-      if (property != null && property.getValue() instanceof JSLiteralExpression) {
-        String value = ((JSLiteralExpression)property.getValue()).getStringValue();
+      String value;
+      if (property != null
+          && property.getValue() instanceof JSLiteralExpression
+          && (value = ((JSLiteralExpression)property.getValue()).getStringValue()) != null) {
         return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
           property.getValue(), value, p -> new TextRange(1 + p.second, 1 + p.second + p.first.length())), property.getValue());
       }

@@ -1,7 +1,76 @@
 MetadataFile:ng-zorro-antd.metadata.json
   ng-zorro-antd <metadata node module>
-    NgZorroAntdModule <metadata class>('')
-    ɵa <metadata class>('')
+    NgZorroAntdModule <metadata module>: imports=[]; declarations=[]; exports=[ɵkc, ɵi, ɵge, ɵjy, ɵju, ɵjs, ɵjq, ɵji, ɵjf, ɵee, ɵjc, ɵiu, ɵil, ɵij, ɵid, ɵhz, ɵbb, ɵhv, ɵhm, ɵhh, ɵhf, ɵgc, ɵfu, ɵfr, ɵfo, ɵfk, ɵfh, ɵff, ɵez, ɵk, ɵes, ɵeq, ɵeo, ɵem, ɵbe, ɵek, ɵei, ɵdx, ɵdv, ɵdr, ɵdo, ɵdl, ɵdj, ɵdg, ɵcz, ɵcx, ɵcu, ɵco, ɵcj, ɵbz, ɵbi, ɵbx, ɵbs, ɵl, ɵa]; scopeFullyResolved=true; exportsFullyResolved=true
+      forRoot <metadata function>
+        NgZorroAntdModule <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵa <metadata reference>('')
+        ɵl <metadata reference>('')
+        ɵbs <metadata reference>('')
+        ɵbx <metadata reference>('')
+        ɵbi <metadata reference>('')
+        ɵbz <metadata reference>('')
+        ɵcj <metadata reference>('')
+        ɵco <metadata reference>('')
+        ɵcu <metadata reference>('')
+        ɵcx <metadata reference>('')
+        ɵcz <metadata reference>('')
+        ɵdg <metadata reference>('')
+        ɵdj <metadata reference>('')
+        ɵdl <metadata reference>('')
+        ɵdo <metadata reference>('')
+        ɵdr <metadata reference>('')
+        ɵdv <metadata reference>('')
+        ɵdx <metadata reference>('')
+        ɵei <metadata reference>('')
+        ɵek <metadata reference>('')
+        ɵbe <metadata reference>('')
+        ɵem <metadata reference>('')
+        ɵeo <metadata reference>('')
+        ɵeq <metadata reference>('')
+        ɵes <metadata reference>('')
+        ɵk <metadata reference>('')
+        ɵez <metadata reference>('')
+        ɵff <metadata reference>('')
+        ɵfh <metadata reference>('')
+        ɵfk <metadata reference>('')
+        ɵfo <metadata reference>('')
+        ɵfr <metadata reference>('')
+        ɵfu <metadata reference>('')
+        ɵgc <metadata reference>('')
+        ɵhf <metadata reference>('')
+        ɵhh <metadata reference>('')
+        ɵhm <metadata reference>('')
+        ɵhv <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵhz <metadata reference>('')
+        ɵid <metadata reference>('')
+        ɵij <metadata reference>('')
+        ɵil <metadata reference>('')
+        ɵiu <metadata reference>('')
+        ɵjc <metadata reference>('')
+        ɵee <metadata reference>('')
+        ɵjf <metadata reference>('')
+        ɵji <metadata reference>('')
+        ɵjq <metadata reference>('')
+        ɵjs <metadata reference>('')
+        ɵju <metadata reference>('')
+        ɵjy <metadata reference>('')
+        ɵge <metadata reference>('')
+        ɵi <metadata reference>('')
+        ɵkc <metadata reference>('')
+    ɵa <metadata module>: imports=[ɵk, ɵi]; declarations=[ɵh, ɵb]; exports=[ɵh, ɵb]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵb <metadata reference>('')
+        ɵh <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵb <metadata reference>('')
+        ɵh <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/observers#ObserversModule <metadata reference>('')
+        ɵi <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵb <metadata component>: selector=[nz-button]; inputs=[nzBlock, nzLoading, nzType, nzGhost, nzShape, nzSearch, nzSize]; outputs=[]; inOuts=[]('')
     ɵc <metadata class>('')
     ɵd <metadata directive>: selector=i.anticon, [nz-icon]; inputs=[iconfont, spin]; outputs=[]; inOuts=[]
@@ -9,10 +78,39 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵg <metadata class>
       @ant-design/icons-angular#IconService <metadata reference>('')
     ɵh <metadata component>: selector=nz-button-group; inputs=[nzSize]; outputs=[]; inOuts=[]('')
-    ɵi <metadata class>('')
+    ɵi <metadata module>: imports=[]; declarations=[ɵj]; exports=[ɵj]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵj <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵj <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/cdk/platform#PlatformModule <metadata reference>('')
     ɵj <metadata directive>: selector=[nz-wave]; inputs=[nzWaveExtraNode]; outputs=[]; inOuts=[]('')
-    ɵk <metadata class>('')
-    ɵl <metadata class>('')
+    ɵk <metadata module>: imports=[]; declarations=[ɵd]; exports=[ɵd]; scopeFullyResolved=true; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵd <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵd <metadata reference>('')
+    ɵl <metadata module>: imports=[ɵbi, ɵbe, ɵbb]; declarations=[ɵba, ɵy, ɵz, ɵx, ɵw, ɵm]; exports=[ɵba, ɵy, ɵz, ɵx, ɵw]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵm <metadata reference>('')
+        ɵw <metadata reference>('')
+        ɵx <metadata reference>('')
+        ɵz <metadata reference>('')
+        ɵy <metadata reference>('')
+        ɵba <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵw <metadata reference>('')
+        ɵx <metadata reference>('')
+        ɵz <metadata reference>('')
+        ɵy <metadata reference>('')
+        ɵba <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵbe <metadata reference>('')
+        ɵbi <metadata reference>('')
     ɵm <metadata component>: selector=nz-calendar-header; inputs=[mode, activeDate, fullscreen]; outputs=[modeChange, monthChange, yearChange]; inOuts=[<mode,modeChange>]('')
     ɵn <metadata class>('')
     ɵp <metadata object>
@@ -37,15 +135,54 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵy <metadata directive>: selector=[nzMonthCell]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵz <metadata directive>: selector=[nzDateFullCell]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵba <metadata directive>: selector=[nzMonthFullCell]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵbb <metadata class>('')
-    ɵbc <metadata class>('')
+    ɵbb <metadata module>: imports=[ɵbc]; declarations=[nzI18n]; exports=[nzI18n]; scopeFullyResolved=true; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵbd <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵbd <metadata reference>('')
+      ___dec.imports <metadata array>
+        ɵbc <metadata reference>('')
+    ɵbc <metadata module>: imports=[]; declarations=[]; exports=[]; scopeFullyResolved=true; exportsFullyResolved=true('')
     nzI18n <metadata pipe>('')
-    ɵbe <metadata class>('')
+    ɵbe <metadata module>: imports=[]; declarations=[ɵbg, ɵbh, ɵbf]; exports=[ɵbg, ɵbh, ɵbf]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵbf <metadata reference>('')
+        ɵbh <metadata reference>('')
+        ɵbg <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵbf <metadata reference>('')
+        ɵbh <metadata reference>('')
+        ɵbg <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
     ɵbf <metadata component>: selector=[nz-radio]; inputs=[nzValue, nzDisabled, nzAutoFocus]; outputs=[]; inOuts=[]('')
     ɵbg <metadata component>: selector=nz-radio-group; inputs=[nzDisabled, nzButtonStyle, nzName, nzSize]; outputs=[]; inOuts=[]('')
     ɵbh <metadata component>: selector=[nz-radio-button]; inputs=[nzValue, nzDisabled, nzAutoFocus]; outputs=[]; inOuts=[]
       ɵbf <metadata reference>('')
-    ɵbi <metadata class>('')
+    ɵbi <metadata module>: imports=[ɵk, ɵbb]; declarations=[ɵbr, ɵbn, ɵbp, ɵbq, ɵbo, ɵbm, ɵbl, nzSubFilterOptionPipe, nzFilterOptionPipe]; exports=[ɵbn, ɵbq, ɵbo, ɵbm, ɵbl]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵbj <metadata reference>('')
+        ɵbk <metadata reference>('')
+        ɵbl <metadata reference>('')
+        ɵbm <metadata reference>('')
+        ɵbo <metadata reference>('')
+        ɵbq <metadata reference>('')
+        ɵbp <metadata reference>('')
+        ɵbn <metadata reference>('')
+        ɵbr <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵbl <metadata reference>('')
+        ɵbm <metadata reference>('')
+        ɵbo <metadata reference>('')
+        ɵbq <metadata reference>('')
+        ɵbn <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵk <metadata reference>('')
     nzFilterOptionPipe <metadata pipe>('')
     nzSubFilterOptionPipe <metadata pipe>('')
     ɵbl <metadata component>: selector=nz-option; inputs=[nzCustomContent, nzLabel, nzValue, nzDisabled]; outputs=[]; inOuts=[]('')
@@ -55,16 +192,54 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵbp <metadata component>: selector=[nz-option-li]; inputs=[nzShowActive, nzActiveOption, compareWith, nzOption, nzListOfSelectedValue, nzMode]; outputs=[]; inOuts=[]('')
     ɵbq <metadata component>: selector=nz-option-group; inputs=[nzLabel]; outputs=[]; inOuts=[]('')
     ɵbr <metadata directive>: selector=[nz-select-unselectable]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵbs <metadata class>('')
+    ɵbs <metadata module>: imports=[]; declarations=[ɵbw, ɵbv, ɵbu, ɵbt]; exports=[ɵbw, ɵbv, ɵbu, ɵbt]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵbt <metadata reference>('')
+        ɵbu <metadata reference>('')
+        ɵbv <metadata reference>('')
+        ɵbw <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵbt <metadata reference>('')
+        ɵbu <metadata reference>('')
+        ɵbv <metadata reference>('')
+        ɵbw <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
     ɵbt <metadata component>: selector=nz-row; inputs=[nzType, nzJustify, nzAlign, nzGutter]; outputs=[]; inOuts=[]('')
     ɵbu <metadata directive>: selector=[nz-col]; inputs=[nzMd, nzPull, nzXl, nzPush, nzXs, nzLg, nzSpan, nzSm, nzXXl, nzOrder, nzOffset]; outputs=[]; inOuts=[]
       ɵbv <metadata reference>('')
     ɵbv <metadata component>: selector=nz-col; inputs=[nzMd, nzPull, nzXl, nzPush, nzXs, nzLg, nzSpan, nzSm, nzXXl, nzOrder, nzOffset]; outputs=[]; inOuts=[]('')
     ɵbw <metadata directive>: selector=[nz-row]; inputs=[nzType, nzJustify, nzAlign, nzGutter]; outputs=[]; inOuts=[]
       ɵbt <metadata reference>('')
-    ɵbx <metadata class>('')
+    ɵbx <metadata module>: imports=[ɵk, ɵi]; declarations=[ɵby]; exports=[ɵby]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵby <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵby <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵi <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵby <metadata component>: selector=nz-switch; inputs=[nzLoading, nzDisabled, nzControl, nzCheckedChildren, nzUnCheckedChildren, nzSize]; outputs=[]; inOuts=[]('')
-    ɵbz <metadata class>('')
+    ɵbz <metadata module>: imports=[ɵk, ɵa]; declarations=[ɵci, ɵch, ɵcc, ɵcb, ɵca]; exports=[ɵci, ɵch, ɵcc, ɵcb, ɵca]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵca <metadata reference>('')
+        ɵcb <metadata reference>('')
+        ɵcc <metadata reference>('')
+        ɵch <metadata reference>('')
+        ɵci <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵca <metadata reference>('')
+        ɵcb <metadata reference>('')
+        ɵcc <metadata reference>('')
+        ɵch <metadata reference>('')
+        ɵci <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵa <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵca <metadata directive>: selector=[nz-menu]; inputs=[nzTheme, nzInDropDown, nzSelectable, nzInlineCollapsed, nzInlineIndent, nzMode]; outputs=[nzClick]; inOuts=[]('')
     ɵcb <metadata directive>: selector=[nz-menu-item]; inputs=[nzDisabled, nzSelected]; outputs=[]; inOuts=[]('')
     ɵcc <metadata component>: selector=[nz-submenu]; inputs=[nzDisabled, nzOpen]; outputs=[nzOpenChange]; inOuts=[<nzOpen,nzOpenChange>]('')
@@ -74,14 +249,36 @@ MetadataFile:ng-zorro-antd.metadata.json
       ɵcd <metadata reference>('')
     ɵch <metadata directive>: selector=[nz-menu-divider]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵci <metadata component>: selector=[nz-menu-group]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵcj <metadata class>('')
+    ɵcj <metadata module>: imports=[ɵk]; declarations=[ɵcn, ɵcm, ɵck]; exports=[ɵcn, ɵcm, ɵck]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵck <metadata reference>('')
+        ɵcm <metadata reference>('')
+        ɵcn <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵck <metadata reference>('')
+        ɵcm <metadata reference>('')
+        ɵcn <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵck <metadata component>: selector=nz-mention; inputs=[nzLoading, nzNotFoundContent, nzSuggestions, nzPrefix, nzPlacement, nzValueWith]; outputs=[nzOnSelect, nzOnSearchChange]; inOuts=[]('')
     ɵcl <metadata object>
       @angular/forms#NG_VALUE_ACCESSOR <metadata reference>('')
       ɵcm <metadata reference>('')
     ɵcm <metadata directive>: selector=input[nzMentionTrigger], textarea[nzMentionTrigger]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵcn <metadata directive>: selector=[nzMentionSuggestion]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵco <metadata class>('')
+    ɵco <metadata module>: imports=[ɵcu]; declarations=[ɵct, ɵcp]; exports=[ɵct, ɵcp]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵcp <metadata reference>('')
+        ɵct <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵcp <metadata reference>('')
+        ɵct <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵcu <metadata reference>('')
     ɵcp <metadata component>: selector=nz-anchor; inputs=[nzTarget, nzAffix, nzBounds, nzShowInkInFixed, nzOffsetTop]; outputs=[nzScroll, nzClick]; inOuts=[]('')
     ɵcq <metadata class>('')
     ɵcs <metadata object>
@@ -92,83 +289,339 @@ MetadataFile:ng-zorro-antd.metadata.json
         <metadata array>
           ɵcq <metadata reference>('')
     ɵct <metadata component>: selector=nz-link; inputs=[nzTitle, nzHref]; outputs=[]; inOuts=[]('')
-    ɵcu <metadata class>('')
+    ɵcu <metadata module>: imports=[]; declarations=[ɵcv]; exports=[ɵcv]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵcv <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵcv <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
     ɵcv <metadata component>: selector=nz-affix; inputs=[nzTarget, nzOffsetBottom, nzOffsetTop]; outputs=[nzChange]; inOuts=[]('')
-    ɵcx <metadata class>('')
+    ɵcx <metadata module>: imports=[ɵk, ɵbz, ɵa]; declarations=[ɵcy, ɵcf, ɵcg, ɵcd]; exports=[ɵcf, ɵcg, ɵcd]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵcd <metadata reference>('')
+        ɵcg <metadata reference>('')
+        ɵcf <metadata reference>('')
+        ɵcy <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵcd <metadata reference>('')
+        ɵcg <metadata reference>('')
+        ɵcf <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵa <metadata reference>('')
+        ɵbz <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵcy <metadata component>: selector=nz-dropdown-context; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵcz <metadata class>('')
+    ɵcz <metadata module>: imports=[ɵk]; declarations=[ɵde, ɵdd, ɵdc, ɵdb, ɵda]; exports=[ɵde, ɵdd, ɵdc, ɵdb, ɵda]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵda <metadata reference>('')
+        ɵdb <metadata reference>('')
+        ɵdc <metadata reference>('')
+        ɵdd <metadata reference>('')
+        ɵde <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵda <metadata reference>('')
+        ɵdb <metadata reference>('')
+        ɵdc <metadata reference>('')
+        ɵdd <metadata reference>('')
+        ɵde <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵda <metadata component>: selector=nz-layout; inputs=[]; outputs=[]; inOuts=[]('')
     ɵdb <metadata component>: selector=nz-header; inputs=[]; outputs=[]; inOuts=[]('')
     ɵdc <metadata component>: selector=nz-content; inputs=[]; outputs=[]; inOuts=[]('')
     ɵdd <metadata component>: selector=nz-footer; inputs=[]; outputs=[]; inOuts=[]('')
     ɵde <metadata component>: selector=nz-sider; inputs=[nzCollapsed, nzCollapsible, nzCollapsedWidth, nzWidth, nzReverseArrow, nzBreakpoint, nzTrigger]; outputs=[nzCollapsedChange]; inOuts=[<nzCollapsed,nzCollapsedChange>]('')
     ɵdf <metadata class>('')
-    ɵdg <metadata class>('')
+    ɵdg <metadata module>: imports=[]; declarations=[ɵdi, ɵdh]; exports=[ɵdi, ɵdh]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵdh <metadata reference>('')
+        ɵdi <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵdh <metadata reference>('')
+        ɵdi <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
     ɵdh <metadata component>: selector=nz-breadcrumb; inputs=[nzAutoGenerate, nzSeparator]; outputs=[]; inOuts=[]('')
     ɵdi <metadata component>: selector=nz-breadcrumb-item; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵdj <metadata class>('')
+    ɵdj <metadata module>: imports=[ɵk, ɵbb, ɵbi]; declarations=[ɵdk]; exports=[ɵdk]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵdk <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵdk <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵbi <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵdk <metadata component>: selector=nz-pagination; inputs=[nzPageSizeOptions, nzPageSize, nzShowQuickJumper, nzItemRender, nzShowSizeChanger, nzSimple, nzTotal, nzHideOnSinglePage, nzPageIndex, nzShowTotal, nzInTable, nzSize]; outputs=[nzPageSizeChange, nzPageIndexChange]; inOuts=[<nzPageSize,nzPageSizeChange>, <nzPageIndex,nzPageIndexChange>]('')
-    ɵdl <metadata class>('')
+    ɵdl <metadata module>: imports=[ɵk]; declarations=[ɵdn, ɵdm]; exports=[ɵdn, ɵdm]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵdm <metadata reference>('')
+        ɵdn <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵdm <metadata reference>('')
+        ɵdn <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵdm <metadata component>: selector=nz-steps; inputs=[nzProgressDot, nzStatus, nzDirection, nzCurrent, nzStartIndex, nzSize]; outputs=[]; inOuts=[]('')
     ɵdn <metadata component>: selector=nz-step; inputs=[nzTitle, nzStatus, nzIcon, nzDescription]; outputs=[]; inOuts=[]('')
-    ɵdo <metadata class>('')
+    ɵdo <metadata module>: imports=[ɵk]; declarations=[ɵdq, ɵdp]; exports=[ɵdq, ɵdp]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵdp <metadata reference>('')
+        ɵdq <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵdp <metadata reference>('')
+        ɵdq <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵdp <metadata directive>: selector=[nz-input]; inputs=[nzAutosize, disabled, nzSize]; outputs=[]; inOuts=[]('')
     ɵdq <metadata component>: selector=nz-input-group; inputs=[nzSuffixIcon, nzAddOnAfterIcon, nzCompact, nzSuffix, nzAddOnAfter, nzAddOnBeforeIcon, nzPrefixIcon, nzSearch, nzPrefix, nzSize, nzAddOnBefore]; outputs=[]; inOuts=[]('')
-    ɵdr <metadata class>('')
+    ɵdr <metadata module>: imports=[]; declarations=[ɵdt, ɵdu, ɵds]; exports=[ɵdt, ɵdu, ɵds]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵds <metadata reference>('')
+        ɵdu <metadata reference>('')
+        ɵdt <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵds <metadata reference>('')
+        ɵdu <metadata reference>('')
+        ɵdt <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        @angular/cdk/observers#ObserversModule <metadata reference>('')
     ɵds <metadata component>: selector=[nz-checkbox]; inputs=[nzIndeterminate, nzValue, nzAutoFocus, nzDisabled, nzChecked]; outputs=[nzCheckedChange]; inOuts=[<nzChecked,nzCheckedChange>]('')
     ɵdt <metadata component>: selector=nz-checkbox-wrapper; inputs=[]; outputs=[nzOnChange]; inOuts=[]('')
     ɵdu <metadata component>: selector=nz-checkbox-group; inputs=[nzDisabled]; outputs=[]; inOuts=[]('')
-    ɵdv <metadata class>('')
+    ɵdv <metadata module>: imports=[ɵk]; declarations=[ɵdw]; exports=[ɵdw]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵdw <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵdw <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵdw <metadata component>: selector=nz-input-number; inputs=[nzMin, nzParser, nzPrecision, nzAutoFocus, nzDisabled, nzPlaceHolder, nzStep, nzSize, nzMax, nzFormatter]; outputs=[]; inOuts=[]('')
-    ɵdx <metadata class>('')
+    ɵdx <metadata module>: imports=[ɵee]; declarations=[ɵed, ɵec, ɵeb, ɵea, ɵdy]; exports=[ɵed, ɵec, ɵeb, ɵea, ɵdy]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵdy <metadata reference>('')
+        ɵea <metadata reference>('')
+        ɵeb <metadata reference>('')
+        ɵec <metadata reference>('')
+        ɵed <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵdy <metadata reference>('')
+        ɵea <metadata reference>('')
+        ɵeb <metadata reference>('')
+        ɵec <metadata reference>('')
+        ɵed <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵee <metadata reference>('')
     ɵdy <metadata component>: selector=nz-slider; inputs=[nzMin, nzVertical, nzDefaultValue, nzDisabled, nzStep, nzIncluded, nzDebugId, nzTipFormatter, nzDots, nzRange, nzMarks, nzMax]; outputs=[nzOnAfterChange]; inOuts=[]('')
     ɵdz <metadata class>('')
     ɵea <metadata component>: selector=nz-slider-track; inputs=[nzVertical, nzClassName, nzOffset, nzLength, nzIncluded]; outputs=[]; inOuts=[]('')
     ɵeb <metadata component>: selector=nz-slider-handle; inputs=[nzVertical, nzValue, nzClassName, nzTipFormatter, nzOffset, nzActive]; outputs=[]; inOuts=[]('')
     ɵec <metadata component>: selector=nz-slider-step; inputs=[nzVertical, nzMarksArray, nzLowerBound, nzUpperBound, nzPrefixCls, nzIncluded]; outputs=[]; inOuts=[]('')
     ɵed <metadata component>: selector=nz-slider-marks; inputs=[nzMin, nzVertical, nzMarksArray, nzLowerBound, nzUpperBound, nzClassName, nzMax, nzIncluded]; outputs=[]; inOuts=[]('')
-    ɵee <metadata class>('')
+    ɵee <metadata module>: imports=[]; declarations=[ɵeh, ɵef]; exports=[ɵeh, ɵef]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵef <metadata reference>('')
+        ɵeh <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵef <metadata reference>('')
+        ɵeh <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
     ɵef <metadata component>: selector=nz-tooltip; inputs=[nzOverlayClassName, nzTitle, nzOverlayStyle, nzVisible, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
     ɵeh <metadata directive>: selector=[nz-tooltip]; inputs=[nz-tooltip, nzOverlayClassName, nzOverlayStyle, nzVisible, nzTitle, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
-    ɵei <metadata class>('')
+    ɵei <metadata module>: imports=[ɵk]; declarations=[ɵej]; exports=[ɵej]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵej <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵej <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵej <metadata component>: selector=nz-rate; inputs=[nzCount, nzAutoFocus, nzDisabled, nzAllowClear, nzAllowHalf, nzCharacter]; outputs=[nzOnFocus, nzOnBlur, nzOnKeyDown, nzOnHoverChange]; inOuts=[]('')
-    ɵek <metadata class>('')
+    ɵek <metadata module>: imports=[]; declarations=[ɵel]; exports=[ɵel]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵel <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵel <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/observers#ObserversModule <metadata reference>('')
     ɵel <metadata component>: selector=nz-badge; inputs=[nzStyle, nzStatus, nzCount, nzOverflowCount, nzShowZero, nzDot, nzText]; outputs=[]; inOuts=[]('')
-    ɵem <metadata class>('')
+    ɵem <metadata module>: imports=[ɵk]; declarations=[ɵen]; exports=[ɵen]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵen <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵen <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵen <metadata component>: selector=nz-alert; inputs=[nzMessage, nzType, nzDescription, nzIconType, nzBanner, nzCloseable, nzShowIcon, nzCloseText]; outputs=[nzOnClose]; inOuts=[]('')
-    ɵeo <metadata class>('')
+    ɵeo <metadata module>: imports=[]; declarations=[ɵep]; exports=[ɵep]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵep <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵep <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/observers#ObserversModule <metadata reference>('')
     ɵep <metadata component>: selector=nz-spin; inputs=[nzTip, nzIndicator, nzDelay, nzSize, nzSpinning]; outputs=[]; inOuts=[]('')
-    ɵeq <metadata class>('')
+    ɵeq <metadata module>: imports=[ɵk]; declarations=[ɵer]; exports=[ɵer]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵer <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵer <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵer <metadata component>: selector=nz-progress; inputs=[nzPercent, nzSuccessPercent, nzStatus, nzType, nzGapDegree, nzGapPosition, nzShowInfo, nzStrokeWidth, nzWidth, nzFormat, nzSize]; outputs=[]; inOuts=[]('')
-    ɵes <metadata class>('')
+    ɵes <metadata module>: imports=[ɵk]; declarations=[ɵey, ɵex, ɵew, ɵev, ɵeu, ɵet]; exports=[ɵey, ɵex, ɵew, ɵev, ɵeu, ɵet]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵet <metadata reference>('')
+        ɵeu <metadata reference>('')
+        ɵev <metadata reference>('')
+        ɵew <metadata reference>('')
+        ɵex <metadata reference>('')
+        ɵey <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵet <metadata reference>('')
+        ɵeu <metadata reference>('')
+        ɵev <metadata reference>('')
+        ɵew <metadata reference>('')
+        ɵex <metadata reference>('')
+        ɵey <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/observers#ObserversModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵet <metadata component>: selector=nz-tab; inputs=[nzDisabled, nzTitle]; outputs=[nzDeselect, nzClick, nzSelect]; inOuts=[]('')
     ɵeu <metadata component>: selector=nz-tabset; inputs=[nzTabPosition, nzShowPagination, nzType, nzTabBarStyle, nzHideAll, nzTabBarExtraContent, nzSelectedIndex, nzTabBarGutter, nzSize, nzAnimated]; outputs=[nzSelectedIndexChange, nzOnNextClick, nzOnPrevClick, nzSelectChange]; inOuts=[<nzSelectedIndex,nzSelectedIndexChange>]('')
     ɵev <metadata component>: selector=[nz-tabs-nav]; inputs=[nzHideBar, nzType, nzShowPagination, nzPositionMode, nzTabBarExtraContent, nzAnimated, selectedIndex]; outputs=[nzOnNextClick, nzOnPrevClick]; inOuts=[]('')
     ɵew <metadata directive>: selector=[nz-tab-label]; inputs=[disabled]; outputs=[]; inOuts=[]('')
     ɵex <metadata directive>: selector=[nz-tabs-ink-bar]; inputs=[nzPositionMode, nzAnimated]; outputs=[]; inOuts=[]('')
     ɵey <metadata component>: selector=[nz-tab-body]; inputs=[content]; outputs=[]; inOuts=[]('')
-    ɵez <metadata class>('')
+    ɵez <metadata module>: imports=[]; declarations=[ɵfb, ɵfe, ɵfd, ɵfc, ɵfa]; exports=[ɵfb, ɵfe, ɵfd, ɵfc, ɵfa]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵfa <metadata reference>('')
+        ɵfc <metadata reference>('')
+        ɵfd <metadata reference>('')
+        ɵfe <metadata reference>('')
+        ɵfb <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵfa <metadata reference>('')
+        ɵfc <metadata reference>('')
+        ɵfd <metadata reference>('')
+        ɵfe <metadata reference>('')
+        ɵfb <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
     ɵfa <metadata component>: selector=nz-card; inputs=[nzLoading, nzTitle, nzBordered, nzType, nzExtra, nzHoverable, nzCover, nzBodyStyle, nzActions]; outputs=[]; inOuts=[]('')
     ɵfb <metadata component>: selector=nz-card-tab; inputs=[]; outputs=[]; inOuts=[]('')
     ɵfc <metadata directive>: selector=[nz-card-grid]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵfd <metadata component>: selector=nz-card-meta; inputs=[nzTitle, nzAvatar, nzDescription]; outputs=[]; inOuts=[]('')
     ɵfe <metadata component>: selector=nz-card-loading; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵff <metadata class>('')
+    ɵff <metadata module>: imports=[ɵk]; declarations=[ɵfg]; exports=[ɵfg]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵfg <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵfg <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵfg <metadata component>: selector=nz-avatar; inputs=[nzShape, nzIcon, nzText, nzSize, nzSrc]; outputs=[]; inOuts=[]('')
-    ɵfh <metadata class>('')
+    ɵfh <metadata module>: imports=[]; declarations=[ɵfj, ɵfi]; exports=[ɵfj, ɵfi]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵfi <metadata reference>('')
+        ɵfj <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵfi <metadata reference>('')
+        ɵfj <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
     ɵfi <metadata component>: selector=nz-timeline-item; inputs=[nzColor, nzDot]; outputs=[]; inOuts=[]('')
     ɵfj <metadata component>: selector=nz-timeline; inputs=[nzPending]; outputs=[]; inOuts=[]('')
-    ɵfk <metadata class>('')
+    ɵfk <metadata module>: imports=[ɵk, ɵbb, ɵdo, ɵa, ɵdr]; declarations=[ɵfn, ɵfm, ɵfl]; exports=[ɵfl]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵfl <metadata reference>('')
+        ɵfm <metadata reference>('')
+        ɵfn <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵfl <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵdr <metadata reference>('')
+        ɵa <metadata reference>('')
+        ɵdo <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵfl <metadata component>: selector=nz-transfer; inputs=[nzNotFoundContent, nzCanMove, nzShowSearch, nzTitles, nzRender, nzDataSource, nzFilterOption, nzSearchPlaceholder, nzItemUnit, nzFooter, nzOperations, nzItemsUnit, nzListStyle]; outputs=[nzChange, nzSearchChange, nzSelectChange]; inOuts=[]('')
     ɵfm <metadata component>: selector=nz-transfer-list; inputs=[searchPlaceholder, notFoundContent, footer, itemUnit, itemsUnit, filter, filterOption, titleText, showSearch, dataSource, render, direction]; outputs=[handleSelectAll, handleSelect, filterChange]; inOuts=[<filter,filterChange>]('')
     ɵfn <metadata component>: selector=[nz-transfer-search]; inputs=[value, placeholder]; outputs=[valueClear, valueChanged]; inOuts=[]('')
-    ɵfo <metadata class>('')
+    ɵfo <metadata module>: imports=[]; declarations=[ɵfq, ɵfp]; exports=[ɵfq, ɵfp]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵfp <metadata reference>('')
+        ɵfq <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵfp <metadata reference>('')
+        ɵfq <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
     ɵfp <metadata component>: selector=nz-carousel; inputs=[nzVertical, nzDotRender, nzEnableSwipe, nzEffect, nzDots, nzAutoPlay, nzAutoPlaySpeed]; outputs=[nzBeforeChange, nzAfterChange]; inOuts=[]('')
     ɵfq <metadata directive>: selector=[nz-carousel-content]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵfr <metadata class>('')
+    ɵfr <metadata module>: imports=[ɵk]; declarations=[ɵft, ɵfs]; exports=[ɵft, ɵfs]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵfs <metadata reference>('')
+        ɵft <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵfs <metadata reference>('')
+        ɵft <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵfs <metadata component>: selector=nz-collapse-panel; inputs=[nzHeader, nzDisabled, nzShowArrow, nzActive]; outputs=[nzActiveChange]; inOuts=[<nzActive,nzActiveChange>]('')
     ɵft <metadata component>: selector=nz-collapse; inputs=[nzBordered, nzAccordion]; outputs=[]; inOuts=[]('')
-    ɵfu <metadata class>('')
+    ɵfu <metadata module>: imports=[ɵk, ɵbb, ɵeo, ɵdj, ɵcx, ɵdr, ɵbe, ɵbz]; declarations=[ɵgb, ɵga, ɵfz, ɵfy, ɵfw, ɵfv]; exports=[ɵgb, ɵga, ɵfz, ɵfy, ɵfw, ɵfv]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵfv <metadata reference>('')
+        ɵfw <metadata reference>('')
+        ɵfy <metadata reference>('')
+        ɵfz <metadata reference>('')
+        ɵga <metadata reference>('')
+        ɵgb <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵfv <metadata reference>('')
+        ɵfw <metadata reference>('')
+        ɵfy <metadata reference>('')
+        ɵfz <metadata reference>('')
+        ɵga <metadata reference>('')
+        ɵgb <metadata reference>('')
+      ___dec.imports <metadata array>
+        ɵbz <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵbe <metadata reference>('')
+        ɵdr <metadata reference>('')
+        ɵcx <metadata reference>('')
+        @angular/common#CommonModule <metadata reference>('')
+        ɵdj <metadata reference>('')
+        ɵeo <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵfv <metadata component>: selector=nz-table; inputs=[nzWidthConfig, nzTitle, nzShowPagination, nzPageSizeOptions, nzFrontPagination, nzPageSize, nzShowQuickJumper, nzNoResult, nzShowSizeChanger, nzTotal, nzSimple, nzLoading, nzBordered, nzHideOnSinglePage, nzFooter, nzData, nzPageIndex, nzShowTotal, nzScroll, nzSize, nzLoadingDelay]; outputs=[nzCurrentPageDataChange, nzPageSizeChange, nzPageIndexChange]; inOuts=[<nzPageSize,nzPageSizeChange>, <nzPageIndex,nzPageIndexChange>]('')
     ɵfw <metadata component>: selector=th:not(.nz-disable-th); inputs=[nzRight, nzExpand, nzLeft, nzDisabled, nzShowFilter, nzSelections, nzCustomFilter, nzFilterMultiple, nzWidth, nzFilters, nzShowCheckbox, nzShowSort, nzChecked, nzSortKey, nzShowRowSelection, nzSort, nzIndeterminate]; outputs=[nzSortChange, nzFilterChange, nzSortChangeWithKey, nzCheckedChange]; inOuts=[<nzSort,nzSortChange>, <nzChecked,nzCheckedChange>]('')
     ɵfx <metadata class>('')
@@ -176,9 +629,75 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵfz <metadata component>: selector=thead:not(.ant-table-thead); inputs=[nzSingleSort]; outputs=[nzSortChange]; inOuts=[]('')
     ɵga <metadata directive>: selector=tbody; inputs=[]; outputs=[]; inOuts=[]('')
     ɵgb <metadata directive>: selector=tr; inputs=[nzExpand]; outputs=[]; inOuts=[]('')
-    ɵgc <metadata class>('')
-    ɵgd <metadata class>('')
-    ɵge <metadata class>('')
+    ɵgc <metadata module>: imports=[ɵk, ɵgd]; declarations=[ɵha, ɵhe, ɵhd, ɵhb, ɵgv, ɵgz, ɵgw, ɵhc]; exports=[ɵhe, ɵhd, ɵhb, ɵha, ɵgv]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵhc <metadata reference>('')
+        ɵgw <metadata reference>('')
+        ɵgz <metadata reference>('')
+        ɵgv <metadata reference>('')
+        ɵhb <metadata reference>('')
+        ɵhd <metadata reference>('')
+        ɵhe <metadata reference>('')
+        ɵha <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵgv <metadata reference>('')
+        ɵha <metadata reference>('')
+        ɵhb <metadata reference>('')
+        ɵhd <metadata reference>('')
+        ɵhe <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵgd <metadata reference>('')
+        ɵk <metadata reference>('')
+    ɵgd <metadata module>: imports=[ɵge, ɵbb]; declarations=[ɵgu, ɵgt, ɵgs, ɵgr, ɵgq, ɵgp, ɵgo, ɵgn, ɵgm, ɵgl, ɵgk, ɵgj, ɵgi]; exports=[ɵgu, ɵgt, ɵgs, ɵgr, ɵgq, ɵgp, ɵgo, ɵgn, ɵgm, ɵgl, ɵgk, ɵgj, ɵgi]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵgi <metadata reference>('')
+        ɵgj <metadata reference>('')
+        ɵgk <metadata reference>('')
+        ɵgl <metadata reference>('')
+        ɵgm <metadata reference>('')
+        ɵgn <metadata reference>('')
+        ɵgo <metadata reference>('')
+        ɵgp <metadata reference>('')
+        ɵgq <metadata reference>('')
+        ɵgr <metadata reference>('')
+        ɵgs <metadata reference>('')
+        ɵgt <metadata reference>('')
+        ɵgu <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵgi <metadata reference>('')
+        ɵgj <metadata reference>('')
+        ɵgk <metadata reference>('')
+        ɵgl <metadata reference>('')
+        ɵgm <metadata reference>('')
+        ɵgn <metadata reference>('')
+        ɵgo <metadata reference>('')
+        ɵgp <metadata reference>('')
+        ɵgq <metadata reference>('')
+        ɵgr <metadata reference>('')
+        ɵgs <metadata reference>('')
+        ɵgt <metadata reference>('')
+        ɵgu <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵge <metadata reference>('')
+    ɵge <metadata module>: imports=[ɵk, ɵbb]; declarations=[ɵgh, ɵgg, ɵgf]; exports=[ɵgf, ɵgg]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵgf <metadata reference>('')
+        ɵgg <metadata reference>('')
+        ɵgh <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵgg <metadata reference>('')
+        ɵgf <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵbb <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵgf <metadata component>: selector=nz-time-picker; inputs=[nzAutoFocus, nzDisabled, nzOpen, nzAllowEmpty, nzSecondStep, nzPlaceHolder, nzAddOn, nzDisabledMinutes, nzDefaultOpenValue, nzDisabledHours, nzMinuteStep, nzHourStep, nzPopupClassName, nzClearText, nzDisabledSeconds, nzFormat, nzSize, nzHideDisabledOptions]; outputs=[nzOpenChange]; inOuts=[<nzOpen,nzOpenChange>]('')
     ɵgg <metadata component>: selector=nz-time-picker-panel; inputs=[format, nzAllowEmpty, opened, nzAddOn, nzPlaceHolder, nzSecondStep, nzDisabledMinutes, nzDefaultOpenValue, nzDisabledHours, nzMinuteStep, nzHourStep, nzClearText, nzDisabledSeconds, nzHideDisabledOptions, nzInDatePicker]; outputs=[timeClear]; inOuts=[]('')
     ɵgh <metadata directive>: selector=input[nzTime]; inputs=[nzTime]; outputs=[]; inOuts=[]('')
@@ -197,7 +716,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵgu <metadata component>: selector=date-range-popup; inputs=[extraFooter, ranges, disabledDate, showTime, panelMode, format, dateRender, locale, isRange, showToday, popupStyle, dropdownClassName, placeholder, disabledTime, value, showWeek]; outputs=[closePicker, resultOk, valueChange, panelModeChange]; inOuts=[<value,valueChange>, <panelMode,panelModeChange>]('')
     ɵgv <metadata component>: selector=nz-date-picker; inputs=[nzDisabledDate, nzDateRender, nzStyle, nzValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzShowTime, nzOpen, nzClassName, nzDisabledTime, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzRanges, nzFormat, nzSize, nzShowToday, nzMode]; outputs=[nzOnPanelChange, nzOnOpenChange, nzOnOk]; inOuts=[]
       ɵgw <metadata reference>('')
-    ɵgw <metadata class>
+    ɵgw <metadata component>: selector=ng-component; inputs=[nzDisabledDate, nzDateRender, nzStyle, nzValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzShowTime, nzOpen, nzClassName, nzDisabledTime, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzRanges, nzFormat, nzSize, nzShowToday, nzMode]; outputs=[nzOnPanelChange, nzOnOpenChange, nzOnOk]; inOuts=[]
       ɵgx <metadata reference>('')
     ɵgx <metadata class>('')
     ɵgz <metadata component>: selector=nz-picker; inputs=[size, format, disabled, className, style, placeholder, autoFocus, allowClear, value, open, isRange]; outputs=[openChange, valueChange]; inOuts=[<open,openChange>, <value,valueChange>]('')
@@ -205,21 +724,58 @@ MetadataFile:ng-zorro-antd.metadata.json
       ɵgw <metadata reference>('')
     ɵhb <metadata component>: selector=nz-month-picker; inputs=[nzDisabledDate, nzStyle, nzValue, nzDefaultValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzOpen, nzClassName, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzFormat, nzSize]; outputs=[nzOnOpenChange]; inOuts=[]
       ɵhc <metadata reference>('')
-    ɵhc <metadata class>
+    ɵhc <metadata component>: selector=ng-component; inputs=[nzDisabledDate, nzStyle, nzValue, nzDefaultValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzOpen, nzClassName, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzFormat, nzSize]; outputs=[nzOnOpenChange]; inOuts=[]
       ɵgx <metadata reference>('')
     ɵhd <metadata component>: selector=nz-year-picker; inputs=[nzDisabledDate, nzStyle, nzValue, nzDefaultValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzOpen, nzClassName, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzFormat, nzSize]; outputs=[nzOnOpenChange]; inOuts=[]
       ɵhc <metadata reference>('')
     ɵhe <metadata component>: selector=nz-week-picker; inputs=[nzDisabledDate, nzDateRender, nzStyle, nzValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzShowTime, nzOpen, nzClassName, nzDisabledTime, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzRanges, nzFormat, nzSize, nzShowToday, nzMode]; outputs=[nzOnPanelChange, nzOnOpenChange, nzOnOk]; inOuts=[]
       ɵgw <metadata reference>('')
-    ɵhf <metadata class>('')
+    ɵhf <metadata module>: imports=[]; declarations=[ɵhg]; exports=[ɵhg]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵhg <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵhg <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
     ɵhg <metadata component>: selector=nz-divider; inputs=[nzType, nzDashed, nzText, nzOrientation]; outputs=[]; inOuts=[]('')
-    ɵhh <metadata class>('')
+    ɵhh <metadata module>: imports=[ɵk]; declarations=[ɵhi]; exports=[ɵhi]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵhi <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵhi <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        @angular/cdk/portal#PortalModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵhi <metadata component>: selector=nz-drawer; inputs=[nzTitle, nzZIndex, nzHeight, nzVisible, nzMask, nzContent, nzWrapClassName, nzPlacement, nzWidth, nzMaskStyle, nzClosable, nzMaskClosable, nzOffsetX, nzBodyStyle, nzOffsetY]; outputs=[nzOnViewInit, nzOnClose]; inOuts=[]
       ɵhj <metadata reference>('')
     ɵhj <metadata class>('')
     ɵhk <metadata class>('')
     ɵhl <metadata class>('')
-    ɵhm <metadata class>('')
+    ɵhm <metadata module>: imports=[ɵk, ɵbs]; declarations=[ɵhu, ɵht, ɵhs, ɵhr, ɵhq, ɵhp, ɵho, ɵhn]; exports=[ɵhu, ɵht, ɵhs, ɵhr, ɵhq, ɵhp, ɵho, ɵhn]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵhn <metadata reference>('')
+        ɵho <metadata reference>('')
+        ɵhp <metadata reference>('')
+        ɵhq <metadata reference>('')
+        ɵhr <metadata reference>('')
+        ɵhs <metadata reference>('')
+        ɵht <metadata reference>('')
+        ɵhu <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵhn <metadata reference>('')
+        ɵho <metadata reference>('')
+        ɵhp <metadata reference>('')
+        ɵhq <metadata reference>('')
+        ɵhr <metadata reference>('')
+        ɵhs <metadata reference>('')
+        ɵht <metadata reference>('')
+        ɵhu <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵbs <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵhn <metadata component>: selector=nz-form-extra; inputs=[]; outputs=[]; inOuts=[]('')
     ɵho <metadata component>: selector=nz-form-label; inputs=[nzPull, nzSpan, nzXXl, nzOrder, nzOffset, nzMd, nzXl, nzPush, nzXs, nzLg, nzSm, nzFor, nzRequired]; outputs=[]; inOuts=[]
       ɵbv <metadata reference>('')
@@ -231,15 +787,56 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵhs <metadata component>: selector=nz-form-explain; inputs=[]; outputs=[]; inOuts=[]('')
     ɵht <metadata component>: selector=nz-form-text; inputs=[]; outputs=[]; inOuts=[]('')
     ɵhu <metadata component>: selector=nz-form-split; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵhv <metadata class>('')
+    ɵhv <metadata module>: imports=[ɵbb, ɵff, ɵbs, ɵeo]; declarations=[ɵhy, ɵhx, ɵhw]; exports=[ɵhy, ɵhx, ɵhw]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵhw <metadata reference>('')
+        ɵhx <metadata reference>('')
+        ɵhy <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵhw <metadata reference>('')
+        ɵhx <metadata reference>('')
+        ɵhy <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵeo <metadata reference>('')
+        ɵbs <metadata reference>('')
+        ɵff <metadata reference>('')
+        ɵbb <metadata reference>('')
     ɵhw <metadata component>: selector=nz-list; inputs=[nzLoadMore, nzHeader, nzItemLayout, nzSplit, nzDataSource, nzLoading, nzBordered, nzFooter, nzPagination, nzGrid, nzRenderItem, nzSize]; outputs=[]; inOuts=[]('')
     ɵhx <metadata component>: selector=nz-list-item; inputs=[nzContent, nzExtra, nzActions]; outputs=[]; inOuts=[]('')
     ɵhy <metadata component>: selector=nz-list-item-meta; inputs=[nzTitle, nzAvatar, nzDescription]; outputs=[]; inOuts=[]('')
-    ɵhz <metadata class>('')
+    ɵhz <metadata module>: imports=[ɵk, ɵbb, ɵeq, ɵee]; declarations=[ɵic, ɵib, ɵia]; exports=[ɵia]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵia <metadata reference>('')
+        ɵib <metadata reference>('')
+        ɵic <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵia <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵee <metadata reference>('')
+        ɵeq <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵia <metadata component>: selector=nz-upload; inputs=[nzMultiple, nzFilter, nzDisabled, nzPreview, nzShowButton, nzName, nzFileType, nzFileList, nzHeaders, nzAction, nzShowUploadList, nzType, nzLimit, nzAccept, nzBeforeUpload, nzDirectory, nzRemove, nzData, nzWithCredentials, nzSize, nzCustomRequest, nzListType]; outputs=[nzFileListChange, nzChange]; inOuts=[<nzFileList,nzFileListChange>]('')
     ɵib <metadata component>: selector=[nz-upload-btn]; inputs=[options, classes]; outputs=[]; inOuts=[]('')
     ɵic <metadata component>: selector=nz-upload-list; inputs=[onPreview, locale, icons, onRemove, listType, items]; outputs=[]; inOuts=[]('')
-    ɵid <metadata class>('')
+    ɵid <metadata module>: imports=[]; declarations=[ɵii, ɵih, ɵif, ɵie]; exports=[ɵii, ɵih, ɵif, ɵie]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵie <metadata reference>('')
+        ɵif <metadata reference>('')
+        ɵih <metadata reference>('')
+        ɵii <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵie <metadata reference>('')
+        ɵif <metadata reference>('')
+        ɵih <metadata reference>('')
+        ɵii <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
     ɵie <metadata component>: selector=nz-autocomplete; inputs=[nzDefaultActiveFirstOption, nzWidth, nzDataSource, nzBackfill]; outputs=[selectionChange]; inOuts=[]('')
     ɵif <metadata component>: selector=nz-auto-option; inputs=[nzLabel, nzValue, nzDisabled]; outputs=[selectionChange]; inOuts=[]('')
     ɵig <metadata object>
@@ -247,9 +844,24 @@ MetadataFile:ng-zorro-antd.metadata.json
       ɵih <metadata reference>('')
     ɵih <metadata directive>: selector=input[nzAutocomplete], textarea[nzAutocomplete]; inputs=[nzAutocomplete]; outputs=[]; inOuts=[]('')
     ɵii <metadata component>: selector=nz-auto-optgroup; inputs=[nzLabel]; outputs=[]; inOuts=[]('')
-    ɵij <metadata class>('')
+    ɵij <metadata module>: imports=[ɵk]; declarations=[ɵik]; exports=[ɵik]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵik <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵik <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵik <metadata component>: selector=nz-tag; inputs=[nzChecked, nzColor, nzMode]; outputs=[nzAfterClose, nzOnClose, nzCheckedChange]; inOuts=[<nzChecked,nzCheckedChange>]('')
-    ɵil <metadata class>('')
+    ɵil <metadata module>: imports=[ɵk]; declarations=[ɵir, ɵim]; exports=[]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵim <metadata reference>('')
+        ɵir <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵim <metadata component>: selector=nz-message-container; inputs=[]; outputs=[]; inOuts=[]('')
     ɵiq <metadata object>
       ɵio <metadata reference>('')
@@ -258,7 +870,14 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵis <metadata class>('')
     ɵit <metadata class>
       ɵis <metadata reference>('')
-    ɵiu <metadata class>('')
+    ɵiu <metadata module>: imports=[ɵk]; declarations=[ɵiw, ɵiv]; exports=[]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵiv <metadata reference>('')
+        ɵiw <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵiv <metadata component>: selector=nz-notification; inputs=[nzMessage, nzIndex]; outputs=[]; inOuts=[]
       ɵir <metadata reference>('')
     ɵiw <metadata component>: selector=nz-notification-container; inputs=[]; outputs=[]; inOuts=[]
@@ -268,32 +887,106 @@ MetadataFile:ng-zorro-antd.metadata.json
       useValue <metadata object>('')
     ɵjb <metadata class>
       ɵis <metadata reference>('')
-    ɵjc <metadata class>('')
+    ɵjc <metadata module>: imports=[]; declarations=[ɵjd, ɵje]; exports=[ɵjd, ɵje]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵje <metadata reference>('')
+        ɵjd <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵje <metadata reference>('')
+        ɵjd <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
     ɵjd <metadata component>: selector=nz-popover; inputs=[nzOverlayClassName, nzTitle, nzOverlayStyle, nzVisible, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       ɵef <metadata reference>('')
     ɵje <metadata directive>: selector=[nz-popover]; inputs=[nz-tooltip, nzOverlayClassName, nzOverlayStyle, nzVisible, nzTitle, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       ɵeh <metadata reference>('')
-    ɵjf <metadata class>('')
+    ɵjf <metadata module>: imports=[ɵk, ɵbb, ɵa]; declarations=[ɵjh, ɵjg]; exports=[ɵjh, ɵjg]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵjg <metadata reference>('')
+        ɵjh <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵjg <metadata reference>('')
+        ɵjh <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵa <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵjg <metadata component>: selector=nz-popconfirm; inputs=[nzTitle, nzCancelText, nzOverlayStyle, nzOkText, nzVisible, nzContent, nzPlacement, nzTrigger, nzCondition, nzOverlayClassName, nzOkType, nzMouseEnterDelay, nzMouseLeaveDelay]; outputs=[nzOnConfirm, nzOnCancel, nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       ɵef <metadata reference>('')
     ɵjh <metadata directive>: selector=[nz-popconfirm]; inputs=[nz-tooltip, nzCancelText, nzOverlayStyle, nzOkText, nzVisible, nzTitle, nzContent, nzPlacement, nzTrigger, nzCondition, nzOverlayClassName, nzOkType, nzMouseEnterDelay, nzMouseLeaveDelay]; outputs=[nzOnConfirm, nzOnCancel, nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       ɵeh <metadata reference>('')
-    ɵji <metadata class>('')
+    ɵji <metadata module>: imports=[ɵk, ɵbc, ɵa, ɵbb]; declarations=[toCssUnit, ɵjj]; exports=[ɵjj]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵjj <metadata reference>('')
+        ɵjo <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵjj <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵbb <metadata reference>('')
+        ɵa <metadata reference>('')
+        ɵbc <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵjj <metadata component>: selector=nz-modal; inputs=[nzGetContainer, nzComponentParams, nzTitle, nzCancelText, nzOkText, nzVisible, nzMask, nzWrapClassName, nzWidth, nzMaskStyle, nzModalType, nzOnCancel, nzOnOk, nzOkLoading, nzZIndex, nzStyle, nzClassName, nzContent, nzCancelLoading, nzClosable, nzIconType, nzOkType, nzMaskClosable, nzFooter, nzBodyStyle]; outputs=[nzOnCancel, nzAfterClose, nzOnOk, nzVisibleChange, nzAfterOpen]; inOuts=[<nzVisible,nzVisibleChange>]
       ɵjk <metadata reference>('')
     ɵjk <metadata class>('')
     ɵjn <metadata class>('')
     toCssUnit <metadata pipe>('')
     ɵjp <metadata class>('')
-    ɵjq <metadata class>('')
+    ɵjq <metadata module>: imports=[]; declarations=[ɵjr]; exports=[ɵjr]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵjr <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵjr <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
     ɵjr <metadata component>: selector=nz-back-top; inputs=[nzVisibilityHeight, nzTarget, nzTemplate]; outputs=[nzClick]; inOuts=[]('')
-    ɵjs <metadata class>('')
+    ɵjs <metadata module>: imports=[ɵk, ɵdo]; declarations=[ɵjt]; exports=[ɵjt]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵjt <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵjt <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        ɵdo <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵjt <metadata component>: selector=nz-cascader,[nz-cascader]; inputs=[nzLabelProperty, nzDisabled, nzOptions, nzChangeOnSelect, nzTriggerAction, nzShowSearch, nzExpandTrigger, nzPlaceHolder, nzColumnClassName, nzClearText, nzPrefixCls, nzLoadData, nzNotFoundContent, nzAutoFocus, nzShowInput, nzMenuStyle, nzAllowClear, nzMenuClassName, nzLabelRender, nzValueProperty, nzShowArrow, nzChangeOn, nzSize, nzMouseEnterDelay, nzMouseLeaveDelay]; outputs=[nzChange, nzSelect, nzClear, nzSelectionChange, nzVisibleChange]; inOuts=[]('')
-    ɵju <metadata class>('')
+    ɵju <metadata module>: imports=[ɵk]; declarations=[ɵjx, ɵjv]; exports=[ɵjx, ɵjv]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵjv <metadata reference>('')
+        ɵjx <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵjv <metadata reference>('')
+        ɵjx <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵjv <metadata component>: selector=nz-tree; inputs=[nzMultiple, nzDefaultCheckedKeys, nzShowExpand, nzCheckable, nzExpandedKeys, nzDefaultExpandedKeys, nzSelectedKeys, nzShowIcon, nzCheckStrictly, nzHideUnMatched, nzShowLine, nzDefaultSelectedKeys, nzSearchValue, nzDraggable, nzDefaultExpandAll, nzData, nzExpandAll, nzAsyncData, nzCheckedKeys, nzBeforeDrop]; outputs=[nzOnDragOver, nzClick, nzOnDragEnd, nzDblClick, nzExpandedKeysChange, nzCheckedKeysChange, nzOnDrop, nzOnDragLeave, nzOnDragStart, nzCheckBoxChange, nzOnDragEnter, nzSearchValueChange, nzContextMenu, nzSelectedKeysChange, nzExpandChange, nzOnSearchNode]; inOuts=[<nzExpandedKeys,nzExpandedKeysChange>, <nzCheckedKeys,nzCheckedKeysChange>, <nzSearchValue,nzSearchValueChange>, <nzSelectedKeys,nzSelectedKeysChange>]('')
     ɵjw <metadata class>('')
     ɵjx <metadata component>: selector=nz-tree-node; inputs=[nzMultiple, nzShowExpand, nzCheckable, nzTreeTemplate, nzCheckStrictly, nzHideUnMatched, nzShowLine, nzTreeNode, nzSearchValue, nzDraggable, nzDefaultExpandAll, nzExpandAll, nzAsyncData, nzBeforeDrop]; outputs=[nzDragLeave, contextMenu, nzDragEnd, clickNode, nzDrop, clickExpand, clickCheckBox, dblClick, nzDragStart, nzDragOver, nzDragEnter]; inOuts=[]('')
-    ɵjy <metadata class>('')
+    ɵjy <metadata module>: imports=[ɵk, ɵju]; declarations=[ɵjz]; exports=[ɵjz]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵjz <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵjz <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/overlay#OverlayModule <metadata reference>('')
+        @angular/forms#FormsModule <metadata reference>('')
+        ɵju <metadata reference>('')
+        ɵk <metadata reference>('')
     ɵjz <metadata component>: selector=nz-tree-select; inputs=[nzMultiple, nzDisabled, nzShowExpand, nzShowSearch, nzOpen, nzCheckable, nzDefaultExpandedKeys, nzPlaceHolder, nzAllowClear, nzShowLine, nzDisplayWith, nzDefaultExpandAll, nzDropdownMatchSelectWidth, nzDropdownStyle, nzAsyncData, nzSize, nzNodes]; outputs=[nzCleared, nzTreeCheckBoxChange, nzRemoved, nzExpandChange, nzOpenChange, nzTreeClick]; inOuts=[<nzOpen,nzOpenChange>]('')
-    ɵkc <metadata class>('')
+    ɵkc <metadata module>: imports=[]; declarations=[ɵkd]; exports=[ɵkd]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        ɵkd <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵkd <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
     ɵkd <metadata component>: selector=nz-skeleton; inputs=[nzLoading, nzTitle, nzAvatar, nzParagraph, nzActive]; outputs=[]; inOuts=[]('')

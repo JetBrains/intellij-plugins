@@ -44,7 +44,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
       names.add(el.getLookupString());
     }
     Angular2EntitiesProvider.getAllElementDirectives(project).forEach((name, list) -> {
-      if (!names.contains(name) && !list.isEmpty()) {
+      if (!names.contains(name) && !list.isEmpty() && !name.isEmpty()) {
         Angular2DirectiveSelectorPsiElement el = list.get(0).getSelector().getPsiElementForElement(name);
         addLookupItem(language, elements, el, name);
       }

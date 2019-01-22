@@ -6,10 +6,10 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.mscharhag.oleaster.runner.OleasterRunner;
 import org.angular2.lang.OleasterTestUtil;
+import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.runner.RunWith;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
