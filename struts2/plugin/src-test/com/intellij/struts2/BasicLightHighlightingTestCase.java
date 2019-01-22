@@ -122,7 +122,6 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
       if (existing != null) {
         existing.getConfiguration().getFileSets().clear();
       }
-      ;
       super.tearDown();
     }
   }
@@ -135,11 +134,6 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
 
   private static final String LIBRARY_PATH =
     FileUtil.toSystemIndependentName(PathManager.getHomePath() + TEST_DATA_PATH + "/lib/");
-
-  protected LightProjectDescriptor createWebDescriptor() {
-    return new Struts2ProjectDescriptorBuilder().withStrutsLibrary()
-      .withStrutsFacet().withWebModuleType().build();
-  }
 
   /**
    * Adds the S2 jars.
