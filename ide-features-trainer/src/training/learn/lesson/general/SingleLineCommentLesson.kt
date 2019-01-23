@@ -39,7 +39,6 @@ abstract class SingleLineCommentLesson(module: Module, lang: String) :
         trigger("CommentByLineComment")
         check({countCommentedLines()}, { before, now -> now >= before + 2 } )
       }
-      complete()
     }
 
   private fun calculateComments(psiElement: PsiElement): Int {
