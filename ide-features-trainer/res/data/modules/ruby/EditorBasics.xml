@@ -3,4 +3,5 @@
   <lesson-kt sample="Selection.rb.sample" implementationClass="training.learn.lesson.general.SelectLesson" lang="ruby"/>
   <lesson-kt implementationClass="training.learn.lesson.ruby.RubyCommentLesson"/>
   <lesson-kt sample="Duplicate.rb.sample" implementationClass="training.learn.lesson.general.DuplicateLesson" lang="ruby"/>
+  <lesson-kt sample="Move.rb.sample" implementationClass="training.learn.lesson.general.MoveLesson" lang="ruby"/>
 </module>

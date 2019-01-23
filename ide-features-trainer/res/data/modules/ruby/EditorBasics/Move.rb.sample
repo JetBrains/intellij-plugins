@@ -1,0 +1,18 @@
+# "Move Statement Up" action has a bug for methods in Ruby now (issue RUBY-23442)
+# Blank line between 2 methods was temporary removed
+class Fred
+  # The initialize method is the constructor.  The @val is
+  # an object value.
+  def initialize(v)
+    @val = v
+  end
+  # Set it and get it.
+  def set(v)
+    <caret>@val = v
+    p "The value was set"
+  end
+
+  def get
+    return @val
+  end
+end
