@@ -29,7 +29,6 @@ class SelectLesson(module: Module, lang: String, private val sample: LessonSampl
       triggerTask("\$SelectAll") {
         text("Now select the whole file instantly with ${action(it)}.")
       }
-      complete()
       task {
         text("Awesome! Click the button below to start the next lesson, or use ${action("learn.next.lesson")}.")
       }

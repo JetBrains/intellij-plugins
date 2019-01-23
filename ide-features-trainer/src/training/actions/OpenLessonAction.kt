@@ -182,6 +182,8 @@ class OpenLessonAction : AnAction() {
           LessonManager.getInstance(lesson).initLesson(textEditor.editor)
           thread(name = "IdeFeaturesTrainer") {
             lesson.lessonContent(LessonContext(lesson, textEditor.editor, project))
+            lesson.pass()
+            LessonManager.getInstance(lesson).passLesson(project, textEditor.editor)
           }
         }
       }

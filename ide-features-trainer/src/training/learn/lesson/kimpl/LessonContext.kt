@@ -31,9 +31,4 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
       trigger(action)
     }
   }
-
-  fun complete() {
-    lesson.pass()
-    LessonManager.getInstance(lesson).passLesson(project, editor)
-  }
 }
