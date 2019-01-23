@@ -21,7 +21,6 @@ class RubyNavigationLesson(module: Module) : KLesson("Basic Navigation", module,
         typeForTest("Us")
         trigger("QuickImplementations")
       }
-      complete()
     }
 
   override val existedFile: String?
