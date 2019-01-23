@@ -226,7 +226,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     overriddenBC.getIosPackagingOptions().setPackageFileName("_flexunit.ipa");
     */
 
-    return Pair.create(moduleAndBC.first, ((FlexBuildConfiguration)overriddenBC));
+    return Pair.create(moduleAndBC.first, overriddenBC);
   }
 
   private void doCheck(final Project project, final Pair<Module, FlexBuildConfiguration> moduleAndBC) throws RuntimeConfigurationError {

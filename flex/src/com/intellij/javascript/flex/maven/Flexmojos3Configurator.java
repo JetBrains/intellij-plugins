@@ -514,7 +514,7 @@ public class Flexmojos3Configurator {
     }
 
     final List<RLMInfo> result = new ArrayList<>();
-    for (final Element moduleFilePathElement : (Iterable<Element>)moduleFilesElement.getChildren()) {
+    for (final Element moduleFilePathElement : moduleFilesElement.getChildren()) {
       final String path = moduleFilePathElement.getTextNormalize();
       if (path.endsWith(".mxml") || path.endsWith(".as")) {
         final String mainClassRelativePath = FileUtil.toSystemIndependentName(path);

@@ -21,14 +21,14 @@ public class OrderedPropertiesTest {
     props.load(new StringReader("Foo: Bar,\\\nnaf\nBar: naf\nBaz=naf\n"));
 
     Enumeration<Object> keys = props.keys();
-    assertThat((String)keys.nextElement(), equalTo("Foo"));
-    assertThat((String)keys.nextElement(), equalTo("Bar"));
-    assertThat((String)keys.nextElement(), equalTo("Baz"));
+    assertThat(keys.nextElement(), equalTo("Foo"));
+    assertThat(keys.nextElement(), equalTo("Bar"));
+    assertThat(keys.nextElement(), equalTo("Baz"));
 
     Enumeration<?> propertyNames = props.propertyNames();
-    assertThat((String)propertyNames.nextElement(), equalTo("Foo"));
-    assertThat((String)propertyNames.nextElement(), equalTo("Bar"));
-    assertThat((String)propertyNames.nextElement(), equalTo("Baz"));
+    assertThat(propertyNames.nextElement(), equalTo("Foo"));
+    assertThat(propertyNames.nextElement(), equalTo("Bar"));
+    assertThat(propertyNames.nextElement(), equalTo("Baz"));
 
     Iterator<String> iterator = props.stringPropertyNames().iterator();
     assertThat(iterator.next(), equalTo("Foo"));

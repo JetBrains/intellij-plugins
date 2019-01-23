@@ -29,7 +29,7 @@ public abstract class GenerateFlexUnitMethodActionBase extends ActionScriptBaseJ
 
       @Override
       protected BaseCreateMembersFix createFix(PsiElement clazz) {
-        return new BaseCreateMembersFix((JSClass)clazz) {
+        return new BaseCreateMembersFix(clazz) {
 
           @Override
           public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {

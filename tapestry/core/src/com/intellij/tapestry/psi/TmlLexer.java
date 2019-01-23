@@ -1,10 +1,11 @@
 package com.intellij.tapestry.psi;
 
-import com.intellij.lexer.*;
+import com.intellij.lexer.XHtmlLexer;
+import com.intellij.lexer.XmlLexer;
+import com.intellij.lexer._XmlLexer;
+import com.intellij.lexer.__XmlLexer;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.Reader;
 
 /**
  * @author Alexey Chmutov
@@ -61,7 +62,7 @@ public class TmlLexer extends XHtmlLexer {
   }
 
   public static XmlLexer createElAwareXmlLexer() {
-    final __XmlLexer internalLexer = new __XmlLexer((Reader)null);
+    final __XmlLexer internalLexer = new __XmlLexer(null);
     internalLexer.setElTypes(TelTokenTypes.TAP5_EL_CONTENT, TelTokenTypes.TAP5_EL_CONTENT);
     return new XmlLexer(new _XmlLexer(internalLexer));
   }

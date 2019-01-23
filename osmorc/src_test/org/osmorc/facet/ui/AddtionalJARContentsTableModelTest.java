@@ -25,9 +25,10 @@
 
 package org.osmorc.facet.ui;
 
+import org.junit.Test;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import org.junit.Test;
 
 /**
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
@@ -51,15 +52,15 @@ public class AddtionalJARContentsTableModelTest {
 
         testObject.addAdditionalJARContent("test1", "test2");
         assertThat(testObject.getRowCount(), equalTo(1));
-        assertThat((String) testObject.getValueAt(0, 0), equalTo("test1"));
-        assertThat((String) testObject.getValueAt(0, 1), equalTo("test2"));
+        assertThat(testObject.getValueAt(0, 0), equalTo("test1"));
+        assertThat(testObject.getValueAt(0, 1), equalTo("test2"));
 
         testObject.addAdditionalJARContent("test3", "test4");
         assertThat(testObject.getRowCount(), equalTo(2));
-        assertThat((String) testObject.getValueAt(0, 0), equalTo("test1"));
-        assertThat((String) testObject.getValueAt(0, 1), equalTo("test2"));
-        assertThat((String) testObject.getValueAt(1, 0), equalTo("test3"));
-        assertThat((String) testObject.getValueAt(1, 1), equalTo("test4"));
+        assertThat(testObject.getValueAt(0, 0), equalTo("test1"));
+        assertThat(testObject.getValueAt(0, 1), equalTo("test2"));
+        assertThat(testObject.getValueAt(1, 0), equalTo("test3"));
+        assertThat(testObject.getValueAt(1, 1), equalTo("test4"));
 
     }
 
@@ -71,15 +72,15 @@ public class AddtionalJARContentsTableModelTest {
 
         testObject.addAdditionalJARContent("test1", "test2");
         testObject.setValueAt("test3", 0, 0);
-        assertThat((String) testObject.getValueAt(0, 0), equalTo("test3"));
-        assertThat((String) testObject.getValueAt(0, 1), equalTo("test2"));
+        assertThat(testObject.getValueAt(0, 0), equalTo("test3"));
+        assertThat(testObject.getValueAt(0, 1), equalTo("test2"));
 
         testObject.setValueAt("test4", 0, 1);
-        assertThat((String) testObject.getValueAt(0, 0), equalTo("test3"));
-        assertThat((String) testObject.getValueAt(0, 1), equalTo("test4"));
+        assertThat(testObject.getValueAt(0, 0), equalTo("test3"));
+        assertThat(testObject.getValueAt(0, 1), equalTo("test4"));
 
         testObject.changeAdditionalJARConent(0, "test5", "test6");
-        assertThat((String) testObject.getValueAt(0, 0), equalTo("test5"));
-        assertThat((String) testObject.getValueAt(0, 1), equalTo("test6"));
+        assertThat(testObject.getValueAt(0, 0), equalTo("test5"));
+        assertThat(testObject.getValueAt(0, 1), equalTo("test6"));
     }
 }

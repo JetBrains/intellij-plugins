@@ -32,7 +32,6 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -126,7 +125,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private final FlexBreakpointsHandler myBreakpointsHandler;
   @NonNls private static final String FAULT_MARKER = "[Fault] ";
   private static final Logger LOG = Logger.getInstance(FlexDebugProcess.class.getName());
-  private static final boolean doSimpleTracing = ((ApplicationEx)ApplicationManager.getApplication()).isInternal();
+  private static final boolean doSimpleTracing = ApplicationManager.getApplication().isInternal();
 
   private Object myStackFrameEqualityObject;
   private Map<String, String> myQName2IdMap;

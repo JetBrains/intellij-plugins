@@ -118,7 +118,7 @@ class ComponentConsoleView implements ConsoleView, PlaceProvider<String> {
   public void printHyperlink(@NotNull String s, final HyperlinkInfo info) {
     if (myLength >= MAX_LENGTH) return;
 
-    myPanel.add((LinkLabel)LinkLabel.create(linkText(s), () -> info.navigate(myProject)));
+    myPanel.add(LinkLabel.create(linkText(s), () -> info.navigate(myProject)));
   }
 
   private static String linkText(String s) {

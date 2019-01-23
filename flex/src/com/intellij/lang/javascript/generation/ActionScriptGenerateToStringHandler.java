@@ -29,7 +29,7 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
   @Override
   protected BaseCreateMembersFix createFix(final PsiElement jsClass) {
 
-    return new BaseCreateMembersFix<JSVariable>((JSClass)jsClass) {
+    return new BaseCreateMembersFix<JSVariable>(jsClass) {
       @Override
       public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
         evalAnchor(editor, file);

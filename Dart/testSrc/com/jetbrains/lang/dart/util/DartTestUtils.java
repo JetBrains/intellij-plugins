@@ -95,7 +95,7 @@ public class DartTestUtils {
       "<caret(?: expected=\'([^\']*)\')?(?: completionEquals=\'([^\']*)\')?(?: completionIncludes=\'([^\']*)\')?(?: completionExcludes=\'([^\']*)\')?>");
     final List<CaretPositionInfo> result = new ArrayList<>();
 
-    WriteCommandAction.runWriteCommandAction(null, (Runnable)() -> {
+    WriteCommandAction.runWriteCommandAction(null, () -> {
       while (true) {
         Matcher m = caretPattern.matcher(document.getImmutableCharSequence());
         if (m.find()) {

@@ -71,7 +71,7 @@ public class KeystorePasswordDialog extends DialogWrapper {
       row++;
 
       if (signingOptions.getKeyAlias().isEmpty()) {
-        result.add(Trinity.create(signingOptions, keystorePasswordField, (JPasswordField)null));
+        result.add(Trinity.create(signingOptions, keystorePasswordField, null));
       }
       else {
         panel.add(new JLabel("Key alias:"), new GridBagConstraints(0, row, 1, 1, 0., 0., GridBagConstraints.WEST, GridBagConstraints.NONE,

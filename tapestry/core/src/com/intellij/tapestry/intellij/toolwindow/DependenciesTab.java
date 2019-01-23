@@ -122,7 +122,7 @@ public class DependenciesTab {
                             Object selectedObject = selectedNode.getUserObject();
 
                             Object selectedClass = ((DefaultMutableTreeNode) event.getNewLeadSelectionPath().getPath()[0]).getUserObject();
-                            IJavaClassType elementClass = ((IJavaClassType) ((PresentationLibraryElement) selectedClass).getElementClass());
+                            IJavaClassType elementClass = ((PresentationLibraryElement) selectedClass).getElementClass();
 
                             String text = null;
                             try {

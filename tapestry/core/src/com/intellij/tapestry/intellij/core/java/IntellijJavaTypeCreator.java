@@ -106,7 +106,8 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
 
         String packageName = ClassUtil.extractPackageName(type.getFullyQualifiedName());
         if (packageName.equals("java.lang")) {
-            if (ImportUtils.hasOnDemandImportConflict(type.getFullyQualifiedName(), (PsiJavaFile) ((IntellijJavaClassType) baseClass).getPsiClass().getContainingFile())) {
+            if (ImportUtils.hasOnDemandImportConflict(type.getFullyQualifiedName(),
+                                                      ((IntellijJavaClassType) baseClass).getPsiClass().getContainingFile())) {
 
                 IdeaUtils.runWriteCommand(
                   null, () -> {
