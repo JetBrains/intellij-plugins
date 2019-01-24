@@ -16,9 +16,9 @@ package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.graph.GraphManager;
 import com.intellij.openapi.graph.base.Node;
 import com.intellij.openapi.graph.builder.GraphBuilder;
@@ -77,13 +77,17 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
                                                                             view,
                                                                             myDataModel,
                                                                             presentationModel);
+    Disposer.register(this, myBuilder);
 
+    JComponent graphComponent = myBuilder.getView().getJComponent();
     setLayout(new BorderLayout());
 
-    add(createToolbarPanel(), BorderLayout.NORTH);
-    add(myBuilder.getView().getJComponent(), BorderLayout.CENTER);
+    ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(
+      ActionPlaces.TOOLBAR, GraphViewUtil.getCommonToolbarActions(), true);
+    toolbar.setTargetComponent(graphComponent);
 
-    Disposer.register(this, myBuilder);
+    add(toolbar.getComponent(), BorderLayout.NORTH);
+    add(graphComponent, BorderLayout.CENTER);
 
     myBuilder.initialize();
 
@@ -95,13 +99,6 @@ public class Struts2GraphComponent extends JPanel implements DataProvider, Dispo
         }
       }
     }, this);
-  }
-
-  private JComponent createToolbarPanel() {
-    final DefaultActionGroup actions = new DefaultActionGroup();
-    actions.add(GraphViewUtil.getBasicToolbar(myBuilder));
-    final ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("Struts2Graph", actions, true);
-    return actionToolbar.getComponent();
   }
 
   public List<DomElement> getSelectedDomElements() {
