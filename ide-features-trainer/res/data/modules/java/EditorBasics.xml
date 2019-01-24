@@ -7,6 +7,5 @@
   <lesson filename="05.Move.xml" lang="JAVA"/>
   <lesson filename="06.Collapse.xml" lang="JAVA"/>
   <lesson filename="07.MultipleSelections.xml" lang="JAVA"/>
-  <lesson filename="Python/01.Select.xml" lang="Python"/>
   <!--<lesson filename="ObjC/01.Select.xml" lang="OCLanguage"/> -->
 </module>

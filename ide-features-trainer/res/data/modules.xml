@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <modules>
     <module name="modules/java/EditorBasics.xml"/>
-    <module name="modules/go/EditorBasics.xml"/>
     <module name="modules/java/Completions.xml"/>
     <module name="modules/java/Refactorings.xml"/>
     <module name="modules/java/CodeAssistance.xml"/>
     <module name="modules/java/Navigation.xml"/>
     <!--Objective-C-->
+    <!--python-->
+    <module name="modules/python/EditorBasics.xml"/>
+    <!--go-->
+    <module name="modules/go/EditorBasics.xml"/>
     <!--Swift-->
     <module name="modules/swift/Editor.xml"/>
     <module name="modules/swift/Navigation.xml"/>
