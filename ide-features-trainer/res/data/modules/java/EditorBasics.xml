@@ -7,6 +7,6 @@
   <lesson-kt sample="05.Move.java.sample" implementationClass="training.learn.lesson.general.MoveLesson" lang="JAVA"/>
   <!--<lesson filename="05.Move.xml" lang="JAVA"/>-->
   <lesson filename="06.Collapse.xml" lang="JAVA"/>
-  <lesson filename="07.MultipleSelections.xml" lang="JAVA"/>
+  <lesson-kt implementationClass="training.learn.lesson.general.MultipleSelectionHtmlLesson"/>
   <!--<lesson filename="ObjC/01.Select.xml" lang="OCLanguage"/> -->
 </module>
