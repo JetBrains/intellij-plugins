@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.linter.tslint.ui;
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
 import com.intellij.javascript.nodejs.util.NodePackageField;
+import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.JSLinterBaseView;
@@ -84,6 +85,15 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
     final JPanel centerPanel = SwingHelper.wrapWithHorizontalStretch(panel);
     centerPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
     return centerPanel;
+  }
+
+  @Override
+  protected void handleEnableStatusChanged(boolean enabled) {
+    NodePackageRef selectedRef = myNodePackageField.getSelectedRef();
+    if (selectedRef == AutodetectLinterPackage.INSTANCE) {
+      UIUtil.setEnabled(myConfigFileView.getComponent(), false, true);
+    }
+    myConfigFileView.onEnabledStateChanged(enabled);
   }
 
   @NotNull
