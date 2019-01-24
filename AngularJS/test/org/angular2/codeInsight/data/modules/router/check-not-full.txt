@@ -22,6 +22,7 @@ AppRoutingModuleNotFullyResolved: Angular2SourceModule
         RouterOutlet: Angular2SourceDirective
       scope fully resolved: true
       exports fully resolved: true
+      declarations fully resolved: true
   declarations:
     MyDirective: Angular2SourceDirective
   exports:
@@ -35,3 +36,4 @@ AppRoutingModuleNotFullyResolved: Angular2SourceModule
     RouterOutlet: Angular2SourceDirective
   scope fully resolved: false
   exports fully resolved: true
+  declarations fully resolved: true

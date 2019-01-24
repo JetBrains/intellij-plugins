@@ -77,3 +77,4 @@ CommonModule: Angular2SourceModule
     uppercase: Angular2SourcePipe
   scope fully resolved: true
   exports fully resolved: true
+  declarations fully resolved: true

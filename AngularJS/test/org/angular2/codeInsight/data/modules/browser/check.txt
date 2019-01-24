@@ -14,9 +14,12 @@ BrowserModuleTest: Angular2SourceModule
             async: Angular2SourcePipe
           scope fully resolved: false
           exports fully resolved: false
+          declarations fully resolved: false
       scope:
+        async: Angular2SourcePipe
       scope fully resolved: true
       exports fully resolved: false
+      declarations fully resolved: true
   declarations:
     MyDirective: Angular2SourceDirective
   exports:
@@ -26,3 +29,4 @@ BrowserModuleTest: Angular2SourceModule
     async: Angular2SourcePipe
   scope fully resolved: false
   exports fully resolved: false
+  declarations fully resolved: true

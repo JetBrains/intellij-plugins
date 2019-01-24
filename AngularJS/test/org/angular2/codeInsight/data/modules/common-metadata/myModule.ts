@@ -12,7 +12,10 @@ export class MyDirective {
 
 @NgModule({
     imports: [
-       CommonModule
+        {
+            ngModule: CommonModule,
+            providers: []
+        }
     ],
     declarations: [
         MyDirective,

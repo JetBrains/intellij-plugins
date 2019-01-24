@@ -40,6 +40,11 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     }
 
     @Override
+    public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
+      //it's ok, if array does not have any children
+    }
+
+    @Override
     public void visitJSFunctionDeclaration(JSFunction node) {
       resolveFunctionReturnType(node);
     }

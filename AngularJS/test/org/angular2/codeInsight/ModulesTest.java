@@ -182,6 +182,10 @@ public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
         .append("exports fully resolved: ")
         .append(module.areExportsFullyResolved())
         .append('\n');
+      withIndent(level, result)
+        .append("declarations fully resolved: ")
+        .append(module.areDeclarationsFullyResolved())
+        .append('\n');
     }
   }
 

@@ -81,6 +81,7 @@ MyIonicModule: Angular2SourceModule
             uppercase: Angular2MetadataPipe
           scope fully resolved: true
           exports fully resolved: true
+          declarations fully resolved: true
       declarations:
         BooleanValueAccessor: Angular2MetadataDirective
         IonApp: Angular2MetadataComponent
@@ -371,6 +372,7 @@ MyIonicModule: Angular2SourceModule
         uppercase: Angular2MetadataPipe
       scope fully resolved: true
       exports fully resolved: true
+      declarations fully resolved: true
   declarations:
   exports:
   scope:
@@ -463,3 +465,4 @@ MyIonicModule: Angular2SourceModule
     VirtualItem: Angular2MetadataDirective
   scope fully resolved: true
   exports fully resolved: true
+  declarations fully resolved: true

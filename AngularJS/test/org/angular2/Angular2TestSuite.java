@@ -49,6 +49,7 @@ import org.junit.runners.Suite;
   PipesTest.class,
   ScopesTest.class,
   TagsTest.class,
+  ModulesTest.class,
   FormattingTest.class,
   EmptyEventHandlerInspectionTest.class,
   Angular2ExpressionTypeInspectionTest.class,

@@ -79,6 +79,7 @@ CommonModuleMetadataTest: Angular2SourceModule
         uppercase: Angular2MetadataPipe
       scope fully resolved: true
       exports fully resolved: true
+      declarations fully resolved: true
   declarations:
     MyDirective: Angular2SourceDirective
     async: Angular2MetadataPipe
@@ -114,3 +115,4 @@ CommonModuleMetadataTest: Angular2SourceModule
     uppercase: Angular2MetadataPipe
   scope fully resolved: true
   exports fully resolved: true
+  declarations fully resolved: true

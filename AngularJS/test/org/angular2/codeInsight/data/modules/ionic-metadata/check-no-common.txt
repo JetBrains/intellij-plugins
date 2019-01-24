@@ -268,6 +268,7 @@ MyIonicModule: Angular2SourceModule
         VirtualItem: Angular2MetadataDirective
       scope fully resolved: false
       exports fully resolved: true
+      declarations fully resolved: true
   declarations:
   exports:
   scope:
@@ -360,3 +361,4 @@ MyIonicModule: Angular2SourceModule
     VirtualItem: Angular2MetadataDirective
   scope fully resolved: true
   exports fully resolved: true
+  declarations fully resolved: true
