@@ -122,6 +122,21 @@
     <localInspection implementationClass="org.angular2.inspections.Angular2DirectiveSelectorInspection"
                      displayName="Directive Selector Property"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2DeclarationMembershipInModuleInspection"
+                     displayName="Declaration Membership in NgModule"
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2ModuleEntityTypeMismatchInspection"
+                     displayName="Imported or Declared Symbol in NgModule With Missing or Incorrect Decorator."
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2ModuleRecursiveImportExportInspection"
+                     displayName="NgModule Recursive Import or Export."
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2ModuleUndeclaredExportInspection"
+                     displayName="Undeclared NgModule Export"
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2InvalidEntryComponentInspection"
+                     displayName="Invalid Entry or Bootstrap Component"
+                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"

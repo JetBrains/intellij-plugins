@@ -1,28 +1,28 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.source;
 
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
-import org.angular2.entities.*;
-import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
+import org.angular2.entities.Angular2Declaration;
+import org.angular2.entities.Angular2Entity;
+import org.angular2.entities.Angular2Module;
+import org.angular2.entities.Angular2ModuleResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static org.angular2.Angular2DecoratorUtil.getProperty;
-import static org.angular2.entities.Angular2ModuleResolver.NG_MODULE_PROP;
 
 public class Angular2SourceModule extends Angular2SourceEntity implements Angular2Module {
 
@@ -62,10 +62,14 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
     return myModuleResolver.areExportsFullyResolved();
   }
 
+  @Override
+  public boolean areDeclarationsFullyResolved() {
+    return myModuleResolver.areDeclarationsFullyResolved();
+  }
 
   private static <T extends Angular2Entity> Pair<Set<T>, Boolean> collectSymbols(@NotNull ES6Decorator decorator,
-                                                                                  @NotNull String propertyName,
-                                                                                  @NotNull Class<T> symbolClazz) {
+                                                                                 @NotNull String propertyName,
+                                                                                 @NotNull Class<T> symbolClazz) {
     JSProperty property = getProperty(decorator, propertyName);
     if (property == null) {
       return Pair.pair(Collections.emptySet(), true);
@@ -73,123 +77,52 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
     return new SourceSymbolCollector<>(symbolClazz).collect(property.getValue());
   }
 
-  private static class SourceSymbolCollector<T extends Angular2Entity> extends JSElementVisitor {
+  private static class SourceSymbolCollector<T extends Angular2Entity> extends Angular2SourceEntityListProcessor<T> {
 
-    private final Stack<PsiElement> myResolveStack = new Stack<>();
-    private final Class<T> mySymbolClazz;
-    private final Set<T> myResult = new HashSet<>();
     private boolean myIsFullyResolved = true;
+    private final Set<T> myResult = new HashSet<>();
+    private final Stack<PsiElement> myResolveQueue = new Stack<>();
 
-    SourceSymbolCollector(@NotNull Class<T> symbolClazz) {
-      mySymbolClazz = symbolClazz;
+    SourceSymbolCollector(@NotNull Class<T> entityClass) {
+      super(entityClass);
     }
 
     public Pair<Set<T>, Boolean> collect(@Nullable JSExpression value) {
       if (value == null) {
         return Pair.pair(myResult, false);
       }
-      myResolveStack.push(value);
-      while (!myResolveStack.empty()) {
-        myResolveStack.pop().accept(this);
+      myResolveQueue.push(value);
+      while (!myResolveQueue.empty()) {
+        PsiElement element = myResolveQueue.pop();
+        List<PsiElement> children = resolve(element);
+        if (children.isEmpty()) {
+          element.accept(getResultsVisitor());
+        }
+        else {
+          myResolveQueue.addAll(children);
+        }
       }
       return Pair.pair(myResult, myIsFullyResolved);
     }
 
     @Override
-    public void visitElement(PsiElement element) {
+    protected void processNonEntityClass(@NotNull JSClass aClass) {
       myIsFullyResolved = false;
     }
 
     @Override
-    public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
-      myResolveStack.addAll(asList(node.getExpressions()));
+    protected void processEntity(@NotNull T entity) {
+      myResult.add(entity);
     }
 
     @Override
-    public void visitJSReferenceExpression(JSReferenceExpression node) {
-      push(node.resolve());
-    }
-
-    @Override
-    public void visitJSVariable(JSVariable node) {
-      // TODO try to use stub here
-      push(node.getInitializer());
-    }
-
-    @Override
-    public void visitJSClass(JSClass aClass) {
-      myIsFullyResolved &= tryAddEntity(aClass);
-    }
-
-    @Override
-    public void visitJSCallExpression(JSCallExpression node) {
-      push(node.getStubSafeMethodExpression());
-    }
-
-    @Override
-    public void visitJSFunctionDeclaration(JSFunction node) {
-      resolveFunctionReturnType(node);
-    }
-
-    @Override
-    public void visitJSFunctionExpression(JSFunctionExpression node) {
-      resolveFunctionReturnType(node);
-    }
-
-    private void resolveFunctionReturnType(@NotNull JSFunction function) {
-      Set<JSResolvedTypeId> visitedTypes = new HashSet<>();
-      boolean lookingForModule = mySymbolClazz.isAssignableFrom(Angular2Module.class);
-      if (lookingForModule) {
-        Angular2MetadataFunction metadataFunction = Angular2EntitiesProvider.findMetadataFunction(function);
-        Angular2Module module;
-        if (metadataFunction != null
-            && (module = metadataFunction.getReferencedModule()) != null) {
-          //noinspection unchecked
-          myResult.add((T)module);
-          return;
-        }
-      }
-      JSType type = function.getReturnType();
-      while (type != null && visitedTypes.add(type.getResolvedTypeId())) {
-        JSRecordType recordType = type.asRecordType();
-        JSRecordType.PropertySignature ngModuleSignature;
-        if (lookingForModule
-            && (ngModuleSignature = recordType.findPropertySignature(NG_MODULE_PROP)) != null) {
-          type = ngModuleSignature.getType();
-        }
-        else {
-          PsiElement sourceElement = type.getSourceElement();
-          if (sourceElement instanceof TypeScriptSingleType) {
-            JSReferenceExpression expression = ((TypeScriptSingleType)sourceElement).getReferenceExpression();
-            if (expression != null
-                && tryAddEntity(ObjectUtils.tryCast(expression.resolve(), JSClass.class))) {
-              return;
-            }
-          }
-          JSRecordType.CallSignature constructor = ContainerUtil.find(recordType.getCallSignatures(),
-                                                                      JSRecordType.CallSignature::hasNew);
-          type = ObjectUtils.doIfNotNull(constructor, JSRecordType.CallSignature::getReturnType);
-        }
-      }
+    protected void processAnyType() {
       myIsFullyResolved = false;
     }
 
-    private boolean tryAddEntity(@Nullable JSClass aClass) {
-      T entity = ObjectUtils.tryCast(Angular2EntitiesProvider.getEntity(aClass), mySymbolClazz);
-      if (entity != null) {
-        myResult.add(entity);
-        return true;
-      }
-      return false;
-    }
-
-    private void push(@Nullable PsiElement element) {
-      if (element != null) {
-        myResolveStack.push(element);
-      }
-      else {
-        myIsFullyResolved = false;
-      }
+    @Override
+    protected void processAnyElement(JSElement node) {
+      myIsFullyResolved = false;
     }
   }
 }

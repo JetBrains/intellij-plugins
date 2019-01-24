@@ -1,8 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -19,6 +22,14 @@ public class Angular2ModuleResolver<T extends PsiElement> {
 
   public static final String NG_MODULE_PROP = "ngModule";
 
+  private static final String KEYS_PREFIX = "angular.moduleResolver.";
+  private static final Key<CachedValue<ResolvedModuleList<Angular2Declaration>>> DECLARATIONS_KEY =
+    new Key<>(KEYS_PREFIX + DECLARATIONS_PROP);
+  private static final Key<CachedValue<ResolvedModuleList<Angular2Module>>> IMPORTS_KEY =
+    new Key<>(KEYS_PREFIX + IMPORTS_PROP);
+  private static final Key<CachedValue<ResolvedModuleList<Angular2Entity>>> EXPORTS_KEY =
+    new Key<>(KEYS_PREFIX + EXPORTS_PROP);
+
   private final Supplier<T> mySourceSupplier;
   private final SymbolCollector<T> mySymbolCollector;
 
@@ -30,90 +41,64 @@ public class Angular2ModuleResolver<T extends PsiElement> {
 
   @NotNull
   public Set<Angular2Declaration> getDeclarations() {
-    return getResolvedModuleScope().myDeclarations;
+    return getResolvedModuleList(DECLARATIONS_KEY, Angular2Declaration.class).list;
   }
 
   @NotNull
   public Set<Angular2Module> getImports() {
-    return getResolvedModuleScope().myImports;
+    return getResolvedModuleList(IMPORTS_KEY, Angular2Module.class).list;
   }
 
   @NotNull
   public Set<Angular2Entity> getExports() {
-    return getResolvedModuleExports().myExports;
+    return getResolvedModuleList(EXPORTS_KEY, Angular2Entity.class).list;
   }
 
   public boolean isScopeFullyResolved() {
-    return getResolvedModuleScope().myIsScopeFullyResolved;
+    if (!getResolvedModuleList(DECLARATIONS_KEY, Angular2Declaration.class).isFullyResolved) {
+      return false;
+    }
+    ResolvedModuleList<Angular2Module> imports = getResolvedModuleList(IMPORTS_KEY, Angular2Module.class);
+    return imports.isFullyResolved
+           && ContainerUtil.find(imports.list, m -> !m.areExportsFullyResolved()) == null;
   }
 
   public boolean areExportsFullyResolved() {
-    return getResolvedModuleExports().myAreExportsFullyResolved;
+    ResolvedModuleList<Angular2Entity> exports = getResolvedModuleList(EXPORTS_KEY, Angular2Entity.class);
+    return exports.isFullyResolved
+           && ContainerUtil.find(exports.list, m -> m instanceof Angular2Module
+                                                    && !((Angular2Module)m).areExportsFullyResolved()) == null;
+  }
+
+  public boolean areDeclarationsFullyResolved() {
+    return getResolvedModuleList(DECLARATIONS_KEY, Angular2Declaration.class).isFullyResolved;
   }
 
   @NotNull
-  private ResolvedModuleScope getResolvedModuleScope() {
+  private <U extends Angular2Entity> ResolvedModuleList<U> getResolvedModuleList(@NotNull Key<CachedValue<ResolvedModuleList<U>>> key,
+                                                                                 @NotNull Class<U> entityClass) {
     final T source = mySourceSupplier.get();
     @SuppressWarnings("UnnecessaryLocalVariable") final SymbolCollector<T> symbolCollector = mySymbolCollector;
-    return CachedValuesManager.getCachedValue(source, () -> {
-      ResolvedModuleScope resolvedModule = resolveModuleScope(source, symbolCollector);
-      return CachedValueProvider.Result.create(resolvedModule, PsiModificationTracker.MODIFICATION_COUNT);
-    });
-  }
-
-  @NotNull
-  private ResolvedModuleExports getResolvedModuleExports() {
-    final T source = mySourceSupplier.get();
-    @SuppressWarnings("UnnecessaryLocalVariable") final SymbolCollector<T> symbolCollector = mySymbolCollector;
-    return CachedValuesManager.getCachedValue(source, () -> {
-      ResolvedModuleExports resolvedModule = resolveModuleExports(source, symbolCollector);
-      return CachedValueProvider.Result.create(resolvedModule, PsiModificationTracker.MODIFICATION_COUNT);
-    });
-  }
-
-  private static <T> ResolvedModuleScope resolveModuleScope(@NotNull T source, SymbolCollector<T> symbolCollector) {
-    Pair<Set<Angular2Declaration>, Boolean> declarations = symbolCollector.collect(source, DECLARATIONS_PROP, Angular2Declaration.class);
-    Pair<Set<Angular2Module>, Boolean> imports = symbolCollector.collect(source, IMPORTS_PROP, Angular2Module.class);
-    return new ResolvedModuleScope(declarations.first, imports.first,
-                                   declarations.second == Boolean.TRUE
-                                   && imports.second == Boolean.TRUE
-                                   && ContainerUtil.find(imports.first, module -> !module.areExportsFullyResolved()) == null);
-  }
-
-  private static <T> ResolvedModuleExports resolveModuleExports(@NotNull T source, SymbolCollector<T> symbolCollector) {
-    Pair<Set<Angular2Entity>, Boolean> exports = symbolCollector.collect(source, EXPORTS_PROP, Angular2Entity.class);
-    return new ResolvedModuleExports(exports.first,
-                                     exports.second == Boolean.TRUE);
+    return CachedValuesManager.getCachedValue(source, key, () ->
+      CachedValueProvider.Result.create(new ResolvedModuleList<>(symbolCollector.collect(
+        source,
+        StringUtil.trimStart(key.toString(), KEYS_PREFIX),
+        entityClass)), PsiModificationTracker.MODIFICATION_COUNT));
   }
 
   public interface SymbolCollector<T> {
     <U extends Angular2Entity> Pair<Set<U>, Boolean> collect(@NotNull T source,
-                                                              @NotNull String propertyName,
-                                                              @NotNull Class<U> symbolClazz);
+                                                             @NotNull String propertyName,
+                                                             @NotNull Class<U> symbolClazz);
   }
 
-  private static class ResolvedModuleScope {
-    final Set<Angular2Declaration> myDeclarations;
-    final Set<Angular2Module> myImports;
-    final boolean myIsScopeFullyResolved;
+  private static class ResolvedModuleList<T extends Angular2Entity> {
+    final Set<T> list;
+    final boolean isFullyResolved;
 
-    private ResolvedModuleScope(Set<Angular2Declaration> declarations,
-                                Set<Angular2Module> imports,
-                                boolean isScopeFullyResolved) {
-      myDeclarations = Collections.unmodifiableSet(declarations);
-      myImports = Collections.unmodifiableSet(imports);
-      myIsScopeFullyResolved = isScopeFullyResolved;
-    }
-  }
-
-  private static class ResolvedModuleExports {
-    final Set<Angular2Entity> myExports;
-    final boolean myAreExportsFullyResolved;
-
-    private ResolvedModuleExports(Set<Angular2Entity> exports,
-                                  boolean areExportsFullyResolved) {
-      myExports = Collections.unmodifiableSet(exports);
-      myAreExportsFullyResolved = areExportsFullyResolved;
+    private ResolvedModuleList(@NotNull Pair<Set<T>, Boolean> resolutionResult) {
+      list = Collections.unmodifiableSet(resolutionResult.first);
+      isFullyResolved = resolutionResult.second == Boolean.TRUE;
     }
   }
 }

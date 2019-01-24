@@ -55,23 +55,28 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
     return myModuleResolver.areExportsFullyResolved();
   }
 
-  private static <T extends Angular2Entity> Pair<Set<T>, Boolean> collectSymbols(Angular2MetadataModule source,
-                                                                                  String propertyName,
-                                                                                  Class<T> entityClass) {
+  @Override
+  public boolean areDeclarationsFullyResolved() {
+    return myModuleResolver.areDeclarationsFullyResolved();
+  }
+
+  private static <T extends Angular2Entity> Pair<Set<T>, Boolean> collectSymbols(@NotNull Angular2MetadataModule source,
+                                                                                 @NotNull String propertyName,
+                                                                                 @NotNull Class<T> entityClass) {
     StubElement propertyStub = source.getStub().getModuleConfigPropertyValueStub(propertyName);
     if (propertyStub == null) {
       return Pair.pair(Collections.emptySet(), true);
     }
     boolean allResolved = true;
     Set<T> result = new HashSet<>();
-    Stack<PsiElement> toResolve = new Stack<>(propertyStub.getPsi());
-    while (!toResolve.empty()) {
-      PsiElement element = toResolve.pop();
+    Stack<PsiElement> resolveQueue = new Stack<>(propertyStub.getPsi());
+    while (!resolveQueue.empty()) {
+      PsiElement element = resolveQueue.pop();
       if (element instanceof Angular2MetadataArray) {
-        toResolve.addAll(asList(element.getChildren()));
+        resolveQueue.addAll(asList(element.getChildren()));
       }
       else if (element instanceof Angular2MetadataReference) {
-        toResolve.push(((Angular2MetadataReference)element).resolve());
+        resolveQueue.push(((Angular2MetadataReference)element).resolve());
       }
       else if (element != null
                && entityClass.isAssignableFrom(element.getClass())) {

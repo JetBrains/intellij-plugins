@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
@@ -44,14 +45,11 @@ public class Angular2DirectiveSelectorInspection extends LocalInspectionTool {
                                      new AddJSPropertyQuickFix(initializer, SELECTOR_PROP, "", 0, false));
             }
             else {
-              PsiElement location = doIfNotNull(tryCast(decorator.getExpression(), JSCallExpression.class),
-                                                JSCallExpression::getMethodExpression);
-              if (location != null) {
-                holder.registerProblem(location,
-                                       "Component is missing 'selector' property. Assuming default 'ng-component' selector.",
-                                       ProblemHighlightType.WEAK_WARNING,
-                                       new AddJSPropertyQuickFix(initializer, SELECTOR_PROP, "", 0, false));
-              }
+              holder.registerProblem(decorator,
+                                     "Component is missing 'selector' property. Assuming default 'ng-component' selector.",
+                                     ProblemHighlightType.WEAK_WARNING,
+                                     getDecoratorNameRange(decorator),
+                                     new AddJSPropertyQuickFix(initializer, SELECTOR_PROP, "", 0, false));
             }
           }
           else if ((text = getExpressionStringValue(selector.getValue())) != null) {
@@ -66,5 +64,16 @@ public class Angular2DirectiveSelectorInspection extends LocalInspectionTool {
         }
       }
     };
+  }
+
+  private static TextRange getDecoratorNameRange(ES6Decorator decorator) {
+    PsiElement location = doIfNotNull(tryCast(decorator.getExpression(), JSCallExpression.class),
+                                      JSCallExpression::getMethodExpression);
+    if (location != null) {
+      return new TextRange(0, location.getTextRange().getEndOffset() - decorator.getTextOffset());
+    }
+    else {
+      return new TextRange(0, decorator.getTextLength());
+    }
   }
 }

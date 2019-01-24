@@ -38,6 +38,8 @@ public class Angular2DecoratorUtil {
   public static final String IMPORTS_PROP = "imports";
   public static final String EXPORTS_PROP = "exports";
   public static final String DECLARATIONS_PROP = "declarations";
+  public static final String ENTRY_COMPONENTS_PROP = "entryComponents";
+  public static final String BOOTSTRAP_PROP = "bootstrap";
 
   public static final String TEMPLATE_URL_PROP = "templateUrl";
   public static final String TEMPLATE_PROP = "template";

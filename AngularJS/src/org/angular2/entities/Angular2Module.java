@@ -13,31 +13,39 @@ public interface Angular2Module extends Angular2Entity {
   @NotNull
   Set<Angular2Declaration> getDeclarations();
 
+  boolean areDeclarationsFullyResolved();
+
   @NotNull
   Set<Angular2Module> getImports();
 
   @NotNull
   Set<Angular2Entity> getExports();
 
-  boolean isScopeFullyResolved();
-
   boolean areExportsFullyResolved();
+
+  boolean isScopeFullyResolved();
 
   @NotNull
   default Set<Angular2Declaration> getDeclarationsInScope() {
     Set<Angular2Declaration> result = new HashSet<>(getDeclarations());
-    Stack<Angular2Module> moduleStack = new Stack<>(getImports());
-    while (!moduleStack.empty()) {
-      Angular2Module module = moduleStack.pop();
-      for (Angular2Entity export : module.getExports()) {
-        if (export instanceof Angular2Module) {
-          moduleStack.push((Angular2Module)export);
-        }
-        else if (export instanceof Angular2Declaration) {
-          result.add((Angular2Declaration)export);
-        }
-        else {
-          throw new IllegalArgumentException("Class " + export.getClass() + " extends neither Angular2Module nor Angular2Declaration");
+    Set<Angular2Module> processedModules = ContainerUtil.newHashSet(this);
+    Stack<Angular2Module> moduleQueue = new Stack<>(getImports());
+    getExports().forEach(e -> {
+      if (e instanceof Angular2Module) moduleQueue.add((Angular2Module)e);
+    });
+    while (!moduleQueue.empty()) {
+      Angular2Module module = moduleQueue.pop();
+      if (processedModules.add(module)) {
+        for (Angular2Entity export : module.getExports()) {
+          if (export instanceof Angular2Module) {
+            moduleQueue.push((Angular2Module)export);
+          }
+          else if (export instanceof Angular2Declaration) {
+            result.add((Angular2Declaration)export);
+          }
+          else {
+            throw new IllegalArgumentException("Class " + export.getClass() + " extends neither Angular2Module nor Angular2Declaration");
+          }
         }
       }
     }
