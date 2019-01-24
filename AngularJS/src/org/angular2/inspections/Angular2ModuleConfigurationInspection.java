@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
@@ -20,8 +21,8 @@ import org.angular2.entities.Angular2Module;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
@@ -105,21 +106,28 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
       myModule = module;
     }
 
-    protected void checkRecursionOfImports(@NotNull Angular2Module module) throws RecurrentImportException {
-      checkRecursionOfImports(ContainerUtil.newHashSet(myModule), module);
+    protected void checkCyclicDependencies(@NotNull Angular2Module module) {
+      try {
+        checkCyclicDependencies(ContainerUtil.newLinkedHashSet(myModule), module);
+      }
+      catch (RecurrentImportException e) {
+        registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, e.getMessage());
+      }
     }
 
-    private static void checkRecursionOfImports(@NotNull Set<Angular2Module> visitedModules,
+    private static void checkCyclicDependencies(@NotNull LinkedHashSet<Angular2Module> visitedModules,
                                                 @NotNull Angular2Module module) throws RecurrentImportException {
       if (!visitedModules.add(module)) {
-        throw new RecurrentImportException();
+        throw new RecurrentImportException("Cyclic dependency of modules: "
+                                           + StringUtil.join(visitedModules, Angular2Module::getName, " -> ")
+                                           + " -> " + module.getName());
       }
       for (Angular2Module child : module.getImports()) {
-        checkRecursionOfImports(visitedModules, child);
+        checkCyclicDependencies(visitedModules, child);
       }
       for (Angular2Entity child : module.getExports()) {
         if (child instanceof Angular2Module) {
-          checkRecursionOfImports(visitedModules, (Angular2Module)child);
+          checkCyclicDependencies(visitedModules, (Angular2Module)child);
         }
       }
       visitedModules.remove(module);
@@ -141,15 +149,11 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
     @Override
     protected void processEntity(@NotNull Angular2Module module) {
       if (module.equals(myModule)) {
-        registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, "Module '" + module.getName() + "' cannot import itself");
+        registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
+                        "Module '" + module.getName() + "' cannot import itself");
       }
       else {
-        try {
-          checkRecursionOfImports(module);
-        }
-        catch (RecurrentImportException e) {
-          registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, "Module '" + module.getName() + "' is recursively imported.");
-        }
+        checkCyclicDependencies(module);
       }
     }
   }
@@ -174,15 +178,11 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
     protected void processEntity(@NotNull Angular2Entity entity) {
       if (entity instanceof Angular2Module) {
         if (entity.equals(myModule)) {
-          registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, "Module '" + entity.getName() + "' cannot export itself");
+          registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
+                          "Module '" + entity.getName() + "' cannot export itself");
         }
         else {
-          try {
-            checkRecursionOfImports((Angular2Module)entity);
-          }
-          catch (RecurrentImportException e) {
-            registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT, "Module '" + entity.getName() + "' is recursively exported.");
-          }
+          checkCyclicDependencies((Angular2Module)entity);
         }
       }
       else if (entity instanceof Angular2Declaration) {
@@ -191,7 +191,10 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
                           "Cannot export '" +
                           notNull(doIfNotNull(entity.getTypeScriptClass(), TypeScriptClass::getName),
                                   () -> entity.getName()) +
-                          "' as it was neither declared nor imported.");
+                          "' as it is neither declared nor imported by the module.",
+                          Objects.requireNonNull(myModule).isScopeFullyResolved()
+                          ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                          : ProblemHighlightType.WEAK_WARNING);
         }
       }
       else {
@@ -201,5 +204,8 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
   }
 
   private static final class RecurrentImportException extends Exception {
+    private RecurrentImportException(String message) {
+      super(message);
+    }
   }
 }

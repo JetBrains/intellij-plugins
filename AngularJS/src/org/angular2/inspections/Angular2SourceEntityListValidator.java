@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.JBIterable;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.TreeTraversal;
 import org.angular2.entities.Angular2Entity;
@@ -16,9 +16,7 @@ import org.angular2.entities.source.Angular2SourceEntityListProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.function.Supplier;
-
+import static java.util.Collections.singletonList;
 import static org.angular2.Angular2DecoratorUtil.getProperty;
 
 abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E extends Enum> extends Angular2SourceEntityListProcessor<T> {
@@ -27,7 +25,7 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
   private final String myPropertyName;
   private ES6Decorator myDecorator;
   private ValidationResults<E> myResults;
-  private Supplier<JBIterable<PsiElement>> myBackTraceSupplier;
+  private TreeTraversal.TracingIt<PsiElement> myIterator;
 
   protected Angular2SourceEntityListValidator(@NotNull Class<T> entityClass, String propertyName) {
     super(entityClass);
@@ -42,18 +40,18 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
     if (property == null || (value = property.getValue()) == null) {
       return;
     }
-    TreeTraversal.TracingIt<PsiElement> it = TreeTraversal.LEAVES_DFS
-      .traversal(Collections.singletonList(value), this::resolve)
+    myIterator = TreeTraversal.LEAVES_DFS
+      .traversal(singletonList(value), this::resolve)
       .typedIterator();
-    myBackTraceSupplier = it::backtrace;
-    while (it.advance()) {
-      it.current().accept(getResultsVisitor());
+    while (myIterator.advance()) {
+      myIterator.current().accept(getResultsVisitor());
     }
   }
 
   @NotNull
   protected PsiElement locateProblemElement() {
-    for (PsiElement el : myBackTraceSupplier.get()) {
+    for (PsiElement el : ContainerUtil.concat(singletonList(myIterator.current()),
+                                              myIterator.backtrace())) {
       if (myDecorator.getTextRange().contains(el.getTextRange())) {
         return el;
       }

@@ -72,7 +72,7 @@ public class Angular2InvalidEntryComponentInspection extends LocalInspectionTool
     @Override
     protected void processAnyElement(JSElement node) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
-                      "Expression resolution contains non-class symbols.");
+                      "Expression does not resolve to an array of class types or a class type.");
     }
 
     @Override
