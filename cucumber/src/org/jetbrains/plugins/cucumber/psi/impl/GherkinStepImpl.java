@@ -197,11 +197,8 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
 
   @Override
   public String getName() {
-    final ASTNode keyword = getKeyword();
-    final int keywordLength = keyword != null ? keyword.getTextLength() : 0;
-    return getText().substring(keywordLength).trim();
+    return getElementText();
   }
-
 
   @NotNull
   @Override

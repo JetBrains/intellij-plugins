@@ -33,6 +33,10 @@ public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder
 
   ASTNode getKeyword();
 
+  /**
+   * Deprecated
+   * Use getName() instead
+   */
   String getStepName();
 
   @Nullable
