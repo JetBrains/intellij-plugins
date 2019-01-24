@@ -36,14 +36,11 @@ class CourseManager internal constructor() {
 
   var showGotMessage = false
 
-  private val modulesId2modules: MutableMap<String, Module> = mutableMapOf()
-
   init {
     initXmlModules()
   }
 
   fun clearModules() {
-    modulesId2modules.clear()
     modules.clear()
   }
 
@@ -56,25 +53,7 @@ class CourseManager internal constructor() {
         modules.add(module)
       }
     }
-    mergeModules()
   }
-
-  private fun mergeModules() {
-    // leave only uniques XmlModule id
-    modules.forEach { if (it.id != null && !modulesId2modules.keys.contains(it.id!!)) modulesId2modules.put(it.id!!, it) }
-    modules.forEach {
-      val mergedModule = modulesId2modules.get(it.id)
-      it.lessons.forEach { lesson -> mergedModule!!.addLesson(lesson) }
-    }
-    modules = modulesId2modules.values.toCollection(arrayListOf())
-  }
-
-  fun getModuleById(id: String): Module? {
-    val modules = modules
-    if (modules.isEmpty()) return null
-    return modules.firstOrNull { it.id?.toUpperCase() == id.toUpperCase() }
-  }
-
 
   //TODO: remove this method or convert XmlModule to a Module
   fun registerVirtualFile(module: Module, virtualFile: VirtualFile) {
@@ -84,21 +63,6 @@ class CourseManager internal constructor() {
   fun isVirtualFileRegistered(virtualFile: VirtualFile): Boolean {
     return mapModuleVirtualFile.containsValue(virtualFile)
   }
-
-  fun unregisterVirtualFile(virtualFile: VirtualFile) {
-    if (!mapModuleVirtualFile.containsValue(virtualFile)) return
-    for (module in mapModuleVirtualFile.keys) {
-      if (mapModuleVirtualFile[module] == virtualFile) {
-        mapModuleVirtualFile.remove(module)
-        return
-      }
-    }
-  }
-
-  fun unregisterModule(module: XmlModule) {
-    mapModuleVirtualFile.remove(module)
-  }
-
 
   /**
    * @param projectWhereToOpen -- where to open projectWhereToOpen
