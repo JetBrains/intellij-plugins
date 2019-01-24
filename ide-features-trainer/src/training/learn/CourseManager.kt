@@ -57,11 +57,7 @@ class CourseManager internal constructor() {
 
   //TODO: remove this method or convert XmlModule to a Module
   fun registerVirtualFile(module: Module, virtualFile: VirtualFile) {
-    mapModuleVirtualFile.put(module, virtualFile)
-  }
-
-  fun isVirtualFileRegistered(virtualFile: VirtualFile): Boolean {
-    return mapModuleVirtualFile.containsValue(virtualFile)
+    mapModuleVirtualFile[module] = virtualFile
   }
 
   /**
@@ -122,7 +118,7 @@ class CourseManager internal constructor() {
    * @return null if lesson has no module or it is only one lesson in module
    */
   fun giveNextLesson(currentLesson: Lesson): Lesson? {
-    val module = currentLesson.module ?: throw Exception("Current lesson doesn't have parent module")
+    val module = currentLesson.module
     val lessons = module.lessons
     val size = lessons.size
     if (size == 1) return null
@@ -135,7 +131,6 @@ class CourseManager internal constructor() {
   fun giveNextModule(currentLesson: Lesson): Module? {
     var nextModule: Module? = null
     val module = currentLesson.module
-    val modules = CourseManager.instance.modules ?: return null
     val size = modules.size
     if (size == 1) return null
 
@@ -156,8 +151,7 @@ class CourseManager internal constructor() {
   }
 
   companion object {
-    val LEARN_PROJECT_NAME = "LearnProject"
-    val NOTIFICATION_ID = "Training plugin"
+    const val NOTIFICATION_ID = "Training plugin"
 
     val instance: CourseManager
       get() = ServiceManager.getService(CourseManager::class.java)
