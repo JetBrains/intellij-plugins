@@ -18,7 +18,7 @@ class GoLangSupport : AbstractLangSupport() {
   private val acceptableLanguages = setOf("go", "html")
   override fun acceptLang(ext: String) = acceptableLanguages.contains(ext.toLowerCase())
 
-  override val FILE_EXTENSION: String
+  override val primaryLanguage: String
     get() = "go"
 
   override fun checkSdk(sdk: Sdk?, project: Project) {}

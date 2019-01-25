@@ -29,7 +29,7 @@ class JavaLangSupport : AbstractLangSupport() {
   private val acceptableLanguages = setOf("java", "kt", "html")
   override fun acceptLang(ext: String) = acceptableLanguages.contains(ext.toLowerCase())
 
-  override val FILE_EXTENSION: String
+  override val primaryLanguage: String
     get() = "java"
 
   override fun applyProjectSdk(sdk: Sdk, project: Project) {

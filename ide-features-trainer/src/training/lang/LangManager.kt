@@ -6,7 +6,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.extensions.ExtensionPointName
-import training.learn.CourseManager
 import training.ui.LearnToolWindowFactory
 import training.util.findLanguageByID
 
@@ -40,7 +39,6 @@ class LangManager : PersistentStateComponent<LangManager.State> {
   fun updateLangSupport(langSupport: LangSupport) {
     myLangSupport = langSupport
     myState.languageName  = supportedLanguagesExtensions.find { it.instance == langSupport }?.language ?: throw Exception("Unable to get language.")
-    CourseManager.instance.updateModules()
     LearnToolWindowFactory.learnWindowPerProject.values.forEach{ it.reinitViews() }
   }
 
