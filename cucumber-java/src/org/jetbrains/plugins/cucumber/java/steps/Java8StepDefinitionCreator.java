@@ -150,7 +150,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
     final SnippetGenerator generator = new SnippetGenerator(new Java8Snippet());
 
     String snippetTemplate = generator.getSnippet(cucumberStep, new FunctionNameGenerator(new CamelCaseConcatenator()));
-    String snippet = escapeStepDefinition(snippetTemplate, step);
+    String snippet = processGeneratedStepDefinition(snippetTemplate, step);
 
     JVMElementFactory factory = JVMElementFactories.requireFactory(language, step.getProject());
     PsiElement expression =  factory.createExpressionFromText(snippet, step);
@@ -175,7 +175,7 @@ public class Java8StepDefinitionCreator extends JavaStepDefinitionCreator {
       .replace("${PARAMETERS}", lambda.getParameterList().getText())
       .replace("${BODY}\n", "");
 
-    text = escapeStepDefinition(text, step);
+    text = processGeneratedStepDefinition(text, snippetExpression);
 
     return factory.createExpressionFromText(text, step);
   }

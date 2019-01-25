@@ -217,7 +217,11 @@ public class CucumberJavaUtil {
 
   @Nullable
   public static String getPatternFromStepDefinition(@NotNull final PsiAnnotation stepAnnotation) {
-    return AnnotationUtil.getStringAttributeValue(stepAnnotation, null);
+    String result = AnnotationUtil.getStringAttributeValue(stepAnnotation, null);
+    if (result != null) {
+      result = result.replaceAll("\\\\", "\\\\\\\\");
+    }
+    return result;
   }
 
   @Nullable

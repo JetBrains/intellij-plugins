@@ -8,6 +8,10 @@ public class CucumberJavaCreateStepTest extends AbstractCucumberJavaCreateStepTe
     doTest(true);
   }
 
+  public void testStepWithSlash() {
+    doTest(false);
+  }
+
   public void testJava8Step() {
     doTest(false);
   }

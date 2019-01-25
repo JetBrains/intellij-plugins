@@ -243,10 +243,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
     return file.getName();
   }
 
-  static String escapeStepDefinition(@NotNull String stepDefinition, @NotNull PsiElement context) {
-    return stepDefinition.replace("PendingException", CucumberJavaUtil.getCucumberPendingExceptionFqn(context))
-      .replaceAll("\\\\\\\\", "\\\\")
-      .replaceAll("\\\\d", "\\\\\\\\d");
+  public static String processGeneratedStepDefinition(@NotNull String stepDefinition, @NotNull PsiElement context) {
+    return stepDefinition.replace("PendingException", CucumberJavaUtil.getCucumberPendingExceptionFqn(context));
   }
 
   @NotNull
@@ -268,7 +266,8 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       snippet = replaceRegexpWithCucumberExpression(snippet, step.getStepName());
     }
 
-    snippet = escapeStepDefinition(snippet, step).replaceFirst("@", methodAnnotation);
+    snippet = snippet.replaceFirst("@", methodAnnotation);
+    snippet = processGeneratedStepDefinition(snippet, step);
 
     JVMElementFactory factory = JVMElementFactories.requireFactory(language, step.getProject());
     PsiMethod methodFromCucumberLibraryTemplate = factory.createMethodFromText(snippet, step);
@@ -316,7 +315,7 @@ public class JavaStepDefinitionCreator extends AbstractStepDefinitionCreator {
       .replace("${METHOD_NAME}", methodFromSnippet.getName())
       .replace("${PARAMETERS}", methodFromSnippet.getParameterList().getText()).replace("${BODY}\n", "");
 
-    text = escapeStepDefinition(text, step);
+    text = processGeneratedStepDefinition(text, methodFromSnippet);
 
     return factory.createMethodFromText(text, step);
   }
