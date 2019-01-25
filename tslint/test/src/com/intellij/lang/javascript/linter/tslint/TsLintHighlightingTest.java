@@ -47,7 +47,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     doEditorHighlightingTest("one.ts");
   }
 
-  public void testCustomConfigFileSupported() {
+  public void testWithCustomConfigFile() {
     doEditorHighlightingTest("ts.ts", () -> {
       TsLintConfiguration configuration = TsLintConfiguration.getInstance(myFixture.getProject());
       TsLintState newState = new TsLintState.Builder(configuration.getExtendedState().getState())
