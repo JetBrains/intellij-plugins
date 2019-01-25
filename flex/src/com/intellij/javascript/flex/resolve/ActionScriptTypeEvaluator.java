@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.resolve.context.JSApplyContextElement;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
 import com.intellij.lang.javascript.psi.util.JSUtils;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
@@ -197,5 +198,18 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
       }
     }
     super.addType(_type, source);
+  }
+
+  @NotNull
+  @Override
+  protected JSType createTypeForThisExpression(@NotNull JSContext staticOrInstance,
+                                               @NotNull JSClass jsClass,
+                                               @NotNull JSTypeSource typeSource) {
+    String name = jsClass.getQualifiedName();
+    if (name == null) {
+      Logger.getInstance(ActionScriptTypeEvaluator.class).error(new IllegalArgumentException("name can't be null"));
+      return JSAnyType.get(typeSource);
+    }
+    return JSNamedTypeFactory.createType(name, typeSource, staticOrInstance);
   }
 }
