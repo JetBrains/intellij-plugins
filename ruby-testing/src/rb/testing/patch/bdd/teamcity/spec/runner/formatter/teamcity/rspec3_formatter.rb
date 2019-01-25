@@ -176,7 +176,7 @@ module Spec
           # Backtrace
 
           if example_notification.respond_to? :fully_formatted_lines
-            backtrace_lines = example_notification.fully_formatted_lines(0)
+            backtrace_lines = example_notification.fully_formatted_lines(0, RSpec::Core::Notifications::NullColorizer)
           else
             backtrace_lines = example_notification.formatted_backtrace
           end
