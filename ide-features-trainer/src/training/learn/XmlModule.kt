@@ -2,8 +2,6 @@ package training.learn
 
 import org.jdom.Element
 import org.jdom.JDOMException
-import training.lang.LangManager
-import training.lang.LangSupport
 import training.learn.exceptons.BadLessonException
 import training.learn.exceptons.BadModuleException
 import training.learn.interfaces.Lesson
@@ -21,27 +19,26 @@ import training.util.GenModuleXml.*
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
-import java.util.function.Consumer
 
 /**
  * @author Sergey Karashevich
  */
-class XmlModule(override val name: String, moduleXmlPath: String, private val root: Element): Module {
+class XmlModule(override val name: String,
+                moduleXmlPath: String,
+                private val root: Element,
+                override val primaryLanguage: String?): Module {
 
   override val description: String?
 
   //used for lessons filtered by LangManger chosen lang
-  override var lessons: MutableList<Lesson> = ArrayList<Lesson>()
+  override val lessons: ArrayList<Lesson> = ArrayList()
   override val sanitizedName: String
     get() = name.replace("[^\\dA-Za-z ]".toRegex(), "").replace("\\s+".toRegex(), "")
   override var id: String? = null
   override lateinit var moduleType: ModuleType
 
-  private val allLessons = ArrayList<Lesson>()
-  private val moduleUpdateListeners = ArrayList<ModuleUpdateListener>()
-
-  val answersPath: String?
-  var sdkType: ModuleSdkType?
+  private val answersPath: String?
+  private var sdkType: ModuleSdkType?
 
   enum class ModuleSdkType {
     JAVA
@@ -65,18 +62,8 @@ class XmlModule(override val name: String, moduleXmlPath: String, private val ro
     initLessons(modulePath)
   }
 
-  fun setMySdkType(mySdkType: ModuleSdkType?) {
-    this.sdkType = mySdkType
-  }
-
-  private fun filterLessonsByCurrentLang(): MutableList<Lesson> {
-    val langManager = LangManager.getInstance()
-    if (langManager.isLangUndefined()) return allLessons
-    return filterLessonByLang(langManager.getLangSupport())
-  }
-
-  override fun filterLessonByLang(langSupport: LangSupport): MutableList<Lesson> {
-    return allLessons.filter { langSupport.acceptLang(it.lang) }.toMutableList()
+  override fun toString(): String {
+    return "($name for $primaryLanguage : $root)"
   }
 
   override fun giveNotPassedLesson(): Lesson? {
@@ -91,13 +78,7 @@ class XmlModule(override val name: String, moduleXmlPath: String, private val ro
     return lessons.any { !it.passed }
   }
 
-  override fun update() {
-    lessons = filterLessonsByCurrentLang()
-    moduleUpdateListeners.forEach(Consumer<ModuleUpdateListener> { it.onUpdate() })
-  }
-
   private fun initLessons(modulePath: String) {
-
     if (root.getAttribute(MODULE_LESSONS_PATH_ATTR) != null) {
 
       //retrieve list of xml files inside lessonsPath directory
@@ -111,7 +92,6 @@ class XmlModule(override val name: String, moduleXmlPath: String, private val ro
         }
       }
     }
-    lessons = filterLessonsByCurrentLang()
   }
 
   private fun addXmlLesson(lessonElement: Element, lessonsPath: String) {
@@ -120,7 +100,7 @@ class XmlModule(override val name: String, moduleXmlPath: String, private val ro
     try {
       val scenario = Scenario(lessonPath)
       val lesson = XmlLesson(scenario = scenario, lang = scenario.lang, module = this)
-      allLessons.add(lesson)
+      lessons.add(lesson)
     } catch (e: JDOMException) {
       //XmlLesson file is corrupted
       throw BadLessonException("Probably lesson file is corrupted: $lessonPath JDOMException:$e")
@@ -151,7 +131,7 @@ class XmlModule(override val name: String, moduleXmlPath: String, private val ro
     }
     if (lesson !is KLesson)
       throw BadLessonException("Field " + MODULE_LESSON_IMPLEMENTATION_ATTR + " should specify reference to existed class")
-    allLessons.add(lesson)
+    lessons.add(lesson)
   }
 
   override fun equals(other: Any?): Boolean {
@@ -172,14 +152,10 @@ class XmlModule(override val name: String, moduleXmlPath: String, private val ro
     return result
   }
 
-  inner class ModuleUpdateListener : EventListener {
-    internal fun onUpdate() {}
-  }
-
   companion object {
 
     @Throws(BadModuleException::class, BadLessonException::class, JDOMException::class, IOException::class, URISyntaxException::class)
-    fun initModule(modulePath: String): XmlModule? {
+    fun initModule(modulePath: String, primaryLanguage: String?): XmlModule? {
       //load xml with lessons
 
       //Check DOM with XmlModule
@@ -187,7 +163,7 @@ class XmlModule(override val name: String, moduleXmlPath: String, private val ro
       if (root.getAttribute(GenModuleXml.MODULE_NAME_ATTR) == null) return null
       val name = root.getAttribute(GenModuleXml.MODULE_NAME_ATTR).value
 
-      return XmlModule(name, modulePath, root)
+      return XmlModule(name, modulePath, root, primaryLanguage)
 
     }
 

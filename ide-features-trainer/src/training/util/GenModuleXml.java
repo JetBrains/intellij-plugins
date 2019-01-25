@@ -20,6 +20,8 @@ public class GenModuleXml {
     public final static String MODULE_ALLMODULE_FILENAME = "modules.xml";
     public final static String MODULE_MODULES_PATH = "modules/";
     public final static String MODULE_TYPE_ATTR = "module";
+    public final static String LANGUAGE_NODE_ATTR = "language";
+    public final static String LANGUAGE_NAME_ATTR = "lang";
 
     public final static String MODULE_NAME_ATTR = "name";
     private final static String MODULE_XML_VER_ATTR = "version";
