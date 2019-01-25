@@ -5,10 +5,21 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.Language;
+import com.intellij.lang.javascript.completion.JSLookupElementInsertHandler;
 import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
+import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser;
+import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser.FunctionTypeWithKind;
+import com.intellij.lang.javascript.ecmascript6.types.OverloadPriority;
+import com.intellij.lang.javascript.psi.JSFunctionType;
+import com.intellij.lang.javascript.psi.JSParameterTypeDecorator;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
+import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PatternCondition;
@@ -21,6 +32,7 @@ import com.intellij.psi.impl.source.xml.XmlAttributeReference;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -36,23 +48,21 @@ import org.angular2.codeInsight.attributes.Angular2AttributesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributesProvider.CompletionResultsConsumer;
 import org.angular2.css.Angular2CssAttributeNameCompletionProvider;
 import org.angular2.css.Angular2CssExpressionCompletionProvider;
-import org.angular2.entities.Angular2Component;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Module;
+import org.angular2.entities.*;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
+import org.angular2.lang.expr.psi.Angular2PipeExpression;
+import org.angular2.lang.expr.psi.Angular2PipeLeftSideArgument;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 
 import static com.intellij.codeInsight.completion.XmlAttributeReferenceCompletionProvider.isValidVariant;
+import static com.intellij.lang.javascript.psi.types.JSCompositeTypeBaseImpl.isNullOrUndefinedType;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
@@ -109,8 +119,47 @@ public class Angular2CompletionContributor extends CompletionContributor {
           || r instanceof JSReferenceExpressionImpl);
       }
       if (ref instanceof Angular2PipeReferenceExpression) {
-        for (String controller : Angular2EntitiesProvider.getAllPipeNames(((Angular2PipeReferenceExpression)ref).getProject())) {
-          result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, controller, NG_VARIABLE_PRIORITY, false, false));
+        Set<Angular2Pipe> scope = getModuleScope(parameters.getPosition());
+        JSType actualType = calcActualType(((Angular2PipeReferenceExpression)ref));
+        for (Map.Entry<String, List<Angular2Pipe>> pipeEntry : Angular2EntitiesProvider
+          .getAllPipes(((Angular2PipeReferenceExpression)ref).getProject()).entrySet()) {
+          List<Angular2Pipe> candidates = pipeEntry.getValue();
+          if (candidates.isEmpty()) {
+            return;
+          }
+          Angular2Pipe match = scope == null
+                               ? candidates.get(0)
+                               : ContainerUtil.find(pipeEntry.getValue(), scope::contains);
+          LookupElementBuilder builder = LookupElementBuilder.create(pipeEntry.getKey())
+            .withIcon(AngularJSIcons.Angular2)
+            .withTypeText("pipe", null, true)
+            .withInsertHandler(new JSLookupElementInsertHandler(false, null));
+          Consumer<LookupElementBuilder> addResult = el ->
+            result.consume(PrioritizedLookupElement.withPriority(el, NG_VARIABLE_PRIORITY.getPriorityValue()));
+          if (match != null) {
+            List<TypeScriptFunction> transformMethods = ContainerUtil.newArrayList(match.getTransformMethods());
+            if (!transformMethods.isEmpty() && actualType != null) {
+              Collections.sort(transformMethods,
+                               Comparator.comparingInt(f -> isNullOrUndefinedType(f.getReturnType()) ? 1 : 0));
+              List<FunctionTypeWithKind> resolveResults = new JSTypeSignatureChooser(
+                parameters.getPosition(), Collections.singletonList(actualType), null, JSTypeDeclaration.EMPTY_ARRAY
+              ).chooseOverload(ContainerUtil.map(transformMethods, TypeScriptTypeParser::buildFunctionType), true);
+              for (FunctionTypeWithKind resolved : resolveResults) {
+                if (resolved.getOverloadType().isAssignable()
+                    || resolved.getOverloadType() == OverloadPriority.INCORRECT_PARAMETERS_LENGTH) {
+                  JSFunctionType f = resolved.getJsFunction();
+                  addResult.accept(builder.withTypeText(renderPipeTypeText(f, pipeEntry.getKey()), true));
+                  break;
+                }
+              }
+            }
+            else {
+              addResult.accept(builder);
+            }
+          }
+          else {
+            addResult.accept(builder.withItemTextForeground(SimpleTextAttributes.GRAYED_ATTRIBUTES.getFgColor()));
+          }
         }
         result.stopHere();
       }
@@ -129,6 +178,44 @@ public class Angular2CompletionContributor extends CompletionContributor {
       }
     }
 
+    private static JSType calcActualType(Angular2PipeReferenceExpression ref) {
+      Angular2PipeExpression pipeCall = (Angular2PipeExpression)ref.getParent();
+      Angular2PipeLeftSideArgument leftSideArgument = pipeCall.getLeftSideArgument();
+      return leftSideArgument != null ? JSResolveUtil.getExpressionJSType(leftSideArgument.getExpression())
+                                      : null;
+    }
+
+    private static String renderPipeTypeText(JSFunctionType f, String pipeName) {
+      StringBuilder result = new StringBuilder();
+      result.append('[');
+      boolean first = true;
+      for (JSParameterTypeDecorator param : f.getParameters()) {
+        JSType type = param.getSimpleType();
+        result.append("<")
+          .append(type == null ? "*" : type.getTypeText()
+            .replaceAll("\\|(null|undefined)", "")
+            .replaceAll("String\\((.*?)\\)", "$1"))
+          .append(param.isOptional() ? "?" : "")
+          .append(">");
+        if (first) {
+          result.append(" | ")
+            .append(pipeName);
+          first = false;
+        }
+        result.append(":");
+      }
+      result.setLength(result.length() - 1);
+      JSType type = f.getReturnType();
+      return StringUtil.shortenTextWithEllipsis(
+        result
+          .append("] : <")
+          .append(type == null ? "?" : type.getTypeText()
+            .replaceAll("\\|(null|undefined)", ""))
+          .append(">")
+          .toString(),
+        50, 0, true);
+    }
+
     private static JSLookupPriority calcPriority(@NotNull JSPsiElementBase element) {
       if (Angular2Processor.$ANY.equals(element.getName())) {
         return NG_$ANY_PRIORITY;
@@ -136,6 +223,13 @@ public class Angular2CompletionContributor extends CompletionContributor {
       return Angular2DecoratorUtil.isPrivateMember(element)
              ? NG_PRIVATE_VARIABLE_PRIORITY
              : NG_VARIABLE_PRIORITY;
+    }
+
+    @Nullable
+    private static Set<Angular2Pipe> getModuleScope(@NotNull PsiElement element) {
+      Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
+        Angular2IndexingHandler.findComponentClass(element)), Angular2Component::getModule);
+      return module != null ? module.getPipesInScope() : null;
     }
   }
 
@@ -213,9 +307,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
 
     @Nullable
-    private static Set<Angular2Directive> getModuleScope(@NotNull XmlTag tag) {
+    private static Set<Angular2Directive> getModuleScope(@NotNull PsiElement element) {
       Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
-        Angular2IndexingHandler.findComponentClass(tag)), Angular2Component::getModule);
+        Angular2IndexingHandler.findComponentClass(element)), Angular2Component::getModule);
       return module != null ? module.getDirectivesInScope() : null;
     }
   }

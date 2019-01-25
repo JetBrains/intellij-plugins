@@ -2,18 +2,22 @@
 package org.angular2.codeInsight.refs;
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
+import org.angular2.entities.Angular2Element;
 import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.Angular2Pipe;
 import org.angularjs.codeInsight.refs.AngularJSReferenceBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static org.angular2.Angular2DecoratorUtil.PIPE_DEC;
 
 public class Angular2PipeNameReferencesProvider extends PsiReferenceProvider {
 
@@ -37,11 +41,11 @@ public class Angular2PipeNameReferencesProvider extends PsiReferenceProvider {
     @Nullable
     @Override
     public PsiElement resolveInner() {
-      String pipeName = getElement().getStringValue();
-      return pipeName != null ?
-             ObjectUtils.doIfNotNull(Angular2EntitiesProvider.findPipe(getElement().getProject(), pipeName),
-                                     Angular2Pipe::getSourceElement)
-                              : null;
+      ES6Decorator decorator = PsiTreeUtil.getParentOfType(getElement(), ES6Decorator.class);
+      if (decorator != null && PIPE_DEC.equals(decorator.getDecoratorName())) {
+        return doIfNotNull(Angular2EntitiesProvider.getPipe(decorator), Angular2Element::getSourceElement);
+      }
+      return null;
     }
 
     @NotNull

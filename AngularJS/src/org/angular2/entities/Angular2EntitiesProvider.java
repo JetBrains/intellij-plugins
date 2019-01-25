@@ -21,8 +21,10 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import one.util.streamex.StreamEx;
 import org.angular2.entities.metadata.psi.*;
 import org.angular2.entities.source.Angular2SourceComponent;
 import org.angular2.entities.source.Angular2SourceDirective;
@@ -36,11 +38,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
-import static com.intellij.util.containers.ContainerUtil.concat;
-import static com.intellij.util.containers.ContainerUtil.newHashSet;
 import static java.util.stream.Collectors.toMap;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.index.Angular2IndexingHandler.NG_MODULE_INDEX_NAME;
@@ -120,18 +120,19 @@ public class Angular2EntitiesProvider {
     return findDirectivesCandidates(project, Angular2EntityUtils.getAttributeDirectiveIndexName(attributeName));
   }
 
-  @Nullable
-  public static Angular2Pipe findPipe(@NotNull Project project, @NotNull String name) {
-    JSImplicitElement pipe = AngularIndexUtil.resolve(project, Angular2SourcePipeIndex.KEY, name);
-    if (pipe != null) {
-      return getPipe(pipe);
-    }
-    Ref<Angular2Pipe> res = new Ref<>();
+  @NotNull
+  public static List<Angular2Pipe> findPipes(@NotNull Project project, @NotNull String name) {
+    List<Angular2Pipe> result = new SmartList<>();
+    AngularIndexUtil.multiResolve(
+      project, Angular2SourcePipeIndex.KEY, name, pipe -> {
+        ContainerUtil.addIfNotNull(result, getPipe(pipe));
+        return true;
+      });
     processMetadataEntities(project, name, Angular2MetadataPipe.class, Angular2MetadataPipeIndex.KEY, p -> {
-      res.set(p);
-      return false;
+      result.add(p);
+      return true;
     });
-    return res.get();
+    return result;
   }
 
   @NotNull
@@ -152,20 +153,28 @@ public class Angular2EntitiesProvider {
 
   @NotNull
   public static Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
-    return Stream.concat(
-      AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project).stream(),
-      AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project).stream())
-      .filter(name -> Angular2EntityUtils.isElementDirectiveIndexName(name)
-                      && !Angular2EntityUtils.getElementName(name).isEmpty())
-      .collect(toMap(name -> Angular2EntityUtils.getElementName(name),
-                     name -> findDirectivesCandidates(project, name),
-                     ContainerUtil::concat));
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
+      StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project))
+        .append(AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project))
+        .filter(name -> Angular2EntityUtils.isElementDirectiveIndexName(name)
+                        && !Angular2EntityUtils.getElementName(name).isEmpty())
+        .distinct(Angular2EntityUtils::getElementName)
+        .collect(toMap(Angular2EntityUtils::getElementName,
+                       name -> findDirectivesCandidates(project, name))),
+      PsiModificationTracker.MODIFICATION_COUNT)
+    );
   }
 
   @NotNull
-  public static Collection<String> getAllPipeNames(@NotNull Project project) {
-    return newHashSet(concat(AngularIndexUtil.getAllKeys(Angular2SourcePipeIndex.KEY, project),
-                             AngularIndexUtil.getAllKeys(Angular2MetadataPipeIndex.KEY, project)));
+  public static Map<String, List<Angular2Pipe>> getAllPipes(@NotNull Project project) {
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
+      StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourcePipeIndex.KEY, project))
+        .append(AngularIndexUtil.getAllKeys(Angular2MetadataPipeIndex.KEY, project))
+        .distinct()
+        .collect(toMap(Function.identity(),
+                       name -> findPipes(project, name))),
+      PsiModificationTracker.MODIFICATION_COUNT)
+    );
   }
 
   public static boolean isPipeTransformMethod(@Nullable PsiElement element) {

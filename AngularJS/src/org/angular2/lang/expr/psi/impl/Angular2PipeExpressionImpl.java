@@ -12,12 +12,14 @@ import com.intellij.util.ObjectUtils;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2PipeExpression;
+import org.angular2.lang.expr.psi.Angular2PipeLeftSideArgument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.PIPE_ARGUMENTS_LIST;
+import static org.angular2.lang.expr.parser.Angular2ElementTypes.PIPE_LEFT_SIDE_ARGUMENT;
 
 public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angular2PipeExpression, JSCallLikeExpressionCommon {
 
@@ -72,6 +74,14 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
     final ASTNode node = findChildByType(PIPE_ARGUMENTS_LIST);
     assert node != null;
     return node.getPsi(JSArgumentList.class);
+  }
+
+  @Nullable
+  @Override
+  public Angular2PipeLeftSideArgument getLeftSideArgument() {
+    final ASTNode node = findChildByType(PIPE_LEFT_SIDE_ARGUMENT);
+    assert node != null;
+    return node.getPsi(Angular2PipeLeftSideArgument.class);
   }
 
   @NotNull

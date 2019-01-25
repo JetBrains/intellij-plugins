@@ -17,16 +17,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Module;
 import org.angular2.entities.Angular2Pipe;
+import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 
 public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionResolver {
 
@@ -55,13 +58,28 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
       return new JSTypeSignatureChooser(((JSCallExpression)expression.getParent())).chooseOverload(results);
     }
     assert myReferencedName != null;
-    final Angular2Pipe pipe = Angular2EntitiesProvider.findPipe(myParent.getProject(), myReferencedName);
+
+
+    List<Angular2Pipe> candidates = Angular2EntitiesProvider.findPipes(expression.getProject(), myReferencedName);
+    final Angular2Pipe pipe;
+    if (!candidates.isEmpty()) {
+      Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
+        Angular2IndexingHandler.findComponentClass(expression)), Angular2Component::getModule);
+      Set<Angular2Pipe> scope = module != null ? module.getPipesInScope() : null;
+      if (scope == null) {
+        pipe = candidates.get(0);
+      }
+      else {
+        pipe = ContainerUtil.find(candidates, scope::contains);
+      }
+    }
+    else {
+      pipe = null;
+    }
     if (pipe != null) {
       if (!pipe.getTransformMethods().isEmpty()) {
-        return pipe.getTransformMethods()
-          .stream()
-          .map(JSResolveResult::new)
-          .toArray(ResolveResult[]::new);
+        return ContainerUtil.map2Array(pipe.getTransformMethods(), ResolveResult.EMPTY_ARRAY,
+                                       JSResolveResult::new);
       }
       return new ResolveResult[]{new JSResolveResult(ObjectUtils.notNull(pipe.getTypeScriptClass(), pipe.getSourceElement()))};
     }
