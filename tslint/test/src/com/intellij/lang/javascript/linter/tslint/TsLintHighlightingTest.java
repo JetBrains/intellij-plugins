@@ -44,7 +44,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testOne() {
-    doEditorHighlightingTest("one/one.ts");
+    doEditorHighlightingTest("one.ts");
   }
 
   public void testCustomConfigFileSupported() {
@@ -150,7 +150,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   private void doFixTest(String mainFileName, String intentionDescription) {
-    String testDir = getTestName(true);
+    String testDir = getTestName(false);
     doEditorHighlightingTest(mainFileName + ".ts");
 
     IntentionAction intention = myFixture.getAvailableIntention(intentionDescription);
