@@ -18,7 +18,7 @@ import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoJavaModuleException
 import training.learn.interfaces.Lesson
 import training.learn.interfaces.Module
-import training.util.GenModuleXml
+import training.util.XmlModuleConstants
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -50,13 +50,13 @@ class CourseManager internal constructor() {
   }
 
   fun initXmlModules() {
-    val modulesRoot = XmlModule.getRootFromPath(GenModuleXml.MODULE_ALLMODULE_FILENAME)
+    val modulesRoot = XmlModule.getRootFromPath(XmlModuleConstants.MODULE_ALLMODULE_FILENAME)
     for (language in modulesRoot.children) {
-      if (language.name == GenModuleXml.LANGUAGE_NODE_ATTR) {
-        val primaryLanguage = language.getAttribute(GenModuleXml.LANGUAGE_NAME_ATTR).value
+      if (language.name == XmlModuleConstants.LANGUAGE_NODE_ATTR) {
+        val primaryLanguage = language.getAttribute(XmlModuleConstants.LANGUAGE_NAME_ATTR).value
         for (element in language.children) {
-          if (element.name == GenModuleXml.MODULE_TYPE_ATTR) {
-            val moduleFilename = element.getAttribute(GenModuleXml.MODULE_NAME_ATTR).value
+          if (element.name == XmlModuleConstants.MODULE_TYPE_ATTR) {
+            val moduleFilename = element.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR).value
             val module = XmlModule.initModule(moduleFilename, primaryLanguage)
                 ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
             allModules.add(module)
