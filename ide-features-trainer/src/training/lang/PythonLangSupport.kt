@@ -31,8 +31,8 @@ class PythonLangSupport : AbstractLangSupport() {
   private val acceptableLanguages = setOf("python", "html")
   override fun acceptLang(ext: String) = acceptableLanguages.contains(ext.toLowerCase())
 
-  override val FILE_EXTENSION: String
-    get() = "py"
+  override val primaryLanguage: String
+    get() = "python"
 
 
   override fun getSdkForProject(project: Project): Sdk {

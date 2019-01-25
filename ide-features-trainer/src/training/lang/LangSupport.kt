@@ -11,7 +11,7 @@ import training.learn.exceptons.NoSdkException
  */
 interface LangSupport {
 
-    val FILE_EXTENSION: String
+    val primaryLanguage: String
     val defaultProjectName: String
     companion object {
         val EP_NAME = "training.TrainingLangExtension"

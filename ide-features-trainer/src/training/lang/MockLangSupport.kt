@@ -6,7 +6,7 @@ import com.intellij.openapi.projectRoots.Sdk
 /**
  * @author Sergey Karashevich
  */
-class MockLangSupport(override val FILE_EXTENSION: String) : AbstractLangSupport() {
+class MockLangSupport(override val primaryLanguage: String) : AbstractLangSupport() {
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }

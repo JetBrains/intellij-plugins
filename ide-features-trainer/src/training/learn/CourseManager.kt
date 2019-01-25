@@ -8,9 +8,9 @@ import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.IdeFocusManager
+import com.intellij.util.containers.ContainerUtil
 import training.actions.OpenLessonAction
 import training.lang.LangManager
 import training.lang.LangSupport
@@ -27,7 +27,12 @@ class CourseManager internal constructor() {
   var learnProject: Project? = null
   var learnProjectPath: String? = null
   var mapModuleVirtualFile = HashMap<Module, VirtualFile>()
-  var modules: MutableList<Module> = ArrayList()
+
+  private var allModules: MutableList<Module> = ArrayList()
+
+  val modules: List<Module>
+    get() = filterByLanguage(LangManager.getInstance().getLanguageDisplayName())
+
   val currentProject: Project?
     get() {
       val lastFocusedFrame = IdeFocusManager.getGlobalInstance().lastFocusedFrame ?: return null
@@ -41,17 +46,25 @@ class CourseManager internal constructor() {
   }
 
   fun clearModules() {
-    modules.clear()
+    allModules.clear()
   }
 
   fun initXmlModules() {
     val modulesRoot = XmlModule.getRootFromPath(GenModuleXml.MODULE_ALLMODULE_FILENAME)
-    for (element in modulesRoot.children) {
-      if (element.name == GenModuleXml.MODULE_TYPE_ATTR) {
-        val moduleFilename = element.getAttribute(GenModuleXml.MODULE_NAME_ATTR).value
-        val module = XmlModule.initModule(moduleFilename) ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
-        modules.add(module)
+    for (language in modulesRoot.children) {
+      if (language.name == GenModuleXml.LANGUAGE_NODE_ATTR) {
+        val primaryLanguage = language.getAttribute(GenModuleXml.LANGUAGE_NAME_ATTR).value
+        for (element in language.children) {
+          if (element.name == GenModuleXml.MODULE_TYPE_ATTR) {
+            val moduleFilename = element.getAttribute(GenModuleXml.MODULE_NAME_ATTR).value
+            val module = XmlModule.initModule(moduleFilename, primaryLanguage)
+                ?: throw Exception("Unable to init module (is null) from file: $moduleFilename")
+            allModules.add(module)
+          }
+          else throw IllegalArgumentException("Unknown attribute name " + element.name)
+        }
       }
+      else throw IllegalArgumentException("Unknown attribute name " + language.name)
     }
   }
 
@@ -94,11 +107,6 @@ class CourseManager internal constructor() {
         .flatMap { it.lessons }
         .firstOrNull { it.name.toUpperCase() == lessonName.toUpperCase() }
   }
-
-  fun updateModules() {
-    modules.forEach { it.update() }
-  }
-
 
   fun calcNotPassedLessons(): Int {
     if (modules.isEmpty()) return 0
@@ -145,9 +153,13 @@ class CourseManager internal constructor() {
   }
 
   fun calcLessonsForLanguage(langSupport: LangSupport): Int {
-    val inc = Ref(0)
-    modules.forEach { module -> inc.set(inc.get() + module.filterLessonByLang(langSupport).size) }
-    return inc.get()
+    return ContainerUtil.concat(filterByLanguage(langSupport.primaryLanguage).map { m -> m.lessons }).size
+  }
+
+  private fun filterByLanguage(language: String): List<Module> {
+    return allModules.filter { m ->
+          m.primaryLanguage!!.equals(language, ignoreCase = true)
+    }
   }
 
   companion object {

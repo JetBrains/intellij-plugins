@@ -62,8 +62,8 @@ class RubyLangSupport : AbstractLangSupport() {
   override val defaultProjectName:String
     get() = rubyProjectName
 
-  override val FILE_EXTENSION: String
-    get() = "rb"
+  override val primaryLanguage: String
+    get() = "ruby"
 
   override fun applyToProjectAfterConfigure(): (Project) -> Unit = { project ->
     val tempDirectory = FileUtil.createTempDirectory("bundler_gem", null, true)
