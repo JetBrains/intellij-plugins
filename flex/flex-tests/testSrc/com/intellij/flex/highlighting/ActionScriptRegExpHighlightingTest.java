@@ -2,6 +2,7 @@ package com.intellij.flex.highlighting;
 
 import com.intellij.flex.util.ActionScriptDaemonAnalyzerTestCase;
 import com.intellij.flex.util.FlexTestUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
@@ -15,6 +16,7 @@ public class ActionScriptRegExpHighlightingTest extends ActionScriptDaemonAnalyz
     defaultTest();
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");

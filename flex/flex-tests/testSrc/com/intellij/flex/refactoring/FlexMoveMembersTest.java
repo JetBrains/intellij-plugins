@@ -46,11 +46,13 @@ public class FlexMoveMembersTest extends MultiFileTestCase {
     return "moveMembers/";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

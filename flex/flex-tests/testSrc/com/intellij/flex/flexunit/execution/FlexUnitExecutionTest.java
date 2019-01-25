@@ -114,11 +114,13 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
     FlexTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("flexUnit");
@@ -192,7 +194,7 @@ public abstract class FlexUnitExecutionTest extends CodeInsightTestCase implemen
   }
 
   @Override
-  protected void runBareRunnable(ThrowableRunnable<Throwable> runnable) throws Throwable {
+  protected void runBareRunnable(@NotNull ThrowableRunnable<Throwable> runnable) throws Throwable {
     runnable.run();
   }
 

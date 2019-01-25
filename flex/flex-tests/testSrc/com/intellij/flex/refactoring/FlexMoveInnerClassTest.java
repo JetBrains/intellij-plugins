@@ -37,6 +37,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
     return "move_inner/";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
@@ -50,6 +51,7 @@ public class FlexMoveInnerClassTest extends MultiFileTestCase {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

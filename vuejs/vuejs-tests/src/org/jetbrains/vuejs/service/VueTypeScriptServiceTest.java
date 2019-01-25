@@ -20,6 +20,7 @@ import static org.jetbrains.vuejs.language.VueTestUtilKt.getVueTestDataPath;
 public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   private static final String BASE_PATH = "/ts_ls_highlighting";
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return getVueTestDataPath();

@@ -51,11 +51,13 @@ public class FlexPullUpTest extends MultiFileTestCase {
     return "pullUp/";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

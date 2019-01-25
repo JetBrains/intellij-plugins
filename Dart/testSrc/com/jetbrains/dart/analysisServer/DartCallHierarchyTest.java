@@ -39,6 +39,7 @@ public class DartCallHierarchyTest extends HierarchyViewTestBase {
     return "analysisServer/callHierarchy/" + getTestName(false);
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH;

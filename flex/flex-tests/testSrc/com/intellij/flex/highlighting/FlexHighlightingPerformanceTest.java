@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.ProfilingUtil;
+import org.jetbrains.annotations.NotNull;
 
 public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerTestCase {
   @Override
@@ -20,6 +21,7 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
     return "";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath(FlexHighlightingTest.BASE_PATH);
@@ -44,6 +46,7 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
     }
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

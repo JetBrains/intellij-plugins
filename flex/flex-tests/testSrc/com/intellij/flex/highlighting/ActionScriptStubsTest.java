@@ -56,6 +56,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     return "";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath(FlexHighlightingTest.BASE_PATH);
@@ -76,6 +77,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

@@ -164,6 +164,7 @@ public class FlexCompilerConfigTest extends PlatformTestCase {
     return FlexTestUtils.getTestDataPath("compilerConfig") + "/";
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

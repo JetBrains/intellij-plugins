@@ -52,6 +52,7 @@ public class FlexCssNavigationTest extends CodeInsightTestCase {
     return PsiUtilCore.toPsiElementArray(targets);
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
@@ -64,6 +65,7 @@ public class FlexCssNavigationTest extends CodeInsightTestCase {
     JSTestUtils.initJSIndexes(getProject());
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

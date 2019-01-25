@@ -84,6 +84,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   private Runnable myAfterCommitRunnable = null;
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
@@ -101,6 +102,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

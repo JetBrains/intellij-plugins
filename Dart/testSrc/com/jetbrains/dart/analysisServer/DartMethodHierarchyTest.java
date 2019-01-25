@@ -36,6 +36,7 @@ public class DartMethodHierarchyTest extends HierarchyViewTestBase {
     return "analysisServer/methodHierarchy/" + getTestName(false);
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH;

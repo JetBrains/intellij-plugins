@@ -38,11 +38,13 @@ public class FlexMoveTest extends JSMoveTestBase {
     return "/move/";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

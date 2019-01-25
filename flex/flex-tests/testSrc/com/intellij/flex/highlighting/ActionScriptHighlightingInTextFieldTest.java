@@ -14,6 +14,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.ExpectedHighlightingData;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTestCase {
 
@@ -30,6 +31,7 @@ public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTes
     FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), getTestRootDisposable());
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
@@ -40,6 +42,7 @@ public class ActionScriptHighlightingInTextFieldTest extends JSDaemonAnalyzerTes
     return BASE_PATH;
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");

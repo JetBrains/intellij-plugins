@@ -20,6 +20,7 @@ import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testFramework.ModuleTestCase;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class FlexProjectConfigTest extends ModuleTestCase {
     super.setUp();
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

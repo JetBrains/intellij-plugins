@@ -54,11 +54,13 @@ public class FlexGotoImplementationsTest extends CodeInsightTestCase {
     super.tearDown();
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

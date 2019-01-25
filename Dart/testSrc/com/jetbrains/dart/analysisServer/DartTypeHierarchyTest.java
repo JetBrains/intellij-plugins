@@ -13,6 +13,7 @@ import com.jetbrains.lang.dart.ide.index.DartClassIndex;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.util.DartTestUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class DartTypeHierarchyTest extends HierarchyViewTestBase {
     return "analysisServer/typeHierarchy/" + getTestName(false);
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return DartTestUtils.BASE_TEST_DATA_PATH;

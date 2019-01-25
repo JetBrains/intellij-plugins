@@ -74,6 +74,7 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
     FlexTestUtils.addFlexUnitLib(getClass(), getTestName(false), getModule(), getTestDataPath(), FLEX_UNIT_0_9_SWC, FLEX_UNIT_4_SWC);
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("flexUnit");
@@ -240,6 +241,7 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
     doTest(getBasePath() + getTestName(false) + ".as", true, false, true);
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

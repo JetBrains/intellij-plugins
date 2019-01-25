@@ -139,6 +139,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   public @interface NeedsJavaModule {
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
@@ -173,6 +174,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     super.tearDown();
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return needsJavaModule() ? StdModuleTypes.JAVA : FlexModuleType.getInstance();

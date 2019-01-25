@@ -63,6 +63,7 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
     return "";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath(FlexHighlightingTest.BASE_PATH);
@@ -134,6 +135,7 @@ public class SwfHighlightingTest extends JSDaemonAnalyzerTestCase {
   }
 
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

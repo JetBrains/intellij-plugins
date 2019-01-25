@@ -24,6 +24,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.PsiTestUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import static com.intellij.flex.completion.FlexCompletionInTextFieldBase.assertC
 public class ActionScriptMultiModuleTextFieldCompletionTest extends CompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
@@ -50,6 +52,7 @@ public class ActionScriptMultiModuleTextFieldCompletionTest extends CompletionTe
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "");
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();

@@ -28,6 +28,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThrowableRunnable;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("ConstantConditions")
 public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
@@ -40,6 +41,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     super.setUp();
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
@@ -55,6 +57,7 @@ public class FlexScopeTest extends JSDaemonAnalyzerTestCase {
     return "/flex_scope/";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");

@@ -46,6 +46,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
     return "extractSuper/";
   }
 
+  @NotNull
   @Override
   protected String getTestDataPath() {
     return FlexTestUtils.getTestDataPath("");
@@ -59,6 +60,7 @@ public class FlexExtractSuperTest extends MultiFileTestCase {
     JSTestUtils.disableFileHeadersInTemplates(getProject());
   }
 
+  @NotNull
   @Override
   protected ModuleType getModuleType() {
     return FlexModuleType.getInstance();
