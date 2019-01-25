@@ -14,8 +14,8 @@ import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 import training.util.DataLoader
 import training.util.DataLoader.getResourceAsStream
-import training.util.GenModuleXml
-import training.util.GenModuleXml.*
+import training.util.XmlModuleConstants
+import training.util.XmlModuleConstants.*
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
@@ -160,8 +160,8 @@ class XmlModule(override val name: String,
 
       //Check DOM with XmlModule
       val root = getRootFromPath(modulePath)
-      if (root.getAttribute(GenModuleXml.MODULE_NAME_ATTR) == null) return null
-      val name = root.getAttribute(GenModuleXml.MODULE_NAME_ATTR).value
+      if (root.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR) == null) return null
+      val name = root.getAttribute(XmlModuleConstants.MODULE_NAME_ATTR).value
 
       return XmlModule(name, modulePath, root, primaryLanguage)
 
@@ -170,6 +170,14 @@ class XmlModule(override val name: String,
     @Throws(JDOMException::class, IOException::class)
     fun getRootFromPath(pathToFile: String): Element {
       return DataLoader.getXmlRootElement(pathToFile)
+    }
+
+    private fun getSdkTypeFromString(string: String?): ModuleSdkType? {
+      if (string == null) return null
+      for (moduleSdkType in ModuleSdkType.values()) {
+        if (moduleSdkType.toString() == string) return moduleSdkType
+      }
+      return null
     }
   }
 
@@ -183,5 +191,4 @@ class XmlModule(override val name: String,
       return root.getAttribute(attributeName)?.value
     }
   }
-
 }
