@@ -36,7 +36,7 @@ public final class TsLinterError extends JSLinterError {
     myIsGlobal = false;
   }
 
-  public TsLinterError(final @NotNull String description) {
+  private TsLinterError(final @NotNull String description) {
     super(1, 1, description, null);
     myPath = null;
     myEndLine = 1;
@@ -82,5 +82,9 @@ public final class TsLinterError extends JSLinterError {
            ", myFixInfo=" + myFixInfo +
            ", myIsGlobal=" + myIsGlobal +
            '}';
+  }
+
+  public static TsLinterError createGlobalError(final @NotNull String description) {
+    return new TsLinterError(description);
   }
 }

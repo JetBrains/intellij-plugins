@@ -79,6 +79,10 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     return new TsLintState(ref, myNodePackageRef, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory, myAllowJs);
   }
 
+  public Builder builder() {
+    return new Builder(this);
+  }
+
   public static class Builder {
     private boolean myCustomConfigFileUsed = false;
     private String myCustomConfigFilePath = "";

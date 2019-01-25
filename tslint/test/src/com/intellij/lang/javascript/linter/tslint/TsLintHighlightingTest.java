@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
@@ -50,9 +51,10 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   public void testWithCustomConfigFile() {
     doEditorHighlightingTest("ts.ts", () -> {
       TsLintConfiguration configuration = TsLintConfiguration.getInstance(myFixture.getProject());
-      TsLintState newState = new TsLintState.Builder(configuration.getExtendedState().getState())
+      TsLintState newState = configuration.getExtendedState().getState().builder()
         .setCustomConfigFileUsed(true)
-        .setCustomConfigFilePath(myFixture.getTempDirPath() + "/tslint-base.json").build();
+        .setCustomConfigFilePath(myFixture.getTempDirPath() + "/tslint-base.json")
+        .build();
       configuration.setExtendedState(true, newState);
     });
   }
@@ -73,6 +75,25 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   public void testNoConfig() {
     doEditorHighlightingTest("data.ts");
     myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("Config file was not found.", false, true);
+  }
+
+  public void testNoConfigWithCustomConfigFileSet() {
+    doEditorHighlightingTest("data.ts", () -> {
+      TsLintConfiguration configuration = TsLintConfiguration.getInstance(myFixture.getProject());
+      TsLintState newState = configuration.getExtendedState()
+        .getState()
+        .builder()
+        .setCustomConfigFilePath(myFixture.getTempDirPath() + "/tslint-nonexistent.json")
+        .build();
+      configuration.setExtendedState(configuration.isEnabled(), newState);
+    });
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation("Config file was not found.", false, true);
+  }
+
+  public void testSuppressMissingConfigFileWithAutodetectPackage() {
+    configureLinterForPackage(AutodetectLinterPackage.INSTANCE);
+    AutodetectLinterPackage.setTestAutodetectedPackage(myFixture.getProject(), getNodePackage(), myFixture.getTestRootDisposable());
+    doEditorHighlightingTest("data.ts");
   }
 
   public void testLineSeparatorsWin() {

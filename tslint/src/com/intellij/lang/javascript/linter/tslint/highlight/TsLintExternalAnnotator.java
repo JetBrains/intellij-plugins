@@ -129,7 +129,8 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                                                  collectedInfo.getVirtualFile());
     if (interpreterAndPackageError != null) return JSLinterAnnotationResult.create(collectedInfo, interpreterAndPackageError, config);
 
-    final Future<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(), config, collectedInfo.getFileContent());
+    final Future<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(), 
+                                                                 config, collectedInfo.getFileContent(), linterState);
     final List<TsLinterError> result;
     try {
       result = JSLanguageServiceUtil.awaitLanguageService(future, service);
