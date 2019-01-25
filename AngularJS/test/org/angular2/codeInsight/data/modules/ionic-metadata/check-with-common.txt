@@ -54,6 +54,31 @@ MyIonicModule: Angular2SourceModule
             slice: Angular2MetadataPipe
             titlecase: Angular2MetadataPipe
             uppercase: Angular2MetadataPipe
+          all-exported-declarations:
+            NgClass: Angular2MetadataDirective
+            NgComponentOutlet: Angular2MetadataDirective
+            NgForOf: Angular2MetadataDirective
+            NgIf: Angular2MetadataDirective
+            NgPlural: Angular2MetadataDirective
+            NgPluralCase: Angular2MetadataDirective
+            NgStyle: Angular2MetadataDirective
+            NgSwitch: Angular2MetadataDirective
+            NgSwitchCase: Angular2MetadataDirective
+            NgSwitchDefault: Angular2MetadataDirective
+            NgTemplateOutlet: Angular2MetadataDirective
+            async: Angular2MetadataPipe
+            currency: Angular2MetadataPipe
+            date: Angular2MetadataPipe
+            i18nPlural: Angular2MetadataPipe
+            i18nSelect: Angular2MetadataPipe
+            json: Angular2MetadataPipe
+            keyvalue: Angular2MetadataPipe
+            lowercase: Angular2MetadataPipe
+            number: Angular2MetadataPipe
+            percent: Angular2MetadataPipe
+            slice: Angular2MetadataPipe
+            titlecase: Angular2MetadataPipe
+            uppercase: Angular2MetadataPipe
           scope:
             NgClass: Angular2MetadataDirective
             NgComponentOutlet: Angular2MetadataDirective
@@ -258,6 +283,94 @@ MyIonicModule: Angular2SourceModule
         VirtualFooter: Angular2MetadataDirective
         VirtualHeader: Angular2MetadataDirective
         VirtualItem: Angular2MetadataDirective
+      all-exported-declarations:
+        BooleanValueAccessor: Angular2MetadataDirective
+        IonApp: Angular2MetadataComponent
+        IonAvatar: Angular2MetadataComponent
+        IonBackButton: Angular2MetadataComponent
+        IonBackButtonDelegate: Angular2MetadataDirective
+        IonBackdrop: Angular2MetadataComponent
+        IonBadge: Angular2MetadataComponent
+        IonButton: Angular2MetadataComponent
+        IonButtons: Angular2MetadataComponent
+        IonCard: Angular2MetadataComponent
+        IonCardContent: Angular2MetadataComponent
+        IonCardHeader: Angular2MetadataComponent
+        IonCardSubtitle: Angular2MetadataComponent
+        IonCardTitle: Angular2MetadataComponent
+        IonCheckbox: Angular2MetadataComponent
+        IonChip: Angular2MetadataComponent
+        IonCol: Angular2MetadataComponent
+        IonContent: Angular2MetadataComponent
+        IonDatetime: Angular2MetadataComponent
+        IonFab: Angular2MetadataComponent
+        IonFabButton: Angular2MetadataComponent
+        IonFabList: Angular2MetadataComponent
+        IonFooter: Angular2MetadataComponent
+        IonGrid: Angular2MetadataComponent
+        IonHeader: Angular2MetadataComponent
+        IonIcon: Angular2MetadataComponent
+        IonImg: Angular2MetadataComponent
+        IonInfiniteScroll: Angular2MetadataComponent
+        IonInfiniteScrollContent: Angular2MetadataComponent
+        IonInput: Angular2MetadataComponent
+        IonItem: Angular2MetadataComponent
+        IonItemDivider: Angular2MetadataComponent
+        IonItemGroup: Angular2MetadataComponent
+        IonItemOption: Angular2MetadataComponent
+        IonItemOptions: Angular2MetadataComponent
+        IonItemSliding: Angular2MetadataComponent
+        IonLabel: Angular2MetadataComponent
+        IonList: Angular2MetadataComponent
+        IonListHeader: Angular2MetadataComponent
+        IonMenu: Angular2MetadataComponent
+        IonMenuButton: Angular2MetadataComponent
+        IonMenuToggle: Angular2MetadataComponent
+        IonNav: Angular2MetadataComponent
+        IonNavPop: Angular2MetadataComponent
+        IonNavPush: Angular2MetadataComponent
+        IonNavSetRoot: Angular2MetadataComponent
+        IonNote: Angular2MetadataComponent
+        IonProgressBar: Angular2MetadataComponent
+        IonRadio: Angular2MetadataComponent
+        IonRadioGroup: Angular2MetadataComponent
+        IonRange: Angular2MetadataComponent
+        IonRefresher: Angular2MetadataComponent
+        IonRefresherContent: Angular2MetadataComponent
+        IonReorder: Angular2MetadataComponent
+        IonReorderGroup: Angular2MetadataComponent
+        IonRippleEffect: Angular2MetadataComponent
+        IonRouterOutlet: Angular2MetadataDirective
+        IonRow: Angular2MetadataComponent
+        IonSearchbar: Angular2MetadataComponent
+        IonSegment: Angular2MetadataComponent
+        IonSegmentButton: Angular2MetadataComponent
+        IonSelect: Angular2MetadataComponent
+        IonSelectOption: Angular2MetadataComponent
+        IonSkeletonText: Angular2MetadataComponent
+        IonSlide: Angular2MetadataComponent
+        IonSlides: Angular2MetadataComponent
+        IonSpinner: Angular2MetadataComponent
+        IonSplitPane: Angular2MetadataComponent
+        IonTabBar: Angular2MetadataComponent
+        IonTabButton: Angular2MetadataComponent
+        IonTabs: Angular2MetadataComponent
+        IonText: Angular2MetadataComponent
+        IonTextarea: Angular2MetadataComponent
+        IonThumbnail: Angular2MetadataComponent
+        IonTitle: Angular2MetadataComponent
+        IonToggle: Angular2MetadataComponent
+        IonToolbar: Angular2MetadataComponent
+        IonVirtualScroll: Angular2MetadataComponent
+        NavDelegate: Angular2MetadataDirective
+        NumericValueAccessor: Angular2MetadataDirective
+        RadioValueAccessor: Angular2MetadataDirective
+        RouterLinkDelegate: Angular2MetadataDirective
+        SelectValueAccessor: Angular2MetadataDirective
+        TextValueAccessor: Angular2MetadataDirective
+        VirtualFooter: Angular2MetadataDirective
+        VirtualHeader: Angular2MetadataDirective
+        VirtualItem: Angular2MetadataDirective
       scope:
         BooleanValueAccessor: Angular2MetadataDirective
         IonApp: Angular2MetadataComponent
@@ -375,6 +488,7 @@ MyIonicModule: Angular2SourceModule
       declarations fully resolved: true
   declarations:
   exports:
+  all-exported-declarations:
   scope:
     BooleanValueAccessor: Angular2MetadataDirective
     IonApp: Angular2MetadataComponent

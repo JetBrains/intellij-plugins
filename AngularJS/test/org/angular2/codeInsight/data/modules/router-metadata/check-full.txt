@@ -14,6 +14,12 @@ AppRoutingModule: Angular2SourceModule
         RouterLinkActive: Angular2MetadataDirective
         RouterLinkWithHref: Angular2MetadataDirective
         RouterOutlet: Angular2MetadataDirective
+      all-exported-declarations:
+        EmptyOutletComponent: Angular2MetadataComponent
+        RouterLink: Angular2MetadataDirective
+        RouterLinkActive: Angular2MetadataDirective
+        RouterLinkWithHref: Angular2MetadataDirective
+        RouterOutlet: Angular2MetadataDirective
       scope:
         EmptyOutletComponent: Angular2MetadataComponent
         RouterLink: Angular2MetadataDirective
@@ -26,6 +32,9 @@ AppRoutingModule: Angular2SourceModule
   declarations:
     MyDirective: Angular2SourceDirective
   exports:
+    MyDirective: Angular2SourceDirective
+  all-exported-declarations:
+    MyDirective: Angular2SourceDirective
   scope:
     EmptyOutletComponent: Angular2MetadataComponent
     MyDirective: Angular2SourceDirective

@@ -1,10 +1,8 @@
 ﻿#AutomaticCompletion:
 # 11 ITEMS #
 
-*ngSwitch
 aria-selected
 aria-setsize
-aria-sort
 showWhen
 + small
 + solid
@@ -12,3 +10,31 @@ spellcheck
 + strong
 style
 virtualScroll
+
+(scroll)
+(search)
+(seeked)
+(seeking)
+(select)
+(selectstart)
+(show)
+(sort)
+(stalled)
+(submit)
+(suspend)
+*ngSwitchCase
+*ngSwitchDefault
+ngSwitch
+[ngSwitch]
+[ngStyle]
+[scrollLeft]
+[scrollTop]
+[slot]
+[small]
+[solid]
+[spellcheck]
+[strong]
+[style]
+[virtualScroll]
+slot
+xml:space

@@ -10,9 +10,11 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -33,8 +35,8 @@ public class Angular2ModuleResolver<T extends PsiElement> {
   private final Supplier<T> mySourceSupplier;
   private final SymbolCollector<T> mySymbolCollector;
 
-  public Angular2ModuleResolver(Supplier<T> sourceSupplier,
-                                SymbolCollector<T> symbolCollector) {
+  public Angular2ModuleResolver(@NotNull Supplier<T> sourceSupplier,
+                                @NotNull SymbolCollector<T> symbolCollector) {
     mySourceSupplier = sourceSupplier;
     mySymbolCollector = symbolCollector;
   }
@@ -72,6 +74,39 @@ public class Angular2ModuleResolver<T extends PsiElement> {
 
   public boolean areDeclarationsFullyResolved() {
     return getResolvedModuleList(DECLARATIONS_KEY, Angular2Declaration.class).isFullyResolved;
+  }
+
+  @NotNull
+  public Set<Angular2Declaration> getAllExportedDeclarations() {
+    final T source = mySourceSupplier.get();
+    return CachedValuesManager.getCachedValue(source, () -> {
+      Set<Angular2Declaration> result = new HashSet<>();
+      Angular2Module module = source instanceof Angular2Module
+                              ? (Angular2Module)source
+                              : Angular2EntitiesProvider.getModule(source);
+      if (module != null) {
+        Set<Angular2Module> processedModules = ContainerUtil.newHashSet();
+        Stack<Angular2Module> moduleQueue = new Stack<>(module);
+        while (!moduleQueue.empty()) {
+          Angular2Module current = moduleQueue.pop();
+          if (processedModules.add(current)) {
+            for (Angular2Entity export : current.getExports()) {
+              if (export instanceof Angular2Module) {
+                moduleQueue.push((Angular2Module)export);
+              }
+              else if (export instanceof Angular2Declaration) {
+                result.add((Angular2Declaration)export);
+              }
+              else {
+                throw new IllegalArgumentException(
+                  "Class " + export.getClass() + " extends neither Angular2Module nor Angular2Declaration");
+              }
+            }
+          }
+        }
+      }
+      return CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT);
+    });
   }
 
   @NotNull

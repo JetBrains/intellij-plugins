@@ -8,6 +8,12 @@ import {RouterModule, RouterOutlet} from "./router";
 export class MyDirective {
 
 }
+@Directive({
+    selector: "[attr]"
+})
+export class MyDirective2 {
+
+}
 
 class Test {
 
@@ -23,6 +29,9 @@ class Test {
     ],
     declarations: [
         MyDirective
+    ],
+    exports: [
+        MyDirective
     ]
 })
 export class AppRoutingModule {
@@ -34,10 +43,11 @@ export class AppRoutingModule {
         Test.getThis()
     ],
     declarations: [
-        MyDirective
+        MyDirective2
     ],
     exports: [
-        RouterOutlet
+        RouterOutlet,
+        AppRoutingModule
     ]
 })
 export class AppRoutingModuleNotFullyResolved {

@@ -8,6 +8,8 @@ import java.util.*;
 
 public interface Angular2Directive extends Angular2Declaration {
 
+  Angular2Directive[] EMPTY_ARRAY = new Angular2Directive[0];
+
   @NotNull
   Angular2DirectiveSelector getSelector();
 

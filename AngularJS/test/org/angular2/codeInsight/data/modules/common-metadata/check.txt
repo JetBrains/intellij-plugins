@@ -52,6 +52,31 @@ CommonModuleMetadataTest: Angular2SourceModule
         slice: Angular2MetadataPipe
         titlecase: Angular2MetadataPipe
         uppercase: Angular2MetadataPipe
+      all-exported-declarations:
+        NgClass: Angular2MetadataDirective
+        NgComponentOutlet: Angular2MetadataDirective
+        NgForOf: Angular2MetadataDirective
+        NgIf: Angular2MetadataDirective
+        NgPlural: Angular2MetadataDirective
+        NgPluralCase: Angular2MetadataDirective
+        NgStyle: Angular2MetadataDirective
+        NgSwitch: Angular2MetadataDirective
+        NgSwitchCase: Angular2MetadataDirective
+        NgSwitchDefault: Angular2MetadataDirective
+        NgTemplateOutlet: Angular2MetadataDirective
+        async: Angular2MetadataPipe
+        currency: Angular2MetadataPipe
+        date: Angular2MetadataPipe
+        i18nPlural: Angular2MetadataPipe
+        i18nSelect: Angular2MetadataPipe
+        json: Angular2MetadataPipe
+        keyvalue: Angular2MetadataPipe
+        lowercase: Angular2MetadataPipe
+        number: Angular2MetadataPipe
+        percent: Angular2MetadataPipe
+        slice: Angular2MetadataPipe
+        titlecase: Angular2MetadataPipe
+        uppercase: Angular2MetadataPipe
       scope:
         NgClass: Angular2MetadataDirective
         NgComponentOutlet: Angular2MetadataDirective
@@ -84,6 +109,10 @@ CommonModuleMetadataTest: Angular2SourceModule
     MyDirective: Angular2SourceDirective
     async: Angular2MetadataPipe
   exports:
+    NgIf: Angular2MetadataDirective
+    async: Angular2MetadataPipe
+    date: Angular2MetadataPipe
+  all-exported-declarations:
     NgIf: Angular2MetadataDirective
     async: Angular2MetadataPipe
     date: Angular2MetadataPipe

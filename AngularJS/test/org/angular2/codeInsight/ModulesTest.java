@@ -173,6 +173,7 @@ public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
       printEntityList(level, "imports", module.getImports(), result, printed);
       printEntityList(level, "declarations", module.getDeclarations(), result, printed);
       printEntityList(level, "exports", module.getExports(), result, printed);
+      printEntityList(level, "all-exported-declarations", module.getAllExportedDeclarations(), result, printed);
       printEntityList(level, "scope", module.getDeclarationsInScope(), result, printed);
       withIndent(level, result)
         .append("scope fully resolved: ")

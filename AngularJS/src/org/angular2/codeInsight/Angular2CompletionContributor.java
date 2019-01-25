@@ -36,7 +36,11 @@ import org.angular2.codeInsight.attributes.Angular2AttributesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributesProvider.CompletionResultsConsumer;
 import org.angular2.css.Angular2CssAttributeNameCompletionProvider;
 import org.angular2.css.Angular2CssExpressionCompletionProvider;
+import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Module;
+import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
@@ -51,6 +55,7 @@ import java.util.Set;
 import static com.intellij.codeInsight.completion.XmlAttributeReferenceCompletionProvider.isValidVariant;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.newHashSet;
 
 public class Angular2CompletionContributor extends CompletionContributor {
@@ -167,6 +172,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
           final PsiFile file = tag.getContainingFile();
           final XmlExtension extension = XmlExtension.getExtension(file);
 
+          Set<Angular2Directive> moduleScope = getModuleScope(tag);
           final XmlAttribute[] attributes = tag.getAttributes();
           Set<String> providedAttributes = StreamEx.of(attributes)
             .map(attr -> attr.getDescriptor())
@@ -178,10 +184,16 @@ public class Angular2CompletionContributor extends CompletionContributor {
               if (!providedAttributes.contains(descriptor.getName())
                   && isValidVariant(attribute, descriptor, attributes, extension)) {
                 Pair<LookupElement, String> elementWithPrefix =
-                  ((Angular2AttributeDescriptor)descriptor).getLookupElementWithPrefix(result.getPrefixMatcher());
-                providedAttributes.add(elementWithPrefix.first.getLookupString());
-                result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(elementWithPrefix.second))
-                  .addElement(elementWithPrefix.first);
+                  ((Angular2AttributeDescriptor)descriptor).getLookupElementWithPrefix(
+                    result.getPrefixMatcher(), moduleScope);
+                if (elementWithPrefix.first == null) {
+                  providedAttributes.add(elementWithPrefix.second);
+                }
+                else {
+                  providedAttributes.add(elementWithPrefix.first.getLookupString());
+                  result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(elementWithPrefix.second))
+                    .addElement(elementWithPrefix.first);
+                }
               }
             }
           }
@@ -198,6 +210,13 @@ public class Angular2CompletionContributor extends CompletionContributor {
           });
         }
       }
+    }
+
+    @Nullable
+    private static Set<Angular2Directive> getModuleScope(@NotNull XmlTag tag) {
+      Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
+        Angular2IndexingHandler.findComponentClass(tag)), Angular2Component::getModule);
+      return module != null ? module.getDirectivesInScope() : null;
     }
   }
 

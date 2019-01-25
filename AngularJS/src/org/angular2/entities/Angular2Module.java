@@ -2,7 +2,6 @@
 package org.angular2.entities;
 
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -25,30 +24,18 @@ public interface Angular2Module extends Angular2Entity {
 
   boolean isScopeFullyResolved();
 
+  boolean isPublic();
+
+  @NotNull
+  Set<Angular2Declaration> getAllExportedDeclarations();
+
   @NotNull
   default Set<Angular2Declaration> getDeclarationsInScope() {
     Set<Angular2Declaration> result = new HashSet<>(getDeclarations());
-    Set<Angular2Module> processedModules = ContainerUtil.newHashSet(this);
-    Stack<Angular2Module> moduleQueue = new Stack<>(getImports());
-    getExports().forEach(e -> {
-      if (e instanceof Angular2Module) moduleQueue.add((Angular2Module)e);
-    });
-    while (!moduleQueue.empty()) {
-      Angular2Module module = moduleQueue.pop();
-      if (processedModules.add(module)) {
-        for (Angular2Entity export : module.getExports()) {
-          if (export instanceof Angular2Module) {
-            moduleQueue.push((Angular2Module)export);
-          }
-          else if (export instanceof Angular2Declaration) {
-            result.add((Angular2Declaration)export);
-          }
-          else {
-            throw new IllegalArgumentException("Class " + export.getClass() + " extends neither Angular2Module nor Angular2Declaration");
-          }
-        }
-      }
+    for (Angular2Module imported : getImports()) {
+      result.addAll(imported.getAllExportedDeclarations());
     }
+    result.addAll(getAllExportedDeclarations());
     return result;
   }
 

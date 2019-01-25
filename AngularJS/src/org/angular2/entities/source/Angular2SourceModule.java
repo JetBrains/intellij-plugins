@@ -52,6 +52,12 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
     return myModuleResolver.getExports();
   }
 
+  @NotNull
+  @Override
+  public Set<Angular2Declaration> getAllExportedDeclarations() {
+    return myModuleResolver.getAllExportedDeclarations();
+  }
+
   @Override
   public boolean isScopeFullyResolved() {
     return myModuleResolver.isScopeFullyResolved();
@@ -65,6 +71,11 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
   @Override
   public boolean areDeclarationsFullyResolved() {
     return myModuleResolver.areDeclarationsFullyResolved();
+  }
+
+  @Override
+  public boolean isPublic() {
+    return !getName().startsWith("ɵ");
   }
 
   private static <T extends Angular2Entity> Pair<Set<T>, Boolean> collectSymbols(@NotNull ES6Decorator decorator,

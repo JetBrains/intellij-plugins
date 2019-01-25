@@ -45,6 +45,12 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
     return myModuleResolver.getExports();
   }
 
+  @NotNull
+  @Override
+  public Set<Angular2Declaration> getAllExportedDeclarations() {
+    return myModuleResolver.getAllExportedDeclarations();
+  }
+
   @Override
   public boolean isScopeFullyResolved() {
     return myModuleResolver.isScopeFullyResolved();
@@ -58,6 +64,12 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
   @Override
   public boolean areDeclarationsFullyResolved() {
     return myModuleResolver.areDeclarationsFullyResolved();
+  }
+
+  @Override
+  public boolean isPublic() {
+    return getStub().getMemberName() == null
+           || !getStub().getMemberName().startsWith("ɵ");
   }
 
   private static <T extends Angular2Entity> Pair<Set<T>, Boolean> collectSymbols(@NotNull Angular2MetadataModule source,

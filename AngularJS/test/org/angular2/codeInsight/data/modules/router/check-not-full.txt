@@ -14,6 +14,12 @@ AppRoutingModuleNotFullyResolved: Angular2SourceModule
         RouterLinkActive: Angular2SourceDirective
         RouterLinkWithHref: Angular2SourceDirective
         RouterOutlet: Angular2SourceDirective
+      all-exported-declarations:
+        EmptyOutletComponent: Angular2SourceComponent
+        RouterLink: Angular2SourceDirective
+        RouterLinkActive: Angular2SourceDirective
+        RouterLinkWithHref: Angular2SourceDirective
+        RouterOutlet: Angular2SourceDirective
       scope:
         EmptyOutletComponent: Angular2SourceComponent
         RouterLink: Angular2SourceDirective
@@ -26,6 +32,8 @@ AppRoutingModuleNotFullyResolved: Angular2SourceModule
   declarations:
     MyDirective: Angular2SourceDirective
   exports:
+    RouterOutlet: Angular2SourceDirective
+  all-exported-declarations:
     RouterOutlet: Angular2SourceDirective
   scope:
     EmptyOutletComponent: Angular2SourceComponent

@@ -174,6 +174,16 @@ public class Angular2EntitiesProvider {
            && getPipe(element) != null;
   }
 
+  public static MultiMap<Angular2Declaration, Angular2Module> getExportedDeclarationToModuleMap(@NotNull Project project) {
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
+      MultiMap<Angular2Declaration, Angular2Module> result = new MultiMap<>();
+      getAllModules(project).forEach(
+        module -> module.getAllExportedDeclarations().forEach(
+          decl -> result.putValue(decl, module)));
+      return create(result, PsiModificationTracker.MODIFICATION_COUNT);
+    });
+  }
+
   public static MultiMap<Angular2Declaration, Angular2Module> getDeclarationToModuleMap(@NotNull Project project) {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> {
       MultiMap<Angular2Declaration, Angular2Module> result = new MultiMap<>();

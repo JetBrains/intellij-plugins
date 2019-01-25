@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
@@ -40,6 +41,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.intellij.openapi.util.Pair.pair;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
@@ -91,7 +94,14 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
 
     final Map<String, XmlAttributeDescriptor> result = new LinkedHashMap<>();
     Consumer<XmlAttributeDescriptor> addDescriptor =
-      attr -> result.putIfAbsent(attr.getName(), attr);
+      attr -> result.merge(attr.getName(), attr, (a, b) -> {
+        if (a instanceof Angular2AttributeDescriptor) {
+          return ((Angular2AttributeDescriptor)a).merge(b);
+        } else if (b instanceof Angular2AttributeDescriptor) {
+          return ((Angular2AttributeDescriptor)b).merge(a);
+        }
+        return a;
+      });
 
     getDirectiveDescriptors(xmlTag).forEach(addDescriptor);
     getStandardPropertyAndEventDescriptors(xmlTag).forEach(addDescriptor);
@@ -139,23 +149,24 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     getStandardPropertyAndEventDescriptors(xmlTag).forEach(
       attr -> knownAttributes.add(attr.getName()));
 
-    MultiMap<String, PsiElement> attrsFromSelectors = new MultiMap<>();
-    BiConsumer<String, PsiElement> addAttribute = (attrName, element) -> {
-      if (!knownAttributes.contains(attrName)) {
-        attrsFromSelectors.putValue(attrName, element);
-      }
-    };
+    MultiMap<String, Pair<Angular2Directive, PsiElement>> attrsFromSelectors = new MultiMap<>();
     Map<String, Angular2DirectiveProperty> inputs = new HashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new HashMap<>();
     Map<String, Angular2DirectiveProperty> inOuts = new HashMap<>();
     for (Angular2Directive candidate : directiveCandidates) {
+      BiConsumer<String, PsiElement> addAttribute = (attrName, source) -> {
+        if (!knownAttributes.contains(attrName)) {
+          attrsFromSelectors.putValue(attrName, pair(candidate, source));
+        }
+      };
       fillNamesAndProperties(inputs, candidate.getInputs(), p -> p);
       if (!isTemplateTag && candidate.isTemplate()) {
         List<SimpleSelectorWithPsi> selectors = candidate.getSelector().getSimpleSelectorsWithPsi();
         if (selectors.size() == 1) {
           List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selectors.get(0).getAttributes();
           if (attributeCandidates.size() == 1) {
-            addAttribute.accept("*" + attributeCandidates.get(0).getName(), attributeCandidates.get(0).getNavigationElement());
+            addAttribute.accept("*" + attributeCandidates.get(0).getName(),
+                                attributeCandidates.get(0).getNavigationElement());
           }
           else {
             CANDIDATES_LOOP:
@@ -206,8 +217,10 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       }
     }
-    attrsFromSelectors.entrySet().forEach(e -> result.add(
-      new Angular2AttributeDescriptor(e.getKey(), isTemplateTag, e.getValue())));
+    attrsFromSelectors.entrySet().forEach(
+      e -> result.add(new Angular2AttributeDescriptor(e.getKey(), isTemplateTag,
+                                                      ContainerUtil.map2Set(e.getValue(), p -> p.getFirst()),
+                                                      ContainerUtil.map2Set(e.getValue(), p -> p.getSecond()))));
     return result;
   }
 
@@ -268,10 +281,10 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       }
       for (String name : allowedElementProperties) {
         if (name.startsWith("(")) {
-          result.add(new Angular2EventHandlerDescriptor(name, isInTemplateTag, Collections.emptyList()));
+          result.add(new Angular2EventHandlerDescriptor(name, isInTemplateTag, emptyList()));
         }
         else {
-          result.add(new Angular2AttributeDescriptor(name, isInTemplateTag, Collections.emptyList()));
+          result.add(new Angular2AttributeDescriptor(name, isInTemplateTag, emptyList()));
         }
       }
       return CachedValueProvider.Result.create(Collections.unmodifiableList(result),

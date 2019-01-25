@@ -3,4 +3,5 @@
 
 ion-menu
 + menu
-+ menuitem
++ ion-segment
++ ion-segment-button
