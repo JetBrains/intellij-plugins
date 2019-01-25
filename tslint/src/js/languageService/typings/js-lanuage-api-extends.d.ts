@@ -37,31 +37,26 @@ interface TsLintRequest {
     readonly arguments?: any;
 }
 
-interface GetErrorsArguments {
+interface CommandArguments {
     /**
      * Absolute path for the file to check
      */
-    readonly fileName: string;
+    readonly filePath: string;
 
     /**
      * Absolute config path
      */
     readonly configPath: string;
+    
+    readonly isJSFile: boolean;
+}
 
+interface GetErrorsArguments extends CommandArguments {
     /**
      * Content of the file
      */
     readonly content: string;
 }
 
-interface FixErrorsArguments {
-    /**
-     * Absolute path for the file to check
-     */
-    readonly fileName: string;
-
-    /**
-     * Absolute config path
-     */
-    readonly configPath: string;
+interface FixErrorsArguments extends CommandArguments {
 }

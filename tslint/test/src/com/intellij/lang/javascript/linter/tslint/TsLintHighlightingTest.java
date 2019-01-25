@@ -108,6 +108,15 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     doEditorHighlightingTest("ts.ts");
   }
 
+  public void testHighlightJsFiles() {
+    doEditorHighlightingTest("test.js");
+  }
+
+  public void testSuppressNoConfigFileForJs() {
+    //similarly to tslint **/*.*, if there are no jsRules, there shouldn't be an error for .js files
+    doEditorHighlightingTest("test.js");
+  }
+
   public void testFixFile() {
     doFixTest("fix", "TSLint: Fix current file");
   }

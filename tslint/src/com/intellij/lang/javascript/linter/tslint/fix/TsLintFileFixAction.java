@@ -16,6 +16,7 @@ package com.intellij.lang.javascript.linter.tslint.fix;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.history.LocalHistory;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
@@ -28,6 +29,7 @@ import com.intellij.lang.javascript.linter.tslint.execution.TsLinterError;
 import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
@@ -48,7 +50,9 @@ public class TsLintFileFixAction extends JSLinterFixAction {
 
   @Override
   protected boolean isFileAccepted(@NotNull VirtualFile file) {
-    return TypeScriptUtil.TYPESCRIPT_FILE_TYPES.contains(file.getFileType());
+    FileType fileType = file.getFileType();
+    return TypeScriptUtil.TYPESCRIPT_FILE_TYPES.contains(fileType)
+           || DialectDetector.JAVASCRIPT_FILE_TYPES.contains(fileType);
   }
 
   @NotNull

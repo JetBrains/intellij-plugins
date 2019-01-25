@@ -1,6 +1,18 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 exports.__esModule = true;
 var utils_1 = require("../utils");
+var fs_1 = require("fs");
 var TsLintCommands;
 (function (TsLintCommands) {
     TsLintCommands.GetErrors = "GetErrors";
@@ -11,10 +23,9 @@ var Response = /** @class */ (function () {
     }
     return Response;
 }());
-var fs = require("fs");
 var TSLintPlugin = /** @class */ (function () {
     function TSLintPlugin(state) {
-        this.linterOptions = resolveTsLint(state);
+        this.linterApi = resolveTsLint(state.tslintPackagePath);
         this.additionalRulesDirectory = state.additionalRootDirectory;
     }
     TSLintPlugin.prototype.process = function (parsedObject) {
@@ -33,7 +44,7 @@ var TSLintPlugin = /** @class */ (function () {
         // here we use object -> JSON.stringify, because we need to escape possible error's text symbols
         // and we do not want to duplicate this code
         var response = new Response();
-        response.version = this.linterOptions.version.raw;
+        response.version = this.linterApi.version.raw;
         response.command = request.command;
         response.request_seq = request.seq;
         var result;
@@ -51,64 +62,62 @@ var TSLintPlugin = /** @class */ (function () {
         writer.write(JSON.stringify(response));
     };
     TSLintPlugin.prototype.getErrors = function (toProcess) {
-        var options = this.getOptions(false);
-        return this.processLinting(toProcess.fileName, toProcess.content, toProcess.configPath, options);
+        return this.processLinting(toProcess, this.getOptions(false));
     };
     TSLintPlugin.prototype.fixErrors = function (toProcess) {
-        var options = this.getOptions(true);
-        var contents = fs.readFileSync(toProcess.fileName, "utf8");
-        return this.processLinting(toProcess.fileName, contents, toProcess.configPath, options);
+        //TODO. why here?
+        var contents = fs_1.readFileSync(toProcess.filePath, "utf8");
+        return this.processLinting(__assign({}, toProcess, { content: contents }), this.getOptions(true));
     };
     TSLintPlugin.prototype.getOptions = function (fix) {
         return {
             formatter: "json",
             fix: fix,
-            rulesDirectory: this.additionalRulesDirectory,
-            formattersDirectory: undefined
+            rulesDirectory: this.additionalRulesDirectory
         };
     };
-    TSLintPlugin.prototype.processLinting = function (fileName, content, configFileName, options) {
-        var linterOptions = this.linterOptions;
-        var linter = this.linterOptions.linter;
-        var result = {};
-        var configuration = this.getConfiguration(fileName, configFileName, linter);
-        if (linterOptions.version.major && linterOptions.version.major >= 4) {
-            var tslint = new linter(options);
-            tslint.lint(fileName, content, configuration);
-            result = tslint.getResult();
+    TSLintPlugin.prototype.processLinting = function (args, options) {
+        var linter = this.linterApi.linter;
+        var major = this.linterApi.version.major || 0;
+        var configuration = this.getConfiguration(args.filePath, args.configPath);
+        if (args.isJSFile && (major < 4 || !this.hasJSRules(configuration))) {
+            return {
+                errorCount: 0, warningCount: 0,
+                failures: [], fixes: [],
+                format: "json", output: ""
+            };
         }
-        else {
-            options.configuration = configuration;
-            var tslint = new linter(fileName, content, options);
-            result = tslint.lint();
+        if (major >= 4) {
+            var tslint_1 = new linter(options);
+            tslint_1.lint(args.filePath, args.content, configuration);
+            return tslint_1.getResult();
         }
-        return result;
+        options.configuration = configuration;
+        var tslint = new linter(args.filePath, args.content, options);
+        return tslint.lint();
     };
-    TSLintPlugin.prototype.getConfiguration = function (fileName, configFileName, linter) {
-        var linterConfiguration = this.linterOptions.linterConfiguration;
-        var majorVersion = this.linterOptions.version.major;
+    TSLintPlugin.prototype.getConfiguration = function (fileName, configFileName) {
+        var majorVersion = this.linterApi.version.major;
+        var configurationResult = this.linterApi.linter.findConfiguration(configFileName, fileName);
         if (majorVersion && majorVersion >= 4) {
-            var configurationResult = linterConfiguration.findConfiguration(configFileName, fileName);
-            if (!configurationResult) {
+            if (!configurationResult || !configurationResult.results) {
                 throw new Error("Cannot find configuration " + configFileName);
-            }
-            if (configurationResult && configurationResult.error) {
-                throw configurationResult.error;
             }
             return configurationResult.results;
         }
-        else {
-            return linter.findConfiguration(configFileName, fileName);
-        }
+        return configurationResult;
+    };
+    TSLintPlugin.prototype.hasJSRules = function (config) {
+        return this.linterApi.version.major && this.linterApi.version.major >= 5
+            ? config.jsRules.size > 0
+            : Object.keys(config.jsRules).length > 0;
     };
     return TSLintPlugin;
 }());
 exports.TSLintPlugin = TSLintPlugin;
-function resolveTsLint(options) {
-    var tslintPackagePath = options.tslintPackagePath;
-    var tslint = require(tslintPackagePath);
+function resolveTsLint(packagePath) {
+    var tslint = require(packagePath);
     var version = utils_1.getVersion(tslint);
     var linter = version.major && version.major >= 4 ? tslint.Linter : tslint;
-    var linterConfiguration = tslint.Configuration;
-    return { linter: linter, linterConfiguration: linterConfiguration, version: version };
+    return { linter: linter, version: version };
 }

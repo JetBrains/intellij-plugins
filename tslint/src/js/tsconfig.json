@@ -4,6 +4,7 @@
     "noImplicitThis": true,
     "module": "commonjs",
     "noImplicitAny": true,
+    "lib": ["es6"],
     "strictNullChecks": true,
     "downlevelIteration": true,
     "outDir": "../../gen/js/"

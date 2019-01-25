@@ -52,10 +52,6 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     return builder.build();
   }
 
-  public boolean isAllowJs() {
-    return getMyStateWithoutPrivateSettings().isAllowJs();
-  }
-
   @NotNull
   @Override
   protected Class<? extends JSLinterInspection> getInspectionClass() {
@@ -77,9 +73,6 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     if (!StringUtil.isEmptyOrSpaces(rulesDirectory)) {
       root.setAttribute(RULES, FileUtil.toSystemIndependentName(rulesDirectory));
     }
-    if (state.isAllowJs()) {
-      root.setAttribute(ALLOW_JS, String.valueOf(true));
-    }
     storeLinterLocalPaths(state);
     return root;
   }
@@ -95,7 +88,6 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
     if (!StringUtil.isEmptyOrSpaces(rulesDirectory)) {
       builder.setRulesDirectory(rulesDirectory);
     }
-    builder.setAllowJs(Boolean.parseBoolean(element.getAttributeValue(ALLOW_JS)));
     restoreLinterLocalPaths(builder);
     return builder.build();
   }

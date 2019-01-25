@@ -1,0 +1,5 @@
+{
+  "jsRules": {
+    "no-debugger": true
+  }
+}

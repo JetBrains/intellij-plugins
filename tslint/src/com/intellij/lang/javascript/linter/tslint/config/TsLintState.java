@@ -24,18 +24,16 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
   private final boolean myCustomConfigFileUsed;
   @Nullable
   private final String myRulesDirectory;
-  private final boolean myAllowJs;
 
   private TsLintState(@NotNull NodeJsInterpreterRef nodePath,
                       @NotNull NodePackageRef nodePackageRef,
                       boolean customConfigFileUsed,
                       @Nullable String customConfigFilePath,
-                      @Nullable String rulesDirectory, boolean allowJs) {
+                      @Nullable String rulesDirectory) {
     myCustomConfigFileUsed = customConfigFileUsed;
     myCustomConfigFilePath = customConfigFilePath;
     myInterpreterRef = nodePath;
     myRulesDirectory = rulesDirectory;
-    myAllowJs = allowJs;
     myNodePackageRef = nodePackageRef;
   }
 
@@ -59,10 +57,6 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     return myRulesDirectory;
   }
 
-  public boolean isAllowJs() {
-    return myAllowJs;
-  }
-
   @NotNull
   @Override
   public NodePackageRef getNodePackageRef() {
@@ -76,7 +70,7 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
 
   @Override
   public TsLintState withInterpreterRef(NodeJsInterpreterRef ref) {
-    return new TsLintState(ref, myNodePackageRef, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory, myAllowJs);
+    return new TsLintState(ref, myNodePackageRef, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory);
   }
 
   public Builder builder() {
@@ -88,7 +82,6 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     private String myCustomConfigFilePath = "";
     private NodeJsInterpreterRef myInterpreterRef = NodeJsInterpreterRef.createProjectRef();
     private NodePackageRef myNodePackageRef = NodePackageRef.create(new NodePackage(""));
-    private boolean myAllowJs;
 
     @Nullable
     private String myRulesDirectory;
@@ -102,7 +95,6 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
       myInterpreterRef = state.getInterpreterRef();
       myNodePackageRef = state.getNodePackageRef();
       myRulesDirectory = state.getRulesDirectory();
-      myAllowJs = state.isAllowJs();
     }
 
     public Builder setCustomConfigFileUsed(boolean customConfigFileUsed) {
@@ -131,13 +123,8 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
       return this;
     }
 
-    public Builder setAllowJs(boolean allowJs) {
-      myAllowJs = allowJs;
-      return this;
-    }
-
     public TsLintState build() {
-      return new TsLintState(myInterpreterRef, myNodePackageRef, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory, myAllowJs);
+      return new TsLintState(myInterpreterRef, myNodePackageRef, myCustomConfigFileUsed, myCustomConfigFilePath, myRulesDirectory);
     }
   }
 
@@ -149,15 +136,10 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     TsLintState state = (TsLintState)o;
 
     if (myCustomConfigFileUsed != state.myCustomConfigFileUsed) return false;
-    if (myAllowJs != state.myAllowJs) return false;
     if (!myInterpreterRef.equals(state.myInterpreterRef)) return false;
     if (!Objects.equals(myNodePackageRef, state.myNodePackageRef)) return false;
-    if (myCustomConfigFilePath != null
-        ? !myCustomConfigFilePath.equals(state.myCustomConfigFilePath)
-        : state.myCustomConfigFilePath != null) {
-      return false;
-    }
-    if (myRulesDirectory != null ? !myRulesDirectory.equals(state.myRulesDirectory) : state.myRulesDirectory != null) return false;
+    if (!Objects.equals(myCustomConfigFilePath, state.myCustomConfigFilePath)) return false;
+    if (!Objects.equals(myRulesDirectory, state.myRulesDirectory)) return false;
 
     return true;
   }
@@ -169,7 +151,6 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
     result = 31 * result + (myCustomConfigFilePath != null ? myCustomConfigFilePath.hashCode() : 0);
     result = 31 * result + (myCustomConfigFileUsed ? 1 : 0);
     result = 31 * result + (myRulesDirectory != null ? myRulesDirectory.hashCode() : 0);
-    result = 31 * result + (myAllowJs ? 1 : 0);
     return result;
   }
 
@@ -181,7 +162,6 @@ public class TsLintState implements JSNpmLinterState<TsLintState> {
            ", myCustomConfigFilePath='" + myCustomConfigFilePath + '\'' +
            ", myCustomConfigFileUsed=" + myCustomConfigFileUsed +
            ", myRulesDirectory='" + myRulesDirectory + '\'' +
-           ", myAllowJs=" + myAllowJs +
            '}';
   }
 }

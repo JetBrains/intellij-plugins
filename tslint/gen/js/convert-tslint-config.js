@@ -54,22 +54,22 @@ var configObject = version.major && version.major >= 5
     } : configFile;
 console.log(JSON.stringify(configObject));
 function mapToObject(map, mapper) {
+    var e_1, _a;
     var rules = {};
     try {
         for (var map_1 = __values(map), map_1_1 = map_1.next(); !map_1_1.done; map_1_1 = map_1.next()) {
-            var _a = __read(map_1_1.value, 2), key = _a[0], value = _a[1];
+            var _b = __read(map_1_1.value, 2), key = _b[0], value = _b[1];
             rules[key] = mapper(value);
         }
     }
     catch (e_1_1) { e_1 = { error: e_1_1 }; }
     finally {
         try {
-            if (map_1_1 && !map_1_1.done && (_b = map_1["return"])) _b.call(map_1);
+            if (map_1_1 && !map_1_1.done && (_a = map_1["return"])) _a.call(map_1);
         }
         finally { if (e_1) throw e_1.error; }
     }
     return rules;
-    var e_1, _b;
 }
 function mapOptions(options) {
     return {

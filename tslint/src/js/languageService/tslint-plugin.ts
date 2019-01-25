@@ -1,15 +1,18 @@
 import {getVersion, Version} from "../utils";
+import {IConfigurationFile} from "tslint/lib/configuration";
+import {ILinterOptions, Linter, LintResult} from "tslint";
+import {readFileSync} from "fs"
 
 namespace TsLintCommands {
     export let GetErrors: string = "GetErrors";
     export let FixErrors: string = "FixErrors";
 }
 
-type LinterOptions = {
-    linter?: any;
-    linterConfiguration: any;
+type LinterApi = {
+    linter: typeof Linter;
     version: Version
 }
+
 class Response {
     version?: string;
     command: string;
@@ -17,15 +20,14 @@ class Response {
     body: string | null;
     error: string | null;
 }
-let fs = require("fs");
 
 export class TSLintPlugin implements LanguagePlugin {
 
-    private readonly linterOptions: LinterOptions;
+    private readonly linterApi: LinterApi;
     private readonly additionalRulesDirectory?: string;
 
     constructor(state: PluginState) {
-        this.linterOptions = resolveTsLint(state);
+        this.linterApi = resolveTsLint(state.tslintPackagePath);
         this.additionalRulesDirectory = state.additionalRootDirectory;
     }
 
@@ -47,7 +49,7 @@ export class TSLintPlugin implements LanguagePlugin {
         // here we use object -> JSON.stringify, because we need to escape possible error's text symbols
         // and we do not want to duplicate this code
         let response: Response = new Response();
-        response.version = this.linterOptions.version.raw;
+        response.version = this.linterApi.version.raw;
         response.command = request.command;
         response.request_seq = request.seq;
 
@@ -65,78 +67,69 @@ export class TSLintPlugin implements LanguagePlugin {
         writer.write(JSON.stringify(response));
     }
 
-    private getErrors(toProcess: GetErrorsArguments): {} {
-        let options = this.getOptions(false);
-        return this.processLinting(toProcess.fileName, toProcess.content, toProcess.configPath, options);
+    private getErrors(toProcess: GetErrorsArguments): LintResult {
+        return this.processLinting(toProcess, this.getOptions(false));
     }
 
-    private fixErrors(toProcess: FixErrorsArguments): {} {
-        let options = this.getOptions(true);
-
-        let contents = fs.readFileSync(toProcess.fileName, "utf8");
-
-        return this.processLinting(toProcess.fileName, contents, toProcess.configPath, options);
+    private fixErrors(toProcess: FixErrorsArguments): LintResult {
+        //TODO. why here?
+        let contents = readFileSync(toProcess.filePath, "utf8");
+        return this.processLinting({...toProcess, content: contents}, this.getOptions(true));
     }
 
     private getOptions(fix: boolean) {
         return {
             formatter: "json",
             fix: fix,
-            rulesDirectory: this.additionalRulesDirectory,
-            formattersDirectory: undefined
+            rulesDirectory: this.additionalRulesDirectory
         };
     }
 
-    private processLinting(fileName: string, content: string | null | undefined, configFileName: string, options: {}) {
-        let linterOptions = this.linterOptions;
-        let linter: any = this.linterOptions.linter;
-        let result = {};
+    private processLinting(args: CommandArguments & { content: string }, options: ILinterOptions): LintResult {
+        let linter = this.linterApi.linter;
+        let major = this.linterApi.version.major || 0;
 
-        let configuration = this.getConfiguration(fileName, configFileName, linter);
-        if (linterOptions.version.major && linterOptions.version.major >= 4) {
+        let configuration = this.getConfiguration(args.filePath, args.configPath);
+        if (args.isJSFile && (major < 4 || !this.hasJSRules(configuration))) {
+            return {
+                errorCount: 0, warningCount: 0,
+                failures: [], fixes: [],
+                format: "json", output: ""
+            }
+        }
+        if (major >= 4) {
             let tslint = new linter(options);
-            tslint.lint(fileName, content, configuration);
-            result = tslint.getResult();
+            tslint.lint(args.filePath, args.content, configuration);
+            return tslint.getResult();
         }
-        else {
-            (<any>options).configuration = configuration;
-            let tslint = new (<any>linter)(fileName, content, options);
-            result = tslint.lint();
-        }
-
-        return result;
+        (<any>options).configuration = configuration;
+        let tslint = new (<any>linter)(args.filePath, args.content, options);
+        return tslint.lint();
     }
 
-    private getConfiguration(fileName: string, configFileName: string, linter: any) {
-
-        let linterConfiguration = this.linterOptions.linterConfiguration;
-        let majorVersion = this.linterOptions.version.major;
+    private getConfiguration(fileName: string, configFileName: string): IConfigurationFile {
+        let majorVersion = this.linterApi.version.major;
+        let configurationResult = this.linterApi.linter.findConfiguration(configFileName, fileName);
         if (majorVersion && majorVersion >= 4) {
-            let configurationResult: any = linterConfiguration.findConfiguration(configFileName, fileName);
-            if (!configurationResult) {
+            if (!configurationResult || !configurationResult.results) {
                 throw new Error("Cannot find configuration " + configFileName);
             }
-            if (configurationResult && configurationResult.error) {
-                throw configurationResult.error;
-            }
-
             return configurationResult.results;
-        } else {
-            return linter.findConfiguration(configFileName, fileName);
         }
+        return (<IConfigurationFile>configurationResult)
+    }
+
+    private hasJSRules(config: IConfigurationFile): boolean {
+        return this.linterApi.version.major && this.linterApi.version.major >= 5
+            ? config.jsRules.size > 0
+            : Object.keys((<{}>config.jsRules)).length > 0;
     }
 }
 
-
-function resolveTsLint(options: PluginState): LinterOptions {
-    const tslintPackagePath = options.tslintPackagePath;
-    const tslint: any = require(tslintPackagePath);
-
+function resolveTsLint(packagePath: string): LinterApi {
+    const tslint: any = require(packagePath);
     const version = getVersion(tslint);
-
     const linter = version.major && version.major >= 4 ? tslint.Linter : tslint;
-    const linterConfiguration = tslint.Configuration;
-
-    return {linter, linterConfiguration, version};
+    return {linter, version};
 }
 
