@@ -7,7 +7,7 @@ package garbuz.mmo.wardrobe
                         var x:Number = 10;
 
                         //extract next line to a method
-                    created(x);
+                        created(x);
                 }
 
             public static function created(x2:*):void {
