@@ -9,6 +9,7 @@ import com.intellij.util.SmartList;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Angular2DirectiveSimpleSelectorWithRanges;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       @NotNull
       @Override
       protected List<Angular2DirectiveSimpleSelector> compute() {
+        if (myText == null) {
+          return Collections.emptyList();
+        }
         try {
           return Collections.unmodifiableList(Angular2DirectiveSimpleSelector.parse(myText));
         }
@@ -39,6 +43,9 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       @NotNull
       @Override
       protected List<SimpleSelectorWithPsi> compute() {
+        if (myText == null) {
+          return Collections.emptyList();
+        }
         try {
           List<Angular2DirectiveSimpleSelectorWithRanges> simpleSelectorsWithRanges = Angular2DirectiveSimpleSelector.parseRanges(myText);
           List<SimpleSelectorWithPsi> result = new ArrayList<>(simpleSelectorsWithRanges.size());
@@ -53,7 +60,9 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       }
     };
 
-  public Angular2DirectiveSelectorImpl(PsiElement element, String text, Function<Pair<String, Integer>, TextRange> createRange) {
+  public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
+                                       @Nullable String text,
+                                       @NotNull Function<Pair<String, Integer>, TextRange> createRange) {
     mySelectorElement = element;
     myText = text;
     myCreateRange = createRange;
@@ -62,7 +71,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
   @NotNull
   @Override
   public String getText() {
-    return myText;
+    return myText == null ? "<null>" : myText;
   }
 
   @NotNull
@@ -90,7 +99,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
         }
       }
     }
-    throw new IllegalArgumentException("Element " + elementName + " is not present in the selector: " + getText());
+    return new Angular2DirectiveSelectorPsiElement(mySelectorElement, new TextRange(0, 0), elementName, true);
   }
 
   @Override

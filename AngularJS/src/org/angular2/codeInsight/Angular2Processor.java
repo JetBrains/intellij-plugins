@@ -37,6 +37,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import com.intellij.xml.XmlAttributeDescriptor;
 import one.util.streamex.StreamEx;
+import org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
@@ -52,7 +53,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Angular2Processor {
@@ -62,7 +62,7 @@ public class Angular2Processor {
   public static final String $ANY = "$any";
 
   public static boolean isTemplateTag(@Nullable String tagName) {
-    return "ng-template".equalsIgnoreCase(tagName)
+    return Angular2TagDescriptorsProvider.NG_TEMPLATE.equalsIgnoreCase(tagName)
            || "template".equalsIgnoreCase(tagName);
   }
 
@@ -168,11 +168,9 @@ public class Angular2Processor {
       return;
     }
     Map<String, String> tagToClass = new HashMap<>();
-    Collection<VirtualFile> libs = JSCorePredefinedLibrariesProvider
-      .getAllJSPredefinedLibraryFiles()
-      .stream()
-      .filter(lib -> TypeScriptLibraryProvider.LIB_DOM_D_TS.equals(lib.getName()))
-      .collect(Collectors.toList());
+    Collection<VirtualFile> libs = ContainerUtil.filter(JSCorePredefinedLibrariesProvider
+                                                          .getAllJSPredefinedLibraryFiles(),
+                                                        lib -> TypeScriptLibraryProvider.LIB_DOM_D_TS.equals(lib.getName()));
 
     final List<JSClass> elements = TypeScriptClassResolver.getInstance().findClassesByQName(
       "HTMLElementTagNameMap", GlobalSearchScope.filesScope(project, libs));
@@ -456,9 +454,9 @@ public class Angular2Processor {
     private Angular2$AnyScope(@NotNull PsiElement context) {
       super(null);
       $any = new JSImplicitElementImpl.Builder($ANY, context)
-        .setTypeString("any")
+        .setTypeString("*")
         .setParameters(Collections.singletonList(
-          new JSImplicitParameterStructure("arg", "any", false, false, true)
+          new JSImplicitParameterStructure("arg", "*", false, false, true)
         ))
         .setType(JSImplicitElement.Type.Function)
         .toImplicitElement();

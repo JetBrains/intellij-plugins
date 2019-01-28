@@ -42,10 +42,7 @@ import org.angularjs.index.AngularSymbolIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -132,10 +129,14 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   private static void addDirective(@NotNull TypeScriptClass directiveClass,
                                    @NotNull Consumer<JSImplicitElement> processor,
                                    @Nullable String selector) {
-    if (StringUtil.isEmpty(selector)) {
-      selector = "";
+    final Set<String> indexNames;
+    if (selector == null) {
+      selector = "<null>";
+      indexNames = Collections.emptySet();
     }
-    Set<String> indexNames = Angular2EntityUtils.getDirectiveIndexNames(selector);
+    else {
+      indexNames = Angular2EntityUtils.getDirectiveIndexNames(selector.trim());
+    }
     JSImplicitElement directive = new JSImplicitElementImpl
       .Builder(ObjectUtils.notNull(directiveClass.getName(), selector), directiveClass)
       .setType(JSImplicitElement.Type.Class)
@@ -194,8 +195,10 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   private static void addPipe(@NotNull TypeScriptClass pipeClass,
                               @NotNull Consumer<JSImplicitElement> processor,
-                              String pipe) {
-    if (pipe == null) return;
+                              @Nullable String pipe) {
+    if (pipe == null) {
+      pipe = "<unnamed>";
+    }
     JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(pipe, pipeClass)
       .setUserString(ANGULAR2_PIPE_INDEX_USER_STRING)
       .setTypeString(PIPE_TYPE)

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static org.angular2.Angular2DecoratorUtil.SELECTOR_PROP;
 
@@ -37,10 +38,17 @@ public class Angular2MetadataDirectiveStub extends Angular2MetadataDirectiveStub
                                        @NotNull JsonObject source,
                                        @NotNull JsonObject initializer) {
     super(memberName, parent, source, initializer, Angular2MetadataElementTypes.DIRECTIVE);
+    assert super.getSelector() != null;
   }
 
   public Angular2MetadataDirectiveStub(@NotNull StubInputStream stream,
                                        @Nullable StubElement parent) throws IOException {
     super(stream, parent, Angular2MetadataElementTypes.DIRECTIVE);
+  }
+
+  @NotNull
+  @Override
+  public String getSelector() {
+    return Objects.requireNonNull(super.getSelector());
   }
 }

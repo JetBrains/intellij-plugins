@@ -27,10 +27,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
-  private static final String NG_CONTAINER = "ng-container";
-  private static final String NG_CONTENT = "ng-content";
-  private static final String NG_TEMPLATE = "ng-template";
+  public static final String NG_CONTAINER = "ng-container";
+  public static final String NG_CONTENT = "ng-content";
+  public static final String NG_TEMPLATE = "ng-template";
 
   @Override
   public void addTagNameVariants(@NotNull final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
@@ -43,15 +45,17 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     for (LookupElement el : elements) {
       names.add(el.getLookupString());
     }
+    for (String name : asList(NG_CONTAINER, NG_CONTENT, NG_TEMPLATE)) {
+      if (names.add(name)) {
+        addLookupItem(language, elements, name);
+      }
+    }
     Angular2EntitiesProvider.getAllElementDirectives(project).forEach((name, list) -> {
-      if (!names.contains(name) && !list.isEmpty()) {
+      if (!list.isEmpty() && !name.isEmpty() && names.add(name)) {
         Angular2DirectiveSelectorPsiElement el = list.get(0).getSelector().getPsiElementForElement(name);
         addLookupItem(language, elements, el, name);
       }
     });
-    addLookupItem(language, elements, NG_CONTAINER);
-    addLookupItem(language, elements, NG_CONTENT);
-    addLookupItem(language, elements, NG_TEMPLATE);
   }
 
   private static void addLookupItem(@NotNull Language language, @NotNull List<LookupElement> elements, @NotNull String name) {
