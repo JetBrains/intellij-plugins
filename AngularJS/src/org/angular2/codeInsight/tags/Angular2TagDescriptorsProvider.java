@@ -19,17 +19,16 @@ import com.intellij.xml.util.XmlUtil;
 import icons.AngularJSIcons;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
-import org.angular2.codeInsight.Angular2Processor;
-import org.angular2.entities.Angular2Directive;
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
-import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
-import org.angular2.lang.selector.Angular2SelectorMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 
@@ -90,7 +89,6 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
   @Nullable
   @Override
   public XmlElementDescriptor getDescriptor(@NotNull XmlTag xmlTag) {
-    final Project project = xmlTag.getProject();
     if (!(xmlTag instanceof HtmlTag && Angular2LangUtil.isAngular2Context(xmlTag))) {
       return null;
     }
@@ -101,30 +99,16 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
       return new Angular2TagDescriptor(tagName, createDirective(xmlTag, tagName));
     }
 
-    List<Angular2Directive> directiveCandidates = Angular2EntitiesProvider.findElementDirectivesCandidates(project, tagName);
-    if (directiveCandidates.isEmpty()) {
+    Angular2ApplicableDirectivesProvider provider = new Angular2ApplicableDirectivesProvider(xmlTag, true);
+    if (provider.getCandidates().isEmpty()) {
       return null;
     }
-    List<Angular2Directive> matchedDirectives = matchDirectives(xmlTag, directiveCandidates);
-    return new Angular2TagDescriptor(tagName, (matchedDirectives.isEmpty() ? directiveCandidates : matchedDirectives).get(0).getSelector()
+    return new Angular2TagDescriptor(tagName, (provider.getMatched().isEmpty()
+                                               ? provider.getCandidates()
+                                               : provider.getMatched())
+      .get(0)
+      .getSelector()
       .getPsiElementForElement(tagName));
-  }
-
-  @NotNull
-  public static List<Angular2Directive> matchDirectives(@NotNull XmlTag xmlTag,
-                                                        @NotNull Collection<Angular2Directive> directiveCandidates) {
-    Angular2SelectorMatcher<Angular2Directive> matcher = new Angular2SelectorMatcher<>();
-    directiveCandidates.forEach(d -> matcher.addSelectables(d.getSelector().getSimpleSelectors(), d));
-
-    boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
-    List<Angular2Directive> matchedDirectives = new ArrayList<>();
-    Angular2DirectiveSimpleSelector tagInfo = Angular2DirectiveSimpleSelector.createElementCssSelector(xmlTag);
-    matcher.match(tagInfo, (selector, directive) -> {
-      if (!directive.isTemplate() || isTemplateTag) {
-        matchedDirectives.add(directive);
-      }
-    });
-    return matchedDirectives;
   }
 
   @NotNull

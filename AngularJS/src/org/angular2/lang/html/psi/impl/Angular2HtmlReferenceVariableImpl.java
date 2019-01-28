@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.HintedReferenceHost;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -20,6 +19,7 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
+import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.html.parser.Angular2HtmlStubElementTypes;
@@ -32,7 +32,6 @@ import static com.intellij.lang.javascript.psi.types.JSNamedTypeFactory.createEx
 import static com.intellij.lang.javascript.psi.types.TypeScriptTypeParser.buildTypeFromClass;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClassType;
-import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getApplicableDirectives;
 
 public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariableStub<JSVariable>, JSVariable>
   implements Angular2HtmlReferenceVariable, HintedReferenceHost {
@@ -55,13 +54,12 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
 
     XmlTag tag = reference.getParent();
     if (tag != null) {
-      if (reference.getValueElement() == null
-          || StringUtil.isEmpty(reference.getValueElement().getValue())) {
+      String exportName = reference.getValue();
+      if (exportName == null || exportName.isEmpty()) {
         return getHtmlElementClassType(this, tag.getName());
       }
       else {
-        String exportName = reference.getValueElement().getValue();
-        for (Angular2Directive directive : getApplicableDirectives(tag)) {
+        for (Angular2Directive directive : new Angular2ApplicableDirectivesProvider(tag).getMatched()) {
           for (String exportAs : directive.getExportAsList()) {
             if (exportName.equals(exportAs)) {
               return doIfNotNull(directive.getTypeScriptClass(),

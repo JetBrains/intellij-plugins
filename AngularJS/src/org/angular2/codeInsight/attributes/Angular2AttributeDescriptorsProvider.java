@@ -23,7 +23,6 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
 import org.angular2.codeInsight.Angular2Processor;
-import org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
@@ -44,7 +43,6 @@ import java.util.function.Function;
 import static com.intellij.openapi.util.Pair.pair;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
@@ -120,25 +118,13 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return getAttributeDescriptor(attrName, xmlTag, this::getAttributeDescriptors);
   }
 
-  public static List<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag) {
-    return getApplicableDirectives(xmlTag, new HashSet<>());
-  }
-
-  private static List<Angular2Directive> getApplicableDirectives(@NotNull XmlTag xmlTag,
-                                                                 @NotNull Set<Angular2Directive> directiveCandidates) {
-    directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), xmlTag.getName()));
-    directiveCandidates.addAll(findElementDirectivesCandidates(xmlTag.getProject(), ""));
-    return Angular2TagDescriptorsProvider.matchDirectives(xmlTag, directiveCandidates);
-  }
-
   @NotNull
   public static Collection<XmlAttributeDescriptor> getDirectiveDescriptors(@NotNull XmlTag xmlTag) {
-    Set<Angular2Directive> directiveCandidates = new HashSet<>();
-    List<Angular2Directive> matchedDirectives = getApplicableDirectives(xmlTag, directiveCandidates);
+    Angular2ApplicableDirectivesProvider applicableDirectives = new Angular2ApplicableDirectivesProvider(xmlTag);
 
     boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
     List<XmlAttributeDescriptor> result = new ArrayList<>();
-    for (Angular2Directive matchedDirective : matchedDirectives) {
+    for (Angular2Directive matchedDirective : applicableDirectives.getMatched()) {
       result.addAll(Angular2AttributeDescriptor.getDirectiveDescriptors(matchedDirective, isTemplateTag));
     }
 
@@ -153,7 +139,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     Map<String, Angular2DirectiveProperty> inputs = new HashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new HashMap<>();
     Map<String, Angular2DirectiveProperty> inOuts = new HashMap<>();
-    for (Angular2Directive candidate : directiveCandidates) {
+    for (Angular2Directive candidate : applicableDirectives.getCandidates()) {
       BiConsumer<String, PsiElement> addAttribute = (attrName, source) -> {
         if (!knownAttributes.contains(attrName)) {
           attrsFromSelectors.putValue(attrName, pair(candidate, source));
