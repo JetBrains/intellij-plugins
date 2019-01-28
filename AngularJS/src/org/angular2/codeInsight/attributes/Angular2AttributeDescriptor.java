@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -22,13 +21,15 @@ import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
+import org.angular2.codeInsight.Angular2DeclarationsScope;
+import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.Angular2Processor;
-import org.angular2.entities.*;
+import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.angular2.lang.html.psi.PropertyBindingType;
@@ -296,68 +297,39 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return null;
   }
 
-  public boolean isInScope(@NotNull Set<Angular2Directive> moduleScope) {
-    if (mySourceDirectives == null) {
-      return true;
-    }
-    for (Angular2Directive directive : mySourceDirectives) {
-      if (directive == null
-          || moduleScope.contains(directive)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   @NotNull
   public Pair<LookupElement, String> getLookupElementWithPrefix(@NotNull PrefixMatcher prefixMatcher,
-                                                                @Nullable Set<Angular2Directive> moduleScope) {
-    boolean isInScope = moduleScope == null || isInScope(moduleScope);
+                                                                @NotNull Angular2DeclarationsScope moduleScope) {
     LookupElementInfo info = buildElementInfo(prefixMatcher);
     String currentPrefix = prefixMatcher.getPrefix();
     Pair<String, String> hide = notNull(find(info.hidePrefixesAndSuffixes,
                                              pair -> currentPrefix.startsWith(pair.first)),
                                         () -> pair("", ""));
     String name = StringUtil.trimStart(info.elementName, hide.first);
-    if (!isInScope && !isAnyDirectivePubliclyExported()) {
+    DeclarationProximity proximity = mySourceDirectives == null
+                                     ? DeclarationProximity.IN_SCOPE
+                                     : moduleScope.getDeclarationsProximity(mySourceDirectives);
+    if (proximity == DeclarationProximity.PRIVATE) {
       return pair(null, name);
     }
     LookupElementBuilder element = LookupElementBuilder.create(name)
       .withPresentableText(StringUtil.trimEnd(name, hide.second))
       .withCaseSensitivity(myInfo.type != REGULAR || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
       .withIcon(getIcon())
-      .withBoldness(isInScope && myPriority == AttributePriority.HIGH)
+      .withBoldness(proximity == DeclarationProximity.IN_SCOPE && myPriority == AttributePriority.HIGH)
       .withInsertHandler(new Angular2AttributeInsertHandler(true, shouldCompleteValue(), null));
     if (info.lookupStrings != null) {
       element = element.withLookupStrings(map(info.lookupStrings, str -> StringUtil.trimStart(str, hide.first)));
     }
-    if (!isInScope) {
+    if (proximity != DeclarationProximity.IN_SCOPE) {
       element = element.withItemTextForeground(SimpleTextAttributes.GRAYED_ATTRIBUTES.getFgColor());
     }
     String typeName = getTypeName();
     if (!StringUtil.isEmptyOrSpaces(typeName)) {
       element = element.withTypeText(typeName);
     }
-    return pair(PrioritizedLookupElement.withPriority(element, myPriority.getValue(isInScope)),
+    return pair(PrioritizedLookupElement.withPriority(element, myPriority.getValue(proximity == DeclarationProximity.IN_SCOPE)),
                 currentPrefix.substring(hide.first.length()));
-  }
-
-  private boolean isAnyDirectivePubliclyExported() {
-    if (mySourceDirectives == null) {
-      return false;
-    }
-    Map<Project, MultiMap<Angular2Declaration, Angular2Module>> export2NgModuleMap = new HashMap<>();
-    for (Angular2Directive directive : mySourceDirectives) {
-      if (directive != null
-          && find(export2NgModuleMap
-                    .computeIfAbsent(directive.getSourceElement().getProject(),
-                                     p -> Angular2EntitiesProvider.getExportedDeclarationToModuleMap(p))
-                    .get(directive),
-                  Angular2Module::isPublic) != null) {
-        return true;
-      }
-    }
-    return false;
   }
 
   protected LookupElementInfo buildElementInfo(@NotNull PrefixMatcher prefixMatcher) {

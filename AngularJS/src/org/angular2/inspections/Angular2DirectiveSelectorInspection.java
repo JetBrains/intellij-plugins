@@ -2,23 +2,17 @@
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.*;
 
 public class Angular2DirectiveSelectorInspection extends LocalInspectionTool {
@@ -44,13 +38,6 @@ public class Angular2DirectiveSelectorInspection extends LocalInspectionTool {
               holder.registerProblem(initializer, "Directive is missing required 'selector' property.",
                                      new AddJSPropertyQuickFix(initializer, SELECTOR_PROP, "", 0, false));
             }
-            else {
-              holder.registerProblem(decorator,
-                                     "Component is missing 'selector' property. Assuming default 'ng-component' selector.",
-                                     ProblemHighlightType.WEAK_WARNING,
-                                     getDecoratorNameRange(decorator),
-                                     new AddJSPropertyQuickFix(initializer, SELECTOR_PROP, "", 0, false));
-            }
           }
           else if ((text = getExpressionStringValue(selector.getValue())) != null) {
             try {
@@ -64,16 +51,5 @@ public class Angular2DirectiveSelectorInspection extends LocalInspectionTool {
         }
       }
     };
-  }
-
-  private static TextRange getDecoratorNameRange(ES6Decorator decorator) {
-    PsiElement location = doIfNotNull(tryCast(decorator.getExpression(), JSCallExpression.class),
-                                      JSCallExpression::getMethodExpression);
-    if (location != null) {
-      return new TextRange(0, location.getTextRange().getEndOffset() - decorator.getTextOffset());
-    }
-    else {
-      return new TextRange(0, decorator.getTextLength());
-    }
   }
 }

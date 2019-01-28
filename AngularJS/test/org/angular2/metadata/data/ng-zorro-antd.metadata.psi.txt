@@ -716,7 +716,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵgu <metadata component>: selector=date-range-popup; inputs=[extraFooter, ranges, disabledDate, showTime, panelMode, format, dateRender, locale, isRange, showToday, popupStyle, dropdownClassName, placeholder, disabledTime, value, showWeek]; outputs=[closePicker, resultOk, valueChange, panelModeChange]; inOuts=[<value,valueChange>, <panelMode,panelModeChange>]('')
     ɵgv <metadata component>: selector=nz-date-picker; inputs=[nzDisabledDate, nzDateRender, nzStyle, nzValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzShowTime, nzOpen, nzClassName, nzDisabledTime, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzRanges, nzFormat, nzSize, nzShowToday, nzMode]; outputs=[nzOnPanelChange, nzOnOpenChange, nzOnOk]; inOuts=[]
       ɵgw <metadata reference>('')
-    ɵgw <metadata component>: selector=ng-component; inputs=[nzDisabledDate, nzDateRender, nzStyle, nzValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzShowTime, nzOpen, nzClassName, nzDisabledTime, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzRanges, nzFormat, nzSize, nzShowToday, nzMode]; outputs=[nzOnPanelChange, nzOnOpenChange, nzOnOk]; inOuts=[]
+    ɵgw <metadata component>: selector=<null>; inputs=[nzDisabledDate, nzDateRender, nzStyle, nzValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzShowTime, nzOpen, nzClassName, nzDisabledTime, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzRanges, nzFormat, nzSize, nzShowToday, nzMode]; outputs=[nzOnPanelChange, nzOnOpenChange, nzOnOk]; inOuts=[]
       ɵgx <metadata reference>('')
     ɵgx <metadata class>('')
     ɵgz <metadata component>: selector=nz-picker; inputs=[size, format, disabled, className, style, placeholder, autoFocus, allowClear, value, open, isRange]; outputs=[openChange, valueChange]; inOuts=[<open,openChange>, <value,valueChange>]('')
@@ -724,7 +724,7 @@ MetadataFile:ng-zorro-antd.metadata.json
       ɵgw <metadata reference>('')
     ɵhb <metadata component>: selector=nz-month-picker; inputs=[nzDisabledDate, nzStyle, nzValue, nzDefaultValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzOpen, nzClassName, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzFormat, nzSize]; outputs=[nzOnOpenChange]; inOuts=[]
       ɵhc <metadata reference>('')
-    ɵhc <metadata component>: selector=ng-component; inputs=[nzDisabledDate, nzStyle, nzValue, nzDefaultValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzOpen, nzClassName, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzFormat, nzSize]; outputs=[nzOnOpenChange]; inOuts=[]
+    ɵhc <metadata component>: selector=<null>; inputs=[nzDisabledDate, nzStyle, nzValue, nzDefaultValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzOpen, nzClassName, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzFormat, nzSize]; outputs=[nzOnOpenChange]; inOuts=[]
       ɵgx <metadata reference>('')
     ɵhd <metadata component>: selector=nz-year-picker; inputs=[nzDisabledDate, nzStyle, nzValue, nzDefaultValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzOpen, nzClassName, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzFormat, nzSize]; outputs=[nzOnOpenChange]; inOuts=[]
       ɵhc <metadata reference>('')

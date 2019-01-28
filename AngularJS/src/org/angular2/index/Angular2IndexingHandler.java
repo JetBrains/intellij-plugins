@@ -59,7 +59,6 @@ import static org.angular2.Angular2DecoratorUtil.*;
 public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   public static final String REQUIRE = "require";
-  public static final String DEFAULT_COMPONENT_NAME = "ng-component";
 
   private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
   private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
@@ -130,12 +129,12 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       }
       else if (DIRECTIVE_DEC.equals(decoratorName)
                || (isComponent = COMPONENT_DEC.equals(decoratorName))) {
+        String selector = getPropertyValue(decorator, SELECTOR_PROP);
+        if (selector == null && !isComponent) {
+          return data;
+        }
         if (data == null) {
           data = new JSElementIndexingDataImpl();
-        }
-        String selector = getPropertyValue(decorator, SELECTOR_PROP);
-        if (selector == null && isComponent) {
-          selector = DEFAULT_COMPONENT_NAME;
         }
         addDirective(enclosingClass, data::addImplicitElement, selector);
         if (isComponent) {

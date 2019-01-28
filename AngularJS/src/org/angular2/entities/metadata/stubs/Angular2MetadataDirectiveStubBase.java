@@ -11,7 +11,6 @@ import com.intellij.util.io.StringRef;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
-import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.index.Angular2MetadataDirectiveIndex;
 import org.angular2.lang.metadata.psi.MetadataElementType;
 import org.jetbrains.annotations.NotNull;
@@ -38,11 +37,7 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
                                            @NotNull MetadataElementType elementType) {
     super(memberName, parent, source, elementType);
     String selector = readStringPropertyValue(initializer.findProperty(SELECTOR_PROP));
-    if (selector == null && this instanceof Angular2MetadataComponentStub) {
-      selector = Angular2IndexingHandler.DEFAULT_COMPONENT_NAME;
-    }
     mySelector = StringRef.fromString(selector);
-    assert mySelector != null;
     myExportAs = StringRef.fromString(readStringPropertyValue(initializer.findProperty(EXPORT_AS_PROP)));
     loadAdditionalBindingMappings(myInputMappings, initializer, Angular2DecoratorUtil.INPUTS_PROP);
     loadAdditionalBindingMappings(myOutputMappings, initializer, Angular2DecoratorUtil.OUTPUTS_PROP);
@@ -56,7 +51,7 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     myExportAs = stream.readName();
   }
 
-  @NotNull
+  @Nullable
   public String getSelector() {
     return StringRef.toString(mySelector);
   }
@@ -76,8 +71,10 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
   @Override
   public void index(@NotNull IndexSink sink) {
     super.index(sink);
-    Angular2EntityUtils.getDirectiveIndexNames(getSelector())
-      .forEach(indexName -> sink.occurrence(Angular2MetadataDirectiveIndex.KEY, indexName));
+    if (getSelector() != null) {
+      Angular2EntityUtils.getDirectiveIndexNames(getSelector())
+        .forEach(indexName -> sink.occurrence(Angular2MetadataDirectiveIndex.KEY, indexName));
+    }
   }
 
   private static void loadAdditionalBindingMappings(@NotNull Map<String, String> mappings,

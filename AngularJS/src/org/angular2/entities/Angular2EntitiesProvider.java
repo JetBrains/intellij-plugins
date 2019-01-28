@@ -43,6 +43,7 @@ import java.util.function.Function;
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static java.util.stream.Collectors.toMap;
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.entities.Angular2EntityUtils.*;
 import static org.angular2.index.Angular2IndexingHandler.NG_MODULE_INDEX_NAME;
 
 public class Angular2EntitiesProvider {
@@ -112,12 +113,12 @@ public class Angular2EntitiesProvider {
 
   @NotNull
   public static List<Angular2Directive> findElementDirectivesCandidates(@NotNull Project project, @NotNull String elementName) {
-    return findDirectivesCandidates(project, Angular2EntityUtils.getElementDirectiveIndexName(elementName));
+    return findDirectivesCandidates(project, getElementDirectiveIndexName(elementName));
   }
 
   @NotNull
   public static List<Angular2Directive> findAttributeDirectivesCandidates(@NotNull Project project, @NotNull String attributeName) {
-    return findDirectivesCandidates(project, Angular2EntityUtils.getAttributeDirectiveIndexName(attributeName));
+    return findDirectivesCandidates(project, getAttributeDirectiveIndexName(attributeName));
   }
 
   @NotNull
@@ -156,11 +157,12 @@ public class Angular2EntitiesProvider {
     return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
       StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project))
         .append(AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project))
-        .filter(name -> Angular2EntityUtils.isElementDirectiveIndexName(name)
-                        && !Angular2EntityUtils.getElementName(name).isEmpty())
-        .distinct(Angular2EntityUtils::getElementName)
-        .collect(toMap(Angular2EntityUtils::getElementName,
-                       name -> findDirectivesCandidates(project, name))),
+        .map(name -> isElementDirectiveIndexName(name) ? getElementName(name) : null)
+        .nonNull()
+        .distinct()
+        .collect(toMap(Function.identity(),
+                       name -> findDirectivesCandidates(
+                         project, getElementDirectiveIndexName(name)))),
       PsiModificationTracker.MODIFICATION_COUNT)
     );
   }

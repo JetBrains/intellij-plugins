@@ -46,7 +46,8 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   public Angular2DirectiveSelector getSelector() {
     return getCachedClassBasedValue(
       cls -> new Angular2DirectiveSelectorImpl(cls != null ? cls : this,
-                                               getStub().getSelector(), a -> new TextRange(0, 0)));
+                                               getStub().getSelector(),
+                                               a -> new TextRange(0, 0)));
   }
 
   @NotNull

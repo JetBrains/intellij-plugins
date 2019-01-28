@@ -25,7 +25,8 @@ public final class Angular2MetadataFileType extends MetadataJsonFileType {
     final CharSequence fileName = file.getNameSequence();
     final VirtualFile parent;
     if (StringUtil.endsWith(fileName, METADATA_SUFFIX)
-        && (parent = file.getParent()) != null) {
+        && (parent = file.getParent()) != null
+        && parent.isValid()) {
       final VirtualFile sibling = parent.findChild(fileName.subSequence(0, fileName.length() - METADATA_SUFFIX.length()) + D_TS_SUFFIX);
       return sibling != null;
     }

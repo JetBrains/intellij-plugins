@@ -41,6 +41,7 @@ import com.intellij.xml.XmlExtension;
 import icons.AngularJSIcons;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
+import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeInsertHandler;
@@ -48,8 +49,8 @@ import org.angular2.codeInsight.attributes.Angular2AttributesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributesProvider.CompletionResultsConsumer;
 import org.angular2.css.Angular2CssAttributeNameCompletionProvider;
 import org.angular2.css.Angular2CssExpressionCompletionProvider;
-import org.angular2.entities.*;
-import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2PipeExpression;
@@ -65,7 +66,6 @@ import static com.intellij.codeInsight.completion.XmlAttributeReferenceCompletio
 import static com.intellij.lang.javascript.psi.types.JSCompositeTypeBaseImpl.isNullOrUndefinedType;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
-import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.newHashSet;
 
 public class Angular2CompletionContributor extends CompletionContributor {
@@ -119,46 +119,42 @@ public class Angular2CompletionContributor extends CompletionContributor {
           || r instanceof JSReferenceExpressionImpl);
       }
       if (ref instanceof Angular2PipeReferenceExpression) {
-        Set<Angular2Pipe> scope = getModuleScope(parameters.getPosition());
+        Angular2DeclarationsScope scope = new Angular2DeclarationsScope(parameters.getPosition());
         JSType actualType = calcActualType(((Angular2PipeReferenceExpression)ref));
         for (Map.Entry<String, List<Angular2Pipe>> pipeEntry : Angular2EntitiesProvider
           .getAllPipes(((Angular2PipeReferenceExpression)ref).getProject()).entrySet()) {
-          List<Angular2Pipe> candidates = pipeEntry.getValue();
-          if (candidates.isEmpty()) {
+          Pair<Angular2Pipe, DeclarationProximity> bestMatch = scope.getClosestDeclaration(pipeEntry.getValue());
+          if (bestMatch == null || bestMatch.second == DeclarationProximity.PRIVATE) {
             return;
           }
-          Angular2Pipe match = scope == null
-                               ? candidates.get(0)
-                               : ContainerUtil.find(pipeEntry.getValue(), scope::contains);
+          Angular2Pipe match = bestMatch.first;
           LookupElementBuilder builder = LookupElementBuilder.create(pipeEntry.getKey())
             .withIcon(AngularJSIcons.Angular2)
             .withTypeText("pipe", null, true)
             .withInsertHandler(new JSLookupElementInsertHandler(false, null));
+          if (bestMatch.second == DeclarationProximity.PUBLIC_MODULE_EXPORT) {
+            builder = builder.withItemTextForeground(SimpleTextAttributes.GRAYED_ATTRIBUTES.getFgColor());
+          }
           Consumer<LookupElementBuilder> addResult = el ->
             result.consume(PrioritizedLookupElement.withPriority(el, NG_VARIABLE_PRIORITY.getPriorityValue()));
-          if (match != null) {
-            List<TypeScriptFunction> transformMethods = ContainerUtil.newArrayList(match.getTransformMethods());
-            if (!transformMethods.isEmpty() && actualType != null) {
-              Collections.sort(transformMethods,
-                               Comparator.comparingInt(f -> isNullOrUndefinedType(f.getReturnType()) ? 1 : 0));
-              List<FunctionTypeWithKind> resolveResults = new JSTypeSignatureChooser(
-                parameters.getPosition(), Collections.singletonList(actualType), null, JSTypeDeclaration.EMPTY_ARRAY
-              ).chooseOverload(ContainerUtil.map(transformMethods, TypeScriptTypeParser::buildFunctionType), true);
-              for (FunctionTypeWithKind resolved : resolveResults) {
-                if (resolved.getOverloadType().isAssignable()
-                    || resolved.getOverloadType() == OverloadPriority.INCORRECT_PARAMETERS_LENGTH) {
-                  JSFunctionType f = resolved.getJsFunction();
-                  addResult.accept(builder.withTypeText(renderPipeTypeText(f, pipeEntry.getKey()), true));
-                  break;
-                }
+          List<TypeScriptFunction> transformMethods = ContainerUtil.newArrayList(match.getTransformMethods());
+          if (!transformMethods.isEmpty() && actualType != null) {
+            Collections.sort(transformMethods,
+                             Comparator.comparingInt(f -> isNullOrUndefinedType(f.getReturnType()) ? 1 : 0));
+            List<FunctionTypeWithKind> resolveResults = new JSTypeSignatureChooser(
+              parameters.getPosition(), Collections.singletonList(actualType), null, JSTypeDeclaration.EMPTY_ARRAY
+            ).chooseOverload(ContainerUtil.map(transformMethods, TypeScriptTypeParser::buildFunctionType), true);
+            for (FunctionTypeWithKind resolved : resolveResults) {
+              if (resolved.getOverloadType().isAssignable()
+                  || resolved.getOverloadType() == OverloadPriority.INCORRECT_PARAMETERS_LENGTH) {
+                JSFunctionType f = resolved.getJsFunction();
+                addResult.accept(builder.withTypeText(renderPipeTypeText(f, pipeEntry.getKey()), true));
+                break;
               }
-            }
-            else {
-              addResult.accept(builder);
             }
           }
           else {
-            addResult.accept(builder.withItemTextForeground(SimpleTextAttributes.GRAYED_ATTRIBUTES.getFgColor()));
+            addResult.accept(builder);
           }
         }
         result.stopHere();
@@ -224,13 +220,6 @@ public class Angular2CompletionContributor extends CompletionContributor {
              ? NG_PRIVATE_VARIABLE_PRIORITY
              : NG_VARIABLE_PRIORITY;
     }
-
-    @Nullable
-    private static Set<Angular2Pipe> getModuleScope(@NotNull PsiElement element) {
-      Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
-        Angular2IndexingHandler.findComponentClass(element)), Angular2Component::getModule);
-      return module != null ? module.getPipesInScope() : null;
-    }
   }
 
   private static class AttributeNameCompletionProvider extends CompletionProvider<CompletionParameters> {
@@ -266,7 +255,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
           final PsiFile file = tag.getContainingFile();
           final XmlExtension extension = XmlExtension.getExtension(file);
 
-          Set<Angular2Directive> moduleScope = getModuleScope(tag);
+          Angular2DeclarationsScope moduleScope = new Angular2DeclarationsScope(tag);
           final XmlAttribute[] attributes = tag.getAttributes();
           Set<String> providedAttributes = StreamEx.of(attributes)
             .map(attr -> attr.getDescriptor())
@@ -304,13 +293,6 @@ public class Angular2CompletionContributor extends CompletionContributor {
           });
         }
       }
-    }
-
-    @Nullable
-    private static Set<Angular2Directive> getModuleScope(@NotNull PsiElement element) {
-      Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
-        Angular2IndexingHandler.findComponentClass(element)), Angular2Component::getModule);
-      return module != null ? module.getDirectivesInScope() : null;
     }
   }
 

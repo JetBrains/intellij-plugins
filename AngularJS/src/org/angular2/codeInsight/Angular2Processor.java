@@ -37,6 +37,7 @@ import com.intellij.util.containers.Stack;
 import com.intellij.xml.XmlAttributeDescriptor;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2InjectionUtils;
+import org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
@@ -60,7 +61,7 @@ public class Angular2Processor {
   public static final String $ANY = "$any";
 
   public static boolean isTemplateTag(@Nullable String tagName) {
-    return "ng-template".equalsIgnoreCase(tagName)
+    return Angular2TagDescriptorsProvider.NG_TEMPLATE.equalsIgnoreCase(tagName)
            || "template".equalsIgnoreCase(tagName);
   }
 

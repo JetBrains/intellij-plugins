@@ -10,6 +10,7 @@ import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.Angular2DirectiveSimpleSelectorWithRanges;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,9 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       @NotNull
       @Override
       protected List<Angular2DirectiveSimpleSelector> compute() {
+        if (myText == null) {
+          return Collections.emptyList();
+        }
         try {
           return Collections.unmodifiableList(Angular2DirectiveSimpleSelector.parse(myText));
         }
@@ -39,6 +43,9 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       @NotNull
       @Override
       protected List<SimpleSelectorWithPsi> compute() {
+        if (myText == null) {
+          return Collections.emptyList();
+        }
         try {
           List<Angular2DirectiveSimpleSelectorWithRanges> simpleSelectorsWithRanges = Angular2DirectiveSimpleSelector.parseRanges(myText);
           List<SimpleSelectorWithPsi> result = new ArrayList<>(simpleSelectorsWithRanges.size());
@@ -54,7 +61,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
     };
 
   public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
-                                       @NotNull String text,
+                                       @Nullable String text,
                                        @NotNull Function<Pair<String, Integer>, TextRange> createRange) {
     mySelectorElement = element;
     myText = text;
@@ -64,7 +71,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
   @NotNull
   @Override
   public String getText() {
-    return myText;
+    return myText == null ? "<null>" : myText;
   }
 
   @NotNull
