@@ -11,9 +11,7 @@ import training.project.ProjectUtils
  * @author Sergey Karashevich
  */
 class SwiftSupport : AbstractLangSupport() {
-    private val acceptableLanguages = setOf("swift")
-    override fun acceptLang(ext: String) = acceptableLanguages.contains(ext.toLowerCase())
-    override val primaryLanguage: String
+  override val primaryLanguage: String
         get() = "swift"
 
 

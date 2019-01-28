@@ -23,8 +23,4 @@ class MockLangSupport(override val primaryLanguage: String) : AbstractLangSuppor
     throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 
-  override fun acceptLang(ext: String): Boolean {
-    throw UnsupportedOperationException("not implemented") //To change body of created functions use File | Settings | File Templates.
-  }
-
 }

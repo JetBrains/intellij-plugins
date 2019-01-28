@@ -17,8 +17,6 @@ interface LangSupport {
         val EP_NAME = "training.TrainingLangExtension"
     }
 
-    fun acceptLang(ext: String): Boolean
-
     /**
      * Implement that method to define SDK lookup depending on a given project.
      * 
