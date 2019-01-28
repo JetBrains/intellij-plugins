@@ -26,9 +26,6 @@ class JavaLangSupport : AbstractLangSupport() {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
 
-  private val acceptableLanguages = setOf("java", "kt", "html")
-  override fun acceptLang(ext: String) = acceptableLanguages.contains(ext.toLowerCase())
-
   override val primaryLanguage: String
     get() = "java"
 
