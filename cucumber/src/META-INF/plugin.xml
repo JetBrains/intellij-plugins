@@ -5,7 +5,6 @@
   <name>Gherkin</name>
   <description>Provides support of Gherkin language</description>
   <depends>com.intellij.modules.xml</depends>
-  <idea-version since-build="136.0"/>
   <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">

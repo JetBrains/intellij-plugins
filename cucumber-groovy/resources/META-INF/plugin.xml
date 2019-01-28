@@ -22,7 +22,6 @@
   <depends>gherkin</depends>
   <depends>org.intellij.groovy</depends>
   <depends>cucumber-java</depends>
-  <idea-version since-build="136.0"/>
   <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">

@@ -9,7 +9,6 @@
   </description>
   <depends>com.intellij.modules.java</depends>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="134.1425"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <java.compiler implementation="org.intellij.errorProne.ErrorProneJavaBackendCompiler"/>

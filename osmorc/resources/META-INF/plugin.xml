@@ -45,7 +45,6 @@
   ]]></description>
   <category>Framework integration</category>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="183.0"/>
 
   <change-notes>
     <![CDATA[
