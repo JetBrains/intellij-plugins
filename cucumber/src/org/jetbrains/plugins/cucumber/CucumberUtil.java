@@ -29,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CucumberUtil {
   @NonNls public static final String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
@@ -62,6 +64,9 @@ public class CucumberUtil {
 
   public static final String PREFIX_CHAR = "^";
   public static final String SUFFIX_CHAR = "$";
+
+  private static final Pattern ESCAPE_PATTERN = Pattern.compile("([\\\\^\\[$.|?*+\\]])");
+  private static final Pattern OPTIONAL_PATTERN = Pattern.compile("(\\\\\\\\)?\\(([^)]+)\\)");
 
   public static final Map<String, String> STANDARD_PARAMETER_TYPES;
 
@@ -265,36 +270,19 @@ public class CucumberUtil {
    * {@code I have \d+ cucumber(?:s)? in my belly}
    */
   public static String replaceNotNecessaryTextTemplateByRegexp(@NotNull String cucumberExpression) {
-    StringBuilder result = new StringBuilder();
-    int i = 0;
-    while (i < cucumberExpression.length()) {
-      char c = cucumberExpression.charAt(i);
-      if (c == '(') {
-        int j = i;
-        while (j < cucumberExpression.length()) {
-          if (cucumberExpression.charAt(j) == ')'){
-            break;
-          }
-          if (cucumberExpression.charAt(j) == '\\') {
-            break;
-          }
-          j++;
-        }
-        if (j >= cucumberExpression.length()) {
-          // Error: not closed parenthesis
-          return cucumberExpression;
-        }
-        result.append("(?:").append(cucumberExpression, i + 1, j + 1).append('?');
-        i = j + 1;
-        continue;
+    Matcher matcher = OPTIONAL_PATTERN.matcher(cucumberExpression);
+    StringBuffer result = new StringBuffer();
+
+    while(matcher.find()) {
+      String parameterPart = matcher.group(2);
+      if ("\\\\".equals(matcher.group(1))) {
+        matcher.appendReplacement(result, "\\\\(" + parameterPart + "\\\\)");
+      } else {
+        matcher.appendReplacement(result, "(?:" + parameterPart + ")?");
       }
-      result.append(c);
-      if (c == '\\') {
-        i++;
-        result.append(cucumberExpression.charAt(i));
-      }
-      i++;
     }
+
+    matcher.appendTail(result);
     return result.toString();
   }
 
@@ -440,11 +428,6 @@ public class CucumberUtil {
   }
 
   public static String escapeCucumberExpression(@NotNull String stepPattern) {
-    return stepPattern.replaceAll("\\\\", "\\\\\\\\")
-      .replaceAll("\\$", "\\\\\\$")
-      .replaceAll("\\^", "\\\\^")
-      .replaceAll("\\*", "\\\\*")
-      .replaceAll("\\.", "\\\\.")
-      .replaceAll("\\[", "\\\\[");
+    return ESCAPE_PATTERN.matcher(stepPattern).replaceAll("\\\\$1");
   }
 }

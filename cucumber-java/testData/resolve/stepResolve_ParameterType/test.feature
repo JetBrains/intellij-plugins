@@ -17,3 +17,4 @@ Feature: Parameter Type test
     When I have 1 cucumber in my belly
     When I have $10
     And my ' | step "["
+    Given I have parenthes(s)

@@ -84,4 +84,8 @@ public class ParameterTypeSteps {
   @And("my ' | step \"[\"")
   public void my_test_step() {
   }
+
+  @Given("I have parenthes\\(s)")
+  public void my_test_step_with_parenthesis() {
+  }
 }

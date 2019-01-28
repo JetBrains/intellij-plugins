@@ -49,6 +49,12 @@ public class CucumberJava3ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("| st<caret>ep \"", "my_test_step");
   }
 
+  public void testResolveStepDefinitionWithParenthesis() {
+    init("stepResolve_ParameterType");
+
+    checkReference("Given I have pa<caret>renthes(s)", "my_test_step_with_parenthesis");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber3ProjectDescriptor();
