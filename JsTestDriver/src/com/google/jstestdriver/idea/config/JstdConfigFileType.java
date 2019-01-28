@@ -30,7 +30,7 @@ public class JstdConfigFileType extends LanguageFileType {
   /**
    * Creates a language file type for the specified language.
    */
-  protected JstdConfigFileType() {
+  private JstdConfigFileType() {
     super(findLanguage());
   }
 

@@ -27,7 +27,7 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
+import org.jetbrains.lang.manifest.ManifestFileType;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
@@ -107,7 +107,7 @@ public class OsgiPsiUtil {
 
   private static Header createHeader(Project project, String headerName, String valueText) {
     String text = String.format("%s: %s\n", headerName, valueText);
-    PsiFile file = PsiFileFactory.getInstance(project).createFileFromText("DUMMY.MF", ManifestFileTypeFactory.MANIFEST, text);
+    PsiFile file = PsiFileFactory.getInstance(project).createFileFromText("DUMMY.MF", ManifestFileType.INSTANCE, text);
     Header header = ((ManifestFile)file).getHeader(headerName);
     if (header == null) {
       throw new IncorrectOperationException("Bad header: '" + text + "'");

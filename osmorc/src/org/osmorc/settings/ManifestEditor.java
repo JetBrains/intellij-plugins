@@ -32,7 +32,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
+import org.jetbrains.lang.manifest.ManifestFileType;
 
 /**
  * Editor component for editing a Manifest with syntax highlighting and code completion. This is used in various settings dialogs.
@@ -43,7 +43,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
   private final ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();
 
   public ManifestEditor(@NotNull Project project, final String text) {
-    super("", project, ManifestFileTypeFactory.MANIFEST);
+    super("", project, ManifestFileType.INSTANCE);
     addDocumentListener(listener);
     UIUtil.invokeLaterIfNeeded(() -> setText(text));
   }

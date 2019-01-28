@@ -26,7 +26,7 @@ import javax.swing.*;
 public class MarkdownFileType extends LanguageFileType {
   public static final MarkdownFileType INSTANCE = new MarkdownFileType();
 
-  protected MarkdownFileType() {
+  private MarkdownFileType() {
     super(MarkdownLanguage.INSTANCE);
   }
 

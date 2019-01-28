@@ -15,7 +15,7 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
+import org.jetbrains.lang.manifest.ManifestFileType;
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode;
 import org.osgi.framework.Constants;
 
@@ -87,7 +87,7 @@ public class OsmorcFrameworkDetector extends FacetBasedFrameworkDetector<OsmorcF
   @NotNull
   @Override
   public FileType getFileType() {
-    return ManifestFileTypeFactory.MANIFEST;
+    return ManifestFileType.INSTANCE;
   }
 
   private boolean isSuitableFile(CharSequence fileContent) {
