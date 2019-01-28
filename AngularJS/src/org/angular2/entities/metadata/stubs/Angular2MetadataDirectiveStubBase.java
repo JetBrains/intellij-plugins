@@ -36,8 +36,8 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
                                            @NotNull JsonObject initializer,
                                            @NotNull MetadataElementType elementType) {
     super(memberName, parent, source, elementType);
-    mySelector = StringRef.fromString(readStringPropertyValue(initializer.findProperty(SELECTOR_PROP)));
-    assert mySelector != null;
+    String selector = readStringPropertyValue(initializer.findProperty(SELECTOR_PROP));
+    mySelector = StringRef.fromString(selector);
     myExportAs = StringRef.fromString(readStringPropertyValue(initializer.findProperty(EXPORT_AS_PROP)));
     loadAdditionalBindingMappings(myInputMappings, initializer, Angular2DecoratorUtil.INPUTS_PROP);
     loadAdditionalBindingMappings(myOutputMappings, initializer, Angular2DecoratorUtil.OUTPUTS_PROP);
@@ -51,7 +51,7 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     myExportAs = stream.readName();
   }
 
-  @NotNull
+  @Nullable
   public String getSelector() {
     return StringRef.toString(mySelector);
   }
@@ -71,8 +71,10 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
   @Override
   public void index(@NotNull IndexSink sink) {
     super.index(sink);
-    Angular2EntityUtils.getDirectiveIndexNames(getSelector())
-      .forEach(indexName -> sink.occurrence(Angular2MetadataDirectiveIndex.KEY, indexName));
+    if (getSelector() != null) {
+      Angular2EntityUtils.getDirectiveIndexNames(getSelector())
+        .forEach(indexName -> sink.occurrence(Angular2MetadataDirectiveIndex.KEY, indexName));
+    }
   }
 
   private static void loadAdditionalBindingMappings(@NotNull Map<String, String> mappings,

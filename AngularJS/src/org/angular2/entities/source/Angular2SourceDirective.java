@@ -43,7 +43,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
           property.getValue(), value, p -> new TextRange(1 + p.second, 1 + p.second + p.first.length())), property.getValue());
       }
-      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), "", a -> new TextRange(0, 0)),
+      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), null, a -> new TextRange(0, 0)),
                                                getDecorator());
     });
   }

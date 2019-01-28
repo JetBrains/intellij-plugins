@@ -16,10 +16,12 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import one.util.streamex.StreamEx;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.metadata.psi.Angular2MetadataPipe;
@@ -34,13 +36,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.util.containers.ContainerUtil.concat;
 import static com.intellij.util.containers.ContainerUtil.newHashSet;
 import static java.util.stream.Collectors.toMap;
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.entities.Angular2EntityUtils.*;
 
 public class Angular2EntitiesProvider {
 
@@ -80,12 +83,12 @@ public class Angular2EntitiesProvider {
 
   @NotNull
   public static List<Angular2Directive> findElementDirectivesCandidates(@NotNull Project project, @NotNull String elementName) {
-    return findDirectivesCandidates(project, Angular2EntityUtils.getElementDirectiveIndexName(elementName));
+    return findDirectivesCandidates(project, getElementDirectiveIndexName(elementName));
   }
 
   @NotNull
   public static List<Angular2Directive> findAttributeDirectivesCandidates(@NotNull Project project, @NotNull String attributeName) {
-    return findDirectivesCandidates(project, Angular2EntityUtils.getAttributeDirectiveIndexName(attributeName));
+    return findDirectivesCandidates(project, getAttributeDirectiveIndexName(attributeName));
   }
 
   @Nullable
@@ -115,14 +118,17 @@ public class Angular2EntitiesProvider {
 
   @NotNull
   public static Map<String, List<Angular2Directive>> getAllElementDirectives(@NotNull Project project) {
-    return Stream.concat(
-      AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project).stream(),
-      AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project).stream())
-      .filter(name -> Angular2EntityUtils.isElementDirectiveIndexName(name)
-                      && !Angular2EntityUtils.getElementName(name).isEmpty())
-      .collect(toMap(name -> Angular2EntityUtils.getElementName(name),
-                     name -> findDirectivesCandidates(project, name),
-                     ContainerUtil::concat));
+    return CachedValuesManager.getManager(project).getCachedValue(project, () -> create(
+      StreamEx.of(AngularIndexUtil.getAllKeys(Angular2SourceDirectiveIndex.KEY, project))
+        .append(AngularIndexUtil.getAllKeys(Angular2MetadataDirectiveIndex.KEY, project))
+        .map(name -> isElementDirectiveIndexName(name) ? getElementName(name) : null)
+        .nonNull()
+        .distinct()
+        .collect(toMap(Function.identity(),
+                       name -> findDirectivesCandidates(
+                         project, getElementDirectiveIndexName(name)))),
+      PsiModificationTracker.MODIFICATION_COUNT)
+    );
   }
 
   @NotNull
@@ -264,7 +270,8 @@ public class Angular2EntitiesProvider {
       }
       if (element instanceof ES6Decorator) {
         ES6Decorator dec = (ES6Decorator)element;
-        if (!ArrayUtil.contains(dec.getDecoratorName(), myDecoratorNames)) {
+        if (!ArrayUtil.contains(dec.getDecoratorName(), myDecoratorNames)
+            || !Angular2LangUtil.isAngular2Context(element)) {
           return null;
         }
         return CachedValuesManager.getCachedValue(dec, () -> {
