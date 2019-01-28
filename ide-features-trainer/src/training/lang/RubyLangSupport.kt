@@ -55,9 +55,6 @@ class RubyLangSupport : AbstractLangSupport() {
   override fun importLearnProject(): Project? {
     TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
   }
-  private val acceptableLanguages = setOf("ruby")
-
-  override fun acceptLang(ext: String) = acceptableLanguages.contains(ext.toLowerCase())
 
   override val defaultProjectName:String
     get() = rubyProjectName
