@@ -88,4 +88,7 @@ public class ParameterTypeSteps {
   @Given("I have parenthes\\(s)")
   public void my_test_step_with_parenthesis() {
   }
+
+  @Given("step {}")
+  public void anonymousParameterType() {}
 }

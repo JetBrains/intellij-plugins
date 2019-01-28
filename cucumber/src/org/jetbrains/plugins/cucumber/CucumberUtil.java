@@ -76,6 +76,7 @@ public class CucumberUtil {
     standardParameterTypes.put("float", "-?\\d*[.,]?\\d+");
     standardParameterTypes.put("word", "[^\\s]+");
     standardParameterTypes.put("string", "\"(?:[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'(?:[^'\\\\]*(?:\\\\.[^'\\\\]*)*)'");
+    standardParameterTypes.put("", "(.*)");
 
     STANDARD_PARAMETER_TYPES = Collections.unmodifiableMap(standardParameterTypes);
   }

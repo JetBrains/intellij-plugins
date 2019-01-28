@@ -55,6 +55,12 @@ public class CucumberJava3ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("Given I have pa<caret>renthes(s)", "my_test_step_with_parenthesis");
   }
 
+  public void testAnonymousParameterType() {
+    init("stepResolve_ParameterType");
+
+    checkReference("step with any<caret>thing", "anonymousParameterType");
+  }
+
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return CucumberJavaTestUtil.createCucumber3ProjectDescriptor();
