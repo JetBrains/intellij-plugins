@@ -1,49 +1,49 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
-import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
-import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
+import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2BindingToEventInspection extends LocalInspectionTool {
+public class Angular2BindingToEventInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new Angular2HtmlElementVisitor() {
-      @Override
-      public void visitPropertyBinding(Angular2HtmlPropertyBinding propertyBinding) {
-        final String propertyName = propertyBinding.getPropertyName();
-        if (propertyName.startsWith("on")) {
-          switch (propertyBinding.getBindingType()) {
-            case ATTRIBUTE:
-              holder.registerProblem(propertyBinding.getNameElement(),
-                                     "Binding to event attribute '" + propertyName + "' is disallowed for security reasons.",
+  protected void visitAngularAttribute(@NotNull ProblemsHolder holder,
+                                       @NotNull XmlAttribute attribute,
+                                       @NotNull Angular2AttributeDescriptor descriptor) {
+    AttributeInfo info = descriptor.getInfo();
+    if (info.type == Angular2AttributeType.PROPERTY_BINDING) {
+      final String propertyName = info.name;
+      if (propertyName.startsWith("on")) {
+        switch (((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType) {
+          case ATTRIBUTE:
+            holder.registerProblem(attribute.getNameElement(),
+                                   "Binding to event attribute '" + propertyName + "' is disallowed for security reasons.",
+                                   new ConvertToEventQuickFix(propertyName.substring(2)));
+            break;
+          case PROPERTY:
+            if (descriptor.getSourceDirectives() == null
+                || descriptor.getSourceDirectives().length == 0) {
+              holder.registerProblem(attribute.getNameElement(),
+                                     "Binding to event property '" + propertyName +
+                                     "' is disallowed for security reasons. If '" + propertyName +
+                                     "' is a directive input, make sure the directive is imported by the current module.",
                                      new ConvertToEventQuickFix(propertyName.substring(2)));
-              break;
-            case PROPERTY:
-              if (propertyBinding.getDescriptor() == null) {
-                holder.registerProblem(propertyBinding.getNameElement(),
-                                       "Binding to event property '" + propertyName +
-                                       "' is disallowed for security reasons. If '" + propertyName +
-                                       "' is a directive input, make sure the directive is imported by the current module.",
-                                       new ConvertToEventQuickFix(propertyName.substring(2)));
-              }
-              break;
-            default:
-          }
+            }
+            break;
+          default:
         }
       }
-    };
+    }
   }
 
   private static class ConvertToEventQuickFix implements LocalQuickFix {

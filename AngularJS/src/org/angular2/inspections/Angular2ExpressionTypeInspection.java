@@ -3,21 +3,22 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSTypeComparingContextService;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
-import org.angular2.Angular2InjectionUtils;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.lang.expr.psi.Angular2Binding;
-import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.html.parser.Angular2AttributeType;
-import org.angular2.lang.html.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.psi.util.PsiTreeUtil.getParentOfType;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
 
 public class Angular2ExpressionTypeInspection extends LocalInspectionTool {
@@ -25,41 +26,21 @@ public class Angular2ExpressionTypeInspection extends LocalInspectionTool {
   @NotNull
   @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-    return new Angular2HtmlElementVisitor() {
-
+    return new Angular2ElementVisitor() {
       @Override
-      public void visitXmlAttribute(XmlAttribute attribute) {
-        if (attribute instanceof Angular2HtmlBoundAttribute) {
-          return;
+      public void visitAngular2Binding(Angular2Binding binding) {
+        XmlAttribute attribute = getParentOfType(binding, XmlAttribute.class);
+        if (attribute == null) {
+          attribute = getParentOfType(InjectedLanguageManager.getInstance(binding.getProject()).getInjectionHost(binding),
+                                      XmlAttribute.class);
         }
-        Angular2AttributeDescriptor descriptor = tryCast(attribute.getDescriptor(),
-                                                         Angular2AttributeDescriptor.class);
-        if (descriptor == null || attribute.getValueElement() == null) return;
-        Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attribute.getName(), false);
-        if (info.type == Angular2AttributeType.PROPERTY_BINDING
-            || info.type == Angular2AttributeType.BANANA_BOX_BINDING) {
-          validateType(descriptor, Angular2InjectionUtils.findInjectedAngularExpression(attribute, Angular2Binding.class));
+        Angular2AttributeDescriptor descriptor =
+          tryCast(doIfNotNull(attribute, XmlAttribute::getDescriptor), Angular2AttributeDescriptor.class);
+        if (descriptor != null
+            && (descriptor.getInfo().type == Angular2AttributeType.PROPERTY_BINDING
+                || descriptor.getInfo().type == Angular2AttributeType.BANANA_BOX_BINDING)) {
+          validateType(descriptor, binding);
         }
-      }
-
-      @Override
-      public void visitReference(Angular2HtmlReference reference) {
-      }
-
-      @Override
-      public void visitVariable(Angular2HtmlVariable variable) {
-      }
-
-      @Override
-      public void visitPropertyBinding(Angular2HtmlPropertyBinding propertyBinding) {
-        validateType(tryCast(propertyBinding.getDescriptor(), Angular2AttributeDescriptor.class),
-                     propertyBinding.getBinding());
-      }
-
-      @Override
-      public void visitBananaBoxBinding(Angular2HtmlBananaBoxBinding bananaBoxBinding) {
-        validateType(tryCast(bananaBoxBinding.getDescriptor(), Angular2AttributeDescriptor.class),
-                     bananaBoxBinding.getBinding());
       }
 
       private void validateType(@Nullable Angular2AttributeDescriptor attributeDescriptor, @Nullable Angular2Binding binding) {

@@ -167,22 +167,22 @@
     <lookup.charFilter implementation="org.angular2.editor.Angular2LookupCharFilter" order="before xml"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2EmptyEventBindingInspection"
                      displayName="Empty Event Handler" groupName="Angular" enabledByDefault="true"
-                     level="ERROR" language="Angular2Html"/>
+                     level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2ExpressionTypeInspection"
                      displayName="Expression Result Type" groupName="Angular" enabledByDefault="true"
-                     level="WARNING" language="Angular2Html"/>
+                     level="WARNING" language="Angular2"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2BindingToEventInspection"
                      displayName="Binding to Event" groupName="Angular" enabledByDefault="true"
-                     level="WARNING" language="Angular2Html"/>
+                     level="WARNING"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2NonEmptyNgContentInspection"
                      displayName="Non Empty &lt;ng-content&gt; Tag" groupName="Angular" enabledByDefault="true"
-                     level="ERROR" language="Angular2Html"/>
+                     level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2MultipleTemplateBindingsInspection"
                      displayName="Multiple Structural Directives" groupName="Angular" enabledByDefault="true"
-                     level="ERROR" language="Angular2Html"/>
+                     level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2AnimationTriggerAssignmentInspection"
                      displayName="Animation Trigger Assignment" groupName="Angular" enabledByDefault="true"
-                     level="ERROR" language="Angular2Html"/>
+                     level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2TemplateReferenceVariableInspection"
                      displayName="Template Reference Variable" groupName="Angular" enabledByDefault="true"
                      level="ERROR" language="Angular2Html"/>
@@ -191,7 +191,7 @@
                      level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2MatchingComponentsInspection"
                      displayName="Matching Components" groupName="Angular" enabledByDefault="true"
-                     level="ERROR" language="Angular2Html"/>
+                     level="ERROR"/>
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2ServiceCompletionContributor"
                             id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"

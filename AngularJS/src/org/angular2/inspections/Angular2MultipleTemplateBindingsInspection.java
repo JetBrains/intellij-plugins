@@ -1,39 +1,38 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.util.ObjectUtils;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
-import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2MultipleTemplateBindingsInspection extends LocalInspectionTool {
+import java.util.List;
 
-  @NotNull
+import static com.intellij.util.ObjectUtils.tryCast;
+
+public class Angular2MultipleTemplateBindingsInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new Angular2HtmlElementVisitor() {
-      @Override
-      public void visitTemplateBindings(Angular2HtmlTemplateBindings bindings) {
-        if (bindings.getParent() != null
-            && ContainerUtil.find(bindings.getParent().getAttributes(),
-                                  attr -> attr != bindings && attr instanceof Angular2HtmlTemplateBindings) != null) {
-          holder
-            .registerProblem(bindings.getNameElement(), "Only one structural directive (attribute prefixed with *) per element is allowed.",
-                             new RemoveAttributeQuickFix(bindings.getName()));
-        }
-      }
-    };
+  protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {
+    List<XmlAttribute> templateBindings = ContainerUtil.filter(tag.getAttributes(), attr -> {
+      Angular2AttributeDescriptor descriptor = tryCast(attr.getDescriptor(), Angular2AttributeDescriptor.class);
+      return descriptor != null && descriptor.getInfo().type == Angular2AttributeType.TEMPLATE_BINDINGS;
+    });
+    if (templateBindings.size() > 1) {
+      templateBindings.forEach(attr -> holder.registerProblem(
+        attr.getNameElement(),
+        "Only one structural directive (attribute prefixed with *) per element is allowed.",
+        new RemoveAttributeQuickFix(attr.getName())));
+    }
   }
 
   private static class RemoveAttributeQuickFix implements LocalQuickFix {
@@ -57,7 +56,7 @@ public class Angular2MultipleTemplateBindingsInspection extends LocalInspectionT
 
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      final XmlAttribute attribute = ObjectUtils.tryCast(descriptor.getPsiElement().getParent(), XmlAttribute.class);
+      final XmlAttribute attribute = tryCast(descriptor.getPsiElement().getParent(), XmlAttribute.class);
       if (attribute != null) {
         PsiElement parent = attribute.getParent();
         attribute.delete();

@@ -1,41 +1,37 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
-import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
-import org.angular2.lang.html.psi.Angular2HtmlPropertyBinding;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
 import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2AnimationTriggerAssignmentInspection extends LocalInspectionTool {
+public class Angular2AnimationTriggerAssignmentInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
 
-  @NotNull
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly) {
-    return new Angular2HtmlElementVisitor() {
-      @Override
-      public void visitPropertyBinding(Angular2HtmlPropertyBinding propertyBinding) {
-        if (propertyBinding.getBindingType() == PropertyBindingType.ANIMATION
-            && propertyBinding.getName().startsWith("@")
-            && propertyBinding.getValueElement() != null
-            && !StringUtil.notNullize(propertyBinding.getValue()).isEmpty()) {
-          holder.registerProblem(propertyBinding.getValueElement(),
-                                 "Assigning animation triggers via @prop=\"exp\" attributes with an expression is invalid.",
-                                 new ConvertToPropertyBindingQuickFix(propertyBinding.getPropertyName()),
-                                 new RemoveAttributeValueQuickFix());
-        }
-      }
-    };
+  protected void visitAngularAttribute(@NotNull ProblemsHolder holder,
+                                       @NotNull XmlAttribute attribute,
+                                       @NotNull Angular2AttributeDescriptor descriptor) {
+    PropertyBindingInfo info = ObjectUtils.tryCast(descriptor.getInfo(), PropertyBindingInfo.class);
+    if (info != null
+        && info.bindingType == PropertyBindingType.ANIMATION
+        && attribute.getName().startsWith("@")
+        && attribute.getValueElement() != null
+        && !StringUtil.notNullize(attribute.getValue()).isEmpty()) {
+      holder.registerProblem(attribute.getValueElement(),
+                             "Assigning animation triggers via @prop=\"exp\" attributes with an expression is invalid.",
+                             new ConvertToPropertyBindingQuickFix(info.name),
+                             new RemoveAttributeValueQuickFix());
+    }
   }
 
   private static class ConvertToPropertyBindingQuickFix implements LocalQuickFix {

@@ -1,36 +1,33 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
-import org.angular2.lang.expr.psi.Angular2Action;
-import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
-import org.angular2.lang.html.psi.Angular2HtmlEvent;
+import com.intellij.psi.xml.XmlAttributeValue;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2EmptyEventBindingInspection extends LocalInspectionTool {
-  @NotNull
+public class Angular2EmptyEventBindingInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+
   @Override
-  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
-    return new Angular2HtmlElementVisitor() {
-      @Override
-      public void visitEvent(Angular2HtmlEvent event) {
-        Angular2Action action = event.getAction();
-        if (action == null) {
-          holder.registerProblem(event, "Event binding attribute must have a value.", new CreateAttributeQuickFix());
-        }
-        else if (action.getStatements().length == 0 && event.getValueElement() != null) {
-          holder.registerProblem(event.getValueElement(), "Empty expressions in event bindings are not allowed.");
-        }
+  protected void visitAngularAttribute(@NotNull ProblemsHolder holder,
+                                       @NotNull XmlAttribute attribute,
+                                       @NotNull Angular2AttributeDescriptor descriptor) {
+    if (descriptor.getInfo().type == Angular2AttributeType.EVENT) {
+      XmlAttributeValue value = attribute.getValueElement();
+      if (value == null || value.getTextLength() == 0) {
+        holder.registerProblem(attribute, "Event binding attribute must have a value.", new CreateAttributeQuickFix());
       }
-    };
+      else if (value.getValue().trim().isEmpty()) {
+        holder.registerProblem(value, "Empty expressions in event bindings are not allowed.");
+      }
+    }
   }
 
   private static class CreateAttributeQuickFix implements LocalQuickFix {
@@ -52,9 +49,13 @@ public class Angular2EmptyEventBindingInspection extends LocalInspectionTool {
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       final XmlAttribute attribute = (XmlAttribute)descriptor.getPsiElement();
       attribute.setValue("");
-      PsiNavigationSupport.getInstance().createNavigatable(project, attribute.getContainingFile().getVirtualFile(),
-                                                           attribute.getValueElement().getTextRange()
-                                                             .getStartOffset() + 1).navigate(true);
+      final XmlAttributeValue value = attribute.getValueElement();
+      if (value != null) {
+        PsiNavigationSupport.getInstance().createNavigatable(
+          project, attribute.getContainingFile().getVirtualFile(),
+          value.getTextRange().getStartOffset() + 1
+        ).navigate(true);
+      }
     }
   }
 }
