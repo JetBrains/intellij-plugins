@@ -10,16 +10,12 @@ public class CfmlQuoteHandler implements QuoteHandler {
   @Override
   public boolean isClosingQuote(HighlighterIterator iterator, int offset) {
     return iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE_CLOSER ||
-           iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE_CLOSER ||
-           iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE_CLOSER ||
            iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE_CLOSER;
   }
 
   @Override
   public boolean isOpeningQuote(HighlighterIterator iterator, int offset) {
     return iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE ||
-           iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE ||
-           iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE ||
            iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE;
   }
 
