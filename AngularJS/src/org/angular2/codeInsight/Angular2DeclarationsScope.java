@@ -2,7 +2,7 @@
 package org.angular2.codeInsight;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.NullableLazyValue;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.MultiMap;
@@ -23,14 +23,14 @@ import static java.util.Arrays.asList;
 
 public class Angular2DeclarationsScope {
 
-  private final NullableLazyValue<Set<Angular2Declaration>> myScope;
+  private final NotNullLazyValue<Pair<Set<Angular2Declaration>, Boolean>> myScope;
   private final Map<Project, MultiMap<Angular2Declaration, Angular2Module>> myExport2NgModuleMap = new HashMap<>();
 
   public Angular2DeclarationsScope(@NotNull PsiElement element) {
-    myScope = NullableLazyValue.createValue(() -> {
+    myScope = NotNullLazyValue.createValue(() -> {
       Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
         Angular2IndexingHandler.findComponentClass(element)), c -> c.getModule());
-      return module != null ? module.getDeclarationsInScope() : null;
+      return module != null ? pair(module.getDeclarationsInScope(), module.isScopeFullyResolved()) : pair(null, false);
     });
   }
 
@@ -42,9 +42,13 @@ public class Angular2DeclarationsScope {
       .orElse(null);
   }
 
+  public boolean isFullyResolved() {
+    return myScope.getValue().second;
+  }
+
   @NotNull
   public DeclarationProximity getDeclarationProximity(@NotNull Angular2Declaration declaration) {
-    Set<Angular2Declaration> scope = myScope.getValue();
+    Set<Angular2Declaration> scope = myScope.getValue().first;
     if (scope == null || scope.contains(declaration)) {
       return DeclarationProximity.IN_SCOPE;
     }
@@ -55,7 +59,7 @@ public class Angular2DeclarationsScope {
              Angular2Module::isPublic) != null) {
       return DeclarationProximity.PUBLIC_MODULE_EXPORT;
     }
-    return DeclarationProximity.PRIVATE;
+    return DeclarationProximity.DOES_NOT_EXIST;
   }
 
   @NotNull
@@ -68,7 +72,7 @@ public class Angular2DeclarationsScope {
     if (myScope == null) {
       return DeclarationProximity.IN_SCOPE;
     }
-    DeclarationProximity result = DeclarationProximity.PRIVATE;
+    DeclarationProximity result = DeclarationProximity.DOES_NOT_EXIST;
     for (Angular2Declaration declaration : declarations) {
       switch (getDeclarationProximity(declaration)) {
         case IN_SCOPE:
@@ -76,7 +80,7 @@ public class Angular2DeclarationsScope {
         case PUBLIC_MODULE_EXPORT:
           result = DeclarationProximity.PUBLIC_MODULE_EXPORT;
           break;
-        case PRIVATE:
+        case DOES_NOT_EXIST:
           break;
       }
     }
@@ -86,6 +90,6 @@ public class Angular2DeclarationsScope {
   public enum DeclarationProximity {
     IN_SCOPE,
     PUBLIC_MODULE_EXPORT,
-    PRIVATE
+    DOES_NOT_EXIST
   }
 }

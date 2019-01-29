@@ -70,26 +70,34 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @Nullable
-  public static Angular2AttributeDescriptor create(@NotNull String attributeName,
-                                                   @NotNull List<PsiElement> elements) {
+  private static Angular2AttributeDescriptor create(@NotNull String attributeName,
+                                                    @NotNull List<PsiElement> elements) {
     if (getCustomNgAttrs().contains(attributeName)) {
       return new Angular2AttributeDescriptor(attributeName, false, elements);
     }
     Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attributeName, true);
+
+    Collection<Angular2Directive> source;
+    if (elements.isEmpty() && info.type == REGULAR) {
+      return null;
+    }
     if (elements.isEmpty()
-        && (info.type == REGULAR
-            || info.type == TEMPLATE_BINDINGS
+        && (info.type == TEMPLATE_BINDINGS
             || (info instanceof Angular2AttributeNameParser.EventInfo
                 && ((Angular2AttributeNameParser.EventInfo)info).eventType == Angular2HtmlEvent.EventType.REGULAR
                 && !info.name.contains(":"))
             || (info instanceof Angular2AttributeNameParser.PropertyBindingInfo
-                && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY))) {
-      return null;
+                && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType
+                   == PropertyBindingType.PROPERTY))) {
+      source = emptyList();
+    }
+    else {
+      source = null;
     }
     if (info.type == EVENT) {
-      return new Angular2EventHandlerDescriptor(attributeName, info, elements);
+      return new Angular2EventHandlerDescriptor(attributeName, info, source, elements);
     }
-    return new Angular2AttributeDescriptor(attributeName, info, elements);
+    return new Angular2AttributeDescriptor(attributeName, info, source, elements);
   }
 
   @NotNull
@@ -129,8 +137,9 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   protected Angular2AttributeDescriptor(@NotNull String attributeName,
                                         @NotNull Angular2AttributeNameParser.AttributeInfo info,
+                                        @Nullable Collection<Angular2Directive> sourceDirectives,
                                         @NotNull Collection<PsiElement> elements) {
-    this(attributeName, info, AttributePriority.NORMAL, null, elements);
+    this(attributeName, info, AttributePriority.NORMAL, sourceDirectives, elements);
   }
 
   protected Angular2AttributeDescriptor(@NotNull String attributeName,
@@ -229,6 +238,11 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return null;
   }
 
+  @Nullable
+  public Angular2Directive[] getSourceDirectives() {
+    return mySourceDirectives;
+  }
+
   @Override
   @NotNull
   public String[] getEnumeratedValues() {
@@ -309,7 +323,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     DeclarationProximity proximity = mySourceDirectives == null
                                      ? DeclarationProximity.IN_SCOPE
                                      : moduleScope.getDeclarationsProximity(mySourceDirectives);
-    if (proximity == DeclarationProximity.PRIVATE) {
+    if (proximity == DeclarationProximity.DOES_NOT_EXIST) {
       return pair(null, name);
     }
     LookupElementBuilder element = LookupElementBuilder.create(name)

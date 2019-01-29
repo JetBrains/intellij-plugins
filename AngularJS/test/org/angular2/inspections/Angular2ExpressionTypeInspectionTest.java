@@ -18,6 +18,7 @@ public class Angular2ExpressionTypeInspectionTest extends LightPlatformCodeInsig
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.enableInspections(Angular2ExpressionTypeInspection.class,
+                                Angular2BindingsInspection.class,
                                 HtmlUnknownAttributeInspection.class,
                                 JSCheckFunctionSignaturesInspection.class,
                                 JSUnresolvedFunctionInspection.class);

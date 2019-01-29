@@ -124,7 +124,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
         for (Map.Entry<String, List<Angular2Pipe>> pipeEntry : Angular2EntitiesProvider
           .getAllPipes(((Angular2PipeReferenceExpression)ref).getProject()).entrySet()) {
           Pair<Angular2Pipe, DeclarationProximity> bestMatch = scope.getClosestDeclaration(pipeEntry.getValue());
-          if (bestMatch == null || bestMatch.second == DeclarationProximity.PRIVATE) {
+          if (bestMatch == null || bestMatch.second == DeclarationProximity.DOES_NOT_EXIST) {
             return;
           }
           Angular2Pipe match = bestMatch.first;

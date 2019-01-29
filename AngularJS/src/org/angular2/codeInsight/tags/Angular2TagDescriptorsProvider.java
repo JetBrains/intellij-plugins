@@ -71,7 +71,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
                                     @NotNull Object component,
                                     @NotNull String name,
                                     @NotNull DeclarationProximity proximity) {
-    if (proximity == DeclarationProximity.PRIVATE) {
+    if (proximity == DeclarationProximity.DOES_NOT_EXIST) {
       return;
     }
     LookupElementBuilder element = LookupElementBuilder.create(component, name)

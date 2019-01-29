@@ -5,6 +5,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2BindingsInspection;
 import org.angularjs.AngularTestUtil;
 
 public class NgMaterialTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -15,8 +16,9 @@ public class NgMaterialTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testTemplatesWithSuperConstructors() {
     JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(UnterminatedStatementJSInspection.class);
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(UnterminatedStatementJSInspection.class,
+                                  HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       AngularTestUtil.configureWithMetadataFiles(myFixture, "table", "cdk-index");
       myFixture.configureByFiles("templateTest.html", "cell.d.ts", "row.ts", "cdk_cell.d.ts", "cdk_row.ts");
       myFixture.checkHighlighting();

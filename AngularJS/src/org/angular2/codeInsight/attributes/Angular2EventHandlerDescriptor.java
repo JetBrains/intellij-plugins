@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +35,8 @@ public class Angular2EventHandlerDescriptor extends Angular2AttributeDescriptor 
 
   public Angular2EventHandlerDescriptor(@NotNull String attributeName,
                                         @NotNull Angular2AttributeNameParser.AttributeInfo info,
+                                        @Nullable Collection<Angular2Directive> sourceDirectives,
                                         @NotNull List<PsiElement> elements) {
-    super(attributeName, info, elements);
+    super(attributeName, info, sourceDirectives, elements);
   }
 }

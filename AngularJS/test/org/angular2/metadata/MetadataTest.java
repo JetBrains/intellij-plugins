@@ -10,6 +10,7 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2BindingsInspection;
 import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory;
 import org.angular2.lang.metadata.psi.MetadataFileImpl;
 import org.angularjs.AngularTestUtil;
@@ -74,7 +75,8 @@ public class MetadataTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testES6(getProject(), () -> {
       AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd");
       myFixture.configureByFiles("inherited_properties.html", "nz-col.component.d.ts", "nz-form-control.component.d.ts");
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.checkHighlighting(true, false, true);
     });
   }

@@ -186,6 +186,12 @@
     <localInspection implementationClass="org.angular2.inspections.Angular2TemplateReferenceVariableInspection"
                      displayName="Template Reference Variable" groupName="Angular" enabledByDefault="true"
                      level="ERROR" language="Angular2Html"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2BindingsInspection"
+                     displayName="Bindings" groupName="Angular" enabledByDefault="true"
+                     level="ERROR"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2MatchingComponentsInspection"
+                     displayName="Matching Components" groupName="Angular" enabledByDefault="true"
+                     level="ERROR" language="Angular2Html"/>
     <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2ServiceCompletionContributor"
                             id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"

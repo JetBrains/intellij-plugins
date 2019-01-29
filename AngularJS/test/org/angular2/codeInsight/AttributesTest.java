@@ -34,6 +34,7 @@ import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.inspections.Angular2BindingsInspection;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -787,7 +788,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testStandardPropertiesOnComponent() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("std_props_on_component.html", "one_time_binding.ts", "package.json");
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.checkHighlighting(true, false, true);
     });
   }
@@ -795,7 +797,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testCaseInsensitiveAttrNames() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("case_insensitive.html", "one_time_binding.ts", "package.json");
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.checkHighlighting(true, false, true);
     });
   }
@@ -1076,7 +1079,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testExtKeyEventsInspections() {
     JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.configureByFiles("extKeyEvents.html", "custom.ts", "package.json");
       myFixture.checkHighlighting(true, false, true);
     });
