@@ -16,7 +16,6 @@
 <li>Collection of code snippets for Angular and AngularJS</li>
 <li>Create new projects from the IDE Welcome screen using Angular CLI or built-in template for AngularJS</li>
 <li>Generate new app elements using Angular CLI</li>
-<li>Integration with Angular Language Service</li>
 <li>For AngularJS apps that use ui-router, see state diagram</li>
 </ul>
 <p>Here you can find more information on using <a href="https://www.jetbrains.com/help/webstorm/angular.html">Angular</a> and <a href="https://www.jetbrains.com/help/webstorm/angularjs.html">AngularJS</a> in the IDE.</p>
@@ -107,8 +106,6 @@
     <javascript.module.provider implementation="org.angularjs.codeInsight.attributes.AngularModulesProvider"/>
 
     <!-- Angular 2 contributions -->
-    <projectService serviceInterface="org.angular2.settings.AngularSettings"
-                    serviceImplementation="org.angular2.settings.AngularSettings"/>
     <applicationService serviceInterface="org.angular2.cli.AngularCliSchematicsRegistryService"
                         serviceImplementation="org.angular2.cli.AngularCliSchematicsRegistryServiceImpl"/>
     <javascript.names.suggester implementation="org.angular2.naming.Angular2NamesSuggester"/>
@@ -192,8 +189,6 @@
     <localInspection implementationClass="org.angular2.inspections.Angular2MatchingComponentsInspection"
                      displayName="Matching Components" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
-    <completion.contributor language="Angular2Html" implementationClass="org.angular2.codeInsight.Angular2ServiceCompletionContributor"
-                            id="Angular2ServiceCompletionContributorHtml" order="before AngularJSXmlCompletionContributor"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"
                                       order="first"/>
     <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider"/>
@@ -233,7 +228,6 @@
     <filetype.stubBuilder filetype="Angular Metadata JSON" implementationClass="org.angular2.lang.metadata.MetadataJsonStubBuilder"/>
     <fileType.fileViewProviderFactory filetype="Angular Metadata JSON"
                                       implementationClass="org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory"/>
-    <daemon.tooltipActionProvider implementation="org.angular2.service.Angular2TooltipActionProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
@@ -246,7 +240,6 @@
 
     <!-- Angular 2 Expression language contributions -->
     <frameworkIndexingHandler implementation="org.angular2.index.Angular2IndexingHandler"/>
-    <LanguageServiceProvider implementation="org.angular2.service.Angular2LanguageServiceProvider"/>
     <elementScopeProvider implementation="org.angular2.codeInsight.Angular2ResolveScopeProvider"/>
     <dialectSpecificHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2SpecificHandlersFactory"/>
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.codeInsight.Angular2AnalysisHandlersFactory"/>
@@ -272,10 +265,4 @@
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
     </action>
   </actions>
-
-  <project-components>
-    <component>
-      <implementation-class>org.angular2.service.Angular2HighlightingPassFactory</implementation-class>
-    </component>
-  </project-components>
 </idea-plugin>

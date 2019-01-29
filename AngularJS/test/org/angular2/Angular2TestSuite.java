@@ -24,7 +24,6 @@ import org.angular2.refactoring.AngularChangeSignatureTest;
 import org.angular2.refactoring.DirectiveRenameTest;
 import org.angular2.refactoring.RenameTest;
 import org.angular2.resharper.Angular2ReSharperTestSuite;
-import org.angular2.service.Angular2ServiceTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -59,7 +58,6 @@ import org.junit.runners.Suite;
   ComponentDeclarationNavigationTest.class,
   MetadataTest.class,
   NgMaterialTest.class,
-  Angular2ServiceTest.class,
   GotoSymbolTest.class,
   GotoRelatedTest.class,
   CssClassTest.class,
