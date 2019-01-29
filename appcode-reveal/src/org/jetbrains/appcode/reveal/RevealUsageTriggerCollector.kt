@@ -16,12 +16,10 @@ package org.jetbrains.appcode.reveal
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.project.Project
 
-private const val GROUP = "statistics.appcode.reveal"
-
 class RevealUsageTriggerCollector {
   companion object {
     fun trigger(project: Project, feature: String) {
-      FUCounterUsageLogger.getInstance().logEvent(project, GROUP, feature)
+      FUCounterUsageLogger.getInstance().logEvent(project, "appcode.reveal", feature)
     }
   }
 }
