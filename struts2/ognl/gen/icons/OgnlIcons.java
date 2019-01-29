@@ -17,5 +17,5 @@ public final class OgnlIcons {
   /**
    * 10x10
    */
-  public static final Icon Action_small = load("/icons/action_small.png");
+  public static final Icon Action_small = load("/icons/action_small.svg");
 }
