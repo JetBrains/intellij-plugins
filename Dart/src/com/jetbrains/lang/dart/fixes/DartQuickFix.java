@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.fixes;
 
 import com.intellij.CommonBundle;
@@ -76,6 +77,7 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
     if (mySuppressActionDelegate != null) {
       mySuppressActionDelegate.invoke(project, editor, file);
+      return;
     }
 
     if (mySourceChange == null) return;
