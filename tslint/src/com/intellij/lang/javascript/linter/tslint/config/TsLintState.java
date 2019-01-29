@@ -14,6 +14,7 @@ import java.util.Objects;
  */
 public class TsLintState implements JSNpmLinterState<TsLintState> {
 
+  public static final TsLintState DEFAULT = new Builder().build();
   @NotNull
   private final NodeJsInterpreterRef myInterpreterRef;
   @NotNull

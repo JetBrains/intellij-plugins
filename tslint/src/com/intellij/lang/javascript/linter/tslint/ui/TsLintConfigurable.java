@@ -1,10 +1,8 @@
 package com.intellij.lang.javascript.linter.tslint.ui;
 
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.linter.JSLinterBaseView;
-import com.intellij.lang.javascript.linter.JSLinterConfigurable;
-import com.intellij.lang.javascript.linter.JSLinterUtil;
-import com.intellij.lang.javascript.linter.JSLinterView;
+import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.linter.eslint.NewLinterView;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
@@ -90,6 +88,14 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
     NewTslintView(Project project, String displayName, TslintPanel panel) {
       super(project, displayName, panel.createComponent(), "tslint.json");
       myPanel = panel;
+    }
+
+    @NotNull
+    @Override
+    protected TsLintState getStateWithConfiguredAutomatically() {
+      return TsLintState.DEFAULT
+        .withInterpreterRef(NodeJsInterpreterRef.createProjectRef())
+        .withLinterPackage(AutodetectLinterPackage.INSTANCE);
     }
 
     @Override

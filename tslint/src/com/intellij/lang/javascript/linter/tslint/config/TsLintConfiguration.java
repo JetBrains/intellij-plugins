@@ -105,15 +105,6 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   @NotNull
   @Override
   protected TsLintState getDefaultState() {
-    TsLintState state = DEFAULT_STATE;
-    if (state != null) {
-      return state;
-    }
-    final TsLintState.Builder builder = new TsLintState.Builder();
-    builder.setCustomConfigFileUsed(false);
-
-    state = builder.build();
-    DEFAULT_STATE = state;
-    return state;
+    return TsLintState.DEFAULT;
   }
 }
