@@ -84,10 +84,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
     void commitModifiableModels() throws ConfigurationException;
 
     @Nullable
-    Library findSourceLibraryForLiveName(String name, String level);
+    Library findSourceLibraryForLiveName(String name, @NotNull String level);
 
     @Nullable
-    Library findSourceLibrary(String name, String level);
+    Library findSourceLibrary(String name, @NotNull String level);
   }
 
   public interface ModulesModelChangeListener extends EventListener {
@@ -204,7 +204,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
       @Override
       @Nullable
-      public Library findSourceLibrary(final String name, final String level) {
+      public Library findSourceLibrary(final String name, @NotNull final String level) {
         if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
           return globalLibrariesModel.getLibraryByName(name);
         }
@@ -217,7 +217,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
 
       @Override
-      public Library findSourceLibraryForLiveName(final String name, final String level) {
+      public Library findSourceLibraryForLiveName(final String name, @NotNull final String level) {
         return findSourceLibrary(name, level);
       }
     };

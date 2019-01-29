@@ -330,7 +330,7 @@ public class MarkdownIntroduceLinkReferenceAction extends AnAction implements Du
       PsiElement[] duplicatedLinks =
         PsiTreeUtil.collectElements(myFile, new PsiElementFilter() {
           @Override
-          public boolean isAccepted(PsiElement element) {
+          public boolean isAccepted(@NotNull PsiElement element) {
             return MarkdownTokenTypeSets.LINKS.contains(PsiUtilCore.getElementType(element))
                    && myUrl.equals(getUrl(element))
                    //inside inline links

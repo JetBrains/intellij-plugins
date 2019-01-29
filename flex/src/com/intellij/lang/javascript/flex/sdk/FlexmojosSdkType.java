@@ -61,7 +61,7 @@ public class FlexmojosSdkType extends SdkType {
   }
 
   @Override
-  public SdkAdditionalData loadAdditionalData(final Element element) {
+  public SdkAdditionalData loadAdditionalData(@NotNull final Element element) {
     final FlexmojosSdkAdditionalData additionalData = new FlexmojosSdkAdditionalData();
     additionalData.load(element);
     return additionalData;

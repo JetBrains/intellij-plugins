@@ -28,7 +28,7 @@ public class JsErrorFilter implements Filter {
 
   @Nullable
   @Override
-  public Result applyFilter(String line, int entireLength) {
+  public Result applyFilter(@NotNull String line, int entireLength) {
     JsErrorMessage message;
     try {
       message = JsErrorMessage.parseFromText(line, myBasePath);

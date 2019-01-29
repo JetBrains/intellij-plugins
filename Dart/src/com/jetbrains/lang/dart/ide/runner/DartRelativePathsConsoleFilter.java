@@ -23,7 +23,7 @@ public class DartRelativePathsConsoleFilter implements Filter {
 
   @Override
   @Nullable
-  public Result applyFilter(final String text, final int entireLength) {
+  public Result applyFilter(@NotNull final String text, final int entireLength) {
     final String trimmedText = StringUtil.trimLeading(text);
     final Trinity<String, Integer, Integer> fileRelPathLineAndColumn = getFileRelPathLineAndColumn(trimmedText);
     if (fileRelPathLineAndColumn == null) return null;

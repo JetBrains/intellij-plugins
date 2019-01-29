@@ -36,6 +36,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return ModuleType.get(module) == FlexModuleType.getInstance();
     }
 
+    @NotNull
     @Override
     public OrderEnumerationHandler createHandler(@NotNull Module module) {
       return new FlexOrderEnumerationHandler(module);

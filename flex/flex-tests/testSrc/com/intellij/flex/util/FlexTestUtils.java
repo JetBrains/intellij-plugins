@@ -298,12 +298,12 @@ public class FlexTestUtils {
       }
 
       @Override
-      public Library findSourceLibraryForLiveName(final String name, final String level) {
+      public Library findSourceLibraryForLiveName(final String name, @NotNull final String level) {
         return findSourceLibrary(name, level);
       }
 
       @Override
-      public Library findSourceLibrary(final String name, final String level) {
+      public Library findSourceLibrary(final String name, @NotNull final String level) {
         return getLibrariesTable(level).getLibraryByName(name);
       }
 

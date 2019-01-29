@@ -42,6 +42,7 @@ public class Struts2LibraryType extends DownloadableLibraryType {
     return Struts2Icons.Action;
   }
 
+  @NotNull
   @Override
   public String[] getDetectionClassNames() {
     return new String[]{STRUTS_VERSION_CLASS};

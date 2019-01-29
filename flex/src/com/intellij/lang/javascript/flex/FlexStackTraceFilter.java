@@ -44,7 +44,7 @@ public class FlexStackTraceFilter implements Filter {
 
   @Override
   @Nullable
-  public Result applyFilter(final String line, final int entireLength) {
+  public Result applyFilter(@NotNull final String line, final int entireLength) {
     //    [trace]    at org.flexunit::Assert$/fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\Assert.as:294]
     //    at org.flexunit::Assert$/fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\Assert.as:294]
     //    at global/org.flexunit.asserts::fail()[E:\hudson\jobs\FlexUnit4-Flex4.1\workspace\FlexUnit4\src\org\flexunit\asserts\fail.as:39]

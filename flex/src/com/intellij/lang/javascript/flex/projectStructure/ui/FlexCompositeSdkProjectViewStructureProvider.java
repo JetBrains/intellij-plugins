@@ -83,11 +83,13 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
     }
 
     @Override
+    @NotNull
     public Sdk getJdk() {
       return mySdk;
     }
 
     @Override
+    @NotNull
     public String getJdkName() {
       return mySdk.getName();
     }

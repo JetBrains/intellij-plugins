@@ -44,7 +44,7 @@ public class DartConsoleFilter implements Filter {
 
   @Override
   @Nullable
-  public Result applyFilter(final String line, final int entireLength) {
+  public Result applyFilter(@NotNull final String line, final int entireLength) {
     if (line.startsWith(OBSERVATORY_LISTENING_ON + "http://")) {
       return getObservatoryUrlResult(line, entireLength - line.length());
     }

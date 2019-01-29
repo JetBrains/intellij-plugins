@@ -34,7 +34,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
   public static class SdkFinderImpl extends SdkFinder {
     @Override
-    public Sdk findSdk(final String name, final String sdkType) {
+    public Sdk findSdk(@NotNull String name, @NotNull final String sdkType) {
       if (TYPE.getName().equals(sdkType)) {
         final List<String> sdksNames = StringUtil.split(name, NAME_DELIM);
         return new FlexCompositeSdk(ArrayUtil.toStringArray(sdksNames));

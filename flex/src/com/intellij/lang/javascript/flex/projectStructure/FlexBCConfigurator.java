@@ -89,19 +89,19 @@ public class FlexBCConfigurator {
           configurator.apply();
         }
 
-        public LibraryTable.ModifiableModel getLibrariesModifiableModel(final String level) {
+        public LibraryTable.ModifiableModel getLibrariesModifiableModel(@NotNull String level) {
           return ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
         }
 
         @Override
-        public Library findSourceLibraryForLiveName(final String name, final String level) {
+        public Library findSourceLibraryForLiveName(final String name, @NotNull final String level) {
           final LibrariesModifiableModel model =
             ProjectStructureConfigurable.getInstance(project).getContext().createModifiableModelProvider(level).getModifiableModel();
           return ContainerUtil.find(model.getLibraries(), library -> name.equals(model.getLibraryEditor(library).getModel().getName()));
         }
 
         @Override
-        public Library findSourceLibrary(final String name, final String level) {
+        public Library findSourceLibrary(final String name, @NotNull final String level) {
           return getLibrariesModifiableModel(level).getLibraryByName(name);
         }
       });

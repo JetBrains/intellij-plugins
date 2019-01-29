@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.GuiUtils;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.File;
@@ -43,7 +44,7 @@ public class CfmlStackTraceFilterProvider implements Filter {
     Pattern.compile("\\s*((" + PATTERN + ")[(](" + LINE_NUM_PATTERN + ")[)])[^\n]*\n");
 
   @Override
-  public Result applyFilter(String line, int entireLength) {
+  public Result applyFilter(@NotNull String line, int entireLength) {
     Pattern p = WIN_MXUNIT_PATTERN_ERROR;
     Matcher m = p.matcher(line);
 

@@ -1061,16 +1061,19 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     LibraryTablePresentation presentation = new LibraryTablePresentation() {
+      @NotNull
       @Override
       public String getDisplayName(boolean plural) {
         return FlexBundle.message(plural ? "library.editor.title.plural" : "library.editor.title.singular");
       }
 
+      @NotNull
       @Override
       public String getDescription() {
         return ProjectBundle.message("libraries.node.text.module");
       }
 
+      @NotNull
       @Override
       public String getLibraryTableEditorTitle() {
         return "Configure Library"; // not used as far as I see
