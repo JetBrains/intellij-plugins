@@ -83,8 +83,8 @@ def drb_launch_tests(drb_runner, test_scripts, test_scripts_names, test_names)
     test_name_pattern = get_test_name_pattern(test_names)
 
     rails = Gem.loaded_specs['rails']
-    version = rails.version if rails
-    if version && version >= Gem::Version.create('4')
+    version = rails ? rails.version.to_s : IntelliJ::RAILS_VERSION
+    if version && version >= '4'
       cmdline << 'rake'
       cmdline << 'test'
 
