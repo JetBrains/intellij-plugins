@@ -40,6 +40,10 @@ module IntelliJ
   SEARCH_MASK = ENV["INTELLIJ_IDEA_RUN_CONF_SEARCH_MASK"] # **/*.rb or **/*_spec.rb, etc.
 
   # TestUnit run all in folder
+  # Rails version
+  RAILS_VERSION = ENV["ENV_KEY_RAILS_VERSION"]
+
+  # TestUnit run all in folder
   # RSpec run all in folder
   WORK_DIR = ENV["INTELLIJ_IDEA_RUN_CONF_WORKING_DIR"]
 
