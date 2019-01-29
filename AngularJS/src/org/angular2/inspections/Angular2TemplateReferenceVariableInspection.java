@@ -4,6 +4,7 @@ package org.angular2.inspections;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElementVisitor;
+import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,8 @@ public class Angular2TemplateReferenceVariableInspection extends LocalInspection
             && reference.getVariable() != null
             && reference.getVariable().getType() == null) {
           holder.registerProblem(reference.getVariable(),
-                                 "There is no directive with 'exportAs' set to '" + exportName +"'");
+                                 "There is no directive with 'exportAs' set to '" + exportName +"'",
+                                 new RemoveAttributeQuickFix(reference.getName()));
         }
       }
     };

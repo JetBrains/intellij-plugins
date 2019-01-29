@@ -8,6 +8,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.NotNull;
@@ -77,7 +78,8 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
           default:
             return;
         }
-        holder.registerProblem(attribute.getNameElement(), message, severity);
+        holder.registerProblem(attribute.getNameElement(), message, severity,
+                               new RemoveAttributeQuickFix(attribute.getName()));
     }
   }
 }

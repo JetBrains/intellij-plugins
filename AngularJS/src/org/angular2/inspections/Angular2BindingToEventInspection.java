@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
@@ -28,7 +29,8 @@ public class Angular2BindingToEventInspection extends Angular2HtmlLikeTemplateLo
           case ATTRIBUTE:
             holder.registerProblem(attribute.getNameElement(),
                                    "Binding to event attribute '" + propertyName + "' is disallowed for security reasons.",
-                                   new ConvertToEventQuickFix(propertyName.substring(2)));
+                                   new ConvertToEventQuickFix(propertyName.substring(2)),
+                                   new RemoveAttributeQuickFix(attribute.getName()));
             break;
           case PROPERTY:
             if (descriptor.getSourceDirectives() == null
@@ -37,7 +39,8 @@ public class Angular2BindingToEventInspection extends Angular2HtmlLikeTemplateLo
                                      "Binding to event property '" + propertyName +
                                      "' is disallowed for security reasons. If '" + propertyName +
                                      "' is a directive input, make sure the directive is imported by the current module.",
-                                     new ConvertToEventQuickFix(propertyName.substring(2)));
+                                     new ConvertToEventQuickFix(propertyName.substring(2)),
+                                     new RemoveAttributeQuickFix(attribute.getName()));
             }
             break;
           default:
