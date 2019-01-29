@@ -12,6 +12,4 @@ public interface Angular2PipeExpression extends JSCallExpression {
 
   @Nullable
   Angular2PipeLeftSideArgument getLeftSideArgument();
-
-
 }

@@ -47,7 +47,7 @@ public interface Angular2AttributesProvider {
                                  @NotNull AttributePriority priority,
                                  @Nullable String hidePrefix,
                                  @Nullable String suffix) {
-      addAbbreviation(Collections.singletonList(lookupName),priority, hidePrefix, suffix);
+      addAbbreviation(Collections.singletonList(lookupName), priority, hidePrefix, suffix);
     }
   }
 }

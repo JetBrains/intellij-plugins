@@ -23,7 +23,7 @@ public class Angular2TemplateReferenceVariableInspection extends LocalInspection
             && reference.getVariable() != null
             && reference.getVariable().getType() == null) {
           holder.registerProblem(reference.getVariable(),
-                                 "There is no directive with 'exportAs' set to '" + exportName +"'",
+                                 "There is no directive with 'exportAs' set to '" + exportName + "'",
                                  new RemoveAttributeQuickFix(reference.getName()));
         }
       }

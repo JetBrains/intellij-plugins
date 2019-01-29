@@ -243,7 +243,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val file = e.getData(PlatformDataKeys.VIRTUAL_FILE)
 
     e.presentation.isEnabledAndVisible = project != null
-      && AngularCliUtil.findAngularCliFolder(project, file) != null
+                                         && AngularCliUtil.findAngularCliFolder(project, file) != null
   }
 
 }

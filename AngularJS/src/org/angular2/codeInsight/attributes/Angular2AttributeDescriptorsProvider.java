@@ -95,7 +95,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       attr -> result.merge(attr.getName(), attr, (a, b) -> {
         if (a instanceof Angular2AttributeDescriptor) {
           return ((Angular2AttributeDescriptor)a).merge(b);
-        } else if (b instanceof Angular2AttributeDescriptor) {
+        }
+        else if (b instanceof Angular2AttributeDescriptor) {
           return ((Angular2AttributeDescriptor)b).merge(a);
         }
         return a;

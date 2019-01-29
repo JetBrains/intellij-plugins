@@ -30,7 +30,7 @@ public class Angular2GotoDeclarationHandler implements GotoDeclarationHandler {
     List<Angular2Directive> directives;
     if (symbol instanceof Angular2DirectiveSelectorPsiElement
         && !(directives = Angular2EntitiesProvider.findDirectives((Angular2DirectiveSelectorPsiElement)symbol)).isEmpty()) {
-      return ContainerUtil.all(directives,Angular2Directive::isComponent) ? "Component &Declaration" : "Directive &Declaration";
+      return ContainerUtil.all(directives, Angular2Directive::isComponent) ? "Component &Declaration" : "Directive &Declaration";
     }
     return null;
   }

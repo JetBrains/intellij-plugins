@@ -17,8 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static org.angular2.service.Angular2LanguageService.isEnabledAngularService;
-
 public class Angular2LanguageServiceProvider implements JSLanguageServiceProvider {
   private final AtomicNotNullLazyValue<Angular2LanguageService> myLanguageService;
   private final Project myProject;

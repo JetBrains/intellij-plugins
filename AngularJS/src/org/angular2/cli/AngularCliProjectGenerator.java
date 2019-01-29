@@ -24,7 +24,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
-import com.intellij.util.gist.GistManagerImpl;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
