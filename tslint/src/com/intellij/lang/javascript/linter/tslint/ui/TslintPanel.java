@@ -5,7 +5,6 @@ import com.intellij.javascript.nodejs.util.NodePackageField;
 import com.intellij.javascript.nodejs.util.NodePackageRef;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
-import com.intellij.lang.javascript.linter.JSLinterBaseView;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.ui.JSLinterConfigFileTexts;
@@ -19,27 +18,28 @@ import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
  */
-public final class TsLintView extends JSLinterBaseView<TsLintState> {
+public final class TslintPanel {
   private static final JSLinterConfigFileTexts CONFIG_TEXTS = getConfigTexts();
 
   private final Project myProject;
   private final JSLinterConfigFileView myConfigFileView;
+  private final boolean myFullModeDialog;
+  private final boolean myAddLeftIndent;
   private final NodeJsInterpreterField myNodeInterpreterField;
   private final NodePackageField myNodePackageField;
   private TextFieldWithBrowseButton myRules;
 
-  public TsLintView(@NotNull Project project, boolean fullModeDialog) {
-    super(fullModeDialog);
+  public TslintPanel(@NotNull Project project, boolean fullModeDialog, boolean addLeftIndent) {
     myProject = project;
     myConfigFileView = new JSLinterConfigFileView(project, CONFIG_TEXTS, null);
+    myFullModeDialog = fullModeDialog;
+    myAddLeftIndent = addLeftIndent;
     myConfigFileView.setAdditionalConfigFilesProducer(() -> TslintUtil.findAllConfigsInScope(project));
     myNodeInterpreterField = new NodeJsInterpreterField(project, false);
     myNodePackageField = AutodetectLinterPackage.createNodePackageField(ContainerUtil.list(TslintUtil.PACKAGE_NAME),
@@ -47,32 +47,30 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
                                                                         TslintUtil.isMultiRootEnabled());
   }
 
-  @Nullable
-  @Override
-  protected Component createTopRightComponent() {
-    return null;
-  }
 
   @NotNull
-  @Override
-  protected Component createCenterComponent() {
+  public JComponent createComponent() {
     myRules = new TextFieldWithBrowseButton();
     SwingHelper.installFileCompletionAndBrowseDialog(myProject, myRules, "Select additional rules directory",
                                                      FileChooserDescriptorFactory.createSingleFolderDescriptor());
-    final FormBuilder nodeFieldsWrapperBuilder = FormBuilder.createFormBuilder()
-      .setAlignLabelOnRight(true)
+    final FormBuilder nodeFieldsWrapperBuilder = FormBuilder.createFormBuilder();
+    nodeFieldsWrapperBuilder.setAlignLabelOnRight(true)
       .setHorizontalGap(UIUtil.DEFAULT_HGAP)
-      .setVerticalGap(UIUtil.DEFAULT_VGAP)
-      .setFormLeftIndent(UIUtil.DEFAULT_HGAP)
-      .addLabeledComponent("&Node interpreter:", myNodeInterpreterField)
+      .setVerticalGap(UIUtil.DEFAULT_VGAP);
+    if (myAddLeftIndent) {
+      nodeFieldsWrapperBuilder.setFormLeftIndent(UIUtil.DEFAULT_HGAP);
+    }
+    nodeFieldsWrapperBuilder.addLabeledComponent("&Node interpreter:", myNodeInterpreterField)
       .addLabeledComponent("TSLint package:", myNodePackageField);
 
-    JPanel panel = FormBuilder.createFormBuilder()
-      .setAlignLabelOnRight(true)
+    FormBuilder builder = FormBuilder.createFormBuilder();
+    builder.setAlignLabelOnRight(true)
       .setHorizontalGap(UIUtil.DEFAULT_HGAP)
-      .setVerticalGap(UIUtil.DEFAULT_VGAP)
-      .setFormLeftIndent(UIUtil.DEFAULT_HGAP)
-      .addComponent(nodeFieldsWrapperBuilder.getPanel())
+      .setVerticalGap(UIUtil.DEFAULT_VGAP);
+    if (myAddLeftIndent) {
+      builder.setFormLeftIndent(UIUtil.DEFAULT_HGAP);
+    }
+    JPanel panel = builder.addComponent(nodeFieldsWrapperBuilder.getPanel())
       .addComponent(myConfigFileView.getComponent())
       .addSeparator(4)
       .addVerticalGap(4)
@@ -83,8 +81,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
     return centerPanel;
   }
 
-  @Override
-  protected void handleEnableStatusChanged(boolean enabled) {
+  public void handleEnableStatusChanged(boolean enabled) {
     NodePackageRef selectedRef = myNodePackageField.getSelectedRef();
     if (selectedRef == AutodetectLinterPackage.INSTANCE) {
       UIUtil.setEnabled(myConfigFileView.getComponent(), false, true);
@@ -93,8 +90,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   }
 
   @NotNull
-  @Override
-  protected TsLintState getState() {
+  public TsLintState getState() {
     final TsLintState.Builder builder = new TsLintState.Builder()
       .setNodePath(myNodeInterpreterField.getInterpreterRef())
       .setNodePackageRef(myNodePackageField.getSelectedRef())
@@ -106,8 +102,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
     return builder.build();
   }
 
-  @Override
-  protected void setState(@NotNull TsLintState state) {
+  public void setState(@NotNull TsLintState state) {
     myNodeInterpreterField.setInterpreterRef(state.getInterpreterRef());
     myNodePackageField.setSelectedRef(state.getNodePackageRef());
 
@@ -121,7 +116,7 @@ public final class TsLintView extends JSLinterBaseView<TsLintState> {
   }
 
   private void resizeOnSeparateDialog() {
-    if (isFullModeDialog()) {
+    if (myFullModeDialog) {
       myNodeInterpreterField.setPreferredWidthToFitText();
       myConfigFileView.setPreferredWidthToComponents();
     }
