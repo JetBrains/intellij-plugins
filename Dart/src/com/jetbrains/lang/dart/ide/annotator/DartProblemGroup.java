@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -23,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.psi.DartFile;
+import org.dartlang.analysis.server.protocol.AnalysisErrorSeverity;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,8 +34,8 @@ public class DartProblemGroup implements SuppressableProblemGroup {
   public SuppressIntentionAction[] getSuppressActions(@Nullable final PsiElement element) {
     if (element != null && element.getContainingFile() instanceof DartFile) {
       return new SuppressIntentionAction[]{
-        new DartSuppressAction(myErrorCode, myErrorSeverity, false),
-        new DartSuppressAction(myErrorCode, myErrorSeverity, true)
+        new DartSuppressAction(myErrorCode, myErrorSeverity, false, false),
+        new DartSuppressAction(myErrorCode, myErrorSeverity, false, true)
       };
     }
     return NO_ACTIONS;
@@ -61,15 +50,23 @@ public class DartProblemGroup implements SuppressableProblemGroup {
   public static class DartSuppressAction extends SuppressIntentionAction implements Comparable<IntentionAction> {
     public static final String IGNORE_PREFIX = "ignore:";
     @NotNull private final String myErrorCode;
+    @NotNull private final String myErrorSeverity;
     private final boolean myEolComment;
 
     /**
      * @param eolComment {@code true} means that {@code //ignore} comment should be placed in the end of the current line, {@code false} -> on previous line
      */
-    public DartSuppressAction(@NotNull final String errorCode, @NotNull final String errorSeverity, boolean eolComment) {
+    public DartSuppressAction(@NotNull String errorCode, @NotNull String errorSeverity, boolean topLevelAction, boolean eolComment) {
       myErrorCode = errorCode;
+      myErrorSeverity = errorSeverity;
       myEolComment = eolComment;
-      setText("Suppress " + errorSeverity.toLowerCase(Locale.US) + (eolComment ? " with EOL comment" : " with comment"));
+      String severityText = errorSeverity.equals(AnalysisErrorSeverity.INFO) ? "warning" : errorSeverity.toLowerCase(Locale.US);
+      if (topLevelAction) {
+        setText("Suppress " + severityText + " " + errorCode);
+      }
+      else {
+        setText("Suppress " + severityText + (eolComment ? " with EOL comment" : " with comment"));
+      }
     }
 
     @Nls
@@ -90,6 +87,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
     @Override
     public boolean isAvailable(@NotNull final Project project, final Editor editor, @NotNull final PsiElement element) {
       if (editor == null) return false;
+      if (myErrorSeverity.equals(AnalysisErrorSeverity.ERROR)) return false;
 
       final Document document = editor.getDocument();
       final int line = document.getLineNumber(element.getTextRange().getStartOffset());
