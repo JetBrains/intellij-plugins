@@ -88,7 +88,7 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
     private final TslintPanel myPanel;
 
     NewTslintView(Project project, String displayName, TslintPanel panel) {
-      super(project, displayName, panel.createComponent());
+      super(project, displayName, panel.createComponent(), "tslint.json");
       myPanel = panel;
     }
 
