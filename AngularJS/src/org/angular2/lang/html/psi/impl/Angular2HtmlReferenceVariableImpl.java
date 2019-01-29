@@ -19,6 +19,7 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.IncorrectOperationException;
+import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.index.Angular2IndexingHandler;
@@ -59,13 +60,16 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
         return getHtmlElementClassType(this, tag.getName());
       }
       else {
+        Angular2DeclarationsScope scope = new Angular2DeclarationsScope(this);
         for (Angular2Directive directive : new Angular2ApplicableDirectivesProvider(tag).getMatched()) {
-          for (String exportAs : directive.getExportAsList()) {
-            if (exportName.equals(exportAs)) {
-              return doIfNotNull(directive.getTypeScriptClass(),
-                                 clazz -> clazz.getQualifiedName() != null
-                                          ? createExplicitlyDeclaredType(clazz.getQualifiedName(), clazz)
-                                          : buildTypeFromClass(clazz, false));
+          if (scope.contains(directive)) {
+            for (String exportAs : directive.getExportAsList()) {
+              if (exportName.equals(exportAs)) {
+                return doIfNotNull(directive.getTypeScriptClass(),
+                                   clazz -> clazz.getQualifiedName() != null
+                                            ? createExplicitlyDeclaredType(clazz.getQualifiedName(), clazz)
+                                            : buildTypeFromClass(clazz, false));
+              }
             }
           }
         }

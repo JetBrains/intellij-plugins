@@ -46,10 +46,14 @@ public class Angular2DeclarationsScope {
     return myScope.getValue().second;
   }
 
+  public boolean contains(@NotNull Angular2Declaration declaration) {
+    Set<Angular2Declaration> scope = myScope.getValue().first;
+    return scope == null || scope.contains(declaration);
+  }
+
   @NotNull
   public DeclarationProximity getDeclarationProximity(@NotNull Angular2Declaration declaration) {
-    Set<Angular2Declaration> scope = myScope.getValue().first;
-    if (scope == null || scope.contains(declaration)) {
+    if (contains(declaration)) {
       return DeclarationProximity.IN_SCOPE;
     }
     if (find(myExport2NgModuleMap

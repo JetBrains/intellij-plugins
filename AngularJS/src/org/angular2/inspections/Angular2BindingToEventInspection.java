@@ -7,6 +7,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
+import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
@@ -33,12 +35,12 @@ public class Angular2BindingToEventInspection extends Angular2HtmlLikeTemplateLo
                                    new RemoveAttributeQuickFix(attribute.getName()));
             break;
           case PROPERTY:
+            Angular2DeclarationsScope scope = new Angular2DeclarationsScope(attribute);
             if (descriptor.getSourceDirectives() == null
-                || descriptor.getSourceDirectives().length == 0) {
+                || ContainerUtil.find(descriptor.getSourceDirectives(), scope::contains) == null) {
               holder.registerProblem(attribute.getNameElement(),
                                      "Binding to event property '" + propertyName +
-                                     "' is disallowed for security reasons. If '" + propertyName +
-                                     "' is a directive input, make sure the directive is imported by the current module.",
+                                     "' is disallowed for security reasons",
                                      new ConvertToEventQuickFix(propertyName.substring(2)),
                                      new RemoveAttributeQuickFix(attribute.getName()));
             }

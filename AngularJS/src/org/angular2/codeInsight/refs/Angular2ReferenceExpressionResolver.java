@@ -13,14 +13,12 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
-import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
@@ -60,12 +58,12 @@ public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionRe
     }
     assert myReferencedName != null;
 
-    Pair<Angular2Pipe, DeclarationProximity> closestMatch = new Angular2DeclarationsScope(expression)
-      .getClosestDeclaration(Angular2EntitiesProvider.findPipes(expression.getProject(), myReferencedName));
-    if (closestMatch == null || closestMatch.second != DeclarationProximity.IN_SCOPE) {
+    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(expression);
+    Angular2Pipe pipe = ContainerUtil.find(Angular2EntitiesProvider.findPipes(expression.getProject(), myReferencedName),
+                                           scope::contains);
+    if (pipe == null) {
       return ResolveResult.EMPTY_ARRAY;
     }
-    final Angular2Pipe pipe = closestMatch.first;
     if (!pipe.getTransformMethods().isEmpty()) {
       return ContainerUtil.map2Array(pipe.getTransformMethods(), ResolveResult.EMPTY_ARRAY,
                                      JSResolveResult::new);

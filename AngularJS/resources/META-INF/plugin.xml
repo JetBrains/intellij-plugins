@@ -182,7 +182,7 @@
                      level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2TemplateReferenceVariableInspection"
                      displayName="Template Reference Variable" groupName="Angular" enabledByDefault="true"
-                     level="ERROR" language="Angular2Html"/>
+                     level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.Angular2BindingsInspection"
                      displayName="Bindings" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
