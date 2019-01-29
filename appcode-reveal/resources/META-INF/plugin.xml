@@ -14,6 +14,10 @@
   <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.appcode</depends>
 
+  <extensions defaultExtensionNs="com.intellij">
+    <statistics.counterUsagesCollector group_id="statistics.appcode.reveal" version="1"/>
+  </extensions>
+
   <extensions defaultExtensionNs="appcode">
     <runConfigurationExtension implementation="org.jetbrains.appcode.reveal.RevealRunConfigurationExtension"/>
   </extensions>
