@@ -3,6 +3,7 @@ package org.angular2.lang.html.parser;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
 import org.angular2.lang.html.psi.PropertyBindingType;
@@ -10,10 +11,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.Map;
 
+import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.lang.html.psi.PropertyBindingType.*;
 
 public class Angular2AttributeNameParser {
+
+  private static final Map<String, String> ATTR_TO_PROP_MAPPING = ContainerUtil.newHashMap(
+    pair("class", "className"),
+    pair("for", "htmlFor"),
+    pair("formaction", "formAction"),
+    pair("innerHtml", "innerHTML"),
+    pair("readonly", "readOnly"),
+    pair("tabindex", "tabIndex")
+  );
 
   @NotNull
   public static AttributeInfo parseBound(@NotNull String name) {
@@ -217,7 +229,8 @@ public class Angular2AttributeNameParser {
                                boolean isCanonical,
                                boolean bananaBoxBinding,
                                @NotNull PropertyBindingType bindingType) {
-      super(name, isCanonical, bananaBoxBinding ? Angular2AttributeType.BANANA_BOX_BINDING : Angular2AttributeType.PROPERTY_BINDING);
+      super(ATTR_TO_PROP_MAPPING.getOrDefault(name, name), isCanonical,
+            bananaBoxBinding ? Angular2AttributeType.BANANA_BOX_BINDING : Angular2AttributeType.PROPERTY_BINDING);
       this.bindingType = bindingType;
     }
 

@@ -1085,4 +1085,13 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.checkHighlighting(true, false, true);
     });
   }
+
+  public void testAttributeNameMapping() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
+      myFixture.configureByFiles("attributeNameMapping.html", "package.json");
+      myFixture.checkHighlighting();
+    });
+  }
 }
