@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.marker;
 
 import com.intellij.codeHighlighting.Pass;
@@ -21,19 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DartMethodLineMarkerProvider implements LineMarkerProvider {
-
-  private final DaemonCodeAnalyzerSettings myDaemonSettings;
-  private final EditorColorsManager myColorsManager;
-
-  public DartMethodLineMarkerProvider(DaemonCodeAnalyzerSettings daemonSettings, EditorColorsManager colorsManager) {
-    myDaemonSettings = daemonSettings;
-    myColorsManager = colorsManager;
-  }
-
   @Nullable
   @Override
   public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement element) {
-    if (!myDaemonSettings.SHOW_METHOD_SEPARATORS) {
+    if (!DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS) {
       return null;
     }
 
@@ -69,7 +60,7 @@ public class DartMethodLineMarkerProvider implements LineMarkerProvider {
       LineMarkerInfo info = new LineMarkerInfo<>(anchor, anchor.getTextRange(), null, Pass.LINE_MARKERS,
                                                  FunctionUtil.<Object, String>nullConstant(), null,
                                                  GutterIconRenderer.Alignment.RIGHT);
-      EditorColorsScheme scheme = myColorsManager.getGlobalScheme();
+      EditorColorsScheme scheme = EditorColorsManager.getInstance().getGlobalScheme();
       info.separatorColor = scheme.getColor(CodeInsightColors.METHOD_SEPARATORS_COLOR);
       info.separatorPlacement = SeparatorPlacement.TOP;
       return info;
