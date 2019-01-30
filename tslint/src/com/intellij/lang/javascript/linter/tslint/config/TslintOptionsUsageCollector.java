@@ -23,8 +23,10 @@ public class TslintOptionsUsageCollector extends ProjectUsagesCollector {
     if (!extendedState.isEnabled()) {
       return Collections.emptySet();
     }
-    TsLintState state = extendedState.getState();
     Set<UsageDescriptor> set = new HashSet<>();
+    set.add(new UsageDescriptor("enabled"));
+
+    TsLintState state = extendedState.getState();
     if (state.getInterpreterRef() != TsLintState.DEFAULT.getInterpreterRef()) {
       set.add(new UsageDescriptor("node.interpreter.custom"));
     }
