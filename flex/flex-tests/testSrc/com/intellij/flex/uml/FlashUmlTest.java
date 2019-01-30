@@ -3,13 +3,9 @@ package com.intellij.flex.uml;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.codeInsight.TargetElementUtil;
-import com.intellij.diagram.DiagramBuilder;
-import com.intellij.diagram.DiagramDataModel;
-import com.intellij.diagram.DiagramNode;
-import com.intellij.diagram.DiagramProvider;
+import com.intellij.diagram.*;
 import com.intellij.diagram.settings.DiagramConfiguration;
 import com.intellij.diagram.util.DiagramUtils;
-import com.intellij.diagram.util.UmlDataModelDumper;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.JSTestOption;
