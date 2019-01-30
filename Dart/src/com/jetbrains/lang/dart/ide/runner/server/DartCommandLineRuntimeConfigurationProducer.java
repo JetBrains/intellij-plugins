@@ -1,17 +1,16 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.LazyRunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.ide.runner.test.DartTestRunConfigurationProducer;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.DartImportStatement;
@@ -61,8 +60,7 @@ public final class DartCommandLineRuntimeConfigurationProducer extends LazyRunCo
 
     if (psiFile instanceof DartFile &&
         virtualFile != null &&
-        ProjectRootManager.getInstance(context.getProject()).getFileIndex().isInContent(virtualFile) &&
-        !DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile.getProject(), virtualFile) &&
+        ProjectFileIndex.getInstance(context.getProject()).isInContent(virtualFile) &&
         DartResolveUtil.getMainFunction(psiFile) != null &&
         (!checkBrowserSpecificImports || !hasImport((DartFile)psiFile,
                                                     "dart:html", "dart:html_common", "dart:indexed_db", "dart:js",

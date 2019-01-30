@@ -1,16 +1,13 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.openapi.fileEditor.impl.NonProjectFileWritingAccessExtension;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.jetbrains.lang.dart.util.DartUrlResolver;
+import com.jetbrains.lang.dart.DartFileType;
 import org.jetbrains.annotations.NotNull;
-
-import static com.jetbrains.lang.dart.util.PubspecYamlUtil.PUBSPEC_YAML;
 
 public class DartWritingAccessProvider implements NonProjectFileWritingAccessExtension {
 
@@ -21,37 +18,13 @@ public class DartWritingAccessProvider implements NonProjectFileWritingAccessExt
   }
 
   @Override
-  public boolean isNotWritable(@NotNull VirtualFile file) {   
-    return isInDartSdkOrDartPackagesFolder(myProject, file);
+  public boolean isNotWritable(@NotNull VirtualFile file) {
+    return file.getFileType() == DartFileType.INSTANCE && ProjectRootManager.getInstance(myProject).getFileIndex().isExcluded(file);
   }
 
-  public static boolean isInDartSdkOrDartPackagesFolder(final @NotNull PsiFile psiFile) {
-    final VirtualFile vFile = psiFile.getOriginalFile().getVirtualFile();
-    return vFile != null && isInDartSdkOrDartPackagesFolder(psiFile.getProject(), vFile);
-  }
-
-  public static boolean isInDartSdkOrDartPackagesFolder(final @NotNull Project project, final @NotNull VirtualFile file) {
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-
-    if (fileIndex.isInLibraryClasses(file) && !fileIndex.isInContent(file)) {
-      return true; // file in SDK or in custom package root
-    }
-
-    if (fileIndex.isExcluded(file) || (fileIndex.isInContent(file) && isInDartPackagesFolder(fileIndex, file))) {
-      return true; // symlinked child of 'packages' folder. Real location is in user cache folder for Dart packages, not in project
-    }
-
-    return false;
-  }
-
-  private static boolean isInDartPackagesFolder(final ProjectFileIndex fileIndex, final VirtualFile file) {
-    VirtualFile parent = file;
-    while ((parent = parent.getParent()) != null && fileIndex.isInContent(parent)) {
-      if (DartUrlResolver.PACKAGES_FOLDER_NAME.equals(parent.getName())) {
-        return VfsUtilCore.findRelativeFile("../" + PUBSPEC_YAML, parent) != null;
-      }
-    }
-
-    return false;
+  @Deprecated
+  // TODO remove when Flutter plugin usage is removed
+  public static boolean isInDartSdkOrDartPackagesFolder(@NotNull Project project, @NotNull VirtualFile file) {
+    return file.getFileType() == DartFileType.INSTANCE && !ProjectFileIndex.getInstance(project).isInContent(file);
   }
 }

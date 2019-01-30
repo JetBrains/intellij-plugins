@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.codeInsight.hint.HintManager;
@@ -15,6 +15,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -26,7 +27,6 @@ import com.intellij.ui.LightweightHint;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
-import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +57,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
 
     if (editor != null) {
       final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-      if (!isApplicableFile(psiFile)) return;
+      if (psiFile == null || !isApplicableFile(project, psiFile.getVirtualFile())) return;
       runOverEditor(project, editor, psiFile);
     }
     else {
@@ -101,7 +101,7 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
       final PsiFile psiFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
       // visible for any Dart file, but enabled for applicable only
       presentation.setVisible(psiFile != null && psiFile.getFileType() == DartFileType.INSTANCE);
-      presentation.setEnabled(isApplicableFile(psiFile));
+      presentation.setEnabled(psiFile != null && isApplicableFile(project, psiFile.getVirtualFile()));
       presentation.setText(getActionTextForEditor());
       return;
     }
@@ -159,28 +159,13 @@ public abstract class AbstractDartFileProcessingAction extends AnAction implemen
     return result;
   }
 
-  private static boolean isApplicableFile(@NotNull final Project project, @NotNull final VirtualFile file) {
-    if (file.getFileType() != DartFileType.INSTANCE) return false;
+  private static boolean isApplicableFile(@NotNull final Project project, @Nullable final VirtualFile file) {
+    if (file == null || file.getFileType() != DartFileType.INSTANCE) return false;
+    if (ProjectFileIndex.getInstance(project).isInContent(file)) return false;
 
     final Module module = ModuleUtilCore.findModuleForFile(file, project);
     if (module == null) return false;
-
     if (!DartSdkLibUtil.isDartSdkEnabled(module)) return false;
-
-    if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(project, file)) return false;
-
-    return true;
-  }
-
-  private static boolean isApplicableFile(@Nullable final PsiFile psiFile) {
-    if (psiFile == null || psiFile.getVirtualFile() == null || psiFile.getFileType() != DartFileType.INSTANCE) return false;
-
-    final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
-    if (module == null) return false;
-
-    if (!DartSdkLibUtil.isDartSdkEnabled(module)) return false;
-
-    if (DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(psiFile)) return false;
 
     return true;
   }

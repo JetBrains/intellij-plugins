@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.execution.ExecutionBundle;
@@ -32,7 +20,6 @@ import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBCheckBox;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.DartWritingAccessProvider;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunnerParameters;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -60,7 +47,8 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersion(), "2") < 0) {
       myCheckedModeOrEnableAssertsCheckBox.setText("Checked mode");
       myCheckedModeOrEnableAssertsCheckBox.setMnemonic('c');
-    } else {
+    }
+    else {
       myCheckedModeOrEnableAssertsCheckBox.setText("Enable asserts");
       myCheckedModeOrEnableAssertsCheckBox.setMnemonic('l');
     }
@@ -80,12 +68,8 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
       final VirtualFile initialFile = initialPath.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(initialPath);
       final PsiFile initialPsiFile = initialFile == null ? null : PsiManager.getInstance(project).findFile(initialFile);
 
-      TreeFileChooser fileChooser = TreeFileChooserFactory.getInstance(project).createFileChooser(
-        DartBundle.message("choose.dart.main.file"),
-        initialPsiFile,
-        DartFileType.INSTANCE,
-        file -> !DartWritingAccessProvider.isInDartSdkOrDartPackagesFolder(file)
-      );
+      TreeFileChooser fileChooser = TreeFileChooserFactory.getInstance(project)
+        .createFileChooser(DartBundle.message("choose.dart.main.file"), initialPsiFile, DartFileType.INSTANCE, null);
 
       fileChooser.showDialog();
 
