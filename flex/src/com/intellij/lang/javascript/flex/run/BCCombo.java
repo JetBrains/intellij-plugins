@@ -9,10 +9,10 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.ui.ColoredListCellRendererWrapper;
-import com.intellij.ui.SimpleColoredText;
+import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -53,25 +53,25 @@ public class BCCombo extends JComboBox {
     }
     myAllConfigs = allConfigs.toArray(new FlexBuildConfiguration[0]);
 
-    setRenderer(new ColoredListCellRendererWrapper() {
+    setRenderer(new ColoredListCellRenderer<Object>() {
       @Override
-      protected void doCustomize(final JList list, final Object value, final int index, final boolean selected, final boolean hasFocus) {
+      protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if (value instanceof Pair) {
           final String moduleName = (String)((Pair)value).first;
           final String configName = (String)((Pair)value).second;
           //setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
           if (moduleName.isEmpty() || configName.isEmpty()) {
-            append(new SimpleColoredText("[none]", SimpleTextAttributes.ERROR_ATTRIBUTES));
+            append("[none]", SimpleTextAttributes.ERROR_ATTRIBUTES);
           }
           else {
-            append(BCUtils.renderMissingBuildConfiguration(configName, moduleName));
+            BCUtils.renderMissingBuildConfiguration(configName, moduleName).appendToComponent(this);
           }
         }
         else {
           assert value instanceof FlexBuildConfiguration : value;
           final FlexBuildConfiguration bc = (FlexBuildConfiguration)value;
           setIcon(bc.getIcon());
-          append(BCUtils.renderBuildConfiguration(bc, mySingleModuleProject ? null : myBCToModuleMap.get(bc).getName()));
+          BCUtils.renderBuildConfiguration(bc, mySingleModuleProject ? null : myBCToModuleMap.get(bc).getName()).appendToComponent(this);
         }
       }
     });
