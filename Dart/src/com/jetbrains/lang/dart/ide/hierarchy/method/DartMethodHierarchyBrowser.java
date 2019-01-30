@@ -8,6 +8,7 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -23,7 +24,6 @@ import java.util.Map;
 
 public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.hierarchy.method.DartMethodHierarchyBrowser");
-  private static final String GROUP_DART_METHOD_HIERARCHY_POPUP = "DartMethodHierarchyPopupMenu";
 
   public DartMethodHierarchyBrowser(Project project, PsiElement target) {
     super(project, target);
@@ -41,7 +41,7 @@ public class DartMethodHierarchyBrowser extends MethodHierarchyBrowserBase {
   @Override
   protected void createTrees(@NotNull Map<String, JTree> trees) {
     final JTree tree = createTree(false);
-    ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(GROUP_DART_METHOD_HIERARCHY_POPUP);
+    ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_METHOD_HIERARCHY_POPUP);
     PopupHandler.installPopupHandler(tree, group, ActionPlaces.METHOD_HIERARCHY_VIEW_POPUP, ActionManager.getInstance());
     trees.put(METHOD_TYPE, tree);
   }

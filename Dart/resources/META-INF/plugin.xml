@@ -302,55 +302,5 @@
     </group>
     <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction" text="Pub: Repair Cache..."
             description="Run 'pub cache repair'"/>
-
-    <action id="DartTypeHierarchy.BaseOnThisType" text="Base on this Type"
-            class="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser$BaseOnThisTypeAction"
-            use-shortcut-of="TypeHierarchy"/>
-    <group id="DartClassHierarchyPopupMenu">
-      <reference ref="DartTypeHierarchy.BaseOnThisType"/>
-      <reference ref="TypeHierarchy.Class"/>
-      <reference ref="TypeHierarchy.Subtypes"/>
-      <reference ref="TypeHierarchy.Supertypes"/>
-      <separator/>
-      <reference ref="EditSource"/>
-      <separator/>
-      <reference ref="FindUsages"/>
-      <reference ref="RefactoringMenu"/>
-      <separator/>
-      <reference ref="AddToFavorites"/>
-      <separator/>
-      <reference ref="VersionControlsGroup"/>
-      <separator/>
-    </group>
-
-    <action id="DartCallHierarchy.BaseOnThisFunction" text="Base on this Component"
-            class="com.intellij.ide.hierarchy.CallHierarchyBrowserBase$BaseOnThisMethodAction"
-            use-shortcut-of="CallHierarchy"/>
-    <group id="DartCallHierarchyPopupMenu">
-      <reference ref="DartCallHierarchy.BaseOnThisFunction"/>
-      <separator/>
-      <reference ref="EditSource"/>
-      <separator/>
-      <reference ref="FindUsages"/>
-      <reference ref="RefactoringMenu"/>
-      <separator/>
-      <reference ref="AddToFavorites"/>
-      <separator/>
-      <reference ref="VersionControlsGroup"/>
-      <separator/>
-    </group>
-
-    <group id="DartMethodHierarchyPopupMenu">
-      <reference ref="EditSource"/>
-      <separator/>
-      <reference ref="FindUsages"/>
-      <reference ref="RefactoringMenu"/>
-      <separator/>
-      <reference ref="AddToFavorites"/>
-      <separator/>
-      <reference ref="VersionControlsGroup"/>
-      <separator/>
-    </group>
-
   </actions>
 </idea-plugin>

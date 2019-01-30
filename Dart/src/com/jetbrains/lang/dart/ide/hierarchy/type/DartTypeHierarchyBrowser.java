@@ -1,10 +1,10 @@
 package com.jetbrains.lang.dart.ide.hierarchy.type;
 
-import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.ide.hierarchy.TypeHierarchyBrowserBase;
 import com.intellij.ide.util.treeView.NodeDescriptor;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -19,7 +19,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyBrowser");
+  private static final Logger LOG = Logger.getInstance(DartTypeHierarchyBrowser.class);
 
   public DartTypeHierarchyBrowser(final Project project, final DartClass dartClass) {
     super(project, dartClass);
@@ -32,26 +32,8 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
 
   @Override
   protected void createTrees(@NotNull final Map<String, JTree> trees) {
-    createTreeAndSetupCommonActions(trees, "DartClassHierarchyPopupMenu");
+    createTreeAndSetupCommonActions(trees, IdeActions.GROUP_TYPE_HIERARCHY_POPUP);
   }
-
-  @NotNull
-  @Override
-  protected TypeHierarchyBrowserBase.BaseOnThisTypeAction createBaseOnThisAction() {
-    return new BaseOnThisTypeAction();
-  }
-
-  /*
-  Commented out so far as it doesn't work yet. Probably here should be custom Dart specific ChangeScopeAction
-  protected void prependActions(DefaultActionGroup actionGroup) {
-    super.prependActions(actionGroup);
-    actionGroup.add(new ChangeScopeAction() {
-      protected boolean isEnabled() {
-        return !Comparing.strEqual(myCurrentViewType, SUPERTYPES_HIERARCHY_TYPE);
-      }
-    });
-  }
-  */
 
   @Override
   protected PsiElement getElementFromDescriptor(@NotNull HierarchyNodeDescriptor descriptor) {
@@ -68,6 +50,12 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
   @Override
   protected boolean isApplicableElement(@NotNull final PsiElement element) {
     return element instanceof DartClass;
+  }
+
+  @Override
+  protected boolean isApplicableElementForBaseOn(@NotNull PsiElement element) {
+    return element instanceof DartClass &&
+           !DartResolveUtil.OBJECT.equals(((DartClass)element).getName());
   }
 
   @Override
@@ -103,12 +91,5 @@ public class DartTypeHierarchyBrowser extends TypeHierarchyBrowserBase {
       return ((DartClass)psiElement).getName();
     }
     return "";
-  }
-
-  public static class BaseOnThisTypeAction extends TypeHierarchyBrowserBase.BaseOnThisTypeAction {
-    @Override
-    protected boolean isEnabled(@NotNull final HierarchyBrowserBaseEx browser, @NotNull final PsiElement psiElement) {
-      return super.isEnabled(browser, psiElement) && !DartResolveUtil.OBJECT.equals(((DartClass)psiElement).getName());
-    }
   }
 }

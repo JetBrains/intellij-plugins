@@ -7,6 +7,7 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -21,7 +22,6 @@ import java.util.Map;
 
 public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyBrowser");
-  private static final String GROUP_DART_CALL_HIERARCHY_POPUP = "DartCallHierarchyPopupMenu";
 
   public DartCallHierarchyBrowser(Project project, PsiElement method) {
     super(project, method);
@@ -39,7 +39,7 @@ public class DartCallHierarchyBrowser extends CallHierarchyBrowserBase {
 
   @Override
   protected void createTrees(@NotNull Map<String, JTree> type2TreeMap) {
-    final ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(GROUP_DART_CALL_HIERARCHY_POPUP);
+    ActionGroup group = (ActionGroup)ActionManager.getInstance().getAction(IdeActions.GROUP_CALL_HIERARCHY_POPUP);
     type2TreeMap.put(CALLER_TYPE, createHierarchyTree(group));
     type2TreeMap.put(CALLEE_TYPE, createHierarchyTree(group));
   }
