@@ -5,6 +5,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
 import org.angular2.entities.Angular2Declaration;
@@ -21,6 +25,9 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.find;
 import static java.util.Arrays.asList;
 
+/**
+ * Objects of this class should not be cached or stored. It is intended for single use.
+ */
 public class Angular2DeclarationsScope {
 
   private final NotNullLazyValue<Pair<Set<Angular2Declaration>, Boolean>> myScope;
@@ -28,9 +35,17 @@ public class Angular2DeclarationsScope {
 
   public Angular2DeclarationsScope(@NotNull PsiElement element) {
     myScope = NotNullLazyValue.createValue(() -> {
-      Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
-        Angular2IndexingHandler.findComponentClass(element)), c -> c.getModule());
-      return module != null ? pair(module.getDeclarationsInScope(), module.isScopeFullyResolved()) : pair(null, false);
+      PsiFile file = element.getContainingFile();
+      if (file == null) {
+        return pair(null, false);
+      }
+      return CachedValuesManager.getCachedValue(file, () -> {
+        Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
+          Angular2IndexingHandler.findComponentClass(file)), c -> c.getModule());
+        return CachedValueProvider.Result
+          .create(module != null ? pair(module.getDeclarationsInScope(), module.isScopeFullyResolved()) : pair(null, false),
+                  PsiModificationTracker.MODIFICATION_COUNT);
+      });
     });
   }
 

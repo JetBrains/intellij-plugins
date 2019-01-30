@@ -44,7 +44,7 @@ public class Angular2MatchingComponentsInspection extends Angular2HtmlLikeTempla
           result.append(" and ");
         }
         else {
-          result.append(" , ");
+          result.append(", ");
         }
       }
       Angular2Directive component = directives.get(i);
