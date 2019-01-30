@@ -62,10 +62,16 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       myEolComment = eolComment;
       String severityText = errorSeverity.equals(AnalysisErrorSeverity.INFO) ? "warning" : errorSeverity.toLowerCase(Locale.US);
       if (topLevelAction) {
-        setText("Suppress " + severityText + " " + errorCode);
+        // Suppress 'unused_local' warning
+        setText("Suppress '" + errorCode + "' " + severityText);
+      }
+      else if (eolComment) {
+        // Suppress 'unused_local' using EOL comment
+        setText("Suppress '" + errorCode + "' using EOL comment");
       }
       else {
-        setText("Suppress " + severityText + (eolComment ? " with EOL comment" : " with comment"));
+        // Suppress 'unused_local'
+        setText("Suppress '" + errorCode + "'");
       }
     }
 
