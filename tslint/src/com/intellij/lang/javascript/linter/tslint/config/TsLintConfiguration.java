@@ -23,11 +23,8 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
   private static final String IS_CUSTOM_CONFIG_FILE_USED_ATTRIBUTE_NAME = "use-custom-config-file";
   private static final String CUSTOM_CONFIG_FILE_PATH_ATTRIBUTE_NAME = "custom-config-file-path";
   private static final String RULES = "rules";
-  private static final String ALLOW_JS = "allowJs";
 
   private final JSLinterPackage myPackage;
-
-  private TsLintState DEFAULT_STATE;
 
   public TsLintConfiguration(@NotNull Project project) {
     super(project);
