@@ -2,7 +2,6 @@
 package org.angular2;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
@@ -17,6 +16,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,10 +25,10 @@ import java.util.List;
 
 public class Angular2InjectionUtils {
 
-  public static PsiFile getFirstInjectedFile(@Nullable JSExpression expression) {
-    if (expression != null) {
+  public static PsiFile getFirstInjectedFile(@Nullable PsiElement element) {
+    if (element != null) {
       List<Pair<PsiElement, TextRange>> injections =
-        InjectedLanguageManager.getInstance(expression.getProject()).getInjectedPsiFiles(expression);
+        InjectedLanguageManager.getInstance(element.getProject()).getInjectedPsiFiles(element);
       if (injections != null) {
         for (Pair<PsiElement, TextRange> injection : injections) {
           if (injection.getFirst() instanceof PsiFile) {
@@ -59,9 +59,8 @@ public class Angular2InjectionUtils {
                                                                                        @NotNull Class<T> expressionClass) {
     XmlAttributeValue value = attribute.getValueElement();
     if (value != null && value.getTextLength() >= 2) {
-      PsiElement injection = InjectedLanguageManager.getInstance(attribute.getProject()).findInjectedElementAt(
-        value.getContainingFile(), value.getTextOffset() + 1);
-      return PsiTreeUtil.getParentOfType(injection, expressionClass);
+      PsiFile injected = getFirstInjectedFile(value);
+      return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(injected, expressionClass));
     }
     return null;
   }

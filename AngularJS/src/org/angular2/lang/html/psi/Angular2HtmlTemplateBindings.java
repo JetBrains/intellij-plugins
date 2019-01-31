@@ -3,13 +3,12 @@ package org.angular2.lang.html.psi;
 
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface Angular2HtmlTemplateBindings extends Angular2HtmlBoundAttribute {
 
   @NotNull
   String getTemplateName();
 
-  @Nullable
+  @NotNull
   Angular2TemplateBindings getBindings();
 }

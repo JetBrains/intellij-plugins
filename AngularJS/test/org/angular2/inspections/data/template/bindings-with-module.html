@@ -1,0 +1,31 @@
+<ng-template
+  <error descr="Property 'innerHTML' is not provided by any applicable directive on an embedded template.">[innerHTML]</error>="b"
+  <error descr="Event 'click' is not emitted by any applicable directive on an embedded template.">(click)</error>="f"
+></ng-template>
+<ng-template
+  <error descr="Property 'foo-comp' is not provided by any applicable directive on an embedded template.">[foo-comp]</error>="a"
+></ng-template>
+<ng-template
+  <error descr="Property 'foo-dir' is not provided by any applicable directive on an embedded template.">[foo-dir]</error>="a"
+></ng-template>
+
+<div <error descr="Property 'foo-comp' is not provided by any applicable directive on an embedded template.">*foo-comp</error>="a"></div>
+<div <error descr="Property 'foo-dir' is not provided by any applicable directive on an embedded template.">*foo-dir</error>="a"></div>
+
+<div foo-dir="" foo-comp="" <warning descr="Attribute foo-bar is not allowed here">foo-bar</warning>=""></div>
+<my-comp [onFoo]="a" <error descr="Property 'foo' is not provided by any applicable directives nor by 'my-comp' element.">[foo]</error>=""></my-comp>
+
+
+<div <weak_warning descr="No directive is matched on attribute 'myTemplate'.">*myTemplate</weak_warning>="let a for b; bar: c; goo: nope"></div>
+
+<ng-template <error descr="Property 'myTemplateFor' is not provided by any applicable directive on an embedded template.">[myTemplateFor]</error>="nope"
+  <error descr="Event 'otherEvent' is not emitted by any applicable directive on an embedded template.">(otherEvent)</error>="yup"
+  <error descr="Event 'badEvent' is not emitted by any applicable directive on an embedded template.">(badEvent)</error>="fff"
+></ng-template>
+<ng-template myTemplate="foo" <error descr="Property 'myTemplateFor' is not provided by any applicable directive on an embedded template.">[myTemplateFor]</error>="nope" <error descr="Event 'otherEvent' is not emitted by any applicable directive on an embedded template.">(otherEvent)</error>="yup"></ng-template>
+
+<ng-template *ngFor="t"></ng-template>
+
+<div [innerHTML]="s" (click)="s" onclick=""></div>
+
+<div ref-a #b></div>

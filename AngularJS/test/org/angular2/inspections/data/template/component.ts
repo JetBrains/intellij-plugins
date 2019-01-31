@@ -22,7 +22,7 @@ export class MyComponent2 {
 }
 
 @Component({
-    selector: '[foo-comp2]',
+    selector: '[fooComp2]',
     template: `<div></div>`,
 })
 export class MyComponent3 {

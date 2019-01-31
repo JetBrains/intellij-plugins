@@ -5,6 +5,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2BindingsInspection;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
@@ -32,8 +33,9 @@ public class NgForTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNgForInspections() {
     JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(UnterminatedStatementJSInspection.class);
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(UnterminatedStatementJSInspection.class,
+                                  HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.configureByFiles("NgForInspections.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
       myFixture.checkHighlighting();
     });

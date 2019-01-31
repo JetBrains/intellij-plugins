@@ -2,6 +2,7 @@
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -15,74 +16,91 @@ public class Angular2TemplateInspectionsTest extends LightPlatformCodeInsightFix
   }
 
   public void testEmptyEventBinding1() {
-    doTest(1, Angular2EmptyEventBindingInspection.class, "onc<caret>lick", "Add attribute value",
+    doTest(1, "onc<caret>lick", "Add attribute value", Angular2EmptyEventBindingInspection.class,
            "empty-event-binding.html");
   }
 
   public void testEmptyEventBinding2() {
-    doTest(2, Angular2EmptyEventBindingInspection.class, "on<caret>tap", "Add attribute value",
+    doTest(2, "on<caret>tap", "Add attribute value", Angular2EmptyEventBindingInspection.class,
            "empty-event-binding.html");
   }
 
   public void testBindingToEvent1() {
-    doTest(1, Angular2BindingToEventInspection.class, "[on<caret>foo]", "Bind to event (foo)",
+    doTest(1, "[on<caret>foo]", "Bind to event (foo)", Angular2BindingToEventInspection.class,
            "binding-to-event.html", "component.ts");
   }
 
   public void testBindingToEvent2() {
-    doTest(2, Angular2BindingToEventInspection.class, "[on<caret>foo]", "Remove '[onfoo]' attribute",
+    doTest(2, "[on<caret>foo]", "Remove '[onfoo]' attribute", Angular2BindingToEventInspection.class,
            "binding-to-event.html", "component.ts");
   }
 
   public void testBindingToEvent3() {
-    doTest(3, Angular2BindingToEventInspection.class, "[attr.on<caret>Foo]", "Bind to event (Foo)",
+    doTest(3, "[attr.on<caret>Foo]", "Bind to event (Foo)", Angular2BindingToEventInspection.class,
            "binding-to-event.html", "component.ts");
   }
 
   public void testNonEmptyNgContent() {
-    doTest(1, Angular2NonEmptyNgContentInspection.class, "ff<caret>f", "Remove content",
+    doTest(1, "ff<caret>f", "Remove content", Angular2NonEmptyNgContentInspection.class,
            "non-empty-ng-content.html");
   }
 
   public void testMultipleTemplateBindings() {
-    doTest(1, Angular2MultipleTemplateBindingsInspection.class, "*some<caret>thing", "Remove '*something' attribute",
+    doTest(1, "*some<caret>thing", "Remove '*something' attribute", Angular2MultipleTemplateBindingsInspection.class,
            "multiple-template-bindings.html");
   }
 
   public void testAnimationTriggerAssignment1() {
-    doTest(1, Angular2AnimationTriggerAssignmentInspection.class, "@trigger=\"<caret>foo", "Bind to property [@trigger]",
+    doTest(1, "@trigger=\"<caret>foo", "Bind to property [@trigger]", Angular2AnimationTriggerAssignmentInspection.class,
            "animation-trigger-assignment.html");
   }
 
   public void testAnimationTriggerAssignment2() {
-    doTest(2, Angular2AnimationTriggerAssignmentInspection.class, "@trigger=\"<caret>foo", "Remove attribute value",
+    doTest(2, "@trigger=\"<caret>foo", "Remove attribute value", Angular2AnimationTriggerAssignmentInspection.class,
            "animation-trigger-assignment.html");
   }
 
   public void testTemplateReferenceVariable() {
-    doTest(1, Angular2TemplateReferenceVariableInspection.class, "#a<caret>bc=\"foo\"", "Remove '#abc' attribute",
+    doTest(1, "#a<caret>bc=\"foo\"", "Remove '#abc' attribute", Angular2TemplateReferenceVariableInspection.class,
            "template-reference-variable.html", "component.ts");
   }
 
   public void testTemplateReferenceVariableWithModule() {
-    doTest(1, Angular2TemplateReferenceVariableInspection.class, "#a<caret>bc=\"foo\"", "Remove '#abc' attribute",
+    doTest(1, "#a<caret>bc=\"foo\"", "Remove '#abc' attribute", Angular2TemplateReferenceVariableInspection.class,
            "template-reference-variable-with-module.html", "component.ts", "template-reference-variable-module.ts");
   }
 
   public void testMatchingComponents() {
-    doTest(1, Angular2MatchingComponentsInspection.class, null, null,
+    doTest(Angular2MatchingComponentsInspection.class,
            "matching-components.html", "component.ts");
   }
 
   public void testMatchingComponentsWithModule() {
-    doTest(1, Angular2MatchingComponentsInspection.class, null, null,
+    doTest(Angular2MatchingComponentsInspection.class,
            "matching-components-with-module.html", "component.ts", "matching-components-module.ts");
   }
 
+  public void testBindings() {
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+    doTest(Angular2BindingsInspection.class,
+           "bindings.html", "component.ts");
+  }
+
+  public void testBindingsWithModule() {
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+    doTest(Angular2BindingsInspection.class,
+           "bindings-with-module.html", "component.ts", "bindings-module.ts");
+  }
+
+  private void doTest(@NotNull Class<? extends LocalInspectionTool> inspection,
+                      String... files) {
+    doTest(1, null, null, inspection, files);
+  }
+
   private void doTest(int testNr,
-                      @NotNull Class<? extends LocalInspectionTool> inspection,
                       @Nullable String location,
                       @Nullable String quickFixName,
+                      @NotNull Class<? extends LocalInspectionTool> inspection,
                       String... files) {
     myFixture.enableInspections(inspection);
     myFixture.configureByFiles("package.json");

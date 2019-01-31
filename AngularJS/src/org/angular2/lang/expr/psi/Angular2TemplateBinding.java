@@ -12,6 +12,9 @@ public interface Angular2TemplateBinding extends JSStatement {
   @NotNull
   String getKey();
 
+  @Nullable
+  Angular2TemplateBindingKey getKeyElement();
+
   boolean keyIsVar();
 
   @Override
@@ -23,4 +26,6 @@ public interface Angular2TemplateBinding extends JSStatement {
 
   @Nullable
   JSExpression getExpression();
+
+  Angular2TemplateBinding[] EMPTY_ARRAY = new Angular2TemplateBinding[0];
 }

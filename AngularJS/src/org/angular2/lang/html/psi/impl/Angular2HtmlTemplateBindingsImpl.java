@@ -4,13 +4,14 @@ package org.angular2.lang.html.psi.impl;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.XmlElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
+import org.angular2.lang.expr.psi.impl.Angular2EmptyTemplateBindings;
 import org.angular2.lang.html.parser.Angular2HtmlElementTypes.Angular2ElementType;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class Angular2HtmlTemplateBindingsImpl extends Angular2HtmlBoundAttributeImpl implements Angular2HtmlTemplateBindings {
 
@@ -31,10 +32,12 @@ public class Angular2HtmlTemplateBindingsImpl extends Angular2HtmlBoundAttribute
     }
   }
 
-  @Nullable
+  @NotNull
   @Override
   public Angular2TemplateBindings getBindings() {
-    return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2TemplateBindings.class));
+    return ObjectUtils.notNull(
+      ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(this, Angular2TemplateBindings.class)),
+      () -> new Angular2EmptyTemplateBindings(this, getTemplateName()));
   }
 
   @NotNull

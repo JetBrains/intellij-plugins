@@ -114,7 +114,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   private final PsiElement[] myElements;
   @Nullable
-  private final Angular2Directive[] mySourceDirectives;
+  private final List<Angular2Directive> mySourceDirectives;
   @NotNull
   private final String myAttributeName;
   @NotNull
@@ -166,7 +166,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                       @NotNull Collection<PsiElement> elements) {
     myAttributeName = attributeName;
     myElements = elements.toArray(PsiElement.EMPTY_ARRAY);
-    mySourceDirectives = sourceDirectives != null ? sourceDirectives.toArray(Angular2Directive.EMPTY_ARRAY) : null;
+    mySourceDirectives = sourceDirectives != null ? immutableList(sourceDirectives.toArray(Angular2Directive.EMPTY_ARRAY)) : null;
     myInfo = info;
     myPriority = priority;
   }
@@ -186,8 +186,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
         sources = null;
       }
       else {
-        sources = new HashSet<>(asList(mySourceDirectives));
-        sources.addAll(asList(ngOther.mySourceDirectives));
+        sources = new HashSet<>(mySourceDirectives);
+        sources.addAll(ngOther.mySourceDirectives);
       }
       return new Angular2AttributeDescriptor(myAttributeName, myInfo, myPriority,
                                              sources, elements);
@@ -239,7 +239,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @Nullable
-  public Angular2Directive[] getSourceDirectives() {
+  public List<Angular2Directive> getSourceDirectives() {
     return mySourceDirectives;
   }
 

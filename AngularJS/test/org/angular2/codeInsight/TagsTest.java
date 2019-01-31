@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2BindingsInspection;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
@@ -173,8 +174,9 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testHtmlWithDoctype() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
-      myFixture.enableInspections(HtmlUnknownTagInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class,
+                                  HtmlUnknownTagInspection.class);
       myFixture.configureByFiles("withDoctype.html", "package.json");
       myFixture.checkHighlighting(true, false, true);
     });

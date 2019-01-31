@@ -85,7 +85,8 @@ public class MetadataTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testES6(getProject(), () -> {
       AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd", "ant-design-icons-angular");
       myFixture.configureByFiles("inter_module_props.html", "nz-icon.directive.d.ts", "icon.directive.ts");
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.checkHighlighting(true, false, true);
     });
   }

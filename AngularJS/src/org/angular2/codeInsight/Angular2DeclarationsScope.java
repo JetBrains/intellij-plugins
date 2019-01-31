@@ -23,7 +23,6 @@ import java.util.*;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.find;
-import static java.util.Arrays.asList;
 
 /**
  * Objects of this class should not be cached or stored. It is intended for single use.
@@ -79,11 +78,6 @@ public class Angular2DeclarationsScope {
       return DeclarationProximity.PUBLIC_MODULE_EXPORT;
     }
     return DeclarationProximity.DOES_NOT_EXIST;
-  }
-
-  @NotNull
-  public DeclarationProximity getDeclarationsProximity(@NotNull Angular2Declaration... declarations) {
-    return getDeclarationsProximity(asList(declarations));
   }
 
   @NotNull

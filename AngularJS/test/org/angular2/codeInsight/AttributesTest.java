@@ -65,16 +65,18 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testSrcBinding20() {
     myFixture.configureByFiles("srcBinding.html", "package.json");
-    myFixture.enableInspections(RequiredAttributesInspection.class);
-    myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+    myFixture.enableInspections(RequiredAttributesInspection.class,
+                                HtmlUnknownAttributeInspection.class,
+                                Angular2BindingsInspection.class);
     myFixture.checkHighlighting();
   }
 
   public void testEventHandlers2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("event.html", "package.json");
-      myFixture.enableInspections(RequiredAttributesInspection.class);
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(RequiredAttributesInspection.class,
+                                  HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.checkHighlighting();
     });
   }
@@ -101,8 +103,9 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testTemplateReferenceDeclarations2() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("variable.html", "custom.ts", "package.json");
-      myFixture.enableInspections(RequiredAttributesInspection.class);
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(RequiredAttributesInspection.class,
+                                  HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.checkHighlighting();
     });
   }
@@ -511,8 +514,9 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testBindingNamespace() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("bindingNamespace.html", "package.json");
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
-      myFixture.enableInspections(XmlUnboundNsPrefixInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class,
+                                  XmlUnboundNsPrefixInspection.class);
       myFixture.checkHighlighting();
     });
   }
@@ -520,8 +524,9 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testEventNamespace() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("eventNamespace.html", "package.json");
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
-      myFixture.enableInspections(XmlUnboundNsPrefixInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class,
+                                  XmlUnboundNsPrefixInspection.class);
       myFixture.checkHighlighting();
     });
   }
@@ -652,7 +657,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testI18NAttr() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.configureByFiles("i18n.html", "package.json");
       myFixture.checkHighlighting(true, false, true);
     });
@@ -780,7 +786,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testOneTimeBindingOfPrimitives() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("one_time_binding.html", "one_time_binding.ts", "package.json");
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
+      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                  Angular2BindingsInspection.class);
       myFixture.checkHighlighting(true, false, true);
     });
   }

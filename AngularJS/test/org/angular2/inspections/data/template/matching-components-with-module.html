@@ -1,9 +1,12 @@
 <my-comp foo-dir></my-comp>
 <error descr="More than one component matched on this element: MyComponent (my-comp) and MyComponent2 ([foo-comp])"><my-comp foo-comp foo-dir></error></my-comp>
-<error descr="More than one component matched on this element: MyComponent (my-comp) and MyComponent2 ([foo-comp])"><my-comp foo-comp foo-comp2 foo-dir></error></my-comp>
+<error descr="More than one component matched on this element: MyComponent (my-comp) and MyComponent2 ([foo-comp])"><my-comp foo-comp fooComp2 foo-dir></error></my-comp>
 
-<div <error descr="Components on an embedded template: MyComponent2 ([foo-comp])">*foo-comp="a"</error>></div>
+<div <error descr="Components on an embedded template: MyComponent2 ([foo-comp])">*foo-comp="a"</error>
+  *fooComp2
+  *foo-comp3=
+></div>
 
 <ng-template foo-dir></ng-template>
 <error descr="Components on an embedded template: MyComponent2 ([foo-comp])"><ng-template foo-comp foo-dir></error></ng-template>
-<error descr="Components on an embedded template: MyComponent2 ([foo-comp])"><ng-template foo-comp foo-comp2 foo-dir></error></ng-template>
+<error descr="Components on an embedded template: MyComponent2 ([foo-comp])"><ng-template foo-comp fooComp2 foo-dir></error></ng-template>

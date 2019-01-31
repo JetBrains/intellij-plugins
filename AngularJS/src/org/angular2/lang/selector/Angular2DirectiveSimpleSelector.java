@@ -1,14 +1,18 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.selector;
 
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.xml.util.XmlUtil;
 import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.lang.expr.psi.Angular2TemplateBinding;
+import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
 
 public class Angular2DirectiveSimpleSelector {
 
@@ -132,6 +137,18 @@ public class Angular2DirectiveSimpleSelector {
     return results;
   }
 
+  public static Angular2DirectiveSimpleSelector createTemplateBindingsCssSelector(@NotNull Angular2TemplateBindings bindings) {
+    Angular2DirectiveSimpleSelector cssSelector = new Angular2DirectiveSimpleSelector();
+    cssSelector.setElement(NG_TEMPLATE);
+    cssSelector.addAttribute(bindings.getTemplateName(), null);
+    for (Angular2TemplateBinding binding : bindings.getBindings()) {
+      if (!binding.keyIsVar()) {
+        cssSelector.addAttribute(binding.getKey(), ObjectUtils.doIfNotNull(binding.getExpression(), JSExpression::getText));
+      }
+    }
+    return cssSelector;
+  }
+
   public static Angular2DirectiveSimpleSelector createElementCssSelector(@NotNull XmlTag element) {
     Angular2DirectiveSimpleSelector cssSelector = new Angular2DirectiveSimpleSelector();
     String elNameNoNs = XmlUtil.findLocalNameByQualifiedName(element.getName());
@@ -141,6 +158,9 @@ public class Angular2DirectiveSimpleSelector {
     boolean isTemplateTag = Angular2Processor.isTemplateTag(element.getName());
     for (XmlAttribute attr : element.getAttributes()) {
       String attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.getName());
+      if (attrNameNoNs.startsWith("*")) {
+        continue;
+      }
       attrNameNoNs = Angular2AttributeNameParser.parse(attrNameNoNs, isTemplateTag).name;
       cssSelector.addAttribute(attrNameNoNs, attr.getValue());
       if (attr.getName().toLowerCase().equals("class") && attr.getValue() != null) {
