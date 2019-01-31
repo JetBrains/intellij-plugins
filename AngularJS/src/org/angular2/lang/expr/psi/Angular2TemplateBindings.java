@@ -23,6 +23,6 @@ public interface Angular2TemplateBindings extends Angular2EmbeddedExpression {
     }
     assert attribute.getName().startsWith("*");
     return ObjectUtils.notNull(Angular2InjectionUtils.findInjectedAngularExpression(attribute, Angular2TemplateBindings.class),
-                               () -> new Angular2EmptyTemplateBindings(null, attribute.getName().substring(1)));
+                               () -> new Angular2EmptyTemplateBindings(attribute, attribute.getName().substring(1)));
   }
 }

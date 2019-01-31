@@ -16,7 +16,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,8 +58,9 @@ public class Angular2InjectionUtils {
                                                                                        @NotNull Class<T> expressionClass) {
     XmlAttributeValue value = attribute.getValueElement();
     if (value != null && value.getTextLength() >= 2) {
-      PsiFile injected = getFirstInjectedFile(value);
-      return ContainerUtil.getFirstItem(PsiTreeUtil.findChildrenOfType(injected, expressionClass));
+      PsiElement injection = InjectedLanguageManager.getInstance(attribute.getProject()).findInjectedElementAt(
+        value.getContainingFile(), value.getTextOffset() + 1);
+      return PsiTreeUtil.getParentOfType(injection, expressionClass);
     }
     return null;
   }
