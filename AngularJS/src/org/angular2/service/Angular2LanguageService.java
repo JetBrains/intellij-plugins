@@ -120,11 +120,11 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     VirtualFile rootService = searchInRootDirectory(baseDir);
     if (rootService != null) return Collections.singleton(rootService);
 
-    Collection<TypeScriptConfig> configFiles = TypeScriptConfigService.Provider.getConfigFiles(project);
+    Collection<VirtualFile> configFiles = TypeScriptConfigService.Provider.get(project).getConfigFiles();
     if (configFiles.isEmpty()) return ContainerUtil.emptyList();
 
     return configFiles.stream()
-      .map(el -> el.getConfigDirectory())
+      .map(el -> el.getParent())
       .map(dir -> searchInRootDirectory(dir)).filter(el -> el != null)
       .collect(Collectors.toList());
   }
@@ -248,9 +248,11 @@ public class Angular2LanguageService extends TypeScriptServerServiceImpl {
     return super.getConfigForFile(file);
   }
 
+  @Nullable
   private TypeScriptConfig getNearestConfig(@NotNull VirtualFile file) {
-    Collection<TypeScriptConfig> allConfigs = TypeScriptConfigService.Provider.getConfigFiles(myProject);
-    return TypeScriptConfigUtil.getNearestParentConfig(file, allConfigs);
+    TypeScriptConfigService service = TypeScriptConfigService.Provider.get(myProject);
+    List<VirtualFile> files = service.getConfigFiles();
+    return service.parseConfigFile(TypeScriptConfigUtil.getNearestParentConfigFile(file, files));
   }
 
   @Nullable
