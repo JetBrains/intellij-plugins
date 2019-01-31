@@ -115,12 +115,15 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
       }
     }
 
-    private static void checkCyclicDependencies(@NotNull LinkedHashSet<Angular2Module> visitedModules,
-                                                @NotNull Angular2Module module) throws RecurrentImportException {
+    private void checkCyclicDependencies(@NotNull LinkedHashSet<Angular2Module> visitedModules,
+                                         @NotNull Angular2Module module) throws RecurrentImportException {
       if (!visitedModules.add(module)) {
-        throw new RecurrentImportException("Cyclic dependency of modules: "
-                                           + StringUtil.join(visitedModules, Angular2Module::getName, " -> ")
-                                           + " -> " + module.getName());
+        if (module == myModule) {
+          throw new RecurrentImportException("Cyclic dependency of modules: "
+                                             + StringUtil.join(visitedModules, Angular2Module::getName, " -> ")
+                                             + " -> " + module.getName());
+        }
+        return;
       }
       for (Angular2Module child : module.getImports()) {
         checkCyclicDependencies(visitedModules, child);
@@ -168,7 +171,7 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
     protected void processNonEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
                       "Class '" + aClass.getName() +
-                      "' is neither Angular Module, Component, Declaration nor Pipe.",
+                      "' is neither Angular Module, Component, Directive nor Pipe.",
                       Objects.requireNonNull(myModule).isScopeFullyResolved()
                       ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                       : ProblemHighlightType.WEAK_WARNING);

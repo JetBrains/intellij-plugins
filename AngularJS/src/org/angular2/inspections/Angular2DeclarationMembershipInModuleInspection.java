@@ -62,8 +62,8 @@ public class Angular2DeclarationMembershipInModuleInspection extends LocalInspec
 
 
   private static boolean allSourceDeclarationsResolved(@NotNull Project project) {
-    return ContainerUtil.find(Angular2EntitiesProvider.getAllModules(project),
-                              module -> module instanceof Angular2SourceModule
-                                        && !module.areDeclarationsFullyResolved()) == null;
+    return !ContainerUtil.exists(Angular2EntitiesProvider.getAllModules(project),
+                                 module -> module instanceof Angular2SourceModule
+                                           && !module.areDeclarationsFullyResolved());
   }
 }

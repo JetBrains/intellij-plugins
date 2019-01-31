@@ -34,7 +34,11 @@ public interface Angular2Module extends Angular2Entity {
     for (Angular2Module imported : getImports()) {
       result.addAll(imported.getAllExportedDeclarations());
     }
-    result.addAll(getAllExportedDeclarations());
+    for (Angular2Entity entity : getExports()) {
+      if (entity instanceof Angular2Module) {
+        result.addAll(((Angular2Module)entity).getAllExportedDeclarations());
+      }
+    }
     return result;
   }
 }
