@@ -133,7 +133,6 @@ fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSour
   }
 
   val dataSource = SqlDataSourceImpl(dialect.dbms.name, project, null)
-  dataSource.init()
   dataSource.urls = urls
 
   val dbPsiFacade = DbPsiFacade.getInstance(project)
