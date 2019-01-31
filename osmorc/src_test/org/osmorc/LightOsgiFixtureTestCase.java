@@ -33,7 +33,7 @@ public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTe
       String annotationsPath = PathManager.getJarPathForClass(NotNull.class);
       assertNotNull(annotationsPath);
       File annotations = new File(annotationsPath);
-      PsiTestUtil.addLibrary(module, model, "annotations", annotations.getParent(), annotations.getName());
+      PsiTestUtil.addLibrary(model, "annotations", annotations.getParent(), annotations.getName());
 
       FacetManager.getInstance(module).addFacet(OsmorcFacetType.getInstance(), "OSGi", null);
     }

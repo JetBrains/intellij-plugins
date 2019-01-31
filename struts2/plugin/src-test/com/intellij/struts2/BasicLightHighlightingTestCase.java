@@ -140,16 +140,16 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
    *
    */
   static void addStrutsJars(Module module, ModifiableRootModel model) {
-    addLibrary(module, model, "struts2",
+    addLibrary(model, "struts2",
                "struts2-core-" + STRUTS2_VERSION + ".jar",
                "freemarker-2.3.18.jar",
                "ognl-3.0.3.jar",
                "xwork-core-2.3.1.jar");
   }
 
-  static void addLibrary(Module module, ModifiableRootModel model,
+  static void addLibrary(ModifiableRootModel model,
                          @NonNls final String libraryName, @NonNls final String... jarPaths) {
-    PsiTestUtil.addLibrary(module, model, libraryName, LIBRARY_PATH, jarPaths);
+    PsiTestUtil.addLibrary(model, libraryName, LIBRARY_PATH, jarPaths);
   }
 
   /**

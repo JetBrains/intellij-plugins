@@ -111,7 +111,7 @@ public final class Struts2ProjectDescriptorBuilder extends DefaultLightProjectDe
     }
 
     for (LibraryDefinition library : libraries) {
-      BasicLightHighlightingTestCase.addLibrary(module, model, library.groupId, library.artifactIds);
+      BasicLightHighlightingTestCase.addLibrary(model, library.groupId, library.artifactIds);
     }
 
     final WebFacet webFacet = FacetUtil.addFacet(module, WebFacetType.getInstance());
