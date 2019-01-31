@@ -3,6 +3,8 @@ package org.jetbrains.vuejs.language
 
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection
 import com.intellij.codeInspection.htmlInspections.*
+import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedAttributeInspection
+import com.intellij.htmltools.codeInspection.htmlInspections.HtmlDeprecatedTagInspection
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JSTestUtils.testWithinLanguageLevel
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
@@ -23,18 +25,20 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
 
   override fun setUp() {
     super.setUp()
-    myFixture.enableInspections(HtmlUnknownBooleanAttributeInspectionBase())
-    myFixture.enableInspections(HtmlUnknownAttributeInspection())
-    myFixture.enableInspections(HtmlUnknownTagInspection())
-    myFixture.enableInspections(RequiredAttributesInspection())
-    myFixture.enableInspections(JSUnusedLocalSymbolsInspection())
-    myFixture.enableInspections(JSAnnotatorInspection())
-    myFixture.enableInspections(JSUnresolvedVariableInspection())
-    myFixture.enableInspections(JSUnresolvedFunctionInspection())
-    myFixture.enableInspections(ThisExpressionReferencesGlobalObjectJSInspection())
-    myFixture.enableInspections(JSValidateTypesInspection())
-    myFixture.enableInspections(TypeScriptValidateTypesInspection())
-    myFixture.enableInspections(CheckEmptyTagInspection())
+    myFixture.enableInspections(HtmlDeprecatedAttributeInspection(),
+                                HtmlDeprecatedTagInspection(),
+                                HtmlUnknownBooleanAttributeInspectionBase(),
+                                HtmlUnknownAttributeInspection(),
+                                HtmlUnknownTagInspection(),
+                                RequiredAttributesInspection(),
+                                JSUnusedLocalSymbolsInspection(),
+                                JSAnnotatorInspection(),
+                                JSUnresolvedVariableInspection(),
+                                JSUnresolvedFunctionInspection(),
+                                ThisExpressionReferencesGlobalObjectJSInspection(),
+                                JSValidateTypesInspection(),
+                                TypeScriptValidateTypesInspection(),
+                                CheckEmptyTagInspection())
   }
 
   fun testDirectivesWithoutParameters() {
