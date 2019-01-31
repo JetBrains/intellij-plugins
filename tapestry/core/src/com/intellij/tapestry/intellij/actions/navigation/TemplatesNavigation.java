@@ -50,7 +50,7 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
             return EMPTY_ACTION_ARRAY;
 
 
-        PsiFile psiFile = classTemplateNavigation.getEventPsiFile(event);
+        PsiFile psiFile = ClassTemplateNavigation.getEventPsiFile(event);
 
         if (psiFile == null)
             return EMPTY_ACTION_ARRAY;

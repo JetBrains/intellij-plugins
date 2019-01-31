@@ -88,7 +88,7 @@ public class CfscriptParser {
     return false;
   }
 
-  private boolean parseProperty(PsiBuilder myBuilder) {
+  private static boolean parseProperty(PsiBuilder myBuilder) {
     assert myBuilder.getTokenType() == IDENTIFIER;
     PsiBuilder.Marker propertyMarker = myBuilder.mark();
     myBuilder.advanceLexer();
@@ -578,12 +578,12 @@ public class CfscriptParser {
       return;
     }
     myBuilder.advanceLexer();
-    if (!this.eatLeftBracket(myBuilder)) {
+    if (!eatLeftBracket(myBuilder)) {
       switchMarker.drop();
       return;
     }
-    this.parseExpression(myBuilder);
-    this.eatRightBracket(myBuilder);
+    parseExpression(myBuilder);
+    eatRightBracket(myBuilder);
     if (myBuilder.getTokenType() != L_CURLYBRACKET) {
       myBuilder.error(CfmlBundle.message("cfml.parsing.open.curly.bracket.expected"));
       switchMarker.drop();

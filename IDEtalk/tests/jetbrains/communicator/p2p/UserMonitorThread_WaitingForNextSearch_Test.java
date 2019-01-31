@@ -111,7 +111,7 @@ public class UserMonitorThread_WaitingForNextSearch_Test extends BaseTestCase {
   public void testSecondCycleOfUserFinding() throws Exception {
     Thread.sleep(1010 * SECS_BETWEEN_SCANS);
 
-    myUserMonitorThread.LOG.debug("Expect another search");
+    UserMonitorThread.LOG.debug("Expect another search");
     assertTrue("Should search for users again", myUserMonitorThread.isFinding());
     expectSetOneOnlineUser();
     Thread.sleep(myUserMonitorThread.getWaitUserResponsesTimeout());

@@ -596,7 +596,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
   public void testSendMessageWithNullBody_ResposesHaveNoBody() throws Exception {
     //Thread.sleep(1000);
     myEvents.clear();
-    Message baseMessage = myTransport.createBaseMessage(mySelf, null);
+    Message baseMessage = JabberTransport.createBaseMessage(mySelf, null);
     myTransport.getFacade().getConnection().sendPacket(baseMessage);
     Thread.sleep(100);
     assertEquals("No events expected: " + myEvents, 0, myEvents.size());
@@ -626,7 +626,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
   }
 
   public void testTimeIsSetInSimpleMessage() {
-    Message baseMessage = myTransport.createBaseMessage(mySelf, "some text");
+    Message baseMessage = JabberTransport.createBaseMessage(mySelf, "some text");
     myTransport.getFacade().getConnection().sendPacket(baseMessage);
 
     new WaitFor(TIMEOUT){

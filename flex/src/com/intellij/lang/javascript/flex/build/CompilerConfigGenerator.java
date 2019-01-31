@@ -858,7 +858,7 @@ public class CompilerConfigGenerator {
            ReadAction.compute(() -> {
              // we include file in compilation if it has (or intended to have) some public declaration (class, namespace, function) which is equivalent to having JSPackageStatement declaration.
              // But first we try to find it in JSQualifiedElementIndex because it is faster.
-             final Collection<JSQualifiedNamedElement> elements = StubIndex.getInstance()
+             final Collection<JSQualifiedNamedElement> elements = StubIndex
                .getElements(JSQualifiedElementIndex.KEY, qName.hashCode(), module.getProject(), GlobalSearchScope.moduleScope(module),
                             JSQualifiedNamedElement.class);
              if (elements.isEmpty()) {
