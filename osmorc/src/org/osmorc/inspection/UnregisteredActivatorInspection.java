@@ -100,9 +100,7 @@ public class UnregisteredActivatorInspection extends AbstractOsgiVisitor {
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       ManifestFile manifestFile = getVerifiedManifestFile(descriptor.getEndElement());
       if (manifestFile != null) {
-        WriteCommandAction.writeCommandAction(project, manifestFile).run(() -> {
-          OsgiPsiUtil.setHeader(manifestFile, Constants.BUNDLE_ACTIVATOR, myActivatorClass);
-        });
+        WriteCommandAction.writeCommandAction(project, manifestFile).run(() -> OsgiPsiUtil.setHeader(manifestFile, Constants.BUNDLE_ACTIVATOR, myActivatorClass));
       }
     }
   }

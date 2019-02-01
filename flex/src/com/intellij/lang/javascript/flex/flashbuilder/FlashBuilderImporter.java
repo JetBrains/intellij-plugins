@@ -235,9 +235,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
         Logger.getInstance(FlashBuilderImporter.class).error(e);
       }
 
-      ApplicationManager.getApplication().runWriteAction(() -> {
-        ModifiableModelCommitter.multiCommit(moduleToModifiableModelMap.values(), moduleModel);
-      });
+      ApplicationManager.getApplication().runWriteAction(() -> ModifiableModelCommitter.multiCommit(moduleToModifiableModelMap.values(), moduleModel));
     }
 
     return new ArrayList<>(moduleToModifiableModelMap.keySet());

@@ -20,7 +20,6 @@ import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
@@ -31,7 +30,6 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopupStep;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -142,9 +140,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
           @Override
           public PopupStep onChosen(final Action selectedValue, final boolean finalChoice) {
             final String path = selectedValue.getName().getStringValue();
-            WriteCommandAction.writeCommandAction(project).run(() -> {
-              createValidationXml(project, actionClass, path);
-            });
+            WriteCommandAction.writeCommandAction(project).run(() -> createValidationXml(project, actionClass, path));
             return FINAL_CHOICE;
           }
         };

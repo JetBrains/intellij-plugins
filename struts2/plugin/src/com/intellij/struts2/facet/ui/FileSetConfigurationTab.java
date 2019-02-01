@@ -169,9 +169,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
               myBuilder.updateFromRoot();
               selectFileSet(fileSet);
             }
-            IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-              IdeFocusManager.getGlobalInstance().requestFocus(myTree, true);
-            });
+            IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myTree, true));
           }
         })
         .setRemoveAction(new AnActionButtonRunnable() {
@@ -180,9 +178,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
             remove();
             myModified = true;
             myBuilder.updateFromRoot();
-            IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-              IdeFocusManager.getGlobalInstance().requestFocus(myTree, true);
-            });
+            IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myTree, true));
           }
         })
         .setEditAction(new AnActionButtonRunnable() {
@@ -205,9 +201,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
                 myBuilder.updateFromRoot();
                 selectFileSet(edited);
               }
-              IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-                IdeFocusManager.getGlobalInstance().requestFocus(myTree, true);
-              });
+              IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myTree, true));
             }
           }
         })

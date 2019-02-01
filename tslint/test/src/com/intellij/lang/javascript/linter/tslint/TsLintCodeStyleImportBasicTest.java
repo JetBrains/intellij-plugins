@@ -28,9 +28,7 @@ import org.junit.Assert;
 
 public class TsLintCodeStyleImportBasicTest extends LightPlatformCodeInsightFixtureTestCase {
   public void testSimpleStringValue() {
-    doTestJson("{\"rules\": {\"semicolon\": [true,\"never\"]}}", (settings) -> {
-      Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT);
-    });
+    doTestJson("{\"rules\": {\"semicolon\": [true,\"never\"]}}", (settings) -> Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
   }
 
   public void testSimpleNumberValue() {
@@ -201,9 +199,7 @@ public class TsLintCodeStyleImportBasicTest extends LightPlatformCodeInsightFixt
 
   public void testSimpleStringValueYaml() {
     doTestYaml("rules:\n" +
-               "    semicolon: [true, \"never\"]", settings -> {
-      Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT);
-    });
+               "    semicolon: [true, \"never\"]", settings -> Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
   }
 
   public void testSimpleNumberValueYaml() {
@@ -219,9 +215,7 @@ public class TsLintCodeStyleImportBasicTest extends LightPlatformCodeInsightFixt
     doTestYaml("rules:\n" +
                "    semicolon:\n" +
                "        options:\n" +
-               "            - never", settings -> {
-      Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT);
-    });
+               "            - never", settings -> Assert.assertFalse(settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_SEMICOLON_AFTER_STATEMENT));
   }
 
   public void testNumberValueFromOptionsYaml() {

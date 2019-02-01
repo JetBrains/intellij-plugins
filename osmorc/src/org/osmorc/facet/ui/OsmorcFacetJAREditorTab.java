@@ -157,9 +157,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
           String destinationName = preselectedPath != null ? determineMostLikelyLocationInJar(preselectedPath) : "";
           myAdditionalJARContentsTableModel.changeAdditionalJARConent(row, additionalJARContent.first, destinationName);
           myAdditionalJARContentsTable.editCellAt(row, 1);
-          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-            IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true);
-          });
+          IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true));
         }
       }
     });
@@ -219,9 +217,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         String destPath = determineMostLikelyLocationInJar(files[0]);
         myAdditionalJARContentsTableModel.changeAdditionalJARConent(row, sourcePath, destPath);
         myAdditionalJARContentsTable.editCellAt(row, 1);
-        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-          IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true);
-        });
+        IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true));
       }
     }
   }
@@ -253,9 +249,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
       String destFile = determineMostLikelyLocationInJar(file);
       int row = myAdditionalJARContentsTableModel.addAdditionalJARContent(file.getPath(), destFile);
       myAdditionalJARContentsTable.editCellAt(row, 1);
-      IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-        IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true);
-      });
+      IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myAdditionalJARContentsTable.getEditorComponent(), true));
     }
   }
 

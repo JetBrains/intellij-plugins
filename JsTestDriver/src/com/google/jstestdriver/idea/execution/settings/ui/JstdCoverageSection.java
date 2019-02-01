@@ -121,9 +121,7 @@ public class JstdCoverageSection extends AbstractRunSettingsSection {
       model.fireTableRowsDeleted(row, row);
       removedCount++;
     }
-    IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-      IdeFocusManager.getGlobalInstance().requestFocus(table, true);
-    });
+    IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(table, true));
   }
 
   @NotNull

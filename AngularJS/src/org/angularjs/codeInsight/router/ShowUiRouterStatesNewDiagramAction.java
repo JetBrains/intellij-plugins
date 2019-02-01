@@ -39,25 +39,23 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     if (diagramProvider == null) return;
     List<Pair<String, AngularUiRouterGraphBuilder>> graphBuilders = new ArrayList<>();
     ProgressManager.getInstance().runProcessWithProgressSynchronously(
-      () -> {
-        ApplicationManager.getApplication().runReadAction(() -> {
-          final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(project);
-          builder.build();
-          final Map<VirtualFile, RootTemplate> rootTemplates = builder.getRootTemplates();
+      () -> ApplicationManager.getApplication().runReadAction(() -> {
+        final AngularUiRouterDiagramBuilder builder = new AngularUiRouterDiagramBuilder(project);
+        builder.build();
+        final Map<VirtualFile, RootTemplate> rootTemplates = builder.getRootTemplates();
 
-          for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getDefiningFiles2States().entrySet()) {
-            final AngularUiRouterGraphBuilder graphBuilder =
-              new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), null, entry.getKey());
-            graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
-          }
-          for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getRootTemplates2States().entrySet()) {
-            final AngularUiRouterGraphBuilder graphBuilder =
-              new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), rootTemplates.get(entry.getKey()),
-                                              entry.getKey());
-            graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
-          }
-        });
-      }, "Building " + diagramProvider.getPresentableName() + " diagram", false, project);
+        for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getDefiningFiles2States().entrySet()) {
+          final AngularUiRouterGraphBuilder graphBuilder =
+            new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), null, entry.getKey());
+          graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
+        }
+        for (Map.Entry<VirtualFile, Map<String, UiRouterState>> entry : builder.getRootTemplates2States().entrySet()) {
+          final AngularUiRouterGraphBuilder graphBuilder =
+            new AngularUiRouterGraphBuilder(project, entry.getValue(), builder.getTemplatesMap(), rootTemplates.get(entry.getKey()),
+                                            entry.getKey());
+          graphBuilders.add(Pair.create(entry.getKey().getName(), graphBuilder));
+        }
+      }), "Building " + diagramProvider.getPresentableName() + " diagram", false, project);
 
     final AngularUiRouterProviderContext routerProviderContext = AngularUiRouterProviderContext.getInstance(project);
     routerProviderContext.reset();

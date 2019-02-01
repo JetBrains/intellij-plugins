@@ -2072,9 +2072,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   private void registerPostfixCompletionTemplates() {
-    ApplicationManager.getApplication().invokeLater(() -> {
-      DartPostfixTemplateProvider.initializeTemplates(this);
-    }, ModalityState.NON_MODAL);
+    ApplicationManager.getApplication().invokeLater(() -> DartPostfixTemplateProvider.initializeTemplates(this), ModalityState.NON_MODAL);
   }
 
   /**

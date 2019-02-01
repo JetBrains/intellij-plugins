@@ -214,9 +214,7 @@ public class MessagesTab implements Disposable {
     @Override
     public void actionPerformed(ActionEvent e) {
       send();
-      IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> {
-        IdeFocusManager.getGlobalInstance().requestFocus(myInput, true);
-      });
+      IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myInput, true));
     }
   }
   private class LfAction extends AbstractAction {
