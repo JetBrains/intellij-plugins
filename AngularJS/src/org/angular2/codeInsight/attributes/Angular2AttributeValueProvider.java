@@ -25,6 +25,8 @@ import static org.angular2.lang.html.psi.PropertyBindingType.CLASS;
 
 public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
 
+  public static final String NG_CLASS_ATTR = "ngClass";
+
   public static boolean isNgClassAttribute(@Nullable XmlAttribute attribute) {
     return attribute != null && (isNgClassAttribute(parse(attribute.getName(), false)));
   }
@@ -32,7 +34,7 @@ public class Angular2AttributeValueProvider extends HtmlAttributeValueProvider {
   public static boolean isNgClassAttribute(@NotNull AttributeInfo info) {
     return info instanceof PropertyBindingInfo
            && ((PropertyBindingInfo)info).bindingType == PropertyBindingType.PROPERTY
-           && "ngClass".equals(info.name);
+           && NG_CLASS_ATTR.equals(info.name);
   }
 
   @Nullable

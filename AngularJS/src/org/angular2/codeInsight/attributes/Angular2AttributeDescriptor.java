@@ -51,13 +51,14 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getCustomNgAttrs;
+import static org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.NG_CLASS_ATTR;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
 
   public static final JSType STRING_TYPE = new JSStringType(true, JSTypeSource.EXPLICITLY_DECLARED, JSTypeContext.INSTANCE);
 
-  private static final Collection<String> ONE_TIME_BINDING_EXCLUDES = newArrayList("ngClass");
+  private static final Collection<String> ONE_TIME_BINDING_EXCLUDES = newArrayList(NG_CLASS_ATTR);
 
   @Nullable
   public static Angular2AttributeDescriptor create(@NotNull String attributeName) {
@@ -331,7 +332,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       .withCaseSensitivity(myInfo.type != REGULAR || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
       .withIcon(getIcon())
       .withBoldness(proximity == DeclarationProximity.IN_SCOPE && myPriority == AttributePriority.HIGH)
-      .withInsertHandler(new Angular2AttributeInsertHandler(true, shouldCompleteValue(), null));
+      .withInsertHandler(new Angular2AttributeInsertHandler(shouldInsertHandlerRemoveLeftover(), shouldCompleteValue(), null));
     if (info.lookupStrings != null) {
       element = element.withLookupStrings(map(info.lookupStrings, str -> StringUtil.trimStart(str, hide.first)));
     }
@@ -355,6 +356,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     }
     return new LookupElementInfo(getName(), emptyList(),
                                  myInfo.type == EVENT ? newArrayList(getName(), "on" + myInfo.getFullName()) : null);
+  }
+
+  protected boolean shouldInsertHandlerRemoveLeftover() {
+    return false;
   }
 
   private boolean shouldCompleteValue() {

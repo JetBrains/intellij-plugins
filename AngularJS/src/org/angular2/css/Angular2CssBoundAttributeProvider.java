@@ -24,7 +24,7 @@ public class Angular2CssBoundAttributeProvider implements Angular2AttributesProv
   private static final String CANONICAL_PREFIX_BASE = PROPERTY_BINDING.getCanonicalPrefix();
 
   private static final String BASE_PREFIX = "class.";
-  private static final String SHORT_PREFIX = "[" + BASE_PREFIX;
+  public static final String SHORT_PREFIX = "[" + BASE_PREFIX;
   private static final String CANONICAL_PREFIX = CANONICAL_PREFIX_BASE + BASE_PREFIX;
 
   private static final List<String> PREFIXES = unmodifiableList(newArrayList(SHORT_PREFIX, CANONICAL_PREFIX, BASE_PREFIX));

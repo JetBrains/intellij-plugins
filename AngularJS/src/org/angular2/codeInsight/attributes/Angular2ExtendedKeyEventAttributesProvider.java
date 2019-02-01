@@ -189,5 +189,10 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
       }
       return super.buildElementInfo(prefixMatcher);
     }
+
+    @Override
+    protected boolean shouldInsertHandlerRemoveLeftover() {
+      return true;
+    }
   }
 }

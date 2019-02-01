@@ -53,7 +53,7 @@ public class Angular2CssAttributeNameCompletionProvider extends CompletionProvid
       }
       final XmlAttribute attribute = ((XmlAttributeReference)reference).getElement();
       String attributeName = attribute.getName();
-      if (!attributeName.startsWith("[class.")) {
+      if (!attributeName.startsWith(Angular2CssBoundAttributeProvider.SHORT_PREFIX)) {
         return;
       }
       CssElementDescriptorProvider descriptorProvider = CssDescriptorsUtil.findDescriptorProvider(

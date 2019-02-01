@@ -107,5 +107,10 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
     protected LookupElementInfo buildElementInfo(@NotNull PrefixMatcher prefixMatcher) {
       return new LookupElementInfo(getName(), asList(pair(SHORT_PREFIX, "]"), pair(CANONICAL_PREFIX, "")), null);
     }
+
+    @Override
+    protected boolean shouldInsertHandlerRemoveLeftover() {
+      return true;
+    }
   }
 }
