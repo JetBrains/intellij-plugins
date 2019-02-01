@@ -163,7 +163,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       if (myServer.getServerSettings().isDebug() || myServer.areBrowsersReady() || Disposer.isDisposed(myConsole)) {
         return;
       }
-      final int DELAY_MILLIS = 3000;
+      final int DELAY_MILLIS = 10000;
       Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, myConsole);
       AtomicLong lastPrintTimeMillis = new AtomicLong(0);
       alarm.addRequest(new Runnable() {
