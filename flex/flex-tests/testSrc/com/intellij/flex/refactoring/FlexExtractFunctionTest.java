@@ -31,35 +31,35 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
     FlexTestUtils.setupFlexSdk(myFixture.getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
-  public void testExpressionInClass() throws Exception {
+  public void testExpressionInClass() {
     ecmaL4Test();
   }
 
-  private void ecmaL4Test() throws Exception {
+  private void ecmaL4Test() {
     doTest("created", "js2");
   }
 
-  public void testLeavingReturn() throws Exception {
+  public void testLeavingReturn() {
     ecmaL4Test();
   }
 
-  public void testLeavingReturn3() throws Exception {
+  public void testLeavingReturn3() {
     ecmaL4Test();
   }
 
-  public void testAssignExpr() throws Exception {
+  public void testAssignExpr() {
     ecmaL4Test();
   }
 
-  public void testAssignExprUntyped() throws Exception {
+  public void testAssignExprUntyped() {
     ecmaL4Test();
   }
 
-  public void testMethodInClass() throws Exception {
+  public void testMethodInClass() {
     doTest("addHello", "js2");
   }
 
-  public void testSelectEntireLine() throws Exception {
+  public void testSelectEntireLine() {
     doTest(
       () -> {
         JSExtractFunctionSettings.ParametersInfo parametersInfo = new JSExtractFunctionSettings.ParametersInfo();
@@ -74,90 +74,90 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
     );
   }
 
-  public void testBasic3() throws Exception {
+  public void testBasic3() {
     ecmaL4Test();
   }
 
-  public void testBasic4() throws Exception {
+  public void testBasic4() {
     ecmaL4Test();
   }
 
-  public void testBasic5() throws Exception {
+  public void testBasic5() {
     ecmaL4Test();
   }
 
-  public void testBasic6() throws Exception {
+  public void testBasic6() {
     ecmaL4Test();
   }
 
-  public void testArguments() throws Exception {
+  public void testArguments() {
     ecmaL4Test();
   }
 
-  public void testExtraReturn() throws Exception {
+  public void testExtraReturn() {
     failedEcmaTest();
   }
 
-  public void testContinue() throws Exception {
+  public void testContinue() {
     failedEcmaTest();
   }
 
-  public void testContinue2() throws Exception {
+  public void testContinue2() {
     ecmaL4Test();
   }
 
-  public void testContinue2_2() throws Exception {
+  public void testContinue2_2() {
     failedEcmaTest();
   }
 
-  public void testBreak() throws Exception {
+  public void testBreak() {
     failedEcmaTest();
   }
 
-  public void testBreak2() throws Exception {
+  public void testBreak2() {
     ecmaL4Test();
   }
 
-  public void testInsertImport() throws Exception {
+  public void testInsertImport() {
     ecmaL4Test();
   }
 
-  public void testBadSelectionJS2() throws Exception {
+  public void testBadSelectionJS2() {
     failedEcmaTest();
   }
 
-  public void testBadSelectionJS2_2() throws Exception {
+  public void testBadSelectionJS2_2() {
     failedEcmaTest();
   }
 
-  public void testBadSelectionJS2_3() throws Exception {
+  public void testBadSelectionJS2_3() {
     failedEcmaTest();
   }
 
-  public void testBadSelectionJS2_4() throws Exception {
+  public void testBadSelectionJS2_4() {
     failedEcmaTest();
   }
 
-  public void testBadSelectionJS2_5() throws Exception {
+  public void testBadSelectionJS2_5() {
     failedEcmaTest();
   }
 
-  private void failedEcmaTest() throws Exception {
+  private void failedEcmaTest() {
     assertFails(() -> doTest("created", "js2"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testMxml() throws Exception {
+  public void testMxml() {
     doTest("created", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testMxml2() throws Exception {
+  public void testMxml2() {
     doTest("created", "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testMxml3() throws Exception {
+  public void testMxml3() {
     doTest("created", "mxml");
   }
 
