@@ -19,7 +19,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.ReferenceSetBase;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +66,7 @@ public class BeanPropertyPathReferenceSet extends ReferenceSetBase<BeanPropertyP
   @NotNull
   @Override
   public BeanPropertyPathReference[] getPsiReferences() {
-    return ArrayUtil.toObjectArray(getReferences(), BeanPropertyPathReference.class);
+    return getReferences().toArray(new BeanPropertyPathReference[0]);
   }
 
   @Nullable

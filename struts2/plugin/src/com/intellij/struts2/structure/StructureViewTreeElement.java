@@ -23,7 +23,6 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.ElementDescriptionUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomElementVisitor;
@@ -98,7 +97,7 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
       }
     });
 
-    return ArrayUtil.toObjectArray(result, TreeElement.class);
+    return result.toArray(TreeElement.EMPTY_ARRAY);
   }
 
   /**

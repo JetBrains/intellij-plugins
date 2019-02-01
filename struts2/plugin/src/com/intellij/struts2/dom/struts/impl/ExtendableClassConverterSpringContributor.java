@@ -31,7 +31,6 @@ import com.intellij.spring.model.utils.SpringModelSearchers;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.ExtendableClassConverter;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomJavaUtil;
@@ -151,7 +150,7 @@ public class ExtendableClassConverterSpringContributor
         ContainerUtil.addIfNotNull(variants, SpringConverterUtil.createCompletionVariant(bean));
       }
 
-      return ArrayUtil.toObjectArray(variants, LookupElement.class);
+      return variants.toArray(LookupElement.EMPTY_ARRAY);
     }
 
     /**

@@ -42,7 +42,6 @@ import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.treeStructure.*;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,7 +83,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
           nodes.add(setNode);
         }
       }
-      return ArrayUtil.toObjectArray(nodes, SimpleNode.class);
+      return nodes.toArray(new SimpleNode[0]);
     }
 
     @Override
@@ -387,7 +386,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       for (final VirtualFilePointer file : mySet.getFiles()) {
         nodes.add(new ConfigFileNode(file, this));
       }
-      return ArrayUtil.toObjectArray(nodes, SimpleNode.class);
+      return nodes.toArray(new SimpleNode[0]);
     }
 
     @Override

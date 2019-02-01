@@ -19,7 +19,6 @@ import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.pom.references.PomService;
@@ -33,7 +32,6 @@ import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorRef;
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorStack;
 import com.intellij.struts2.reference.common.BeanPropertyPathReferenceSet;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomTarget;
@@ -81,7 +79,7 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
                                                         stack));
 
     if (resolvedInterceptorRef == null) {
-      return ArrayUtil.toObjectArray(customReferences, PsiReference.class);
+      return customReferences.toArray(PsiReference.EMPTY_ARRAY);
     }
 
     final String propertyText = text.substring(idx + 1);
@@ -91,7 +89,7 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
 
     Collections.addAll(customReferences, beanPropertyPathReferenceSet.getPsiReferences());
 
-    return ArrayUtil.toObjectArray(customReferences, PsiReference.class);
+    return customReferences.toArray(PsiReference.EMPTY_ARRAY);
   }
 
 
@@ -140,7 +138,7 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
         names.add(LookupElementBuilder.create(resolvedInterceptor, interceptorName)
                                       .withIcon(ElementPresentationManager.getIcon(resolvedInterceptor)));
       }
-      return ArrayUtil.toObjectArray(names, LookupElement.class);
+      return names.toArray(LookupElement.EMPTY_ARRAY);
     }
 
     @NotNull

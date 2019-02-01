@@ -128,7 +128,7 @@ public class ResultParamNameCustomConverter extends ParamNameConverter.ParamName
           }
         }
       }
-      return ArrayUtil.toObjectArray(quickFixes, LocalQuickFix.class);
+      return quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY);
     }
   }
 }

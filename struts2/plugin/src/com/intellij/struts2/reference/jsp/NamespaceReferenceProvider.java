@@ -25,7 +25,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.SmartList;
@@ -84,7 +83,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
           resolveResults.add(new PsiElementResolveResult(packageTag));
         }
       }
-      return ArrayUtil.toObjectArray(resolveResults, ResolveResult.class);
+      return resolveResults.toArray(ResolveResult.EMPTY_ARRAY);
     }
 
     @Override

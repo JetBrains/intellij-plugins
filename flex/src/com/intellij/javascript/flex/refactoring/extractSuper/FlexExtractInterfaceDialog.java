@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.refactoring.util.JSUsesAndInterfacesDependen
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.classMembers.MemberInfoChange;
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +42,7 @@ public class FlexExtractInterfaceDialog extends FlexExtractSuperBaseDialog {
 
   @Override
   protected BaseRefactoringProcessor createProcessor() {
-    return new FlexExtractSuperProcessor(mySourceClass, ArrayUtil.toObjectArray(getSelectedMemberInfos(), JSMemberInfo.class),
+    return new FlexExtractSuperProcessor(mySourceClass, getSelectedMemberInfos().toArray(JSMemberInfo.EMPTY_ARRAY),
                                          getExtractedSuperName(), getTargetPackageName(), getDocCommentPolicy(),
                                          getMode(), false, getTargetDirectory());
   }

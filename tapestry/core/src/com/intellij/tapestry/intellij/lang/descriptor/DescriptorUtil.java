@@ -204,7 +204,7 @@ class DescriptorUtil {
     for (Mixin mixin : mixins) {
       result.addAll(ContainerUtil.map(mixin.getParameters().values(), mapping));
     }
-    return ArrayUtil.toObjectArray(result, XmlElementDescriptor.class);
+    return result.toArray(XmlElementDescriptor.EMPTY_ARRAY);
   }
 
   @Nullable
