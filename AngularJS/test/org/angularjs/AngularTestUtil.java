@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs;
 
+import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.application.PathManager;
@@ -10,11 +11,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
 
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
 import static junit.framework.TestCase.assertEquals;
@@ -94,4 +98,29 @@ public class AngularTestUtil {
     assertEquals(varName, varClass.cast(resolve).getName());
     return (T)resolve;
   }
+
+  public static List<String> renderLookupItems(@NotNull CodeInsightTestFixture fixture, boolean renderPriority, boolean renderTypeText) {
+    return ContainerUtil.mapNotNull(fixture.getLookupElements(), el -> {
+      StringBuilder result = new StringBuilder();
+      TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
+      if (renderPriority && presentation.isItemTextBold()) {
+        result.append('!');
+      }
+      result.append(el.getLookupString());
+      if (renderTypeText) {
+        result.append('#');
+        result.append(presentation.getTypeText());
+      }
+      if (renderPriority) {
+        result.append('#');
+        double priority = 0;
+        if (el instanceof PrioritizedLookupElement) {
+          priority = ((PrioritizedLookupElement)el).getPriority();
+        }
+        result.append((int)priority);
+      }
+      return result.toString();
+    });
+  }
+
 }

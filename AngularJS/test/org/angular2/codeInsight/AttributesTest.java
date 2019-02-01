@@ -1,7 +1,6 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
@@ -26,7 +25,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.XmlInvalidIdInspection;
@@ -47,6 +45,7 @@ import java.util.stream.Collectors;
 import static com.intellij.openapi.util.Pair.pair;
 import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
+import static org.angularjs.AngularTestUtil.renderLookupItems;
 
 public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
@@ -868,10 +867,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts", "package.json");
       myFixture.completeBasic();
       assertContainsElements(
-        ContainerUtil.mapNotNull(myFixture.getLookupElements(), el -> {
-          TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
-          return presentation.getItemText() + "#" + presentation.getTypeText();
-        }),
+        renderLookupItems(myFixture, false, true),
         "plainBoolean#boolean",
         "[plainBoolean]#boolean",
         "simpleStringEnum#MyType",
@@ -892,15 +888,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("attributeTypes.ts", "lib.dom.d.ts");
       myFixture.completeBasic();
       assertContainsElements(
-        ContainerUtil.mapNotNull(myFixture.getLookupElements(), el -> {
-          double priority = 0;
-          if (el instanceof PrioritizedLookupElement) {
-            priority = ((PrioritizedLookupElement)el).getPriority();
-          }
-          TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
-
-          return (presentation.isItemTextBold() ? "!" : "") + el.getLookupString() + "#" + (int)priority;
-        }),
+        renderLookupItems(myFixture, true, false),
         "!plainBoolean#100",
         "![plainBoolean]#100",
         "!simpleStringEnum#100",

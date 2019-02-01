@@ -22,7 +22,7 @@ import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static com.intellij.util.containers.ContainerUtil.find;
+import static com.intellij.util.containers.ContainerUtil.exists;
 
 /**
  * Objects of this class should not be cached or stored. It is intended for single use.
@@ -70,11 +70,11 @@ public class Angular2DeclarationsScope {
     if (contains(declaration)) {
       return DeclarationProximity.IN_SCOPE;
     }
-    if (find(myExport2NgModuleMap
-               .computeIfAbsent(declaration.getSourceElement().getProject(),
-                                p -> Angular2EntitiesProvider.getExportedDeclarationToModuleMap(p))
-               .get(declaration),
-             Angular2Module::isPublic) != null) {
+    Collection<Angular2Module> modules = myExport2NgModuleMap
+      .computeIfAbsent(declaration.getSourceElement().getProject(),
+                       p -> Angular2EntitiesProvider.getExportedDeclarationToModuleMap(p))
+      .get(declaration);
+    if (modules.isEmpty() || exists(modules, Angular2Module::isPublic)) {
       return DeclarationProximity.PUBLIC_MODULE_EXPORT;
     }
     return DeclarationProximity.DOES_NOT_EXIST;

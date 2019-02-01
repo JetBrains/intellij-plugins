@@ -5,12 +5,16 @@ import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
 
+import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.containers.ContainerUtil.sorted;
+import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
 import static org.angularjs.AngularTestUtil.resolveReference;
 
@@ -98,5 +102,31 @@ public class PipesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.completeBasic();
       myFixture.checkResultByFile("ngIfAs.after.ts");
     });
+  }
+
+  public void testContextAware() {
+    myFixture.configureByFiles("context-aware.html", "context-aware.ts", "json_pipe.ts", "async_pipe.ts",
+                               "i18n_plural_pipe.ts", "case_conversion_pipes.ts", "Observable.d.ts", "package.json");
+    for (Pair<String, List<String>> check : asList(
+      pair("{{ 12 | }}", asList(
+        "json#[<any> | json] : <string>#100",
+        "i18nPlural#[<number> | i18nPlural:<{[p: string]: string}>:<s…#101")),
+      pair("{{ \"test\" | }}", asList(
+        "json#[<any> | json] : <string>#100",
+        "lowercase#[<string> | lowercase] : <string>#101",
+        "titlecase#[<string> | titlecase] : <string>#100",
+        "uppercase#[<string> | uppercase] : <string>#100")),
+      pair("{{ makePromise() | }}", asList(
+        "json#[<any> | json] : <string>#100",
+        "async#[<Promise<T>> | async] : <T>#101")),
+      pair("{{ makeObservable() | }}", asList(
+        "json#[<any> | json] : <string>#100",
+        "async#[<Observable<T>> | async] : <T>#101"))
+    )) {
+      AngularTestUtil.moveToOffsetBySignature(check.first.replace("|", "|<caret>"), myFixture);
+      myFixture.completeBasic();
+      assertEquals("Issue when checking: " + check.first, sorted(check.second),
+                   sorted(AngularTestUtil.renderLookupItems(myFixture, true, true)));
+    }
   }
 }

@@ -10,15 +10,15 @@ import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser.FunctionTypeWithKind;
-import com.intellij.lang.javascript.ecmascript6.types.OverloadPriority;
 import com.intellij.lang.javascript.psi.JSFunctionType;
-import com.intellij.lang.javascript.psi.JSParameterTypeDecorator;
+import com.intellij.lang.javascript.psi.JSParameterListElement;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.types.JSFunctionTypeImpl;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -136,19 +136,26 @@ public class Angular2CompletionContributor extends CompletionContributor {
             builder = builder.withItemTextForeground(SimpleTextAttributes.GRAYED_ATTRIBUTES.getFgColor());
           }
           Consumer<LookupElementBuilder> addResult = el ->
-            result.consume(PrioritizedLookupElement.withPriority(el, NG_VARIABLE_PRIORITY.getPriorityValue()));
+            result.consume(PrioritizedLookupElement.withPriority(el, bestMatch.second == DeclarationProximity.IN_SCOPE
+                                                                     ? NG_VARIABLE_PRIORITY.getPriorityValue()
+                                                                     : NG_PRIVATE_VARIABLE_PRIORITY.getPriorityValue()));
           List<TypeScriptFunction> transformMethods = ContainerUtil.newArrayList(match.getTransformMethods());
           if (!transformMethods.isEmpty() && actualType != null) {
-            Collections.sort(transformMethods,
-                             Comparator.comparingInt(f -> isNullOrUndefinedType(f.getReturnType()) ? 1 : 0));
+            Collections.sort(transformMethods, Comparator.
+              <TypeScriptFunction>comparingInt(f -> isNullOrUndefinedType(f.getReturnType()) ? 1 : 0)
+              .thenComparingInt(f -> f.isOverloadDeclaration() ? 0 : 1));
+            Map<JSFunctionType, TypeScriptFunction> converted2Original = new LinkedHashMap<>();
+            transformMethods.forEach(f -> {
+              JSFunctionType type = TypeScriptTypeParser.buildFunctionType(f);
+              converted2Original.put(toTypeWithOneParam(type), f);
+            });
             List<FunctionTypeWithKind> resolveResults = new JSTypeSignatureChooser(
               parameters.getPosition(), Collections.singletonList(actualType), null, JSTypeDeclaration.EMPTY_ARRAY
-            ).chooseOverload(ContainerUtil.map(transformMethods, TypeScriptTypeParser::buildFunctionType), true);
+            ).chooseOverload(converted2Original.keySet(), true);
             for (FunctionTypeWithKind resolved : resolveResults) {
-              if (resolved.getOverloadType().isAssignable()
-                  || resolved.getOverloadType() == OverloadPriority.INCORRECT_PARAMETERS_LENGTH) {
+              if (resolved.getOverloadType().isAssignable()) {
                 JSFunctionType f = resolved.getJsFunction();
-                addResult.accept(builder.withTypeText(renderPipeTypeText(f, pipeEntry.getKey()), true));
+                addResult.accept(builder.withTypeText(renderPipeTypeText(converted2Original.get(f), pipeEntry.getKey()), true));
                 break;
               }
             }
@@ -174,6 +181,13 @@ public class Angular2CompletionContributor extends CompletionContributor {
       }
     }
 
+    private static JSFunctionType toTypeWithOneParam(@NotNull JSFunctionType type) {
+      return type.getParameters().size() <= 1
+             ? type
+             : new JSFunctionTypeImpl(type.getSource(), Collections.singletonList(type.getParameters().get(0)),
+                                      type.getReturnType());
+    }
+
     private static JSType calcActualType(Angular2PipeReferenceExpression ref) {
       Angular2PipeExpression pipeCall = (Angular2PipeExpression)ref.getParent();
       Angular2PipeLeftSideArgument leftSideArgument = pipeCall.getLeftSideArgument();
@@ -181,11 +195,11 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                       : null;
     }
 
-    private static String renderPipeTypeText(JSFunctionType f, String pipeName) {
+    private static String renderPipeTypeText(@NotNull TypeScriptFunction f, @NotNull String pipeName) {
       StringBuilder result = new StringBuilder();
       result.append('[');
       boolean first = true;
-      for (JSParameterTypeDecorator param : f.getParameters()) {
+      for (JSParameterListElement param : f.getParameters()) {
         JSType type = param.getSimpleType();
         result.append("<")
           .append(type == null ? "*" : type.getTypeText()
