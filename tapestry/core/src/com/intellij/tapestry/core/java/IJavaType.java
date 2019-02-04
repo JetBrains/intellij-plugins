@@ -13,7 +13,7 @@ public interface IJavaType {
      *
      * @return the type name.
      */
-    public String getName();
+    String getName();
 
     /**
      * Tests whether a given type can be converted to the type

@@ -14,7 +14,7 @@ public interface HbBlockMustache extends HbMustache {
    * @return the {@link HbMustacheName} for this block or null if none found (which should only happen if there are
    *         currently parse errors in the file)
    */
-  public HbMustacheName getBlockMustacheName();
+  HbMustacheName getBlockMustacheName();
 
   /**
    * Get the block element paired with this one
@@ -22,5 +22,5 @@ public interface HbBlockMustache extends HbMustache {
    * @return the matching {@link HbBlockMustache} element (i.e. for {{#foo}}, returns {{/foo}} and vice-versa or null
    *         if none found (which should only happen if there are currently parse errors in the file)
    */
-  public HbBlockMustache getPairedElement();
+  HbBlockMustache getPairedElement();
 }

@@ -41,12 +41,12 @@ public interface Obr {
   /**
    * @return the name of the Obr, which is displayed to the user.
    */
-  public String getDisplayName();
+  String getDisplayName();
 
   /**
    * @return true, if the repository supports maven, false otherwise.
    */
-  public boolean supportsMaven();
+  boolean supportsMaven();
 
   /**
    * Queries the remote repository and returns information about possibly matching maven dependencies.
@@ -56,7 +56,6 @@ public interface Obr {
    * @return a list of results. If nothing is found an empty array is returned.
    * @throws IOException if the connection to the bundle repository failed.
    */
-  public
   @NotNull
   ObrMavenResult[] queryForMavenArtifact(@NotNull String queryString,
                                          @NotNull ProgressIndicator progressIndicator) throws
@@ -67,7 +66,6 @@ public interface Obr {
    *
    * @return a list of repositories or an empty array if this obr does not support maven.
    */
-  public
   @NotNull
   MavenRepository[] getMavenRepositories();
 }
