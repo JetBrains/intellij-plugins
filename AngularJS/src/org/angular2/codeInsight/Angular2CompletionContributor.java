@@ -42,10 +42,7 @@ import icons.AngularJSIcons;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
-import org.angular2.codeInsight.attributes.Angular2AttributeInsertHandler;
-import org.angular2.codeInsight.attributes.Angular2AttributesProvider;
+import org.angular2.codeInsight.attributes.*;
 import org.angular2.codeInsight.attributes.Angular2AttributesProvider.CompletionResultsConsumer;
 import org.angular2.css.Angular2CssAttributeNameCompletionProvider;
 import org.angular2.css.Angular2CssExpressionCompletionProvider;
@@ -241,7 +238,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     @Override
     protected void addCompletions(@NotNull CompletionParameters parameters,
                                   @NotNull ProcessingContext context,
-                                  @NotNull CompletionResultSet result) {
+                                  @NotNull CompletionResultSet resultSet) {
       if (!Angular2LangUtil.isAngular2Context(parameters.getPosition())) {
         return;
       }
@@ -251,6 +248,8 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                        XmlAttributeReference.class::isInstance);
       }
       if (reference instanceof XmlAttributeReference) {
+        CompletionResultSet result = resultSet.withPrefixMatcher(
+          new TemplateBindingsPrefixMatcher(resultSet.getPrefixMatcher()));
         final XmlAttribute attribute = ((XmlAttributeReference)reference).getElement();
         final XmlTag tag = attribute.getParent();
         final XmlElementDescriptor parentDescriptor = tag.getDescriptor();
@@ -303,7 +302,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
                 return;
               }
             }
-            result.passResult(toPass);
+            result.withPrefixMatcher(new TemplateBindingsPrefixMatcher(toPass.getPrefixMatcher()))
+              .withRelevanceSorter(toPass.getSorter())
+              .addElement(toPass.getLookupElement());
           });
         }
       }

@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.containers.ContainerUtil.sorted;
 import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
 import static org.angularjs.AngularTestUtil.renderLookupItems;
@@ -534,8 +535,27 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("case.html", "ng_for_of.ts", "package.json");
       myFixture.completeBasic();
-      myFixture.type('\n');
       myFixture.checkResultByFile("case.after.html");
+    });
+  }
+
+  public void testTemplatesCompletion() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      configureWithMetadataFiles(myFixture, "common");
+      myFixture.configureByFiles("templates_completion.html");
+      myFixture.completeBasic();
+      assertEquals(asList("*ngIf", "*ngSwitchCase", "*ngSwitchDefault"),
+                   sorted(myFixture.getLookupElementStrings()));
+    });
+  }
+
+  public void testTemplatesCompletion2() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      configureWithMetadataFiles(myFixture, "common");
+      myFixture.configureByFiles("templates_completion2.html");
+      myFixture.completeBasic();
+      assertEquals(asList("*ngPluralCase", "*ngSwitchCase", "[ngClass]", "[ngComponentOutlet]", "ngComponentOutlet"),
+                   sorted(myFixture.getLookupElementStrings()));
     });
   }
 
@@ -821,7 +841,7 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
       myFixture.configureByFiles("lifecycleHooks.ts", "package.json");
       myFixture.completeBasic();
-      assertEquals(ContainerUtil.sorted(myFixture.getLookupElementStrings()),
+      assertEquals(sorted(myFixture.getLookupElementStrings()),
                    ContainerUtil.newArrayList("$any", "testOne", "testTwo", "testing"));
     });
   }
