@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static java.util.Arrays.asList;
 
 public class Angular2CssInclusionContext extends CssInclusionContext {
@@ -54,6 +55,20 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
     ComponentCssContext componentContext = getComponentContext(context);
     return componentContext != null
            && !componentContext.isAngularCli();
+  }
+
+  @NotNull
+  @Override
+  public PsiFile[] getLocalUseScope(@NotNull PsiFile file) {
+    if (file instanceof StylesheetFile) {
+      Angular2Component component = Angular2EntitiesProvider.getComponent(Angular2IndexingHandler.findComponentClass(file));
+      if (component != null) {
+        List<PsiFile> files = new ArrayList<>(component.getCssFiles());
+        doIfNotNull(component.getTemplateFile(), files::add);
+        return files.toArray(PsiFile.EMPTY_ARRAY);
+      }
+    }
+    return PsiFile.EMPTY_ARRAY;
   }
 
   @Nullable
@@ -101,7 +116,7 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
       if (myAngularCliJson != null) {
         AngularCliConfig config = AngularCliConfigLoader.load(project, myAngularCliJson);
         PsiManager psiManager = PsiManager.getInstance(project);
-        PsiFile html = ObjectUtils.doIfNotNull(config.getIndexHtmlFile(), psiManager::findFile);
+        PsiFile html = doIfNotNull(config.getIndexHtmlFile(), psiManager::findFile);
         if (html instanceof XmlFile) {
           cssFilesList.addAll(asList(CssResolveManager.getInstance().getNewResolver()
                                        .resolveStyleSheets((XmlFile)html, null)));
