@@ -130,7 +130,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
       .filter { it is JSFunctionType }.findFirst()
     val dataPropertyType = if (dataStream.isPresent) (dataStream.get() as? JSFunctionType)?.returnType
     else null ?: JSTypeCastUtil.NO_RECORD_TYPE
-    val genericArguments = listOf(vue, dataPropertyType, getContextualType(methodPropertyType),
+    val genericArguments = listOf(vue, getContextualType(dataPropertyType), getContextualType(methodPropertyType),
                                   getContextualType(computedPropertyType), getContextualType(propsPropertyType))
     return JSGenericTypeImpl(typeSource, vueType, genericArguments).asRecordType()
   }
