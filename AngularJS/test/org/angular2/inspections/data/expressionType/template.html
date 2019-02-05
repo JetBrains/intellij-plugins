@@ -1,0 +1,14 @@
+<div *ngIf="true; extra: <warning descr="Type 'number' is not assignable to type 'string&number'">12</warning>; super: <warning descr="Type 'String(\"ee\")' is not assignable to type 'string&number'">'ee'</warning>"></div>
+
+<div *ngFor="let item of <warning descr="Type 'number' is not assignable to type 'NgIterable<T>'">myNumber</warning>"></div>
+
+<div *ngFor="let item of myArray; trackBy: <warning descr="Type 'function(string): string' is not assignable to type 'TrackByFunction<S>'">myBadFunction</warning>"></div>
+
+<div *ngFor="let item of myList; trackBy: myAnotherFunction"></div>
+
+<div *ngFor="let item of myArray; trackBy: myOkFunction"></div>
+
+<div *ngIf="true; extra: 12; super: 12"></div>
+
+<div *ngIf="true; then <warning descr="Type 'string' is not assignable to type 'TemplateRef<NgIfContext>|null'">myThen</warning>; else myElse"></div>
+

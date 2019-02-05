@@ -3,6 +3,7 @@ package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSStatement;
+import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +15,9 @@ public interface Angular2TemplateBinding extends JSStatement {
 
   @Nullable
   Angular2TemplateBindingKey getKeyElement();
+
+  @Nullable
+  JSType getKeyJSType();
 
   boolean keyIsVar();
 
