@@ -98,18 +98,6 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
     failedEcmaTest();
   }
 
-  public void testContinue() {
-    failedEcmaTest();
-  }
-
-  public void testContinue2() {
-    ecmaL4Test();
-  }
-
-  public void testContinue2_2() {
-    failedEcmaTest();
-  }
-
   public void testBreak() {
     failedEcmaTest();
   }
@@ -167,5 +155,9 @@ public class FlexExtractFunctionTest extends JSExtractFunctionBaseTest {
 
   public void testScopeOptionsMxml() {
     doTestWithScopeSelection(scopes -> ContainerUtil.getFirstItem(scopes), "mxml");
+  }
+
+  public void testWithMultipleReturnStatements() {
+    ecmaL4Test();
   }
 }

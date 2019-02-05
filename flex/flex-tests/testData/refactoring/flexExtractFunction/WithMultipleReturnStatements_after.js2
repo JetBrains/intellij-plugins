@@ -1,0 +1,17 @@
+class Base {
+    public function doSomething(p:int):Object {
+        console.log('before')
+        return created(p);
+    }
+
+    public function created(p:int):Object {
+        if (p > 0) {
+            return "";
+        }
+        if (p === 0) {
+            return 1;
+        }
+        return 1
+    }
+}
+new Base().doSomething(1)

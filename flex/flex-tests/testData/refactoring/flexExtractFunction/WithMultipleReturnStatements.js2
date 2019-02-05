@@ -1,0 +1,13 @@
+class Base {
+    public function doSomething(p:int):Object {
+        console.log('before')
+        <selection>if (p > 0) {
+            return "";
+        }
+        if (p === 0) {
+            return 1;
+        }
+        return 1</selection>
+    }
+}
+new Base().doSomething(1)
