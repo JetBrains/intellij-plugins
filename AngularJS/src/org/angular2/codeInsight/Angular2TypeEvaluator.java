@@ -2,6 +2,7 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator;
+import com.intellij.lang.javascript.psi.JSCallItem;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeUtils;
@@ -101,7 +102,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
         JSType expressionType = JSResolveUtil.getExpressionJSType(binding.getExpression());
         if (expressionType != null) {
           JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext,
-                                                        expressionType, property.getType(), null);
+                                                        expressionType, property.getType(), null, (JSCallItem)null);
         }
       }
     });
