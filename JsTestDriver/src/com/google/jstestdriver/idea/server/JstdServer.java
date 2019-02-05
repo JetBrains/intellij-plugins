@@ -190,7 +190,7 @@ public class JstdServer {
 
   private class MyDisposable implements Disposable {
 
-    private final boolean myDisposed = false;
+    private static final boolean myDisposed = false;
 
     @Override
     public void dispose() {

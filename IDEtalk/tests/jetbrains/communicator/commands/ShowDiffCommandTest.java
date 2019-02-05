@@ -27,7 +27,7 @@ import org.jmock.Mock;
 public class ShowDiffCommandTest extends BaseTestCase {
   private ShowDiffCommand myCommand;
 
-  private final String myLog = "";
+  private static final String myLog = "";
   private Mock myFacadeMock;
 
   @Override

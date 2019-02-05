@@ -181,7 +181,7 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
   }
 
   final static class PhoneGapProjectSettings {
-    private final String name = "example";
+    private static final String name = "example";
     @Nullable
     private String executable;
     @Nullable
