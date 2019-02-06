@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language.parser
 
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
@@ -31,16 +31,12 @@ class VueHighlightingLexerTest : VueLexerTest() {
     instance.registerService(AppCodeStyleSettingsManager::class.java, AppCodeStyleSettingsManager())
 
     val area = Extensions.getRootArea()
-    var extensionName = CodeStyleSettingsProvider.EXTENSION_POINT_NAME.name
-    if (!area.hasExtensionPoint(extensionName)) {
-      area.registerExtensionPoint(extensionName, CodeStyleSettingsProvider::class.java.name, ExtensionPoint.Kind.INTERFACE)
-      onTearDown.plus(Runnable { area.unregisterExtensionPoint(extensionName) })
+    if (!area.hasExtensionPoint(CodeStyleSettingsProvider.EXTENSION_POINT_NAME)) {
+      area.registerExtensionPoint(CodeStyleSettingsProvider.EXTENSION_POINT_NAME, CodeStyleSettingsProvider::class.java.name, ExtensionPoint.Kind.INTERFACE, testRootDisposable)
     }
 
-    extensionName = LanguageCodeStyleSettingsProvider.EP_NAME.name
-    if (!area.hasExtensionPoint(extensionName)) {
-      area.registerExtensionPoint(extensionName, LanguageCodeStyleSettingsProvider::class.java.name, ExtensionPoint.Kind.INTERFACE)
-      onTearDown.plus(Runnable { area.unregisterExtensionPoint(extensionName) })
+    if (!area.hasExtensionPoint(LanguageCodeStyleSettingsProvider.EP_NAME)) {
+      area.registerExtensionPoint(LanguageCodeStyleSettingsProvider.EP_NAME, LanguageCodeStyleSettingsProvider::class.java.name, ExtensionPoint.Kind.INTERFACE, testRootDisposable)
     }
 
     val settings = CodeStyleSettings()

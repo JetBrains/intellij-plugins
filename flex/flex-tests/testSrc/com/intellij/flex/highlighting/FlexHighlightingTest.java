@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.highlighting;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -55,7 +56,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.XmlHighlighterColors;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -162,11 +162,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void suppressXmlNSAnnotator() {
     HighlightInfoFilter filter = (info, file) -> info.forcedTextAttributesKey != XmlHighlighterColors.XML_NS_PREFIX;
-    Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).registerExtension(filter);
-    Disposer.register(getTestRootDisposable(),
-                      () -> Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).unregisterExtension(filter));
+    EXTENSION_POINT_NAME.getPoint(null).registerExtension(filter, getTestRootDisposable());
   }
-
 
   @Override
   protected void tearDown() throws Exception {
@@ -188,7 +185,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testHtmlCss() throws Exception {
+  public void testHtmlCss() {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     enableInspectionTool(new CssInvalidHtmlTagReferenceInspection());
     enableInspectionTool(new CssUnknownPropertyInspection());
@@ -196,7 +193,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @NeedsJavaModule
-  public void testFlex() throws Exception {
+  public void testFlex() {
     enableInspectionTool(new JSMethodCanBeStaticInspection());
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + ".css");

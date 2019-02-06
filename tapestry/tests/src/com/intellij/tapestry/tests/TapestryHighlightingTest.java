@@ -6,8 +6,6 @@ import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.codeInspection.unused.UnusedPropertyInspection;
 import com.intellij.codeInspection.xml.DeprecatedClassUsageInspection;
 import com.intellij.openapi.editor.XmlHighlighterColors;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
 import com.intellij.testFramework.ExpectedHighlightingData;
@@ -37,11 +35,8 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
 
   private void suppressXmlNSAnnotator() {
     HighlightInfoFilter filter = (info, file) -> info.forcedTextAttributesKey != XmlHighlighterColors.XML_NS_PREFIX;
-    Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).registerExtension(filter);
-    Disposer.register(myFixture.getTestRootDisposable(),
-                      () -> Extensions.getRootArea().getExtensionPoint(EXTENSION_POINT_NAME).unregisterExtension(filter));
+    EXTENSION_POINT_NAME.getPoint(null).registerExtension(filter, myFixture.getTestRootDisposable());
   }
-
 
   public void testTmlTagNameUsingSubpackage() {
     addComponentToProject("other.Count");

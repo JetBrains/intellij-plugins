@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language.parser
 
 import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider
@@ -47,7 +35,7 @@ import java.util.*
 
 @TestDataPath("\$CONTENT_ROOT/testData/lexer")
 open class VueLexerTest : LexerTestCase() {
-  val onTearDown : List<Runnable> = ArrayList()
+  val onTearDown = ArrayList<Runnable>()
 
   override fun setUp() {
     super.setUp()
@@ -64,35 +52,32 @@ open class VueLexerTest : LexerTestCase() {
     }
   }
 
-  fun registerMetaLanguage() {
-    val extensionName = MetaLanguage.EP_NAME.name
+  private fun registerMetaLanguage() {
+    val extensionName = MetaLanguage.EP_NAME
     val area = Extensions.getRootArea()
     if (!area.hasExtensionPoint(extensionName)) {
-      area.registerExtensionPoint(extensionName, MetaLanguage::class.java.name, ExtensionPoint.Kind.INTERFACE)
-      onTearDown.plus(Runnable() { area.unregisterExtensionPoint(extensionName) })
+      area.registerExtensionPoint(extensionName, MetaLanguage::class.java.name, ExtensionPoint.Kind.INTERFACE, testRootDisposable)
     }
   }
 
-  fun <T, KeyT> addExplicitExtension(collector: KeyedExtensionCollector<T, KeyT>, key : KeyT, t : T) {
+  private fun <T, KeyT> addExplicitExtension(collector: KeyedExtensionCollector<T, KeyT>, key : KeyT, t : T) {
     if (!collector.forKey(key).isEmpty()) return
     collector.addExplicitExtension(key, t)
-    onTearDown.plus(Runnable() { collector.removeExplicitExtension(key, t) })
+    onTearDown.add(Runnable { collector.removeExplicitExtension(key, t) })
   }
 
-  fun registerEmbeddedTokens() {
+  private fun registerEmbeddedTokens() {
     addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, SASSLanguage.INSTANCE, SASSSyntaxHighlighterFactory())
 
-    val extensionName = EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME.name
+    val extensionName = EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME
     val area = Extensions.getRootArea()
     if (!area.hasExtensionPoint(extensionName)) {
-      area.registerExtensionPoint(extensionName, EmbeddedTokenTypesProvider::class.java.name, ExtensionPoint.Kind.INTERFACE)
-      onTearDown.plus(Runnable(){area.unregisterExtensionPoint(extensionName)})
+      area.registerExtensionPoint(extensionName, EmbeddedTokenTypesProvider::class.java.name, ExtensionPoint.Kind.INTERFACE, testRootDisposable)
     }
     val extensionPoint = area.getExtensionPoint<EmbeddedTokenTypesProvider>(extensionName)
     val sassTokenTypesProvider = SassTokenTypesProvider()
     if (!extensionPoint.hasAnyExtensions()) {
-      extensionPoint.registerExtension(sassTokenTypesProvider)
-      onTearDown.plus(Runnable() { extensionPoint.unregisterExtension(sassTokenTypesProvider) })
+      extensionPoint.registerExtension(sassTokenTypesProvider, testRootDisposable)
     }
 
     addExplicitExtension(LanguageParserDefinitions.INSTANCE, SASSLanguage.INSTANCE, SASSParserDefinition())
@@ -100,7 +85,7 @@ open class VueLexerTest : LexerTestCase() {
                          HtmlInlineJSScriptTokenTypesProvider())
   }
 
-  fun registerScriptTokens() {
+  private fun registerScriptTokens() {
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE, JSScriptContentProvider())
     addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavascriptLanguage.INSTANCE, JSSyntaxHighlighterFactory())
 
@@ -140,6 +125,7 @@ open class VueLexerTest : LexerTestCase() {
   fun testTsxLang() = doFileTest("vue")
 
   override fun createLexer(): Lexer = org.jetbrains.vuejs.language.VueLexer(JSLanguageLevel.ES6)
+
   override fun getDirPath() = "/contrib/vuejs/vuejs-tests/testData/lexer"
 
   override fun doTest(text: String?) {
