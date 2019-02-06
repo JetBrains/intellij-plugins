@@ -10,9 +10,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.lang.javascript.psi.types.JSTypeSource.EMPTY;
-import static com.intellij.openapi.util.text.StringUtil.notNullize;
-
 /**
  * @author yole
  */
@@ -42,7 +39,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     PsiElement element = JSResolveUtil.findParent(fun);
 
     JSType classType = element instanceof JSClass ?
-                       JSNamedTypeFactory.createType(notNullize(((JSClass)element).getQualifiedName()), EMPTY, JSContext.INSTANCE) :
+                       ((JSClass)element).getJSType():
                        null;
     if (classType != null && JSTypeUtils.isActionScriptVectorType(classType)) {
       String name = fun.getName();
