@@ -44,8 +44,9 @@ public class Angular2ExpressionTypeInspectionTest extends LightPlatformCodeInsig
 
   public void testTemplateBindingsValidation() {
     JSTestUtils.testES6(getProject(), () -> {
-      myFixture.configureByFiles("template.html", "template.ts", "ng_for_of.ts", "ng_if.ts", "iterable_differs.ts",
-                                 "template_ref.ts", "package.json");
+      myFixture.copyDirectoryToProject("node_modules", "./node_modules");
+      myFixture.configureByFiles("template.html", "template.ts", "ng_for_of.ts",
+                                 "ng_if.ts", "package.json");
       myFixture.checkHighlighting();
     });
   }

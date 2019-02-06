@@ -6,8 +6,7 @@
  * found in the LICENSE file at https://angular.io/license
  */
 
-import {Directive, EmbeddedViewRef, Input, ViewContainerRef, ɵstringify as stringify} from '@angular/core';
-import {TemplateRef} from "./template_ref";
+import {Directive, EmbeddedViewRef, Input, TemplateRef, ViewContainerRef, ɵstringify as stringify} from '@angular/core';
 
 
 /**

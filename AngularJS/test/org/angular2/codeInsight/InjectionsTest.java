@@ -23,6 +23,12 @@ import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
 import org.angularjs.AngularTestUtil;
 
+import java.util.List;
+
+import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.containers.ContainerUtil.prepend;
+import static com.intellij.util.containers.ContainerUtil.sorted;
+import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.findOffsetBySignature;
 
 public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -208,6 +214,26 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
                                   JSUnusedLocalSymbolsInspection.class);
       myFixture.configureByFiles("multipart-template-string.ts", "package.json");
       myFixture.checkHighlighting(true, false, true);
+    });
+  }
+
+  public void testCompletionOnTemplateReferenceVariable() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.copyDirectoryToProject("node_modules", "./node_modules");
+      myFixture.configureByFiles("ref-var.html", "ref-var.ts", "package.json");
+      List<String> defaultProps = asList("constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable",
+                                         "toLocaleString", "toString", "valueOf");
+      for (Pair<String, List<String>> check : asList(
+        pair("comp", prepend(defaultProps, "myCompProp")),
+        pair("dir", prepend(defaultProps, "myDirectiveProp")),
+        pair("template", prepend(defaultProps, "createEmbeddedView", "elementRef"))
+      )) {
+        AngularTestUtil.moveToOffsetBySignature(check.first + "Ref.<caret>", myFixture);
+        myFixture.completeBasic();
+        assertEquals("Issue with " + check.first,
+                     sorted(check.second),
+                     sorted(myFixture.getLookupElementStrings()));
+      }
     });
   }
 }

@@ -19,10 +19,10 @@ import {
     IterableDiffer,
     IterableDiffers,
     NgIterable,
+    TemplateRef,
     TrackByFunction,
     ViewContainerRef
-} from './iterable_differs';
-import {TemplateRef} from "./template_ref";
+} from '@angular/core';
 
 export class NgForOfContext<T> {
   constructor(

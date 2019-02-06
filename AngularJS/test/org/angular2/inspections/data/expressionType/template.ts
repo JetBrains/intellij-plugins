@@ -1,6 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import {Component, Directive, Input} from '@angular/core';
-import {TemplateRef} from "./template_ref";
+import {Component, Directive, Input, TemplateRef} from '@angular/core';
 
 @Component({
     selector: 'expr',
@@ -50,5 +49,23 @@ export class MyCustomTemplate<T> {
 
     @Input
     ngIfSuper: T;
+
+    @Input
+    ngIfNumber: number;
+
+}
+
+@Component({
+    selector: "[comp]"
+})
+export class MyCustomComponent {
+
+}
+
+@Directive({
+    selector: "[dir]",
+    exportAs: "dir"
+})
+export class MyDirective {
 
 }

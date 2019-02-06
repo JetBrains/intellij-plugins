@@ -10,6 +10,10 @@
 
 <div <error descr="Components on an embedded template: MyComponent3 ([fooComp2])">*fooComp2</error>></div>
 <ng-template *fooComp2></ng-template>
+<ng-template #fooComp2></ng-template>
+<ng-template ref-fooComp2></ng-template>
+<ng-template data-ref-fooComp2></ng-template>
+<ng-template let-fooComp2></ng-template>
 
 <ng-template foo-dir></ng-template>
 <error descr="Components on an embedded template: MyComponent2 ([foo-comp])"><ng-template foo-comp foo-dir></error></ng-template>
