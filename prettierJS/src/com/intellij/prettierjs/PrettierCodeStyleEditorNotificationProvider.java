@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -19,27 +20,20 @@ import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PrettierCodeStyleEditorNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel>
+public final class PrettierCodeStyleEditorNotificationProvider extends EditorNotifications.Provider<EditorNotificationPanel>
   implements DumbAware {
 
   private static final Key<EditorNotificationPanel> KEY = Key.create("prettier.codestyle.notification.panel");
   private static final String NOTIFICATION_DISMISSED_KEY = "prettier.import.notification.dismissed";
-  private final PropertiesComponent myPropertiesComponent;
-  private final EditorNotifications myEditorNotifications;
 
-  public PrettierCodeStyleEditorNotificationProvider(PropertiesComponent propertiesComponent,
-                                                     Project project,
-                                                     EditorNotifications editorNotifications, 
-                                                     PsiManager psiManager) {
-    myPropertiesComponent = propertiesComponent;
-    myEditorNotifications = editorNotifications;
-    psiManager.addPsiTreeChangeListener(new PsiTreeAnyChangeAbstractAdapter() {
+  public PrettierCodeStyleEditorNotificationProvider(@NotNull Project project) {
+    PsiManager.getInstance(project).addPsiTreeChangeListener(new PsiTreeAnyChangeAbstractAdapter() {
       @Override
       protected void onChange(@Nullable PsiFile file) {
         if (file == null) return;
         final VirtualFile vFile = file.getViewProvider().getVirtualFile();
-        if (PrettierUtil.isConfigFileOrPackageJson(vFile) && !alreadyDismissed()){
-          myEditorNotifications.updateNotifications(vFile);
+        if (PrettierUtil.isConfigFileOrPackageJson(vFile) && !alreadyDismissed(project)){
+          EditorNotifications.getInstance(project).updateNotifications(vFile);
         }
       }
     }, project);
@@ -53,16 +47,12 @@ public class PrettierCodeStyleEditorNotificationProvider extends EditorNotificat
 
   @Nullable
   @Override
-  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor) {
+  public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor, @NotNull Project project) {
     if (!(fileEditor instanceof TextEditor)) return null;
-    final Project project = ((TextEditor)fileEditor).getEditor().getProject();
-    if (project == null) {
-      return null;
-    }
     if (!file.isWritable() || JSProjectUtil.isInLibrary(file, project) || JSLibraryUtil.isProbableLibraryFile(file)) {
       return null;
     }
-    if (alreadyDismissed()) {
+    if (alreadyDismissed(project)) {
       return null;
     }
 
@@ -95,17 +85,17 @@ public class PrettierCodeStyleEditorNotificationProvider extends EditorNotificat
     panel.createActionLabel(PrettierBundle.message("editor.notification.yes.text"),
                             () -> {
                               PrettierCompatibleCodeStyleInstaller.install(project, finalFile, finalConfig, false);
-                              myEditorNotifications.updateAllNotifications();
+                              EditorNotifications.getInstance(project).updateAllNotifications();
                             });
     panel.createActionLabel(PrettierBundle.message("editor.notification.no.text"), () -> {
-      myEditorNotifications.updateAllNotifications();
-      myPropertiesComponent.setValue(NOTIFICATION_DISMISSED_KEY, true);
+      EditorNotifications.getInstance(project).updateAllNotifications();
+      PropertiesComponent.getInstance(project).setValue(NOTIFICATION_DISMISSED_KEY, true);
     });
 
     return panel;
   }
 
-  private boolean alreadyDismissed() {
-    return myPropertiesComponent.getBoolean(NOTIFICATION_DISMISSED_KEY);
+  private static boolean alreadyDismissed(@NotNull Project project) {
+    return PropertiesComponent.getInstance(project).getBoolean(NOTIFICATION_DISMISSED_KEY);
   }
 }

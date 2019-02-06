@@ -7,10 +7,9 @@
   <depends>com.intellij.modules.platform</depends>
   <resource-bundle>messages.TsLintBundle</resource-bundle>
 
-
   <extensions defaultExtensionNs="com.intellij">
 
-    <editorNotificationProvider  implementation="com.intellij.lang.javascript.linter.tslint.editor.TsLintCodeStyleEditorNotificationProvider"/>
+    <editorNotificationProvider implementation="com.intellij.lang.javascript.linter.tslint.editor.TsLintCodeStyleEditorNotificationProvider"/>
     <projectConfigurable id="settings.javascript.linters.tslint"
                          parentId="settings.typescriptcompiler"
                          instance="com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable"
@@ -48,7 +47,7 @@
       <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="Javascript.Linters.EsLint.Fix"/>
     </action>
     <action id="TslintImportCodeStyleAction"
-            class="com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction" 
+            class="com.intellij.lang.javascript.linter.tslint.codestyle.TsLintImportCodeStyleAction"
             text="Apply TSLint Code Style Rules">
       <add-to-group group-id="EditorPopupMenu" anchor="last"/>
       <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>

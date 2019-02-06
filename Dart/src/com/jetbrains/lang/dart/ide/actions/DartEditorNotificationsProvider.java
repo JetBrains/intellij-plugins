@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.intellij.ide.BrowserUtil;
@@ -35,12 +35,6 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   private static final Key<EditorNotificationPanel> KEY = Key.create("DartEditorNotificationsProvider");
   private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("Dart Support");
 
-  @NotNull private final Project myProject;
-
-  public DartEditorNotificationsProvider(@NotNull final Project project) {
-    myProject = project;
-  }
-
   @Override
   @NotNull
   public Key<EditorNotificationPanel> getKey() {
@@ -49,7 +43,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
   @Override
   @Nullable
-  public EditorNotificationPanel createNotificationPanel(@NotNull final VirtualFile vFile, @NotNull final FileEditor fileEditor) {
+  public EditorNotificationPanel createNotificationPanel(@NotNull final VirtualFile vFile, @NotNull final FileEditor fileEditor, @NotNull Project project) {
     if (!vFile.isInLocalFileSystem()) {
       return null;
     }
@@ -57,22 +51,22 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
     boolean isPubspecFile = PubspecYamlUtil.isPubspecFile(vFile);
 
     if (isPubspecFile) {
-      final Module module = ModuleUtilCore.findModuleForFile(vFile, myProject);
+      final Module module = ModuleUtilCore.findModuleForFile(vFile, project);
       if (module == null) return null;
 
       // Defer to the Flutter plugin for package management and SDK configuration if appropriate.
       if (FlutterUtil.isFlutterPluginInstalled() && FlutterUtil.isPubspecDeclaringFlutter(vFile)) return null;
 
-      final DartSdk sdk = DartSdk.getDartSdk(myProject);
+      final DartSdk sdk = DartSdk.getDartSdk(project);
       if (sdk != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
         return new PubActionsPanel();
       }
     }
 
     if (isPubspecFile || vFile.getFileType() == DartFileType.INSTANCE) {
-      final DartSdk sdk = DartSdk.getDartSdk(myProject);
+      final DartSdk sdk = DartSdk.getDartSdk(project);
 
-      final PsiFile psiFile = PsiManager.getInstance(myProject).findFile(vFile);
+      final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
       if (psiFile == null) return null;
 
       final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
@@ -90,7 +84,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
         final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
         panel.createActionLabel(DartBundle.message("download.dart.sdk"), new OpenWebPageRunnable(downloadUrl));
-        panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(myProject));
+        panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(project));
         return panel;
       }
 
@@ -105,7 +99,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
 
         final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
         panel.createActionLabel(DartBundle.message("download.dart.sdk"), new OpenWebPageRunnable(downloadUrl));
-        panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(myProject));
+        panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(project));
         return panel;
       }
     }
@@ -114,13 +108,13 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
   }
 
   @NotNull
-  private EditorNotificationPanel createNotificationToEnableDartSupport(@NotNull final Module module) {
+  private static EditorNotificationPanel createNotificationToEnableDartSupport(@NotNull final Module module) {
     final String message = DartSdkLibUtil.isIdeWithMultipleModuleSupport()
                            ? DartBundle.message("dart.support.is.not.enabled.for.module.0", module.getName())
                            : DartBundle.message("dart.support.is.not.enabled.for.project");
     final EditorNotificationPanel panel = new EditorNotificationPanel().icon(DartIcons.Dart_16).text(message);
     panel.createActionLabel(DartBundle.message("enable.dart.support"), new EnableDartSupportForModule(module));
-    panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(myProject));
+    panel.createActionLabel(DartBundle.message("open.dart.settings"), new OpenDartSettingsRunnable(module.getProject()));
     return panel;
   }
 
