@@ -1487,6 +1487,15 @@ Pair("""<template>
     assertContainsElements(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
   }
 
+  fun testVueCompletionEventModifiers() {
+    configureVueDefinitions()
+    myFixture.configureByText("test.vue", "<template>\n" +
+                                          "    <div v-on:abort.<caret>=\"\"></div>\n" +
+                                          "</template>\n")
+    myFixture.completeBasic()
+    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive", "native")
+  }
+
   fun testVueCompletionInsideScriptNoLifecycleHooks() {
     myFixture.configureByText("test.vue", "<script>\n" +
                                           "    export default {\n" +
