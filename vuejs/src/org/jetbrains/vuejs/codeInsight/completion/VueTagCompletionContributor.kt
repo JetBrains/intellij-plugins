@@ -103,7 +103,7 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
                                        "mouseover", "mouseup", "show", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart",
                                        "drop")
     // https://vuejs.org/v2/guide/events.html#Event-Modifiers
-    private val EVENT_MODIFIERS = arrayOf("stop", "prevent", "capture", "self", "once", "passive")
+    private val EVENT_MODIFIERS = arrayOf("stop", "prevent", "capture", "self", "once", "passive", "native")
   }
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
