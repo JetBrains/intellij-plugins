@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.model.jam;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.patterns.PsiClassPattern;
 import com.intellij.patterns.PsiJavaElementPattern;
 import com.intellij.patterns.PsiJavaPatterns;
@@ -34,16 +35,14 @@ import static com.intellij.patterns.PsiJavaPatterns.psiClass;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsSemContributor extends SemContributor {
-
+final class StrutsSemContributor extends SemContributor {
   private static final PsiJavaElementPattern.Capture<PsiPackage> PSI_PACKAGE_CAPTURE =
       PsiJavaPatterns.psiElement(PsiPackage.class);
 
   private static final PsiClassPattern PSI_CLASS_PATTERN = psiClass().nonAnnotationType();
 
   @Override
-  public void registerSemProviders(@NotNull final SemRegistrar registrar) {
-
+  public void registerSemProviders(@NotNull final SemRegistrar registrar, @NotNull Project project) {
     // @DefaultInterceptorRef
     JamDefaultInterceptorRef.META_PACKAGE.register(registrar, PSI_PACKAGE_CAPTURE);
 
