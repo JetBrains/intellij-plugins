@@ -11,6 +11,8 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.util.Getter
 import com.intellij.psi.codeStyle.*
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorFactory2
+import com.intellij.psi.impl.source.codeStyle.PersistableCodeStyleSchemes
+import com.intellij.testFramework.MockSchemeManagerFactory
 import org.jetbrains.vuejs.VueFileType
 
 class VueHighlightingLexerTest : VueLexerTest() {
@@ -42,6 +44,8 @@ class VueHighlightingLexerTest : VueLexerTest() {
     }
 
     val settings = CodeStyleSettings()
+    instance.registerService<CodeStyleSchemes>(CodeStyleSchemes::class.java,
+                                               PersistableCodeStyleSchemes(MockSchemeManagerFactory()))
     CodeStyleSettingsManager.getInstance().setTemporarySettings(settings)
   }
 
