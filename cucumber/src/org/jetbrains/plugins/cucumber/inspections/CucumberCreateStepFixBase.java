@@ -108,7 +108,7 @@ public abstract class CucumberCreateStepFixBase implements LocalQuickFix {
       }
     }
     else {
-      createFileOrStepDefinition(step, new CucumberStepDefinitionCreationContext());
+      createStepOrSteps(step, new CucumberStepDefinitionCreationContext());
     }
   }
 
