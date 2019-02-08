@@ -1261,27 +1261,27 @@ Pair("""<template>
     // general modifiers only
     myFixture.configureByText("foo.vue", "<template> <MyComponent @click123.<caret> </template>")
     myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive")
+    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive", "native")
 
     // general modifiers (except already used) + key modifiers + system modifiers
     myFixture.configureByText("foo.vue", "<template> <div v-on:keyup.stop.passive.<caret> </template>")
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, "prevent", "capture", "self", "once",
                        "enter", "tab", "delete", "esc", "space", "up", "down", "left", "right",
-                       "ctrl", "alt", "shift", "meta", "exact")
+                       "ctrl", "alt", "shift", "meta", "exact", "native")
 
     // general modifiers (except already used) + mouse button modifiers + system modifiers
     myFixture.configureByText("foo.vue", "<template> <div @click.capture.<caret> </template>")
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "self", "once", "passive",
                        "left", "right", "middle",
-                       "ctrl", "alt", "shift", "meta", "exact")
+                       "ctrl", "alt", "shift", "meta", "exact", "native")
 
     // general modifiers + system modifiers
     myFixture.configureByText("foo.vue", "<template> <div @drop.<caret> </template>")
     myFixture.completeBasic()
     assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive",
-                       "ctrl", "alt", "shift", "meta", "exact")
+                       "ctrl", "alt", "shift", "meta", "exact", "native")
   }
 
   fun testAutopopupAfterVOnSelection() {
@@ -1485,15 +1485,6 @@ Pair("""<template>
                                           "</script>")
     myFixture.completeBasic()
     assertContainsElements(myFixture.lookupElementStrings!!, "\$el", "\$options", "\$parent")
-  }
-
-  fun testVueCompletionEventModifiers() {
-    configureVueDefinitions()
-    myFixture.configureByText("test.vue", "<template>\n" +
-                                          "    <div v-on:abort.<caret>=\"\"></div>\n" +
-                                          "</template>\n")
-    myFixture.completeBasic()
-    assertSameElements(myFixture.lookupElementStrings!!, "stop", "prevent", "capture", "self", "once", "passive", "native")
   }
 
   fun testVueCompletionInsideScriptNoLifecycleHooks() {
