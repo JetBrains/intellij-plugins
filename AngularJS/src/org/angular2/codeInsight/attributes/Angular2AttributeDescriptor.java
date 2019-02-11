@@ -324,7 +324,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     DeclarationProximity proximity = mySourceDirectives == null
                                      ? DeclarationProximity.IN_SCOPE
                                      : moduleScope.getDeclarationsProximity(mySourceDirectives);
-    if (proximity == DeclarationProximity.DOES_NOT_EXIST) {
+    if (proximity == DeclarationProximity.NOT_REACHABLE) {
       return pair(null, name);
     }
     LookupElementBuilder element = LookupElementBuilder.create(name)
@@ -332,6 +332,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       .withCaseSensitivity(myInfo.type != REGULAR || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
       .withIcon(getIcon())
       .withBoldness(proximity == DeclarationProximity.IN_SCOPE && myPriority == AttributePriority.HIGH)
+      // TODO add directive import on insert
       .withInsertHandler(new Angular2AttributeInsertHandler(shouldInsertHandlerRemoveLeftover(), shouldCompleteValue(), null));
     if (info.lookupStrings != null) {
       element = element.withLookupStrings(map(info.lookupStrings, str -> StringUtil.trimStart(str, hide.first)));

@@ -121,15 +121,16 @@ public class Angular2CompletionContributor extends CompletionContributor {
         for (Map.Entry<String, List<Angular2Pipe>> pipeEntry : Angular2EntitiesProvider
           .getAllPipes(((Angular2PipeReferenceExpression)ref).getProject()).entrySet()) {
           Pair<Angular2Pipe, DeclarationProximity> bestMatch = scope.getClosestDeclaration(pipeEntry.getValue());
-          if (bestMatch == null || bestMatch.second == DeclarationProximity.DOES_NOT_EXIST) {
+          if (bestMatch == null || bestMatch.second == DeclarationProximity.NOT_REACHABLE) {
             return;
           }
           Angular2Pipe match = bestMatch.first;
           LookupElementBuilder builder = LookupElementBuilder.create(pipeEntry.getKey())
             .withIcon(AngularJSIcons.Angular2)
             .withTypeText("pipe", null, true)
+            // TODO auto-import on insert
             .withInsertHandler(new JSLookupElementInsertHandler(false, null));
-          if (bestMatch.second == DeclarationProximity.PUBLIC_MODULE_EXPORT) {
+          if (bestMatch.second != DeclarationProximity.IN_SCOPE) {
             builder = builder.withItemTextForeground(SimpleTextAttributes.GRAYED_ATTRIBUTES.getFgColor());
           }
           Consumer<LookupElementBuilder> addResult = el ->

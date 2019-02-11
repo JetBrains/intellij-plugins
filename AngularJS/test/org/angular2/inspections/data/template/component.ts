@@ -28,6 +28,13 @@ export class MyComponent2 {
 export class MyComponent3 {
 }
 
+@Component({
+    selector: 'my-comp2',
+    template: `<div></div>`,
+})
+export class MyComponent4 {
+}
+
 @Directive({
     selector: '[foo-dir]',
     exportAs: 'foo'
