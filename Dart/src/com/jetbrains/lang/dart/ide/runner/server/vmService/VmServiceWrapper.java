@@ -19,14 +19,12 @@ import com.jetbrains.lang.dart.ide.runner.server.vmService.frame.*;
 import org.dartlang.vm.service.VmService;
 import org.dartlang.vm.service.consumer.*;
 import org.dartlang.vm.service.element.*;
+import org.dartlang.vm.service.element.Stack;
 import org.dartlang.vm.service.logging.Logging;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -545,5 +543,11 @@ public class VmServiceWrapper implements Disposable {
         callback.errorOccurred(error.getMessage());
       }
     });
+  }
+
+  public void callToString(@NotNull final String isolateId,
+                           @NotNull final String targetId,
+                           @NotNull final InvokeConsumer callback) {
+    addRequest(() -> myVmService.invoke(isolateId, targetId, "toString", Collections.emptyList(), callback));
   }
 }

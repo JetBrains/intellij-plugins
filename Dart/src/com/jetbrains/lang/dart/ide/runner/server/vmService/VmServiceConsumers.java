@@ -58,4 +58,23 @@ public class VmServiceConsumers {
 
     abstract public void noGoodResult();
   }
+
+  public static abstract class InvokeConsumerWrapper implements InvokeConsumer {
+    @Override
+    public final void received(ErrorRef response) {
+      noGoodResult();
+    }
+
+    @Override
+    public final void received(Sentinel response) {
+      noGoodResult();
+    }
+
+    @Override
+    public final void onError(RPCError error) {
+      noGoodResult();
+    }
+
+    abstract public void noGoodResult();
+  }
 }
