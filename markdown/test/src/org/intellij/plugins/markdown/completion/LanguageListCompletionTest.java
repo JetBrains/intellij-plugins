@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.completion;
 
 import com.intellij.codeInsight.completion.CompletionAutoPopupTestCase;
@@ -8,7 +9,6 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.fileTypes.PlainTextParserDefinition;
-import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.MarkdownTestingUtil;
 import org.intellij.plugins.markdown.injection.CodeFenceLanguageProvider;
@@ -87,23 +87,23 @@ public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureT
 
   public void testCustomCompletionProvider() {
     try {
-      PlatformTestUtil.registerExtension(CodeFenceLanguageProvider.EP_NAME, new CodeFenceLanguageProvider() {
-        @Nullable
-        @Override
-        public Language getLanguageByInfoString(@NotNull String infoString) {
-          return null;
-        }
+      CodeFenceLanguageProvider.EP_NAME.getPoint(null).registerExtension(new CodeFenceLanguageProvider() {
+          @Nullable
+          @Override
+          public Language getLanguageByInfoString(@NotNull String infoString) {
+            return null;
+          }
 
-        @NotNull
-        @Override
-        public List<LookupElement> getCompletionVariantsForInfoString(@NotNull CompletionParameters parameters) {
-          return Collections.singletonList(LookupElementBuilder.create("{js is a great ecma}")
-          .withInsertHandler((context, item) -> {
-            context.getDocument().insertString(context.getEditor().getCaretModel().getOffset(), "Customized insertion");
-            context.getEditor().getCaretModel().moveCaretRelatively("Customized insertion".length(), 0, true, false, true);
-          }));
-        }
-      }, myFixture.getTestRootDisposable());
+          @NotNull
+          @Override
+          public List<LookupElement> getCompletionVariantsForInfoString(@NotNull CompletionParameters parameters) {
+            return Collections.singletonList(LookupElementBuilder.create("{js is a great ecma}")
+            .withInsertHandler((context, item) -> {
+              context.getDocument().insertString(context.getEditor().getCaretModel().getOffset(), "Customized insertion");
+              context.getEditor().getCaretModel().moveCaretRelatively("Customized insertion".length(), 0, true, false, true);
+            }));
+          }
+        }, myFixture.getTestRootDisposable());
 
       LanguageGuesser.INSTANCE.resetCodeFenceLanguageProviders();
       configure();
