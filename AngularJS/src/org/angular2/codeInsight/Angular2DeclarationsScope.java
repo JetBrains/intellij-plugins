@@ -2,8 +2,12 @@
 package org.angular2.codeInsight;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
@@ -13,7 +17,9 @@ import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
+import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,31 +27,37 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.openapi.util.Trinity.create;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.exists;
+import static com.intellij.util.containers.ContainerUtil.filter;
 
 /**
  * Objects of this class should not be cached or stored. It is intended for single use.
  */
 public class Angular2DeclarationsScope {
 
-  private final NotNullLazyValue<Pair<Set<Angular2Declaration>, Boolean>> myScope;
+  private final NotNullLazyValue<Trinity<Angular2Module, Set<Angular2Declaration>, Boolean>> myScope;
   private final Map<Project, MultiMap<Angular2Declaration, Angular2Module>> myExport2NgModuleMap = new HashMap<>();
+  private final NotNullLazyValue<ProjectFileIndex> myFileIndex;
 
   public Angular2DeclarationsScope(@NotNull PsiElement element) {
     myScope = NotNullLazyValue.createValue(() -> {
       PsiFile file = element.getContainingFile();
       if (file == null) {
-        return pair(null, false);
+        return create(null, null, false);
       }
       return CachedValuesManager.getCachedValue(file, () -> {
         Angular2Module module = doIfNotNull(Angular2EntitiesProvider.getComponent(
           Angular2IndexingHandler.findComponentClass(file)), c -> c.getModule());
-        return CachedValueProvider.Result
-          .create(module != null ? pair(module.getDeclarationsInScope(), module.isScopeFullyResolved()) : pair(null, false),
-                  PsiModificationTracker.MODIFICATION_COUNT);
+        return CachedValueProvider.Result.create(
+          module != null ? create(module, module.getDeclarationsInScope(), module.isScopeFullyResolved())
+                         : create(null, null, false),
+          PsiModificationTracker.MODIFICATION_COUNT);
       });
     });
+    myFileIndex = NotNullLazyValue.createValue(
+      () -> ProjectRootManager.getInstance(element.getProject()).getFileIndex());
   }
 
   @Nullable
@@ -56,13 +68,26 @@ public class Angular2DeclarationsScope {
       .orElse(null);
   }
 
+  @Nullable
+  public Angular2Module getModule() {
+    return myScope.getValue().first;
+  }
+
   public boolean isFullyResolved() {
-    return myScope.getValue().second;
+    return myScope.getValue().third;
   }
 
   public boolean contains(@NotNull Angular2Declaration declaration) {
-    Set<Angular2Declaration> scope = myScope.getValue().first;
+    Set<Angular2Declaration> scope = myScope.getValue().second;
     return scope == null || scope.contains(declaration);
+  }
+
+  public List<Angular2Module> getPublicModulesExporting(@NotNull Angular2Declaration declaration) {
+    return filter(myExport2NgModuleMap
+                    .computeIfAbsent(declaration.getSourceElement().getProject(),
+                                     p -> Angular2EntitiesProvider.getExportedDeclarationToModuleMap(p))
+                    .get(declaration),
+                  module -> module.isPublic() && module.getTypeScriptClass() != null);
   }
 
   @NotNull
@@ -74,10 +99,18 @@ public class Angular2DeclarationsScope {
       .computeIfAbsent(declaration.getSourceElement().getProject(),
                        p -> Angular2EntitiesProvider.getExportedDeclarationToModuleMap(p))
       .get(declaration);
-    if (modules.isEmpty() || exists(modules, Angular2Module::isPublic)) {
-      return DeclarationProximity.PUBLIC_MODULE_EXPORT;
+    if (modules.isEmpty()) {
+      if (!isInSource(declaration)) {
+        return DeclarationProximity.NOT_REACHABLE;
+      }
+      return declaration.getAllModules().isEmpty()
+             ? DeclarationProximity.NOT_DECLARED_IN_ANY_MODULE
+             : DeclarationProximity.NOT_EXPORTED_BY_MODULE;
     }
-    return DeclarationProximity.DOES_NOT_EXIST;
+    else if (exists(modules, Angular2Module::isPublic)) {
+      return DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE;
+    }
+    return DeclarationProximity.NOT_REACHABLE;
   }
 
   @NotNull
@@ -85,24 +118,38 @@ public class Angular2DeclarationsScope {
     if (myScope == null) {
       return DeclarationProximity.IN_SCOPE;
     }
-    DeclarationProximity result = DeclarationProximity.DOES_NOT_EXIST;
+    DeclarationProximity result = DeclarationProximity.NOT_REACHABLE;
     for (Angular2Declaration declaration : declarations) {
-      switch (getDeclarationProximity(declaration)) {
-        case IN_SCOPE:
-          return DeclarationProximity.IN_SCOPE;
-        case PUBLIC_MODULE_EXPORT:
-          result = DeclarationProximity.PUBLIC_MODULE_EXPORT;
-          break;
-        case DOES_NOT_EXIST:
-          break;
+      DeclarationProximity current = getDeclarationProximity(declaration);
+      if (current == DeclarationProximity.IN_SCOPE) {
+        return DeclarationProximity.IN_SCOPE;
+      }
+      if (current.ordinal() < result.ordinal()) {
+        result = current;
       }
     }
     return result;
   }
 
+  public boolean isInSource(@NotNull Angular2Entity entity) {
+    if (entity instanceof Angular2MetadataEntity
+        || entity.getDecorator() == null) {
+      return false;
+    }
+    PsiFile file = entity.getDecorator().getContainingFile();
+    if (file == null) {
+      return false;
+    }
+    VirtualFile vf = file.getViewProvider().getVirtualFile();
+    return myFileIndex.getValue().isInContent(vf)
+           && !myFileIndex.getValue().isInLibrary(vf);
+  }
+
   public enum DeclarationProximity {
     IN_SCOPE,
-    PUBLIC_MODULE_EXPORT,
-    DOES_NOT_EXIST
+    EXPORTED_BY_PUBLIC_MODULE,
+    NOT_DECLARED_IN_ANY_MODULE,
+    NOT_EXPORTED_BY_MODULE,
+    NOT_REACHABLE
   }
 }

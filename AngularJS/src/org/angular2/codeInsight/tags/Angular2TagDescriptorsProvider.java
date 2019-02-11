@@ -13,6 +13,7 @@ import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
 import com.intellij.xml.util.XmlUtil;
@@ -28,14 +29,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
-
 public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
+
   public static final String NG_CONTAINER = "ng-container";
   public static final String NG_CONTENT = "ng-content";
   public static final String NG_TEMPLATE = "ng-template";
+
+  public static final Set<String> NG_SPECIAL_TAGS = ContainerUtil.newHashSet(NG_CONTAINER, NG_CONTENT, NG_TEMPLATE);
 
   @Override
   public void addTagNameVariants(@NotNull final List<LookupElement> elements, @NotNull XmlTag xmlTag, String prefix) {
@@ -48,7 +51,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     for (LookupElement el : elements) {
       names.add(el.getLookupString());
     }
-    for (String name : asList(NG_CONTAINER, NG_CONTENT, NG_TEMPLATE)) {
+    for (String name : NG_SPECIAL_TAGS) {
       if (names.add(name)) {
         addLookupItem(language, elements, name);
       }
@@ -71,15 +74,16 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
                                     @NotNull Object component,
                                     @NotNull String name,
                                     @NotNull DeclarationProximity proximity) {
-    if (proximity == DeclarationProximity.DOES_NOT_EXIST) {
+    if (proximity == DeclarationProximity.NOT_REACHABLE) {
       return;
     }
     LookupElementBuilder element = LookupElementBuilder.create(component, name)
       .withIcon(AngularJSIcons.Angular2);
-    if (proximity == DeclarationProximity.PUBLIC_MODULE_EXPORT) {
+    if (proximity != DeclarationProximity.IN_SCOPE) {
       element = element.withItemTextForeground(SimpleTextAttributes.GRAYED_ATTRIBUTES.getFgColor());
     }
     if (language.isKindOf(XMLLanguage.INSTANCE)) {
+      // TODO add module on insert
       element = element.withInsertHandler(XmlTagInsertHandler.INSTANCE);
     }
     elements.add(PrioritizedLookupElement.withPriority(
@@ -95,7 +99,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     String tagName = xmlTag.getName();
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
     tagName = XmlUtil.findLocalNameByQualifiedName(tagName);
-    if (NG_CONTAINER.equalsIgnoreCase(tagName) || NG_CONTENT.equalsIgnoreCase(tagName) || NG_TEMPLATE.equalsIgnoreCase(tagName)) {
+    if (NG_SPECIAL_TAGS.contains(tagName.toLowerCase(Locale.ENGLISH))) {
       return new Angular2TagDescriptor(tagName, createDirective(xmlTag, tagName));
     }
 

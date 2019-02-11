@@ -53,13 +53,22 @@ public class Angular2EntitiesProvider {
   @Nullable
   public static Angular2Entity getEntity(@Nullable PsiElement element) {
     Angular2Entity result;
+    if ((result = getDeclaration(element)) != null) {
+      return result;
+    }
+    if ((result = getModule(element)) != null) {
+      return result;
+    }
+    return null;
+  }
+
+  @Nullable
+  public static Angular2Declaration getDeclaration(@Nullable PsiElement element) {
+    Angular2Declaration result;
     if ((result = getDirective(element)) != null) {
       return result;
     }
     if ((result = getPipe(element)) != null) {
-      return result;
-    }
-    if ((result = getModule(element)) != null) {
       return result;
     }
     return null;

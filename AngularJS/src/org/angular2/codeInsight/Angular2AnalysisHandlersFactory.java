@@ -18,6 +18,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,6 +90,18 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
           return Ref.create("Unresolved pipe " + methodExpression.getReferenceName());
         }
         return super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression);
+      }
+
+      @Override
+      protected void reportUnresolvedReference(@NotNull ResolveResult[] resolveResults,
+                                               @NotNull JSReferenceExpression referenceExpression,
+                                               @NotNull List<LocalQuickFix> quickFixes,
+                                               @NotNull Ref<String> message,
+                                               boolean isFunction) {
+        if (referenceExpression instanceof Angular2PipeReferenceExpression) {
+          Angular2FixesFactory.addUnresolvedDeclarationFixes(referenceExpression, quickFixes);
+        }
+        super.reportUnresolvedReference(resolveResults, referenceExpression, quickFixes, message, isFunction);
       }
 
       @Override
