@@ -43,6 +43,12 @@ public class CucumberJava3ResolveTest extends BaseCucumberJavaResolveTest {
     checkReference("the string \"test\" is in the d<caret>ummy repository", "Given");
   }
 
+  public void testJava8MethodReference() {
+    init("stepResolveJava8CucumberExpressions");
+
+    checkReference("the list should contain exac<caret>tly 1 entries", "Then");
+  }
+
   public void testResolveStepDefinitionRequiringEscaping() {
     init("stepResolve_ParameterType");
 

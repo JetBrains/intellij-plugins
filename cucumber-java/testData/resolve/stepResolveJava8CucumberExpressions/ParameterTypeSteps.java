@@ -19,5 +19,7 @@ public class ParameterTypeSteps implements En {
 
     Then("the result matches our expectation {string}", (String expectedResult)
       -> sampleAcceptanceTest.thenResultEqualsExpectedResult(expectedResult));
+
+    Then("the list should contain exactly {int} entries", TargetStatusSteps::testMethod);
   }
 }

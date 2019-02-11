@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.JavaFileElementType;
 import com.intellij.psi.impl.source.JavaLightTreeUtil;
 import com.intellij.psi.impl.source.tree.RecursiveLighterASTNodeWalkingVisitor;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.*;
 import com.intellij.util.text.StringSearcher;
@@ -23,6 +24,9 @@ import static com.intellij.psi.impl.source.tree.JavaElementType.*;
 public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, List<Integer>> implements PsiDependentIndex {
   public static final ID<Boolean, List<Integer>> INDEX_ID = ID.create("java.cucumber.java8.step");
   private static final String JAVA_8_PACKAGE = "cucumber.api.java8.";
+
+  private static final TokenSet STEP_DEFINITION_IMPLEMENTATION_ELEMENTS =
+    TokenSet.create(METHOD_REF_EXPRESSION, LOCAL_VARIABLE, LAMBDA_EXPRESSION);
 
   private static final List<String> STEP_KEYWORDS = Arrays.asList("Әмма", "Нәтиҗәдә", "Вә", "Әйтик", "Һәм", "Ләкин", "Әгәр",  "Und",
                                                                   "Angenommen", "Gegeben seien",  "Dann", "Aber", "Wenn", "Gegeben sei",
@@ -166,11 +170,11 @@ public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, Lis
               if (expressionListChildren.size() > 1) {
                 LighterASTNode expressionParameter = expressionListChildren.get(0);
                 if (isStringLiteral(expressionParameter, text)) {
-                  LighterASTNode lambdaParameter = expressionListChildren.get(1);
-                  if (isNumber(lambdaParameter, text)) {
-                    lambdaParameter = expressionListChildren.get(2);
+                  LighterASTNode stepDefImplementationArgument = expressionListChildren.get(1);
+                  if (isNumber(stepDefImplementationArgument, text)) {
+                    stepDefImplementationArgument = expressionListChildren.get(2);
                   }
-                  if (lambdaParameter.getTokenType() == LAMBDA_EXPRESSION || isVariable(lambdaParameter)) {
+                  if (STEP_DEFINITION_IMPLEMENTATION_ELEMENTS.contains(stepDefImplementationArgument.getTokenType())) {
                     result.add(expressionParameter.getStartOffset());
                   }
                 }
@@ -194,10 +198,6 @@ public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, Lis
     return text.charAt(element.getStartOffset()) == '"';
   }
 
-  private static boolean isVariable(@NotNull LighterASTNode element) {
-    return element.getTokenType() == LOCAL_VARIABLE;
-  }
-  
   private static boolean isNumber(@NotNull LighterASTNode element, @NotNull CharSequence text) {
     for (int i = element.getStartOffset(); i < element.getEndOffset(); i++) {
       if (!Character.isDigit(text.charAt(i))) {
