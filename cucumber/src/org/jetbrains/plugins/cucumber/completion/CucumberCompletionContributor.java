@@ -39,7 +39,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  */
 public class CucumberCompletionContributor extends CompletionContributor {
   private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<>();
-  private static final Map<String, String> INTERPOLATION_PARAMETERS_MAP = new HashMap<>();
+  private static final Map<String, String> PARAMETERS_MAP = new HashMap<>();
   static {
     GROUP_TYPE_MAP.put("(.*)", "<string>");
     GROUP_TYPE_MAP.put("(.+)", "<string>");
@@ -49,7 +49,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
     GROUP_TYPE_MAP.put("(\\d)", "<number>");
     GROUP_TYPE_MAP.put("(\\d+)", "<number>");
     GROUP_TYPE_MAP.put("(\\.[\\d]+)", "<number>");
-    INTERPOLATION_PARAMETERS_MAP.put("#\\{[^\\}]*\\}", "<param>");
+    PARAMETERS_MAP.put("\\([^|]*\\|[^|]*(?:\\|[^|]*)*\\)", "<param>");
+    PARAMETERS_MAP.put("#\\{[^\\}]*\\}", "<param>");
   }
 
   private static final int SCENARIO_KEYWORD_PRIORITY = 70;
@@ -223,7 +224,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
           stepCompletion = StringUtil.replace(stepCompletion, group.getKey(), group.getValue());
         }
 
-        for (Map.Entry<String, String> group : INTERPOLATION_PARAMETERS_MAP.entrySet()) {
+        for (Map.Entry<String, String> group : PARAMETERS_MAP.entrySet()) {
           stepCompletion = stepCompletion.replaceAll(group.getKey(), group.getValue());
         }
 
@@ -261,7 +262,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
      * }
      * @return list of steps accepted by step definition regexp
      */
-    private static List<String> parseVariationsIntoBrackets(@NotNull String cucumberRegex) {
+    private static Set<String> parseVariationsIntoBrackets(@NotNull String cucumberRegex) {
       List<Pair<String, List<String>>> insertions = new ArrayList<>();
       Matcher m = ARGS_INTO_BRACKETS_PATTERN.matcher(cucumberRegex);
       String mainSample = cucumberRegex;
@@ -300,7 +301,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
         combinations.add(combination = currentCombination);
       }
 
-      List<String> result = new ArrayList<>();
+      Set<String> result = new HashSet<>();
       for (int[] c : combinations) {
         String stepVar = mainSample;
         for (int i = 0; i < c.length; i++) {
