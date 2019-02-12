@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.ExtendedLinterState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import org.apache.commons.lang.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -27,7 +28,7 @@ public class TslintOptionsUsageCollector extends ProjectUsagesCollector {
     set.add(new UsageDescriptor("enabled"));
 
     TsLintState state = extendedState.getState();
-    if (state.getInterpreterRef() != TsLintState.DEFAULT.getInterpreterRef()) {
+    if (!ObjectUtils.equals(state.getInterpreterRef(), TsLintState.DEFAULT.getInterpreterRef())) {
       set.add(new UsageDescriptor("node.interpreter.custom"));
     }
 
