@@ -236,7 +236,7 @@
   </extensions>
 
   <actions>
-    <action id="Dart.stop.dart.dev.server" class="com.jetbrains.lang.dart.pubServer.StopDartDevServerAction" text="Stop Dart Dev Server"/>
+    <action id="Dart.stop.dart.webdev.server" class="com.jetbrains.lang.dart.pubServer.StopDartWebdevServerAction" text="Stop Dart Webdev Server"/>
     <action id="Dart.NewDartFile" class="com.jetbrains.lang.dart.ide.actions.CreateDartFileAction"
             text="Dart File" description="Create new Dart file">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
