@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.pubServer;
 
 import com.intellij.execution.ExecutionException;
@@ -68,8 +68,8 @@ import static org.jetbrains.io.NettyUtil.nioClientBootstrap;
 final class PubServerService extends NetService {
   private static final Logger LOG = Logger.getInstance(PubServerService.class.getName());
 
-  private static final String DART_DEV_SERVER = "Dart Dev Server";
-  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(DART_DEV_SERVER, DART_DEV_SERVER, false);
+  private static final String DART_WEBDEV = "Dart Webdev";
+  private static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(DART_WEBDEV, DART_WEBDEV, false);
 
   private volatile VirtualFile firstServedDir;
 
@@ -140,7 +140,7 @@ final class PubServerService extends NetService {
   @Override
   @NotNull
   protected String getConsoleToolWindowId() {
-    return DART_DEV_SERVER;
+    return DART_WEBDEV;
   }
 
   @Override
@@ -152,7 +152,7 @@ final class PubServerService extends NetService {
   @NotNull
   @Override
   public ActionGroup getConsoleToolWindowActions() {
-    return new DefaultActionGroup(ActionManager.getInstance().getAction("Dart.stop.dart.dev.server"));
+    return new DefaultActionGroup(ActionManager.getInstance().getAction("Dart.stop.dart.webdev.server"));
   }
 
   @Override
@@ -362,7 +362,7 @@ final class PubServerService extends NetService {
     @Override
     public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
       final String text = event.getText().toLowerCase(Locale.US);
-      if (outputType == ProcessOutputTypes.STDERR) {
+      if (outputType == ProcessOutputTypes.STDERR || text.startsWith("[error] ")) {
         final boolean error = text.contains("error");
 
         ApplicationManager.getApplication().invokeLater(() -> showNotificationIfNeeded(error));
@@ -374,13 +374,13 @@ final class PubServerService extends NetService {
     }
 
     private void showNotificationIfNeeded(final boolean isError) {
-      if (ToolWindowManager.getInstance(myProject).getToolWindow(DART_DEV_SERVER).isVisible()) {
+      if (ToolWindowManager.getInstance(myProject).getToolWindow(DART_WEBDEV).isVisible()) {
         return;
       }
 
       if (myNotification != null && !myNotification.isExpired()) {
         final Balloon balloon1 = myNotification.getBalloon();
-        final Balloon balloon2 = ToolWindowManager.getInstance(myProject).getToolWindowBalloon(DART_DEV_SERVER);
+        final Balloon balloon2 = ToolWindowManager.getInstance(myProject).getToolWindowBalloon(DART_WEBDEV);
         if ((balloon1 != null || balloon2 != null) && (myNotificationAboutErrors || !isError)) {
           return; // already showing correct balloon
         }
@@ -389,14 +389,14 @@ final class PubServerService extends NetService {
 
       myNotificationAboutErrors = isError; // previous errors are already reported, so reset our flag
 
-      final String message = DartBundle.message(myNotificationAboutErrors ? "dart.dev.server.output.contains.errors"
-                                                                          : "dart.dev.server.output.contains.warnings");
+      final String message = DartBundle.message(myNotificationAboutErrors ? "dart.webdev.server.output.contains.errors"
+                                                                          : "dart.webdev.server.output.contains.warnings");
 
       myNotification = NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener.Adapter() {
         @Override
         protected void hyperlinkActivated(@NotNull final Notification notification, @NotNull final HyperlinkEvent e) {
           notification.expire();
-          ToolWindowManager.getInstance(myProject).getToolWindow(DART_DEV_SERVER).activate(null);
+          ToolWindowManager.getInstance(myProject).getToolWindow(DART_WEBDEV).activate(null);
         }
       });
 
