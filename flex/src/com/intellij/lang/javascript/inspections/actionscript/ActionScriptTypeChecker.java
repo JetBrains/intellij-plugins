@@ -45,7 +45,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
   public boolean checkExpressionIsAssignableToVariable(JSVariable p,
                                                        final JSExpression expr,
                                                        @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey) {
-    final JSType type = p.getType();
+    final JSType type = p.getJSType();
     boolean isAssignable =
       checkExpressionIsAssignableToTypeAndReportError(expr, type, p, problemKey, null, true);
 
@@ -97,7 +97,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
         }
         else {
           final JSClass expectedEventClass = calcNontrivialExpectedEventType(expr);
-          JSType paramType = parameters[0].getType();
+          JSType paramType = parameters[0].getJSType();
           final String actualParameterType = paramType != null ? paramType.getResolvedTypeText() : null;
 
           if (expectedEventClass == null) {
