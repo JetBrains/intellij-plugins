@@ -50,7 +50,7 @@ class VueModuleImportTest: JSImportHighlightingAndCompletionLightTestBase() {
   }
 
   fun testAutoImportVueFileToTs() {
-    doTestActionWithCopyDirectory(TypeScriptAddImportStatementFix.getActionName(), "ts", null)
+    doTestActionWithCopyDirectory(TypeScriptAddImportStatementFix.getActionName(), "ts", null, null)
   }
 
   fun testAutoImportFromVueWithJs() {
@@ -59,7 +59,7 @@ class VueModuleImportTest: JSImportHighlightingAndCompletionLightTestBase() {
     })
     
     JSTestUtils.testES6(project, ThrowableRunnable<RuntimeException> {
-      doTestActionWithCopyDirectory("Insert 'import HelloWorld from \"./src/HelloWorld.vue\"'", "vue", null)
+      doTestActionWithCopyDirectory("Insert 'import HelloWorld from \"./src/HelloWorld.vue\"'", "vue", null, null)
     })
   }
 
