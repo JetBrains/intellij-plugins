@@ -23,6 +23,7 @@ import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,21 +58,22 @@ public class AddNgModuleImportQuickFix extends LocalQuickFixAndIntentionActionOn
   @NotNull
   @Override
   public String getText() {
-    return myModuleName != null ? "Import " + myModuleName + " NgModule"
-                                : "Import NgModule...";
+    return Angular2Bundle.message(myModuleName == null ? "angular.quickfix.ngmodule.import.name.choice"
+                                                       : "angular.quickfix.ngmodule.import.name",
+                                  myModuleName);
   }
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   @NotNull
   @Override
   public String getFamilyName() {
-    return "Angular";
+    return Angular2Bundle.message("angular.quickfix.family");
   }
 
   @Override
   public void invoke(@NotNull Project project,
                      @NotNull PsiFile file,
-                     @Nullable("is null when called from inspection") Editor editor,
+                     @Nullable Editor editor,
                      @NotNull PsiElement startElement,
                      @NotNull PsiElement endElement) {
     NgModuleImportAction action = new NgModuleImportAction(editor, startElement, getText());
@@ -92,7 +94,7 @@ public class AddNgModuleImportQuickFix extends LocalQuickFixAndIntentionActionOn
 
     @Override
     protected String getModuleSelectionPopupTitle() {
-      return "Choose NgModule to import";
+      return Angular2Bundle.message("angular.quickfix.ngmodule.import.select");
     }
 
     @NotNull

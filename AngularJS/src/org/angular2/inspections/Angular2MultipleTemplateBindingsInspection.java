@@ -7,6 +7,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,7 +26,7 @@ public class Angular2MultipleTemplateBindingsInspection extends Angular2HtmlLike
     if (templateBindings.size() > 1) {
       templateBindings.forEach(attr -> holder.registerProblem(
         attr.getNameElement(),
-        "Only one structural directive (attribute prefixed with *) per element is allowed.",
+        Angular2Bundle.message("angular.inspection.template.multiple-structural-directives"),
         new RemoveAttributeQuickFix(attr.getName())));
     }
   }

@@ -15,6 +15,7 @@ import com.intellij.util.io.DataInputOutputUtil;
 import com.intellij.util.io.StringRef;
 import org.angular2.lang.metadata.psi.MetadataElement;
 import org.angular2.lang.metadata.psi.MetadataElementType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,27 +31,27 @@ import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public abstract class MetadataElementStub<Psi extends MetadataElement> extends StubBase<Psi> {
 
-  protected static final String SYMBOL_TYPE = "__symbolic";
-  protected static final String SYMBOL_REFERENCE = "reference";
-  protected static final String SYMBOL_PROPERTY = "property";
-  protected static final String SYMBOL_FUNCTION = "function";
+  @NonNls protected static final String SYMBOL_TYPE = "__symbolic";
+  @NonNls protected static final String SYMBOL_REFERENCE = "reference";
+  @NonNls protected static final String SYMBOL_PROPERTY = "property";
+  @NonNls protected static final String SYMBOL_FUNCTION = "function";
 
-  protected static final String DECORATORS = "decorators";
-  protected static final String CALL = "call";
-  protected static final String EXPRESSION = "expression";
-  protected static final String ARGUMENTS = "arguments";
-  protected static final String MEMBERS = "members";
-  protected static final String STATICS = "statics";
-  protected static final String EXTENDS = "extends";
-  protected static final String CONSTRUCTOR = "__ctor__";
+  @NonNls protected static final String DECORATORS = "decorators";
+  @NonNls protected static final String CALL = "call";
+  @NonNls protected static final String EXPRESSION = "expression";
+  @NonNls protected static final String ARGUMENTS = "arguments";
+  @NonNls protected static final String MEMBERS = "members";
+  @NonNls protected static final String STATICS = "statics";
+  @NonNls protected static final String EXTENDS = "extends";
+  @NonNls protected static final String CONSTRUCTOR = "__ctor__";
 
-  protected static final String REFERENCE_NAME = "name";
-  protected static final String REFERENCE_MODULE = "module";
+  @NonNls protected static final String REFERENCE_NAME = "name";
+  @NonNls protected static final String REFERENCE_MODULE = "module";
 
-  protected static final String FUNCTION_VALUE = "value";
+  @NonNls protected static final String FUNCTION_VALUE = "value";
 
-  protected static final String ARRAY_TYPE = "#array";
-  protected static final String OBJECT_TYPE = "#object";
+  @NonNls protected static final String ARRAY_TYPE = "#array";
+  @NonNls protected static final String OBJECT_TYPE = "#object";
 
   protected static final FlagsStructure FLAGS_STRUCTURE = FlagsStructure.EMPTY;
 

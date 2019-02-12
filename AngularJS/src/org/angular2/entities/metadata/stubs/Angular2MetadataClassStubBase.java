@@ -13,6 +13,7 @@ import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataClassBase;
 import org.angular2.lang.metadata.MetadataUtils;
 import org.angular2.lang.metadata.psi.MetadataElementType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +31,7 @@ import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase> extends Angular2MetadataElementStub<Psi> {
 
-  private static final String EXTENDS_MEMBER = "#ext";
+  @NonNls private static final String EXTENDS_MEMBER = "#ext";
 
   private static final AtomicNotNullLazyValue<Map<String, EntityFactory>> ENTITY_FACTORIES =
     new AtomicNotNullLazyValue<Map<String, EntityFactory>>() {
@@ -142,7 +143,7 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
   }
 
   private void readTemplateFlag(JsonObject source) {
-    JsonObject members = tryCast(doIfNotNull(source.findProperty("members"), JsonProperty::getValue), JsonObject.class);
+    JsonObject members = tryCast(doIfNotNull(source.findProperty(MEMBERS), JsonProperty::getValue), JsonObject.class);
     JsonProperty constructor = members != null ? members.findProperty(CONSTRUCTOR) : null;
     writeFlag(IS_TEMPLATE_FLAG, constructor != null
                                 && constructor.getText().contains(Angular2EntityUtils.TEMPLATE_REF));

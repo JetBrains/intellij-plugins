@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.attributes;
 
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -13,7 +14,7 @@ public class DomElementSchemaRegistry {
     return SCHEMA.getOrDefault(tagName.toLowerCase(Locale.ENGLISH), DEFAULT_ELEMENT_PROPERTIES);
   }
 
-  private static final String[] SCHEMA_DEF = new String[]{
+  @NonNls private static final String[] SCHEMA_DEF = new String[]{
     "[Element]|textContent,%classList,className,id,innerHTML,*beforecopy,*beforecut,*beforepaste,*copy,*cut,*paste,*search,*selectstart,*webkitfullscreenchange,*webkitfullscreenerror,*wheel,outerHTML,#scrollLeft,#scrollTop,slot" +
       /* added manually to avoid breaking changes */
     ",*message,*mozfullscreenchange,*mozfullscreenerror,*mozpointerlockchange,*mozpointerlockerror,*webglcontextcreationerror,*webglcontextlost,*webglcontextrestored",
@@ -201,6 +202,7 @@ public class DomElementSchemaRegistry {
         }
       });
     }
+    //noinspection HardCodedStringLiteral
     DEFAULT_ELEMENT_PROPERTIES = SCHEMA.get("[HTMLElement]".toLowerCase(Locale.ENGLISH));
   }
 }

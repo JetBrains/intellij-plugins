@@ -37,11 +37,13 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2EntityUtils;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularSymbolIndex;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,18 +59,18 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   public static final String REQUIRE = "require";
 
-  private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
-  private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
-  private static final String ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di";
-  private static final String ANGULAR2_MODULE_INDEX_USER_STRING = "a2mi";
+  @NonNls private static final String ANGULAR2_TEMPLATE_URLS_INDEX_USER_STRING = "a2tui";
+  @NonNls private static final String ANGULAR2_PIPE_INDEX_USER_STRING = "a2pi";
+  @NonNls private static final String ANGULAR2_DIRECTIVE_INDEX_USER_STRING = "a2di";
+  @NonNls private static final String ANGULAR2_MODULE_INDEX_USER_STRING = "a2mi";
 
-  private static final String PIPE_TYPE = "P;;;";
-  private static final String DIRECTIVE_TYPE = "D;;;";
-  private static final String MODULE_TYPE = "M;;;";
+  @NonNls private static final String PIPE_TYPE = "P;;;";
+  @NonNls private static final String DIRECTIVE_TYPE = "D;;;";
+  @NonNls private static final String MODULE_TYPE = "M;;;";
 
-  public static final String NG_MODULE_INDEX_NAME = "ngModule";
+  @NonNls public static final String NG_MODULE_INDEX_NAME = "ngModule";
 
-  private static final String STYLESHEET_INDEX_PREFIX = "ss/";
+  @NonNls private static final String STYLESHEET_INDEX_PREFIX = "ss/";
 
   private final static Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEX_MAP = new HashMap<>();
 
@@ -150,7 +152,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   private static void addDirective(@NotNull TypeScriptClass directiveClass,
                                    @NotNull Consumer<JSImplicitElement> processor,
-                                   @Nullable String selector) {
+                                   @NonNls @Nullable String selector) {
     final Set<String> indexNames;
     if (selector == null) {
       selector = "<null>";
@@ -217,9 +219,9 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   private static void addPipe(@NotNull TypeScriptClass pipeClass,
                               @NotNull Consumer<JSImplicitElement> processor,
-                              @Nullable String pipe) {
+                              @NonNls @Nullable String pipe) {
     if (pipe == null) {
-      pipe = "<unnamed>";
+      pipe = Angular2Bundle.message("angular.description.unnamed");
     }
     JSImplicitElementImpl pipeElement = new JSImplicitElementImpl.Builder(pipe, pipeClass)
       .setUserString(ANGULAR2_PIPE_INDEX_USER_STRING)

@@ -18,6 +18,7 @@ import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +37,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
   private static final int TEST_INDEX = 3;
   private static final int STYLES_INDEX_START = 4;
 
-  private static final String GROUP_NAME = "Angular Component";
+  private static final String GROUP_NAME = Angular2Bundle.message("angular.action.goto-related.group-name");
 
   @NotNull
   @Override
@@ -81,18 +82,21 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
     List<GotoRelatedItem> result = new SmartList<>();
     TypeScriptClass cls = component.getTypeScriptClass();
     if (cls != null && cls.getName() != null) {
-      result.add(new Angular2GoToRelatedItem(cls, COMPONENT_INDEX, false, "Component Class"));
+      result.add(new Angular2GoToRelatedItem(cls, COMPONENT_INDEX, false,
+                                             Angular2Bundle.message("angular.action.goto-related.component-class")));
     }
     PsiFile file = component.getTemplateFile();
     if (file != null) {
-      result.add(new Angular2GoToRelatedItem(file, TEMPLATE_INDEX, true, "Template"));
+      result.add(new Angular2GoToRelatedItem(file, TEMPLATE_INDEX, true,
+                                             Angular2Bundle.message("angular.action.goto-related.template")));
     }
     boolean first = true;
     int count = 1;
     Collection<PsiElement> tests = TestFinderHelper.findTestsForClass(component.getSourceElement());
     for (PsiElement el : tests) {
       result.add(new Angular2GoToRelatedItem(el, first ? TEST_INDEX : -1, false,
-                                             "Tests" + (tests.size() == 1 ? "" : " " + count++)));
+                                             Angular2Bundle.message("angular.action.goto-related.tests",
+                                                                    tests.size() == 1 ? "" : " " + count++)));
       first = false;
     }
 
@@ -101,7 +105,8 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
     count = 1;
     for (PsiFile cssFile : cssFiles) {
       result.add(new Angular2GoToRelatedItem(cssFile, mnemonic++, true,
-                                             "Styles" + (cssFiles.size() == 1 ? "" : " " + count++)));
+                                             Angular2Bundle.message("angular.action.goto-related.styles",
+                                                                    cssFiles.size() == 1 ? "" : " " + count++)));
     }
     return result;
   }
@@ -118,7 +123,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
       super(element, GROUP_NAME, mnemonic > 9 ? -1 : mnemonic);
       myContainerName = inlineable && InjectedLanguageManager.getInstance(element.getProject())
                                         .getTopLevelFile(element) != element.getContainingFile()
-                        ? "<inline>"
+                        ? Angular2Bundle.message("angular.action.goto-related.inline")
                         : null;
       myName = name;
     }

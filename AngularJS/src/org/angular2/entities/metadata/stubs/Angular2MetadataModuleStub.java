@@ -12,6 +12,7 @@ import org.angular2.entities.metadata.psi.Angular2MetadataModule;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.index.Angular2MetadataModuleIndex;
 import org.angular2.lang.metadata.stubs.MetadataElementStub;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,7 @@ public class Angular2MetadataModuleStub extends Angular2MetadataEntityStub<Angul
 
   private static final String[] INTERESTED_IN = new String[]{DECLARATIONS_PROP, EXPORTS_PROP, IMPORTS_PROP};
 
-  private static final String DECORATOR_FIELD_PREFIX = "___dec.";
+  @NonNls private static final String DECORATOR_FIELD_PREFIX = "___dec.";
 
   @SuppressWarnings("unused")
   @Nullable

@@ -41,6 +41,7 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
     }
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   public static void excludeDefault(@NotNull VirtualFile baseDir, ContentEntry entry) {
     entry.addExcludeFolder(baseDir.getUrl() + "/dist");
     entry.addExcludeFolder(baseDir.getUrl() + "/tmp");

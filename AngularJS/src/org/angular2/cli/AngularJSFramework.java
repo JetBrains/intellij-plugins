@@ -3,6 +3,8 @@ package org.angular2.cli;
 
 import com.intellij.framework.FrameworkType;
 import icons.AngularJSIcons;
+import org.angular2.lang.Angular2Bundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -13,14 +15,16 @@ import javax.swing.*;
 public class AngularJSFramework extends FrameworkType {
   public static final AngularJSFramework INSTANCE = new AngularJSFramework();
 
+  @NonNls public static final String ID = "AngularCLI";
+
   protected AngularJSFramework() {
-    super("AngularCLI");
+    super(ID);
   }
 
   @NotNull
   @Override
   public String getPresentableName() {
-    return "Angular CLI";
+    return Angular2Bundle.message("angular.description.angular-cli");
   }
 
   @NotNull

@@ -68,17 +68,17 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
 
   public void testNotExportedDirectiveNoModuleImport() {
     doMultiFileTest("test.html",
-                    "Export MyDirective and import NgModule");
+                    "Export MyDirective");
   }
 
   public void testNotExportedDirectiveSingleModuleImport() {
     doMultiFileTest("test.html",
-                    "Export MyDirective and import NgModule");
+                    "Export MyDirective");
   }
 
   public void testNotExportedDirectiveMultiModuleImport() {
     doMultiFileTest("test.html",
-                    "Export MyDirective and import NgModule",
+                    "Export MyDirective",
                     "\"./module3\"");
   }
 

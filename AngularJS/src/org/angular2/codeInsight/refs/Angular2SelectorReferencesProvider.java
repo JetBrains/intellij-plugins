@@ -78,7 +78,7 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
   @Nullable
   public static XmlElementDescriptor getElementDescriptor(@NotNull String name, @NotNull PsiFile baseFile) {
     XmlNSDescriptorEx descriptorEx = getNamespaceDescriptor(baseFile);
-    return descriptorEx != null ? descriptorEx.getElementDescriptor(name, "http://www.w3.org/1999/xhtml") : null;
+    return descriptorEx != null ? descriptorEx.getElementDescriptor(name, XmlUtil.XHTML_URI) : null;
   }
 
   private static class HtmlElementReference extends PsiReferenceBase<PsiElement> {

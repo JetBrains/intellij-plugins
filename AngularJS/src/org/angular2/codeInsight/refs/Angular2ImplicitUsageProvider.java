@@ -23,6 +23,7 @@ import com.intellij.util.Processor;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +69,9 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
       (JSResolveUtil.isSelfReference((PsiElement)reference) ||
        node instanceof JSFunction && PsiTreeUtil.isAncestor(node, (PsiElement)reference, false));
 
-    SearchScope scope = new LocalSearchScope(new PsiElement[]{template}, "template", true);
+    SearchScope scope = new LocalSearchScope(new PsiElement[]{template},
+                                             Angular2Bundle.message("angular.search-scope.template"),
+                                             true);
     if (!ReferencesSearch.search(node, scope, true).forEach(processor)) {
       return true;
     }

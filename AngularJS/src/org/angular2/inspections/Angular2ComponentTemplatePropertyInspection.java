@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -42,13 +43,13 @@ public class Angular2ComponentTemplatePropertyInspection extends LocalInspection
           JSProperty template = initializer.findProperty(TEMPLATE_PROP);
           if (template == null && templateUrl == null) {
             holder.registerProblem(initializer,
-                                   "Missing 'template' or 'templateUrl' property.",
+                                   Angular2Bundle.message("angular.inspection.decorator.missing-template"),
                                    new AddJSPropertyQuickFix(initializer, TEMPLATE_PROP, "\n\n", 1, true),
                                    new AddJSPropertyQuickFix(initializer, TEMPLATE_URL_PROP, "./", 2, false));
           }
           else if (template != null && templateUrl != null) {
             ContainerUtil.packNullables(template.getNameIdentifier(), templateUrl.getNameIdentifier())
-              .forEach(id -> holder.registerProblem(id, "Only one of 'template' or 'templateUrl' properties can be specified.",
+              .forEach(id -> holder.registerProblem(id, Angular2Bundle.message("angular.inspection.decorator.duplicated-template"),
                                                     new RemoveJSProperty(StringUtil.unquoteString(id.getText()))));
           }
         }
@@ -68,14 +69,14 @@ public class Angular2ComponentTemplatePropertyInspection extends LocalInspection
     @NotNull
     @Override
     public String getName() {
-      return "Remove '" + myPropertyName + "' property";
+      return Angular2Bundle.message("angular.quickfix.decorator.remove-property.name", myPropertyName);
     }
 
     @Nls(capitalization = Nls.Capitalization.Sentence)
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Angular";
+      return Angular2Bundle.message("angular.quickfix.family");
     }
 
     @Override

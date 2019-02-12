@@ -15,10 +15,7 @@ package org.angular2.naming;
 
 import com.intellij.lang.javascript.names.JSNameSuggestionsUtil;
 import com.intellij.lang.javascript.names.JSNamesSuggester;
-import com.intellij.lang.javascript.psi.JSCallExpression;
-import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSNamedElement;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.util.text.StringUtil;
@@ -29,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
+@SuppressWarnings("HardCodedStringLiteral")
 public class Angular2NamesSuggester implements JSNamesSuggester {
   private static final HashMap<String, String> AngularDecoratorEntityMap = ContainerUtil.newHashMap();
 
@@ -55,7 +53,7 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
     }
 
     for (ES6Decorator decorator : decorators) {
-      String referenceName = getDecoratorName(decorator);
+      String referenceName = decorator.getDecoratorName();
       if (referenceName == null) return null;
 
       String entityName = AngularDecoratorEntityMap.get(referenceName);
@@ -78,22 +76,4 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
     return null;
   }
 
-  @Nullable
-  private static String getDecoratorName(@NotNull ES6Decorator decorator) {
-    JSExpression expression = decorator.getExpression();
-    if (!(expression instanceof JSCallExpression)) {
-      return null;
-    }
-
-    JSExpression methodExpression = ((JSCallExpression)expression).getMethodExpression();
-    if (!(methodExpression instanceof JSReferenceExpression)) {
-      return null;
-    }
-
-    String referenceName = ((JSReferenceExpression)methodExpression).getReferenceName();
-    if (referenceName == null) {
-      return null;
-    }
-    return referenceName;
-  }
 }

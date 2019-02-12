@@ -14,6 +14,7 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,7 @@ public class Angular2TemplateReferenceVariableInspection extends Angular2HtmlLik
           }
           quickFixes.add(new RemoveAttributeQuickFix(attribute.getName()));
           holder.registerProblem(attribute.getNameElement(),
-                                 "There is no directive with 'exportAs' set to '" + exportName + "'",
+                                 Angular2Bundle.message("angular.inspection.template.ref-var-unbound", exportName),
                                  scope.isFullyResolved()
                                  ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                  : ProblemHighlightType.WEAK_WARNING,
@@ -54,8 +55,8 @@ public class Angular2TemplateReferenceVariableInspection extends Angular2HtmlLik
         else if (matching.size() > 1) {
           holder.registerProblem(attribute.getNameElement(),
                                  range,
-                                 "There are multiple directives with 'exportAs' set to '" + exportName + "': "
-                                 + Angular2MatchingComponentsInspection.renderDirectiveList(matching));
+                                 Angular2Bundle.message("angular.inspection.template.ref-var-ambiguous-name", exportName,
+                                                        Angular2MatchingComponentsInspection.renderDirectiveList(matching)));
         }
       }
     }

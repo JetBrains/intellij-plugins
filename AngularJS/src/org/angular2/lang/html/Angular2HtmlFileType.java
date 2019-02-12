@@ -2,6 +2,7 @@
 package org.angular2.lang.html;
 
 import com.intellij.ide.highlighter.HtmlFileType;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2HtmlFileType extends HtmlFileType {
@@ -21,6 +22,6 @@ public class Angular2HtmlFileType extends HtmlFileType {
   @NotNull
   @Override
   public String getDescription() {
-    return "Angular HTML Template";
+    return Angular2Bundle.message("angular.description.angular-html-template");
   }
 }

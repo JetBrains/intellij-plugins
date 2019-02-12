@@ -25,6 +25,7 @@ import com.intellij.patterns.StandardPatterns;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -36,7 +37,7 @@ import java.util.List;
  */
 public class AngularJSFrameworkDetector extends FrameworkDetector {
   protected AngularJSFrameworkDetector() {
-    super("AngularCLI");
+    super(AngularJSFramework.ID);
   }
 
   @NotNull
@@ -79,6 +80,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
       Module module = ModuleUtilCore.findModuleForFile(file, project);
       if (module != null) {
         for (String root : ModuleRootManager.getInstance(module).getExcludeRootUrls()) {
+          //noinspection HardCodedStringLiteral
           if (root.equals(file.getParent().getUrl() + "/tmp")) {
             return true;
           }
@@ -109,7 +111,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
     @NotNull
     @Override
     public String getSetupText() {
-      return "AngularCLI";
+      return Angular2Bundle.message("angular.description.angular-cli");
     }
 
     @NotNull

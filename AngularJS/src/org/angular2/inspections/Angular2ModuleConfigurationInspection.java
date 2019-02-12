@@ -18,6 +18,7 @@ import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,10 +93,9 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
     @Override
     protected void processNonEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      "Class '" + aClass.getName() + "' is neither Angular Component, Directive nor Pipe.");
+                      Angular2Bundle.message("angular.inspection.decorator.not-declarable", aClass.getName()));
     }
   }
-
 
   private abstract static class ImportExportValidator<T extends Angular2Entity> extends Angular2SourceEntityListValidator<T, ProblemType> {
 
@@ -119,9 +119,12 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
                                          @NotNull Angular2Module module) throws RecurrentImportException {
       if (!visitedModules.add(module)) {
         if (module == myModule) {
-          throw new RecurrentImportException("Cyclic dependency of modules: "
-                                             + StringUtil.join(visitedModules, Angular2Module::getName, " -> ")
-                                             + " -> " + module.getName());
+          throw new RecurrentImportException(Angular2Bundle.message(
+            "angular.inspection.decorator.cyclic-module-dependency",
+            StringUtil.join(visitedModules,
+                            Angular2Module::getName,
+                            " " + Angular2Bundle.message("angular.inspection.decorator.cyclic-module-dependency.separator") + " "),
+            module.getName()));
         }
         return;
       }
@@ -146,14 +149,14 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
     @Override
     protected void processNonEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      "Class '" + aClass.getName() + "' is not an Angular Module.");
+                      Angular2Bundle.message("angular.inspection.decorator.not-a-module", aClass.getName()));
     }
 
     @Override
     protected void processEntity(@NotNull Angular2Module module) {
       if (module.equals(myModule)) {
         registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
-                        "Module '" + module.getName() + "' cannot import itself");
+                        Angular2Bundle.message("angular.inspection.decorator.self-import", module.getName()));
       }
       else {
         checkCyclicDependencies(module);
@@ -170,8 +173,7 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
     @Override
     protected void processNonEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.ENTITY_WITH_MISMATCHED_TYPE,
-                      "Class '" + aClass.getName() +
-                      "' is neither Angular Module, Component, Directive nor Pipe.",
+                      Angular2Bundle.message("angular.inspection.decorator.not-entity", aClass.getName()),
                       Objects.requireNonNull(myModule).isScopeFullyResolved()
                       ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                       : ProblemHighlightType.WEAK_WARNING);
@@ -182,7 +184,7 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
       if (entity instanceof Angular2Module) {
         if (entity.equals(myModule)) {
           registerProblem(ProblemType.RECURSIVE_IMPORT_EXPORT,
-                          "Module '" + entity.getName() + "' cannot export itself");
+                          Angular2Bundle.message("angular.inspection.decorator.self-export", entity.getName()));
         }
         else {
           checkCyclicDependencies((Angular2Module)entity);
@@ -191,10 +193,9 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
       else if (entity instanceof Angular2Declaration) {
         if (!Objects.requireNonNull(myModule).getDeclarationsInScope().contains(entity)) {
           registerProblem(ProblemType.UNDECLARED_EXPORT,
-                          "Cannot export '" +
-                          notNull(doIfNotNull(entity.getTypeScriptClass(), TypeScriptClass::getName),
-                                  () -> entity.getName()) +
-                          "' as it is neither declared nor imported by the module.",
+                          Angular2Bundle.message("angular.inspection.decorator.export-not-defined",
+                                                 notNull(doIfNotNull(entity.getTypeScriptClass(), TypeScriptClass::getName),
+                                                         () -> entity.getName())),
                           Objects.requireNonNull(myModule).isScopeFullyResolved()
                           ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                           : ProblemHighlightType.WEAK_WARNING);

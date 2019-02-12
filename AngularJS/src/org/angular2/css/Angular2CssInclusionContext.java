@@ -26,6 +26,7 @@ import org.angular2.cli.AngularCliUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.index.Angular2IndexingHandler;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +38,7 @@ import static java.util.Arrays.asList;
 
 public class Angular2CssInclusionContext extends CssInclusionContext {
 
-  private static final Key<CachedValue<ComponentCssContext>> COMPONENT_CONTEXT_KEY =
+  @NonNls private static final Key<CachedValue<ComponentCssContext>> COMPONENT_CONTEXT_KEY =
     new Key<>("ng.component.context");
 
   @NotNull

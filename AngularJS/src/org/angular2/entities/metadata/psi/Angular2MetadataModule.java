@@ -68,6 +68,7 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
 
   @Override
   public boolean isPublic() {
+    //noinspection HardCodedStringLiteral
     return getStub().getMemberName() == null
            || !getStub().getMemberName().startsWith("ɵ");
   }

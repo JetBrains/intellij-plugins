@@ -23,6 +23,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import icons.AngularJSIcons;
+import org.angular2.lang.Angular2Bundle;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,10 +38,12 @@ import static com.intellij.openapi.util.Pair.pair;
 public class AngularCliUtil {
 
   private static final NotificationGroup ANGULAR_CLI_NOTIFICATIONS = new NotificationGroup(
-    "Angular CLI", NotificationDisplayType.BALLOON, false, null, AngularJSIcons.Angular2);
+    Angular2Bundle.message("angular.description.angular-cli"), NotificationDisplayType.BALLOON,
+    false, null, AngularJSIcons.Angular2);
 
-  private static final List<String> ANGULAR_JSON_NAMES = ContainerUtil.newArrayList(
+  @NonNls private static final List<String> ANGULAR_JSON_NAMES = ContainerUtil.newArrayList(
     "angular.json", ".angular-cli.json", "angular-cli.json");
+  @NonNls private static final String NG_CLI_DEFAULT_ADDRESS = "http://localhost:4200";
 
 
   @Nullable
@@ -87,7 +91,7 @@ public class AngularCliUtil {
     VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cliFolder);
     Notification notification = ANGULAR_CLI_NOTIFICATIONS.createNotification(
       message,
-      "Required package '@angular/cli' is not installed.",
+      Angular2Bundle.message("angular.notify.cli.required-package-not-installed"),
       NotificationType.WARNING, null);
     if (packageJson != null) {
       notification.addAction(new PackageJsonGetDependenciesAction(project, packageJson, notification));
@@ -111,7 +115,7 @@ public class AngularCliUtil {
         String nameSuffix = ModuleManager.getInstance(project).getModules().length > 1
                             ? " (" + baseDir.getName() + ")" : "";
 
-        createJSDebugConfiguration(project, "Angular Application" + nameSuffix, "http://localhost:4200");
+        createJSDebugConfiguration(project, "Angular Application" + nameSuffix, NG_CLI_DEFAULT_ADDRESS);
         createKarmaConfiguration(project, baseDir, "Tests" + nameSuffix);
         createProtractorConfiguration(project, baseDir, "E2E Tests" + nameSuffix);
         RunManager.getInstance(project).setSelectedConfiguration(
@@ -128,7 +132,7 @@ public class AngularCliUtil {
     return null;
   }
 
-  private static void createJSDebugConfiguration(@NotNull Project project, @NotNull String label, @NotNull String url) {
+  private static void createJSDebugConfiguration(@NotNull Project project, @NotNull @NonNls String label, @NotNull String url) {
     createIfNoSimilar("jsdebug", project, label, null, null, ContainerUtil.newHashMap(
       pair("uri", url)
     ));
@@ -137,14 +141,16 @@ public class AngularCliUtil {
   @Nullable
   private static RunnerAndConfigurationSettings createNpmConfiguration(@NotNull Project project,
                                                                        @NotNull String packageJsonPath,
-                                                                       @NotNull String label,
+                                                                       @NotNull @NonNls String label,
                                                                        @NotNull String scriptName) {
-    return createIfNoSimilar("npm", project, label, null, packageJsonPath, ContainerUtil.newHashMap(pair("run-script", scriptName)));
+    //noinspection HardCodedStringLiteral
+    return createIfNoSimilar("npm", project, label, null, packageJsonPath,
+                             ContainerUtil.newHashMap(pair("run-script", scriptName)));
   }
 
   private static void createKarmaConfiguration(@NotNull Project project,
                                                @NotNull VirtualFile baseDir,
-                                               @NotNull String label) {
+                                               @NotNull @NonNls String label) {
     ObjectUtils.doIfNotNull(
       AngularCliConfigLoader.load(project, baseDir).getKarmaConfigFile(),
       file -> createIfNoSimilar("karma", project, label, baseDir, file.getPath(), Collections.emptyMap())
@@ -153,7 +159,7 @@ public class AngularCliUtil {
 
   private static void createProtractorConfiguration(@NotNull Project project,
                                                     @NotNull VirtualFile baseDir,
-                                                    @NotNull String label) {
+                                                    @NotNull @NonNls String label) {
     ObjectUtils.doIfNotNull(
       AngularCliConfigLoader.load(project, baseDir).getProtractorConfigFile(),
       file -> createIfNoSimilar("protractor", project, label, null, file.getPath(), Collections.emptyMap())
@@ -161,7 +167,7 @@ public class AngularCliUtil {
   }
 
   @Nullable
-  private static RunnerAndConfigurationSettings createIfNoSimilar(@NotNull String rcType,
+  private static RunnerAndConfigurationSettings createIfNoSimilar(@NotNull @NonNls String rcType,
                                                                   @NotNull Project project,
                                                                   @NotNull String label,
                                                                   VirtualFile baseDir,

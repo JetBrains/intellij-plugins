@@ -11,11 +11,14 @@ import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+
+import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 
 public class Angular2BindingToEventInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
 
@@ -26,11 +29,11 @@ public class Angular2BindingToEventInspection extends Angular2HtmlLikeTemplateLo
     AttributeInfo info = descriptor.getInfo();
     if (info.type == Angular2AttributeType.PROPERTY_BINDING) {
       final String propertyName = info.name;
-      if (propertyName.startsWith("on")) {
+      if (propertyName.startsWith(EVENT_ATTR_PREFIX)) {
         switch (((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType) {
           case ATTRIBUTE:
             holder.registerProblem(attribute.getNameElement(),
-                                   "Binding to event attribute '" + propertyName + "' is disallowed for security reasons.",
+                                   Angular2Bundle.message("angular.inspection.template.binding-to-event-attribute", propertyName),
                                    new ConvertToEventQuickFix(propertyName.substring(2)),
                                    new RemoveAttributeQuickFix(attribute.getName()));
             break;
@@ -39,8 +42,7 @@ public class Angular2BindingToEventInspection extends Angular2HtmlLikeTemplateLo
             if (descriptor.getSourceDirectives() == null
                 || ContainerUtil.find(descriptor.getSourceDirectives(), scope::contains) == null) {
               holder.registerProblem(attribute.getNameElement(),
-                                     "Binding to event property '" + propertyName +
-                                     "' is disallowed for security reasons",
+                                     Angular2Bundle.message("angular.inspection.template.binding-to-event-property", propertyName),
                                      new ConvertToEventQuickFix(propertyName.substring(2)),
                                      new RemoveAttributeQuickFix(attribute.getName()));
             }
@@ -63,14 +65,14 @@ public class Angular2BindingToEventInspection extends Angular2HtmlLikeTemplateLo
     @NotNull
     @Override
     public String getName() {
-      return "Bind to event (" + myEventName + ")";
+      return Angular2Bundle.message("angular.quickfix.template.bind-to-event.name", myEventName);
     }
 
     @Nls
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Angular";
+      return Angular2Bundle.message("angular.quickfix.family");
     }
 
     @Override

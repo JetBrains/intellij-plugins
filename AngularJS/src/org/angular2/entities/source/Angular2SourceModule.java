@@ -75,6 +75,7 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
 
   @Override
   public boolean isPublic() {
+    //noinspection HardCodedStringLiteral
     return !getName().startsWith("ɵ");
   }
 

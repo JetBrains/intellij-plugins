@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithStubSupport, PsiFileEx {
 
-  private static final Logger LOG = Logger.getInstance(MetadataFileImpl.class);
+  @NonNls private static final Logger LOG = Logger.getInstance(MetadataFileImpl.class);
 
   private volatile SoftReference<StubTree> myStub;
   private final Object myStubLock = new Object();
@@ -108,6 +108,7 @@ public class MetadataFileImpl extends PsiBinaryFileImpl implements PsiFileWithSt
       StubTree stubTree = SoftReference.dereference(myStub);
       myStub = null;
       if (stubTree != null) {
+        //noinspection HardCodedStringLiteral
         ((PsiFileStubImpl)stubTree.getRoot()).clearPsi("metadata onContentReload");
       }
     }

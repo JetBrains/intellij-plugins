@@ -3,19 +3,17 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
-import static java.util.Arrays.asList;
 import static org.angular2.Angular2DecoratorUtil.*;
 
 public class Angular2InvalidEntryComponentInspection extends LocalInspectionTool {
@@ -53,7 +51,8 @@ public class Angular2InvalidEntryComponentInspection extends LocalInspectionTool
     @Override
     protected void processNonEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
-                      "Class '" + aClass.getName() + "' is not an Angular Component.");
+                      Angular2Bundle.message("angular.inspection.decorator.not-a-component",
+                                             aClass.getName()));
     }
   }
 
@@ -66,34 +65,15 @@ public class Angular2InvalidEntryComponentInspection extends LocalInspectionTool
     @Override
     protected void processNonEntityClass(@NotNull JSClass aClass) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
-                      "Class '" + aClass.getName() + "' is not an Angular Component.");
+                      Angular2Bundle.message("angular.inspection.decorator.not-a-component",
+                                             aClass.getName()));
     }
 
     @Override
     protected void processAnyElement(JSElement node) {
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
-                      "Expression does not resolve to an array of class types or a class type.");
+                      Angular2Bundle.message("angular.inspection.decorator.not-array-of-class-types"));
     }
 
-    @Override
-    protected JSElementVisitor createResolveVisitor(SmartList<PsiElement> result) {
-      return new JSElementVisitor() {
-        @Override
-        public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
-          result.addAll(asList(node.getExpressions()));
-        }
-
-        @Override
-        public void visitJSReferenceExpression(JSReferenceExpression node) {
-          ContainerUtil.addIfNotNull(result, node.resolve());
-        }
-
-        @Override
-        public void visitJSVariable(JSVariable node) {
-          // TODO try to use stub here
-          ContainerUtil.addIfNotNull(result, node.getInitializer());
-        }
-      };
-    }
   }
 }

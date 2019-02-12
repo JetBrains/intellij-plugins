@@ -16,6 +16,8 @@ import org.angular2.entities.metadata.stubs.Angular2MetadataNodeModuleStub;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.openapi.util.Pair.create;
+import static org.angular2.entities.metadata.Angular2MetadataFileType.D_TS_SUFFIX;
+import static org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX;
 
 public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2MetadataNodeModuleStub> {
 
@@ -27,7 +29,7 @@ public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2
   public Pair<PsiFile, TypeScriptClass> locateFileAndClass(String className) {
     VirtualFile sourceFile = getContainingFile().getViewProvider().getVirtualFile();
     VirtualFile parentDir = sourceFile.getParent();
-    String sourcePath = StringUtil.trimEnd(sourceFile.getName(), ".metadata.json") + ".d.ts";
+    String sourcePath = StringUtil.trimEnd(sourceFile.getName(), METADATA_SUFFIX) + D_TS_SUFFIX;
     VirtualFile definitionFile = parentDir != null ? parentDir.findFileByRelativePath(sourcePath) : null;
     PsiFile definitionPsi = definitionFile != null ? getManager().findFile(definitionFile) : null;
     if (definitionPsi instanceof JSFile) {

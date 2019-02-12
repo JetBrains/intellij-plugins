@@ -2,7 +2,6 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator;
-import com.intellij.lang.javascript.psi.JSCallItem;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeUtils;
@@ -36,6 +35,7 @@ import java.util.*;
 import static com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE;
 import static com.intellij.util.containers.ContainerUtil.find;
 import static com.intellij.util.containers.ContainerUtil.findAll;
+import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
 
 public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
@@ -61,7 +61,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     return super.addTypeFromDialectSpecificElements(resolveResult);
   }
 
-  @Contract("null -> null")
+  @Contract("null -> null") //NON-NLS
   private static JSType getTemplateContextType(@Nullable TypeScriptClass clazz) {
     if (clazz == null) {
       return null;
@@ -69,7 +69,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     JSType templateRefType = null;
     for (TypeScriptFunction fun : clazz.getConstructors()) {
       for (JSParameter param : fun.getParameterVariables()) {
-        if (param.getJSType() != null && param.getJSType().getTypeText().startsWith("TemplateRef<")) {
+        if (param.getJSType() != null && param.getJSType().getTypeText().startsWith(TEMPLATE_REF + "<")) {
           templateRefType = param.getJSType();
           break;
         }
@@ -178,7 +178,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
               JSType expressionType = JSResolveUtil.getExpressionJSType(binding.getExpression());
               if (expressionType != null) {
                 JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext,
-                                                              expressionType, property.getType(), null, (JSCallItem)null);
+                                                              expressionType, property.getType(), null, null);
               }
             }
           });

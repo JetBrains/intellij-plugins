@@ -16,6 +16,7 @@ import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.source.Angular2SourceModule;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,14 +46,14 @@ public class Angular2DeclarationMembershipInModuleInspection extends LocalInspec
                                                              TypeScriptClass::getNameIdentifier), decorator);
             if (modules.isEmpty()) {
               holder.registerProblem(classIdentifier,
-                                     "Declaration is not included in any NgModule.",
+                                     Angular2Bundle.message("angular.inspection.decorator.not-declared-in-NgModule"),
                                      allSourceDeclarationsResolved(decorator.getProject())
                                      ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                      : ProblemHighlightType.WEAK_WARNING);
             }
             else if (modules.size() > 1) {
               holder.registerProblem(classIdentifier,
-                                     "Declaration is included in more than one NgModule.");
+                                     Angular2Bundle.message("angular.inspection.decorator.declared-in-many-NgModules"));
             }
           }
         }

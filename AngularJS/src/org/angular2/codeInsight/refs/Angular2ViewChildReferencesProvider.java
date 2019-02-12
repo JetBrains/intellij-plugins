@@ -97,7 +97,7 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
             public void visitXmlAttribute(XmlAttribute attribute) {
               AttributeInfo info = Angular2AttributeNameParser.parse(attribute.getName(), false);
               if (info.type == Angular2AttributeType.REFERENCE) {
-                JSLocalImplicitElementImpl refVar = new JSLocalImplicitElementImpl(info.name, "any", attribute);
+                JSLocalImplicitElementImpl refVar = new JSLocalImplicitElementImpl(info.name, "*", attribute);
                 if (!processor.test(info.name, refVar)) {
                   stopWalking();
                 }

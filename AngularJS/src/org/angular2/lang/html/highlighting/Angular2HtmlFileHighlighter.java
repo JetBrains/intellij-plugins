@@ -118,6 +118,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
   @NotNull
   @Override
   public Lexer getHighlightingLexer() {
+    //noinspection HardCodedStringLiteral
     return new Angular2HtmlHighlightingLexer(myTokenizeExpansionForms, myInterpolationConfig,
                                              FileTypeRegistry.getInstance().findFileTypeByName("CSS"));
   }

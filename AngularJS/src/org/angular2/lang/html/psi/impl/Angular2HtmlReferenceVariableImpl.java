@@ -33,6 +33,7 @@ import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.html.parser.Angular2HtmlStubElementTypes;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,12 +41,12 @@ import static com.intellij.lang.javascript.psi.types.JSNamedTypeFactory.createEx
 import static com.intellij.lang.javascript.psi.types.TypeScriptTypeParser.buildTypeFromClass;
 import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClassType;
 import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
+import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
 
 public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariableStub<JSVariable>, JSVariable>
   implements Angular2HtmlReferenceVariable, HintedReferenceHost {
 
-  private static final String ANGULAR_CORE_PACKAGE = "@angular/core";
-  private static final String TEMPLATE_REF_CLASS = "TemplateRef";
+  @NonNls public static final String ANGULAR_CORE_PACKAGE = "@angular/core";
 
   public Angular2HtmlReferenceVariableImpl(ASTNode node) {
     super(node);
@@ -91,7 +92,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
         scope, ANGULAR_CORE_PACKAGE, false)) {
         if (module instanceof JSElement) {
           ResolveResult resolved = ArrayUtil.getFirstElement(
-            ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF_CLASS, scope, (JSElement)module));
+            ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF, scope, (JSElement)module));
           if (resolved != null && resolved.isValidResult() && resolved.getElement() instanceof TypeScriptClass) {
             TypeScriptClass templateRefClass = (TypeScriptClass)resolved.getElement();
             JSType baseType = getClassInstanceType(templateRefClass);

@@ -13,6 +13,7 @@ import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.source.Angular2SourceEntity;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -22,7 +23,7 @@ import static com.intellij.openapi.util.Pair.pair;
 
 public class Angular2EntityUtils {
 
-  public static final String TEMPLATE_REF = "TemplateRef";
+  @NonNls public static final String TEMPLATE_REF = "TemplateRef";
 
   private static final String INDEX_ELEMENT_NAME_PREFIX = ">";
   private static final String INDEX_ATTRIBUTE_NAME_PREFIX = "=";
@@ -117,6 +118,7 @@ public class Angular2EntityUtils {
     return result;
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   public static String toString(Angular2Element element) {
     String sourceKind;
     if (element instanceof Angular2SourceEntity) {

@@ -17,6 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
+import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
+
 public class Angular2BasicAttributesProvider implements Angular2AttributesProvider {
   @Override
   public void contributeCompletionResults(@NotNull CompletionResultsConsumer completionResultsConsumer,
@@ -70,7 +72,7 @@ public class Angular2BasicAttributesProvider implements Angular2AttributesProvid
     }
     else if (descriptor instanceof HtmlAttributeDescriptorImpl) {
       String attrName = descriptor.getName();
-      if (!attrName.startsWith("on")) {
+      if (!attrName.startsWith(EVENT_ATTR_PREFIX)) {
         return Collections.singletonList(attrName);
       }
     }
