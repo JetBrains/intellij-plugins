@@ -596,6 +596,7 @@ public class Angular2Processor {
         .flatMap(Collection::stream)
         .select(JSPsiElementBase.class)
         .filter(el -> !(el instanceof TypeScriptFunctionSignature))
+        .filter(el -> !(el instanceof TypeScriptFunction) || !((TypeScriptFunction)el).isOverloadImplementation())
         .toList();
     }
   }
