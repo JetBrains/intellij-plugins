@@ -13,21 +13,24 @@
 // limitations under the License.
 package org.angular2.refactoring;
 
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.refactoring.JSRenameExtension;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.angular2.Angular2DecoratorUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.angular2.Angular2DecoratorUtil.COMPONENT_DEC;
+
 public class Angular2RenameExtension implements JSRenameExtension {
-  private static final String[] CANDIDATE_EXTENSIONS = new String[]{"css", "scss", "less", "styl", "html", "spec.ts"};
+  @NonNls private static final String[] CANDIDATE_EXTENSIONS = new String[]{"css", "scss", "less", "styl", "html", "spec.ts"};
 
   @NotNull
   @Override
@@ -35,7 +38,7 @@ public class Angular2RenameExtension implements JSRenameExtension {
                                                          @NotNull PsiFile originalFile,
                                                          @NotNull String newFileName) {
     if (!(original instanceof JSAttributeListOwner) ||
-        ES6PsiUtil.findDecoratorByName((JSAttributeListOwner)original, "Component") == null) {
+        Angular2DecoratorUtil.findDecorator((JSAttributeListOwner)original, COMPONENT_DEC) == null) {
       return Collections.emptyMap();
     }
     VirtualFile componentVFile = originalFile.getVirtualFile();

@@ -20,6 +20,7 @@ import com.intellij.util.ObjectUtils;
 import org.angular2.cli.AngularCliSchematicsRegistryService;
 import org.angular2.cli.AngularCliUtil;
 import org.angular2.cli.actions.AngularCliAddDependencyAction;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +69,7 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
       if ((pkgVersion != null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(pkgVersion))
           || (pkgVersion == null && AngularCliSchematicsRegistryService.getInstance().supportsNgAdd(packageName, TIMEOUT))) {
-        String message = StringUtil.wrapWithDoubleQuote(packageName) + " can be installed using 'ng add' command";
+        String message = Angular2Bundle.message("angular.inspection.json.install-with-ng-add", StringUtil.wrapWithDoubleQuote(packageName));
         LocalQuickFix quickFix = new AngularCliAddQuickFix(packageJson, packageName, version, pkgVersion != null);
         if (versionLiteral != null) {
           if (pkgVersion == null) {
@@ -118,14 +119,16 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public String getName() {
-      return (myReinstall ? "Reinstall with" : "Run") + " 'ng add " + myPackageName + "'";
+      return Angular2Bundle.message(myReinstall ? "angular.quickfix.json.ng-add.name.reinstall"
+                                                : "angular.quickfix.json.ng-add.name.run",
+                                    myPackageName);
     }
 
     @Nls
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Run 'ng add'";
+      return Angular2Bundle.message("angular.quickfix.json.ng-add.family");
     }
 
     @Override
@@ -135,7 +138,8 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
           project, myPackageJson.getParent(), myPackageName, myVersionSpec.trim(), !myReinstall);
       }
       else {
-        AngularCliUtil.notifyAngularCliNotInstalled(project, myPackageJson.getParent(), "Can't run 'ng add'");
+        AngularCliUtil.notifyAngularCliNotInstalled(project, myPackageJson.getParent(),
+                                                    Angular2Bundle.message("angular.quickfix.json.ng-add.error.cant-run"));
       }
     }
   }

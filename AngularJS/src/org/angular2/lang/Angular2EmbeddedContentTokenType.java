@@ -14,17 +14,18 @@ import com.intellij.psi.tree.ILazyParseableElementTypeBase;
 import com.intellij.psi.tree.ILightLazyParseableElementType;
 import com.intellij.util.CharTable;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Angular2EmbeddedContentTokenType extends IElementType
   implements EmbeddingElementType, ICustomParsingType, ILazyParseableElementTypeBase, ILightLazyParseableElementType {
 
-  protected Angular2EmbeddedContentTokenType(@NotNull String debugName, @Nullable Language language) {
+  protected Angular2EmbeddedContentTokenType(@NotNull @NonNls String debugName, @Nullable Language language) {
     super(debugName, language);
   }
 
-  protected Angular2EmbeddedContentTokenType(@NotNull String debugName, @Nullable Language language, boolean register) {
+  protected Angular2EmbeddedContentTokenType(@NotNull @NonNls String debugName, @Nullable Language language, boolean register) {
     super(debugName, language, register);
   }
 

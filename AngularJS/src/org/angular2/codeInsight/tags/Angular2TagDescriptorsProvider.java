@@ -24,6 +24,7 @@ import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +35,9 @@ import java.util.Set;
 
 public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
 
-  public static final String NG_CONTAINER = "ng-container";
-  public static final String NG_CONTENT = "ng-content";
-  public static final String NG_TEMPLATE = "ng-template";
+  @NonNls public static final String NG_CONTAINER = "ng-container";
+  @NonNls public static final String NG_CONTENT = "ng-content";
+  @NonNls public static final String NG_TEMPLATE = "ng-template";
 
   public static final Set<String> NG_SPECIAL_TAGS = ContainerUtil.newHashSet(NG_CONTAINER, NG_CONTENT, NG_TEMPLATE);
 
@@ -117,6 +118,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
 
   @NotNull
   private static JSImplicitElementImpl createDirective(@NotNull XmlTag xmlTag, @NotNull String name) {
+    //noinspection HardCodedStringLiteral
     return new JSImplicitElementImpl.Builder(name, xmlTag).setTypeString("E;;;").toImplicitElement();
   }
 }

@@ -5,6 +5,7 @@ import org.angular2.entities.metadata.psi.*;
 import org.angular2.entities.metadata.stubs.*;
 import org.angular2.lang.metadata.MetadataJsonLanguage;
 import org.angular2.lang.metadata.psi.MetadataElementType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public interface Angular2MetadataElementTypes {
@@ -34,7 +35,7 @@ public interface Angular2MetadataElementTypes {
 
   final class Angular2MetadataElementType<Stub extends Angular2MetadataElementStub<?>> extends MetadataElementType<Stub> {
 
-    public Angular2MetadataElementType(@NotNull String debugName,
+    public Angular2MetadataElementType(@NotNull @NonNls String debugName,
                                        @NotNull MetadataStubConstructor<? extends Stub> stubConstructor,
                                        @NotNull MetadataElementConstructor<Stub> psiConstructor) {
       super(debugName, MetadataJsonLanguage.INSTANCE, stubConstructor, psiConstructor);

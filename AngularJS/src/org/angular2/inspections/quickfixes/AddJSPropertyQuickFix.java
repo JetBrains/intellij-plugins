@@ -14,14 +14,16 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.ObjectUtils;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.inspections.quickfixes.Angular2FixesPsiUtil.insertJSObjectLiteralProperty;
 import static org.angular2.inspections.quickfixes.Angular2FixesPsiUtil.reformatJSObjectLiteralProperty;
 
 public class AddJSPropertyQuickFix extends LocalQuickFixOnPsiElement {
-  private static final String CARET_MARKER = "___caret___";
+  @NonNls private static final String CARET_MARKER = "___caret___";
 
   private final String myPropertyName;
   private final boolean myUseTemplateString;
@@ -44,14 +46,14 @@ public class AddJSPropertyQuickFix extends LocalQuickFixOnPsiElement {
   @NotNull
   @Override
   public String getText() {
-    return "Add '" + myPropertyName + "' property";
+    return Angular2Bundle.message("angular.quickfix.decorator.add-property.name", myPropertyName);
   }
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   @NotNull
   @Override
   public String getFamilyName() {
-    return "Angular";
+    return Angular2Bundle.message("angular.quickfix.family");
   }
 
   @Override

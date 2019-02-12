@@ -10,6 +10,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
 import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.Nls;
@@ -28,7 +29,7 @@ public class Angular2AnimationTriggerAssignmentInspection extends Angular2HtmlLi
         && attribute.getValueElement() != null
         && !StringUtil.notNullize(attribute.getValue()).isEmpty()) {
       holder.registerProblem(attribute.getValueElement(),
-                             "Assigning animation triggers via @prop=\"exp\" attributes with an expression is invalid.",
+                             Angular2Bundle.message("angular.inspection.template.animation-trigger-assignment"),
                              new ConvertToPropertyBindingQuickFix(info.name),
                              new RemoveAttributeValueQuickFix());
     }
@@ -46,14 +47,14 @@ public class Angular2AnimationTriggerAssignmentInspection extends Angular2HtmlLi
     @NotNull
     @Override
     public String getName() {
-      return "Bind to property [@" + myAnimationTrigger + "]";
+      return Angular2Bundle.message("angular.quickfix.template.bind-to-property.name", myAnimationTrigger);
     }
 
     @Nls
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Angular";
+      return Angular2Bundle.message("angular.quickfix.family");
     }
 
     @Override
@@ -71,14 +72,14 @@ public class Angular2AnimationTriggerAssignmentInspection extends Angular2HtmlLi
     @NotNull
     @Override
     public String getName() {
-      return "Remove attribute value";
+      return Angular2Bundle.message("angular.quickfix.template.remove-attribute-value.name");
     }
 
     @Nls
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Angular";
+      return Angular2Bundle.message("angular.quickfix.family");
     }
 
     @Override

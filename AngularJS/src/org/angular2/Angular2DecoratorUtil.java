@@ -11,6 +11,7 @@ import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
 import org.angularjs.index.AngularJSIndexingHandler;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,29 +23,29 @@ import static com.intellij.util.ObjectUtils.tryCast;
 
 public class Angular2DecoratorUtil {
 
-  public static final String DIRECTIVE_DEC = "Directive";
-  public static final String COMPONENT_DEC = "Component";
-  public static final String PIPE_DEC = "Pipe";
-  public static final String MODULE_DEC = "NgModule";
-  public static final String INPUT_DEC = "Input";
-  public static final String OUTPUT_DEC = "Output";
-  public static final String VIEW_CHILD_DEC = "ViewChild";
+  @NonNls public static final String DIRECTIVE_DEC = "Directive";
+  @NonNls public static final String COMPONENT_DEC = "Component";
+  @NonNls public static final String PIPE_DEC = "Pipe";
+  @NonNls public static final String MODULE_DEC = "NgModule";
+  @NonNls public static final String INPUT_DEC = "Input";
+  @NonNls public static final String OUTPUT_DEC = "Output";
+  @NonNls public static final String VIEW_CHILD_DEC = "ViewChild";
 
-  public static final String NAME_PROP = "name";
-  public static final String SELECTOR_PROP = "selector";
-  public static final String EXPORT_AS_PROP = "exportAs";
-  public static final String INPUTS_PROP = "inputs";
-  public static final String OUTPUTS_PROP = "outputs";
-  public static final String IMPORTS_PROP = "imports";
-  public static final String EXPORTS_PROP = "exports";
-  public static final String DECLARATIONS_PROP = "declarations";
-  public static final String ENTRY_COMPONENTS_PROP = "entryComponents";
-  public static final String BOOTSTRAP_PROP = "bootstrap";
+  @NonNls public static final String NAME_PROP = "name";
+  @NonNls public static final String SELECTOR_PROP = "selector";
+  @NonNls public static final String EXPORT_AS_PROP = "exportAs";
+  @NonNls public static final String INPUTS_PROP = "inputs";
+  @NonNls public static final String OUTPUTS_PROP = "outputs";
+  @NonNls public static final String IMPORTS_PROP = "imports";
+  @NonNls public static final String EXPORTS_PROP = "exports";
+  @NonNls public static final String DECLARATIONS_PROP = "declarations";
+  @NonNls public static final String ENTRY_COMPONENTS_PROP = "entryComponents";
+  @NonNls public static final String BOOTSTRAP_PROP = "bootstrap";
 
-  public static final String TEMPLATE_URL_PROP = "templateUrl";
-  public static final String TEMPLATE_PROP = "template";
-  public static final String STYLE_URLS_PROP = "styleUrls";
-  public static final String STYLES_PROP = "styles";
+  @NonNls public static final String TEMPLATE_URL_PROP = "templateUrl";
+  @NonNls public static final String TEMPLATE_PROP = "template";
+  @NonNls public static final String STYLE_URLS_PROP = "styleUrls";
+  @NonNls public static final String STYLES_PROP = "styles";
 
   public static boolean isLiteralInNgDecorator(@Nullable PsiElement element, @NotNull String propertyName, String... decoratorNames) {
     if (element instanceof JSLiteralExpression) {
@@ -151,5 +152,9 @@ public class Angular2DecoratorUtil {
   public static JSProperty getProperty(@Nullable ES6Decorator decorator, @NotNull String name) {
     return doIfNotNull(getObjectLiteralInitializer(decorator),
                        expr -> expr.findProperty(name));
+  }
+
+  public static boolean isDirective(@NotNull String decoratorName) {
+    return DIRECTIVE_DEC.equals(decoratorName) || COMPONENT_DEC.equals(decoratorName);
   }
 }

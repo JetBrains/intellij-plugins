@@ -17,6 +17,7 @@ import com.intellij.xml.util.HtmlUtil;
 import org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +27,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Angular2CssElementDescriptionProvider extends CssElementDescriptorProvider {
-  private static final String NG_DEEP = "ng-deep";
+  @NonNls private static final String NG_DEEP = "ng-deep";
   private static final Set<CssPseudoSelectorDescriptorStub> PSEUDO_SELECTORS =
     Collections.singleton(new CssPseudoSelectorDescriptorStub(NG_DEEP, true));
 

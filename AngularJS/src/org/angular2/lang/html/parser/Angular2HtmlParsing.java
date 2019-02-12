@@ -12,6 +12,7 @@ import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.xml.util.XmlUtil;
 import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.jetbrains.annotations.NotNull;
 
@@ -116,7 +117,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         interpolation.drop();
       }
       else {
-        interpolation.error("Unterminated interpolation");
+        interpolation.error(Angular2Bundle.message("angular.parse.template.unterminated-interpolation"));
       }
     }
     else if (tt == EXPANSION_FORM_START) {
@@ -159,7 +160,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       advance();
       attrName.error(attributeInfo.error);
     }
-    else if (attributeInfo.elementType == REFERENCE) {
+    else if (attributeInfo.type == Angular2AttributeType.REFERENCE) {
       PsiBuilder.Marker attrName = mark();
       advance();
       attrName.collapse(Angular2HtmlReferenceTokenType.INSTANCE);
@@ -167,7 +168,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     else {
       advance();
     }
-    IElementType attributeElementType = attributeInfo.elementType;
+    IElementType attributeElementType = attributeInfo.type.getElementType();
     if (token() == XML_EQ) {
       advance();
       attributeElementType = parseAttributeValue(attributeElementType, attributeInfo.name);
@@ -273,7 +274,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     }
     if (token() != EXPANSION_FORM_END) {
       expansionForm
-        .error("Unterminated expansion form.");
+        .error(Angular2Bundle.message("angular.parse.template.unterminated-expansion-form"));
       expansionForm = expansionForm.precede();
     }
     else {
@@ -288,8 +289,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     expansionForm = mark();
     assert token() == EXPANSION_FORM_START;
     advance(); //consume LBRACE
-    expansionForm
-      .error("Unterminated expansion form. Do you have an unescaped \"{\" in your template? Use \"{{ '{' }}\") to escape it.");
+    expansionForm.error(Angular2Bundle.message("angular.parse.template.unterminated-expansion-form-critical"));
   }
 
   private boolean remapTokensUntilComma(IElementType textType) {
@@ -299,7 +299,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     }
     start.collapse(textType);
     if (token() != XML_COMMA) {
-      start.precede().error("Invalid ICU message. Expected ','.");
+      start.precede().error(Angular2Bundle.message("angular.parse.template.invalid-icu-message-expected-comma"));
       return false;
     }
     advance();
@@ -312,14 +312,14 @@ public class Angular2HtmlParsing extends HtmlParsing {
       advance(); // value
       skipRealWhiteSpaces();
       if (token() != EXPANSION_FORM_CASE_START) {
-        expansionFormCase.error("Invalid ICU message. Missing '{'.");
+        expansionFormCase.error(Angular2Bundle.message("angular.parse.template.invalid-icu-message-expected-left-brace"));
         expansionFormCase.precede().done(EXPANSION_FORM_CASE);
         return false;
       }
     }
     else if (token() == EXPANSION_FORM_CASE_START) {
       advance();
-      expansionFormCase.error("Invalid ICU message. Missing case value.");
+      expansionFormCase.error(Angular2Bundle.message("angular.parse.template.invalid-icu-message-missing-case-value"));
       expansionFormCase = expansionFormCase.precede();
     }
     else {
@@ -337,7 +337,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
         level--;
       }
       else if (tt == null) {
-        content.error("Invalid ICU message. Missing '}'.");
+        content.error(Angular2Bundle.message("angular.parse.template.invalid-icu-message-missing-right-brace"));
         expansionFormCase.done(EXPANSION_FORM_CASE);
         return false;
       }

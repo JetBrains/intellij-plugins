@@ -14,6 +14,7 @@ import org.angular2.lang.html.lexer.Angular2HtmlLexer;
 import org.angular2.lang.html.lexer._Angular2HtmlLexer;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -29,9 +30,9 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
                                                                                     Angular2AttributeType.PROPERTY_BINDING,
                                                                                     Angular2AttributeType.TEMPLATE_BINDINGS);
 
-  static final IElementType EXPRESSION_WHITE_SPACE = new IElementType("NG:EXPRESSION_WHITE_SPACE", Angular2Language.INSTANCE);
-  static final IElementType EXPANSION_FORM_CONTENT = new IElementType("NG:EXPANSION_FORM_CONTENT", Angular2HtmlLanguage.INSTANCE);
-  static final IElementType EXPANSION_FORM_COMMA = new IElementType("NG:EXPANSION_FORM_COMMA", Angular2HtmlLanguage.INSTANCE);
+  @NonNls static final IElementType EXPRESSION_WHITE_SPACE = new IElementType("NG:EXPRESSION_WHITE_SPACE", Angular2Language.INSTANCE);
+  @NonNls static final IElementType EXPANSION_FORM_CONTENT = new IElementType("NG:EXPANSION_FORM_CONTENT", Angular2HtmlLanguage.INSTANCE);
+  @NonNls static final IElementType EXPANSION_FORM_COMMA = new IElementType("NG:EXPANSION_FORM_COMMA", Angular2HtmlLanguage.INSTANCE);
 
   public Angular2HtmlHighlightingLexer(boolean tokenizeExpansionForms,
                                        @Nullable Pair<String, String> interpolationConfig,

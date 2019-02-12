@@ -70,7 +70,7 @@ export class MyComp1 {
         LIST2,
         [
             MyComp1,
-            <error descr="Expression does not resolve to an array of class types or a class type.">createComponent()</error>
+            createComponent()
         ]
     ]
 })

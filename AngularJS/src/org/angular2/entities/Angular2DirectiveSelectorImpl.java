@@ -71,6 +71,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
   @NotNull
   @Override
   public String getText() {
+    //noinspection HardCodedStringLiteral
     return myText == null ? "<null>" : myText;
   }
 

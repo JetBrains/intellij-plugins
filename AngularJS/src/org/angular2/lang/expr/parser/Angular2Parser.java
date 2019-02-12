@@ -13,14 +13,15 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.Consumer;
+import org.angular2.lang.Angular2Bundle;
+import org.jetbrains.annotations.NonNls;
 
 import static org.angular2.lang.expr.lexer.Angular2TokenTypes.*;
 import static org.angular2.lang.expr.parser.Angular2ElementTypes.*;
 import static org.angular2.lang.expr.parser.Angular2StubElementTypes.PROPERTY;
 
-public class Angular2Parser
-  extends
-  JavaScriptParser<Angular2Parser.Angular2ExpressionParser, Angular2Parser.Angular2StatementParser, FunctionParser, JSPsiTypeParser> {
+public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2ExpressionParser,
+  Angular2Parser.Angular2StatementParser, FunctionParser, JSPsiTypeParser> {
 
   /*
   Angular Expression AST mapping
@@ -94,6 +95,8 @@ public class Angular2Parser
     new Angular2Parser(builder).parseJS(root);
   }
 
+  @NonNls private static final String $IMPLICIT = "$implicit";
+
   private final boolean myIsAction;
   private final boolean myIsSimpleBinding;
   private final boolean myIsJavaScript;
@@ -138,14 +141,14 @@ public class Angular2Parser
         IElementType tokenType = builder.getTokenType();
         if (tokenType == SEMICOLON) {
           if (!myIsAction) {
-            builder.error("binding expression cannot contain chained expression");
+            builder.error(Angular2Bundle.message("angular.parse.expression.chained-expression-in-binding"));
           }
           while (builder.getTokenType() == SEMICOLON) {
             builder.advanceLexer();
           }
         }
         else if (tokenType != null) {
-          builder.error("unexpected token '" + builder.getTokenText() + "'");
+          builder.error(Angular2Bundle.message("angular.parse.expression.unexpected-token", builder.getTokenText()));
         }
       }
       switch (count) {
@@ -218,7 +221,7 @@ public class Angular2Parser
             name = parseTemplateBindingKey(false);
           }
           else {
-            name = "$implicit";
+            name = $IMPLICIT;
           }
         }
         else if (builder.getTokenType() == AS_KEYWORD) {
@@ -260,7 +263,7 @@ public class Angular2Parser
           else {
             key.drop();
           }
-          builder.error("Identifier or keyword expected");
+          builder.error(Angular2Bundle.message("angular.parse.expression.expected-identifier-or-keyword"));
           builder.advanceLexer();
           return result.toString();
         }
@@ -320,10 +323,10 @@ public class Angular2Parser
 
       while (builder.getTokenType() == OR) {
         if (myIsSimpleBinding) {
-          builder.error("host binding expression cannot contain pipes");
+          builder.error(Angular2Bundle.message("angular.parse.expression.pipe-in-host-binding"));
         }
         else if (myIsAction) {
-          builder.error("action expressions cannot contain pipes");
+          builder.error(Angular2Bundle.message("angular.parse.expression.pipe-in-action"));
         }
         firstParam.done(PIPE_LEFT_SIDE_ARGUMENT);
         builder.advanceLexer();
@@ -334,7 +337,7 @@ public class Angular2Parser
           pipeName.done(PIPE_REFERENCE_EXPRESSION);
         }
         else {
-          builder.error("expected identifier or keyword");
+          builder.error(Angular2Bundle.message("angular.parse.expression.expected-identifier-or-keyword"));
         }
         PsiBuilder.Marker params = builder.mark();
         while (builder.getTokenType() == COLON) {
@@ -375,7 +378,7 @@ public class Angular2Parser
       if (builder.getTokenType() == EQ) {
         definitionExpr.done(JSStubElementTypes.DEFINITION_EXPRESSION);
         if (!myIsAction && !myIsJavaScript) {
-          builder.error("binding expressions cannot contain assignments");
+          builder.error(Angular2Bundle.message("angular.parse.expression.assignment-in-binding"));
         }
         builder.advanceLexer();
         if (!parsePipe()) {
@@ -424,7 +427,7 @@ public class Angular2Parser
       if (elementType != IDENTIFIER
           && elementType != STRING_LITERAL
           && !KEYWORDS.contains(elementType)) {
-        builder.error("expected identifier, keyword, or string");
+        builder.error(Angular2Bundle.message("angular.parse.expression.expected-identifier-keyword-or-string"));
         return false;
       }
       return true;

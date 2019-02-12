@@ -6,6 +6,7 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.codeInsight.attributes.Angular2AttributesProvider;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,7 @@ public class Angular2CssBoundAttributeProvider implements Angular2AttributesProv
 
   private static final String CANONICAL_PREFIX_BASE = PROPERTY_BINDING.getCanonicalPrefix();
 
-  private static final String BASE_PREFIX = "class.";
+  @NonNls private static final String BASE_PREFIX = "class.";
   public static final String SHORT_PREFIX = "[" + BASE_PREFIX;
   private static final String CANONICAL_PREFIX = CANONICAL_PREFIX_BASE + BASE_PREFIX;
 

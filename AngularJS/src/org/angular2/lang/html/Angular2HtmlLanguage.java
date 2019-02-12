@@ -3,6 +3,7 @@ package org.angular2.lang.html;
 
 import com.intellij.lang.html.HTMLLanguage;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +23,6 @@ public class Angular2HtmlLanguage extends HTMLLanguage {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "Angular HTML Template";
+    return Angular2Bundle.message("angular.description.angular-html-template");
   }
 }

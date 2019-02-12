@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ArrayUtil;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
@@ -82,8 +83,8 @@ public class Angular2ExpressionTypeInspection extends LocalInspectionTool {
         JSType actualType = JSResolveUtil.getExpressionJSType(expression);
         if (actualType != null
             && !expectedType.isDirectlyAssignableType(actualType, JSTypeComparingContextService.getProcessingContextWithCache(binding))) {
-          holder.registerProblem(expression, "Type '" + actualType.getTypeText() + "' is not assignable to type '"
-                                             + expectedType.getTypeText() + "'");
+          holder.registerProblem(expression, Angular2Bundle.message("angular.inspection.template.type-not-assignable",
+                                                                    actualType.getTypeText(), expectedType.getTypeText()));
         }
       }
     };

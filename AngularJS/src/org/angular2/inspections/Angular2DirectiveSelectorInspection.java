@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.psi.PsiElementVisitor;
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,8 @@ public class Angular2DirectiveSelectorInspection extends LocalInspectionTool {
           String text;
           if (selector == null) {
             if (DIRECTIVE_DEC.equals(decorator.getDecoratorName())) {
-              holder.registerProblem(initializer, "Directive is missing required 'selector' property.",
+              holder.registerProblem(initializer,
+                                     Angular2Bundle.message("angular.inspection.decorator.directive-missing-selector-property"),
                                      new AddJSPropertyQuickFix(initializer, SELECTOR_PROP, "", 0, false));
             }
           }

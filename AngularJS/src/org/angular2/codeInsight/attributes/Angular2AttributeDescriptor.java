@@ -50,6 +50,7 @@ import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getCustomNgAttrs;
 import static org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.NG_CLASS_ATTR;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
@@ -353,10 +354,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     if (canonicalPrefix != null && prefixMatcher.getPrefix().startsWith(canonicalPrefix)) {
       return new LookupElementInfo(Objects.requireNonNull(myInfo.type.buildName(myInfo.getFullName(), true)),
                                    singletonList(pair(canonicalPrefix, "")),
-                                   myInfo.type == EVENT ? newArrayList(getName(), "on" + myInfo.getFullName()) : null);
+                                   myInfo.type == EVENT ? newArrayList(getName(), EVENT_ATTR_PREFIX + myInfo.getFullName()) : null);
     }
     return new LookupElementInfo(getName(), emptyList(),
-                                 myInfo.type == EVENT ? newArrayList(getName(), "on" + myInfo.getFullName()) : null);
+                                 myInfo.type == EVENT ? newArrayList(getName(), EVENT_ATTR_PREFIX + myInfo.getFullName()) : null);
   }
 
   protected boolean shouldInsertHandlerRemoveLeftover() {
@@ -411,7 +412,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                    && expandStringLiteralTypes(property.getType()).isDirectlyAssignableType(STRING_TYPE, null)));
   }
 
-  @Contract("null->null")
+  @Contract("null->null") //NON-NLS
   private static JSType expandStringLiteralTypes(@Nullable JSType type) {
     if (type == null) return null;
     type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);

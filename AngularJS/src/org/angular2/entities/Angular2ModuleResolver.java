@@ -11,6 +11,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -22,9 +23,9 @@ import static org.angular2.Angular2DecoratorUtil.*;
 
 public class Angular2ModuleResolver<T extends PsiElement> {
 
-  public static final String NG_MODULE_PROP = "ngModule";
+  @NonNls public static final String NG_MODULE_PROP = "ngModule";
 
-  private static final String KEYS_PREFIX = "angular.moduleResolver.";
+  @NonNls private static final String KEYS_PREFIX = "angular.moduleResolver.";
   private static final Key<CachedValue<ResolvedModuleList<Angular2Declaration>>> DECLARATIONS_KEY =
     new Key<>(KEYS_PREFIX + DECLARATIONS_PROP);
   private static final Key<CachedValue<ResolvedModuleList<Angular2Module>>> IMPORTS_KEY =
@@ -32,10 +33,10 @@ public class Angular2ModuleResolver<T extends PsiElement> {
   private static final Key<CachedValue<ResolvedModuleList<Angular2Entity>>> EXPORTS_KEY =
     new Key<>(KEYS_PREFIX + EXPORTS_PROP);
 
-  private final Supplier<T> mySourceSupplier;
+  private final Supplier<? extends T> mySourceSupplier;
   private final SymbolCollector<T> mySymbolCollector;
 
-  public Angular2ModuleResolver(@NotNull Supplier<T> sourceSupplier,
+  public Angular2ModuleResolver(@NotNull Supplier<? extends T> sourceSupplier,
                                 @NotNull SymbolCollector<T> symbolCollector) {
     mySourceSupplier = sourceSupplier;
     mySymbolCollector = symbolCollector;

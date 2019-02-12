@@ -23,6 +23,7 @@ import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.source.Angular2SourceDeclaration;
 import org.angular2.entities.source.Angular2SourceModule;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,21 +57,22 @@ public class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionAct
   @NotNull
   @Override
   public String getText() {
-    return "Declare " + myDeclarationName + " in " +
-           (myModuleName == null ? "an NgModule" : myModuleName);
+    return Angular2Bundle.message(myModuleName == null ? "angular.quickfix.ngmodule.declare.name.choice"
+                                                       : "angular.quickfix.ngmodule.declare.name",
+                                  myDeclarationName, myModuleName);
   }
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   @NotNull
   @Override
   public String getFamilyName() {
-    return "Angular";
+    return Angular2Bundle.message("angular.quickfix.family");
   }
 
   @Override
   public void invoke(@NotNull Project project,
                      @NotNull PsiFile file,
-                     @Nullable("is null when called from inspection") Editor editor,
+                     @Nullable Editor editor,
                      @NotNull PsiElement startElement,
                      @NotNull PsiElement endElement) {
     if (myDeclarationDecorator.getElement() == null) return;
@@ -126,7 +128,7 @@ public class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionAct
 
     @Override
     protected String getModuleSelectionPopupTitle() {
-      return "Select where to declare " + myDeclarationName;
+      return Angular2Bundle.message("angular.quickfix.ngmodule.declare.select", myDeclarationName);
     }
 
     @NotNull
@@ -165,7 +167,7 @@ public class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionAct
                              @NotNull String ignored,
                              @NotNull JSElement moduleClassToDeclareIn,
                              @NotNull PsiElement place) {
-      if (myContext == null | !myContext.isValid()) {
+      if (myContext == null || !myContext.isValid()) {
         return;
       }
       Angular2SourceModule module = ObjectUtils.tryCast(Angular2EntitiesProvider.getModule(moduleClassToDeclareIn),

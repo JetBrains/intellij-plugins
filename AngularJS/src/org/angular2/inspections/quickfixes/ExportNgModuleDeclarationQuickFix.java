@@ -18,6 +18,7 @@ import com.intellij.util.ObjectUtils;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.source.Angular2SourceDeclaration;
 import org.angular2.entities.source.Angular2SourceModule;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,20 +42,20 @@ public class ExportNgModuleDeclarationQuickFix extends LocalQuickFixAndIntention
   @NotNull
   @Override
   public String getText() {
-    return "Export " + myDeclarationName + " and import NgModule";
+    return Angular2Bundle.message("angular.quickfix.ngmodule.export.name", myDeclarationName);
   }
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
   @NotNull
   @Override
   public String getFamilyName() {
-    return "Angular";
+    return Angular2Bundle.message("angular.quickfix.family");
   }
 
   @Override
   public void invoke(@NotNull Project project,
                      @NotNull PsiFile file,
-                     @Nullable("is null when called from inspection") Editor editor,
+                     @Nullable Editor editor,
                      @NotNull PsiElement startElement,
                      @NotNull PsiElement endElement) {
     if (myDeclarationDecorator.getElement() == null) return;

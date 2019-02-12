@@ -10,11 +10,12 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.util.*;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2PropertyImpl extends JSPropertyImpl {
 
-  private static final Key<ParameterizedCachedValue<PsiReference[], Angular2PropertyImpl>> REFERENCES_KEY =
+  @NonNls private static final Key<ParameterizedCachedValue<PsiReference[], Angular2PropertyImpl>> REFERENCES_KEY =
     new Key<>("ng.property.references");
   private static final ParameterizedCachedValueProvider<PsiReference[], Angular2PropertyImpl> REFERENCES_PROVIDER =
     param -> CachedValueProvider.Result.create(param.createRefs(), PsiModificationTracker.MODIFICATION_COUNT);

@@ -11,6 +11,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.ObjectUtils;
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase;
 import org.angular2.entities.metadata.stubs.Angular2MetadataReferenceStub;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +34,8 @@ public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataCla
   public String getName() {
     return getCachedClassBasedValue(cls -> cls != null
                                            ? cls.getName()
-                                           : StringUtil.notNullize(getStub().getMemberName(), "<unnamed>"));
+                                           : StringUtil.notNullize(getStub().getMemberName(),
+                                                                   Angular2Bundle.message("angular.description.unnamed")));
   }
 
   public Angular2MetadataClassBase<? extends Angular2MetadataClassStubBase> getExtendedClass() {

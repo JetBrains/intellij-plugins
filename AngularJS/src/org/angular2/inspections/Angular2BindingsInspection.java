@@ -21,6 +21,7 @@ import org.angular2.codeInsight.tags.Angular2TagDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
@@ -74,44 +75,41 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
       Angular2FixesFactory.addUnresolvedDeclarationFixes(attribute, quickFixes);
     }
     quickFixes.add(new RemoveAttributeQuickFix(attribute.getName()));
-    String message;
     ProblemHighlightType severity;
     // TODO take into account 'CUSTOM_ELEMENTS_SCHEMA' and 'NO_ERRORS_SCHEMA' value of '@NgModule.schemas'
     severity = (info.type != EVENT || templateTag) && scope.isFullyResolved()
                ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                : ProblemHighlightType.WEAK_WARNING;
+    final String messageKey;
     switch (info.type) {
       case EVENT:
         if (templateTag) {
-          message = "Event '" + info.name + "' is not emitted by any applicable directive on an embedded template.";
+          messageKey = "angular.inspection.template.embedded.event-not-emitted";
         }
         else {
-          message = "Event '" + info.name + "' is not emitted by any applicable directives nor by '"
-                    + attribute.getParent().getName() + "' element.";
+          messageKey = "angular.inspection.template.event-not-emitted";
         }
         break;
       case PROPERTY_BINDING:
         if (templateTag) {
-          message =
-            "Property '" + info.name + "' is not provided by any applicable directive on an embedded template.";
+          messageKey = "angular.inspection.template.embedded.property-not-provided";
         }
         else {
-          message =
-            "Property '" + info.name + "' is not provided by any applicable directives nor by '" +
-            attribute.getParent().getName() +
-            "' element.";
+          messageKey = "angular.inspection.template.property-not-provided";
         }
         break;
       case BANANA_BOX_BINDING:
-        message = "Can't bind to '" + attribute.getName() + "' since it is not provided by any applicable directives.";
+        messageKey = "angular.inspection.template.banana-box-binding-not-provided";
         break;
       case REGULAR:
-        message = "Directive providing attribute " + info.name + " is out of the current module's scope.";
+        messageKey = "angular.inspection.template.attribute-directive-out-of-scope";
         break;
       default:
         return;
     }
-    holder.registerProblem(attribute.getNameElement(), message, severity,
+    holder.registerProblem(attribute.getNameElement(),
+                           Angular2Bundle.message(messageKey, info.name, attribute.getParent().getName()),
+                           severity,
                            quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
   }
 
@@ -136,7 +134,7 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
       Angular2FixesFactory.addUnresolvedDeclarationFixes(tag, quickFixes);
     }
     holder.registerProblem(tagName,
-                           "Component or directive matching " + tagName.getText() + " element is out of the current module's scope",
+                           Angular2Bundle.message("angular.inspection.template.tag-directive-out-of-scope", tagName.getText()),
                            scope.isFullyResolved() ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                                    : ProblemHighlightType.WEAK_WARNING,
                            quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
@@ -152,7 +150,8 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
       List<LocalQuickFix> fixes = new SmartList<>();
       Angular2FixesFactory.addUnresolvedDeclarationFixes(bindings, fixes);
       holder.registerProblem(attribute.getNameElement(),
-                             "No directive is matched on attribute '" + bindings.getTemplateName() + "'.",
+                             Angular2Bundle.message("angular.inspection.template.embedded.no-directive-matched",
+                                                    bindings.getTemplateName()),
                              ProblemHighlightType.WEAK_WARNING,
                              fixes.toArray(LocalQuickFix.EMPTY_ARRAY));
       return;
@@ -170,8 +169,8 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
           PsiElement element = ObjectUtils.notNull(binding.getKeyElement(), attribute.getNameElement());
           List<LocalQuickFix> fixes = new SmartList<>();
           Angular2FixesFactory.addUnresolvedDeclarationFixes(binding, fixes);
-          holder.registerProblem(element, "Property '" + binding.getKey() +
-                                          "' is not provided by any applicable directive on an embedded template.",
+          holder.registerProblem(element,
+                                 Angular2Bundle.message("angular.inspection.template.embedded.property-not-provided", binding.getKey()),
                                  scope.isFullyResolved() ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                                          : ProblemHighlightType.WEAK_WARNING,
                                  fixes.toArray(LocalQuickFix.EMPTY_ARRAY));

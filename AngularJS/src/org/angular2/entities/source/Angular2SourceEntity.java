@@ -14,6 +14,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2EntityUtils;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -59,7 +60,7 @@ public abstract class Angular2SourceEntity extends UserDataHolderBase implements
   @NotNull
   @Override
   public String getName() {
-    return StringUtil.notNullize(myClass.getName(), "<unnamed>");
+    return StringUtil.notNullize(myClass.getName(), Angular2Bundle.message("angular.description.unnamed"));
   }
 
   @Override

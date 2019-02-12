@@ -23,6 +23,7 @@ public class Angular2AttributeNameVariantsBuilder {
       }
     }
     if (includeDataPrefixVariants) {
+      //noinspection HardCodedStringLiteral
       return ContainerUtil.concat(result, ContainerUtil.map2List(result, r -> "data-" + r));
     }
     return result;

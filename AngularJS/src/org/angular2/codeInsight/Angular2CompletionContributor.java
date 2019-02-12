@@ -48,11 +48,13 @@ import org.angular2.css.Angular2CssAttributeNameCompletionProvider;
 import org.angular2.css.Angular2CssExpressionCompletionProvider;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.angular2.lang.expr.psi.Angular2PipeLeftSideArgument;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,7 +73,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
   private static final JSLookupPriority NG_PRIVATE_VARIABLE_PRIORITY = JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY_EXOTIC;
   private static final JSLookupPriority NG_$ANY_PRIORITY = JSLookupPriority.TOP_LEVEL_SYMBOLS_FROM_OTHER_FILES;
 
-  private static final Set<String> NG_LIFECYCLE_HOOKS = newHashSet(
+  @NonNls private static final Set<String> NG_LIFECYCLE_HOOKS = newHashSet(
     "ngOnChanges", "ngOnInit", "ngDoCheck", "ngOnDestroy", "ngAfterContentInit",
     "ngAfterContentChecked", "ngAfterViewInit", "ngAfterViewChecked");
 
@@ -127,7 +129,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
           Angular2Pipe match = bestMatch.first;
           LookupElementBuilder builder = LookupElementBuilder.create(pipeEntry.getKey())
             .withIcon(AngularJSIcons.Angular2)
-            .withTypeText("pipe", null, true)
+            .withTypeText(Angular2Bundle.message("angular.description.pipe"), null, true)
             // TODO auto-import on insert
             .withInsertHandler(new JSLookupElementInsertHandler(false, null));
           if (bestMatch.second != DeclarationProximity.IN_SCOPE) {
@@ -193,6 +195,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                       : null;
     }
 
+    @SuppressWarnings("HardCodedStringLiteral")
     private static String renderPipeTypeText(@NotNull TypeScriptFunction f, @NotNull String pipeName) {
       StringBuilder result = new StringBuilder();
       result.append('[');

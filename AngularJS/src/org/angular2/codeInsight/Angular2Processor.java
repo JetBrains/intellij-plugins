@@ -55,14 +55,16 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class Angular2Processor {
-  private static volatile Map<String, String> TAG_TO_CLASS;
+  @NonNls private static volatile Map<String, String> TAG_TO_CLASS;
 
-  public static final String $EVENT = "$event";
-  public static final String $ANY = "$any";
+  @NonNls public static final String $EVENT = "$event";
+  @NonNls public static final String $ANY = "$any";
+
+  @NonNls private static final String LEGACY_TEMPLATE_TAG = "template";
 
   public static boolean isTemplateTag(@Nullable String tagName) {
     return Angular2TagDescriptorsProvider.NG_TEMPLATE.equalsIgnoreCase(tagName)
-           || "template".equalsIgnoreCase(tagName);
+           || LEGACY_TEMPLATE_TAG.equalsIgnoreCase(tagName);
   }
 
   public static void process(final @NotNull PsiElement element, @NotNull final Consumer<? super JSPsiElementBase> consumer) {
@@ -162,6 +164,7 @@ public class Angular2Processor {
                                   JSTypeSourceFactory.createTypeSource(scope, true));
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   private static synchronized void initTagToClassMap(@NotNull Project project) {
     if (TAG_TO_CLASS != null) {
       return;
@@ -322,11 +325,9 @@ public class Angular2Processor {
 
     @Override
     public void visitTemplateBindings(Angular2HtmlTemplateBindings bindings) {
-      if (bindings.getBindings() != null) {
-        for (Angular2TemplateBinding b : bindings.getBindings().getBindings()) {
-          if (b.keyIsVar() && b.getVariableDefinition() != null) {
-            addElement(b.getVariableDefinition());
-          }
+      for (Angular2TemplateBinding b : bindings.getBindings().getBindings()) {
+        if (b.keyIsVar() && b.getVariableDefinition() != null) {
+          addElement(b.getVariableDefinition());
         }
       }
     }
@@ -447,6 +448,7 @@ public class Angular2Processor {
 
     private Angular2$AnyScope(@NotNull PsiElement context) {
       super(null);
+      //noinspection HardCodedStringLiteral
       $any = new JSImplicitElementImpl.Builder($ANY, context)
         .setTypeString("*")
         .setParameters(Collections.singletonList(

@@ -12,6 +12,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.NotNull;
@@ -31,12 +32,14 @@ public class Angular2MatchingComponentsInspection extends Angular2HtmlLikeTempla
       .shiftLeft(tag.getTextOffset());
     if (isTemplateTag(tag.getName())) {
       if (!components.isEmpty()) {
-        holder.registerProblem(tag, startTag, "Components on an embedded template: " + renderDirectiveList(components));
+        holder.registerProblem(tag, startTag, Angular2Bundle.message("angular.inspection.template.embedded.components",
+                                                                     renderDirectiveList(components)));
       }
     }
     else {
       if (components.size() > 1) {
-        holder.registerProblem(tag, startTag, "More than one component matched on this element: " + renderDirectiveList(components));
+        holder.registerProblem(tag, startTag, Angular2Bundle.message("angular.inspection.template.element-with-many-components",
+                                                                     renderDirectiveList(components)));
       }
     }
   }
@@ -52,7 +55,8 @@ public class Angular2MatchingComponentsInspection extends Angular2HtmlLikeTempla
         new Angular2ApplicableDirectivesProvider(Angular2TemplateBindings.get(attribute)).getMatched(),
         d -> d.isComponent() && scope.contains(d));
       if (!components.isEmpty()) {
-        holder.registerProblem(attribute, "Components on an embedded template: " + renderDirectiveList(components));
+        holder.registerProblem(attribute, Angular2Bundle.message("angular.inspection.template.embedded.components",
+                                                                 renderDirectiveList(components)));
       }
     }
   }
@@ -62,7 +66,9 @@ public class Angular2MatchingComponentsInspection extends Angular2HtmlLikeTempla
     for (int i = 0; i < directives.size(); i++) {
       if (i > 0) {
         if (i == directives.size() - 1) {
-          result.append(" and ");
+          result.append(' ');
+          result.append(Angular2Bundle.message("angular.inspection.template.and-separator"));
+          result.append(' ');
         }
         else {
           result.append(", ");

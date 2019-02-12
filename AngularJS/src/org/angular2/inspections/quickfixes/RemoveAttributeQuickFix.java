@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,14 +21,14 @@ public class RemoveAttributeQuickFix implements LocalQuickFix {
   @NotNull
   @Override
   public String getName() {
-    return "Remove '" + myAttributeName + "' attribute";
+    return Angular2Bundle.message("angular.quickfix.template.remove-attribute.name", myAttributeName);
   }
 
   @Nls
   @NotNull
   @Override
   public String getFamilyName() {
-    return "Angular";
+    return Angular2Bundle.message("angular.quickfix.family");
   }
 
   @Override

@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +23,12 @@ public class Angular2EmptyEventBindingInspection extends Angular2HtmlLikeTemplat
     if (descriptor.getInfo().type == Angular2AttributeType.EVENT) {
       XmlAttributeValue value = attribute.getValueElement();
       if (value == null || value.getTextLength() == 0) {
-        holder.registerProblem(attribute, "Event binding attribute must have a value.", new CreateAttributeQuickFix());
+        holder.registerProblem(attribute,
+                               Angular2Bundle.message("angular.inspection.template.empty-event-binding-handler"),
+                               new CreateAttributeQuickFix());
       }
       else if (value.getValue().trim().isEmpty()) {
-        holder.registerProblem(value, "Empty expressions in event bindings are not allowed.");
+        holder.registerProblem(value, Angular2Bundle.message("angular.inspection.template.empty-event-binding-handler"));
       }
     }
   }
@@ -35,14 +38,14 @@ public class Angular2EmptyEventBindingInspection extends Angular2HtmlLikeTemplat
     @NotNull
     @Override
     public String getName() {
-      return "Add attribute value";
+      return Angular2Bundle.message("angular.quickfix.template.add-attribute-value.name");
     }
 
     @Nls
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Angular";
+      return Angular2Bundle.message("angular.quickfix.family");
     }
 
     @Override

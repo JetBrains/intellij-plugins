@@ -28,6 +28,7 @@ import static org.angular2.entities.Angular2ModuleResolver.NG_MODULE_PROP;
 public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity> {
 
   private final Class<T> myEntityClass;
+  private final boolean myAcceptNgModuleWithProviders;
   private final JSElementVisitor myResultsVisitor = new JSElementVisitor() {
     @Override
     public void visitJSClass(JSClass aClass) {
@@ -63,6 +64,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
 
   public Angular2SourceEntityListProcessor(@NotNull Class<T> entityClass) {
     myEntityClass = entityClass;
+    myAcceptNgModuleWithProviders = entityClass.isAssignableFrom(Angular2Module.class);
   }
 
   protected final List<PsiElement> resolve(PsiElement t) {
@@ -71,7 +73,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     return result;
   }
 
-  protected JSElementVisitor createResolveVisitor(SmartList<PsiElement> result) {
+  private JSElementVisitor createResolveVisitor(SmartList<PsiElement> result) {
     return new JSElementVisitor() {
       @Override
       public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
@@ -80,8 +82,10 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
 
       @Override
       public void visitJSObjectLiteralExpression(JSObjectLiteralExpression node) {
-        ContainerUtil.addIfNotNull(result, doIfNotNull(node.findProperty(NG_MODULE_PROP),
-                                                       JSProperty::getValue));
+        if (myAcceptNgModuleWithProviders) {
+          ContainerUtil.addIfNotNull(result, doIfNotNull(node.findProperty(NG_MODULE_PROP),
+                                                         JSProperty::getValue));
+        }
       }
 
       @Override

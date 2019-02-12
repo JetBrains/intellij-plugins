@@ -32,6 +32,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlReference;
 import org.angular2.lang.html.psi.Angular2HtmlVariable;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +47,8 @@ import static java.util.Collections.singletonList;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
+
+  @NonNls public static final String EVENT_ATTR_PREFIX = "on";
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
                                                               @NotNull Function<XmlTag, XmlAttributeDescriptor[]> attrDescrProvider) {
@@ -78,8 +81,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     return CUSTOM_NG_ATTRS;
   }
 
-  private static final List<String> CUSTOM_NG_ATTRS = singletonList("i18n");
-  private static final Key<CachedValue<List<XmlAttributeDescriptor>>> STANDARD_PROPERTIES_KEY =
+  @NonNls private static final List<String> CUSTOM_NG_ATTRS = singletonList("i18n");
+  @NonNls private static final Key<CachedValue<List<XmlAttributeDescriptor>>> STANDARD_PROPERTIES_KEY =
     new Key<>("angular.standard.properties");
 
   @Override
@@ -225,7 +228,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   public static List<String> getStandardTagEventAttributeNames(@NotNull XmlTag xmlTag) {
     return ContainerUtil.mapNotNull(getDefaultAttributeDescriptors(xmlTag), attrDescriptor -> {
       String name = attrDescriptor.getName();
-      if (name.startsWith("on")) {
+      if (name.startsWith(EVENT_ATTR_PREFIX)) {
         return name;
       }
       return null;
@@ -254,7 +257,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
             }
             dependencies.add(propertyDeclaration.getContainingFile());
             String name;
-            if (property.getMemberName().startsWith("on")) {
+            if (property.getMemberName().startsWith(EVENT_ATTR_PREFIX)) {
               name = EVENT.buildName(property.getMemberName().substring(2));
             }
             else {

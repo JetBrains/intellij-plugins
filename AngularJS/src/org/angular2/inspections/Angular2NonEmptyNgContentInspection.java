@@ -11,6 +11,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlTagChild;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +27,7 @@ public class Angular2NonEmptyNgContentInspection extends Angular2HtmlLikeTemplat
                                             || !el.getText().trim().isEmpty()) != null) {
         holder.registerProblem(tag, new TextRange(content[0].getTextRangeInParent().getStartOffset(),
                                                   content[content.length - 1].getTextRangeInParent().getEndOffset()),
-                               "<ng-content> element cannot have content.",
+                               Angular2Bundle.message("angular.inspection.template.ng-content-with-content"),
                                new RemoveContentQuickFix()
         );
       }
@@ -38,14 +39,14 @@ public class Angular2NonEmptyNgContentInspection extends Angular2HtmlLikeTemplat
     @NotNull
     @Override
     public String getName() {
-      return "Remove content";
+      return Angular2Bundle.message("angular.quickfix.template.remove-tag-content.name");
     }
 
     @Nls
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Angular";
+      return Angular2Bundle.message("angular.quickfix.family");
     }
 
     @Override

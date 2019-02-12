@@ -10,6 +10,7 @@ import com.intellij.openapi.options.colors.ColorSettingsPage;
 import com.intellij.psi.codeStyle.DisplayPriority;
 import com.intellij.psi.codeStyle.DisplayPrioritySortable;
 import icons.AngularJSIcons;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.Angular2HtmlFileType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,16 +25,16 @@ public class Angular2ColorsAndFontsPage implements ColorSettingsPage, DisplayPri
 
   static {
     ATTRS = new AttributesDescriptor[]{
-      new AttributesDescriptor("Two way data binding ‘[(...)]’", NG_BANANA_BINDING_ATTR_NAME),
-      new AttributesDescriptor("Event binding ‘(event)’", NG_EVENT_BINDING_ATTR_NAME),
-      new AttributesDescriptor("Property binding ‘[property]’", NG_PROPERTY_BINDING_ATTR_NAME),
-      new AttributesDescriptor("Structural directive ‘*directive’", NG_TEMPLATE_BINDINGS_ATTR_NAME),
-      new AttributesDescriptor("Braces in interpolation", NG_INTERPOLATION_DELIMITER),
-      new AttributesDescriptor("Plural expression", NG_EXPANSION_FORM),
-      new AttributesDescriptor("Comma in plural expression", NG_EXPANSION_FORM_COMMA),
-      new AttributesDescriptor("Braces in plural expression", NG_EXPANSION_FORM_DELIMITER),
-      new AttributesDescriptor("Template expression", NG_EXPRESSION),
-      new AttributesDescriptor("Template reference variable ‘#var’", NG_REFERENCE_ATTR_NAME),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.banana-binding"), NG_BANANA_BINDING_ATTR_NAME),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.event-binding"), NG_EVENT_BINDING_ATTR_NAME),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.property-binding"), NG_PROPERTY_BINDING_ATTR_NAME),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.template-binding"), NG_TEMPLATE_BINDINGS_ATTR_NAME),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.interpolation-delimiter"), NG_INTERPOLATION_DELIMITER),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form"), NG_EXPANSION_FORM),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form-comma"), NG_EXPANSION_FORM_COMMA),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.expansion-form-delimiter"), NG_EXPANSION_FORM_DELIMITER),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.template-expression"), NG_EXPRESSION),
+      new AttributesDescriptor(Angular2Bundle.message("angular.colors.ref-var"), NG_REFERENCE_ATTR_NAME),
     };
   }
 

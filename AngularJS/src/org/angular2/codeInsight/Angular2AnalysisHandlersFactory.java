@@ -19,6 +19,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,9 +74,11 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
                                              @NotNull JSClass contextClass) {
               if (DialectDetector.isTypeScript(contextClass)) {
                 if (TypeScriptCodeStyleSettings.getTypeScriptSettings(contextClass).USE_PUBLIC_MODIFIER) {
+                  //noinspection HardCodedStringLiteral
                   template.addTextSegment("public ");
                 }
                 if (staticContext) {
+                  //noinspection HardCodedStringLiteral
                   template.addTextSegment("static ");
                 }
               }
@@ -87,7 +90,7 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
       @Override
       protected Ref<String> createUnresolvedCallReferenceMessage(JSReferenceExpression methodExpression, boolean isNewExpression) {
         if (methodExpression instanceof Angular2PipeReferenceExpression) {
-          return Ref.create("Unresolved pipe " + methodExpression.getReferenceName());
+          return Ref.create(Angular2Bundle.message("angular.inspection.template.unresolved-pipe", methodExpression.getReferenceName()));
         }
         return super.createUnresolvedCallReferenceMessage(methodExpression, isNewExpression);
       }

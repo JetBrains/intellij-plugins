@@ -16,6 +16,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlText;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.ObjectUtils;
+import org.angular2.Angular2DecoratorUtil;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
@@ -41,6 +42,7 @@ public class Angular2Injector implements MultiHostInjector {
     return Arrays.asList(JSLiteralExpression.class, XmlText.class);
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
     final PsiElement parent = context.getParent();
@@ -100,6 +102,7 @@ public class Angular2Injector implements MultiHostInjector {
                                                       braces.first, braces.second, INTERPOLATION);
   }
 
+  @SuppressWarnings("HardCodedStringLiteral")
   @Nullable
   private static String getExpressionFileExtension(int valueLength, @NotNull String attributeName, boolean hostBinding) {
     if (valueLength == 0) {
@@ -134,7 +137,7 @@ public class Angular2Injector implements MultiHostInjector {
     return parent instanceof JSProperty
            && propertyName.equals(((JSProperty)parent).getName())
            && injectIntoDecoratorExpr(registrar, context, parent,
-                                      decoratorName -> Angular2LangUtil.isDirective(decoratorName) || "View".equals(decoratorName),
+                                      decoratorName -> Angular2DecoratorUtil.isDirective(decoratorName) || "View".equals(decoratorName),
                                       language, fileExtension);
   }
 
