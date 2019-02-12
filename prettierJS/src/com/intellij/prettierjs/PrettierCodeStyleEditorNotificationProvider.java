@@ -1,9 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.library.JSLibraryUtil;
+import com.intellij.lang.javascript.linter.LinterCodeStyleImportSourceTracker;
 import com.intellij.lang.javascript.psi.util.JSProjectUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -12,9 +12,6 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiTreeAnyChangeAbstractAdapter;
 import com.intellij.ui.EditorNotificationPanel;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
@@ -24,19 +21,11 @@ public final class PrettierCodeStyleEditorNotificationProvider extends EditorNot
   implements DumbAware {
 
   private static final Key<EditorNotificationPanel> KEY = Key.create("prettier.codestyle.notification.panel");
-  private static final String NOTIFICATION_DISMISSED_KEY = "prettier.import.notification.dismissed";
+  private final LinterCodeStyleImportSourceTracker myLinterSourceTracker;
 
   public PrettierCodeStyleEditorNotificationProvider(@NotNull Project project) {
-    PsiManager.getInstance(project).addPsiTreeChangeListener(new PsiTreeAnyChangeAbstractAdapter() {
-      @Override
-      protected void onChange(@Nullable PsiFile file) {
-        if (file == null) return;
-        final VirtualFile vFile = file.getViewProvider().getVirtualFile();
-        if (PrettierUtil.isConfigFileOrPackageJson(vFile) && !alreadyDismissed(project)){
-          EditorNotifications.getInstance(project).updateNotifications(vFile);
-        }
-      }
-    }, project);
+    myLinterSourceTracker = new LinterCodeStyleImportSourceTracker(project, "prettier.import.notification.dismissed",
+                                                                   PrettierUtil::isConfigFileOrPackageJson);
   }
 
   @NotNull
@@ -52,7 +41,7 @@ public final class PrettierCodeStyleEditorNotificationProvider extends EditorNot
     if (!file.isWritable() || JSProjectUtil.isInLibrary(file, project) || JSLibraryUtil.isProbableLibraryFile(file)) {
       return null;
     }
-    if (alreadyDismissed(project)) {
+    if (myLinterSourceTracker.shouldDismiss(file)) {
       return null;
     }
 
@@ -74,6 +63,7 @@ public final class PrettierCodeStyleEditorNotificationProvider extends EditorNot
     if (config == null) {
       return null;
     }
+    myLinterSourceTracker.registerPsiChangedListener();
     if (PrettierCompatibleCodeStyleInstaller.isInstalled(project, config)) {
       return null;
     }
@@ -87,15 +77,8 @@ public final class PrettierCodeStyleEditorNotificationProvider extends EditorNot
                               PrettierCompatibleCodeStyleInstaller.install(project, finalFile, finalConfig, false);
                               EditorNotifications.getInstance(project).updateAllNotifications();
                             });
-    panel.createActionLabel(PrettierBundle.message("editor.notification.no.text"), () -> {
-      EditorNotifications.getInstance(project).updateAllNotifications();
-      PropertiesComponent.getInstance(project).setValue(NOTIFICATION_DISMISSED_KEY, true);
-    });
+    panel.createActionLabel(PrettierBundle.message("editor.notification.no.text"), myLinterSourceTracker.getDismissAction());
 
     return panel;
-  }
-
-  private static boolean alreadyDismissed(@NotNull Project project) {
-    return PropertiesComponent.getInstance(project).getBoolean(NOTIFICATION_DISMISSED_KEY);
   }
 }
