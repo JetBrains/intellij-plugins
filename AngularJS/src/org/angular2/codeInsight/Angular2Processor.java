@@ -530,9 +530,24 @@ public class Angular2Processor {
     @Override
     @NotNull
     public List<JSPsiElementBase> getElements() {
-
       XmlAttributeDescriptor descriptor = myEvent.getDescriptor();
       PsiElement declaration = descriptor != null ? descriptor.getDeclaration() : null;
+      return Collections.singletonList(new Angular2LocalImplicitElement($EVENT, declaration, myEvent));
+    }
+  }
+
+  private static class Angular2LocalImplicitElement extends JSLocalImplicitElementImpl {
+    @Nullable private final PsiElement myDeclaration;
+
+    private Angular2LocalImplicitElement(@NotNull String name,
+                                         @Nullable PsiElement declaration,
+                                         @Nullable PsiElement provider) {
+      super(name, computeEventType(declaration), provider, JSImplicitElement.Type.Variable);
+      myDeclaration = declaration;
+    }
+
+    @Nullable
+    private static JSType computeEventType(@Nullable PsiElement declaration) {
       JSType type = null;
       if (declaration instanceof JSField) {
         type = ((JSField)declaration).getType();
@@ -541,8 +556,24 @@ public class Angular2Processor {
         type = ((JSFunction)declaration).getReturnType();
       }
       type = getEventVariableType(type);
-      return Collections.singletonList(new JSLocalImplicitElementImpl(
-        $EVENT, type, myEvent, JSImplicitElement.Type.Variable));
+      return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Angular2LocalImplicitElement element = (Angular2LocalImplicitElement)o;
+      if (!myName.equals(element.myName)) return false;
+      if (!Objects.equals(myDeclaration, element.myDeclaration)) return false;
+      if (!Objects.equals(myProvider, element.myProvider)) return false;
+      if (myKind != element.myKind) return false;
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getClass(), myDeclaration, myName, myProvider, myKind);
     }
   }
 
