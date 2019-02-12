@@ -233,7 +233,6 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.configureByFiles("overriddenMethods.ts", "package.json");
       myFixture.completeBasic();
       assertEquals(newArrayList("$any#*#(arg: *)",
-                                "bar#null# TodoCmp (overriddenMethods.ts)",
                                 "bar#string#()",
                                 "bar#string#(test: boolean)",
                                 "bar#string#(test: string)",
