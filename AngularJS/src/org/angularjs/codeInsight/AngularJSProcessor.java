@@ -96,11 +96,7 @@ public class AngularJSProcessor {
   private static void processComponentInitializer(@NotNull final XmlFile file,
                                                   @NotNull JSObjectLiteralExpression componentInitializer,
                                                   @NotNull Collection<JSPsiElementBase> result) {
-
-    result.add(new JSLocalImplicitElementImpl(
-      getCtrlVarName(componentInitializer),
-      getComponentScopeType(file, componentInitializer),
-      componentInitializer, JSImplicitElement.Type.Class));
+    result.add(new AngularJSLocalImplicitElement(file, componentInitializer));
   }
 
   private static String getCtrlVarName(@NotNull JSObjectLiteralExpression componentInitializer) {
@@ -110,6 +106,33 @@ public class AngularJSProcessor {
       ctrlName = unquote(ctrlAs.getValue());
     }
     return ctrlName != null ? ctrlName : $CTRL;
+  }
+
+  private static class AngularJSLocalImplicitElement extends JSLocalImplicitElementImpl {
+    @NotNull private final XmlFile myFile;
+    private AngularJSLocalImplicitElement(@NotNull final XmlFile file,
+                                          @NotNull JSObjectLiteralExpression componentInitializer) {
+      super(getCtrlVarName(componentInitializer), getComponentScopeType(file, componentInitializer), componentInitializer,
+            JSImplicitElement.Type.Class);
+      myFile = file;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      AngularJSLocalImplicitElement element = (AngularJSLocalImplicitElement)o;
+      if (!myName.equals(element.myName)) return false;
+      if (!Objects.equals(myFile, element.myFile)) return false;
+      if (!Objects.equals(myProvider, element.myProvider)) return false;
+      if (myKind != element.myKind) return false;
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(getClass(), myFile, myName, myProvider, myKind);
+    }
   }
 
   @NotNull
