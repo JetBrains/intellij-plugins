@@ -62,7 +62,7 @@ public class ConvertToLocalFix implements LocalQuickFix {
     final PsiElement firstElement = getFirstElement(references);
     final PsiElement anchorElement = getAnchorElement(anchorBlock, firstElement);
 
-    JSType type = myField.getType();
+    JSType type = myField.getJSType();
     final String typeString = type == null ? null : type.getTypeText(JSType.TypeTextFormat.CODE);
     StringBuilder text = new StringBuilder("var ").append(myField.getName());
     final boolean assignment = isAssignment(anchorElement, firstElement);

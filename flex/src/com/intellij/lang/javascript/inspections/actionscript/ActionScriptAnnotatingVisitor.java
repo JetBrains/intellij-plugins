@@ -1032,7 +1032,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         JSVariable var = ArrayUtil.getFirstElement(varStatement.getVariables());
 
         if (var != null) {
-          JSType type = var.getType();
+          JSType type = var.getJSType();
 
           if (!(type instanceof JSStringType) &&
               !(type instanceof JSTypeImpl && "Class".equals(type.getTypeText(JSType.TypeTextFormat.SIMPLE)))) {
@@ -1162,7 +1162,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
           JSType setterType;
           if (setterParameters.length == 1 &&
-              !((setterType = setterParameters[0].getType()) instanceof JSAnyType) &&
+              !((setterType = setterParameters[0].getJSType()) instanceof JSAnyType) &&
               !(type instanceof JSAnyType) &&
               !JSTypeUtils.areTypesCompatible(setterType, type,  null, getter)) {
             PsiElement typeElement = getter.getReturnTypeElement();

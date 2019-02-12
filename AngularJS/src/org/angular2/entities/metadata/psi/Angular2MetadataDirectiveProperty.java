@@ -31,7 +31,7 @@ public class Angular2MetadataDirectiveProperty implements Angular2DirectivePrope
   @Nullable
   @Override
   public JSType getType() {
-    return signature != null ? signature.getType() : null;
+    return signature != null ? signature.getJSType() : null;
   }
 
   @Override

@@ -48,7 +48,7 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
       JSType contextType = JSResolveUtil.getElementJSType(bindings, JSEvaluateContext.JSEvaluationPlace.DEFAULT);
       if (contextType != null) {
         JSRecordType.PropertySignature signature = contextType.asRecordType().findPropertySignature(propertyName);
-        propertyType = signature != null ? signature.getType() : null;
+        propertyType = signature != null ? signature.getJSType() : null;
       }
     }
     return propertyType;

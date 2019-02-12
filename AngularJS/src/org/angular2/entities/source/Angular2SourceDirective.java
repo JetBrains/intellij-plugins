@@ -186,7 +186,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
             .filter(Objects::nonNull)
             .map(JSParameterList::getParameters)
             .flatMap(Stream::of)
-            .map(JSParameterListElement::getType)
+            .map(JSParameterListElement::getJSType)
             .filter(Objects::nonNull)
             .map(type -> type.getTypeText())
             .anyMatch(t -> t.contains(TEMPLATE_REF))) {

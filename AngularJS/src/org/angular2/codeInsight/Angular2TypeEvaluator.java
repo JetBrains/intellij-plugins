@@ -69,8 +69,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     JSType templateRefType = null;
     for (TypeScriptFunction fun : clazz.getConstructors()) {
       for (JSParameter param : fun.getParameterVariables()) {
-        if (param.getType() != null && param.getType().getTypeText().startsWith("TemplateRef<")) {
-          templateRefType = param.getType();
+        if (param.getJSType() != null && param.getJSType().getTypeText().startsWith("TemplateRef<")) {
+          templateRefType = param.getJSType();
           break;
         }
       }

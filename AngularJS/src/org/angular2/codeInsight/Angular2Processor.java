@@ -550,7 +550,7 @@ public class Angular2Processor {
     private static JSType computeEventType(@Nullable PsiElement declaration) {
       JSType type = null;
       if (declaration instanceof JSField) {
-        type = ((JSField)declaration).getType();
+        type = ((JSField)declaration).getJSType();
       }
       else if (declaration instanceof JSFunction) {
         type = ((JSFunction)declaration).getReturnType();

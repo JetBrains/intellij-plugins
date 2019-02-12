@@ -148,7 +148,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       JSRecordType.PropertySignature ngModuleSignature;
       if (lookingForModule
           && (ngModuleSignature = recordType.findPropertySignature(NG_MODULE_PROP)) != null) {
-        type = ngModuleSignature.getType();
+        type = ngModuleSignature.getJSType();
       }
       else {
         PsiElement sourceElement = type.getSourceElement();
