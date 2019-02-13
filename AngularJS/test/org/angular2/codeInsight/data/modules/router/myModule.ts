@@ -18,12 +18,16 @@ class Test {
 
 }
 
+const SPREAD_DECLARATIONS = [
+    MyDirective
+]
+
 @NgModule({
     imports: [
         RouterModule.forRoot({path: 'heroes', component: undefined}),
     ],
     declarations: [
-        MyDirective
+        ...SPREAD_DECLARATIONS
     ]
 })
 export class AppRoutingModule {
@@ -35,7 +39,7 @@ export class AppRoutingModule {
         Test.getThis()
     ],
     declarations: [
-        MyDirective
+        ...SPREAD_DECLARATIONS
     ],
     exports: [
         RouterOutlet
