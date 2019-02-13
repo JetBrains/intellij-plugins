@@ -29,7 +29,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   @NotNull
   @Override
   protected JSLanguageServiceBase getService() {
-    List<JSLanguageService> services = JSLanguageServiceProvider.getLanguageServices(myProject);
+    List<JSLanguageService> services = JSLanguageServiceProvider.getLanguageServices(getProject());
 
     return (JSLanguageServiceBase)ContainerUtil.find(services, el -> el instanceof VueTypeScriptService);
   }
@@ -52,6 +52,6 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
   public void testSimpleCompletion() throws Exception {
-    JSTestUtils.testES6(myProject, () -> checkBaseStringQualifiedCompletionWithTemplates(() -> doTestWithCopyDirectory()));
+    JSTestUtils.testES6(getProject(), () -> checkBaseStringQualifiedCompletionWithTemplates(() -> doTestWithCopyDirectory()));
   }
 }
