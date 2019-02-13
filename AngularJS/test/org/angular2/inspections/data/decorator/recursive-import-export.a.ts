@@ -6,7 +6,7 @@ import {NgModule} from "@angular/core";
 
 
 @NgModule({
-    exports: [<error descr="Cyclic dependency of modules: MyModule3 -> MyModule1 -> MyModule2 -> MyModule3">MyModule1</error>]
+    exports: [<error descr="Cyclic dependency between modules: MyModule3 -> MyModule1 -> MyModule2 -> MyModule3">MyModule1</error>]
 })
 export class MyModule3 {
 
@@ -18,8 +18,8 @@ const THE_IMPORT = [
 
 @NgModule({
     imports: [
-        <error descr="Cyclic dependency of modules: MyModule2 -> MyModule3 -> MyModule1 -> MyModule2">THE_IMPORT</error>,
-        <error descr="Module 'MyModule2' cannot import itself">MyModule2</error>
+        <error descr="Cyclic dependency between modules: MyModule2 -> MyModule3 -> MyModule1 -> MyModule2">THE_IMPORT</error>,
+        <error descr="Module MyModule2 imports itself">MyModule2</error>
     ]
 })
 export class MyModule2 {
@@ -32,7 +32,7 @@ export const MY_IMPORTS = [
 
 @NgModule({
     imports: [MyModule3],
-    exports: [<error descr="Module 'MyModule4' cannot export itself">MyModule4</error>]
+    exports: [<error descr="Module MyModule4 exports itself">MyModule4</error>]
 })
 export class MyModule4 {
 }

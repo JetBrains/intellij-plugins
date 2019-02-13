@@ -7,7 +7,7 @@ HtmlFile:test.html
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
       PsiElement(XML_ATTRIBUTE)
-        PsiErrorElement:"let-" is only supported on ng-template elements.
+        PsiErrorElement:"let-" is only supported on ng-template elements
           XmlToken:XML_NAME('let-a')
       XmlToken:XML_TAG_END('>')
       XmlToken:XML_END_TAG_START('</')

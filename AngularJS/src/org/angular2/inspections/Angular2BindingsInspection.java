@@ -26,6 +26,7 @@ import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProx
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
 import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_SPECIAL_TAGS;
+import static org.angular2.lang.Angular2Bundle.BUNDLE;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
@@ -80,6 +82,7 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
     severity = (info.type != EVENT || templateTag) && scope.isFullyResolved()
                ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                : ProblemHighlightType.WEAK_WARNING;
+    @PropertyKey(resourceBundle = BUNDLE)
     final String messageKey;
     switch (info.type) {
       case EVENT:

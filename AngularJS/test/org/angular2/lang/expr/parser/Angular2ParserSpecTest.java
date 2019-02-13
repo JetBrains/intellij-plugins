@@ -158,8 +158,8 @@ public class Angular2ParserSpecTest {
           });
 
           it("should only allow identifier, string, or keyword as map key", () -> {
-            expectActionError("{(:0}", "expected identifier, keyword, or string");
-            expectActionError("{1234:0}", "expected identifier, keyword, or string");
+            expectActionError("{(:0}", "Expected identifier, keyword, or string");
+            expectActionError("{1234:0}", "Expected identifier, keyword, or string");
           });
         });
 
@@ -229,7 +229,7 @@ public class Angular2ParserSpecTest {
 
         it("should error when using pipes",
            () -> {
-             expectActionError("x|blah", "action expressions cannot contain pipes");
+             expectActionError("x|blah", "Action expressions cannot contain pipes");
            });
 
         //it("should store the source in the result",
@@ -239,7 +239,7 @@ public class Angular2ParserSpecTest {
         //   () -> { expect(parseAction("someExpr", "location").location).toBe("location"); });
 
         it("should report when encountering interpolation", () -> {
-          expectActionError("{{a()}}", "expected identifier, keyword, or string"
+          expectActionError("{{a()}}", "Expected identifier, keyword, or string"
             /* TODO - add proper parsing and tokenization of interpolations */
             /*"Got interpolation ({{}}) where expression was expected"*/);
         });
@@ -248,7 +248,7 @@ public class Angular2ParserSpecTest {
       describe("general error handling", () -> {
         it("should report an unexpected token",
            () -> {
-             expectActionError("[1,2] trac", "unexpected token 'trac'");
+             expectActionError("[1,2] trac", "Unexpected token 'trac'");
            });
 
         it("should report reasonable error for unconsumed tokens",
@@ -321,7 +321,7 @@ public class Angular2ParserSpecTest {
            });
 
         it("should report when encountering interpolation", () -> {
-          expectBindingError("{{a.b}}", "expected identifier, keyword, or string");
+          expectBindingError("{{a.b}}", "Expected identifier, keyword, or string");
         });
 
         it("should parse conditional expression", () -> {
@@ -484,18 +484,18 @@ public class Angular2ParserSpecTest {
         it("should report when encountering pipes", () -> {
           expectError(
             parseSimpleBinding("a | somePipe"),
-            "host binding expression cannot contain pipes");
+            "Host binding expression cannot contain pipes");
         });
 
         it("should report when encountering interpolation", () -> {
           expectError(
             parseSimpleBinding("{{exp}}"),
-            "expected identifier, keyword, or string"
+            "Expected identifier, keyword, or string"
             /*"Got interpolation ({{}}) where expression was expected"*/);
         });
 
         it("should report when encountering field write", () -> {
-          expectError(parseSimpleBinding("a = b"), "binding expressions cannot contain assignments");
+          expectError(parseSimpleBinding("a = b"), "Binding expressions cannot contain assignments");
         });
       });
       describe("error recovery", () -> {

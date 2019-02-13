@@ -31,7 +31,7 @@ HtmlFile:test.html
                           Angular2PipeLeftSideArgument
                             JSReferenceExpression
                               PsiElement(JS:IDENTIFIER)('wordIndex')
-                            PsiErrorElement:action expressions cannot contain pipes
+                            PsiErrorElement:Action expressions cannot contain pipes
                               <empty list>
                           PsiWhiteSpace(' ')
                           PsiElement(JS:OR)('|')

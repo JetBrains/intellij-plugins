@@ -3,7 +3,7 @@ HtmlFile:test.html
     PsiElement(XML_PROLOG)
       <empty list>
     PsiElement(NG:EXPANSION_FORM)
-      PsiErrorElement:Unterminated expansion form.
+      PsiErrorElement:Unterminated expansion form
         PsiElement(NG:EXPANSION_FORM_START)('{')
         ASTWrapperPsiElement(NG:BINDING_EXPR)
           Angular2Binding

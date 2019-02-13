@@ -48,28 +48,28 @@ class MyClass2 {
 
 @NgModule({
     imports: [
-        <error descr="Class 'Component1' is not an Angular Module.">Component1</error>,
-        <error descr="Class 'Directive1' is not an Angular Module.">Directive1</error>,
-        <error descr="Class 'Pipe1' is not an Angular Module.">Pipe1</error>,
+        <error descr="Class Component1 is not an Angular module">Component1</error>,
+        <error descr="Class Directive1 is not an Angular module">Directive1</error>,
+        <error descr="Class Pipe1 is not an Angular module">Pipe1</error>,
         Module2,
-        <error descr="Class 'MyClass' is not an Angular Module.">MyClass</error>,
-        <error descr="Class 'MyClass2' is not an Angular Module.">MyClass2</error>,
+        <error descr="Class MyClass is not an Angular module">MyClass</error>,
+        <error descr="Class MyClass2 is not an Angular module">MyClass2</error>,
     ],
     declarations: [
         Component1,
         Directive1,
         Pipe1,
-        <error descr="Class 'Module2' is neither Angular Component, Directive nor Pipe.">Module2</error>,
-        <error descr="Class 'MyClass' is neither Angular Component, Directive nor Pipe.">MyClass</error>,
-        <error descr="Class 'MyClass2' is neither Angular Component, Directive nor Pipe.">MyClass2</error>,
+        <error descr="Class Module2 is neither an Angular component, directive nor pipe">Module2</error>,
+        <error descr="Class MyClass is neither an Angular component, directive nor pipe">MyClass</error>,
+        <error descr="Class MyClass2 is neither an Angular component, directive nor pipe">MyClass2</error>,
     ],
     exports: [
         Component1,
         Directive1,
         Pipe1,
         Module2,
-        <weak_warning descr="Class 'MyClass' is neither Angular Module, Component, Directive nor Pipe.">MyClass</weak_warning>,
-        <weak_warning descr="Class 'MyClass2' is neither Angular Module, Component, Directive nor Pipe.">MyClass2</weak_warning>,
+        <weak_warning descr="Class MyClass is neither an Angular module, component, directive nor pipe">MyClass</weak_warning>,
+        <weak_warning descr="Class MyClass2 is neither an Angular module, component, directive nor pipe">MyClass2</weak_warning>,
     ]
 })
 class Module1 {

@@ -19,7 +19,7 @@ ASTWrapperPsiElement(FILE)
     PsiWhiteSpace(' ')
     Angular2TemplateBinding <, true, as>
       PsiElement(JS:AS_KEYWORD)('as')
-      PsiErrorElement:expected identifier or keyword
+      PsiErrorElement:Expected identifier or keyword
         <empty list>
 ------
 ASTWrapperPsiElement(FILE)
@@ -60,7 +60,7 @@ ASTWrapperPsiElement(FILE)
       JSVarStatement
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('foo-')
-      PsiErrorElement:expected identifier or keyword
+      PsiErrorElement:Expected identifier or keyword
         <empty list>
       PsiElement(JS:NUMERIC_LITERAL)('2')
     Angular2TemplateBinding <asBar, false, null>

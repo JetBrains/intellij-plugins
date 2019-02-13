@@ -423,7 +423,7 @@ public class Angular2DirectiveSimpleSelectorSpecTest {
       it("should throw when nested :not", () -> {
         expect(() -> {
           Angular2DirectiveSimpleSelector.parse("sometag:not(:not([attrname=attrvalue].someclass))");
-        }).toThrow(ParseException.class, "Nesting :not is not allowed in a selector");
+        }).toThrow(ParseException.class, "Nesting :not is not allowed in selectors");
       });
 
       it("should throw when multiple selectors in :not", () -> {

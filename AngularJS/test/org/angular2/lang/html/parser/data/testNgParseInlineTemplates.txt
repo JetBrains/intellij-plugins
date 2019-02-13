@@ -51,7 +51,7 @@ HtmlFile:test.html
                   JSDefinitionExpression
                     JSReferenceExpression
                       PsiElement(JS:IDENTIFIER)('a')
-                  PsiErrorElement:binding expressions cannot contain assignments
+                  PsiErrorElement:Binding expressions cannot contain assignments
                     <empty list>
                   PsiElement(JS:EQ)('=')
                   JSReferenceExpression

@@ -12,6 +12,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeType;
@@ -33,13 +34,13 @@ public class Angular2MatchingComponentsInspection extends Angular2HtmlLikeTempla
     if (isTemplateTag(tag.getName())) {
       if (!components.isEmpty()) {
         holder.registerProblem(tag, startTag, Angular2Bundle.message("angular.inspection.template.embedded.components",
-                                                                     renderDirectiveList(components)));
+                                                                     Angular2EntityUtils.renderEntityList(components)));
       }
     }
     else {
       if (components.size() > 1) {
         holder.registerProblem(tag, startTag, Angular2Bundle.message("angular.inspection.template.element-with-many-components",
-                                                                     renderDirectiveList(components)));
+                                                                     Angular2EntityUtils.renderEntityList(components)));
       }
     }
   }
@@ -56,30 +57,8 @@ public class Angular2MatchingComponentsInspection extends Angular2HtmlLikeTempla
         d -> d.isComponent() && scope.contains(d));
       if (!components.isEmpty()) {
         holder.registerProblem(attribute, Angular2Bundle.message("angular.inspection.template.embedded.components",
-                                                                 renderDirectiveList(components)));
+                                                                 Angular2EntityUtils.renderEntityList(components)));
       }
     }
-  }
-
-  public static String renderDirectiveList(List<Angular2Directive> directives) {
-    StringBuilder result = new StringBuilder();
-    for (int i = 0; i < directives.size(); i++) {
-      if (i > 0) {
-        if (i == directives.size() - 1) {
-          result.append(' ');
-          result.append(Angular2Bundle.message("angular.inspection.template.and-separator"));
-          result.append(' ');
-        }
-        else {
-          result.append(", ");
-        }
-      }
-      Angular2Directive component = directives.get(i);
-      result.append(component.getName());
-      result.append(" (");
-      result.append(component.getSelector().getText());
-      result.append(')');
-    }
-    return result.toString();
   }
 }
