@@ -121,6 +121,7 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
   private void initInspections() {
     myFixture.enableInspections(
       Angular2BindingsInspection.class,
+      Angular2TagsInspection.class,
       Angular2TemplateReferenceVariableInspection.class,
       JSUnresolvedFunctionInspection.class
     );

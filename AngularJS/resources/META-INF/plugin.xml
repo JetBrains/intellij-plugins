@@ -189,6 +189,9 @@
     <localInspection implementationClass="org.angular2.inspections.Angular2MatchingComponentsInspection"
                      displayName="Ambiguous component tag" groupName="Angular" enabledByDefault="true"
                      level="ERROR"/>
+    <localInspection implementationClass="org.angular2.inspections.Angular2TagsInspection"
+                     displayName="Undefined tag" groupName="Angular" enabledByDefault="true"
+                     level="ERROR"/>
     <xml.attributeDescriptorsProvider implementation="org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider"
                                       order="first"/>
     <xml.tagNameProvider implementation="org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider"/>

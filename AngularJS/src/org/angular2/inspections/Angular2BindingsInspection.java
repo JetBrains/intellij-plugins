@@ -6,18 +6,13 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.xml.XmlElementDescriptor;
-import com.intellij.xml.util.XmlTagUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.codeInsight.tags.Angular2TagDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
@@ -33,7 +28,6 @@ import java.util.List;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
 import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_SPECIAL_TAGS;
 import static org.angular2.lang.Angular2Bundle.BUNDLE;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
@@ -113,33 +107,6 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
     holder.registerProblem(attribute.getNameElement(),
                            Angular2Bundle.message(messageKey, info.name, attribute.getParent().getName()),
                            severity,
-                           quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
-  }
-
-  @Override
-  protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {
-    XmlElementDescriptor descriptor = tag.getDescriptor();
-    if (!(descriptor instanceof Angular2TagDescriptor) || NG_SPECIAL_TAGS.contains(descriptor.getName())) {
-      return;
-    }
-    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(tag);
-    Angular2ApplicableDirectivesProvider provider = new Angular2ApplicableDirectivesProvider(tag, true);
-    DeclarationProximity proximity = scope.getDeclarationsProximity(provider.getMatched());
-    if (proximity == IN_SCOPE) {
-      return;
-    }
-    XmlToken tagName = XmlTagUtil.getStartTagNameElement(tag);
-    if (tagName == null) {
-      return;
-    }
-    List<LocalQuickFix> quickFixes = new SmartList<>();
-    if (proximity != NOT_REACHABLE) {
-      Angular2FixesFactory.addUnresolvedDeclarationFixes(tag, quickFixes);
-    }
-    holder.registerProblem(tagName,
-                           Angular2Bundle.message("angular.inspection.template.tag-directive-out-of-scope", tagName.getText()),
-                           scope.isFullyResolved() ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                                   : ProblemHighlightType.WEAK_WARNING,
                            quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
   }
 
