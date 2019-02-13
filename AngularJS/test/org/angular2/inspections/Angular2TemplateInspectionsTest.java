@@ -3,6 +3,7 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -90,6 +91,18 @@ public class Angular2TemplateInspectionsTest extends LightPlatformCodeInsightFix
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class);
     doTest(Angular2BindingsInspection.class,
            "bindings-with-module.html", "component.ts", "bindings-module.ts");
+  }
+
+  public void testTags() {
+    myFixture.enableInspections(HtmlUnknownTagInspection.class);
+    doTest(Angular2TagsInspection.class,
+           "tags.html", "component.ts");
+  }
+
+  public void testTagsWithModule() {
+    myFixture.enableInspections(HtmlUnknownTagInspection.class);
+    doTest(Angular2TagsInspection.class,
+           "tags-with-module.html", "component.ts", "tags-module.ts");
   }
 
   private void doTest(@NotNull Class<? extends LocalInspectionTool> inspection,
