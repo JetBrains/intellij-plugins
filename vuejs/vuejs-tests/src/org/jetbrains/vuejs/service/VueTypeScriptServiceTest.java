@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.service;
 
+import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.service.JSLanguageService;
 import com.intellij.lang.javascript.service.JSLanguageServiceBase;
@@ -15,16 +16,12 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import static org.jetbrains.vuejs.language.VueTestUtilKt.getVueTestDataPath;
+import static org.jetbrains.vuejs.language.VueTestUtilKt.vueRelativeTestDataPath;
 
 @RunWith(TypeScriptServiceTestRunner.class)
 public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   private static final String BASE_PATH = "/ts_ls_highlighting";
 
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return getVueTestDataPath();
-  }
 
   @NotNull
   @Override
@@ -41,7 +38,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
 
   @Override
   protected String getBasePath() {
-    return BASE_PATH;
+    return vueRelativeTestDataPath() + BASE_PATH;
   }
 
 
@@ -52,6 +49,9 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
   public void testSimpleCompletion() throws Exception {
-    JSTestUtils.testES6(getProject(), () -> checkBaseStringQualifiedCompletionWithTemplates(() -> doTestWithCopyDirectory()));
+    JSTestUtils.testES6(getProject(), () -> checkBaseStringQualifiedCompletionWithTemplates(() -> {
+      doTestWithCopyDirectory();
+      return myFixture.complete(CompletionType.BASIC);
+    }));
   }
 }
