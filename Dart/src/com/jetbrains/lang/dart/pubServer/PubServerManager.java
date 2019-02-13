@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.pubServer;
 
 import com.google.common.cache.CacheBuilder;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class PubServerManager implements Disposable {
@@ -154,6 +156,16 @@ public class PubServerManager implements Disposable {
       ContainerUtil.addIfNotNull(result, service.getPubServeAuthority(subdir));
     }
     return result;
+  }
+
+  @Nullable
+  public VirtualFile getDartRootByAuthority(@NotNull final String authority) {
+    for (Map.Entry<VirtualFile, PubServerService> entry : myServedDirToPubService.asMap().entrySet()) {
+      if (entry.getValue().getAllPubServeAuthorities().contains(authority)) {
+        return entry.getKey();
+      }
+    }
+    return null;
   }
 
   @Nullable
