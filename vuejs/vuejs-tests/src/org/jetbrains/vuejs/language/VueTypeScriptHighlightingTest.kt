@@ -43,8 +43,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
     "RenameFileToTSX",
     "ExportSpecifierGlobalThing",
     "NestedModuleAugmentation",
-    "ExtendStandardInterface",
-    "IntermediateResultsNotCachedForRecursiveTypes"
+    "ExtendStandardInterface"
   )
 
   override fun doTestWithExplicitAssertOnRecursion(assertOnRecursion: Boolean, 
@@ -79,5 +78,10 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
     val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/${getTestName(false)}_after.$ext")
     val text: Any = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
     myFixture.checkResult("<script lang=\"ts\">\n$text\n</script>")
+  }
+  // these tests need to be ignored with additional code:
+
+  override fun testIntermediateResultsNotCachedForRecursiveTypes() {
+    LOG.info("Skipping muted test")
   }
 }
