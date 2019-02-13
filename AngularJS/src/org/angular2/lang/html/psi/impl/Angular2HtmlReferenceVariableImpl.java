@@ -19,8 +19,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
@@ -37,6 +35,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.psi.util.CachedValueProvider.Result.create;
+import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClassType;
 import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
@@ -84,33 +85,30 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
 
   @Nullable
   public static JSType getTemplateRefType(@Nullable PsiElement scope) {
-    if (scope == null) {
-      return null;
-    }
-    TypeScriptClass templateRefClass = CachedValuesManager.getCachedValue(scope, () -> {
+    return scope == null ? null : doIfNotNull(getCachedValue(scope, () -> {
       for (PsiElement module : JSFileReferencesUtil.getMostPriorityModules(
         scope, ANGULAR_CORE_PACKAGE, false)) {
-        if (module instanceof JSElement) {
-          ResolveResult resolved = ArrayUtil.getFirstElement(
-            ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF, scope, (JSElement)module));
-          if (resolved != null && resolved.isValidResult() && resolved.getElement() instanceof TypeScriptClass) {
-            return CachedValueProvider.Result.create((TypeScriptClass)resolved.getElement(),
-                                                     PsiModificationTracker.MODIFICATION_COUNT);
-          }
+        if (!(module instanceof JSElement)) continue;
+        ResolveResult resolved = ArrayUtil.getFirstElement(
+          ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF, scope, (JSElement)module));
+        if (resolved == null
+            || !resolved.isValidResult()
+            || !(resolved.getElement() instanceof TypeScriptClass)) {
+          continue;
         }
+        TypeScriptClass templateRefClass = (TypeScriptClass)resolved.getElement();
+        if (templateRefClass.getTypeParameterList() == null
+            || templateRefClass.getTypeParameterList().getTypeParameters().length != 1) {
+          continue;
+        }
+        return create(templateRefClass, PsiModificationTracker.MODIFICATION_COUNT);
       }
-      return CachedValueProvider.Result.create(null, PsiModificationTracker.MODIFICATION_COUNT);
-    });
-    if (templateRefClass == null) {
-      return null;
-    }
-    JSType baseType = templateRefClass.getJSType();
-    if (templateRefClass.getTypeParameterList() != null
-        && templateRefClass.getTypeParameterList().getTypeParameters().length == 1) {
+      return create(null, PsiModificationTracker.MODIFICATION_COUNT);
+    }), templateRefClass -> {
+      JSType baseType = templateRefClass.getJSType();
       return new JSGenericTypeImpl(baseType.getSource(), baseType,
                                    JSAnyType.get(templateRefClass, true));
-    }
-    return null;
+    });
   }
 
   @Nullable
