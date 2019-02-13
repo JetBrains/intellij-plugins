@@ -105,6 +105,11 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       }
 
       @Override
+      public void visitJSSpreadExpression(JSSpreadExpression spreadExpression) {
+        ContainerUtil.addIfNotNull(result, spreadExpression.getExpression());
+      }
+
+      @Override
       public void visitJSCallExpression(JSCallExpression node) {
         ContainerUtil.addIfNotNull(result, node.getStubSafeMethodExpression());
       }
