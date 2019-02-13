@@ -17,6 +17,7 @@ import com.intellij.util.SmartList;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Module;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
@@ -36,6 +37,7 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
   private static final int TEMPLATE_INDEX = 2;
   private static final int TEST_INDEX = 3;
   private static final int STYLES_INDEX_START = 4;
+  private static final int MODULE_INDEX = 5;
 
   private static final String GROUP_NAME = Angular2Bundle.message("angular.action.goto-related.group-name");
 
@@ -107,6 +109,11 @@ public class Angular2GotoRelatedProvider extends GotoRelatedProvider {
       result.add(new Angular2GoToRelatedItem(cssFile, mnemonic++, true,
                                              Angular2Bundle.message("angular.action.goto-related.styles",
                                                                     cssFiles.size() == 1 ? "" : " " + count++)));
+    }
+    TypeScriptClass moduleClass = ObjectUtils.doIfNotNull(component.getModule(), Angular2Module::getTypeScriptClass);
+    if (moduleClass != null && moduleClass.getName() != null) {
+      result.add(new Angular2GoToRelatedItem(moduleClass, MODULE_INDEX, false,
+                                             Angular2Bundle.message("angular.action.goto-related.module")));
     }
     return result;
   }
