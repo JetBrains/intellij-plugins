@@ -37,8 +37,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.lang.javascript.psi.types.JSNamedTypeFactory.createExplicitlyDeclaredType;
-import static com.intellij.lang.javascript.psi.types.TypeScriptTypeParser.buildTypeFromClass;
 import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClassType;
 import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
@@ -72,8 +70,10 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
         .filter(directive -> scope.contains(directive)
                              && hasExport ? directive.getExportAsList().contains(exportName)
                                           : directive.isComponent())
+        .map(directive -> directive.getTypeScriptClass())
+        .nonNull()
+        .map(TypeScriptClass::getJSType)
         .findFirst()
-        .map(directive -> getClassInstanceType(directive.getTypeScriptClass()))
         .orElseGet(() -> hasExport ? null
                                    : isTemplateTag(tag.getName())
                                      ? getTemplateRefType(getComponentClass())
@@ -87,35 +87,30 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
     if (scope == null) {
       return null;
     }
-    return CachedValuesManager.getCachedValue(scope, () -> {
+    TypeScriptClass templateRefClass = CachedValuesManager.getCachedValue(scope, () -> {
       for (PsiElement module : JSFileReferencesUtil.getMostPriorityModules(
         scope, ANGULAR_CORE_PACKAGE, false)) {
         if (module instanceof JSElement) {
           ResolveResult resolved = ArrayUtil.getFirstElement(
             ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF, scope, (JSElement)module));
           if (resolved != null && resolved.isValidResult() && resolved.getElement() instanceof TypeScriptClass) {
-            TypeScriptClass templateRefClass = (TypeScriptClass)resolved.getElement();
-            JSType baseType = getClassInstanceType(templateRefClass);
-            if (baseType != null
-                && templateRefClass.getTypeParameterList() != null
-                && templateRefClass.getTypeParameterList().getTypeParameters().length == 1) {
-              return CachedValueProvider.Result.create(
-                new JSGenericTypeImpl(baseType.getSource(), baseType,
-                                      JSAnyType.get(templateRefClass, true)),
-                PsiModificationTracker.MODIFICATION_COUNT);
-            }
+            return CachedValueProvider.Result.create((TypeScriptClass)resolved.getElement(),
+                                                     PsiModificationTracker.MODIFICATION_COUNT);
           }
         }
       }
       return CachedValueProvider.Result.create(null, PsiModificationTracker.MODIFICATION_COUNT);
     });
-  }
-
-  private static JSType getClassInstanceType(@Nullable TypeScriptClass clazz) {
-    return clazz == null ? null
-                         : clazz.getQualifiedName() != null
-                           ? createExplicitlyDeclaredType(clazz.getQualifiedName(), clazz)
-                           : buildTypeFromClass(clazz, false);
+    if (templateRefClass == null) {
+      return null;
+    }
+    JSType baseType = templateRefClass.getJSType();
+    if (templateRefClass.getTypeParameterList() != null
+        && templateRefClass.getTypeParameterList().getTypeParameters().length == 1) {
+      return new JSGenericTypeImpl(baseType.getSource(), baseType,
+                                   JSAnyType.get(templateRefClass, true));
+    }
+    return null;
   }
 
   @Nullable
