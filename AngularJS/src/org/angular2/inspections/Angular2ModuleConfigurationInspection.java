@@ -195,7 +195,8 @@ public abstract class Angular2ModuleConfigurationInspection extends LocalInspect
           registerProblem(ProblemType.UNDECLARED_EXPORT,
                           Angular2Bundle.message("angular.inspection.decorator.export-not-defined",
                                                  notNull(doIfNotNull(entity.getTypeScriptClass(), TypeScriptClass::getName),
-                                                         () -> entity.getName())),
+                                                         () -> entity.getName()),
+                                                 myModule.getName()),
                           Objects.requireNonNull(myModule).isScopeFullyResolved()
                           ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                           : ProblemHighlightType.WEAK_WARNING);

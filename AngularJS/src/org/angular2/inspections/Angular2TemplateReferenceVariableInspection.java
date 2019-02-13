@@ -12,6 +12,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.inspections.quickfixes.RemoveAttributeQuickFix;
 import org.angular2.lang.Angular2Bundle;
@@ -56,7 +57,7 @@ public class Angular2TemplateReferenceVariableInspection extends Angular2HtmlLik
           holder.registerProblem(attribute.getNameElement(),
                                  range,
                                  Angular2Bundle.message("angular.inspection.template.ref-var-ambiguous-name", exportName,
-                                                        Angular2MatchingComponentsInspection.renderDirectiveList(matching)));
+                                                        Angular2EntityUtils.renderEntityList(matching)));
         }
       }
     }

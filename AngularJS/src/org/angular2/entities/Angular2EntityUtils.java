@@ -1,16 +1,19 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities;
 
+import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
 import org.angular2.entities.metadata.psi.Angular2MetadataEntity;
 import org.angular2.entities.source.Angular2SourceEntity;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector.ParseException;
 import org.jetbrains.annotations.NonNls;
@@ -186,5 +189,51 @@ public class Angular2EntityUtils {
     else {
       return element.getClass().getName() + "@" + Integer.toHexString(element.hashCode());
     }
+  }
+
+  public static <T extends Angular2Entity> String renderEntityList(Collection<T> entities) {
+    StringBuilder result = new StringBuilder();
+    int i = -1;
+    for (Angular2Entity entity : entities) {
+      if (++i > 0) {
+        if (i == entities.size() - 1) {
+          result.append(' ');
+          result.append(Angular2Bundle.message("angular.inspection.template.and-separator"));
+          result.append(' ');
+        }
+        else {
+          result.append(", ");
+        }
+      }
+      result.append(getEntityClassName(entity));
+      if (entity instanceof Angular2Pipe) {
+        result.append(" (");
+        result.append(entity.getName());
+        result.append(")");
+      }
+      else if (entity instanceof Angular2Directive) {
+        result.append(" (");
+        result.append(((Angular2Directive)entity).getSelector().getText());
+        result.append(')');
+      }
+    }
+    return result.toString();
+  }
+
+
+  public static String getEntityClassName(@NotNull Angular2Entity entity) {
+    if (entity instanceof Angular2Pipe) {
+      return ObjectUtils.notNull(ObjectUtils.doIfNotNull(entity.getTypeScriptClass(), TypeScriptClass::getName),
+                                 Angular2Bundle.message("angular.description.unknown-class"));
+    }
+    return entity.getName();
+  }
+
+  public static String getEntityClassName(@NotNull ES6Decorator decorator) {
+    Angular2Entity entity = Angular2EntitiesProvider.getEntity(decorator);
+    if (entity == null) {
+      return Angular2Bundle.message("angular.description.unknown-class");
+    }
+    return getEntityClassName(entity);
   }
 }

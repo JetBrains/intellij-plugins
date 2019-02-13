@@ -107,23 +107,23 @@ ASTWrapperPsiElement(FILE)
       JSExpressionStatement
         JSObjectLiteralExpression
           PsiElement(JS:LBRACE)('{')
-          PsiErrorElement:expected identifier, keyword, or string
+          PsiErrorElement:Expected identifier, keyword, or string
             <empty list>
       PsiWhiteSpace(' ')
       JSExpressionStatement
         JSLiteralExpression
           PsiElement(JS:NUMERIC_LITERAL)('12')
-      PsiErrorElement:unexpected token ':'
+      PsiErrorElement:Unexpected token ':'
         <empty list>
       PsiWhiteSpace(' ')
       PsiElement(JS:COLON)(':')
-      PsiErrorElement:unexpected token '"test"'
+      PsiErrorElement:Unexpected token '"test"'
         <empty list>
       PsiWhiteSpace(' ')
       JSExpressionStatement
         JSLiteralExpression
           PsiElement(JS:STRING_LITERAL)('"test"')
-      PsiErrorElement:unexpected token '}'
+      PsiErrorElement:Unexpected token '}'
         <empty list>
       PsiElement(JS:RBRACE)('}')
 ------

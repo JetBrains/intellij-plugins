@@ -14,6 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.source.Angular2SourceModule;
 import org.angular2.lang.Angular2Bundle;
@@ -24,6 +25,7 @@ import java.util.Collection;
 
 import static com.intellij.util.ObjectUtils.*;
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.entities.Angular2EntityUtils.renderEntityList;
 
 public class Angular2DeclarationMembershipInModuleInspection extends LocalInspectionTool {
 
@@ -46,14 +48,17 @@ public class Angular2DeclarationMembershipInModuleInspection extends LocalInspec
                                                              TypeScriptClass::getNameIdentifier), decorator);
             if (modules.isEmpty()) {
               holder.registerProblem(classIdentifier,
-                                     Angular2Bundle.message("angular.inspection.decorator.not-declared-in-NgModule"),
+                                     Angular2Bundle.message("angular.inspection.decorator.not-declared-in-NgModule",
+                                                            Angular2EntityUtils.getEntityClassName(decorator)),
                                      allSourceDeclarationsResolved(decorator.getProject())
                                      ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                                      : ProblemHighlightType.WEAK_WARNING);
             }
             else if (modules.size() > 1) {
               holder.registerProblem(classIdentifier,
-                                     Angular2Bundle.message("angular.inspection.decorator.declared-in-many-NgModules"));
+                                     Angular2Bundle.message("angular.inspection.decorator.declared-in-many-NgModules",
+                                                            Angular2EntityUtils.getEntityClassName(decorator),
+                                                            renderEntityList(modules)));
             }
           }
         }

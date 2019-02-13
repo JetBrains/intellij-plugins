@@ -6,5 +6,5 @@ export class Component1 {
 }
 
 @Component({})
-export class <weak_warning descr="Declaration is not included in any NgModule.">Component2</weak_warning> {
+export class <weak_warning descr="Component2 is not declared in any Angular module">Component2</weak_warning> {
 }

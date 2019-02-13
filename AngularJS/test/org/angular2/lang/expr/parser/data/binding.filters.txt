@@ -65,7 +65,7 @@ ASTWrapperPsiElement(FILE)
       JSDefinitionExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('n')
-      PsiErrorElement:binding expressions cannot contain assignments
+      PsiErrorElement:Binding expressions cannot contain assignments
         <empty list>
       PsiWhiteSpace(' ')
       PsiElement(JS:EQ)('=')

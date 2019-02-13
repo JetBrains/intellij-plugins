@@ -16,6 +16,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
@@ -43,7 +44,8 @@ public class Angular2ComponentTemplatePropertyInspection extends LocalInspection
           JSProperty template = initializer.findProperty(TEMPLATE_PROP);
           if (template == null && templateUrl == null) {
             holder.registerProblem(initializer,
-                                   Angular2Bundle.message("angular.inspection.decorator.missing-template"),
+                                   Angular2Bundle.message("angular.inspection.decorator.missing-template",
+                                                          Angular2EntityUtils.getEntityClassName(decorator)),
                                    new AddJSPropertyQuickFix(initializer, TEMPLATE_PROP, "\n\n", 1, true),
                                    new AddJSPropertyQuickFix(initializer, TEMPLATE_URL_PROP, "./", 2, false));
           }

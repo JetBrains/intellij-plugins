@@ -68,7 +68,7 @@ ASTWrapperPsiElement(FILE)
           PsiErrorElement:Unclosed string literal
             <empty list>
       PsiElement(BAD_CHARACTER)('\')
-      PsiErrorElement:unexpected token 'u'
+      PsiErrorElement:Unexpected token 'u'
         <empty list>
       JSExpressionStatement
         JSReferenceExpression

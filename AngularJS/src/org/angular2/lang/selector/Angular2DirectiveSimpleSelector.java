@@ -11,6 +11,7 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.xml.util.XmlUtil;
 import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
@@ -61,7 +62,7 @@ public class Angular2DirectiveSimpleSelector {
     while (matcher.find()) {
       if (matcher.start(1) >= 0) {
         if (inNot) {
-          throw new ParseException("Nesting :not is not allowed in a selector",
+          throw new ParseException(Angular2Bundle.message("angular.parse.selector.nested-not"),
                                    new TextRange(matcher.start(1), matcher.end(1)));
         }
         inNot = true;
@@ -83,7 +84,7 @@ public class Angular2DirectiveSimpleSelector {
       }
       if (matcher.start(8) >= 0) {
         if (inNot) {
-          throw new ParseException("Multiple selectors in :not are not supported",
+          throw new ParseException(Angular2Bundle.message("angular.parse.selector.multiple-not"),
                                    new TextRange(matcher.start(8), matcher.end(8)));
         }
         addResult.accept(cssSelector);
@@ -106,7 +107,7 @@ public class Angular2DirectiveSimpleSelector {
     while (matcher.find()) {
       if (matcher.start(1) >= 0) {
         if (inNot) {
-          throw new ParseException("Nesting :not is not allowed in a selector",
+          throw new ParseException(Angular2Bundle.message("angular.parse.selector.nested-not"),
                                    new TextRange(matcher.start(1), matcher.end(1)));
         }
         inNot = true;
@@ -128,7 +129,7 @@ public class Angular2DirectiveSimpleSelector {
       }
       if (matcher.start(8) >= 0) {
         if (inNot) {
-          throw new ParseException("Multiple selectors in :not are not supported",
+          throw new ParseException(Angular2Bundle.message("angular.parse.selector.multiple-not"),
                                    new TextRange(matcher.start(8), matcher.end(8)));
         }
         results.add(cssSelector);

@@ -2,7 +2,7 @@
 import {Component, Directive, NgModule, Pipe} from "@angular/core";
 
 @Component({})
-class <error descr="Declaration is included in more than one NgModule.">Component1</error> {
+class <error descr="Component1 is declared in multiple Angular modules: Module1 and Module2">Component1</error> {
 }
 
 @Component({})
@@ -10,11 +10,11 @@ class Component2 {
 }
 
 @Component({})
-class <error descr="Declaration is not included in any NgModule.">Component3</error> {
+class <error descr="Component3 is not declared in any Angular module">Component3</error> {
 }
 
 @Directive({})
-class <error descr="Declaration is included in more than one NgModule.">Directive1</error> {
+class <error descr="Directive1 is declared in multiple Angular modules: Module1 and Module2">Directive1</error> {
 }
 
 @Directive({})
@@ -22,11 +22,11 @@ class Directive2 {
 }
 
 @Directive({})
-class <error descr="Declaration is not included in any NgModule.">Directive3</error> {
+class <error descr="Directive3 is not declared in any Angular module">Directive3</error> {
 }
 
 @Pipe({})
-class <error descr="Declaration is included in more than one NgModule.">Pipe1</error> {
+class <error descr="Pipe1 is declared in multiple Angular modules: Module1 and Module2">Pipe1</error> {
 }
 
 @Pipe({})
@@ -34,7 +34,7 @@ class Pipe2 {
 }
 
 @Pipe({})
-class <error descr="Declaration is not included in any NgModule.">Pipe3</error> {
+class <error descr="Pipe3 is not declared in any Angular module">Pipe3</error> {
 }
 
 @NgModule({

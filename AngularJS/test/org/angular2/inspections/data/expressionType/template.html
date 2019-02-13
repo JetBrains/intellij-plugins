@@ -1,8 +1,8 @@
-<div *ngIf="true; extra: <warning descr="Type 'number' is not assignable to type 'string&number'">12</warning>; super: <warning descr="Type 'String(\"ee\")' is not assignable to type 'string&number'">'ee'</warning>"></div>
+<div *ngIf="true; extra: <warning descr="Type number is not assignable to type string&number">12</warning>; super: <warning descr="Type String(\"ee\") is not assignable to type string&number">'ee'</warning>"></div>
 
-<div *ngFor="let item of <warning descr="Type 'number' is not assignable to type 'NgIterable<T>'">myNumber</warning>"></div>
+<div *ngFor="let item of <warning descr="Type number is not assignable to type NgIterable<T>">myNumber</warning>"></div>
 
-<div *ngFor="let item of myArray; trackBy: <warning descr="Type 'function(string): string' is not assignable to type 'TrackByFunction<S>'">myBadFunction</warning>"></div>
+<div *ngFor="let item of myArray; trackBy: <warning descr="Type function(string): string is not assignable to type TrackByFunction<S>">myBadFunction</warning>"></div>
 
 <div *ngFor="let item of myList; trackBy: myAnotherFunction"></div>
 
@@ -10,17 +10,17 @@
 
 <div *ngIf="true; extra: 12; super: 12"></div>
 
-<div *ngIf="true; then <warning descr="Type 'string' is not assignable to type 'TemplateRef<NgIfContext>|null'">myThen</warning>; else myElse"></div>
+<div *ngIf="true; then <warning descr="Type string is not assignable to type TemplateRef<NgIfContext>|null">myThen</warning>; else myElse"></div>
 
 <ng-template #templateRef></ng-template>
 <div *ngIf="false; else templateRef"></div>
-<div *ngIf="false; number: <warning descr="Type 'TemplateRef<any>' is not assignable to type 'number'">templateRef</warning>"></div>
+<div *ngIf="false; number: <warning descr="Type TemplateRef<any> is not assignable to type number">templateRef</warning>"></div>
 
 <div comp #compRef></div>
-<div *ngIf="false; number: <warning descr="Type 'MyCustomComponent' is not assignable to type 'number'">compRef</warning>"></div>
+<div *ngIf="false; number: <warning descr="Type MyCustomComponent is not assignable to type number">compRef</warning>"></div>
 
 <div #divRef></div>
-<div *ngIf="false; else <warning descr="Type 'HTMLDivElement' is not assignable to type 'TemplateRef<NgIfContext>|null'">divRef</warning>"></div>
+<div *ngIf="false; else <warning descr="Type HTMLDivElement is not assignable to type TemplateRef<NgIfContext>|null">divRef</warning>"></div>
 
 <div dir #dirRef="dir"></div>
-<div *ngIf="false; number: <warning descr="Type 'MyDirective' is not assignable to type 'number'">dirRef</warning>"></div>
+<div *ngIf="false; number: <warning descr="Type MyDirective is not assignable to type number">dirRef</warning>"></div>

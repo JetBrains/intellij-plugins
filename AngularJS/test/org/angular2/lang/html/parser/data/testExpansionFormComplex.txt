@@ -96,7 +96,7 @@ HtmlFile:test.html
       XmlText
         XmlToken:XML_DATA_CHARACTERS('}}')
         PsiWhiteSpace(' ')
-      PsiErrorElement:Unterminated expansion form. Do you have an unescaped "{" in your template? Use "{{ '{' }}") to escape it.
+      PsiErrorElement:Unterminated expansion form. Do you have an unescaped "{" in your template? Use "{{ '{' }}") to escape it
         PsiElement(NG:EXPANSION_FORM_START)('{')
       XmlText
         PsiElement(NG:EXPANSION_FORM_END)('}')
