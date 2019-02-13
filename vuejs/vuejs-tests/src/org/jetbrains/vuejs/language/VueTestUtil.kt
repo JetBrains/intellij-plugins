@@ -55,4 +55,6 @@ export default {
 """)
 }
 
-fun getVueTestDataPath() = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData"
+fun getVueTestDataPath() = PathManager.getHomePath() + vueRelativeTestDataPath()
+
+fun vueRelativeTestDataPath() = "/contrib/vuejs/vuejs-tests/testData"
