@@ -17,7 +17,9 @@ HtmlFile:test.html
             PsiWhiteSpace(' ')
             JSBinaryExpression
               JSLiteralExpression
-                PsiElement(JS:STRING_LITERAL)('' &mdash;'')
+                PsiElement(JS:STRING_LITERAL_PART)('' ')
+                PsiElement(NG:XML_CHAR_ENTITY_REF)('&mdash;')
+                PsiElement(JS:STRING_LITERAL_PART)(''')
               PsiWhiteSpace(' ')
               PsiElement(JS:PLUS)('+')
               PsiWhiteSpace(' ')

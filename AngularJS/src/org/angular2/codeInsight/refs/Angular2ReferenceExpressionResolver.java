@@ -2,6 +2,7 @@
 package org.angular2.codeInsight.refs;
 
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
+import com.intellij.lang.javascript.ecmascript6.TypeScriptReferenceExpressionResolver;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.psi.JSCallExpression;
@@ -10,7 +11,6 @@ import com.intellij.lang.javascript.psi.JSPsiElementBase;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.JSReferenceExpressionResolver;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.psi.PsiElement;
@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class Angular2ReferenceExpressionResolver extends JSReferenceExpressionResolver {
+public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpressionResolver {
 
   public Angular2ReferenceExpressionResolver(@NotNull JSReferenceExpressionImpl expression, boolean ignorePerformanceLimits) {
     super(expression, ignorePerformanceLimits);

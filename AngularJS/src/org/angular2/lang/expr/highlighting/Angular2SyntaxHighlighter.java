@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.highlighting.JSHighlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.psi.tree.TokenSet;
 import org.angular2.lang.expr.Angular2Language;
+import org.angular2.lang.expr.lexer.Angular2Lexer;
 import org.angular2.lang.expr.lexer.Angular2TokenTypes;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ public class Angular2SyntaxHighlighter extends JSHighlighter {
   @NotNull
   @Override
   public Lexer getHighlightingLexer() {
-    return new Angular2HighlightingLexer(getDialectOptionsHolder());
+    return new Angular2Lexer();
   }
 
   @NotNull

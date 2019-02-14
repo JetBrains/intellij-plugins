@@ -84,7 +84,8 @@ public class Angular2ExpressionTypeInspection extends LocalInspectionTool {
         if (actualType != null
             && !expectedType.isDirectlyAssignableType(actualType, JSTypeComparingContextService.getProcessingContextWithCache(binding))) {
           holder.registerProblem(expression, Angular2Bundle.message("angular.inspection.template.type-not-assignable",
-                                                                    actualType.getTypeText(), expectedType.getTypeText()));
+                                                                    actualType.getTypeText(JSType.TypeTextFormat.PRESENTABLE),
+                                                                    expectedType.getTypeText(JSType.TypeTextFormat.PRESENTABLE)));
         }
       }
     };

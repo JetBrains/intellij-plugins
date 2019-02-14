@@ -229,6 +229,17 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     doTestHtml("<div>{{foo ? ' &mdash;' + bar : \"\"}}</div>");
   }
 
+  public void testNgStringWithEntity() throws Exception {
+    doTestHtml("{{ &quot;fo&#123;o\" }}");
+  }
+  public void testNgStringWithEntity2() throws Exception {
+    doTestHtml("<div [input]='&apos;foo&quot;&dash;&apos;'");
+  }
+
+  public void testNgStringWithEntity3() throws Exception {
+    doTestHtml("<div [input]='&apos;foo&quot;&dash;&apos;\"second\"'");
+  }
+
   public void testNgWeb20713() throws Exception {
     doTestHtml("<h5>Last Updated: {{(viewModel.lastUpdated$ | async) | date:'mediumTime'}}</h5>");
   }

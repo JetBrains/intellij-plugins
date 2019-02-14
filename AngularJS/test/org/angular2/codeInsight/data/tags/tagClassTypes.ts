@@ -90,8 +90,8 @@ import {Component} from "@angular/core"
         <ul #ul></ul>
         {{ testUList(ul) }}
 
-        {{ testAnchor(<weak_warning descr="Argument type HTMLUListElement is not assignable to parameter type HTMLAnchorElement">ul</weak_warning>) }}
-        {{ testFieldSet(<weak_warning descr="Argument type HTMLTableSectionElement is not assignable to parameter type HTMLFieldSetElement">tfoot</weak_warning>) }}
+        {{ testAnchor(<error descr="Argument type HTMLUListElement is not assignable to parameter type HTMLAnchorElement">ul</error>) }}
+        {{ testFieldSet(<error descr="Argument type HTMLTableSectionElement is not assignable to parameter type HTMLFieldSetElement">tfoot</error>) }}
         
       </div>  
     `

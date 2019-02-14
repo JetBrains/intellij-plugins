@@ -1,38 +1,38 @@
 <my-comp
     <weak_warning descr="Property missingAttr is not provided by any applicable directives nor by my-comp element">[missingAttr]</weak_warning>="12"
-    [plainNumber]="<warning descr="Type String(\"off\") is not assignable to type number">'off'</warning>"
-    [plainBoolean]="<warning descr="Type String(\"off\") is not assignable to type boolean">'off'</warning>"
+    [plainNumber]="<warning descr="Type \"off\" is not assignable to type number">'off'</warning>"
+    [plainBoolean]="<warning descr="Type \"off\" is not assignable to type boolean">'off'</warning>"
     [simpleStringEnum]="'off'"
     [setterSimpleStringEnum]="'off'"
     [dependency]="'off'"
-    [model]="<warning descr="Type String(\"off\") is not assignable to type NgModel">'off'</warning>"
+    [model]="<warning descr="Type \"off\" is not assignable to type NgModel">'off'</warning>"
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<warning descr="Type String(\"foo\") is not assignable to type number">'foo'</warning>"
-    [plainBoolean]="<warning descr="Type String(\"foo\") is not assignable to type boolean">'foo'</warning>"
-    [simpleStringEnum]="<warning descr="Type String(\"foo\") is not assignable to type MyType">'foo'</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type String(\"foo\") is not assignable to type MyType">'foo'</warning>"
+    [plainNumber]="<warning descr="Type \"foo\" is not assignable to type number">'foo'</warning>"
+    [plainBoolean]="<warning descr="Type \"foo\" is not assignable to type boolean">'foo'</warning>"
+    [simpleStringEnum]="<warning descr="Type \"foo\" is not assignable to type MyType">'foo'</warning>"
+    [setterSimpleStringEnum]="<warning descr="Type \"foo\" is not assignable to type MyType">'foo'</warning>"
     [dependency]="'foo'"
-    [model]="<warning descr="Type String(\"foo\") is not assignable to type NgModel">'foo'</warning>"
+    [model]="<warning descr="Type \"foo\" is not assignable to type NgModel">'foo'</warning>"
 ></my-comp>
 
 <my-comp
     [plainNumber]="12"
-    [plainBoolean]="<warning descr="Type number is not assignable to type boolean">12</warning>"
-    [simpleStringEnum]="<warning descr="Type number is not assignable to type MyType">12</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type number is not assignable to type MyType">12</warning>"
-    [dependency]="<warning descr="Type number is not assignable to type string">12</warning>"
-    [model]="<warning descr="Type number is not assignable to type NgModel">12</warning>"
+    [plainBoolean]="<warning descr="Type 12 is not assignable to type boolean">12</warning>"
+    [simpleStringEnum]="<warning descr="Type 12 is not assignable to type MyType">12</warning>"
+    [setterSimpleStringEnum]="<warning descr="Type 12 is not assignable to type MyType">12</warning>"
+    [dependency]="<warning descr="Type 12 is not assignable to type string">12</warning>"
+    [model]="<warning descr="Type 12 is not assignable to type NgModel">12</warning>"
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<warning descr="Type boolean is not assignable to type number">false</warning>"
+    [plainNumber]="<warning descr="Type false is not assignable to type number">false</warning>"
     [plainBoolean]="true"
-    [simpleStringEnum]="<warning descr="Type boolean is not assignable to type MyType">false</warning>"
-    [setterSimpleStringEnum]="<warning descr="Type boolean is not assignable to type MyType">true</warning>"
-    [dependency]="<warning descr="Type boolean is not assignable to type string">false</warning>"
-    [model]="<warning descr="Type boolean is not assignable to type NgModel">true</warning>"
+    [simpleStringEnum]="<warning descr="Type false is not assignable to type MyType">false</warning>"
+    [setterSimpleStringEnum]="<warning descr="Type true is not assignable to type MyType">true</warning>"
+    [dependency]="<warning descr="Type false is not assignable to type string">false</warning>"
+    [model]="<warning descr="Type true is not assignable to type NgModel">true</warning>"
 ></my-comp>
 
 <my-comp

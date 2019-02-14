@@ -106,6 +106,12 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "</tr>\n");
   }
 
+  public void testEscapes() {
+    doTest("{{today | date:'d \\'days so far in\\' LLLL'}}" +
+           "<div [input]=\"'test&quot;test\\u1234\\u123\\n\\r\\t'\">" +
+           "<div [input]='\"ttt\" + &apos;str\\u1234ing&apos;'>");
+  }
+
   public void testExpansionForm() {
     doTest("{one.two, three, =4 {four} =5 {five} foo {bar} }");
   }

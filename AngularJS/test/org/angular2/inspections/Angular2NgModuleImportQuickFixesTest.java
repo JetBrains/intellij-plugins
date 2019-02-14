@@ -2,8 +2,8 @@
 package org.angular2.inspections;
 
 import com.intellij.lang.javascript.LightPlatformMultiFileFixtureTestCase;
-import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
 import com.intellij.lang.resharper.ReSharperTestUtil;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PsiTestUtil;
@@ -123,7 +123,7 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
       Angular2BindingsInspection.class,
       Angular2TagsInspection.class,
       Angular2TemplateReferenceVariableInspection.class,
-      JSUnresolvedFunctionInspection.class
+      TypeScriptUnresolvedFunctionInspection.class
     );
   }
 

@@ -1,7 +1,7 @@
-{{ <weak_warning descr="Unresolved variable or type unknownVar">unknownVar</weak_warning> | <weak_warning descr="Unresolved pipe myPipe">myPipe</weak_warning> }}
-{{ knownVar | <weak_warning descr="Unresolved pipe myPipe">myPipe</weak_warning> }}
-{{ knownVar | lowercase : knownVar : <weak_warning descr="Unresolved variable or type unknownVar">unknownVar</weak_warning> }}
+{{ <error descr="Unresolved variable or type unknownVar">unknownVar</error> | <error descr="Unresolved pipe myPipe">myPipe</error> }}
+{{ knownVar | <error descr="Unresolved pipe myPipe">myPipe</error> }}
+{{ knownVar | lowercase : knownVar : <error descr="Unresolved variable or type unknownVar">unknownVar</error> }}
 {{ knownVar | lowercase }}
-<div [attr]="<weak_warning descr="Unresolved variable or type unknownVar">unknownVar</weak_warning> | <weak_warning descr="Unresolved pipe fooPipe">fooPipe</weak_warning>"></div>
-<div [attr]="knownVar | <weak_warning descr="Unresolved pipe fooPipe">fooPipe</weak_warning>"></div>
+<div [attr]="<error descr="Unresolved variable or type unknownVar">unknownVar</error> | <error descr="Unresolved pipe fooPipe">fooPipe</error>"></div>
+<div [attr]="knownVar | <error descr="Unresolved pipe fooPipe">fooPipe</error>"></div>
 <div #knownVar></div>

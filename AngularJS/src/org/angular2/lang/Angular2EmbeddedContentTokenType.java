@@ -2,24 +2,24 @@
 package org.angular2.lang;
 
 import com.intellij.embedding.EmbeddingElementType;
-import com.intellij.lang.*;
+import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
+import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.LazyParseableElement;
 import com.intellij.psi.tree.ICustomParsingType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.ILazyParseableElementTypeBase;
-import com.intellij.psi.tree.ILightLazyParseableElementType;
 import com.intellij.util.CharTable;
-import com.intellij.util.diff.FlyweightCapableTreeStructure;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Angular2EmbeddedContentTokenType extends IElementType
-  implements EmbeddingElementType, ICustomParsingType, ILazyParseableElementTypeBase, ILightLazyParseableElementType {
+  implements EmbeddingElementType, ICustomParsingType, ILazyParseableElementTypeBase {
 
   protected Angular2EmbeddedContentTokenType(@NotNull @NonNls String debugName, @Nullable Language language) {
     super(debugName, language);
@@ -41,38 +41,18 @@ public abstract class Angular2EmbeddedContentTokenType extends IElementType
     return builder.getTreeBuilt().getFirstChildNode();
   }
 
-  @Override
-  public final FlyweightCapableTreeStructure<LighterASTNode> parseContents(LighterLazyParseableNode chameleon) {
-    PsiBuilder builder = doParseContents(chameleon);
-    return builder.getLightTree();
-  }
-
-  protected PsiBuilder doParseContents(@NotNull Object chameleon) {
-    assert chameleon instanceof ASTNode || chameleon instanceof LighterLazyParseableNode : chameleon.getClass();
-
+  protected PsiBuilder doParseContents(@NotNull ASTNode chameleon) {
     Project project;
-    if (chameleon instanceof ASTNode) {
-      PsiElement psi = ((ASTNode)chameleon).getPsi();
-      project = psi.getProject();
-    }
-    else {
-      PsiFile file = ((LighterLazyParseableNode)chameleon).getContainingFile();
-      assert file != null : "Let's add LighterLazyParseableNode#getProject() method";
-      project = file.getProject();
-    }
+    PsiElement psi = chameleon.getPsi();
+    project = psi.getProject();
 
-    final CharSequence chars = chameleon instanceof ASTNode
-                               ? ((ASTNode)chameleon).getChars()
-                               : ((LighterLazyParseableNode)chameleon).getText();
+    final CharSequence chars = chameleon.getChars();
 
     final Lexer lexer = createLexer();
 
     final PsiBuilder builder =
-      chameleon instanceof ASTNode
-      ? PsiBuilderFactory.getInstance().createBuilder(
-        project, (ASTNode)chameleon, lexer, getLanguage(), chars)
-      : PsiBuilderFactory.getInstance().createBuilder(
-        project, (LighterLazyParseableNode)chameleon, lexer, getLanguage(), chars);
+      PsiBuilderFactory.getInstance().createBuilder(
+        project, chameleon, lexer, getLanguage(), chars);
 
     parse(builder);
     return builder;

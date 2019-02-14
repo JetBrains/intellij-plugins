@@ -1,0 +1,15 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    PsiElement(NG:INTERPOLATION_START)('{{')
+    ASTWrapperPsiElement(NG:INTERPOLATION_EXPR)
+      PsiWhiteSpace(' ')
+      Angular2Interpolation
+        JSLiteralExpression
+          PsiElement(NG:XML_CHAR_ENTITY_REF)('&quot;')
+          PsiElement(JS:STRING_LITERAL_PART)('fo')
+          PsiElement(NG:XML_CHAR_ENTITY_REF)('&#123;')
+          PsiElement(JS:STRING_LITERAL_PART)('o"')
+      PsiWhiteSpace(' ')
+    PsiElement(NG:INTERPOLATION_END)('}}')
