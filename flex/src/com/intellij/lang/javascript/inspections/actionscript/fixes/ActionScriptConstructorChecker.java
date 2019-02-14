@@ -44,8 +44,8 @@ public class ActionScriptConstructorChecker extends JSConstructorChecker {
   @Contract("null -> null")
   protected JSCallExpression findAnyBaseConstructorCall(@Nullable JSFunction jsFunction) {
     if (jsFunction == null) return null;
-    final JSSourceElement[] body = jsFunction.getBody();
-    return body.length > 0 ? findBaseConstructorCall(((JSBlockStatement)body[0])) : null;
+    final JSBlockStatement body = jsFunction.getBlock();
+    return body != null ? findBaseConstructorCall(body) : null;
   }
 
   private static JSCallExpression findBaseConstructorCall(final JSBlockStatement blockStatement) {
