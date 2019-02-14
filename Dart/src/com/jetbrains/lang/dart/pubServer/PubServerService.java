@@ -78,6 +78,8 @@ final class PubServerService extends NetService {
 
   private final ConcurrentMap<VirtualFile, ServerInfo> servedDirToSocketAddress = ContainerUtil.newConcurrentMap();
 
+  private final Object myServerReadyLock = new Object();
+
   private static class ServerInfo {
     private final InetSocketAddress address;
     private final Deque<Channel> freeServerChannels = PlatformDependent.newConcurrentDeque();
@@ -209,7 +211,7 @@ final class PubServerService extends NetService {
     }
 
     final OSProcessHandler processHandler = new OSProcessHandler(commandLine);
-    processHandler.addProcessListener(new PubServeOutputListener(project));
+    processHandler.addProcessListener(new PubServeOutputListener(project, myServerReadyLock));
 
     return processHandler;
   }
@@ -220,8 +222,20 @@ final class PubServerService extends NetService {
                                   @NotNull final OSProcessHandler processHandler,
                                   @NotNull final Consumer<String> errorOutputConsumer) {
 
-    if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject())) && !DartWebdev.INSTANCE.getActivated()) {
-      ApplicationManager.getApplication().invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
+    if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject()))) {
+      if (!DartWebdev.INSTANCE.getActivated()) {
+        ApplicationManager.getApplication()
+          .invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
+      }
+
+      synchronized (myServerReadyLock) {
+        try {
+          // wait for the Webdev server to start before redirecting, so that Chrome doesn't show error.
+          //noinspection WaitNotInLoop
+          myServerReadyLock.wait(20000);
+        }
+        catch (InterruptedException e) {/**/}
+      }
     }
 
     InetSocketAddress firstPubServerAddress = NetKt.loopbackSocketAddress(port);
@@ -352,16 +366,26 @@ final class PubServerService extends NetService {
 
   private static class PubServeOutputListener extends ProcessAdapter {
     private final Project myProject;
+    private final Object myServerReadyLock;
     private boolean myNotificationAboutErrors;
     private Notification myNotification;
 
-    PubServeOutputListener(final Project project) {
+    PubServeOutputListener(@NotNull Project project, @NotNull Object serverReadyLock) {
       myProject = project;
+      myServerReadyLock = serverReadyLock;
     }
 
     @Override
     public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
       final String text = event.getText().toLowerCase(Locale.US);
+
+      // Serving `web` on http://localhost:53322
+      if (text.startsWith("serving ")) {
+        synchronized (myServerReadyLock) {
+          myServerReadyLock.notifyAll();
+        }
+      }
+
       if (outputType == ProcessOutputTypes.STDERR || text.startsWith("[error] ")) {
         final boolean error = text.contains("error");
 
