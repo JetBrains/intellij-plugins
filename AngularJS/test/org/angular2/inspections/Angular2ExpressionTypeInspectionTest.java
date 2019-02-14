@@ -3,8 +3,8 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
-import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -20,8 +20,8 @@ public class Angular2ExpressionTypeInspectionTest extends LightPlatformCodeInsig
     myFixture.enableInspections(Angular2ExpressionTypeInspection.class,
                                 Angular2BindingsInspection.class,
                                 HtmlUnknownAttributeInspection.class,
-                                JSCheckFunctionSignaturesInspection.class,
-                                JSUnresolvedFunctionInspection.class);
+                                TypeScriptValidateTypesInspection.class,
+                                TypeScriptUnresolvedFunctionInspection.class);
   }
 
   public void testSimpleTypesValidation() {

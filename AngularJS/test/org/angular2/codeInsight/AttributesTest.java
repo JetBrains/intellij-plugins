@@ -6,8 +6,6 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
-import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection;
 import com.intellij.lang.javascript.psi.JSField;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
@@ -18,6 +16,8 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptPropertySignature;
 import com.intellij.lang.javascript.psi.resolve.JSSimpleTypeProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
 import com.intellij.lang.javascript.psi.types.JSNamedType;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiElement;
@@ -777,8 +777,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testExportAs() {
     JSTestUtils.testES6(myFixture.getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedVariableInspection.class);
-      myFixture.enableInspections(JSCheckFunctionSignaturesInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class,
+                                  TypeScriptValidateTypesInspection.class);
       myFixture.configureByFiles("exportAs.ts", "package.json");
       myFixture.checkHighlighting(true, false, true);
     });

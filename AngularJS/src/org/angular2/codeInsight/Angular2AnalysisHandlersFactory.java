@@ -3,12 +3,13 @@ package org.angular2.codeInsight;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.JSAnalysisHandlersFactory;
+import com.intellij.lang.javascript.ecmascript6.TypeScriptAnalysisHandlersFactory;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.lang.javascript.validation.JSReferenceChecker;
 import com.intellij.lang.javascript.validation.JSReferenceInspectionProblemReporter;
+import com.intellij.lang.javascript.validation.TypeScriptReferenceChecker;
 import com.intellij.lang.javascript.validation.fixes.CreateJSFunctionIntentionAction;
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
@@ -26,11 +27,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
+public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersFactory {
   @NotNull
   @Override
   public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
-    return new JSReferenceChecker(reporter) {
+    return new TypeScriptReferenceChecker(reporter) {
       @Override
       protected void addCreateFromUsageFixesForCall(@NotNull JSReferenceExpression methodExpression,
                                                     boolean isNewExpression,
@@ -50,6 +51,14 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
               JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
               assert componentClass != null;
               doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
+            }
+
+            @Override
+            protected JSReferenceExpression beforeStartTemplateAction(JSReferenceExpression referenceExpression,
+                                                                      Editor editor,
+                                                                      @Nullable PsiElement anchor,
+                                                                      boolean isStaticContext) {
+              return referenceExpression;
             }
 
             @NotNull
@@ -124,6 +133,14 @@ public class Angular2AnalysisHandlersFactory extends JSAnalysisHandlersFactory {
               JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
               assert componentClass != null;
               doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
+            }
+
+            @Override
+            protected JSReferenceExpression beforeStartTemplateAction(JSReferenceExpression referenceExpression,
+                                                                      Editor editor,
+                                                                      PsiElement anchor,
+                                                                      boolean isStaticContext) {
+              return referenceExpression;
             }
 
             @NotNull

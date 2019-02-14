@@ -32,6 +32,8 @@ FP_LITERAL4=({DIGIT})+
 EXPONENT_PART=[Ee]["+""-"]?({DIGIT})*
 END_OF_LINE_COMMENT="/""/"[^\r\n]*
 
+ALPHA=[:letter:]
+TAG_NAME=({ALPHA}|"_"|":")({ALPHA}|{DIGIT}|"_"|":"|"."|"-")*
 
 IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
 
@@ -40,6 +42,8 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
 %%
 
 <YYINITIAL> {
+  "&apos;"                    { yybegin(YYSTRING); quote = '\''; return XML_CHAR_ENTITY_REF; }
+  "&quot;"                    { yybegin(YYSTRING); quote = '"'; return XML_CHAR_ENTITY_REF; }
   "'"                         { yybegin(YYSTRING); quote = '\''; return STRING_LITERAL_PART; }
   "\""                        { yybegin(YYSTRING); quote = '"'; return STRING_LITERAL_PART; }
   {NUMBER}                    { return NUMERIC_LITERAL; }
@@ -99,12 +103,20 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
 }
 
 <YYSTRING> {
-  [\\][^u\n\r]                |
+  "\\&"{TAG_NAME}";" |
+  "\\&#"{DIGIT}+";" |
+  "\\&#"(x|X)({DIGIT}|[a-fA-F])+";" |
+  [\\][^u\n\r] |
   [\\]u[0-9a-fA-F]{4}         { return ESCAPE_SEQUENCE; }
   [\\]u[^0-9a-fA-F]           { yypushback(1); return INVALID_ESCAPE_SEQUENCE; }
   [\\]u[0-9a-fA-F]{1,3}       { return INVALID_ESCAPE_SEQUENCE; }
+  "&apos;"                    { if (quote == '\'') yybegin(YYINITIAL); return XML_CHAR_ENTITY_REF; }
+  "&quot;"                    { if (quote == '"') yybegin(YYINITIAL); return XML_CHAR_ENTITY_REF; }
   "'"                         { if (quote == '\'') yybegin(YYINITIAL); return STRING_LITERAL_PART; }
   "\""                        { if (quote == '"') yybegin(YYINITIAL); return STRING_LITERAL_PART; }
-  [^\'\"\n\r\\]+              { return STRING_LITERAL_PART; }
+  "&"{TAG_NAME}";" |
+  "&#"(x|X)({DIGIT}|[a-fA-F])+";" |
+  "&#"{DIGIT}+";"             { return XML_CHAR_ENTITY_REF; }
+  [^&\'\"\n\r\\]+ | "&"       { return STRING_LITERAL_PART; }
   [^]                         { yypushback(yytext().length()); yybegin(YYINITIAL); }
 }

@@ -4,11 +4,15 @@ package org.angular2.codeInsight;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.inspections.*;
+import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
+import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFieldImpl;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
@@ -139,7 +143,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testInlineTemplateCreateFunction2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunction.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
       myFixture.checkResultByFile("createFunction.fixed.ts", true);
@@ -148,7 +152,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testInlineTemplateCreateFunctionWithParam2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionWithParam.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
       myFixture.checkResultByFile("createFunctionWithParam.fixed.ts", true);
@@ -157,7 +161,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testInlineTemplateCreateFunctionEventEmitter2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionEventEmitter.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
       myFixture.checkResultByFile("createFunctionEventEmitter.fixed.ts", true);
@@ -166,7 +170,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testInlineTemplateCreateFunctionWithType2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionWithType.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
       myFixture.checkResultByFile("createFunctionWithType.fixed.ts", true);
@@ -175,7 +179,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testInlineTemplateCreateFunctionEventEmitterImplicit2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionEventEmitterImplicit.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
       myFixture.checkResultByFile("createFunctionEventEmitterImplicit.fixed.ts", true);
@@ -184,7 +188,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testInlineTemplateCreateField2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedVariableInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
       myFixture.getAllQuickFixes("createField.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention("Create Field 'todo'"));
       myFixture.checkResultByFile("createField.fixed.ts", true);
@@ -193,7 +197,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNonInlineTemplateCreateFunction2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunction.html", "createFunction.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
       myFixture.checkResultByFile("createFunction.ts", "createFunction.fixed.ts", true);
@@ -202,7 +206,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNonInlineTemplateCreateField2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedVariableInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
       myFixture.getAllQuickFixes("createField.html", "createField.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention("Create Field 'todo'"));
       myFixture.checkResultByFile("createField.ts", "createField.fixed.ts", true);
@@ -211,7 +215,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testNonInlineTemplateCreateFunctionDoubleClass2TypeScript() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSUnresolvedFunctionInspection.class);
+      myFixture.enableInspections(TypeScriptUnresolvedFunctionInspection.class);
       myFixture.getAllQuickFixes("createFunctionDoubleClass.html", "createFunctionDoubleClass.ts", "package.json");
       myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
       myFixture.checkResultByFile("createFunctionDoubleClass.ts", "createFunctionDoubleClass.fixed.ts", true);
@@ -220,7 +224,7 @@ public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testFixSignatureMismatchFromUsageInTemplate() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
-      myFixture.enableInspections(JSCheckFunctionSignaturesInspection.class);
+      myFixture.enableInspections(TypeScriptValidateTypesInspection.class);
       myFixture.getAllQuickFixes("changeMethodSignature.html", "changeMethodSignature.ts", "package.json");
       String fixTitle = JSBundle.message("change.method.signature.fix.text", "HeroDetailComponent.save()");
       myFixture.launchAction(myFixture.findSingleIntention(fixTitle));

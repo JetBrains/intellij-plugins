@@ -5,7 +5,7 @@ import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspectio
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
-import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
@@ -166,7 +166,7 @@ public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testTagClassTypes() {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(), () -> {
-      myFixture.enableInspections(JSCheckFunctionSignaturesInspection.class);
+      myFixture.enableInspections(TypeScriptValidateTypesInspection.class);
       myFixture.configureByFiles("tagClassTypes.ts", "package.json");
       myFixture.checkHighlighting(true, false, true);
     });

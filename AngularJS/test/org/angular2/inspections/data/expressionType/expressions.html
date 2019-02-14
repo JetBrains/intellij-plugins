@@ -18,8 +18,15 @@
 ></my-comp>
 
 <my-comp
-    [plainNumber]="<warning descr="Type string is not assignable to type number"><weak_warning descr="Argument type number is not assignable to parameter type string">12</weak_warning> | lowercase</warning>"
-    [dependency]="<weak_warning descr="Argument type number is not assignable to parameter type string">12</weak_warning> | lowercase"
+    [plainNumber]="<warning descr="Type \"off\" | \"polite\" is not assignable to type number">true ? 'off' : 'polite'</warning>"
+    [simpleStringEnum]="true ? 'off' : 'polite'"
+    [setterSimpleStringEnum]="true ? 'off' : 'polite'"
+    [dependency]="true ? 'off' : 'polite'"
+></my-comp>
+
+<my-comp
+    [plainNumber]="<warning descr="Type string is not assignable to type number"><error descr="Argument type 12 is not assignable to parameter type string">12</error> | lowercase</warning>"
+    [dependency]="<error descr="Argument type 12 is not assignable to parameter type string">12</error> | lowercase"
 ></my-comp>
 <my-comp
     [simpleStringEnum]="<warning descr="Type string is not assignable to type MyType">'off' | lowercase</warning>"
@@ -37,8 +44,8 @@
 ></my-comp>
 
 <my-comp
-    [dependency]="'foo' | <weak_warning descr="Argument types do not match parameters">async</weak_warning>"
-    [model]="'foo' | <weak_warning descr="Argument types do not match parameters">async</weak_warning>"
+    [dependency]="'foo' | <error descr="Argument types do not match parameters">async</error>"
+    [model]="'foo' | <error descr="Argument types do not match parameters">async</error>"
 ></my-comp>
 
 <my-comp
@@ -47,8 +54,8 @@
 ></my-comp>
 
 <my-comp
-    [dependency]="getText(<weak_warning descr="Argument type number is not assignable to parameter type NgModel">12</weak_warning>)"
-    [model]="<warning descr="Type string is not assignable to type NgModel">getText(<weak_warning descr="Argument type string is not assignable to parameter type NgModel">'foo'</weak_warning>)</warning>"
+    [dependency]="getText(<error descr="Argument type 12 is not assignable to parameter type NgModel">12</error>)"
+    [model]="<warning descr="Type string is not assignable to type NgModel">getText(<error descr="Argument type \"foo\" is not assignable to parameter type NgModel">'foo'</error>)</warning>"
 ></my-comp>
 
 <input [ngModel]="true" #model="ngModel"/>

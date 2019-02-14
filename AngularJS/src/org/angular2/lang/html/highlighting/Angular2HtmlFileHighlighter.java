@@ -2,6 +2,7 @@
 package org.angular2.lang.html.highlighting;
 
 import com.intellij.ide.highlighter.HtmlFileHighlighter;
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.highlighting.JSHighlighter;
 import com.intellij.lexer.Lexer;
@@ -18,10 +19,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static com.intellij.openapi.editor.XmlHighlighterColors.HTML_CODE;
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.containers.ContainerUtil.newArrayList;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
 class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
@@ -66,18 +67,18 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
   }
 
   static {
-    Stream.of(INTERPOLATION_START, INTERPOLATION_END).forEach(
+    newArrayList(INTERPOLATION_START, INTERPOLATION_END).forEach(
       token -> put(token, HTML_CODE, NG_EXPRESSION, NG_INTERPOLATION_DELIMITER)
     );
 
-    Stream.of(EXPANSION_FORM_START, EXPANSION_FORM_CASE_START, EXPANSION_FORM_END, EXPANSION_FORM_CASE_END).forEach(
+    newArrayList(EXPANSION_FORM_START, EXPANSION_FORM_CASE_START, EXPANSION_FORM_END, EXPANSION_FORM_CASE_END).forEach(
       token -> put(token, HTML_CODE, NG_EXPANSION_FORM, NG_EXPANSION_FORM_DELIMITER)
     );
 
     put(Angular2HtmlHighlightingLexer.EXPANSION_FORM_CONTENT, HTML_CODE, NG_EXPANSION_FORM);
     put(Angular2HtmlHighlightingLexer.EXPANSION_FORM_COMMA, HTML_CODE, NG_EXPANSION_FORM, NG_EXPANSION_FORM_COMMA);
 
-    Stream.of(
+    newArrayList(
       pair(BANANA_BOX_BINDING, NG_BANANA_BINDING_ATTR_NAME),
       pair(EVENT, NG_EVENT_BINDING_ATTR_NAME),
       pair(PROPERTY_BINDING, NG_PROPERTY_BINDING_ATTR_NAME),
@@ -87,8 +88,17 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
       p -> put(p.first, HTML_CODE, XmlHighlighterColors.HTML_TAG, XmlHighlighterColors.HTML_ATTRIBUTE_NAME, p.second)
     );
 
-    Stream.of(Angular2TokenTypes.KEYWORDS.getTypes()).forEach(
+    newArrayList(Angular2TokenTypes.KEYWORDS.getTypes()).forEach(
       token -> put(token, HTML_CODE, NG_EXPRESSION, JSHighlighter.JS_KEYWORD)
+    );
+
+    newArrayList(
+      pair(Angular2TokenTypes.ESCAPE_SEQUENCE, JSHighlighter.JS_VALID_STRING_ESCAPE),
+      pair(Angular2TokenTypes.INVALID_ESCAPE_SEQUENCE, JSHighlighter.JS_INVALID_STRING_ESCAPE),
+      pair(Angular2TokenTypes.XML_CHAR_ENTITY_REF, XmlHighlighterColors.HTML_ENTITY_REFERENCE),
+      pair(JSTokenTypes.STRING_LITERAL_PART, JSHighlighter.JS_STRING)
+    ).forEach(
+      p -> put(p.first, HTML_CODE, NG_EXPRESSION, p.second)
     );
   }
 

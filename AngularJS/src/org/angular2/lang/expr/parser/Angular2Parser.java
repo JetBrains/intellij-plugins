@@ -297,6 +297,9 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
 
   protected class Angular2ExpressionParser extends ExpressionParser<Angular2Parser> {
 
+    @NonNls private static final String CHAR_ENTITY_QUOT = "&quot;";
+    @NonNls private static final String CHAR_ENTITY_APOS = "&apos;";
+
     public Angular2ExpressionParser() {
       super(Angular2Parser.this);
     }
@@ -396,10 +399,19 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     @Override
     public boolean parsePrimaryExpression() {
       final IElementType firstToken = builder.getTokenType();
-      if (firstToken == JSTokenTypes.STRING_LITERAL_PART) {
+      if (firstToken == JSTokenTypes.STRING_LITERAL_PART
+          || isEntityStringStart(firstToken)) {
         return parsePartialStringLiteral(firstToken);
       }
       return super.parsePrimaryExpression();
+    }
+
+    private boolean isEntityStringStart(IElementType tokenType) {
+      if (tokenType != XML_CHAR_ENTITY_REF) {
+        return false;
+      }
+      String text = builder.getTokenText();
+      return text != null && (text.equals(CHAR_ENTITY_QUOT) || text.equals(CHAR_ENTITY_APOS));
     }
 
     @Override
@@ -473,12 +485,23 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
       final PsiBuilder.Marker mark = builder.mark();
       IElementType currentToken = firstToken;
       StringBuilder literal = new StringBuilder();
-      while (currentToken == JSTokenTypes.STRING_LITERAL_PART ||
-             currentToken == ESCAPE_SEQUENCE ||
-             currentToken == INVALID_ESCAPE_SEQUENCE) {
-        literal.append(builder.getTokenText());
+      String text = getCurrentLiteralPartTokenText(currentToken);
+      boolean singleQuote = text == null
+                            || text.startsWith("'");
+      boolean first = true;
+      while (text != null
+             && (currentToken == JSTokenTypes.STRING_LITERAL_PART
+                 || STRING_PART_SPECIAL_SEQ.contains(currentToken))) {
+        literal.append(text);
         builder.advanceLexer();
+        if (!first
+            && ((singleQuote && (text.endsWith("'") && !text.endsWith("\\'")))
+                || (!singleQuote && text.endsWith("\"") && !text.endsWith("\\\"")))) {
+          break;
+        }
+        first = false;
         currentToken = builder.getTokenType();
+        text = getCurrentLiteralPartTokenText(currentToken);
       }
       mark.done(JSStubElementTypes.LITERAL_EXPRESSION);
       final String errorMessage = validateLiteralText(literal.toString());
@@ -486,6 +509,19 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
         builder.error(errorMessage);
       }
       return true;
+    }
+
+    private String getCurrentLiteralPartTokenText(IElementType currentToken) {
+      String text = builder.getTokenText();
+      if (text != null && currentToken == XML_CHAR_ENTITY_REF) {
+        if (text.equals(CHAR_ENTITY_APOS)) {
+          return "'";
+        }
+        else if (text.equals(CHAR_ENTITY_QUOT)) {
+          return "\"";
+        }
+      }
+      return text;
     }
   }
 }

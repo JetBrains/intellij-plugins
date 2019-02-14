@@ -13,7 +13,7 @@ public class Angular2Language extends JSLanguageDialect implements DependentLang
   public static final Angular2Language INSTANCE = new Angular2Language();
 
   protected Angular2Language() {
-    super("Angular2", DialectOptionHolder.OTHER);
+    super("Angular2", DialectOptionHolder.TS);
   }
 
   @Override
