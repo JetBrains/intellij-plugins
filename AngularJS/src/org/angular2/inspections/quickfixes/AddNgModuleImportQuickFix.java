@@ -36,6 +36,7 @@ import static org.angular2.Angular2DecoratorUtil.IMPORTS_PROP;
 
 public class AddNgModuleImportQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
 
+  @Nullable
   private final String myModuleName;
 
   public AddNgModuleImportQuickFix(@NotNull PsiElement context,

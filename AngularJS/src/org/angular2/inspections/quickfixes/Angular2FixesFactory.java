@@ -14,7 +14,6 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.entities.source.Angular2SourceDeclaration;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
@@ -39,14 +38,10 @@ public class Angular2FixesFactory {
       fixes.add(new AddNgModuleImportQuickFix(element, candidates.get(EXPORTED_BY_PUBLIC_MODULE)));
     }
     for (Angular2Declaration declaration : candidates.get(NOT_DECLARED_IN_ANY_MODULE)) {
-      if (declaration instanceof Angular2SourceDeclaration) {
-        fixes.add(new AddNgModuleDeclarationQuickFix(element, (Angular2SourceDeclaration)declaration));
-      }
+      AddNgModuleDeclarationQuickFix.add(element, declaration, fixes);
     }
     for (Angular2Declaration declaration : candidates.get(NOT_EXPORTED_BY_MODULE)) {
-      if (declaration instanceof Angular2SourceDeclaration) {
-        fixes.add(new ExportNgModuleDeclarationQuickFix(element, (Angular2SourceDeclaration)declaration));
-      }
+      ExportNgModuleDeclarationQuickFix.add(element, declaration, fixes);
     }
   }
 

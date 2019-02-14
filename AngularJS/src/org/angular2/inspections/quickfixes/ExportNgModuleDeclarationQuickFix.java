@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.quickfixes;
 
+import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
 import com.intellij.lang.javascript.psi.JSElement;
@@ -15,6 +16,7 @@ import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.source.Angular2SourceDeclaration;
 import org.angular2.entities.source.Angular2SourceModule;
@@ -24,18 +26,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.angular2.Angular2DecoratorUtil.EXPORTS_PROP;
 
 public class ExportNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionActionOnPsiElement {
 
+  public static void add(@NotNull PsiElement context,
+                         @NotNull Angular2Declaration declaration,
+                         @NotNull List<LocalQuickFix> fixes) {
+    if (declaration instanceof Angular2SourceDeclaration
+        && ((Angular2SourceDeclaration)declaration).getTypeScriptClass().getName() != null) {
+      fixes.add(new ExportNgModuleDeclarationQuickFix(context, (Angular2SourceDeclaration)declaration));
+    }
+  }
+
+  @NotNull
   private final String myDeclarationName;
+  @NotNull
   private final SmartPsiElementPointer<ES6Decorator> myDeclarationDecorator;
 
-  public ExportNgModuleDeclarationQuickFix(@NotNull PsiElement context,
-                                           @NotNull Angular2SourceDeclaration declaration) {
+  private ExportNgModuleDeclarationQuickFix(@NotNull PsiElement context,
+                                            @NotNull Angular2SourceDeclaration declaration) {
     super(context);
-    myDeclarationName = declaration.getTypeScriptClass().getName();
+    myDeclarationName = Objects.requireNonNull(declaration.getTypeScriptClass().getName());
     myDeclarationDecorator = SmartPointerManager.createPointer(declaration.getDecorator());
   }
 
