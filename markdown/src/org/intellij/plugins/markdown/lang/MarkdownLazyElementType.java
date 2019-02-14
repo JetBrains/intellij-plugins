@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.ILazyParseableElementType;
 import org.intellij.markdown.parser.MarkdownParser;
-import org.intellij.plugins.markdown.lang.lexer.MarkdownLexerAdapter;
+import org.intellij.plugins.markdown.lang.lexer.MarkdownMergingLexer;
 import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager;
 import org.intellij.plugins.markdown.lang.parser.PsiBuilderFillingVisitor;
 import org.jetbrains.annotations.NonNls;
@@ -22,7 +22,7 @@ public class MarkdownLazyElementType extends ILazyParseableElementType {
   @Override
   protected ASTNode doParseContents(@NotNull ASTNode chameleon, @NotNull PsiElement psi) {
     final Project project = psi.getProject();
-    final Lexer lexer = new MarkdownLexerAdapter();
+    final Lexer lexer = new MarkdownMergingLexer();
     final CharSequence chars = chameleon.getChars();
 
     final org.intellij.markdown.ast.ASTNode node = new MarkdownParser(MarkdownParserManager.FLAVOUR)

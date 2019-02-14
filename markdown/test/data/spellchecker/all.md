@@ -38,3 +38,17 @@ asfjsdkjfsdg
 
 And the link url should not be checked either
 [This is the link <TYPO descr="Typo: In word 'tpyo'">tpyo</TYPO>](http://googlewatchesyou.com)
+
+needn't
+aren't
+couldn't
+hadn't
+hasn't
+mayn't
+mightn't
+mustn't
+shan't
+shouldn't
+weren't
+wouldn't
+didn't
