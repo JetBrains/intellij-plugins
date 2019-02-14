@@ -11,10 +11,14 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.psi.*;
+import com.intellij.psi.HintedReferenceHost;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
 import com.intellij.psi.search.LocalSearchScope;
@@ -22,8 +26,8 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.ObjectUtils;
 import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
@@ -89,19 +93,14 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
       for (PsiElement module : JSFileReferencesUtil.getMostPriorityModules(
         scope, ANGULAR_CORE_PACKAGE, false)) {
         if (!(module instanceof JSElement)) continue;
-        ResolveResult resolved = ArrayUtil.getFirstElement(
-          ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF, scope, (JSElement)module));
-        if (resolved == null
-            || !resolved.isValidResult()
-            || !(resolved.getElement() instanceof TypeScriptClass)) {
-          continue;
+        TypeScriptClass templateRefClass = ObjectUtils.tryCast(
+          JSResolveResult.resolve(
+            ES6PsiUtil.resolveSymbolInModule(TEMPLATE_REF, scope, (JSElement)module)),
+          TypeScriptClass.class);
+        if (templateRefClass != null
+            && templateRefClass.getTypeParameters().length == 1) {
+          return create(templateRefClass, PsiModificationTracker.MODIFICATION_COUNT);
         }
-        TypeScriptClass templateRefClass = (TypeScriptClass)resolved.getElement();
-        if (templateRefClass.getTypeParameterList() == null
-            || templateRefClass.getTypeParameterList().getTypeParameters().length != 1) {
-          continue;
-        }
-        return create(templateRefClass, PsiModificationTracker.MODIFICATION_COUNT);
       }
       return create(null, PsiModificationTracker.MODIFICATION_COUNT);
     }), templateRefClass -> {
