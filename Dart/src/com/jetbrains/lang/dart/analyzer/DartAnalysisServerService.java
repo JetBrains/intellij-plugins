@@ -2,7 +2,9 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.Uninterruptibles;
 import com.google.dart.server.*;
 import com.google.dart.server.generated.AnalysisServer;
@@ -186,6 +188,11 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     @Override
+    public void computedAvailableSuggestions(@NotNull List<AvailableSuggestionSet> changed, @NotNull int[] removed) {
+      myServerData.computedAvailableSuggestions(changed, removed);
+    }
+
+    @Override
     public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
       final String fileName = PathUtil.getFileName(filePathSD);
 
@@ -275,9 +282,13 @@ public class DartAnalysisServerService implements Disposable {
                                    final int replacementOffset,
                                    final int replacementLength,
                                    @NotNull final List<CompletionSuggestion> completions,
+                                   @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
+                                   @NotNull final List<String> includedSuggestionKinds,
                                    final boolean isLast) {
       synchronized (myCompletionInfos) {
-        myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, isLast));
+        myCompletionInfos.add(
+          new CompletionInfo(completionId, replacementOffset, replacementLength, completions, includedSuggestionSets,
+                             includedSuggestionKinds, isLast));
         myCompletionInfos.notifyAll();
       }
     }
@@ -441,7 +452,8 @@ public class DartAnalysisServerService implements Disposable {
 
   public void addCompletions(@NotNull final VirtualFile file,
                              @NotNull final String completionId,
-                             @NotNull final CompletionSuggestionConsumer consumer) {
+                             @NotNull final CompletionSuggestionConsumer consumer,
+                             @NotNull final CompletionLibraryRefConsumer libraryRefConsumer) {
     while (true) {
       ProgressManager.checkCanceled();
 
@@ -455,6 +467,11 @@ public class DartAnalysisServerService implements Disposable {
             final int convertedReplacementOffset = getConvertedOffset(file, completionInfo.myOriginalReplacementOffset);
             final int convertedReplacementLength = getConvertedOffset(file, completionInfo.myOriginalReplacementLength);
             consumer.consumeCompletionSuggestion(convertedReplacementOffset, convertedReplacementLength, completion);
+          }
+
+          final Set<String> includedKinds = Sets.newHashSet(completionInfo.myIncludedSuggestionKinds);
+          for (final IncludedSuggestionSet includedSet : completionInfo.myIncludedSuggestionSets) {
+            libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds);
           }
           return;
         }
@@ -720,6 +737,11 @@ public class DartAnalysisServerService implements Disposable {
 
   private void handleClosingLabelPreferenceChanged() {
     analysis_setSubscriptions();
+  }
+
+  @Nullable
+  public AvailableSuggestionSet getAvailableSuggestionSet(int id) {
+    return myServerData.getAvailableSuggestionSet(id);
   }
 
   @NotNull
@@ -1323,6 +1345,37 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
+  public GetCompletionDetailsResult completion_getSuggestionDetails(@NotNull final VirtualFile file,
+                                                                    final int id,
+                                                                    final String label,
+                                                                    final int offset) {
+    final String filePath = FileUtil.toSystemDependentName(file.getPath());
+    final Ref<GetCompletionDetailsResult> resultRef = new Ref<>();
+
+    final AnalysisServer server = myServer;
+    if (server == null) {
+      return null;
+    }
+
+    final CountDownLatch latch = new CountDownLatch(1);
+    server.completion_getSuggestionDetails(filePath, id, label, offset, new GetSuggestionDetailsConsumer() {
+      @Override
+      public void computedDetails(GetCompletionDetailsResult result) {
+        resultRef.set(result);
+        latch.countDown();
+      }
+
+      @Override
+      public void onError(RequestError requestError) {
+        latch.countDown();
+      }
+    });
+
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+    return resultRef.get();
+  }
+
+  @Nullable
   public String completion_getSuggestions(@NotNull final VirtualFile file, final int _offset) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<String> resultRef = new Ref<>();
@@ -1813,11 +1866,14 @@ public class DartAnalysisServerService implements Disposable {
         if (Registry.is("dart.projects.without.pubspec", false) && isAnalyzedFilesSubscriptionEnabled()) {
           startedServer.analysis_setGeneralSubscriptions(Collections.singletonList(GeneralAnalysisService.ANALYZED_FILES));
         }
+        startedServer.completion_setSubscriptions(ImmutableList.of(CompletionService.AVAILABLE_SUGGESTION_SETS));
 
         if (!myInitializationOnServerStartupDone) {
           myInitializationOnServerStartupDone = true;
 
           registerFileEditorManagerListener();
+
+
           registerDocumentListener();
           setDasLogger();
         }
@@ -2114,6 +2170,10 @@ public class DartAnalysisServerService implements Disposable {
                                      final @NotNull CompletionSuggestion completionSuggestion);
   }
 
+  public interface CompletionLibraryRefConsumer {
+    void consumeLibraryRef(final IncludedSuggestionSet includedSet, Set<String> includedKinds);
+  }
+
   private static class CompletionInfo {
     @NotNull private final String myCompletionId;
     /**
@@ -2125,17 +2185,23 @@ public class DartAnalysisServerService implements Disposable {
      */
     private final int myOriginalReplacementLength;
     @NotNull private final List<CompletionSuggestion> myCompletions;
+    @NotNull private final List<IncludedSuggestionSet> myIncludedSuggestionSets;
+    @NotNull private final List<String> myIncludedSuggestionKinds;
     private final boolean isLast;
 
     CompletionInfo(@NotNull final String completionId,
                    int replacementOffset,
                    int originalReplacementLength,
                    @NotNull final List<CompletionSuggestion> completions,
+                   @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
+                   @NotNull final List<String> includedSuggestionKinds,
                    boolean isLast) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
       this.myOriginalReplacementLength = originalReplacementLength;
       this.myCompletions = completions;
+      this.myIncludedSuggestionSets = includedSuggestionSets;
+      this.myIncludedSuggestionKinds = includedSuggestionKinds;
       this.isLast = isLast;
     }
   }

@@ -31,6 +31,7 @@ public class DartServerData {
 
   private final EventDispatcher<OutlineListener> myEventDispatcher = EventDispatcher.create(OutlineListener.class);
 
+  private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, List<DartError>> myErrorData = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, List<DartHighlightRegion>> myHighlightData = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, List<DartNavigationRegion>> myNavigationData = Collections.synchronizedMap(new THashMap<>());
@@ -50,6 +51,16 @@ public class DartServerData {
 
   boolean isErrorInfoLost(@NotNull final String filePath) {
     return myFilePathsWithLostErrorInfo.contains(filePath);
+  }
+
+  void computedAvailableSuggestions(@NotNull final List<AvailableSuggestionSet> changed,
+                                    @NotNull final int[] removed) {
+    for (int id : removed) {
+      myAvailableSuggestionSetMap.remove(id);
+    }
+    for (AvailableSuggestionSet suggestionSet : changed) {
+      myAvailableSuggestionSetMap.put(suggestionSet.getId(), suggestionSet);
+    }
   }
 
   /**
@@ -196,6 +207,11 @@ public class DartServerData {
     if (hasChanges) {
       forceFileAnnotation(file, false);
     }
+  }
+
+  @Nullable
+  AvailableSuggestionSet getAvailableSuggestionSet(int id) {
+    return myAvailableSuggestionSetMap.get(id);
   }
 
   @NotNull
