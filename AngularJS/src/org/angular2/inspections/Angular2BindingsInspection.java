@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
@@ -23,7 +24,9 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.PropertyKey;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
@@ -61,7 +64,9 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
       }
     }
     else {
-      proximity = scope.getDeclarationsProximity(sourceDirectives);
+      Set<Angular2Directive> matchedDirectives = new HashSet<>(new Angular2ApplicableDirectivesProvider(
+        attribute.getParent()).getMatched());
+      proximity = scope.getDeclarationsProximity(ContainerUtil.findAll(sourceDirectives, matchedDirectives::contains));
     }
     if (proximity == IN_SCOPE) {
       return;
@@ -99,7 +104,12 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
         messageKey = "angular.inspection.template.banana-box-binding-not-provided";
         break;
       case REGULAR:
-        messageKey = "angular.inspection.template.attribute-directive-out-of-scope";
+        if (proximity == NOT_REACHABLE){
+          messageKey = "angular.inspection.template.unknown-attribute";
+        } else {
+          messageKey = "angular.inspection.template.attribute-directive-out-of-scope";
+        }
+        severity = ProblemHighlightType.WARNING;
         break;
       default:
         return;
