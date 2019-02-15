@@ -58,4 +58,12 @@
     [model]="<warning descr="Type string is not assignable to type NgModel">getText(<error descr="Argument type \"foo\" is not assignable to parameter type NgModel">'foo'</error>)</warning>"
 ></my-comp>
 
+<my-comp
+    [obj]="{f: 'test', e: 'off'}"
+></my-comp>
+
+<my-comp
+    [obj]="<warning descr="Type {e: \"ddd\", f: \"test\"} is not assignable to type {f: string, e: MyType}">{f: 'test', e: 'ddd'}</warning>"
+></my-comp>
+
 <input [ngModel]="true" #model="ngModel"/>
