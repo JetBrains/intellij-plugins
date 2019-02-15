@@ -30,7 +30,7 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
 
   @Nullable
   @Override
-  protected JSType doGetType() {
+  public JSType calculateType() {
     Angular2TemplateBindings bindings = PsiTreeUtil.getParentOfType(this, Angular2TemplateBindings.class);
     Angular2TemplateBinding binding = PsiTreeUtil.getParentOfType(this, Angular2TemplateBinding.class);
     if (binding == null || binding.getName() == null || bindings == null) {

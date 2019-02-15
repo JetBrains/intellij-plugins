@@ -61,7 +61,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
 
   @Nullable
   @Override
-  protected JSType doGetType() {
+  public JSType calculateType() {
     Angular2HtmlReference reference = getReferenceDefinitionAttribute();
     if (reference == null) {
       return null;
