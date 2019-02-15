@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.ide.util.projectWizard.WizardContext;
@@ -37,7 +38,7 @@ public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBui
   }
 
   @Override
-  public boolean canOpenProject(final VirtualFile file) {
+  public boolean canOpenProject(@NotNull final VirtualFile file) {
     // do not look inside archives here - it may be too expensive, fail later if not a suitable archieve
     return file.isDirectory()
            ? FlashBuilderProjectFinder.isFlashBuilderProject(file.findChild(FlashBuilderImporter.DOT_PROJECT))
