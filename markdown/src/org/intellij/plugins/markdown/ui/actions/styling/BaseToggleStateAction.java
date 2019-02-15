@@ -93,7 +93,7 @@ public abstract class BaseToggleStateAction extends ToggleAction implements Dumb
     }
 
 
-    WriteCommandAction.runWriteCommandAction(psiFile.getProject(), () -> {
+    WriteCommandAction.runWriteCommandAction(psiFile.getProject(), getTemplatePresentation().getText(), null, () -> {
       if (!psiFile.isValid()) {
         return;
       }
