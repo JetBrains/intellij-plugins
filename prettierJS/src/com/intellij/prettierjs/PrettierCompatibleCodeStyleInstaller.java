@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.application.options.CodeStyle;
@@ -27,7 +28,7 @@ import java.util.List;
 public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectConfigurator {
 
   @Override
-  public void configureProject(Project project, @NotNull VirtualFile baseDir, Ref<Module> moduleRef) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
     if (project.isDefault() || project.getBaseDir() == null || project.isDisposed()) return;
     StartupManager.getInstance(project).runWhenProjectIsInitialized((DumbAwareRunnable)() -> installCodeStyle(project));
   }

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -125,7 +126,7 @@ public class PrettierConfiguration {
 
   public static class ProjectConfigurator implements DirectoryProjectConfigurator {
     @Override
-    public void configureProject(Project project, @NotNull VirtualFile baseDir, Ref<Module> moduleRef) {
+    public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
       StartupManager.getInstance(project).runWhenProjectIsInitialized(
         (DumbAwareRunnable)() -> getInstance(project).detectLocalOrGlobalPackage());
     }

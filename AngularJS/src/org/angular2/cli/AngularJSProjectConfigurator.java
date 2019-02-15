@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli;
 
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class AngularJSProjectConfigurator implements DirectoryProjectConfigurator {
 
   @Override
-  public void configureProject(Project project, @NotNull VirtualFile baseDir, Ref<Module> moduleRef) {
+  public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
     final ModuleManager moduleManager = ModuleManager.getInstance(project);
     final Module[] modules = moduleManager.getModules();
     if (modules.length == 1) {
