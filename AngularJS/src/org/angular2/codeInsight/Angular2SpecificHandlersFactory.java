@@ -14,6 +14,7 @@ import org.angular2.codeInsight.refs.Angular2ReferenceExpressionResolver;
 import org.angular2.findUsages.Angular2ReadWriteAccessDetector;
 import org.angular2.index.Angular2IndexingHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersFactory {
 
@@ -38,6 +39,12 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
   @Override
   public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor) {
     return new Angular2TypeEvaluator(context, processor);
+  }
+
+  @NotNull
+  @Override
+  public AccessibilityProcessingHandler createAccessibilityProcessingHandler(@Nullable PsiElement place, boolean skipNsResolving) {
+    return new Angular2AccessibilityProcessingHandler(place);
   }
 
   @NotNull
