@@ -4,27 +4,18 @@ package org.angular2.codeInsight;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.library.JSCorePredefinedLibrariesProvider;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.ecma6.*;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitParameterStructure;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
-import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
-import com.intellij.lang.typescript.library.TypeScriptLibraryProvider;
-import com.intellij.lang.typescript.resolve.TypeScriptClassResolver;
-import com.intellij.openapi.project.Project;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -54,13 +45,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.intellij.util.ObjectUtils.notNull;
+
 public class Angular2Processor {
-  @NonNls private static volatile Map<String, String> TAG_TO_CLASS;
 
   @NonNls public static final String $EVENT = "$event";
   @NonNls public static final String $ANY = "$any";
 
   @NonNls private static final String LEGACY_TEMPLATE_TAG = "template";
+  @NonNls private static final String HTML_ELEMENT_CLASS_NAME = "HTMLElement";
+  @NonNls private static final String HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME = "HTMLElementTagNameMap";
 
   public static boolean isTemplateTag(@Nullable String tagName) {
     return Angular2TagDescriptorsProvider.NG_TEMPLATE.equalsIgnoreCase(tagName)
@@ -154,55 +148,14 @@ public class Angular2Processor {
 
   @Nullable
   @NonNls
-  public static JSType getHtmlElementClassType(@NotNull PsiElement scope, @NotNull @NonNls String tagName) {
-    if (TAG_TO_CLASS == null) {
-      initTagToClassMap(scope.getProject());
-    }
-    String classType = TAG_TO_CLASS.getOrDefault(tagName.toLowerCase(), "HTMLElement");
-
-    return JSTypeUtils.createType(classType,
-                                  JSTypeSourceFactory.createTypeSource(scope, true));
-  }
-
-  @SuppressWarnings("HardCodedStringLiteral")
-  private static synchronized void initTagToClassMap(@NotNull Project project) {
-    if (TAG_TO_CLASS != null) {
-      return;
-    }
-    Map<String, String> tagToClass = new HashMap<>();
-    Collection<VirtualFile> libs = ContainerUtil.filter(JSCorePredefinedLibrariesProvider
-                                                          .getAllJSPredefinedLibraryFiles(),
-                                                        lib -> TypeScriptLibraryProvider.LIB_DOM_D_TS.equals(lib.getName()));
-
-    final List<JSClass> elements = TypeScriptClassResolver.getInstance().findClassesByQName(
-      "HTMLElementTagNameMap", GlobalSearchScope.filesScope(project, libs));
-
-    for (JSQualifiedNamedElement el : elements) {
-      if (!(el instanceof TypeScriptInterface)) {
-        continue;
-      }
-      TypeScriptInterface tsInterface = (TypeScriptInterface)el;
-      if (tsInterface.getBody() == null) {
-        continue;
-      }
-      for (TypeScriptTypeMember member : tsInterface.getBody().getTypeMembers()) {
-        if (!(member instanceof TypeScriptPropertySignature)) {
-          continue;
-        }
-        TypeScriptPropertySignature sig = (TypeScriptPropertySignature)member;
-        JSTypeDeclaration decl = sig.getTypeDeclaration();
-        if (!(decl instanceof TypeScriptSingleType)) {
-          continue;
-        }
-        @NonNls
-        String tagName = sig.getMemberName();
-        String className = ((TypeScriptSingleType)decl).getQualifiedTypeName();
-        if (className != null && className.startsWith("HTML") && className.endsWith("Element")) {
-          tagToClass.put(tagName.toLowerCase(), className);
-        }
-      }
-    }
-    TAG_TO_CLASS = tagToClass;
+  public static JSType getHtmlElementClassType(@NotNull PsiElement context, @NotNull @NonNls String tagName) {
+    JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(
+      notNull(Angular2IndexingHandler.findComponentClass(context), context), true);
+    return Optional
+      .ofNullable(JSTypeUtils.createType(HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME, typeSource))
+      .map(tagNameMap -> tagNameMap.asRecordType().findPropertySignature(tagName.toLowerCase()))
+      .map(JSRecordType.PropertySignature::getJSType)
+      .orElseGet(() -> JSTypeUtils.createType(HTML_ELEMENT_CLASS_NAME, typeSource));
   }
 
   private static JSImplicitElement createVariable(@NotNull String name,
