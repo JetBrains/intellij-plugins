@@ -32,13 +32,12 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFix {
   public static final Collection<String> FLEX_TEMPLATES_EXTENSIONS =
-    Arrays.asList(JavaScriptSupportLoader.MXML_FILE_EXTENSION);
+    ContainerUtil.immutableList(JavaScriptSupportLoader.MXML_FILE_EXTENSION);
   @NonNls static final String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
   @NonNls static final String FLEX4_COMPONENT_TEMPLATE_NAME = "Flex 4 Component";
 

@@ -3,6 +3,7 @@ package org.intellij.plugins.markdown.ui.preview;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Range;
+import com.intellij.util.containers.ContainerUtil;
 import org.intellij.markdown.html.HtmlGenerator;
 import org.intellij.plugins.markdown.settings.MarkdownCssSettings;
 import org.jetbrains.annotations.NotNull;
@@ -10,13 +11,12 @@ import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Node;
 
 import javax.swing.*;
-import java.util.Arrays;
 import java.util.List;
 
 public interface MarkdownHtmlPanel extends Disposable {
-  List<String> SCRIPTS = Arrays.asList("processLinks.js", "scrollToElement.js");
+  List<String> SCRIPTS = ContainerUtil.immutableList("processLinks.js", "scrollToElement.js");
 
-  List<String> STYLES = Arrays.asList("default.css", "darcula.css", PreviewStaticServer.INLINE_CSS_FILENAME);
+  List<String> STYLES = ContainerUtil.immutableList("default.css", "darcula.css", PreviewStaticServer.INLINE_CSS_FILENAME);
 
   @NotNull
   JComponent getComponent();
