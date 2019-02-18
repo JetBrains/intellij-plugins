@@ -69,6 +69,12 @@ public class Angular2DecoratorInspectionsTest extends LightPlatformCodeInsightFi
            "invalid-entry-component.ts");
   }
 
+  public void testNotModuleSameLineOtherFile() {
+    doTest(Angular2ModuleEntityTypeMismatchInspection.class,
+           "not-module-same-line-other-file.a.ts",
+           "not-module-same-line-other-file.b.ts");
+  }
+
   private void doTest(@NotNull Class<? extends LocalInspectionTool> inspection,
                       String... files) {
     doTest(1, null, null, inspection, files);
