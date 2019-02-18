@@ -105,6 +105,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
   private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long GET_SUGGESTION_DETAILS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long EXECUTION_CREATE_CONTEXT_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
@@ -1348,7 +1349,7 @@ public class DartAnalysisServerService implements Disposable {
   public GetCompletionDetailsResult completion_getSuggestionDetails(@NotNull final VirtualFile file,
                                                                     final int id,
                                                                     final String label,
-                                                                    final int offset) {
+                                                                    final int _offset) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<GetCompletionDetailsResult> resultRef = new Ref<>();
 
@@ -1358,6 +1359,7 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
     server.completion_getSuggestionDetails(filePath, id, label, offset, new GetSuggestionDetailsConsumer() {
       @Override
       public void computedDetails(GetCompletionDetailsResult result) {
@@ -1371,7 +1373,7 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTIONS_TIMEOUT);
+    awaitForLatchCheckingCanceled(server, latch, GET_SUGGESTION_DETAILS_TIMEOUT);
     return resultRef.get();
   }
 
