@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.TreeTraversal;
@@ -50,9 +51,11 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
 
   @NotNull
   protected PsiElement locateProblemElement() {
+    final PsiFile file = myDecorator.getContainingFile().getOriginalFile();
     for (PsiElement el : ContainerUtil.concat(singletonList(myIterator.current()),
                                               myIterator.backtrace())) {
-      if (myDecorator.getTextRange().contains(el.getTextRange())) {
+      if (myDecorator.getTextRange().contains(el.getTextRange())
+          && file.equals(el.getContainingFile().getOriginalFile())) {
         return el;
       }
     }
