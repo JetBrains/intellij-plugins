@@ -12,7 +12,9 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitParameterStructure;
-import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -162,35 +164,6 @@ public class Angular2Processor {
                                                   @NotNull PsiElement contributor) {
     return new JSImplicitElementImpl.Builder(name, contributor)
       .setType(JSImplicitElement.Type.Variable).toImplicitElement();
-  }
-
-  @Nullable
-  public static JSType getEventVariableType(@Nullable JSType type) {
-    if (type == null) {
-      return null;
-    }
-    List<JSType> result = new ArrayList<>();
-    JSTypeUtils.processExpandedType(subType -> {
-      if (subType instanceof JSGenericTypeImpl) {
-        List<JSType> arguments = ((JSGenericTypeImpl)subType).getArguments();
-        if (arguments.size() == 1) {
-          result.add(arguments.get(0));
-        }
-        return false;
-      }
-      else if (subType instanceof JSFunctionType) {
-        List<JSParameterTypeDecorator> params = ((JSFunctionType)subType).getParameters();
-        if (params.size() == 1) {
-          result.add(params.get(0).getSimpleType());
-        }
-        return false;
-      }
-      return true;
-    }, type);
-    if (result.isEmpty()) {
-      return null;
-    }
-    return JSCompositeTypeImpl.getCommonType(result, type.getSource(), false);
   }
 
   private static class Angular2BaseScopeBuilder extends Angular2HtmlRecursiveElementVisitor {
@@ -485,40 +458,24 @@ public class Angular2Processor {
     @Override
     @NotNull
     public List<JSPsiElementBase> getElements() {
-      XmlAttributeDescriptor descriptor = myEvent.getDescriptor();
-      PsiElement declaration = descriptor != null ? descriptor.getDeclaration() : null;
-      return Collections.singletonList(new Angular2LocalImplicitElement($EVENT, declaration, myEvent));
+      return Collections.singletonList(new Angular2EventImplicitElement(myEvent));
     }
   }
 
-  private static class Angular2LocalImplicitElement extends JSLocalImplicitElementImpl {
+  private static class Angular2EventImplicitElement extends JSLocalImplicitElementImpl {
     @Nullable private final PsiElement myDeclaration;
 
-    private Angular2LocalImplicitElement(@NotNull String name,
-                                         @Nullable PsiElement declaration,
-                                         @Nullable PsiElement provider) {
-      super(name, computeEventType(declaration), provider, JSImplicitElement.Type.Variable);
-      myDeclaration = declaration;
-    }
-
-    @Nullable
-    private static JSType computeEventType(@Nullable PsiElement declaration) {
-      JSType type = null;
-      if (declaration instanceof JSField) {
-        type = ((JSField)declaration).getJSType();
-      }
-      else if (declaration instanceof JSFunction) {
-        type = ((JSFunction)declaration).getReturnType();
-      }
-      type = getEventVariableType(type);
-      return type;
+    private Angular2EventImplicitElement(@NotNull XmlAttribute attribute) {
+      super($EVENT, Angular2TypeEvaluator.resolveEventType(attribute), attribute, JSImplicitElement.Type.Variable);
+      XmlAttributeDescriptor descriptor = attribute.getDescriptor();
+      myDeclaration = descriptor != null ? descriptor.getDeclaration() : null;
     }
 
     @Override
     public boolean equals(Object o) {
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
-      Angular2LocalImplicitElement element = (Angular2LocalImplicitElement)o;
+      Angular2EventImplicitElement element = (Angular2EventImplicitElement)o;
       if (!myName.equals(element.myName)) return false;
       if (!Objects.equals(myDeclaration, element.myDeclaration)) return false;
       if (!Objects.equals(myProvider, element.myProvider)) return false;

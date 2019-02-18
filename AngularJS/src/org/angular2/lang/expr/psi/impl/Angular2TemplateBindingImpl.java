@@ -67,7 +67,7 @@ public class Angular2TemplateBindingImpl extends JSStatementImpl implements Angu
     if (!keyIsVar()) {
       Angular2TemplateBindings bindings = tryCast(getParent(), Angular2TemplateBindings.class);
       if (bindings != null) {
-        return Angular2TypeEvaluator.resolveType(bindings, myKey);
+        return Angular2TypeEvaluator.resolvePropertyType(bindings, myKey);
       }
     }
     return null;
