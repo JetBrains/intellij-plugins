@@ -2,9 +2,7 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.ecmascript6.TypeScriptTypeEvaluator;
-import com.intellij.lang.javascript.psi.JSParameter;
-import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.JSTypeUtils;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
@@ -17,25 +15,43 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.containers.Predicate;
+import one.util.streamex.EntryStream;
+import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
+import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.index.Angular2IndexingHandler;
+import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
+import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.find;
 import static com.intellij.util.containers.ContainerUtil.findAll;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
+import static org.angular2.lang.html.parser.Angular2AttributeType.*;
+import static org.angular2.lang.html.psi.PropertyBindingType.PROPERTY;
 
 public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
@@ -44,9 +60,68 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     super(context, processor);
   }
 
-  public static JSType resolveType(@NotNull Angular2TemplateBindings bindings,
-                                   @NotNull String key) {
+  @Nullable
+  public static JSType getEventVariableType(@Nullable JSType type) {
+    if (type == null) {
+      return null;
+    }
+    List<JSType> result = new ArrayList<>();
+    JSTypeUtils.processExpandedType(subType -> {
+      if (subType instanceof JSGenericTypeImpl) {
+        List<JSType> arguments = ((JSGenericTypeImpl)subType).getArguments();
+        if (arguments.size() == 1) {
+          result.add(arguments.get(0));
+        }
+        return false;
+      }
+      else if (subType instanceof JSFunctionType) {
+        List<JSParameterTypeDecorator> params = ((JSFunctionType)subType).getParameters();
+        if (params.size() == 1) {
+          result.add(params.get(0).getSimpleType());
+        }
+        return false;
+      }
+      return true;
+    }, type);
+    if (result.isEmpty()) {
+      return null;
+    }
+    return JSCompositeTypeImpl.getCommonType(result, type.getSource(), false);
+  }
+
+  @Nullable
+  public static JSType resolvePropertyType(@NotNull Angular2TemplateBindings bindings,
+                                           @NotNull String key) {
     return BindingsTypeResolver.get(bindings).resolveDirectiveInputType(key);
+  }
+
+  @Nullable
+  public static JSType resolvePropertyType(@NotNull XmlAttribute attribute) {
+    return resolveType(attribute,
+                       Angular2TypeEvaluator::isPropertyBindingAttribute,
+                       BindingsTypeResolver::resolveDirectiveInputType);
+  }
+
+  public static JSType resolveEventType(@NotNull XmlAttribute attribute) {
+    Angular2AttributeDescriptor descriptor = ObjectUtils.tryCast(attribute.getDescriptor(), Angular2AttributeDescriptor.class);
+    if (descriptor != null && ContainerUtil.isEmpty(descriptor.getSourceDirectives())) {
+      return getEventVariableType(descriptor.getJSType());
+    }
+    return resolveType(attribute,
+                       Angular2TypeEvaluator::isEventAttribute,
+                       BindingsTypeResolver::resolveDirectiveEventType);
+  }
+
+  @Nullable
+  private static JSType resolveType(@NotNull XmlAttribute attribute,
+                                    @NotNull Predicate<AttributeInfo> infoValidation,
+                                    @NotNull BiFunction<BindingsTypeResolver, String, JSType> resolveMethod) {
+    Angular2AttributeDescriptor descriptor = ObjectUtils.tryCast(attribute.getDescriptor(), Angular2AttributeDescriptor.class);
+    XmlTag tag = attribute.getParent();
+    if (descriptor == null || tag == null || !infoValidation.apply(descriptor.getInfo())) {
+      return null;
+    }
+    return resolveMethod.apply(BindingsTypeResolver.get(tag), descriptor.getInfo().name);
   }
 
   @Override
@@ -100,6 +175,17 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
             : new JSIntersectionTypeImpl(source, types), OPTIMIZED_SIMPLE);
   }
 
+  private static boolean isPropertyBindingAttribute(AttributeInfo info) {
+    return info.type == BANANA_BOX_BINDING
+           || (info.type == PROPERTY_BINDING
+               && ((PropertyBindingInfo)info).bindingType == PROPERTY);
+  }
+
+  private static boolean isEventAttribute(AttributeInfo info) {
+    return info.type == EVENT
+           && ((Angular2AttributeNameParser.EventInfo)info).eventType == EventType.REGULAR;
+  }
+
   private static class BindingsTypeResolver {
 
     private final List<Angular2Directive> myMatched;
@@ -108,26 +194,77 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     private final JSTypeSubstitutor myTypeSubstitutor;
 
     private BindingsTypeResolver(@NotNull Angular2TemplateBindings bindings) {
-      myMatched = new Angular2ApplicableDirectivesProvider(bindings).getMatched();
-      myScope = new Angular2DeclarationsScope(bindings);
+      this(bindings, new Angular2ApplicableDirectivesProvider(bindings), b ->
+        StreamEx.of(b.getBindings())
+          .filter(binding -> !binding.keyIsVar())
+          .mapToEntry(Angular2TemplateBinding::getKey,
+                      Angular2TemplateBinding::getExpression)
+      );
+    }
 
-      List<Angular2Directive> templateDirectives = findAll(
-        myMatched, directive -> myScope.contains(directive) && directive.isTemplate());
+    private BindingsTypeResolver(@NotNull XmlTag tag) {
+      this(tag, new Angular2ApplicableDirectivesProvider(tag), t ->
+        StreamEx.of(t.getAttributes())
+          .mapToEntry(attr -> Angular2AttributeNameParser.parse(attr.getName(), false),
+                      Function.identity())
+          .filterKeys(Angular2TypeEvaluator::isPropertyBindingAttribute)
+          .mapValues(attribute -> doIfNotNull(Angular2Binding.get(attribute),
+                                              Angular2Binding::getExpression))
+          .mapKeys(info -> info.name));
+    }
 
-      if (templateDirectives.isEmpty()) {
+    private <T extends PsiElement> BindingsTypeResolver(@NotNull T element,
+                                                        @NotNull Angular2ApplicableDirectivesProvider provider,
+                                                        @NotNull Function<T, EntryStream<String, JSExpression>> inputExpressionsProvider) {
+      myMatched = provider.getMatched();
+      myScope = new Angular2DeclarationsScope(element);
+
+      List<Angular2Directive> directives = findAll(
+        myMatched, directive -> myScope.contains(directive));
+
+      if (directives.isEmpty()) {
         myRawTemplateContextType = null;
         myTypeSubstitutor = null;
         return;
       }
-      Pair<JSType, JSTypeSubstitutor> analyzed = analyze(templateDirectives, bindings);
+      Pair<JSType, JSTypeSubstitutor> analyzed = analyze(directives, element, inputExpressionsProvider);
       myRawTemplateContextType = analyzed.first;
       myTypeSubstitutor = analyzed.second;
     }
 
     @NotNull
-    public static BindingsTypeResolver get(Angular2TemplateBindings bindings) {
+    public static BindingsTypeResolver get(@NotNull XmlTag tag) {
+      return CachedValuesManager.getCachedValue(tag, () -> CachedValueProvider.Result.create(
+        new BindingsTypeResolver(tag), PsiModificationTracker.MODIFICATION_COUNT));
+    }
+
+    @NotNull
+    public static BindingsTypeResolver get(@NotNull Angular2TemplateBindings bindings) {
       return CachedValuesManager.getCachedValue(bindings, () -> CachedValueProvider.Result.create(
         new BindingsTypeResolver(bindings), PsiModificationTracker.MODIFICATION_COUNT));
+    }
+
+    public JSType resolveDirectiveEventType(String name) {
+      for (Angular2Directive directive : myMatched) {
+        Angular2DirectiveProperty property;
+        if (myScope.contains(directive)
+            && (property = find(directive.getOutputs(), output -> output.getName().equals(name))) != null) {
+          PsiElement source = property.getSourceElement();
+          JSType type = null;
+          if (source instanceof JSField) {
+            type = ((JSField)source).getJSType();
+          }
+          else if (source instanceof JSFunction) {
+            type = ((JSFunction)source).getReturnType();
+          }
+          type = getEventVariableType(type);
+          if (type != null && myTypeSubstitutor != null) {
+            return JSTypeUtils.applyGenericArguments(type, myTypeSubstitutor);
+          }
+          return type;
+        }
+      }
+      return null;
     }
 
     public JSType resolveDirectiveInputType(String key) {
@@ -152,46 +289,55 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
              : myRawTemplateContextType;
     }
 
-    private static Pair<JSType, JSTypeSubstitutor> analyze(@NotNull List<Angular2Directive> directives,
-                                                           @NotNull Angular2TemplateBindings bindings) {
-      Map<String, Angular2TemplateBinding> bindingsMap = new HashMap<>();
-      for (Angular2TemplateBinding templateBinding : bindings.getBindings()) {
-        if (!templateBinding.keyIsVar()) {
-          bindingsMap.putIfAbsent(templateBinding.getKey(), templateBinding);
-        }
-      }
-
+    private static <T extends PsiElement> Pair<JSType, JSTypeSubstitutor> analyze(@NotNull List<Angular2Directive> directives,
+                                                                                  @NotNull T element,
+                                                                                  @NotNull Function<T, EntryStream<String, JSExpression>> inputExpressionsProvider) {
+      Map<String, JSExpression> inputsMap = inputExpressionsProvider
+        .apply(element)
+        .nonNullValues()
+        .toMap((a, b) -> a);
       MultiMap<JSTypeSubstitutor.JSTypeGenericId, JSType> genericArguments = MultiMap.createSmart();
       List<JSType> contextTypes = new SmartList<>();
+      TypeScriptClass componentClass = Angular2IndexingHandler.findComponentClass(element);
       directives.forEach(directive -> {
-        JSType contextType = getTemplateContextType(directive.getTypeScriptClass());
-        if (contextType == null) {
+        TypeScriptClass clazz = directive.getTypeScriptClass();
+        if (clazz == null) {
           return;
         }
-        contextTypes.add(contextType);
-        if (contextType instanceof JSGenericTypeImpl) {
-          final ProcessingContext processingContext =
-            JSTypeComparingContextService.getProcessingContextWithCache(directive.getTypeScriptClass());
-          directive.getInputs().forEach(property -> {
-            Angular2TemplateBinding binding = bindingsMap.get(property.getName());
-            if (binding != null && property.getType() != null) {
-              JSType expressionType = JSResolveUtil.getExpressionJSType(binding.getExpression());
-              if (expressionType != null) {
-                JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext,
-                                                              expressionType, property.getType(), null, null);
-              }
-            }
-          });
+        JSType contextType = getTemplateContextType(clazz);
+        if (contextType != null) {
+          contextTypes.add(contextType);
         }
+        final ProcessingContext processingContext =
+          JSTypeComparingContextService.getProcessingContextWithCache(clazz);
+        directive.getInputs().forEach(property -> {
+          JSExpression inputExpression = inputsMap.get(property.getName());
+          if (inputExpression != null && property.getType() != null) {
+            JSType expressionType = JSResolveUtil.getExpressionJSType(inputExpression);
+            if (expressionType != null) {
+              JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext,
+                                                            expressionType, property.getType(), null, null);
+            }
+          }
+        });
       });
-      if (contextTypes.isEmpty()) {
-        return Pair.pair(null, null);
+      JSTypeSource typeSource = componentClass != null ? componentClass.getJSType().getSource() : null;
+      if (typeSource == null) {
+        JSType type;
+        if (!contextTypes.isEmpty()) {
+          type = contextTypes.get(0);
+        }
+        else {
+          type = find(genericArguments.values(), Objects::nonNull);
+        }
+        if (type == null) {
+          return Pair.pair(null, null);
+        }
+        typeSource = type.getSource();
       }
-      JSType templateContextType = merge(contextTypes.get(0).getSource(), contextTypes, true);
-      if (genericArguments.isEmpty()) {
-        return Pair.pair(templateContextType, null);
-      }
-      return Pair.pair(templateContextType, intersectGenerics(genericArguments, templateContextType.getSource()));
+      return Pair.pair(
+        contextTypes.isEmpty() ? null : merge(typeSource, contextTypes, true),
+        genericArguments.isEmpty() ? null : intersectGenerics(genericArguments, typeSource));
     }
   }
 }

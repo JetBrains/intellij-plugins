@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.ArrayUtil;
+import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2Binding;
@@ -38,7 +39,7 @@ public class Angular2ExpressionTypeInspection extends LocalInspectionTool {
       @Override
       public void visitAngular2Binding(Angular2Binding binding) {
         validateBinding(binding,
-                        (b, descriptor) -> pair(b.getExpression(), descriptor.getJSType()),
+                        (b, attribute) -> pair(b.getExpression(), Angular2TypeEvaluator.resolvePropertyType(attribute)),
                         Angular2AttributeType.PROPERTY_BINDING,
                         Angular2AttributeType.BANANA_BOX_BINDING);
       }
@@ -51,7 +52,7 @@ public class Angular2ExpressionTypeInspection extends LocalInspectionTool {
       }
 
       private <T extends JSElement> void validateBinding(@Nullable T binding,
-                                                         @NotNull BiFunction<T, Angular2AttributeDescriptor, Pair<JSExpression, JSType>>
+                                                         @NotNull BiFunction<T, XmlAttribute, Pair<JSExpression, JSType>>
                                                            getTypeAndExpression,
                                                          @NotNull Angular2AttributeType... supportedTypes) {
         if (binding == null) {
@@ -66,15 +67,15 @@ public class Angular2ExpressionTypeInspection extends LocalInspectionTool {
           tryCast(doIfNotNull(attribute, XmlAttribute::getDescriptor), Angular2AttributeDescriptor.class);
         if (descriptor != null
             && ArrayUtil.contains(descriptor.getInfo().type, supportedTypes)) {
-          validateType(descriptor, binding, getTypeAndExpression);
+          validateType(attribute, binding, getTypeAndExpression);
         }
       }
 
-      private <T extends JSElement> void validateType(@NotNull Angular2AttributeDescriptor attributeDescriptor,
+      private <T extends JSElement> void validateType(@NotNull XmlAttribute attribute,
                                                       @NotNull T binding,
-                                                      @NotNull BiFunction<T, Angular2AttributeDescriptor, Pair<JSExpression, JSType>>
+                                                      @NotNull BiFunction<T, XmlAttribute, Pair<JSExpression, JSType>>
                                                         getTypeAndExpression) {
-        Pair<JSExpression, JSType> typeAndExpression = getTypeAndExpression.apply(binding, attributeDescriptor);
+        Pair<JSExpression, JSType> typeAndExpression = getTypeAndExpression.apply(binding, attribute);
         JSType expectedType = typeAndExpression.second;
         JSExpression expression = typeAndExpression.first;
         if (expectedType == null || expression == null) {

@@ -27,7 +27,7 @@ import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
-import org.angular2.codeInsight.Angular2Processor;
+import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
@@ -304,7 +304,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       }
       else if (myInfo instanceof Angular2AttributeNameParser.EventInfo
                && ((Angular2AttributeNameParser.EventInfo)myInfo).eventType == Angular2HtmlEvent.EventType.REGULAR) {
-        type = Angular2Processor.getEventVariableType(type);
+        type = Angular2TypeEvaluator.getEventVariableType(type);
         if (type != null) {
           return type.getTypeText();
         }

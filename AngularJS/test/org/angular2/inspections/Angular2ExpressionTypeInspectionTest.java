@@ -24,7 +24,7 @@ public class Angular2ExpressionTypeInspectionTest extends LightPlatformCodeInsig
                                 TypeScriptUnresolvedFunctionInspection.class);
   }
 
-  public void testSimpleTypesValidation() {
+  public void testSimpleTypes() {
     JSTestUtils.testES6(getProject(), () -> {
       AngularTestUtil.configureWithMetadataFiles(myFixture, "common", "forms");
       myFixture.configureByFiles("async_pipe.d.ts", "ng_model.d.ts", "Observable.d.ts", "case_conversion_pipes.d.ts");
@@ -33,7 +33,7 @@ public class Angular2ExpressionTypeInspectionTest extends LightPlatformCodeInsig
     });
   }
 
-  public void testExpressionsValidation() {
+  public void testExpressions() {
     JSTestUtils.testES6(getProject(), () -> {
       AngularTestUtil.configureWithMetadataFiles(myFixture, "common", "forms");
       myFixture.configureByFiles("async_pipe.d.ts", "ng_model.d.ts", "Observable.d.ts", "case_conversion_pipes.d.ts");
@@ -42,11 +42,18 @@ public class Angular2ExpressionTypeInspectionTest extends LightPlatformCodeInsig
     });
   }
 
-  public void testTemplateBindingsValidation() {
+  public void testTemplateBindings() {
     JSTestUtils.testES6(getProject(), () -> {
       myFixture.copyDirectoryToProject("node_modules", "./node_modules");
       myFixture.configureByFiles("template.html", "template.ts", "ng_for_of.ts",
                                  "ng_if.ts", "package.json");
+      myFixture.checkHighlighting();
+    });
+  }
+
+  public void testGenericsValidation() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("generics.html", "generics.ts", "package.json");
       myFixture.checkHighlighting();
     });
   }
