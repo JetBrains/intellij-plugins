@@ -53,8 +53,7 @@ public final class TslintPanel {
     myRules = new TextFieldWithBrowseButton();
     SwingHelper.installFileCompletionAndBrowseDialog(myProject, myRules, "Select additional rules directory",
                                                      FileChooserDescriptorFactory.createSingleFolderDescriptor());
-    final FormBuilder nodeFieldsWrapperBuilder = FormBuilder.createFormBuilder();
-    nodeFieldsWrapperBuilder.setAlignLabelOnRight(true)
+    final FormBuilder nodeFieldsWrapperBuilder = FormBuilder.createFormBuilder()
       .setHorizontalGap(UIUtil.DEFAULT_HGAP)
       .setVerticalGap(UIUtil.DEFAULT_VGAP);
     if (myAddLeftIndent) {
@@ -63,8 +62,7 @@ public final class TslintPanel {
     nodeFieldsWrapperBuilder.addLabeledComponent("&Node interpreter:", myNodeInterpreterField)
       .addLabeledComponent("TSLint package:", myNodePackageField);
 
-    FormBuilder builder = FormBuilder.createFormBuilder();
-    builder.setAlignLabelOnRight(true)
+    FormBuilder builder = FormBuilder.createFormBuilder()
       .setHorizontalGap(UIUtil.DEFAULT_HGAP)
       .setVerticalGap(UIUtil.DEFAULT_VGAP);
     if (myAddLeftIndent) {
