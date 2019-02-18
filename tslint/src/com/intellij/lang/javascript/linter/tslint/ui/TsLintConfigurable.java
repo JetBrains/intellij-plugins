@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.linter.tslint.ui;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.*;
-import com.intellij.lang.javascript.linter.eslint.NewLinterView;
+import com.intellij.lang.javascript.linter.NewLinterView;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
