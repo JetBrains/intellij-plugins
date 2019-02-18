@@ -27,6 +27,9 @@ public class Angular2MatchingComponentsInspection extends Angular2HtmlLikeTempla
   @Override
   protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(tag);
+    if (scope.getModule() == null) {
+      return;
+    }
     List<Angular2Directive> components = ContainerUtil.filter(
       new Angular2ApplicableDirectivesProvider(tag).getMatched(), d -> d.isComponent() && scope.contains(d));
     final TextRange startTag = ObjectUtils.notNull(XmlTagUtil.getStartTagRange(tag), () -> tag.getTextRange())
