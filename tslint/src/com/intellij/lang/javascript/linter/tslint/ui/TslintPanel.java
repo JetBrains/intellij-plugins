@@ -84,7 +84,7 @@ public final class TslintPanel {
   public void handleEnableStatusChanged(boolean enabled) {
     NodePackageRef selectedRef = myNodePackageField.getSelectedRef();
     if (selectedRef == AutodetectLinterPackage.INSTANCE) {
-      UIUtil.setEnabled(myConfigFileView.getComponent(), false, true);
+      myConfigFileView.setEnabled(false);
     }
     myConfigFileView.onEnabledStateChanged(enabled);
   }
