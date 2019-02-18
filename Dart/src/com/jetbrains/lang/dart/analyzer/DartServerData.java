@@ -214,6 +214,9 @@ public class DartServerData {
     return myAvailableSuggestionSetMap.get(id);
   }
 
+  @Nullable
+  Map<Integer, AvailableSuggestionSet> getAvailableSuggestionSetMap() { return myAvailableSuggestionSetMap; }
+
   @NotNull
   List<DartError> getErrors(@NotNull final SearchScope scope) {
     final List<DartError> errors = new ArrayList<>();

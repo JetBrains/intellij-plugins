@@ -745,6 +745,9 @@ public class DartAnalysisServerService implements Disposable {
     return myServerData.getAvailableSuggestionSet(id);
   }
 
+  @Nullable
+  public Map<Integer, AvailableSuggestionSet> getAvailableSuggestionSets() { return myServerData.getAvailableSuggestionSetMap(); }
+
   @NotNull
   public List<DartServerData.DartError> getErrors(@NotNull final VirtualFile file) {
     return myServerData.getErrors(file);

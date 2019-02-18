@@ -14,8 +14,12 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartTestUtils;
+import org.dartlang.analysis.server.protocol.AvailableSuggestionSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   @Override
@@ -175,5 +179,19 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
                               "}\n");
     myFixture.completeBasic();
     assertNull(myFixture.getLookup());
+  }
+
+  public void testNotYetImportedClass() throws InterruptedException {
+    // Wait until we've received symbols to cache from the dart:io library from analysis server.
+    while (true) {
+      Map<Integer, AvailableSuggestionSet> cache = DartAnalysisServerService.getInstance(getProject()).getAvailableSuggestionSets();
+      if (cache.entrySet().stream().anyMatch(entry -> entry.getValue().getUri().equals("dart:io"))) {
+        break;
+      };
+
+      TimeUnit.SECONDS.sleep(1);
+    }
+
+    doTest("Process");
   }
 }
