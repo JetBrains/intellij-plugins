@@ -12,9 +12,12 @@ import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
+import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
@@ -184,6 +187,27 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
       myFixture.openFileInEditor(files[3].getViewProvider().getVirtualFile());
       checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+    });
+  }
+
+  public void testNodeModulesBasedInclusionCheck1() {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), () -> {
+      VirtualFile root = myFixture.copyDirectoryToProject("node-modules-check", ".");
+
+      VirtualFile nodeModules1 = root.findFileByRelativePath("inner2/node_modules/@angular/core");
+      PsiTestUtil.addSourceContentToRoots(myModule, nodeModules1);
+      try {
+        myFixture.openFileInEditor(root.findFileByRelativePath("inner/event.html"));
+        int offsetBySignature = findOffsetBySignature("callAnonymous<caret>Api()", myFixture.getFile());
+        assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
+
+        myFixture.openFileInEditor(root.findFileByRelativePath("inner2/event.html"));
+        checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+      }
+      finally {
+        ModuleRootModificationUtil.updateModel(myModule, model -> model.removeContentEntry(
+          ContainerUtil.find(model.getContentEntries(), entry -> nodeModules1.equals(entry.getFile()))));
+      }
     });
   }
 
