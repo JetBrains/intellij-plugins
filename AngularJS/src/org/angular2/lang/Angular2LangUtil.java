@@ -20,9 +20,12 @@ import com.intellij.testFramework.LightVirtualFileBase;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES;
+
 public class Angular2LangUtil {
 
   private static final Key<CachedValue<Boolean>> ANGULAR2_CONTEXT_KEY = new Key<>("angular2.isContext");
+  private static final String NODE_MODULE_ANGULAR_CORE_PATH = "/" + NODE_MODULES + "/@angular/core/";
 
   public static boolean isAngular2Context(@NotNull PsiElement context) {
     if (!context.isValid()) {
@@ -75,7 +78,13 @@ public class Angular2LangUtil {
     PackageJsonFileManager manager = PackageJsonFileManager.getInstance(psiDir.getProject());
     String dirPath = ObjectUtils.notNull(dir.getCanonicalPath(), dir::getPath) + "/";
     for (VirtualFile config : manager.getValidPackageJsonFiles()) {
-      if (dirPath.startsWith(ObjectUtils.notNull(config.getParent().getCanonicalPath(), dir::getPath) + "/")) {
+      String configPath = ObjectUtils.notNull(config.getParent().getCanonicalPath(), config.getParent()::getPath) + "/";
+      if (configPath.endsWith(NODE_MODULE_ANGULAR_CORE_PATH)) {
+        if (dirPath.startsWith(configPath.substring(0, configPath.length() - NODE_MODULE_ANGULAR_CORE_PATH.length()) + "/")) {
+          return true;
+        }
+      }
+      else if (dirPath.startsWith(configPath)) {
         PackageJsonData data = PackageJsonUtil.getOrCreateData(config);
         if (data.isDependencyOfAnyType("@angular/core")) {
           return true;
