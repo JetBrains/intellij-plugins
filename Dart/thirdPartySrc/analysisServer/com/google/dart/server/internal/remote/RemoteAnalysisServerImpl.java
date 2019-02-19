@@ -75,6 +75,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   private static final String ANALYSIS_NOTIFICATION_CLOSING_LABELS = "analysis.closingLabels";
 
   // Code Completion domain
+  private static final String COMPLETION_AVAILABLE_SUGGESTIONS = "completion.availableSuggestions";
   private static final String COMPLETION_NOTIFICATION_RESULTS = "completion.results";
 
   // Search domain
@@ -300,10 +301,26 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void completion_getSuggestionDetails(String file, int id, String label, int offset, GetSuggestionDetailsConsumer consumer) {
+    String requestId = generateUniqueId();
+    sendRequestToServer(requestId, RequestUtilities.generateCompletionGetSuggestionDetails(requestId, file, id, label, offset), consumer);
+  }
+
+  @Override
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateCompletionGetSuggestions(id, file, offset), consumer);
   }
+
+  @Override
+  public void completion_setSubscriptions(List<String> subscriptions) {
+    String id = generateUniqueId();
+    if (subscriptions == null) {
+      subscriptions = StringUtilities.EMPTY_LIST;
+    }
+    sendRequestToServer(id, RequestUtilities.generateCompletionSetSubscriptions(id, subscriptions));
+  }
+
 
   @Override
   public void diagnostic_getDiagnostics(GetDiagnosticsConsumer consumer) {
@@ -607,6 +624,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
       // analysis.errors
       new NotificationAnalysisAnalyzedFilesProcessor(listener).process(response);
     }
+    else if (event.equals(COMPLETION_AVAILABLE_SUGGESTIONS)) {
+      // completion.results
+      new NotificationCompletionAvailableSuggestionsProcessor(listener).process(response);
+    }
     else if (event.equals(COMPLETION_NOTIFICATION_RESULTS)) {
       // completion.results
       new NotificationCompletionResultsProcessor(listener).process(response);
@@ -670,6 +691,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     //
     // Completion Domain
     //
+    else if (consumer instanceof GetSuggestionDetailsConsumer) {
+      new GetSuggestionDetailsProcessor((GetSuggestionDetailsConsumer)consumer).process(resultObject, requestError);
+    }
     else if (consumer instanceof GetSuggestionsConsumer) {
       new CompletionIdProcessor((GetSuggestionsConsumer)consumer).process(resultObject, requestError);
     }
