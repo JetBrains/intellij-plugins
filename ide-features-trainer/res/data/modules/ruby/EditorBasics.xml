@@ -4,5 +4,6 @@
   <lesson-kt implementationClass="training.learn.lesson.ruby.RubyCommentLesson"/>
   <lesson-kt sample="Duplicate.rb.sample" implementationClass="training.learn.lesson.general.DuplicateLesson" lang="ruby"/>
   <lesson-kt sample="Move.rb.sample" implementationClass="training.learn.lesson.general.MoveLesson" lang="ruby"/>
+  <lesson-kt sample="Collapse.rb.sample" implementationClass="training.learn.lesson.general.CollapseLesson" lang="ruby"/>
   <lesson-kt implementationClass="training.learn.lesson.general.MultipleSelectionHtmlLesson"/>
 </module>
