@@ -1,4 +1,4 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.nested.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument

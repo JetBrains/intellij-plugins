@@ -1,4 +1,4 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.statements.action
   Angular2Action
     Angular2Chain
       JSExpressionStatement
@@ -27,7 +27,7 @@ ASTWrapperPsiElement(FILE)
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('b')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.statements.action
   Angular2Action
     Angular2Chain
       PsiErrorElement:expression expected

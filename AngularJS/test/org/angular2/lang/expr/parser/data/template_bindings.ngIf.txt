@@ -1,4 +1,4 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -12,7 +12,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('bar')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -25,7 +25,7 @@ ASTWrapperPsiElement(FILE)
       PsiErrorElement:expression expected
         <empty list>
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -46,7 +46,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('bar')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -66,7 +66,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('bar')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -86,7 +86,7 @@ ASTWrapperPsiElement(FILE)
       PsiErrorElement:expression expected
         <empty list>
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -105,7 +105,7 @@ ASTWrapperPsiElement(FILE)
       PsiErrorElement:expression expected
         <empty list>
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -134,7 +134,7 @@ ASTWrapperPsiElement(FILE)
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('conditionResult')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -164,7 +164,7 @@ ASTWrapperPsiElement(FILE)
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('conditionResult')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -186,7 +186,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('bar')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -200,7 +200,7 @@ ASTWrapperPsiElement(FILE)
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('conditionResult')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -221,7 +221,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('loading')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       Angular2PipeExpression
@@ -251,7 +251,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('loading')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -273,7 +273,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('bar')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -294,7 +294,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('bar')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -315,7 +315,7 @@ ASTWrapperPsiElement(FILE)
       PsiErrorElement:expression expected
         <empty list>
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
@@ -335,7 +335,7 @@ ASTWrapperPsiElement(FILE)
       PsiErrorElement:expression expected
         <empty list>
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngIf.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngIf, false, null>
       JSReferenceExpression
