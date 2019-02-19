@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2014, the Dart project authors.
- * 
+ *
  * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -37,6 +37,7 @@ public class RequestUtilities {
   private static final String EXPRESSIONS = "expressions";
   private static final String FILE = "file";
   private static final String ID = "id";
+  private static final String LABEL = "label";
   private static final String LENGTH = "length";
   private static final String LINE_LENGTH = "lineLength";
   private static final String METHOD = "method";
@@ -96,7 +97,9 @@ public class RequestUtilities {
   private static final String METHOD_LIST_POSTFIX_COMPLETION_TEMPLATES = "edit.listPostfixCompletionTemplates";
 
   // Code Completion domain
+  private static final String METHOD_COMPLETION_GET_SUGGESTION_DETAILS = "completion.getSuggestionDetails";
   private static final String METHOD_COMPLETION_GET_SUGGESTIONS = "completion.getSuggestions";
+  private static final String METHOD_COMPLETION_SET_SUBSCRIPTIONS = "completion.setSubscriptions";
 
   // Search domain
   private static final String METHOD_SEARCH_FIND_ELEMENT_REFERENCES = "search.findElementReferences";
@@ -180,7 +183,8 @@ public class RequestUtilities {
     }
     else if (object instanceof Location) {
       return buildJsonObjectLocation((Location)object);
-    } else if (object instanceof ImportedElements) {
+    }
+    else if (object instanceof ImportedElements) {
       return ((ImportedElements)object).toJson();
     }
     throw new IllegalArgumentException("Unable to convert to JSON: " + object);
@@ -420,6 +424,30 @@ public class RequestUtilities {
   }
 
   /**
+   * Generate and return a {@value #METHOD_COMPLETION_GET_SUGGESTION_DETAILS} request.
+   * <p>
+   * <pre>
+   * request: {
+   *   "id": String
+   *   "method": "completion.getSuggestionDetails"
+   *   "params": {
+   *     "file": FilePath
+   *     "id": int
+   *     "label": String
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateCompletionGetSuggestionDetails(String idValue, String file, int id, String label, int offset) {
+    JsonObject params = new JsonObject();
+    params.addProperty(FILE, file);
+    params.addProperty(ID, id);
+    params.addProperty(LABEL, label);
+    params.addProperty(OFFSET, offset);
+    return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTION_DETAILS, params);
+  }
+
+  /**
    * Generate and return a {@value #METHOD_COMPLETION_GET_SUGGESTIONS} request.
    * <p>
    * <pre>
@@ -438,6 +466,26 @@ public class RequestUtilities {
     params.addProperty(FILE, file);
     params.addProperty(OFFSET, offset);
     return buildJsonObjectRequest(idValue, METHOD_COMPLETION_GET_SUGGESTIONS, params);
+  }
+
+  /**
+   * Generate and return a {@value #METHOD_COMPLETION_SET_SUBSCRIPTIONS} request.
+   * <p>
+   * <pre>
+   * request: {
+   *   "id": String
+   *   "method": "completion.setSubscriptions"
+   *   "params": {
+   *     "subscriptions": List&lt;CompletionService&gt;
+   *   }
+   * }
+   * </pre>
+   */
+  public static JsonObject generateCompletionSetSubscriptions(String idValue,
+                                                              List<String> subscriptions) {
+    JsonObject params = new JsonObject();
+    params.add(SUBSCRIPTIONS, buildJsonElement(subscriptions));
+    return buildJsonObjectRequest(idValue, METHOD_COMPLETION_SET_SUBSCRIPTIONS, params);
   }
 
   /**

@@ -14,10 +14,16 @@
 package com.google.dart.server.internal.remote.processor;
 
 import com.google.dart.server.AnalysisServerListener;
+import com.google.dart.server.utilities.general.JsonUtilities;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.dartlang.analysis.server.protocol.CompletionSuggestion;
+import org.dartlang.analysis.server.protocol.IncludedSuggestionSet;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Processor for "completion.results" notification.
@@ -38,6 +44,25 @@ public class NotificationCompletionResultsProcessor extends NotificationProcesso
     JsonObject paramsObject = response.get("params").getAsJsonObject();
     String completionId = paramsObject.get("id").getAsString();
     JsonArray resultsArray = paramsObject.get("results").getAsJsonArray();
+
+    final List<IncludedSuggestionSet> includedSuggestionSets;
+    final JsonElement includedSuggestionSetsElement = paramsObject.get("includedSuggestionSets");
+    if (includedSuggestionSetsElement != null) {
+      final JsonArray includedSuggestionSetsArray = includedSuggestionSetsElement.getAsJsonArray();
+      includedSuggestionSets = IncludedSuggestionSet.fromJsonArray(includedSuggestionSetsArray);
+    } else {
+      includedSuggestionSets = Collections.emptyList();
+    }
+
+    final List<String> includedSuggestionKinds;
+    final JsonElement includedSuggestionKindsElement = paramsObject.get("includedSuggestionKinds");
+    if (includedSuggestionKindsElement != null) {
+      final JsonArray includedSuggestionKindsArray = includedSuggestionKindsElement.getAsJsonArray();
+      includedSuggestionKinds = JsonUtilities.decodeStringList(includedSuggestionKindsArray);
+    } else {
+      includedSuggestionKinds = Collections.emptyList();
+    }
+
     int replacementOffset = paramsObject.get("replacementOffset").getAsInt();
     int replacementLength = paramsObject.get("replacementLength").getAsInt();
     boolean isLast = paramsObject.get("isLast").getAsBoolean();
@@ -47,6 +72,8 @@ public class NotificationCompletionResultsProcessor extends NotificationProcesso
         replacementOffset,
         replacementLength,
         CompletionSuggestion.fromJsonArray(resultsArray),
+        includedSuggestionSets,
+        includedSuggestionKinds,
         isLast);
   }
 }

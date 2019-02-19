@@ -380,6 +380,17 @@ public interface AnalysisServer {
   public void analytics_sendTiming(String event, int millis);
 
   /**
+   * {@code completion.getSuggestionDetails}
+   *
+   * Request that completion suggestions for the given offset in the given file be returned.
+   *
+   * @param file The file containing the point at which suggestions are to be made.
+   * @param id The identifier of the <tt>AvailableSuggestionSet</tt> containing the selected label.
+   * @param label The label from the <tt>AvailableSuggestionSet</tt> with the `id` for which insertion information is requested.
+   */
+  public void completion_getSuggestionDetails(String file, int id, String label, int offset, GetSuggestionDetailsConsumer consumer);
+
+  /**
    * {@code completion.getSuggestions}
    *
    * Request that completion suggestions for the given offset in the given file be returned.
@@ -388,6 +399,19 @@ public interface AnalysisServer {
    * @param offset The offset within the file at which suggestions are to be made.
    */
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer);
+
+  /**
+   * {@code completion.setSubscriptions}
+   *
+   * Subscribe for completion services.
+   * All previous subscriptions are replaced by the given set of services.
+   *
+   * It is an error if any of the elements in the list are not valid services. If there is an error,
+   * then the current subscriptions will remain unchanged.
+   *
+   * @param subscriptions A list of the services being subscribed to.
+   */
+  public void completion_setSubscriptions(List<String> subscriptions);
 
   /**
    * {@code diagnostic.getDiagnostics}
