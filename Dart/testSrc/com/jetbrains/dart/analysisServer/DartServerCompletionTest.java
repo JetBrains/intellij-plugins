@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.EditorTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartTestUtils;
@@ -24,6 +25,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     DartTestUtils.configureDartSdk(myModule, myFixture.getTestRootDisposable(), true);
     DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest();
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
+    ((CodeInsightTestFixtureImpl)myFixture).canChangeDocumentDuringHighlighting(true);
   }
 
   @Override
@@ -41,6 +43,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
 
   private void doTest(@Nullable final String lookupToSelect, final char complationChar) {
     myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.doHighlighting(); // warm up
     myFixture.complete(CompletionType.BASIC);
 
     if (lookupToSelect != null) {
@@ -124,6 +127,7 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
 
   public void testInsideIncompleteListLiteral() {
     myFixture.configureByFile(getTestName(false) + ".dart");
+    myFixture.doHighlighting();
     myFixture.complete(CompletionType.BASIC);
     assertNotNull(myFixture.getLookup());
   }
@@ -140,13 +144,14 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     final EditorTestUtil.CaretAndSelectionState markers = EditorTestUtil.extractCaretAndSelectionMarkers(getEditor().getDocument());
     getEditor().getCaretModel().moveToOffset(markers.carets.get(0).getCaretOffset(getEditor().getDocument()));
 
+    myFixture.doHighlighting();
     myFixture.complete(CompletionType.BASIC);
     selectLookup("package:projectName/libFile.dart", Lookup.REPLACE_SELECT_CHAR);
     myFixture.checkResultByFile(testName + ".after.dart");
   }
 
   public void testIncompleteTernary() {
-    doTest();
+    doTest("true");
   }
 
   public void testSorting() {
@@ -157,11 +162,11 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
                               "main() {\n" +
                               "  foo(x: <caret>);\n" +
                               "}");
+    myFixture.doHighlighting();
     myFixture.completeBasic();
     myFixture.assertPreferredCompletionItems(0, "AXX.one", "AXX.two", "main", "const", "false", "new", "null", "true",
-                                             "AbstractClassInstantiationError", "AbstractClassInstantiationError", "ArgumentError",
-                                             "ArgumentError", "ArgumentError.notNull", "ArgumentError.value", "AssertionError",
-                                             "AssertionError", "AXB", "AXB.four", "AXB.three", "AXX", "BidirectionalIterator");
+                                             "AXB", "AXB.four", "AXB.three", "AXX",
+                                             "AbstractClassInstantiationError", "ArgumentError", "AssertionError", "BidirectionalIterator");
   }
 
   public void testNoCompletionAfterDigit() {
@@ -173,7 +178,12 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
                               "  final double bar, baz;\n" +
                               "  const Foo({ this.bar, this.baz, });\n" +
                               "}\n");
+    myFixture.doHighlighting();
     myFixture.completeBasic();
     assertNull(myFixture.getLookup());
+  }
+
+  public void testNotYetImportedClass() {
+    doTest("Process");
   }
 }
