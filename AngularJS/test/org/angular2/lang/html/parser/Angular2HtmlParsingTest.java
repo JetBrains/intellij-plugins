@@ -24,6 +24,7 @@ import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
 import com.intellij.psi.impl.BlockSupportImpl;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.impl.DiffLog;
+import org.angular2.lang.expr.parser.Angular2ParserDefinition;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,11 @@ import java.io.IOException;
 public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
   public Angular2HtmlParsingTest() {
-    super("", "html", new Angular2HtmlParserDefinition(), new JavascriptParserDefinition(), new CSSParserDefinition());
+    super("", "html",
+          new Angular2HtmlParserDefinition(),
+          new Angular2ParserDefinition(),
+          new JavascriptParserDefinition(),
+          new CSSParserDefinition());
   }
 
   @Override
