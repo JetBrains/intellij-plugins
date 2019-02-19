@@ -1109,4 +1109,19 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.checkHighlighting();
     });
   }
+
+  public void testMultiSelectorTemplateBindings() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("multi-selector-template-bindings.html", "multi-selector-template-bindings.ts", "package.json");
+      myFixture.completeBasic();
+      assertEquals(asList("*appIf", "*appUnless"),
+                   sorted(myFixture.getLookupElementStrings()));
+      assertEquals("multi-selector-template-bindings.ts",
+                   resolveReference("*app<caret>If=").getContainingFile().getName());
+      assertEquals("multi-selector-template-bindings.ts",
+                   resolveReference("*app<caret>Unless=").getContainingFile().getName());
+      assertUnresolvedReference("*app<caret>Foo=");
+    });
+  }
+
 }

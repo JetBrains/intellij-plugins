@@ -152,8 +152,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       fillNamesAndProperties(inputs, candidate.getInputs(), p -> p);
       if (!isTemplateTag && candidate.isTemplate()) {
         List<SimpleSelectorWithPsi> selectors = candidate.getSelector().getSimpleSelectorsWithPsi();
-        if (selectors.size() == 1) {
-          List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selectors.get(0).getAttributes();
+        for (SimpleSelectorWithPsi selector: selectors) {
+          List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selector.getAttributes();
           if (attributeCandidates.size() == 1) {
             addAttribute.accept("*" + attributeCandidates.get(0).getName(),
                                 attributeCandidates.get(0).getNavigationElement());
