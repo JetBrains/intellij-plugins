@@ -1,4 +1,4 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.filters.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -10,7 +10,7 @@ ASTWrapperPsiElement(FILE)
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('nonexistent')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.filters.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -29,7 +29,7 @@ ASTWrapperPsiElement(FILE)
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('offset')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.filters.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -55,7 +55,7 @@ ASTWrapperPsiElement(FILE)
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('uppercase')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.filters.binding
   Angular2Binding
     JSAssignmentExpression
       JSDefinitionExpression
@@ -79,7 +79,7 @@ ASTWrapperPsiElement(FILE)
             PsiElement(JS:IDENTIFIER)('lowercase')
         PsiElement(JS:RPAR)(')')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.filters.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument
@@ -94,7 +94,7 @@ ASTWrapperPsiElement(FILE)
       PsiErrorElement:expression expected
         <empty list>
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.filters.binding
   Angular2Binding
     Angular2PipeExpression
       Angular2PipeLeftSideArgument

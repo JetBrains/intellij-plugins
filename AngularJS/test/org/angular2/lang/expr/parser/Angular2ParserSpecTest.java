@@ -15,19 +15,15 @@ package org.angular2.lang.expr.parser;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.lang.ParserDefinition;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptNotNullExpression;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.mscharhag.oleaster.runner.OleasterRunner;
 import junit.framework.AssertionFailedError;
 import org.angular2.lang.OleasterTestUtil;
@@ -35,10 +31,8 @@ import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.*;
 import org.junit.runner.RunWith;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.testFramework.LightPlatformTestCase.getProject;
@@ -385,8 +379,10 @@ public class Angular2ParserSpecTest {
 
         it("should store the sources in the result", () -> {
           final Angular2TemplateBinding[] bindings = parseTemplateBindings("a", "1,b 2");
-          expect(bindings[0].getExpression().getText()).toEqual("1");
-          expect(bindings[1].getExpression().getText()).toEqual("2");
+          ReadAction.run(() -> {
+            expect(bindings[0].getExpression().getText()).toEqual("1");
+            expect(bindings[1].getExpression().getText()).toEqual("2");
+          });
         });
 
         //This feature is not required by WebStorm
@@ -562,38 +558,34 @@ public class Angular2ParserSpecTest {
 
   private static Angular2TemplateBinding[] parseTemplateBindings(String key, String value, @SuppressWarnings("unused") String location) {
     ASTNode root = parse(value, key + "." + Angular2PsiParser.TEMPLATE_BINDINGS);
-    return root.findChildByType(Angular2ElementTypes.TEMPLATE_BINDINGS_STATEMENT)
+    return ReadAction.compute(() -> root.findChildByType(Angular2ElementTypes.TEMPLATE_BINDINGS_STATEMENT)
       .getPsi(Angular2TemplateBindings.class)
-      .getBindings();
+      .getBindings());
   }
 
   private static List<String> keys(Angular2TemplateBinding[] templateBindings) {
-    return Arrays.stream(templateBindings)
-      .map(binding -> binding.getKey())
-      .collect(Collectors.toList());
+    return ContainerUtil.map(templateBindings, binding -> binding.getKey());
   }
 
   private static List<String> keyValues(Angular2TemplateBinding[] templateBindings) {
-    return Arrays.stream(templateBindings).map(binding -> {
+    return ContainerUtil.map(templateBindings, binding -> {
       if (binding.keyIsVar()) {
         return "let " + binding.getKey() + (binding.getName() == null ? "=null" : '=' + binding.getName());
       }
       else {
         return binding.getKey() + (binding.getExpression() == null ? "" : "=" + unparse(binding.getExpression()));
       }
-    }).collect(Collectors.toList());
+    });
   }
 
   private static List<String> keySpans(String source, Angular2TemplateBinding[] templateBindings) {
-    return Arrays.stream(templateBindings)
-      .map(binding -> source.substring(binding.getTextRange().getStartOffset(), binding.getTextRange().getEndOffset()))
-      .collect(Collectors.toList());
+    return ReadAction.compute(() -> ContainerUtil.map(
+      templateBindings, binding -> source.substring(binding.getTextRange().getStartOffset(), binding.getTextRange().getEndOffset())));
   }
 
   private static List<String> exprSources(Angular2TemplateBinding[] templateBindings) {
-    return Arrays.stream(templateBindings)
-      .map(binding -> binding.getExpression() != null ? binding.getExpression().getText() : null)
-      .collect(Collectors.toList());
+    return ReadAction.compute(() -> ContainerUtil.map(
+      templateBindings, binding -> binding.getExpression() != null ? binding.getExpression().getText() : null));
   }
 
 
@@ -621,14 +613,9 @@ public class Angular2ParserSpecTest {
 
   private static ASTNode parse(String text, String extension) {
     return ReadAction.compute(() -> {
-      VirtualFile virtualFile = new LightVirtualFile("test." + extension, text);
-      SingleRootFileViewProvider viewProvider = new MySingleRootFileViewProvider(virtualFile);
-      ParserDefinition parserDefinition = new Angular2ParserDefinition();
-      PsiFile psiFile = parserDefinition.createFile(viewProvider);
-
-      final Angular2ParserDefinition definition = new Angular2ParserDefinition();
-      final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(getProject(), psiFile.getNode());
-      return definition.createParser(getProject()).parse(Angular2ParserDefinition.FILE, builder);
+      return PsiFileFactory.getInstance(getProject())
+        .createFileFromText("test." + extension, Angular2Language.INSTANCE, text)
+        .getNode();
     });
   }
 
@@ -649,14 +636,6 @@ public class Angular2ParserSpecTest {
       root.accept(unparser);
       return unparser.getResult();
     });
-  }
-
-  @SuppressWarnings("NewClassNamingConvention")
-  static class MySingleRootFileViewProvider extends SingleRootFileViewProvider {
-
-    MySingleRootFileViewProvider(VirtualFile file) {
-      super(PsiManager.getInstance(getProject()), file, false, Angular2Language.INSTANCE);
-    }
   }
 
   @SuppressWarnings("NewClassNamingConvention")
@@ -706,7 +685,8 @@ public class Angular2ParserSpecTest {
       }
       else if (element instanceof ASTWrapperPsiElement
                || element instanceof PsiErrorElement
-               || element instanceof JSEmptyExpression) {
+               || element instanceof JSEmptyExpression
+               || element instanceof JSFile) {
         super.visitElement(element);
       }
       else {

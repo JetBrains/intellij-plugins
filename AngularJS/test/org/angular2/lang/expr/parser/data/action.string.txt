@@ -1,4 +1,4 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.string.action
   Angular2Action
     JSExpressionStatement
       JSBinaryExpression
@@ -10,7 +10,7 @@ ASTWrapperPsiElement(FILE)
         JSLiteralExpression
           PsiElement(JS:STRING_LITERAL)(''b c'')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.string.action
   Angular2Action
     JSExpressionStatement
       JSBinaryExpression
@@ -24,7 +24,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(NG:ESCAPE_SEQUENCE)('\u0042')
           PsiElement(JS:STRING_LITERAL_PART)(''')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.string.action
   Angular2Action
     JSExpressionStatement
       JSBinaryExpression
@@ -38,7 +38,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(NG:INVALID_ESCAPE_SEQUENCE)('\u')
           PsiElement(JS:STRING_LITERAL_PART)(''')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.string.action
   Angular2Action
     JSExpressionStatement
       JSBinaryExpression
@@ -53,7 +53,7 @@ ASTWrapperPsiElement(FILE)
         PsiErrorElement:Unclosed string literal
           <empty list>
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.string.action
   Angular2Action
     Angular2Chain
       JSExpressionStatement
@@ -74,7 +74,7 @@ ASTWrapperPsiElement(FILE)
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('u')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.string.action
   Angular2Action
     JSExpressionStatement
       JSLiteralExpression

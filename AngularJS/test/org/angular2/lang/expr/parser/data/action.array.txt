@@ -1,11 +1,11 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.array.action
   Angular2Action
     JSExpressionStatement
       JSArrayLiteralExpression
         PsiElement(JS:LBRACKET)('[')
         PsiElement(JS:RBRACKET)(']')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.array.action
   Angular2Action
     JSExpressionStatement
       JSArrayLiteralExpression
@@ -18,7 +18,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:NUMERIC_LITERAL)('2')
         PsiElement(JS:RBRACKET)(']')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.array.action
   Angular2Action
     JSExpressionStatement
       JSIndexedPropertyAccessExpression
@@ -32,7 +32,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:NUMERIC_LITERAL)('0')
         PsiElement(JS:RBRACKET)(']')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.array.action
   Angular2Action
     JSExpressionStatement
       JSIndexedPropertyAccessExpression
@@ -54,7 +54,7 @@ ASTWrapperPsiElement(FILE)
           PsiElement(JS:NUMERIC_LITERAL)('0')
         PsiElement(JS:RBRACKET)(']')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.array.action
   Angular2Action
     JSExpressionStatement
       JSReferenceExpression
@@ -64,7 +64,7 @@ ASTWrapperPsiElement(FILE)
         PsiElement(JS:DOT)('.')
         PsiElement(JS:IDENTIFIER)('length')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.array.action
   Angular2Action
     JSExpressionStatement
       JSReferenceExpression

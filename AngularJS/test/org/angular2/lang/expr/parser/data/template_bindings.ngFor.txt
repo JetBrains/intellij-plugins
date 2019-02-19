@@ -1,4 +1,4 @@
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngFor.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngFor, false, null>
       <empty list>
@@ -16,7 +16,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('bar')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngFor.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngFor, false, null>
       <empty list>
@@ -47,7 +47,7 @@ ASTWrapperPsiElement(FILE)
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('index')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngFor.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngFor, false, null>
       <empty list>
@@ -85,7 +85,7 @@ ASTWrapperPsiElement(FILE)
       JSReferenceExpression
         PsiElement(JS:IDENTIFIER)('trackByFn')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngFor.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngFor, false, null>
       <empty list>
@@ -139,7 +139,7 @@ ASTWrapperPsiElement(FILE)
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('isFirst')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngFor.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngFor, false, null>
       <empty list>
@@ -183,7 +183,7 @@ ASTWrapperPsiElement(FILE)
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('last')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngFor.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngFor, false, null>
       <empty list>
@@ -236,7 +236,7 @@ ASTWrapperPsiElement(FILE)
       Angular2TemplateBindingKey
         PsiElement(JS:IDENTIFIER)('odd')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngFor.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngFor, false, null>
       <empty list>
@@ -257,7 +257,7 @@ ASTWrapperPsiElement(FILE)
         Angular2TemplateVariable
           PsiElement(JS:IDENTIFIER)('as')
 ------
-ASTWrapperPsiElement(FILE)
+JSFile:test.ngFor.template_bindings
   Angular2TemplateBindings
     Angular2TemplateBinding <ngFor, false, null>
       <empty list>

@@ -13,20 +13,15 @@
 // limitations under the License.
 package org.angular2.lang.expr.parser;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.ParserDefinition;
-import com.intellij.lang.PsiBuilder;
-import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.SingleRootFileViewProvider;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.FileBasedTestCaseHelperEx;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
-import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.testFramework.UsefulTestCase;
+import org.angular2.lang.expr.Angular2Language;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,16 +76,11 @@ public class Angular2ParserTest extends LightPlatformCodeInsightTestCase impleme
 
     for (String line : StringUtil.splitByLines(text)) {
       if (result.length() > 0) result.append("------\n");
-      VirtualFile virtualFile = new LightVirtualFile("test." + name + "." + extension, line);
-      SingleRootFileViewProvider viewProvider = new Angular2ParserSpecTest.MySingleRootFileViewProvider(virtualFile);
-      ParserDefinition parserDefinition = new Angular2ParserDefinition();
-      PsiFile psiFile = parserDefinition.createFile(viewProvider);
 
-      final Angular2ParserDefinition definition = new Angular2ParserDefinition();
-      final PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(getProject(), psiFile.getNode());
-      final ASTNode root = definition.createParser(getProject()).parse(Angular2ParserDefinition.FILE, builder);
+      PsiFile psiFile = PsiFileFactory.getInstance(getProject())
+        .createFileFromText("test." + name + "." + extension, Angular2Language.INSTANCE, line);
 
-      result.append(DebugUtil.psiToString(root.getPsi(), false, false));
+      result.append(DebugUtil.psiToString(psiFile, false, false));
     }
     UsefulTestCase.assertSameLinesWithFile(new File(path, suffix.replace("js", "txt")).toString(), result.toString());
   }
