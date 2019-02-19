@@ -28,7 +28,7 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
 
   private final FlashUmlVisibilityManager myVisibilityManager = new FlashUmlVisibilityManager();
   private final FlashUmlNodeContentManager myNodeContentManager = new FlashUmlNodeContentManager();
-  private final FlashUmlElementManager myElementManager = new FlashUmlElementManager(this);
+  private final FlashUmlElementManager myElementManager = new FlashUmlElementManager();
   private final FlashUmlVfsResolver myVfsResolver = new FlashUmlVfsResolver();
   private final FlashUmlRelationshipManager myRelationshipManager = new FlashUmlRelationshipManager();
   private final FlashUmlColorManager myColorManager = new FlashUmlColorManager();
