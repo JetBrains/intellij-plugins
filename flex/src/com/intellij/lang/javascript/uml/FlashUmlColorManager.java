@@ -16,11 +16,12 @@
 
 package com.intellij.lang.javascript.uml;
 
+import com.intellij.diagram.DiagramColorManagerBase;
+import com.intellij.diagram.DiagramColors;
 import com.intellij.diagram.DiagramEdge;
 import com.intellij.diagram.DiagramRelationshipInfo;
 import com.intellij.diagram.presentation.DiagramLineType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.diagram.DiagramColorManagerBase;
 
 import java.awt.*;
 
@@ -32,7 +33,7 @@ public class FlashUmlColorManager extends DiagramColorManagerBase {
         || !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getTarget()))
         || edge.getRelationship().getStartArrow() != DiagramRelationshipInfo.DELTA
         || edge.getRelationship().getLineType() != DiagramLineType.SOLID ?
-    super.getEdgeColor(edge) : REALIZATION;
+           super.getEdgeColor(edge) : DiagramColors.REALIZATION_EDGE;
   }
 
   private static boolean isInterface(Object element) {
