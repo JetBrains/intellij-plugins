@@ -1,4 +1,4 @@
 <template><div></div></template>
 <script lang="ts">
-    "".<error></error><EOLError></EOLError><caret>
+    "".<EOLError></EOLError><EOLError></EOLError><caret>
 </script>
