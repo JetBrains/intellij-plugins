@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.google.common.collect.Sets;
@@ -38,6 +39,7 @@ public class DartServerData {
   private final Map<String, List<DartRegion>> myImplementedClassData = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, List<DartRegion>> myImplementedMemberData = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, Outline> myOutlineData = Collections.synchronizedMap(new THashMap<>());
+  private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new THashMap<>());
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
@@ -126,6 +128,15 @@ public class DartServerData {
     ApplicationManager.getApplication().invokeLater(() -> myEventDispatcher.getMulticaster().outlineUpdated(filePath),
                                                     ModalityState.NON_MODAL,
                                                     myService.getProject().getDisposed());
+  }
+
+  void computedAvailableSuggestions(@NotNull final List<AvailableSuggestionSet> changed, @NotNull final int[] removed) {
+    for (int id : removed) {
+      myAvailableSuggestionSetMap.remove(id);
+    }
+    for (AvailableSuggestionSet suggestionSet : changed) {
+      myAvailableSuggestionSetMap.put(suggestionSet.getId(), suggestionSet);
+    }
   }
 
   @NotNull
@@ -263,6 +274,11 @@ public class DartServerData {
     myEventDispatcher.removeListener(listener);
   }
 
+  @Nullable
+  AvailableSuggestionSet getAvailableSuggestionSet(int id) {
+    return myAvailableSuggestionSetMap.get(id);
+  }
+
   private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
     if (file != null) {
       final Project project = myService.getProject();
@@ -340,6 +356,7 @@ public class DartServerData {
     myImplementedClassData.clear();
     myImplementedMemberData.clear();
     myOutlineData.clear();
+    myAvailableSuggestionSetMap.clear();
   }
 
   void onDocumentChanged(@NotNull final DocumentEvent e) {

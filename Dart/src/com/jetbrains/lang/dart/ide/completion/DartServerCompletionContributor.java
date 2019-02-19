@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.completion;
 
+import com.intellij.CommonBundle;
 import com.intellij.codeInsight.AutoPopupController;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.*;
@@ -29,6 +30,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
@@ -36,6 +38,8 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.assists.AssistUtils;
+import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -108,6 +112,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                final String completionId = das.completion_getSuggestions(file, offset);
                if (completionId == null) return;
 
+               final VirtualFile targetFile = file;
                das.addCompletions(file, completionId, (replacementOffset, replacementLength, suggestion) -> {
                  final CompletionResultSet updatedResultSet;
                  if (uriPrefix != null) {
@@ -135,6 +140,24 @@ public class DartServerCompletionContributor extends CompletionContributor {
                  }
 
                  updatedResultSet.addElement(lookupElement);
+               }, (includedSet, includedKinds) -> {
+                 final AvailableSuggestionSet suggestionSet = das.getAvailableSuggestionSet(includedSet.getId());
+                 if (suggestionSet == null) {
+                   return;
+                 }
+
+                 for (AvailableSuggestion suggestion : suggestionSet.getItems()) {
+                   final String kind = suggestion.getElement().getKind();
+                   if (!includedKinds.contains(kind)) {
+                     continue;
+                   }
+
+                   CompletionSuggestion completionSuggestion =
+                     createCompletionSuggestionFromAvailableSuggestion(suggestion, suggestionSet, includedSet.getRelevance());
+                   LookupElementBuilder lookupElement =
+                     createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true);
+                   resultSet.addElement(lookupElement);
+                 }
                });
              }
            });
@@ -315,6 +338,12 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
   @NotNull
   public static LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
+    return createLookupElement(project, suggestion, null, null, false);
+  }
+
+  @NotNull
+  public static LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion,
+                                                         final Integer suggestionSetId, final VirtualFile file, boolean isNotYetImported) {
     final Element element = suggestion.getElement();
     final Location location = element == null ? null : element.getLocation();
     final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
@@ -455,8 +484,47 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
     }
 
-    // Use selection offset / length.
-    if (shouldSetSelection) {
+    if (isNotYetImported) {
+      lookup = lookup.withInsertHandler((context, item) -> {
+        final DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+        final GetCompletionDetailsResult result =
+          das.completion_getSuggestionDetails(file, suggestionSetId, suggestion.getCompletion(), context.getStartOffset());
+        if (result == null) {
+          return;
+        }
+
+        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), result.completion);
+
+        @Nullable final SourceChange change = result.change;
+        if (change == null) {
+          return;
+        }
+
+        try {
+          AssistUtils.applySourceChange(project, change, true);
+        }
+        catch (DartSourceEditException e) {
+          CommonRefactoringUtil.showErrorHint(project, context.getEditor(), e.getMessage(), CommonBundle.getErrorTitle(), null);
+        }
+
+        final List<String> parameterNames = suggestion.getParameterNames();
+        if (parameterNames == null) {
+          return;
+        }
+
+        // Like in JavaCompletionUtil.insertParentheses().
+        final boolean needsRightParen = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET ||
+                                        parameterNames.isEmpty() && context.getCompletionChar() != '(';
+        final ParenthesesInsertHandler<LookupElement> handler =
+          ParenthesesInsertHandler.getInstance(!parameterNames.isEmpty(), false, false, needsRightParen, false);
+        handler.handleInsert(context, item);
+        if (!parameterNames.isEmpty()) {
+          AutoPopupController.getInstance(project).autoPopupParameterInfo(context.getEditor(), lookupObject.findPsiElement());
+        }
+      });
+    }
+    else if (shouldSetSelection) {
+      // Use selection offset / length.
       lookup = lookup.withInsertHandler((context, item) -> {
         final Editor editor = context.getEditor();
         final int startOffset = context.getStartOffset() + suggestion.getSelectionOffset();
@@ -469,6 +537,38 @@ public class DartServerCompletionContributor extends CompletionContributor {
     }
 
     return lookup;
+  }
+
+
+  @NotNull
+  private static CompletionSuggestion createCompletionSuggestionFromAvailableSuggestion(@NotNull final AvailableSuggestion suggestion,
+                                                                                        @NotNull final AvailableSuggestionSet suggestionSet,
+                                                                                        final int relevance) {
+    Element element = suggestion.getElement();
+    return new CompletionSuggestion(
+      "UNKNOWN", // TODO should be CompletionSuggestionKind
+      relevance,
+      suggestion.getLabel(),
+      null,
+      suggestionSet.getUri(),
+      0,
+      0,
+      element.isDeprecated(),
+      false,
+      suggestion.getDocSummary(),
+      suggestion.getDocComplete(),
+      null,
+      null,
+      null,
+      element,
+      element.getReturnType(),
+      suggestion.getParameterNames(),
+      null,
+      null,
+      null,
+      null,
+      null,
+      suggestionSet.getUri());
   }
 
   private static Icon getBaseImage(Element element) {
