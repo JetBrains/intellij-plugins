@@ -1024,4 +1024,17 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertEquals("common.rnc", element.getContainingFile().getName());
     });
   }
+
+  public void testMultiSelectorTemplateBindings() {
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("multi-selector-template-bindings.html", "multi-selector-template-bindings.ts", "package.json");
+      myFixture.completeBasic();
+      assertContainsElements(myFixture.getLookupElementStrings(),"*appIf", "*appUnless");
+      assertEquals("multi-selector-template-bindings.ts",
+                   resolveReference("*app<caret>If=").getContainingFile().getName());
+      assertEquals("multi-selector-template-bindings.ts",
+                   resolveReference("*app<caret>Unless=").getContainingFile().getName());
+      assertUnresolvedReference("*app<caret>Foo=");
+    });
+  }
 }
