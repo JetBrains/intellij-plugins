@@ -81,8 +81,7 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
     severity = (info.type != EVENT || templateTag) && scope.isFullyResolved()
                ? ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                : ProblemHighlightType.WEAK_WARNING;
-    @PropertyKey(resourceBundle = BUNDLE)
-    final String messageKey;
+    @PropertyKey(resourceBundle = BUNDLE) final String messageKey;
     switch (info.type) {
       case EVENT:
         if (templateTag) {
@@ -104,9 +103,10 @@ public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalIns
         messageKey = "angular.inspection.template.banana-box-binding-not-provided";
         break;
       case REGULAR:
-        if (proximity == NOT_REACHABLE){
+        if (proximity == NOT_REACHABLE) {
           messageKey = "angular.inspection.template.unknown-attribute";
-        } else {
+        }
+        else {
           messageKey = "angular.inspection.template.attribute-directive-out-of-scope";
         }
         severity = ProblemHighlightType.WARNING;

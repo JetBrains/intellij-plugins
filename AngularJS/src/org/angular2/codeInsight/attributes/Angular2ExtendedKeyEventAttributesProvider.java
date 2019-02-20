@@ -161,7 +161,7 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
 
   private static XmlAttributeDescriptor getEventDescriptor(@NotNull XmlTag tag, boolean keydown) {
     String attrName = EVENT_ATTR_PREFIX + trimEnd(keydown ? KEYDOWN_EVENT_BASE_PREFIX : KEYUP_EVENT_BASE_PREFIX,
-                                     '.');
+                                                  '.');
     return find(Angular2AttributeDescriptorsProvider.getDefaultAttributeDescriptors(tag),
                 attr -> attrName.equalsIgnoreCase(attr.getName()));
   }

@@ -74,6 +74,5 @@ public class Angular2InvalidEntryComponentInspection extends LocalInspectionTool
       registerProblem(ProblemType.INVALID_ENTRY_COMPONENT,
                       Angular2Bundle.message("angular.inspection.decorator.not-array-of-class-types"));
     }
-
   }
 }

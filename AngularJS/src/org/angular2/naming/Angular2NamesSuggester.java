@@ -75,5 +75,4 @@ public class Angular2NamesSuggester implements JSNamesSuggester {
 
     return null;
   }
-
 }

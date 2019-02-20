@@ -16,7 +16,8 @@ public class Angular2AccessibilityProcessingHandler extends AccessibilityProcess
   private static final List<JSAccessibilityChecker> ourCheckers;
 
   static {
-    List<JSAccessibilityChecker> checkers = ContainerUtil.filter(CHECKERS, checker -> !(checker instanceof TypeScriptConfigAccessibilityChecker));
+    List<JSAccessibilityChecker> checkers = ContainerUtil.filter(
+      CHECKERS, checker -> !(checker instanceof TypeScriptConfigAccessibilityChecker));
     checkers.add(new Angular2ConfigAccessibilityChecker());
     ourCheckers = ContainerUtil.immutableList(checkers);
   }
