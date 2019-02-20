@@ -18,18 +18,20 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
-import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ArrayUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
+import org.angular2.codeInsight.Angular2CodeInsightUtils;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.angular2.lang.html.psi.PropertyBindingType;
@@ -333,19 +335,20 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       .withCaseSensitivity(myInfo.type != REGULAR || (myElements.length > 0 && !(myElements[0] instanceof JSPsiElementBase)))
       .withIcon(getIcon())
       .withBoldness(proximity == DeclarationProximity.IN_SCOPE && myPriority == AttributePriority.HIGH)
-      // TODO add directive import on insert
       .withInsertHandler(new Angular2AttributeInsertHandler(shouldInsertHandlerRemoveLeftover(), shouldCompleteValue(), null));
     if (info.lookupStrings != null) {
       element = element.withLookupStrings(map(info.lookupStrings, str -> StringUtil.trimStart(str, hide.first)));
     }
     if (proximity != DeclarationProximity.IN_SCOPE) {
-      element = element.withItemTextForeground(SimpleTextAttributes.GRAYED_ATTRIBUTES.getFgColor());
+      element = Angular2CodeInsightUtils.wrapWithImportDeclarationModuleHandler(
+        Angular2CodeInsightUtils.decorateLookupElementWithModuleSource(element, mySourceDirectives, proximity, moduleScope),
+        myInfo.type == TEMPLATE_BINDINGS ? Angular2TemplateBindings.class : XmlAttribute.class);
     }
     String typeName = getTypeName();
     if (!StringUtil.isEmptyOrSpaces(typeName)) {
       element = element.withTypeText(typeName);
     }
-    return pair(PrioritizedLookupElement.withPriority(element, myPriority.getValue(proximity == DeclarationProximity.IN_SCOPE)),
+    return pair(PrioritizedLookupElement.withPriority(element, myPriority.getValue(proximity)),
                 currentPrefix.substring(hide.first.length()));
   }
 
@@ -435,8 +438,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       return myValue;
     }
 
-    public double getValue(boolean isInScope) {
-      return isInScope ? myValue : 0;
+    public double getValue(DeclarationProximity proximity) {
+      return proximity == DeclarationProximity.IN_SCOPE
+             || proximity == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE
+             ? myValue : 0;
     }
   }
 
