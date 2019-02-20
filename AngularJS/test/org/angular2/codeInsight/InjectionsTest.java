@@ -201,7 +201,7 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       VirtualFile root = myFixture.copyDirectoryToProject("node-modules-check", ".");
 
       VirtualFile nodeModules1 = root.findFileByRelativePath("inner2/node_modules/@angular/core");
-      PsiTestUtil.addSourceContentToRoots(myModule, nodeModules1);
+      PsiTestUtil.addContentRoot(myModule, nodeModules1);
       try {
         myFixture.openFileInEditor(root.findFileByRelativePath("inner/event.html"));
         int offsetBySignature = findOffsetBySignature("callAnonymous<caret>Api()", myFixture.getFile());
