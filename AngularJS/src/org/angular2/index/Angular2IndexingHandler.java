@@ -262,7 +262,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
     if (!file.getOriginalFile().equals(hostFile) && DialectDetector.isTypeScript(hostFile)) {
       // inline content
       return ContainerUtil.packNullables(PsiTreeUtil.getContextOfType(
-        InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file),
+        InjectedLanguageManager.getInstance(context.getProject()).getInjectionHost(file.getOriginalFile()),
         TypeScriptClass.class));
     }
     // external content

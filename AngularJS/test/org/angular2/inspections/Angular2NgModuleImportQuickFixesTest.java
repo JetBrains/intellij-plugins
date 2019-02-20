@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.LightPlatformMultiFileFixtureTestCase;
 import com.intellij.lang.resharper.ReSharperTestUtil;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PsiTestUtil;
 import org.angularjs.AngularTestUtil;
@@ -34,12 +35,28 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
                     "\"@angular/common\"");
   }
 
+  public void testNgForCompletion() {
+    doCompletionTest("angular-commons",
+                     "test.html",
+                     "*ngFor=\"let item of items\"",
+                     "*ngFo\nlet item of items",
+                     "\"@angular/common\"");
+  }
+
   public void testNgClass() {
     doMultiFileTest("angular-commons",
                     "test.html",
                     "[ng<caret>Class]",
                     "Import NgModule...",
                     "\"@angular/common\"");
+  }
+
+  public void testNgClassCompletion() {
+    doCompletionTest("angular-commons",
+                     "test.html",
+                     "[ngClass]=\"'my'\"",
+                     "[ngCl\n'my'",
+                     "\"@angular/common\"");
   }
 
   public void testLowercasePipe() {
@@ -50,14 +67,30 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
                     "\"@angular/common\"");
   }
 
+  public void testLowercasePipeCompletion() {
+    doCompletionTest("angular-commons",
+                     "test.html",
+                     "lowercase",
+                     "lo\n",
+                     "\"@angular/common\"");
+  }
+
   public void testImportDirective() {
     doMultiFileTest("test.html",
                     "Import Module2");
   }
 
+  public void testImportDirectiveCompletion() {
+    doTagCompletionTest("test.html");
+  }
+
   public void testUndeclaredDirective() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in MyModule");
+  }
+
+  public void testUndeclaredDirectiveCompletion() {
+    doTagCompletionTest("test.html");
   }
 
   public void testUndeclaredDirectiveDifferentModule() {
@@ -66,14 +99,27 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
                     "( module2.ts )");
   }
 
+  public void testUndeclaredDirectiveDifferentModuleCompletion() {
+    doTagCompletionTest("test.html",
+                        "( module2.ts )");
+  }
+
   public void testNotExportedDirectiveNoModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective");
   }
 
+  public void testNotExportedDirectiveNoModuleImportCompletion() {
+    doTagCompletionTest("test.html");
+  }
+
   public void testNotExportedDirectiveSingleModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective");
+  }
+
+  public void testNotExportedDirectiveSingleModuleImportCompletion() {
+    doTagCompletionTest("test.html");
   }
 
   public void testNotExportedDirectiveMultiModuleImport() {
@@ -82,9 +128,18 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
                     "\"./module3\"");
   }
 
+  public void testNotExportedDirectiveMultiModuleImportCompletion() {
+    doTagCompletionTest("test.html",
+                        "\"./module3\"");
+  }
+
   public void testInlineTemplate() {
     doMultiFileTest("component.ts",
                     "Declare MyDirective in MyModule");
+  }
+
+  public void testInlineTemplateCompletion() {
+    doTagCompletionTest("component.ts");
   }
 
   private void doMultiFileTest(@NotNull String mainFile,
@@ -115,6 +170,36 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
         myFixture.getEditor().putUserData(NAME_TO_IMPORT, importName);
       }
       myFixture.launchAction(myFixture.findSingleIntention(intention));
+    }, testName);
+  }
+
+  private void doTagCompletionTest(@NotNull String mainFile) {
+    doTagCompletionTest(mainFile, null);
+  }
+
+  private void doTagCompletionTest(@NotNull String mainFile,
+                                   @Nullable String importToSelect) {
+    doCompletionTest(StringUtil.trimEnd(getTestName(true), "Completion"),
+                     mainFile, "foo", "foo\n", importToSelect);
+  }
+
+  private void doCompletionTest(@NotNull String testName,
+                                @NotNull String mainFile,
+                                @NotNull String toRemove,
+                                @NotNull String toType,
+                                @Nullable String importToSelect) {
+    doTest((rootDir, rootAfter) -> {
+      initNodeModules();
+      myFixture.configureFromTempProjectFile(mainFile);
+      if (importToSelect != null) {
+        myFixture.getEditor().putUserData(NAME_TO_IMPORT, importToSelect);
+      }
+      AngularTestUtil.moveToOffsetBySignature("<caret>" + toRemove, myFixture);
+      myFixture.getEditor().getSelectionModel().setSelection(myFixture.getCaretOffset(),
+                                                             myFixture.getCaretOffset() + toRemove.length());
+      myFixture.type("\b");
+      myFixture.completeBasic();
+      myFixture.type(toType);
     }, testName);
   }
 

@@ -32,7 +32,6 @@ import com.intellij.psi.impl.source.xml.XmlAttributeReference;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -130,13 +129,16 @@ public class Angular2CompletionContributor extends CompletionContributor {
           LookupElementBuilder builder = LookupElementBuilder.create(pipeEntry.getKey())
             .withIcon(AngularJSIcons.Angular2)
             .withTypeText(Angular2Bundle.message("angular.description.pipe"), null, true)
-            // TODO auto-import on insert
             .withInsertHandler(new JSLookupElementInsertHandler(false, null));
           if (bestMatch.second != DeclarationProximity.IN_SCOPE) {
-            builder = builder.withItemTextForeground(SimpleTextAttributes.GRAYED_ATTRIBUTES.getFgColor());
+            builder = Angular2CodeInsightUtils.wrapWithImportDeclarationModuleHandler(
+              Angular2CodeInsightUtils.decorateLookupElementWithModuleSource(builder, Collections.singletonList(bestMatch.first),
+                                                                             bestMatch.second, scope),
+              Angular2PipeReferenceExpression.class);
           }
           Consumer<LookupElementBuilder> addResult = el ->
             result.consume(PrioritizedLookupElement.withPriority(el, bestMatch.second == DeclarationProximity.IN_SCOPE
+                                                                     || bestMatch.second == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE
                                                                      ? NG_VARIABLE_PRIORITY.getPriorityValue()
                                                                      : NG_PRIVATE_VARIABLE_PRIORITY.getPriorityValue()));
           List<TypeScriptFunction> transformMethods = ContainerUtil.newArrayList(match.getTransformMethods());
