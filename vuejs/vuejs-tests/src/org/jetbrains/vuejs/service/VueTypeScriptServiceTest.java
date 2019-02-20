@@ -45,6 +45,9 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   @TypeScriptVersion(TypeScriptVersions.TS28)
   public void testSimpleVue() throws Exception {
     doTestWithCopyDirectory();
+
+    myFixture.configureByFile("SimpleVueNoTs.vue");
+    checkHighlightingByOptions(false);
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
@@ -54,4 +57,13 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
       return myFixture.complete(CompletionType.BASIC);
     }));
   }
+
+  @TypeScriptVersion(TypeScriptVersions.TS28)
+  public void testSimpleVueNoTs() throws Exception {
+    doTestWithCopyDirectory();
+    
+    myFixture.configureByFile("SimpleVue.vue");
+    checkHighlightingByOptions(false);
+  }
+
 }
