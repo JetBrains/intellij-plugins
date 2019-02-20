@@ -69,7 +69,8 @@ public interface Angular2ElementTypes extends JSElementTypes, Angular2StubElemen
 
   class Angular2ExpressionElementType extends Angular2ElementType implements JSExpressionElementType {
 
-    public Angular2ExpressionElementType(@NotNull @NonNls String debugName, @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
+    public Angular2ExpressionElementType(@NotNull @NonNls String debugName,
+                                         @NotNull Function<Angular2ElementType, ASTNode> classConstructor) {
       super(debugName, classConstructor);
     }
   }

@@ -51,5 +51,4 @@ public class Angular2TagsInspection extends Angular2HtmlLikeTemplateLocalInspect
                                                    : ProblemHighlightType.WEAK_WARNING,
                            quickFixes.toArray(LocalQuickFix.EMPTY_ARRAY));
   }
-
 }

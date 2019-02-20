@@ -81,7 +81,8 @@ public class Angular2FixesFactory {
   }
 
   @NotNull
-  public static MultiMap<DeclarationProximity, Angular2Declaration> getCandidatesForResolution(@NotNull PsiElement element, boolean codeCompletion) {
+  public static MultiMap<DeclarationProximity, Angular2Declaration> getCandidatesForResolution(@NotNull PsiElement element,
+                                                                                               boolean codeCompletion) {
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(element);
     if (scope.getModule() == null || !scope.isInSource(scope.getModule())) {
       return MultiMap.empty();
