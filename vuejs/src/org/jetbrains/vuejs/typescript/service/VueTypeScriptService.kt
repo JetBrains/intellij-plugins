@@ -14,6 +14,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.C
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -71,10 +72,11 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
 
   override fun isAcceptableNonTsFile(project: Project, service: TypeScriptConfigService, virtualFile: VirtualFile): Boolean {
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true
-
     if (!isVueFile(virtualFile)) return false
 
-    return service.getPreferableConfig(virtualFile) != null
+    //lightweight check -> only parent configs, no indirect deps 
+    val configs = TypeScriptConfigUtil.getNearestParentConfigFiles(virtualFile, service.configFiles)
+    return configs.any { service.parseConfigFile(it)?.include?.accept(virtualFile) ?: false }
   }
 
   override fun highlight(file: PsiFile, info: JSFileHighlightingInfo): Future<List<JSAnnotationError>>? {
