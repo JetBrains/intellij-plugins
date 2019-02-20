@@ -159,7 +159,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
     myColorManager = new DiagramColorManagerBase() {
       @NotNull
       @Override
-      public Color getNodeHeaderColor(@NotNull DiagramBuilder builder, @NotNull DiagramNode node, Object element) {
+      public Color getNodeHeaderBackground(@NotNull DiagramBuilder builder, @NotNull DiagramNode node, Object element) {
         return getColor(element);
       }
 
