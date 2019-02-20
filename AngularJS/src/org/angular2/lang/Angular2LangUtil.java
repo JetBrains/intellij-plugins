@@ -81,13 +81,13 @@ public class Angular2LangUtil {
     PackageJsonFileManager manager = PackageJsonFileManager.getInstance(psiDir.getProject());
     String dirPath = ObjectUtils.notNull(dir.getCanonicalPath(), dir::getPath) + "/";
     for (VirtualFile config : manager.getValidPackageJsonFiles()) {
-      String configPath = ObjectUtils.notNull(config.getParent().getCanonicalPath(), config.getParent()::getPath) + "/";
-      if (configPath.endsWith(NODE_MODULE_ANGULAR_CORE_PATH)) {
-        if (dirPath.startsWith(configPath.substring(0, configPath.length() - NODE_MODULE_ANGULAR_CORE_PATH.length()) + "/")) {
+      String configDirPath = ObjectUtils.notNull(config.getParent().getCanonicalPath(), config.getParent()::getPath) + "/";
+      if (configDirPath.endsWith(NODE_MODULE_ANGULAR_CORE_PATH)) {
+        if (dirPath.startsWith(configDirPath.substring(0, configDirPath.length() - NODE_MODULE_ANGULAR_CORE_PATH.length()) + "/")) {
           return true;
         }
       }
-      else if (dirPath.startsWith(configPath)) {
+      else if (dirPath.startsWith(configDirPath)) {
         PackageJsonData data = PackageJsonUtil.getOrCreateData(config);
         if (data.isDependencyOfAnyType(ANGULAR_CORE_PACKAGE)) {
           return true;
