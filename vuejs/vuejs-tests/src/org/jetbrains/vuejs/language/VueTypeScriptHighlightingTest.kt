@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
+import com.intellij.lang.javascript.JSDaemonAnalyzerLightTestCase
 import com.intellij.lang.javascript.typescript.TypeScriptHighlightingTest
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -71,16 +72,23 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
   override fun configureEditorFile(name: String?) {
     val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/$name")
     val text: Any = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
-    myFixture.configureByText(VueFileType.INSTANCE, "<script lang=\"ts\">\n$text\n</script>")
+    myFixture.configureByText(VueFileType.INSTANCE, surroundWithScriptTag(text))
   }
 
   override fun checkEditorText(ext: String?) {
     val tsFile = LocalFileSystem.getInstance().findFileByPath("$testDataPath/${getTestName(false)}_after.$ext")
     val text: Any = StringUtil.convertLineSeparators(VfsUtil.loadText(tsFile!!))
-    myFixture.checkResult("<script lang=\"ts\">\n$text\n</script>")
+    myFixture.checkResult(surroundWithScriptTag(text))
   }
-  // these tests need to be ignored with additional code:
 
+  override fun checkHighlightingByRelativePath(relativePath: String?) {
+    val text = surroundWithScriptTag(JSDaemonAnalyzerLightTestCase.loadText(relativePath))
+    JSDaemonAnalyzerLightTestCase.checkHighlightByFile(myFixture, relativePath,text)
+  }
+
+  private fun surroundWithScriptTag(text: Any) = "<script lang=\"ts\">\n$text\n</script>"
+  
+  // these tests need to be ignored with additional code:
   override fun testIntermediateResultsNotCachedForRecursiveTypes() {
     LOG.info("Skipping muted test")
   }
