@@ -32,7 +32,7 @@ public class FlashUmlColorManager extends DiagramColorManagerBase {
            !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getTarget())) ||
            edge.getRelationship().getStartArrow() != DiagramRelationshipInfo.DELTA ||
            edge.getRelationship().getLineType() != DiagramLineType.SOLID ?
-           super.getEdgeColor(builder, edge) : ObjectUtils.notNull(builder.getColorScheme().getColor(DiagramColors.REALIZATION_EDGE_KEY));
+           super.getEdgeColor(builder, edge) : ObjectUtils.notNull(builder.getColorScheme().getColor(DiagramColors.REALIZATION_EDGE));
   }
 
   private static boolean isInterface(Object element) {
