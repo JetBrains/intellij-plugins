@@ -46,6 +46,8 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.intellij.util.ObjectUtils.notNull;
+
 /**
  * @author Irina.Chernushina on 3/23/2016.
  */
@@ -160,7 +162,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
       @NotNull
       @Override
       public Color getNodeHeaderBackground(@NotNull DiagramBuilder builder, @NotNull DiagramNode node, Object element) {
-        return getColor(element);
+        return getColor(builder, element);
       }
 
       @NotNull
@@ -169,13 +171,13 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
                                      @NotNull DiagramNode node,
                                      Object element,
                                      boolean selected) {
-        return getColor(element);
+        return getColor(builder, element);
       }
 
       @NotNull
-      private Color getColor(Object nodeElement) {
+      private Color getColor(DiagramBuilder builder, Object nodeElement) {
         if (nodeElement instanceof DiagramObject) {
-          final DiagramObject element = ((DiagramObject)nodeElement);
+          DiagramObject element = ((DiagramObject)nodeElement);
           if (Type.state.equals(element.getType())) {
             return LightColors.YELLOW;
           }
@@ -189,7 +191,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
             return LightColors.SLIGHTLY_GREEN;
           }
         }
-        return DiagramColors.NODE_HEADER;
+        return notNull(builder.getColorScheme().getColor(DiagramColors.NODE_HEADER));
       }
     };
   }
