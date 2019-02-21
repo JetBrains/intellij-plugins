@@ -69,7 +69,7 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
         && (seenScript == seenAttribute)) {
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(getTokenText(), true);
       if (info.type != Angular2AttributeType.REGULAR) {
-        seenScript = NG_EL_ATTRIBUTES.contains(info.type);
+        pushScriptStyle(NG_EL_ATTRIBUTES.contains(info.type), false);
         seenAttribute = true;
         return info.type.getElementType();
       }

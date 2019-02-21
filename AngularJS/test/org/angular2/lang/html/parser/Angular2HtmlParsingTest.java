@@ -278,4 +278,38 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   public void testNgInterpolationEmpty() throws Exception {
     doTestHtml("empty {{}} interpolation");
   }
+
+
+  public void testNgScriptWithEventAndAngularAttr() throws Exception {
+    doTestHtml("<script src=\"//example.com\" onerror=\"console.log(1)\" (error)='console.log(1)'" +
+           "onload=\"console.log(1)\" (load)='console.log(1)'>\n" +
+           "  console.log(2)\n" +
+           "</script>\n" +
+           "<div></div>");
+  }
+
+  public void testNgStyleTag() throws Exception {
+    doTestHtml("<style>\n" +
+           "  div {\n" +
+           "  }\n" +
+           "</style>\n" +
+           "<div></div>");
+  }
+
+  public void testNgStyleAngularAttr() throws Exception {
+    doTestHtml("<style (load)='disabled=true'>\n" +
+           "  div {\n" +
+           "  }\n" +
+           "</style>\n" +
+           "<div></div>");
+  }
+
+  public void testNgStyleWithEventAndAngularAttr() throws Exception {
+    doTestHtml("<style (load)='disabled=true' onload=\"this.disabled=true\" (load)='disabled=true'>\n" +
+           "  div {\n" +
+           "  }\n" +
+           "</style>\n" +
+           "<div></div>");
+  }
+
 }
