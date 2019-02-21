@@ -65,15 +65,13 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
 
     final int state = getState();
     // we need to convert attribute names according to their function
-    if (tokenType == XML_NAME && (state & BASE_STATE_MASK) == _Angular2HtmlLexer.TAG_ATTRIBUTES
-        && (seenScript == seenAttribute)) {
+    if (tokenType == XML_NAME && (state & BASE_STATE_MASK) == _Angular2HtmlLexer.TAG_ATTRIBUTES) {
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(getTokenText(), true);
-      if (info.type != Angular2AttributeType.REGULAR) {
-        pushScriptStyle(NG_EL_ATTRIBUTES.contains(info.type), false);
+      if (info.type != Angular2AttributeType.REGULAR && NG_EL_ATTRIBUTES.contains(info.type)) {
+        pushScriptStyle(true, false);
         seenAttribute = true;
         return info.type.getElementType();
       }
-      seenScript = false;
     }
     else if (tokenType != null && isLexerWithinExpansionForm(state)) {
       if (tokenType == TAG_WHITE_SPACE
