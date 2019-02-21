@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -9,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import icons.FlexIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -51,7 +53,7 @@ public class FlexmojosSdkType extends SdkType {
 
   @NotNull
   @Override
-  public String suggestSdkName(final String currentSdkName, final String sdkHome) {
+  public String suggestSdkName(@Nullable final String currentSdkName, final String sdkHome) {
     return "Flexmojos SDK " + getVersionString(sdkHome);
   }
 

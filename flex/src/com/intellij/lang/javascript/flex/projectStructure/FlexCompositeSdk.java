@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -23,10 +24,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, CompositeRootCollection {
 
@@ -284,8 +282,8 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
     @NotNull
     @Override
-    public String suggestSdkName(final String currentSdkName, final String sdkHome) {
-      return currentSdkName;
+    public String suggestSdkName(@Nullable String currentSdkName, String sdkHome) {
+      return Objects.requireNonNull(currentSdkName);
     }
 
     @Override
