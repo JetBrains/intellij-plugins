@@ -37,3 +37,16 @@ export class GenericsDirective<T, S> {
     output3: EventEmitter<S>
 
 }
+
+@Directive({
+    selector: "[gen2]"
+})
+export class GenericsDirective2<T> {
+
+    @Input()
+    input1: T;
+
+    @Input()
+    input2: string;
+
+}
