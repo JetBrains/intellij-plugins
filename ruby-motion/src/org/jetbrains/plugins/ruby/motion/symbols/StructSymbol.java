@@ -20,11 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Struct;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Children;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.ChildrenImpl;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolImpl;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.SymbolPsiProcessor;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.*;
 
 /**
  * @author Dennis.Ushakov
@@ -45,7 +41,7 @@ public class StructSymbol extends SymbolImpl implements MotionSymbol {
   public Children getChildren() {
     return new ChildrenImpl() {
       @Override
-      public boolean processChildren(SymbolPsiProcessor processor, final PsiElement invocationPoint) {
+      public boolean processChildren(SymbolProcessor processor, final PsiElement invocationPoint) {
         for (String name : myStruct.getFields()) {
           final Symbol[] symbols = MotionSymbolUtil.createStructFieldSymbols(myModule, StructSymbol.this, myStruct, name);
           for (Symbol symbol : symbols) {

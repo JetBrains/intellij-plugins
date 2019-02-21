@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.Symbol;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.SymbolPsiProcessor;
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolProcessor;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.TopLevelSymbol;
 import org.jetbrains.plugins.ruby.ruby.lang.psi.RFile;
 
@@ -37,7 +37,7 @@ public class RubyMotionSymbol extends TopLevelSymbol {
   }
 
   @Override
-  protected boolean processChildrenInner(final SymbolPsiProcessor processor, final PsiElement invocationPoint) {
+  protected boolean processChildrenInner(final SymbolProcessor processor, final PsiElement invocationPoint) {
     final Module module = myModule;
     if (module != null) {
       for (Symbol symbol : MotionSymbolUtil.MotionSymbolsCache.getInstance(module).getSymbols()) {

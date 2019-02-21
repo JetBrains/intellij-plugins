@@ -26,7 +26,6 @@ import org.jetbrains.plugins.ruby.motion.bridgesupport.InheritanceInfoHolder;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Type;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.*;
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.SingletonClassSymbol;
-import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.SymbolPsiProcessor;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +49,7 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
   public Children getChildren() {
     return new ChildrenImpl() {
       @Override
-      public boolean processChildren(SymbolPsiProcessor processor, final PsiElement invocationPoint) {
+      public boolean processChildren(SymbolProcessor processor, final PsiElement invocationPoint) {
         final MotionClassSymbol parent = MotionClassSymbol.this;
         for (Class clazz : myClasses) {
           for (Function function : clazz.getFunctions()) {
@@ -132,7 +131,7 @@ public class MotionClassSymbol extends SymbolImpl implements MotionSymbol {
     }
 
     @Override
-    public boolean processChildrenInner(SymbolPsiProcessor processor, PsiElement invocationPoint) {
+    public boolean processChildrenInner(SymbolProcessor processor, PsiElement invocationPoint) {
       return getParentSymbol().getChildren().processChildren(processor, invocationPoint);
     }
   }
