@@ -19,6 +19,7 @@ package com.intellij.lang.javascript.uml;
 import com.intellij.diagram.*;
 import com.intellij.diagram.presentation.DiagramLineType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -31,7 +32,7 @@ public class FlashUmlColorManager extends DiagramColorManagerBase {
            !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getTarget())) ||
            edge.getRelationship().getStartArrow() != DiagramRelationshipInfo.DELTA ||
            edge.getRelationship().getLineType() != DiagramLineType.SOLID ?
-           super.getEdgeColor(builder, edge) : DiagramColors.REALIZATION_EDGE;
+           super.getEdgeColor(builder, edge) : ObjectUtils.notNull(builder.getColorScheme().getColor(DiagramColors.REALIZATION_EDGE_KEY));
   }
 
   private static boolean isInterface(Object element) {
