@@ -109,7 +109,7 @@ public class RenameTest extends LightPlatformMultiFileFixtureTestCase {
   }
 
   private void doMultiFileTest(String mainFile, String newName, boolean searchCommentsAndText) {
-    doTest((rootDir, rootAfter) -> {
+    JSTestUtils.testES6(getProject(), () -> doTest((rootDir, rootAfter) -> {
       myFixture.configureFromTempProjectFile(mainFile);
       PsiElement targetElement = TargetElementUtil.findTargetElement(
         myFixture.getEditor(),
@@ -118,7 +118,7 @@ public class RenameTest extends LightPlatformMultiFileFixtureTestCase {
       RenameProcessor renameProcessor =
         new RenameProcessor(myFixture.getProject(), targetElement, newName, searchCommentsAndText, searchCommentsAndText);
       renameProcessor.run();
-    });
+    }));
   }
 
   @NotNull
