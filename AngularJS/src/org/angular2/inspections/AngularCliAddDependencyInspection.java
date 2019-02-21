@@ -8,9 +8,8 @@ import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder;
 import com.intellij.javascript.nodejs.packageJson.codeInsight.PackageJsonMismatchedDependencyInspection;
 import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
-import com.intellij.lang.javascript.modules.NodeModuleUtil;
+import com.intellij.lang.javascript.library.JSLibraryUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -46,12 +45,8 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
 
   private static void annotate(@NotNull JsonFile file, @NotNull ProblemsHolder holder) {
     VirtualFile packageJson = file.getVirtualFile();
-    if (packageJson == null) return;
     Project project = file.getProject();
-    VirtualFile contentRoot = ProjectFileIndex.getInstance(project).getContentRootForFile(packageJson, false);
-    if (contentRoot != null && NodeModuleUtil.hasNodeModulesDirInPath(packageJson, contentRoot)) {
-      return;
-    }
+    if (packageJson == null || !JSLibraryUtil.isUnderContentRootsAndOutsideOfLibraryRoots(project, packageJson)) return;
 
     List<JsonProperty> properties = PackageJsonMismatchedDependencyInspection.getDependencies(file);
     if (properties.isEmpty()) return;
