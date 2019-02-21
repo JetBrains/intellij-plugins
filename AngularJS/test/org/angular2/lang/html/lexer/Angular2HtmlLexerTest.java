@@ -161,6 +161,38 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "</body>");
   }
 
+  public void testScriptWithEventAndAngularAttr() {
+    doTest("<script src=\"//example.com\" onerror=\"console.log(1)\" (error)='console.log(1)'" +
+           "onload=\"console.log(1)\" (load)='console.log(1)'>\n" +
+           "  console.log(2)\n" +
+           "</script>\n" +
+           "<div></div>");
+  }
+
+  public void testStyleTag() {
+    doTest("<style>\n" +
+           "  div {\n" +
+           "  }\n" +
+           "</style>\n" +
+           "<div></div>");
+  }
+
+  public void testStyleAngularAttr() {
+    doTest("<style (load)='disabled=true'>\n" +
+           "  div {\n" +
+           "  }\n" +
+           "</style>\n" +
+           "<div></div>");
+  }
+
+  public void testStyleWithEventAndAngularAttr() {
+    doTest("<style (load)='disabled=true' onload=\"this.disabled=true\" (load)='disabled=true'>\n" +
+           "  div {\n" +
+           "  }\n" +
+           "</style>\n" +
+           "<div></div>");
+  }
+
   @Override
   protected void doTest(@NonNls String text) {
     super.doTest(text);
