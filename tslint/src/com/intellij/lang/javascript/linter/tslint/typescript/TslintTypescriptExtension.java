@@ -18,7 +18,8 @@ public class TslintTypescriptExtension implements TypescriptServiceExtension {
   @Override
   public Set<VirtualFile> getConfigFilesToWatch(@NotNull PsiFile fileToHighlight) {
     TypeScriptConfig config = TypeScriptConfigUtil.getConfigForPsiFile(fileToHighlight);
-    if (config != null && config.getPlugins().contains(TslintUtil.TYPESCRIPT_PLUGIN_PACKAGE_NAME)) {
+    if (config != null && (config.getPlugins().contains(TslintUtil.TYPESCRIPT_PLUGIN_PACKAGE_NAME)
+                           || config.getPlugins().contains(TslintUtil.TYPESCRIPT_PLUGIN_OLD_PACKAGE_NAME))) {
       VirtualFile virtualFile = fileToHighlight.getVirtualFile();
       if (virtualFile != null) {
         VirtualFile tslintJson = TslintUtil.lookupConfig(virtualFile);
