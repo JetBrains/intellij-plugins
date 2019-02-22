@@ -49,8 +49,8 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
 
   @Override
   public boolean enable(@NotNull Project project, Collection<PackageJsonData> packageJsonFiles) {
-    // skip if there is tslint-language-service
-    if (ContainerUtil.or(packageJsonFiles, data -> data.isDependencyOfAnyType("tslint-language-service"))) {
+    // skip if there is typescript-tslint-plugin
+    if (ContainerUtil.or(packageJsonFiles, data -> data.isDependencyOfAnyType(TslintUtil.TYPESCRIPT_PLUGIN_PACKAGE_NAME))) {
       return false;
     }
     return super.enable(project, packageJsonFiles);

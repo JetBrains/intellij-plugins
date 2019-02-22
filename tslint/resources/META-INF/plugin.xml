@@ -37,6 +37,7 @@
     <json.jsonStandardComplianceProvider implementation="com.intellij.lang.javascript.linter.tslint.TslintJsonStandardComplianceProvider"/>
     <registryKey description="Enable TSLint support for multiple instances in one project" key="tslint.enable.multiroot" defaultValue="true"/>
     <statistics.projectUsagesCollector implementation="com.intellij.lang.javascript.linter.tslint.config.TslintOptionsUsageCollector"/>
+    <lang.typescript.languageService.extension implementation="com.intellij.lang.javascript.linter.tslint.typescript.TslintTypescriptExtension"/>
   </extensions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
     <ProviderFactory implementation="com.intellij.lang.javascript.linter.tslint.schema.TsLintJsonSchemaProviderFactory"/>
