@@ -15,7 +15,6 @@ import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder;
 import com.intellij.javascript.nodejs.packageJson.NodePackageBasicInfo;
@@ -227,21 +226,19 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       return;
     }
     NodeJsInterpreter interpreter = NodeJsInterpreterManager.getInstance(project).getInterpreter();
-    NodeJsLocalInterpreter node = NodeJsLocalInterpreter.tryCast(interpreter);
+    if (interpreter == null) {
+      return;
+    }
     try {
-      if (node == null) {
-        throw new ExecutionException("Cannot find local node interpreter.");
-      }
-
       List<CompletionModuleInfo> modules = new ArrayList<>();
       NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli,
-                                               false, node);
+                                               false, interpreter);
       if (modules.isEmpty() || modules.get(0).getVirtualFile() == null) {
         throw new ExecutionException("Angular CLI package is not installed.");
       }
       CompletionModuleInfo module = modules.get(0);
       ProcessHandler handler = NpmPackageProjectGenerator.generate(
-        node, new NodePackage(Objects.requireNonNull(module.getVirtualFile()).getPath()),
+        interpreter, new NodePackage(Objects.requireNonNull(module.getVirtualFile()).getPath()),
         pkg -> Objects.requireNonNull(pkg.findBinFile(AngularCliProjectGenerator.NG_EXECUTABLE, null)).getAbsolutePath(),
         cli, VfsUtilCore.virtualToIoFile(cli),
         project, () -> GistManager.getInstance().invalidateData(),

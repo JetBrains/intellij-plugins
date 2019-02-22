@@ -6,7 +6,6 @@ import com.intellij.icons.AllIcons
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
-import com.intellij.javascript.nodejs.interpreter.local.NodeJsLocalInterpreter
 import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
@@ -223,16 +222,15 @@ class AngularCliGenerateAction : DumbAwareAction() {
   }
 
   private fun runGenerator(project: Project, schematic: Schematic, arguments: Array<String>, cli: VirtualFile, workingDir: VirtualFile?) {
-    val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter
-    val node = NodeJsLocalInterpreter.tryCast(interpreter) ?: return
+    val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return
 
     val modules: MutableList<CompletionModuleInfo> = mutableListOf()
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, false, node)
+    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, false, interpreter)
 
     val module = modules.firstOrNull() ?: return
 
     val filter = AngularCliFilter(project, cli.path)
-    AngularCliProjectGenerator.generate(node, NodePackage(module.virtualFile?.path!!),
+    AngularCliProjectGenerator.generate(interpreter, NodePackage(module.virtualFile?.path!!),
                                         Function<NodePackage, String> { pkg -> pkg.findBinFile("ng", null)?.absolutePath },
                                         cli, VfsUtilCore.virtualToIoFile(workingDir ?: cli), project,
                                         null, arrayOf(filter), "generate", schematic.name, *arguments)
