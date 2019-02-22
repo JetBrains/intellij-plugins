@@ -10,19 +10,23 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
 
 public class TslintTypescriptExtension implements TypescriptServiceExtension {
   @NotNull
   @Override
-  public List<VirtualFile> getConfigFilesToWatch(@NotNull PsiFile fileToHighlight) {
+  public Set<VirtualFile> getConfigFilesToWatch(@NotNull PsiFile fileToHighlight) {
     TypeScriptConfig config = TypeScriptConfigUtil.getConfigForPsiFile(fileToHighlight);
     if (config != null && config.getPlugins().contains(TslintUtil.TYPESCRIPT_PLUGIN_PACKAGE_NAME)) {
       VirtualFile virtualFile = fileToHighlight.getVirtualFile();
       if (virtualFile != null) {
-        return ContainerUtil.createMaybeSingletonList(TslintUtil.lookupConfig(virtualFile));  
+        VirtualFile tslintJson = TslintUtil.lookupConfig(virtualFile);
+        if (tslintJson != null) {
+          return ContainerUtil.newHashSet(tslintJson);
+        }
       }
     }
-    return ContainerUtil.emptyList();
+    return Collections.emptySet();
   }
 }
