@@ -14,8 +14,5 @@ public final class CucumberJavaIcons {
     return IconLoader.getIcon(path, CucumberJavaIcons.class);
   }
 
-  /**
-   * 16x16
-   */
-  public static final Icon CucumberJavaRunConfiguration = load("/org/jetbrains/plugins/cucumber/cucumberJavaRunConfiguration.png");
+  /** 16x16 */ public static final Icon CucumberJavaRunConfiguration = load("/org/jetbrains/plugins/cucumber/cucumberJavaRunConfiguration.png");
 }

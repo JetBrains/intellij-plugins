@@ -13,12 +13,6 @@ public final class JsTestDriverIcons {
     return IconLoader.getIcon(path, JsTestDriverIcons.class);
   }
 
-  /**
-   * 16x16
-   */
-  public static final Icon JsTestDriver = load("/com/google/jstestdriver/idea/icons/JsTestDriver.svg");
-  /**
-   * 13x13
-   */
-  public static final Icon ToolWindowTestDriver = load("/com/google/jstestdriver/idea/icons/toolWindowTestDriver.svg");
+  /** 16x16 */ public static final Icon JsTestDriver = load("/com/google/jstestdriver/idea/icons/JsTestDriver.svg");
+  /** 13x13 */ public static final Icon ToolWindowTestDriver = load("/com/google/jstestdriver/idea/icons/toolWindowTestDriver.svg");
 }

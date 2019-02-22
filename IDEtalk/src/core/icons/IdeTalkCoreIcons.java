@@ -19,54 +19,21 @@ public final class IdeTalkCoreIcons {
 
 
   public final static class IdeTalk {
-    /**
-     * 16x16
-     */
-    public static final Icon Away = load("/ideTalk/away.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon Jabber = load("/ideTalk/jabber.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon Jabber_dnd = load("/ideTalk/jabber_dnd.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon Notavailable = load("/ideTalk/notavailable.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon Offline = load("/ideTalk/offline.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon User = load("/ideTalk/user.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon User_dnd = load("/ideTalk/user_dnd.svg");
-    /**
-     * 13x13
-     */
-    public static final Icon User_toolwindow = load("/ideTalk/user_toolwindow.svg");
+    /** 16x16 */ public static final Icon Away = load("/ideTalk/away.svg");
+    /** 16x16 */ public static final Icon Jabber = load("/ideTalk/jabber.svg");
+    /** 16x16 */ public static final Icon Jabber_dnd = load("/ideTalk/jabber_dnd.svg");
+    /** 16x16 */ public static final Icon Notavailable = load("/ideTalk/notavailable.svg");
+    /** 16x16 */ public static final Icon Offline = load("/ideTalk/offline.svg");
+    /** 16x16 */ public static final Icon User = load("/ideTalk/user.svg");
+    /** 16x16 */ public static final Icon User_dnd = load("/ideTalk/user_dnd.svg");
+    /** 13x13 */ public static final Icon User_toolwindow = load("/ideTalk/user_toolwindow.svg");
 
   }
-  /**
-   * 16x16
-   */
-  public static final Icon Message = load("/message.svg");
+  /** 16x16 */ public static final Icon Message = load("/message.svg");
 
   public final static class Nodes {
-    /**
-     * 16x16
-     */
-    public static final Icon Group_close = load("/nodes/group_close.svg");
+    /** 16x16 */ public static final Icon Group_close = load("/nodes/group_close.svg");
 
   }
-  /**
-   * 16x16
-   */
-  public static final Icon Stacktrace = load("/stacktrace.svg");
+  /** 16x16 */ public static final Icon Stacktrace = load("/stacktrace.svg");
 }
