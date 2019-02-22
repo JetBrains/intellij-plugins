@@ -28,7 +28,7 @@ class YamlCompletionTests : LightCodeInsightFixtureTestCase() {
 
   fun testProperty1() = checkBasicCompletion("resource_1.yaml",
       "Condition", "CreationPolicy", "DeletionPolicy", "DependsOn",
-      "Description", "Metadata", "Properties", "UpdatePolicy", "Version")
+      "Description", "Metadata", "Properties", "UpdatePolicy", "UpdateReplacePolicy", "Version")
 
   fun testParameterProperty() = checkBasicCompletion("parameter_property.yaml",
       "AllowedPattern", "AllowedValues", "ConstraintDescription",

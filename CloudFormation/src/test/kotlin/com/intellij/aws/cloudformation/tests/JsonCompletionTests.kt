@@ -57,7 +57,7 @@ class JsonCompletionTests : LightCodeInsightFixtureTestCase() {
   }
 
   fun testResourceTopLevelProperty1() {
-    checkBasicCompletion("ResourceTopLevelProperty1.template", "Condition", "CreationPolicy", "DeletionPolicy", "Description", "Metadata", "Properties", "UpdatePolicy", "Version")
+    checkBasicCompletion("ResourceTopLevelProperty1.template", "Condition", "CreationPolicy", "DeletionPolicy", "Description", "Metadata", "Properties", "UpdatePolicy", "UpdateReplacePolicy", "Version")
   }
 
   fun testPrefix1() {

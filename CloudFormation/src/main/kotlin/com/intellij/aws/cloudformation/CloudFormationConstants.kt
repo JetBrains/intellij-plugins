@@ -32,6 +32,7 @@ object CloudFormationConstants {
   val DependsOnPropertyName = "DependsOn"
   val MetadataPropertyName = "Metadata"
   val UpdatePolicyPropertyName = "UpdatePolicy"
+  val UpdateReplacePolicyPropertyName = "UpdateReplacePolicy"
   val VersionPropertyName = "Version"
 
   // https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst#supported-resources
@@ -51,6 +52,7 @@ object CloudFormationConstants {
       DependsOnPropertyName,
       MetadataPropertyName,
       UpdatePolicyPropertyName,
+      UpdateReplacePolicyPropertyName,
       VersionPropertyName
   ).toSet()
 
