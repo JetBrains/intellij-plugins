@@ -6,5 +6,4 @@ jobs:
     working_directory: ~/repo
     steps:
       - checkout
-      - run: ./gradlew assemble
-      - run: ./gradlew check
+      - run: ./gradlew build
