@@ -10,7 +10,6 @@ import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.RowIcon;
 import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.NotNull;
@@ -80,10 +79,7 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
       Icon newIcon = myRawIcon = baseIcon;
       myStateIcon = stateIcon;
       if (myIsBase) {
-        final LayeredIcon icon = new LayeredIcon(2);
-        icon.setIcon(newIcon, 0);
-        newIcon = icon;
-        icon.setIcon(AllIcons.Actions.Forward, 1, -AllIcons.Actions.Forward.getIconWidth() / 2, 0);
+        newIcon = getBaseMarkerIcon(newIcon);
       }
       if (myStateIcon != null) {
         newIcon = new RowIcon(myStateIcon, newIcon);
