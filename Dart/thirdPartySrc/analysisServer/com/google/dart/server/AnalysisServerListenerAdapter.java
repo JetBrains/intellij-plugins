@@ -40,6 +40,7 @@ public class AnalysisServerListenerAdapter implements AnalysisServerListener {
                                  List<CompletionSuggestion> completions,
                                  List<IncludedSuggestionSet> includedSuggestionSets,
                                  List<String> includedSuggestionKinds,
+                                 List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                                  boolean isLast) {
   }
 
