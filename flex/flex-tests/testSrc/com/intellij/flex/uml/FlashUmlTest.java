@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.uml;
 
 import com.intellij.codeInsight.CodeInsightTestCase;
@@ -30,6 +30,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -38,7 +39,6 @@ import com.intellij.testFramework.SkipInHeadlessEnvironment;
 import com.intellij.uml.UmlGraphBuilderFactory;
 import com.intellij.uml.core.actions.ShowDiagramBase;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.JdomKt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jdom.transform.JDOMResult;
@@ -200,7 +200,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
     String expectedDataFileName =
       getTestName(false) + (StringUtil.isEmpty(expectedPrefix) ? ".expected.xml" : ".expected." + expectedPrefix + ".xml");
     CharSequence expectedText = LoadTextUtil.loadText(getVirtualFile(BASE_PATH + expectedDataFileName));
-    final Element expected = JdomKt.loadElement(expectedText);
+    final Element expected = JDOMUtil.load(expectedText);
     final String expectedOriginFqn = expected.getAttributeValue("origin");
     assertEquals(expectedDataFileName + ": Invalid origin element", expectedOriginFqn, actualOriginFqn);
     JDOMResult actual = new JDOMResult();
