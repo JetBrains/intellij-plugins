@@ -16,30 +16,12 @@ public final class HandlebarsIcons {
 
 
   public final static class Elements {
-    /**
-     * 16x16
-     */
-    public static final Icon OpenBlock = load("/icons/elements/openBlock.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon OpenInverse = load("/icons/elements/openInverse.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon OpenMustache = load("/icons/elements/openMustache.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon OpenPartial = load("/icons/elements/openPartial.svg");
-    /**
-     * 16x16
-     */
-    public static final Icon OpenUnescaped = load("/icons/elements/openUnescaped.svg");
+    /** 16x16 */ public static final Icon OpenBlock = load("/icons/elements/openBlock.svg");
+    /** 16x16 */ public static final Icon OpenInverse = load("/icons/elements/openInverse.svg");
+    /** 16x16 */ public static final Icon OpenMustache = load("/icons/elements/openMustache.svg");
+    /** 16x16 */ public static final Icon OpenPartial = load("/icons/elements/openPartial.svg");
+    /** 16x16 */ public static final Icon OpenUnescaped = load("/icons/elements/openUnescaped.svg");
 
   }
-  /**
-   * 16x16
-   */
-  public static final Icon Handlebars_icon = load("/icons/handlebars_icon.svg");
+  /** 16x16 */ public static final Icon Handlebars_icon = load("/icons/handlebars_icon.svg");
 }

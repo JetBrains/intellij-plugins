@@ -14,8 +14,5 @@ public final class VuejsIcons {
     return IconLoader.getIcon(path, VuejsIcons.class);
   }
 
-  /**
-   * 16x16
-   */
-  public static final Icon Vue = load("/icons/vue.svg");
+  /** 16x16 */ public static final Icon Vue = load("/icons/vue.svg");
 }

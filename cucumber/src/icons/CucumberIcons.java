@@ -14,8 +14,5 @@ public final class CucumberIcons {
     return IconLoader.getIcon(path, CucumberIcons.class);
   }
 
-  /**
-   * 16x16
-   */
-  public static final Icon Cucumber = load("/org/jetbrains/plugins/cucumber/icons/cucumber.svg");
+  /** 16x16 */ public static final Icon Cucumber = load("/org/jetbrains/plugins/cucumber/icons/cucumber.svg");
 }

@@ -13,16 +13,7 @@ public final class Struts2Icons {
     return IconLoader.getIcon(path, Struts2Icons.class);
   }
 
-  /**
-   * 16x16
-   */
-  public static final Icon Action = load("/resources/icons/action.svg");
-  /**
-   * 10x10
-   */
-  public static final Icon Action_small = load("/resources/icons/action_small.svg");
-  /**
-   * 10x10
-   */
-  public static final Icon Edit_small = load("/resources/icons/edit_small.svg");
+  /** 16x16 */ public static final Icon Action = load("/resources/icons/action.svg");
+  /** 10x10 */ public static final Icon Action_small = load("/resources/icons/action_small.svg");
+  /** 10x10 */ public static final Icon Edit_small = load("/resources/icons/edit_small.svg");
 }
