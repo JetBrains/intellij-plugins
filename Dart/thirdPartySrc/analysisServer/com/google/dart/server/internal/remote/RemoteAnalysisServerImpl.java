@@ -301,6 +301,12 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void completion_registerLibraryPaths(List<LibraryPathSet> paths) {
+    String id = generateUniqueId();
+    sendRequestToServer(id, RequestUtilities.generateCompletionRegisterLibraryPaths(id, paths));
+  }
+
+  @Override
   public void completion_getSuggestionDetails(String file, int id, String label, int offset, GetSuggestionDetailsConsumer consumer) {
     String requestId = generateUniqueId();
     sendRequestToServer(requestId, RequestUtilities.generateCompletionGetSuggestionDetails(requestId, file, id, label, offset), consumer);
