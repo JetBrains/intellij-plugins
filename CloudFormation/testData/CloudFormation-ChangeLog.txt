@@ -1,1247 +1,13 @@
 [Amazon Web Services] <http://aws.amazon.com>
 Sign In to the Console <https://console.aws.amazon.com/console/home>
 <http://www.amazon.com/dp/B07641FR9Q>
-<https://github.com/awsdocs/aws-cloudformation-user-guide/tree/master/doc_source/ReleaseHistory.md>
+<https://github.com/awsdocs/aws-cloudformation-user-guide/tree/master/doc_source/../common/ReleaseHistory.xml>
 AWS CloudFormation
 User Guide (API Version 2010-05-15)
 
 
 [Go]
 
-    * What is AWS CloudFormation?
-          o AWS CloudFormation Concepts
-          o How Does AWS CloudFormation Work?
-    * Setting Up
-          o Signing Up for an AWS Account and Pricing
-          o Controlling Access with IAM
-                + AWS CloudFormation Service Role
-          o Logging API Calls
-          o Limits
-          o Endpoints
-          o Setting Up VPC Endpoints for AWS CloudFormation
-    * Getting Started
-          o Get Started
-          o Learn Template Basics
-          o Walkthrough: Updating a Stack
-    * Best Practices
-    * Continuous Delivery
-          o Walkthrough: Building a Pipeline for Test and Production Stacks
-          o Configuration Properties Reference
-          o AWS CloudFormation Artifacts
-          o Using Parameter Override Functions with AWS CodePipeline
-            Pipelines
-    * Working with Stacks
-          o Using the Console
-                + Logging In to the Console
-                + Creating a Stack
-                      # Selecting a Stack Template
-                      # Specifying Stack Name and Parameters
-                      # Setting Stack Options
-                      # Reviewing Your Stack and Estimating Stack Cost
-                      # Creating Stacks Using Change Sets
-                + Creating an EC2 Key Pair
-                + Estimating the Cost of Your Stack
-                + Viewing Stack Data and Resources
-                + Monitor and Roll Back Stack Operations
-                + Creating Quick-Create Links for Stacks
-                + Deleting a Stack
-                + Protecting a Stack From Being Deleted
-                + Viewing Deleted Stacks
-          o Using the AWS CLI
-                + Creating a Stack
-                + Describing and Listing Your Stacks
-                + Viewing Stack Event History
-                + Listing Resources
-                + Retrieving a Template
-                + Validating a Template
-                + Uploading Local Artifacts to an S3 Bucket
-                + Quickly Deploying Templates with Transforms
-                + Deleting a Stack
-          o Stack Updates
-                + Update Behaviors of Stack Resources
-                + Modifying a Stack Template
-                + Updating Stacks Using Change Sets
-                      # Creating a Change Set
-                      # Viewing a Change Set
-                      # Executing a Change Set
-                      # Deleting a Change Set
-                      # Example Change Sets
-                + Updating Stacks Directly
-                + Monitoring Progress
-                + Canceling a Stack Update
-                + Prevent Updates to Stack Resources
-                + Continue Rolling Back an Update
-          o Exporting Stack Output Values
-          o Listing Stacks That Import an Exported Output Value
-          o Working with Nested Stacks
-          o Working with Windows Stacks
-                + Windows AMIs and Templates
-                + Bootstrapping Windows Stacks
-    * Working with Templates
-          o Template Formats
-          o Template Anatomy
-                + Format Version
-                + Description
-                + Metadata
-                + Parameters
-                      # Using Dynamic References to Specify Template Values
-                + Mappings
-                + Conditions
-                + Transform
-                      # AWS::Serverless Transform
-                      # AWS::Include Transform
-                + Resources
-                + Outputs
-          o What Is AWS CloudFormation Designer?
-                + Why Use Designer?
-                + Interface Overview
-                      # Canvas Pane
-                      # JSON and YAML Editor
-                + How to Get Started
-          o Walkthroughs
-                + Walkthrough: Use AWS CloudFormation Designer to Create a
-                  Basic Web Server
-                + Walkthrough: Use AWS CloudFormation Designer to Modify a
-                  Stack's Template
-                + Peer with a VPC in Another Account
-                + Walkthrough: Refer to Resource Outputs in Another AWS
-                  CloudFormation Stack
-                + Create a Scalable, Load-balancing Web Server
-                + Deploying Applications
-                + Creating Wait Conditions
-          o Template Snippets
-                + General
-                + Auto Scaling
-                + AWS CloudFormation
-                + CloudFront
-                + CloudWatch
-                + CloudWatch Logs
-                + DynamoDB
-                + Amazon EC2
-                + Amazon ECS
-                + Amazon EFS
-                + Elastic Beanstalk
-                + Elastic Load Balancing
-                + IAM
-                + AWS Lambda
-                + AWS OpsWorks
-                + Amazon Redshift
-                + Amazon RDS
-                + Route 53
-                + Amazon S3
-                + Amazon SNS
-                + Amazon SQS
-          o Custom Resources
-                + Amazon Simple Notification Service-backed Custom
-                  Resources
-                + AWS Lambda-backed Custom Resources
-                      # Walkthrough: Looking Up Amazon Machine Image IDs
-                + Custom Resource Reference
-                      # Request Objects
-                      # Response Objects
-                      # Request Types
-                            * Create
-                            * Delete
-                            * Update
-          o Template Macros
-                + Macro Example: Creating and Using a Macro
-          o Using Regular Expressions
-          o Using CloudFormer to Create Templates
-    * Working with AWS CloudFormation StackSets
-          o StackSets Concepts
-          o Prerequisites: Granting Permissions for Stack Set Operations
-          o Getting Started
-                + Create a New Stack Set
-                + Update Your Stack Set
-                + Add Stacks to a Stack Set
-                + Override Parameters on Stack Instances
-                + Delete Stack Instances
-                + Delete Stack Sets
-          o Target account gates
-          o Best Practices
-          o Limitations of StackSets
-          o Sample Templates
-          o Troubleshooting
-    * Template Reference
-          o AWS Resource Types
-                + AWS::AmazonMQ::Broker
-                + AWS::AmazonMQ::Configuration
-                + AWS::ApiGateway::Account
-                + AWS::ApiGateway::ApiKey
-                + AWS::ApiGateway::Authorizer
-                + AWS::ApiGateway::BasePathMapping
-                + AWS::ApiGateway::ClientCertificate
-                + AWS::ApiGateway::Deployment
-                + AWS::ApiGateway::DocumentationPart
-                + AWS::ApiGateway::DocumentationVersion
-                + AWS::ApiGateway::DomainName
-                + AWS::ApiGateway::GatewayResponse
-                + AWS::ApiGateway::Method
-                + AWS::ApiGateway::Model
-                + AWS::ApiGateway::RequestValidator
-                + AWS::ApiGateway::Resource
-                + AWS::ApiGateway::RestApi
-                + AWS::ApiGateway::Stage
-                + AWS::ApiGateway::UsagePlan
-                + AWS::ApiGateway::UsagePlanKey
-                + AWS::ApiGateway::VpcLink
-                + AWS::ApplicationAutoScaling::ScalableTarget
-                + AWS::ApplicationAutoScaling::ScalingPolicy
-                + AWS::AppSync::ApiKey
-                + AWS::AppSync::DataSource
-                + AWS::AppSync::GraphQLApi
-                + AWS::AppSync::GraphQLSchema
-                + AWS::AppSync::Resolver
-                + AWS::Athena::NamedQuery
-                + AWS::AutoScaling::AutoScalingGroup
-                + AWS::AutoScaling::LaunchConfiguration
-                + AWS::AutoScaling::LifecycleHook
-                + AWS::AutoScaling::ScalingPolicy
-                + AWS::AutoScaling::ScheduledAction
-                + AWS::AutoScalingPlans::ScalingPlan
-                + AWS::Batch::ComputeEnvironment
-                + AWS::Batch::JobDefinition
-                + AWS::Batch::JobQueue
-                + AWS::Budgets::Budget
-                + AWS::CertificateManager::Certificate
-                + AWS::Cloud9::EnvironmentEC2
-                + AWS::CloudFormation::Authentication
-                + AWS::CloudFormation::CustomResource
-                + AWS::CloudFormation::Init
-                + AWS::CloudFormation::Interface
-                + AWS::CloudFormation::Macro
-                + AWS::CloudFormation::Stack
-                + AWS::CloudFormation::WaitCondition
-                + AWS::CloudFormation::WaitConditionHandle
-                + AWS::CloudFront::Distribution
-                + AWS::CloudFront::CloudFrontOriginAccessIdentity
-                + AWS::CloudFront::StreamingDistribution
-                + AWS::CloudTrail::Trail
-                + AWS::CloudWatch::Alarm
-                + AWS::CloudWatch::Dashboard
-                + AWS::CodeBuild::Project
-                + AWS::CodeCommit::Repository
-                + AWS::CodeDeploy::Application
-                + AWS::CodeDeploy::DeploymentConfig
-                + AWS::CodeDeploy::DeploymentGroup
-                + AWS::CodePipeline::CustomActionType
-                + AWS::CodePipeline::Pipeline
-                + AWS::CodePipeline::Webhook
-                + AWS::Cognito::IdentityPool
-                + AWS::Cognito::IdentityPoolRoleAttachment
-                + AWS::Cognito::UserPool
-                + AWS::Cognito::UserPoolClient
-                + AWS::Cognito::UserPoolGroup
-                + AWS::Cognito::UserPoolUser
-                + AWS::Cognito::UserPoolUserToGroupAttachment
-                + AWS::Config::AggregationAuthorization
-                + AWS::Config::ConfigRule
-                + AWS::Config::ConfigurationAggregator
-                + AWS::Config::ConfigurationRecorder
-                + AWS::Config::DeliveryChannel
-                + AWS::DataPipeline::Pipeline
-                + AWS::DAX::Cluster
-                + AWS::DAX::ParameterGroup
-                + AWS::DAX::SubnetGroup
-                + AWS::DirectoryService::MicrosoftAD
-                + AWS::DirectoryService::SimpleAD
-                + AWS::DMS::Certificate
-                + AWS::DMS::Endpoint
-                + AWS::DMS::EventSubscription
-                + AWS::DMS::ReplicationInstance
-                + AWS::DMS::ReplicationSubnetGroup
-                + AWS::DMS::ReplicationTask
-                + AWS::DynamoDB::Table
-                + AWS::EC2::CustomerGateway
-                + AWS::EC2::DHCPOptions
-                + AWS::EC2::EgressOnlyInternetGateway
-                + AWS::EC2::EIP
-                + AWS::EC2::EIPAssociation
-                + AWS::EC2::FlowLog
-                + AWS::EC2::Host
-                + AWS::EC2::Instance
-                + AWS::EC2::InternetGateway
-                + AWS::EC2::LaunchTemplate
-                + AWS::EC2::NatGateway
-                + AWS::EC2::NetworkAcl
-                + AWS::EC2::NetworkAclEntry
-                + AWS::EC2::NetworkInterface
-                + AWS::EC2::NetworkInterfaceAttachment
-                + AWS::EC2::NetworkInterfacePermission
-                + AWS::EC2::PlacementGroup
-                + AWS::EC2::Route
-                + AWS::EC2::RouteTable
-                + AWS::EC2::SecurityGroup
-                + AWS::EC2::SecurityGroupEgress
-                + AWS::EC2::SecurityGroupIngress
-                + AWS::EC2::SpotFleet
-                + AWS::EC2::Subnet
-                + AWS::EC2::SubnetCidrBlock
-                + AWS::EC2::SubnetNetworkAclAssociation
-                + AWS::EC2::SubnetRouteTableAssociation
-                + AWS::EC2::Volume
-                + AWS::EC2::VolumeAttachment
-                + AWS::EC2::VPC
-                + AWS::EC2::VPCCidrBlock
-                + AWS::EC2::VPCDHCPOptionsAssociation
-                + AWS::EC2::VPCEndpoint
-                + AWS::EC2::VPCEndpointConnectionNotification
-                + AWS::EC2::VPCEndpointService
-                + AWS::EC2::VPCEndpointServicePermissions
-                + AWS::EC2::VPCGatewayAttachment
-                + AWS::EC2::VPCPeeringConnection
-                + AWS::EC2::VPNConnection
-                + AWS::EC2::VPNConnectionRoute
-                + AWS::EC2::VPNGateway
-                + AWS::EC2::VPNGatewayRoutePropagation
-                + AWS::ECR::Repository
-                + AWS::ECS::Cluster
-                + AWS::ECS::Service
-                + AWS::ECS::TaskDefinition
-                + AWS::EFS::FileSystem
-                + AWS::EFS::MountTarget
-                + AWS::EKS::Cluster
-                + AWS::ElastiCache::CacheCluster
-                + AWS::ElastiCache::ParameterGroup
-                + AWS::ElastiCache::ReplicationGroup
-                + AWS::ElastiCache::SecurityGroup
-                + AWS::ElastiCache::SecurityGroupIngress
-                + AWS::ElastiCache::SubnetGroup
-                + AWS::ElasticBeanstalk::Application
-                + AWS::ElasticBeanstalk::ApplicationVersion
-                + AWS::ElasticBeanstalk::ConfigurationTemplate
-                + AWS::ElasticBeanstalk::Environment
-                + AWS::ElasticLoadBalancing::LoadBalancer
-                + AWS::ElasticLoadBalancingV2::Listener
-                + AWS::ElasticLoadBalancingV2::ListenerCertificate
-                + AWS::ElasticLoadBalancingV2::ListenerRule
-                + AWS::ElasticLoadBalancingV2::LoadBalancer
-                + AWS::ElasticLoadBalancingV2::TargetGroup
-                + AWS::Elasticsearch::Domain
-                + AWS::EMR::Cluster
-                + AWS::EMR::InstanceFleetConfig
-                + AWS::EMR::InstanceGroupConfig
-                + AWS::EMR::SecurityConfiguration
-                + AWS::EMR::Step
-                + AWS::Events::Rule
-                + AWS::GameLift::Alias
-                + AWS::GameLift::Build
-                + AWS::GameLift::Fleet
-                + AWS::Glue::Classifier
-                + AWS::Glue::Connection
-                + AWS::Glue::Crawler
-                + AWS::Glue::Database
-                + AWS::Glue::DevEndpoint
-                + AWS::Glue::Job
-                + AWS::Glue::Partition
-                + AWS::Glue::Table
-                + AWS::Glue::Trigger
-                + AWS::GuardDuty::Detector
-                + AWS::GuardDuty::Filter
-                + AWS::GuardDuty::Master
-                + AWS::GuardDuty::Member
-                + AWS::GuardDuty::IPSet
-                + AWS::GuardDuty::ThreatIntelSet
-                + AWS::IAM::AccessKey
-                + AWS::IAM::Group
-                + AWS::IAM::InstanceProfile
-                + AWS::IAM::ManagedPolicy
-                + AWS::IAM::Policy
-                + AWS::IAM::Role
-                + AWS::IAM::ServiceLinkedRole
-                + AWS::IAM::User
-                + AWS::IAM::UserToGroupAddition
-                + AWS::Inspector::AssessmentTarget
-                + AWS::Inspector::AssessmentTemplate
-                + AWS::Inspector::ResourceGroup
-                + AWS::IoT::Certificate
-                + AWS::IoT::Policy
-                + AWS::IoT::PolicyPrincipalAttachment
-                + AWS::IoT::Thing
-                + AWS::IoT::ThingPrincipalAttachment
-                + AWS::IoT::TopicRule
-                + AWS::IoT1Click::Device
-                + AWS::IoT1Click::Placement
-                + AWS::IoT1Click::Project
-                + AWS::Kinesis::Stream
-                + AWS::KinesisAnalytics::Application
-                + AWS::KinesisAnalytics::ApplicationOutput
-                + AWS::KinesisAnalytics::ApplicationReferenceDataSource
-                + AWS::KinesisFirehose::DeliveryStream
-                + AWS::KMS::Alias
-                + AWS::KMS::Key
-                + AWS::Lambda::EventSourceMapping
-                + AWS::Lambda::Alias
-                + AWS::Lambda::Function
-                + AWS::Lambda::Permission
-                + AWS::Lambda::Version
-                + AWS::Logs::Destination
-                + AWS::Logs::LogGroup
-                + AWS::Logs::LogStream
-                + AWS::Logs::MetricFilter
-                + AWS::Logs::SubscriptionFilter
-                + AWS::Neptune::DBCluster
-                + AWS::Neptune::DBClusterParameterGroup
-                + AWS::Neptune::DBInstance
-                + AWS::Neptune::DBParameterGroup
-                + AWS::Neptune::DBSubnetGroup
-                + AWS::OpsWorks::App
-                + AWS::OpsWorks::ElasticLoadBalancerAttachment
-                + AWS::OpsWorks::Instance
-                + AWS::OpsWorks::Layer
-                + AWS::OpsWorks::Stack
-                + AWS::OpsWorks::UserProfile
-                + AWS::OpsWorks::Volume
-                + AWS::RDS::DBCluster
-                + AWS::RDS::DBClusterParameterGroup
-                + AWS::RDS::DBInstance
-                + AWS::RDS::DBParameterGroup
-                + AWS::RDS::DBSecurityGroup
-                + AWS::RDS::DBSecurityGroupIngress
-                + AWS::RDS::DBSubnetGroup
-                + AWS::RDS::EventSubscription
-                + AWS::RDS::OptionGroup
-                + AWS::Redshift::Cluster
-                + AWS::Redshift::ClusterParameterGroup
-                + AWS::Redshift::ClusterSecurityGroup
-                + AWS::Redshift::ClusterSecurityGroupIngress
-                + AWS::Redshift::ClusterSubnetGroup
-                + AWS::Route53::HealthCheck
-                + AWS::Route53::HostedZone
-                + AWS::Route53::RecordSet
-                + AWS::Route53::RecordSetGroup
-                + AWS::S3::Bucket
-                + AWS::S3::BucketPolicy
-                + AWS::SageMaker::Endpoint
-                + AWS::SageMaker::EndpointConfig
-                + AWS::SageMaker::Model
-                + AWS::SageMaker::NotebookInstance
-                + AWS::SageMaker::NotebookInstanceLifecycleConfig
-                + AWS::SDB::Domain
-                + AWS::ServiceCatalog::AcceptedPortfolioShare
-                + AWS::ServiceCatalog::CloudFormationProduct
-                + AWS::ServiceCatalog::CloudFormationProvisionedProduct
-                + AWS::ServiceCatalog::LaunchNotificationConstraint
-                + AWS::ServiceCatalog::LaunchRoleConstraint
-                + AWS::ServiceCatalog::LaunchTemplateConstraint
-                + AWS::ServiceCatalog::Portfolio
-                + AWS::ServiceCatalog::PortfolioPrincipalAssociation
-                + AWS::ServiceCatalog::PortfolioProductAssociation
-                + AWS::ServiceCatalog::PortfolioShare
-                + AWS::ServiceCatalog::TagOption
-                + AWS::ServiceCatalog::TagOptionAssociation
-                + AWS::ServiceDiscovery::Instance
-                + AWS::ServiceDiscovery::PrivateDnsNamespace
-                + AWS::ServiceDiscovery::PublicDnsNamespace
-                + AWS::ServiceDiscovery::Service
-                + AWS::SES::ConfigurationSet
-                + AWS::SES::ConfigurationSetEventDestination
-                + AWS::SES::ReceiptFilter
-                + AWS::SES::ReceiptRule
-                + AWS::SES::ReceiptRuleSet
-                + AWS::SES::Template
-                + AWS::SNS::Subscription
-                + AWS::SNS::Topic
-                + AWS::SNS::TopicPolicy
-                + AWS::SQS::Queue
-                + AWS::SQS::QueuePolicy
-                + AWS::SSM::Association
-                + AWS::SSM::Document
-                + AWS::SSM::MaintenanceWindow
-                + AWS::SSM::MaintenanceWindowTarget
-                + AWS::SSM::MaintenanceWindowTask
-                + AWS::SSM::Parameter
-                + AWS::SSM::PatchBaseline
-                + AWS::SSM::ResourceDataSync
-                + AWS::StepFunctions::Activity
-                + AWS::StepFunctions::StateMachine
-                + AWS::WAF::ByteMatchSet
-                + AWS::WAF::IPSet
-                + AWS::WAF::Rule
-                + AWS::WAF::SizeConstraintSet
-                + AWS::WAF::SqlInjectionMatchSet
-                + AWS::WAF::WebACL
-                + AWS::WAF::XssMatchSet
-                + AWS::WAFRegional::ByteMatchSet
-                + AWS::WAFRegional::IPSet
-                + AWS::WAFRegional::Rule
-                + AWS::WAFRegional::SizeConstraintSet
-                + AWS::WAFRegional::SqlInjectionMatchSet
-                + AWS::WAFRegional::WebACL
-                + AWS::WAFRegional::WebACLAssociation
-                + AWS::WAFRegional::XssMatchSet
-                + AWS::WorkSpaces::Workspace
-          o Resource Property Types
-                + Amazon MQ Broker ConfigurationId
-                + Amazon MQ Broker LogsConfiguration
-                + Amazon MQ Broker MaintenanceWindow
-                + Amazon MQ Broker User
-                + API Gateway ApiKey StageKey
-                + API Gateway Deployment AccessLogSetting
-                + API Gateway Deployment CanarySetting
-                + API Gateway Deployment DeploymentCanarySettings
-                + API Gateway Deployment StageDescription
-                + API Gateway Deployment MethodSetting
-                + API Gateway DocumentationPart Location
-                + API Gateway DomainName EndpointConfiguration
-                + API Gateway Method Integration
-                + API Gateway Method Integration IntegrationResponse
-                + API Gateway Method MethodResponse
-                + API Gateway RestApi S3Location
-                + API Gateway RestApi EndpointConfiguration
-                + API Gateway Stage AccessLogSetting
-                + API Gateway Stage CanarySetting
-                + API Gateway Stage MethodSetting
-                + API Gateway UsagePlan ApiStage
-                + API Gateway UsagePlan QuotaSettings
-                + API Gateway UsagePlan ThrottleSettings
-                + Application Auto Scaling ScalingPolicy
-                  CustomizedMetricSpecification
-                + Application Auto Scaling ScalingPolicy MetricDimension
-                + Application Auto Scaling ScalingPolicy
-                  PredefinedMetricSpecification
-                + Application Auto Scaling ScalingPolicy
-                  StepScalingPolicyConfiguration
-                + Application Auto Scaling ScalingPolicy
-                  StepScalingPolicyConfiguration StepAdjustment
-                + Application Auto Scaling ScalingPolicy
-                  TargetTrackingScalingPolicyConfiguration
-                + Application Auto Scaling ScalableTarget
-                  ScalableTargetAction
-                + Application Auto Scaling ScalableTarget ScheduledAction
-                + AWS AppSync DataSource DynamoDBConfig
-                + AWS AppSync DataSource HttpConfig
-                + AWS AppSync DataSource ElasticsearchConfig
-                + AWS AppSync DataSource LambdaConfig
-                + AWS AppSync GraphQLApi LogConfig
-                + AWS AppSync GraphQLApi UserPoolConfig
-                + AWS AppSync GraphQLApi OpenId Connect Config
-                + Amazon EC2 Auto Scaling Block Device Mapping
-                + Amazon EC2 Auto Scaling EBS Block Device
-                + Amazon EC2 Auto Scaling AutoScalingGroup
-                  LifecycleHookSpecification
-                + Amazon EC2 Auto Scaling AutoScalingGroup
-                  LaunchTemplateSpecification
-                + Amazon EC2 Auto Scaling AutoScalingGroup
-                  MetricsCollection
-                + Amazon EC2 Auto Scaling AutoScalingGroup
-                  NotificationConfiguration
-                + Amazon EC2 Auto Scaling AutoScalingGroup TagProperty
-                + Amazon EC2 Auto Scaling ScalingPolicy
-                  CustomizedMetricSpecification
-                + Amazon EC2 Auto Scaling ScalingPolicy MetricDimension
-                + Amazon EC2 Auto Scaling ScalingPolicy
-                  PredefinedMetricSpecification
-                + Amazon EC2 Auto Scaling ScalingPolicy StepAdjustments
-                + Amazon EC2 Auto Scaling ScalingPolicy
-                  TargetTrackingConfiguration
-                + AWS Auto Scaling ScalingPlan ApplicationSource
-                + AWS Auto Scaling ScalingPlan
-                  CustomizedScalingMetricSpecification
-                + AWS Auto Scaling ScalingPlan MetricDimension
-                + AWS Auto Scaling ScalingPlan
-                  PredefinedScalingMetricSpecification
-                + AWS Auto Scaling ScalingPlan ScalingInstruction
-                + AWS Auto Scaling ScalingPlan TagFilter
-                + AWS Auto Scaling ScalingPlan TargetTrackingConfiguration
-                + AWS Batch ComputeEnvironment ComputeResources
-                + AWS Batch JobDefinition ContainerProperties
-                + AWS Batch JobDefinition Environment
-                + AWS Batch JobDefinition MountPoints
-                + AWS Batch JobDefinition RetryStrategy
-                + AWS Batch JobDefinition Timeout
-                + AWS Batch JobDefinition Ulimit
-                + AWS Batch JobDefinition Volumes
-                + AWS Batch JobDefinition VolumesHost
-                + AWS Batch JobQueue ComputeEnvironmentOrder
-                + Billing and Cost Management Budget BudgetData
-                + Billing and Cost Management Budget CostTypes
-                + Billing and Cost Management Budget Notification
-                + Billing and Cost Management Budget
-                  NotificationWithSubscribers
-                + Billing and Cost Management Budget Spend
-                + Billing and Cost Management Budget Subscriber
-                + Billing and Cost Management Budget TimePeriod
-                + AWS Cloud9 EnvironmentEC2 Repository
-                + ACM Certificate DomainValidationOption
-                + AWS CloudFormation Stack Parameters
-                + AWS CloudFormation Interface Label
-                + AWS CloudFormation Interface ParameterGroup
-                + AWS CloudFormation Interface ParameterLabel
-                + CloudFront CloudFrontOriginAccessIdentity
-                  CloudFrontOriginAccessIdentityConfig
-                + CloudFront Distribution CacheBehavior
-                + CloudFront Distribution Cookies
-                + CloudFront Distribution CustomErrorResponse
-                + CloudFront Distribution CustomOriginConfig
-                + CloudFront Distribution DefaultCacheBehavior
-                + CloudFront Distribution DistributionConfig
-                + CloudFront Distribution ForwardedValues
-                + CloudFront Distribution GeoRestriction
-                + CloudFront Distribution LambdaFunctionAssociation
-                + CloudFront Distribution Logging
-                + CloudFront Distribution Origin
-                + CloudFront Distribution OriginCustomHeader
-                + CloudFront Distribution Restrictions
-                + CloudFront Distribution S3Origin
-                + CloudFront Distribution ViewerCertificate
-                + CloudFront StreamingDistribution Logging
-                + CloudFront StreamingDistribution S3Origin
-                + CloudFront StreamingDistribution
-                  StreamingDistributionConfig
-                + CloudFront StreamingDistribution TrustedSigners
-                + CloudTrail Trail EventSelector
-                + CloudTrail Trail DataResource
-                + CloudWatch Metric Dimension
-                + CloudWatch Events Rule EcsParameters
-                + CloudWatch Events Rule InputTransformer
-                + CloudWatch Events Rule KinesisParameters
-                + CloudWatch Events Rule RunCommandParameters
-                + CloudWatch Events Rule RunCommandTarget
-                + CloudWatch Events Rule Target
-                + CloudWatch Logs MetricFilter MetricTransformation
-                  Property
-                + AWS CodeBuild Project Artifacts
-                + AWS CodeBuild Project CloudWatch Logs
-                + AWS CodeBuild Project Environment
-                + AWS CodeBuild Project EnvironmentVariable
-                + AWS CodeBuild Project LogsConfig
-                + AWS CodeBuild Project ProjectCache
-                + AWS CodeBuild Project Source
-                + AWS CodeBuild Project SourceAuth
-                + AWS CodeBuild Project S3Logs
-                + AWS CodeBuild Project ProjectTriggers
-                + AWS CodeBuild Project VpcConfig
-                + AWS CodeCommit Repository Trigger
-                + AWS CodeDeploy DeploymentConfig MinimumHealthyHosts
-                + AWS CodeDeploy DeploymentGroup Alarm
-                + AWS CodeDeploy DeploymentGroup AlarmConfiguration
-                + AWS CodeDeploy DeploymentGroup AutoRollbackConfiguration
-                + AWS CodeDeploy DeploymentGroup Deployment
-                + AWS CodeDeploy DeploymentGroup DeploymentStyle
-                + AWS CodeDeploy DeploymentGroup ELBInfo
-                + AWS CodeDeploy DeploymentGroup LoadBalancerInfo
-                + AWS CodeDeploy DeploymentGroup TargetGroupInfo
-                + AWS CodeDeploy DeploymentGroup Deployment Revision
-                + AWS CodeDeploy DeploymentGroup Deployment Revision
-                  GitHubLocation
-                + AWS CodeDeploy DeploymentGroup Deployment Revision
-                  S3Location
-                + AWS CodeDeploy DeploymentGroup Ec2TagFilters
-                + AWS CodeDeploy DeploymentGroup EC2TagSet
-                + AWS CodeDeploy DeploymentGroup EC2TagSetListObject
-                + AWS CodeDeploy DeploymentGroup OnPremisesTagSet
-                + AWS CodeDeploy DeploymentGroup OnPremisesTagSetListObject
-                + AWS CodeDeploy DeploymentGroup TagFilters
-                + AWS CodeDeploy DeploymentGroup TriggerConfig
-                + AWS CodePipeline CustomActionType ArtifactDetails
-                + AWS CodePipeline CustomActionType ConfigurationProperties
-                + AWS CodePipeline CustomActionType Settings
-                + AWS CodePipeline Pipeline ArtifactStore
-                + AWS CodePipeline Pipeline ArtifactStore EncryptionKey
-                + AWS CodePipeline Pipeline DisableInboundStageTransitions
-                + AWS CodePipeline Pipeline Stages
-                + AWS CodePipeline Pipeline Stages Actions
-                + AWS CodePipeline Pipeline Stages Actions ActionTypeId
-                + AWS CodePipeline Pipeline Stages Actions InputArtifacts
-                + AWS CodePipeline Pipeline Stages Actions OutputArtifacts
-                + AWS CodePipeline Pipeline Stages Blockers
-                + AWS CodePipeline Webhook WebhookAuthConfiguration
-                + AWS CodePipeline Webhook WebhookFilterRule
-                + Amazon Cognito IdentityPool CognitoStreams
-                + Amazon Cognito IdentityPool PushSync
-                + Amazon Cognito IdentityPoolRoleAttachment RoleMapping
-                + Amazon Cognito IdentityPoolRoleAttachment MappingRule
-                + Amazon Cognito IdentityPool CognitoIdentityProvider
-                + Amazon Cognito IdentityPoolRoleAttachment RoleMapping
-                  RulesConfiguration
-                + Amazon Cognito UserPool AdminCreateUserConfig
-                + Amazon Cognito UserPool DeviceConfiguration
-                + Amazon Cognito UserPool EmailConfiguration
-                + Amazon Cognito UserPool InviteMessageTemplate
-                + Amazon Cognito UserPool LambdaConfig
-                + Amazon Cognito UserPool NumberAttributeConstraints
-                + Amazon Cognito UserPool PasswordPolicy
-                + Amazon Cognito UserPool Policies
-                + Amazon Cognito UserPool SchemaAttribute
-                + Amazon Cognito UserPool SmsConfiguration
-                + Amazon Cognito UserPool StringAttributeConstraints
-                + Amazon Cognito UserPoolUser AttributeType
-                + Amazon Cognito UserPool InviteMessageTemplate
-                + AWS Config ConfigRule Scope
-                + AWS Config ConfigRule Source
-                + AWS Config ConfigRule SourceDetails
-                + AWS Config ConfigurationAggregator
-                  AccountAggregationSource
-                + AWS Config ConfigurationAggregator
-                  OrganizationAggregationSource
-                + AWS Config ConfigurationRecorder RecordingGroup
-                + AWS Config DeliveryChannel
-                  ConfigSnapshotDeliveryProperties
-                + AWS Data Pipeline Pipeline ParameterObjects
-                + AWS Data Pipeline Parameter Objects Attributes
-                + AWS Data Pipeline Pipeline ParameterValues
-                + AWS Data Pipeline PipelineObject
-                + AWS Data Pipeline Pipeline Field
-                + AWS Data Pipeline Pipeline PipelineTags
-                + AWS DMS Endpoint DynamoDBSettings
-                + AWS DMS Endpoint MongoDbSettings
-                + AWS DMS Endpoint S3Settings
-                + AWS Directory Service MicrosoftAD VpcSettings
-                + AWS Directory Service SimpleAD VpcSettings
-                + DAX Cluster SSESpecification
-                + DynamoDB Table AttributeDefinition
-                + DynamoDB Table GlobalSecondaryIndex
-                + DynamoDB Table KeySchema
-                + DynamoDB Table LocalSecondaryIndex
-                + DynamoDB Table PointInTimeRecoverySpecification
-                + DynamoDB Table Projection
-                + DynamoDB Table ProvisionedThroughput
-                + DynamoDB SSESpecification
-                + DynamoDB Table StreamSpecification
-                + DynamoDB Table TimeToLiveSpecification
-                + Amazon EC2 Block Device Mapping Property
-                + Amazon Elastic Block Store Block Device Property
-                + Amazon EC2 Instance CreditSpecification
-                + Amazon EC2 Instance ElasticGpuSpecification
-                + Amazon EC2 Instance LaunchTemplateSpecification
-                + Amazon EC2 Instance SsmAssociations AssociationParameters
-                + Amazon EC2 Instance SsmAssociations
-                + Amazon EC2 LaunchTemplate BlockDeviceMapping
-                + Amazon EC2 LaunchTemplate CreditSpecification
-                + Amazon EC2 LaunchTemplate Ebs
-                + Amazon EC2 LaunchTemplate ElasticGpuSpecification
-                + Amazon EC2 LaunchTemplate IamInstanceProfile
-                + Amazon EC2 LaunchTemplate InstanceMarketOptions
-                + Amazon EC2 LaunchTemplate Ipv6Add
-                + Amazon EC2 LaunchTemplate LaunchTemplateData
-                + Amazon EC2 LaunchTemplate Monitoring
-                + Amazon EC2 LaunchTemplate NetworkInterface
-                + Amazon EC2 LaunchTemplate Placement
-                + Amazon EC2 LaunchTemplate PrivateIpAdd
-                + Amazon EC2 LaunchTemplate SpotOptions
-                + Amazon EC2 LaunchTemplate TagSpecification
-                + EC2 MountPoint
-                + EC2 Network Interface
-                + EC2 NetworkAclEntry Icmp
-                + EC2 NetworkAclEntry PortRange
-                + EC2 NetworkInterface Ipv6Addresses
-                + EC2 Network Interface Private IP Specification
-                + EC2 Security Group Rule
-                + Amazon EC2 SpotFleet SpotFleetRequestConfigData
-                + Amazon EC2 SpotFleet LaunchSpecifications
-                + Amazon EC2 SpotFleet BlockDeviceMappings
-                + Amazon EC2 SpotFleet ClassicLoadBalancer
-                + Amazon EC2 SpotFleet ClassicLoadBalancersConfig
-                + Amazon EC2 SpotFleet Ebs
-                + Amazon EC2 SpotFleet FleetLaunchTemplateSpecification
-                + Amazon EC2 SpotFleet IamInstanceProfile
-                + Amazon EC2 SpotFleet LaunchTemplateConfig
-                + Amazon EC2 SpotFleet LaunchTemplateOverrides
-                + Amazon EC2 SpotFleet LoadBalancersConfig
-                + Amazon EC2 SpotFleet Monitoring
-                + Amazon EC2 SpotFleet NetworkInterfaces
-                + Amazon EC2 SpotFleet PrivateIpAddresses
-                + Amazon EC2 SpotFleet Placement
-                + Amazon EC2 SpotFleet SecurityGroups
-                + Amazon EC2 SpotFleet SpotFleetTagSpecification
-                + Amazon EC2 SpotFleet TargetGroup
-                + Amazon EC2 SpotFleet TargetGroupsConfig
-                + EC2 VPNConnection VpnTunnelOptionsSpecification
-                + Amazon ECS Service AwsVpcConfiguration
-                + Amazon ECR Repository LifecyclePolicy
-                + Amazon ECS Service DeploymentConfiguration
-                + Amazon ECS Service NetworkConfiguration
-                + Amazon ECS Service PlacementConstraint
-                + Amazon ECS Service PlacementStrategies
-                + Amazon ECS Service LoadBalancers
-                + Amazon ECS Service ServiceRegistry
-                + Amazon ECS TaskDefinition DockerVolumeConfiguration
-                + Amazon ECS TaskDefinition HealthCheck
-                + Amazon ECS TaskDefinition ContainerDefinition
-                + Amazon ECS TaskDefinition Device
-                + Amazon ECS TaskDefinition HostEntry
-                + Amazon ECS TaskDefinition KernelCapabilities
-                + Amazon ECS TaskDefinition KeyValuePair
-                + Amazon ECS TaskDefinition LinuxParameters
-                + Amazon ECS TaskDefinition LogConfiguration
-                + Amazon ECS TaskDefinition MountPoint
-                + Amazon ECS TaskDefinition ContainerDefinitions
-                  PortMapping
-                + Amazon ECS TaskDefinition Ulimit
-                + Amazon ECS TaskDefinition VolumeFrom
-                + Amazon ECS Service PlacementConstraint
-                + Amazon ECS TaskDefinition RepositoryCredentials
-                + Amazon ECS TaskDefinition Tmpfs
-                + Amazon ECS TaskDefinition Volumes
-                + Amazon ECS TaskDefinition Volumes Host
-                + Amazon Elastic File System FileSystem FileSystemTags
-                + EKS Cluster ResourcesVpcConfig
-                + Elastic Beanstalk Application
-                  ApplicationResourceLifecycleConfig
-                + Elastic Beanstalk Application
-                  ApplicationVersionLifecycleConfig
-                + Elastic Beanstalk Application MaxAgeRule
-                + Elastic Beanstalk Application MaxCountRule
-                + Elastic Beanstalk ConfigurationTemplate
-                  ConfigurationOptionSetting
-                + Elastic Beanstalk ConfigurationTemplate
-                  SourceConfiguration
-                + Elastic Beanstalk Environment Tier
-                + Elastic Beanstalk Environment OptionSetting
-                + Elastic Beanstalk SourceBundle Property Type
-                + ElastiCache ReplicationGroup NodeGroupConfiguration
-                + Elastic Load Balancing AccessLoggingPolicy
-                + AppCookieStickinessPolicy
-                + Elastic Load Balancing ConnectionDrainingPolicy
-                + Elastic Load Balancing ConnectionSettings
-                + ElasticLoadBalancing LoadBalancer HealthCheck
-                + LBCookieStickinessPolicy
-                + ElasticLoadBalancing Listener
-                + ElasticLoadBalancing Policy
-                + Elastic Load Balancing Listener Certificate
-                + Elastic Load Balancing ListenerCertificate Certificate
-                + Elastic Load Balancing Listener Action
-                + Elastic Load Balancing ListenerRule Actions
-                + Elastic Load Balancing ListenerRule Conditions
-                + Elastic Load Balancing LoadBalancer
-                  LoadBalancerAttributes
-                + Elastic Load Balancing LoadBalancer SubnetMapping
-                + Elastic Load Balancing TargetGroup Matcher
-                + Elastic Load Balancing TargetGroup TargetDescription
-                + Elastic Load Balancing TargetGroup TargetGroupAttributes
-                + Amazon ES Domain EBSOptions
-                + Amazon ES Domain ElasticsearchClusterConfig
-                + Amazon ES Domain EncryptionAtRestOptions
-                + Amazon ES Domain SnapshotOptions
-                + Amazon ES Domain VPCOptions
-                + Amazon EMR Cluster Application
-                + Amazon EMR Cluster AutoScalingPolicy
-                + Amazon EMR Cluster BootstrapActionConfig
-                + Amazon EMR Cluster CloudWatchAlarmDefinition
-                + Amazon EMR Cluster Configurations
-                + Amazon EMR Cluster InstanceFleetConfig
-                + Amazon EMR Cluster
-                  InstanceFleetProvisioningSpecifications
-                + Amazon EMR Cluster InstanceGroupConfig
-                + Amazon EMR Cluster InstanceTypeConfig
-                + Amazon EMR Cluster JobFlowInstancesConfig
-                + Amazon EMR Cluster MetricDimension
-                + Amazon EMR Cluster PlacementType
-                + Amazon EMR Cluster ScalingAction
-                + Amazon EMR Cluster ScalingConstraints
-                + Amazon EMR Cluster ScalingRule
-                + Amazon EMR Cluster ScalingTrigger
-                + Amazon EMR Cluster ScriptBootstrapActionConfig
-                + Amazon EMR Cluster SimpleScalingPolicyConfiguration
-                + Amazon EMR Cluster SpotProvisioningSpecification
-                + Amazon EMR Cluster KerberosAttributes
-                + Amazon EMR EbsConfiguration
-                + Amazon EMR EbsConfiguration EbsBlockDeviceConfigs
-                + Amazon EMR EbsConfiguration EbsBlockDeviceConfig
-                  VolumeSpecification
-                + Amazon EMR InstanceFleetConfig Configuration
-                + Amazon EMR InstanceFleetConfig EbsBlockDeviceConfig
-                + Amazon EMR InstanceFleetConfig EbsConfiguration
-                + Amazon EMR InstanceFleetConfig
-                  InstanceFleetProvisioningSpecifications
-                + Amazon EMR InstanceFleetConfig InstanceTypeConfig
-                + Amazon EMR InstanceFleetConfig
-                  SpotProvisioningSpecification
-                + Amazon EMR InstanceFleetConfig VolumeSpecification
-                + Amazon EMR InstanceGroupConfig AutoScalingPolicy
-                + Amazon EMR InstanceGroupConfig CloudWatchAlarmDefinition
-                + Amazon EMR InstanceGroupConfig MetricDimension
-                + Amazon EMR InstanceGroupConfig ScalingAction
-                + Amazon EMR InstanceGroupConfig ScalingConstraints
-                + Amazon EMR InstanceGroupConfig ScalingRule
-                + Amazon EMR InstanceGroupConfig ScalingTrigger
-                + Amazon EMR InstanceGroupConfig
-                  SimpleScalingPolicyConfiguration
-                + Amazon EMR Step HadoopJarStepConfig
-                + Amazon EMR Step KeyValue
-                + GameLift Alias RoutingStrategy
-                + GameLift Build StorageLocation
-                + GameLift Fleet EC2InboundPermission
-                + AWS Glue Classifier GrokClassifier
-                + AWS Glue Classifier JsonClassifier
-                + AWS Glue Classifier XMLClassifier
-                + AWS Glue Connection ConnectionInput
-                + AWS Glue Connection PhysicalConnectionRequirements
-                + AWS Glue Crawler JdbcTarget
-                + AWS Glue Crawler S3Target
-                + AWS Glue Crawler Schedule
-                + AWS Glue Crawler SchemaChangePolicy
-                + AWS Glue Crawler Targets
-                + AWS Glue Database DatabaseInput
-                + AWS Glue Job ConnectionsList
-                + AWS Glue Job ExecutionProperty
-                + AWS Glue Job JobCommand
-                + AWS Glue Partition Column
-                + AWS Glue Partition Order
-                + AWS Glue Partition PartitionInput
-                + AWS Glue Partition SerdeInfo
-                + AWS Glue Partition SkewedInfo
-                + AWS Glue Partition StorageDescriptor
-                + AWS Glue Table Column
-                + AWS Glue Table Order
-                + AWS Glue Table SerdeInfo
-                + AWS Glue Table SkewedInfo
-                + AWS Glue Table StorageDescriptor
-                + AWS Glue Table TableInput
-                + AWS Glue Trigger Action
-                + AWS Glue Trigger Condition
-                + AWS Glue Trigger Predicate
-                + GuardDuty Filter FindingCriteria
-                + GuardDuty Filter Condition
-                + IAM Policies
-                + IAM User LoginProfile
-                + AWS IoT 1-Click Project PlacementTemplate
-                + AWS IoT TopicRule Action
-                + AWS IoT TopicRule CloudwatchAlarmAction
-                + AWS IoT TopicRule CloudwatchMetricAction
-                + AWS IoT TopicRule DynamoDBAction
-                + AWS IoT TopicRule DynamoDBv2Action
-                + AWS IoT TopicRule ElasticsearchAction
-                + AWS IoT TopicRule FirehoseAction
-                + AWS IoT TopicRule KinesisAction
-                + AWS IoT TopicRule LambdaAction
-                + AWS IoT TopicRule PutItemInput
-                + AWS IoT TopicRule RepublishAction
-                + AWS IoT TopicRule S3Action
-                + AWS IoT TopicRule SnsAction
-                + AWS IoT TopicRule SqsAction
-                + AWS IoT Thing AttributePayload
-                + AWS IoT TopicRule TopicRulePayload
-                + Kinesis StreamEncryption
-                + Kinesis Data Analytics Application CSVMappingParameters
-                + Kinesis Data Analytics Application Input
-                + Kinesis Data Analytics Application InputLambdaProcessor
-                + Kinesis Data Analytics Application InputParallelism
-                + Kinesis Data Analytics Application
-                  InputProcessingConfiguration
-                + Kinesis Data Analytics Application InputSchema
-                + Kinesis Data Analytics Application JSONMappingParameters
-                + Kinesis Data Analytics Application KinesisFirehoseInput
-                + Kinesis Data Analytics Application KinesisStreamsInput
-                + Kinesis Data Analytics Application MappingParameters
-                + Kinesis Data Analytics Application RecordColumn
-                + Kinesis Data Analytics Application RecordFormat
-                + Kinesis Data Analytics ApplicationOutput
-                  DestinationSchema
-                + Kinesis Data Analytics ApplicationOutput
-                  KinesisFirehoseOutput
-                + Kinesis Data Analytics ApplicationOutput
-                  KinesisStreamsOutput
-                + Kinesis Data Analytics ApplicationOutput LambdaOutput
-                + Kinesis Data Analytics ApplicationOutput Output
-                + Kinesis Data Analytics ApplicationReferenceDataSource
-                  CSVMappingParameters
-                + Kinesis Data Analytics ApplicationReferenceDataSource
-                  JSONMappingParameters
-                + Kinesis Data Analytics ApplicationReferenceDataSource
-                  MappingParameters
-                + Kinesis Data Analytics ApplicationReferenceDataSource
-                  RecordColumn
-                + Kinesis Data Analytics ApplicationReferenceDataSource
-                  RecordFormat
-                + Kinesis Data Analytics ApplicationReferenceDataSource
-                  ReferenceDataSource
-                + Kinesis Data Analytics ApplicationReferenceDataSource
-                  ReferenceSchema
-                + Kinesis Data Analytics ApplicationReferenceDataSource
-                  S3ReferenceDataSource
-                + Kinesis Data Firehose DeliveryStream BufferingHints
-                + Kinesis Data Firehose DeliveryStream
-                  CloudWatchLoggingOptions
-                + Kinesis Data Firehose DeliveryStream CopyCommand
-                + Kinesis Data Firehose DeliveryStream
-                  ElasticsearchBufferingHints
-                + Kinesis Data Firehose DeliveryStream
-                  ElasticsearchDestinationConfiguration
-                + Kinesis Data Firehose DeliveryStream
-                  ElasticsearchRetryOptions
-                + Kinesis Data Firehose DeliveryStream
-                  EncryptionConfiguration
-                + Kinesis Data Firehose DeliveryStream
-                  ExtendedS3DestinationConfiguration
-                + Kinesis Data Firehose DeliveryStream
-                  KinesisStreamSourceConfiguration
-                + Kinesis Data Firehose DeliveryStream KMSEncryptionConfig
-                + Kinesis Data Firehose DeliveryStream
-                  ProcessingConfiguration
-                + Kinesis Data Firehose DeliveryStream Processor
-                + Kinesis Data Firehose DeliveryStream ProcessorParameter
-                + Kinesis Data Firehose DeliveryStream
-                  RedshiftDestinationConfiguration
-                + Kinesis Data Firehose DeliveryStream
-                  S3DestinationConfiguration
-                + Kinesis Data Firehose DeliveryStream
-                  SplunkDestinationConfiguration
-                + Kinesis Data Firehose DeliveryStream SplunkRetryOptions
-                + AWS Lambda Alias AliasRoutingConfiguration
-                + AWS Lambda Alias VersionWeight
-                + AWS Lambda Function DeadLetterConfig
-                + AWS Lambda Function Environment
-                + AWS Lambda Function Code
-                + AWS Lambda Function TracingConfig
-                + AWS Lambda Function VpcConfig
-                + Name Type
-                + AWS OpsWorks App DataSource
-                + AWS OpsWorks App Environment
-                + AWS OpsWorks AutoScalingThresholds Type
-                + AWS OpsWorks ChefConfiguration Type
-                + AWS OpsWorks Layer LifeCycleConfiguration
-                + AWS OpsWorks Layer LifeCycleConfiguration
-                  ShutdownEventConfiguration
-                + AWS OpsWorks LoadBasedAutoScaling Type
-                + AWS OpsWorks Instance BlockDeviceMapping
-                + AWS OpsWorks Instance BlockDeviceMapping EbsBlockDevice
-                + AWS OpsWorks Recipes Type
-                + AWS OpsWorks Source Type
-                + AWS OpsWorks SslConfiguration Type
-                + AWS OpsWorks Stack ElasticIp
-                + AWS OpsWorks Stack RdsDbInstance
-                + AWS OpsWorks StackConfigurationManager Type
-                + AWS OpsWorks TimeBasedAutoScaling Type
-                + AWS OpsWorks VolumeConfiguration Type
-                + Amazon Redshift Parameter Type
-                + Amazon Redshift Cluster LoggingProperties
-                + Resource Tag
-                + Amazon RDS DBCluster ScalingConfiguration
-                + Amazon RDS OptionGroup OptionConfiguration
-                + Amazon RDS OptionGroup OptionSetting
-                + RDS Security Group Rule
-                + Route 53 AliasTarget Property
-                + Route 53 Record Set GeoLocation Property
-                + Route 53 HealthCheck HealthCheckConfig
-                + Route 53 HealthCheck AlarmIdentifier
-                + Route 53 HealthCheck HealthCheckTags
-                + Route 53 HostedZoneConfig Property
-                + Amazon Route 53 HostedZoneTags
-                + Route 53 QueryLoggingConfig
-                + Route 53 HostedZoneVPCs
-                + Amazon S3 Bucket AbortIncompleteMultipartUpload
-                + Amazon S3 Bucket AccelerateConfiguration
-                + Amazon S3 Bucket AccessControlTranslation
-                + Amazon S3 Bucket AnalyticsConfiguration
-                + Amazon S3 Bucket BucketEncryption
-                + Amazon S3 Bucket CorsConfiguration
-                + Amazon S3 Bucket CorsRule
-                + Amazon S3 Bucket DataExport
-                + Amazon S3 Bucket Destination
-                + Amazon S3 EncryptionConfiguration
-                + Amazon S3 Bucket FilterRule
-                + Amazon S3 Bucket InventoryConfiguration
-                + Amazon S3 Bucket LambdaConfiguration
-                + Amazon S3 Bucket LifecycleConfiguration
-                + Amazon S3 Bucket LoggingConfiguration
-                + Amazon S3 Bucket MetricsConfiguration
-                + Amazon S3 Bucket NoncurrentVersionTransition
-                + Amazon S3 Bucket NotificationConfiguration
-                + Amazon S3 Bucket NotificationFilter
-                + Amazon S3 Bucket QueueConfiguration
-                + Amazon S3 Bucket ReplicationConfiguration
-                + Amazon S3 Bucket ReplicationDestination
-                + Amazon S3 Bucket ReplicationRule
-                + Amazon S3 Bucket Rule
-                + Amazon S3 Bucket S3KeyFilter
-                + Amazon S3 Bucket ServerSideEncryptionRule
-                + Amazon S3 Bucket ServerSideEncryptionByDefault
-                + Amazon S3 Bucket SseKmsEncryptedObjects
-                + Amazon S3 Bucket SourceSelectionCriteria
-                + Amazon S3 Bucket StorageClassAnalysis
-                + Amazon S3 Bucket TagFilter
-                + Amazon S3 Bucket TopicConfiguration
-                + Amazon S3 Bucket Transition
-                + Amazon S3 Bucket VersioningConfiguration
-                + Amazon S3 Website Configuration Property
-                + Amazon S3 Website Configuration Redirect All Requests To
-                  Property
-                + Amazon S3 Website Configuration Routing Rules Property
-                + Amazon S3 Website Configuration Routing Rules Redirect
-                  Rule Property
-                + Amazon S3 Website Configuration Routing Rules Routing
-                  Rule Condition Property
-                + Amazon SageMaker EndpointConfig ProductionVariant
-                + Amazon SageMaker NotebookInstanceLifecycleConfig
-                  NotebookInstanceLifecycleHook
-                + Amazon SageMaker Model ContainerDefinition
-                + Amazon SageMaker Model VpcConfig
-                + AWS Service Catalog CloudFormationProduct
-                  ProvisioningArtifactProperties
-                + AWS Service Catalog CloudFormationProvisionedProduct
-                  ProvisioningParameter
-                + Amazon Route 53 ServiceDiscovery DnsConfig
-                + Amazon Route 53 ServiceDiscovery DnsRecord
-                + Amazon Route 53 ServiceDiscovery HealthCheckConfig
-                + Route 53 ServiceDiscovery Service HealthCheckCustomConfig
-                + Amazon SES ConfigurationSetEventDestination
-                  CloudWatchDestination
-                + Amazon SES ConfigurationSetEventDestination
-                  DimensionConfiguration
-                + Amazon SES ConfigurationSetEventDestination
-                  EventDestination
-                + Amazon SES ConfigurationSetEventDestination
-                  KinesisFirehoseDestination
-                + Amazon SES ReceiptFilter Filter
-                + Amazon SES ReceiptFilter IpFilter
-                + Amazon SES ReceiptRule Action
-                + Amazon SES ReceiptRule AddHeaderAction
-                + Amazon SES ReceiptRule BounceAction
-                + Amazon SES ReceiptRule LambdaAction
-                + Amazon SES ReceiptRule Rule
-                + Amazon SES ReceiptRule S3Action
-                + Amazon SES ReceiptRule SNSAction
-                + Amazon SES ReceiptRule StopAction
-                + Amazon SES ReceiptRule WorkmailAction
-                + Amazon SES Template Template
-                + Systems Manager Association
-                  InstanceAssociationOutputLocation
-                + Systems Manager Association S3OutputLocation
-                + Systems Manager Association Targets
-                + Systems Manager MaintenanceWindowTarget Targets
-                + Systems Manager MaintenanceWindowTask LoggingInfo
-                + Systems Manager MaintenanceWindowTask
-                  MaintenanceWindowAutomationParameters
-                + Systems Manager MaintenanceWindowTask
-                  MaintenanceWindowLambdaParameters
-                + Systems Manager MaintenanceWindowTask
-                  MaintenanceWindowRunCommandParameters
-                + Systems Manager MaintenanceWindowTask
-                  MaintenanceWindowStepFunctionsParameters
-                + Systems Manager MaintenanceWindowTask NotificationConfig
-                + Systems Manager MaintenanceWindowTask Target
-                + Systems Manager MaintenanceWindowTask
-                  TaskInvocationParameters
-                + Systems Manager PatchBaseline PatchFilterGroup
-                + Systems Manager PatchBaseline Rule
-                + Systems Manager PatchBaseline PatchFilter
-                + Systems Manager PatchBaseline RuleGroup
-                + Amazon SNS Subscription
-                + Amazon SQS RedrivePolicy
-                + AWS WAF ByteMatchSet ByteMatchTuples
-                + AWS WAF ByteMatchSet ByteMatchTuples FieldToMatch
-                + AWS WAF IPSet IPSetDescriptors
-                + AWS WAF Rule Predicates
-                + AWS WAF SizeConstraintSet SizeConstraint
-                + AWS WAF SizeConstraintSet SizeConstraint FieldToMatch
-                + AWS WAF SqlInjectionMatchSet SqlInjectionMatchTuples
-                + AWS WAF SqlInjectionMatchSet SqlInjectionMatchTuples
-                  FieldToMatch
-                + AWS WAF XssMatchSet XssMatchTuple
-                + AWS WAF XssMatchSet XssMatchTuple FieldToMatch
-                + AWS WAF WebACL Action
-                + AWS WAF WebACL ActivatedRule
-                + AWS WAF Regional ByteMatchSet ByteMatchTuples
-                + AWS WAF Regional ByteMatchSet ByteMatchTuples
-                  FieldToMatch
-                + AWS WAF Regional IPSet IPSetDescriptors
-                + AWS WAF Regional Rule Predicates
-                + AWS WAF Regional SizeConstraintSet SizeConstraint
-                + AWS WAF Regional SizeConstraintSet SizeConstraint
-                  FieldToMatch
-                + AWS WAF Regional SqlInjectionMatchSet
-                  SqlInjectionMatchTuples
-                + AWS WAF Regional SqlInjectionMatchSet
-                  SqlInjectionMatchTuples FieldToMatch
-                + AWS WAF Regional XssMatchSet XssMatchTuple
-                + AWS WAF Regional XssMatchSet XssMatchTuple FieldToMatch
-                + AWS WAF Regional WebACL Action
-                + AWS WAF Regional WebACL Rules
-          o Resource Specification
-                + Specification Format
-          o Resource Attributes
-                + CreationPolicy
-                + DeletionPolicy
-                + DependsOn
-                + Metadata
-                + UpdatePolicy
-          o Intrinsic Functions
-                + Fn::Base64
-                + Fn::Cidr
-                + Condition Functions
-                      # Sample Templates
-                + Fn::FindInMap
-                + Fn::GetAtt
-                + Fn::GetAZs
-                + Fn::ImportValue
-                + Fn::Join
-                + Fn::Select
-                + Fn::Split
-                + Fn::Sub
-                + Fn::Transform
-                + Ref
-          o Pseudo Parameters
-          o CloudFormation Helper Scripts
-                + cfn-init
-                + cfn-signal
-                + cfn-get-metadata
-                + cfn-hup
-    * Sample Templates
-          o Asia Pacific (Mumbai) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o Asia Pacific (Seoul) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o Asia Pacific (Singapore) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o Asia Pacific (Sydney) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o Asia Pacific (Tokyo) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o Canada (Central) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o China (Beijing) Region
-          o EU (Frankfurt) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o EU (London) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o EU (Ireland) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o South America (Sao Paulo) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o US East (Northern Virginia) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o US East (Ohio) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o US West (Northern California) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-          o US West (Oregon) Region
-                + Sample Solutions
-                + Application Frameworks
-                + Services
-    * Troubleshooting
-    * Release History
-          o Supported AWS Services
-          o Release History for Helper Scripts
-    * AWS Glossary
-    *  <http://www.amazon.com/dp/B07641FR9Q>
 AWS Documentation » AWS CloudFormation » User Guide » Release History
 
 
@@ -1252,6 +18,1087 @@ CloudFormation User Guide after May 2018. For notification about updates to
 this documentation, you can subscribe to an RSS feed.
 
 Change 	Description 	Date
+
+Updated resources
+
+The following resources were updated: AWS::ApiGateway::ApiKey, 
+AWS::CodeBuild::Project, AWS::Elasticsearch::Domain, AWS::RDS::DBCluster, 
+and AWS::RDS::DBInstance.
+
+AWS::ApiGateway::ApiKey
+
+    Use the Value property to specify the value of the API key.
+
+AWS::CodeBuild::Project
+
+    In the ProjectCache property type, you can use the Modes property to
+    specify the type cache an AWS CodeBuild project uses.
+
+AWS::Elasticsearch::Domain
+
+    Use the NodeToNodeEncryptionOptions property to specify whether
+    node-to-node encryption is enabled.
+
+AWS::RDS::DBCluster
+
+    Use the SourceRegion property to specify the AWS Region which contains
+    the source DB cluster when replicating a DB cluster.
+
+AWS::RDS::DBInstance
+
+    Use the UseDefaultProcessorFeatures property to specify that the DB
+    instance class of the DB instance uses its default processor features.
+
+February 21, 2019
+
+New resources
+
+The following resources were added: AWS::RAM::ResourceShare, 
+AWS::RoboMaker::Fleet, AWS::RoboMaker::Robot, 
+AWS::RoboMaker::RobotApplication, AWS::RoboMaker::RobotApplicationVersion, 
+AWS::RoboMaker::SimulationApplication, and 
+AWS::RoboMaker::SimulationApplicationVersion.
+
+AWS::RAM::ResourceShare
+
+    Use the AWS::RAM::ResourceShare resource to create, update, and delete
+    an Amazon ResourceShare.
+
+AWS::RoboMaker::Fleet
+
+    Use the AWS::RoboMaker::Fleet resource to to create an AWS RoboMaker
+    fleet.
+
+AWS::RoboMaker::Robot
+
+    Use the AWS::RoboMaker::Robot resource to create an AWS RoboMaker
+    robot.
+
+AWS::RoboMaker::RobotApplication
+
+    Use the AWS::RoboMaker::RobotApplication resource to create an AWS
+    RoboMaker robot application.
+
+AWS::RoboMaker::RobotApplicationVersion
+
+    Use the AWS::RoboMaker::RobotApplicationVersion resource to create a
+    version of an AWS RoboMaker robot application.
+
+AWS::RoboMaker::SimulationApplication
+
+    Use the AWS::RoboMaker::SimulationApplication resource to create an AWS
+    RoboMaker simulation application.
+
+AWS::RoboMaker::SimulationApplicationVersion
+
+    Use the AWS::RoboMaker::SimulationApplicationVersion resource to create
+    a version of an AWS RoboMaker simulation application.
+
+February 21, 2019
+
+Updated resource
+
+The following resource was updated: AWS::CodeBuild::Project.
+
+AWS::CodeBuild::Project
+
+    In the ProjectTriggers property type, you can use the WebhookFilters 
+    property to specify the webhook events that trigger a new AWS CodeBuild
+    build.
+
+February 15, 2019
+
+New resources
+
+The following resources were added: AWS::FSx::FileSystem, 
+AWS::KinesisAnalyticsv2::Application, 
+AWS::KinesisAnalyticsv2::ApplicationCloudWatchLoggingOption, 
+AWS::KinesisAnalyticsv2::ApplicationOutput, and 
+AWS::KinesisAnalyticsv2::ApplicationReferenceDataSource.
+
+AWS::FSx::FileSystem
+
+    Use the AWS::FSx::FileSystem resource to create a new Amazon FSx for
+    Lustre or Amazon FSx for Windows File Server file system.
+
+AWS::KinesisAnalyticsV2::Application
+
+    Use the AWS CloudFormation AWS::KinesisAnalyticsV2::Application 
+    resource to create an Amazon Kinesis Data Analytics application.
+
+    Use the AWS CloudFormation 
+    AWS::KinesisAnalyticsV2::ApplicationCloudWatchLoggingOption resource to
+    add an Amazon CloudWatch log stream to monitor application
+    configuration errors.
+
+AWS::KinesisAnalyticsV2::ApplicationOutput
+
+    Use the AWS CloudFormation AWS::KinesisAnalyticsV2::ApplicationOutput 
+    resource to describe a SQL-based Amazon Kinesis Data Analytics
+    application's output configuration.
+
+AWS::KinesisAnalyticsV2::ApplicationReferenceDataSource
+
+    Use the AWS CloudFormation 
+    AWS::KinesisAnalyticsV2::ApplicationReferenceDataSource resource to
+    describe a reference data source for a SQL-based Amazon Kinesis Data
+    Analytics application.
+
+February 15, 2019
+
+Updated resources
+
+The following resources were updated: AWS::OpsWorksCM::Server, 
+AWS::ServiceDiscovery::Instance, and AWS::ServiceDiscovery::Service.
+
+AWS::OpsWorksCM::Server
+
+    EngineAttributes were updated to include additional attributes that you
+    can use to create an AWS OpsWorks for Puppet Enterprise master server.
+
+AWS::ServiceDiscovery::Instance
+
+    The DNSConfig property is no longer required.
+
+    An update to the HealthCheckCustomConfig property now requires
+    replacement.
+
+AWS::ServiceDiscovery::Service
+
+    The InstanceAttributes property now takes a String map value.
+
+February 8, 2019
+
+New resources
+
+The following resources were added: AWS::ApiGatewayV2::Api, 
+AWS::ApiGatewayV2::Authorizer, AWS::ApiGatewayV2::Deployment, 
+AWS::ApiGatewayV2::Integration, AWS::ApiGatewayV2::IntegrationResponse, 
+AWS::ApiGatewayV2::Model, AWS::ApiGatewayV2::Route, 
+AWS::ApiGatewayV2::RouteResponse, and AWS::ApiGatewayV2::Stage.
+
+AWS::ApiGatewayV2::Api
+
+    Use the AWS::ApiGatewayV2::Api resource to manage an API Gateway
+    WebSocket API.
+
+AWS::ApiGatewayV2::Authorizer
+
+    Use the AWS::ApiGatewayV2::Authorizer resource to represent an API
+    Gateway authorizer function.
+
+AWS::ApiGatewayV2::Deployment
+
+    Use the AWS::ApiGatewayV2::Deployment resource to create an API Gateway
+    WebSocket API deployment.
+
+AWS::ApiGatewayV2::Integration
+
+    Use the AWS::ApiGatewayV2::Integration resource to specify information
+    about the target backend that an API Gateway route calls.
+
+AWS::ApiGatewayV2::IntegrationResponse
+
+    Use the AWS::ApiGatewayV2::IntegrationResponse resource to specify the
+    response that API Gateway sends after a route's backend finishes
+    processing a WebSocket message.
+
+AWS::ApiGatewayV2::Model
+
+    Use the AWS::ApiGatewayV2::Model resource to define the structure of a
+    route request or response payload for an API Gateway WebSocket API.
+
+AWS::ApiGatewayV2::Route
+
+    Use the AWS::ApiGatewayV2::Route resource to specify information that
+    is expected to be present in a WebSocket message payload.
+
+AWS::ApiGatewayV2::RouteResponse
+
+    Use the AWS::ApiGatewayV2::RouteResponse resource to define the
+    responses that can be sent to the client that sends a message to an API
+    Gateway WebSocket API.
+
+AWS::ApiGatewayV2::Stage
+
+    Use the AWS::ApiGatewayV2::Stage resource to create a stage for an API
+    Gateway WebSocket API deployment.
+
+February 8, 2019
+
+Updated resources
+
+The following resources were updated: AWS::CodeBuild::Project and 
+AWS::ElasticLoadBalancingV2::Listener.
+
+AWS::CodeBuild::Project
+
+    In the Environment property type, you can use the 
+    ImagePullCredentialsType property to specify the type of credentials
+    AWS CodeBuild uses to pull images in your build.
+
+    In the Environment property type, you can use the RegistryCredential 
+    property to provide information about credentials that provide access
+    to a private Docker registry.
+
+AWS::ElasticLoadBalancingV2::Listener
+
+    Create TLS listeners for your Network Load Balancers.
+
+January 24, 2019
+
+New resource
+
+The following resource was added: AWS::OpsWorksCM::Server.
+
+AWS::OpsWorksCM::Server
+
+    Use the AWS::OpsWorksCM::Server resource to create an AWS OpsWorks for
+    Chef Automate or AWS OpsWorks for Puppet Enterprise server.
+
+January 24, 2019
+
+UpdateReplacePolicy attribute added
+
+Use the UpdateReplacePolicy attribute to retain or (in some cases) backup 
+the existing physical instance of a resource when it is replaced during a 
+stack update operation.
+
+For more information, see UpdateReplacePolicy Attribute.
+
+January 23, 2019
+
+Updated resource
+
+The following resource was updated: AWS::Inspector::AssessmentTarget
+
+AWS::Inspector::AssessmentTarget
+
+    The ResourceGroupArn property is no longer required. If unspecified,
+    all Amazon EC2 instances in your AWS account in the current region will
+    be included in the assessment target.
+
+January 17, 2019
+
+Updated resource
+
+The following resource was updated: 
+AWS::ServiceCatalog::CloudFormationProvisionedProduct.
+
+AWS::ServiceCatalog::CloudFormationProvisionedProduct
+
+    The ProductId property now requires no interruption upon update.
+
+    The ProductName property now requires no interruption upon update.
+
+    Each time a stack is created or updated, if ProductName is provided it
+    will successfully resolve to ProductId as long as only one product
+    exists in the account/region with that ProductName.
+
+January 10, 2019
+
+New resources
+
+The following resources were added: AWS::DocDB::DBCluster, 
+AWS::DocDB::DBClusterParameterGroup, AWS::DocDB::DBInstance, and 
+AWS::DocDB::DBSubnetGroup.
+
+AWS::DocDB::DBCluster
+
+    Use the AWS::DocDB::DBCluster resource to manage an Amazon DocumentDB
+    cluster.
+
+AWS::DocDB::DBClusterParameterGroup
+
+    Use the AWS::DocDB::DBClusterParameterGroup resource to manage an
+    Amazon DocumentDB cluster parameter group.
+
+AWS::DocDB::DBInstance
+
+    Use the AWS::DocDB::DBInstance resource to manage an Amazon DocumentDB
+    instance.
+
+AWS::DocDB::DBSubnetGroup
+
+    Use the AWS::DocDB::DBSubnetGroup resource to describe an Amazon
+    DocumentDB subnet group.
+
+January 10, 2019
+
+Updated resources
+
+The following resources were updated: AWS::AmazonMQ::Broker, 
+AWS::AmazonMQ::Configuration, and AWS::SageMaker::Model.
+
+AWS::AmazonMQ::Broker
+
+    Use the Tags property to specify an array of key-value pairs for cost
+    allocation tagging.
+
+AWS::AmazonMQ::Configuration
+
+    Use the Tags property to specify an array of key-value pairs for cost
+    allocation tagging.
+
+AWS::SageMaker::Model
+
+    Use the Containers property to specify the list of containers in the
+    inference pipeline.
+
+January 3, 2019
+
+New resource
+
+The following resource was added: 
+AWS::Route53Resolver::ResolverRuleAssociation.
+
+AWS::Route53Resolver::ResolverRuleAssociation
+
+    Use the AWS::Route53Resolver::ResolverRuleAssociation resource to
+    associate an Amazon Route 53 Resolver rule and a VPC that you created
+    using Amazon Virtual Private Cloud (Amazon VPC).
+
+January 3, 2019
+
+Updated resource
+
+The following resource was updated: AWS::AmazonMQ::Broker.
+
+AWS::AmazonMQ::Broker
+
+    The following attributes are now available using the Fn::Getatt 
+    intrinsic function:
+
+        * IpAddresses
+
+        * MqttEndpoints
+
+        * OpenWireEndpoints
+
+        * AmqpEndpoints
+
+        * StompEndpoints
+
+        * WssEndpoints
+
+December 13, 2018
+
+Stack instance operation limit
+
+For StackSets, you can have a maximum of 1500 stack instance operations 
+running in a given region at the same time, per administrator account.
+
+For more information, see Limitations of StackSets.
+
+December 13, 2018
+
+New resources
+
+The following resources were added: 
+AWS::AmazonMQ::ConfigurationAssociation, AWS::IoTAnalytics::Channel, 
+AWS::IoTAnalytics::Dataset, AWS::IoTAnalytics::Datastore, and 
+AWS::IoTAnalytics::Pipeline.
+
+AWS::AmazonMQ::ConfigurationAssociation
+
+    Use the AWS::AmazonMQ::ConfigurationAssociation resource to associate a
+    configuration with a broker, or return information about the specified
+    configuration association.
+
+AWS::IoTAnalytics::Channel
+
+    Use the AWS::IoTAnalytics::Channel resource to create a channel. A
+    channel collects data from an MQTT topic and archives the raw,
+    unprocessed messages before publishing the data to a pipeline.
+
+AWS::IoTAnalytics::Dataset
+
+    Use the AWS::IoTAnalytics::Dataset resource to create a data set. A
+    data set retrieves data from a data store and allows you to explore and
+    analyze your data using machine learning tools.
+
+AWS::IoTAnalytics::Datastore
+
+    Use the AWS::IoTAnalytics::Datastore resource to create a data store. A
+    data store holds messages from a channel which have been processed
+    through a pipeline.
+
+AWS::IoTAnalytics::Pipeline
+
+    Use the AWS::IoTAnalytics::Pipeline resource to create a pipeline. A
+    pipeline consumes messages from one or more channels and allows you to
+    process the messages before storing them in a data store.
+
+December 13, 2018
+
+The CAPABILITY_AUTO_EXPAND capability is now available.
+
+Use the CAPABILITY_AUTO_EXPAND capability to create or update a stack 
+directly from a stack template that contains macros, without first 
+reviewing the resulting changes in a change set first.
+
+For more information, see CreateStack
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CreateStack.html> 
+or UpdateStack
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_UpdateStack.html> 
+in AWS CloudFormation API Reference.
+
+December 7, 2018
+
+Updated resource
+
+The following resource was updated: AWS::CodeBuild::Project.
+
+AWS::CodeBuild::Project
+        * In the AWS CodeBuild Project Environment property type, you can
+          use the Certificate property to specify a certificate to use with
+          your build project.
+
+        * In the AWS CodeBuild Project Artifacts property type, you can use
+          the ArtifactIdentifier property to identify the project artifact.
+
+        * In the AWS CodeBuild Project Source property type, you can use
+          the SourceIdentifier property to identify the project source.
+
+December 6, 2018
+
+Updated resource
+
+The following resource was updated: AWS::Lambda::Function
+
+AWS::Lambda::Function
+
+    Use the Layers property to specify a list of Amazon Resource Names
+    (ARNs) for the function layers to add to the function's execution
+    environment.
+
+November 29, 2018
+
+New resources
+
+The following resources were added: AWS::Lambda::LayerVersion, 
+AWS::Lambda::LayerVersionPermission.
+
+AWS::Lambda::LayerVersion
+
+    Use the AWS CloudFormation AWS::Lambda::LayerVersion resource to create
+    a layer version in AWS Lambda.
+
+AWS::Lambda::LayerVersionPermission
+
+    Use the AWS CloudFormation AWS::Lambda::LayerVersionPermission 
+    resource to give other accounts permission to use a layer version in
+    AWS Lambda.
+
+November 29, 2018
+
+Updated resources
+
+The following resources were updated: AWS::DynamoDB::Table, 
+AWS::EC2::Instance, and AWS::ServiceDiscovery::Service.
+
+AWS::DynamoDB::Table
+
+    Use the BillingMode property to specify how you are charged for read
+    and write throughput and how you manage capacity.
+
+    The ProvisionedThroughput property is now conditional.
+
+    In the GlobalSecondaryIndex property type, the ProvisionedThroughput 
+    property is now conditional.
+
+AWS::EC2::Instance
+
+    Use the ElasticInferenceAccelerators property to specify a list of
+    elastic inference accelerators for an instance.
+
+    Use the LicenseSpecifications property to associate a list of license
+    configuration with an instance.
+
+AWS::ServiceDiscovery::Service
+
+    Use the NamespaceId property to specify the ID of the namespace that
+    you want to use to create the service.
+
+    In the DnsConfig property type, use the RoutingPolicy property to
+    specify the routing policy that you want to apply to all DNS records
+    that AWS Cloud Map creates when you register an instance and specify
+    this service.
+
+November 28, 2018
+
+New resource
+
+The following resource was added: AWS::ServiceDiscovery::HttpNamespace.
+
+AWS::ServiceDiscovery::HttpNamespace
+
+    Use the HttpNamespace resource to create an HTTP namespace for Cloud
+    Map.
+
+November 28, 2018
+
+New resources
+
+The following resources were added: AWS::EC2::TransitGateway, 
+AWS::EC2::TransitGatewayAttachment, AWS::EC2::TransitGatewayRoute, 
+AWS::EC2::TransitGatewayRouteTable, 
+AWS::EC2::TransitGatewayRouteTableAssociation, and 
+AWS::EC2::TransitGatewayRouteTablePropagation.
+
+AWS::EC2::TransitGateway
+
+    Use the AWS::EC2::TransitGateway resource to create a transit gateway.
+
+AWS::EC2::TransitGatewayAttachment
+
+    Use the AWS::EC2::TransitGatewayAttachment resource to create an
+    attachment between a VPC and a transit gateway.
+
+AWS::EC2::TransitGatewayRoute
+
+    Use the AWS::EC2::TransitGatewayRoute resource to create a static route
+    for a transit gateway route table.
+
+AWS::EC2::TransitGatewayRouteTable
+
+    Use the AWS::EC2::TransitGatewayRouteTable resource to create a route
+    table for a transit gateway.
+
+AWS::EC2::TransitGatewayRouteTableAssociation
+
+    Use the AWS::EC2::TransitGatewayRouteTableAssociation resource to
+    associate an attachment with a transit gateway route table.
+
+AWS::EC2::TransitGatewayRouteTablePropagation
+
+    Use the AWS::EC2::TransitGatewayRouteTablePropagation resource to
+    enable an attachment to propagate routes.
+
+November 26, 2018
+
+New resources
+
+The following resources were added: Alexa::ASK::Skill, 
+AWS::AppSync::FunctionConfiguration, AWS::EC2::EC2Fleet, 
+AWS::Kinesis::StreamConsumer, AWS::Route53Resolver:ResolverEndpoint, and 
+AWS::Route53Resolver::ResolverRule.
+
+Alexa::ASK::Skill
+
+    Use the Alexa::ASK::Skill resource to create an Alexa skill.
+
+AWS::AppSync::FunctionConfiguration
+
+    Use the AWS::AppSync::FunctionConfiguration resource to describe the
+    functions defined with appsync datasource in AWS AppSync.
+
+AWS::EC2::EC2Fleet
+
+    Use the AWS::EC2::EC2Fleet resource to launch an EC2 Fleet that can
+    include multiple launch specifications that vary by instance type, AMI,
+    Availability Zone, or subnet.
+
+AWS::Kinesis::StreamConsumer
+
+    Use the AWS::Kinesis::StreamConsumer resource to to register a consumer
+    with a Kinesis data stream.
+
+AWS::Route53Resolver::ResolverEndpoint
+
+    Use the AWS::Route53Resolver::ResolverEndpoint resource to specify
+    settings for inbound or outbound endpoints for Amazon Route 53.
+
+AWS::Route53Resolver::ResolverRule
+
+    Use the AWS::Route53Resolver::ResolverRule resource to specify detailed
+    information about a resolver rule, which specifies how to route DNS
+    queries out of a VPC for Amazon Route 53.
+
+November 20, 2018
+
+Updated resources
+
+The following resources were updated: AWS::ApiGateway::Deployment, 
+AWS::ApiGateway::Stage, AWS::AutoScaling::AutoScalingGroup, AWS::EC2::EIP, 
+AWS::ElasticLoadBalancingV2::Listener, AWS::EMR::Cluster, 
+AWS::OpsWorks::Layer, AWS::RDS::DBCluster, AWS::RDS::DBInstance, 
+AWS::S3::Bucket, and AWS::SNS::Topic.
+
+AWS::ApiGateway::Deployment
+
+    In the StageDescription property type, use the Tags property to specify
+    the AWS CloudFormation resource tags to associate with the stage.
+
+AWS::ApiGateway::Stage
+
+    Use the Tags property to specify the AWS CloudFormation resource tags
+    to associate with the stage.
+
+AWS::AutoScaling::AutoScalingGroup
+
+    Use the MixedInstancesPolicy property to provision a combination of
+    On-Demand Instances and Spot Instances across multiple instance types.
+    When you create your Auto Scaling group, you can specify a launch
+    configuration or template as a parameter for the top-level object, or
+    you can specify a mixed instances policy, but not both at the same
+    time.
+
+AWS::EC2::EIP
+
+    Use the PublicIpv4Pool property to specify the ID of an address pool
+    that you own to let Amazon EC2 select an address from the address pool.
+
+AWS::ElasticLoadBalancingV2::Listener
+
+    In the Action property type:
+
+        * Use the AuthenticateCognitoConfig property to specify request
+          parameters to use when integrating with Amazon Cognito to
+          authenticate users.
+
+        * Use the AuthenticateOidcConfig property to request parameters
+          when using an identity provider (IdP) that is compliant with
+          OpenID Connect (OIDC) to authenticate users.
+
+        * Use the FixedResponseConfig property to specify information about
+          an action that returns a custom HTTP response.
+
+        * Use the RedirectConfig property to specify information about a
+          redirect action.
+
+AWS::ElasticLoadBalancingV2::ListenerRule
+
+    In the Actions property type:
+
+        * Use the AuthenticateCognitoConfig property to specify request
+          parameters to use when integrating with Amazon Cognito to
+          authenticate users.
+
+        * Use the AuthenticateOidcConfig property to request parameters
+          when using an identity provider (IdP) that is compliant with
+          OpenID Connect (OIDC) to authenticate users.
+
+        * Use the FixedResponseConfig property to specify information about
+          an action that returns a custom HTTP response.
+
+        * Use the RedirectConfig property to specify information about a
+          redirect action.
+
+AWS::EMR::Cluster
+
+    Use the Amazon EMR Cluster HadoopJarStepConfig property type to specify
+    a job flow step consisting of a JAR file whose main function will be
+    executed.
+
+    Use the Amazon EMR Cluster StepConfig property type to specify a
+    cluster (job flow) step.
+
+    Use the Amazon EMR Cluster KeyValue property type to specify a key
+    value pair.
+
+    In the Amazon EMR Cluster JobFlowInstancesConfig property type, use 
+    KeepJobFlowAliveWhenNoSteps property to specify whether the cluster
+    should remain available after completing all steps.
+
+AWS OpsWorks VolumeConfiguration
+
+    In the VolumeConfiguration property type, use the Encrypted property to
+    specify whether an Amazon EBS volume is encrypted.
+
+AWS::RDS::DBCluster
+
+    Use the DeletionProtection property to indicate whether the DB cluster
+    should have deletion protection enabled. The database can't be deleted
+    when this value is set to true. If you want to delete a stack with a
+    protected cluster, update this value to false before you delete the
+    stack.
+
+AWS::RDS::DBInstance
+
+    Use the DeleteAutomatedBackups property to indicate whether automated
+    backups should be deleted (true) or retained (false) when you delete a
+    DB instance. The default is true.
+
+    Use the DeletionProtection property to indicate whether the DB instance
+    should have deletion protection enabled. The database can't be deleted
+    when this value is set to true. If you want to delete a stack with a
+    protected instance, update this value to false before you delete the
+    stack.
+
+AWS::S3::Bucket
+
+    Use the PublicAccessBlockConfiguration property to specify the public
+    access configuration for an Amazon S3 bucket.
+
+AWS::SNS::Topic
+
+    Use the KmsMasterKeyId property to specify an AWS KMS key identifier.
+    This can be a key ID, key ARN, or key alias.
+
+November 19, 2018
+
+Updated resource
+
+The following resource was updated: AWS::CodePipeline::Pipeline.
+
+AWS::CodePipeline::Pipeline
+
+    Use the ArtifactStores property to specify a list of ArtifactStoreMap 
+    mappings. There must be an artifact store for the pipeline region and
+    for each cross-region action within the pipeline. You can only use
+    either ArtifactStore or ArtifactStores, not both.
+
+    In the Actions property type, use the Region property to specify the
+    action’s AWS Region, such as us-east-1.
+
+November 13, 2018
+
+Stack drift detection added
+
+Drift detection enables you to detect whether a stack's actual 
+configuration differs, or has drifted, from its expected template 
+configuration as defined within AWS CloudFormation. You can have AWS 
+CloudFormation detect drift on an entire stack, or individual stack 
+resources.
+
+For more information, see Detecting Unmanaged Configuration Changes to 
+Stacks and Resources.
+
+November 13, 2018
+
+Updated resources
+
+The following resources have been updated: AWS::ApiGateway::Deployment, 
+AWS::ApiGateway::Stage, AWS::CloudWatch::Alarm, 
+AWS::EC2::SecurityGroupIngress, AWS::IAM::Role, AWS::IAM::User, 
+AWS::IoT::TopicRule, AWS::KMS::Key, AWS::RDS::DBCluster, 
+AWS::RDS::DBInstance, AWS::Route53::RecordSet, AWS::S3::Bucket, and 
+AWS::Workspaces::Workspace.
+
+AWS::ApiGateway::Deployment
+
+    In the StageDescription property type, use the TracingEnabled property
+    to specify whether active tracing with X-ray is enabled for this stage.
+
+AWS::ApiGateway::Stage
+
+    Use the TracingEnabled property to specify whether active tracing with
+    X-ray is enabled for this stage.
+
+AWS::CloudWatch::Alarm
+
+    Use the DatapointsToAlarm property to specify the number of datapoints
+    that must be breaching to trigger the alarm. This is used only if you
+    are setting an "M out of N" alarm. In that case, this value is the M.
+
+AWS::EC2::SecurityGroupIngress
+
+    Use the SourcePrefixListId property to specify the AWS service prefix
+    of an Amazon VPC endpoint.
+
+AWS::IAM::Role
+
+    Use the PermissionsBoundary property to specify the policy that is used
+    to set the permissions boundary for the role.
+
+AWS::IAM::User
+
+    Use the PermissionsBoundary property to specify the policy that is used
+    to set the permissions boundary for the user.
+
+AWS::IoT::TopicRule
+
+    In the TopicRulePayload property type, use the ErrorActions property to
+    specify the action to take when an error occurs.
+
+    In the Action property type:
+
+        * Use the IoTAnalytics property to send message data to an AWS IoT
+          Analytics channel.
+
+        * Use the StepFunctionsAction property to start execution of a Step
+          Functions state machine.
+
+AWS::KMS::Key
+
+    Use the PendingWindowInDays property to specify the waiting period,
+    specified in number of days, after which AWS KMS deletes the customer
+    master key (CMK).
+
+AWS::RDS::DBInstance
+
+    Use the EnableCloudwatchLogsExports property to specify the list of log
+    types that need to be enabled for exporting to CloudWatch Logs.
+
+    Use the EnableIAMDatabaseAuthentication property to enable mapping of
+    AWS Identity and Access Management (IAM) accounts to database accounts.
+
+    Use the EnablePerformanceInsights property to enable Performance
+    Insights for the DB instance.
+
+    Use the PerformanceInsightsKMSKeyId property to specify the AWS KMS key
+    identifier for encryption of Performance Insights data. The AWS KMS key
+    ID is the Amazon Resource Name (ARN), AWS KMS key identifier, or the
+    AWS KMS key alias for the AWS KMS encryption key.
+
+    Use the PerformanceInsightsRetentionPeriod property to specify the
+    amount of time, in days, to retain Performance Insights data.
+
+    Use the ProcessorFeatures property to specify the number of CPU cores
+    and the number of threads per core for the DB instance class of the DB
+    instance.
+
+    Use the PromotionTier property to specify the order in which an Aurora
+    Replica is promoted to the primary instance after a failure of the
+    existing primary instance.
+
+AWS::RDS::DBCluster
+
+    Use the EnableCloudwatchLogsExports property to specify the list of log
+    types that need to be enabled for exporting to CloudWatch Logs.
+
+    Use the EnableIAMDatabaseAuthentication property to enable mapping of
+    AWS Identity and Access Management (IAM) accounts to database accounts.
+
+    Use the BacktrackWindow property to specify the target backtrack
+    window, in seconds. To disable backtracking, specify 0. If specified,
+    this property must be set to a number from 0 to 259,200 (72 hours).
+
+AWS::Route53::RecordSet
+
+    Use the MultiValueAnswer property to route traffic approximately
+    randomly to multiple resources, such as web servers. Create one
+    multivalue answer record for each resource and specify true for 
+    MultiValueAnswer.
+
+AWS::S3::Bucket
+
+    Use the RegionalDomainName attribute with the Fn::GetAtt function to
+    return the regional domain name of the specified bucket.
+
+AWS::WorkSpaces::Workspace
+
+    Use the Tags property to specify the tags (key-value pairs) that you
+    want to attach to the WorkSpace.
+
+    Use the WorkspaceProperties property to specify information about a
+    WorkSpace.
+
+November 9, 2018
+
+The secretsmanager dynamic reference is now available.
+
+Use the secretsmanager dynamic reference to retrieve entire secrets or 
+secret values that are stored in AWS Secrets Manager for use in your 
+templates. Secrets can be database credentials, passwords, third-party API 
+keys, and even arbitrary text. Using the secretsmanager dynamic reference 
+guarantees that neither Secrets Manager nor CloudFormation logs or persists 
+any resolved secret value.
+
+For more information, see Using Dynamic References to Specify Template 
+Values.
+
+November 9, 2018
+
+New resources
+
+The following resources were added: AWS::DLM::LifecyclePolicy, 
+AWS::SecretsManager::ResourcePolicy, AWS::SecretsManager::RotationSchedule, 
+AWS::SecretsManager::Secret, and 
+AWS::SecretsManager::SecretTargetAttachment.
+
+AWS::DLM::LifecyclePolicy
+
+    The AWS::DLM::LifecyclePolicy resource creates a lifecycle policy for
+    Amazon Data Lifecycle Manager.
+
+AWS::SecretsManager::ResourcePolicy
+
+    Use the AWS::SecretsManager::ResourcePolicy resource to define a
+    resource-based policy and attach it to a secret that's stored in
+    Secrets Manager.
+
+AWS::SecretsManager::RotationSchedule
+
+    Use the AWS::SecretsManager::RotationSchedule resource to configure
+    rotation for a secret.
+
+AWS::SecretsManager::Secret
+
+    Use the AWS::SecretsManager::Secret resource to create a secret and
+    stores it in Secrets Manager.
+
+AWS::SecretsManager::SecretTargetAttachment
+
+    Use the AWS::SecretsManager::SecretTargetAttachment resource to
+    complete the final link between a Secrets Manager secret and its
+    associated database.
+
+November 9, 2018
+
+Updated resource
+
+The following resource was updated: AWS::SSM:MaintenanceWindow.
+
+AWS::SSM::MaintenanceWindow
+
+    Use the StartDate and StartDate property types to specify when you want
+    the Maintenance Window to become active or inactive. Use the 
+    ScheduleTimezone property type to specify the time zone to base
+    scheduled Maintenance Window executions on, in Internet Assigned
+    Numbers Authority (IANA) format.
+
+November 1, 2018
+
+Updated resources
+
+The following resources were updated: AWS::AppSync::DataSource, 
+AWS::AppSync::Resolver, AWS::AutoScalingPlans::ScalingPlan, 
+AWS::Batch::JobDefinition, AWS::Batch::ComputeEnvironment, 
+AWS::CloudWatch::Alarm, AWS::IoT1Click::Placement, and 
+AWS::IoT1Click::Project.
+
+AWS::AppSync::DataSource
+
+    Use the RelationalDatabaseConfig property type to specify
+    RelationalDatabaseConfig for an AWS AppSync data source.
+
+    In the HttpConfig property type, use the AuthorizationConfig property
+    to specify the authorization type and configurations for an AWS AppSync
+    http data source.
+
+AWS::AppSync::Resolver
+
+    Use the PipelineConfig property type to specify PipelineConfig for an
+    AWS AppSync data source to connect with functions.
+
+AWS::AutoScalingPlans::ScalingPlan
+
+    Use the ScalingInstruction property type to configure predictive
+    scaling as part of the scaling configuration for an Amazon EC2 Auto
+    Scaling group in an AWS Auto Scaling scaling plan.
+
+    Use the PredefinedLoadMetricSpecification property type to specify a
+    predefined load metric for predictive scaling to use with AWS Auto
+    Scaling.
+
+    Use the CustomizedLoadMetricSpecification property type to specify a
+    customized load metric for predictive scaling to use with AWS Auto
+    Scaling.
+
+AWS::Batch::JobDefinition
+
+    The AWS::Batch::JobDefinition resource was updated to support AWS Batch
+    multi-node parallel jobs.
+
+AWS::Batch::ComputeEnvironment
+
+    The AWS::Batch::ComputeEnvironment resource was updated to support
+    Amazon EC2 launch templates and placement groups.
+
+AWS::CloudWatch::Alarm
+
+    Use the Metrics property to specify the metric data to return.
+
+    The MetricName, Namespace, and Period properties are now optional.
+
+AWS::IoT1Click::Placement
+
+    The PlacementName property is now optional.
+
+AWS::IoT1Click::Project
+
+    The ProjectName property is now optional.
+
+October 25, 2018
+
+New resources
+
+The following resources were added: AWS::AppStream::DirectoryConfig, 
+AWS::AppStream::Fleet, AWS::AppStream::ImageBuilder, AWS::AppStream::Stack, 
+AWS::AppStream::StackFleetAssociation, 
+AWS::AppStream::StackUserAssociation, AWS::AppStream::User.
+
+AWS::AppStream::DirectoryConfig
+
+    Use the AWS::AppStream::DirectoryConfig resource to describe the
+    configuration information required to join Amazon AppStream 2.0 fleets
+    and image builders to Microsoft Active Directory domains.
+
+AWS::AppStream::Fleet
+
+    Use the AWS::AppStream::Fleet resource to create a fleet for Amazon
+    AppStream 2.0. A fleet consists of streaming instances that run a
+    specified image.
+
+AWS::AppStream::ImageBuilder
+
+    Use the AWS::AppStream::ImageBuilder resource to create an image
+    builder for Amazon AppStream 2.0.
+
+AWS::AppStream::Stack
+
+    Use the AWS::AppStream::Stack resource to create a stack to start
+    streaming applications to Amazon AppStream 2.0 users.
+
+AWS::AppStream::StackFleetAssociation
+
+    Use the AWS::AppStream::StackFleetAssociation resource to associate a
+    fleet with a stack for Amazon AppStream 2.0.
+
+AWS::AppStream::StackUserAssociation
+
+    Use the AWS::AppStream::StackUserAssociation resource to associate the
+    specified stacks with the specified users for Amazon AppStream 2.0.
+    Users in a user pool cannot be assigned to stacks with fleets that are
+    joined to an Active Directory domain.
+
+AWS::AppStream::User
+
+    Use the AWS::AppStream::User resource to create a new user in the user
+    pool for Amazon AppStream 2.0.
+
+October 25, 2018
+
+Updated resource
+
+Updated the following resources: AWS::AmazonMQ::Broker, 
+AWS::GuardDuty::Detector, and AWS::SSM::PatchBaseline.
+
+AWS::AmazonMQ::Broker
+
+    Amazon MQ now supports engine versions 5.15.6 and 5.15.0. Property
+    changes include:
+
+        * The EngineVersion property now requires some interruptions upon
+          update.
+
+        * The AutoMinorVersionUpgrade property now requires no interruption
+          upon update.
+
+AWS::GuardDuty::Detector
+
+    Use the FindingPublishingFrequency property to specify the frequency of
+    notifications sent about the subsequent finding occurrences.
+
+AWS::SSM::PatchBaseline
+
+    Use the PatchSource property type to provide information about the
+    patches to use to update target instances.
+
+October 18, 2018
+
+New resource
+
+Added the AWS::Events::EventBusPolicy resource.
+
+AWS::Events::EventBusPolicy
+
+    Use the AWS::Events::EventBusPolicy resource to grant permission to
+    other AWS accounts that send events to your account.
+
+October 18, 2018
 
 UseOnlineResharding update policy now available.
 
@@ -1277,7 +1124,7 @@ AWS::ApiGateway::Deployment
     Use the DeploymentCanarySettings property to specify settings for the
     canary deployment.
 
-    In the API Gateway Deployment StageDescription property type:
+    In the StageDescription property type:
 
         * Use the AccessLogSetting property to specify settings for logging
           access in this stage.
@@ -1290,7 +1137,7 @@ AWS::ApiGateway::Method
     Use the AuthorizationScopes property to specify a list of authorization
     scopes configured on the method.
 
-    In the API Gateway Method Integration:
+    In the Integration:
 
         * Use the ConnectionId property to specify the ID of the VpcLink
           used for the integration when connectionType=VPC_LINK.
@@ -1388,7 +1235,7 @@ AWS::ECS::Service
     Use the SchedulingStrategy property to specify the scheduling strategy
     to use for the service.
 
-    In the Amazon ECS Service ServiceRegistry property type:
+    In the ServiceRegistry property type:
 
         * Use the ContainerName property to specify the container name
           value, already specified in the task definition, to be used for
@@ -1400,7 +1247,7 @@ AWS::ECS::Service
 
 AWS::ECS::TaskDefinition
 
-    In the Amazon ECS TaskDefinition LinuxParameters property type:
+    In the LinuxParameters property type:
 
         * Use the Tmpfs property to specify the container path, mount
           options, and size of the tmpfs mount.
@@ -1408,23 +1255,22 @@ AWS::ECS::TaskDefinition
         * Use the SharedMemorySize property to specify the size (in MiB) of
           the /dev/shm volume.
 
-    In the Amazon ECS TaskDefinition Volumes property type, use the 
-    DockerVolumeConfiguration property to specify the configuration of a
-    Docker volume.
+    In the Volumes property type, use the DockerVolumeConfiguration 
+    property to specify the configuration of a Docker volume.
 
-    In the Amazon ECS TaskDefinition ContainerDefinition property type, use
-    the RepositoryCredentials property to specify the repository
-    credentials for private registry authentication.
+    In the ContainerDefinition property type, use the 
+    RepositoryCredentials property to specify the repository credentials
+    for private registry authentication.
 
 AWS::ElastiCache::ReplicationGroup
 
     The NodeGroupConfiguration and NumNodeGroups properties are now
     conditional for some update operations.
 
-    In the ElastiCache ReplicationGroup NodeGroupConfiguration property
-    type, use the NodeGroupId property to specify either the ElastiCache
-    for Redis supplied 4-digit id or a user supplied id for the node group
-    these configuration values apply to.
+    In the NodeGroupConfiguration property type, use the NodeGroupId 
+    property to specify either the ElastiCache for Redis supplied 4-digit
+    id or a user supplied id for the node group these configuration values
+    apply to.
 
 AWS::RDS::DBCluster
 
@@ -1538,7 +1384,7 @@ other services, including Systems Manager Parameter Store SecureString type
 parameters, in your stack templates.
 
 For more information, see Using Dynamic References to Specify Template 
-ValuesSpecifying Dynamic References in Stack Templates.
+Values.
 
 August 16, 2018
 
@@ -1814,7 +1660,7 @@ June 14, 2018
 
 New resource
 
-The following resource was released: : AWS::SSM::ResourceDataSync.
+The following resource was released: AWS::SSM::ResourceDataSync.
 
 AWS::SSM::ResourceDataSync
 
@@ -2386,9 +2232,8 @@ AWS::ApplicationAutoScaling::ScalingPolicy
 
 AWS::EC2::SpotFleet
 
-    In the Amazon EC2 SpotFleet LaunchSpecifications property type, use the 
-    TagSpecifications property to specify the tags to apply during
-    SpotFleet creation.
+    In the LaunchSpecifications property type, use the TagSpecifications 
+    property to specify the tags to apply during SpotFleet creation.
 
 AWS::Elasticsearch::Domain
 
@@ -2414,9 +2259,9 @@ AWS::Redshift::Cluster
 
 AWS::Route53::HealthCheck
 
-    In the Route 53 HealthCheck HealthCheckConfig property type, use the 
-    Regions property to specify the regions from which you want Route 53
-    health checkers to check the specified endpoint.
+    In the HealthCheckConfig property type, use the Regions property to
+    specify the regions from which you want Route 53 health checkers to
+    check the specified endpoint.
 
 AWS::SSM::Document
 
@@ -2724,7 +2569,7 @@ November 28, 2017
 AWS::CodeDeploy::Application
 
     Use the ComputePlatform property to specify an AWS Lambda compute
-    platform for AWS CodeDeploy to deploy an application to.
+    platform for CodeDeploy to deploy an application to.
 
 AWS::CodeDeploy::DeploymentGroup
 
@@ -2748,9 +2593,9 @@ New CodeDeployLambdaAliasUpdate update policy
 
 November 28, 2017
 
-Use the CodeDeployLambdaAliasUpdate update policy to perform an AWS 
-CodeDeploy deployment when the version changes on an AWS::Lambda::Alias 
-resource. For more information, see UpdatePolicy.
+Use the CodeDeployLambdaAliasUpdate update policy to perform an CodeDeploy 
+deployment when the version changes on an AWS::Lambda::Alias resource. For 
+more information, see UpdatePolicy Attribute.
 
 2010-05-15
 
@@ -3187,7 +3032,7 @@ AWS::S3::Bucket
 Termination protection added for stacks. 	September 26, 2017 	
 
 Enabling termination protection on a stack prevents it from being 
-accidently deleted. A user cannot delete a stack with termination 
+accidentally deleted. A user cannot delete a stack with termination 
 protection enabled. For more information, see Protecting a Stack From Being 
 Deleted.
 
@@ -3422,12 +3267,12 @@ following resources:
 
 2010-05-15
 
-Support for stack tags in AWS CodePipeline artifacts
+Support for stack tags in CodePipeline artifacts
 
 August 18, 2017
 
 You can now specify tags for stacks in template configuration files for use 
-as artifacts for AWS CodePipeline pipelines. Specified tags are applied to 
+as artifacts for CodePipeline pipelines. Specified tags are applied to 
 stacks created using the template configuration file. For more information, 
 see AWS CloudFormation Artifacts.
 
@@ -3752,7 +3597,7 @@ New resources
 May 11, 2017
 
 The following new resources support using AWS WAF with Elastic Load 
-Balancing (ELB) Application load balancers.
+Balancing (ELB) Application Load Balancers.
 
 AWS::WAFRegional::ByteMatchSet
 
@@ -4295,7 +4140,7 @@ November 03, 2016
 
 Use AWS CodePipeline to build continuous delivery workflows with AWS 
 CloudFormation stacks. For more information, see Continuous Delivery with 
-AWS CodePipeline.
+CodePipeline.
 
 2010-05-15
 
@@ -4350,8 +4195,8 @@ AWS::ApiGateway::UsagePlan
 
 AWS::CodeCommit::Repository
 
-    Use the AWS::CodeCommit::Repository resource to create an AWS
-    CodeCommit repository that is hosted by Amazon Web Services.
+    Use the AWS::CodeCommit::Repository resource to create an CodeCommit
+    repository that is hosted by Amazon Web Services.
 
 2010-05-15
 
@@ -4480,7 +4325,7 @@ New resources
 
 August 11, 2016
 
-Use the following Elastic Load Balancing Application load balancer 
+Use the following Elastic Load Balancing Application Load Balancer 
 resources to distribute incoming application traffic to multiple targets, 
 such as EC2 instances, in multiple Availability Zones:
 
@@ -4501,13 +4346,13 @@ August 11, 2016
 AWS::AutoScaling::AutoScalingGroup
 
     Use the TargetGroupARNs property to associate the Auto Scaling group
-    with one or more Application load balancer target groups.
+    with one or more Application Load Balancer target groups.
 
 AWS::ECS::Service
 
     For the load LoadBalancers property, use the TargetGroupArn property to
     associate an Amazon Elastic Container Service service with an
-    Application load balancer target group.
+    Application Load Balancer target group.
 
 2010-05-15
 
@@ -4608,7 +4453,7 @@ contains are replaced when you update the Auto Scaling group. During a
 replacement, AWS CloudFormation retains the old Auto Scaling group until it 
 creates the new one successfully so that AWS CloudFormation can roll back 
 to the old Auto Scaling group if the update fails. For more information, 
-see UpdatePolicy.
+see UpdatePolicy Attribute.
 
 2010-05-15
 
@@ -4976,8 +4821,8 @@ AWS CloudFormation added the following resources:
 
 AWS::CodePipeline::Pipeline and AWS::CodePipeline::CustomActionType
 
-    Use the AWS CodePipeline resources to create a pipeline that describes
-    how software changes go through a release process.
+    Use the CodePipeline resources to create a pipeline that describes how
+    software changes go through a release process.
 
 AWS::Config::ConfigurationRecorder, AWS::Config::DeliveryChannel, and 
 AWS::Config::ConfigRule
@@ -5024,7 +4869,7 @@ AWS::CodeDeploy::Application, AWS::CodeDeploy::DeploymentConfig, and
 AWS::CodeDeploy::DeploymentGroup
 
     Use the ApplicationName, DeploymentConfigName, and DeploymentGroupName 
-    properties to specify custom names for AWS CodeDeploy resources.
+    properties to specify custom names for CodeDeploy resources.
 
 AWS::DynamoDB::Table
 
@@ -5073,8 +4918,8 @@ AWS CloudFormation added the following resources:
 AWS::CodeDeploy::Application, AWS::CodeDeploy::DeploymentGroup, and 
 AWS::CodeDeploy::DeploymentConfig
 
-    Use the AWS CodeDeploy resources to create and apply deployments to EC2
-    or on-premises instances.
+    Use the CodeDeploy resources to create and apply deployments to EC2 or
+    on-premises instances.
 
 AWS::DirectoryService::SimpleAD
 
@@ -5493,7 +5338,7 @@ November 6, 2014
 During an update, you can use the WaitOnResourceSignals flag to instruct 
 AWS CloudFormation to wait for instances to signal success. That way, AWS 
 CloudFormation won't update the next batch of instances until the current 
-batch is ready. For more information, see UpdatePolicy.
+batch is ready. For more information, see UpdatePolicy Attribute.
 
 2010-05-15
 
@@ -5581,7 +5426,8 @@ UpdatePolicy attribute update
 September 05, 2014
 
 You can specify an update policy for an Auto Scaling group that has an 
-associated scheduled action. For more information, see UpdatePolicy.
+associated scheduled action. For more information, see UpdatePolicy 
+Attribute.
 
 2010-05-15
 
@@ -5888,7 +5734,7 @@ Cross-zone load balancing
 December 19, 2013
 
 With cross-zone load balancing, you can route traffic to back-end instances 
-across all Avalibility Zones (AZs). For more information, see 
+across all Availability Zones (AZs). For more information, see 
 AWS::ElasticLoadBalancing::LoadBalancer.
 
 2010-05-15
@@ -6107,7 +5953,7 @@ are replaced or modified when the Amazon EC2 Auto Scaling group adds or
 removes instances. You can modify these settings at stack creation or 
 during a stack update.
 
-For more information and an example, see UpdatePolicy.
+For more information and an example, see UpdatePolicy Attribute.
 
 2010-05-15
 
@@ -6153,9 +5999,9 @@ to set block device mappings for your EC2 instance.
 
 With this change, two new types have been added:
 
-    * Amazon EC2 Block Device Mapping Property
+    * Amazon EC2 BlockDeviceMapping
 
-    * Amazon Elastic Block Store Block Device Property
+    * Amazon Elastic Block Store Block Device
 
 2010-05-15
 
@@ -6441,7 +6287,7 @@ This is the initial public release of AWS CloudFormation.
 
 Document Conventions
 « Previous Next »
-© 2018, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+© 2019, Amazon Web Services, Inc. or its affiliates. All rights reserved.
 
 On this page:
 
@@ -6449,7 +6295,7 @@ On this page:
 We use cookies to provide and improve our services. By using our site, you 
 consent to cookies. Learn more <http://aws.amazon.com/legal/cookies>
 Terms of Use <http://aws.amazon.com/terms> | Privacy
-<http://aws.amazon.com/privacy> | © 2018, Amazon Web Services, Inc. or its 
+<http://aws.amazon.com/privacy> | © 2019, Amazon Web Services, Inc. or its 
 affiliates. All rights reserved.
 Have a question? Try the Forums.
 <http://forums.aws.amazon.com/forum.jspa?forumID=92>
