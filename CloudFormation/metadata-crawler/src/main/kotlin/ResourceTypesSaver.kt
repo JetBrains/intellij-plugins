@@ -1,5 +1,6 @@
 @file:Suppress("LoopToCallChain", "Destructure")
 
+import com.google.gson.JsonParser
 import com.intellij.aws.cloudformation.CloudFormationConstants
 import com.intellij.aws.cloudformation.metadata.CloudFormationLimits
 import com.intellij.aws.cloudformation.metadata.CloudFormationManualResourceType
@@ -7,23 +8,22 @@ import com.intellij.aws.cloudformation.metadata.CloudFormationMetadata
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceTypesDescription
 import com.intellij.aws.cloudformation.metadata.MetadataSerializer
 import com.intellij.aws.cloudformation.metadata.awsServerless20161031ResourceTypes
-import org.apache.commons.io.IOUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Exception
 import java.net.URL
 import java.util.ArrayList
 import java.util.TreeMap
-import java.util.regex.Pattern
+import java.util.zip.GZIPInputStream
 
 object ResourceTypesSaver {
-  private val RESOURCE_TYPE_PATTERN = Pattern.compile("<li><a href=\"([^\"]+)\">(AWS::[^<]+)</a></li>")
   private val FETCH_TIMEOUT_MS = 10000
 
-  fun CloudFormationManualResourceType.toResourceTypeBuilder(): ResourceTypeBuilder {
+  private fun CloudFormationManualResourceType.toResourceTypeBuilder(): ResourceTypeBuilder {
     val builder = ResourceTypeBuilder(name, url)
     builder.description = description
     builder.transform = CloudFormationConstants.awsServerless20161031TransformName
@@ -56,15 +56,29 @@ object ResourceTypesSaver {
     val predefinedParameters = fetchPredefinedParameters()
 
     val resourceTypes = resourceTypeLocations.pmap(numThreads = 10) {
-      val builder = ResourceTypeBuilder(it.name, it.location)
-      fetchResourceType(builder)
+      val location = when (it.name) {
+        "AWS::CloudWatch::Dashboard" -> "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-dashboard.html"
+        "AWS::DMS::ReplicationSubnetGroup" -> "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dms-replicationsubnet-group.html"
+        "AWS::ElasticBeanstalk::ConfigurationTemplate" -> "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-beanstalk-configurationtemplate.html"
+        else -> it.location
+      }
 
-      // Check everything is set
-      builder.toResourceType()
-      builder.toResourceTypeDescription()
+      // No documentation on site
+      if (it.name == "AWS::EC2::TrunkInterfaceAssociation") return@pmap null
 
-      builder
-    }
+      try {
+        val builder = ResourceTypeBuilder(name = it.name, url = location)
+        fetchResourceType(builder)
+
+        // Check everything is set
+        builder.toResourceType()
+        builder.toResourceTypeDescription()
+
+        builder
+      } catch (e: Throwable) {
+        throw Exception("Unable to parse resource type ${it.name} from $location: ${e.message}", e)
+      }
+    }.filterNotNull()
 
     fetchResourceAttributes(resourceTypes)
 
@@ -125,7 +139,8 @@ object ResourceTypesSaver {
       }
 
       fun addAttribute(_resourceTypeName: String, _attribute: String, _description: String) {
-        val builder = resourceTypes.single { it.name == _resourceTypeName }
+        val builder = resourceTypes.singleOrNull { it.name == _resourceTypeName }
+            ?: error("Can't find resource type $_resourceTypeName")
         builder.addAttribute(_attribute).description = _description
       }
 
@@ -318,7 +333,8 @@ object ResourceTypesSaver {
                 // Most likely a documentation bug, this property was introduced later
                 false
               } else if (requiredValue != null) {
-                if (requiredValue.equals("Yes", ignoreCase = true)) {
+                if (requiredValue.equals("Yes", ignoreCase = true) ||
+                    requiredValue.equals("true", ignoreCase = true)) {
                   true
                 } else if (
                     requiredValue.startsWith("No", ignoreCase = true) ||
@@ -341,6 +357,7 @@ object ResourceTypesSaver {
                 // TODO
                 if (builder.name != "AWS::RDS::DBParameterGroup" &&
                     builder.name != "AWS::Route53::RecordSet" &&
+                    builder.name != "AWS::EC2::EC2Fleet" &&
                     builder.name != "AWS::RDS::DBSecurityGroupIngress") {
                   throw RuntimeException("Required is not found in property $name in ${builder.url}")
                 }
@@ -431,24 +448,43 @@ object ResourceTypesSaver {
 
   private data class ResourceTypeLocation(val name: String, val location: String)
 
-  private fun fetchResourceTypeLocations(): List<ResourceTypeLocation> {
-    val url = URL("https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html")
-    val content = IOUtils.toString(url)
-
-    val result: MutableList<ResourceTypeLocation> = ArrayList()
-
-    val matcher = RESOURCE_TYPE_PATTERN.matcher(content)
-    while (matcher.find()) {
-      val href = matcher.group(1)
-      val name = matcher.group(2)
-      if ("AWS::CloudFormation::Init" == name) {
-        continue
-      }
-
-      result.add(ResourceTypeLocation(name.replace(Regex("\\s"), "").trim(), URL(url, href.trim()).toExternalForm()))
+  private fun fetchResourceTypeLocations(url: String): Map<String, ResourceTypeLocation> {
+    val content = URL(url).openStream().use { stream ->
+      GZIPInputStream(stream).bufferedReader().readText()
     }
 
-    return result.sortedBy { it.name }
+    val root = JsonParser().parse(content)
+
+    val resourceTypes = root.asJsonObject["ResourceTypes"].asJsonObject
+
+    return resourceTypes.entrySet()
+        .mapNotNull { (key, resourceTypeJson) ->
+          val documentationElement = resourceTypeJson.asJsonObject["Documentation"]
+          if (documentationElement == null) {
+            return@mapNotNull null
+          } else {
+            key to ResourceTypeLocation(
+                name = key,
+                location = documentationElement.asString.replace("http://", "https://")
+            )
+          }
+        }
+        .toMap()
+  }
+
+  private fun fetchResourceTypeLocations(): List<ResourceTypeLocation> {
+    // from https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-resource-specification.html
+    val urls = listOf(
+        "https://d1mta8qj7i28i2.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json", // EU (Frankfurt)
+        "https://d3teyb21fexa9r.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json", // EU (Ireland)
+        "https://d68hl49wbnanq.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json", // US West (N. California)
+        "https://d201a2mn26r7lk.cloudfront.net/latest/gzip/CloudFormationResourceSpecification.json" //  US West (Oregon)
+    )
+
+    return urls.map { fetchResourceTypeLocations(it) }
+        .fold(mapOf<String, ResourceTypeLocation>()) { acc, map -> acc + map }
+        .map { it.value }
+        .sortedBy { it.name }
   }
 
   private fun fetchPredefinedParameters(): List<String> {
@@ -468,9 +504,9 @@ object ResourceTypesSaver {
     val limits = table.filter { it.size == 4 }.map { it[0] to it[2] }.toMap()
 
     return CloudFormationLimits(
-        maxMappings = Integer.parseInt(limits["Mappings"]!!.replace(" mappings", "")),
-        maxParameters = Integer.parseInt(limits["Parameters"]!!.replace(" parameters", "")),
-        maxOutputs = Integer.parseInt(limits["Outputs"]!!.replace(" outputs", ""))
+        maxMappings = Integer.parseInt(limits.getValue("Mappings").replace(" mappings", "")),
+        maxParameters = Integer.parseInt(limits.getValue("Parameters").replace(" parameters", "")),
+        maxOutputs = Integer.parseInt(limits.getValue("Outputs").replace(" outputs", ""))
     )
   }
 }
