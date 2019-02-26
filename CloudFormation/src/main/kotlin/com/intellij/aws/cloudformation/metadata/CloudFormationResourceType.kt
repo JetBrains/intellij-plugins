@@ -20,5 +20,6 @@ data class CloudFormationResourceType(
     }
 
     fun isCloudFormationStack(value: String): Boolean = value == "AWS::CloudFormation::Stack"
+    fun isServerlessApplication(value: String): Boolean = value == "AWS::Serverless::Application"
   }
 }

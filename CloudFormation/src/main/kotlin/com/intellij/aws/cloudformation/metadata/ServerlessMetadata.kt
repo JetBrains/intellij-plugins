@@ -32,7 +32,8 @@ val awsServerlessFunction = CloudFormationManualResourceType(
     properties = listOf(
         CloudFormationManualResourceProperty(name = "Handler", type = "string", description = "Function within your code that is called to begin execution", required = true),
         CloudFormationManualResourceProperty(name = "Runtime", type = "string", description = "The runtime environment", required = true),
-        CloudFormationManualResourceProperty(name = "CodeUri", type = "string | S3 Location Object", description = "S3 Uri or location to the function code. The S3 object this Uri references MUST be a Lambda deployment package.", required = true),
+        CloudFormationManualResourceProperty(name = "CodeUri", type = "string | S3 Location Object", description = "S3 Uri or location to the function code. The S3 object this Uri references MUST be a Lambda deployment package. Either CodeUri or InlineCode must be specified.", required = false),
+        CloudFormationManualResourceProperty(name = "InlineCode", type = "string", description = "The inline code for the lambda. Either CodeUri or InlineCode must be specified.", required = false),
         CloudFormationManualResourceProperty(name = "FunctionName", type = "string", description = "A name for the function. If you don't specify a name, a unique name will be generated for you. More Info", excludedFromGlobals = true),
         CloudFormationManualResourceProperty(name = "Description", type = "string", description = "Description of the function."),
         CloudFormationManualResourceProperty(name = "MemorySize", type = "integer", description = "Size of the memory allocated per invocation of the function in MB. Defaults to 128."),
@@ -47,6 +48,7 @@ val awsServerlessFunction = CloudFormationManualResourceType(
         CloudFormationManualResourceProperty(name = "KmsKeyArn", type = "string", description = "The Amazon Resource Name (ARN) of an AWS Key Management Service (AWS KMS) key that Lambda uses to encrypt and decrypt your function's environment variables."),
         CloudFormationManualResourceProperty(name = "DeadLetterQueue", type = "map | DeadLetterQueue Object", description = "Configures SNS topic or SQS queue where Lambda sends events that it can't process."),
         CloudFormationManualResourceProperty(name = "DeploymentPreference", type = "DeploymentPreference Object", description = "Settings to enable Safe Lambda Deployments. Read the usage guide for detailed information."),
+        CloudFormationManualResourceProperty(name = "Layers", type = "list of string", description = "List of LayerVersion ARNs that should be used by this function. The order specified here is the order that they will be imported when running the Lambda function."),
         CloudFormationManualResourceProperty(name = "AutoPublishAlias", type = "string", description = "Name of the Alias. Read AutoPublishAlias Guide for how it works"),
         CloudFormationManualResourceProperty(name = "ReservedConcurrentExecutions", type = "integer", description = "The maximum of concurrent executions you want to reserve for the function. For more information see AWS Documentation on managing concurrency", excludedFromGlobals = true)
     ),
@@ -70,7 +72,35 @@ val awsServerlessApi = CloudFormationManualResourceType(
         CloudFormationManualResourceProperty(name = "MethodSettings", type = "CloudFormation MethodSettings property", description = "Configures all settings for API stage including Logging, Metrics, CacheTTL, Throttling. This value is passed through to CloudFormation. So any values supported by CloudFormation MethodSettings property can be used here."),
         CloudFormationManualResourceProperty(name = "EndpointConfiguration", type = "string", description = "string\tSpecify the type of endpoint for API endpoint. Value is either REGIONAL or EDGE."),
         CloudFormationManualResourceProperty(name = "BinaryMediaTypes", type = "List of string", description = "List of MIME types that your API could return. Use this to enable binary support for APIs. Use ~1 instead of / in the mime types (See examples in template.yaml)."),
-        CloudFormationManualResourceProperty(name = "Cors", type = "string or Cors Configuration", description = "Enable CORS for all your APIs. Specify the domain to allow as a string or specify a dictionary with additional Cors Configuration. NOTE: Cors requires SAM to modify your Swagger definition. Hence it works only inline swagger defined with DefinitionBody.")
+        CloudFormationManualResourceProperty(name = "Cors", type = "string or Cors Configuration", description = "Enable CORS for all your APIs. Specify the domain to allow as a string or specify a dictionary with additional Cors Configuration. NOTE: Cors requires SAM to modify your Swagger definition. Hence it works only inline swagger defined with DefinitionBody."),
+        CloudFormationManualResourceProperty(name = "Auth", type = "API Auth Object", description = "Auth configuration for this API. Define Lambda and Cognito Authorizers and specify a DefaultAuthorizer for this API.")
+    )
+)
+
+val awsServerlessApplication = CloudFormationManualResourceType(
+    name = "AWS::Serverless::Application",
+    url = "https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessapplication",
+    description = "Embeds a serverless application from the AWS Serverless Application Repository or from an Amazon S3 bucket as a nested application. Nested applications are deployed as nested stacks, which can contain multiple other resources, including other AWS::Serverless::Application resources.",
+    properties = listOf(
+        CloudFormationManualResourceProperty(name = "Location", type = "string or Application Location Object", description = "string or Application Location Object", required = true, excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "Parameters", type = "Map of string to string", description = "Application parameter values.", excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "NotificationArns", type = "List of string", description = "A list of existing Amazon SNS topics where notifications about stack events are sent.", excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "Tags", type = "Map of string to string", description = "A map (string to string) that specifies the tags to be added to this application. When the stack is created, SAM will automatically add the following tags: lambda:createdBy:SAM, serverlessrepo:applicationId:<applicationId>, serverlessrepo:semanticVersion:<semanticVersion>.", excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "TimeoutInMinutes", type = "integer", description = "The length of time, in minutes, that AWS CloudFormation waits for the nested stack to reach the CREATE_COMPLETE state. The default is no timeout. When AWS CloudFormation detects that the nested stack has reached the CREATE_COMPLETE state, it marks the nested stack resource as CREATE_COMPLETE in the parent stack and resumes creating the parent stack. If the timeout period expires before the nested stack reaches CREATE_COMPLETE, AWS CloudFormation marks the nested stack as failed and rolls back both the nested stack and parent stack.", excludedFromGlobals = true)
+    )
+)
+
+val awsServerlessLayerVersion = CloudFormationManualResourceType(
+    name = "AWS::Serverless::LayerVersion",
+    url = "https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlesslayerversion",
+    description = "Creates a Lambda LayerVersion that contains library or runtime code needed by a Lambda Function. When a Serverless LayerVersion is transformed, SAM also transforms the logical id of the resource so that old LayerVersions are not automatically deleted by CloudFormation when the resource is updated.",
+    properties = listOf(
+        CloudFormationManualResourceProperty(name = "LayerName", type = "string", description = "Name of this layer. If you don't specify a name, the logical id of the resource will be used as the name.", excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "Description", type = "string", description = "Description of this layer.", excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "ContentUri", type = "\tstring | S3 Location Object", description = "S3 Uri or location for the layer code.", required = true, excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "CompatibleRuntimes", type = "List of string", description = "List of runtimes compatible with this LayerVersion.", excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "LicenseInfo", type = "string", description = "Information about the license for this LayerVersion.", excludedFromGlobals = true),
+        CloudFormationManualResourceProperty(name = "RetentionPolicy", type = "string", description = "\tOptions are Retain and Delete. Defaults to Retain. When Retain is set, SAM adds DeletionPolicy: Retain to the transformed resource so CloudFormation does not delete old versions after an update.", excludedFromGlobals = true)
     )
 )
 
@@ -87,4 +117,4 @@ val awsServerlessSimpleTable = CloudFormationManualResourceType(
     )
 )
 
-val awsServerless20161031ResourceTypes = listOf(awsServerlessFunction, awsServerlessApi, awsServerlessSimpleTable)
+val awsServerless20161031ResourceTypes = listOf(awsServerlessFunction, awsServerlessApi, awsServerlessApplication, awsServerlessSimpleTable, awsServerlessLayerVersion)

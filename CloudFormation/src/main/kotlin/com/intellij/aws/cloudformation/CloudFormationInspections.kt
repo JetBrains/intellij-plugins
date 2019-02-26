@@ -222,6 +222,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
               if (typeName != null &&
                   !CloudFormationResourceType.isCustomResourceType(typeName) &&
                   !(CloudFormationResourceType.isCloudFormationStack(typeName) && attributeName.startsWith("Outputs.")) &&
+                  !(CloudFormationResourceType.isServerlessApplication(typeName) && attributeName.startsWith("Outputs.")) &&
                   CloudFormationMetadataProvider.METADATA.findResourceType(typeName, parsed.root) != null) {
                 if (!resource.getAttributes(parsed.root).containsKey(attributeName)) {
                   addProblem(

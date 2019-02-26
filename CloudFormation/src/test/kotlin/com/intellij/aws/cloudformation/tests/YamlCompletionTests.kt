@@ -41,11 +41,11 @@ class YamlCompletionTests : LightCodeInsightFixtureTestCase() {
   fun testParameterType3() = checkBasicCompletion("parameter_type_3.yaml")
 
   fun testServerless1() = checkBasicCompletion("serverless_1.yaml",
-      "AutoPublishAlias", "CodeUri", "DeadLetterQueue", "DeploymentPreference", "Description",
+      "AutoPublishAlias", "CodeUri", "DeadLetterQueue", "DeploymentPreference", "InlineCode", "Description",
       "Environment", "Events", "FunctionName", "KmsKeyArn", "MemorySize",
-      "Policies", "ReservedConcurrentExecutions", "Role", "Tags", "Timeout", "Tracing", "VpcConfig")
+      "Policies", "ReservedConcurrentExecutions", "Role", "Layers", "Tags", "Timeout", "Tracing", "VpcConfig")
   fun testServerless2() = checkBasicCompletion("serverless_2.yaml",
-      "AWS::Serverless::Api", "AWS::Serverless::Function", "AWS::Serverless::SimpleTable")
+      "AWS::Serverless::Api", "AWS::Serverless::Function", "AWS::Serverless::SimpleTable", "AWS::Serverless::Application", "AWS::Serverless::LayerVersion")
   fun testServerless3() = checkBasicCompletion("serverless_3.yaml")
 
   private fun checkBasicCompletion(fileName: String, vararg expectedElements: String) {
