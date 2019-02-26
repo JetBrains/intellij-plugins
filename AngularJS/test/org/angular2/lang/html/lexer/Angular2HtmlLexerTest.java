@@ -137,7 +137,9 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
   }
 
   public void testExpansionFormComplex() {
-    doTest("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}");
+    doTest("<div>Text{ form, open, =23 {{{{foo: 12} }} is {inner, open, =34{{{\"test\"}} cool } =12{<tag test='12'></tag>}}}}}} {}",
+           // TODO improve state handling when nesting expansion forms
+           false);
   }
 
   public void testScriptSrc() {
@@ -166,7 +168,9 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "onload=\"console.log(1)\" (load)='console.log(1)'>\n" +
            "  console.log(2)\n" +
            "</script>\n" +
-           "<div></div>");
+           "<div></div>",
+           // TODO improve JS embedded lexer
+           false);
   }
 
   public void testStyleTag() {
@@ -174,7 +178,9 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "  div {\n" +
            "  }\n" +
            "</style>\n" +
-           "<div></div>");
+           "<div></div>",
+           // TODO improve CSS lexer to have less states
+           false);
   }
 
   public void testStyleAngularAttr() {
@@ -182,7 +188,9 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "  div {\n" +
            "  }\n" +
            "</style>\n" +
-           "<div></div>");
+           "<div></div>",
+           // TODO improve CSS lexer to have less states
+           false);
   }
 
   public void testStyleWithEventAndAngularAttr() {
@@ -190,13 +198,24 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "  div {\n" +
            "  }\n" +
            "</style>\n" +
-           "<div></div>");
+           "<div></div>",
+           // TODO improve CSS lexer to have less states
+           false);
   }
 
   @Override
   protected void doTest(@NonNls String text) {
+    doTest(text, true);
+  }
+
+  protected void doTest(@NonNls String text, boolean checkRestartOnEveryToken) {
     super.doTest(text);
-    checkCorrectRestart(text);
+    if (checkRestartOnEveryToken) {
+      checkCorrectRestartOnEveryToken(text);
+    }
+    else {
+      checkCorrectRestart(text);
+    }
   }
 
   @Override
