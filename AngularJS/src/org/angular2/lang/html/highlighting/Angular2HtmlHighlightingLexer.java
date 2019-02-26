@@ -15,10 +15,13 @@ import org.angular2.lang.html.lexer._Angular2HtmlLexer;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 
+import static com.intellij.lang.javascript.JSTokenTypes.STRING_LITERAL;
+import static com.intellij.lang.javascript.JSTokenTypes.STRING_LITERAL_PART;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.INTERPOLATION_EXPR;
 import static org.angular2.lang.html.lexer.Angular2HtmlLexer.Angular2HtmlMergingLexer.*;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
@@ -30,9 +33,12 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
                                                                                     Angular2AttributeType.PROPERTY_BINDING,
                                                                                     Angular2AttributeType.TEMPLATE_BINDINGS);
 
-  @NonNls static final IElementType EXPRESSION_WHITE_SPACE = new IElementType("NG:EXPRESSION_WHITE_SPACE", Angular2Language.INSTANCE);
-  @NonNls static final IElementType EXPANSION_FORM_CONTENT = new IElementType("NG:EXPANSION_FORM_CONTENT", Angular2HtmlLanguage.INSTANCE);
-  @NonNls static final IElementType EXPANSION_FORM_COMMA = new IElementType("NG:EXPANSION_FORM_COMMA", Angular2HtmlLanguage.INSTANCE);
+  @NonNls public static final IElementType EXPRESSION_WHITE_SPACE =
+    new IElementType("NG:EXPRESSION_WHITE_SPACE", Angular2Language.INSTANCE);
+  @NonNls public static final IElementType EXPANSION_FORM_CONTENT =
+    new IElementType("NG:EXPANSION_FORM_CONTENT", Angular2HtmlLanguage.INSTANCE);
+  @NonNls public static final IElementType EXPANSION_FORM_COMMA =
+    new IElementType("NG:EXPANSION_FORM_COMMA", Angular2HtmlLanguage.INSTANCE);
 
   public Angular2HtmlHighlightingLexer(boolean tokenizeExpansionForms,
                                        @Nullable Pair<String, String> interpolationConfig,
@@ -41,6 +47,23 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
             new FlexAdapter(new _Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig))),
           true, styleFileType);
     registerHandler(INTERPOLATION_EXPR, new ElEmbeddmentHandler());
+    registerHandler(XML_NAME, new HtmlAttributeNameHandler());
+  }
+
+  @Override
+  public void start(@NotNull CharSequence buffer, int startOffset, int endOffset, int initialState) {
+    super.start(buffer, startOffset, endOffset,
+                ((Angular2HtmlLexer.Angular2HtmlMergingLexer)getDelegate()).initExpansionFormNestingLevel(initialState));
+  }
+
+  @Override
+  public int getState() {
+    return super.getState() | ((Angular2HtmlLexer.Angular2HtmlMergingLexer)getDelegate()).getExpansionFormNestingLevelState();
+  }
+
+  @Override
+  protected boolean isHtmlTagState(int state) {
+    return state == _Angular2HtmlLexer.START_TAG_NAME || state == _Angular2HtmlLexer.END_TAG_NAME;
   }
 
   @Override
@@ -68,8 +91,6 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
     if (tokenType == XML_NAME && (state & BASE_STATE_MASK) == _Angular2HtmlLexer.TAG_ATTRIBUTES) {
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(getTokenText(), true);
       if (info.type != Angular2AttributeType.REGULAR && NG_EL_ATTRIBUTES.contains(info.type)) {
-        pushScriptStyle(true, false);
-        seenAttribute = true;
         return info.type.getElementType();
       }
     }
@@ -91,6 +112,22 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
                                               || isLexerWithinUnterminatedInterpolation(state))) {
       return XmlTokenType.XML_REAL_WHITE_SPACE;
     }
+    else if (tokenType == STRING_LITERAL_PART) {
+      return STRING_LITERAL;
+    }
     return tokenType;
+  }
+
+  class HtmlAttributeNameHandler implements TokenHandler {
+    @Override
+    public void handleElement(Lexer lexer) {
+      if ((lexer.getState() & BASE_STATE_MASK) == _Angular2HtmlLexer.TAG_ATTRIBUTES) {
+        Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(getTokenText(), true);
+        if (info.type != Angular2AttributeType.REGULAR && NG_EL_ATTRIBUTES.contains(info.type)) {
+          pushScriptStyle(true, false);
+          seenAttribute = true;
+        }
+      }
+    }
   }
 }
