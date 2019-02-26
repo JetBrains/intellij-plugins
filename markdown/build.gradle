@@ -4,7 +4,7 @@ buildscript {
   repositories {
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
   }
 
   dependencies {
@@ -14,7 +14,7 @@ buildscript {
 
 repositories {
   mavenCentral()
-  maven { url 'http://dl.bintray.com/jetbrains/markdown' }
+  maven { url 'https://dl.bintray.com/jetbrains/markdown' }
   flatDir { dirs 'lib' }
 }
 

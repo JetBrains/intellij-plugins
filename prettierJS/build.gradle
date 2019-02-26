@@ -1,7 +1,7 @@
 buildscript {
   repositories {
     mavenCentral()
-    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    maven { url 'https://dl.bintray.com/jetbrains/intellij-plugin-service' }
   }
 }
 
