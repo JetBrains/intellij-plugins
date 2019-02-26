@@ -21,8 +21,10 @@ public class PropertyTest {
   @Test
   public void testPropertiesChange() {
     // expectedNumberOfPropertyFields represents the number of enum entries plus that static members, plus one for the $VALUES that every enum gets
-    int expectedNumberOfPropertyFields = 9;
+    int expectedNumberOfPropertyFields = 6;
 
+
+    int length = Property.values().length;
     Field[] fields = Property.class.getDeclaredFields();
     Assert.assertEquals("Declared properties in enum \"" +
                         Property.class.getSimpleName() +
@@ -30,7 +32,7 @@ public class PropertyTest {
                         "and " + PropertyNameTest.class.getName() + " has been updated appropriately.\n" +
                         "Fields: " + Arrays.toString(fields),
                         expectedNumberOfPropertyFields,
-                        fields.length);
+                        length);
   }
 
   @Test
