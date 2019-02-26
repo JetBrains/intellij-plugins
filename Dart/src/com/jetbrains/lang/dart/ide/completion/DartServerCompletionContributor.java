@@ -397,7 +397,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
 
       // If this is a class, try to show which package it's coming from.
-      if (element.getKind().equals(ElementKind.CLASS) && displayUri != null) {
+      if (!element.getKind().equals(ElementKind.FUNCTION) &&
+          !element.getKind().equals(ElementKind.FUNCTION_INVOCATION) &&
+          displayUri != null) {
         lookup = lookup.appendTailText(" (" + displayUri + ")", true);
       }
 
