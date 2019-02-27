@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.typescript.service
 
 import com.intellij.lang.javascript.integration.JSAnnotationError
-import com.intellij.lang.javascript.service.JSFileHighlightingInfo
 import com.intellij.lang.javascript.service.JSLanguageServiceAnnotationResult
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
@@ -15,6 +14,7 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.C
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -28,8 +28,6 @@ import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.findModule
 import org.jetbrains.vuejs.index.hasVue
 import org.jetbrains.vuejs.typescript.service.protocol.VueTypeScriptServiceProtocol
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Future
 
 /**
  * We need to modify "original" file content by removing all content excluding ts code
@@ -79,24 +77,24 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
     return configs.any { service.parseConfigFile(it)?.include?.accept(virtualFile) ?: false }
   }
 
-  override fun highlight(file: PsiFile, info: JSFileHighlightingInfo): Future<List<JSAnnotationError>>? {
-    if (file.virtualFile == null || !isVueFile(file.virtualFile)) {
-      return super.highlight(file, info)
+  override fun postprocessErrors(file: PsiFile, errors: MutableList<JSAnnotationError>): List<JSAnnotationError> {
+    if (file.virtualFile != null && isVueFile(file.virtualFile)) {
+      return ReadAction.compute<List<JSAnnotationError>, Throwable> {
+        val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
+        val module = findModule(file)
+        if (module != null && document != null) {
+          val startOffset = module.textRange.startOffset
+          val startLine = document.getLineNumber(startOffset)
+          val startColumn = startOffset - document.getLineStartOffset(startLine)
+          val endOffset = module.textRange.endOffset
+          val endLine = document.getLineNumber(endOffset)
+          val endColumn = endOffset - document.getLineStartOffset(endLine)
+          return@compute errors.filter { error -> isWithinRange(error, startLine, startColumn, endLine, endColumn) }
+        }
+        return@compute super.postprocessErrors(file, errors)
+      }
     }
-    val future = super.highlight(file, info)
-    val document = PsiDocumentManager.getInstance(file.project).getDocument(file)
-    val module = findModule(file)
-
-    if (module != null && document != null && future is CompletableFuture) {
-      val startOffset = module.textRange.startOffset
-      val startLine = document.getLineNumber(startOffset)
-      val startColumn = startOffset - document.getLineStartOffset(startLine)
-      val endOffset = module.textRange.endOffset
-      val endLine = document.getLineNumber(endOffset)
-      val endColumn = endOffset - document.getLineStartOffset(endLine)
-      return future.thenApply { errors -> errors.filter { error -> isWithinRange(error, startLine, startColumn, endLine, endColumn) } }
-    }
-    return future
+    return super.postprocessErrors(file, errors)
   }
 
   private fun isWithinRange(error: JSAnnotationError, startLine: Int, startColumn: Int, endLine: Int, endColumn: Int): Boolean {
