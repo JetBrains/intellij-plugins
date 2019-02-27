@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.util.Consumer;
-import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
@@ -45,16 +45,16 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
   @Nullable
   @Override
-  public Future<FormatResult> format(@NotNull String filePath,
-                                     @Nullable String ignoreFilePath,
-                                     @NotNull String text,
-                                     @NotNull NodePackage prettierPackage,
-                                     @Nullable TextRange range) {
+  public CompletableFuture<FormatResult> format(@NotNull String filePath,
+                                                @Nullable String ignoreFilePath,
+                                                @NotNull String text,
+                                                @NotNull NodePackage prettierPackage,
+                                                @Nullable TextRange range) {
     String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
     ignoreFilePath = JSLanguageServiceUtil.normalizeNameAndPath(ignoreFilePath);
     JSLanguageServiceQueue process = getProcess();
     if (process == null || !process.isValid()) {
-      return new FixedFuture<>(FormatResult.error(PrettierBundle.message("service.not.started.message")));
+      return CompletableFuture.completedFuture(FormatResult.error(PrettierBundle.message("service.not.started.message")));
     }
     ReformatFileCommand command =
       new ReformatFileCommand(filePath, prettierPackagePath, ignoreFilePath, text, range, myFlushConfigCache);
@@ -66,11 +66,11 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
 
   @Nullable
-  public Future<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage) {
+  public CompletableFuture<SupportedFilesInfo> getSupportedFiles(@NotNull NodePackage prettierPackage) {
     String prettierPackagePath = JSLanguageServiceUtil.normalizeNameAndPath(prettierPackage.getSystemDependentPath());
     JSLanguageServiceQueue process = getProcess();
     if (process == null || !process.isValid()) {
-      return new FixedFuture<>(null);
+      return CompletableFuture.completedFuture(null);
     }
     return process.execute(new GetSupportedFilesCommand(prettierPackagePath), 
                            (ignored, response) -> parseGetSupportedFilesResponse(response));

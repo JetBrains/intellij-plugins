@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -126,8 +127,8 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                                                  collectedInfo.getVirtualFile());
     if (interpreterAndPackageError != null) return JSLinterAnnotationResult.create(collectedInfo, interpreterAndPackageError, config);
 
-    final Future<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(), 
-                                                                 config, collectedInfo.getFileContent(), linterState);
+    final CompletableFuture<List<TsLinterError>> future = service.highlight(collectedInfo.getVirtualFile(),
+                                                                            config, collectedInfo.getFileContent(), linterState);
     final List<TsLinterError> result;
     try {
       result = JSLanguageServiceUtil.awaitLanguageService(future, service);
