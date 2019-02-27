@@ -19,7 +19,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.concurrency.FixedFuture;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 
@@ -47,17 +47,17 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   @Nullable
-  public final Future<List<TsLinterError>> highlight(@NotNull VirtualFile virtualFile,
-                                                     @Nullable VirtualFile config,
-                                                     @Nullable String content,
-                                                     @NotNull TsLintState state) {
+  public final CompletableFuture<List<TsLinterError>> highlight(@NotNull VirtualFile virtualFile,
+                                                                @Nullable VirtualFile config,
+                                                                @Nullable String content,
+                                                                @NotNull TsLintState state) {
     boolean isJSFile = DialectDetector.JAVASCRIPT_FILE_TYPES.contains(virtualFile.getFileType());
     String configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
     if (configFilePath == null) {
       if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE || isJSFile) {
-        return new FixedFuture<>(ContainerUtil.emptyList());
+        return CompletableFuture.completedFuture(ContainerUtil.emptyList());
       }
-      return new FixedFuture<>(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
+      return CompletableFuture.completedFuture(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
     }
     String path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile);
     if (path == null) {
@@ -66,7 +66,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
     final JSLanguageServiceQueue process = getProcess();
     if (process == null) {
-      return new FixedFuture<>(Collections.singletonList(
+      return CompletableFuture.completedFuture(Collections.singletonList(
         TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
     }
     GetErrorsCommand command = new GetErrorsCommand(LocalFilePath.create(path),
@@ -77,15 +77,15 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
   }
 
   @Nullable
-  public final Future<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
+  public final CompletableFuture<List<TsLinterError>> highlightAndFix(@NotNull VirtualFile virtualFile, @NotNull TsLintState state) {
     boolean isJSFile = DialectDetector.JAVASCRIPT_FILE_TYPES.contains(virtualFile.getFileType());
     VirtualFile config = TslintUtil.getConfig(state, virtualFile);
     String configFilePath = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(config);
     if (configFilePath == null) {
       if (state.getNodePackageRef() == AutodetectLinterPackage.INSTANCE || isJSFile) {
-        return new FixedFuture<>(ContainerUtil.emptyList());
+        return CompletableFuture.completedFuture(ContainerUtil.emptyList());
       }
-      return new FixedFuture<>(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
+      return CompletableFuture.completedFuture(Collections.singletonList(TsLinterError.createGlobalError("Config file was not found.")));
     }
     String path = JSLanguageServiceUtil.normalizePathDoNotFollowSymlinks(virtualFile);
     if (path == null) {
@@ -94,7 +94,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
 
     final JSLanguageServiceQueue process = getProcess();
     if (process == null) {
-      return new FixedFuture<>(Collections.singletonList(
+      return CompletableFuture.completedFuture(Collections.singletonList(
         TsLinterError.createGlobalError(JSLanguageServiceUtil.getLanguageServiceCreationError(this))));
     }
 

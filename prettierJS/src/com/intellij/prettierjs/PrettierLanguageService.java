@@ -8,14 +8,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 
 public interface PrettierLanguageService {
   @Nullable
-  Future<FormatResult> format(@NotNull String filePath,
-                              String ignoreFilePath, @NotNull String text,
-                              @NotNull NodePackage prettierPackage,
-                              @Nullable TextRange range);
+  CompletableFuture<FormatResult> format(@NotNull String filePath,
+                                         String ignoreFilePath, @NotNull String text,
+                                         @NotNull NodePackage prettierPackage,
+                                         @Nullable TextRange range);
 
   @NotNull
   static PrettierLanguageServiceImpl getInstance(@NotNull Project project) {
