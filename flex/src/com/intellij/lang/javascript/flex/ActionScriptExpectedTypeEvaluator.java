@@ -19,11 +19,6 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
   }
 
   @Override
-  protected ActionScriptExpectedTypeEvaluator newExpectedTypeEvaluator(JSExpression parent, JSExpectedTypeKind expectedTypeKind) {
-    return new ActionScriptExpectedTypeEvaluator(parent, expectedTypeKind);
-  }
-
-  @Override
   protected void findRestParameterExpectedType(JSParameterItem parameterItem) {
     if (!(parameterItem instanceof JSParameter)) {
       super.findRestParameterExpectedType(parameterItem);
