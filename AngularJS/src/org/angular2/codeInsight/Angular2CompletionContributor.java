@@ -269,8 +269,6 @@ public class Angular2CompletionContributor extends CompletionContributor {
           providers.forEach(provider -> provider.contributeCompletionResults(
             consumer, tag, result.getPrefixMatcher().getPrefix()));
 
-          consumer.flushChanges();
-
           final PsiFile file = tag.getContainingFile();
           final XmlExtension extension = XmlExtension.getExtension(file);
 
@@ -312,6 +310,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
               .withRelevanceSorter(toPass.getSorter())
               .addElement(toPass.getLookupElement());
           });
+
+          //add abbreviations and prefixes in the end
+          consumer.flushChanges();
         }
       }
     }
@@ -322,6 +323,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     private final CompletionResultSet myResult;
     private final List<Angular2AttributeDescriptor> myDescriptors;
     private final Set<String> myPrefixes = new HashSet<>();
+    private final List<Runnable> myAbbreviations = new ArrayList<>();
 
     private MyCompletionResultsConsumer(CompletionResultSet result, List<Angular2AttributeDescriptor> descriptors) {
       myResult = result;
@@ -329,6 +331,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
 
     public void flushChanges() {
+      myAbbreviations.forEach(Runnable::run);
       myResult.restartCompletionOnPrefixChange(string().oneOf(myPrefixes));
     }
 
@@ -343,29 +346,35 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                 @Nullable String hidePrefix,
                                 @Nullable String suffix) {
       assert !lookupNames.isEmpty();
-      myPrefixes.addAll(lookupNames);
-      CompletionResultSet resultSet = myResult;
-      if (hidePrefix != null) {
-        lookupNames = ContainerUtil.map(lookupNames, name -> StringUtil.trimStart(name, hidePrefix));
-        resultSet = myResult.withPrefixMatcher(myResult.getPrefixMatcher().cloneWithPrefix(
-          StringUtil.trimStart(myResult.getPrefixMatcher().getPrefix(), hidePrefix)));
-      }
-      resultSet.addElement(
-        PrioritizedLookupElement.withPriority(
-          LookupElementBuilder
-            .create(lookupNames.get(0))
-            .withLookupStrings(lookupNames)
-            .withPresentableText(lookupNames.get(0) + "…" + (hidePrefix == null ? StringUtil.notNullize(suffix) : ""))
-            .withIcon(AngularJSIcons.Angular2)
-            .withInsertHandler((@NotNull InsertionContext context, @NotNull LookupElement item) -> {
-              if (suffix != null) {
-                new Angular2AttributeInsertHandler(false, false, suffix)
-                  .handleInsert(context, item);
-              }
-              context.setLaterRunnable(() -> CodeCompletionHandlerBase.createHandler(CompletionType.BASIC)
-                .invokeCompletion(context.getProject(), context.getEditor()));
-            }),
-          priority.getValue()));
+      myAbbreviations.add(() -> {
+        myPrefixes.addAll(lookupNames);
+        CompletionResultSet resultSet = myResult;
+        List<String> lookupNamesNoPrefix;
+        if (hidePrefix != null) {
+          lookupNamesNoPrefix = ContainerUtil.map(lookupNames, name -> StringUtil.trimStart(name, hidePrefix));
+          resultSet = myResult.withPrefixMatcher(myResult.getPrefixMatcher().cloneWithPrefix(
+            StringUtil.trimStart(myResult.getPrefixMatcher().getPrefix(), hidePrefix)));
+        }
+        else {
+          lookupNamesNoPrefix = lookupNames;
+        }
+        resultSet.addElement(
+          PrioritizedLookupElement.withPriority(
+            LookupElementBuilder
+              .create(lookupNamesNoPrefix.get(0))
+              .withLookupStrings(lookupNamesNoPrefix)
+              .withPresentableText(lookupNamesNoPrefix.get(0) + "…" + (hidePrefix == null ? StringUtil.notNullize(suffix) : ""))
+              .withIcon(AngularJSIcons.Angular2)
+              .withInsertHandler((@NotNull InsertionContext context, @NotNull LookupElement item) -> {
+                if (suffix != null) {
+                  new Angular2AttributeInsertHandler(false, false, suffix)
+                    .handleInsert(context, item);
+                }
+                context.setLaterRunnable(() -> CodeCompletionHandlerBase.createHandler(CompletionType.BASIC)
+                  .invokeCompletion(context.getProject(), context.getEditor()));
+              }),
+            priority.getValue()));
+      });
     }
   }
 }
