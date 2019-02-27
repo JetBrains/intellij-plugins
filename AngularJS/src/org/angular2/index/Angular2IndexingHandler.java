@@ -9,6 +9,7 @@ import com.intellij.lang.ecmascript6.psi.ES6ImportedBinding;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSElementTypes;
+import com.intellij.lang.javascript.JSStubElementTypes;
 import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -23,6 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.css.StylesheetFile;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.stubs.IndexSink;
@@ -38,7 +40,6 @@ import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.lang.Angular2Bundle;
-import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angularjs.index.AngularIndexUtil;
@@ -71,6 +72,11 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   @NonNls public static final String NG_MODULE_INDEX_NAME = "ngModule";
 
   @NonNls private static final String STYLESHEET_INDEX_PREFIX = "ss/";
+
+  private static final Set<String> STUBBED_PROPERTIES = ContainerUtil.newHashSet(
+    TEMPLATE_URL_PROP, STYLE_URLS_PROP, SELECTOR_PROP, INPUTS_PROP, OUTPUTS_PROP);
+  private static final Set<String> STUBBED_DECORATORS_STRING_ARGS = ContainerUtil.newHashSet(
+    INPUT_DEC, OUTPUT_DEC);
 
   private final static Map<String, StubIndexKey<String, JSImplicitElementProvider>> INDEX_MAP = new HashMap<>();
 
@@ -107,10 +113,47 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   @Override
   public boolean shouldCreateStubForLiteral(ASTNode node) {
-    if (node.getElementType() == JSElementTypes.ARRAY_LITERAL_EXPRESSION) {
-      return Angular2LangUtil.isAngular2Context(node.getPsi());
+    return checkIsInterestingPropertyValue(node.getTreeParent());
+  }
+
+  @Override
+  public boolean shouldCreateStubForCallExpression(ASTNode node) {
+    final ASTNode parent = node.getTreeParent();
+    if (parent != null && parent.getElementType() == JSStubElementTypes.ES6_DECORATOR) {
+      final ASTNode methodExpression = node.getFirstChildNode();
+      if (methodExpression.getElementType() != JSElementTypes.REFERENCE_EXPRESSION) return false;
+
+      final ASTNode referencedNameElement = methodExpression.getFirstChildNode();
+      final String decoratorName = referencedNameElement.getText();
+      return STUBBED_DECORATORS_STRING_ARGS.contains(decoratorName);
     }
     return false;
+  }
+
+  private boolean checkIsInterestingPropertyValue(@Nullable ASTNode parent) {
+    if (parent == null) {
+      return false;
+    }
+    if (parent.getElementType() == JSElementTypes.ARGUMENT_LIST) {
+      final ASTNode grandParent = parent.getTreeParent();
+      return grandParent != null
+             && grandParent.getElementType() == JSStubElementTypes.CALL_EXPRESSION
+             && shouldCreateStubForCallExpression(grandParent);
+    }
+    if (parent.getElementType() == JSElementTypes.ARRAY_LITERAL_EXPRESSION) {
+      parent = parent.getTreeParent();
+    }
+    if (parent != null && parent.getElementType() == JSStubElementTypes.PROPERTY) {
+      String propName = doIfNotNull(parent.getPsi(PsiNamedElement.class),
+                                    PsiNamedElement::getName);
+      return STUBBED_PROPERTIES.contains(propName);
+    }
+    return false;
+  }
+
+  @Override
+  public boolean hasSignificantValue(@NotNull JSLiteralExpression expression) {
+    return shouldCreateStubForLiteral(expression.getNode());
   }
 
   @Nullable

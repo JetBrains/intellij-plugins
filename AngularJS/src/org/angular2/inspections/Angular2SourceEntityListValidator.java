@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.TreeTraversal;
@@ -37,16 +38,21 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
     myDecorator = decorator;
     myResults = results;
     JSProperty property = getProperty(myDecorator, myPropertyName);
-    JSExpression value;
-    if (property == null || (value = property.getValue()) == null) {
+    if (property == null) {
       return;
     }
-    myIterator = TreeTraversal.LEAVES_DFS
-      .traversal(singletonList(value), this::resolve)
-      .typedIterator();
-    while (myIterator.advance()) {
-      myIterator.current().accept(getResultsVisitor());
-    }
+    AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(), () -> {
+      JSExpression value = property.getValue();
+      if (value == null) {
+        return;
+      }
+      myIterator = TreeTraversal.LEAVES_DFS
+        .traversal(singletonList(value), this::resolve)
+        .typedIterator();
+      while (myIterator.advance()) {
+        myIterator.current().accept(getResultsVisitor());
+      }
+    });
   }
 
   @NotNull

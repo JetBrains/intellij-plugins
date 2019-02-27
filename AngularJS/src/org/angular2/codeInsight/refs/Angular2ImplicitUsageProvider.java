@@ -19,6 +19,7 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.Processor;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
@@ -72,7 +73,9 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
     SearchScope scope = new LocalSearchScope(new PsiElement[]{template},
                                              Angular2Bundle.message("angular.search-scope.template"),
                                              true);
-    if (!ReferencesSearch.search(node, scope, true).forEach(processor)) {
+    // TODO stub references in Angular templates
+    if (!AstLoadingFilter.forceAllowTreeLoading(template, () ->
+      ReferencesSearch.search(node, scope, true).forEach(processor))) {
       return true;
     }
     return false;

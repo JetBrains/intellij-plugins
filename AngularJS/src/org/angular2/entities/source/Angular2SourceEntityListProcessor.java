@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2EntitiesProvider;
@@ -83,8 +84,9 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       @Override
       public void visitJSObjectLiteralExpression(JSObjectLiteralExpression node) {
         if (myAcceptNgModuleWithProviders) {
-          ContainerUtil.addIfNotNull(result, doIfNotNull(node.findProperty(NG_MODULE_PROP),
-                                                         JSProperty::getValue));
+          AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
+            ContainerUtil.addIfNotNull(result, doIfNotNull(node.findProperty(NG_MODULE_PROP),
+                                                           JSProperty::getValue)));
         }
       }
 
@@ -95,8 +97,8 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
 
       @Override
       public void visitJSVariable(JSVariable node) {
-        // TODO try to use stub here
-        ContainerUtil.addIfNotNull(result, node.getInitializer());
+        AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
+          ContainerUtil.addIfNotNull(result, node.getInitializer()));
       }
 
       @Override
@@ -162,7 +164,8 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       else {
         PsiElement sourceElement = type.getSourceElement();
         if (sourceElement instanceof TypeScriptSingleType) {
-          JSReferenceExpression expression = ((TypeScriptSingleType)sourceElement).getReferenceExpression();
+          JSReferenceExpression expression = AstLoadingFilter.forceAllowTreeLoading(
+            sourceElement.getContainingFile(), ((TypeScriptSingleType)sourceElement)::getReferenceExpression);
           if (expression != null) {
             resolvedClazz = tryCast(expression.resolve(), JSClass.class);
             T entity = getEntity(resolvedClazz);

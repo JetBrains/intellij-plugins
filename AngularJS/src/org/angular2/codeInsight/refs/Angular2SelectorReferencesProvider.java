@@ -9,6 +9,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.SmartList;
 import com.intellij.xml.Html5SchemaProvider;
@@ -66,7 +67,7 @@ public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
       }
       XmlFile xmlFile = XmlUtil.findNamespace(baseFile, htmlNS);
       if (xmlFile != null) {
-        final XmlDocument document = xmlFile.getDocument();
+        final XmlDocument document = AstLoadingFilter.forceAllowTreeLoading(xmlFile, xmlFile::getDocument);
         if (document != null && document.getMetaData() instanceof XmlNSDescriptorEx) {
           return CachedValueProvider.Result.create((XmlNSDescriptorEx)document.getMetaData(), xmlFile);
         }

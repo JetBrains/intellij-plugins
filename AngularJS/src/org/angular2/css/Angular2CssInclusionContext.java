@@ -18,6 +18,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.cli.AngularCliConfig;
@@ -119,8 +120,9 @@ public class Angular2CssInclusionContext extends CssInclusionContext {
         PsiManager psiManager = PsiManager.getInstance(project);
         PsiFile html = doIfNotNull(config.getIndexHtmlFile(), psiManager::findFile);
         if (html instanceof XmlFile) {
-          cssFilesList.addAll(asList(CssResolveManager.getInstance().getNewResolver()
-                                       .resolveStyleSheets((XmlFile)html, null)));
+          AstLoadingFilter.forceAllowTreeLoading(html, () ->
+            cssFilesList.addAll(asList(CssResolveManager.getInstance().getNewResolver()
+                                         .resolveStyleSheets((XmlFile)html, null))));
         }
         cssFilesList.addAll(ContainerUtil.mapNotNull(
           config.getGlobalStyleSheets(), file -> ObjectUtils.tryCast(psiManager.findFile(file), StylesheetFile.class)));

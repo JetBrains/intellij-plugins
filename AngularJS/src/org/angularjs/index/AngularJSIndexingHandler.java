@@ -179,9 +179,11 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
   private static final String PARAM = "@param";
 
   public static boolean isInjectable(PsiElement context) {
-    final JSCallExpression call = PsiTreeUtil.getParentOfType(context, JSCallExpression.class, false, JSBlockStatement.class);
+    final JSCallExpression call = PsiTreeUtil.getContextOfType(context, JSCallExpression.class, false, JSBlockStatement.class);
     if (call != null) {
-      final JSExpression methodExpression = call.getMethodExpression();
+      // TODO stub for method/function references
+      final JSExpression methodExpression = AstLoadingFilter.forceAllowTreeLoading(
+        call.getContainingFile(), call::getMethodExpression);
       JSReferenceExpression callee = ObjectUtils.tryCast(methodExpression, JSReferenceExpression.class);
       JSExpression qualifier = callee != null ? callee.getQualifier() : null;
       return qualifier != null && INJECTABLE_METHODS.contains(callee.getReferenceName());
@@ -286,10 +288,13 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     if (methodExpression == null) return false;
 
     final ASTNode referencedNameElement = methodExpression.getLastChildNode();
-    final ASTNode qualifier = JSReferenceExpressionImpl.getQualifierNode(methodExpression);
-    if (qualifier == null) return false;
-    return STATE.equals(referencedNameElement.getText()) && "$stateProvider".equalsIgnoreCase(qualifier.getText()) ||
-           MODULE.equals(referencedNameElement.getText()) && "angular".equalsIgnoreCase(qualifier.getText());
+    final ASTNode qualifierElement = JSReferenceExpressionImpl.getQualifierNode(methodExpression);
+    if (qualifierElement == null) return false;
+    String referencedName = referencedNameElement.getText();
+    String qualifier = qualifierElement.getText();
+    return STATE.equals(referencedName) && "$stateProvider".equalsIgnoreCase(qualifier)
+           || MODULE.equals(referencedName) && "angular".equalsIgnoreCase(qualifier)
+           || INJECTABLE_METHODS.contains(referencedName);
   }
 
   @Nullable

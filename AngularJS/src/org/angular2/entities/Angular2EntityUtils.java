@@ -236,4 +236,10 @@ public class Angular2EntityUtils {
     }
     return getEntityClassName(entity);
   }
+
+  @NotNull
+  public static String unquote(@NotNull String s) {
+    return s.length() > 1 && ("'\"`".indexOf(s.charAt(0)) >= 0) && s.charAt(0) == s.charAt(s.length() - 1) ?
+           s.substring(1, s.length() - 1) : s;
+  }
 }
