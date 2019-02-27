@@ -18,7 +18,7 @@ public class Angular2PipeReferenceExpressionImpl extends JSReferenceExpressionIm
   @Override
   public boolean isReferenceTo(@NotNull PsiElement element) {
     if (Angular2EntitiesProvider.isPipeTransformMethod(element)) {
-      return resolve() == element;
+      return element.equals(resolve());
     }
     return false;
   }
