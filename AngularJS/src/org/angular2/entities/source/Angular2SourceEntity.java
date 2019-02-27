@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.openapi.util.UserDataHolderBase;
@@ -12,6 +13,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
+import one.util.streamex.StreamEx;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.lang.Angular2Bundle;
@@ -19,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
+import java.util.function.Function;
 
 public abstract class Angular2SourceEntity extends UserDataHolderBase implements Angular2Entity {
 
@@ -42,7 +46,15 @@ public abstract class Angular2SourceEntity extends UserDataHolderBase implements
   @Override
   @NotNull
   public JSElement getSourceElement() {
-    return myImplicitElement;
+    // try to find a fresh implicit element
+    return StreamEx.ofNullable(myDecorator.getIndexingData())
+      .map(JSElementIndexingData::getImplicitElements)
+      .nonNull()
+      .flatCollection(Function.identity())
+      .filter(el -> myImplicitElement.getName().equals(el.getName())
+                    && Objects.equals(myImplicitElement.getUserString(), el.getUserString()))
+      .findFirst()
+      .orElse(myImplicitElement);
   }
 
   @NotNull
@@ -84,5 +96,19 @@ public abstract class Angular2SourceEntity extends UserDataHolderBase implements
       });
       return CachedValueProvider.Result.create(dependencies, dependencies);
     });
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Angular2SourceEntity entity = (Angular2SourceEntity)o;
+    return myDecorator.equals(entity.myDecorator) &&
+           myClass.equals(entity.myClass);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(myDecorator, myClass);
   }
 }
