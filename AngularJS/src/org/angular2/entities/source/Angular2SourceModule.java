@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.containers.Stack;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2Entity;
@@ -86,7 +87,8 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
     if (property == null) {
       return Pair.pair(Collections.emptySet(), true);
     }
-    return new SourceSymbolCollector<>(symbolClazz).collect(property.getValue());
+    return AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(),
+                                                  () -> new SourceSymbolCollector<>(symbolClazz).collect(property.getValue()));
   }
 
   private static class SourceSymbolCollector<T extends Angular2Entity> extends Angular2SourceEntityListProcessor<T> {
