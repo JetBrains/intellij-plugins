@@ -24,6 +24,7 @@ public class AngularTypeScriptConfigFileTypeFactory extends FileTypeFactory {
   public void createFileTypes(@NotNull FileTypeConsumer consumer) {
     consumer.consume(TypeScriptConfigFileType.INSTANCE,
                      new ExactFileNameMatcher("tsconfig.app.json"),
+                     new ExactFileNameMatcher("tsconfig.lib.json"),
                      new ExactFileNameMatcher("tsconfig.spec.json"),
                      new ExactFileNameMatcher("tsconfig.e2e.json"));
   }
