@@ -275,10 +275,19 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     });
   }
 
+  public void testOneTimeBindingAttributeCompletion3TypeScript() throws Exception {
+    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
+      myFixture.configureByFiles("attribute_one_time_binding.html", "package.json", "object.ts");
+      myFixture.completeBasic();
+      myFixture.type("onetli\n");
+      myFixture.checkResultByFile("attribute_one_time_binding.after.html");
+    });
+  }
+
   public void testOneTimeBindingAttributeResolve2TypeScript() throws Exception {
     JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
       myFixture.configureByFiles("attribute_one_time_binding.after.html", "package.json", "object.ts");
-      PsiElement resolve = resolveReference("one<caret>Time");
+      PsiElement resolve = resolveReference("one<caret>TimeList");
       assertEquals("object.ts", resolve.getContainingFile().getName());
       assertInstanceOf(resolve, JSField.class);
     });
@@ -1123,5 +1132,4 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
       assertUnresolvedReference("*app<caret>Foo=");
     });
   }
-
 }
