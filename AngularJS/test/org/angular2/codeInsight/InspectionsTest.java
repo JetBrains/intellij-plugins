@@ -1,15 +1,12 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
-import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
-import com.intellij.util.ThrowableRunnable;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
@@ -20,63 +17,49 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testUnusedSymbol() {
-    JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
-                                  JSUnusedLocalSymbolsInspection.class);
-      myFixture.configureByFiles("unused.ts", "unused.html", "package.json");
-      myFixture.checkHighlighting();
-    });
+    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
+                                JSUnusedLocalSymbolsInspection.class);
+    myFixture.configureByFiles("unused.ts", "unused.html", "package.json");
+    myFixture.checkHighlighting();
   }
 
   public void testUnusedSetter() {
-    JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
-                                  JSUnusedLocalSymbolsInspection.class);
-      myFixture.configureByFiles("unusedSetter.ts", "unusedSetter.html", "package.json");
-      myFixture.checkHighlighting();
-    });
+    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
+                                JSUnusedLocalSymbolsInspection.class);
+    myFixture.configureByFiles("unusedSetter.ts", "unusedSetter.html", "package.json");
+    myFixture.checkHighlighting();
   }
 
   public void testMethodCanBeStatic() {
-    JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(JSMethodCanBeStaticInspection.class);
-      myFixture.configureByFiles("methodCanBeStatic.ts", "methodCanBeStatic.html", "package.json");
-      myFixture.checkHighlighting();
-    });
+    myFixture.enableInspections(JSMethodCanBeStaticInspection.class);
+    myFixture.configureByFiles("methodCanBeStatic.ts", "methodCanBeStatic.html", "package.json");
+    myFixture.checkHighlighting();
   }
 
-  public void testUnterminated() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.enableInspections(UnterminatedStatementJSInspection.class);
-      myFixture.configureByFiles("unterminated.ts", "package.json");
-      myFixture.checkHighlighting();
-    });
+  public void testUnterminated() {
+    myFixture.enableInspections(UnterminatedStatementJSInspection.class);
+    myFixture.configureByFiles("unterminated.ts", "package.json");
+    myFixture.checkHighlighting();
   }
 
   public void testUnusedReference() {
-    JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
-                                  JSUnusedLocalSymbolsInspection.class);
-      myFixture.configureByFiles("unusedReference.html", "unusedReference.ts", "package.json");
-      myFixture.checkHighlighting();
-    });
+    myFixture.enableInspections(JSUnusedGlobalSymbolsInspection.class,
+                                JSUnusedLocalSymbolsInspection.class);
+    myFixture.configureByFiles("unusedReference.html", "unusedReference.ts", "package.json");
+    myFixture.checkHighlighting();
   }
 
   public void testId() {
-    JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class,
-                                  JSUnusedGlobalSymbolsInspection.class);
-      myFixture.configureByFiles("object.ts", "package.json");
-      myFixture.checkHighlighting();
-    });
+    myFixture.enableInspections(JSUnusedLocalSymbolsInspection.class,
+                                JSUnusedGlobalSymbolsInspection.class);
+    myFixture.configureByFiles("object.ts", "package.json");
+    myFixture.checkHighlighting();
   }
 
   public void testPipeAndArgResolution() {
-    JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class,
-                                  TypeScriptUnresolvedFunctionInspection.class);
-      myFixture.configureByFiles("pipeAndArgResolution.html", "lowercase_pipe.ts", "package.json");
-      myFixture.checkHighlighting();
-    });
+    myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class,
+                                TypeScriptUnresolvedFunctionInspection.class);
+    myFixture.configureByFiles("pipeAndArgResolution.html", "lowercase_pipe.ts", "package.json");
+    myFixture.checkHighlighting();
   }
 }

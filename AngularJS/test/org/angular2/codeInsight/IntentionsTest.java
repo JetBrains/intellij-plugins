@@ -2,7 +2,6 @@
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
@@ -29,16 +28,14 @@ public class IntentionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   private void doTestForFile(String name, String intentionHint) {
-    JSTestUtils.testES6(myFixture.getProject(), () -> {
-      myFixture.setCaresAboutInjection(false);
-      myFixture.configureByFiles(name + ".html", "package.json");
-      IntentionAction action = ContainerUtil.find(myFixture.getAvailableIntentions(),
-                                                  t -> StringUtil.equals(t.getText(), intentionHint));
-      if (action == null) {
-        throw new RuntimeException("Could not find intention by text " + intentionHint);
-      }
-      myFixture.launchAction(action);
-      myFixture.checkResultByFile(getTestName(true) + "_after.html");
-    });
+    myFixture.setCaresAboutInjection(false);
+    myFixture.configureByFiles(name + ".html", "package.json");
+    IntentionAction action = ContainerUtil.find(myFixture.getAvailableIntentions(),
+                                                t -> StringUtil.equals(t.getText(), intentionHint));
+    if (action == null) {
+      throw new RuntimeException("Could not find intention by text " + intentionHint);
+    }
+    myFixture.launchAction(action);
+    myFixture.checkResultByFile(getTestName(true) + "_after.html");
   }
 }

@@ -2,9 +2,12 @@
 package org.angularjs;
 
 import com.intellij.codeInsight.completion.PrioritizedLookupElement;
+import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.lang.javascript.settings.JSRootConfiguration;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
@@ -127,5 +130,13 @@ public class AngularTestUtil {
       }
       return result.toString();
     });
+  }
+
+  public static void testES6(@NotNull CodeInsightTestFixture fixture) {
+    JSRootConfiguration configuration = JSRootConfiguration.getInstance(fixture.getProject());
+    JSLanguageLevel previousLevel = configuration.getLanguageLevel();
+    configuration.storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6);
+    Disposer.register(fixture.getTestRootDisposable(), () ->
+      configuration.storeLanguageLevelAndUpdateCaches(previousLevel == JSLanguageLevel.DEFAULT ? null : previousLevel));
   }
 }

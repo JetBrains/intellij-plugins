@@ -25,6 +25,7 @@ public abstract class Angular2ReSharperCompletionTestBase extends TypeScriptReSh
   public void setUp() throws Exception {
     super.setUp();
     AngularTestUtil.enableAstLoadingFilter(this);
+    AngularTestUtil.testES6(myFixture);
   }
 
   protected List<String> doGetExtraFiles() {
