@@ -2,7 +2,6 @@
 package org.angular2.codeInsight;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2BindingsInspection;
@@ -22,45 +21,37 @@ public class NgForTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testNgFor() {
-    JSTestUtils.testES6(getProject(), () -> {
-      final List<String> variants = myFixture.getCompletionVariants("NgFor.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
-      assertNotNull(variants);
-      assertTrue(variants.size() >= 2);
-      assertEquals("created_at", variants.get(0));
-      assertEquals("email", variants.get(1));
-    });
+    final List<String> variants = myFixture.getCompletionVariants("NgFor.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
+    assertNotNull(variants);
+    assertTrue(variants.size() >= 2);
+    assertEquals("created_at", variants.get(0));
+    assertEquals("email", variants.get(1));
   }
 
   public void testNgForInspections() {
-    JSTestUtils.testES6(getProject(), () -> {
-      myFixture.enableInspections(UnterminatedStatementJSInspection.class,
-                                  HtmlUnknownAttributeInspection.class,
-                                  Angular2BindingsInspection.class);
-      myFixture.configureByFiles("NgForInspections.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
-      myFixture.checkHighlighting();
-    });
+    myFixture.enableInspections(UnterminatedStatementJSInspection.class,
+                                HtmlUnknownAttributeInspection.class,
+                                Angular2BindingsInspection.class);
+    myFixture.configureByFiles("NgForInspections.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
+    myFixture.checkHighlighting();
   }
 
   public void testNgForWithinAttribute() {
-    JSTestUtils.testES6(getProject(), () -> {
-      final List<String> variants = myFixture.getCompletionVariants(
-        "NgForWithinAttribute.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
-      assertNotNull(variants);
-      assertTrue(variants.size() >= 2);
-      assertEquals("created_at", variants.get(0));
-      assertEquals("email", variants.get(1));
-    });
+    final List<String> variants = myFixture.getCompletionVariants(
+      "NgForWithinAttribute.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
+    assertNotNull(variants);
+    assertTrue(variants.size() >= 2);
+    assertEquals("created_at", variants.get(0));
+    assertEquals("email", variants.get(1));
   }
 
   public void testNgForWithinAttributeHTML() {
-    JSTestUtils.testES6(getProject(), () -> {
-      final List<String> variants = myFixture.getCompletionVariants(
-        "NgForWithinAttributeHTML.html", "NgForWithinAttributeHTML.ts", "ng_for_of.ts", "iterable_differs.ts",
-        "package.json");
-      assertNotNull(variants);
-      assertTrue(variants.size() >= 2);
-      assertEquals("created_at", variants.get(0));
-      assertEquals("email", variants.get(1));
-    });
+    final List<String> variants = myFixture.getCompletionVariants(
+      "NgForWithinAttributeHTML.html", "NgForWithinAttributeHTML.ts", "ng_for_of.ts", "iterable_differs.ts",
+      "package.json");
+    assertNotNull(variants);
+    assertTrue(variants.size() >= 2);
+    assertEquals("created_at", variants.get(0));
+    assertEquals("email", variants.get(1));
   }
 }

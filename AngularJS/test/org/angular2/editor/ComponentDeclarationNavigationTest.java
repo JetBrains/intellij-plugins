@@ -4,7 +4,6 @@ package org.angular2.editor;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.codeInsight.navigation.actions.GotoTypeDeclarationAction;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
@@ -107,7 +106,7 @@ public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtu
                       @Nullable String actionLabel,
                       @Nullable String targetFile,
                       @Nullable String elementText) throws Exception {
-    invokeTestRunnable(() -> JSTestUtils.testES6(getProject(), () -> {
+    invokeTestRunnable(() -> {
       myFixture.configureByFiles(testFile, "custom.html", "custom.ts", "package.json");
 
       AngularTestUtil.moveToOffsetBySignature(location, myFixture);
@@ -126,6 +125,6 @@ public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtu
       PsiElement element = TargetElementUtil.findTargetElement(focusedEditor, findTargetFlags);
       assertNotNull(element);
       assertEquals(elementText, element.getText());
-    }));
+    });
   }
 }

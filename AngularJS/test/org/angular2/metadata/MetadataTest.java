@@ -3,7 +3,6 @@ package org.angular2.metadata;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.json.psi.impl.JsonFileImpl;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SingleRootFileViewProvider;
@@ -51,16 +50,14 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMetadataStubBuildingWithResolution() {
-    JSTestUtils.testES6(getProject(), () -> {
-      AngularTestUtil.configureWithMetadataFiles(myFixture, "ant-design-icons-angular");
-      myFixture.configureByFiles("ng-zorro-antd.d.ts", "nz-icon.directive.d.ts", "icon.directive.ts",
-                                 "nz-col.component.d.ts", "nz-form-control.component.d.ts");
-      VirtualFile vFile = myFixture.copyFileToProject("ng-zorro-antd.metadata.json");
-      PsiFile file = myFixture.getPsiManager().findFile(vFile);
-      assert file instanceof MetadataFileImpl;
-      String result = DebugUtil.psiToString(file, false, false);
-      UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "ng-zorro-antd.metadata.resolved.psi.txt").toString(), result);
-    });
+    AngularTestUtil.configureWithMetadataFiles(myFixture, "ant-design-icons-angular");
+    myFixture.configureByFiles("ng-zorro-antd.d.ts", "nz-icon.directive.d.ts", "icon.directive.ts",
+                               "nz-col.component.d.ts", "nz-form-control.component.d.ts");
+    VirtualFile vFile = myFixture.copyFileToProject("ng-zorro-antd.metadata.json");
+    PsiFile file = myFixture.getPsiManager().findFile(vFile);
+    assert file instanceof MetadataFileImpl;
+    String result = DebugUtil.psiToString(file, false, false);
+    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "ng-zorro-antd.metadata.resolved.psi.txt").toString(), result);
   }
 
   public void testJsonFileType() {
@@ -72,22 +69,18 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testExtendsObfuscatedName() {
-    JSTestUtils.testES6(getProject(), () -> {
-      AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd");
-      myFixture.configureByFiles("inherited_properties.html", "nz-col.component.d.ts", "nz-form-control.component.d.ts");
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                  Angular2BindingsInspection.class);
-      myFixture.checkHighlighting(true, false, true);
-    });
+    AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd");
+    myFixture.configureByFiles("inherited_properties.html", "nz-col.component.d.ts", "nz-form-control.component.d.ts");
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                Angular2BindingsInspection.class);
+    myFixture.checkHighlighting(true, false, true);
   }
 
   public void testInterModuleExtends() {
-    JSTestUtils.testES6(getProject(), () -> {
-      AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd", "ant-design-icons-angular");
-      myFixture.configureByFiles("inter_module_props.html", "nz-icon.directive.d.ts", "icon.directive.ts");
-      myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                  Angular2BindingsInspection.class);
-      myFixture.checkHighlighting(true, false, true);
-    });
+    AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd", "ant-design-icons-angular");
+    myFixture.configureByFiles("inter_module_props.html", "nz-icon.directive.d.ts", "icon.directive.ts");
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                Angular2BindingsInspection.class);
+    myFixture.checkHighlighting(true, false, true);
   }
 }

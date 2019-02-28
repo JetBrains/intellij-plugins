@@ -109,7 +109,7 @@ public class RenameTest extends Angular2MultiFileFixtureTestCase {
   }
 
   private void doMultiFileTest(String mainFile, String newName, boolean searchCommentsAndText) {
-    JSTestUtils.testES6(getProject(), () -> doTest((rootDir, rootAfter) -> {
+    doTest((rootDir, rootAfter) -> {
       myFixture.configureFromTempProjectFile(mainFile);
       PsiElement targetElement = TargetElementUtil.findTargetElement(
         myFixture.getEditor(),
@@ -118,7 +118,7 @@ public class RenameTest extends Angular2MultiFileFixtureTestCase {
       RenameProcessor renameProcessor =
         new RenameProcessor(myFixture.getProject(), targetElement, newName, searchCommentsAndText, searchCommentsAndText);
       renameProcessor.run();
-    }));
+    });
   }
 
   @NotNull
