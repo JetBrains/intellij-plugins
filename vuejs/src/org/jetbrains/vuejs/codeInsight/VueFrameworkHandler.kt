@@ -148,7 +148,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     //Bootstrap-vue components
     if (property.containingFile.name == "index.js" && property.parent is JSObjectLiteralExpression) {
       val parent = PsiTreeUtil.findFirstParent(property, Condition {
-        return@Condition it is JSVarStatement && it.variables.first().name == "components"
+        return@Condition it is JSVarStatement && it.variables.firstOrNull()?.name == "components"
       })
       if (parent != null) {
         val componentName = property.name ?: ""
