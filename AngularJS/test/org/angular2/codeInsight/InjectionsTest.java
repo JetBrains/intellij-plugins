@@ -234,4 +234,10 @@ public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
       myFixture.checkHighlighting(true, false, true);
     });
   }
+
+  public void testInterpolationTyping() {
+    myFixture.configureByFiles("interpolation.html", "package.json");
+    myFixture.type("{{foo");
+    myFixture.checkResultByFile("interpolation.after.html");
+  }
 }

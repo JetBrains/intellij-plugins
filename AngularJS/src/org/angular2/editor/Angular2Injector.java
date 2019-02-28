@@ -32,7 +32,7 @@ import static org.angular2.lang.expr.parser.Angular2PsiParser.*;
 public class Angular2Injector implements MultiHostInjector {
 
   public static final NullableFunction<PsiElement, Pair<String, String>> BRACES_FACTORY = JSInjectionBracesUtil
-    .delimitersFactory(Angular2Language.INSTANCE.getDisplayName(),
+    .delimitersFactory(Angular2HtmlLanguage.INSTANCE.getDisplayName(),
                        (project, key) -> /* no support for custom delimiters*/ null);
 
   @NotNull
