@@ -215,4 +215,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
                    sorted(myFixture.getLookupElementStrings()));
     }
   }
+
+  public void testInterpolationTyping() {
+    myFixture.configureByFiles("interpolation.html", "package.json");
+    myFixture.type("{{foo");
+    myFixture.checkResultByFile("interpolation.after.html");
+  }
 }

@@ -48,7 +48,7 @@
 
     <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
 
-    <typedHandler implementation="org.angularjs.editor.AngularBracesInterpolationTypedHandler"/>
+    <typedHandler implementation="org.angularjs.editor.AngularJSBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="AngularJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
 
     <stubIndex implementation="org.angularjs.index.AngularDirectivesIndex"/>
@@ -154,6 +154,7 @@
     <findUsagesHandlerFactory implementation="org.angular2.findUsages.Angular2FindUsagesHandlerFactory"/>
     <gotoSymbolContributor implementation="org.angular2.navigation.Angular2GotoSymbolContributor"/>
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
+    <typedHandler implementation="org.angular2.editor.Angular2BracesInterpolationTypedHandler"/>
 
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
