@@ -3,40 +3,42 @@ package org.angular2.inspections.quickfixes;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.util.ObjectUtils;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class RemoveAttributeQuickFix implements LocalQuickFix {
-  private final String myAttributeName;
+public class RemoveJSProperty implements LocalQuickFix {
+  private final String myPropertyName;
 
-  public RemoveAttributeQuickFix(@NotNull String name) {myAttributeName = name;}
+  public RemoveJSProperty(@NotNull String name) {
+    myPropertyName = name;
+  }
 
-  @Nls
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   @NotNull
   @Override
   public String getName() {
-    return Angular2Bundle.message("angular.quickfix.template.remove-attribute.name", myAttributeName);
+    return Angular2Bundle.message("angular.quickfix.decorator.remove-property.name", myPropertyName);
   }
 
-  @Nls
+  @Nls(capitalization = Nls.Capitalization.Sentence)
   @NotNull
   @Override
   public String getFamilyName() {
-    return Angular2Bundle.message("angular.quickfix.template.remove-attribute.family");
+    return Angular2Bundle.message("angular.quickfix.decorator.remove-property.family");
   }
 
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-    final XmlAttribute attribute = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), XmlAttribute.class);
-    if (attribute != null) {
-      PsiElement parent = attribute.getParent();
-      attribute.delete();
+    final JSProperty property = ObjectUtils.tryCast(descriptor.getPsiElement().getParent(), JSProperty.class);
+    if (property != null) {
+      PsiElement parent = property.getParent();
+      property.delete();
       FormatFixer.create(parent, FormatFixer.Mode.Reformat).fixFormat();
     }
   }

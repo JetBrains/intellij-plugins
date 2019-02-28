@@ -1,8 +1,10 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.codeInsight.intention.HighPriorityAction;
-import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.javascript.nodejs.packageJson.InstalledPackageVersion;
 import com.intellij.javascript.nodejs.packageJson.NodeInstalledPackageFinder;
 import com.intellij.javascript.nodejs.packageJson.codeInsight.PackageJsonMismatchedDependencyInspection;
@@ -18,9 +20,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.ObjectUtils;
 import org.angular2.cli.AngularCliSchematicsRegistryService;
 import org.angular2.cli.AngularCliUtil;
-import org.angular2.cli.actions.AngularCliAddDependencyAction;
+import org.angular2.inspections.quickfixes.AngularCliAddQuickFix;
 import org.angular2.lang.Angular2Bundle;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -94,48 +95,5 @@ public class AngularCliAddDependencyInspection extends LocalInspectionTool {
   @Override
   public boolean isEnabledByDefault() {
     return true;
-  }
-
-  private static class AngularCliAddQuickFix implements LocalQuickFix, HighPriorityAction {
-    private final VirtualFile myPackageJson;
-    private final String myPackageName;
-    private final String myVersionSpec;
-    private final boolean myReinstall;
-
-    AngularCliAddQuickFix(@NotNull VirtualFile packageJson, @NotNull String packageName,
-                          @NotNull String versionSpec, boolean reinstall) {
-      myPackageJson = packageJson;
-      myPackageName = packageName;
-      myVersionSpec = versionSpec;
-      myReinstall = reinstall;
-    }
-
-    @Nls
-    @NotNull
-    @Override
-    public String getName() {
-      return Angular2Bundle.message(myReinstall ? "angular.quickfix.json.ng-add.name.reinstall"
-                                                : "angular.quickfix.json.ng-add.name.run",
-                                    myPackageName);
-    }
-
-    @Nls
-    @NotNull
-    @Override
-    public String getFamilyName() {
-      return Angular2Bundle.message("angular.quickfix.json.ng-add.family");
-    }
-
-    @Override
-    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      if (AngularCliUtil.hasAngularCLIPackageInstalled(project, myPackageJson)) {
-        AngularCliAddDependencyAction.runAndShowConsoleLater(
-          project, myPackageJson.getParent(), myPackageName, myVersionSpec.trim(), !myReinstall);
-      }
-      else {
-        AngularCliUtil.notifyAngularCliNotInstalled(project, myPackageJson.getParent(),
-                                                    Angular2Bundle.message("angular.quickfix.json.ng-add.error.cant-run"));
-      }
-    }
   }
 }
