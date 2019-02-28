@@ -31,7 +31,7 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
     doMultiFileTest("angular-commons",
                     "test.html",
                     "*ng<caret>For",
-                    "Import NgModule...",
+                    "Import an Angular module...",
                     "\"@angular/common\"");
   }
 
@@ -47,7 +47,7 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
     doMultiFileTest("angular-commons",
                     "test.html",
                     "[ng<caret>Class]",
-                    "Import NgModule...",
+                    "Import an Angular module...",
                     "\"@angular/common\"");
   }
 
@@ -63,7 +63,7 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
     doMultiFileTest("angular-commons",
                     "test.html",
                     "lower<caret>case",
-                    "Import NgModule...",
+                    "Import an Angular module...",
                     "\"@angular/common\"");
   }
 
@@ -95,7 +95,7 @@ public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFile
 
   public void testUndeclaredDirectiveDifferentModule() {
     doMultiFileTest("test.html",
-                    "Declare MyDirective in an NgModule",
+                    "Declare MyDirective in an Angular module",
                     "( module2.ts )");
   }
 

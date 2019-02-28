@@ -53,7 +53,7 @@ public class AddJSPropertyQuickFix extends LocalQuickFixOnPsiElement {
   @NotNull
   @Override
   public String getFamilyName() {
-    return Angular2Bundle.message("angular.quickfix.family");
+    return Angular2Bundle.message("angular.quickfix.decorator.add-property.family");
   }
 
   @Override

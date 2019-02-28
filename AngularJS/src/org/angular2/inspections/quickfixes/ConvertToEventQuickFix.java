@@ -3,41 +3,40 @@ package org.angular2.inspections.quickfixes;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.util.ObjectUtils;
 import org.angular2.lang.Angular2Bundle;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class RemoveAttributeQuickFix implements LocalQuickFix {
-  private final String myAttributeName;
+public class ConvertToEventQuickFix implements LocalQuickFix {
 
-  public RemoveAttributeQuickFix(@NotNull String name) {myAttributeName = name;}
+  private final String myEventName;
+
+  public ConvertToEventQuickFix(@NotNull String eventName) {
+    myEventName = eventName;
+  }
 
   @Nls
   @NotNull
   @Override
   public String getName() {
-    return Angular2Bundle.message("angular.quickfix.template.remove-attribute.name", myAttributeName);
+    return Angular2Bundle.message("angular.quickfix.template.bind-to-event.name", myEventName);
   }
 
   @Nls
   @NotNull
   @Override
   public String getFamilyName() {
-    return Angular2Bundle.message("angular.quickfix.template.remove-attribute.family");
+    return Angular2Bundle.message("angular.quickfix.template.bind-to-event.family");
   }
 
   @Override
   public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-    final XmlAttribute attribute = PsiTreeUtil.getParentOfType(descriptor.getPsiElement(), XmlAttribute.class);
+    final XmlAttribute attribute = ObjectUtils.tryCast(descriptor.getPsiElement().getParent(), XmlAttribute.class);
     if (attribute != null) {
-      PsiElement parent = attribute.getParent();
-      attribute.delete();
-      FormatFixer.create(parent, FormatFixer.Mode.Reformat).fixFormat();
+      attribute.setName("(" + myEventName + ")");
     }
   }
 }

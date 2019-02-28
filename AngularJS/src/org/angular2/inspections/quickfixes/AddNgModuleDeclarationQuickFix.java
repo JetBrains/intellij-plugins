@@ -71,7 +71,7 @@ public class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionAct
   @NotNull
   @Override
   public String getFamilyName() {
-    return Angular2Bundle.message("angular.quickfix.family");
+    return Angular2Bundle.message("angular.quickfix.ngmodule.declare.family");
   }
 
   @Override
