@@ -13,8 +13,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.presentation.java.SymbolPresentationUtil;
 import com.intellij.testFramework.EdtTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import one.util.streamex.StreamEx;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
@@ -34,7 +34,7 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
 
 @RunWith(com.intellij.testFramework.Parameterized.class)
-public class GotoRelatedTest extends LightPlatformCodeInsightFixtureTestCase {
+public class GotoRelatedTest extends Angular2CodeInsightFixtureTestCase {
 
   @Parameterized.Parameter
   public String myTestDir;

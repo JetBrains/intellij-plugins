@@ -3,7 +3,6 @@ package org.angular2.refactoring;
 
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.LightPlatformMultiFileFixtureTestCase;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.ui.Messages;
@@ -11,10 +10,11 @@ import com.intellij.openapi.ui.TestDialog;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
+import org.angular2.Angular2MultiFileFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class RenameTest extends LightPlatformMultiFileFixtureTestCase {
+public class RenameTest extends Angular2MultiFileFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "rename";

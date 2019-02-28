@@ -9,7 +9,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.UsefulTestCase;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2BindingsInspection;
 import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory;
 import org.angular2.lang.metadata.psi.MetadataFileImpl;
@@ -17,7 +17,7 @@ import org.angularjs.AngularTestUtil;
 
 import java.io.File;
 
-public class MetadataTest extends LightPlatformCodeInsightFixtureTestCase {
+public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {

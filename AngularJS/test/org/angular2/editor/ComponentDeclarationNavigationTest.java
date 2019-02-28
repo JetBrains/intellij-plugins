@@ -13,7 +13,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.EdtTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import java.util.Collection;
 import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 @RunWith(Parameterized.class)
-public class ComponentDeclarationNavigationTest extends LightPlatformCodeInsightFixtureTestCase {
+public class ComponentDeclarationNavigationTest extends Angular2CodeInsightFixtureTestCase {
 
   @Parameterized.Parameter
   public boolean myIsComponent;

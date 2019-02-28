@@ -4,12 +4,12 @@ package org.angular2.codeInsight;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.intellij.idea.lang.javascript.intention.JSIntentionBundle;
 
-public class IntentionsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class IntentionsTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {

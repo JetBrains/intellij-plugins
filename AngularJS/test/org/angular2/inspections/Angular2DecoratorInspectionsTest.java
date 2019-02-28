@@ -2,12 +2,12 @@
 package org.angular2.inspections;
 
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2DecoratorInspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class Angular2DecoratorInspectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {

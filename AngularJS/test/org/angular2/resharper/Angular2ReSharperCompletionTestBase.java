@@ -21,6 +21,12 @@ public abstract class Angular2ReSharperCompletionTestBase extends TypeScriptReSh
                                   "$R#_COMPLETION_TEST_ROOT");
   }
 
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    AngularTestUtil.enableAstLoadingFilter(this);
+  }
+
   protected List<String> doGetExtraFiles() {
     List<String> extraFiles = new ArrayList<>();
     String basePath = "/" + getName() + ".";
