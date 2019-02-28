@@ -1,20 +1,20 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
-import com.intellij.lang.javascript.LightPlatformMultiFileFixtureTestCase;
 import com.intellij.lang.resharper.ReSharperTestUtil;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PsiTestUtil;
+import org.angular2.Angular2MultiFileFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.javascript.modules.ES6ImportAction.NAME_TO_IMPORT;
 
-public class Angular2NgModuleImportQuickFixesTest extends LightPlatformMultiFileFixtureTestCase {
+public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {

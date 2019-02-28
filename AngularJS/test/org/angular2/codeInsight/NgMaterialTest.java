@@ -4,11 +4,11 @@ package org.angular2.codeInsight;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2BindingsInspection;
 import org.angularjs.AngularTestUtil;
 
-public class NgMaterialTest extends LightPlatformCodeInsightFixtureTestCase {
+public class NgMaterialTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "ngMaterial";

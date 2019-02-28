@@ -14,15 +14,15 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInsp
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import one.util.streamex.StreamEx;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
-public class ContextTest extends LightPlatformCodeInsightFixtureTestCase {
+public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "context";

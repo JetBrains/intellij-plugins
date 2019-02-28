@@ -6,8 +6,8 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.impl.PsiManagerEx;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import static java.util.Arrays.asList;
 
-public class GotoSymbolTest extends LightPlatformCodeInsightFixtureTestCase {
+public class GotoSymbolTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {

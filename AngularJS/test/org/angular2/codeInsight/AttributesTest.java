@@ -24,10 +24,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.XmlInvalidIdInspection;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
@@ -48,7 +48,7 @@ import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
 import static org.angularjs.AngularTestUtil.renderLookupItems;
 
-public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
+public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "attributes";

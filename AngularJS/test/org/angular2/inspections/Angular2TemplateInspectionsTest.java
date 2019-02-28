@@ -4,12 +4,12 @@ package org.angular2.inspections;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Angular2TemplateInspectionsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {

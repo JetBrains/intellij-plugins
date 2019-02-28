@@ -5,11 +5,13 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import com.intellij.util.ObjectUtils;
@@ -36,6 +38,10 @@ public class AngularTestUtil {
       fixture.configureByFiles(name + ".d.ts");
       fixture.copyFileToProject(name + ".metadata.json");
     }
+  }
+
+  public static void enableAstLoadingFilter(@NotNull UsefulTestCase testCase) {
+    Registry.get("ast.loading.filter").setValue(true, testCase.getTestRootDisposable());
   }
 
   public static String getBaseTestDataPath(Class clazz) {
@@ -122,5 +128,4 @@ public class AngularTestUtil {
       return result.toString();
     });
   }
-
 }

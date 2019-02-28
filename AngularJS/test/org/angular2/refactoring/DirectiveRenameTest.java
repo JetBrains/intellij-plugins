@@ -1,10 +1,10 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.refactoring;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
-public class DirectiveRenameTest extends LightPlatformCodeInsightFixtureTestCase {
+public class DirectiveRenameTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "rename";

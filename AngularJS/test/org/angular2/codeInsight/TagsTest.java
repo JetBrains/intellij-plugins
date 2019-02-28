@@ -9,13 +9,13 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspectio
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2BindingsInspection;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
 
-public class TagsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class TagsTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "tags";

@@ -20,13 +20,14 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.AstLoadingFilter;
-import com.intellij.util.Processor;
 import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Predicate;
 
 import static org.angular2.Angular2DecoratorUtil.isPrivateMember;
 
@@ -65,17 +66,17 @@ public class Angular2ImplicitUsageProvider implements ImplicitUsageProvider {
   }
 
   private static boolean isReferencedInTemplate(@NotNull PsiElement node, @NotNull PsiFile template) {
-    Processor<PsiReference> processor = reference ->
+    Predicate<PsiReference> predicate = reference ->
       reference instanceof PsiElement &&
-      (JSResolveUtil.isSelfReference((PsiElement)reference) ||
-       node instanceof JSFunction && PsiTreeUtil.isAncestor(node, (PsiElement)reference, false));
+      !(JSResolveUtil.isSelfReference((PsiElement)reference) ||
+        node instanceof JSFunction && PsiTreeUtil.isAncestor(node, (PsiElement)reference, false));
 
     SearchScope scope = new LocalSearchScope(new PsiElement[]{template},
                                              Angular2Bundle.message("angular.search-scope.template"),
                                              true);
     // TODO stub references in Angular templates
-    if (!AstLoadingFilter.forceAllowTreeLoading(template, () ->
-      ReferencesSearch.search(node, scope, true).forEach(processor))) {
+    if (AstLoadingFilter.forceAllowTreeLoading(template, () ->
+      ReferencesSearch.search(node, scope, true).anyMatch(predicate))) {
       return true;
     }
     return false;

@@ -18,9 +18,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.angular2.lang.html.psi.Angular2HtmlTemplateBindings;
@@ -34,7 +34,7 @@ import static com.intellij.util.containers.ContainerUtil.sorted;
 import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.findOffsetBySignature;
 
-public class InjectionsTest extends LightPlatformCodeInsightFixtureTestCase {
+public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "injections";

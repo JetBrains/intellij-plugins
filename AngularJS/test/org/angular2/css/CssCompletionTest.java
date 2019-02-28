@@ -1,13 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.css;
 
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
 import static com.intellij.util.containers.ContainerUtil.sorted;
 import static java.util.Arrays.asList;
 
-public class CssCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
+public class CssCompletionTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {

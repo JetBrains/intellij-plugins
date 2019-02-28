@@ -5,9 +5,9 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import one.util.streamex.StreamEx;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
@@ -20,7 +20,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ModulesTest extends LightPlatformCodeInsightFixtureTestCase {
+public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {

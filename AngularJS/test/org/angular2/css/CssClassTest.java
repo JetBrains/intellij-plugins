@@ -4,14 +4,14 @@ package org.angular2.css;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.Arrays.asList;
 
-public class CssClassTest extends LightPlatformCodeInsightFixtureTestCase {
+public class CssClassTest extends Angular2CodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
