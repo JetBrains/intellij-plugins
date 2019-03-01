@@ -136,7 +136,7 @@ public class AngularTestUtil {
     JSRootConfiguration configuration = JSRootConfiguration.getInstance(fixture.getProject());
     JSLanguageLevel previousLevel = configuration.getLanguageLevel();
     configuration.storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6);
-    Disposer.register(fixture.getTestRootDisposable(), () ->
+    Disposer.register(fixture.getProjectDisposable(), () ->
       configuration.storeLanguageLevelAndUpdateCaches(previousLevel == JSLanguageLevel.DEFAULT ? null : previousLevel));
   }
 }
