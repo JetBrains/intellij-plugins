@@ -284,11 +284,11 @@ public class DartAnalysisServerService implements Disposable {
                                    final int replacementLength,
                                    @NotNull final List<CompletionSuggestion> completions,
                                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
-                                   @NotNull final List<String> includedSuggestionKinds,
+                                   @NotNull final List<String> includedElementKinds,
                                    final boolean isLast) {
       synchronized (myCompletionInfos) {
         myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, includedSuggestionSets,
-                                                 includedSuggestionKinds, isLast));
+                                                 includedElementKinds, isLast));
         myCompletionInfos.notifyAll();
       }
     }
@@ -469,7 +469,7 @@ public class DartAnalysisServerService implements Disposable {
             consumer.consumeCompletionSuggestion(convertedReplacementOffset, convertedReplacementLength, completion);
           }
 
-          final Set<String> includedKinds = Sets.newHashSet(completionInfo.myIncludedSuggestionKinds);
+          final Set<String> includedKinds = Sets.newHashSet(completionInfo.myIncludedElementKinds);
           for (final IncludedSuggestionSet includedSet : completionInfo.myIncludedSuggestionSets) {
             libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds);
           }
@@ -2185,7 +2185,7 @@ public class DartAnalysisServerService implements Disposable {
     private final int myOriginalReplacementLength;
     @NotNull private final List<CompletionSuggestion> myCompletions;
     @NotNull private final List<IncludedSuggestionSet> myIncludedSuggestionSets;
-    @NotNull private final List<String> myIncludedSuggestionKinds;
+    @NotNull private final List<String> myIncludedElementKinds;
     private final boolean isLast;
 
     CompletionInfo(@NotNull final String completionId,
@@ -2193,14 +2193,14 @@ public class DartAnalysisServerService implements Disposable {
                    int originalReplacementLength,
                    @NotNull final List<CompletionSuggestion> completions,
                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
-                   @NotNull final List<String> includedSuggestionKinds,
+                   @NotNull final List<String> includedElementKinds,
                    boolean isLast) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
       this.myOriginalReplacementLength = originalReplacementLength;
       this.myCompletions = completions;
       this.myIncludedSuggestionSets = includedSuggestionSets;
-      this.myIncludedSuggestionKinds = includedSuggestionKinds;
+      this.myIncludedElementKinds = includedElementKinds;
       this.isLast = isLast;
     }
   }

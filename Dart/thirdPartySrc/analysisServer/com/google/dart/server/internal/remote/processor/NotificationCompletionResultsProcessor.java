@@ -54,13 +54,13 @@ public class NotificationCompletionResultsProcessor extends NotificationProcesso
       includedSuggestionSets = Collections.emptyList();
     }
 
-    final List<String> includedSuggestionKinds;
-    final JsonElement includedSuggestionKindsElement = paramsObject.get("includedSuggestionKinds");
-    if (includedSuggestionKindsElement != null) {
-      final JsonArray includedSuggestionKindsArray = includedSuggestionKindsElement.getAsJsonArray();
-      includedSuggestionKinds = JsonUtilities.decodeStringList(includedSuggestionKindsArray);
+    final List<String> includedElementKinds;
+    final JsonElement includedElementKindsElement = paramsObject.get("includedElementKinds");
+    if (includedElementKindsElement != null) {
+      final JsonArray includedElementKindsArray = includedElementKindsElement.getAsJsonArray();
+      includedElementKinds = JsonUtilities.decodeStringList(includedElementKindsArray);
     } else {
-      includedSuggestionKinds = Collections.emptyList();
+      includedElementKinds = Collections.emptyList();
     }
 
     int replacementOffset = paramsObject.get("replacementOffset").getAsInt();
@@ -73,7 +73,7 @@ public class NotificationCompletionResultsProcessor extends NotificationProcesso
         replacementLength,
         CompletionSuggestion.fromJsonArray(resultsArray),
         includedSuggestionSets,
-        includedSuggestionKinds,
+        includedElementKinds,
         isLast);
   }
 }
