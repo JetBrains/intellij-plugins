@@ -11,8 +11,6 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile "org.jetbrains.kotlin:kotlin-reflect"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
