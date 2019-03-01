@@ -1,13 +1,17 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.typescript.service
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.service.JSLanguageServiceAnnotationResult
+import com.intellij.lang.javascript.service.JSLanguageServiceFileCommandCache
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceObject
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceProtocol
 import com.intellij.lang.javascript.service.protocol.JSLanguageServiceSimpleCommand
 import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
+import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFixSet
 import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCacheImpl
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
@@ -21,6 +25,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.Consumer
 import com.intellij.util.containers.ContainerUtil
@@ -165,6 +170,13 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
     if (!isVueFile(file)) return super.getDocumentText(file, instance, document)
 
     return getModifiedVueDocumentText(myProject, document)
+  }
+
+  override fun createFixSet(file: PsiFile,
+                            cache: JSLanguageServiceFileCommandCache,
+                            typescriptResult: TypeScriptLanguageServiceAnnotationResult): TypeScriptLanguageServiceFixSet {
+    val textRange = findModule(file)?.textRange
+    return TypeScriptLanguageServiceFixSet(file.project, cache, file.virtualFile, typescriptResult, textRange)
   }
 
   private fun isVueFile(virtualFile: VirtualFile) = virtualFile.fileType == VueFileType.INSTANCE

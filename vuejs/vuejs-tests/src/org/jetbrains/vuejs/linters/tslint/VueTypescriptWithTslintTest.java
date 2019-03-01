@@ -14,4 +14,8 @@ public class VueTypescriptWithTslintTest extends TypescriptServiceWithTslintTest
   public void testFilterWhitespaceErrorsByScriptTag() {
     doHighlightingTest("main", "vue");
   }
+
+  public void testFixAllErrorsWithWhitespaceRules() {
+    doFixTest("main", "vue", "Fix all auto-fixable tslint failures");
+  }
 }
