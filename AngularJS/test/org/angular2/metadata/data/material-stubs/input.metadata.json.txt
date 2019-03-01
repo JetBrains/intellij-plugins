@@ -1,0 +1,3 @@
+MetadataFile:input.metadata.json
+  @angular/material/input <metadata node module>
+    export * from ./input/index <metadata module export>('')

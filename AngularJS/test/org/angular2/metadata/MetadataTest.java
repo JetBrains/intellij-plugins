@@ -3,13 +3,18 @@ package org.angular2.metadata;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.json.psi.impl.JsonFileImpl;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.inspections.Angular2BindingsInspection;
+import org.angular2.inspections.Angular2MatchingComponentsInspection;
+import org.angular2.inspections.Angular2TagsInspection;
 import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory;
 import org.angular2.lang.metadata.psi.MetadataFileImpl;
 import org.angularjs.AngularTestUtil;
@@ -82,5 +87,49 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
                                 Angular2BindingsInspection.class);
     myFixture.checkHighlighting(true, false, true);
+  }
+
+  public void testMetadataWithExportAliases() {
+    AngularTestUtil.configureWithMetadataFiles(myFixture, "export.test");
+    VirtualFile vFile = myFixture.getTempDirFixture().getFile("export.test.metadata.json");
+    PsiFile file = myFixture.getPsiManager().findFile(vFile);
+    assert file instanceof MetadataFileImpl;
+    String result = DebugUtil.psiToString(file, false, false);
+    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "export.test.metadata.json.txt").toString(), result);
+  }
+
+  public void testMaterialMetadataResolution() {
+    myFixture.copyDirectoryToProject("material", ".");
+    myFixture.enableInspections(Angular2MatchingComponentsInspection.class,
+                                Angular2TagsInspection.class);
+    myFixture.configureFromTempProjectFile("module.ts");
+    myFixture.checkHighlighting();
+  }
+
+  public void testMaterialMetadataStubGeneration() {
+    myFixture.copyDirectoryToProject("material", ".");
+    VirtualFile materialDir = myFixture.getTempDirFixture().getFile("node_modules/@angular/material");
+    String pathPrefix = materialDir.getPath();
+    PsiDirectory material = myFixture.getPsiManager().findDirectory(materialDir);
+    material.acceptChildren(new PsiElementVisitor() {
+      @Override
+      public void visitFile(PsiFile file) {
+        if (file.getName().endsWith(".metadata.json")) {
+          String relativeFile = FileUtil.getRelativePath(pathPrefix, file.getVirtualFile().getPath(), '/');
+          assert file instanceof MetadataFileImpl : relativeFile;
+          String result = DebugUtil.psiToString(file, false, false);
+          UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "material-stubs/" + relativeFile + ".txt").toString(), result);
+        }
+      }
+
+      @Override
+      public void visitDirectory(PsiDirectory dir) {
+        String relativeFile = FileUtil.getRelativePath(
+          pathPrefix, dir.getVirtualFile().getPath(), '/');
+        if (!"typings".equals(relativeFile)) {
+          dir.acceptChildren(this);
+        }
+      }
+    });
   }
 }

@@ -1,5 +1,6 @@
 MetadataFile:ng-zorro-antd.metadata.json
   ng-zorro-antd <metadata node module>
+    export * from ./core/public-api <metadata module export>('')
     NgZorroAntdModule <metadata module>: imports=[]; declarations=[]; exports=[ɵa, ɵbb, ɵbe, ɵbi, ɵbs, ɵbx, ɵbz, ɵcj, ɵco, ɵcu, ɵcx, ɵcz, ɵdg, ɵdj, ɵdl, ɵdo, ɵdr, ɵdv, ɵdx, ɵee, ɵei, ɵek, ɵem, ɵeo, ɵeq, ɵes, ɵez, ɵff, ɵfh, ɵfk, ɵfo, ɵfr, ɵfu, ɵgc, ɵge, ɵhf, ɵhh, ɵhm, ɵhv, ɵhz, ɵi, ɵid, ɵij, ɵil, ɵiu, ɵjc, ɵjf, ɵji, ɵjq, ɵjs, ɵju, ɵjy, ɵk, ɵkc, ɵl]; scopeFullyResolved=true; exportsFullyResolved=true
       forRoot <metadata function>
         NgZorroAntdModule <metadata reference>('')

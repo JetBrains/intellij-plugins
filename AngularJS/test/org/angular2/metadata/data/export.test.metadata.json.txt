@@ -1,0 +1,78 @@
+MetadataFile:export.test.metadata.json
+  @angular/cdk/table <metadata node module>
+    export {OtherDataSource as MyDataSource, DataSource as DataSource} from @angular/cdk/collections <metadata module export>('')
+    DataRowOutlet <metadata directive>: selector=[rowOutlet]; inputs=[]; outputs=[]; inOuts=[]('')
+    HeaderRowOutlet <metadata directive>: selector=[headerRowOutlet]; inputs=[]; outputs=[]; inOuts=[]('')
+    FooterRowOutlet <metadata directive>: selector=[footerRowOutlet]; inputs=[]; outputs=[]; inOuts=[]('')
+    CdkTable <metadata component>: selector=cdk-table, table[cdk-table]; exportAs=cdkTable; inputs=[trackBy, dataSource, multiTemplateDataRows]; outputs=[]; inOuts=[]('')
+    CdkCellDef <metadata template>: selector=[cdkCellDef]; inputs=[]; outputs=[]; inOuts=[]('')
+    CdkHeaderCellDef <metadata template>: selector=[cdkHeaderCellDef]; inputs=[]; outputs=[]; inOuts=[]('')
+    CdkFooterCellDef <metadata template>: selector=[cdkFooterCellDef]; inputs=[]; outputs=[]; inOuts=[]('')
+    CdkColumnDefBase <metadata class>('')
+    CdkColumnDef <metadata directive>: selector=[cdkColumnDef]; inputs=[cdkColumnDef, sticky, stickyEnd]; outputs=[]; inOuts=[]
+      _CdkColumnDefBase <metadata reference>('')
+    BaseCdkCell <metadata class>('')
+    CdkHeaderCell <metadata directive>: selector=cdk-header-cell, th[cdk-header-cell]; inputs=[]; outputs=[]; inOuts=[]
+      BaseCdkCell <metadata reference>('')
+    CdkFooterCell <metadata directive>: selector=cdk-footer-cell, td[cdk-footer-cell]; inputs=[]; outputs=[]; inOuts=[]
+      BaseCdkCell <metadata reference>('')
+    CdkCell <metadata directive>: selector=cdk-cell, td[cdk-cell]; inputs=[]; outputs=[]; inOuts=[]
+      BaseCdkCell <metadata reference>('')
+    BaseRowDef <metadata class>('')
+    CdkHeaderRowDefBase <metadata class>
+      BaseRowDef <metadata reference>('')
+    CdkHeaderRowDef <metadata template>: selector=[cdkHeaderRowDef]; inputs=[cdkHeaderRowDefSticky, cdkHeaderRowDef]; outputs=[]; inOuts=[]
+      _CdkHeaderRowDefBase <metadata reference>('')
+    CdkFooterRowDefBase <metadata class>
+      BaseRowDef <metadata reference>('')
+    CdkFooterRowDef <metadata template>: selector=[cdkFooterRowDef]; inputs=[cdkFooterRowDefSticky, cdkFooterRowDef]; outputs=[]; inOuts=[]
+      _CdkFooterRowDefBase <metadata reference>('')
+    CdkRowDef <metadata template>: selector=[cdkRowDef]; inputs=[cdkRowDefWhen, cdkRowDefColumns]; outputs=[]; inOuts=[]
+      BaseRowDef <metadata reference>('')
+    CdkCellOutlet <metadata directive>: selector=[cdkCellOutlet]; inputs=[]; outputs=[]; inOuts=[]('')
+    CdkHeaderRow <metadata component>: selector=cdk-header-row, tr[cdk-header-row]; inputs=[]; outputs=[]; inOuts=[]('')
+    CdkFooterRow <metadata component>: selector=cdk-footer-row, tr[cdk-footer-row]; inputs=[]; outputs=[]; inOuts=[]('')
+    CdkRow <metadata component>: selector=cdk-row, tr[cdk-row]; inputs=[]; outputs=[]; inOuts=[]('')
+    CdkTableModule <metadata module>: imports=[]; declarations=[CdkCell, CdkCellDef, CdkCellOutlet, CdkColumnDef, CdkFooterCell, CdkFooterCellDef, CdkFooterRow, CdkFooterRowDef, CdkHeaderCell, CdkHeaderCellDef, CdkHeaderRow, CdkHeaderRowDef, CdkRow, CdkRowDef, CdkTable, DataRowOutlet, FooterRowOutlet, HeaderRowOutlet]; exports=[CdkCell, CdkCellDef, CdkCellOutlet, CdkColumnDef, CdkFooterCell, CdkFooterCellDef, CdkFooterRow, CdkFooterRowDef, CdkHeaderCell, CdkHeaderCellDef, CdkHeaderRow, CdkHeaderRowDef, CdkRow, CdkRowDef, CdkTable, DataRowOutlet, FooterRowOutlet, HeaderRowOutlet]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        CdkTable <metadata reference>('')
+        CdkRowDef <metadata reference>('')
+        CdkCellDef <metadata reference>('')
+        CdkCellOutlet <metadata reference>('')
+        CdkHeaderCellDef <metadata reference>('')
+        CdkFooterCellDef <metadata reference>('')
+        CdkColumnDef <metadata reference>('')
+        CdkCell <metadata reference>('')
+        CdkRow <metadata reference>('')
+        CdkHeaderCell <metadata reference>('')
+        CdkFooterCell <metadata reference>('')
+        CdkHeaderRow <metadata reference>('')
+        CdkHeaderRowDef <metadata reference>('')
+        CdkFooterRow <metadata reference>('')
+        CdkFooterRowDef <metadata reference>('')
+        DataRowOutlet <metadata reference>('')
+        HeaderRowOutlet <metadata reference>('')
+        FooterRowOutlet <metadata reference>('')
+      ___dec.exports <metadata array>
+        CdkTable <metadata reference>('')
+        CdkRowDef <metadata reference>('')
+        CdkCellDef <metadata reference>('')
+        CdkCellOutlet <metadata reference>('')
+        CdkHeaderCellDef <metadata reference>('')
+        CdkFooterCellDef <metadata reference>('')
+        CdkColumnDef <metadata reference>('')
+        CdkCell <metadata reference>('')
+        CdkRow <metadata reference>('')
+        CdkHeaderCell <metadata reference>('')
+        CdkFooterCell <metadata reference>('')
+        CdkHeaderRow <metadata reference>('')
+        CdkHeaderRowDef <metadata reference>('')
+        CdkFooterRow <metadata reference>('')
+        CdkFooterRowDef <metadata reference>('')
+        DataRowOutlet <metadata reference>('')
+        HeaderRowOutlet <metadata reference>('')
+        FooterRowOutlet <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+    STICKY_DIRECTIONS <metadata array>('')
+    StickyStyler <metadata class>('')
