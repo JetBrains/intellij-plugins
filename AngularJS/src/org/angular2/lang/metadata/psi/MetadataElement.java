@@ -51,7 +51,7 @@ public abstract class MetadataElement<Stub extends MetadataElementStub<?>> exten
     return myStub;
   }
 
-  public MetadataElement findMember(String name) {
+  public MetadataElement findMember(@Nullable String name) {
     return (MetadataElement)ObjectUtils.doIfNotNull(getStub().findMember(name), MetadataElementStub::getPsi);
   }
 

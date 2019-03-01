@@ -13,6 +13,7 @@ import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataClassBase;
 import org.angular2.lang.metadata.MetadataUtils;
 import org.angular2.lang.metadata.psi.MetadataElementType;
+import org.angular2.lang.metadata.stubs.MetadataElementStub;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,10 +64,14 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
   }
 
   private static final BooleanStructureElement IS_TEMPLATE_FLAG = new BooleanStructureElement();
+  private static final BooleanStructureElement HAS_INPUT_MAPPINGS = new BooleanStructureElement();
+  private static final BooleanStructureElement HAS_OUTPUT_MAPPINGS = new BooleanStructureElement();
   @SuppressWarnings("StaticFieldReferencedViaSubclass")
   protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
     Angular2MetadataElementStub.FLAGS_STRUCTURE,
-    IS_TEMPLATE_FLAG
+    IS_TEMPLATE_FLAG,
+    HAS_INPUT_MAPPINGS,
+    HAS_OUTPUT_MAPPINGS
   );
 
   protected final Map<String, String> myInputMappings;
@@ -97,8 +102,8 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
   public Angular2MetadataClassStubBase(@NotNull StubInputStream stream,
                                        @Nullable StubElement parent, @NotNull MetadataElementType elementType) throws IOException {
     super(stream, parent, elementType);
-    myInputMappings = readStringMap(stream);
-    myOutputMappings = readStringMap(stream);
+    myInputMappings = readFlag(HAS_INPUT_MAPPINGS) ? MetadataElementStub.readStringMap(stream) : Collections.emptyMap();
+    myOutputMappings = readFlag(HAS_OUTPUT_MAPPINGS) ? MetadataElementStub.readStringMap(stream) : Collections.emptyMap();
   }
 
   @Nullable
@@ -128,9 +133,15 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
 
   @Override
   public void serialize(@NotNull StubOutputStream stream) throws IOException {
+    writeFlag(HAS_INPUT_MAPPINGS, !myInputMappings.isEmpty());
+    writeFlag(HAS_OUTPUT_MAPPINGS, !myOutputMappings.isEmpty());
     super.serialize(stream);
-    writeStringMap(myInputMappings, stream);
-    writeStringMap(myOutputMappings, stream);
+    if (!myInputMappings.isEmpty()) {
+      writeStringMap(myInputMappings, stream);
+    }
+    if (!myOutputMappings.isEmpty()) {
+      writeStringMap(myOutputMappings, stream);
+    }
   }
 
   protected boolean loadInOuts() {

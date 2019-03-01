@@ -52,7 +52,7 @@ public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataCla
       String className = getStub().getClassName();
       Angular2MetadataNodeModule nodeModule = getNodeModule();
       Pair<PsiFile, TypeScriptClass> fileAndClass = className != null && nodeModule != null
-                                                    ? nodeModule.locateFileAndClass(className)
+                                                    ? nodeModule.locateFileAndMember(className, TypeScriptClass.class)
                                                     : Pair.create(null, null);
       Collection<Object> dependencies = new HashSet<>();
       dependencies.add(getContainingFile());

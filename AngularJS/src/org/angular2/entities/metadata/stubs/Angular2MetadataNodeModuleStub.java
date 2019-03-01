@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
+import one.util.streamex.StreamEx;
 import org.angular2.entities.metadata.Angular2MetadataElementTypes;
 import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
 import org.angular2.index.Angular2MetadataNodeModuleIndex;
@@ -22,8 +23,10 @@ import java.io.IOException;
 public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<Angular2MetadataNodeModule> {
 
   @NonNls private static final String IMPORT_AS = "importAs";
+  @NonNls private static final String EXPORTS = "exports";
   private static final String METADATA = "metadata";
 
+  @Nullable
   private final StringRef myImportAs;
 
   public Angular2MetadataNodeModuleStub(@NotNull StubInputStream stream, @Nullable StubElement parentStub) throws IOException {
@@ -39,6 +42,10 @@ public class Angular2MetadataNodeModuleStub extends Angular2MetadataElementStub<
     if (fileRoot instanceof JsonObject) {
       JsonObject fileRootObject = (JsonObject)fileRoot;
       myImportAs = StringRef.fromString(MetadataUtils.readStringPropertyValue(fileRootObject.findProperty(IMPORT_AS)));
+      StreamEx.ofNullable(MetadataUtils.getPropertyValue(fileRootObject.findProperty(EXPORTS), JsonArray.class))
+        .flatCollection(JsonArray::getValueList)
+        .select(JsonObject.class)
+        .forEach(object -> new Angular2MetadataModuleExportStub(this, object));
       MetadataUtils.streamObjectProperty(fileRootObject.findProperty(METADATA))
         .forEach(this::loadMemberProperty);
     }

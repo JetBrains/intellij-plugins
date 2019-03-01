@@ -5,6 +5,7 @@ import com.intellij.json.psi.JsonArray;
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.json.psi.JsonValue;
+import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
 import com.intellij.lang.javascript.index.flags.FlagsStructure;
 import com.intellij.lang.javascript.index.flags.FlagsStructureElement;
 import com.intellij.lang.javascript.index.flags.IntFlagsSerializer;
@@ -53,7 +54,10 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   @NonNls protected static final String ARRAY_TYPE = "#array";
   @NonNls protected static final String OBJECT_TYPE = "#object";
 
-  protected static final FlagsStructure FLAGS_STRUCTURE = FlagsStructure.EMPTY;
+  private static final BooleanStructureElement HAS_MEMBER_NAME = new BooleanStructureElement();
+  protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
+    HAS_MEMBER_NAME
+  );
 
   private final StringRef myMemberName;
   private int myFlags;
@@ -83,7 +87,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
       assert flagsSize <= Integer.SIZE : this.getClass();
       myFlags = DataInputOutputUtil.readINT(stream);
     }
-    myMemberName = stream.readName();
+    myMemberName = readFlag(HAS_MEMBER_NAME) ? stream.readName() : null;
   }
 
   @Nullable
@@ -94,10 +98,13 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   protected abstract Map<String, ConstructorFromJsonValue> getTypeFactory();
 
   public void serialize(@NotNull StubOutputStream stream) throws IOException {
+    writeFlag(HAS_MEMBER_NAME, myMemberName != null);
     if (getFlagsStructure().size() > 0) {
       DataInputOutputUtil.writeINT(stream, myFlags);
     }
-    writeString(myMemberName, stream);
+    if (myMemberName != null) {
+      writeString(myMemberName, stream);
+    }
   }
 
   public void index(@NotNull IndexSink sink) {
@@ -108,12 +115,11 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   }
 
   protected <T> void writeFlag(FlagsStructureElement<T> structureElement, T value) {
-    // TODO sync
     myFlags = IntFlagsSerializer.INSTANCE.writeValue(getFlagsStructure(), structureElement, value, myFlags);
   }
 
   protected FlagsStructure getFlagsStructure() {
-    return FlagsStructure.EMPTY;
+    return FLAGS_STRUCTURE;
   }
 
   protected void loadMemberProperty(@NotNull JsonProperty p) {
@@ -134,7 +140,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
     }
   }
 
-  public MetadataElementStub findMember(String name) {
+  public MetadataElementStub findMember(@Nullable String name) {
     return membersMap.getValue().get(name);
   }
 

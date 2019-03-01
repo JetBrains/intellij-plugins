@@ -2,6 +2,8 @@
 package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.*;
+import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
+import com.intellij.lang.javascript.index.flags.FlagsStructure;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
@@ -27,6 +29,13 @@ import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2MetadataDirectiveBase> extends Angular2MetadataEntityStub<Psi> {
 
+  private static final BooleanStructureElement HAS_EXPORT_AS = new BooleanStructureElement();
+  @SuppressWarnings("StaticFieldReferencedViaSubclass")
+  protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
+    Angular2MetadataEntityStub.FLAGS_STRUCTURE,
+    HAS_EXPORT_AS
+  );
+
   private final StringRef mySelector;
   private final StringRef myExportAs;
 
@@ -48,7 +57,7 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     throws IOException {
     super(stream, parent, elementType);
     mySelector = stream.readName();
-    myExportAs = stream.readName();
+    myExportAs = readFlag(HAS_EXPORT_AS) ? stream.readName() : null;
   }
 
   @Nullable
@@ -63,9 +72,12 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
 
   @Override
   public void serialize(@NotNull StubOutputStream stream) throws IOException {
+    writeFlag(HAS_EXPORT_AS, myExportAs != null);
     super.serialize(stream);
     writeString(mySelector, stream);
-    writeString(myExportAs, stream);
+    if (myExportAs != null) {
+      writeString(myExportAs, stream);
+    }
   }
 
   @Override
@@ -75,6 +87,11 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
       Angular2EntityUtils.getDirectiveIndexNames(getSelector())
         .forEach(indexName -> sink.occurrence(Angular2MetadataDirectiveIndex.KEY, indexName));
     }
+  }
+
+  @Override
+  protected FlagsStructure getFlagsStructure() {
+    return FLAGS_STRUCTURE;
   }
 
   private static void loadAdditionalBindingMappings(@NotNull Map<String, String> mappings,

@@ -23,6 +23,9 @@ public interface Angular2MetadataElementTypes {
     new Angular2MetadataElementType<>("CLASS", Angular2MetadataClassStub::new, Angular2MetadataClass::new);
   MetadataElementType<Angular2MetadataNodeModuleStub> NODE_MODULE =
     new Angular2MetadataElementType<>("NODE_MODULE", Angular2MetadataNodeModuleStub::new, Angular2MetadataNodeModule::new);
+  MetadataElementType<Angular2MetadataModuleExportStub> MODULE_EXPORT =
+    new Angular2MetadataElementType<>("MODULE_EXPORT", Angular2MetadataModuleExportStub::new, Angular2MetadataModuleExport::new);
+
 
   MetadataElementType<Angular2MetadataModuleStub> MODULE =
     new Angular2MetadataElementType<>("MODULE", Angular2MetadataModuleStub::new, Angular2MetadataModule::new);

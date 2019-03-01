@@ -1,0 +1,3 @@
+MetadataFile:index.metadata.json
+  @angular/material/input <metadata node module>
+    export * from ./typings/index <metadata module export>('')

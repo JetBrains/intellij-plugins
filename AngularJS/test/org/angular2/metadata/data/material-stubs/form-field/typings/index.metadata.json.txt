@@ -1,0 +1,33 @@
+MetadataFile:index.metadata.json
+  @angular/material/form-field <metadata node module>
+    MatFormFieldModule <metadata module>: imports=[]; declarations=[MatError, MatFormField, MatHint, MatLabel, MatPlaceholder, MatPrefix, MatSuffix]; exports=[MatError, MatFormField, MatHint, MatLabel, MatPlaceholder, MatPrefix, MatSuffix]; scopeFullyResolved=false; exportsFullyResolved=true
+      ___dec.declarations <metadata array>
+        MatError <metadata reference>('')
+        MatFormField <metadata reference>('')
+        MatHint <metadata reference>('')
+        MatLabel <metadata reference>('')
+        MatPlaceholder <metadata reference>('')
+        MatPrefix <metadata reference>('')
+        MatSuffix <metadata reference>('')
+      ___dec.exports <metadata array>
+        MatError <metadata reference>('')
+        MatFormField <metadata reference>('')
+        MatHint <metadata reference>('')
+        MatLabel <metadata reference>('')
+        MatPlaceholder <metadata reference>('')
+        MatPrefix <metadata reference>('')
+        MatSuffix <metadata reference>('')
+      ___dec.imports <metadata array>
+        @angular/common#CommonModule <metadata reference>('')
+        @angular/cdk/observers#ObserversModule <metadata reference>('')
+    MatError <metadata directive>: selector=mat-error; inputs=[id]; outputs=[]; inOuts=[]('')
+    MatFormFieldBase <metadata class>('')
+    MatFormField <metadata component>: selector=mat-form-field; exportAs=matFormField; inputs=[hintLabel, appearance, color, hideRequiredMarker, floatLabel]; outputs=[]; inOuts=[]
+      _MatFormFieldMixinBase <metadata reference>('')
+    MatFormFieldControl <metadata class>('')
+    MatHint <metadata directive>: selector=mat-hint; inputs=[align, id]; outputs=[]; inOuts=[]('')
+    MatPlaceholder <metadata directive>: selector=mat-placeholder; inputs=[]; outputs=[]; inOuts=[]('')
+    MatPrefix <metadata directive>: selector=[matPrefix]; inputs=[]; outputs=[]; inOuts=[]('')
+    MatSuffix <metadata directive>: selector=[matSuffix]; inputs=[]; outputs=[]; inOuts=[]('')
+    MatLabel <metadata directive>: selector=mat-label; inputs=[]; outputs=[]; inOuts=[]('')
+    matFormFieldAnimations <metadata object>('')
