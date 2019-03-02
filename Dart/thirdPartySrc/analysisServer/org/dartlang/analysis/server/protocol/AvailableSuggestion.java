@@ -47,6 +47,20 @@ public class AvailableSuggestion {
   private final Element element;
 
   /**
+   * A default String for use in generating argument list source contents on the client side.
+   */
+  private final String defaultArgumentListString;
+
+  /**
+   * Pairs of offsets and lengths describing 'defaultArgumentListString' text ranges suitable for use
+   * by clients to set up linked edits of default argument source contents. For example, given an
+   * argument list string 'x, y', the corresponding text range [0, 1, 3, 1], indicates two text
+   * ranges of length 1, starting at offsets 0 and 3. Clients can use these ranges to treat the 'x'
+   * and 'y' values specially for linked edits.
+   */
+  private final int[] defaultArgumentListTextRanges;
+
+  /**
    * The Dartdoc associated with the element being suggested. This field is omitted if there is no
    * Dartdoc associated with the element.
    */
@@ -71,18 +85,27 @@ public class AvailableSuggestion {
    */
   private final List<String> parameterTypes;
 
+  /**
+   * This field is set if the relevance of this suggestion might be changed depending on where
+   * completion is requested.
+   */
+  private final List<String> relevanceTags;
+
   private final Integer requiredParameterCount;
 
   /**
    * Constructor for {@link AvailableSuggestion}.
    */
-  public AvailableSuggestion(String label, Element element, String docComplete, String docSummary, List<String> parameterNames, List<String> parameterTypes, Integer requiredParameterCount) {
+  public AvailableSuggestion(String label, Element element, String defaultArgumentListString, int[] defaultArgumentListTextRanges, String docComplete, String docSummary, List<String> parameterNames, List<String> parameterTypes, List<String> relevanceTags, Integer requiredParameterCount) {
     this.label = label;
     this.element = element;
+    this.defaultArgumentListString = defaultArgumentListString;
+    this.defaultArgumentListTextRanges = defaultArgumentListTextRanges;
     this.docComplete = docComplete;
     this.docSummary = docSummary;
     this.parameterNames = parameterNames;
     this.parameterTypes = parameterTypes;
+    this.relevanceTags = relevanceTags;
     this.requiredParameterCount = requiredParameterCount;
   }
 
@@ -93,10 +116,13 @@ public class AvailableSuggestion {
       return
         ObjectUtilities.equals(other.label, label) &&
         ObjectUtilities.equals(other.element, element) &&
+        ObjectUtilities.equals(other.defaultArgumentListString, defaultArgumentListString) &&
+        Arrays.equals(other.defaultArgumentListTextRanges, defaultArgumentListTextRanges) &&
         ObjectUtilities.equals(other.docComplete, docComplete) &&
         ObjectUtilities.equals(other.docSummary, docSummary) &&
         ObjectUtilities.equals(other.parameterNames, parameterNames) &&
         ObjectUtilities.equals(other.parameterTypes, parameterTypes) &&
+        ObjectUtilities.equals(other.relevanceTags, relevanceTags) &&
         ObjectUtilities.equals(other.requiredParameterCount, requiredParameterCount);
     }
     return false;
@@ -105,12 +131,15 @@ public class AvailableSuggestion {
   public static AvailableSuggestion fromJson(JsonObject jsonObject) {
     String label = jsonObject.get("label").getAsString();
     Element element = Element.fromJson(jsonObject.get("element").getAsJsonObject());
+    String defaultArgumentListString = jsonObject.get("defaultArgumentListString") == null ? null : jsonObject.get("defaultArgumentListString").getAsString();
+    int[] defaultArgumentListTextRanges = jsonObject.get("defaultArgumentListTextRanges") == null ? null : JsonUtilities.decodeIntArray(jsonObject.get("defaultArgumentListTextRanges").getAsJsonArray());
     String docComplete = jsonObject.get("docComplete") == null ? null : jsonObject.get("docComplete").getAsString();
     String docSummary = jsonObject.get("docSummary") == null ? null : jsonObject.get("docSummary").getAsString();
     List<String> parameterNames = jsonObject.get("parameterNames") == null ? null : JsonUtilities.decodeStringList(jsonObject.get("parameterNames").getAsJsonArray());
     List<String> parameterTypes = jsonObject.get("parameterTypes") == null ? null : JsonUtilities.decodeStringList(jsonObject.get("parameterTypes").getAsJsonArray());
+    List<String> relevanceTags = jsonObject.get("relevanceTags") == null ? null : JsonUtilities.decodeStringList(jsonObject.get("relevanceTags").getAsJsonArray());
     Integer requiredParameterCount = jsonObject.get("requiredParameterCount") == null ? null : jsonObject.get("requiredParameterCount").getAsInt();
-    return new AvailableSuggestion(label, element, docComplete, docSummary, parameterNames, parameterTypes, requiredParameterCount);
+    return new AvailableSuggestion(label, element, defaultArgumentListString, defaultArgumentListTextRanges, docComplete, docSummary, parameterNames, parameterTypes, relevanceTags, requiredParameterCount);
   }
 
   public static List<AvailableSuggestion> fromJsonArray(JsonArray jsonArray) {
@@ -123,6 +152,24 @@ public class AvailableSuggestion {
       list.add(fromJson(iterator.next().getAsJsonObject()));
     }
     return list;
+  }
+
+  /**
+   * A default String for use in generating argument list source contents on the client side.
+   */
+  public String getDefaultArgumentListString() {
+    return defaultArgumentListString;
+  }
+
+  /**
+   * Pairs of offsets and lengths describing 'defaultArgumentListString' text ranges suitable for use
+   * by clients to set up linked edits of default argument source contents. For example, given an
+   * argument list string 'x, y', the corresponding text range [0, 1, 3, 1], indicates two text
+   * ranges of length 1, starting at offsets 0 and 3. Clients can use these ranges to treat the 'x'
+   * and 'y' values specially for linked edits.
+   */
+  public int[] getDefaultArgumentListTextRanges() {
+    return defaultArgumentListTextRanges;
   }
 
   /**
@@ -172,6 +219,14 @@ public class AvailableSuggestion {
     return parameterTypes;
   }
 
+  /**
+   * This field is set if the relevance of this suggestion might be changed depending on where
+   * completion is requested.
+   */
+  public List<String> getRelevanceTags() {
+    return relevanceTags;
+  }
+
   public Integer getRequiredParameterCount() {
     return requiredParameterCount;
   }
@@ -181,10 +236,13 @@ public class AvailableSuggestion {
     HashCodeBuilder builder = new HashCodeBuilder();
     builder.append(label);
     builder.append(element);
+    builder.append(defaultArgumentListString);
+    builder.append(defaultArgumentListTextRanges);
     builder.append(docComplete);
     builder.append(docSummary);
     builder.append(parameterNames);
     builder.append(parameterTypes);
+    builder.append(relevanceTags);
     builder.append(requiredParameterCount);
     return builder.toHashCode();
   }
@@ -193,6 +251,16 @@ public class AvailableSuggestion {
     JsonObject jsonObject = new JsonObject();
     jsonObject.addProperty("label", label);
     jsonObject.add("element", element.toJson());
+    if (defaultArgumentListString != null) {
+      jsonObject.addProperty("defaultArgumentListString", defaultArgumentListString);
+    }
+    if (defaultArgumentListTextRanges != null) {
+      JsonArray jsonArrayDefaultArgumentListTextRanges = new JsonArray();
+      for (int elt : defaultArgumentListTextRanges) {
+        jsonArrayDefaultArgumentListTextRanges.add(new JsonPrimitive(elt));
+      }
+      jsonObject.add("defaultArgumentListTextRanges", jsonArrayDefaultArgumentListTextRanges);
+    }
     if (docComplete != null) {
       jsonObject.addProperty("docComplete", docComplete);
     }
@@ -213,6 +281,13 @@ public class AvailableSuggestion {
       }
       jsonObject.add("parameterTypes", jsonArrayParameterTypes);
     }
+    if (relevanceTags != null) {
+      JsonArray jsonArrayRelevanceTags = new JsonArray();
+      for (String elt : relevanceTags) {
+        jsonArrayRelevanceTags.add(new JsonPrimitive(elt));
+      }
+      jsonObject.add("relevanceTags", jsonArrayRelevanceTags);
+    }
     if (requiredParameterCount != null) {
       jsonObject.addProperty("requiredParameterCount", requiredParameterCount);
     }
@@ -227,6 +302,10 @@ public class AvailableSuggestion {
     builder.append(label + ", ");
     builder.append("element=");
     builder.append(element + ", ");
+    builder.append("defaultArgumentListString=");
+    builder.append(defaultArgumentListString + ", ");
+    builder.append("defaultArgumentListTextRanges=");
+    builder.append(StringUtils.join(defaultArgumentListTextRanges, ", ") + ", ");
     builder.append("docComplete=");
     builder.append(docComplete + ", ");
     builder.append("docSummary=");
@@ -235,6 +314,8 @@ public class AvailableSuggestion {
     builder.append(StringUtils.join(parameterNames, ", ") + ", ");
     builder.append("parameterTypes=");
     builder.append(StringUtils.join(parameterTypes, ", ") + ", ");
+    builder.append("relevanceTags=");
+    builder.append(StringUtils.join(relevanceTags, ", ") + ", ");
     builder.append("requiredParameterCount=");
     builder.append(requiredParameterCount);
     builder.append("]");

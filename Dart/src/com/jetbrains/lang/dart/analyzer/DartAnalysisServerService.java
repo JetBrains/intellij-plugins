@@ -285,10 +285,11 @@ public class DartAnalysisServerService implements Disposable {
                                    @NotNull final List<CompletionSuggestion> completions,
                                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
                                    @NotNull final List<String> includedElementKinds,
+                                   @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                                    final boolean isLast) {
       synchronized (myCompletionInfos) {
         myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, includedSuggestionSets,
-                                                 includedElementKinds, isLast));
+                                                 includedElementKinds, includedSuggestionRelevanceTags, isLast));
         myCompletionInfos.notifyAll();
       }
     }
@@ -470,8 +471,12 @@ public class DartAnalysisServerService implements Disposable {
           }
 
           final Set<String> includedKinds = Sets.newHashSet(completionInfo.myIncludedElementKinds);
+          final Map<String, IncludedSuggestionRelevanceTag> includedRelevanceTags = new HashMap<>();
+          for (IncludedSuggestionRelevanceTag includedRelevanceTag : completionInfo.myIncludedSuggestionRelevanceTags) {
+            includedRelevanceTags.put(includedRelevanceTag.getTag(), includedRelevanceTag);
+          }
           for (final IncludedSuggestionSet includedSet : completionInfo.myIncludedSuggestionSets) {
-            libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds);
+            libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds, includedRelevanceTags);
           }
           return;
         }
@@ -2170,7 +2175,9 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   public interface CompletionLibraryRefConsumer {
-    void consumeLibraryRef(final IncludedSuggestionSet includedSet, Set<String> includedKinds);
+    void consumeLibraryRef(@NotNull IncludedSuggestionSet includedSet,
+                           @NotNull Set<String> includedKinds,
+                           @NotNull Map<String, IncludedSuggestionRelevanceTag> includedRelevanceTags);
   }
 
   private static class CompletionInfo {
@@ -2186,6 +2193,7 @@ public class DartAnalysisServerService implements Disposable {
     @NotNull private final List<CompletionSuggestion> myCompletions;
     @NotNull private final List<IncludedSuggestionSet> myIncludedSuggestionSets;
     @NotNull private final List<String> myIncludedElementKinds;
+    @NotNull private final List<IncludedSuggestionRelevanceTag> myIncludedSuggestionRelevanceTags;
     private final boolean isLast;
 
     CompletionInfo(@NotNull final String completionId,
@@ -2194,6 +2202,7 @@ public class DartAnalysisServerService implements Disposable {
                    @NotNull final List<CompletionSuggestion> completions,
                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
                    @NotNull final List<String> includedElementKinds,
+                   @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                    boolean isLast) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
@@ -2201,6 +2210,7 @@ public class DartAnalysisServerService implements Disposable {
       this.myCompletions = completions;
       this.myIncludedSuggestionSets = includedSuggestionSets;
       this.myIncludedElementKinds = includedElementKinds;
+      this.myIncludedSuggestionRelevanceTags = includedSuggestionRelevanceTags;
       this.isLast = isLast;
     }
   }
