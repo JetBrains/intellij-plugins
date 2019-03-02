@@ -20,6 +20,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.dartlang.analysis.server.protocol.CompletionSuggestion;
+import org.dartlang.analysis.server.protocol.IncludedSuggestionRelevanceTag;
 import org.dartlang.analysis.server.protocol.IncludedSuggestionSet;
 
 import java.util.Collections;
@@ -63,6 +64,15 @@ public class NotificationCompletionResultsProcessor extends NotificationProcesso
       includedElementKinds = Collections.emptyList();
     }
 
+    final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags;
+    final JsonElement includedSuggestionRelevanceKindsElement = paramsObject.get("includedSuggestionRelevanceTags");
+    if (includedSuggestionRelevanceKindsElement != null) {
+      final JsonArray includedSuggestionRelevanceTagsArray = includedSuggestionRelevanceKindsElement.getAsJsonArray();
+      includedSuggestionRelevanceTags = IncludedSuggestionRelevanceTag.fromJsonArray(includedSuggestionRelevanceTagsArray);
+    } else {
+      includedSuggestionRelevanceTags = Collections.emptyList();
+    }
+
     int replacementOffset = paramsObject.get("replacementOffset").getAsInt();
     int replacementLength = paramsObject.get("replacementLength").getAsInt();
     boolean isLast = paramsObject.get("isLast").getAsBoolean();
@@ -74,6 +84,7 @@ public class NotificationCompletionResultsProcessor extends NotificationProcesso
         CompletionSuggestion.fromJsonArray(resultsArray),
         includedSuggestionSets,
         includedElementKinds,
+        includedSuggestionRelevanceTags,
         isLast);
   }
 }

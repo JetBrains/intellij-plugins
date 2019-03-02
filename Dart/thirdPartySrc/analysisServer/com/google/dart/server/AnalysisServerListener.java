@@ -61,6 +61,7 @@ public interface AnalysisServerListener {
                                  List<CompletionSuggestion> completions,
                                  List<IncludedSuggestionSet> includedSuggestionSets,
                                  List<String> includedElementKinds,
+                                 List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                                  boolean isLast);
 
   /**

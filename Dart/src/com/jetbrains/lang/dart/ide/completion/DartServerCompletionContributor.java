@@ -53,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
@@ -140,7 +141,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
                  }
 
                  updatedResultSet.addElement(lookupElement);
-               }, (includedSet, includedKinds) -> {
+               }, (includedSet, includedKinds, includedRelevanceTags) -> {
                  final AvailableSuggestionSet suggestionSet = das.getAvailableSuggestionSet(includedSet.getId());
                  if (suggestionSet == null) {
                    return;
@@ -153,9 +154,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
                    }
 
                    CompletionSuggestion completionSuggestion =
-                     createCompletionSuggestionFromAvailableSuggestion(suggestion, suggestionSet, includedSet.getRelevance());
+                     createCompletionSuggestionFromAvailableSuggestion(suggestion, includedSet.getRelevance(), includedRelevanceTags);
                    LookupElementBuilder lookupElement =
-                     createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true);
+                     createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true, suggestionSet.getUri());
+
                    resultSet.addElement(lookupElement);
                  }
                });
@@ -338,12 +340,16 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
   @NotNull
   public static LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion) {
-    return createLookupElement(project, suggestion, null, null, false);
+    return createLookupElement(project, suggestion, null, null, false, null);
   }
 
   @NotNull
-  public static LookupElementBuilder createLookupElement(@NotNull final Project project, @NotNull final CompletionSuggestion suggestion,
-                                                         final Integer suggestionSetId, final VirtualFile file, boolean isNotYetImported) {
+  public static LookupElementBuilder createLookupElement(@NotNull final Project project,
+                                                         @NotNull final CompletionSuggestion suggestion,
+                                                         final Integer suggestionSetId,
+                                                         final VirtualFile file,
+                                                         final boolean isNotYetImported,
+                                                         @Nullable final String displayUri) {
     final Element element = suggestion.getElement();
     final Location location = element == null ? null : element.getLocation();
     final DartLookupObject lookupObject = new DartLookupObject(project, location, suggestion.getRelevance());
@@ -394,9 +400,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
         lookup = lookup.withTypeText(returnType, true);
       }
 
-      // If this is a class, try to show which package it's coming from.
-      if (element.getKind().equals(ElementKind.CLASS) && suggestion.getElementUri() != null) {
-        lookup = lookup.appendTailText(" (" + suggestion.getElementUri() + ")", true);
+      // If this is a class or similar global symbol, try to show which package it's coming from.
+      if (displayUri != null &&
+          element.getTypeParameters() == null &&
+          element.getParameters() == null) {
+        lookup = lookup.appendTailText(" (" + displayUri + ")", true);
       }
 
       // icon
@@ -541,16 +549,26 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
 
   @NotNull
-  private static CompletionSuggestion createCompletionSuggestionFromAvailableSuggestion(@NotNull final AvailableSuggestion suggestion,
-                                                                                        @NotNull final AvailableSuggestionSet suggestionSet,
-                                                                                        final int relevance) {
+  private static CompletionSuggestion createCompletionSuggestionFromAvailableSuggestion(@NotNull AvailableSuggestion suggestion,
+                                                                                        int suggestionSetRelevance,
+                                                                                        @NotNull Map<String, IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags) {
+    int relevance = suggestionSetRelevance;
+    List<String> relevanceTags = suggestion.getRelevanceTags();
+    if (relevanceTags != null) {
+      for (String tag : relevanceTags) {
+        IncludedSuggestionRelevanceTag relevanceTag = includedSuggestionRelevanceTags.get(tag);
+        if (relevanceTag != null) {
+          relevance += includedSuggestionRelevanceTags.get(tag).getRelevanceBoost();
+        }
+      }
+    }
+
     Element element = suggestion.getElement();
     return new CompletionSuggestion(
-      "UNKNOWN", // TODO should be CompletionSuggestionKind
+      "UNKNOWN", // we don't have info about CompletionSuggestionKind
       relevance,
       suggestion.getLabel(),
       null,
-      suggestionSet.getUri(),
       0,
       0,
       element.isDeprecated(),
@@ -567,8 +585,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       null,
       null,
       null,
-      null,
-      suggestionSet.getUri());
+      null);
   }
 
   private static Icon getBaseImage(Element element) {
