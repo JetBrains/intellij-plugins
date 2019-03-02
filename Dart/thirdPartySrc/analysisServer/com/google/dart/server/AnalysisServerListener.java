@@ -60,7 +60,7 @@ public interface AnalysisServerListener {
                                  int replacementLength,
                                  List<CompletionSuggestion> completions,
                                  List<IncludedSuggestionSet> includedSuggestionSets,
-                                 List<String> includedSuggestionKinds,
+                                 List<String> includedElementKinds,
                                  boolean isLast);
 
   /**

@@ -66,7 +66,7 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
                                  int replacementLength,
                                  List<CompletionSuggestion> completions,
                                  List<IncludedSuggestionSet> includedSuggestionSets,
-                                 List<String> includedSuggestionKinds,
+                                 List<String> includedElementKinds,
                                  boolean isLast) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.computedCompletion(
@@ -75,7 +75,7 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
         replacementLength,
         completions,
         includedSuggestionSets,
-        includedSuggestionKinds,
+        includedElementKinds,
         isLast);
     }
   }
