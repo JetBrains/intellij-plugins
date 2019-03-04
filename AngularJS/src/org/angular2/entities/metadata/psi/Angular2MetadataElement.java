@@ -7,12 +7,15 @@ import com.intellij.psi.stubs.StubElement;
 import org.angular2.entities.metadata.stubs.Angular2MetadataElementStub;
 import org.angular2.entities.metadata.stubs.Angular2MetadataNodeModuleStub;
 import org.angular2.lang.metadata.psi.MetadataElement;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 
 public abstract class Angular2MetadataElement<Stub extends Angular2MetadataElementStub<?>> extends MetadataElement<Stub> {
+
+  @NonNls private static final String INDEX_FILE_NAME = "index";
 
   public Angular2MetadataElement(@NotNull Stub element) {
     super(element);
@@ -37,10 +40,19 @@ public abstract class Angular2MetadataElement<Stub extends Angular2MetadataEleme
     return 0;
   }
 
-  protected PsiFile loadRelativeFile(@NotNull String path) {
-    VirtualFile sourceFile = getContainingFile().getViewProvider().getVirtualFile();
-    VirtualFile moduleFile = doIfNotNull(sourceFile.getParent(),
-                                         parentDir -> parentDir.findFileByRelativePath(path));
-    return doIfNotNull(moduleFile, getManager()::findFile);
+  protected PsiFile loadRelativeFile(@NotNull String path, @NotNull String extension) {
+    VirtualFile sourceDir = getContainingFile().getViewProvider().getVirtualFile().getParent();
+    if (sourceDir == null) {
+      return null;
+    }
+    VirtualFile moduleFile = sourceDir.findFileByRelativePath(path + extension);
+    if (moduleFile != null) {
+      return getManager().findFile(moduleFile);
+    }
+    VirtualFile moduleDir = sourceDir.findFileByRelativePath(path);
+    if (moduleDir == null || !moduleDir.isDirectory()) {
+      return null;
+    }
+    return doIfNotNull(moduleDir.findChild(INDEX_FILE_NAME + extension), getManager()::findFile);
   }
 }
