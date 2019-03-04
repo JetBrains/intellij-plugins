@@ -223,7 +223,7 @@ public class Angular2ParserSpecTest {
 
         it("should error when using pipes",
            () -> {
-             expectActionError("x|blah", "Action expressions cannot contain pipes");
+             expectActionError("x|blah", "Action expression cannot contain pipes");
            });
 
         //it("should store the source in the result",
@@ -306,7 +306,7 @@ public class Angular2ParserSpecTest {
 
         it("should report chain expressions",
            () -> {
-             expectError(parseBinding("1;2"), "contain chained expression");
+             expectError(parseBinding("1;2"), "contain chained expressions");
            });
 
         it("should report assignment",
@@ -491,7 +491,7 @@ public class Angular2ParserSpecTest {
         });
 
         it("should report when encountering field write", () -> {
-          expectError(parseSimpleBinding("a = b"), "Binding expressions cannot contain assignments");
+          expectError(parseSimpleBinding("a = b"), "Binding expression cannot contain assignments");
         });
       });
       describe("error recovery", () -> {

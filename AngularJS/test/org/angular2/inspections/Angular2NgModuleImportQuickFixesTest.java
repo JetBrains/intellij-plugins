@@ -31,7 +31,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("angular-commons",
                     "test.html",
                     "*ng<caret>For",
-                    "Import an Angular module...",
+                    "Import Angular module...",
                     "\"@angular/common\"");
   }
 
@@ -47,7 +47,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("angular-commons",
                     "test.html",
                     "[ng<caret>Class]",
-                    "Import an Angular module...",
+                    "Import Angular module...",
                     "\"@angular/common\"");
   }
 
@@ -63,7 +63,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doMultiFileTest("angular-commons",
                     "test.html",
                     "lower<caret>case",
-                    "Import an Angular module...",
+                    "Import Angular module...",
                     "\"@angular/common\"");
   }
 
@@ -95,7 +95,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
 
   public void testUndeclaredDirectiveDifferentModule() {
     doMultiFileTest("test.html",
-                    "Declare MyDirective in an Angular module",
+                    "Declare MyDirective in Angular module",
                     "( module2.ts )");
   }
 

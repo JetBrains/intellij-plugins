@@ -65,7 +65,7 @@ JSFile:test.filters.binding
       JSDefinitionExpression
         JSReferenceExpression
           PsiElement(JS:IDENTIFIER)('n')
-      PsiErrorElement:Binding expressions cannot contain assignments
+      PsiErrorElement:Binding expression cannot contain assignments
         <empty list>
       PsiWhiteSpace(' ')
       PsiElement(JS:EQ)('=')

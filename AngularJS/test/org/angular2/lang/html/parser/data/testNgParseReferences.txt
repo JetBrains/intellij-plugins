@@ -57,7 +57,7 @@ HtmlFile:test.html
       XmlToken:XML_NAME('div')
       PsiWhiteSpace(' ')
       PsiElement(XML_ATTRIBUTE)
-        PsiErrorElement:"-" is not allowed in reference names
+        PsiErrorElement:'-' is not allowed in reference names
           XmlToken:XML_NAME('#a-b')
       XmlToken:XML_TAG_END('>')
       XmlToken:XML_END_TAG_START('</')
