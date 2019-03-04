@@ -99,4 +99,8 @@ public class HbParserFreeFormTest extends HbParserTest {
   public void testLiteralHelperName() {
     doTest(true);
   }
+
+  public void testInheritanceBlock() {
+    doTest(true);
+  }
 }
