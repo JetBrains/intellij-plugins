@@ -44,13 +44,13 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
     }
   }
 
-  fun copyCode(code: String) {
+  fun setDocumentCode(code: String) {
     ApplicationManager.getApplication().invokeAndWait {
       val document = editor.document
       DocumentUtil.writeInRunUndoTransparentAction {
         val documentReference = DocumentReferenceManager.getInstance().create(document)
         UndoManager.getInstance(project).nonundoableActionPerformed(documentReference, false)
-        document.insertString(0, code)
+        document.replaceString(0, document.textLength, code)
       }
       PsiDocumentManager.getInstance(project).commitDocument(document)
       doUndoableAction(project)
