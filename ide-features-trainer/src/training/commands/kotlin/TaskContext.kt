@@ -87,6 +87,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
         DataManager.getInstance().dataContextFromFocusAsync.onSuccess { dataContext ->
           app.invokeAndWait {
             val event = AnActionEvent.createFromAnAction(action, null, ActionPlaces.UNKNOWN, dataContext)
+            @Suppress("MissingRecentApi") // used for debug
             ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
           }
         }
