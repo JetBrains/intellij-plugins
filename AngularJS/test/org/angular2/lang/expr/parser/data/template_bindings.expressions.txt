@@ -136,7 +136,7 @@ ASTWrapperPsiElement(FILE)
         JSDefinitionExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('a')
-        PsiErrorElement:Binding expressions cannot contain assignments
+        PsiErrorElement:Binding expression cannot contain assignments
           <empty list>
         PsiElement(JS:EQ)('=')
         JSLiteralExpression
@@ -155,7 +155,7 @@ ASTWrapperPsiElement(FILE)
               PsiElement(JS:IDENTIFIER)('y')
             PsiElement(JS:DOT)('.')
             PsiElement(JS:IDENTIFIER)('z')
-        PsiErrorElement:Binding expressions cannot contain assignments
+        PsiErrorElement:Binding expression cannot contain assignments
           <empty list>
         PsiElement(JS:EQ)('=')
         JSLiteralExpression
@@ -169,7 +169,7 @@ ASTWrapperPsiElement(FILE)
         JSDefinitionExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('a')
-        PsiErrorElement:Binding expressions cannot contain assignments
+        PsiErrorElement:Binding expression cannot contain assignments
           <empty list>
         PsiElement(JS:EQ)('=')
         JSLiteralExpression

@@ -59,17 +59,17 @@ class MyClass2 {
         Component1,
         Directive1,
         Pipe1,
-        <error descr="Class Module2 is neither an Angular component, directive nor pipe">Module2</error>,
-        <error descr="Class MyClass is neither an Angular component, directive nor pipe">MyClass</error>,
-        <error descr="Class MyClass2 is neither an Angular component, directive nor pipe">MyClass2</error>,
+        <error descr="Class Module2 is neither an Angular component nor directive nor pipe">Module2</error>,
+        <error descr="Class MyClass is neither an Angular component nor directive nor pipe">MyClass</error>,
+        <error descr="Class MyClass2 is neither an Angular component nor directive nor pipe">MyClass2</error>,
     ],
     exports: [
         Component1,
         Directive1,
         Pipe1,
         Module2,
-        <weak_warning descr="Class MyClass is neither an Angular module, component, directive nor pipe">MyClass</weak_warning>,
-        <weak_warning descr="Class MyClass2 is neither an Angular module, component, directive nor pipe">MyClass2</weak_warning>,
+        <weak_warning descr="Class MyClass is neither an Angular module nor component nor directive nor pipe">MyClass</weak_warning>,
+        <weak_warning descr="Class MyClass2 is neither an Angular module nor component nor directive nor pipe">MyClass2</weak_warning>,
     ]
 })
 class Module1 {
