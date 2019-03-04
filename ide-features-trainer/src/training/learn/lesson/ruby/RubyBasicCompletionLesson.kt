@@ -1,0 +1,77 @@
+package training.learn.lesson.ruby
+
+import com.intellij.openapi.project.Project
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Types
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
+import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.ClassModuleSymbol
+import training.learn.interfaces.Module
+import training.learn.lesson.kimpl.KLesson
+import training.learn.lesson.kimpl.LessonContext
+import training.learn.lesson.kimpl.parseLessonSample
+
+class RubyBasicCompletionLesson(module: Module) : KLesson("Basic Completion", module, "ruby") {
+  private val sample1 = parseLessonSample("""class Animal
+  def speak
+    "Hello!"
+  end
+end
+
+class Cat < <caret>
+end
+""".trimIndent())
+
+  private val sample2 = parseLessonSample("""class Animal
+  def speak
+    "Hello!"
+  end
+end
+
+class Cat < Animal
+  def mau
+    "Mau"
+  end
+
+  def speak
+    <caret>
+  end
+end
+""".trimIndent())
+
+  override val lessonContent: LessonContext.() -> Unit
+    get() = {
+      prepareSample(sample1)
+      task {
+        text("By default, IntelliJ IDEA completes your code instantly. Start typing <code>An</code> right where " +
+            "the caret is, and you will see the Lookup Menu with matching suggestions. Choose the first item " +
+            "<code>Animal</code> from the Lookup menu by pressing <action>EditorEnter</action>.")
+        check({ editor.document.text }, fun(before: String, now: String): Boolean {
+          return checkHierarchy(project) && now != before
+        })
+        typeForTest("An")
+        trigger("EditorChooseLookupItem")
+      }
+      Thread.sleep(500)
+      prepareSample(sample2)
+      triggerTask("CodeCompletion") {
+        text("To activate Basic Completion, press ${action(it)} and you will see lookup menu again")
+      }
+    }
+
+  private fun checkHierarchy(project: Project): Boolean {
+    val catSymbol = SymbolUtil.findConstantByFQN(
+        project,
+        Types.MODULE_OR_CLASS_OR_CONSTANT,
+        FQN.Builder.create(listOf("Cat"), false),
+        null)
+
+    return if (catSymbol is ClassModuleSymbol) {
+      val base = catSymbol.getSuperClassSymbol(null)
+      val name : String = base?.name ?: ""
+      name == "Animal"
+    } else false
+  }
+
+  override val existedFile: String
+    get() = "app/Completions.rb"
+}
