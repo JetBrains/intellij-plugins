@@ -73,7 +73,7 @@ public class Angular2MetadataModuleExport extends Angular2MetadataElement<Angula
       return null;
     }
     if (from.startsWith("./") || from.startsWith("../")) {
-      return doIfNotNull(loadRelativeFile(from + METADATA_SUFFIX),
+      return doIfNotNull(loadRelativeFile(from, METADATA_SUFFIX),
                          file -> PsiTreeUtil.getStubChildOfType(file, Angular2MetadataNodeModule.class));
     }
     List<Angular2MetadataNodeModule> candidates = new SmartList<>();

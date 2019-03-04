@@ -8,7 +8,7 @@ import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
-import com.intellij.util.ObjectUtils;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.StreamEx;
@@ -24,6 +24,8 @@ import java.util.Set;
 
 import static com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.tryCast;
+import static org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX;
 
 public class Angular2MetadataReference extends Angular2MetadataElement<Angular2MetadataReferenceStub> {
   @NonNls private static final Logger LOG = Logger.getInstance(Angular2MetadataReference.class);
@@ -46,22 +48,27 @@ public class Angular2MetadataReference extends Angular2MetadataElement<Angular2M
                                           PsiModificationTracker.MODIFICATION_COUNT));
     }
     else {
-      return ObjectUtils.tryCast(getNodeModule().findMember(getStub().getName()), Angular2MetadataElement.class);
+      return tryCast(getNodeModule().findMember(getStub().getName()), Angular2MetadataElement.class);
     }
   }
 
-  private static Angular2MetadataElement resolveFromPackage(@NotNull String elementName,
-                                                            @NotNull String moduleName,
-                                                            @NotNull Project project,
-                                                            @Nullable String sourceModuleName) {
+  private Angular2MetadataElement resolveFromPackage(@NotNull String elementName,
+                                                     @NotNull String moduleName,
+                                                     @NotNull Project project,
+                                                     @Nullable String sourceModuleName) {
+    if (moduleName.startsWith("./") || moduleName.startsWith("../")) {
+      Angular2MetadataNodeModule module = doIfNotNull(loadRelativeFile(moduleName, METADATA_SUFFIX),
+                                                      file -> PsiTreeUtil.getStubChildOfType(file, Angular2MetadataNodeModule.class));
+      return module != null ? tryCast(module.findMember(elementName), Angular2MetadataElement.class) : null;
+    }
     MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates = new MultiMap<>();
     StubIndex.getInstance().processElements(
       Angular2MetadataNodeModuleIndex.KEY, moduleName, project,
       GlobalSearchScope.allScope(project), Angular2MetadataNodeModule.class,
       nodeModule -> {
         if (nodeModule.isValid()) {
-          doIfNotNull(ObjectUtils.tryCast(nodeModule.findMember(elementName),
-                                          Angular2MetadataElement.class),
+          doIfNotNull(tryCast(nodeModule.findMember(elementName),
+                              Angular2MetadataElement.class),
                       element -> {
                         candidates.putValue(element, nodeModule);
                         return null;

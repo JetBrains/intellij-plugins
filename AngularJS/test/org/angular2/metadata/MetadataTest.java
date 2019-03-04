@@ -2,6 +2,7 @@
 package org.angular2.metadata;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
+import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.json.psi.impl.JsonFileImpl;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -132,4 +133,19 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
       }
     });
   }
+
+  public void testIonicMetadataResolution() {
+    myFixture.copyDirectoryToProject("ionic", ".");
+    myFixture.enableInspections(Angular2MatchingComponentsInspection.class,
+                                Angular2TagsInspection.class,
+                                Angular2BindingsInspection.class,
+                                HtmlUnknownTagInspection.class,
+                                HtmlUnknownAttributeInspection.class);
+    myFixture.configureFromTempProjectFile("tab1.page.html");
+    myFixture.checkHighlighting();
+    AngularTestUtil.moveToOffsetBySignature("ion-card-<caret>subtitle", myFixture);
+    assertEquals("proxies.metadata.json",
+                 myFixture.getElementAtCaret().getContainingFile().getName());
+  }
+
 }
