@@ -5,7 +5,7 @@ import {MatFormFieldModule, MatInputModule} from "@angular/material"
 @Component({
   template:`
     <mat-form-field></mat-form-field>
-    <error descr="More than one component matched on this element: FooComponent (foo) and FooComponent2 (foo)"><foo></error></foo>
+    <error descr="More than one component is matched on this element: FooComponent (foo) and FooComponent2 (foo)"><foo></error></foo>
     <bar></bar>
   `
 })

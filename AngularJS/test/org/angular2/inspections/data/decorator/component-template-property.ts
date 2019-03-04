@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 import {Component, Directive} from "@angular/core";
 
-@Component(<error descr="NoProp doesnt have template">{}</error>)
+@Component(<error descr="NoProp doesnt have a template">{}</error>)
 export class NoProp {
 
 }
