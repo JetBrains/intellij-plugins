@@ -77,4 +77,5 @@ abstract class AbstractLangSupport : LangSupport {
         }
     }
 
+    override fun toString(): String = primaryLanguage
 }
