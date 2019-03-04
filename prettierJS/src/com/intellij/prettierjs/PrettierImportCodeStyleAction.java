@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.prettierjs;
 
+import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -28,8 +29,17 @@ public class PrettierImportCodeStyleAction extends AnAction {
 
   private static boolean isConfigOrPackageJsonWithSection(@NotNull PsiFile psiFile) {
     VirtualFile virtualFile = psiFile.getVirtualFile();
-    return PrettierUtil.isConfigFile(virtualFile) ||
-           PackageJsonUtil.isPackageJsonWithTopLevelProperty(virtualFile, PrettierUtil.PACKAGE_NAME);
+    if (PrettierUtil.isConfigFile(virtualFile)) {
+      return true;
+    }
+    if (PackageJsonUtil.isPackageJsonFile(virtualFile)) {
+      PackageJsonData data = PackageJsonUtil.getOrCreateData(virtualFile);
+      if (data.containsOneOfDependencyOfAnyType(PrettierUtil.PACKAGE_NAME)
+          || data.getTopLevelProperties().contains(PrettierUtil.PACKAGE_NAME)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
