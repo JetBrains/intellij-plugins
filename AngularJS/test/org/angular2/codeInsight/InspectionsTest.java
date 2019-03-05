@@ -10,6 +10,8 @@ import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInsp
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
+import static java.util.Arrays.asList;
+
 public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
@@ -47,6 +49,12 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
                                 JSUnusedLocalSymbolsInspection.class);
     myFixture.configureByFiles("unusedReference.html", "unusedReference.ts", "package.json");
     myFixture.checkHighlighting();
+
+    for (String attrToRemove : asList("notUsedRef", "anotherNotUsedRef", "notUsedRefWithAttr", "anotherNotUsedRefWithAttr")) {
+      AngularTestUtil.moveToOffsetBySignature("<caret>" + attrToRemove, myFixture);
+      myFixture.launchAction(myFixture.findSingleIntention("Remove unused variable '" + attrToRemove + "'"));
+    }
+    myFixture.checkResultByFile("unusedReference.after.html");
   }
 
   public void testId() {
