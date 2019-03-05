@@ -11,12 +11,16 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.angular2.lang.expr.parser.Angular2StubElementTypes;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static com.intellij.psi.util.CachedValueProvider.Result.create;
+import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
 
 public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<JSVariable>, JSVariable> {
 
@@ -52,6 +56,13 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
       }
     }
     return propertyType;
+  }
+
+  @Nullable
+  @Override
+  public JSType getJSType() {
+    return getCachedValue(this, () ->
+      create(calculateType(), PsiModificationTracker.MODIFICATION_COUNT));
   }
 
   @Override
