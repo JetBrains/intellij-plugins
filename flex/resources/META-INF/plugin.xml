@@ -313,11 +313,11 @@
     </action>
     <action id="Generate.EventHandler.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateEventHandlerAction"
             text="Event Handler">
-      <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.Actionscript" group-id="GenerateGroup"/>
+      <add-to-group anchor="after" relative-to-action="Generate.GetSetAccessor.JavaScript" group-id="GenerateGroup"/>
     </action>
     <action id="Generate.ToString.Actionscript" class="com.intellij.lang.javascript.generation.JavaScriptGenerateToStringAction"
             text="toString()">
-      <add-to-group anchor="after" relative-to-action="Generate.Delegate.Actionscript" group-id="GenerateGroup"/>
+      <add-to-group anchor="after" relative-to-action="Generate.EventHandler.Actionscript" group-id="GenerateGroup"/>
     </action>
     <action id="Flex.NewActionScriptClass" class="com.intellij.lang.javascript.flex.actions.newfile.NewActionScriptClassAction"
             text="ActionScript Class" description="Create new ActionScript class" icon="JavaScriptPsiIcons.Classes.ActionScriptClass">
