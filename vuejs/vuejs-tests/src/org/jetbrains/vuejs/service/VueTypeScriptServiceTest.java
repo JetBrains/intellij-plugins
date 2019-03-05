@@ -41,6 +41,16 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
     return "vue";
   }
 
+  private void completeTsLangAndAssert() {
+    doTestWithCopyDirectory();
+    myFixture.type(" lang=\"\bts\"");
+
+    FileDocumentManager.getInstance().saveDocument(myFixture.getDocument(myFixture.getFile()));
+
+    UIUtil.dispatchAllInvocationEvents();
+    checkAfterFile("vue");
+  }
+
   @Override
   protected String getBasePath() {
     return vueRelativeTestDataPath() + BASE_PATH;
@@ -83,12 +93,11 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
   public void testSimpleVueEditingNoTs() throws Exception {
-    doTestWithCopyDirectory();
-    myFixture.type(" lang=\"\bts\"");
+    completeTsLangAndAssert();
+  }
 
-    FileDocumentManager.getInstance().saveDocument(myFixture.getDocument(myFixture.getFile()));
-    
-    UIUtil.dispatchAllInvocationEvents();
-    checkAfterFile("vue");
+  @TypeScriptVersion(TypeScriptVersions.TS28)
+  public void testSimpleVueEditingNoTsNoRefs() throws Exception {
+    completeTsLangAndAssert();
   }
 }

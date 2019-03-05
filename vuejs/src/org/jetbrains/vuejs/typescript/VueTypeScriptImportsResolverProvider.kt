@@ -1,16 +1,29 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.typescript
 
+import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.typescript.modules.TypeScriptNodeReference
 import com.intellij.lang.typescript.tsconfig.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
+import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.codeInsight.findModule
 import org.jetbrains.vuejs.index.hasVue
 
 const val vueExtension = ".vue"
 val defaultExtensionsWithDot = arrayOf(vueExtension)
 
 class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
+  override fun isDynamicFile(project: Project, file: VirtualFile): Boolean {
+    if (file.fileType != VueFileType.INSTANCE) return false
+
+    val psiFile = PsiManager.getInstance(project).findFile(file) ?: return false
+    val module = findModule(psiFile)
+    
+    return module != null && DialectDetector.isTypeScript(module)
+  }
+
   override fun useExplicitExtension(extensionWithDot: String): Boolean = extensionWithDot == vueExtension
   override fun getExtensions(): Array<String> = defaultExtensionsWithDot
 
