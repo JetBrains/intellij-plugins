@@ -88,7 +88,14 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   }
 
   @Nullable
-  public static JSType getTemplateRefType(@Nullable PsiElement scope) {
+  @Override
+  public JSType getJSType() {
+    return getCachedValue(this, () ->
+      create(calculateType(), PsiModificationTracker.MODIFICATION_COUNT));
+  }
+
+  @Nullable
+  private static JSType getTemplateRefType(@Nullable PsiElement scope) {
     return scope == null ? null : doIfNotNull(getCachedValue(scope, () -> {
       for (PsiElement module : JSFileReferencesUtil.getMostPriorityModules(
         scope, ANGULAR_CORE_PACKAGE, false)) {
