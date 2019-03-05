@@ -149,8 +149,40 @@ public class DartVmServiceValue extends XNamedValue {
     if (computeRegExpPresentation(node)) return;
     if (computeMapPresentation(node)) return;
     if (computeListPresentation(node)) return;
-    computeDefaultPresentation(node);
+
+    // computeDefaultPresentation is called internally here when no result is got.
+    // The reason for this is that the async method used cannot be properly waited.
+    computeDebugPresentation(node);
+
     // todo handle other special kinds: Type, TypeParameter, Pattern, may be some others as well
+  }
+
+  private void computeDebugPresentation(final XValueNode node) {
+    myDebugProcess.getVmServiceWrapper()
+      .evaluateInTargetContext(myIsolateId, myInstanceRef.getId(), "toStringDeep()", new VmServiceConsumers.EvaluateConsumerWrapper() {
+        @Override
+        public void received(final InstanceRef toStringInstanceRef) {
+          if (toStringInstanceRef.getKind() == InstanceKind.String) {
+            String content = toStringInstanceRef.getValueAsString();
+            String summary = content.split("\n")[0];
+            node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), summary, true);
+            if (toStringInstanceRef.getValueAsStringIsTruncated()) {
+              addFullStringValueEvaluator(node, toStringInstanceRef);
+            }
+            else {
+              node.setFullValueEvaluator(new ImmediateFullValueEvaluator("View", content));
+            }
+          }
+          else {
+            noGoodResult();
+          }
+        }
+
+        @Override
+        public void noGoodResult() {
+          computeDefaultPresentation(node);
+        }
+      });
   }
 
   private Icon getIcon() {
