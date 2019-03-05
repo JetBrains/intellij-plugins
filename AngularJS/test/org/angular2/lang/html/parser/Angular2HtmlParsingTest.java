@@ -5,10 +5,13 @@ import com.intellij.html.HtmlParsingTest;
 import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider;
+import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
+import com.intellij.lang.javascript.dialects.JS15ParserDefinition;
+import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -54,6 +57,10 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     registerExtension(CssElementDescriptorProvider.EP_NAME, new CssElementDescriptorProviderImpl());
     registerApplicationService(CssElementDescriptorFactory2.class,
                                new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
+
+    // Update parser definition if version is changed
+    assert JSLanguageLevel.DEFAULT == JSLanguageLevel.ES5;
+    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JSLanguageLevel.ES5.getDialect(), new JS15ParserDefinition());
   }
 
   @Override
@@ -237,6 +244,7 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
   public void testNgStringWithEntity() throws Exception {
     doTestHtml("{{ &quot;fo&#123;o\" }}");
   }
+
   public void testNgStringWithEntity2() throws Exception {
     doTestHtml("<div [input]='&apos;foo&quot;&dash;&apos;'");
   }
@@ -282,34 +290,33 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
 
   public void testNgScriptWithEventAndAngularAttr() throws Exception {
     doTestHtml("<script src=\"//example.com\" onerror=\"console.log(1)\" (error)='console.log(1)'" +
-           "onload=\"console.log(1)\" (load)='console.log(1)'>\n" +
-           "  console.log(2)\n" +
-           "</script>\n" +
-           "<div></div>");
+               "onload=\"console.log(1)\" (load)='console.log(1)'>\n" +
+               "  console.log(2)\n" +
+               "</script>\n" +
+               "<div></div>");
   }
 
   public void testNgStyleTag() throws Exception {
     doTestHtml("<style>\n" +
-           "  div {\n" +
-           "  }\n" +
-           "</style>\n" +
-           "<div></div>");
+               "  div {\n" +
+               "  }\n" +
+               "</style>\n" +
+               "<div></div>");
   }
 
   public void testNgStyleAngularAttr() throws Exception {
     doTestHtml("<style (load)='disabled=true'>\n" +
-           "  div {\n" +
-           "  }\n" +
-           "</style>\n" +
-           "<div></div>");
+               "  div {\n" +
+               "  }\n" +
+               "</style>\n" +
+               "<div></div>");
   }
 
   public void testNgStyleWithEventAndAngularAttr() throws Exception {
     doTestHtml("<style (load)='disabled=true' onload=\"this.disabled=true\" (load)='disabled=true'>\n" +
-           "  div {\n" +
-           "  }\n" +
-           "</style>\n" +
-           "<div></div>");
+               "  div {\n" +
+               "  }\n" +
+               "</style>\n" +
+               "<div></div>");
   }
-
 }
