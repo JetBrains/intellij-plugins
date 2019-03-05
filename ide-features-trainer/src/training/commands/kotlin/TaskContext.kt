@@ -123,11 +123,14 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
   }
 
   fun typeForTest(text : String) {
-    testActions.add(Runnable {
-      GuiTestUtil.typeText(text)
-    })
+    testAction { GuiTestUtil.typeText(text) }
   }
 
+  fun testAction(action: () -> Unit) {
+    testActions.add(Runnable {
+      action()
+    })
+  }
 
   fun action(id: String): String {
     return "<action>$id</action>"
