@@ -8,7 +8,11 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase;
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider;
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase;
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestRunner;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.vuejs.typescript.service.VueTypeScriptService;
 import org.junit.runner.RunWith;
@@ -31,6 +35,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
     return (JSLanguageServiceBase)ContainerUtil.find(services, el -> el instanceof VueTypeScriptService);
   }
 
+  @NotNull
   @Override
   protected String getExtension() {
     return "vue";
@@ -66,4 +71,24 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
     checkHighlightingByOptions(false);
   }
 
+  @TypeScriptVersion(TypeScriptVersions.TS28)
+  public void testSimpleVueEditing() throws Exception {
+    doTestWithCopyDirectory();
+    myFixture.type('\b');
+    
+    checkAfterFile("vue");
+    myFixture.type('s');
+    checkAfterFile("2.vue");
+  }
+
+  @TypeScriptVersion(TypeScriptVersions.TS28)
+  public void testSimpleVueEditingNoTs() throws Exception {
+    doTestWithCopyDirectory();
+    myFixture.type(" lang=\"\bts\"");
+
+    FileDocumentManager.getInstance().saveDocument(myFixture.getDocument(myFixture.getFile()));
+    
+    UIUtil.dispatchAllInvocationEvents();
+    checkAfterFile("vue");
+  }
 }

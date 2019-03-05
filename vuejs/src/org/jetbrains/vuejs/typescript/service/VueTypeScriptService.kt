@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.typescript.service
 
-import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.integration.JSAnnotationError
 import com.intellij.lang.javascript.service.JSLanguageServiceAnnotationResult
 import com.intellij.lang.javascript.service.JSLanguageServiceFileCommandCache
@@ -12,7 +12,7 @@ import com.intellij.lang.typescript.compiler.TypeScriptCompilerSettings
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptServerServiceImpl
 import com.intellij.lang.typescript.compiler.languageService.codeFixes.TypeScriptLanguageServiceFixSet
-import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCacheImpl
+import com.intellij.lang.typescript.compiler.languageService.protocol.TypeScriptLanguageServiceCache
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequest
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.ConfigureRequestArguments
 import com.intellij.lang.typescript.compiler.languageService.protocol.commands.FileExtensionInfo
@@ -25,7 +25,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.Consumer
 import com.intellij.util.containers.ContainerUtil
@@ -39,9 +38,10 @@ import org.jetbrains.vuejs.typescript.service.protocol.VueTypeScriptServiceProto
  */
 fun getModifiedVueDocumentText(project: Project, document: Document): String? {
   val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(document)
-  if (psiFile == null) return null
+  if (psiFile == null) return ""
 
-  val module = findModule(psiFile) ?: return null
+  val module = findModule(psiFile) ?: return ""
+  if (!DialectDetector.isTypeScript(module)) return "" 
 
   val text = module.node
   val textRange = text.textRange
@@ -50,16 +50,16 @@ fun getModifiedVueDocumentText(project: Project, document: Document): String? {
   val newLines = StringUtil.repeat("\n", lineNumber)
   val currentLineStart = textRange.startOffset - document.getLineStartOffset(lineNumber)
 
-  if (currentLineStart < 0) return null
+  if (currentLineStart < 0) return ""
 
   val spacesCurrentLine = StringUtil.repeat(" ", currentLineStart)
 
   val startSpaceCount = textRange.startOffset - newLines.length - currentLineStart
-  if (startSpaceCount < 0) return null
+  if (startSpaceCount < 0) return ""
   val fakeBefore = StringUtil.repeat(" ", startSpaceCount)
 
   val afterSpaces = document.textLength - textRange.endOffset - 1
-  if (afterSpaces < 0) return null
+  if (afterSpaces < 0) return ""
 
   val fakeAfter = StringUtil.repeat(" ", afterSpaces)
 
@@ -138,12 +138,17 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
 
     val virtualFile = file.virtualFile ?: return false
 
-    if (!isServiceEnabled(virtualFile)) return false
+    if (!isServiceEnabled(virtualFile) || !checkAnnotationProvider(file)) return false
+
+    val module = findModule(file)
+    if (module == null || !DialectDetector.isTypeScript(module)) return false
 
     val configForFile = getConfigForFile(virtualFile)
 
     return configForFile != null
   }
+  
+  
 
   private fun addConfigureCommand(result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>>) {
     val arguments = ConfigureRequestArguments()
@@ -154,16 +159,8 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
     result[ConfigureRequest(arguments)] = Consumer {}
   }
 
-  override fun createLSCache(): TypeScriptLanguageServiceCacheImpl {
-    return object : TypeScriptLanguageServiceCacheImpl(myProject) {
-      override fun getDocumentText(virtualFile: VirtualFile, document: Document): String {
-        if (!isVueFile(virtualFile)) {
-          return super.getDocumentText(virtualFile, document)
-        }
-
-        return getModifiedVueDocumentText(myProject, document) ?: ""
-      }
-    }
+  override fun createLSCache(): TypeScriptLanguageServiceCache {
+    return VueTypeScriptServiceCache(myProject)
   }
 
   override fun getDocumentText(file: VirtualFile, instance: FileDocumentManager, document: Document): String? {
