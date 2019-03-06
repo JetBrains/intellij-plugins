@@ -57,6 +57,10 @@ public class MarkdownWrapTest extends LightPlatformCodeInsightFixtureTestCase {
     doTest("a b c");
   }
 
+  public void testWrapInCodeFenceInQuotes() {
+    doTest("a b c d e f");
+  }
+
   public void testWrapInCodeFenceInList() {
     doTest("synchronization");
   }
