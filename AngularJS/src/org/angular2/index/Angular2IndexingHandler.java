@@ -107,11 +107,6 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   @Override
-  public int getVersion() {
-    return Angular2IndexBase.VERSION;
-  }
-
-  @Override
   public boolean shouldCreateStubForLiteral(ASTNode node) {
     return checkIsInterestingPropertyValue(node.getTreeParent());
   }
