@@ -1,3 +1,3 @@
    >```js
-   >no accessors for interface com.intellij.openapi.extensions.PluginDescriptor <caret>
+   >Gallia est omnis divisa in partes tres, quarum unam incolumnt Belgae, aliam <caret>
    >```
