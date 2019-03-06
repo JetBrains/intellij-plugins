@@ -5,11 +5,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 
 public abstract class Angular2IndexBase<T extends PsiElement> extends StringStubIndexExtension<T> {
-  public static final int VERSION = 11;
-
   @Override
   public int getVersion() {
-    return VERSION;
+    return 10;
   }
 }
 
