@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.errorProne;
 
 import com.intellij.openapi.compiler.CompileContext;
@@ -9,6 +10,7 @@ import com.intellij.util.download.DownloadableFileDescription;
 import com.intellij.util.download.DownloadableFileService;
 import com.intellij.util.download.DownloadableFileSetDescription;
 import com.intellij.util.download.DownloadableFileSetVersions;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +23,7 @@ public class ErrorProneCompilerDownloadingTask implements CompileTask {
   private static final Logger LOG = Logger.getInstance(ErrorProneCompilerDownloadingTask.class);
 
   @Override
-  public boolean execute(CompileContext context) {
+  public boolean execute(@NotNull CompileContext context) {
     if (!ErrorProneClasspathProvider.isErrorProneCompilerSelected(context.getProject())) {
       return true;
     }

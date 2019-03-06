@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
@@ -30,6 +31,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.UIBundle;
 import com.intellij.util.ResourceUtil;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -69,7 +71,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
   }
 
   @Override
-  public boolean execute(CompileContext context) {
+  public boolean execute(@NotNull CompileContext context) {
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(context.getCompileScope());
     if (!(runConfiguration instanceof FlexUnitRunConfiguration)) {
       return true;
