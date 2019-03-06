@@ -58,8 +58,6 @@ JSFile:test.nested.binding
                 PsiWhiteSpace(' ')
                 Angular2PipeReferenceExpression
                   PsiElement(JS:IDENTIFIER)('escape')
-                Angular2PipeArgumentsList
-                  <empty list>
               PsiElement(JS:RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(JS:RBRACE)('}')

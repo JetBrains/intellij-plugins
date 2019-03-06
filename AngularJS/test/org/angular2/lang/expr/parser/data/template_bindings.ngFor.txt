@@ -109,9 +109,7 @@ JSFile:test.ngFor.template_bindings
         PsiWhiteSpace(' ')
         Angular2PipeReferenceExpression
           PsiElement(JS:IDENTIFIER)('async')
-        PsiWhiteSpace(' ')
-        Angular2PipeArgumentsList
-          <empty list>
+    PsiWhiteSpace(' ')
     Angular2TemplateBinding <users, true, ngForOf>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')

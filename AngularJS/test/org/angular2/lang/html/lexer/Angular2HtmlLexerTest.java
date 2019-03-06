@@ -56,6 +56,10 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
     doTest("{{ a }}b{{ c // comment }}");
   }
 
+  public void testMultiLineComment() {
+    doTest("{{ a }}b{{ c // comment\non\nmultiple\nlines }}");
+  }
+
   public void testBoundAttributes() {
     doTest("<a [src]=bla() (click)='event()'></a>");
   }

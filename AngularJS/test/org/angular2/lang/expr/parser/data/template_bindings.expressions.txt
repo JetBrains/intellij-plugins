@@ -426,8 +426,6 @@ JSFile:test.expressions.template_bindings
           PsiWhiteSpace(' ')
           Angular2PipeReferenceExpression
             PsiElement(JS:IDENTIFIER)('async')
-          Angular2PipeArgumentsList
-            <empty list>
         PsiElement(JS:RPAR)(')')
     PsiElement(JS:SEMICOLON)(';')
     PsiWhiteSpace(' ')

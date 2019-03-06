@@ -53,7 +53,7 @@ public class Angular2PsiParser implements PsiParser {
         Angular2Parser.parseJS(builder, root);
       }
       else {
-        LOG.error("Invalid file name '" + containingFile.getName() + "' - unsupported extension: " + ext);
+        Angular2Parser.parseInterpolation(builder, root);
       }
     }
     else {
