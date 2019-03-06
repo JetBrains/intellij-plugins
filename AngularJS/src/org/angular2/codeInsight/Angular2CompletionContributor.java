@@ -32,6 +32,7 @@ import com.intellij.psi.impl.source.xml.XmlAttributeReference;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -51,7 +52,6 @@ import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.Angular2LangUtil;
 import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2PipeExpression;
-import org.angular2.lang.expr.psi.Angular2PipeLeftSideArgument;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -192,9 +192,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
 
     private static JSType calcActualType(Angular2PipeReferenceExpression ref) {
       Angular2PipeExpression pipeCall = (Angular2PipeExpression)ref.getParent();
-      Angular2PipeLeftSideArgument leftSideArgument = pipeCall.getLeftSideArgument();
-      return leftSideArgument != null ? JSResolveUtil.getExpressionJSType(leftSideArgument.getExpression())
-                                      : null;
+      return JSResolveUtil.getExpressionJSType(ArrayUtil.getFirstElement(pipeCall.getArguments()));
     }
 
     @SuppressWarnings("HardCodedStringLiteral")

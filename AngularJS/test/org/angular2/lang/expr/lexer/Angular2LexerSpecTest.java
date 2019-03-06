@@ -288,7 +288,13 @@ public class Angular2LexerSpecTest {
         it("should tokenize single line comment", () -> {
           final Token[] tokens = lex("a//foo bar");
           expectIdentifierToken(tokens[0], 0, "a");
-          expect(tokens[1].tokenType).toEqual(END_OF_LINE_COMMENT);
+          expect(tokens[1].tokenType).toEqual(C_STYLE_COMMENT);
+        });
+        it("should tokenize multi line comment", () -> {
+          final Token[] tokens = lex("a//foo bar\nfoo");
+          expect(tokens.length).toEqual(2);
+          expectIdentifierToken(tokens[0], 0, "a");
+          expect(tokens[1].tokenType).toEqual(C_STYLE_COMMENT);
         });
       });
     });

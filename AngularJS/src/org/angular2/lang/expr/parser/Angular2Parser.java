@@ -343,13 +343,20 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
           builder.error(Angular2Bundle.message("angular.parse.expression.expected-identifier-or-keyword"));
         }
         PsiBuilder.Marker params = builder.mark();
+        boolean hasParams = false;
         while (builder.getTokenType() == COLON) {
           builder.advanceLexer();
           if (!parseAssignmentExpressionChecked()) {
             builder.error(JSBundle.message("javascript.parser.message.expected.expression"));
+          } else {
+            hasParams = true;
           }
         }
-        params.done(PIPE_ARGUMENTS_LIST);
+        if (hasParams) {
+          params.done(PIPE_ARGUMENTS_LIST);
+        } else {
+          params.drop();
+        }
         pipe.done(PIPE_EXPRESSION);
         firstParam = pipe.precede();
         pipe = firstParam.precede();

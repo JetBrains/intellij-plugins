@@ -21,21 +21,21 @@ import static com.intellij.psi.TokenType.WHITE_SPACE;
 
 %function advance
 
-WHITE_SPACE     = ([ \t\n\r\u000B\u00A0]|\\\n)+
+WHITE_SPACE=([ \t\n\r\u000B\u00A0]|\\\n)+
 
-DIGIT = [0-9]
+DIGIT=[0-9]
 NUMBER=({DIGIT}+)|({FP_LITERAL1})|({FP_LITERAL2})|({FP_LITERAL3})|({FP_LITERAL4})
 FP_LITERAL1=({DIGIT})+"."({DIGIT})*({EXPONENT_PART})?
 FP_LITERAL2="."({DIGIT})+({EXPONENT_PART})?
 FP_LITERAL3=({DIGIT})+({EXPONENT_PART})
 FP_LITERAL4=({DIGIT})+
 EXPONENT_PART=[Ee]["+""-"]?({DIGIT})*
-END_OF_LINE_COMMENT="/""/"[^\r\n]*
+COMMENT="//"[^]*
 
 ALPHA=[:letter:]
 TAG_NAME=({ALPHA}|"_"|":")({ALPHA}|{DIGIT}|"_"|":"|"."|"-")*
 
-IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
+IDENT=[_$a-zA-Z][$0-9_a-zA-Z]*
 
 %state YYSTRING
 
@@ -48,7 +48,7 @@ IDENT =[_$a-zA-Z][$0-9_a-zA-Z]*
   "\""                        { yybegin(YYSTRING); quote = '"'; return STRING_LITERAL_PART; }
   {NUMBER}                    { return NUMERIC_LITERAL; }
   {WHITE_SPACE}               { return WHITE_SPACE; }
-  {END_OF_LINE_COMMENT}       { return END_OF_LINE_COMMENT; }
+  {COMMENT}                   { return C_STYLE_COMMENT; }
 
   "var"                       { return VAR_KEYWORD; }
   "let"                       { return LET_KEYWORD; }

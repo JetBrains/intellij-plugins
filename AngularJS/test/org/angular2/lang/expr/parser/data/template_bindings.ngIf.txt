@@ -233,9 +233,7 @@ ASTWrapperPsiElement(FILE)
         PsiWhiteSpace(' ')
         Angular2PipeReferenceExpression
           PsiElement(JS:IDENTIFIER)('async')
-        PsiWhiteSpace(' ')
-        Angular2PipeArgumentsList
-          <empty list>
+    PsiWhiteSpace(' ')
     Angular2TemplateBinding <user, true, ngIf>
       PsiElement(JS:AS_KEYWORD)('as')
       PsiWhiteSpace(' ')

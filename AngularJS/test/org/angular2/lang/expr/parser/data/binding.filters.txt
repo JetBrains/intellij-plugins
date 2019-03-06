@@ -9,8 +9,6 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('nonexistent')
-      Angular2PipeArgumentsList
-        <empty list>
 ------
 ASTWrapperPsiElement(FILE)
   Angular2Binding
@@ -56,8 +54,6 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('uppercase')
-      Angular2PipeArgumentsList
-        <empty list>
 ------
 ASTWrapperPsiElement(FILE)
   Angular2Binding
@@ -81,8 +77,6 @@ ASTWrapperPsiElement(FILE)
           PsiWhiteSpace(' ')
           Angular2PipeReferenceExpression
             PsiElement(JS:IDENTIFIER)('lowercase')
-          Angular2PipeArgumentsList
-            <empty list>
         PsiElement(JS:RPAR)(')')
 ------
 ASTWrapperPsiElement(FILE)
@@ -96,10 +90,9 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('uppercase')
-      Angular2PipeArgumentsList
-        PsiElement(JS:COLON)(':')
-        PsiErrorElement:expression expected
-          <empty list>
+      PsiElement(JS:COLON)(':')
+      PsiErrorElement:expression expected
+        <empty list>
 ------
 ASTWrapperPsiElement(FILE)
   Angular2Binding
@@ -121,5 +114,80 @@ ASTWrapperPsiElement(FILE)
       PsiWhiteSpace(' ')
       Angular2PipeReferenceExpression
         PsiElement(JS:IDENTIFIER)('translate')
+------
+JSFile:test.filters.binding
+  Angular2Binding
+    Angular2PipeExpression
+      Angular2PipeLeftSideArgument
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      Angular2PipeReferenceExpression
+        PsiElement(JS:IDENTIFIER)('b')
+      PsiWhiteSpace(' ')
       Angular2PipeArgumentsList
-        <empty list>
+        PsiElement(JS:COLON)(':')
+        PsiWhiteSpace(' ')
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('c')
+  PsiWhiteSpace(' ')
+  PsiComment(JS:C_STYLE_COMMENT)('//comment')
+------
+JSFile:test.filters.binding
+  Angular2Binding
+    Angular2PipeExpression
+      Angular2PipeLeftSideArgument
+        Angular2PipeExpression
+          Angular2PipeLeftSideArgument
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(JS:OR)('|')
+          PsiWhiteSpace(' ')
+          Angular2PipeReferenceExpression
+            PsiElement(JS:IDENTIFIER)('b')
+          PsiWhiteSpace(' ')
+          Angular2PipeArgumentsList
+            PsiElement(JS:COLON)(':')
+            PsiWhiteSpace(' ')
+            JSReferenceExpression
+              PsiElement(JS:IDENTIFIER)('d')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      Angular2PipeReferenceExpression
+        PsiElement(JS:IDENTIFIER)('c')
+  PsiWhiteSpace(' ')
+  PsiComment(JS:C_STYLE_COMMENT)('//comment')
+------
+JSFile:test.filters.binding
+  Angular2Binding
+    Angular2PipeExpression
+      Angular2PipeLeftSideArgument
+        JSReferenceExpression
+          PsiElement(JS:IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(JS:OR)('|')
+      PsiWhiteSpace(' ')
+      Angular2PipeReferenceExpression
+        PsiElement(JS:IDENTIFIER)('b')
+      PsiWhiteSpace(' ')
+      Angular2PipeArgumentsList
+        PsiElement(JS:COLON)(':')
+        PsiWhiteSpace(' ')
+        JSParenthesizedExpression
+          PsiElement(JS:LPAR)('(')
+          Angular2PipeExpression
+            Angular2PipeLeftSideArgument
+              JSReferenceExpression
+                PsiElement(JS:IDENTIFIER)('d')
+            PsiWhiteSpace(' ')
+            PsiElement(JS:OR)('|')
+            PsiWhiteSpace(' ')
+            Angular2PipeReferenceExpression
+              PsiElement(JS:IDENTIFIER)('c')
+          PsiElement(JS:RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiComment(JS:C_STYLE_COMMENT)('//comment')

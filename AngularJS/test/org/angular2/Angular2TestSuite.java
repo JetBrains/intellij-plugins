@@ -17,6 +17,7 @@ import org.angular2.lang.expr.lexer.Angular2LexerTest;
 import org.angular2.lang.expr.parser.Angular2ParserSpecTest;
 import org.angular2.lang.expr.parser.Angular2ParserTest;
 import org.angular2.lang.html.highlighting.Angular2HtmlHighlightingTest;
+import org.angular2.lang.html.index.Angular2HtmlIndexerTest;
 import org.angular2.lang.html.lexer.Angular2HtmlLexerSpecTest;
 import org.angular2.lang.html.lexer.Angular2HtmlLexerTest;
 import org.angular2.lang.html.parser.Angular2HtmlParsingTest;
@@ -41,6 +42,7 @@ import org.junit.runners.Suite;
   Angular2HtmlLexerSpecTest.class,
   Angular2HtmlLexerTest.class,
   Angular2HtmlHighlightingTest.class,
+  Angular2HtmlIndexerTest.class,
   Angular2HtmlParsingTest.class,
   Angular2DirectiveSimpleSelectorSpecTest.class,
   AttributesTest.class,

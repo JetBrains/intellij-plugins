@@ -7,7 +7,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import org.angular2.lang.expr.parser.Angular2ElementTypes;
 import org.angular2.lang.expr.psi.Angular2PipeArgumentsList;
-import org.angular2.lang.expr.psi.Angular2PipeLeftSideArgument;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,15 +23,20 @@ public class Angular2PipeArgumentsListImpl extends JSArgumentListImpl implements
   public JSExpression[] getArguments() {
     JSExpression leftSide = getPipeLeftSideExpression();
     return leftSide != null
-           ? ArrayUtil.prepend(getPipeLeftSideExpression(), super.getArguments())
-           : super.getArguments();
+           ? ArrayUtil.prepend(leftSide, super.getArguments())
+           : JSExpression.EMPTY_ARRAY;
+  }
+
+  @NotNull
+  JSExpression[] getPipeRightSideExpressions() {
+    return super.getArguments();
   }
 
   @Nullable
   private JSExpression getPipeLeftSideExpression() {
     return doIfNotNull(((Angular2PipeExpressionImpl)getParent())
                          .findChildByType(Angular2ElementTypes.PIPE_LEFT_SIDE_ARGUMENT),
-                       node -> doIfNotNull(node.getPsi(Angular2PipeLeftSideArgument.class),
-                                           Angular2PipeLeftSideArgument::getExpression));
+                       node -> doIfNotNull(node.getPsi(Angular2PipeLeftSideArgumentImpl.class),
+                                           Angular2PipeLeftSideArgumentImpl::getPipeLeftSideExpression));
   }
 }

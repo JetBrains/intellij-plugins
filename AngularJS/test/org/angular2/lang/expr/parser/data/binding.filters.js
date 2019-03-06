@@ -4,3 +4,6 @@
 n = (name | lowercase)
 name | uppercase:
 book.title || 'No Title' | translate
+a | b : c //comment
+a | b : d | c //comment
+a | b : (d | c) //comment

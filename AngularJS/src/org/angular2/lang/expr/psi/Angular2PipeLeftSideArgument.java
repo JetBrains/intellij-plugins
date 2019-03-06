@@ -2,9 +2,7 @@
 package org.angular2.lang.expr.psi;
 
 import com.intellij.lang.javascript.psi.JSArgumentList;
-import com.intellij.lang.javascript.psi.JSExpression;
 
 public interface Angular2PipeLeftSideArgument extends JSArgumentList {
 
-  JSExpression getExpression();
 }
