@@ -1,8 +1,8 @@
 package name.kropp.intellij.makefile.toolWindow
 
-import com.intellij.util.enumeration.*
 import name.kropp.intellij.makefile.*
 import name.kropp.intellij.makefile.psi.*
+import java.util.Collections.*
 import javax.swing.*
 import javax.swing.tree.*
 
@@ -12,7 +12,7 @@ class MakefileTargetNode(target: MakefileTarget) : MakefileTreeNode(target.name 
 
   internal lateinit var parent: MakefileFileNode
 
-  override fun children() = EmptyEnumeration.INSTANCE
+  override fun children() = emptyEnumeration<Any>()!!
 
   override fun isLeaf() = true
 

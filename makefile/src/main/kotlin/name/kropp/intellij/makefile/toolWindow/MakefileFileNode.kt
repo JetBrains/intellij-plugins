@@ -1,13 +1,13 @@
 package name.kropp.intellij.makefile.toolWindow
 
 import com.intellij.psi.*
-import com.intellij.util.enumeration.*
 import name.kropp.intellij.makefile.*
 import java.util.*
+import java.util.Collections.*
 import javax.swing.*
 import javax.swing.tree.*
 
-class MakefileFileNode(val psiFile: PsiFile, private val targets: Array<MakefileTargetNode>) : MakefileTreeNode(psiFile.name) {
+class MakefileFileNode(val psiFile: PsiFile, private val targets: List<MakefileTargetNode>) : MakefileTreeNode(psiFile.name) {
   init {
     for (target in targets) {
       target.parent = this
@@ -19,7 +19,7 @@ class MakefileFileNode(val psiFile: PsiFile, private val targets: Array<Makefile
   override val icon: Icon
     get() = MakefileIcon
 
-  override fun children(): Enumeration<*> = ArrayEnumeration(targets)
+  override fun children(): Enumeration<*> = enumeration(targets)
 
   override fun isLeaf() = false
 

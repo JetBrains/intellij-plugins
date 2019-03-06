@@ -1,11 +1,11 @@
 package name.kropp.intellij.makefile.toolWindow
 
-import com.intellij.util.enumeration.*
 import name.kropp.intellij.makefile.*
+import java.util.Collections.*
 import javax.swing.*
 import javax.swing.tree.*
 
-class MakefileRootNode(private val files: Array<MakefileFileNode>) : MakefileTreeNode("make") {
+class MakefileRootNode(private val files: List<MakefileFileNode>) : MakefileTreeNode("make") {
   init {
     for (file in files) {
       file.parent = this
@@ -15,7 +15,7 @@ class MakefileRootNode(private val files: Array<MakefileFileNode>) : MakefileTre
   override val icon: Icon
     get() = MakefileIcon
 
-  override fun children() = ArrayEnumeration(files)
+  override fun children() = enumeration(files)
 
   override fun isLeaf() = false
 

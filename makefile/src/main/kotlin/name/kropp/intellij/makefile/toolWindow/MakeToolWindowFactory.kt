@@ -22,10 +22,10 @@ class MakeToolWindowFactory : ToolWindowFactory {
       val files = MakefileTargetIndex.allTargets(project).filterNot { it.isSpecialTarget || it.isPatternTarget }.groupBy {
         it.containingFile
       }.map {
-        MakefileFileNode(it.key, it.value.map { MakefileTargetNode(it) }.toTypedArray())
+        MakefileFileNode(it.key, it.value.map(::MakefileTargetNode))
       }
 
-      val model = DefaultTreeModel(MakefileRootNode(files.toTypedArray()))
+      val model = DefaultTreeModel(MakefileRootNode(files))
 
       val panel = SimpleToolWindowPanel(true)
 
