@@ -60,8 +60,8 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
     final PsiFile file = myDecorator.getContainingFile().getOriginalFile();
     for (PsiElement el : ContainerUtil.concat(singletonList(myIterator.current()),
                                               myIterator.backtrace())) {
-      if (myDecorator.getTextRange().contains(el.getTextRange())
-          && file.equals(el.getContainingFile().getOriginalFile())) {
+      if (file.equals(el.getContainingFile().getOriginalFile())
+          && myDecorator.getTextRange().contains(el.getTextRange())) {
         return el;
       }
     }
