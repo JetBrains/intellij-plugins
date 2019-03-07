@@ -10,9 +10,12 @@ import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
+import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.PsiTestUtil;
@@ -219,6 +222,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   public void testInterpolationTyping() {
     myFixture.configureByFiles("interpolation.html", "package.json");
     myFixture.type("{{foo");
-    myFixture.checkResultByFile("interpolation.after.html");
+    Document doc = myFixture.getDocument(myFixture.getFile());
+    assertEquals("<div>{{foo}}</div>", doc.getText());
+    WriteAction.runAndWait(() -> PsiDocumentManager.getInstance(getProject()).commitDocument(doc));
+    myFixture.type("}}bar");
+    assertEquals("<div>{{foo}}bar</div>", doc.getText());
   }
 }
