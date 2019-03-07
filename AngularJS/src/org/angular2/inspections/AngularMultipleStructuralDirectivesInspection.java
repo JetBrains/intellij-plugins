@@ -15,7 +15,7 @@ import java.util.List;
 
 import static com.intellij.util.ObjectUtils.tryCast;
 
-public class Angular2MultipleTemplateBindingsInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+public class AngularMultipleStructuralDirectivesInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {

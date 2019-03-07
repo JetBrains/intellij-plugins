@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
 
-public class Angular2NonEmptyNgContentInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+public class AngularNonEmptyNgContentInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {

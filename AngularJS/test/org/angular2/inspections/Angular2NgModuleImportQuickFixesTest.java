@@ -205,9 +205,9 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
 
   private void initInspections() {
     myFixture.enableInspections(
-      Angular2BindingsInspection.class,
-      Angular2TagsInspection.class,
-      Angular2TemplateReferenceVariableInspection.class,
+      AngularUndefinedBindingInspection.class,
+      AngularUndefinedTagInspection.class,
+      AngularInvalidTemplateReferenceVariableInspection.class,
       TypeScriptUnresolvedFunctionInspection.class
     );
   }

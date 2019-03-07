@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.*;
 
-public class Angular2ComponentTemplatePropertyInspection extends LocalInspectionTool {
+public class AngularIncorrectTemplateDefinitionInspection extends LocalInspectionTool {
 
   @NotNull
   @Override

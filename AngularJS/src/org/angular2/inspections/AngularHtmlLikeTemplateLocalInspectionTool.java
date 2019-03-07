@@ -13,7 +13,7 @@ import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class Angular2HtmlLikeTemplateLocalInspectionTool extends LocalInspectionTool {
+public abstract class AngularHtmlLikeTemplateLocalInspectionTool extends LocalInspectionTool {
 
   @NotNull
   @Override
@@ -38,7 +38,7 @@ public abstract class Angular2HtmlLikeTemplateLocalInspectionTool extends LocalI
 
       @Override
       public void visitXmlTag(XmlTag tag) {
-        Angular2HtmlLikeTemplateLocalInspectionTool.this.visitXmlTag(holder, tag);
+        AngularHtmlLikeTemplateLocalInspectionTool.this.visitXmlTag(holder, tag);
       }
     };
   }

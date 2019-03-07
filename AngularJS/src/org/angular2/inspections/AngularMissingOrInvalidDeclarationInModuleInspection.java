@@ -27,7 +27,7 @@ import static com.intellij.util.ObjectUtils.*;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.renderEntityList;
 
-public class Angular2DeclarationMembershipInModuleInspection extends LocalInspectionTool {
+public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalInspectionTool {
 
   @NotNull
   @Override

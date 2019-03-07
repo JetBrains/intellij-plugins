@@ -9,7 +9,7 @@ import org.angular2.css.CssInspectionsTest;
 import org.angular2.editor.ComponentDeclarationNavigationTest;
 import org.angular2.formatting.FormattingTest;
 import org.angular2.inspections.Angular2DecoratorInspectionsTest;
-import org.angular2.inspections.Angular2ExpressionTypeInspectionTest;
+import org.angular2.inspections.Angular2InvalidExpressionResultTypeInspectionTest;
 import org.angular2.inspections.Angular2NgModuleImportQuickFixesTest;
 import org.angular2.inspections.Angular2TemplateInspectionsTest;
 import org.angular2.lang.expr.lexer.Angular2LexerSpecTest;
@@ -58,7 +58,7 @@ import org.junit.runners.Suite;
   FormattingTest.class,
   Angular2TemplateInspectionsTest.class,
   Angular2DecoratorInspectionsTest.class,
-  Angular2ExpressionTypeInspectionTest.class,
+  Angular2InvalidExpressionResultTypeInspectionTest.class,
   Angular2NgModuleImportQuickFixesTest.class,
   AngularChangeSignatureTest.class,
   DirectiveRenameTest.class,

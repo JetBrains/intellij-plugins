@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.*;
 
-public class Angular2InvalidEntryComponentInspection extends LocalInspectionTool {
+public class AngularInvalidEntryComponentInspection extends LocalInspectionTool {
 
   @NotNull
   @Override

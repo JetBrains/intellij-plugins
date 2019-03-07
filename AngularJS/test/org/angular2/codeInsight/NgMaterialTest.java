@@ -4,7 +4,7 @@ package org.angular2.codeInsight;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angular2.inspections.Angular2BindingsInspection;
+import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angularjs.AngularTestUtil;
 
 public class NgMaterialTest extends Angular2CodeInsightFixtureTestCase {
@@ -16,7 +16,7 @@ public class NgMaterialTest extends Angular2CodeInsightFixtureTestCase {
   public void testTemplatesWithSuperConstructors() {
     myFixture.enableInspections(UnterminatedStatementJSInspection.class,
                                 HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     AngularTestUtil.configureWithMetadataFiles(myFixture, "table", "cdk-index");
     myFixture.configureByFiles("templateTest.html", "cell.d.ts", "row.ts", "cdk_cell.d.ts", "cdk_row.ts");
     myFixture.checkHighlighting();

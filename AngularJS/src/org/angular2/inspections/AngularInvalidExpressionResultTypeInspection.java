@@ -30,7 +30,7 @@ import static com.intellij.psi.util.PsiTreeUtil.getParentOfType;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
 
-public class Angular2ExpressionTypeInspection extends LocalInspectionTool {
+public class AngularInvalidExpressionResultTypeInspection extends LocalInspectionTool {
 
   @NotNull
   @Override

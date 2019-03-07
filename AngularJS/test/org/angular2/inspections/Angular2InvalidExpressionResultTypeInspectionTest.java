@@ -7,7 +7,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspectio
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
-public class Angular2ExpressionTypeInspectionTest extends Angular2CodeInsightFixtureTestCase {
+public class Angular2InvalidExpressionResultTypeInspectionTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "expressionType";
@@ -16,8 +16,8 @@ public class Angular2ExpressionTypeInspectionTest extends Angular2CodeInsightFix
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    myFixture.enableInspections(Angular2ExpressionTypeInspection.class,
-                                Angular2BindingsInspection.class,
+    myFixture.enableInspections(AngularInvalidExpressionResultTypeInspection.class,
+                                AngularUndefinedBindingInspection.class,
                                 HtmlUnknownAttributeInspection.class,
                                 TypeScriptValidateTypesInspection.class,
                                 TypeScriptUnresolvedFunctionInspection.class);

@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Angular2TemplateReferenceVariableInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+public class AngularInvalidTemplateReferenceVariableInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitAngularAttribute(@NotNull ProblemsHolder holder,

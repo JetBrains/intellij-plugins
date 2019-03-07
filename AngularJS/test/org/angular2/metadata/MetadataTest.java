@@ -13,9 +13,9 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angular2.inspections.Angular2BindingsInspection;
-import org.angular2.inspections.Angular2MatchingComponentsInspection;
-import org.angular2.inspections.Angular2TagsInspection;
+import org.angular2.inspections.AngularAmbiguousComponentTagInspection;
+import org.angular2.inspections.AngularUndefinedBindingInspection;
+import org.angular2.inspections.AngularUndefinedTagInspection;
 import org.angular2.lang.metadata.MetadataJsonFileViewProviderFactory;
 import org.angular2.lang.metadata.psi.MetadataFileImpl;
 import org.angularjs.AngularTestUtil;
@@ -78,7 +78,7 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd");
     myFixture.configureByFiles("inherited_properties.html", "nz-col.component.d.ts", "nz-form-control.component.d.ts");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting(true, false, true);
   }
 
@@ -86,7 +86,7 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     AngularTestUtil.configureWithMetadataFiles(myFixture, "ng-zorro-antd", "ant-design-icons-angular");
     myFixture.configureByFiles("inter_module_props.html", "nz-icon.directive.d.ts", "icon.directive.ts");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting(true, false, true);
   }
 
@@ -101,8 +101,8 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testMaterialMetadataResolution() {
     myFixture.copyDirectoryToProject("material", ".");
-    myFixture.enableInspections(Angular2MatchingComponentsInspection.class,
-                                Angular2TagsInspection.class);
+    myFixture.enableInspections(AngularAmbiguousComponentTagInspection.class,
+                                AngularUndefinedTagInspection.class);
     myFixture.configureFromTempProjectFile("module.ts");
     myFixture.checkHighlighting();
   }
@@ -136,9 +136,9 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testIonicMetadataResolution() {
     myFixture.copyDirectoryToProject("ionic", ".");
-    myFixture.enableInspections(Angular2MatchingComponentsInspection.class,
-                                Angular2TagsInspection.class,
-                                Angular2BindingsInspection.class,
+    myFixture.enableInspections(AngularAmbiguousComponentTagInspection.class,
+                                AngularUndefinedTagInspection.class,
+                                AngularUndefinedBindingInspection.class,
                                 HtmlUnknownTagInspection.class,
                                 HtmlUnknownAttributeInspection.class);
     myFixture.configureFromTempProjectFile("tab1.page.html");

@@ -34,7 +34,7 @@ import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 import static org.angular2.lang.Angular2Bundle.BUNDLE;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
-public class Angular2BindingsInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitAngularAttribute(@NotNull ProblemsHolder holder,
