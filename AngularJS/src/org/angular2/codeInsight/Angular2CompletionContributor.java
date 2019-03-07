@@ -284,10 +284,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
                 Pair<LookupElement, String> elementWithPrefix =
                   ((Angular2AttributeDescriptor)descriptor).getLookupElementWithPrefix(
                     result.getPrefixMatcher(), moduleScope);
-                if (elementWithPrefix.first == null) {
-                  providedAttributes.add(elementWithPrefix.second);
-                }
-                else {
+                if (elementWithPrefix.first != null) {
                   providedAttributes.add(elementWithPrefix.first.getLookupString());
                   result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(elementWithPrefix.second))
                     .addElement(elementWithPrefix.first);

@@ -942,4 +942,16 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                  resolveReference("*app<caret>Unless=").getContainingFile().getName());
     assertUnresolvedReference("*app<caret>Foo=");
   }
+
+  public void testTypeAttrWithFormsCompletion() {
+    AngularTestUtil.configureWithMetadataFiles(myFixture, "common", "forms");
+    myFixture.configureByFiles("typeAttrWithForms.html", "typeAttrWithForms.ts");
+    AngularTestUtil.moveToOffsetBySignature("<button <caret>>", myFixture);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "type");
+
+    AngularTestUtil.moveToOffsetBySignature("<input <caret>/>", myFixture);
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "type");
+  }
 }
