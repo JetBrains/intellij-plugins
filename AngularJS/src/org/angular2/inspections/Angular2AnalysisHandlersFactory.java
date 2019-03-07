@@ -1,6 +1,8 @@
-package org.angular2.codeInsight;
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package org.angular2.inspections;
 
 import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInspection.InspectionSuppressor;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptAnalysisHandlersFactory;
@@ -28,6 +30,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersFactory {
+
+  @NotNull
+  @Override
+  public InspectionSuppressor getInspectionSuppressor() {
+    return Angular2InspectionSuppressor.INSTANCE;
+  }
+
   @NotNull
   @Override
   public JSReferenceChecker getReferenceChecker(@NotNull JSReferenceInspectionProblemReporter reporter) {
