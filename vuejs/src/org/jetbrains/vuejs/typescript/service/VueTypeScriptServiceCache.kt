@@ -11,7 +11,7 @@ import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.findModule
 
 class VueTypeScriptServiceCache(project: Project) : TypeScriptLanguageServiceCache(project) {
-  override fun getDocumentText(virtualFile: VirtualFile, document: Document): String {
+  override fun getDocumentText(virtualFile: VirtualFile, document: Document): CharSequence {
     return if (virtualFile.fileType != VueFileType.INSTANCE) {
       super.getDocumentText(virtualFile, document)
     }
