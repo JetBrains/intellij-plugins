@@ -1,0 +1,10 @@
+{{ test1 //noinspection UnresolvedVariable }}
+{{ <error descr="Unresolved variable or type test2">test2</error> }}
+
+<!--suppress AngularUndefinedBinding -->
+<div [foo1]="bar1 | pipe1 //noinspection UnresolvedVariable,UnresolvedFunction"></div>
+<div [foo2]="<error descr="Unresolved variable or type bar2">bar2</error> | <error descr="Unresolved pipe pipe2">pipe2</error>"></div>
+
+<!--suppress JSUnusedGlobalSymbols -->
+<div #var1></div>
+<div #<warning descr="Unused variable var2">var2</warning>></div>
