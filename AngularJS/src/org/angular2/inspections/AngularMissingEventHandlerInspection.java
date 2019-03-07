@@ -10,7 +10,7 @@ import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2EmptyEventBindingInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+public class AngularMissingEventHandlerInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitAngularAttribute(@NotNull ProblemsHolder holder,

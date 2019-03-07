@@ -22,7 +22,7 @@ import java.util.List;
 
 import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 
-public class Angular2MatchingComponentsInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+public class AngularAmbiguousComponentTagInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {

@@ -4,7 +4,7 @@ package org.angular2.codeInsight;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angular2.inspections.Angular2BindingsInspection;
+import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class NgForTest extends Angular2CodeInsightFixtureTestCase {
   public void testNgForInspections() {
     myFixture.enableInspections(UnterminatedStatementJSInspection.class,
                                 HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.configureByFiles("NgForInspections.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
     myFixture.checkHighlighting();
   }

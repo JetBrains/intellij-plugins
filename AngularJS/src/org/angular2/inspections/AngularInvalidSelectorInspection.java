@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.Angular2DecoratorUtil.*;
 
-public class Angular2DirectiveSelectorInspection extends LocalInspectionTool {
+public class AngularInvalidSelectorInspection extends LocalInspectionTool {
 
   @NotNull
   @Override

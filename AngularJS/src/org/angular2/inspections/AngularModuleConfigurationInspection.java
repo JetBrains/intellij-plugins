@@ -31,11 +31,11 @@ import static java.util.Arrays.asList;
 import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.inspections.Angular2SourceEntityListValidator.ValidationResults;
 
-public abstract class Angular2ModuleConfigurationInspection extends LocalInspectionTool {
+public abstract class AngularModuleConfigurationInspection extends LocalInspectionTool {
 
   private final ProblemType myProblemType;
 
-  protected Angular2ModuleConfigurationInspection(@NotNull ProblemType type) {
+  protected AngularModuleConfigurationInspection(@NotNull ProblemType type) {
     myProblemType = type;
   }
 

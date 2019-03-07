@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.inspections.invalid.CssInvalidPseudoSelectorInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angular2.inspections.Angular2BindingsInspection;
+import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angularjs.AngularTestUtil;
 
 import java.util.List;
@@ -147,7 +147,7 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testHtmlWithDoctype() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class,
+                                AngularUndefinedBindingInspection.class,
                                 HtmlUnknownTagInspection.class);
     myFixture.configureByFiles("withDoctype.html", "package.json");
     myFixture.checkHighlighting(true, false, true);

@@ -23,7 +23,7 @@ import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProx
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
 import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_SPECIAL_TAGS;
 
-public class Angular2TagsInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+public class AngularUndefinedTagInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {

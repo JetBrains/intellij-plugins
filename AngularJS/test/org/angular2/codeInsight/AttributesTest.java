@@ -29,7 +29,7 @@ import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
-import org.angular2.inspections.Angular2BindingsInspection;
+import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("srcBinding.html", "package.json");
     myFixture.enableInspections(RequiredAttributesInspection.class,
                                 HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting();
   }
 
@@ -72,7 +72,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("event.html", "package.json");
     myFixture.enableInspections(RequiredAttributesInspection.class,
                                 HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting();
   }
 
@@ -95,7 +95,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("variable.html", "custom.ts", "package.json");
     myFixture.enableInspections(RequiredAttributesInspection.class,
                                 HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting();
   }
 
@@ -429,7 +429,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testBindingNamespace() {
     myFixture.configureByFiles("bindingNamespace.html", "package.json");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class,
+                                AngularUndefinedBindingInspection.class,
                                 XmlUnboundNsPrefixInspection.class);
     myFixture.checkHighlighting();
   }
@@ -437,7 +437,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testEventNamespace() {
     myFixture.configureByFiles("eventNamespace.html", "package.json");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class,
+                                AngularUndefinedBindingInspection.class,
                                 XmlUnboundNsPrefixInspection.class);
     myFixture.checkHighlighting();
   }
@@ -555,7 +555,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testI18NAttr() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.configureByFiles("i18n.html", "package.json");
     myFixture.checkHighlighting(true, false, true);
   }
@@ -674,21 +674,21 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testOneTimeBindingOfPrimitives() {
     myFixture.configureByFiles("one_time_binding.html", "one_time_binding.ts", "package.json");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting(true, false, true);
   }
 
   public void testStandardPropertiesOnComponent() {
     myFixture.configureByFiles("std_props_on_component.html", "one_time_binding.ts", "package.json");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting(true, false, true);
   }
 
   public void testCaseInsensitiveAttrNames() {
     myFixture.configureByFiles("case_insensitive.html", "one_time_binding.ts", "package.json");
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.checkHighlighting(true, false, true);
   }
 
@@ -919,14 +919,14 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testExtKeyEventsInspections() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.configureByFiles("extKeyEvents.html", "custom.ts", "package.json");
     myFixture.checkHighlighting(true, false, true);
   }
 
   public void testAttributeNameMapping() {
     myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                Angular2BindingsInspection.class);
+                                AngularUndefinedBindingInspection.class);
     myFixture.configureByFiles("attributeNameMapping.html", "package.json");
     myFixture.checkHighlighting();
   }

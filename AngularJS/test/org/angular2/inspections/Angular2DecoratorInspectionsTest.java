@@ -15,62 +15,62 @@ public class Angular2DecoratorInspectionsTest extends Angular2CodeInsightFixture
   }
 
   public void testComponentTemplateProperty1() {
-    doTest(1, "@Component({<caret>})", "Add 'template' property", Angular2ComponentTemplatePropertyInspection.class,
+    doTest(1, "@Component({<caret>})", "Add 'template' property", AngularIncorrectTemplateDefinitionInspection.class,
            "component-template-property.ts");
   }
 
   public void testComponentTemplateProperty2() {
-    doTest(2, "@Component({<caret>})", "Add 'templateUrl' property", Angular2ComponentTemplatePropertyInspection.class,
+    doTest(2, "@Component({<caret>})", "Add 'templateUrl' property", AngularIncorrectTemplateDefinitionInspection.class,
            "component-template-property.ts");
   }
 
   public void testComponentTemplateProperty3() {
-    doTest(3, "template<caret>: \"foo\"", "Remove 'template' property", Angular2ComponentTemplatePropertyInspection.class,
+    doTest(3, "template<caret>: \"foo\"", "Remove 'template' property", AngularIncorrectTemplateDefinitionInspection.class,
            "component-template-property.ts");
   }
 
   public void testComponentTemplateProperty4() {
-    doTest(4, "templateUrl<caret>: \"bar\"", "Remove 'templateUrl' property", Angular2ComponentTemplatePropertyInspection.class,
+    doTest(4, "templateUrl<caret>: \"bar\"", "Remove 'templateUrl' property", AngularIncorrectTemplateDefinitionInspection.class,
            "component-template-property.ts");
   }
 
   public void testDirectiveSelector() {
-    doTest(1, "outputs: <caret>", "Add 'selector' property", Angular2DirectiveSelectorInspection.class,
+    doTest(1, "outputs: <caret>", "Add 'selector' property", AngularInvalidSelectorInspection.class,
            "directive-selector.ts");
   }
 
   public void testDeclarationMembershipInModule() {
-    doTest(Angular2DeclarationMembershipInModuleInspection.class,
+    doTest(AngularMissingOrInvalidDeclarationInModuleInspection.class,
            "declaration-membership-in-module.ts");
   }
 
   public void testDeclarationMembershipInModule2() {
-    doTest(Angular2DeclarationMembershipInModuleInspection.class,
+    doTest(AngularMissingOrInvalidDeclarationInModuleInspection.class,
            "declaration-membership-in-module.2a.ts", "declaration-membership-in-module.2b.ts");
   }
 
   public void testModuleEntityTypeMismatch() {
-    doTest(Angular2ModuleEntityTypeMismatchInspection.class,
+    doTest(AngularInvalidImportedOrDeclaredSymbolInspection.class,
            "module-entity-type-mismatch.ts");
   }
 
   public void testRecursiveImportExport() {
-    doTest(Angular2ModuleRecursiveImportExportInspection.class,
+    doTest(AngularRecursiveModuleImportExportInspection.class,
            "recursive-import-export.a.ts", "recursive-import-export.b.ts");
   }
 
   public void testUndeclaredExport() {
-    doTest(Angular2ModuleUndeclaredExportInspection.class,
+    doTest(AngularUndefinedModuleExportInspection.class,
            "undeclared-export.ts");
   }
 
   public void testInvalidEntryComponent() {
-    doTest(Angular2InvalidEntryComponentInspection.class,
+    doTest(AngularInvalidEntryComponentInspection.class,
            "invalid-entry-component.ts");
   }
 
   public void testNotModuleSameLineOtherFile() {
-    doTest(Angular2ModuleEntityTypeMismatchInspection.class,
+    doTest(AngularInvalidImportedOrDeclaredSymbolInspection.class,
            "not-module-same-line-other-file.a.ts",
            "not-module-same-line-other-file.b.ts");
   }

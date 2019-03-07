@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 
-public class Angular2BindingToEventInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+public class AngularInsecureBindingToEventInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitAngularAttribute(@NotNull ProblemsHolder holder,

@@ -13,7 +13,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBinding
 import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
 
-public class Angular2AnimationTriggerAssignmentInspection extends Angular2HtmlLikeTemplateLocalInspectionTool {
+public class AngularInvalidAnimationTriggerAssignmentInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitAngularAttribute(@NotNull ProblemsHolder holder,
