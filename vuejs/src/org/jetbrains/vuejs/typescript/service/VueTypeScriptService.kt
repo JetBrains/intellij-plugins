@@ -163,10 +163,10 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
     return VueTypeScriptServiceCache(myProject)
   }
 
-  override fun getDocumentText(file: VirtualFile, instance: FileDocumentManager, document: Document): String? {
+  override fun getDocumentText(file: VirtualFile, instance: FileDocumentManager, document: Document): CharSequence? {
     if (!isVueFile(file)) return super.getDocumentText(file, instance, document)
-
-    return getModifiedVueDocumentText(myProject, document)
+    
+    return getModifiedVueDocumentText(myProject, document) ?: ""
   }
 
   override fun createFixSet(file: PsiFile,

@@ -100,4 +100,14 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   public void testSimpleVueEditingNoTsNoRefs() throws Exception {
     completeTsLangAndAssert();
   }
+
+  @TypeScriptVersion(TypeScriptVersions.TS28)
+  public void testSimpleVueEditingCloseTag() throws Exception {
+    doTestWithCopyDirectory();
+    myFixture.type('\b');
+    checkAfterFile("vue");
+    myFixture.type('/');
+    checkAfterFile("2.vue");
+  }
+
 }
