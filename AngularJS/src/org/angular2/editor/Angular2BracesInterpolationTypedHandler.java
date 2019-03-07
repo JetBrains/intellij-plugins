@@ -7,27 +7,39 @@ import com.intellij.lang.javascript.JSInjectionBracesUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.xml.XmlElement;
 import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.angular2.lang.html.lexer.Angular2HtmlTokenTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2BracesInterpolationTypedHandler extends TypedHandlerDelegate {
   private final JSInjectionBracesUtil.InterpolationBracesCompleter myBracesCompleter;
 
   public Angular2BracesInterpolationTypedHandler() {
-    myBracesCompleter = new JSInjectionBracesUtil.InterpolationBracesCompleter(Angular2Injector.BRACES_FACTORY);
+    myBracesCompleter = new JSInjectionBracesUtil.InterpolationBracesCompleter(Angular2Injector.BRACES_FACTORY) {
+      @Override
+      protected boolean checkTypingContext(@NotNull Editor editor, @NotNull PsiFile file) {
+        PsiElement atCaret = getContextElement(editor, file);
+        return atCaret == null
+               || atCaret instanceof XmlElement
+               || atCaret.getNode().getElementType() == Angular2HtmlTokenTypes.INTERPOLATION_END;
+      }
+    };
   }
 
   @NotNull
   @Override
-  public Result beforeCharTyped(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file, @NotNull FileType fileType) {
+  public Result beforeCharTyped(char c,
+                                @NotNull Project project,
+                                @NotNull Editor editor,
+                                @NotNull PsiFile file,
+                                @NotNull FileType fileType) {
     final Language language = file.getLanguage();
     if (Angular2HtmlLanguage.INSTANCE.equals(language)) {
       return myBracesCompleter.beforeCharTyped(c, project, editor, file);
     }
     return Result.CONTINUE;
   }
-
-
-
 }
