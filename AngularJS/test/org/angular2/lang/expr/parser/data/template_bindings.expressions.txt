@@ -209,7 +209,7 @@ ASTWrapperPsiElement(FILE)
   Angular2TemplateBindings
     Angular2TemplateBinding <expressions, false, null>
       JSReferenceExpression
-        JSPostfixExpression
+        TypeScriptNotNullExpression
           JSReferenceExpression
             PsiElement(JS:IDENTIFIER)('aaa')
           PsiElement(JS:EXCL)('!')

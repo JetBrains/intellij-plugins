@@ -19,6 +19,7 @@ import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilderFactory;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptNotNullExpression;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -695,7 +696,11 @@ public class Angular2ParserSpecTest {
 
     @Override
     public void visitElement(PsiElement element) {
-      if (element.getClass() == LeafPsiElement.class) {
+      if (element instanceof TypeScriptNotNullExpression) {
+        printElement(((TypeScriptNotNullExpression)element).getExpression());
+        result.append("!");
+      }
+      else if (element.getClass() == LeafPsiElement.class) {
         LeafPsiElement leaf = (LeafPsiElement)element;
         result.append(leaf.getText());
       }
