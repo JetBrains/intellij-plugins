@@ -13,6 +13,7 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.inspections.AngularUndefinedTagInspection;
@@ -148,4 +149,12 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
                  myFixture.getElementAtCaret().getContainingFile().getName());
   }
 
+  public void testFunctionPropertyMetadata() {
+    myFixture.copyDirectoryToProject("function_property", ".");
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureFromTempProjectFile("template.html");
+    myFixture.checkHighlighting();
+    assertEquals("my-lib.component.d.ts",
+                 myFixture.getElementAtCaret().getContainingFile().getName());
+  }
 }

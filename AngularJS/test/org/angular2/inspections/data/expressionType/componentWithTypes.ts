@@ -37,5 +37,10 @@ export class ComponentWithTypes {
 
     }
 
+    @Input()
+    predicate(arg: string) {
+        return false;
+    }
+
     id: string;
 }
