@@ -207,4 +207,10 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals("customer.ts", resolve.getContainingFile().getName());
     assertInstanceOf(resolve, TypeScriptFunction.class);
   }
+
+  public void testES6Refactorings() {
+    myFixture.configureByFiles("package.json");
+    myFixture.configureByText("test.html","{{ 'foo<caret>'}}");
+    assertEmpty(myFixture.filterAvailableIntentions("Replace with template string"));
+  }
 }
