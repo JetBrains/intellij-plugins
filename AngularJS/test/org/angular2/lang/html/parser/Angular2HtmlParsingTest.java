@@ -3,8 +3,10 @@ package org.angular2.lang.html.parser;
 
 import com.intellij.html.HtmlParsingTest;
 import com.intellij.javascript.HtmlInlineJSScriptTokenTypesProvider;
+import com.intellij.javascript.JSScriptContentProvider;
 import com.intellij.lang.LanguageASTFactory;
 import com.intellij.lang.LanguageHtmlInlineScriptTokenTypesProvider;
+import com.intellij.lang.LanguageHtmlScriptContentProvider;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
@@ -48,6 +50,8 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
     super.setUp();
     addExplicitExtension(LanguageHtmlInlineScriptTokenTypesProvider.INSTANCE, JavascriptLanguage.INSTANCE,
                          new HtmlInlineJSScriptTokenTypesProvider());
+    addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavascriptLanguage.INSTANCE,
+                         new JSScriptContentProvider());
     registerExtensionPoint(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, EmbeddedTokenTypesProvider.class);
     registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssEmbeddedTokenTypesProvider());
     registerExtension(EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME, new CssRulesetBlockEmbeddedTokenTypesProvider());
