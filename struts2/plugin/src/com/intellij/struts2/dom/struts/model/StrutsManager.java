@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 The authors
+ * Copyright 2019 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,9 +19,11 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyKey;
+import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
+import com.intellij.util.xml.model.impl.BaseDomModelFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +66,7 @@ public abstract class StrutsManager {
    *
    * @param module Module.
    * @return List of all models.
-   * @see com.intellij.util.xml.model.impl.DomModelFactory#getAllModels(com.intellij.openapi.util.UserDataHolder)
+   * @see BaseDomModelFactory#getAllModels(UserDataHolder)
    */
   @NotNull
   public abstract List<StrutsModel> getAllModels(@NotNull Module module);
@@ -74,7 +76,7 @@ public abstract class StrutsManager {
    *
    * @param module Module.
    * @return Combined model.
-   * @see com.intellij.util.xml.model.impl.DomModelFactory#getCombinedModel(com.intellij.openapi.util.UserDataHolder)
+   * @see BaseDomModelFactory#getCombinedModel(UserDataHolder)
    */
   @Nullable
   public abstract StrutsModel getCombinedModel(@Nullable final Module module);
