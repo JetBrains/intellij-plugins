@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-import {Component, Input} from '@angular/core';
+import {Component} from '@angular/core';
 import {NgModel} from './forms';
 import {Observable} from './Observable';
 
@@ -20,6 +20,14 @@ export class ExpressionsComponent {
 
     getText(model: NgModel): string {
         return null;
+    }
+
+    foo(arg: string): boolean {
+        return true;
+    }
+
+    bar(arg: number): boolean {
+        return false;
     }
 
 }

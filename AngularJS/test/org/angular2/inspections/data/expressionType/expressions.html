@@ -67,3 +67,6 @@
 ></my-comp>
 
 <input [ngModel]="true" #model="ngModel"/>
+
+<my-comp [predicate]="foo"></my-comp>
+<my-comp [predicate]="<warning descr="Type (arg: number) => boolean is not assignable to type (arg: string) => false">bar</warning>"></my-comp>

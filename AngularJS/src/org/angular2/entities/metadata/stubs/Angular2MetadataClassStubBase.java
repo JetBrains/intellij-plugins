@@ -171,7 +171,7 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       return;
     }
     String memberSymbol = readStringPropertyValue(obj.findProperty(SYMBOL_TYPE));
-    if (loadInOuts() && SYMBOL_PROPERTY.equals(memberSymbol)) {
+    if (loadInOuts() && (SYMBOL_PROPERTY.equals(memberSymbol) || SYMBOL_METHOD.equals(memberSymbol))) {
       streamDecorators(obj).forEach(dec -> {
         if (INPUT_DEC.equals(dec.first)) {
           addBindingMapping(name, myInputMappings, getDecoratorInitializer(dec.second, JsonStringLiteral.class));

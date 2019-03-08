@@ -175,7 +175,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     if (property instanceof TypeScriptFunction) {
       TypeScriptFunction fun = (TypeScriptFunction)property;
       if (!fun.isSetProperty() && !fun.isGetProperty()) {
-        return Collections.emptyList();
+        return Collections.singletonList(fun);
       }
       List<JSAttributeListOwner> result = new ArrayList<>();
       result.add(fun);

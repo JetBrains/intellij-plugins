@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@angular/core": "0.0.0",
+    "my-lib": "0.0.0"
+  }
+}

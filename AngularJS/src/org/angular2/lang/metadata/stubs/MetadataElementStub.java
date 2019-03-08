@@ -36,6 +36,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   @NonNls protected static final String SYMBOL_REFERENCE = "reference";
   @NonNls protected static final String SYMBOL_PROPERTY = "property";
   @NonNls protected static final String SYMBOL_FUNCTION = "function";
+  @NonNls protected static final String SYMBOL_METHOD = "method";
 
   @NonNls protected static final String DECORATORS = "decorators";
   @NonNls protected static final String CALL = "call";
