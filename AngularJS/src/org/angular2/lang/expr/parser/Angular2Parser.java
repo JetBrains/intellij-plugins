@@ -3,10 +3,7 @@ package org.angular2.lang.expr.parser;
 
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.WhitespacesBinders;
-import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.JSStubElementTypes;
-import com.intellij.lang.javascript.JSTokenTypes;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.parsing.*;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -456,8 +453,9 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
     protected boolean parseDialectSpecificMemberExpressionPart(Ref<PsiBuilder.Marker> markerRef) {
       if (builder.getTokenType() == EXCL) {
         builder.advanceLexer();
-        markerRef.get().done(POSTFIX_EXPRESSION);
-        markerRef.set(markerRef.get().precede());
+        PsiBuilder.Marker marker = markerRef.get();
+        marker.done(JSElementTypes.NOT_NULL_EXPRESSION);
+        markerRef.set(marker.precede());
         return true;
       }
       return false;

@@ -16,6 +16,7 @@ package org.angular2.lang.expr.parser;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptNotNullExpression;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -674,7 +675,11 @@ public class Angular2ParserSpecTest {
 
     @Override
     public void visitElement(PsiElement element) {
-      if (element.getClass() == LeafPsiElement.class) {
+      if (element instanceof TypeScriptNotNullExpression) {
+        printElement(((TypeScriptNotNullExpression)element).getExpression());
+        result.append("!");
+      }
+      else if (element.getClass() == LeafPsiElement.class) {
         LeafPsiElement leaf = (LeafPsiElement)element;
         result.append(leaf.getText());
       }

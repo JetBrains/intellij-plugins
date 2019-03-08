@@ -200,4 +200,11 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
                    return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
                  }).sorted().toList());
   }
+
+  public void testNonNullAssertionResolutionTypeScript() {
+    myFixture.configureByFiles("nonNullAssertion.html", "nonNullAssertion.ts", "package.json", "customer.ts", "customer2.ts");
+    PsiElement resolve = resolveReference("ca<caret>ll()");
+    assertEquals("customer.ts", resolve.getContainingFile().getName());
+    assertInstanceOf(resolve, TypeScriptFunction.class);
+  }
 }
