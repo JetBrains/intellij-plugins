@@ -91,6 +91,13 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                      "check-with-common.txt");
   }
 
+  public void testSourceForRootResolution() {
+    doResolutionTest("source-forRoot",
+                     "mainModule.ts",
+                     "export class Main<caret>Module {",
+                     "check.txt");
+  }
+
   public void testCommonNgClassModules() {
     doDeclarationModulesCheckText("common",
                                   "directives/ng_class.ts",
