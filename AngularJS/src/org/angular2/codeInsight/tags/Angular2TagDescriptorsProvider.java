@@ -108,7 +108,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
     tagName = XmlUtil.findLocalNameByQualifiedName(tagName);
     if (NG_SPECIAL_TAGS.contains(tagName.toLowerCase(Locale.ENGLISH))) {
-      return new Angular2TagDescriptor(tagName, createDirective(xmlTag, tagName));
+      return new Angular2TagDescriptor(tagName, createDirective(xmlTag, tagName), !NG_CONTENT.equals(tagName));
     }
 
     Angular2ApplicableDirectivesProvider provider = new Angular2ApplicableDirectivesProvider(xmlTag, true);

@@ -90,7 +90,7 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("ngContainer.after.html", resolve.getContainingFile().getName());
-    assertEquals("<ng-container></ng-container>", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    assertEquals("<ng-container", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testNgTemplateCompletion20() {
@@ -106,7 +106,7 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("ngTemplate.after.html", resolve.getContainingFile().getName());
-    assertEquals("<ng-template></ng-template>", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    assertEquals("<ng-template", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testNgContentCompletion20() {
