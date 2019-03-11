@@ -3,10 +3,20 @@ package org.angular2.entities.source;
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifierAlias;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptSingleType;
+import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFunctionCachingVisitor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.impl.JSFunctionBaseImpl;
+import com.intellij.lang.javascript.psi.impl.JSFunctionCachedData;
+import com.intellij.lang.javascript.psi.impl.JSFunctionNodesVisitor;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
+import com.intellij.lang.javascript.psi.types.JSGenericTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
@@ -155,11 +165,11 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     while (type != null
            && !(type instanceof JSAnyType)
            && visitedTypes.add(type.getResolvedTypeId())) {
-      JSRecordType recordType = type.asRecordType();
+      NotNullLazyValue<JSRecordType> recordType = NotNullLazyValue.createValue(type::asRecordType);
       JSRecordType.PropertySignature ngModuleSignature;
       if (lookingForModule
-          && (ngModuleSignature = recordType.findPropertySignature(NG_MODULE_PROP)) != null) {
-        type = ngModuleSignature.getJSType();
+          && (ngModuleSignature = recordType.getValue().findPropertySignature(NG_MODULE_PROP)) != null) {
+        type = evaluateModuleWithProvidersType(ngModuleSignature, type.getSource());
       }
       else {
         PsiElement sourceElement = type.getSourceElement();
@@ -175,7 +185,15 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
             }
           }
         }
-        JSRecordType.CallSignature constructor = ContainerUtil.find(recordType.getCallSignatures(),
+        else if (sourceElement instanceof TypeScriptClass) {
+          resolvedClazz = (JSClass)sourceElement;
+          T entity = getEntity(resolvedClazz);
+          if (entity != null) {
+            processEntity(entity);
+            return;
+          }
+        }
+        JSRecordType.CallSignature constructor = ContainerUtil.find(recordType.getValue().getCallSignatures(),
                                                                     JSRecordType.CallSignature::hasNew);
         type = doIfNotNull(constructor, JSRecordType.CallSignature::getReturnType);
       }
@@ -186,6 +204,37 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     else {
       processAnyType();
     }
+  }
+
+  private static JSType evaluateModuleWithProvidersType(JSRecordType.PropertySignature ngModuleSignature, JSTypeSource functionTypeSource) {
+    JSType result = ngModuleSignature.getJSType();
+    List<JSType> args;
+    JSFunctionBaseImpl function;
+
+    if (result instanceof JSGenericTypeImpl
+        && (args = ((JSGenericTypeImpl)result).getArguments()).size() == 1
+        && args.get(0) instanceof JSAnyType
+        && functionTypeSource.getSourceElement() != null
+        && (function = tryCast(functionTypeSource.getSourceElement().getContext(), JSFunctionBaseImpl.class)) != null) {
+
+      JSType evaluatedReturnType = CachedValuesManager.getCachedValue(function, () -> {
+        final JSFunctionCachedData cachedData = new JSFunctionCachedData();
+        final List<JSFunction> nestedFuns = new SmartList<>();
+        final List<JSType> evaluatedReturnTypes = new SmartList<>();
+        final JSFunctionNodesVisitor cachedDataEvaluator =
+          new TypeScriptFunctionCachingVisitor(function,
+                                               cachedData, nestedFuns, evaluatedReturnTypes);
+        AstLoadingFilter.forceAllowTreeLoading(
+          function.getContainingFile(),
+          () -> cachedDataEvaluator.visitElement(function.getNode()));
+        return CachedValueProvider.Result.create(cachedDataEvaluator.getReturnTypeFromEvaluated(), function);
+      });
+
+      ngModuleSignature = doIfNotNull(evaluatedReturnType,
+                                      t -> t.asRecordType().findPropertySignature(NG_MODULE_PROP));
+      result = doIfNotNull(ngModuleSignature, JSRecordType.PropertySignature::getJSType);
+    }
+    return result;
   }
 
   private T getEntity(@Nullable JSClass aClass) {
