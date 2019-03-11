@@ -423,72 +423,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
 
       // Prepare for typing arguments, if any.
-      if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind())) {
-        final List<String> parameterNames = suggestion.getParameterNames();
-        if (parameterNames != null) {
-          shouldSetSelection = false;
-          lookup = lookup.withInsertHandler((context, item) -> {
-            // like in JavaCompletionUtil.insertParentheses()
-            final boolean needRightParenth = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET ||
-                                             parameterNames.isEmpty() && context.getCompletionChar() != '(';
-
-            if (parameterNames.isEmpty()) {
-              final ParenthesesInsertHandler<LookupElement> handler =
-                ParenthesesInsertHandler.getInstance(false, false, false, needRightParenth, false);
-              handler.handleInsert(context, item);
-            }
-            else {
-              final ParenthesesInsertHandler<LookupElement> handler =
-                ParenthesesInsertHandler.getInstance(true, false, false, needRightParenth, false);
-              handler.handleInsert(context, item);
-
-              final Editor editor = context.getEditor();
-
-              if (DartCodeInsightSettings.getInstance().INSERT_DEFAULT_ARG_VALUES) {
-                // Insert argument defaults if provided.
-                final String argumentListString = suggestion.getDefaultArgumentListString();
-                if (argumentListString != null) {
-                  final Document document = editor.getDocument();
-                  int offset = editor.getCaretModel().getOffset();
-
-                  // At this point caret is expected to be right after the opening paren.
-                  // But if user was completing using Tab over the existing method call with arguments then old arguments are still there,
-                  // if so, skip inserting argumentListString
-
-                  final CharSequence text = document.getCharsSequence();
-                  if (text.charAt(offset - 1) == '(' && text.charAt(offset) == ')') {
-                    document.insertString(offset, argumentListString);
-
-                    PsiDocumentManager.getInstance(project).commitDocument(document);
-
-                    final TemplateBuilderImpl
-                      builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
-
-                    final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
-                    // Only proceed if ranges are provided and well-formed.
-                    if (ranges != null && (ranges.length & 1) == 0) {
-                      int index = 0;
-                      while (index < ranges.length) {
-                        final int start = ranges[index];
-                        final int length = ranges[index + 1];
-                        final String arg = argumentListString.substring(start, start + length);
-                        final TextExpression expression = new TextExpression(arg);
-                        final TextRange range = new TextRange(offset + start, offset + start + length);
-
-                        index += 2;
-                        builder.replaceRange(range, "group_" + (index - 1), expression, true);
-                      }
-
-                      builder.run(editor, true);
-                    }
-                  }
-                }
-              }
-
-              AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, lookupObject.findPsiElement());
-            }
-          });
-        }
+      if (CompletionSuggestionKind.INVOCATION.equals(suggestion.getKind()) && suggestion.getParameterNames() != null) {
+        shouldSetSelection = false;
+        lookup = lookup.withInsertHandler((context, item) -> handleFunctionInvocationInsertion(context, item, suggestion));
       }
     }
 
@@ -513,21 +450,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
         }
         catch (DartSourceEditException e) {
           CommonRefactoringUtil.showErrorHint(project, context.getEditor(), e.getMessage(), CommonBundle.getErrorTitle(), null);
-        }
-
-        final List<String> parameterNames = suggestion.getParameterNames();
-        if (parameterNames == null) {
           return;
         }
 
-        // Like in JavaCompletionUtil.insertParentheses().
-        final boolean needsRightParen = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET ||
-                                        parameterNames.isEmpty() && context.getCompletionChar() != '(';
-        final ParenthesesInsertHandler<LookupElement> handler =
-          ParenthesesInsertHandler.getInstance(!parameterNames.isEmpty(), false, false, needsRightParen, false);
-        handler.handleInsert(context, item);
-        if (!parameterNames.isEmpty()) {
-          AutoPopupController.getInstance(project).autoPopupParameterInfo(context.getEditor(), lookupObject.findPsiElement());
+        if (element != null && ElementKind.FUNCTION.equals(element.getKind()) && suggestion.getParameterNames() != null) {
+          handleFunctionInvocationInsertion(context, item, suggestion);
         }
       });
     }
@@ -545,6 +472,70 @@ public class DartServerCompletionContributor extends CompletionContributor {
     }
 
     return lookup;
+  }
+
+  private static void handleFunctionInvocationInsertion(@NotNull InsertionContext context,
+                                                        @NotNull LookupElement item,
+                                                        @NotNull CompletionSuggestion suggestion) {
+    List<String> parameterNames = suggestion.getParameterNames();
+    if (parameterNames == null) {
+      return;
+    }
+
+    // like in JavaCompletionUtil.insertParentheses()
+    final boolean needRightParenth = CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET ||
+                                     parameterNames.isEmpty() && context.getCompletionChar() != '(';
+
+    boolean hasParameters = !parameterNames.isEmpty();
+    final ParenthesesInsertHandler<LookupElement> handler =
+      ParenthesesInsertHandler.getInstance(hasParameters, false, false, needRightParenth, false);
+    handler.handleInsert(context, item);
+
+    final Editor editor = context.getEditor();
+    if (hasParameters && DartCodeInsightSettings.getInstance().INSERT_DEFAULT_ARG_VALUES) {
+      final String argumentListString = suggestion.getDefaultArgumentListString();
+      if (argumentListString != null) {
+        final Document document = editor.getDocument();
+        int offset = editor.getCaretModel().getOffset();
+
+        // At this point caret is expected to be right after the opening paren.
+        // But if user was completing using Tab over the existing method call with arguments then old arguments are still there,
+        // if so, skip inserting argumentListString
+
+        final CharSequence text = document.getCharsSequence();
+        if (text.charAt(offset - 1) == '(' && text.charAt(offset) == ')') {
+          document.insertString(offset, argumentListString);
+
+          PsiDocumentManager.getInstance(context.getProject()).commitDocument(document);
+
+          final TemplateBuilderImpl builder =
+            (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(context.getFile());
+
+          final int[] ranges = suggestion.getDefaultArgumentListTextRanges();
+          // Only proceed if ranges are provided and well-formed.
+          if (ranges != null && (ranges.length & 1) == 0) {
+            int index = 0;
+            while (index < ranges.length) {
+              final int start = ranges[index];
+              final int length = ranges[index + 1];
+              final String arg = argumentListString.substring(start, start + length);
+              final TextExpression expression = new TextExpression(arg);
+              final TextRange range = new TextRange(offset + start, offset + start + length);
+
+              index += 2;
+              builder.replaceRange(range, "group_" + (index - 1), expression, true);
+            }
+
+            builder.run(editor, true);
+          }
+        }
+      }
+    }
+
+    Object itemObj = item.getObject();
+    if (itemObj instanceof DartLookupObject) {
+      AutoPopupController.getInstance(context.getProject()).autoPopupParameterInfo(editor, ((DartLookupObject)itemObj).findPsiElement());
+    }
   }
 
 
@@ -576,8 +567,8 @@ public class DartServerCompletionContributor extends CompletionContributor {
       suggestion.getDocSummary(),
       suggestion.getDocComplete(),
       null,
-      null,
-      null,
+      suggestion.getDefaultArgumentListString(),
+      suggestion.getDefaultArgumentListTextRanges(),
       element,
       element.getReturnType(),
       suggestion.getParameterNames(),
