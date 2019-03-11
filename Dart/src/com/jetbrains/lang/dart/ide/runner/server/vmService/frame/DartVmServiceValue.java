@@ -164,12 +164,14 @@ public class DartVmServiceValue extends XNamedValue {
         public void received(final InstanceRef toStringInstanceRef) {
           if (toStringInstanceRef.getKind() == InstanceKind.String) {
             String content = toStringInstanceRef.getValueAsString();
-            String summary = content.split("\n")[0];
+            int firstLineBreak = content.indexOf('\n');
+            String summary = firstLineBreak < 0 ? content : content.substring(0, firstLineBreak);
             node.setPresentation(getIcon(), myInstanceRef.getClassRef().getName(), summary, true);
             if (toStringInstanceRef.getValueAsStringIsTruncated()) {
               addFullStringValueEvaluator(node, toStringInstanceRef);
             }
-            else {
+            else if (firstLineBreak >= 0){
+              // Multi-line content. Display a View link to reveal full content.
               node.setFullValueEvaluator(new ImmediateFullValueEvaluator("View", content));
             }
           }
