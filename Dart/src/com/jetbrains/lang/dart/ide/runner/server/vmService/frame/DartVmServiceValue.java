@@ -172,7 +172,7 @@ public class DartVmServiceValue extends XNamedValue {
             }
             else if (firstLineBreak >= 0){
               // Multi-line content. Display a View link to reveal full content.
-              node.setFullValueEvaluator(new ImmediateFullValueEvaluator("View", content));
+              node.setFullValueEvaluator(new ImmediateFullValueEvaluator("...View", content));
             }
           }
           else {
