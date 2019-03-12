@@ -1,6 +1,5 @@
-package name.kropp.intellij.makefile.psi;
+package name.kropp.intellij.makefile.psi
 
-import com.intellij.psi.PsiNameIdentifierOwner;
+import com.intellij.psi.*
 
-public interface MakefileNamedElement extends PsiNameIdentifierOwner {
-}
+interface MakefileNamedElement : PsiNameIdentifierOwner

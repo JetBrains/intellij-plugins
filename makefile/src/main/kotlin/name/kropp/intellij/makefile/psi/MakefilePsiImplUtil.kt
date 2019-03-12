@@ -1,173 +1,139 @@
-package name.kropp.intellij.makefile.psi;
+package name.kropp.intellij.makefile.psi
 
-import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
-import name.kropp.intellij.makefile.MakefileFile;
-import name.kropp.intellij.makefile.psi.impl.MakefilePrerequisiteImpl;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.navigation.*
+import com.intellij.psi.*
+import com.intellij.psi.tree.*
+import com.intellij.psi.util.*
+import name.kropp.intellij.makefile.*
+import name.kropp.intellij.makefile.psi.impl.*
+import java.util.regex.*
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+object MakefilePsiImplUtil {
+  private val suffixRule = Pattern.compile("^\\.[a-zA-Z]+(\\.[a-zA-Z]+)$")
 
-public class MakefilePsiImplUtil {
-    private static final Pattern suffixRule = Pattern.compile("^\\.[a-zA-Z]+(\\.[a-zA-Z]+)$");
+  private val ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN)
+  private val LINE = TokenSet.create(MakefileTypes.LINE)
+  private val VARIABLE_VALUE_LINE = TokenSet.create(MakefileTypes.VARIABLE_VALUE_LINE)
 
-    public static List<MakefileTarget> getTargets(MakefileRule element) {
-        return element.getTargetLine().getTargets().getTargetList();
+  fun getTargets(element: MakefileRule): List<MakefileTarget> {
+    return element.targetLine.targets.targetList
+  }
+
+  fun getTargetName(element: MakefileTargetLine): String? {
+    val targetNode = element.node.findChildByType(MakefileTypes.TARGET) ?: return null
+    return targetNode.text
+  }
+
+  fun getName(element: MakefileTarget?): String? {
+    return element?.text
+  }
+
+  fun setName(element: MakefileTarget, newName: String): PsiElement {
+    val identifierNode = element.node.firstChildNode
+    if (identifierNode != null) {
+      val target = MakefileElementFactory.createTarget(element.project, newName)
+      val newIdentifierNode = target.firstChild.node
+      element.node.replaceChild(identifierNode, newIdentifierNode)
+    }
+    return element
+  }
+
+  fun getNameIdentifier(element: MakefileTarget): PsiElement? {
+    if (element.isSpecialTarget) return null
+
+    val targetNode = element.node
+    return targetNode?.psi
+  }
+
+  fun getDocComment(element: MakefileTarget): String? {
+    if (element.isSpecialTarget) return null
+
+    val targetLine = element.parent.parent as MakefileTargetLine
+
+    val comments = PsiTreeUtil.findChildrenOfType(targetLine, PsiComment::class.java)
+    for (comment in comments) {
+      if (comment.tokenType === MakefileTypes.DOC_COMMENT) {
+        return comment.text.substring(2)
+      }
     }
 
-    @Nullable
-    public static String getTargetName(MakefileTargetLine element) {
-        ASTNode targetNode = element.getNode().findChildByType(MakefileTypes.TARGET);
-        if (targetNode == null) {
-            return null;
-        }
-        return targetNode.getText();
+    return null
+  }
+
+  fun getPresentation(element: MakefileTarget): ItemPresentation {
+    return MakefileTargetPresentation(element)
+  }
+
+  fun isSpecialTarget(element: MakefileTarget): Boolean {
+    val name = element.name
+    return name != null && (name.matches("^\\.[A-Z_]*".toRegex()) || name == "FORCE" || suffixRule.matcher(name).matches())
+  }
+
+  fun isPatternTarget(element: MakefileTarget): Boolean {
+    val name = element.name
+    return name != null && name.contains("%")
+  }
+
+  fun matches(element: MakefileTarget, prerequisite: String): Boolean {
+    val name = element.name ?: return false
+    if (name.startsWith("%")) {
+      return prerequisite.endsWith(name.substring(1))
     }
-
-    @Nullable
-    public static String getName(MakefileTarget element) {
-        return element != null ? element.getText() : null;
+    if (name.endsWith("%")) {
+      return prerequisite.startsWith(name.substring(0, name.length - 1))
     }
+    val matcher = suffixRule.matcher(name)
+    return if (matcher.matches()) {
+      prerequisite.endsWith(matcher.group(1))
+    } else name == prerequisite
+  }
 
-    public static PsiElement setName(MakefileTarget element, String newName) {
-        ASTNode identifierNode = element.getNode().getFirstChildNode();
-        if (identifierNode != null) {
-            MakefileTarget target = MakefileElementFactory.INSTANCE.createTarget(element.getProject(), newName);
-            ASTNode newIdentifierNode = target.getFirstChild().getNode();
-            element.getNode().replaceChild(identifierNode, newIdentifierNode);
-        }
-        return element;
-    }
+  fun getAssignment(element: MakefileVariableAssignment): PsiElement? {
+    val node = element.node.findChildByType(ASSIGNMENT) ?: return null
+    return node.psi
+  }
 
-    @Nullable
-    public static PsiElement getNameIdentifier(MakefileTarget element) {
-        if (element.isSpecialTarget()) return null;
+  fun getValue(element: MakefileVariableAssignment): String? {
+    val value = element.variableValue ?: return ""
+    val nodes = value.node.getChildren(LINE)
+    return nodes.joinToString("\n") { it.text }
+  }
 
-        ASTNode targetNode = element.getNode();
-        return targetNode != null ? targetNode.getPsi() : null;
-    }
+  fun getAssignment(element: MakefileDefine): PsiElement? {
+    val node = element.node.findChildByType(ASSIGNMENT) ?: return null
+    return node.psi
+  }
 
-    @Nullable
-    public static String getDocComment(MakefileTarget element) {
-        if (element.isSpecialTarget()) return null;
+  fun getValue(element: MakefileDefine): String? {
+    val nodes = element.node.getChildren(VARIABLE_VALUE_LINE)
+    return nodes.joinToString("\n") { it.text }
+  }
 
-        final MakefileTargetLine targetLine = (MakefileTargetLine) element.getParent().getParent();
+  fun isEmpty(element: MakefileRecipe): Boolean {
+    return element.commandList.isEmpty() && element.conditionalList.isEmpty()
+  }
 
-        Collection<PsiComment> comments = PsiTreeUtil.findChildrenOfType(targetLine, PsiComment.class);
-        for (PsiComment comment : comments) {
-            if (comment.getTokenType() == MakefileTypes.DOC_COMMENT) {
-                return comment.getText().substring(2);
+  fun updateText(prerequisite: MakefilePrerequisite, newText: String): MakefilePrerequisiteImpl {
+    val replacement = MakefileElementFactory.createPrerequisite(prerequisite.project, newText)
+    return prerequisite.replace(replacement) as MakefilePrerequisiteImpl
+  }
+
+  fun isPhonyTarget(prerequisite: MakefilePrerequisite): Boolean {
+    val file = prerequisite.containingFile
+    if (file is MakefileFile) {
+      for (rule in file.phonyRules) {
+        val prerequisites = rule.targetLine.prerequisites
+        if (prerequisites != null) {
+          val normalPrerequisites = prerequisites.normalPrerequisites
+          for (goal in normalPrerequisites.prerequisiteList) {
+            if (goal.text == prerequisite.text) {
+              return true
             }
+          }
         }
+      }
 
-        return null;
     }
-
-    public static ItemPresentation getPresentation(MakefileTarget element) {
-        return new MakefileTargetPresentation(element);
-    }
-
-    public static boolean isSpecialTarget(MakefileTarget element) {
-        String name = element.getName();
-        return name != null && (name.matches("^\\.[A-Z_]*") || name.equals("FORCE") || suffixRule.matcher(name).matches());
-    }
-
-    public static boolean isPatternTarget(MakefileTarget element) {
-        String name = element.getName();
-        return name != null && name.contains("%");
-    }
-
-    public static boolean matches(MakefileTarget element, String prerequisite) {
-        String name = element.getName();
-        if (name == null) {
-            return false;
-        }
-        if (name.startsWith("%")) {
-            return prerequisite.endsWith(name.substring(1));
-        }
-        if (name.endsWith("%")) {
-            return prerequisite.startsWith(name.substring(0, name.length()-1));
-        }
-        Matcher matcher = suffixRule.matcher(name);
-        if (matcher.matches()) {
-            return prerequisite.endsWith(matcher.group(1));
-        }
-        return name.equals(prerequisite);
-    }
-
-    private static TokenSet ASSIGNMENT = TokenSet.create(MakefileTypes.ASSIGN);
-    private static TokenSet LINE = TokenSet.create(MakefileTypes.LINE);
-    private static TokenSet VARIABLE_VALUE_LINE = TokenSet.create(MakefileTypes.VARIABLE_VALUE_LINE);
-
-    @Nullable
-    public static PsiElement getAssignment(MakefileVariableAssignment element) {
-        ASTNode node = element.getNode().findChildByType(ASSIGNMENT);
-        if (node == null)
-            return null;
-        return node.getPsi();
-    }
-
-    @Nullable
-    public static String getValue(MakefileVariableAssignment element) {
-        MakefileVariableValue value = element.getVariableValue();
-        if (value == null) {
-            return "";
-        }
-        ASTNode[] nodes = value.getNode().getChildren(LINE);
-        return Arrays.stream(nodes).map(ASTNode::getText).collect(Collectors.joining("\n"));
-    }
-
-    @Nullable
-    public static PsiElement getAssignment(MakefileDefine element) {
-        ASTNode node = element.getNode().findChildByType(ASSIGNMENT);
-        if (node == null)
-            return null;
-        return node.getPsi();
-    }
-
-    @Nullable
-    public static String getValue(MakefileDefine element) {
-        ASTNode[] nodes = element.getNode().getChildren(VARIABLE_VALUE_LINE);
-        return Arrays.stream(nodes).map(ASTNode::getText).collect(Collectors.joining("\n"));
-    }
-
-    public static boolean isEmpty(MakefileRecipe element) {
-        return element.getCommandList().isEmpty() && element.getConditionalList().isEmpty();
-    }
-
-    public static MakefilePrerequisiteImpl updateText(MakefilePrerequisite prerequisite, String newText) {
-        MakefilePrerequisite replacement = MakefileElementFactory.INSTANCE.createPrerequisite(prerequisite.getProject(), newText);
-        return (MakefilePrerequisiteImpl) prerequisite.replace(replacement);
-    }
-
-    public static boolean isPhonyTarget(MakefilePrerequisite prerequisite) {
-        final PsiFile file = prerequisite.getContainingFile();
-        if (file instanceof MakefileFile) {
-            final MakefileFile makefile = (MakefileFile) file;
-            for (MakefileRule rule : makefile.getPhonyRules()) {
-                MakefilePrerequisites prerequisites = rule.getTargetLine().getPrerequisites();
-                if (prerequisites != null) {
-                    MakefileNormalPrerequisites normalPrerequisites = prerequisites.getNormalPrerequisites();
-                    for (MakefilePrerequisite goal : normalPrerequisites.getPrerequisiteList()) {
-                        if (Objects.equals(goal.getText(), prerequisite.getText())) {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-        }
-        return false;
-    }
+    return false
+  }
 }

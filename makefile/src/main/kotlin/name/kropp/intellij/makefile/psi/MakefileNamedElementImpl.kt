@@ -1,23 +1,14 @@
-package name.kropp.intellij.makefile.psi.impl;
+package name.kropp.intellij.makefile.psi.impl
 
-import com.intellij.extapi.psi.StubBasedPsiElementBase;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
-import name.kropp.intellij.makefile.psi.MakefileNamedElement;
-import name.kropp.intellij.makefile.stub.MakefileTargetStubElement;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.extapi.psi.*
+import com.intellij.lang.*
+import com.intellij.psi.stubs.*
+import name.kropp.intellij.makefile.psi.*
+import name.kropp.intellij.makefile.stub.*
 
-public abstract class MakefileNamedElementImpl extends StubBasedPsiElementBase<MakefileTargetStubElement> implements MakefileNamedElement {
-    public MakefileNamedElementImpl(@NotNull ASTNode node) {
-        super(node);
-    }
+abstract class MakefileNamedElementImpl : StubBasedPsiElementBase<MakefileTargetStubElement>, MakefileNamedElement {
+  constructor(node: ASTNode) : super(node)
+  constructor(stub: MakefileTargetStubElement, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
-    public MakefileNamedElementImpl(@NotNull MakefileTargetStubElement stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
-    }
-
-    @Override
-    public String toString() {
-        return "MakefileTargetImpl(TARGET)";
-    }
+  override fun toString() = "MakefileTargetImpl(TARGET)"
 }

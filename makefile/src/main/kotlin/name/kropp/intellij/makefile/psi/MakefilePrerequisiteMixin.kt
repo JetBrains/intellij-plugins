@@ -1,27 +1,21 @@
-package name.kropp.intellij.makefile.psi.impl;
+package name.kropp.intellij.makefile.psi.impl
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
-import com.intellij.util.ArrayUtil;
-import name.kropp.intellij.makefile.MakefileTargetReference;
-import name.kropp.intellij.makefile.psi.MakefilePrerequisite;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.extapi.psi.*
+import com.intellij.lang.*
+import com.intellij.psi.*
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.*
+import com.intellij.util.*
+import name.kropp.intellij.makefile.*
+import name.kropp.intellij.makefile.psi.*
 
-public abstract class MakefilePrerequisiteMixin extends ASTWrapperPsiElement implements MakefilePrerequisite {
-    MakefilePrerequisiteMixin(@NotNull ASTNode node) {
-        super(node);
+abstract class MakefilePrerequisiteMixin internal constructor(node: ASTNode) : ASTWrapperPsiElement(node), MakefilePrerequisite {
+
+  override fun getReferences(): Array<PsiReference> {
+    val targetReference = MakefileTargetReference(this)
+    if (isPhonyTarget) {
+      return arrayOf(targetReference)
     }
-
-    @NotNull
-    @Override
-    public PsiReference[] getReferences() {
-        MakefileTargetReference targetReference = new MakefileTargetReference(this);
-        if (isPhonyTarget()) {
-            return new PsiReference[] { targetReference };
-        }
-        PsiReference[] references = new FileReferenceSet(this).getAllReferences();
-        return ArrayUtil.prepend(targetReference, references, PsiReference.ARRAY_FACTORY);
-    }
+    val references = FileReferenceSet(this).allReferences
+    return ArrayUtil.prepend(targetReference, references, PsiReference.ARRAY_FACTORY)
+  }
 }
