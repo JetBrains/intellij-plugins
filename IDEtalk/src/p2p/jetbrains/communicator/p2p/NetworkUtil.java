@@ -16,7 +16,7 @@
 package jetbrains.communicator.p2p;
 
 import jetbrains.communicator.core.Pico;
-import jetbrains.communicator.util.TimeoutCachedValue;
+import com.intellij.openapi.util.TimeoutCachedValue;
 import jetbrains.communicator.util.XmlRpcTarget;
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcClient;
@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Kir
@@ -34,9 +35,7 @@ import java.util.*;
 public class NetworkUtil {
   private static final Logger LOG = Logger.getLogger(NetworkUtil.class);
 
-  private static final TimeoutCachedValue<List<InetAddress>> ourInterfaces = new TimeoutCachedValue<List<InetAddress>>(30 * 1000) {
-    @Override
-    protected List<InetAddress> calculate() {
+  private static final TimeoutCachedValue<List<InetAddress>> ourInterfaces = new TimeoutCachedValue<List<InetAddress>>(30, TimeUnit.SECONDS, ()-> {
       final List<InetAddress> result = new ArrayList<>();
       try {
         final Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
@@ -56,14 +55,13 @@ public class NetworkUtil {
         LOG.error("Cannot get list of local interfaces", e);
       }
       return result;
-    }
-  };
+    });
 
   private NetworkUtil() {
   }
 
   public static Collection<InetAddress> getSelfAddresses() {
-    return ourInterfaces.getValue();
+    return ourInterfaces.get();
   }
 
   public static Object sendMessage(XmlRpcTarget target, String xmlRpcId, String method, Object... parameters) {

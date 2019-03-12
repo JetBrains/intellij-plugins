@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.core.impl.users;
 
+import com.intellij.openapi.util.TimeoutCachedValue;
 import jetbrains.communicator.commands.Helper;
 import jetbrains.communicator.core.EventBroadcaster;
 import jetbrains.communicator.core.Pico;
@@ -31,10 +32,10 @@ import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.SendCodePointerEvent;
 import jetbrains.communicator.ide.SendMessageEvent;
-import jetbrains.communicator.util.TimeoutCachedValue;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Kir
@@ -65,7 +66,7 @@ public final class UserImpl extends BaseUserImpl {
   @Override
   public UserPresence getPresence() {
     updateVars();
-    return myUserPresenceCache.getValue();
+    return myUserPresenceCache.get();
   }
 
   @Override
@@ -83,7 +84,7 @@ public final class UserImpl extends BaseUserImpl {
   @Override
   public Icon getIcon() {
     updateVars();
-    return myIconCache.getValue();
+    return myIconCache.get();
   }
 
   @Override
@@ -144,18 +145,8 @@ public final class UserImpl extends BaseUserImpl {
 
   private void updateVars() {
     if (myUserPresenceCache == null) {
-      myUserPresenceCache = new TimeoutCachedValue<UserPresence>(CACHE_TIMEOUT) {
-        @Override
-        protected UserPresence calculate() {
-          return getTransport().getUserPresence(UserImpl.this);
-        }
-      };
-      myIconCache = new TimeoutCachedValue<Icon>(CACHE_TIMEOUT) {
-        @Override
-        protected Icon calculate() {
-          return getTransport().getIcon(getPresence());
-        }
-      };
+      myUserPresenceCache = new TimeoutCachedValue<UserPresence>(CACHE_TIMEOUT, TimeUnit.MILLISECONDS, ()->getTransport().getUserPresence(UserImpl.this));
+      myIconCache = new TimeoutCachedValue<Icon>(CACHE_TIMEOUT, TimeUnit.MILLISECONDS, ()->getTransport().getIcon(getPresence()));
     }
   }
 
