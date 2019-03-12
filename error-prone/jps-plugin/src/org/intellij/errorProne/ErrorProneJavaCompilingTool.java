@@ -40,24 +40,12 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
   @NotNull
   @Override
   public JavaCompiler createCompiler() throws CannotCreateJavaCompilerException {
-    if (isUnderJava9()) {
-      return new JavacCompilerTool().createCompiler();
-    }
-    try {
-      return (JavaCompiler)Class.forName("com.google.errorprone.ErrorProneJavaCompiler").newInstance();
-    }
-    catch (Exception e) {
-      throw new CannotCreateJavaCompilerException(e.getMessage());
-    }
-  }
-
-  private static boolean isUnderJava9() {
-    return JavaVersion.current().feature >= 9;
+    return new JavacCompilerTool().createCompiler();
   }
 
   @Override
   public boolean isCompilerTreeAPISupported() {
-    return isUnderJava9();
+    return true;
   }
 
   @NotNull
@@ -68,22 +56,21 @@ public class ErrorProneJavaCompilingTool extends JavaCompilingTool {
 
   @Override
   public void preprocessOptions(List<String> options) {
-    if (isUnderJava9()) {
-      //when running under Java 9 Error Prone should register itself as a plugin, see http://errorprone.info/docs/installation#command-line
-      Iterator<String> iterator = options.iterator();
-      List<String> errorProneOptions = new ArrayList<>();
-      while (iterator.hasNext()) {
-        String option = iterator.next();
-        if (option.startsWith("-Xep")) {
-          iterator.remove();
-          errorProneOptions.add(option);
-        }
+    //Error Prone should register itself as a plugin, see http://errorprone.info/docs/installation#command-line
+    Iterator<String> iterator = options.iterator();
+    List<String> errorProneOptions = new ArrayList<>();
+    while (iterator.hasNext()) {
+      String option = iterator.next();
+      if (option.startsWith("-Xep")) {
+        iterator.remove();
+        errorProneOptions.add(option);
       }
-      String compilerPath = System.getProperty(COMPILER_PATH_PROPERTY);
-      LOG.assertTrue(compilerPath != null);
-      options.add("-processorpath");
-      options.add(compilerPath);
-      options.add(("-Xplugin:ErrorProne " + StringUtil.join(errorProneOptions, " ")).trim());
     }
+    String compilerPath = System.getProperty(COMPILER_PATH_PROPERTY);
+    LOG.assertTrue(compilerPath != null);
+    options.add("-XDcompilePolicy=simple");
+    options.add("-processorpath");
+    options.add(compilerPath);
+    options.add(("-Xplugin:ErrorProne " + StringUtil.join(errorProneOptions, " ")).trim());
   }
 }
