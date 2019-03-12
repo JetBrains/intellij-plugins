@@ -15,19 +15,23 @@ object MakefilePsiImplUtil {
   private val LINE = TokenSet.create(MakefileTypes.LINE)
   private val VARIABLE_VALUE_LINE = TokenSet.create(MakefileTypes.VARIABLE_VALUE_LINE)
 
+  @JvmStatic
   fun getTargets(element: MakefileRule): List<MakefileTarget> {
     return element.targetLine.targets.targetList
   }
 
+  @JvmStatic
   fun getTargetName(element: MakefileTargetLine): String? {
     val targetNode = element.node.findChildByType(MakefileTypes.TARGET) ?: return null
     return targetNode.text
   }
 
+  @JvmStatic
   fun getName(element: MakefileTarget?): String? {
     return element?.text
   }
 
+  @JvmStatic
   fun setName(element: MakefileTarget, newName: String): PsiElement {
     val identifierNode = element.node.firstChildNode
     if (identifierNode != null) {
@@ -38,6 +42,7 @@ object MakefilePsiImplUtil {
     return element
   }
 
+  @JvmStatic
   fun getNameIdentifier(element: MakefileTarget): PsiElement? {
     if (element.isSpecialTarget) return null
 
@@ -45,6 +50,7 @@ object MakefilePsiImplUtil {
     return targetNode?.psi
   }
 
+  @JvmStatic
   fun getDocComment(element: MakefileTarget): String? {
     if (element.isSpecialTarget) return null
 
@@ -60,20 +66,24 @@ object MakefilePsiImplUtil {
     return null
   }
 
+  @JvmStatic
   fun getPresentation(element: MakefileTarget): ItemPresentation {
     return MakefileTargetPresentation(element)
   }
 
+  @JvmStatic
   fun isSpecialTarget(element: MakefileTarget): Boolean {
     val name = element.name
     return name != null && (name.matches("^\\.[A-Z_]*".toRegex()) || name == "FORCE" || suffixRule.matcher(name).matches())
   }
 
+  @JvmStatic
   fun isPatternTarget(element: MakefileTarget): Boolean {
     val name = element.name
     return name != null && name.contains("%")
   }
 
+  @JvmStatic
   fun matches(element: MakefileTarget, prerequisite: String): Boolean {
     val name = element.name ?: return false
     if (name.startsWith("%")) {
@@ -88,36 +98,43 @@ object MakefilePsiImplUtil {
     } else name == prerequisite
   }
 
+  @JvmStatic
   fun getAssignment(element: MakefileVariableAssignment): PsiElement? {
     val node = element.node.findChildByType(ASSIGNMENT) ?: return null
     return node.psi
   }
 
+  @JvmStatic
   fun getValue(element: MakefileVariableAssignment): String? {
     val value = element.variableValue ?: return ""
     val nodes = value.node.getChildren(LINE)
     return nodes.joinToString("\n") { it.text }
   }
 
+  @JvmStatic
   fun getAssignment(element: MakefileDefine): PsiElement? {
     val node = element.node.findChildByType(ASSIGNMENT) ?: return null
     return node.psi
   }
 
+  @JvmStatic
   fun getValue(element: MakefileDefine): String? {
     val nodes = element.node.getChildren(VARIABLE_VALUE_LINE)
     return nodes.joinToString("\n") { it.text }
   }
 
+  @JvmStatic
   fun isEmpty(element: MakefileRecipe): Boolean {
     return element.commandList.isEmpty() && element.conditionalList.isEmpty()
   }
 
+  @JvmStatic
   fun updateText(prerequisite: MakefilePrerequisite, newText: String): MakefilePrerequisiteImpl {
     val replacement = MakefileElementFactory.createPrerequisite(prerequisite.project, newText)
     return prerequisite.replace(replacement) as MakefilePrerequisiteImpl
   }
 
+  @JvmStatic
   fun isPhonyTarget(prerequisite: MakefilePrerequisite): Boolean {
     val file = prerequisite.containingFile
     if (file is MakefileFile) {
