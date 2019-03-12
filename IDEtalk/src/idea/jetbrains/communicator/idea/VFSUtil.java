@@ -237,8 +237,8 @@ public class VFSUtil {
   }
 
   private static FileType getArchiveFileType() {
-    FileType fileType = FileTypeManager.getInstance().getFileTypeByExtension(".zip");
-    if (fileType == FileTypeManager.getInstance().getFileTypeByExtension(".kokoko")) {
+    FileType fileType = FileTypeManager.getInstance().getFileTypeByExtension("zip");
+    if (fileType == FileTypeManager.getInstance().getFileTypeByExtension("kokoko")) {
       fileType = FileTypeManager.getInstance().getFileTypeByExtension("zip");
     }
     return fileType;
