@@ -155,6 +155,7 @@
     <gotoSymbolContributor implementation="org.angular2.navigation.Angular2GotoSymbolContributor"/>
     <gotoRelatedProvider implementation="org.angular2.navigation.Angular2GotoRelatedProvider"/>
     <typedHandler implementation="org.angular2.editor.Angular2BracesInterpolationTypedHandler"/>
+    <moveFileHandler implementation="org.angular2.refactoring.Angular2MoveFileHandler" order="first"/>
 
     <!-- Angular 2 HTML template contributions -->
     <multiHostInjector implementation="org.angular2.editor.Angular2Injector" order="first,after JSCommentInjector" id="angular2"/>
