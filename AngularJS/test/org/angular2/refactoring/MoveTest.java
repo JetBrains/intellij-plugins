@@ -8,10 +8,13 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2MultiFileFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 public class MoveTest extends Angular2MultiFileFixtureTestCase {
 
@@ -94,14 +97,42 @@ public class MoveTest extends Angular2MultiFileFixtureTestCase {
                     "src/app/test1/app1.component.html");
   }
 
-  private void doMultiFileTest(String destinationDir, String... files) {
-    doTest((rootDir, rootAfter) -> {
+  public void testFolderRelative() {
+    doMultiFileTest(createMove("src/app/dest", "src/app/test1"),
+                    createMove("src/app", "src/app/dest/test2"));
+  }
+
+  // Fails because of broken contract of MoveFileHandler.prepareMovedFile
+  public void _testFolderAmbiguousBaseRelative() {
+    doMultiFileTest(createMove("src/app/dest", "src/app/test1"),
+                    createMove("src/app", "src/app/dest/test2"));
+  }
+
+  public void testFolderAmbiguousFileRelative() {
+    doMultiFileTest(createMove("src/app/dest", "src/app/test1"),
+                    createMove("src/app", "src/app/dest/test2"));
+  }
+
+  private ThrowableRunnable<IOException> createMove(String destinationDir, String... files) {
+    return () -> {
       MoveFilesOrDirectoriesProcessor moveProcessor = new MoveFilesOrDirectoriesProcessor(
         getProject(), ContainerUtil.map2Array(files, PsiElement.class, this::map2FileOrDir),
         myFixture.getPsiManager().findDirectory(myFixture.getTempDirFixture().findOrCreateDir(destinationDir)),
         true, false, false,
         null, null);
       moveProcessor.run();
+    };
+  }
+
+  private void doMultiFileTest(String destinationDir, String... files) {
+    doMultiFileTest(createMove(destinationDir, files));
+  }
+
+  private void doMultiFileTest(ThrowableRunnable<? extends Exception>... actions) {
+    doTest((rootDir, rootAfter) -> {
+      for (ThrowableRunnable<? extends Exception> action : actions) {
+        action.run();
+      }
     });
   }
 
