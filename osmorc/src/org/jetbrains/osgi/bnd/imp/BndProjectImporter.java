@@ -353,7 +353,7 @@ public class BndProjectImporter {
     Set<Container> bootSet = Collections.emptySet();
     if (!boot.isEmpty()) {
       setDependencies(moduleModel, libraryModel, rootModel, project, boot, false, bootSet, warnings);
-      bootSet = ContainerUtil.newHashSet(boot);
+      bootSet = new HashSet<>(boot);
 
       OrderEntry[] entries = rootModel.getOrderEntries();
       if (entries.length > 2) {

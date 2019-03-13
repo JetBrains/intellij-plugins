@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -108,7 +109,7 @@ public class KarmaServerState {
       }
       expectedBrowsers = config.getBrowsers();
     }
-    Set<String> expectedBrowserSet = ContainerUtil.newHashSet(expectedBrowsers);
+    Set<String> expectedBrowserSet = new HashSet<>(expectedBrowsers);
     expectedBrowserSet.removeAll(myFailedToStartBrowsers);
     if (myCapturedBrowsers.values().stream().anyMatch(o -> !o.isAutoCaptured())) {
       return true;

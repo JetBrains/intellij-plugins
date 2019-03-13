@@ -32,10 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
   private Workspace myWorkspace = null;
@@ -70,7 +67,7 @@ public class BndProjectImportBuilder extends ProjectImportBuilder<Project> {
 
   @Override
   public void setList(List<Project> list) throws ConfigurationException {
-    myChosenProjects = ContainerUtil.newHashSet(list);
+    myChosenProjects = new HashSet<>(list);
   }
 
   @Override

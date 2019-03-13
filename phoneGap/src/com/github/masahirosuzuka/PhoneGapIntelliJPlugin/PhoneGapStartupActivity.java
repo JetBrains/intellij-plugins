@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapUtil.*;
@@ -46,7 +47,7 @@ public class PhoneGapStartupActivity implements StartupActivity {
           return;
         }
 
-        updateModuleExcludeByFSEvent(project, event, ContainerUtil.newHashSet(), ContainerUtil.newHashSet(getExcludedFolderNames(event)));
+        updateModuleExcludeByFSEvent(project, event, ContainerUtil.newHashSet(), new HashSet<>(getExcludedFolderNames(event)));
       }
 
       @Override
