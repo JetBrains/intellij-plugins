@@ -50,6 +50,7 @@ import org.jetbrains.builtInWebServer.BuiltInWebServerKt;
 import org.jetbrains.builtInWebServer.ConsoleManager;
 import org.jetbrains.builtInWebServer.NetService;
 import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.ide.BuiltInServerManager;
 import org.jetbrains.io.ChannelExceptionHandler;
 import org.jetbrains.io.ChannelRegistrar;
 import org.jetbrains.io.Responses;
@@ -62,8 +63,6 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
-
-import static org.jetbrains.io.NettyUtil.nioClientBootstrap;
 
 final class PubServerService extends NetService {
   private static final Logger LOG = Logger.getInstance(PubServerService.class.getName());
@@ -102,7 +101,7 @@ final class PubServerService extends NetService {
   PubServerService(@NotNull Project project, @NotNull ConsoleManager consoleManager) {
     super(project, consoleManager);
 
-    nioClientBootstrap().handler(new ChannelInitializer() {
+    BuiltInServerManager.getInstance().createClientBootstrap().handler(new ChannelInitializer() {
       @Override
       protected void initChannel(Channel channel) {
         channel.pipeline().addLast(serverChannelRegistrar, new HttpClientCodec());
