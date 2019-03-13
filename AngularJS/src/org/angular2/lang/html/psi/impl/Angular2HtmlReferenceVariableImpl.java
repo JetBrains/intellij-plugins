@@ -97,8 +97,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   @Nullable
   private static JSType getTemplateRefType(@Nullable PsiElement scope) {
     return scope == null ? null : doIfNotNull(getCachedValue(scope, () -> {
-      for (PsiElement module : JSFileReferencesUtil.getMostPriorityModules(
-        scope, ANGULAR_CORE_PACKAGE, false)) {
+      for (PsiElement module : JSFileReferencesUtil.resolveModuleReference(scope, ANGULAR_CORE_PACKAGE)) {
         if (!(module instanceof JSElement)) continue;
         TypeScriptClass templateRefClass = ObjectUtils.tryCast(
           JSResolveResult.resolve(
