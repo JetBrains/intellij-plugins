@@ -27,7 +27,7 @@ import java.awt.Point
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.geom.RoundRectangle2D
-import java.util.*
+import java.util.concurrent.CopyOnWriteArrayList
 import javax.swing.Icon
 import javax.swing.JTextPane
 import javax.swing.text.BadLocationException
@@ -40,7 +40,7 @@ import javax.swing.text.StyleConstants
 
 class LessonMessagePane : JTextPane() {
 
-    private val lessonMessages = ArrayList<LessonMessage>()
+    private val lessonMessages = CopyOnWriteArrayList<LessonMessage>()
 
     private var fontFamily: String? = null
 
