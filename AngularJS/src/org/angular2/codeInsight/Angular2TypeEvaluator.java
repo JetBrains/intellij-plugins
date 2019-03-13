@@ -327,7 +327,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
             JSType expressionType = TypeScriptGenericTypesEvaluator.getParameterExpressionType(inputExpression, true);
             if (expressionType != null) {
               JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext,
-                                                            expressionType, property.getType(), null, null);
+                                                            expressionType, property.getType());
             }
           }
         });
