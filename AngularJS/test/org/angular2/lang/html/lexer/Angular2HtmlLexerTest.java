@@ -207,6 +207,16 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            false);
   }
 
+  public void testEmptyStructuralDirective() {
+    doTest("<div *foo [bar]=\"\"></div>\n" +
+           "<div [bar]=\"some\"></div>");
+  }
+
+  public void testEmptyHtmlEvent() {
+    doTest("<div onclick onclick=\"\"></div>\n" +
+           "<div [bar]=\"some\"></div>");
+  }
+
   @Override
   protected void doTest(@NonNls String text) {
     doTest(text, true);
