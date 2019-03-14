@@ -114,8 +114,7 @@ public class MoveTest extends Angular2MultiFileFixtureTestCase {
                     "src/app/test1/app1.component.html");
   }
 
-  // Fails because of broken contract of MoveFileHandler.prepareMovedFile
-  public void _testFolderDotBaseRelative() {
+  public void testFolderDotBaseRelative() {
     doMultiFileTest(createMove("src/app/dest", "src/app/test1"),
                     createMove("src/app", "src/app/dest/test2"));
   }
@@ -125,8 +124,7 @@ public class MoveTest extends Angular2MultiFileFixtureTestCase {
                     createMove("src/app", "src/app/dest/test2"));
   }
 
-  // Fails because of broken contract of MoveFileHandler.prepareMovedFile
-  public void _testFolderAmbiguousBaseRelative() {
+  public void testFolderBaseRelative() {
     doMultiFileTest(createMove("src/app/dest", "src/app/test1"),
                     createMove("src/app", "src/app/dest/test2"));
   }

@@ -12,6 +12,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.SoftFileReferenceSet;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -19,12 +20,14 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.hash.HashMap;
 import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.intellij.lang.typescript.modules.TypeScriptModuleFileReferenceSet.addParentPathContexts;
@@ -39,18 +42,40 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
 
   public static class Angular2SoftFileReferenceSet extends SoftFileReferenceSet {
 
-    public static void encodeAmbiguousRelativePathData(PsiFile file) {
-      visitFile(file, Angular2SoftFileReferenceSet::encodeAmbiguousRelativePathData);
+    public static Map<String, Angular2TemplateReferenceData> encodeTemplateReferenceData(@Nullable PsiFile file) {
+      Map<String, Angular2TemplateReferenceData> result = new HashMap<>();
+      visitFile(file, fileReferenceSet -> {
+        Angular2TemplateReferenceData referenceData = fileReferenceSet.encodeTemplateReferenceData();
+        fileReferenceSet.getElement().putCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY, referenceData);
+        ContainerUtil.putIfNotNull(fileReferenceSet.getPathString(),
+                                   referenceData,
+                                   result);
+      });
+      return result;
     }
 
-    public static void decodeAmbiguousRelativePathData(PsiFile file) {
-      visitFile(file, Angular2SoftFileReferenceSet::decodeAmbiguousRelativePathData);
+    public static void decodeTemplateReferenceData(@Nullable PsiFile file) {
+      visitFile(file, fileReferenceSet -> {
+        Angular2TemplateReferenceData referenceData = fileReferenceSet.getElement().getCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY);
+        if (referenceData != null) {
+          fileReferenceSet.decodeTemplateReferenceData(referenceData);
+        }
+      });
     }
 
-    private static final Key<AmbiguousRelativePathData> AMBIGUOUS_RELATIVE_PATH_DATA =
-      new Key<>("angular2.ambiguous-relative-path-data");
+    public static void decodeTemplateReferenceData(@Nullable PsiFile file, @NotNull Map<String, Angular2TemplateReferenceData> dataMap) {
+      visitFile(file, fileReferenceSet -> {
+        Angular2TemplateReferenceData referenceData = dataMap.get(fileReferenceSet.getPathString());
+        if (referenceData != null) {
+          fileReferenceSet.decodeTemplateReferenceData(referenceData);
+        }
+      });
+    }
 
-    public Angular2SoftFileReferenceSet(PsiElement element) {
+    private static final Key<Angular2TemplateReferenceData> TEMPLATE_REFERENCE_DATA_KEY =
+      new Key<>("angular2.template-reference-data");
+
+    public Angular2SoftFileReferenceSet(@NotNull PsiElement element) {
       super(element);
     }
 
@@ -89,8 +114,8 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       }
     }
 
-    @NotNull
-    private void encodeAmbiguousRelativePathData() {
+    @Nullable
+    private Angular2TemplateReferenceData encodeTemplateReferenceData() {
       final PsiFile file = getElement().getContainingFile().getOriginalFile();
       String pathString = StringUtil.trimStart(getPathString(), "./");
       Collection<PsiFileSystemItem> contexts = ContainerUtil.newLinkedHashSet();
@@ -102,22 +127,22 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
         boolean isFileRelative = firstItem == file.getParent();
         PsiFileSystemItem resolved = resolve();
         if (resolved != null) {
-          getElement().putCopyableUserData(
-            AMBIGUOUS_RELATIVE_PATH_DATA, new AmbiguousRelativePathData(
-              resolved, isFileRelative ? null : new ArrayList<>(contexts)));
+          return new Angular2TemplateReferenceData(resolved, isFileRelative ? null : new ArrayList<>(contexts));
         }
       }
+      return null;
     }
 
-    @NotNull
-    private void decodeAmbiguousRelativePathData() {
-      AmbiguousRelativePathData data = getElement().getCopyableUserData(AMBIGUOUS_RELATIVE_PATH_DATA);
-      if (data != null) {
-        getElement().putCopyableUserData(AMBIGUOUS_RELATIVE_PATH_DATA, null);
-        Angular2FileReference ref = ObjectUtils.tryCast(getLastReference(), Angular2FileReference.class);
-        if (data.targetFile != null && ref != null) {
-          ref.bindToElementAfterMove(data);
-        }
+    private void decodeTemplateReferenceData(@NotNull Angular2TemplateReferenceData data) {
+      Angular2FileReference ref = ObjectUtils.tryCast(getLastReference(), Angular2FileReference.class);
+      PsiManager manager = getElement().getManager();
+      PsiFileSystemItem file = data.getTargetFile(manager);
+      Collection<PsiFileSystemItem> contexts =
+        ContainerUtil.filter(ObjectUtils.notNull(data.getContexts(manager), () ->
+                               getDefaultFileRelativeContexts(getElement().getContainingFile().getOriginalFile())),
+                             PsiFileSystemItem::isValid);
+      if (file != null && file.isValid() && ref != null) {
+        ref.bindToElementAfterMove(file, contexts);
       }
     }
 
@@ -139,54 +164,61 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
 
   private static class Angular2FileReference extends JSFileReference {
 
-    private AmbiguousRelativePathData myBindingAfterMoveData;
+    private boolean myBindingAfterMoveData;
 
-    public Angular2FileReference(String refText,
-                                 int offset,
-                                 TextRange textRange,
-                                 @NotNull FileReferenceSet fileReferenceSet,
-                                 String[] implicitExtensions) {
+    Angular2FileReference(String refText,
+                          int offset,
+                          TextRange textRange,
+                          @NotNull FileReferenceSet fileReferenceSet,
+                          String[] implicitExtensions) {
       super(refText, offset, textRange, fileReferenceSet, implicitExtensions);
     }
 
     @Override
     public boolean isRelativeCommonPath() {
-      return myBindingAfterMoveData != null || super.isRelativeCommonPath();
+      return myBindingAfterMoveData || super.isRelativeCommonPath();
     }
 
-    public void bindToElementAfterMove(AmbiguousRelativePathData data) {
-      Collection<PsiFileSystemItem> contexts =
-        data.contexts != null ? ContainerUtil.filter(data.contexts, PsiFileSystemItem::isValid)
-                              : Angular2SoftFileReferenceSet.getDefaultFileRelativeContexts(
-                                getFileReferenceSet().getElement().getContainingFile().getOriginalFile());
-      if (contexts.size() > 0 && data.targetFile.isValid()) {
+    public void bindToElementAfterMove(@NotNull PsiFileSystemItem targetFile, @NotNull Collection<PsiFileSystemItem> contexts) {
+      if (contexts.size() > 0) {
         Collection<VirtualFile> filteredContexts = ContainerUtil.map(contexts, el -> el.getVirtualFile());
-        VirtualFile dstVFile = data.targetFile.getVirtualFile();
+        VirtualFile dstVFile = targetFile.getVirtualFile();
         String path = JSFileReferencesUtil.getShortestPathInContexts(dstVFile, filteredContexts, true);
         if (path != null) {
           rename(path);
           return;
         }
       }
-      myBindingAfterMoveData = data;
+      myBindingAfterMoveData = true;
       try {
-        super.bindToElement(data.targetFile, false);
+        super.bindToElement(targetFile, false);
       }
       finally {
-        myBindingAfterMoveData = null;
+        myBindingAfterMoveData = false;
       }
     }
   }
 
-  private static class AmbiguousRelativePathData {
-    @NotNull public final PsiFileSystemItem targetFile;
-    @Nullable public final Collection<PsiFileSystemItem> contexts;
+  public static class Angular2TemplateReferenceData {
+    private final VirtualFile targetFile;
+    private final Collection<VirtualFile> contexts;
 
+    private Angular2TemplateReferenceData(@NotNull PsiFileSystemItem targetFile,
+                                          @Nullable Collection<PsiFileSystemItem> contexts) {
+      this.targetFile = targetFile.getVirtualFile();
+      this.contexts = contexts != null ? ContainerUtil.map(contexts, PsiFileSystemItem::getVirtualFile) : null;
+    }
 
-    private AmbiguousRelativePathData(@NotNull PsiFileSystemItem targetFile,
-                                      @Nullable Collection<PsiFileSystemItem> contexts) {
-      this.targetFile = targetFile;
-      this.contexts = contexts;
+    @Nullable
+    private PsiFileSystemItem getTargetFile(@NotNull PsiManager manager) {
+      return FileReferenceHelper.getPsiFileSystemItem(manager, targetFile);
+    }
+
+    @Nullable
+    private Collection<PsiFileSystemItem> getContexts(@NotNull PsiManager manager) {
+      return contexts != null
+             ? ContainerUtil.mapNotNull(contexts, item -> FileReferenceHelper.getPsiFileSystemItem(manager, item))
+             : null;
     }
   }
 }
