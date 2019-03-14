@@ -70,7 +70,11 @@ public class TsLintSuppressionUtil extends JSLinterSuppressionUtil {
 
   @NotNull
   private static String getCommentText(String prefix, @Nullable String existing, @Nullable String toAdd) {
-    String rules = StringUtil.isEmpty(existing) ? StringUtil.notNullize(toAdd) : existing + " " + toAdd;
+    if (toAdd == null) {
+      //'suppress all' should overwrite suppression for particular rules
+      return prefix;
+    }
+    String rules = StringUtil.isEmpty(existing) ? toAdd : existing + " " + toAdd;
     return prefix + (StringUtil.isEmpty(rules) ? "" : ":" + rules);
   }
 }

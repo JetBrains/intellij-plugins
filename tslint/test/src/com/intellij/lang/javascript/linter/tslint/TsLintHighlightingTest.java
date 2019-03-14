@@ -145,6 +145,10 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
     doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
   }
 
+  public void testSuppressAllRulesForLineOverwritesExistingSuppressionForRule() {
+    doFixTest("main", JSBundle.message("javascript.linter.suppress.rules.for.line.description", "all TSLint rules"));
+  }
+
   public void _testAllRulesAreInConfig() throws Exception {
     myFixture.configureByFile(getTestName(true) + "/tslint.json");
     final Set<String> fromConfig =
