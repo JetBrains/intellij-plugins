@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -215,15 +214,21 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
     JSLinterStandardFixes fixes = new JSLinterStandardFixes();
     fixes.setErrorToIntentionConverter(errorBase -> {
-      if (errorBase instanceof TsLinterError && ((TsLinterError)errorBase).hasFix()) {
-        ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
+      if (!(errorBase instanceof TsLinterError)) {
+        return ContainerUtil.emptyList();
+      }
+      TsLinterError tslintError = (TsLinterError)errorBase;
+      ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
+      if (tslintError.hasFix()) {
         if (document != null && isOnTheFly()) {
-          result.add(new TsLintErrorFixAction(file, (TsLinterError)errorBase, document.getModificationStamp()));
+          result.add(new TsLintErrorFixAction(file, tslintError, document.getModificationStamp()));
         }
         result.add(fixAllFileIntention);
-        return result;
       }
-      return ContainerUtil.emptyList();
+      else {
+        ContainerUtil.addIfNotNull(result, TsLintSuppressionUtil.INSTANCE.getHighPrioritySuppressFOrLineAction(tslintError));
+      }
+      return result;
     }).setProblemGroup(error -> {
       if (isOnTheFly() && error instanceof TsLinterError) {
         SuppressIntentionAction[] intentionActions = TsLintSuppressionUtil.INSTANCE
