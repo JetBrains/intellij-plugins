@@ -43,8 +43,7 @@ import javax.swing.JPanel
 class AngularCliGenerateAction : DumbAwareAction() {
   override fun actionPerformed(e: AnActionEvent) {
     val project = e.project ?: return
-
-    val file = e.getData(PlatformDataKeys.VIRTUAL_FILE)
+    val file = e.getData(PlatformDataKeys.VIRTUAL_FILE) ?: return
     val editor = e.getData(PlatformDataKeys.FILE_EDITOR)
     val cli = AngularCliUtil.findAngularCliFolder(project, file) ?: return
 
@@ -241,6 +240,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val file = e.getData(PlatformDataKeys.VIRTUAL_FILE)
 
     e.presentation.isEnabledAndVisible = project != null
+                                         && file != null
                                          && AngularCliUtil.findAngularCliFolder(project, file) != null
   }
 

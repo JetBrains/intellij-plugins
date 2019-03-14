@@ -115,11 +115,10 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
-    if (project == null) {
+    final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
+    if (project == null || file == null) {
       return;
     }
-
-    final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
     final VirtualFile cli = AngularCliUtil.findAngularCliFolder(project, file);
     final VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(cli);
     if (cli == null || packageJson == null) {
@@ -216,8 +215,9 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
   public void update(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
     final VirtualFile file = e.getData(CommonDataKeys.VIRTUAL_FILE);
-    e.getPresentation().setEnabledAndVisible(
-      project != null && AngularCliUtil.findAngularCliFolder(project, file) != null);
+    e.getPresentation().setEnabledAndVisible(project != null
+                                             && file != null
+                                             && AngularCliUtil.findAngularCliFolder(project, file) != null);
   }
 
   private static void runAndShowConsole(@NotNull Project project, @NotNull VirtualFile cli,
