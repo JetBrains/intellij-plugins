@@ -164,19 +164,12 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
 
   private static class Angular2FileReference extends JSFileReference {
 
-    private boolean myBindingAfterMoveData;
-
     Angular2FileReference(String refText,
                           int offset,
                           TextRange textRange,
                           @NotNull FileReferenceSet fileReferenceSet,
                           String[] implicitExtensions) {
       super(refText, offset, textRange, fileReferenceSet, implicitExtensions);
-    }
-
-    @Override
-    public boolean isRelativeCommonPath() {
-      return myBindingAfterMoveData || super.isRelativeCommonPath();
     }
 
     public void bindToElementAfterMove(@NotNull PsiFileSystemItem targetFile, @NotNull Collection<PsiFileSystemItem> contexts) {
@@ -189,13 +182,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
           return;
         }
       }
-      myBindingAfterMoveData = true;
-      try {
-        super.bindToElement(targetFile, false);
-      }
-      finally {
-        myBindingAfterMoveData = false;
-      }
+      bindToElement(targetFile, false, true);
     }
   }
 

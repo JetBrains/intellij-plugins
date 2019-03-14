@@ -28,8 +28,9 @@ public class Angular2MoveFileHandler extends ES6MoveFileHandler {
   @NotNull
   @Override
   protected List<UsageInfo> doFindUsages(@NotNull PsiFile psiFile) {
-    Map<String, Angular2TemplateReferenceData>
-      map = Angular2SoftFileReferenceSet.encodeTemplateReferenceData(psiFile);
+    // In addition to hack from ES6MoveFileHandler for preventing broken file reference,
+    // we need to workaround broken contract of `prepareMovedFile` when moving directories.
+    Map<String, Angular2TemplateReferenceData> map = Angular2SoftFileReferenceSet.encodeTemplateReferenceData(psiFile);
     if (map.isEmpty()) return super.doFindUsages(psiFile);
     return ContainerUtil.append(super.doFindUsages(psiFile), new MyRestoreReferencesUsage(psiFile, map));
   }
