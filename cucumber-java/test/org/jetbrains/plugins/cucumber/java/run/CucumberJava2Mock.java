@@ -63,6 +63,7 @@ public class CucumberJava2Mock implements EventPublisher {
     EventHandler<TestCaseStarted> testCaseStarted = myMap.get(TestCaseStarted.class);
     EventHandler<TestCaseFinished> testCaseFinished = myMap.get(TestCaseFinished.class);
     EventHandler<TestStepStarted> testStepStarted = myMap.get(TestStepStarted.class);
+    EventHandler<WriteEvent> writeEvent = myMap.get(WriteEvent.class);
     EventHandler<TestStepFinished> testStepFinished = myMap.get(TestStepFinished.class);
     EventHandler<TestRunFinished> testRunFinished = myMap.get(TestRunFinished.class);
 
@@ -95,6 +96,7 @@ public class CucumberJava2Mock implements EventPublisher {
     testStepFinished.receive(new TestStepFinished(0L, failingStep, resultFailed));
 
     testStepStarted.receive(new TestStepStarted(0L, specialStep));
+    writeEvent.receive(new WriteEvent(0L, "text"));
     testStepFinished.receive(new TestStepFinished(0L, specialStep, resultPassed));
 
     testCaseFinished.receive(new TestCaseFinished(0L, testCase, resultFailed));

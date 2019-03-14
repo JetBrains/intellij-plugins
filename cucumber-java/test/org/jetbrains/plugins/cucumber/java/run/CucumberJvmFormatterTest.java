@@ -55,8 +55,9 @@ public class CucumberJvmFormatterTest {
       "##teamcity[testStarted timestamp = '<time>' locationHint = 'file:///features/my.feature:4' captureStandardOutput = 'true' name = 'failing step']\n" +
       "##teamcity[testFailed timestamp = '<time>' details = '' message = '' name = 'failing step' ]\n" +
       "##teamcity[testFinished timestamp = '<time>' duration = '0' name = 'failing step']\n" +
-      "##teamcity[testStarted timestamp = '<time>' locationHint = 'file:///features/my.feature:5' captureStandardOutput = 'true' name = '\\bstep with \"special|\' symbols']\n" +
-      "##teamcity[testFinished timestamp = '<time>' duration = '0' name = '\\bstep with \"special|\' symbols']\n" +
+      "##teamcity[testStarted timestamp = '<time>' locationHint = 'file:///features/my.feature:5' captureStandardOutput = 'true' name = '\\bstep with \"special|' symbols']\n" +
+      "text\n" +
+      "##teamcity[testFinished timestamp = '<time>' duration = '0' name = '\\bstep with \"special|' symbols']\n" +
       "##teamcity[testSuiteFinished timestamp = '<time>' name = 'scenario']\n" +
       "##teamcity[customProgressStatus type = 'testFinished' timestamp = '<time>']\n" +
       "##teamcity[testSuiteFinished timestamp = '<time>' name = 'feature|'']\n",
