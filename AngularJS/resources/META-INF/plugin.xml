@@ -251,6 +251,7 @@
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2AnalysisHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="Angular2"
                                             implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
+    <intentionAndInspectionFilter language="Angular2" implementationClass="org.angular2.codeInsight.Angular2InspectionFilter"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
