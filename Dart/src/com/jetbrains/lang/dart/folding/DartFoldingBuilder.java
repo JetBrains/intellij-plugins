@@ -54,7 +54,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
         DartTypeArguments.class,
         PsiComment.class,
         DartStringLiteralExpression.class,
-        DartMapLiteralExpression.class,
+        DartSetOrMapLiteralExpression.class,
         DartNewExpression.class,
         DartCallExpression.class});
     foldComments(descriptors, psiElements, fileHeaderRange);                           // 4. Comments and comment sequences
@@ -62,7 +62,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     foldFunctionBodies(descriptors, psiElements);                                      // 6. Function body
     foldTypeArguments(descriptors, psiElements);                                       // 7. Type arguments
     foldMultilineStrings(descriptors, psiElements);                                    // 8. Multi-line strings
-    foldMapLiterals(descriptors, psiElements);                                         // 9. Map literals
+    foldSetOrMapLiterals(descriptors, psiElements);                                    // 9. Set or Map literals
     foldNewDartExpressions(descriptors, psiElements);                                  // 10. Constructor invocations
   }
 
@@ -87,7 +87,7 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     if (psiElement instanceof DartStringLiteralExpression) {
       return multilineStringPlaceholder(node);                                       // 8.   Multi-line strings
     }
-    if (psiElement instanceof DartMapLiteralExpression) return "{...}";              // 9.   Map literals
+    if (psiElement instanceof DartSetOrMapLiteralExpression) return "{...}";         // 9.   Set or Map literals
     if (psiElement instanceof DartArguments) return "(...)";                         // 10. Constructor invocations
 
     return "...";
@@ -344,10 +344,10 @@ public class DartFoldingBuilder extends CustomFoldingBuilder implements DumbAwar
     return "...";
   }
 
-  private static void foldMapLiterals(@NotNull final List<FoldingDescriptor> descriptors,
-                                      @NotNull final Collection<PsiElement> psiElements) {
+  private static void foldSetOrMapLiterals(@NotNull final List<FoldingDescriptor> descriptors,
+                                           @NotNull final Collection<PsiElement> psiElements) {
     for (PsiElement psiElement : psiElements) {
-      if (psiElement instanceof DartMapLiteralExpression) {
+      if (psiElement instanceof DartSetOrMapLiteralExpression) {
         final ASTNode node = psiElement.getNode();
         final ASTNode lBrace = node.findChildByType(DartTokenTypes.LBRACE);
         final ASTNode rBrace = lBrace == null ? null : node.findChildByType(DartTokenTypes.RBRACE, lBrace);

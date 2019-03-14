@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart;
@@ -36,6 +36,7 @@ public interface DartTokenTypes {
   IElementType DEFAULT_CASE = new DartElementType("DEFAULT_CASE");
   IElementType DEFAULT_FORMAL_NAMED_PARAMETER = new DartElementType("DEFAULT_FORMAL_NAMED_PARAMETER");
   IElementType DO_WHILE_STATEMENT = new DartElementType("DO_WHILE_STATEMENT");
+  IElementType ELEMENT = new DartElementType("ELEMENT");
   IElementType ENUM_CONSTANT_DECLARATION = new DartElementType("ENUM_CONSTANT_DECLARATION");
   IElementType ENUM_DEFINITION = new DartElementType("ENUM_DEFINITION");
   IElementType EQUALITY_OPERATOR = new DartElementType("EQUALITY_OPERATOR");
@@ -47,6 +48,7 @@ public interface DartTokenTypes {
   IElementType FIELD_INITIALIZER = new DartElementType("FIELD_INITIALIZER");
   IElementType FINALLY_PART = new DartElementType("FINALLY_PART");
   IElementType FORMAL_PARAMETER_LIST = new DartElementType("FORMAL_PARAMETER_LIST");
+  IElementType FOR_ELEMENT = new DartElementType("FOR_ELEMENT");
   IElementType FOR_IN_PART = new DartElementType("FOR_IN_PART");
   IElementType FOR_LOOP_PARTS = new DartElementType("FOR_LOOP_PARTS");
   IElementType FOR_LOOP_PARTS_IN_BRACES = new DartElementType("FOR_LOOP_PARTS_IN_BRACES");
@@ -61,6 +63,7 @@ public interface DartTokenTypes {
   IElementType GETTER_DECLARATION = new DartElementType("GETTER_DECLARATION");
   IElementType HIDE_COMBINATOR = new DartElementType("HIDE_COMBINATOR");
   IElementType ID = new DartElementType("ID");
+  IElementType IF_ELEMENT = new DartElementType("IF_ELEMENT");
   IElementType IF_NULL_EXPRESSION = new DartElementType("IF_NULL_EXPRESSION");
   IElementType IF_STATEMENT = new DartElementType("IF_STATEMENT");
   IElementType IMPORT_STATEMENT = new DartElementType("IMPORT_STATEMENT");
@@ -79,8 +82,7 @@ public interface DartTokenTypes {
   IElementType LOGIC_AND_EXPRESSION = new DartElementType("LOGIC_AND_EXPRESSION");
   IElementType LOGIC_OR_EXPRESSION = new DartElementType("LOGIC_OR_EXPRESSION");
   IElementType LONG_TEMPLATE_ENTRY = new DartElementType("LONG_TEMPLATE_ENTRY");
-  IElementType MAP_LITERAL_ENTRY = new DartElementType("MAP_LITERAL_ENTRY");
-  IElementType MAP_LITERAL_EXPRESSION = new DartElementType("MAP_LITERAL_EXPRESSION");
+  IElementType MAP_ENTRY = new DartElementType("MAP_ENTRY");
   IElementType METADATA = new DartElementType("METADATA");
   IElementType METHOD_DECLARATION = new DartElementType("METHOD_DECLARATION");
   IElementType MIXINS = new DartElementType("MIXINS");
@@ -111,13 +113,14 @@ public interface DartTokenTypes {
   IElementType RETURN_STATEMENT = new DartElementType("RETURN_STATEMENT");
   IElementType RETURN_TYPE = new DartElementType("RETURN_TYPE");
   IElementType SETTER_DECLARATION = new DartElementType("SETTER_DECLARATION");
-  IElementType SET_LITERAL_EXPRESSION = new DartElementType("SET_LITERAL_EXPRESSION");
+  IElementType SET_OR_MAP_LITERAL_EXPRESSION = new DartElementType("SET_OR_MAP_LITERAL_EXPRESSION");
   IElementType SHIFT_EXPRESSION = new DartElementType("SHIFT_EXPRESSION");
   IElementType SHIFT_OPERATOR = new DartElementType("SHIFT_OPERATOR");
   IElementType SHORT_TEMPLATE_ENTRY = new DartElementType("SHORT_TEMPLATE_ENTRY");
   IElementType SHOW_COMBINATOR = new DartElementType("SHOW_COMBINATOR");
   IElementType SIMPLE_FORMAL_PARAMETER = new DartElementType("SIMPLE_FORMAL_PARAMETER");
   IElementType SIMPLE_TYPE = new DartElementType("SIMPLE_TYPE");
+  IElementType SPREAD_ELEMENT = new DartElementType("SPREAD_ELEMENT");
   IElementType STATEMENTS = new DartElementType("STATEMENTS");
   IElementType STRING_LITERAL_EXPRESSION = new DartElementType("STRING_LITERAL_EXPRESSION");
   IElementType SUFFIX_EXPRESSION = new DartElementType("SUFFIX_EXPRESSION");
@@ -178,6 +181,8 @@ public interface DartTokenTypes {
   IElementType DO = new DartElementType("do");
   IElementType DOT = new DartElementType(".");
   IElementType DOT_DOT = new DartElementType("..");
+  IElementType DOT_DOT_DOT = new DartElementType("...");
+  IElementType DOT_DOT_DOT_QUEST = new DartElementType("...?");
   IElementType ELSE = new DartElementType("else");
   IElementType ENUM = new DartElementType("enum");
   IElementType EQ = new DartElementType("=");
@@ -357,6 +362,9 @@ public interface DartTokenTypes {
       else if (type == DO_WHILE_STATEMENT) {
         return new DartDoWhileStatementImpl(node);
       }
+      else if (type == ELEMENT) {
+        return new DartElementImpl(node);
+      }
       else if (type == ENUM_CONSTANT_DECLARATION) {
         return new DartEnumConstantDeclarationImpl(node);
       }
@@ -389,6 +397,9 @@ public interface DartTokenTypes {
       }
       else if (type == FORMAL_PARAMETER_LIST) {
         return new DartFormalParameterListImpl(node);
+      }
+      else if (type == FOR_ELEMENT) {
+        return new DartForElementImpl(node);
       }
       else if (type == FOR_IN_PART) {
         return new DartForInPartImpl(node);
@@ -431,6 +442,9 @@ public interface DartTokenTypes {
       }
       else if (type == ID) {
         return new DartIdImpl(node);
+      }
+      else if (type == IF_ELEMENT) {
+        return new DartIfElementImpl(node);
       }
       else if (type == IF_NULL_EXPRESSION) {
         return new DartIfNullExpressionImpl(node);
@@ -486,11 +500,8 @@ public interface DartTokenTypes {
       else if (type == LONG_TEMPLATE_ENTRY) {
         return new DartLongTemplateEntryImpl(node);
       }
-      else if (type == MAP_LITERAL_ENTRY) {
-        return new DartMapLiteralEntryImpl(node);
-      }
-      else if (type == MAP_LITERAL_EXPRESSION) {
-        return new DartMapLiteralExpressionImpl(node);
+      else if (type == MAP_ENTRY) {
+        return new DartMapEntryImpl(node);
       }
       else if (type == METADATA) {
         return new DartMetadataImpl(node);
@@ -582,8 +593,8 @@ public interface DartTokenTypes {
       else if (type == SETTER_DECLARATION) {
         return new DartSetterDeclarationImpl(node);
       }
-      else if (type == SET_LITERAL_EXPRESSION) {
-        return new DartSetLiteralExpressionImpl(node);
+      else if (type == SET_OR_MAP_LITERAL_EXPRESSION) {
+        return new DartSetOrMapLiteralExpressionImpl(node);
       }
       else if (type == SHIFT_EXPRESSION) {
         return new DartShiftExpressionImpl(node);
@@ -602,6 +613,9 @@ public interface DartTokenTypes {
       }
       else if (type == SIMPLE_TYPE) {
         return new DartSimpleTypeImpl(node);
+      }
+      else if (type == SPREAD_ELEMENT) {
+        return new DartSpreadElementImpl(node);
       }
       else if (type == STATEMENTS) {
         return new DartStatementsImpl(node);

@@ -47,7 +47,7 @@ Dart File
         PsiElement(OPEN_QUOTE)('"')
         LONG_TEMPLATE_ENTRY
           PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
-          MAP_LITERAL_EXPRESSION
+          SET_OR_MAP_LITERAL_EXPRESSION
             PsiElement({)('{')
             PsiComment(SINGLE_LINE_COMMENT)('// line comment')
             PsiComment(SINGLE_LINE_DOC_COMMENT)('/// line doc comment')
@@ -179,7 +179,7 @@ Dart File
             LIST_LITERAL_EXPRESSION
               PsiElement(const)('const')
               PsiElement([)('[')
-              EXPRESSION_LIST
+              ELEMENT
                 REFERENCE_EXPRESSION
                   ID
                     PsiElement(IDENTIFIER)('someConstant')

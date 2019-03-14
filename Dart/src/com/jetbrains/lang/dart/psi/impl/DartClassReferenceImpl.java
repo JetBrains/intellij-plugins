@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
@@ -98,12 +99,6 @@ public class DartClassReferenceImpl extends DartExpressionImpl implements DartRe
     if (this instanceof DartListLiteralExpression) {
       final DartClassResolveResult classResolveResult = DartResolveUtil.findCoreClass(this, "List");
       classResolveResult.specializeByParameters(((DartListLiteralExpression)this).getTypeArguments());
-      return classResolveResult;
-    }
-
-    if (this instanceof DartMapLiteralExpression) {
-      final DartClassResolveResult classResolveResult = DartResolveUtil.findCoreClass(this, "Map");
-      classResolveResult.specializeByParameters(((DartMapLiteralExpression)this).getTypeArguments());
       return classResolveResult;
     }
 

@@ -1105,7 +1105,7 @@ Dart File
             PsiElement(=)('=')
             LIST_LITERAL_EXPRESSION
               PsiElement([)('[')
-              EXPRESSION_LIST
+              ELEMENT
                 VALUE_EXPRESSION
                   STRING_LITERAL_EXPRESSION
                     PsiElement(OPEN_QUOTE)('"')
@@ -1156,44 +1156,45 @@ Dart File
               PsiElement(IDENTIFIER)('y')
           VAR_INIT
             PsiElement(=)('=')
-            MAP_LITERAL_EXPRESSION
+            SET_OR_MAP_LITERAL_EXPRESSION
               PsiElement({)('{')
-              MAP_LITERAL_ENTRY
-                VALUE_EXPRESSION
-                  STRING_LITERAL_EXPRESSION
-                    PsiElement(OPEN_QUOTE)('"')
-                    PsiElement(REGULAR_STRING_PART)('bar')
-                    PsiElement(CLOSING_QUOTE)('"')
-                  CASCADE_REFERENCE_EXPRESSION
-                    PsiElement(..)('..')
-                    CALL_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('padLeft')
-                      ARGUMENTS
-                        PsiElement(()('(')
-                        ARGUMENT_LIST
-                          LITERAL_EXPRESSION
-                            PsiElement(NUMBER)('1')
-                        PsiElement())(')')
-                PsiElement(:)(':')
-                VALUE_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('baz')
-                  CASCADE_REFERENCE_EXPRESSION
-                    PsiElement(..)('..')
+              ELEMENT
+                MAP_ENTRY
+                  VALUE_EXPRESSION
+                    STRING_LITERAL_EXPRESSION
+                      PsiElement(OPEN_QUOTE)('"')
+                      PsiElement(REGULAR_STRING_PART)('bar')
+                      PsiElement(CLOSING_QUOTE)('"')
+                    CASCADE_REFERENCE_EXPRESSION
+                      PsiElement(..)('..')
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('padLeft')
+                        ARGUMENTS
+                          PsiElement(()('(')
+                          ARGUMENT_LIST
+                            LITERAL_EXPRESSION
+                              PsiElement(NUMBER)('1')
+                          PsiElement())(')')
+                  PsiElement(:)(':')
+                  VALUE_EXPRESSION
                     REFERENCE_EXPRESSION
                       ID
-                        PsiElement(IDENTIFIER)('q')
-                  CASCADE_REFERENCE_EXPRESSION
-                    PsiElement(..)('..')
-                    CALL_EXPRESSION
+                        PsiElement(IDENTIFIER)('baz')
+                    CASCADE_REFERENCE_EXPRESSION
+                      PsiElement(..)('..')
                       REFERENCE_EXPRESSION
                         ID
-                          PsiElement(IDENTIFIER)('w')
-                      ARGUMENTS
-                        PsiElement(()('(')
-                        PsiElement())(')')
+                          PsiElement(IDENTIFIER)('q')
+                    CASCADE_REFERENCE_EXPRESSION
+                      PsiElement(..)('..')
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('w')
+                        ARGUMENTS
+                          PsiElement(()('(')
+                          PsiElement())(')')
               PsiElement(})('}')
   PsiElement(;)(';')

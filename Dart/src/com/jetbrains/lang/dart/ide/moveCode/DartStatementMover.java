@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.moveCode;
 
 import com.intellij.codeInsight.editorActions.moveUpDown.LineMover;
@@ -69,6 +70,11 @@ public class DartStatementMover extends LineMover {
       statements = DartRefactoringUtil.findStatementsInRange(file, startOffset, endOffset);
     }
     if (statements.length == 0) return false;
+
+    if (statements[0] instanceof DartListLiteralExpression) {
+      return info.prohibitMove(); // TODO fix list elements moving (WEB-37790)
+    }
+
     range.firstElement = statements[0];
     range.lastElement = statements[statements.length - 1];
     info.indentTarget = true;

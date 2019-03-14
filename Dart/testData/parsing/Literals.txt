@@ -653,7 +653,7 @@ Dart File
                     PsiElement(=)('=')
                     LIST_LITERAL_EXPRESSION
                       PsiElement([)('[')
-                      EXPRESSION_LIST
+                      ELEMENT
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('12')
                       PsiElement(])(']')
@@ -668,7 +668,7 @@ Dart File
                     PsiElement(=)('=')
                     LIST_LITERAL_EXPRESSION
                       PsiElement([)('[')
-                      EXPRESSION_LIST
+                      ELEMENT
                         LITERAL_EXPRESSION
                           PsiElement(null)('null')
                       PsiElement(])(']')
@@ -683,7 +683,7 @@ Dart File
                     PsiElement(=)('=')
                     LIST_LITERAL_EXPRESSION
                       PsiElement([)('[')
-                      EXPRESSION_LIST
+                      ELEMENT
                         CALL_EXPRESSION
                           REFERENCE_EXPRESSION
                             ID
@@ -691,7 +691,8 @@ Dart File
                           ARGUMENTS
                             PsiElement(()('(')
                             PsiElement())(')')
-                        PsiElement(,)(',')
+                      PsiElement(,)(',')
+                      ELEMENT
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('o2')
@@ -707,7 +708,7 @@ Dart File
                     PsiElement(=)('=')
                     LIST_LITERAL_EXPRESSION
                       PsiElement([)('[')
-                      EXPRESSION_LIST
+                      ELEMENT
                         FUNCTION_EXPRESSION
                           FORMAL_PARAMETER_LIST
                             PsiElement(()('(')
@@ -722,7 +723,8 @@ Dart File
                                     PsiElement(NUMBER)('42')
                                   PsiElement(;)(';')
                               PsiElement(})('}')
-                        PsiElement(,)(',')
+                      PsiElement(,)(',')
+                      ELEMENT
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('o2')
@@ -738,7 +740,7 @@ Dart File
                     PsiElement(=)('=')
                     LIST_LITERAL_EXPRESSION
                       PsiElement([)('[')
-                      EXPRESSION_LIST
+                      ELEMENT
                         FUNCTION_EXPRESSION
                           FORMAL_PARAMETER_LIST
                             PsiElement(()('(')
@@ -747,7 +749,8 @@ Dart File
                             PsiElement(=>)('=>')
                             LITERAL_EXPRESSION
                               PsiElement(NUMBER)('42')
-                        PsiElement(,)(',')
+                      PsiElement(,)(',')
+                      ELEMENT
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('o2')
@@ -773,10 +776,11 @@ Dart File
                                   PsiElement(IDENTIFIER)('int')
                         PsiElement(>)('>')
                       PsiElement([)('[')
-                      EXPRESSION_LIST
+                      ELEMENT
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('12')
-                        PsiElement(,)(',')
+                      PsiElement(,)(',')
+                      ELEMENT
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('18')
                       PsiElement(])(']')
@@ -800,10 +804,11 @@ Dart File
                                   PsiElement(IDENTIFIER)('int')
                         PsiElement(>)('>')
                       PsiElement([)('[')
-                      EXPRESSION_LIST
+                      ELEMENT
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('12')
-                        PsiElement(,)(',')
+                      PsiElement(,)(',')
+                      ELEMENT
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('18')
                       PsiElement(])(']')
@@ -838,7 +843,7 @@ Dart File
                       ARRAY_ACCESS_EXPRESSION
                         LIST_LITERAL_EXPRESSION
                           PsiElement([)('[')
-                          EXPRESSION_LIST
+                          ELEMENT
                             LIST_LITERAL_EXPRESSION
                               PsiElement([)('[')
                               PsiElement(])(']')
@@ -867,10 +872,11 @@ Dart File
                         LIST_LITERAL_EXPRESSION
                           PsiElement(const)('const')
                           PsiElement([)('[')
-                          EXPRESSION_LIST
+                          ELEMENT
                             LITERAL_EXPRESSION
                               PsiElement(NUMBER)('1')
-                            PsiElement(,)(',')
+                          PsiElement(,)(',')
+                          ELEMENT
                             LITERAL_EXPRESSION
                               PsiElement(NUMBER)('2')
                           PsiElement(])(']')
@@ -942,11 +948,12 @@ Dart File
                             PsiElement(IDENTIFIER)('String')
                   PsiElement(>)('>')
                 PsiElement([)('[')
-                EXPRESSION_LIST
+                ELEMENT
                   STRING_LITERAL_EXPRESSION
                     PsiElement(OPEN_QUOTE)(''')
                     PsiElement(CLOSING_QUOTE)(''')
-                  PsiElement(,)(',')
+                PsiElement(,)(',')
+                ELEMENT
                   LIST_LITERAL_EXPRESSION
                     PsiElement([)('[')
                     PsiElement(])(']')
@@ -987,7 +994,7 @@ Dart File
                         PsiElement(IDENTIFIER)('o0')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement({)('{')
                       PsiElement(})('}')
                 PsiElement(;)(';')
@@ -999,16 +1006,17 @@ Dart File
                         PsiElement(IDENTIFIER)('o1')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('a')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('12')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('a')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('12')
                       PsiElement(})('}')
                 PsiElement(;)(';')
                 VAR_DECLARATION_LIST
@@ -1019,16 +1027,17 @@ Dart File
                         PsiElement(IDENTIFIER)('o2')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('a')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(null)('null')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('a')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(null)('null')
                       PsiElement(,)(',')
                       PsiElement(})('}')
                 PsiElement(;)(';')
@@ -1040,31 +1049,33 @@ Dart File
                         PsiElement(IDENTIFIER)('o3')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('a')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        CALL_EXPRESSION
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('a')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          CALL_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('f')
+                            ARGUMENTS
+                              PsiElement(()('(')
+                              PsiElement())(')')
+                      PsiElement(,)(',')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('b')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
                           REFERENCE_EXPRESSION
                             ID
-                              PsiElement(IDENTIFIER)('f')
-                          ARGUMENTS
-                            PsiElement(()('(')
-                            PsiElement())(')')
-                      PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('b')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('o2')
+                              PsiElement(IDENTIFIER)('o2')
                       PsiElement(})('}')
                 PsiElement(;)(';')
                 VAR_DECLARATION_LIST
@@ -1075,38 +1086,40 @@ Dart File
                         PsiElement(IDENTIFIER)('o4')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('a')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        FUNCTION_EXPRESSION
-                          FORMAL_PARAMETER_LIST
-                            PsiElement(()('(')
-                            PsiElement())(')')
-                          FUNCTION_EXPRESSION_BODY
-                            LAZY_PARSEABLE_BLOCK
-                              PsiElement({)('{')
-                              STATEMENTS
-                                RETURN_STATEMENT
-                                  PsiElement(return)('return')
-                                  LITERAL_EXPRESSION
-                                    PsiElement(NUMBER)('42')
-                                  PsiElement(;)(';')
-                              PsiElement(})('}')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('a')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          FUNCTION_EXPRESSION
+                            FORMAL_PARAMETER_LIST
+                              PsiElement(()('(')
+                              PsiElement())(')')
+                            FUNCTION_EXPRESSION_BODY
+                              LAZY_PARSEABLE_BLOCK
+                                PsiElement({)('{')
+                                STATEMENTS
+                                  RETURN_STATEMENT
+                                    PsiElement(return)('return')
+                                    LITERAL_EXPRESSION
+                                      PsiElement(NUMBER)('42')
+                                    PsiElement(;)(';')
+                                PsiElement(})('}')
                       PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('b')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('o2')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('b')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('o2')
                       PsiElement(,)(',')
                       PsiElement(})('}')
                 PsiElement(;)(';')
@@ -1118,32 +1131,34 @@ Dart File
                         PsiElement(IDENTIFIER)('o4')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('a')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        FUNCTION_EXPRESSION
-                          FORMAL_PARAMETER_LIST
-                            PsiElement(()('(')
-                            PsiElement())(')')
-                          FUNCTION_EXPRESSION_BODY
-                            PsiElement(=>)('=>')
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('42')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('a')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          FUNCTION_EXPRESSION
+                            FORMAL_PARAMETER_LIST
+                              PsiElement(()('(')
+                              PsiElement())(')')
+                            FUNCTION_EXPRESSION_BODY
+                              PsiElement(=>)('=>')
+                              LITERAL_EXPRESSION
+                                PsiElement(NUMBER)('42')
                       PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('b')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('o2')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('b')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('o2')
                       PsiElement(,)(',')
                       PsiElement(})('}')
                 PsiElement(;)(';')
@@ -1155,16 +1170,17 @@ Dart File
                         PsiElement(IDENTIFIER)('o5')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('if')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('12')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('if')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('12')
                       PsiElement(})('}')
                 PsiElement(;)(';')
                 VAR_DECLARATION_LIST
@@ -1175,25 +1191,27 @@ Dart File
                         PsiElement(IDENTIFIER)('o6')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('foo bar')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(null)('null')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('foo bar')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(null)('null')
                       PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('while')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('17')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('while')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('17')
                       PsiElement(})('}')
                 PsiElement(;)(';')
                 VAR_DECLARATION_LIST
@@ -1204,7 +1222,7 @@ Dart File
                         PsiElement(IDENTIFIER)('o7')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement(const)('const')
                       TYPE_ARGUMENTS
                         PsiElement(<)('<')
@@ -1222,23 +1240,25 @@ Dart File
                                   PsiElement(IDENTIFIER)('int')
                         PsiElement(>)('>')
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('a')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('12')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('a')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('12')
                       PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('b')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('18')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('b')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('18')
                       PsiElement(})('}')
                 PsiElement(;)(';')
                 VAR_DECLARATION_LIST
@@ -1249,7 +1269,7 @@ Dart File
                         PsiElement(IDENTIFIER)('o8')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       TYPE_ARGUMENTS
                         PsiElement(<)('<')
                         TYPE_LIST
@@ -1266,23 +1286,25 @@ Dart File
                                   PsiElement(IDENTIFIER)('int')
                         PsiElement(>)('>')
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('a')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('12')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('a')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('12')
                       PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        STRING_LITERAL_EXPRESSION
-                          PsiElement(OPEN_QUOTE)('"')
-                          PsiElement(REGULAR_STRING_PART)('b')
-                          PsiElement(CLOSING_QUOTE)('"')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('18')
+                      ELEMENT
+                        MAP_ENTRY
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)('"')
+                            PsiElement(REGULAR_STRING_PART)('b')
+                            PsiElement(CLOSING_QUOTE)('"')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('18')
                       PsiElement(})('}')
                 PsiElement(;)(';')
                 VAR_DECLARATION_LIST
@@ -1293,181 +1315,189 @@ Dart File
                         PsiElement(IDENTIFIER)('o9')
                   VAR_INIT
                     PsiElement(=)('=')
-                    MAP_LITERAL_EXPRESSION
+                    SET_OR_MAP_LITERAL_EXPRESSION
                       PsiElement({)('{')
-                      MAP_LITERAL_ENTRY
-                        ADDITIVE_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('x')
-                          ADDITIVE_OPERATOR
-                            PsiElement(+)('+')
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('y')
-                        PsiElement(:)(':')
-                        ADDITIVE_EXPRESSION
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('z')
-                          ADDITIVE_OPERATOR
-                            PsiElement(+)('+')
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('q')
+                      ELEMENT
+                        MAP_ENTRY
+                          ADDITIVE_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('x')
+                            ADDITIVE_OPERATOR
+                              PsiElement(+)('+')
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('y')
+                          PsiElement(:)(':')
+                          ADDITIVE_EXPRESSION
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('z')
+                            ADDITIVE_OPERATOR
+                              PsiElement(+)('+')
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('q')
                       PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        LITERAL_EXPRESSION
-                          PsiElement(null)('null')
-                        PsiElement(:)(':')
-                        FUNCTION_EXPRESSION
-                          FORMAL_PARAMETER_LIST
-                            PsiElement(()('(')
-                            PsiElement())(')')
-                          FUNCTION_EXPRESSION_BODY
-                            PsiElement(=>)('=>')
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('5')
-                      PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        MAP_LITERAL_EXPRESSION
-                          PsiElement({)('{')
-                          MAP_LITERAL_ENTRY
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('1')
-                            PsiElement(:)(':')
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('1')
-                          PsiElement(})('}')
-                        PsiElement(:)(':')
-                        MAP_LITERAL_EXPRESSION
-                          PsiElement({)('{')
-                          MAP_LITERAL_ENTRY
-                            PARENTHESIZED_EXPRESSION
+                      ELEMENT
+                        MAP_ENTRY
+                          LITERAL_EXPRESSION
+                            PsiElement(null)('null')
+                          PsiElement(:)(':')
+                          FUNCTION_EXPRESSION
+                            FORMAL_PARAMETER_LIST
                               PsiElement(()('(')
-                              PARENTHESIZED_EXPRESSION
-                                PsiElement(()('(')
+                              PsiElement())(')')
+                            FUNCTION_EXPRESSION_BODY
+                              PsiElement(=>)('=>')
+                              LITERAL_EXPRESSION
+                                PsiElement(NUMBER)('5')
+                      PsiElement(,)(',')
+                      ELEMENT
+                        MAP_ENTRY
+                          SET_OR_MAP_LITERAL_EXPRESSION
+                            PsiElement({)('{')
+                            ELEMENT
+                              MAP_ENTRY
+                                LITERAL_EXPRESSION
+                                  PsiElement(NUMBER)('1')
+                                PsiElement(:)(':')
+                                LITERAL_EXPRESSION
+                                  PsiElement(NUMBER)('1')
+                            PsiElement(})('}')
+                          PsiElement(:)(':')
+                          SET_OR_MAP_LITERAL_EXPRESSION
+                            PsiElement({)('{')
+                            ELEMENT
+                              MAP_ENTRY
+                                PARENTHESIZED_EXPRESSION
+                                  PsiElement(()('(')
+                                  PARENTHESIZED_EXPRESSION
+                                    PsiElement(()('(')
+                                    LITERAL_EXPRESSION
+                                      PsiElement(NUMBER)('2')
+                                    PsiElement())(')')
+                                  PsiElement())(')')
+                                PsiElement(:)(':')
                                 LITERAL_EXPRESSION
                                   PsiElement(NUMBER)('2')
-                                PsiElement())(')')
+                            PsiElement(})('}')
+                      PsiElement(,)(',')
+                      ELEMENT
+                        MAP_ENTRY
+                          LITERAL_EXPRESSION
+                            PsiElement(false)('false')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(true)('true')
+                      PsiElement(,)(',')
+                      ELEMENT
+                        MAP_ENTRY
+                          FUNCTION_EXPRESSION
+                            FORMAL_PARAMETER_LIST
+                              PsiElement(()('(')
+                              NORMAL_FORMAL_PARAMETER
+                                SIMPLE_FORMAL_PARAMETER
+                                  COMPONENT_NAME
+                                    ID
+                                      PsiElement(IDENTIFIER)('a')
+                              PsiElement(,)(',')
+                              NORMAL_FORMAL_PARAMETER
+                                SIMPLE_FORMAL_PARAMETER
+                                  TYPE
+                                    SIMPLE_TYPE
+                                      REFERENCE_EXPRESSION
+                                        ID
+                                          PsiElement(IDENTIFIER)('String')
+                                  COMPONENT_NAME
+                                    ID
+                                      PsiElement(IDENTIFIER)('b')
+                              PsiElement(,)(',')
+                              NORMAL_FORMAL_PARAMETER
+                                SIMPLE_FORMAL_PARAMETER
+                                  COMPONENT_NAME
+                                    ID
+                                      PsiElement(IDENTIFIER)('c')
                               PsiElement())(')')
-                            PsiElement(:)(':')
-                            LITERAL_EXPRESSION
-                              PsiElement(NUMBER)('2')
-                          PsiElement(})('}')
+                            FUNCTION_EXPRESSION_BODY
+                              LAZY_PARSEABLE_BLOCK
+                                PsiElement({)('{')
+                                STATEMENTS
+                                  IF_STATEMENT
+                                    PsiElement(if)('if')
+                                    PsiElement(()('(')
+                                    LITERAL_EXPRESSION
+                                      PsiElement(false)('false')
+                                    PsiElement())(')')
+                                    BLOCK
+                                      PsiElement({)('{')
+                                      STATEMENTS
+                                        VAR_DECLARATION_LIST
+                                          VAR_ACCESS_DECLARATION
+                                            PsiElement(var)('var')
+                                            COMPONENT_NAME
+                                              ID
+                                                PsiElement(IDENTIFIER)('a')
+                                        PsiElement(;)(';')
+                                      PsiElement(})('}')
+                                PsiElement(})('}')
+                          PsiElement(:)(':')
+                          FUNCTION_EXPRESSION
+                            FORMAL_PARAMETER_LIST
+                              PsiElement(()('(')
+                              NORMAL_FORMAL_PARAMETER
+                                SIMPLE_FORMAL_PARAMETER
+                                  COMPONENT_NAME
+                                    ID
+                                      PsiElement(IDENTIFIER)('d')
+                              PsiElement(,)(',')
+                              NORMAL_FORMAL_PARAMETER
+                                SIMPLE_FORMAL_PARAMETER
+                                  TYPE
+                                    SIMPLE_TYPE
+                                      REFERENCE_EXPRESSION
+                                        ID
+                                          PsiElement(IDENTIFIER)('int')
+                                  COMPONENT_NAME
+                                    ID
+                                      PsiElement(IDENTIFIER)('e')
+                              PsiElement(,)(',')
+                              NORMAL_FORMAL_PARAMETER
+                                SIMPLE_FORMAL_PARAMETER
+                                  COMPONENT_NAME
+                                    ID
+                                      PsiElement(IDENTIFIER)('f')
+                              PsiElement())(')')
+                            FUNCTION_EXPRESSION_BODY
+                              LAZY_PARSEABLE_BLOCK
+                                PsiElement({)('{')
+                                STATEMENTS
+                                  IF_STATEMENT
+                                    PsiElement(if)('if')
+                                    PsiElement(()('(')
+                                    LITERAL_EXPRESSION
+                                      PsiElement(false)('false')
+                                    PsiElement())(')')
+                                    BLOCK
+                                      PsiElement({)('{')
+                                      STATEMENTS
+                                        VAR_DECLARATION_LIST
+                                          VAR_ACCESS_DECLARATION
+                                            PsiElement(var)('var')
+                                            COMPONENT_NAME
+                                              ID
+                                                PsiElement(IDENTIFIER)('a')
+                                        PsiElement(;)(';')
+                                      PsiElement(})('}')
+                                PsiElement(})('}')
                       PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        LITERAL_EXPRESSION
-                          PsiElement(false)('false')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(true)('true')
-                      PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        FUNCTION_EXPRESSION
-                          FORMAL_PARAMETER_LIST
-                            PsiElement(()('(')
-                            NORMAL_FORMAL_PARAMETER
-                              SIMPLE_FORMAL_PARAMETER
-                                COMPONENT_NAME
-                                  ID
-                                    PsiElement(IDENTIFIER)('a')
-                            PsiElement(,)(',')
-                            NORMAL_FORMAL_PARAMETER
-                              SIMPLE_FORMAL_PARAMETER
-                                TYPE
-                                  SIMPLE_TYPE
-                                    REFERENCE_EXPRESSION
-                                      ID
-                                        PsiElement(IDENTIFIER)('String')
-                                COMPONENT_NAME
-                                  ID
-                                    PsiElement(IDENTIFIER)('b')
-                            PsiElement(,)(',')
-                            NORMAL_FORMAL_PARAMETER
-                              SIMPLE_FORMAL_PARAMETER
-                                COMPONENT_NAME
-                                  ID
-                                    PsiElement(IDENTIFIER)('c')
-                            PsiElement())(')')
-                          FUNCTION_EXPRESSION_BODY
-                            LAZY_PARSEABLE_BLOCK
-                              PsiElement({)('{')
-                              STATEMENTS
-                                IF_STATEMENT
-                                  PsiElement(if)('if')
-                                  PsiElement(()('(')
-                                  LITERAL_EXPRESSION
-                                    PsiElement(false)('false')
-                                  PsiElement())(')')
-                                  BLOCK
-                                    PsiElement({)('{')
-                                    STATEMENTS
-                                      VAR_DECLARATION_LIST
-                                        VAR_ACCESS_DECLARATION
-                                          PsiElement(var)('var')
-                                          COMPONENT_NAME
-                                            ID
-                                              PsiElement(IDENTIFIER)('a')
-                                      PsiElement(;)(';')
-                                    PsiElement(})('}')
-                              PsiElement(})('}')
-                        PsiElement(:)(':')
-                        FUNCTION_EXPRESSION
-                          FORMAL_PARAMETER_LIST
-                            PsiElement(()('(')
-                            NORMAL_FORMAL_PARAMETER
-                              SIMPLE_FORMAL_PARAMETER
-                                COMPONENT_NAME
-                                  ID
-                                    PsiElement(IDENTIFIER)('d')
-                            PsiElement(,)(',')
-                            NORMAL_FORMAL_PARAMETER
-                              SIMPLE_FORMAL_PARAMETER
-                                TYPE
-                                  SIMPLE_TYPE
-                                    REFERENCE_EXPRESSION
-                                      ID
-                                        PsiElement(IDENTIFIER)('int')
-                                COMPONENT_NAME
-                                  ID
-                                    PsiElement(IDENTIFIER)('e')
-                            PsiElement(,)(',')
-                            NORMAL_FORMAL_PARAMETER
-                              SIMPLE_FORMAL_PARAMETER
-                                COMPONENT_NAME
-                                  ID
-                                    PsiElement(IDENTIFIER)('f')
-                            PsiElement())(')')
-                          FUNCTION_EXPRESSION_BODY
-                            LAZY_PARSEABLE_BLOCK
-                              PsiElement({)('{')
-                              STATEMENTS
-                                IF_STATEMENT
-                                  PsiElement(if)('if')
-                                  PsiElement(()('(')
-                                  LITERAL_EXPRESSION
-                                    PsiElement(false)('false')
-                                  PsiElement())(')')
-                                  BLOCK
-                                    PsiElement({)('{')
-                                    STATEMENTS
-                                      VAR_DECLARATION_LIST
-                                        VAR_ACCESS_DECLARATION
-                                          PsiElement(var)('var')
-                                          COMPONENT_NAME
-                                            ID
-                                              PsiElement(IDENTIFIER)('a')
-                                      PsiElement(;)(';')
-                                    PsiElement(})('}')
-                              PsiElement(})('}')
-                      PsiElement(,)(',')
-                      MAP_LITERAL_ENTRY
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('1')
-                        PsiElement(:)(':')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('2')
+                      ELEMENT
+                        MAP_ENTRY
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('1')
+                          PsiElement(:)(':')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('2')
                       PsiElement(,)(',')
                       PsiElement(})('}')
                 PsiElement(;)(';')
@@ -1482,7 +1512,7 @@ Dart File
           PsiElement(IDENTIFIER)('v1')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
         PsiElement(})('}')
   PsiElement(;)(';')
@@ -1495,7 +1525,7 @@ Dart File
           PsiElement(IDENTIFIER)('v2')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         TYPE_ARGUMENTS
           PsiElement(<)('<')
           TYPE_LIST
@@ -1523,7 +1553,7 @@ Dart File
           PsiElement(IDENTIFIER)('v3')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         TYPE_ARGUMENTS
           PsiElement(<)('<')
           TYPE_LIST
@@ -1545,14 +1575,15 @@ Dart File
           PsiElement(IDENTIFIER)('v4')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
-        MAP_LITERAL_ENTRY
-          LITERAL_EXPRESSION
-            PsiElement(NUMBER)('1')
-          PsiElement(:)(':')
-          LITERAL_EXPRESSION
-            PsiElement(NUMBER)('1')
+        ELEMENT
+          MAP_ENTRY
+            LITERAL_EXPRESSION
+              PsiElement(NUMBER)('1')
+            PsiElement(:)(':')
+            LITERAL_EXPRESSION
+              PsiElement(NUMBER)('1')
         PsiElement(})('}')
   PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// LinkedHashMap<int, int>')
@@ -1564,10 +1595,11 @@ Dart File
           PsiElement(IDENTIFIER)('v5')
     VAR_INIT
       PsiElement(=)('=')
-      SET_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('1')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('1')
         PsiElement(})('}')
   PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// LinkedHashSet<int>')
@@ -1592,7 +1624,7 @@ Dart File
           PsiElement(IDENTIFIER)('v6')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
         PsiElement(})('}')
   PsiElement(;)(';')
@@ -1624,7 +1656,7 @@ Dart File
           PsiElement(IDENTIFIER)('v7')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
         PsiElement(})('}')
   PsiElement(;)(';')
@@ -1641,7 +1673,7 @@ Dart File
           PsiElement(IDENTIFIER)('v8')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
         PsiElement(})('}')
   PsiElement(;)(';')
@@ -1667,10 +1699,11 @@ Dart File
           PsiElement(IDENTIFIER)('v9')
     VAR_INIT
       PsiElement(=)('=')
-      SET_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('1')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('1')
         PsiElement(})('}')
   PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// LinkedHashSet<num>')
@@ -1695,7 +1728,7 @@ Dart File
           PsiElement(IDENTIFIER)('v10')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         TYPE_ARGUMENTS
           PsiElement(<)('<')
           TYPE_LIST
@@ -1730,7 +1763,7 @@ Dart File
           PsiElement(IDENTIFIER)('v11')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
         PsiElement(})('}')
   PsiElement(;)(';')
@@ -1743,7 +1776,7 @@ Dart File
           PsiElement(IDENTIFIER)('v12')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
         PsiElement(})('}')
   PsiElement(;)(';')
@@ -1756,10 +1789,11 @@ Dart File
           PsiElement(IDENTIFIER)('v13')
     VAR_INIT
       PsiElement(=)('=')
-      SET_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('1')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('1')
         PsiElement(})('}')
   PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// const Set<int>')
@@ -1776,7 +1810,7 @@ Dart File
           PsiElement(IDENTIFIER)('v14')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
         PsiElement(})('}')
   PsiElement(;)(';')
@@ -1793,11 +1827,12 @@ Dart File
           PsiElement(IDENTIFIER)('v15')
     VAR_INIT
       PsiElement(=)('=')
-      SET_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement(const)('const')
         PsiElement({)('{')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('4')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('4')
         PsiElement(})('}')
   PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// const Set<dynamic>')
@@ -1812,22 +1847,27 @@ Dart File
           PsiElement(IDENTIFIER)('v16')
     VAR_INIT
       PsiElement(=)('=')
-      SET_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('1')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('1')
         PsiElement(,)(',')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('2')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('2')
         PsiElement(,)(',')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('3')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('3')
         PsiElement(,)(',')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('2')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('2')
         PsiElement(,)(',')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('1')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('1')
         PsiElement(})('}')
   PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// LinkedHashSet<int>')
@@ -1863,14 +1903,16 @@ Dart File
           PsiElement(IDENTIFIER)('l18')
     VAR_INIT
       PsiElement(=)('=')
-      SET_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement(const)('const')
         PsiElement({)('{')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('1')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('1')
         PsiElement(,)(',')
-        LITERAL_EXPRESSION
-          PsiElement(NUMBER)('2')
+        ELEMENT
+          LITERAL_EXPRESSION
+            PsiElement(NUMBER)('2')
         PsiElement(})('}')
   PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// const Set<int>')
@@ -1882,9 +1924,48 @@ Dart File
           PsiElement(IDENTIFIER)('a')
     VAR_INIT
       PsiElement(=)('=')
-      MAP_LITERAL_EXPRESSION
+      SET_OR_MAP_LITERAL_EXPRESSION
         PsiElement({)('{')
-        MAP_LITERAL_ENTRY
+        ELEMENT
+          MAP_ENTRY
+            TERNARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('a')
+              PsiElement(?)('?')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('b')
+              PsiElement(:)(':')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('c')
+            PsiElement(:)(':')
+            TERNARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('d')
+              PsiElement(?)('?')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('e')
+              PsiElement(:)(':')
+              REFERENCE_EXPRESSION
+                ID
+                  PsiElement(IDENTIFIER)('f')
+        PsiElement(})('}')
+  PsiElement(;)(';')
+  VAR_DECLARATION_LIST
+    VAR_ACCESS_DECLARATION
+      PsiElement(var)('var')
+      COMPONENT_NAME
+        ID
+          PsiElement(IDENTIFIER)('b')
+    VAR_INIT
+      PsiElement(=)('=')
+      SET_OR_MAP_LITERAL_EXPRESSION
+        PsiElement({)('{')
+        ELEMENT
           TERNARY_EXPRESSION
             REFERENCE_EXPRESSION
               ID
@@ -1897,7 +1978,8 @@ Dart File
             REFERENCE_EXPRESSION
               ID
                 PsiElement(IDENTIFIER)('c')
-          PsiElement(:)(':')
+        PsiElement(,)(',')
+        ELEMENT
           TERNARY_EXPRESSION
             REFERENCE_EXPRESSION
               ID
@@ -1910,42 +1992,5 @@ Dart File
             REFERENCE_EXPRESSION
               ID
                 PsiElement(IDENTIFIER)('f')
-        PsiElement(})('}')
-  PsiElement(;)(';')
-  VAR_DECLARATION_LIST
-    VAR_ACCESS_DECLARATION
-      PsiElement(var)('var')
-      COMPONENT_NAME
-        ID
-          PsiElement(IDENTIFIER)('b')
-    VAR_INIT
-      PsiElement(=)('=')
-      SET_LITERAL_EXPRESSION
-        PsiElement({)('{')
-        TERNARY_EXPRESSION
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('a')
-          PsiElement(?)('?')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('b')
-          PsiElement(:)(':')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('c')
-        PsiElement(,)(',')
-        TERNARY_EXPRESSION
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('d')
-          PsiElement(?)('?')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('e')
-          PsiElement(:)(':')
-          REFERENCE_EXPRESSION
-            ID
-              PsiElement(IDENTIFIER)('f')
         PsiElement(})('}')
   PsiElement(;)(';')

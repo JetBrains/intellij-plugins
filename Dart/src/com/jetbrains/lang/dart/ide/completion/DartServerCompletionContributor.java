@@ -314,7 +314,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       if (reference instanceof DartNewExpression ||
           reference instanceof DartParenthesizedExpression ||
           reference instanceof DartListLiteralExpression ||
-          reference instanceof DartMapLiteralExpression) {
+          reference instanceof DartSetOrMapLiteralExpression) {
         // historically DartNewExpression is a reference; it can appear here only in situation like new Foo(o.<caret>);
         // without the following hack closing paren is replaced on Tab. We won't get here if at least one symbol after dot typed.
         context.setReplacementOffset(context.getStartOffset());

@@ -1,3 +1,5 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart.psi;
 
@@ -7,8 +9,8 @@ import com.intellij.psi.PsiElement;
 
 public interface DartListLiteralExpression extends DartExpression, DartReference {
 
-  @Nullable
-  DartExpressionList getExpressionList();
+  @NotNull
+  List<DartElement> getElementList();
 
   @Nullable
   DartTypeArguments getTypeArguments();
