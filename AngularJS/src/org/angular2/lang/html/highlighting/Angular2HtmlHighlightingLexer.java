@@ -123,7 +123,9 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
     public void handleElement(Lexer lexer) {
       if ((lexer.getState() & BASE_STATE_MASK) == _Angular2HtmlLexer.TAG_ATTRIBUTES) {
         Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(getTokenText(), true);
-        if (info.type != Angular2AttributeType.REGULAR && NG_EL_ATTRIBUTES.contains(info.type)) {
+        if (info.type != Angular2AttributeType.REGULAR
+            && NG_EL_ATTRIBUTES.contains(info.type)
+            && !seenAttribute) {
           pushScriptStyle(true, false);
           seenAttribute = true;
         }
