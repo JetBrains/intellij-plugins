@@ -4,16 +4,20 @@ package org.angular2.refactoring;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.typescript.refactoring.ES6MoveFileHandler;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.Angular2LangUtil;
-import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider;
+import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider.Angular2SoftFileReferenceSet;
+import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider.Angular2TemplateReferenceData;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Map;
 
 public class Angular2MoveFileHandler extends ES6MoveFileHandler {
+
   @Override
   public boolean canProcessElement(PsiFile element) {
     return element instanceof JSFile
@@ -21,15 +25,30 @@ public class Angular2MoveFileHandler extends ES6MoveFileHandler {
            && Angular2LangUtil.isAngular2Context(element);
   }
 
+  @NotNull
   @Override
-  public void prepareMovedFile(PsiFile file, PsiDirectory moveDestination, Map<PsiElement, PsiElement> oldToNewMap) {
-    super.prepareMovedFile(file, moveDestination, oldToNewMap);
-    AngularJSTemplateReferencesProvider.Angular2SoftFileReferenceSet.encodeAmbiguousRelativePathData(file);
+  protected List<UsageInfo> doFindUsages(@NotNull PsiFile psiFile) {
+    Map<String, Angular2TemplateReferenceData>
+      map = Angular2SoftFileReferenceSet.encodeTemplateReferenceData(psiFile);
+    if (map.isEmpty()) return super.doFindUsages(psiFile);
+    return ContainerUtil.append(super.doFindUsages(psiFile), new MyRestoreReferencesUsage(psiFile, map));
   }
 
   @Override
   public void updateMovedFile(PsiFile file) throws IncorrectOperationException {
     super.updateMovedFile(file);
-    AngularJSTemplateReferencesProvider.Angular2SoftFileReferenceSet.decodeAmbiguousRelativePathData(file);
+    Angular2SoftFileReferenceSet.decodeTemplateReferenceData(file);
+  }
+
+  final private static class MyRestoreReferencesUsage extends RestoreReferencesUsage<Map<String, Angular2TemplateReferenceData>> {
+
+    MyRestoreReferencesUsage(@NotNull PsiFile element, @NotNull Map<String, Angular2TemplateReferenceData> refs) {
+      super(element, refs);
+    }
+
+    @Override
+    protected void restore(@NotNull PsiFile file) {
+      Angular2SoftFileReferenceSet.decodeTemplateReferenceData(file, myRefs);
+    }
   }
 }
