@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.formatting.Block;
@@ -37,7 +37,7 @@ public class DartSpacingProcessor {
   private static final TokenSet ID_SET = TokenSet.create(ID);
   private static final TokenSet PREFIX_OPERATOR_SET = TokenSet.create(PREFIX_OPERATOR);
   private static final TokenSet SIMPLE_LITERAL_SET =
-    TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS, LIST_LITERAL_EXPRESSION, MAP_LITERAL_EXPRESSION);
+    TokenSet.create(STRING_LITERAL_EXPRESSION, NUMBER, TRUE, FALSE, NULL, THIS, LIST_LITERAL_EXPRESSION, SET_OR_MAP_LITERAL_EXPRESSION);
   private static final TokenSet SKIP_COMMA = TokenSet.create(COMMA);
   private static final TokenSet DIRECTIVE_GROUPS = TokenSet.create(IMPORT_STATEMENT, EXPORT_STATEMENT, PART_STATEMENT);
 
@@ -598,14 +598,14 @@ public class DartSpacingProcessor {
     if (type1 == LBRACE && type2 == RBRACE) {
       // Empty class.
       if (elementType == CLASS_BODY && mySettings.KEEP_SIMPLE_CLASSES_IN_ONE_LINE) return noSpace();
-      // Empty MAP_LITERAL_EXPRESSION or LIST_LITERAL_EXPRESSION.
+      // Empty SET_OR_MAP_LITERAL_EXPRESSION or LIST_LITERAL_EXPRESSION.
       if (mySettings.KEEP_SIMPLE_BLOCKS_IN_ONE_LINE) return noSpace();
     }
     boolean isBraces = type1 == LBRACE || type2 == RBRACE;
     if ((isBraces &&
          elementType != OPTIONAL_FORMAL_PARAMETERS &&
          elementType != OPTIONAL_PARAMETER_TYPES &&
-         elementType != MAP_LITERAL_EXPRESSION) ||
+         elementType != SET_OR_MAP_LITERAL_EXPRESSION) ||
         BLOCKS_EXT.contains(type1) ||
         FUNCTION_DEFINITION.contains(type1)) {
       return addLineBreak();
@@ -762,7 +762,7 @@ public class DartSpacingProcessor {
       return Spacing.createDependentLFSpacing(0, 0, node1.getTextRange(), mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
-    if (elementType == NAMED_ARGUMENT || elementType == DEFAULT_FORMAL_NAMED_PARAMETER || elementType == MAP_LITERAL_ENTRY) {
+    if (elementType == NAMED_ARGUMENT || elementType == DEFAULT_FORMAL_NAMED_PARAMETER || elementType == MAP_ENTRY) {
       if (type1 == COLON) {
         return addSingleSpaceIf(true);
       }
@@ -787,7 +787,7 @@ public class DartSpacingProcessor {
       return noSpace(); // Might want a user setting to control space before/after type
     }
 
-    if (type2 == RBRACE && type1 == MAP_LITERAL_ENTRY) {
+    if (type2 == RBRACE && type1 == ELEMENT) {
       return noSpace();
     }
 

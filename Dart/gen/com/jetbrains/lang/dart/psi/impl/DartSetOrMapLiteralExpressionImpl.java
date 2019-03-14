@@ -1,3 +1,5 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart.psi.impl;
 
@@ -11,14 +13,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartMapLiteralEntryImpl extends DartPsiCompositeElementImpl implements DartMapLiteralEntry {
+public class DartSetOrMapLiteralExpressionImpl extends DartClassReferenceImpl implements DartSetOrMapLiteralExpression {
 
-  public DartMapLiteralEntryImpl(@NotNull ASTNode node) {
+  public DartSetOrMapLiteralExpressionImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitMapLiteralEntry(this);
+    visitor.visitSetOrMapLiteralExpression(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,8 +30,14 @@ public class DartMapLiteralEntryImpl extends DartPsiCompositeElementImpl impleme
 
   @Override
   @NotNull
-  public List<DartExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
+  public List<DartElement> getElementList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartElement.class);
+  }
+
+  @Override
+  @Nullable
+  public DartTypeArguments getTypeArguments() {
+    return findChildByClass(DartTypeArguments.class);
   }
 
 }

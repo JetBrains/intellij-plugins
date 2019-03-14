@@ -38,7 +38,6 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("splitting/arguments.stmt:118  if split before other positional, split before first named too");
     KNOWN_TO_FAIL_STRICT.add("splitting/arguments.stmt:139  avoid splitting before single positional argument");
     KNOWN_TO_FAIL_STRICT.add("splitting/arguments.stmt:144  multiple nested collections");
-    KNOWN_TO_FAIL_STRICT.add("splitting/arguments.stmt:172  all trailing collections");
     KNOWN_TO_FAIL_STRICT.add("splitting/arguments.stmt:185  non-collection non-preceding argument forces all collections to indent");
     KNOWN_TO_FAIL_STRICT.add("splitting/arguments.stmt:204  trailing comma");
     KNOWN_TO_FAIL_STRICT.add("splitting/arguments.stmt:212  trailing comma in named argument list");
@@ -95,6 +94,7 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0108.unit:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0119.stmt:1  (indent 4)");
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0121.stmt:1  (indent 6)");
+    KNOWN_TO_FAIL_STRICT.add("regression/0100/0139.unit:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0142.stmt:1  (indent 4)");
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0151.unit:1");
     KNOWN_TO_FAIL_STRICT.add("regression/0100/0158.unit:1");
@@ -164,11 +164,6 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:14  nothing but list args does not nest");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:48  leading lists do not nest");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:63  arg between lists forces nesting");
-    KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:80  unsplit leading args");
-    KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:89  split before leading args");
-    KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:125  unsplit trailing args");
-    KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:134  split before trailing args");
-    KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:145  split in middle of trailing args");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:181  split before one leading arg");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:215  split before all args including trailing");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:224  named args before and after list forces nesting");
@@ -178,9 +173,7 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:291  don't allow splitting before first arg while splitting collections");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:320  trailing named arguments that do not split");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:335  trailing named arguments that do split");
-    KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:363  don't nest because of nested 1-arg fn");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:372  do nest because of nested many-arg fn");
-    KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:383  don't nest because of nested 1-arg method call");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:392  do nest because of nested many-arg method call");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:403  leading positional collections indent if their args split");
     KNOWN_TO_FAIL_STRICT.add("splitting/list_arguments.stmt:417  trailing positional collections indent if their args split");
@@ -232,7 +225,6 @@ public class DartStyleStrictTest extends DartStyleTest {
     KNOWN_TO_FAIL_STRICT.add("splitting/lists.stmt:34  split indirect outer");
     KNOWN_TO_FAIL_STRICT.add("splitting/lists.stmt:44  nested split list");
     KNOWN_TO_FAIL_STRICT.add("splitting/lists.stmt:76  trailing comma forces split");
-    KNOWN_TO_FAIL_STRICT.add("splitting/lists.stmt:93  nested lists are forced to split");
     KNOWN_TO_FAIL_STRICT.add("splitting/lists.stmt:122  wrap between elements even when newlines are preserved");
     KNOWN_TO_FAIL_STRICT.add("splitting/lists.stmt:136  ignore line comment after the ']'");
     KNOWN_TO_FAIL_STRICT.add("splitting/lists.stmt:145  preserves one blank line between elements");

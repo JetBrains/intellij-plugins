@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.formatting.FormattingMode;
@@ -21,7 +22,7 @@ public class DartIndentProcessor {
     .create(ADDITIVE_EXPRESSION, ARRAY_ACCESS_EXPRESSION, ASSIGN_EXPRESSION, AS_EXPRESSION, AWAIT_EXPRESSION, BITWISE_EXPRESSION,
             CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION, COMPARE_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION, IS_EXPRESSION,
             LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION,
-            MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION,
+            SET_OR_MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION,
             PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION, REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION,
             SUFFIX_EXPRESSION, SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, THROW_EXPRESSION,
             VALUE_EXPRESSION, IF_NULL_EXPRESSION);
@@ -70,7 +71,7 @@ public class DartIndentProcessor {
       return Indent.getNormalIndent();
     }
 
-    if (parentType == MAP_LITERAL_EXPRESSION || parentType == LIST_LITERAL_EXPRESSION) {
+    if (parentType == SET_OR_MAP_LITERAL_EXPRESSION || parentType == LIST_LITERAL_EXPRESSION) {
       if (elementType == LBRACE || elementType == RBRACE || elementType == LBRACKET || elementType == RBRACKET) {
         return Indent.getNoneIndent();
       }
@@ -78,7 +79,7 @@ public class DartIndentProcessor {
         return Indent.getNoneIndent();
       }
       // Be careful to preserve typing behavior.
-      if (elementType == MAP_LITERAL_ENTRY || elementType == EXPRESSION_LIST || elementType == COMMA) {
+      if (elementType == ELEMENT || elementType == COMMA) {
         return Indent.getNormalIndent();
       }
       if (COMMENTS.contains(elementType)) {

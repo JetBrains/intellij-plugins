@@ -7,9 +7,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartOnMixins extends DartPsiCompositeElement {
+public interface DartSetOrMapLiteralExpression extends DartExpression, DartReference {
+
+  @NotNull
+  List<DartElement> getElementList();
 
   @Nullable
-  DartTypeList getTypeList();
+  DartTypeArguments getTypeArguments();
 
 }
