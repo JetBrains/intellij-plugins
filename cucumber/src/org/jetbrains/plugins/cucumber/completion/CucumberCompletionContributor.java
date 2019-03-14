@@ -41,14 +41,18 @@ public class CucumberCompletionContributor extends CompletionContributor {
   private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<>();
   private static final Map<String, String> PARAMETERS_MAP = new HashMap<>();
   static {
-    GROUP_TYPE_MAP.put("(.*)", "<string>");
+    GROUP_TYPE_MAP.put("(.*)", "<any>");
+    GROUP_TYPE_MAP.put("[^\\s]+", "<word>");
     GROUP_TYPE_MAP.put("(.+)", "<string>");
     GROUP_TYPE_MAP.put("([^\"]*)", "<string>");
     GROUP_TYPE_MAP.put("([^\"]+)", "<string>");
     GROUP_TYPE_MAP.put("(\\d*)", "<number>");
     GROUP_TYPE_MAP.put("(\\d)", "<number>");
+    GROUP_TYPE_MAP.put("(-?\\d+)", "<number>");
     GROUP_TYPE_MAP.put("(\\d+)", "<number>");
-    GROUP_TYPE_MAP.put("(\\.[\\d]+)", "<number>");
+    GROUP_TYPE_MAP.put("(-?\\d*[.,]?\\d+)", "<float>");
+    GROUP_TYPE_MAP.put("(\\.[\\d]+)", "<float>");
+    GROUP_TYPE_MAP.put("(\"[^\"\\\\]*(?:\\\\.[^\"\\\\]**)\"|'[^'\\\\]*(?:\\\\.[^'\\\\]**)')", "<string>");
     PARAMETERS_MAP.put("\\([^|]*\\|[^|]*(?:\\|[^|]*)*\\)", "<param>");
     PARAMETERS_MAP.put("#\\{[^\\}]*\\}", "<param>");
   }
@@ -58,7 +62,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
   public static final Pattern POSSIBLE_GROUP_PATTERN = Pattern.compile("\\(([^)]*)\\)");
   public static final Pattern QUESTION_MARK_PATTERN = Pattern.compile("([^\\\\])\\?:?");
   public static final Pattern ARGS_INTO_BRACKETS_PATTERN = Pattern.compile("\\(\\?:[^)]*\\)");
-  public static final Pattern PARAMETERS_PATTERN = Pattern.compile("<string>|<number>|<param>|\\{[^}]+}");
+  public static final Pattern PARAMETERS_PATTERN = Pattern.compile("<string>|<number>|<param>|<word>|<float>|<any>|\\{[^}]+}");
   public static final String INTELLIJ_IDEA_RULEZZZ = "IntellijIdeaRulezzz";
 
   public CucumberCompletionContributor() {
