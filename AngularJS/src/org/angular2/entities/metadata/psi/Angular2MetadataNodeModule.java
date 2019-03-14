@@ -16,7 +16,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.ObjectUtils;
 import one.util.streamex.StreamEx;
 import org.angular2.entities.metadata.stubs.Angular2MetadataModuleExportStub;
 import org.angular2.entities.metadata.stubs.Angular2MetadataNodeModuleStub;
@@ -24,9 +23,13 @@ import org.angular2.lang.metadata.psi.MetadataElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON;
 import static com.intellij.openapi.util.Pair.create;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.tryCast;
+import static com.intellij.util.containers.ContainerUtil.findInstance;
 import static org.angular2.entities.metadata.Angular2MetadataFileType.D_TS_SUFFIX;
 import static org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX;
 
@@ -41,13 +44,16 @@ public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2
     PsiFile definitionPsi = loadRelativeFile(StringUtil.trimEnd(getContainingFile().getName(), METADATA_SUFFIX), D_TS_SUFFIX);
     T result = null;
     if (definitionPsi instanceof JSFile) {
-      ResolveResultSink sink = new ResolveResultSink(definitionPsi, memberName);
+      ResolveResultSink sink = new ResolveResultSink(definitionPsi, memberName, true);
       ES6PsiUtil.processExportDeclarationInScope((JSFile)definitionPsi, new TypeScriptQualifiedItemProcessor<>(sink, definitionPsi));
-      if (memberClass.isInstance(sink.getResult())) {
-        result = memberClass.cast(sink.getResult());
-      }
-      else if (sink.getResult() instanceof ES6ExportSpecifierAlias) {
-        result = ObjectUtils.tryCast(((ES6ExportSpecifierAlias)sink.getResult()).findAliasedElement(), memberClass);
+
+      List<PsiElement> results = sink.getResults();
+      if (results != null) {
+        result = findInstance(results, memberClass);
+        if (result == null) {
+          result = doIfNotNull(findInstance(results, ES6ExportSpecifierAlias.class),
+                               alias -> tryCast(alias.findAliasedElement(), memberClass));
+        }
       }
     }
     return create(definitionPsi, result);

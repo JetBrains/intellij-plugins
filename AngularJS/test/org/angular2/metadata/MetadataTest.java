@@ -145,7 +145,7 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureFromTempProjectFile("tab1.page.html");
     myFixture.checkHighlighting();
     AngularTestUtil.moveToOffsetBySignature("ion-card-<caret>subtitle", myFixture);
-    assertEquals("proxies.metadata.json",
+    assertEquals("proxies.d.ts",
                  myFixture.getElementAtCaret().getContainingFile().getName());
   }
 
