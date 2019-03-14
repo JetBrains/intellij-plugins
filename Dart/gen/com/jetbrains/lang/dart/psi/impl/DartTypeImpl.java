@@ -1,3 +1,5 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart.psi.impl;
 
@@ -44,16 +46,19 @@ public class DartTypeImpl extends DartPsiCompositeElementImpl implements DartTyp
     return findChildByClass(DartUntypedFunctionType.class);
   }
 
+  @Override
   @Nullable
   public PsiElement resolveReference() {
     return DartPsiImplUtil.resolveReference(this);
   }
 
+  @Override
   @Nullable
   public DartReferenceExpression getReferenceExpression() {
     return DartPsiImplUtil.getReferenceExpression(this);
   }
 
+  @Override
   @Nullable
   public DartTypeArguments getTypeArguments() {
     return DartPsiImplUtil.getTypeArguments(this);

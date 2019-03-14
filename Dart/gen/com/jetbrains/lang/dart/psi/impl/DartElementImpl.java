@@ -13,14 +13,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartMixinDeclarationImpl extends AbstractDartPsiClass implements DartMixinDeclaration {
+public class DartElementImpl extends DartPsiCompositeElementImpl implements DartElement {
 
-  public DartMixinDeclarationImpl(@NotNull ASTNode node) {
+  public DartElementImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitMixinDeclaration(this);
+    visitor.visitElement(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -29,39 +29,33 @@ public class DartMixinDeclarationImpl extends AbstractDartPsiClass implements Da
   }
 
   @Override
-  @NotNull
-  public DartClassBody getClassBody() {
-    return findNotNullChildByClass(DartClassBody.class);
-  }
-
-  @Override
-  @NotNull
-  public DartComponentName getComponentName() {
-    return findNotNullChildByClass(DartComponentName.class);
+  @Nullable
+  public DartExpression getExpression() {
+    return findChildByClass(DartExpression.class);
   }
 
   @Override
   @Nullable
-  public DartInterfaces getInterfaces() {
-    return findChildByClass(DartInterfaces.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
+  public DartForElement getForElement() {
+    return findChildByClass(DartForElement.class);
   }
 
   @Override
   @Nullable
-  public DartOnMixins getOnMixins() {
-    return findChildByClass(DartOnMixins.class);
+  public DartIfElement getIfElement() {
+    return findChildByClass(DartIfElement.class);
   }
 
   @Override
   @Nullable
-  public DartTypeParameters getTypeParameters() {
-    return findChildByClass(DartTypeParameters.class);
+  public DartMapEntry getMapEntry() {
+    return findChildByClass(DartMapEntry.class);
+  }
+
+  @Override
+  @Nullable
+  public DartSpreadElement getSpreadElement() {
+    return findChildByClass(DartSpreadElement.class);
   }
 
 }

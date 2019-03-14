@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart;
@@ -103,6 +103,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == DO_WHILE_STATEMENT) {
       r = doWhileStatement(b, 0);
     }
+    else if (t == ELEMENT) {
+      r = element(b, 0);
+    }
     else if (t == ENUM_CONSTANT_DECLARATION) {
       r = enumConstantDeclaration(b, 0);
     }
@@ -132,6 +135,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     }
     else if (t == FINALLY_PART) {
       r = finallyPart(b, 0);
+    }
+    else if (t == FOR_ELEMENT) {
+      r = forElement(b, 0);
     }
     else if (t == FOR_IN_PART) {
       r = forInPart(b, 0);
@@ -177,6 +183,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     }
     else if (t == ID) {
       r = id(b, 0);
+    }
+    else if (t == IF_ELEMENT) {
+      r = ifElement(b, 0);
     }
     else if (t == IF_NULL_EXPRESSION) {
       r = ifNullExpression(b, 0);
@@ -232,11 +241,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == LONG_TEMPLATE_ENTRY) {
       r = longTemplateEntry(b, 0);
     }
-    else if (t == MAP_LITERAL_ENTRY) {
-      r = mapLiteralEntry(b, 0);
-    }
-    else if (t == MAP_LITERAL_EXPRESSION) {
-      r = mapLiteralExpression(b, 0);
+    else if (t == MAP_ENTRY) {
+      r = mapEntry(b, 0);
     }
     else if (t == METADATA) {
       r = metadata(b, 0);
@@ -325,8 +331,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     else if (t == RETURN_TYPE) {
       r = returnType(b, 0);
     }
-    else if (t == SET_LITERAL_EXPRESSION) {
-      r = setLiteralExpression(b, 0);
+    else if (t == SET_OR_MAP_LITERAL_EXPRESSION) {
+      r = setOrMapLiteralExpression(b, 0);
     }
     else if (t == SETTER_DECLARATION) {
       r = setterDeclaration(b, 0);
@@ -348,6 +354,9 @@ public class DartParser implements PsiParser, LightPsiParser {
     }
     else if (t == SIMPLE_TYPE) {
       r = simpleType(b, 0);
+    }
+    else if (t == SPREAD_ELEMENT) {
+      r = spreadElement(b, 0);
     }
     else if (t == STATEMENTS) {
       r = statements(b, 0);
@@ -457,11 +466,11 @@ public class DartParser implements PsiParser, LightPsiParser {
       AWAIT_EXPRESSION, BITWISE_EXPRESSION, CALL_EXPRESSION, CASCADE_REFERENCE_EXPRESSION,
       COMPARE_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION, IF_NULL_EXPRESSION,
       IS_EXPRESSION, LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION, LITERAL_EXPRESSION,
-      LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION, MULTIPLICATIVE_EXPRESSION,
-      NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
-      REFERENCE_EXPRESSION, SET_LITERAL_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION,
-      SUFFIX_EXPRESSION, SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION,
-      THIS_EXPRESSION, THROW_EXPRESSION, VALUE_EXPRESSION),
+      LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION,
+      PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION, REFERENCE_EXPRESSION,
+      SET_OR_MAP_LITERAL_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
+      SUPER_EXPRESSION, SYMBOL_LITERAL_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
+      THROW_EXPRESSION, VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -1573,6 +1582,63 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // spreadElement | ifElement | forElement | mapEntry | expression
+  public static boolean element(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "element")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, ELEMENT, "<element>");
+    r = spreadElement(b, l + 1);
+    if (!r) r = ifElement(b, l + 1);
+    if (!r) r = forElement(b, l + 1);
+    if (!r) r = mapEntry(b, l + 1);
+    if (!r) r = expression(b, l + 1);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // element (',' element)* ','?
+  static boolean elements(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "elements")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = element(b, l + 1);
+    r = r && elements_1(b, l + 1);
+    r = r && elements_2(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // (',' element)*
+  private static boolean elements_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "elements_1")) return false;
+    while (true) {
+      int c = current_position_(b);
+      if (!elements_1_0(b, l + 1)) break;
+      if (!empty_element_parsed_guard_(b, "elements_1", c)) break;
+    }
+    return true;
+  }
+
+  // ',' element
+  private static boolean elements_1_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "elements_1_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, COMMA);
+    r = r && element(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  // ','?
+  private static boolean elements_2(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "elements_2")) return false;
+    consumeToken(b, COMMA);
+    return true;
+  }
+
+  /* ********************************************************** */
   // componentName
   public static boolean enumConstantDeclaration(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "enumConstantDeclaration")) return false;
@@ -1795,7 +1861,7 @@ public class DartParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // !(<<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
+  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '...' | '...?' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
   //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
@@ -1816,7 +1882,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   // <<nonStrictID>> | <<parenthesizedExpressionWrapper>> | '!' | '!=' | '%' | '%=' |
-  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '/' |
+  //                                  '&&' | '&&=' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++' | '+=' | ',' | '-' | '--' | '-=' | '.' | '..' | '...' | '...?' | '/' |
   //                                  '/=' | ':' | ';' | '<' | '<<' | '<<=' | '<=' | '=' | '==' | '=>' | '>' | <<gtGt>> | <<gtEq>> | <<gtGtEq>> |
   //                                  '@' | '[' | ']' | '^' | '^=' | '?.' | '??=' | '??' | '?' |
   //                                  'abstract' | 'as' | 'assert' | 'async' | 'break' | 'case' | 'catch' | 'class' | 'const' |
@@ -1854,6 +1920,8 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, MINUS_EQ);
     if (!r) r = consumeToken(b, DOT);
     if (!r) r = consumeToken(b, DOT_DOT);
+    if (!r) r = consumeToken(b, DOT_DOT_DOT);
+    if (!r) r = consumeToken(b, DOT_DOT_DOT_QUEST);
     if (!r) r = consumeToken(b, DIV);
     if (!r) r = consumeToken(b, DIV_EQ);
     if (!r) r = consumeToken(b, COLON);
@@ -2351,6 +2419,30 @@ public class DartParser implements PsiParser, LightPsiParser {
     r = r && block(b, l + 1);
     exit_section_(b, l, m, r, p, null);
     return r || p;
+  }
+
+  /* ********************************************************** */
+  // 'await'? 'for' '(' forLoopParts ')' element
+  public static boolean forElement(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forElement")) return false;
+    if (!nextTokenIs(b, "<for element>", AWAIT, FOR)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, FOR_ELEMENT, "<for element>");
+    r = forElement_0(b, l + 1);
+    r = r && consumeTokens(b, 1, FOR, LPAREN);
+    p = r; // pin = 2
+    r = r && report_error_(b, forLoopParts(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
+    r = p && element(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // 'await'?
+  private static boolean forElement_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "forElement_0")) return false;
+    consumeToken(b, AWAIT);
+    return true;
   }
 
   /* ********************************************************** */
@@ -3415,6 +3507,41 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // 'if' '(' expressionWithRecoverUntilParen ')' element ('else' element)?
+  public static boolean ifElement(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifElement")) return false;
+    if (!nextTokenIs(b, IF)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, IF_ELEMENT, null);
+    r = consumeTokens(b, 1, IF, LPAREN);
+    p = r; // pin = 1
+    r = r && report_error_(b, expressionWithRecoverUntilParen(b, l + 1));
+    r = p && report_error_(b, consumeToken(b, RPAREN)) && r;
+    r = p && report_error_(b, element(b, l + 1)) && r;
+    r = p && ifElement_5(b, l + 1) && r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // ('else' element)?
+  private static boolean ifElement_5(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifElement_5")) return false;
+    ifElement_5_0(b, l + 1);
+    return true;
+  }
+
+  // 'else' element
+  private static boolean ifElement_5_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "ifElement_5_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, ELSE);
+    r = r && element(b, l + 1);
+    exit_section_(b, m, null, r);
+    return r;
+  }
+
+  /* ********************************************************** */
   // '??' logicOrExpressionWrapper
   public static boolean ifNullExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "ifNullExpression")) return false;
@@ -3947,7 +4074,7 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'const'? typeArguments? '[' (expressionList ','?)? ']'
+  // 'const'? typeArguments? '[' elements? ']'
   public static boolean listLiteralExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listLiteralExpression")) return false;
     if (!nextTokenIs(b, "<list literal expression>", CONST, LBRACKET, LT)) return false;
@@ -3976,33 +4103,15 @@ public class DartParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // (expressionList ','?)?
+  // elements?
   private static boolean listLiteralExpression_3(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "listLiteralExpression_3")) return false;
-    listLiteralExpression_3_0(b, l + 1);
-    return true;
-  }
-
-  // expressionList ','?
-  private static boolean listLiteralExpression_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "listLiteralExpression_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = expressionList(b, l + 1);
-    r = r && listLiteralExpression_3_0_1(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean listLiteralExpression_3_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "listLiteralExpression_3_0_1")) return false;
-    consumeToken(b, COMMA);
+    elements(b, l + 1);
     return true;
   }
 
   /* ********************************************************** */
-  // NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | <<mapLiteralExpressionWrapper>> | <<setLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
+  // NULL | TRUE | FALSE | NUMBER | HEX_NUMBER | stringLiteralExpression | symbolLiteralExpression | <<setOrMapLiteralExpressionWrapper>> | <<listLiteralExpressionWrapper>>
   public static boolean literalExpression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "literalExpression")) return false;
     boolean r;
@@ -4014,8 +4123,7 @@ public class DartParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, HEX_NUMBER);
     if (!r) r = stringLiteralExpression(b, l + 1);
     if (!r) r = symbolLiteralExpression(b, l + 1);
-    if (!r) r = mapLiteralExpressionWrapper(b, l + 1);
-    if (!r) r = setLiteralExpressionWrapper(b, l + 1);
+    if (!r) r = setOrMapLiteralExpressionWrapper(b, l + 1);
     if (!r) r = listLiteralExpressionWrapper(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
@@ -4110,115 +4218,16 @@ public class DartParser implements PsiParser, LightPsiParser {
 
   /* ********************************************************** */
   // expression ':' expression
-  public static boolean mapLiteralEntry(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapLiteralEntry")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, MAP_LITERAL_ENTRY, "<map literal entry>");
+  public static boolean mapEntry(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "mapEntry")) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, MAP_ENTRY, "<map entry>");
     r = expression(b, l + 1);
     r = r && consumeToken(b, COLON);
+    p = r; // pin = 2
     r = r && expression(b, l + 1);
-    exit_section_(b, l, m, r, false, map_literal_entry_recover_parser_);
-    return r;
-  }
-
-  /* ********************************************************** */
-  // 'const'? typeArguments? '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
-  public static boolean mapLiteralExpression(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapLiteralExpression")) return false;
-    if (!nextTokenIs(b, "<map literal expression>", CONST, LBRACE, LT)) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, MAP_LITERAL_EXPRESSION, "<map literal expression>");
-    r = mapLiteralExpression_0(b, l + 1);
-    r = r && mapLiteralExpression_1(b, l + 1);
-    r = r && consumeToken(b, LBRACE);
-    r = r && mapLiteralExpression_3(b, l + 1);
-    r = r && consumeToken(b, RBRACE);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // 'const'?
-  private static boolean mapLiteralExpression_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapLiteralExpression_0")) return false;
-    consumeToken(b, CONST);
-    return true;
-  }
-
-  // typeArguments?
-  private static boolean mapLiteralExpression_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapLiteralExpression_1")) return false;
-    typeArguments(b, l + 1);
-    return true;
-  }
-
-  // (mapLiteralEntry (',' mapLiteralEntry)* ','? )?
-  private static boolean mapLiteralExpression_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapLiteralExpression_3")) return false;
-    mapLiteralExpression_3_0(b, l + 1);
-    return true;
-  }
-
-  // mapLiteralEntry (',' mapLiteralEntry)* ','?
-  private static boolean mapLiteralExpression_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapLiteralExpression_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = mapLiteralEntry(b, l + 1);
-    r = r && mapLiteralExpression_3_0_1(b, l + 1);
-    r = r && mapLiteralExpression_3_0_2(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // (',' mapLiteralEntry)*
-  private static boolean mapLiteralExpression_3_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapLiteralExpression_3_0_1")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!mapLiteralExpression_3_0_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "mapLiteralExpression_3_0_1", c)) break;
-    }
-    return true;
-  }
-
-  // ',' mapLiteralEntry
-  private static boolean mapLiteralExpression_3_0_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapLiteralExpression_3_0_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, COMMA);
-    r = r && mapLiteralEntry(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean mapLiteralExpression_3_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "mapLiteralExpression_3_0_2")) return false;
-    consumeToken(b, COMMA);
-    return true;
-  }
-
-  /* ********************************************************** */
-  // !(',' | '}')
-  static boolean map_literal_entry_recover(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "map_literal_entry_recover")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NOT_);
-    r = !map_literal_entry_recover_0(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // ',' | '}'
-  private static boolean map_literal_entry_recover_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "map_literal_entry_recover_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, COMMA);
-    if (!r) r = consumeToken(b, RBRACE);
-    exit_section_(b, m, null, r);
-    return r;
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
   }
 
   /* ********************************************************** */
@@ -5532,80 +5541,39 @@ public class DartParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // 'const'? typeArguments? '{' (expression (',' expression)* ','? )? '}'
-  public static boolean setLiteralExpression(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "setLiteralExpression")) return false;
-    if (!nextTokenIs(b, "<set literal expression>", CONST, LBRACE, LT)) return false;
+  // 'const'? typeArguments? '{' elements? '}'
+  public static boolean setOrMapLiteralExpression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "setOrMapLiteralExpression")) return false;
+    if (!nextTokenIs(b, "<set or map literal expression>", CONST, LBRACE, LT)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, SET_LITERAL_EXPRESSION, "<set literal expression>");
-    r = setLiteralExpression_0(b, l + 1);
-    r = r && setLiteralExpression_1(b, l + 1);
+    Marker m = enter_section_(b, l, _NONE_, SET_OR_MAP_LITERAL_EXPRESSION, "<set or map literal expression>");
+    r = setOrMapLiteralExpression_0(b, l + 1);
+    r = r && setOrMapLiteralExpression_1(b, l + 1);
     r = r && consumeToken(b, LBRACE);
-    r = r && setLiteralExpression_3(b, l + 1);
+    r = r && setOrMapLiteralExpression_3(b, l + 1);
     r = r && consumeToken(b, RBRACE);
     exit_section_(b, l, m, r, false, null);
     return r;
   }
 
   // 'const'?
-  private static boolean setLiteralExpression_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "setLiteralExpression_0")) return false;
+  private static boolean setOrMapLiteralExpression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "setOrMapLiteralExpression_0")) return false;
     consumeToken(b, CONST);
     return true;
   }
 
   // typeArguments?
-  private static boolean setLiteralExpression_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "setLiteralExpression_1")) return false;
+  private static boolean setOrMapLiteralExpression_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "setOrMapLiteralExpression_1")) return false;
     typeArguments(b, l + 1);
     return true;
   }
 
-  // (expression (',' expression)* ','? )?
-  private static boolean setLiteralExpression_3(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "setLiteralExpression_3")) return false;
-    setLiteralExpression_3_0(b, l + 1);
-    return true;
-  }
-
-  // expression (',' expression)* ','?
-  private static boolean setLiteralExpression_3_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "setLiteralExpression_3_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = expression(b, l + 1);
-    r = r && setLiteralExpression_3_0_1(b, l + 1);
-    r = r && setLiteralExpression_3_0_2(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // (',' expression)*
-  private static boolean setLiteralExpression_3_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "setLiteralExpression_3_0_1")) return false;
-    while (true) {
-      int c = current_position_(b);
-      if (!setLiteralExpression_3_0_1_0(b, l + 1)) break;
-      if (!empty_element_parsed_guard_(b, "setLiteralExpression_3_0_1", c)) break;
-    }
-    return true;
-  }
-
-  // ',' expression
-  private static boolean setLiteralExpression_3_0_1_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "setLiteralExpression_3_0_1_0")) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, COMMA);
-    r = r && expression(b, l + 1);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  // ','?
-  private static boolean setLiteralExpression_3_0_2(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "setLiteralExpression_3_0_2")) return false;
-    consumeToken(b, COMMA);
+  // elements?
+  private static boolean setOrMapLiteralExpression_3(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "setOrMapLiteralExpression_3")) return false;
+    elements(b, l + 1);
     return true;
   }
 
@@ -5937,6 +5905,31 @@ public class DartParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b, l, _NOT_);
     r = !consumeToken(b, RBRACE);
     exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // ('...' | '...?') expression
+  public static boolean spreadElement(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "spreadElement")) return false;
+    if (!nextTokenIs(b, "<spread element>", DOT_DOT_DOT, DOT_DOT_DOT_QUEST)) return false;
+    boolean r, p;
+    Marker m = enter_section_(b, l, _NONE_, SPREAD_ELEMENT, "<spread element>");
+    r = spreadElement_0(b, l + 1);
+    p = r; // pin = 1
+    r = r && expression(b, l + 1);
+    exit_section_(b, l, m, r, p, null);
+    return r || p;
+  }
+
+  // '...' | '...?'
+  private static boolean spreadElement_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "spreadElement_0")) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, DOT_DOT_DOT);
+    if (!r) r = consumeToken(b, DOT_DOT_DOT_QUEST);
+    exit_section_(b, m, null, r);
     return r;
   }
 
@@ -7322,11 +7315,6 @@ public class DartParser implements PsiParser, LightPsiParser {
   static final Parser for_loops_parts_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder b, int l) {
       return for_loops_parts_recover(b, l + 1);
-    }
-  };
-  static final Parser map_literal_entry_recover_parser_ = new Parser() {
-    public boolean parse(PsiBuilder b, int l) {
-      return map_literal_entry_recover(b, l + 1);
     }
   };
   static final Parser not_paren_or_comma_recover_parser_ = new Parser() {

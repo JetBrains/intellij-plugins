@@ -2004,19 +2004,23 @@ Dart File
               PsiElement(=)('=')
               LIST_LITERAL_EXPRESSION
                 PsiElement([)('[')
-                EXPRESSION_LIST
+                ELEMENT
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('1')
-                  PsiElement(,)(',')
+                PsiElement(,)(',')
+                ELEMENT
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('2')
-                  PsiElement(,)(',')
+                PsiElement(,)(',')
+                ELEMENT
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('3')
-                  PsiElement(,)(',')
+                PsiElement(,)(',')
+                ELEMENT
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('4')
-                  PsiElement(,)(',')
+                PsiElement(,)(',')
+                ELEMENT
                   LITERAL_EXPRESSION
                     PsiElement(NUMBER)('5')
                 PsiElement(])(']')

@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.formatting.Wrap;
@@ -36,7 +24,7 @@ public class DartWrappingProcessor {
 
   // Consider using a single key -- the grammar doesn't allow mis-use.
   private static final Key<Wrap> DART_TERNARY_EXPRESSION_WRAP_KEY = Key.create("TERNARY_EXPRESSION_WRAP_KEY");
-  private static final Key<Wrap> DART_EXPRESSION_LIST_WRAP_KEY = Key.create("EXPRESSION_LIST_WRAP_KEY");
+  private static final Key<Wrap> DART_COLLECTION_ELEMENT_WRAP_KEY = Key.create("COLLECTION_ELEMENT_WRAP_KEY");
   private static final Key<Wrap> DART_ARGUMENT_LIST_WRAP_KEY = Key.create("ARGUMENT_LIST_WRAP_KEY");
   private static final Key<Wrap> DART_TYPE_LIST_WRAP_KEY = Key.create("TYPE_LIST_WRAP_KEY");
   private static final TokenSet NAMED_ARGUMENTS = TokenSet.create(NAMED_ARGUMENT);
@@ -135,46 +123,14 @@ public class DartWrappingProcessor {
       }
     }
 
-    // Lists in schematic s-expr notation:
-    // (LIST_LITERAL_EXPRESSION '[ (EXPRESSION_LIST expr ', expr) '])
-    if (elementType == EXPRESSION_LIST) {
-      Wrap wrap;
+    if (elementType == SET_OR_MAP_LITERAL_EXPRESSION || elementType == LIST_LITERAL_EXPRESSION) {
       // First, do persistent object management.
-      if (myNode.getFirstChildNode() == child) {
-        wrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, true);
-        if (myNode.getLastChildNode() != child) {
-          myNode.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, wrap);
-        }
-      }
-      else {
-        wrap = myNode.getUserData(DART_EXPRESSION_LIST_WRAP_KEY);
-      }
-      // Second, decide what object to return.
-      if (childType == MULTI_LINE_COMMENT || childType == CONST) {
-        return Wrap.createWrap(WrapType.NONE, false);
-      }
-      return wrap != null ? wrap : Wrap.createWrap(WrapType.NORMAL, true);
-    }
-    else if (elementType == LIST_LITERAL_EXPRESSION && childType == RBRACKET) {
-      ASTNode exprList = FormatterUtil.getPreviousNonWhitespaceSibling(child);
-      Wrap wrap = null;
-      if (exprList != null && exprList.getElementType() == EXPRESSION_LIST) {
-        wrap = exprList.getUserData(DART_EXPRESSION_LIST_WRAP_KEY);
-        exprList.putUserData(DART_EXPRESSION_LIST_WRAP_KEY, null);
-      }
-      return wrap != null ? wrap : Wrap.createWrap(WrapType.NORMAL, true);
-    }
-
-    // Maps in schematic s-expr notation:
-    // (MAP_LITERAL_EXPRESSION '{ (MAP_LITERAL_ENTRY expr ': expr) ', (MAP_LITERAL_ENTRY expr ': expr) '})
-    if (elementType == MAP_LITERAL_EXPRESSION) {
-      // First, do persistent object management.
-      Wrap wrap = sharedWrap(child, DART_EXPRESSION_LIST_WRAP_KEY);
+      Wrap wrap = sharedWrap(child, DART_COLLECTION_ELEMENT_WRAP_KEY);
       // Second, decide what object to return.
       if (childType == LBRACE || childType == LBRACKET) {
         return Wrap.createWrap(WrapType.NONE, false);
       }
-      if (childType == MULTI_LINE_COMMENT || childType == CONST) {
+      if (childType == MULTI_LINE_COMMENT || childType == CONST || childType == TYPE_ARGUMENTS) {
         return Wrap.createWrap(WrapType.NONE, false);
       }
       return wrap != null ? wrap : Wrap.createWrap(WrapType.NORMAL, true);

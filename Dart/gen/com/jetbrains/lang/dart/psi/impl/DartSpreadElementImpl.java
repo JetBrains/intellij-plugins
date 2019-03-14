@@ -13,14 +13,14 @@ import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 
-public class DartOnMixinsImpl extends DartPsiCompositeElementImpl implements DartOnMixins {
+public class DartSpreadElementImpl extends DartPsiCompositeElementImpl implements DartSpreadElement {
 
-  public DartOnMixinsImpl(@NotNull ASTNode node) {
+  public DartSpreadElementImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull DartVisitor visitor) {
-    visitor.visitOnMixins(this);
+    visitor.visitSpreadElement(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -30,8 +30,8 @@ public class DartOnMixinsImpl extends DartPsiCompositeElementImpl implements Dar
 
   @Override
   @Nullable
-  public DartTypeList getTypeList() {
-    return findChildByClass(DartTypeList.class);
+  public DartExpression getExpression() {
+    return findChildByClass(DartExpression.class);
   }
 
 }

@@ -1,3 +1,5 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart.psi.impl;
 
@@ -27,9 +29,9 @@ public class DartListLiteralExpressionImpl extends DartClassReferenceImpl implem
   }
 
   @Override
-  @Nullable
-  public DartExpressionList getExpressionList() {
-    return findChildByClass(DartExpressionList.class);
+  @NotNull
+  public List<DartElement> getElementList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartElement.class);
   }
 
   @Override

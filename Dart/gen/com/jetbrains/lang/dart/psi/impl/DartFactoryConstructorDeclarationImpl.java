@@ -1,3 +1,5 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+
 // This is a generated file. Not intended for manual editing.
 package com.jetbrains.lang.dart.psi.impl;
 
@@ -62,6 +64,7 @@ public class DartFactoryConstructorDeclarationImpl extends AbstractDartComponent
     return findChildByClass(DartType.class);
   }
 
+  @Override
   @Nullable
   public DartComponentName getComponentName() {
     return DartPsiImplUtil.getComponentName(this);

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.index;
 
 import com.intellij.openapi.application.ReadAction;
@@ -146,8 +147,8 @@ const Map<String, LibraryInfo> LIBRARIES = const {
 
     librariesDartFile.acceptChildren(new DartRecursiveVisitor() {
       @Override
-      public void visitMapLiteralEntry(final @NotNull DartMapLiteralEntry mapLiteralEntry) {
-        final List<DartExpression> expressions = mapLiteralEntry.getExpressionList();
+      public void visitMapEntry(@NotNull DartMapEntry mapEntry) {
+        final List<DartExpression> expressions = mapEntry.getExpressionList();
         if (expressions.size() != 2 ||
             !(expressions.get(0) instanceof DartStringLiteralExpression) ||
             !(expressions.get(1) instanceof DartNewExpression)) {
