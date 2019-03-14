@@ -78,10 +78,14 @@ prepareTestingSandbox {
 }
 
 runIde {
-    systemProperties System.properties.findAll {(it.key as String).startsWith("idea") || (it.key as String).startsWith("jb")}
-    /* Need to split the space-delimited value in the exec.args */
-    print systemProperties
-    args System.getProperty("exec.args", "").split(",")
+    if (System.getProperty("idea.gui.tests.gradle.runner").equals("true")) {
+        systemProperties System.properties.findAll {
+            (it.key as String).startsWith("idea") || (it.key as String).startsWith("jb")
+        }
+        /* Need to split the space-delimited value in the exec.args */
+        print systemProperties
+        args System.getProperty("exec.args", "").split(",")
+    }
 }
 
 test{
