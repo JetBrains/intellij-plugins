@@ -14,5 +14,5 @@ public interface Angular2TokenTypes extends JSTokenTypes {
                                       UNDEFINED_KEYWORD, TRUE_KEYWORD, FALSE_KEYWORD, IF_KEYWORD,
                                       ELSE_KEYWORD, THIS_KEYWORD);
 
-  TokenSet STRING_PART_SPECIAL_SEQ = TokenSet.create(ESCAPE_SEQUENCE, INVALID_ESCAPE_SEQUENCE, XML_CHAR_ENTITY_REF, XML_ENTITY_REF);
+  TokenSet STRING_PART_SPECIAL_SEQ = TokenSet.create(ESCAPE_SEQUENCE, INVALID_ESCAPE_SEQUENCE, XML_CHAR_ENTITY_REF);
 }
