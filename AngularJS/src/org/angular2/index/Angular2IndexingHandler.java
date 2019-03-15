@@ -14,6 +14,8 @@ import com.intellij.lang.javascript.index.FrameworkIndexingHandler;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
@@ -139,8 +141,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       parent = parent.getTreeParent();
     }
     if (parent != null && parent.getElementType() == JSStubElementTypes.PROPERTY) {
-      ASTNode id = parent.getFirstChildNode();
-      String propName = id == null ? null : id.getText();
+      ASTNode identifier = JSPropertyImpl.findNameIdentifier(parent);
+      String propName = identifier != null ? JSPsiImplUtils.getNameFromIdentifier(identifier) : null;
       return propName != null && STUBBED_PROPERTIES.contains(propName);
     }
     return false;
