@@ -11,13 +11,12 @@ class DuplicateLesson(module: Module, lang: String, private val sample: LessonSa
     get() = {
       prepareSample(sample)
 
-      triggerTask("EditorDuplicate") {
-        text("Duplicate any line with ${action(it)}")
-      }
-      triggerTask("EditorDuplicate") {
+      actionTask("EditorDuplicate") { "Duplicate any line with ${action(it)}" }
+
+      task("EditorDuplicate") {
         text("You can do the same thing with multiple lines, too. Simply select two or more lines and duplicate them with ${action(it)}")
         testActions("EditorUp", "EditorLineStart", "EditorDownWithSelection", "EditorDownWithSelection")
-        check({
+        trigger(it, {
           val selection = editor.selectionModel
           val start = selection.selectionStartPosition?.line ?: 0
           val end = selection.selectionEndPosition?.line ?: 0

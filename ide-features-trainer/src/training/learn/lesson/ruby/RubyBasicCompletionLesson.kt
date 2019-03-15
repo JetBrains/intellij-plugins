@@ -45,16 +45,15 @@ end
         text("By default, IntelliJ IDEA completes your code instantly. Start typing <code>An</code> right where " +
             "the caret is, and you will see the Lookup Menu with matching suggestions. Choose the first item " +
             "<code>Animal</code> from the Lookup menu by pressing <action>EditorEnter</action>.")
-        check({ editor.document.text }, fun(before: String, now: String): Boolean {
-          return checkHierarchy(project) && now != before
-        })
         typeForTest("An")
-        trigger("EditorChooseLookupItem")
+        trigger("EditorChooseLookupItem",
+            { editor.document.text },
+            { before, now -> checkHierarchy(project) && now != before })
       }
       Thread.sleep(500)
       prepareSample(sample2)
-      triggerTask("CodeCompletion") {
-        text("To activate Basic Completion, press ${action(it)} and you will see lookup menu again")
+      actionTask("CodeCompletion") {
+        "To activate Basic Completion, press ${action(it)} and you will see lookup menu again"
       }
     }
 

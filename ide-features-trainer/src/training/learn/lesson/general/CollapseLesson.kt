@@ -11,17 +11,17 @@ class CollapseLesson(module: Module, lang: String, private val sample: LessonSam
     get() = {
       prepareSample(sample)
 
-      triggerTask("CollapseRegion") {
-        text("Sometimes you need to collapse a piece of code for better readability. Try collapsing code with ${action(it)}.")
+      actionTask("CollapseRegion") {
+        "Sometimes you need to collapse a piece of code for better readability. Try collapsing code with ${action(it)}."
       }
-      triggerTask("ExpandRegion") {
-        text("To expand a code region, hit ${action(it)}")
+      actionTask("ExpandRegion") {
+        "To expand a code region, hit ${action(it)}"
       }
-      triggerTask("CollapseAllRegions") {
-        text("If you want to collapse all regions in the file, use ${action(it)}")
+      actionTask("CollapseAllRegions") {
+        "If you want to collapse all regions in the file, use ${action(it)}"
       }
-      triggerTask("ExpandAllRegions") {
-        text("Similarly, press ${action(it)} to expand all available regions")
+      actionTask("ExpandAllRegions") {
+        "Similarly, press ${action(it)} to expand all available regions"
       }
     }
 }
