@@ -8,11 +8,17 @@ import training.learn.lesson.LessonManager
 import kotlin.concurrent.thread
 
 class LessonContext(val lesson: KLesson, val editor: Editor, val project: Project) {
+  val recorder = ActionsRecorder(project, editor.document)
+
+  init {
+    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
+  }
+
   /**
    * Start a new task in a lesson context
    */
   fun task(taskContent: TaskContext.() -> Unit) {
-    val taskContext = TaskContext(lesson, editor, project)
+    val taskContext = TaskContext(lesson, editor, project, recorder)
     taskContext.apply(taskContent)
 
     if (TaskContext.inTestMode) {
@@ -21,30 +27,25 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
       }
     }
 
-    val recorder = ActionsRecorder(project, editor.document)
-    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
-
-    val actionId = taskContext.myActionId
-    val check = taskContext.myCheck
-    if (actionId != null) {
-      if (check != null) {
-        recorder.futureActionAndCheckAround(actionId, check).get()
-      }
-      else {
-        recorder.futureAction(actionId).get()
-      }
-    }
-    else if (check != null) {
-      check.before()
-      recorder.futureCheck { check.check() }.get()
-    }
+    taskContext.steps.all { it.get() }
     LessonManager.getInstance(lesson).passExercise()
   }
 
-  fun triggerTask(action: String, taskContent: TaskContext.(action: String) -> Unit) {
+  /** Describe a simple task: just one action required */
+  fun actionTask(action: String, getText: TaskContext.(action: String) -> String) {
+    task {
+      text(getText(action))
+      trigger(action)
+    }
+  }
+
+  /**
+   * Just shortcut to write action name once
+   * @see task
+   */
+  fun task(action: String, taskContent: TaskContext.(action: String) -> Unit) {
     task {
       taskContent(action)
-      trigger(action)
     }
   }
 

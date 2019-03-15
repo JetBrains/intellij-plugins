@@ -21,18 +21,18 @@ abstract class SingleLineCommentLesson(module: Module, lang: String) :
 
       prepareSample(sample)
 
-      triggerTask("CommentByLineComment") {
-        text("Comment out any line with ${action(it)}")
+      actionTask("CommentByLineComment") {
+        "Comment out any line with ${action(it)}"
       }
-      triggerTask("CommentByLineComment") {
+      task("CommentByLineComment") {
         testActions("EditorUp")
         text("Uncomment the commented line with the same shortcut, ${action(it)}.")
-        check({countCommentedLines()}, { _, now -> now == 0 } )
+        trigger(it, {countCommentedLines()}, { _, now -> now == 0 } )
       }
-      triggerTask("CommentByLineComment") {
+      task("CommentByLineComment") {
         text("Select several lines and then comment them with ${action(it)}.")
         testActions("EditorDownWithSelection", "EditorDownWithSelection")
-        check({countCommentedLines()}, { before, now -> now >= before + 2 } )
+        trigger(it, {countCommentedLines()}, { before, now -> now >= before + 2 } )
       }
     }
 

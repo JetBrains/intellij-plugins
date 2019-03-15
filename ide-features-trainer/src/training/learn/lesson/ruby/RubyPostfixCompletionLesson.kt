@@ -38,7 +38,7 @@ end
       }
       task {
         text("TODO Now choose second item <code>@user.save</code>")
-        check({ Unit }) { _, _ -> editor.document.text == result }
+        stateCheck { editor.document.text == result }
         testAction {
 //          Thread.sleep(500)
           GuiTestUtil.shortcut(Key.DOWN)

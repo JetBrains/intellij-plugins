@@ -8,13 +8,14 @@ class RubyNavigationLesson(module: Module) : KLesson("Basic Navigation", module,
   override val lessonContent: LessonContext.() -> Unit
     get() = {
 
-      triggerTask("GotoDeclaration") {
+      task("GotoDeclaration") {
         caret(20, 45)
         text("Use ${action(it)} to jump to the declaration of a class or interface.")
+        trigger(it)
       }
 
-      triggerTask("GotoClass") {
-        text("Try to find a class with ${action(it)}")
+      actionTask("GotoClass") {
+        "Try to find a class with ${action(it)}"
       }
       task {
         text("Write 'Us' and press ${action("QuickImplementations")} to see the definition of the selected class")

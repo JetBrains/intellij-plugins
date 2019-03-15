@@ -16,17 +16,17 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
       prepareSample(sample)
       ShowLineNumberCommand.showLineNumber(editor)
 
-      triggerTask("MoveLineDown") {
-        text("Rearranging lines usually takes two actions: cut and paste. In this IDE, you can do it with just one: " +
-            "pressing ${action(it)} will pull down the current line.")
+      actionTask("MoveLineDown") {
+        "Rearranging lines usually takes two actions: cut and paste. In this IDE, you can do it with just one: " +
+            "pressing ${action(it)} will pull down the current line."
       }
-      triggerTask("MoveLineUp") {
-        text("Similarly, to pull a line up, use ${action(it)}")
+      actionTask("MoveLineUp") {
+        "Similarly, to pull a line up, use ${action(it)}"
       }
-      triggerTask("MoveStatementUp") {
+      task("MoveStatementUp") {
         text("Now try moving the whole method up with ${action(it)}")
         testActions("EditorUp")
-        check({ editor.document.text }, { before, now ->
+        trigger(it, { editor.document.text }, { before, now ->
           val changes = ContainerUtil.newArrayList(
               compareLines(before, now, LineOffsetsUtil.create(before), LineOffsetsUtil.create(now)
               ).iterateChanges())

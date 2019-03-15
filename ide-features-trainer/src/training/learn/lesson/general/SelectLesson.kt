@@ -11,20 +11,20 @@ class SelectLesson(module: Module, lang: String, private val sample: LessonSampl
     get() = {
       prepareSample(sample)
 
-      triggerTask("EditorNextWordWithSelection") {
-        text("Place the caret before any word. Press ${action(it)} to move the caret to the next word and select everything in between.")
+      actionTask("EditorNextWordWithSelection") {
+        "Place the caret before any word. Press ${action(it)} to move the caret to the next word and select everything in between."
       }
-      triggerTask("EditorSelectWord") {
-        text("Press ${action(it)} to extend the selection to the next code block.")
+      actionTask("EditorSelectWord") {
+        "Press ${action(it)} to extend the selection to the next code block."
       }
-      triggerTask("EditorSelectWord") {
-        text("Try increasing your selection with ${action(it)} until your whole file is selected.")
+      actionTask("EditorSelectWord") {
+        "Try increasing your selection with ${action(it)} until your whole file is selected."
       }
-      triggerTask("EditorUnSelectWord") {
-        text("${action(it)} shrinks selection. Try pressing it.")
+      actionTask("EditorUnSelectWord") {
+        "${action(it)} shrinks selection. Try pressing it."
       }
-      triggerTask("\$SelectAll") {
-        text("Now select the whole file instantly with ${action(it)}.")
+      actionTask("\$SelectAll") {
+        "Now select the whole file instantly with ${action(it)}."
       }
       task {
         text("Awesome! Click the button below to start the next lesson, or use ${action("learn.next.lesson")}.")
