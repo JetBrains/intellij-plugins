@@ -3,9 +3,6 @@ package org.angularjs.codeInsight.refs;
 import com.intellij.javascript.JSFileReference;
 import com.intellij.lang.ecmascript6.resolve.JSFileReferencesUtil;
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
-import com.intellij.lang.typescript.compiler.TypeScriptCompilerConfigUtil;
-import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -153,12 +150,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     }
 
     private static Collection<PsiFileSystemItem> getDefaultFileRelativeContexts(PsiFile file) {
-      final Project project = file.getProject();
-      final TypeScriptConfig config = TypeScriptCompilerConfigUtil.getConfigForFile(project, file.getVirtualFile());
-      final PsiDirectory directory = config != null ?
-                                     PsiManager.getInstance(project).findDirectory(config.getConfigDirectory()) :
-                                     null;
-      return ContainerUtil.packNullables(file.getContainingDirectory(), directory);
+      return ContainerUtil.packNullables(file.getContainingDirectory());
     }
   }
 
