@@ -139,9 +139,9 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       parent = parent.getTreeParent();
     }
     if (parent != null && parent.getElementType() == JSStubElementTypes.PROPERTY) {
-      String propName = doIfNotNull(parent.getPsi(PsiNamedElement.class),
-                                    PsiNamedElement::getName);
-      return STUBBED_PROPERTIES.contains(propName);
+      ASTNode id = parent.getFirstChildNode();
+      String propName = id == null ? null : id.getText();
+      return propName != null && STUBBED_PROPERTIES.contains(propName);
     }
     return false;
   }
