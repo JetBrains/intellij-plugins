@@ -62,14 +62,6 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
               doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
             }
 
-            @Override
-            protected JSReferenceExpression beforeStartTemplateAction(JSReferenceExpression referenceExpression,
-                                                                      Editor editor,
-                                                                      @Nullable PsiElement anchor,
-                                                                      boolean isStaticContext) {
-              return referenceExpression;
-            }
-
             @NotNull
             @Override
             protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
@@ -80,7 +72,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
             protected void writeFunctionAndName(Template template,
                                                 String createdMethodName,
                                                 @NotNull PsiElement anchorParent,
-                                                @Nullable PsiElement clazz,
+                                                @Nullable PsiElement scope,
                                                 JSReferenceExpression referenceExpression) {
               template.addTextSegment(JSClassUtils.createClassFunctionName(createdMethodName, anchorParent));
             }
@@ -142,14 +134,6 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
               JSClass componentClass = Angular2IndexingHandler.findComponentClass(psiElement);
               assert componentClass != null;
               doApplyFix(project, componentClass, componentClass.getContainingFile(), null);
-            }
-
-            @Override
-            protected JSReferenceExpression beforeStartTemplateAction(JSReferenceExpression referenceExpression,
-                                                                      Editor editor,
-                                                                      PsiElement anchor,
-                                                                      boolean isStaticContext) {
-              return referenceExpression;
             }
 
             @NotNull
