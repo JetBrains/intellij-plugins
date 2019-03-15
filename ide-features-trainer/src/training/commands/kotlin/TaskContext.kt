@@ -23,13 +23,15 @@ import com.intellij.testGuiFramework.framework.GuiTestUtil
 import com.intellij.util.DocumentUtil
 import org.jdom.input.SAXBuilder
 import training.check.Check
+import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
 import training.ui.Message
+import java.util.concurrent.CompletableFuture
 
-class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project) {
-  var myActionId: String? = null
-  var myCheck: Check? = null
+class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
+                  private val recorder: ActionsRecorder) {
+  val steps : MutableList<CompletableFuture<Boolean>> = mutableListOf()
 
   val testActions: MutableList<Runnable> = mutableListOf()
 
@@ -73,10 +75,24 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
     }
   }
 
+  /** Simply wait until an user perform particular action */
   fun trigger(actionId: String) {
-    assert (myActionId == null) { "Allowed no more than one trigger per task" }
-    myActionId = actionId
+    steps.add(recorder.futureAction(actionId))
     testActions(actionId)
+  }
+
+  /** An user need to rice an action which leads to necessary state change */
+  fun <T : Any> trigger(actionId: String, calculateState: () -> T, checkState: (T, T) -> Boolean) {
+    val recorder = ActionsRecorder(project, editor.document)
+    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
+    val check = getCheck(calculateState, checkState)
+    steps.add(recorder.futureActionAndCheckAround(actionId, check))
+    testActions(actionId)
+  }
+
+  /** An user need to rice an action which leads to appropriate end state */
+  fun trigger(actionId: String, checkState: () -> Boolean) {
+    trigger(actionId, { Unit }, { _, _ -> checkState() })
   }
 
   fun testActions(vararg actionIds: String) {
@@ -95,9 +111,19 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project)
     })
   }
 
-  fun <T : Any> check(calculateState: () -> T, checkState: (T, T) -> Boolean) {
-    assert (myCheck == null) { "Allowed no more than one check per task" }
-    myCheck = object : Check {
+  /** Check that IDE state have been changed by single action as expected */
+  fun <T : Any> changeCheck(calculateState: () -> T, checkState: (T, T) -> Boolean) {
+    val check = getCheck(calculateState, checkState)
+    steps.add(recorder.futureCheck { check.check() })
+  }
+
+  /** Check that IDE state is as expected */
+  fun stateCheck(checkState: () -> Boolean) {
+    steps.add(recorder.futureCheck { checkState() })
+  }
+
+  private fun <T : Any> getCheck(calculateState: () -> T, checkState: (T, T) -> Boolean) : Check {
+    return object : Check {
       var state: T? = null
 
       override fun before() {
