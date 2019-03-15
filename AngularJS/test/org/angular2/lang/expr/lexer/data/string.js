@@ -17,3 +17,5 @@
 "fo\&quot;dd"
 'fo&quotdd'
 "fo&quot; + 12
+&quot;test&quot; + 12
+&apos;test&apos; + 12
