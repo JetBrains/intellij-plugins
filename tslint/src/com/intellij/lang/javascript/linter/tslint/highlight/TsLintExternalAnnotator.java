@@ -225,7 +225,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
         result.add(fixAllFileIntention);
       }
       else {
-        ContainerUtil.addIfNotNull(result, TsLintSuppressionUtil.INSTANCE.getHighPrioritySuppressFOrLineAction(tslintError));
+        ContainerUtil.addIfNotNull(result, TsLintSuppressionUtil.INSTANCE.getHighPrioritySuppressForLineAction(tslintError));
       }
       return result;
     }).setProblemGroup(error -> {
