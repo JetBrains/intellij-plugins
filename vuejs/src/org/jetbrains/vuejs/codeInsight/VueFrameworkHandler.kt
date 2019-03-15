@@ -71,6 +71,10 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     record(VueOptionsIndex.KEY),
     record(VueStoreIndex.KEY)
   )
+  private val expectedLiteralOwnerExpressions = TokenSet.create(JSStubElementTypes.CALL_EXPRESSION, 
+                                                                JSStubElementTypes.NEW_EXPRESSION,
+                                                                JSStubElementTypes.ASSIGNMENT_EXPRESSION)
+  
 
   companion object {
     private fun record(key: StubIndexKey<String, JSImplicitElementProvider>): Pair<String, StubIndexKey<String, JSImplicitElementProvider>> {
