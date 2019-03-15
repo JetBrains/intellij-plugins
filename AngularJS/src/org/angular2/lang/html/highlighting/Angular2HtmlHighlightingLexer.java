@@ -43,7 +43,7 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
   public Angular2HtmlHighlightingLexer(boolean tokenizeExpansionForms,
                                        @Nullable Pair<String, String> interpolationConfig,
                                        @Nullable FileType styleFileType) {
-    super(new Angular2HtmlLexer.Angular2HtmlMergingLexer(
+    super(new Angular2HtmlHighlightingMergingLexer(
             new FlexAdapter(new _Angular2HtmlLexer(tokenizeExpansionForms, interpolationConfig))),
           true, styleFileType);
     registerHandler(INTERPOLATION_EXPR, new ElEmbeddmentHandler());
@@ -130,6 +130,27 @@ public class Angular2HtmlHighlightingLexer extends HtmlHighlightingLexer {
           seenAttribute = true;
         }
       }
+    }
+  }
+
+  private static class Angular2HtmlHighlightingMergingLexer extends Angular2HtmlLexer.Angular2HtmlMergingLexer {
+
+    Angular2HtmlHighlightingMergingLexer(@NotNull FlexAdapter original) {
+      super(original);
+    }
+
+    @Override
+    protected IElementType merge(IElementType type, Lexer originalLexer) {
+      type = super.merge(type, originalLexer);
+      if (type == XML_CHAR_ENTITY_REF) {
+        while (originalLexer.getTokenType() == XML_CHAR_ENTITY_REF) {
+          originalLexer.advance();
+        }
+        if (originalLexer.getTokenType() == XML_ATTRIBUTE_VALUE_TOKEN) {
+          return XML_ATTRIBUTE_VALUE_TOKEN;
+        }
+      }
+      return type;
     }
   }
 }

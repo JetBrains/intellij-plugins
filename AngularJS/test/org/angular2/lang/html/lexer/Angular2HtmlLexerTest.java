@@ -116,6 +116,14 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            "<div [input]='\"ttt\" + &apos;str\\u1234ing&apos;'>");
   }
 
+  public void testTextInEscapedQuotes() {
+    doTest("<div [foo]=\"&quot;test&quot; + 12\">");
+  }
+
+  public void testTextInEscapedApos() {
+    doTest("<div [foo]=\"&apos;test&apos; + 12\">");
+  }
+
   public void testExpansionForm() {
     doTest("{one.two, three, =4 {four} =5 {five} foo {bar} }");
   }

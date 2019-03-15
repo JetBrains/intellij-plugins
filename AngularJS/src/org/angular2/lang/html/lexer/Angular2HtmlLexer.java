@@ -93,7 +93,7 @@ public class Angular2HtmlLexer extends HtmlLexer {
 
     @Override
     public MergeFunction getMergeFunction() {
-      return Angular2HtmlMergingLexer::merge;
+      return this::merge;
     }
 
     @Override
@@ -110,7 +110,7 @@ public class Angular2HtmlLexer extends HtmlLexer {
       return (_Angular2HtmlLexer)((FlexAdapter)getOriginal()).getFlex();
     }
 
-    private static IElementType merge(IElementType type, Lexer originalLexer) {
+    protected IElementType merge(IElementType type, Lexer originalLexer) {
       final IElementType next = originalLexer.getTokenType();
       if (type == INTERPOLATION_START
           && next != INTERPOLATION_EXPR
