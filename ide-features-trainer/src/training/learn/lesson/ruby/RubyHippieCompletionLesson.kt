@@ -7,7 +7,7 @@ import training.learn.lesson.kimpl.START_TAG
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyHippieCompletionLesson(module: Module) : KLesson("Hippie Completion", module, "ruby") {
-  private val sample = parseLessonSample("""class Example
+  private val sample = parseLessonSample("""class UsersController
   def index
     @users = User.where(activated: true).
       paginate(page: params[:p<caret>])
@@ -21,11 +21,11 @@ end
       val step1 = calculateResult("arams")
       val step2 = calculateResult("age")
       task("HippieCompletion") {
-        text("TODO Sometimes you need to complete a word by textual similarity. Press ${action(it)} to call hippie completion.")
+        text("Sometimes you need to complete a word by textual similarity. Press ${action(it)} to call hippie completion.")
         trigger(it) { editor.document.text == step1 }
       }
       task("HippieCompletion") {
-        text("TODO You could repeat ${action(it)} until the desired word is found. Do it now one more time.")
+        text("You could repeat ${action(it)} until the desired word is found. Do it now one more time.")
         trigger(it) { editor.document.text == step2 }
       }
     }
