@@ -3,12 +3,12 @@ package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunctionSignature;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitParameterStructure;
@@ -18,13 +18,13 @@ import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -45,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static com.intellij.util.ObjectUtils.notNull;
@@ -63,7 +64,7 @@ public class Angular2Processor {
            || LEGACY_TEMPLATE_TAG.equalsIgnoreCase(tagName);
   }
 
-  public static void process(final @NotNull PsiElement element, @NotNull final Consumer<? super JSPsiElementBase> consumer) {
+  public static void process(final @NotNull PsiElement element, @NotNull final Consumer<? super ResolveResult> consumer) {
     PsiElement original = CompletionUtil.getOriginalOrSelf(element);
     if (!checkLanguage(original)) {
       return;
@@ -94,7 +95,7 @@ public class Angular2Processor {
     });
 
     calculateElementScopes(element, hostElement, templateRootScope)
-      .forEach(s -> s.consumeElementsFromAllScopes(consumer));
+      .forEach(s -> s.consumeResultsFromAllScopes(consumer));
   }
 
   private static boolean checkLanguage(@NotNull PsiElement element) {
@@ -112,8 +113,8 @@ public class Angular2Processor {
                                                             @NotNull Angular2TemplateScope rootTemplateScope) {
     List<Angular2Scope> scopes = new ArrayList<>();
 
-    final JSClass clazz = Angular2IndexingHandler.findComponentClass(element);
-    if (clazz != null && DialectDetector.isTypeScript(clazz)) {
+    final TypeScriptClass clazz = Angular2IndexingHandler.findComponentClass(element);
+    if (clazz != null) {
       scopes.add(new Angular2ComponentScope(clazz));
     }
     scopes.add(Objects.requireNonNull(rootTemplateScope.findBestMatchingTemplateScope(hostElement)));
@@ -356,16 +357,15 @@ public class Angular2Processor {
       this.children.add(scope);
     }
 
-    public final void consumeElementsFromAllScopes(@NotNull Consumer<? super JSPsiElementBase> consumer) {
+    public final void consumeResultsFromAllScopes(@NotNull Consumer<? super ResolveResult> consumer) {
       Angular2Scope scope = this;
       while (scope != null) {
-        scope.getElements().forEach(el -> consumer.consume(el));
+        scope.resolve(consumer);
         scope = scope.getParent();
       }
     }
 
-    @NotNull
-    public abstract List<JSPsiElementBase> getElements();
+    public abstract void resolve(@NotNull Consumer<? super ResolveResult> consumer);
   }
 
   private static class Angular2$AnyScope extends Angular2Scope {
@@ -384,10 +384,9 @@ public class Angular2Processor {
         .toImplicitElement();
     }
 
-    @NotNull
     @Override
-    public List<JSPsiElementBase> getElements() {
-      return Collections.singletonList($any);
+    public void resolve(@NotNull Consumer<? super ResolveResult> consumer) {
+      consumer.accept(new JSResolveResult($any));
     }
   }
 
@@ -406,9 +405,8 @@ public class Angular2Processor {
     }
 
     @Override
-    @NotNull
-    public List<JSPsiElementBase> getElements() {
-      return elements;
+    public void resolve(@NotNull Consumer<? super ResolveResult> consumer) {
+      elements.forEach(el -> consumer.accept(new JSResolveResult(el)));
     }
 
     public void add(@NotNull JSPsiElementBase element) {
@@ -456,9 +454,8 @@ public class Angular2Processor {
     }
 
     @Override
-    @NotNull
-    public List<JSPsiElementBase> getElements() {
-      return Collections.singletonList(new Angular2EventImplicitElement(myEvent));
+    public void resolve(@NotNull Consumer<? super ResolveResult> consumer) {
+      consumer.accept(new JSResolveResult(new Angular2EventImplicitElement(myEvent)));
     }
   }
 
@@ -491,25 +488,25 @@ public class Angular2Processor {
 
   private static class Angular2ComponentScope extends Angular2Scope {
 
-    private final JSClass myJsClass;
+    private final TypeScriptClass myClass;
 
-    private Angular2ComponentScope(@NotNull JSClass jsClass) {
+    private Angular2ComponentScope(@NotNull TypeScriptClass aClass) {
       super(null);
-      myJsClass = jsClass;
+      myClass = aClass;
     }
 
-    @NotNull
     @Override
-    public List<JSPsiElementBase> getElements() {
-      return StreamEx.of(TypeScriptTypeParser
-                           .buildTypeFromClass(myJsClass, false)
-                           .getProperties())
-        .map(prop -> prop.getMemberSource().getAllSourceElements())
-        .flatMap(Collection::stream)
-        .select(JSPsiElementBase.class)
-        .filter(el -> !(el instanceof TypeScriptFunctionSignature))
-        .filter(el -> !(el instanceof TypeScriptFunction) || !((TypeScriptFunction)el).isOverloadImplementation())
-        .toList();
+    public void resolve(@NotNull Consumer<? super ResolveResult> consumer) {
+      StreamEx.of(TypeScriptTypeParser
+                    .buildTypeFromClass(myClass, false)
+                    .getProperties())
+        .mapToEntry(prop -> prop.getMemberSource().getAllSourceElements())
+        .flatMapValues(Collection::stream)
+        .selectValues(JSPsiElementBase.class)
+        .filterValues(el -> !(el instanceof TypeScriptFunctionSignature))
+        .filterValues(el -> !(el instanceof TypeScriptFunction) || !((TypeScriptFunction)el).isOverloadImplementation())
+        .map(entry -> new Angular2ComponentPropertyResolveResult(entry.getValue(), entry.getKey()))
+        .forEach(consumer);
     }
   }
 }

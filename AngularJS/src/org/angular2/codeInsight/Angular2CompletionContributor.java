@@ -33,6 +33,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -170,7 +171,11 @@ public class Angular2CompletionContributor extends CompletionContributor {
       }
       else if (ref instanceof JSReferenceExpressionImpl && ((JSReferenceExpressionImpl)ref).getQualifier() == null) {
         final Set<String> contributedElements = new HashSet<>();
-        Angular2Processor.process(parameters.getPosition(), element -> {
+        Angular2Processor.process(parameters.getPosition(), resolveResult -> {
+          final JSPsiElementBase element = ObjectUtils.tryCast(resolveResult.getElement(), JSPsiElementBase.class);
+          if (element == null) {
+            return;
+          }
           final String name = element.getName();
           if (name != null && !NG_LIFECYCLE_HOOKS.contains(name)
               && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, null))) {

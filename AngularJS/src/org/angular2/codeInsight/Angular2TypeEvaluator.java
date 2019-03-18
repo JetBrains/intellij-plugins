@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
@@ -135,6 +136,15 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     return super.addTypeFromDialectSpecificElements(resolveResult);
   }
 
+  @Override
+  protected boolean addTypeFromResolveResult(String referenceName, ResolveResult resolveResult) {
+    if (resolveResult instanceof Angular2ComponentPropertyResolveResult && resolveResult.getElement() != null) {
+      addType(((Angular2ComponentPropertyResolveResult)resolveResult).getJSType(), resolveResult.getElement());
+      return true;
+    }
+    return super.addTypeFromResolveResult(referenceName, resolveResult);
+  }
+
   @Contract("null -> null") //NON-NLS
   private static JSType getTemplateContextType(@Nullable TypeScriptClass clazz) {
     if (clazz == null) {
@@ -253,14 +263,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
         Angular2DirectiveProperty property;
         if (myScope.contains(directive)
             && (property = find(directive.getOutputs(), output -> output.getName().equals(name))) != null) {
-          PsiElement source = property.getSourceElement();
-          JSType type = null;
-          if (source instanceof JSField) {
-            type = ((JSField)source).getJSType();
-          }
-          else if (source instanceof JSFunction) {
-            type = ((JSFunction)source).getReturnType();
-          }
+          JSType type = property.getType();
           types.add(getEventVariableType(type));
         }
       }
@@ -324,7 +327,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
         directive.getInputs().forEach(property -> {
           JSExpression inputExpression = inputsMap.get(property.getName());
           if (inputExpression != null && property.getType() != null) {
-            JSType expressionType = TypeScriptGenericTypesEvaluator.getParameterExpressionType(inputExpression, true);
+            JSType expressionType = TypeScriptGenericTypesEvaluator.getParameterExpressionType(
+              Angular2ContextualTypeEvaluator.getContextualType(inputExpression));
             if (expressionType != null) {
               JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext,
                                                             expressionType, property.getType());

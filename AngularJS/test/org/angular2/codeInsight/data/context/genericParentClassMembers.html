@@ -1,0 +1,10 @@
+{{items[0].someName}}
+{{items[0].someValue}}
+{{items[0].<error descr="Unresolved variable foo">foo</error>}}
+<div *ngFor="let item of items; let idx = index">
+  {{idx + 1}}. Name: {{item.someName}}, Value: {{item.someValue}}
+</div>
+
+<div (event)="fun($event.someName)"></div>
+<div (event)="fun(<error descr="Argument type number is not assignable to parameter type string">$event.someValue</error>)"></div>
+<div (event)="fun($event.<error descr="Unresolved variable foo">foo</error>)"></div>
