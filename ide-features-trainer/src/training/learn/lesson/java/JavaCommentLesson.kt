@@ -2,12 +2,13 @@ package training.learn.lesson.java
 
 import com.intellij.psi.JavaTokenType
 import com.intellij.psi.tree.IElementType
+import training.lang.JavaLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.general.SingleLineCommentLesson
 import training.learn.lesson.kimpl.LessonSample
 import training.learn.lesson.kimpl.parseLessonSample
 
-class JavaCommentLesson(module: Module) : SingleLineCommentLesson(module, "JAVA") {
+class JavaCommentLesson(module: Module) : SingleLineCommentLesson(module, JavaLangSupport.lang) {
   override val commentElementType: IElementType
     get() = JavaTokenType.END_OF_LINE_COMMENT
   override val sample: LessonSample
