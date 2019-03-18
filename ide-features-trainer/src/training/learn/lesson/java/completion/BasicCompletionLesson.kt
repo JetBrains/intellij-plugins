@@ -37,10 +37,9 @@ class BasicCompletionDemo implements Runnable{
         actionTask("EditorChooseLookupItem") {
           "By default, IntelliJ IDEA completes your code instantly. Start typing <code>Ran</code> right where the caret is, and you will see the Lookup Menu with matching suggestions. You can choose the first item from the Lookup menu by pressing ${action("EditorEnter")}."
         }
-        task("CodeCompletion") {
-          caret(18, 36)
-          text("To activate Basic Completion, press ${action(it)} and you will see lookup menu again.")
-          trigger(it)
+        caret(18, 36)
+        actionTask("CodeCompletion") {
+          "To activate Basic Completion, press ${action(it)} and you will see lookup menu again."
         }
         actionTask("EditorChooseLookupItem") {
           "Select <code>i</code> inside the lookup menu and press <action>EditorEnter</action>."

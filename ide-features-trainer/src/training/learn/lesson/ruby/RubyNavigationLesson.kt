@@ -7,11 +7,10 @@ import training.learn.lesson.kimpl.LessonContext
 class RubyNavigationLesson(module: Module) : KLesson("Basic Navigation", module, "ruby") {
   override val lessonContent: LessonContext.() -> Unit
     get() = {
+      caret(20, 45)
 
-      task("GotoDeclaration") {
-        caret(20, 45)
-        text("Use ${action(it)} to jump to the declaration of a class or interface.")
-        trigger(it)
+      actionTask("GotoDeclaration") {
+        "Use ${action(it)} to jump to the declaration of a class or interface."
       }
 
       actionTask("GotoClass") {
