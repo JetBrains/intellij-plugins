@@ -13,7 +13,7 @@ import training.learn.lesson.kimpl.parseLessonSample
 class RubyBasicCompletionLesson(module: Module) : KLesson("Basic Completion", module, "ruby") {
   private val sample1 = parseLessonSample("""class Animal
   def speak
-    "Hello!"
+    'Hello!'
   end
 end
 
@@ -28,8 +28,8 @@ end
 end
 
 class Cat < Animal
-  def mau
-    "Mau"
+  def meow
+    "Meow"
   end
 
   def speak
@@ -42,7 +42,7 @@ end
     get() = {
       prepareSample(sample1)
       task {
-        text("By default, IntelliJ IDEA completes your code instantly. Start typing <code>An</code> right where " +
+        text("By default, the IDE completes your code instantly. Start typing <code>An</code> right where " +
             "the caret is, and you will see the Lookup Menu with matching suggestions. Choose the first item " +
             "<code>Animal</code> from the Lookup menu by pressing <action>EditorEnter</action>.")
         typeForTest("An")
@@ -61,14 +61,11 @@ end
     val catSymbol = SymbolUtil.findConstantByFQN(
         project,
         Types.MODULE_OR_CLASS_OR_CONSTANT,
-        FQN.Builder.create(listOf("Cat"), false),
+        FQN.of("Cat"),
         null)
 
-    return if (catSymbol is ClassModuleSymbol) {
-      val base = catSymbol.getSuperClassSymbol(null)
-      val name : String = base?.name ?: ""
-      name == "Animal"
-    } else false
+    return catSymbol is ClassModuleSymbol &&
+      catSymbol.getSuperClassSymbol(null)?.name == "Animal"
   }
 
   override val existedFile: String
