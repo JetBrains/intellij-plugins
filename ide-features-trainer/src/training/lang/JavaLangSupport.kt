@@ -109,4 +109,10 @@ class JavaLangSupport : AbstractLangSupport() {
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
     return ProjectUtils.importOrOpenProject("/learnProjects/java/LearnProject", "LearnProject")
   }
+
+  companion object {
+    @JvmStatic
+    val lang: String = "JAVA"
+  }
+
 }
