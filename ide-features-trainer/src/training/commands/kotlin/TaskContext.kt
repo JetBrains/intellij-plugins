@@ -85,8 +85,6 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
 
   /** An user need to rice an action which leads to necessary state change */
   fun <T : Any> trigger(actionId: String, calculateState: () -> T, checkState: (T, T) -> Boolean) {
-    val recorder = ActionsRecorder(project, editor.document)
-    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
     val check = getCheck(calculateState, checkState)
     steps.add(recorder.futureActionAndCheckAround(actionId, check))
     testActions(actionId)
