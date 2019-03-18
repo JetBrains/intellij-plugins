@@ -69,7 +69,7 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
     //register tool window
     val toolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)
     if (toolWindow == null) {
-      val createdToolWindow = toolWindowManager.registerToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW, true, LangManager.getInstance().getLangSupport().getToolWindowAnchor(), myProject, true)
+      val createdToolWindow = toolWindowManager.registerToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW, true, LangManager.getInstance().getLangSupport()?.getToolWindowAnchor() ?: ToolWindowAnchor.LEFT, myProject, true)
       createdToolWindow.icon = LearnIcons.chevronToolWindowIcon
     }
   }
@@ -153,12 +153,12 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
 
     showToolStripes()
 
-    val toolWindowAnchor = LangManager.getInstance().getLangSupport().getToolWindowAnchor()
+    val toolWindowAnchor = LangManager.getInstance().getLangSupport()?.getToolWindowAnchor() ?: ToolWindowAnchor.LEFT
 
     if (!CourseManager.instance.showGotMessage) return
     GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"),
         LearnBundle.message("learn.tool.window.quick.access.message", toolWindowAnchor))
-        .setCallback({ if (toolStripesAreHiddenDefault) hideToolStripes() })
+        .setCallback { if (toolStripesAreHiddenDefault) hideToolStripes() }
         .show(RelativePoint(learnStripeButton,
             Point(learnStripeButton.bounds.width, learnStripeButton.bounds.height / 2)),
             getBalloonPosition(toolWindowAnchor))

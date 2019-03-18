@@ -13,7 +13,7 @@ import training.util.findLanguageByID
  * @author Sergey Karashevich
  */
 
-@State(name = "LangManager", storages = arrayOf(Storage(value = "ide-features-trainer.xml")))
+@State(name = "LangManager", storages = [Storage(value = "ide-features-trainer.xml")])
 class LangManager : PersistentStateComponent<LangManager.State> {
 
   var supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(LangSupport.EP_NAME).extensions.toList()
@@ -42,8 +42,8 @@ class LangManager : PersistentStateComponent<LangManager.State> {
     LearnToolWindowFactory.learnWindowPerProject.values.forEach{ it.reinitViews() }
   }
 
-  fun getLangSupport(): LangSupport {
-    return myLangSupport ?: throw Exception("Lang support is not defined.")
+  fun getLangSupport(): LangSupport? {
+    return myLangSupport
   }
 
   override fun loadState(state: State) {
