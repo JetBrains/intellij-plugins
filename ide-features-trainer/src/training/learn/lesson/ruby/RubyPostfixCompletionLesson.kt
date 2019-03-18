@@ -8,16 +8,16 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyPostfixCompletionLesson(module: Module) : KLesson("Postfix Completion", module, "ruby") {
-  private val sample = parseLessonSample("""class Example
+  private val sample = parseLessonSample("""class UsersController
   def create
-    @users = User.new(user_params)
+    @user = User.new(user_params)
     @user.save<caret>
   end
 end
 """.trimIndent())
-  private val result = parseLessonSample("""class Example
+  private val result = parseLessonSample("""class UsersController
   def create
-    @users = User.new(user_params)
+    @user = User.new(user_params)
     if @user.save
       <caret>
     end
