@@ -15,6 +15,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.TestLookupElementPresentation;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -210,7 +211,19 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testES6Refactorings() {
     myFixture.configureByFiles("package.json");
-    myFixture.configureByText("test.html","{{ 'foo<caret>'}}");
+    myFixture.configureByText("test.html", "{{ 'foo<caret>'}}");
     assertEmpty(myFixture.filterAvailableIntentions("Replace with template string"));
+  }
+
+  public void testGenericParentClassMembers() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("genericParentClassMembers.html", "genericParentClassMembers.ts",
+                               "ng_for_of.ts", "iterable_differs.ts", "package.json");
+    myFixture.checkHighlighting();
+    assertEquals("{\n" +
+                 "  someName: string;\n" +
+                 "  someValue: number;\n" +
+                 "}",
+                 AngularTestUtil.resolveReference("item.some<caret>Name", myFixture).getParent().getText());
   }
 }
