@@ -99,7 +99,7 @@ class CourseManager internal constructor() {
   @Throws(InvalidSdkException::class, NoJavaModuleException::class)
   fun checkEnvironment(project: Project) {
     val sdk = ProjectRootManager.getInstance(project).projectSdk
-    LangManager.getInstance().getLangSupport().checkSdk(sdk, project)
+    LangManager.getInstance().getLangSupport()?.checkSdk(sdk, project) ?: throw Exception("Language for learning plugin is not defined")
   }
 
   fun findLesson(lessonName: String): Lesson? {

@@ -75,7 +75,7 @@ class OpenLessonAction : AnAction() {
   private fun openLesson(project: Project, projectWhereToStartLesson: Project, lesson: Lesson) {
     LOG.debug("${projectWhereToStartLesson.name}: start openLesson method")
     try {
-      val langSupport = LangManager.getInstance().getLangSupport()
+      val langSupport = LangManager.getInstance().getLangSupport() ?: throw Exception("Language for learning plugin is not defined")
       if (lesson.isOpen) throw LessonIsOpenedException(lesson.name + " is opened")
 
       val scratchFileName = "Learning"
@@ -355,7 +355,7 @@ class OpenLessonAction : AnAction() {
   }
 
   private fun initLearnProject(projectToClose: Project?): Project? {
-    val langSupport = LangManager.getInstance().getLangSupport()
+    val langSupport = LangManager.getInstance().getLangSupport() ?: throw Exception("Language for learning plugin is not defined")
     //if projectToClose is open
     var myLearnProject = findLearnProjectInOpenedProjects(langSupport)
     if (myLearnProject != null) return myLearnProject
