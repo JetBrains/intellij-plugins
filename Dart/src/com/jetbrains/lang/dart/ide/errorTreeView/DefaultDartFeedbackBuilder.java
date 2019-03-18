@@ -30,7 +30,7 @@ public class DefaultDartFeedbackBuilder extends DartFeedbackBuilder {
     final boolean isEAP = appInfo.isEAP();
     final String intellijBuild = isEAP ? appInfo.getBuild().asStringWithoutProductCode() : appInfo.getBuild().asString();
     final String sdkVersion = getSdkVersion(project);
-    final String platformDescription = StringUtil.replace(SendFeedbackAction.getDescription(), ";", " ").trim();
+    final String platformDescription = StringUtil.replace(SendFeedbackAction.getDescription(project), ";", " ").trim();
 
     final String url = DartBundle.message("dart.feedback.url");
     String body = DartBundle.message("dart.feedback.template", intellijBuild, sdkVersion, platformDescription);
