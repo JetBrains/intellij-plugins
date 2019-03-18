@@ -69,10 +69,12 @@ public class Angular2MetadataReferenceStub extends Angular2MetadataElementStub<A
     }
   }
 
+  @NotNull
   public String getName() {
     return StringRef.toString(myName);
   }
 
+  @Nullable
   public String getModule() {
     return StringRef.toString(myModule);
   }
