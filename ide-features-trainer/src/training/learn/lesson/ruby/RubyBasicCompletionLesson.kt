@@ -27,13 +27,13 @@ end
 
   private val sample2 = parseLessonSample("""class Animal
   def speak
-    "Hello!"
+    'Hello!'
   end
 end
 
 class Cat < Animal
   def meow
-    "Meow"
+    'Meow'
   end
 
   def speak

@@ -21,12 +21,12 @@ end
       val step1 = calculateResult("arams")
       val step2 = calculateResult("age")
       task("HippieCompletion") {
-        text("Sometimes you need to complete a word by textual similarity. Press ${action(it)} to call hippie completion.")
+        text("Sometimes you need to complete a word by textual similarity. Press ${action(it)} to invoke hippie completion.")
         trigger(it) { editor.document.text == step1 }
         test { actions(it) }
       }
       task("HippieCompletion") {
-        text("You could repeat ${action(it)} until the desired word is found. Do it now one more time.")
+        text("You can repeat ${action(it)} until the desired word is found. Try it once more now.")
         trigger(it) { editor.document.text == step2 }
         test { actions(it) }
       }
