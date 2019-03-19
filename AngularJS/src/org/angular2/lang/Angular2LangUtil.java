@@ -79,9 +79,9 @@ public class Angular2LangUtil {
   private static boolean isAngular2ContextDir(@NotNull PsiDirectory psiDir) {
     VirtualFile dir = psiDir.getVirtualFile();
     PackageJsonFileManager manager = PackageJsonFileManager.getInstance(psiDir.getProject());
-    String dirPath = ObjectUtils.notNull(dir.getCanonicalPath(), dir::getPath) + "/";
+    String dirPath = dir.getPath() + "/";
     for (VirtualFile config : manager.getValidPackageJsonFiles()) {
-      String configDirPath = ObjectUtils.notNull(config.getParent().getCanonicalPath(), config.getParent()::getPath) + "/";
+      String configDirPath = config.getParent().getPath() + "/";
       if (configDirPath.endsWith(NODE_MODULE_ANGULAR_CORE_PATH)) {
         if (dirPath.startsWith(configDirPath.substring(0, configDirPath.length() - NODE_MODULE_ANGULAR_CORE_PATH.length()) + "/")) {
           return true;
