@@ -25,7 +25,6 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
       }
       task("MoveStatementUp") {
         text("Now try moving the whole method up with ${action(it)}")
-        testActions("EditorUp")
         trigger(it, { editor.document.text }, { before, now ->
           val changes = ContainerUtil.newArrayList(
               compareLines(before, now, LineOffsetsUtil.create(before), LineOffsetsUtil.create(now)
@@ -35,6 +34,7 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
           !changes.isEmpty() &&
               (changes[0].end1 - changes[0].start1 > 1 || changes[0].end2 - changes[0].start2 > 1)
         })
+        test { actions("EditorUp", it) }
       }
     }
 }

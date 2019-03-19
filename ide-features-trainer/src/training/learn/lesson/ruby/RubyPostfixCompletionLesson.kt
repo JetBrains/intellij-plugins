@@ -1,6 +1,8 @@
 package training.learn.lesson.ruby
 
-import com.intellij.testGuiFramework.framework.GuiTestUtil
+import com.intellij.testGuiFramework.framework.GuiTestUtil.shortcut
+import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
+import com.intellij.testGuiFramework.impl.jList
 import com.intellij.testGuiFramework.util.Key
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
@@ -30,19 +32,24 @@ end
       prepareSample(sample)
       task {
         text("TODO RubyMine propose postfix shortcuts. Type <code>.if</code> and press <action>EditorEnter</action>.")
-        typeForTest(".if")
-        testAction {
-//          Thread.sleep(1000)
-        }
         trigger("EditorChooseLookupItem")
+        test {
+          ideFrame {
+            typeText(".if")
+            jList("if")
+            shortcut(Key.ENTER)
+          }
+        }
       }
-      task {
-        text("TODO Now choose second item <code>@user.save</code>")
+      task("@user.save") {
+        text("TODO Now choose second item <code>$it</code>")
         stateCheck { editor.document.text == result }
-        testAction {
-//          Thread.sleep(500)
-          GuiTestUtil.shortcut(Key.DOWN)
-          GuiTestUtil.shortcut(Key.ENTER)
+        test {
+          ideFrame {
+            jList(it)
+            shortcut(Key.DOWN)
+            shortcut(Key.ENTER)
+          }
         }
       }
     }

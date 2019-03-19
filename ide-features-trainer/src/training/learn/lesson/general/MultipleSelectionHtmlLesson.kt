@@ -51,8 +51,8 @@ class MultipleSelectionHtmlLesson(module: Module) : KLesson("Multiple Selections
       }
       task {
         text("Type <code>td</code> to replace all occurrences of <code>th</code> with <code>td</code>")
-        typeForTest("td")
         stateCheck { checkMultiChange() }
+        test { type("td") }
       }
     }
 

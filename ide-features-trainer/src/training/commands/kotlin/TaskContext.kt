@@ -1,16 +1,9 @@
 package training.commands.kotlin
 
-import com.intellij.ide.DataManager
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.ex.ActionUtil
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.testGuiFramework.framework.GuiTestUtil
 import org.jdom.input.SAXBuilder
 import training.check.Check
 import training.learn.ActionsRecorder
@@ -37,7 +30,6 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
   /** Simply wait until an user perform particular action */
   fun trigger(actionId: String) {
     steps.add(recorder.futureAction(actionId))
-    testActions(actionId)
   }
 
   fun triggers(vararg actionIds: String) {
@@ -48,28 +40,11 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
   fun <T : Any> trigger(actionId: String, calculateState: () -> T, checkState: (T, T) -> Boolean) {
     val check = getCheck(calculateState, checkState)
     steps.add(recorder.futureActionAndCheckAround(actionId, check))
-    testActions(actionId)
   }
 
   /** An user need to rice an action which leads to appropriate end state */
   fun trigger(actionId: String, checkState: () -> Boolean) {
     trigger(actionId, { Unit }, { _, _ -> checkState() })
-  }
-
-  fun testActions(vararg actionIds: String) {
-    testActions.add(Runnable {
-      val app = ApplicationManager.getApplication()
-      for (actionId in actionIds) {
-        val action = ActionManager.getInstance().getAction(actionId) ?: error("Action $actionId is non found")
-        DataManager.getInstance().dataContextFromFocusAsync.onSuccess { dataContext ->
-          app.invokeAndWait {
-            val event = AnActionEvent.createFromAnAction(action, null, ActionPlaces.UNKNOWN, dataContext)
-            @Suppress("MissingRecentApi") // used for debug
-            ActionUtil.performActionDumbAwareWithCallbacks(action, event, dataContext)
-          }
-        }
-      }
-    })
   }
 
   /** Check that IDE state have been changed by single action as expected */
@@ -109,13 +84,9 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
     }
   }
 
-  fun typeForTest(text : String) {
-    testAction { GuiTestUtil.typeText(text) }
-  }
-
-  fun testAction(action: () -> Unit) {
+  fun test(action: TaskTestContext.() -> Unit) {
     testActions.add(Runnable {
-      action()
+      TaskTestContext(this).action()
     })
   }
 

@@ -48,6 +48,7 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
     task {
       text(getText(action))
       trigger(action)
+      test { actions(action) }
     }
   }
 

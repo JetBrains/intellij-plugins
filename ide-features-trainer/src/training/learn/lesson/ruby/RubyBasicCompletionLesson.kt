@@ -1,6 +1,10 @@
 package training.learn.lesson.ruby
 
 import com.intellij.openapi.project.Project
+import com.intellij.testGuiFramework.framework.GuiTestUtil.shortcut
+import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
+import com.intellij.testGuiFramework.impl.jList
+import com.intellij.testGuiFramework.util.Key
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Types
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
@@ -45,10 +49,16 @@ end
         text("By default, the IDE completes your code instantly. Start typing <code>An</code> right where " +
             "the caret is, and you will see the Lookup Menu with matching suggestions. Choose the first item " +
             "<code>Animal</code> from the Lookup menu by pressing <action>EditorEnter</action>.")
-        typeForTest("An")
         trigger("EditorChooseLookupItem",
             { editor.document.text },
             { before, now -> checkHierarchy(project) && now != before })
+        test {
+          ideFrame {
+            typeText("An")
+            jList("Animal")
+            shortcut(Key.ENTER)
+          }
+        }
       }
       Thread.sleep(500)
       prepareSample(sample2)

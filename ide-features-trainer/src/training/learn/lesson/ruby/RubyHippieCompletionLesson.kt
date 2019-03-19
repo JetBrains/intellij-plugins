@@ -23,10 +23,12 @@ end
       task("HippieCompletion") {
         text("Sometimes you need to complete a word by textual similarity. Press ${action(it)} to call hippie completion.")
         trigger(it) { editor.document.text == step1 }
+        test { actions(it) }
       }
       task("HippieCompletion") {
         text("You could repeat ${action(it)} until the desired word is found. Do it now one more time.")
         trigger(it) { editor.document.text == step2 }
+        test { actions(it) }
       }
     }
 

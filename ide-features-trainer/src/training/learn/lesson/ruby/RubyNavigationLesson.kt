@@ -16,10 +16,13 @@ class RubyNavigationLesson(module: Module) : KLesson("Basic Navigation", module,
       actionTask("GotoClass") {
         "Try to find a class with ${action(it)}"
       }
-      task {
-        text("Write 'Us' and press ${action("QuickImplementations")} to see the definition of the selected class")
-        typeForTest("Us")
-        trigger("QuickImplementations")
+      task("QuickImplementations") {
+        text("Write 'Us' and press ${action(it)} to see the definition of the selected class")
+        trigger(it)
+        test {
+          type("Us")
+          actions(it)
+        }
       }
     }
 
