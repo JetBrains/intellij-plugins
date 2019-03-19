@@ -2,6 +2,7 @@
 package org.angular2.entities.metadata.psi;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -13,9 +14,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES;
@@ -27,6 +26,7 @@ public class ExternalNodeModuleResolver {
   @NonNls private static final Logger LOG = Logger.getInstance(ExternalNodeModuleResolver.class);
 
   private static final Set<String> ourReportedErrors = new HashSet<>();
+  private static final String NODE_MODULES_SEGMENT = "/" + NODE_MODULES + "/";
 
   private final Angular2MetadataElement mySource;
   private final String myModuleName;
@@ -64,26 +64,93 @@ public class ExternalNodeModuleResolver {
         return true;
       });
     if (candidates.size() > 1) {
-      List<Angular2MetadataElement> inPackageRoot = ContainerUtil.findAll(
-        candidates.keySet(), c -> ContainerUtil.exists(candidates.get(c), Angular2MetadataNodeModule::isPackageTypingsRoot));
-      if (inPackageRoot.size() != 1 && ourReportedErrors.add(myModuleName + "/" + myMemberName)) {
-        LOG.error("Ambiguous resolution for import '" + myModuleName + "/" + myMemberName
-                  + "' in module '" + mySource.getNodeModule().getName() + "'; candidates: " +
-                  StreamEx.of(inPackageRoot.size() > 1 ? inPackageRoot : candidates.values())
-                    .map(ExternalNodeModuleResolver::renderFileName).joining(", "));
-      }
-      if (!inPackageRoot.isEmpty()) {
-        return ContainerUtil.getFirstItem(inPackageRoot);
-      }
+      retainReachableNodeModulesFolders(candidates);
+    }
+    if (candidates.size() > 1) {
+      retainPackageTypingRoots(candidates);
+    }
+    if (candidates.size() > 1 && ourReportedErrors.add(myModuleName + "/" + myMemberName)) {
+      LOG.error("Ambiguous resolution for import '" + myModuleName + "/" + myMemberName
+                + "' in module '" + mySource.getNodeModule().getName() + "'; candidates: " +
+                StreamEx.of(candidates.values())
+                  .map(ExternalNodeModuleResolver::renderFileName)
+                  .sorted()
+                  .joining(", "));
     }
     return ContainerUtil.getFirstItem(candidates.keySet());
   }
 
+  private void retainReachableNodeModulesFolders(@NotNull MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates) {
+    String path = getNodeModulesPath(mySource);
+    if (path == null) {
+      return;
+    }
+    Set<Angular2MetadataNodeModule> sameFolder = new HashSet<>();
+    Set<Angular2MetadataNodeModule> parentFolder = new HashSet<>();
+    candidates.values().forEach(nodeModule -> {
+      String path1 = getNodeModulesPath(nodeModule);
+      if (path1 != null) {
+        if (path.equals(path1)) {
+          sameFolder.add(nodeModule);
+        }
+        else if (path.startsWith(path1)) {
+          parentFolder.add(nodeModule);
+        }
+      }
+    });
+    if (!sameFolder.isEmpty()) {
+      retain(candidates, sameFolder);
+    }
+    else if (!parentFolder.isEmpty()) {
+      retain(candidates, parentFolder);
+    }
+  }
+
+  private static void retainPackageTypingRoots(@NotNull MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates) {
+    Set<Angular2MetadataNodeModule> packageTypingsRoots = new HashSet<>();
+    candidates.values().forEach(nodeModule -> {
+      if (nodeModule.isPackageTypingsRoot()) {
+        packageTypingsRoots.add(nodeModule);
+      }
+    });
+    if (!packageTypingsRoots.isEmpty()) {
+      retain(candidates, packageTypingsRoots);
+    }
+  }
+
+  private static void retain(@NotNull MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates,
+                             @NotNull Set<Angular2MetadataNodeModule> nodeModules) {
+    Iterator<Map.Entry<Angular2MetadataElement, Collection<Angular2MetadataNodeModule>>> iterator = candidates.entrySet().iterator();
+    while (iterator.hasNext()) {
+      Map.Entry<Angular2MetadataElement, Collection<Angular2MetadataNodeModule>> entry = iterator.next();
+      Iterator<Angular2MetadataNodeModule> listIterator = entry.getValue().iterator();
+      while (listIterator.hasNext()) {
+        if (!nodeModules.contains(listIterator.next())) {
+          listIterator.remove();
+        }
+      }
+      if (entry.getValue().isEmpty()) {
+        iterator.remove();
+      }
+    }
+  }
+
+  @Nullable
+  private static String getNodeModulesPath(@NotNull Angular2MetadataElement element) {
+    return stripNodeModulesPath(doIfNotNull(element.getContainingFile().getOriginalFile().getVirtualFile(), VirtualFile::getPath));
+  }
+
+  @Nullable
+  private static String stripNodeModulesPath(@Nullable String path) {
+    int index = path != null ? path.lastIndexOf(NODE_MODULES_SEGMENT) : -1;
+    return index >= 0 ? path.substring(0, index + 1) : null;
+  }
+
   private static String renderFileName(@NotNull Angular2MetadataElement element) {
     String name = element.getContainingFile().getVirtualFile().getPath();
-    int index = name.lastIndexOf(NODE_MODULES);
-    if (index > 0) {
-      index = name.lastIndexOf("/", index);
+    int index = name.lastIndexOf(NODE_MODULES_SEGMENT);
+    if (index > 1) {
+      index = name.lastIndexOf("/", index - 1);
       if (index > 0) {
         return name.substring(index);
       }
