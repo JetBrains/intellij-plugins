@@ -41,7 +41,7 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
     //if persisted base has already state for this lesson do not add
     if (persistedLessonId2State.contains(lesson.id)) return // because it contains already info about this lesson. And al least this lesson has been started.
     val statisticData = StatisticData(StatisticState.STARTED, System.currentTimeMillis())
-    persistedLessonId2State.put(lesson.id, statisticData)
+    persistedLessonId2State[lesson.id] = statisticData
     sessionLessonId2State.add(Pair(lesson.id, statisticData))
   }
 
@@ -53,7 +53,7 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
       val timestamp = persistedLessonId2State[lesson.id]!!.timestamp ?: return
       val delta = System.currentTimeMillis() - timestamp
       val statisticData = StatisticData(StatisticState.PASSED, delta)
-      persistedLessonId2State.put(lesson.id, statisticData)
+      persistedLessonId2State[lesson.id] = statisticData
       sessionLessonId2State.add(Pair(lesson.id, statisticData))
     }
   }
