@@ -87,11 +87,11 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
 
             @Override
             protected void addAccessModifier(Template template,
-                                             JSReferenceExpression referenceExpression,
+                                             @NotNull JSReferenceExpression referenceExpression,
                                              boolean staticContext,
-                                             @NotNull JSClass contextClass) {
-              if (DialectDetector.isTypeScript(contextClass)) {
-                if (TypeScriptCodeStyleSettings.getTypeScriptSettings(contextClass).USE_PUBLIC_MODIFIER) {
+                                             @NotNull JSClass targetClass) {
+              if (DialectDetector.isTypeScript(targetClass)) {
+                if (TypeScriptCodeStyleSettings.getTypeScriptSettings(targetClass).USE_PUBLIC_MODIFIER) {
                   //noinspection HardCodedStringLiteral
                   template.addTextSegment("public ");
                 }
@@ -160,9 +160,9 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
 
             @Override
             protected void addAccessModifier(Template template,
-                                             JSReferenceExpression referenceExpression,
+                                             @NotNull JSReferenceExpression referenceExpression,
                                              boolean staticContext,
-                                             @NotNull JSClass contextClass) {
+                                             @NotNull JSClass targetClass) {
             }
           });
         }
