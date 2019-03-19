@@ -31,7 +31,7 @@ end
     get() = {
       prepareSample(sample)
       task {
-        text("TODO RubyMine propose postfix shortcuts. Type <code>.if</code> and press <action>EditorEnter</action>.")
+        text("The IDE can offer postfix shortcuts. Type <code>.if</code> and press <action>EditorEnter</action>.")
         trigger("EditorChooseLookupItem")
         test {
           ideFrame {
@@ -42,7 +42,7 @@ end
         }
       }
       task("@user.save") {
-        text("TODO Now choose second item <code>$it</code>")
+        text("Now choose the second item, <code>@user.save</code>")
         stateCheck { editor.document.text == result }
         test {
           ideFrame {
