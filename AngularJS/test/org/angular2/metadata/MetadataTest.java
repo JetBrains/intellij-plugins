@@ -4,6 +4,9 @@ package org.angular2.metadata;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection;
 import com.intellij.json.psi.impl.JsonFileImpl;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -11,8 +14,11 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.DebugUtil;
+import com.intellij.testFramework.LoggedErrorProcessor;
 import com.intellij.testFramework.UsefulTestCase;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.entities.metadata.psi.Angular2MetadataNodeModule;
+import org.angular2.entities.metadata.psi.Angular2MetadataReference;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularAmbiguousComponentTagInspection;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
@@ -22,6 +28,9 @@ import org.angular2.lang.metadata.psi.MetadataFileImpl;
 import org.angularjs.AngularTestUtil;
 
 import java.io.File;
+
+import static com.intellij.openapi.util.Pair.pair;
+import static java.util.Arrays.asList;
 
 public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
 
@@ -156,5 +165,36 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
     assertEquals("my-lib.component.d.ts",
                  myFixture.getElementAtCaret().getContainingFile().getName());
+  }
+
+  public void testMultipleNodeModulesResolution() {
+    myFixture.copyDirectoryToProject("multiple_node_modules", ".");
+    PsiFile file =
+      myFixture.getPsiManager().findFile(myFixture.getTempDirFixture().getFile("foo/node_modules/modules-test/test.metadata.json"));
+    assert file != null;
+    Angular2MetadataNodeModule nodeModule = (Angular2MetadataNodeModule)file.getFirstChild();
+    assert nodeModule != null;
+
+    for (Pair<String, String> check : asList(pair("Test1", "foo1.metadata.json"),
+                                             pair("Test2", "root1.metadata.json"),
+                                             pair("Test3", "bar1.metadata.json"))) {
+      Angular2MetadataReference reference1 = (Angular2MetadataReference)nodeModule.findMember("Test1");
+      assert reference1.resolve() != null : check;
+      assertEquals(check.toString(), "foo1.metadata.json", reference1.resolve().getContainingFile().getName());
+    }
+    Disposable loggerDisposable = Disposer.newDisposable();
+    try {
+      LoggedErrorProcessor.getInstance().disableStderrDumping(loggerDisposable);
+      ((Angular2MetadataReference)nodeModule.findMember("Test4")).resolve();
+      fail("Should have thrown assertion error");
+    }
+    catch (AssertionError error) {
+      assertEquals(
+        "Ambiguous resolution for import 'test/Class4' in module 'modules-test'; candidates: /bar/node_modules/test/bar1.metadata.json, /bar/node_modules/test/bar2.metadata.json",
+        error.getMessage());
+    }
+    finally {
+      Disposer.dispose(loggerDisposable);
+    }
   }
 }
