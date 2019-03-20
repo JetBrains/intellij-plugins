@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.types.*;
-import com.intellij.lang.typescript.resolve.TypeScriptGenericTypesEvaluator;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
@@ -33,6 +32,7 @@ import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
+import org.angular2.lang.expr.psi.types.Angular2LazyExpressionType;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
@@ -327,12 +327,9 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
         directive.getInputs().forEach(property -> {
           JSExpression inputExpression = inputsMap.get(property.getName());
           if (inputExpression != null && property.getType() != null) {
-            JSType expressionType = TypeScriptGenericTypesEvaluator.getParameterExpressionType(
-              Angular2ContextualTypeEvaluator.getContextualType(inputExpression));
-            if (expressionType != null) {
-              JSGenericTypesEvaluatorBase.matchGenericTypes(genericArguments, processingContext,
-                                                            expressionType, property.getType());
-            }
+            JSGenericTypesEvaluatorBase.matchGenericTypes(
+              genericArguments, processingContext,
+              new Angular2LazyExpressionType(inputExpression, true), property.getType());
           }
         });
       });

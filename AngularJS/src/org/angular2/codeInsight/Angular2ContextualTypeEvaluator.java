@@ -14,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * This type evaluator is based on {@link com.intellij.lang.javascript.ecmascript6.TypeScriptContextualTypeEvaluator} and
- * it's main purpose is to provide type of expression without literal types widening.
+ * Copy of {@link com.intellij.lang.javascript.ecmascript6.TypeScriptContextualTypeEvaluator} based on Angular2TypeEvaluator.
  */
 public class Angular2ContextualTypeEvaluator extends Angular2TypeEvaluator {
 
