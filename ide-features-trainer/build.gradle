@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.intellij' version '0.4.3'
+    id 'org.jetbrains.intellij' version '0.4.5'
     id 'org.jetbrains.kotlin.jvm' version '1.2.61'
     id 'de.undercouch.download' version '3.4.3'
 }
@@ -21,13 +21,12 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 intellij {
-    version 'IU-183.5153.4'
-    //to check compatibility for Python and Go
-//    version 'LATEST-TRUNK-SNAPSHOT'
+    type 'IU'
+
     plugins = [
-            'Pythonid:2018.3.183.5153.8',
-            'org.jetbrains.plugins.go:183.4886.37.1581',
-            'org.jetbrains.plugins.ruby:2018.3.20181220',
+            'Pythonid:2019.1.191.6183.20',
+            'org.jetbrains.plugins.go:191.6183.20.133',
+            'org.jetbrains.plugins.ruby:2019.1.20190314',
             'com.intellij.testGuiFramework:0.9.37@nightly'
     ]
     if (System.getProperty("idea.gui.test.alternativeIdePath") != null) {
