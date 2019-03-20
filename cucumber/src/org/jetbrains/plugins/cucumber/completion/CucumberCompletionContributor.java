@@ -215,11 +215,11 @@ public class CucumberCompletionContributor extends CompletionContributor {
   private static void addStepDefinitions(@NotNull CompletionResultSet result, @NotNull PsiFile file) {
     final List<AbstractStepDefinition> definitions = CucumberStepsIndex.getInstance(file.getProject()).getAllStepDefinitions(file);
     for (AbstractStepDefinition definition : definitions) {
-      String definitionText = definition.getStepDefinitionText();
-      if (definitionText == null) {
+      String expression = definition.getExpression();
+      if (expression == null) {
         continue;
       }
-      for (String stepCompletion : parseVariationsIntoBrackets(definitionText)) {
+      for (String stepCompletion : parseVariationsIntoBrackets(expression)) {
         // trim regexp line start/end markers
         stepCompletion = StringUtil.trimStart(stepCompletion, "^");
         stepCompletion = StringUtil.trimEnd(stepCompletion, "$");

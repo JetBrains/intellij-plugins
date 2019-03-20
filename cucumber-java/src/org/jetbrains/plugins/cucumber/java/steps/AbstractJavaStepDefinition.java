@@ -26,9 +26,13 @@ public abstract class AbstractJavaStepDefinition extends AbstractStepDefinition 
 
   @Nullable
   @Override
-  protected String getCucumberRegexFromElement(PsiElement element) {
-    String definitionText = getStepDefinitionText();
+  public String getCucumberRegex() {
+    String definitionText = getExpression();
     if (definitionText == null) {
+      return null;
+    }
+    PsiElement element = getElement();
+    if (element == null) {
       return null;
     }
     final Module module = ModuleUtilCore.findModuleForPsiElement(element);
