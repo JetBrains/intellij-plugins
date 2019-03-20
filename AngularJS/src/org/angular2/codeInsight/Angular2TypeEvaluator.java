@@ -38,6 +38,7 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -198,6 +199,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
   private static class BindingsTypeResolver {
 
+    @NonNls private static final String NG_MODEL_CHANGE = "ngModelChange";
+
     @NotNull private final PsiElement myElement;
     @NotNull private final List<Angular2Directive> myMatched;
     @NotNull private final Angular2DeclarationsScope myScope;
@@ -264,7 +267,18 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
         if (myScope.contains(directive)
             && (property = find(directive.getOutputs(), output -> output.getName().equals(name))) != null) {
           JSType type = property.getType();
-          types.add(getEventVariableType(type));
+          type = getEventVariableType(type);
+          if (type != null
+              // Workaround issue with ngModelChange field.
+              // The workaround won't execute once Angular source is corrected.
+              && name.equals(NG_MODEL_CHANGE)
+              && type instanceof JSRecordType
+              && !((JSRecordType)type).hasProperties()) {
+            types.add(JSAnyType.get(type.getSource()));
+          }
+          else {
+            types.add(type);
+          }
         }
       }
       return processAndMerge(types);
