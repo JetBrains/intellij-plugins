@@ -226,4 +226,10 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
                  "}",
                  AngularTestUtil.resolveReference("item.some<caret>Name", myFixture).getParent().getText());
   }
+
+  public void testUnionsWithoutTypeGuardSupport() {
+    myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
+    myFixture.configureByFiles("unions.ts", "ng_for_of.ts", "iterable_differs.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
 }
