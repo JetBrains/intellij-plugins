@@ -21,6 +21,7 @@ public abstract class Angular2MetadataElement<Stub extends Angular2MetadataEleme
     super(element);
   }
 
+  @Nullable
   public Angular2MetadataNodeModule getNodeModule() {
     StubElement stub = getStub();
     while (stub != null && !(stub instanceof Angular2MetadataNodeModuleStub)) {
