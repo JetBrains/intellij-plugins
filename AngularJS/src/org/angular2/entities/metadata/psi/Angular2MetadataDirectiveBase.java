@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import org.angular2.codeInsight.Angular2LibrariesHacks;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector;
@@ -100,6 +101,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
       classes.push(current);
       current = current.getExtendedClass();
     }
+    Angular2LibrariesHacks.hackIonicComponentOutputs(this, outputs);
     while (!classes.isEmpty()) {
       current = classes.pop();
       inputs.putAll(current.getStub().getInputMappings());
