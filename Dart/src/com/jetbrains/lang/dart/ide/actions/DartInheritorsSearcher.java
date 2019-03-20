@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.actions;
 
 import com.google.common.collect.Sets;
@@ -22,8 +10,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.DefinitionsScopedSearch;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.Processor;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -38,12 +24,31 @@ import org.dartlang.analysis.server.protocol.Element;
 import org.dartlang.analysis.server.protocol.Location;
 import org.dartlang.analysis.server.protocol.TypeHierarchyItem;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, DefinitionsScopedSearch.SearchParameters> {
+  private static class HierarchyInfo {
+    @NotNull final String filePath;
+    final int offset;
+    final long modCount;
+    @NotNull final List<TypeHierarchyItem> hierarchyItems;
+
+    private HierarchyInfo(@NotNull String filePath, int offset, long modCount, @NotNull List<TypeHierarchyItem> hierarchyItems) {
+      this.filePath = filePath;
+      this.offset = offset;
+      this.modCount = modCount;
+      this.hierarchyItems = hierarchyItems;
+    }
+  }
+
+  // This short-living cache helps not to call Analysis Server twice for the same info on a single 'Go To Implementations' action.
+  @Nullable private WeakReference<HierarchyInfo> myLastResult;
+
   @Override
   public void processQuery(@NotNull final DefinitionsScopedSearch.SearchParameters parameters,
                            @NotNull final Processor<? super PsiElement> consumer) {
@@ -56,19 +61,34 @@ public class DartInheritorsSearcher extends QueryExecutorBase<PsiElement, Defini
     if (fileRef.isNull() || offsetRef.isNull() || componentTypeRef.isNull()) return;
 
     ApplicationManager.getApplication().runReadAction(() -> {
-      final List<TypeHierarchyItem> hierarchyItems = CachedValuesManager.getCachedValue(parameters.getElement(), () -> {
-        final DartAnalysisServerService das = DartAnalysisServerService.getInstance(parameters.getElement().getProject());
-        final List<TypeHierarchyItem> items = das.search_getTypeHierarchy(fileRef.get(), offsetRef.get(), false);
-        return new CachedValueProvider.Result<>(items, PsiModificationTracker.MODIFICATION_COUNT);
-      });
-
+      List<TypeHierarchyItem> hierarchyItems = getHierarchyItems(parameters.getElement().getProject(), fileRef.get(), offsetRef.get());
       final Set<DartComponent> components = componentTypeRef.get() == DartComponentType.CLASS
                                             ? getSubClasses(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems)
                                             : getSubMembers(parameters.getElement().getProject(), parameters.getScope(), hierarchyItems);
       for (DartComponent component : components) {
-        consumer.process(component);
+        if (!consumer.process(component)) {
+          return;
+        }
       }
     });
+  }
+
+  @NotNull
+  private List<TypeHierarchyItem> getHierarchyItems(Project project, VirtualFile file, int offset) {
+    long modCount = PsiModificationTracker.SERVICE.getInstance(project).getModificationCount();
+    if (myLastResult != null) {
+      HierarchyInfo info = myLastResult.get();
+      if (info != null) {
+        if (info.filePath.equals(file.getPath()) && info.offset == offset && modCount == info.modCount) {
+          return info.hierarchyItems;
+        }
+      }
+    }
+
+    DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+    List<TypeHierarchyItem> items = das.search_getTypeHierarchy(file, offset, false);
+    myLastResult = new WeakReference<>(new HierarchyInfo(file.getPath(), offset, modCount, items));
+    return items;
   }
 
   private static void prepare(@NotNull final DefinitionsScopedSearch.SearchParameters parameters,
