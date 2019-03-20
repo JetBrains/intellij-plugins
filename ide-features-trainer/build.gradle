@@ -21,11 +21,10 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 intellij {
-    type 'IU'
+    version 'IU-191-SNAPSHOT'
 
     plugins = [
             'Pythonid:2019.1.191.6183.20',
-            'org.jetbrains.plugins.go:191.6183.20.133',
             'org.jetbrains.plugins.ruby:2019.1.20190314',
             'com.intellij.testGuiFramework:0.9.37@nightly'
     ]
