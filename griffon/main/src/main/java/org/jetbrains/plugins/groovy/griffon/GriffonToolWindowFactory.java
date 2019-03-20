@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.groovy.griffon;
 
 import com.intellij.icons.AllIcons;
@@ -123,12 +123,12 @@ public class GriffonToolWindowFactory extends MvcToolWindowDescriptor {
   private static final Map<String, GriffonDirectoryMetadata> DIRECTORY_METADATA = new LinkedHashMap<>();
 
   static {
-    DIRECTORY_METADATA.put("models", new GriffonDirectoryMetadata("Models", JetgroovyIcons.Mvc.ModelsNode, 20));
+    DIRECTORY_METADATA.put("models", new GriffonDirectoryMetadata("Models", AllIcons.Nodes.Models, 20));
     DIRECTORY_METADATA.put("views", new GriffonDirectoryMetadata("Views", JetgroovyIcons.Groovy.Groovy_16x16, 30));
     DIRECTORY_METADATA.put("controllers", new GriffonDirectoryMetadata("Controllers", AllIcons.Nodes.KeymapTools, 40));
-    DIRECTORY_METADATA.put("services", new GriffonDirectoryMetadata("Services", JetgroovyIcons.Mvc.Service, 50));
+    DIRECTORY_METADATA.put("services", new GriffonDirectoryMetadata("Services", AllIcons.FileTypes.Config, 50));
     DIRECTORY_METADATA.put("lifecycle", new GriffonDirectoryMetadata("Lifecycle", JetgroovyIcons.Groovy.Groovy_16x16, 60));
-    DIRECTORY_METADATA.put("conf", new GriffonDirectoryMetadata("Configuration", JetgroovyIcons.Mvc.Config_folder_closed, 65));
+    DIRECTORY_METADATA.put("conf", new GriffonDirectoryMetadata("Configuration", AllIcons.Nodes.ConfigFolder, 65));
   }
 
   private static class GriffonDirectoryMetadata {
