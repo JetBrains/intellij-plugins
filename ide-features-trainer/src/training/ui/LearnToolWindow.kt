@@ -20,7 +20,6 @@ class LearnToolWindow : SimpleToolWindowPanel, DataProvider, Disposable {
   val myContentPanel: JPanel = JPanel()
   //TODO: remove public modificator set ScrollPane before release
   var scrollPane: JBScrollPane? = null
-    set
   private var myLearnPanel: LearnPanel? = null
   private var modulesPanel: ModulesPanel? = null
   private var myProject: Project? = null
@@ -34,13 +33,13 @@ class LearnToolWindow : SimpleToolWindowPanel, DataProvider, Disposable {
 
     myProject = project
     reinitViewsInternal()
-    if (LangManager.getInstance().isLangUndefined()) {
+    scrollPane = if (LangManager.getInstance().isLangUndefined()) {
       val myLanguageChoosePanel = LanguageChoosePanel()
-      scrollPane = JBScrollPane(myLanguageChoosePanel)
+      JBScrollPane(myLanguageChoosePanel)
     } else {
-      scrollPane = JBScrollPane(modulesPanel)
+      JBScrollPane(modulesPanel)
     }
-    setContent(scrollPane)
+    setContent(scrollPane!!)
   }
 
   private fun reinitViewsInternal() {
