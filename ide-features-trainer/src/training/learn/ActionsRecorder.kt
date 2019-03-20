@@ -50,7 +50,7 @@ class ActionsRecorder(private val project: Project,
         }
       }
 
-      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent?) {
+      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
         if (actionId == getActionId(action)) {
           ApplicationManager.getApplication().invokeLater {
             if (check.check()) {
@@ -172,7 +172,7 @@ class ActionsRecorder(private val project: Project,
         projectAvailable = event.project != null
       }
 
-      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent?) {
+      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
         processAction(getActionId(action), project)
       }
 
