@@ -45,6 +45,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
     <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierConfiguration$ProjectConfigurator"/>
+    <javascript.json.schema.provider implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaInJsProvider"/>
   </extensions>
   <actions>
     <action id="ReformatWithPrettierAction"
@@ -64,6 +65,9 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
   </actions>
   <extensions defaultExtensionNs="JavaScript.JsonSchema">
     <ProviderFactory implementation="com.intellij.prettierjs.config.PrettierConfigJsonSchemaProviderFactory"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij.json">
+    <jsonSchemaEnabler implementation="com.intellij.prettierjs.config.PrettierJsonSchemaInJsEnabler"/>
   </extensions>
 
 </idea-plugin>

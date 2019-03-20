@@ -24,6 +24,7 @@ import com.intellij.util.LineSeparator;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
@@ -79,6 +80,17 @@ public class PrettierUtil {
     return virtualFile != null && (PackageJsonUtil.FILE_NAME.equals(virtualFile.getName()) || isConfigFile(virtualFile));
   }
 
+  @Contract("null -> false")
+  public static boolean isJSConfigFile(@Nullable VirtualFile virtualFile) {
+    return virtualFile != null && "js".equals(virtualFile.getExtension()) && isConfigFile(virtualFile);
+  }
+
+  @Contract("null -> false")
+  public static boolean isNonJSConfigFile(@Nullable VirtualFile virtualFile) {
+    return virtualFile != null && !"js".equals(virtualFile.getExtension()) && isConfigFile(virtualFile);
+  }
+
+  @Contract("null -> false")
   public static boolean isConfigFile(@Nullable VirtualFile virtualFile) {
     if (virtualFile == null) {
       return false;

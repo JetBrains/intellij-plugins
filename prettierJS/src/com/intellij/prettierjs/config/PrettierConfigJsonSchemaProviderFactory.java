@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class PrettierConfigJsonSchemaProviderFactory implements JsonSchemaProviderFactory {
-  private static final String SCHEMA_FILE_NAME = "prettierrc-schema.json";
+  static final String SCHEMA_FILE_NAME = "prettierrc-schema.json";
 
   @NotNull
   @Override
@@ -22,7 +22,7 @@ public final class PrettierConfigJsonSchemaProviderFactory implements JsonSchema
                                                                                  PrettierConfigJsonSchemaProviderFactory.class, "/") {
       @Override
       public boolean isAvailable(@NotNull VirtualFile file) {
-        return PrettierUtil.isConfigFile(file);
+        return PrettierUtil.isNonJSConfigFile(file);
       }
     };
     return Collections.singletonList(provider);
