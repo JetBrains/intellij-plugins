@@ -1,5 +1,8 @@
 package training.statistic
 
+import com.intellij.internal.statistic.eventLog.FeatureUsageData
+import com.intellij.internal.statistic.eventLog.FeatureUsageGroup
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
@@ -19,7 +22,11 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
   var persistedLessonId2State: LinkedHashMap<String, StatisticData> = LinkedHashMap()
   //non persisted history of lessons states
   @Transient
-  val sessionLessonId2State: ArrayList<Pair<String, StatisticData>> = ArrayList()
+  val sessionLessonId2State: MutableList<Pair<String, StatisticData>> = ArrayList()
+
+  init {
+    FUCounterUsageLogger.getInstance().register(FeatureUsageGroup(GROUP_ID, VERSION))
+  }
 
   companion object {
     private var cachedService: StatisticBase? = null
@@ -43,6 +50,7 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
     val statisticData = StatisticData(StatisticState.STARTED, System.currentTimeMillis())
     persistedLessonId2State[lesson.id] = statisticData
     sessionLessonId2State.add(Pair(lesson.id, statisticData))
+    logEvent("start", FeatureUsageData().addData("id", lesson.id.sanitizeId()))
   }
 
   fun onPassLesson(lesson: Lesson) {
@@ -55,6 +63,26 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
       val statisticData = StatisticData(StatisticState.PASSED, delta)
       persistedLessonId2State[lesson.id] = statisticData
       sessionLessonId2State.add(Pair(lesson.id, statisticData))
+      logEvent("passed", FeatureUsageData().addData("duration", delta).addData("id", lesson.id.sanitizeId()))
     }
   }
 }
+
+private fun logEvent(event: String, featureUsageData: FeatureUsageData? = null) {
+  if (featureUsageData != null)
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, event, featureUsageData)
+  else
+    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, event)
+}
+
+private const val GROUP_ID = "ideFeaturesTrainer"
+private const val VERSION = 1
+
+private fun String.sanitizeId(): String {
+  return this.toLowerCase()
+      .replace(" ", "")
+      .replace("_", "")
+      .replace("/", "")
+      .replace("-", "")
+}
+
