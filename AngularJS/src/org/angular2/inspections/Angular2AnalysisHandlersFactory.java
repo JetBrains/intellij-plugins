@@ -90,16 +90,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
                                              @NotNull JSReferenceExpression referenceExpression,
                                              boolean staticContext,
                                              @NotNull JSClass targetClass) {
-              if (DialectDetector.isTypeScript(targetClass)) {
-                if (TypeScriptCodeStyleSettings.getTypeScriptSettings(targetClass).USE_PUBLIC_MODIFIER) {
-                  //noinspection HardCodedStringLiteral
-                  template.addTextSegment("public ");
-                }
-                if (staticContext) {
-                  //noinspection HardCodedStringLiteral
-                  template.addTextSegment("static ");
-                }
-              }
+              addClassMemberModifiers(template, staticContext, targetClass);
             }
           });
         }
@@ -147,7 +138,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
             @Override
             protected JSReferenceExpression beforeStartTemplateAction(JSReferenceExpression referenceExpression,
                                                                       Editor editor,
-                                                                      PsiElement anchor,
+                                                                      @NotNull PsiElement anchor,
                                                                       boolean isStaticContext) {
               return referenceExpression;
             }
@@ -163,6 +154,7 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
                                              @NotNull JSReferenceExpression referenceExpression,
                                              boolean staticContext,
                                              @NotNull JSClass targetClass) {
+              addClassMemberModifiers(template, staticContext, targetClass);
             }
           });
         }
@@ -170,6 +162,19 @@ public class Angular2AnalysisHandlersFactory extends TypeScriptAnalysisHandlersF
         return inTypeContext;
       }
     };
+  }
+
+  private static void addClassMemberModifiers(Template template, boolean staticContext, @NotNull JSClass targetClass) {
+    if (DialectDetector.isTypeScript(targetClass)) {
+      if (TypeScriptCodeStyleSettings.getTypeScriptSettings(targetClass).USE_PUBLIC_MODIFIER) {
+        //noinspection HardCodedStringLiteral
+        template.addTextSegment("public ");
+      }
+      if (staticContext) {
+        //noinspection HardCodedStringLiteral
+        template.addTextSegment("static ");
+      }
+    }
   }
 
   @NotNull

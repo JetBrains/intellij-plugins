@@ -2,12 +2,14 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptFieldImpl;
 import com.intellij.lang.javascript.psi.ecma6.impl.TypeScriptParameterImpl;
+import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
@@ -178,6 +180,16 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.getAllQuickFixes("createFunctionDoubleClass.html", "createFunctionDoubleClass.ts", "package.json");
     myFixture.launchAction(myFixture.findSingleIntention("Create Method 'fetchFromApi'"));
     myFixture.checkResultByFile("createFunctionDoubleClass.ts", "createFunctionDoubleClass.fixed.ts", true);
+  }
+
+  public void testCreateFieldWithExplicitPublicModifier() {
+    JSTestUtils.testWithTempCodeStyleSettings(getProject(), settings -> {
+      settings.getCustomSettings(TypeScriptCodeStyleSettings.class).USE_PUBLIC_MODIFIER = true;
+      myFixture.enableInspections(TypeScriptUnresolvedVariableInspection.class);
+      myFixture.configureByFiles("createFieldWithExplicitPublic.html", "createFieldWithExplicitPublic.ts", "package.json");
+      myFixture.launchAction(myFixture.findSingleIntention("Create Field 'unresolved'"));
+      myFixture.checkResultByFile("createFieldWithExplicitPublic.ts", "createFieldWithExplicitPublic.fixed.ts", true);  
+    });
   }
 
   public void testFixSignatureMismatchFromUsageInTemplate() {
