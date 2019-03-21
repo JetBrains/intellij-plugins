@@ -56,7 +56,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
   public Angular2TypeEvaluator(@NotNull JSEvaluateContext context,
                                @NotNull JSTypeProcessor processor) {
-    super(context, processor, Angular2TypeEvaluationSupport.INSTANCE);
+    super(context, processor, Angular2TypeEvaluationHelper.INSTANCE);
   }
 
   @Nullable
