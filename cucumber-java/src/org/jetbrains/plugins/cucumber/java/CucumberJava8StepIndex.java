@@ -8,9 +8,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.source.JavaFileElementType;
 import com.intellij.psi.impl.source.JavaLightTreeUtil;
 import com.intellij.psi.impl.source.tree.RecursiveLighterASTNodeWalkingVisitor;
-import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.indexing.*;
-import com.intellij.util.io.*;
+import com.intellij.util.io.BooleanDataDescriptor;
+import com.intellij.util.io.DataExternalizer;
+import com.intellij.util.io.KeyDescriptor;
 import com.intellij.util.text.StringSearcher;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,9 +26,6 @@ import static com.intellij.psi.impl.source.tree.JavaElementType.*;
 public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, List<Integer>> implements PsiDependentIndex {
   public static final ID<Boolean, List<Integer>> INDEX_ID = ID.create("java.cucumber.java8.step");
   private static final String JAVA_8_PACKAGE = "cucumber.api.java8.";
-
-  private static final TokenSet STEP_DEFINITION_IMPLEMENTATION_ELEMENTS =
-    TokenSet.create(METHOD_REF_EXPRESSION, LOCAL_VARIABLE, LAMBDA_EXPRESSION);
 
   private static final List<String> STEP_KEYWORDS = Arrays.asList("Әмма", "Нәтиҗәдә", "Вә", "Әйтик", "Һәм", "Ләкин", "Әгәр",  "Und",
                                                                   "Angenommen", "Gegeben seien",  "Dann", "Aber", "Wenn", "Gegeben sei",
@@ -174,7 +173,8 @@ public class CucumberJava8StepIndex extends FileBasedIndexExtension<Boolean, Lis
                   if (isNumber(stepDefImplementationArgument, text)) {
                     stepDefImplementationArgument = expressionListChildren.get(2);
                   }
-                  if (STEP_DEFINITION_IMPLEMENTATION_ELEMENTS.contains(stepDefImplementationArgument.getTokenType())) {
+                  IElementType type = stepDefImplementationArgument.getTokenType();
+                  if (type == METHOD_REF_EXPRESSION || type == LOCAL_VARIABLE || type == LAMBDA_EXPRESSION) {
                     result.add(expressionParameter.getStartOffset());
                   }
                 }
