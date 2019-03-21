@@ -1,5 +1,6 @@
 package training.learn.lesson.ruby
 
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.testGuiFramework.framework.GuiTestUtil.shortcut
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
@@ -62,8 +63,19 @@ end
       }
       Thread.sleep(500)
       prepareSample(sample2)
-      actionTask("CodeCompletion") {
-        "To activate Basic Completion, press ${action(it)} and you will see lookup menu again"
+      task("CodeCompletion") {
+        text("To activate Basic Completion, press ${action(it)} and you will see lookup menu again. " +
+            "Then choose item <code>meow</code>.")
+        trigger(it)
+        System.err.println("Done first")
+        trigger("EditorChooseLookupItem") { textBeforeCaret(editor, "meow") }
+        test {
+          actions(it)
+          ideFrame {
+            jList("meow")
+            shortcut(Key.ENTER)
+          }
+        }
       }
     }
 
@@ -76,6 +88,16 @@ end
 
     return catSymbol is ClassModuleSymbol &&
       catSymbol.getSuperClassSymbol(null)?.name == "Animal"
+  }
+
+  private fun textBeforeCaret(editor: Editor, text: String) : Boolean {
+    val offset = editor.caretModel.offset
+    if (offset < text.length) {
+      return false
+    }
+    val subSequence = editor.document.charsSequence.subSequence(offset - text.length, offset)
+    System.err.println(subSequence)
+    return subSequence.toString() == text
   }
 
   override val existedFile: String
