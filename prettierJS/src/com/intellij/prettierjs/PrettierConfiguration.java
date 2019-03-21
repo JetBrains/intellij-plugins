@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent;
 import com.intellij.platform.DirectoryProjectConfigurator;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.Producer;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Supplier;
 
 public class PrettierConfiguration {
   @NotNull
@@ -89,7 +89,7 @@ public class PrettierConfiguration {
     detectPackage(() -> localPackageIfInDependencies());
   }
 
-  private void detectPackage(@NotNull Producer<NodePackage> packageProducer) {
+  private void detectPackage(@NotNull Supplier<NodePackage> packageProducer) {
     if (myProject.isDisposed() || myProject.isDefault()) {
       return;
     }
@@ -98,7 +98,7 @@ public class PrettierConfiguration {
       return;
     }
 
-    NodePackage detected = packageProducer.produce();
+    NodePackage detected = packageProducer.get();
     if (detected != null) {
       myPropertiesComponent.setValue(PACKAGE_PROPERTY, detected.getSystemDependentPath());
     }
