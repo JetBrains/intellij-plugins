@@ -37,7 +37,7 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
 
   @NotNull
   @Override
-  public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor) {
+  public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
     return new Angular2TypeEvaluator(context, processor);
   }
 
@@ -51,5 +51,10 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
   @Override
   public JSDialectSpecificReadWriteAccessDetector getReadWriteAccessDetector() {
     return Angular2ReadWriteAccessDetector.INSTANCE;
+  }
+
+  @Override
+  public JSTypeEvaluationSupport getTypeEvaluationSupport() {
+    return Angular2TypeEvaluationSupport.INSTANCE;
   }
 }

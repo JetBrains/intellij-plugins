@@ -42,8 +42,8 @@ public class Angular2ContextualTypeEvaluator extends Angular2TypeEvaluator {
       .getParameterizedCachedValue(element, CONTEXTUAL_KEY, CONTEXTUAL_PROVIDER, false, element);
   }
 
-  public Angular2ContextualTypeEvaluator(JSEvaluateContext context,
-                                         JSTypeProcessor processor) {
+  private Angular2ContextualTypeEvaluator(@NotNull JSEvaluateContext context,
+                                          @NotNull JSTypeProcessor processor) {
     super(context, processor);
   }
 
