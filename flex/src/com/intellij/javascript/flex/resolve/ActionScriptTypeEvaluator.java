@@ -35,7 +35,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   private static final String REPEATER_CLASS_FQN = "mx.core.Repeater";
 
   public ActionScriptTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor) {
-    super(context, processor);
+    super(context, processor, JSTypeEvaluationHelper.DEFAULT);
   }
 
   @Override
