@@ -120,7 +120,7 @@ public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureT
   public static class AutopopupTest extends CompletionAutoPopupTestCase {
 
     @Override
-    protected void setUp() {
+    protected void setUp() throws Exception {
       super.setUp();
       assert JavascriptLanguage.INSTANCE != null;
       // Because injector handles the code in the fence and gets parser definition for that lang
