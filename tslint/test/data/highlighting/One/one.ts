@@ -6,6 +6,6 @@ class Greeter {
         return "<h1>" + this.greeting + "</h1>";
     }
 }<error descr="TSLint: Unnecessary semicolon (semicolon)">;</error>
-var greeter = new Greeter(<error descr="TSLint: ' should be \" (quotemark)">'Hello, world!'</error>);
+var greeter = new Greeter(<error descr="TSLint: ' should be &quot; (quotemark)">'Hello, world!'</error>);
 var str = greeter.greet();
 document.body.innerHTML = str<error descr="TSLint: file should end with a newline (eofline)">;</error>
