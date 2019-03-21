@@ -54,7 +54,7 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
   }
 
   @Override
-  public JSTypeEvaluationSupport getTypeEvaluationSupport() {
-    return Angular2TypeEvaluationSupport.INSTANCE;
+  public JSTypeEvaluationHelper getTypeEvaluationHelper() {
+    return Angular2TypeEvaluationHelper.INSTANCE;
   }
 }
