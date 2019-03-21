@@ -54,9 +54,9 @@ import static org.angular2.lang.html.psi.PropertyBindingType.PROPERTY;
 
 public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
-  public Angular2TypeEvaluator(JSEvaluateContext context,
-                               JSTypeProcessor processor) {
-    super(context, processor);
+  public Angular2TypeEvaluator(@NotNull JSEvaluateContext context,
+                               @NotNull JSTypeProcessor processor) {
+    super(context, processor, Angular2TypeEvaluationSupport.INSTANCE);
   }
 
   @Nullable

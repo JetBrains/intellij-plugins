@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandlersFactory {
   @NotNull
   @Override
-  public JSTypeEvaluator newTypeEvaluator(JSEvaluateContext context, JSTypeProcessor processor) {
+  public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
     return new ActionScriptTypeEvaluator(context, processor);
   }
 
