@@ -30,10 +30,9 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
     return new ActionScriptTypeEvaluator(context, processor);
   }
 
-  @NotNull
   @Override
-  public JSGenericTypesEvaluator getGenericTypeEvaluator() {
-    return JSGenericTypesEvaluator.NO_OP;
+  public JSTypeEvaluationHelper getTypeEvaluationHelper() {
+    return ActionScriptTypeEvaluationHelper.INSTANCE;
   }
 
   @NotNull
