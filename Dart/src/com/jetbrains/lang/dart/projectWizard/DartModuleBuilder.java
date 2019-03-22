@@ -10,10 +10,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.WebModuleBuilder;
-import com.intellij.openapi.module.WebModuleType;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
@@ -65,7 +62,7 @@ public class DartModuleBuilder extends ModuleBuilder {
 
   @Override
   public ModuleType getModuleType() {
-    return WebModuleType.getInstance();
+    return WebModuleTypeBase.getInstance();
   }
 
   @Override
