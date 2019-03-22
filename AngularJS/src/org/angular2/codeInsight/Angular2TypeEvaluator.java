@@ -33,7 +33,6 @@ import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.psi.Angular2Binding;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
-import org.angular2.lang.expr.psi.types.Angular2LazyExpressionType;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.PropertyBindingInfo;
@@ -330,7 +329,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
           if (inputExpression != null && property.getType() != null) {
             JSGenericTypesEvaluatorBase.matchGenericTypes(
               new JSGenericMappings(genericArguments), processingContext,
-                                    new Angular2LazyExpressionType(inputExpression, true), property.getType());
+                                    new JSLazyExpressionType(inputExpression, true), property.getType());
             JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(property.getType()), null, null);
           }
         });
