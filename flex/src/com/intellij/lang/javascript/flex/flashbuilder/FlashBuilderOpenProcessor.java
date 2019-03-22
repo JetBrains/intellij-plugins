@@ -7,6 +7,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.projectImport.ProjectOpenProcessorBase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,10 +16,11 @@ import javax.swing.*;
 import java.io.File;
 import java.util.Collections;
 
-public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBuilderImporter> {
-
-  public FlashBuilderOpenProcessor(@NotNull final FlashBuilderImporter builder) {
-    super(builder);
+public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBuilderImporter> {
+  @NotNull
+  @Override
+  protected FlashBuilderImporter doGetBuilder() {
+    return ProjectImportBuilder.EXTENSIONS_POINT_NAME.findExtensionOrFail(FlashBuilderImporter.class);
   }
 
   @Override
@@ -39,7 +41,7 @@ public class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<FlashBui
 
   @Override
   public boolean canOpenProject(@NotNull final VirtualFile file) {
-    // do not look inside archives here - it may be too expensive, fail later if not a suitable archieve
+    // do not look inside archives here - it may be too expensive, fail later if not a suitable archive
     return file.isDirectory()
            ? FlashBuilderProjectFinder.isFlashBuilderProject(file.findChild(FlashBuilderImporter.DOT_PROJECT))
            : FlashBuilderProjectFinder.isFlashBuilderProject(file) || FlashBuilderProjectFinder.hasArchiveExtension(file.getPath());

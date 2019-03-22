@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
@@ -75,7 +76,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   private final FlexCssValueValidator FLEX_CSS_VALUE_VALIDATOR = new FlexCssValueValidator(this);
   private final Map<String, CssFunctionDescriptor> myFunctionDescriptors = ContainerUtil.newHashMap();
 
-  public FlexCssElementDescriptorProvider(@NotNull CssElementDescriptorFactory2 descriptorFactory) {
+  public FlexCssElementDescriptorProvider() {
+    CssElementDescriptorFactory2 descriptorFactory = CssElementDescriptorFactory2.getInstance();
     CssStringValue singleStringValue = descriptorFactory.createStringValueDescriptor(null, 1, 1, null);
 
     CssGroupValue embedFunctionValue = descriptorFactory.createGroupValue(CssGroupValue.Type.OR, 1, 1, null, null);

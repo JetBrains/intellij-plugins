@@ -1,19 +1,20 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.projectImport.ProjectImportProvider;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
-public class FlashBuilderImportProvider extends ProjectImportProvider {
+final class FlashBuilderImportProvider extends ProjectImportProvider {
+  private final FlashBuilderOpenProcessor myProcessor = new FlashBuilderOpenProcessor();
 
-  private final FlashBuilderOpenProcessor myProcessor;
-
-  public FlashBuilderImportProvider(final FlashBuilderImporter builder) {
-    super(builder);
-    myProcessor = new FlashBuilderOpenProcessor(builder);
+  @Override
+  protected ProjectImportBuilder doGetBuilder() {
+    return ProjectImportBuilder.EXTENSIONS_POINT_NAME.findExtensionOrFail(FlashBuilderImporter.class);
   }
 
   @Override
@@ -31,7 +32,7 @@ public class FlashBuilderImportProvider extends ProjectImportProvider {
     return file.getPath();
   }
 
-  @Nullable
+  @NotNull
   @Override
   public String getFileSample() {
     return "<b>Flash Builder</b> project file (" + StringUtil.join(myProcessor.getSupportedExtensions(), ", ") + ")";
