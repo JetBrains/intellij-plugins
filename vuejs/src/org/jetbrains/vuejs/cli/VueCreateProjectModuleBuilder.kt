@@ -103,7 +103,7 @@ class VueCreateProjectModuleBuilder(generator: VueCliProjectGenerator) : WebModu
   }
 
   override fun getModuleType(): ModuleType<*> {
-    return WebModuleType.getInstance()
+    return WebModuleTypeBase.getInstance()
   }
 
   override fun getParentGroup(): String {
