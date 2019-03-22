@@ -400,7 +400,7 @@ public class PsiFileMock implements PsiFile {
     }
 
     @Override
-    public boolean processChildren(PsiElementProcessor<PsiFileSystemItem> processor) {
+    public boolean processChildren(@NotNull PsiElementProcessor<PsiFileSystemItem> processor) {
         return false;
     }
 }
