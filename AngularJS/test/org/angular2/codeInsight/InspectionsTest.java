@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
+import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.lang.javascript.inspections.JSMethodCanBeStaticInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
@@ -70,4 +71,11 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("pipeAndArgResolution.html", "lowercase_pipe.ts", "package.json");
     myFixture.checkHighlighting();
   }
+
+  public void testHtmlTargetWithInterpolation() {
+    myFixture.enableInspections(HtmlUnknownTargetInspection.class);
+    myFixture.configureByFiles("htmlTargetWithInterpolation.html", "package.json");
+    myFixture.checkHighlighting();
+  }
+
 }
