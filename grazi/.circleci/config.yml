@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~
+    steps:
+      - checkout
+      - run: ./gradlew build
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
