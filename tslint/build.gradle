@@ -25,11 +25,6 @@ sourceSets {
       srcDirs 'resources'
     }
   }
-  test {
-    java {
-      srcDirs 'test'
-    }
-  }
 }
 
 apply plugin: "kotlin"
@@ -37,7 +32,7 @@ apply plugin: 'org.jetbrains.intellij'
 
 version="163.7000"
 intellij {
-  version 'IU-LATEST-EAP-SNAPSHOT'
+  version 'IU-191-EAP-SNAPSHOT'
   pluginName 'tslint'
   downloadSources false
   updateSinceUntilBuild false
