@@ -50,7 +50,8 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
     val statisticData = StatisticData(StatisticState.STARTED, System.currentTimeMillis())
     persistedLessonId2State[lesson.id] = statisticData
     sessionLessonId2State.add(Pair(lesson.id, statisticData))
-    logEvent("start", FeatureUsageData().addData("id", lesson.id.sanitizeId()))
+    logEvent("start.${lesson.id.sanitizeId()}",
+        FeatureUsageData().addData("id", lesson.id.sanitizeId()).addData("lang", lesson.lang))
   }
 
   fun onPassLesson(lesson: Lesson) {
@@ -63,7 +64,7 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
       val statisticData = StatisticData(StatisticState.PASSED, delta)
       persistedLessonId2State[lesson.id] = statisticData
       sessionLessonId2State.add(Pair(lesson.id, statisticData))
-      logEvent("passed", FeatureUsageData().addData("duration", delta).addData("id", lesson.id.sanitizeId()))
+      logEvent("passed.${lesson.id.sanitizeId()}", FeatureUsageData().addData("duration", delta).addData("id", lesson.id.sanitizeId()).addData("lang", lesson.lang))
     }
   }
 }
