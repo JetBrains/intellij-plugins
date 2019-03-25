@@ -36,7 +36,7 @@ apply plugin: "kotlin"
 
 version="163.7000"
 intellij {
-  version 'IU-LATEST-TRUNK-SNAPSHOT'
+  version 'IU-LATEST-EAP-SNAPSHOT'
   pluginName 'AngularJS'
   downloadSources false
   updateSinceUntilBuild false
