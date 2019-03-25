@@ -29,7 +29,7 @@ sourceSets {
 }
 
 intellij {
-  version 'IU-LATEST-TRUNK-SNAPSHOT'
+  version 'IU-LATEST-EAP-SNAPSHOT'
   pluginName 'intellij.prettierJS'
   downloadSources false
   updateSinceUntilBuild false

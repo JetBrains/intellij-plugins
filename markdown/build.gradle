@@ -46,7 +46,7 @@ sourceSets {
 }
 
 intellij {
-  version 'IC-LATEST-TRUNK-SNAPSHOT'
+  version 'IC-LATEST-EAP-SNAPSHOT'
   pluginName 'markdown'
   downloadSources false
   updateSinceUntilBuild false
