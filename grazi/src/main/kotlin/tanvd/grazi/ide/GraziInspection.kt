@@ -32,6 +32,7 @@ class GraziInspection : AbstractBaseJavaLocalInspectionTool() {
             fixes.forEach { fix ->
                 val range = TextRange.create(fix.range.start, fix.range.endInclusive)
                 val quickFixes = fix.fix?.map { GraziQuickFix(fix.category.description, ext, block, range, it) }?.toTypedArray() ?: emptyArray()
+                @Suppress("SpreadOperator")
                 val problemDescriptor = manager.createProblemDescriptor(block.element, range,
                         fix.fullDescription, fix.category.highlight, isOnTheFly, *quickFixes)
 
