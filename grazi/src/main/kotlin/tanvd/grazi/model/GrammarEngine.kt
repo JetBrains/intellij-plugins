@@ -8,6 +8,7 @@ import java.util.stream.Collectors
 object GrammarEngine {
     fun getFixes(str: String): List<TextFix> {
 //        val langTool = JLanguageTool(LanguageIdentifier().detectLanguage(str))
+
         val langTool = JLanguageTool(BritishEnglish())
         return langTool.check(str)
                 .stream()

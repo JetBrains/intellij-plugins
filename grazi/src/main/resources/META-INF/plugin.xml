@@ -2,6 +2,8 @@
     <id>tanvd.grazi</id>
     <name>Grazi</name>
 
+    <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
+
     <extensions defaultExtensionNs="com.intellij">
         <localInspection displayName="Mistake in an English text" groupName="English"
                          enabledByDefault="true"
