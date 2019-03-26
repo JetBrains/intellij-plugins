@@ -20,6 +20,8 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(kotlin("reflect"))
     compile("org.languagetool","languagetool-core", "4.4")
+    compile("org.apache.commons", "commons-lang3","3.5")
+
     compile("org.languagetool","language-en", "4.4")
-    compile("org.junit.jupiter","junit-jupiter-api", "5.0.2")
+    testCompile("org.junit.jupiter","junit-jupiter-api", "5.0.2")
 }
