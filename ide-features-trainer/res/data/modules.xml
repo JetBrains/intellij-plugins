@@ -22,8 +22,8 @@
     </language>
     <language lang="ruby">
         <module name="modules/ruby/EditorBasics.xml"/>
-        <module name="modules/ruby/Completions.xml"/>
         <module name="modules/ruby/Navigation.xml"/>
+        <module name="modules/ruby/Completions.xml"/>
     </language>
 </modules>
 
