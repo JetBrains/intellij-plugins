@@ -20,6 +20,6 @@ class GrammarEngineTest {
     @Test
     fun testInCorrectText() {
         val fixes = GrammarEngine.getFixes("A sentence with a error in the Hitchhiker's Guide tot he Galaxy")
-        assertEquals(3, fixes.size)
+        assertEquals(2, fixes.size)
     }
 }
