@@ -23,11 +23,7 @@ object GrammarEngine {
             return emptyList()
         }
 
-        val lang = try {
-            LanguageIdentifier(charsForLangDetection).detectLanguage(str, disabledLangs)?.detectedLanguage ?: americanEnglish
-        } catch (e: ClassNotFoundException) {
-            americanEnglish
-        }
+        val lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str, disabledLangs)?.detectedLanguage ?: americanEnglish
 
         if (lang !in langToolsByLang) {
             langToolsByLang[lang] = JLanguageTool(lang)
