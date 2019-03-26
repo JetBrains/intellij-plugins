@@ -1,8 +1,10 @@
 package tanvd.grazi.model
 
 import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.lang.annotation.ProblemGroup
 
-enum class TyposCategories(val value: String, val description: String = "", val highlight: ProblemHighlightType = ProblemHighlightType.WEAK_WARNING) {
+enum class TyposCategories(val value: String, val description: String = "",
+                           val highlight: ProblemHighlightType = ProblemHighlightType.WEAK_WARNING) : ProblemGroup {
     /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
     CASING("CASING", "Wrong case", ProblemHighlightType.LIKE_UNKNOWN_SYMBOL),
 
@@ -50,6 +52,8 @@ enum class TyposCategories(val value: String, val description: String = "", val 
     MISC("MISC", "Miscellaneous"),
 
     OTHER("OTHER", "Typo");
+
+    override fun getProblemName() = description
 
     companion object {
         operator fun get(value: String): TyposCategories {
