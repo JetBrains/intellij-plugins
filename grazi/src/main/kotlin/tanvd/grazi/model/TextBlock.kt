@@ -1,4 +1,4 @@
-package tanvd.grazi.ide
+package tanvd.grazi.model
 
 import com.intellij.psi.PsiElement
 

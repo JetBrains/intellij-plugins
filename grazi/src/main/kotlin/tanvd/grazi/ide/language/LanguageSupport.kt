@@ -1,9 +1,10 @@
-package tanvd.grazi.ide
+package tanvd.grazi.ide.language
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import tanvd.grazi.model.TextBlock
 
-interface GraziLanguageSupport {
+interface LanguageSupport {
     fun replace(textBlock: TextBlock, range: TextRange, replacement: String)
 
     fun extract(file: PsiFile): List<TextBlock>? = null

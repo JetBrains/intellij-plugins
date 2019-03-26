@@ -1,4 +1,4 @@
-package tanvd.grazi.ide
+package tanvd.grazi.ide.language
 
 
 import com.intellij.openapi.util.TextRange
@@ -8,8 +8,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.markdown.lang.MarkdownFileType
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownParagraphImpl
+import tanvd.grazi.model.TextBlock
 
-class MarkdownSupport : GraziLanguageSupport {
+class MarkdownSupport : LanguageSupport {
     override fun replace(textBlock: TextBlock, range: TextRange, replacement: String) {
         val newText = range.replace(textBlock.element.text, replacement)
         val newFile = PsiFileFactory.getInstance(textBlock.element.project).createFileFromText("a.md", MarkdownFileType.INSTANCE, newText) as MarkdownFile

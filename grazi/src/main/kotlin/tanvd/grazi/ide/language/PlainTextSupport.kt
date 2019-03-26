@@ -1,11 +1,12 @@
-package tanvd.grazi.ide
+package tanvd.grazi.ide.language
 
 
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import tanvd.grazi.model.TextBlock
 
-class GraziPlainTextSupport : GraziLanguageSupport {
+class PlainTextSupport : LanguageSupport {
     override fun extract(file: PsiFile): List<TextBlock>? {
         val plainText = file.children.firstOrNull() as? PsiPlainText ?: return null
         return listOf(TextBlock(plainText, plainText.text))

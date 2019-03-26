@@ -1,4 +1,4 @@
-package tanvd.grazi.ide
+package tanvd.grazi.ide.language
 
 
 import com.intellij.openapi.util.TextRange
@@ -7,8 +7,9 @@ import com.intellij.psi.impl.PsiElementFactoryImpl
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.source.javadoc.PsiDocCommentImpl
 import com.intellij.psi.util.PsiTreeUtil
+import tanvd.grazi.model.TextBlock
 
-class JavaDocSupport : GraziLanguageSupport {
+class JavaDocSupport : LanguageSupport {
     override fun extract(cls: PsiClass): List<TextBlock>? {
         return (PsiTreeUtil.collectElementsOfType(cls, PsiDocCommentImpl::class.java)).map {
             TextBlock(it, it.text)

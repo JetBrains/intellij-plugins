@@ -14,15 +14,15 @@
     </extensions>
 
     <extensionPoints>
-        <extensionPoint qualifiedName="tanvd.grazi.languageSupport" interface="tanvd.grazi.ide.GraziLanguageSupport"/>
+        <extensionPoint qualifiedName="tanvd.grazi.languageSupport" interface="tanvd.grazi.ide.language.LanguageSupport"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport implementation="tanvd.grazi.ide.GraziPlainTextSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.PlainTextSupport"/>
     </extensions>
 
     <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport implementation="tanvd.grazi.ide.JavaDocSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.JavaDocSupport"/>
     </extensions>
 
     <extensions defaultExtensionNs="tanvd.grazi">

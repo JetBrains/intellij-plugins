@@ -14,7 +14,7 @@ object GrammarEngine {
     var charsForLangDetection = 500
     var noopLangs = emptyList<String>()
 
-    fun getFixes(str: String): List<TextFix> {
+    fun getFixes(str: String): List<Typo> {
         if (str.length < 2) {
             return Collections.emptyList()
         }
@@ -33,13 +33,13 @@ object GrammarEngine {
                 .filter { it != null }
                 .filter { !removeUnknownWords || removeUnknownWords && it.type != RuleMatch.Type.UnknownWord }
                 .map {
-                    TextFix(
+                    Typo(
                             IntRange(it.fromPos, it.toPos),
                             it.shortMessage,
-                            TyposCategories[it.rule.category.id.toString()],
+                            Typo.Category[it.rule.category.id.toString()],
                             it.suggestedReplacements
                     )
                 }
-                .collect(Collectors.toList<TextFix>())
+                .collect(Collectors.toList<Typo>())
     }
 }
