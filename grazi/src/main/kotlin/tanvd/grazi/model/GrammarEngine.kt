@@ -1,62 +1,41 @@
 package tanvd.grazi.model
 
-import com.intellij.openapi.components.ApplicationComponent
-import org.jetbrains.annotations.NotNull
 import org.languagetool.JLanguageTool
 import org.languagetool.Language
-import org.languagetool.Languages
 import org.languagetool.language.AmericanEnglish
 import org.languagetool.language.LanguageIdentifier
 import org.languagetool.rules.RuleMatch
 import java.util.*
-import java.util.stream.Collectors
+import kotlin.collections.ArrayList
 
-object GrammarEngine : ApplicationComponent {
-    private var langToolsByLang: MutableMap<Language, JLanguageTool> = HashMap()
-    var removeUnknownWords = true
-    var charsForLangDetection = 500
-    var noopLangs = emptyList<String>()
+object GrammarEngine {
+    private val langToolsByLang: MutableMap<Language, JLanguageTool> = HashMap()
+    private val americanEnglish by lazy { AmericanEnglish() }
+
+    val disabledRules = arrayListOf(RuleMatch.Type.UnknownWord)
+    val disabledCategories = arrayListOf(Typo.Category.TYPOGRAPHY)
+    val disabledLangs = ArrayList<String>()
+
+    private const val charsForLangDetection = 500
 
     fun getFixes(str: String): List<Typo> {
         if (str.length < 2) {
             return emptyList()
         }
-        var lang: Language
-        try {
-            lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str, noopLangs)?.detectedLanguage ?: AmericanEnglish()
+
+        val lang = try {
+            LanguageIdentifier(charsForLangDetection).detectLanguage(str, disabledLangs)?.detectedLanguage ?: americanEnglish
         } catch (e: ClassNotFoundException) {
-            lang = AmericanEnglish()
+            americanEnglish
         }
-        if (!langToolsByLang.containsKey(lang)) {
+
+        if (lang !in langToolsByLang) {
             langToolsByLang[lang] = JLanguageTool(lang)
         }
-        return langToolsByLang[lang]!!
+        return langToolsByLang.getOrPut(lang) { JLanguageTool(lang) }
                 .check(str)
-                .stream()
-                .filter { it != null }
-                .filter { !removeUnknownWords || removeUnknownWords && it.type != RuleMatch.Type.UnknownWord }
-                .map {
-                    Typo(
-                            IntRange(it.fromPos, it.toPos),
-                            it.shortMessage,
-                            Typo.Category[it.rule.category.id.toString()],
-                            it.suggestedReplacements
-                    )
-                }
-                .collect(Collectors.toList<Typo>())
-    }
-
-    override fun initComponent() {
-        for (langName in listOf("English", "Russian")) {
-            val lang = Languages.getLanguageForName(langName)
-            if (lang != null) {
-                langToolsByLang[lang] = JLanguageTool(lang)
-            }
-        }
-    }
-
-    @NotNull
-    override fun getComponentName(): String {
-        return "GrammarEngine"
+                .filterNotNull()
+                .filter { it.type !in disabledRules && it.typoCategory !in disabledCategories }
+                .map { Typo(it.toIntRange(), it.shortMessage, it.typoCategory, it.suggestedReplacements) }
     }
 }

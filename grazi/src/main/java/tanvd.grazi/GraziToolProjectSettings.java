@@ -52,7 +52,7 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
         if (!myState.languages.contains("uk")) {
             list.add("uk");
         }
-        GrammarEngine.INSTANCE.setNoopLangs(list);
+        GrammarEngine.INSTANCE.getDisabledLangs().addAll(list);
     }
 
     public void setGraziHome(String graziHome) {
