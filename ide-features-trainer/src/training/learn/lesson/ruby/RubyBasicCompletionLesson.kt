@@ -64,10 +64,9 @@ end
       Thread.sleep(500)
       prepareSample(sample2)
       task("CodeCompletion") {
-        text("To activate Basic Completion, press ${action(it)} and you will see lookup menu again. " +
-            "Then choose item <code>meow</code>.")
+        text("To activate Basic Completion explicitly, press ${action(it)}." +
+            "Select <code>meow</code> and press <action>EditorEnter</action>.")
         trigger(it)
-        System.err.println("Done first")
         trigger("EditorChooseLookupItem") { textBeforeCaret(editor, "meow") }
         test {
           actions(it)
@@ -96,7 +95,6 @@ end
       return false
     }
     val subSequence = editor.document.charsSequence.subSequence(offset - text.length, offset)
-    System.err.println(subSequence)
     return subSequence.toString() == text
   }
 
