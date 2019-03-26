@@ -25,12 +25,8 @@ class GraziInspection : AbstractBaseJavaLocalInspectionTool() {
         return emptyArray()
     }
 
-    private fun checkBlocks(
-            blocks: List<TextBlock>,
-            manager: InspectionManager,
-            isOnTheFly: Boolean,
-            ext: GraziLanguageSupport
-    ): Array<ProblemDescriptor> {
+    private fun checkBlocks(blocks: List<TextBlock>, manager: InspectionManager, isOnTheFly: Boolean,
+                            ext: GraziLanguageSupport): Array<ProblemDescriptor> {
         val result = mutableListOf<ProblemDescriptor>()
         for (block in blocks) {
             val fixes = GrammarEngine.getFixes(block.text)
@@ -38,7 +34,7 @@ class GraziInspection : AbstractBaseJavaLocalInspectionTool() {
                 val range = TextRange.create(it.range.start, it.range.endInclusive)
                 val quickFixes = it.fix?.map { GraziQuickFix(ext, block, range, it) }?.toTypedArray() ?: emptyArray()
                 result += manager.createProblemDescriptor(block.element, range,
-                        it.description, ProblemHighlightType.ERROR, isOnTheFly, *quickFixes)
+                        it.description, it.category.highlight, isOnTheFly, *quickFixes)
             }
         }
         return result.toTypedArray()

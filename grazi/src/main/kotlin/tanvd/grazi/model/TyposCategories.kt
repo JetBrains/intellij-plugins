@@ -1,6 +1,8 @@
 package tanvd.grazi.model
 
-enum class TyposCategories(val value: String) {
+import com.intellij.codeInspection.ProblemHighlightType
+
+enum class TyposCategories(val value: String, val highlight: ProblemHighlightType = ProblemHighlightType.WEAK_WARNING) {
     /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
     CASING("CASING"),
 
@@ -10,7 +12,7 @@ enum class TyposCategories(val value: String) {
     GRAMMAR("GRAMMAR"),
 
     /** Spelling issues.  */
-    TYPOS("TYPOS"),
+    TYPOS("TYPOS", ProblemHighlightType.LIKE_UNKNOWN_SYMBOL),
 
     PUNCTUATION("PUNCTUATION"),
 
@@ -22,7 +24,7 @@ enum class TyposCategories(val value: String) {
 
     REPETITIONS("REPETITIONS"),
 
-    REDUNDANCY("REDUNDANCY"),
+    REDUNDANCY("REDUNDANCY", ProblemHighlightType.LIKE_UNUSED_SYMBOL),
 
     /** General style issues not covered by other categories, like overly verbose wording.  */
     STYLE("STYLE"),
