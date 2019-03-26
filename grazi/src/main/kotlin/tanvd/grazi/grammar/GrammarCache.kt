@@ -8,7 +8,7 @@ object GrammarCache {
             .maximumSize(10000)
             .build { key -> key }
 
-    fun isValid(str: String) : Boolean {
+    fun isValid(str: String): Boolean {
         return cache.getIfPresent(str.hashCode()) != null
     }
 

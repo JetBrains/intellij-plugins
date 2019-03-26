@@ -58,6 +58,7 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
     public static class State {
         public String graziHome = getDefaultGraziHome();
         public final Set<String> languages = new HashSet<>();
+
         {
             languages.add("en");
         }
