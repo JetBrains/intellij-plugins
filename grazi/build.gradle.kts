@@ -18,4 +18,5 @@ intellij {
 dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(kotlin("reflect"))
+    compile("org.languagetool","languagetool-core", "4.4")
 }
