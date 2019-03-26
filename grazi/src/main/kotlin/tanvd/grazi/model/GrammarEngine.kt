@@ -1,14 +1,17 @@
 package tanvd.grazi.model
 
+import com.intellij.openapi.components.ApplicationComponent
+import org.jetbrains.annotations.NotNull
 import org.languagetool.JLanguageTool
 import org.languagetool.Language
+import org.languagetool.Languages
 import org.languagetool.language.AmericanEnglish
 import org.languagetool.language.LanguageIdentifier
 import org.languagetool.rules.RuleMatch
 import java.util.*
 import java.util.stream.Collectors
 
-object GrammarEngine {
+object GrammarEngine : ApplicationComponent {
     private var langToolsByLang: MutableMap<Language, JLanguageTool> = HashMap()
     var removeUnknownWords = true
     var charsForLangDetection = 500
@@ -16,7 +19,7 @@ object GrammarEngine {
 
     fun getFixes(str: String): List<Typo> {
         if (str.length < 2) {
-            return Collections.emptyList()
+            return emptyList()
         }
         var lang: Language
         try {
@@ -41,5 +44,19 @@ object GrammarEngine {
                     )
                 }
                 .collect(Collectors.toList<Typo>())
+    }
+
+    override fun initComponent() {
+        for (langName in listOf("English", "Russian")) {
+            val lang = Languages.getLanguageForName(langName)
+            if (lang != null) {
+                langToolsByLang[lang] = JLanguageTool(lang)
+            }
+        }
+    }
+
+    @NotNull
+    override fun getComponentName(): String {
+        return "GrammarEngine"
     }
 }

@@ -26,11 +26,7 @@ dependencies {
     }
     compile("org.apache.commons", "commons-lang3", "3.5")
 
-    compile("org.languagetool", "language-en", "4.4")
-    {
-        exclude("org.slf4j", "slf4j-api")
-    }
-    compile("org.languagetool", "language-uk", "4.4")
+    compile("org.languagetool", "language-all", "4.4")
     {
         exclude("org.slf4j", "slf4j-api")
     }
