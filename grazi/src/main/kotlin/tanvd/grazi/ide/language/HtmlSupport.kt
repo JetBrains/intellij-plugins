@@ -1,4 +1,4 @@
-package tanvd.grazi.ide
+package tanvd.grazi.ide.language
 
 
 import com.intellij.ide.highlighter.HtmlFileType
@@ -8,8 +8,9 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.source.html.HtmlDocumentImpl
 import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.util.PsiTreeUtil
+import tanvd.grazi.model.TextBlock
 
-class HtmlSupport : GraziLanguageSupport {
+class HtmlSupport : LanguageSupport {
     override fun replace(textBlock: TextBlock, range: TextRange, replacement: String) {
         val newText = range.replace(textBlock.element.text, replacement)
         val newFile = PsiFileFactory.getInstance(textBlock.element.project).createFileFromText("a.html", HtmlFileType.INSTANCE, newText) as HtmlFileImpl

@@ -26,6 +26,6 @@
     </extensions>
 
     <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport implementation="tanvd.grazi.ide.HtmlSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.HtmlSupport"/>
     </extensions>
 </idea-plugin>
