@@ -112,7 +112,7 @@ class Navigation: UITableViewController {
     <Try triggers="Stop">Stop your application by pressing <action>Stop</action>.</Try>
     <MoveCaret position="17:9" />
     <Try trigger="ViewBreakpoints">The <strong>Breakpoints</strong> dialog has the same functionality as <strong>Breakpoint</strong> navigator in Xcode - it shows the list of all breakpoints in your project. Activate it by using <action>ViewBreakpoints</action>.</Try>
-    <Try trigger="ActivateVersionControlToolWindow">Init the GIT repository via <action>Vcs.QuickListPopupAction</action>→3. Now activate the <strong>VCS</strong> toolwindow with the <action>ActivateVersionControlToolWindow</action> shortcut.</Try>
+    <Try trigger="ActivateVersionControlToolWindow">Init the GIT repository via <action>Vcs.QuickListPopupAction</action>→<strong>Create Git Repository</strong>. Now activate the <strong>VCS</strong> toolwindow with the <action>ActivateVersionControlToolWindow</action> shortcut.</Try>
     <Text>The <strong>VCS</strong> tool window provides everything you need to work with version control systems, including the <strong>Changes</strong> view, the <strong>VCS log</strong>, and more.</Text>
     <Win/>
 </xml>
