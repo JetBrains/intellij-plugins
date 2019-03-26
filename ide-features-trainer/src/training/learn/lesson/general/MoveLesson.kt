@@ -4,6 +4,7 @@ import com.intellij.diff.tools.util.text.LineOffsetsUtil
 import com.intellij.openapi.vcs.ex.compareLines
 import com.intellij.util.containers.ContainerUtil
 import training.commands.ShowLineNumberCommand
+import training.lang.JavaLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -21,10 +22,11 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
             "pressing ${action(it)} will pull down the current line."
       }
       actionTask("MoveLineUp") {
-        "Similarly, to pull a line up, use ${action(it)}"
+        "Similarly, to pull a line up, use ${action(it)}."
       }
+      if (lang == JavaLangSupport.lang) caret(9, 5)
       task("MoveStatementUp") {
-        text("Now try moving the whole method up with ${action(it)}")
+        text("Now try moving the whole method up with ${action(it)}.")
         trigger(it, { editor.document.text }, { before, now ->
           val changes = ContainerUtil.newArrayList(
               compareLines(before, now, LineOffsetsUtil.create(before), LineOffsetsUtil.create(now)

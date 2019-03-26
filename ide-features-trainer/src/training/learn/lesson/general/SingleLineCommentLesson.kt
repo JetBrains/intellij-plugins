@@ -22,7 +22,7 @@ abstract class SingleLineCommentLesson(module: Module, lang: String) :
       prepareSample(sample)
 
       actionTask("CommentByLineComment") {
-        "Comment out any line with ${action(it)}"
+        "Comment out any line with ${action(it)}."
       }
       task("CommentByLineComment") {
         text("Uncomment the commented line with the same shortcut, ${action(it)}.")
