@@ -52,6 +52,7 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
         if (!myState.languages.contains("uk")) {
             list.add("uk");
         }
+        GrammarEngine.INSTANCE.getDisabledLangs().clear();
         GrammarEngine.INSTANCE.getDisabledLangs().addAll(list);
     }
 
