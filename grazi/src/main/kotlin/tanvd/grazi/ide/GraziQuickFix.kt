@@ -9,10 +9,11 @@ import com.intellij.openapi.util.text.StringUtil
 import java.util.regex.Pattern
 
 
-class GraziQuickFix(private val ext: GraziLanguageSupport, private val block: TextBlock,
-                    private val textRange: TextRange, private val replacement: String) : LocalQuickFix {
+class GraziQuickFix(private val ruleName: String, private val ext: GraziLanguageSupport,
+                    private val block: TextBlock, private val textRange: TextRange,
+                    private val replacement: String) : LocalQuickFix {
     override fun getName(): String {
-        return "Replace with '" + StringUtil.shortenTextWithEllipsis(replacement, 20, 0, true) + "'"
+        return "Fix '$ruleName', use: '" + StringUtil.shortenTextWithEllipsis(replacement, 20, 0, true) + "'"
     }
 
     override fun getFamilyName(): String = "Replace with suggested text"

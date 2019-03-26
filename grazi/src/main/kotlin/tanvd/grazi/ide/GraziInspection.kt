@@ -27,11 +27,13 @@ class GraziInspection : AbstractBaseJavaLocalInspectionTool() {
         val result = mutableListOf<ProblemDescriptor>()
         for (block in blocks) {
             val fixes = GrammarEngine.getFixes(block.text)
-            fixes.forEach {
-                val range = TextRange.create(it.range.start, it.range.endInclusive)
-                val quickFixes = it.fix?.map { GraziQuickFix(ext, block, range, it) }?.toTypedArray() ?: emptyArray()
-                result += manager.createProblemDescriptor(block.element, range,
-                        it.description, it.category.highlight, isOnTheFly, *quickFixes)
+            fixes.forEach { fix ->
+                val range = TextRange.create(fix.range.start, fix.range.endInclusive)
+                val quickFixes = fix.fix?.map { GraziQuickFix(fix.category.description, ext, block, range, it) }?.toTypedArray() ?: emptyArray()
+                val problemDescriptor = manager.createProblemDescriptor(block.element, range,
+                        fix.fullDescription, fix.category.highlight, isOnTheFly, *quickFixes)
+
+                result += problemDescriptor
             }
         }
         return result.toTypedArray()

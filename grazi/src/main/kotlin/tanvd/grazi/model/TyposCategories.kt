@@ -4,7 +4,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 
 enum class TyposCategories(val value: String, val description: String = "", val highlight: ProblemHighlightType = ProblemHighlightType.WEAK_WARNING) {
     /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
-    CASING("CASING", "Wrong case",ProblemHighlightType.LIKE_UNKNOWN_SYMBOL),
+    CASING("CASING", "Wrong case", ProblemHighlightType.LIKE_UNKNOWN_SYMBOL),
 
     /** Rules about spelling terms as one word or as as separate words.  */
     COMPOUNDING("COMPOUNDING", ""),

@@ -7,8 +7,6 @@ import com.intellij.psi.impl.PsiElementFactoryImpl
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.source.javadoc.PsiDocCommentImpl
 import com.intellij.psi.util.PsiTreeUtil
-import org.intellij.plugins.markdown.lang.MarkdownFileType
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile
 
 class JavaDocSupport : GraziLanguageSupport {
     override fun extract(cls: PsiClass): List<TextBlock>? {
