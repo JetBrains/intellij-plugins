@@ -18,11 +18,12 @@ class GrammarEngineTest {
     }
 
     @Test
-    fun testCasing() {
-        val fixes = GrammarEngine.getFixes("Hello. world,, the")
-        assertEquals(2, fixes.size)
+    fun testDifferentTypos() {
+        val fixes = GrammarEngine.getFixes("Hello. world,, tot he")
+        assertEquals(3, fixes.size)
         assertEquals(TyposCategories.CASING, fixes[0].category)
         assertEquals(TyposCategories.PUNCTUATION, fixes[1].category)
+        assertEquals(TyposCategories.TYPOS, fixes[2].category)
     }
 
     @Test
