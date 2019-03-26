@@ -25,4 +25,8 @@
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.JavaDocSupport"/>
     </extensions>
+
+    <extensions defaultExtensionNs="tanvd.grazi">
+        <languageSupport implementation="tanvd.grazi.ide.HtmlSupport"/>
+    </extensions>
 </idea-plugin>
