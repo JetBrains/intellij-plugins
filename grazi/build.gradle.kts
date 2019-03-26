@@ -13,7 +13,7 @@ intellij {
     pluginName = "Grazi"
     version = "2018.3.5"
     downloadSources = true
-    setPlugins("org.intellij.plugins.markdown:183.5153.1")
+    setPlugins("org.intellij.plugins.markdown:183.5153.1", "org.intellij.plugins.javadoc:2.1.2")
 }
 
 dependencies {
