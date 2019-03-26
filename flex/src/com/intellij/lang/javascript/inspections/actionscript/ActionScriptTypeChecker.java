@@ -295,7 +295,7 @@ public class ActionScriptTypeChecker extends JSTypeChecker {
       rOperand,
       rOperand,
       "Class",
-      "javascript.binary.operand.type.mismatch"
+      "actionscript.binary.operand.type.mismatch"
     );
   }
 }
