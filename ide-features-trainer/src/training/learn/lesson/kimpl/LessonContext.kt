@@ -2,6 +2,7 @@ package training.learn.lesson.kimpl
 
 import com.intellij.find.FindManager
 import com.intellij.find.FindResult
+import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
@@ -30,6 +31,7 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
    * Start a new task in a lesson context
    */
   fun task(taskContent: TaskContext.() -> Unit) {
+    recorder.removeListeners(editor.document, ActionManager.getInstance())
     val taskContext = TaskContext(lesson, editor, project, recorder)
     taskContext.apply(taskContent)
 
