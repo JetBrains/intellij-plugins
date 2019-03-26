@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
+import com.intellij.lang.javascript.psi.resolve.JSGenericMappings;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.types.*;
@@ -328,8 +329,9 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
           JSExpression inputExpression = inputsMap.get(property.getName());
           if (inputExpression != null && property.getType() != null) {
             JSGenericTypesEvaluatorBase.matchGenericTypes(
-              genericArguments, processingContext,
-              new Angular2LazyExpressionType(inputExpression, true), property.getType());
+              new JSGenericMappings(genericArguments), processingContext,
+                                    new Angular2LazyExpressionType(inputExpression, true), property.getType());
+            JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(property.getType()), null, null);
           }
         });
       });
