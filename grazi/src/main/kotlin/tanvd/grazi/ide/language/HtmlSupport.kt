@@ -1,20 +1,17 @@
 package tanvd.grazi.ide.language
 
 
-import com.intellij.ide.highlighter.HtmlFileType
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.impl.source.html.HtmlDocumentImpl
 import com.intellij.psi.impl.source.html.HtmlFileImpl
+import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
 import tanvd.grazi.model.TextBlock
 
 class HtmlSupport : LanguageSupport {
     override fun replace(textBlock: TextBlock, range: TextRange, replacement: String) {
         val newText = range.replace(textBlock.element.text, replacement)
-        val newFile = PsiFileFactory.getInstance(textBlock.element.project).createFileFromText("a.html", HtmlFileType.INSTANCE, newText) as HtmlFileImpl
-        textBlock.element.replace(collectParagraphs(newFile).single())
+        (textBlock.element as XmlTextImpl).value = newText
     }
 
     override fun extract(file: PsiFile): List<TextBlock>? {
@@ -24,6 +21,7 @@ class HtmlSupport : LanguageSupport {
         }
     }
 
-    private fun collectParagraphs(htmlFile: HtmlFileImpl): MutableCollection<HtmlDocumentImpl> =
-            PsiTreeUtil.collectElementsOfType(htmlFile, HtmlDocumentImpl::class.java)
+    private fun collectParagraphs(htmlFile: HtmlFileImpl): MutableCollection<XmlTextImpl> {
+        return PsiTreeUtil.collectElementsOfType(htmlFile, XmlTextImpl::class.java)
+    }
 }
