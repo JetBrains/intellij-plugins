@@ -1,0 +1,19 @@
+<idea-plugin>
+    <id>tanvd.grazi</id>
+    <name>Grazi</name>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <localInspection displayName="Mistake in an English text" groupName="English"
+                         enabledByDefault="true"
+                         implementationClass="tanvd.grazi.ide.GraziInspection"/>
+    </extensions>
+
+    <extensionPoints>
+        <extensionPoint qualifiedName="tanvd.grazi.languageSupport"
+                        interface="tanvd.grazi.ide.GraziLanguageSupport"/>
+    </extensionPoints>
+
+    <extensions defaultExtensionNs="tanvd.grazi">
+        <languageSupport implementation="tanvd.grazi.ide.PlainTextSupport"/>
+    </extensions>
+</idea-plugin>
