@@ -86,7 +86,7 @@ class Navigation: UITableViewController {
 
 }]]></CopyText>
     <Try trigger="ActivateTODOToolWindow">Have you ever wondered how many todos there are in your code? In <ide/>, there is a dedicated <strong>TODO</strong> toolwindow for them. Activate it by using <action>ActivateTODOToolWindow</action>.</Try>
-    <Try trigger="com.intellij.ide.todo.SetTodoFilterAction">You can define your own custom <strong>TODO</strong> filters. Open the TODO filters dialog with <icon>AllIcons.General.Filter</icon> → <strong>Edit Filters</strong> and then try adding your own filters using RegExps.</Try>
+    <Try trigger="com.intellij.ide.todo.SetTodoFilterAction$1">You can define your own custom <strong>TODO</strong> filters. Open the TODO filters dialog with <icon>AllIcons.General.Filter</icon> → <strong>Edit Filters</strong> and then try adding your own filters using RegExps.</Try>
     <Text>Press <action>EditorEscape</action> to return to editor window.</Text>
     <MoveCaret position="20:9" />
     <Try trigger="ToggleBookmark">Now press <action>ToggleBookmark</action>. This shortcut toggles a bookmark in your code. Bookmarks are saved in the project directory and are useful if you want to point your colleague to a specific place in your code.</Try>
