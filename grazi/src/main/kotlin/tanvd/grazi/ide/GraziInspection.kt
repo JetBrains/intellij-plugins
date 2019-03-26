@@ -4,10 +4,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import tanvd.grazi.model.GrammarEngine
 
 class GraziInspection : AbstractBaseJavaLocalInspectionTool() {

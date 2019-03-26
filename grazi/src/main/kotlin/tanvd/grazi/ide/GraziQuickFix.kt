@@ -10,7 +10,7 @@ import java.util.regex.Pattern
 
 
 class GraziQuickFix(private val ext: GraziLanguageSupport, private val block: TextBlock,
-                     private val textRange: TextRange, private val replacement: String) : LocalQuickFix {
+                    private val textRange: TextRange, private val replacement: String) : LocalQuickFix {
     override fun getName(): String {
         return "Replace with '" + StringUtil.shortenTextWithEllipsis(replacement, 20, 0, true) + "'"
     }

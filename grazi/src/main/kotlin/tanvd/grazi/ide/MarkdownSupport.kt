@@ -2,7 +2,8 @@ package tanvd.grazi.ide
 
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.markdown.lang.MarkdownFileType
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownFile
