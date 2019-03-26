@@ -13,6 +13,8 @@ import com.intellij.openapi.command.CommandListener
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
+import com.intellij.openapi.fileEditor.FileEditorManagerEvent
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiDocumentManager
@@ -102,6 +104,17 @@ class ActionsRecorder(private val project: Project,
       if (mutableListOfActions.isEmpty()) future.complete(true)
     }
     ActionManager.getInstance().addAnActionListener(listener, this)
+    // Message bus is here to track switching to other files in lessons; do not remove it.
+    // One can specify the file name as a trigger. It means that specific step won't be marked as completed until user navigates to the correct file.
+    myMessageBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+      override fun selectionChanged(event: FileEditorManagerEvent) {
+        System.out.println(event.newFile?.name)
+        event.newFile?.name.let {
+          if (mutableListOfActions.isNotEmpty() && mutableListOfActions.first() == event.newFile?.name) mutableListOfActions.removeAt(0)
+          if (mutableListOfActions.isEmpty()) future.complete(true)
+        }
+      }
+    })
     return future
   }
 
@@ -124,35 +137,6 @@ class ActionsRecorder(private val project: Project,
     get() {
       return project.messageBus.connect()
     }
-
-  /**
-   * method adds action and document listeners to monitor user activity and check task
-   */
-  private fun addActionAndDocumentListeners() {
-//    myAnActionListener = createActionListener {
-//      actionId, _ -> doProcessAction(actionId, true)
-//    }
-//    myDocumentListener = createDocumentListener {
-//      doWhenTriggerIsEmptyAndTaskSolved(ActionManager.getInstance(), completableFuture)
-//    }
-//
-//    val myEventDispatcher = IdeEventQueue.EventDispatcher { e ->
-//      if (e is KeyEvent) {
-//        doWhenTriggerIsEmptyAndTaskSolved(ActionManager.getInstance(), completableFuture)
-//      }
-//      false
-//    }
-//
-//    myMessageBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
-//      override fun selectionChanged(event: FileEditorManagerEvent) {
-//        event.newFile?.name?.let { doProcessAction(it, true, completableFuture) }
-//      }
-//    })
-//
-//    if (check != null && check!!.listenAllKeys()) IdeEventQueue.getInstance().addDispatcher(myEventDispatcher, this)
-//    document.addDocumentListener(myDocumentListener!!)
-//    ActionManager.getInstance().addAnActionListener(myAnActionListener)
-  }
 
   private fun addKeyEventListener(onKeyEvent: () -> Unit) {
     val myEventDispatcher: IdeEventQueue.EventDispatcher = IdeEventQueue.EventDispatcher { e ->
