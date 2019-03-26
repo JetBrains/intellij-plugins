@@ -8,6 +8,10 @@
         <localInspection displayName="Mistake in an English text" groupName="English"
                          enabledByDefault="true"
                          implementationClass="tanvd.grazi.ide.GraziInspection"/>
+        <projectService serviceImplementation="tanvd.grazi.GraziToolProjectSettings"/>
+        <projectConfigurable groupId="tools" instance="tanvd.grazi.GraziToolConfigurable"
+                             id="reference.settingsdialog.project.grazi"
+                             key="grazi.name" bundle="messages.HCLBundle"/>
     </extensions>
 
     <extensionPoints>
