@@ -5,7 +5,7 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 
-class PlainTextSupport : GraziLanguageSupport {
+class GraziPlainTextSupport : GraziLanguageSupport {
     override fun extract(file: PsiFile): List<TextBlock>? {
         val plainText = file.children.firstOrNull() as? PsiPlainText ?: return null
         return listOf(TextBlock(plainText, plainText.text))
