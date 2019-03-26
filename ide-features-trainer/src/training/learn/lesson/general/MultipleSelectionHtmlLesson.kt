@@ -38,19 +38,19 @@ class MultipleSelectionHtmlLesson(module: Module) : KLesson("Multiple Selections
       prepareSample(sample)
 
       actionTask("SelectNextOccurrence") {
-        "Press ${action(it)} to select the symbol at the caret"
+        "Press ${action(it)} to select the symbol at the caret."
       }
       actionTask("SelectNextOccurrence") {
-        "Press ${action(it)} again to select the next occurrence of this symbol"
+        "Press ${action(it)} again to select the next occurrence of this symbol."
       }
       actionTask("UnselectPreviousOccurrence") {
-        "Press ${action(it)} to deselect the last occurrence"
+        "Press ${action(it)} to deselect the last occurrence."
       }
       actionTask("SelectAllOccurrences") {
-        "Press ${action(it)} to select all occurrences in the file"
+        "Press ${action(it)} to select all occurrences in the file."
       }
       task {
-        text("Type <code>td</code> to replace all occurrences of <code>th</code> with <code>td</code>")
+        text("Type <code>td</code> to replace all occurrences of <code>th</code> with <code>td</code>.")
         stateCheck { checkMultiChange() }
         test { type("td") }
       }
