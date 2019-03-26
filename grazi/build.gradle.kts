@@ -46,4 +46,5 @@ dependencies {
         exclude("org.slf4j", "slf4j-api")
     }
     testCompile("org.junit.jupiter", "junit-jupiter-api", "5.0.2")
+    compile("com.github.ben-manes.caffeine", "caffeine", "2.7.0")
 }
