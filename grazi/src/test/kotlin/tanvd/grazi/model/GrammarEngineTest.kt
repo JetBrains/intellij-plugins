@@ -2,6 +2,7 @@ package tanvd.grazi.model
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import tanvd.grazi.grammar.GrammarEngine
 
 class GrammarEngineTest {
     @Test

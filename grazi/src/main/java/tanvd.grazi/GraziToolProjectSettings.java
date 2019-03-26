@@ -3,7 +3,7 @@ package tanvd.grazi;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.*;
 import org.jetbrains.annotations.*;
-import tanvd.grazi.model.*;
+import tanvd.grazi.grammar.*;
 
 import java.io.*;
 import java.util.*;
@@ -48,7 +48,7 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
     }
 
     public void loadLanguages() {
-        GrammarEngine.INSTANCE.setEnabledLangs(new ArrayList<>(myState.languages));
+        Languages.INSTANCE.setEnabledLangs(new ArrayList<>(myState.languages));
     }
 
     public void setGraziHome(String graziHome) {

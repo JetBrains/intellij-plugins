@@ -5,8 +5,8 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import tanvd.grazi.grammar.GrammarEngine
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.model.GrammarEngine
 import tanvd.grazi.model.TextBlock
 
 class GraziInspection : AbstractBaseJavaLocalInspectionTool() {
