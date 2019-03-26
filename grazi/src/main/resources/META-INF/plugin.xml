@@ -11,8 +11,7 @@
     </extensions>
 
     <extensionPoints>
-        <extensionPoint qualifiedName="tanvd.grazi.languageSupport"
-                        interface="tanvd.grazi.ide.GraziLanguageSupport"/>
+        <extensionPoint qualifiedName="tanvd.grazi.languageSupport" interface="tanvd.grazi.ide.GraziLanguageSupport"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="tanvd.grazi">

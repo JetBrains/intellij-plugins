@@ -22,7 +22,7 @@ class GraziInspection : AbstractBaseJavaLocalInspectionTool() {
                 return checkBlocks(blocks, manager, isOnTheFly, ext)
             }
         }
-        return null
+        return emptyArray()
     }
 
     private fun checkBlocks(
@@ -30,14 +30,14 @@ class GraziInspection : AbstractBaseJavaLocalInspectionTool() {
             manager: InspectionManager,
             isOnTheFly: Boolean,
             ext: GraziLanguageSupport
-    ): Array<ProblemDescriptor>? {
+    ): Array<ProblemDescriptor> {
         val result = mutableListOf<ProblemDescriptor>()
         for (block in blocks) {
             val fixes = GrammarEngine.getFixes(block.text)
             fixes.forEach {
                 val range = TextRange.create(it.range.start, it.range.endInclusive)
                 val quickFixes = it.fix?.map { GraziQuickFix(ext, block, range, it) }?.toTypedArray() ?: emptyArray()
-                manager.createProblemDescriptor(block.element, range,
+                result += manager.createProblemDescriptor(block.element, range,
                         it.description, ProblemHighlightType.ERROR, isOnTheFly, *quickFixes)
             }
         }
