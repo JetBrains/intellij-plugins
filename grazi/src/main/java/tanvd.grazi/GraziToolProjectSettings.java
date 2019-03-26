@@ -15,17 +15,32 @@
  */
 package tanvd.grazi;
 
-import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.project.ProjectManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.languagetool.Language;
+import tanvd.grazi.model.GrammarEngine;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 @State(
         name = "GraziToolProjectSettings",
@@ -33,6 +48,7 @@ import java.io.File;
 )
 public class GraziToolProjectSettings implements PersistentStateComponent<GraziToolProjectSettings.State> {
     private State myState = new State();
+    private Set<String> loadingLanguages = new HashSet<>();
 
     public static GraziToolProjectSettings getInstance(@NotNull final Project project) {
         return ServiceManager.getService(project, GraziToolProjectSettings.class);
@@ -46,12 +62,29 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
 
     @Override
     public void loadState(@NotNull State state) {
-        myState.graziHome = state.graziHome;
-        myState.uaEnabled = state.uaEnabled;
+        myState = state;
     }
 
     public String getGraziHome() {
         return myState.graziHome;
+    }
+
+    public boolean getUaEnabled() {
+        return myState.languages.contains("uk");
+    }
+
+    public void setUaEnabled(boolean uaEnabled) {
+        if (uaEnabled) {
+            myState.languages.add("uk");
+        } else
+            myState.languages.remove("uk");
+    }
+
+    public void loadLanguages() {
+        final ArrayList<String> list = new ArrayList<>();
+        if (!myState.languages.contains("uk"))
+            list.add("uk");
+        GrammarEngine.INSTANCE.setNoopLangs(list);
     }
 
     public void setGraziHome(String graziHome) {
@@ -60,7 +93,7 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
 
     public static class State {
         public String graziHome = getDefaultGraziHome();
-        public boolean uaEnabled = false;
+        public final Set<String> languages = new HashSet<>();
     }
 
     public static String getDefaultGraziHome() {

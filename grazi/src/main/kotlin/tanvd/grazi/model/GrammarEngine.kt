@@ -12,14 +12,15 @@ object GrammarEngine {
     private var langToolsByLang: MutableMap<Language, JLanguageTool> = HashMap()
     var removeUnknownWords = true
     var charsForLangDetection = 500
+    var noopLangs = emptyList<String>()
 
     fun getFixes(str: String): List<TextFix> {
         if (str.length < 2) {
             return Collections.emptyList()
         }
-        var lang : Language
+        var lang: Language
         try {
-            lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str) ?: AmericanEnglish()
+            lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str, noopLangs)?.detectedLanguage ?: AmericanEnglish()
         } catch (e: ClassNotFoundException) {
             lang = AmericanEnglish()
         }

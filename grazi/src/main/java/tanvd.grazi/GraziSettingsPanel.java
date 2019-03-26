@@ -27,6 +27,7 @@ import javax.swing.*;
 public class GraziSettingsPanel implements ConfigurableUi<GraziToolProjectSettings> {
     private JPanel myWholePanel;
     private TextFieldWithBrowseButton myGraziPathField;
+    private JCheckBox ukrainianCheckBox;
 
     @NotNull
     @Override
@@ -46,16 +47,20 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziToolProjectSettin
 
     @Override
     public boolean isModified(@NotNull GraziToolProjectSettings settings) {
-        return !(Comparing.equal(myGraziPathField.getText(), settings.getGraziHome()));
+        return !(Comparing.equal(myGraziPathField.getText(), settings.getGraziHome()) &&
+                ukrainianCheckBox.isSelected() == settings.getUaEnabled());
     }
 
     @Override
     public void apply(@NotNull GraziToolProjectSettings settings) {
         settings.setGraziHome(myGraziPathField.getText());
+        settings.setUaEnabled(ukrainianCheckBox.isSelected());
+        settings.loadLanguages();
     }
 
     @Override
     public void reset(@NotNull GraziToolProjectSettings settings) {
         myGraziPathField.setText(settings.getGraziHome());
+        ukrainianCheckBox.setSelected(settings.getUaEnabled());
     }
 }
