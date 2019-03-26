@@ -69,11 +69,8 @@ class StatisticBase : PersistentStateComponent<StatisticBase> {
   }
 }
 
-private fun logEvent(event: String, featureUsageData: FeatureUsageData? = null) {
-  if (featureUsageData != null)
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, event, featureUsageData)
-  else
-    FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, event)
+private fun logEvent(event: String, featureUsageData: FeatureUsageData) {
+  FUCounterUsageLogger.getInstance().logEvent(GROUP_ID, event, featureUsageData)
 }
 
 private const val GROUP_ID = "ideFeaturesTrainer"
