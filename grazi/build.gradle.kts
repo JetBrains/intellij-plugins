@@ -14,15 +14,21 @@ intellij {
     pluginName = "Grazi"
     version = "2018.3.5"
     downloadSources = true
-    setPlugins("org.intellij.plugins.markdown:183.5153.1", "org.intellij.plugins.javadoc:2.1.2")
+    setPlugins("org.intellij.plugins.markdown:183.5153.1")
 }
 
 dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(kotlin("reflect"))
     compile("org.languagetool","languagetool-core", "4.4")
+    {
+        exclude("org.slf4j", "slf4j-api")
+    }
     compile("org.apache.commons", "commons-lang3","3.5")
 
     compile("org.languagetool","language-en", "4.4")
+    {
+        exclude("org.slf4j", "slf4j-api")
+    }
     testCompile("org.junit.jupiter","junit-jupiter-api", "5.0.2")
 }
