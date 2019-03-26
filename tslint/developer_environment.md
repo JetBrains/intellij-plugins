@@ -1,5 +1,5 @@
 
-####Setting up a development environment
+#### Setting up a development environment
 
 * Fork this project, clone it to your machine
 * Launch IDEA and `File -> New -> Project from Existing Sources...` the `tslint` directory as a Gradle project
