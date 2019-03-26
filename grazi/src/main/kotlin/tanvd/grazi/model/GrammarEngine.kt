@@ -2,8 +2,10 @@ package tanvd.grazi.model
 
 import org.languagetool.JLanguageTool
 import org.languagetool.Language
+import org.languagetool.language.AmericanEnglish
 import org.languagetool.language.LanguageIdentifier
 import org.languagetool.rules.RuleMatch
+import java.util.*
 import java.util.stream.Collectors
 
 object GrammarEngine {
@@ -12,8 +14,15 @@ object GrammarEngine {
     var charsForLangDetection = 500
 
     fun getFixes(str: String): List<TextFix> {
-        val lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str)
-                ?: throw RuntimeException("Language not found")
+        if (str.length < 2) {
+            return Collections.emptyList()
+        }
+        var lang : Language
+        try {
+            lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str) ?: AmericanEnglish()
+        } catch (e: ClassNotFoundException) {
+            lang = AmericanEnglish()
+        }
         if (!langToolsByLang.containsKey(lang)) {
             langToolsByLang[lang] = JLanguageTool(lang)
         }
