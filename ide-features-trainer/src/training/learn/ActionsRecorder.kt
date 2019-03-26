@@ -8,6 +8,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandEvent
+import com.intellij.openapi.command.CommandListener
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
@@ -45,22 +47,40 @@ class ActionsRecorder(private val project: Project,
     val future: CompletableFuture<Boolean> = CompletableFuture()
     val actionListener = object : AnActionListener {
       override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
-        if (actionId == getActionId(action)) {
+        val caughtActionId : String? = ActionManager.getInstance().getId(action)
+        if (actionId == caughtActionId) {
           check.before()
+        }
+        else if (caughtActionId != null) {
+          // remove additional state listener to check caret positions and so on
+          commandListener = null
         }
       }
 
       override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
-        if (actionId == getActionId(action)) {
+        if (actionId == ActionManager.getInstance().getId(action)) {
           ApplicationManager.getApplication().invokeLater {
-            if (check.check()) {
-              future.complete(true)
+            val complete = checkComplete()
+            if (!complete) {
+              commandListener = object : CommandListener {
+                override fun commandFinished(event: CommandEvent) {
+                  checkComplete()
+                }
+              }
             }
           }
         }
       }
 
       override fun beforeEditorTyping(c: Char, dataContext: DataContext) {}
+
+      private fun checkComplete() : Boolean {
+        val complete = check.check()
+        if (complete) {
+          future.complete(true)
+        }
+        return complete
+      }
     }
     actionListeners.add(actionListener)
     ActionManager.getInstance().addAnActionListener(actionListener, this)
@@ -183,7 +203,7 @@ class ActionsRecorder(private val project: Project,
   }
 
 
-  private fun removeListeners(document: Document, actionManager: ActionManager) {
+  fun removeListeners(document: Document, actionManager: ActionManager) {
     if (actionListeners.isNotEmpty()) actionListeners.forEach { actionManager.removeAnActionListener(it) }
     if (documentListeners.isNotEmpty()) documentListeners.forEach { document.removeDocumentListener(it) }
     if (eventDispatchers.isNotEmpty()) eventDispatchers.forEach { IdeEventQueue.getInstance().removeDispatcher(it) }
@@ -191,9 +211,45 @@ class ActionsRecorder(private val project: Project,
     actionListeners.clear()
     documentListeners.clear()
     eventDispatchers.clear()
+    commandListener = null
   }
 
   private fun getActionId(action: AnAction): String =
       ActionManager.getInstance().getId(action) ?: action.javaClass.name
-}
 
+
+  companion object {
+    @Volatile
+    var commandListener: CommandListener? = null
+
+    init {
+      // This listener allows to track a lot of IDE state changes
+      val messageBus = ApplicationManager.getApplication().messageBus
+      messageBus.connect().subscribe(CommandListener.TOPIC, object: CommandListener {
+        override fun commandStarted(event: CommandEvent) {
+          commandListener?.commandStarted(event)
+        }
+
+        override fun beforeCommandFinished(event: CommandEvent) {
+          commandListener?.beforeCommandFinished(event)
+        }
+
+        override fun commandFinished(event: CommandEvent) {
+          commandListener?.commandFinished(event)
+        }
+
+        override fun undoTransparentActionStarted() {
+          commandListener?.undoTransparentActionStarted()
+        }
+
+        override fun beforeUndoTransparentActionFinished() {
+          commandListener?.beforeUndoTransparentActionFinished()
+        }
+
+        override fun undoTransparentActionFinished() {
+          commandListener?.undoTransparentActionFinished()
+        }
+      })
+    }
+  }
+}

@@ -37,7 +37,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
   }
 
   /** An user need to rice an action which leads to necessary state change */
-  fun <T : Any> trigger(actionId: String, calculateState: () -> T, checkState: (T, T) -> Boolean) {
+  fun <T : Any?> trigger(actionId: String, calculateState: () -> T, checkState: (T, T) -> Boolean) {
     val check = getCheck(calculateState, checkState)
     steps.add(recorder.futureActionAndCheckAround(actionId, check))
   }
@@ -58,7 +58,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
     steps.add(recorder.futureCheck { checkState() })
   }
 
-  private fun <T : Any> getCheck(calculateState: () -> T, checkState: (T, T) -> Boolean) : Check {
+  private fun <T : Any?> getCheck(calculateState: () -> T, checkState: (T, T) -> Boolean) : Check {
     return object : Check {
       var state: T? = null
 
