@@ -48,12 +48,7 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
     }
 
     public void loadLanguages() {
-        final ArrayList<String> list = new ArrayList<>();
-        if (!myState.languages.contains("uk")) {
-            list.add("uk");
-        }
-        GrammarEngine.INSTANCE.getDisabledLangs().clear();
-        GrammarEngine.INSTANCE.getDisabledLangs().addAll(list);
+        GrammarEngine.INSTANCE.setEnabledLangs(new ArrayList<>(myState.languages));
     }
 
     public void setGraziHome(String graziHome) {
@@ -63,6 +58,9 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
     public static class State {
         public String graziHome = getDefaultGraziHome();
         public final Set<String> languages = new HashSet<>();
+        {
+            languages.add("en");
+        }
     }
 
     public static String getDefaultGraziHome() {
