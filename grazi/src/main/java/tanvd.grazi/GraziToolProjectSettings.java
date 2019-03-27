@@ -14,7 +14,6 @@ import java.util.*;
 )
 public class GraziToolProjectSettings implements PersistentStateComponent<GraziToolProjectSettings.State> {
     private State myState = new State();
-    private Set<String> loadingLanguages = new HashSet<>();
 
     public static GraziToolProjectSettings getInstance(@NotNull final Project project) {
         return ServiceManager.getService(project, GraziToolProjectSettings.class);
@@ -33,18 +32,6 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
 
     public String getGraziHome() {
         return myState.graziHome;
-    }
-
-    public boolean getUaEnabled() {
-        return myState.languages.contains("uk");
-    }
-
-    public void setUaEnabled(boolean uaEnabled) {
-        if (uaEnabled) {
-            myState.languages.add("uk");
-        } else {
-            myState.languages.remove("uk");
-        }
     }
 
     public void loadLanguages() {
