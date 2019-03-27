@@ -66,7 +66,7 @@ data class Typo(val range: IntRange, val description: String, val category: Cate
         /** Miscellaneous rules that don't fit elsewhere.  */
         MISC("MISC", "Miscellaneous"),
 
-        OTHER("OTHER", "Typo");
+        OTHER("OTHER", "Other mistake");
 
         override fun getProblemName() = description
 

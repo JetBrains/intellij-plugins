@@ -62,7 +62,7 @@ class GrammarEngineService {
         val fixes = tryRun { languages.getLangChecker(str, enabledLangs).check(str) }.orEmpty()
                 .filterNotNull()
                 .filter { it.type !in disabledRules && it.typoCategory !in disabledCategories }
-                .map { Typo(it.toIntRange(), it.shortMessage, it.typoCategory, it.suggestedReplacements) }
+                .map { Typo(it) }
         checksDone++
 
         grammarCache.set(str, fixes)

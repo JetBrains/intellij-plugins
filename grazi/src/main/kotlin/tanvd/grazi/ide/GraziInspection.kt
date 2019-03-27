@@ -12,10 +12,12 @@ import tanvd.grazi.model.TextBlock
 import tanvd.grazi.model.Typo
 
 class GraziInspection : LocalInspectionTool() {
+
     companion object {
         val EP_NAME = ExtensionPointName.create<LanguageSupport>("tanvd.grazi.languageSupport")
 
-        fun typoToProblemDescriptors(fix: Typo, block: TextBlock, manager: InspectionManager, isOnTheFly: Boolean, ext: LanguageSupport): ProblemDescriptor {
+        fun typoToProblemDescriptors(fix: Typo, block: TextBlock, manager: InspectionManager,
+                                     isOnTheFly: Boolean, ext: LanguageSupport): ProblemDescriptor {
             val range = TextRange.create(fix.range.start, fix.range.endInclusive)
             val quickFixes = fix.fix?.map { GraziQuickFix(fix.category.description, ext, block, range, it) }?.toTypedArray() ?: emptyArray()
             @Suppress("SpreadOperator")

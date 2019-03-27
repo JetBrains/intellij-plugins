@@ -19,7 +19,7 @@ class GraziQuickFix(private val ruleName: String, private val ext: LanguageSuppo
     }
 
     override fun getName(): String {
-        return "Fix $ruleName, use: '" + StringUtil.shortenTextWithEllipsis(replacement, maxReplacementLength, 0, true) + "'"
+        return "Fix $ruleName, use: '${StringUtil.shortenTextWithEllipsis(replacement, maxReplacementLength, 0, true)}'"
     }
 
     override fun getFamilyName(): String = "Fix typo"
