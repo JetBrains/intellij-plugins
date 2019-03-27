@@ -11,7 +11,7 @@ import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.model.TextBlock
 import tanvd.grazi.model.Typo
 
-class GraziInspection : AbstractBaseJavaLocalInspectionTool() {
+class GraziInspection : LocalInspectionTool() {
     companion object {
         val EP_NAME = ExtensionPointName.create<LanguageSupport>("tanvd.grazi.languageSupport")
 
