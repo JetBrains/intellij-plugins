@@ -34,4 +34,8 @@
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.MarkdownSupport"/>
     </extensions>
+
+    <extensions defaultExtensionNs="tanvd.grazi">
+        <languageSupport implementation="tanvd.grazi.ide.language.CommentsSupport"/>
+    </extensions>
 </idea-plugin>

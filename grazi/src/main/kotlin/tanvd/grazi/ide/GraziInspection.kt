@@ -25,17 +25,18 @@ class GraziInspection : LocalInspectionTool() {
     }
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
+        val result = mutableListOf<ProblemDescriptor>()
         for (ext in Extensions.getExtensions(EP_NAME)) {
             val blocks = ext.extract(file)
             if (blocks != null) {
-                return checkBlocks(blocks, manager, isOnTheFly, ext)
+                result += checkBlocks(blocks, manager, isOnTheFly, ext)
             }
         }
-        return emptyArray()
+        return result.toTypedArray()
     }
 
     private fun checkBlocks(blocks: List<TextBlock>, manager: InspectionManager, isOnTheFly: Boolean,
-                            ext: LanguageSupport): Array<ProblemDescriptor> {
+                            ext: LanguageSupport): MutableList<ProblemDescriptor> {
         val result = mutableListOf<ProblemDescriptor>()
         for (block in blocks) {
             if (block.element::class.java == JavaDocSupport.Companion.JavaDocTextElement::class.java) {
@@ -47,6 +48,6 @@ class GraziInspection : LocalInspectionTool() {
                 result += typoToProblemDescriptors(fix, block, manager, isOnTheFly, ext)
             }
         }
-        return result.toTypedArray()
+        return result
     }
 }
