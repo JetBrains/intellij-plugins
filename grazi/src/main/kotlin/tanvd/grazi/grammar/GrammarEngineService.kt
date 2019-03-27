@@ -46,7 +46,7 @@ class GrammarEngineService {
                 Typo(it.range.withOffset(cumLen), it.description, it.category, it.fix)
             }
             result.addAll(stringFixes)
-            cumLen += s.length
+            cumLen += s.length + separators[sepInd].length
         }
         return result to checksDone
     }
