@@ -7,7 +7,7 @@ import tanvd.grazi.grammar.toIntRange
 import tanvd.grazi.grammar.typoCategory
 
 data class Typo(val range: IntRange, val description: String, val category: Category, val fix: List<String>? = null) {
-    constructor(match: RuleMatch): this(match.toIntRange(), match.rule.description, match.typoCategory, match.suggestedReplacements)
+    constructor(match: RuleMatch) : this(match.toIntRange(), match.rule.description, match.typoCategory, match.suggestedReplacements)
 
     val fullDescription: String
         get() {

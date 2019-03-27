@@ -7,7 +7,7 @@ import tanvd.grazi.model.Typo
 class GrammarCache {
     private val cache: LoadingCache<Int, List<Typo>> = Caffeine.newBuilder()
             .maximumSize(10000)
-            .build{ null }
+            .build { null }
 
     fun contains(str: String): Boolean {
         return cache.getIfPresent(str.hashCode()) != null

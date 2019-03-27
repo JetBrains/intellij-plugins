@@ -4,7 +4,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiFile
 import tanvd.grazi.grammar.GrammarEngineService
 import tanvd.grazi.ide.language.JavaDocSupport
 import tanvd.grazi.ide.language.LanguageSupport

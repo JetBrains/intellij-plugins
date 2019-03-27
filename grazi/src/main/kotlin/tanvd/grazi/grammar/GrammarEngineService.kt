@@ -1,8 +1,10 @@
 package tanvd.grazi.grammar
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.progress.ProgressManager
 import org.languagetool.rules.RuleMatch
 import tanvd.grazi.model.Typo
+
 
 class GrammarEngineService {
     companion object {
@@ -23,7 +25,9 @@ class GrammarEngineService {
     private fun isSmall(str: String) = str.length < 2
     private fun isBig(str: String) = str.length > 1000
 
-    fun getFixes(str: String): List<Typo> = getFixes(str, 0, 0).first
+    fun getFixes(str: String): List<Typo> {
+        return getFixes(str, 0, 0).first
+    }
 
     private fun getFixes(str: String, sepInd: Int = 0, numChecksDone: Int = 0): Pair<List<Typo>, Int> {
         var checksDone = numChecksDone
@@ -53,9 +57,10 @@ class GrammarEngineService {
 
         if (grammarCache.contains(str)) return grammarCache.get(str) to checksDone
 
-//        ProgressManager.checkCanceled()
+        ProgressManager.checkCanceled()
 
-        val fixes = languages.getLangChecker(str, enabledLangs).check(str).filterNotNull()
+        val fixes = tryRun { languages.getLangChecker(str, enabledLangs).check(str) }.orEmpty()
+                .filterNotNull()
                 .filter { it.type !in disabledRules && it.typoCategory !in disabledCategories }
                 .map { Typo(it.toIntRange(), it.shortMessage, it.typoCategory, it.suggestedReplacements) }
         checksDone++
@@ -64,4 +69,5 @@ class GrammarEngineService {
 
         return fixes to checksDone
     }
+
 }
