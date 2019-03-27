@@ -302,5 +302,6 @@
     </group>
     <action id="Dart.pub.cache.repair" class="com.jetbrains.lang.dart.ide.actions.DartPubCacheRepairAction" text="Pub: Repair Cache..."
             description="Run 'pub cache repair'"/>
+    <action id="Dart.reload.sources" class="com.jetbrains.lang.dart.ide.runner.actions.DartReloadSourcesAction"/>
   </actions>
 </idea-plugin>

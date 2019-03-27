@@ -1,6 +1,9 @@
 package com.jetbrains.lang.dart.ide.runner.server.vmService;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -352,6 +355,29 @@ public class VmServiceWrapper implements Disposable {
 
   public void removeBreakpoint(@NotNull final String isolateId, @NotNull final String vmBreakpointId) {
     addRequest(() -> myVmService.removeBreakpoint(isolateId, vmBreakpointId, VmServiceConsumers.EMPTY_SUCCESS_CONSUMER));
+  }
+
+  public void reloadSources(@NotNull final String isolateId) {
+    addRequest(() -> myVmService.reloadSources(isolateId, new VmServiceConsumers.ReloadReportConsumerWrapper() {
+      @Override
+      public void received(ReloadReport response) {
+        if (!response.getSuccess()) {
+          JsonArray notices = response.getJson().get("notices").getAsJsonArray();
+          for (JsonElement notice : notices) {
+            String message = notice.getAsJsonObject().get("message").getAsString();
+            myDebugProcess.getSession().getConsoleView().print(message + '\n', ConsoleViewContentType.ERROR_OUTPUT);
+          }
+        } else {
+          JsonObject details = response.getJson().get("details").getAsJsonObject();
+          int finalLibraryCount = details.get("finalLibraryCount").getAsInt();
+          int loadedLibraryCount = details.get("loadedLibraryCount").getAsInt();
+          String message = loadedLibraryCount == 0
+                           ? "Nothing to reload"
+                           : "Reloaded " + loadedLibraryCount + "/" + finalLibraryCount + " libraries";
+          myDebugProcess.getSession().getConsoleView().print(message + '\n', ConsoleViewContentType.SYSTEM_OUTPUT);
+        }
+      }
+    }));
   }
 
   public void resumeIsolate(@NotNull final String isolateId, @Nullable final StepOption stepOption) {
