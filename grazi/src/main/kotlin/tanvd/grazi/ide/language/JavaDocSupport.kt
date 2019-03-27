@@ -21,7 +21,7 @@ class JavaDocSupport : LanguageSupport {
             private val commentTokens = tokens.filter { it.parent::class != PsiDocTagImpl::class }
             private val tagTokens = tokens.filter { it.parent::class == PsiDocTagImpl::class }
 
-            private val commentTokensText = commentTokens.map { x -> x.text }.joinToString(" ")
+            private val commentTokensText = commentTokens.joinToString(" ") { x -> x.text }
 
             fun getFixes(manager: InspectionManager, isOnTheFly: Boolean, ext: LanguageSupport): MutableList<ProblemDescriptor> {
                 val grammarEngineService = GrammarEngineService.getInstance()

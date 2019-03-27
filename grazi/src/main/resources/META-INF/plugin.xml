@@ -7,12 +7,17 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="tanvd.grazi.grammar.GrammarEngineService"/>
-        <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
-                         shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection"/>
         <projectService serviceImplementation="tanvd.grazi.GraziToolProjectSettings"/>
+
+        <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
+                         shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="Grazi.Typo"/>
+
         <projectConfigurable groupId="tools" instance="tanvd.grazi.GraziToolConfigurable"
                              id="reference.settingsdialog.project.grazi"
                              key="grazi.name" bundle="messages.HCLBundle"/>
+
+        <severitiesProvider implementation="tanvd.grazi.ide.GraziSeveritiesProvider"/>
+
     </extensions>
 
     <extensionPoints>
@@ -21,21 +26,9 @@
 
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.PlainTextSupport"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.JavaDocSupport"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.HtmlSupport"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.MarkdownSupport"/>
-    </extensions>
-
-    <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.CommentsSupport"/>
     </extensions>
 </idea-plugin>

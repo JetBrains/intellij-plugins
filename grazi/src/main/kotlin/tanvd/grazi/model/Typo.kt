@@ -19,7 +19,7 @@ data class Typo(val range: IntRange, val description: String, val category: Cate
         }
 
     enum class Category(val value: String, val description: String,
-                        val highlight: ProblemHighlightType = ProblemHighlightType.WEAK_WARNING) : ProblemGroup {
+                        val highlight: ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING) : ProblemGroup {
         /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
         CASING("CASING", "Wrong case"),
 

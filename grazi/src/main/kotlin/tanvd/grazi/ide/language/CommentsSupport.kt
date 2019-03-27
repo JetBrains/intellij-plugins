@@ -3,9 +3,7 @@ package tanvd.grazi.ide.language
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.html.HtmlFileImpl
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
-import com.intellij.psi.impl.source.xml.XmlTextImpl
 import com.intellij.psi.util.PsiTreeUtil
 import tanvd.grazi.model.TextBlock
 
