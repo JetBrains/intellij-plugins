@@ -50,18 +50,22 @@ class Languages {
     }
 
     private class PatchedLanguages(enabledLangs: List<String>) : Closeable {
-        val field = org.languagetool.Languages::class.java.getDeclaredField("LANGUAGES")!!
-        val oldValue: List<Language>
+        companion object {
+            val field = org.languagetool.Languages::class.java.getDeclaredField("LANGUAGES")!!
+            val modifiersField = Field::class.java.getDeclaredField("modifiers")!!
+            val oldValue: List<Language>
+
+            init {
+                field.isAccessible = true
+                modifiersField.isAccessible = true;
+                modifiersField.setInt(field, field.modifiers and Modifier::FINAL.get().inv())
+                oldValue = field.get(null) as List<Language>
+            }
+        }
 
         init {
-            field.isAccessible = true
-            val modifiersField = Field::class.java.getDeclaredField("modifiers");
-            modifiersField.isAccessible = true;
-            modifiersField.setInt(field, field.modifiers and Modifier::FINAL.get().inv())
-            oldValue = field.get(null) as List<Language>
-            val collect = oldValue.stream().filter { language -> enabledLangs.contains(language.shortCode) }
-                    .collect(Collectors.toList())
-            field.set(null, collect)
+            field.set(null, oldValue.stream().filter { language -> enabledLangs.contains(language.shortCode) }
+                    .collect(Collectors.toList()))
         }
 
         override fun close() {
