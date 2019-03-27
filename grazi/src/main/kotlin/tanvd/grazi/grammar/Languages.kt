@@ -33,7 +33,7 @@ class Languages {
         }
     }
 
-    enum class Family(val shortCode: String, val enableRules: List<String>) {
+    enum class Family(val shortCode: String, private val enableRules: List<String>) {
         ENGLISH("en", listOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE")),
         RUSSIAN("ru", listOf("ABREV_DOT2", "KAK_VVODNOE", "PARTICLE_JE", "po_povodu_togo", "tak_skazat", "kak_bi", "O_tom_chto", "kosvennaja_rech"));
 
@@ -57,7 +57,7 @@ class Languages {
 
             init {
                 field.isAccessible = true
-                modifiersField.isAccessible = true;
+                modifiersField.isAccessible = true
                 modifiersField.setInt(field, field.modifiers and Modifier::FINAL.get().inv())
                 oldValue = field.get(null) as List<Language>
             }

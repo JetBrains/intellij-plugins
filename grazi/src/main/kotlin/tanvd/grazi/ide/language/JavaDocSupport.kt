@@ -47,9 +47,9 @@ class JavaDocSupport : LanguageSupport {
                 }
 
                 val problemDescriptorsForComments = fixesForText.map {
-                    val token = commentTokens[mappings.get(it.range.start)!!.second]
+                    val token = commentTokens[mappings[it.range.start]!!.second]
                     // TODO fix bad crutch here. should be: mappings.get(it.range.endInclusive)!!.first
-                    it.range = IntRange(mappings.get(it.range.start)!!.first, mappings.get(it.range.endInclusive - 1)!!.first + 1)
+                    it.range = IntRange(mappings[it.range.start]!!.first, mappings[it.range.endInclusive - 1]!!.first + 1)
                     typoToProblemDescriptors(it, TextBlock(token, token.text), manager, isOnTheFly, ext)
                 }
 
