@@ -1,11 +1,20 @@
 package tanvd.grazi.grammar
 
+import com.intellij.openapi.components.ServiceManager
 import org.languagetool.rules.RuleMatch
 import tanvd.grazi.model.Typo
 
+class GrammarEngineService {
+    companion object {
+        fun getInstance(): GrammarEngineService {
+            return ServiceManager.getService(GrammarEngineService::class.java)
+        }
+    }
 
-object GrammarEngine {
+    private val grammarCache = GrammarCache()
+    private val languages = Languages()
     private val separators = listOf("\n\n", "\n", ".")
+    var enabledLangs = arrayListOf("en")
 
 
     val disabledRules = arrayListOf(RuleMatch.Type.UnknownWord)
@@ -36,14 +45,14 @@ object GrammarEngine {
     private fun getFixesSmall(str: String): List<Typo> {
         if (isSmall(str)) return emptyList()
 
-        if (GrammarCache.isValid(str)) return emptyList()
+        if (grammarCache.isValid(str)) return emptyList()
 
-        val fixes = Languages.getLangChecker(str).check(str).filterNotNull()
+        val fixes = languages.getLangChecker(str, enabledLangs).check(str).filterNotNull()
                 .filter { it.type !in disabledRules && it.typoCategory !in disabledCategories }
                 .map { Typo(it.toIntRange(), it.shortMessage, it.typoCategory, it.suggestedReplacements) }
 
         if (fixes.isEmpty()) {
-            GrammarCache.setValid(str)
+            grammarCache.setValid(str)
         }
 
         return fixes

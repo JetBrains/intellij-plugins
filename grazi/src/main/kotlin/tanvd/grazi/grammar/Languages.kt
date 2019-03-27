@@ -6,15 +6,13 @@ import org.languagetool.language.AmericanEnglish
 import org.languagetool.language.LanguageIdentifier
 import java.util.*
 
-object Languages {
+class Languages {
     private val langs: MutableMap<Language, JLanguageTool> = HashMap()
 
-    var enabledLangs = arrayListOf("en")
-
     private val americanEnglish by lazy { AmericanEnglish() }
-    private const val charsForLangDetection = 500
+    private val charsForLangDetection = 500
 
-    fun getLangChecker(str: String): JLanguageTool {
+    fun getLangChecker(str: String, enabledLangs: List<String>): JLanguageTool {
         var lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str, emptyList())?.detectedLanguage ?: americanEnglish
         if (lang.shortCode !in enabledLangs) {
             lang = americanEnglish

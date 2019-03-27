@@ -3,7 +3,7 @@ package tanvd.grazi.grammar
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
 
-object GrammarCache {
+class GrammarCache {
     private val cache: LoadingCache<Int, Int> = Caffeine.newBuilder()
             .maximumSize(10000)
             .build { key -> key }

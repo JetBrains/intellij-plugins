@@ -5,7 +5,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import tanvd.grazi.grammar.GrammarEngine
+import tanvd.grazi.grammar.GrammarEngineService
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.model.TextBlock
 
@@ -28,7 +28,7 @@ class GraziInspection : AbstractBaseJavaLocalInspectionTool() {
                             ext: LanguageSupport): Array<ProblemDescriptor> {
         val result = mutableListOf<ProblemDescriptor>()
         for (block in blocks) {
-            val fixes = GrammarEngine.getFixes(block.text)
+            val fixes = GrammarEngineService.getInstance().getFixes(block.text)
             fixes.forEach { fix ->
                 val range = TextRange.create(fix.range.start, fix.range.endInclusive)
                 val quickFixes = fix.fix?.map { GraziQuickFix(fix.category.description, ext, block, range, it) }?.toTypedArray() ?: emptyArray()

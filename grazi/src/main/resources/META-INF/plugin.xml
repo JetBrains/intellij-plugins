@@ -6,6 +6,7 @@
     <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="tanvd.grazi.grammar.GrammarEngineService"/>
         <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection"/>
         <projectService serviceImplementation="tanvd.grazi.GraziToolProjectSettings"/>

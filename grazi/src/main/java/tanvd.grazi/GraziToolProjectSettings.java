@@ -48,7 +48,7 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
     }
 
     public void loadLanguages() {
-        Languages.INSTANCE.setEnabledLangs(new ArrayList<>(myState.languages));
+        GrammarEngineService.Companion.getInstance().setEnabledLangs(new ArrayList<>(myState.languages));
     }
 
     public void setGraziHome(String graziHome) {
