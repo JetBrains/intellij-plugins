@@ -5,7 +5,6 @@ import com.intellij.openapi.progress.ProgressManager
 import org.languagetool.rules.RuleMatch
 import tanvd.grazi.model.Typo
 
-
 class GrammarEngineService {
     companion object {
         fun getInstance(): GrammarEngineService {
@@ -18,52 +17,42 @@ class GrammarEngineService {
 
     private val grammarCache = GrammarCache()
     private val languages = Languages()
-    private val separators = listOf("\n\n", "\n", ".", " ")
+    private val separators = listOf("\n", ".", " ")
     var enabledLangs = arrayListOf("en")
         set(value) {
             field = value
             grammarCache.reset()
         }
-    private val newChecksPerTime = 10000
 
     val disabledRules = arrayListOf(RuleMatch.Type.UnknownWord)
     val disabledCategories = arrayListOf(Typo.Category.TYPOGRAPHY)
 
-
     private fun isSmall(str: String) = str.length < minChars
     private fun isBig(str: String) = str.length > maxChars
 
-    fun getFixes(str: String): List<Typo> {
-        return getFixes(str, 0, 0).first
-    }
+    fun getFixes(str: String) = getFixes(str, 0)
 
-    private fun getFixes(str: String, sepInd: Int = 0, numChecksDone: Int = 0): Pair<List<Typo>, Int> {
-        var checksDone = numChecksDone
+    private fun getFixes(str: String, sepInd: Int = 0): List<Typo> {
         val result: MutableList<Typo> = ArrayList()
         var cumLen = 0
         for (s in str.split(separators[sepInd])) {
             val stringFixes: List<Typo> = if (isBig(s) && sepInd + 1 < separators.size) {
-                val (list, checks) = getFixes(s, sepInd + 1, checksDone)
-                checksDone = checks
-                list
+                getFixes(s, sepInd + 1)
             } else {
-                val (list, checks) = getFixesSmall(s, checksDone)
-                checksDone = checks
-                list
+                getFixesSmall(s)
             }.map {
                 Typo(it.range.withOffset(cumLen), it.description, it.category, it.fix)
             }
             result.addAll(stringFixes)
             cumLen += s.length + separators[sepInd].length
         }
-        return result to checksDone
+        return result
     }
 
-    private fun getFixesSmall(str: String, numChecksDone: Int = 0): Pair<List<Typo>, Int> {
-        var checksDone = numChecksDone
-        if (isSmall(str) || isBig(str) || checksDone > newChecksPerTime) return emptyList<Typo>() to checksDone
+    private fun getFixesSmall(str: String): List<Typo> {
+        if (isSmall(str) || isBig(str)) return emptyList()
 
-        if (grammarCache.contains(str)) return grammarCache.get(str) to checksDone
+        if (grammarCache.contains(str)) return grammarCache.get(str)
 
         ProgressManager.checkCanceled()
 
@@ -71,11 +60,9 @@ class GrammarEngineService {
                 .filterNotNull()
                 .filter { it.type !in disabledRules && it.typoCategory !in disabledCategories }
                 .map { Typo(it) }
-        checksDone++
 
         grammarCache.set(str, fixes)
 
-        return fixes to checksDone
+        return fixes
     }
-
 }
