@@ -98,6 +98,13 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                      "check.txt");
   }
 
+  public void testFormsResolution() {
+    doResolutionTest("forms",
+                     "myModule.ts",
+                     "export class FormsModuleMetadata<caret>Test {",
+                     "check.txt");
+  }
+
   public void testCommonNgClassModules() {
     doDeclarationModulesCheckText("common",
                                   "directives/ng_class.ts",

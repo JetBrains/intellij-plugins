@@ -1,11 +1,11 @@
 MetadataFile:index.metadata.json
   @angular/material/input <metadata node module>
     MatTextareaAutosize <metadata directive>: selector=textarea[mat-autosize], textarea[matTextareaAutosize]; exportAs=matTextareaAutosize; inputs=[matAutosizeMinRows, cdkAutosizeMinRows, matTextareaAutosize, matAutosizeMaxRows, mat-autosize, cdkAutosizeMaxRows]; outputs=[]; inOuts=[]
-      @angular/cdk/text-field#CdkTextareaAutosize <metadata reference>('')
+      #ext: @angular/cdk/text-field#CdkTextareaAutosize <metadata reference>('')
     MatInputBase <metadata class>('')
     MatInput <metadata directive>: selector=input[matInput], textarea[matInput], select[matNativeControl],
       input[matNativeControl], textarea[matNativeControl]; exportAs=matInput; inputs=[readonly, errorStateMatcher, disabled, id, placeholder, type, value, required]; outputs=[]; inOuts=[]
-      _MatInputMixinBase <metadata reference>('')
+      #ext: _MatInputMixinBase <metadata reference>('')
     MatInputModule <metadata module>: imports=[MatFormFieldModule]; declarations=[MatInput, MatTextareaAutosize]; exports=[MatFormFieldModule, MatInput, MatTextareaAutosize]; scopeFullyResolved=false; exportsFullyResolved=false
       ___dec.declarations <metadata array>
         MatInput <metadata reference>('')

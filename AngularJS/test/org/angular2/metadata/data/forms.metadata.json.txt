@@ -1,0 +1,171 @@
+MetadataFile:forms.metadata.json
+  @angular/forms <metadata node module>
+    ɵangular_packages_forms_forms_a <metadata object>
+      provide: NG_VALUE_ACCESSOR <metadata reference>('')
+      useExisting: CheckboxControlValueAccessor <metadata reference>('')
+    ɵangular_packages_forms_forms_b <metadata object>
+      provide: NG_VALUE_ACCESSOR <metadata reference>('')
+      useExisting: DefaultValueAccessor <metadata reference>('')
+    ɵangular_packages_forms_forms_c <metadata class>('')
+    ɵangular_packages_forms_forms_d <metadata object>
+      $quoted$ <metadata array>('')
+    ɵangular_packages_forms_forms_e <metadata object>
+      provide: ControlContainer <metadata reference>('')
+      useExisting: NgForm <metadata reference>('')
+    ɵangular_packages_forms_forms_g <metadata object>
+      provide: NgControl <metadata reference>('')
+      useExisting: NgModel <metadata reference>('')
+    ɵangular_packages_forms_forms_h <metadata object>
+      provide: ControlContainer <metadata reference>('')
+      useExisting: NgModelGroup <metadata reference>('')
+    ɵangular_packages_forms_forms_i <metadata object>
+      provide: NG_VALUE_ACCESSOR <metadata reference>('')
+      useExisting: RadioControlValueAccessor <metadata reference>('')
+    ɵangular_packages_forms_forms_j <metadata class>('')
+    ɵangular_packages_forms_forms_l <metadata object>
+      provide: NgControl <metadata reference>('')
+      useExisting: FormControlDirective <metadata reference>('')
+    ɵangular_packages_forms_forms_m <metadata object>
+      provide: NgControl <metadata reference>('')
+      useExisting: FormControlName <metadata reference>('')
+    ɵangular_packages_forms_forms_n <metadata object>
+      provide: ControlContainer <metadata reference>('')
+      useExisting: FormGroupDirective <metadata reference>('')
+    ɵangular_packages_forms_forms_o <metadata object>
+      provide: ControlContainer <metadata reference>('')
+      useExisting: FormGroupName <metadata reference>('')
+    ɵangular_packages_forms_forms_p <metadata object>
+      provide: ControlContainer <metadata reference>('')
+      useExisting: FormArrayName <metadata reference>('')
+    ɵangular_packages_forms_forms_q <metadata object>
+      provide: NG_VALUE_ACCESSOR <metadata reference>('')
+      useExisting: SelectControlValueAccessor <metadata reference>('')
+    ɵangular_packages_forms_forms_r <metadata object>
+      provide: NG_VALUE_ACCESSOR <metadata reference>('')
+      useExisting: SelectMultipleControlValueAccessor <metadata reference>('')
+    ɵangular_packages_forms_forms_s <metadata directive>: selector=option; inputs=[value, ngValue]; outputs=[]; inOuts=[]('')
+    ɵangular_packages_forms_forms_t <metadata object>
+      provide: NG_VALIDATORS <metadata reference>('')
+      useExisting: RequiredValidator <metadata reference>('')
+    ɵangular_packages_forms_forms_u <metadata object>
+      provide: NG_VALIDATORS <metadata reference>('')
+      useExisting: CheckboxRequiredValidator <metadata reference>('')
+    ɵangular_packages_forms_forms_v <metadata object>
+      provide: NG_VALIDATORS <metadata reference>('')
+      useExisting: EmailValidator <metadata reference>('')
+    ɵangular_packages_forms_forms_w <metadata object>
+      provide: NG_VALIDATORS <metadata reference>('')
+      useExisting: MinLengthValidator <metadata reference>('')
+    ɵangular_packages_forms_forms_x <metadata object>
+      provide: NG_VALIDATORS <metadata reference>('')
+      useExisting: MaxLengthValidator <metadata reference>('')
+    ɵangular_packages_forms_forms_y <metadata object>
+      provide: NG_VALIDATORS <metadata reference>('')
+      useExisting: PatternValidator <metadata reference>('')
+    AbstractControlDirective <metadata class>('')
+    AbstractFormGroupDirective <metadata class>
+      #ext: ControlContainer <metadata reference>('')
+    CheckboxControlValueAccessor <metadata directive>: selector=input[type=checkbox][formControlName],input[type=checkbox][formControl],input[type=checkbox][ngModel]; inputs=[]; outputs=[]; inOuts=[]('')
+    ControlContainer <metadata class>
+      #ext: AbstractControlDirective <metadata reference>('')
+    DefaultValueAccessor <metadata directive>: selector=input:not([type=checkbox])[formControlName],textarea[formControlName],input:not([type=checkbox])[formControl],textarea[formControl],input:not([type=checkbox])[ngModel],textarea[ngModel],[ngDefaultControl]; inputs=[]; outputs=[]; inOuts=[]('')
+    NgControl <metadata class>
+      #ext: AbstractControlDirective <metadata reference>('')
+    NgControlStatus <metadata directive>: selector=[formControlName],[ngModel],[formControl]; inputs=[]; outputs=[]; inOuts=[]
+      #ext: ɵangular_packages_forms_forms_c <metadata reference>('')
+    NgControlStatusGroup <metadata directive>: selector=[formGroupName],[formArrayName],[ngModelGroup],[formGroup],form:not([ngNoForm]),[ngForm]; inputs=[]; outputs=[]; inOuts=[]
+      #ext: ɵangular_packages_forms_forms_c <metadata reference>('')
+    NgForm <metadata directive>: selector=form:not([ngNoForm]):not([formGroup]),ngForm,ng-form,[ngForm]; exportAs=ngForm; inputs=[ngFormOptions]; outputs=[ngSubmit]; inOuts=[]
+      #ext: ControlContainer <metadata reference>('')
+    NgFormSelectorWarning <metadata directive>: selector=ngForm; inputs=[]; outputs=[]; inOuts=[]('')
+    NgModel <metadata directive>: selector=[ngModel]:not([formControlName]):not([formControl]); exportAs=ngModel; inputs=[name, ngModelOptions, ngModel, disabled]; outputs=[ngModelChange]; inOuts=[<ngModel,ngModelChange>]
+      #ext: NgControl <metadata reference>('')
+    NgModelGroup <metadata directive>: selector=[ngModelGroup]; exportAs=ngModelGroup; inputs=[ngModelGroup]; outputs=[]; inOuts=[]
+      #ext: AbstractFormGroupDirective <metadata reference>('')
+    RadioControlValueAccessor <metadata directive>: selector=input[type=radio][formControlName],input[type=radio][formControl],input[type=radio][ngModel]; inputs=[name, formControlName, value]; outputs=[]; inOuts=[]('')
+    FormControlDirective <metadata directive>: selector=[formControl]; exportAs=ngForm; inputs=[ngModel, disabled, formControl]; outputs=[ngModelChange]; inOuts=[<ngModel,ngModelChange>]
+      #ext: NgControl <metadata reference>('')
+    FormControlName <metadata directive>: selector=[formControlName]; inputs=[formControlName, ngModel, disabled]; outputs=[ngModelChange]; inOuts=[<ngModel,ngModelChange>]
+      #ext: NgControl <metadata reference>('')
+    FormGroupDirective <metadata directive>: selector=[formGroup]; exportAs=ngForm; inputs=[formGroup]; outputs=[ngSubmit]; inOuts=[]
+      #ext: ControlContainer <metadata reference>('')
+    FormArrayName <metadata directive>: selector=[formArrayName]; inputs=[formArrayName]; outputs=[]; inOuts=[]
+      #ext: ControlContainer <metadata reference>('')
+    FormGroupName <metadata directive>: selector=[formGroupName]; inputs=[formGroupName]; outputs=[]; inOuts=[]
+      #ext: AbstractFormGroupDirective <metadata reference>('')
+    NgSelectOption <metadata directive>: selector=option; inputs=[value, ngValue]; outputs=[]; inOuts=[]('')
+    SelectControlValueAccessor <metadata directive>: selector=select:not([multiple])[formControlName],select:not([multiple])[formControl],select:not([multiple])[ngModel]; inputs=[compareWith]; outputs=[]; inOuts=[]('')
+    SelectMultipleControlValueAccessor <metadata directive>: selector=select[multiple][formControlName],select[multiple][formControl],select[multiple][ngModel]; inputs=[compareWith]; outputs=[]; inOuts=[]('')
+    CheckboxRequiredValidator <metadata directive>: selector=input[type=checkbox][required][formControlName],input[type=checkbox][required][formControl],input[type=checkbox][required][ngModel]; inputs=[required]; outputs=[]; inOuts=[]
+      #ext: RequiredValidator <metadata reference>('')
+    EmailValidator <metadata directive>: selector=[email][formControlName],[email][formControl],[email][ngModel]; inputs=[email]; outputs=[]; inOuts=[]('')
+    MaxLengthValidator <metadata directive>: selector=[maxlength][formControlName],[maxlength][formControl],[maxlength][ngModel]; inputs=[maxlength]; outputs=[]; inOuts=[]('')
+    MinLengthValidator <metadata directive>: selector=[minlength][formControlName],[minlength][formControl],[minlength][ngModel]; inputs=[minlength]; outputs=[]; inOuts=[]('')
+    PatternValidator <metadata directive>: selector=[pattern][formControlName],[pattern][formControl],[pattern][ngModel]; inputs=[pattern]; outputs=[]; inOuts=[]('')
+    RequiredValidator <metadata directive>: selector=:not([type=checkbox])[required][formControlName],:not([type=checkbox])[required][formControl],:not([type=checkbox])[required][ngModel]; inputs=[required]; outputs=[]; inOuts=[]('')
+    FormBuilder <metadata class>('')
+    AbstractControl <metadata class>('')
+    FormArray <metadata class>
+      #ext: AbstractControl <metadata reference>('')
+    FormControl <metadata class>
+      #ext: AbstractControl <metadata reference>('')
+    FormGroup <metadata class>
+      #ext: AbstractControl <metadata reference>('')
+    Validators <metadata class>('')
+    FormsModule <metadata module>: imports=[]; declarations=[NgForm, NgFormSelectorWarning, NgModel, NgModelGroup]; exports=[NgForm, NgFormSelectorWarning, NgModel, NgModelGroup, ɵangular_packages_forms_forms_bc]; scopeFullyResolved=true; exportsFullyResolved=true
+      withConfig <metadata function>
+        ngModule: FormsModule <metadata reference>('')
+      ___dec.declarations: ɵangular_packages_forms_forms_ba <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵangular_packages_forms_forms_bc <metadata reference>('')
+        ɵangular_packages_forms_forms_ba <metadata reference>('')
+    ReactiveFormsModule <metadata module>: imports=[]; declarations=[FormArrayName, FormControlDirective, FormControlName, FormGroupDirective, FormGroupName]; exports=[FormArrayName, FormControlDirective, FormControlName, FormGroupDirective, FormGroupName, ɵangular_packages_forms_forms_bc]; scopeFullyResolved=true; exportsFullyResolved=true
+      withConfig <metadata function>
+        ngModule: ReactiveFormsModule <metadata reference>('')
+      ___dec.declarations <metadata array>
+        ɵangular_packages_forms_forms_bb <metadata reference>('')
+      ___dec.exports <metadata array>
+        ɵangular_packages_forms_forms_bc <metadata reference>('')
+        ɵangular_packages_forms_forms_bb <metadata reference>('')
+    ɵangular_packages_forms_forms_z <metadata array>
+      ɵangular_packages_forms_forms_bh <metadata reference>('')
+      NgSelectOption <metadata reference>('')
+      ɵangular_packages_forms_forms_s <metadata reference>('')
+      DefaultValueAccessor <metadata reference>('')
+      ɵangular_packages_forms_forms_be <metadata reference>('')
+      ɵangular_packages_forms_forms_bg <metadata reference>('')
+      CheckboxControlValueAccessor <metadata reference>('')
+      SelectControlValueAccessor <metadata reference>('')
+      SelectMultipleControlValueAccessor <metadata reference>('')
+      RadioControlValueAccessor <metadata reference>('')
+      NgControlStatus <metadata reference>('')
+      NgControlStatusGroup <metadata reference>('')
+      RequiredValidator <metadata reference>('')
+      MinLengthValidator <metadata reference>('')
+      MaxLengthValidator <metadata reference>('')
+      PatternValidator <metadata reference>('')
+      CheckboxRequiredValidator <metadata reference>('')
+      EmailValidator <metadata reference>('')
+    ɵangular_packages_forms_forms_ba <metadata array>
+      NgModel <metadata reference>('')
+      NgModelGroup <metadata reference>('')
+      NgForm <metadata reference>('')
+      NgFormSelectorWarning <metadata reference>('')
+    ɵangular_packages_forms_forms_bb <metadata array>
+      FormControlDirective <metadata reference>('')
+      FormGroupDirective <metadata reference>('')
+      FormControlName <metadata reference>('')
+      FormGroupName <metadata reference>('')
+      FormArrayName <metadata reference>('')
+    ɵangular_packages_forms_forms_bc <metadata module>: imports=[]; declarations=[CheckboxControlValueAccessor, CheckboxRequiredValidator, DefaultValueAccessor, EmailValidator, MaxLengthValidator, MinLengthValidator, NgControlStatus, NgControlStatusGroup, NgSelectOption, PatternValidator, RadioControlValueAccessor, RequiredValidator, SelectControlValueAccessor, SelectMultipleControlValueAccessor, ɵangular_packages_forms_forms_be, ɵangular_packages_forms_forms_bg, ɵangular_packages_forms_forms_bh, ɵangular_packages_forms_forms_s]; exports=[CheckboxControlValueAccessor, CheckboxRequiredValidator, DefaultValueAccessor, EmailValidator, MaxLengthValidator, MinLengthValidator, NgControlStatus, NgControlStatusGroup, NgSelectOption, PatternValidator, RadioControlValueAccessor, RequiredValidator, SelectControlValueAccessor, SelectMultipleControlValueAccessor, ɵangular_packages_forms_forms_be, ɵangular_packages_forms_forms_bg, ɵangular_packages_forms_forms_bh, ɵangular_packages_forms_forms_s]; scopeFullyResolved=true; exportsFullyResolved=true
+      ___dec.declarations: ɵangular_packages_forms_forms_z <metadata reference>('')
+      ___dec.exports: ɵangular_packages_forms_forms_z <metadata reference>('')
+    ɵangular_packages_forms_forms_bd <metadata object>
+      provide: NG_VALUE_ACCESSOR <metadata reference>('')
+      useExisting: ɵangular_packages_forms_forms_be <metadata reference>('')
+    ɵangular_packages_forms_forms_be <metadata directive>: selector=input[type=number][formControlName],input[type=number][formControl],input[type=number][ngModel]; inputs=[]; outputs=[]; inOuts=[]('')
+    ɵangular_packages_forms_forms_bf <metadata object>
+      provide: NG_VALUE_ACCESSOR <metadata reference>('')
+      useExisting: ɵangular_packages_forms_forms_bg <metadata reference>('')
+    ɵangular_packages_forms_forms_bg <metadata directive>: selector=input[type=range][formControlName],input[type=range][formControl],input[type=range][ngModel]; inputs=[]; outputs=[]; inOuts=[]('')
+    ɵangular_packages_forms_forms_bh <metadata directive>: selector=form:not([ngNoForm]):not([ngNativeValidate]); inputs=[]; outputs=[]; inOuts=[]('')

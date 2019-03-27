@@ -10,25 +10,25 @@ MetadataFile:export.test.metadata.json
     CdkFooterCellDef <metadata template>: selector=[cdkFooterCellDef]; inputs=[]; outputs=[]; inOuts=[]('')
     CdkColumnDefBase <metadata class>('')
     CdkColumnDef <metadata directive>: selector=[cdkColumnDef]; inputs=[cdkColumnDef, sticky, stickyEnd]; outputs=[]; inOuts=[]
-      _CdkColumnDefBase <metadata reference>('')
+      #ext: _CdkColumnDefBase <metadata reference>('')
     BaseCdkCell <metadata class>('')
     CdkHeaderCell <metadata directive>: selector=cdk-header-cell, th[cdk-header-cell]; inputs=[]; outputs=[]; inOuts=[]
-      BaseCdkCell <metadata reference>('')
+      #ext: BaseCdkCell <metadata reference>('')
     CdkFooterCell <metadata directive>: selector=cdk-footer-cell, td[cdk-footer-cell]; inputs=[]; outputs=[]; inOuts=[]
-      BaseCdkCell <metadata reference>('')
+      #ext: BaseCdkCell <metadata reference>('')
     CdkCell <metadata directive>: selector=cdk-cell, td[cdk-cell]; inputs=[]; outputs=[]; inOuts=[]
-      BaseCdkCell <metadata reference>('')
+      #ext: BaseCdkCell <metadata reference>('')
     BaseRowDef <metadata class>('')
     CdkHeaderRowDefBase <metadata class>
-      BaseRowDef <metadata reference>('')
+      #ext: BaseRowDef <metadata reference>('')
     CdkHeaderRowDef <metadata template>: selector=[cdkHeaderRowDef]; inputs=[cdkHeaderRowDefSticky, cdkHeaderRowDef]; outputs=[]; inOuts=[]
-      _CdkHeaderRowDefBase <metadata reference>('')
+      #ext: _CdkHeaderRowDefBase <metadata reference>('')
     CdkFooterRowDefBase <metadata class>
-      BaseRowDef <metadata reference>('')
+      #ext: BaseRowDef <metadata reference>('')
     CdkFooterRowDef <metadata template>: selector=[cdkFooterRowDef]; inputs=[cdkFooterRowDefSticky, cdkFooterRowDef]; outputs=[]; inOuts=[]
-      _CdkFooterRowDefBase <metadata reference>('')
+      #ext: _CdkFooterRowDefBase <metadata reference>('')
     CdkRowDef <metadata template>: selector=[cdkRowDef]; inputs=[cdkRowDefWhen, cdkRowDefColumns]; outputs=[]; inOuts=[]
-      BaseRowDef <metadata reference>('')
+      #ext: BaseRowDef <metadata reference>('')
     CdkCellOutlet <metadata directive>: selector=[cdkCellOutlet]; inputs=[]; outputs=[]; inOuts=[]('')
     CdkHeaderRow <metadata component>: selector=cdk-header-row, tr[cdk-header-row]; inputs=[]; outputs=[]; inOuts=[]('')
     CdkFooterRow <metadata component>: selector=cdk-footer-row, tr[cdk-footer-row]; inputs=[]; outputs=[]; inOuts=[]('')
