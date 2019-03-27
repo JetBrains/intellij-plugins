@@ -4,8 +4,13 @@ import org.languagetool.JLanguageTool
 import org.languagetool.Language
 import org.languagetool.language.AmericanEnglish
 import org.languagetool.language.LanguageIdentifier
+import java.io.Closeable
+import java.lang.reflect.Field
+import java.lang.reflect.Modifier
 import java.util.*
+import java.util.stream.Collectors
 
+@Suppress("UNCHECKED_CAST")
 class Languages {
     private val langs: MutableMap<Language, JLanguageTool> = HashMap()
 
@@ -13,14 +18,17 @@ class Languages {
     private val charsForLangDetection = 500
 
     fun getLangChecker(str: String, enabledLangs: List<String>): JLanguageTool {
-        var lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str, emptyList())?.detectedLanguage ?: americanEnglish
-        if (lang.shortCode !in enabledLangs) {
-            lang = americanEnglish
-        }
+        PatchedLanguages(enabledLangs).use {
+            var lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str, emptyList())?.detectedLanguage
+                    ?: americanEnglish
+            if (lang.shortCode !in enabledLangs) {
+                lang = americanEnglish
+            }
 
-        return langs.getOrPut(lang) {
-            JLanguageTool(lang).apply {
-                Family[lang]?.configure(this)
+            return langs.getOrPut(lang) {
+                JLanguageTool(lang).apply {
+                    Family[lang]?.configure(this)
+                }
             }
         }
     }
@@ -38,6 +46,26 @@ class Languages {
             toEnable.forEach {
                 tool.enableRule(it.id)
             }
+        }
+    }
+
+    private class PatchedLanguages(enabledLangs: List<String>) : Closeable {
+        val field = org.languagetool.Languages::class.java.getDeclaredField("LANGUAGES")!!
+        val oldValue: List<Language>
+
+        init {
+            field.isAccessible = true
+            val modifiersField = Field::class.java.getDeclaredField("modifiers");
+            modifiersField.isAccessible = true;
+            modifiersField.setInt(field, field.modifiers and Modifier::FINAL.get().inv())
+            oldValue = field.get(null) as List<Language>
+            val collect = oldValue.stream().filter { language -> enabledLangs.contains(language.shortCode) }
+                    .collect(Collectors.toList())
+            field.set(null, collect)
+        }
+
+        override fun close() {
+            field.set(null, oldValue)
         }
     }
 }
