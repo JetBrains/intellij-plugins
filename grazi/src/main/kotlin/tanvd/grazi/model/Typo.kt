@@ -3,7 +3,7 @@ package tanvd.grazi.model
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.ProblemGroup
 
-data class Typo(val range: IntRange, val description: String, val category: Category, val fix: List<String>? = null) {
+data class Typo(var range: IntRange, val description: String, val category: Category, val fix: List<String>? = null) {
     val fullDescription: String
         get() {
             if (description.isBlank())

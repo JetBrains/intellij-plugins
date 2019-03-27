@@ -11,7 +11,7 @@ import tanvd.grazi.model.TextBlock
 class HtmlSupport : LanguageSupport {
     override fun replace(textBlock: TextBlock, range: TextRange, replacement: String) {
         val newText = range.replace(textBlock.element.text, replacement)
-        (textBlock.element as XmlTextImpl).value = newText
+        (textBlock.element as? XmlTextImpl)?.value = newText
     }
 
     override fun extract(file: PsiFile): List<TextBlock>? {

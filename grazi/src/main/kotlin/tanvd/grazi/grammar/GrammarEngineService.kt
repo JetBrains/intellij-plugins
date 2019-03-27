@@ -23,7 +23,7 @@ class GrammarEngineService {
     private fun isSmall(str: String) = str.length < 2
     private fun isBig(str: String) = str.length > 1_000_000
 
-    fun getFixes(str: String) = getFixes(str, 0)
+    fun getFixes(str: String): List<Typo> = getFixes(str, 0)
 
     private fun getFixes(str: String, sepInd: Int = 0): List<Typo> {
         val result: MutableList<Typo> = ArrayList()
