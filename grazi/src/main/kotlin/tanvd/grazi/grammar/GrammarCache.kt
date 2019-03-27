@@ -20,4 +20,8 @@ class GrammarCache {
     fun set(str: String, typos: List<Typo>) {
         cache.put(str.hashCode(), typos)
     }
+
+    fun reset() {
+        cache.invalidateAll()
+    }
 }

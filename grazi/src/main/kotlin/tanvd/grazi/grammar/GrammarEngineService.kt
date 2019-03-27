@@ -17,6 +17,10 @@ class GrammarEngineService {
     private val languages = Languages()
     private val separators = listOf("\n\n", "\n", ".", " ")
     var enabledLangs = arrayListOf("en")
+        set(value) {
+            field = value
+            grammarCache.reset()
+        }
     private val newChecksPerTime = 10000
 
     val disabledRules = arrayListOf(RuleMatch.Type.UnknownWord)
