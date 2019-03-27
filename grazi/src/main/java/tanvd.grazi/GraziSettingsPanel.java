@@ -19,12 +19,11 @@ import com.intellij.openapi.fileChooser.*;
 import com.intellij.openapi.options.*;
 import com.intellij.openapi.ui.*;
 import com.intellij.openapi.util.*;
-import com.intellij.ui.CheckBoxList;
+import com.intellij.ui.*;
 import org.jetbrains.annotations.*;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class GraziSettingsPanel implements ConfigurableUi<GraziToolProjectSettings> {
     private JPanel myWholePanel;
@@ -96,10 +95,11 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziToolProjectSettin
     public void apply(@NotNull GraziToolProjectSettings settings) {
         settings.setGraziHome(myGraziPathField.getText());
         for (String shortCode : allLanguageShortCodes.values()) {
-            if (enabledLanguages.isItemSelected(shortCode))
+            if (enabledLanguages.isItemSelected(shortCode)) {
                 settings.getState().languages.add(shortCode);
-            else
+            } else {
                 settings.getState().languages.remove(shortCode);
+            }
         }
         settings.loadLanguages();
     }

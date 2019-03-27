@@ -1,5 +1,6 @@
 package tanvd.grazi.ide
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.*
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -12,7 +13,6 @@ import tanvd.grazi.model.TextBlock
 import tanvd.grazi.model.Typo
 
 class GraziInspection : LocalInspectionTool() {
-
     companion object {
         val EP_NAME = ExtensionPointName.create<LanguageSupport>("tanvd.grazi.languageSupport")
 

@@ -11,6 +11,9 @@ class GrammarEngineService {
         fun getInstance(): GrammarEngineService {
             return ServiceManager.getService(GrammarEngineService::class.java)
         }
+
+        private const val maxChars = 1000
+        private const val minChars = 2
     }
 
     private val grammarCache = GrammarCache()
@@ -26,8 +29,9 @@ class GrammarEngineService {
     val disabledRules = arrayListOf(RuleMatch.Type.UnknownWord)
     val disabledCategories = arrayListOf(Typo.Category.TYPOGRAPHY)
 
-    private fun isSmall(str: String) = str.length < 2
-    private fun isBig(str: String) = str.length > 1000
+
+    private fun isSmall(str: String) = str.length < minChars
+    private fun isBig(str: String) = str.length > maxChars
 
     fun getFixes(str: String): List<Typo> {
         return getFixes(str, 0, 0).first

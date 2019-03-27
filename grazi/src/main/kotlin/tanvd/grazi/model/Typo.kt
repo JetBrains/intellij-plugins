@@ -21,7 +21,7 @@ data class Typo(val range: IntRange, val description: String, val category: Cate
     enum class Category(val value: String, val description: String,
                         val highlight: ProblemHighlightType = ProblemHighlightType.WEAK_WARNING) : ProblemGroup {
         /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
-        CASING("CASING", "Wrong case", ProblemHighlightType.LIKE_UNKNOWN_SYMBOL),
+        CASING("CASING", "Wrong case"),
 
         /** Rules about spelling terms as one word or as as separate words.  */
         COMPOUNDING("COMPOUNDING", "Compounding"),
@@ -29,7 +29,7 @@ data class Typo(val range: IntRange, val description: String, val category: Cate
         GRAMMAR("GRAMMAR", "Grammar"),
 
         /** Spelling issues.  */
-        TYPOS("TYPOS", "Typo", ProblemHighlightType.LIKE_UNKNOWN_SYMBOL),
+        TYPOS("TYPOS", "Typo"),
 
         PUNCTUATION("PUNCTUATION", "Punctuation"),
 

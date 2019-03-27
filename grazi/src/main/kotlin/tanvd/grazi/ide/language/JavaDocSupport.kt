@@ -4,16 +4,16 @@ package tanvd.grazi.ide.language
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.javadoc.PsiDocTagImpl
 import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.java.IJavaDocElementType
-import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import tanvd.grazi.model.TextBlock
-import tanvd.grazi.grammar.*
+import tanvd.grazi.grammar.GrammarEngineService
 import tanvd.grazi.ide.GraziInspection.Companion.typoToProblemDescriptors
+import tanvd.grazi.model.TextBlock
 
 class JavaDocSupport : LanguageSupport {
     companion object {
@@ -55,7 +55,7 @@ class JavaDocSupport : LanguageSupport {
 
                 val problemDescriptorsForTags = tagTokens.map {
                     grammarEngineService.getFixes(it.text).map { fix -> it to fix }
-                } .flatten().map {
+                }.flatten().map {
                     typoToProblemDescriptors(it.second, TextBlock(it.first, it.first.text), manager, isOnTheFly, ext)
                 }
 
