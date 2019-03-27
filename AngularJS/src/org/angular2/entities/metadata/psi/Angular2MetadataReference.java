@@ -8,6 +8,7 @@ import org.angular2.entities.metadata.stubs.Angular2MetadataReferenceStub;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
 
 public class Angular2MetadataReference extends Angular2MetadataElement<Angular2MetadataReferenceStub> {
@@ -26,13 +27,17 @@ public class Angular2MetadataReference extends Angular2MetadataElement<Angular2M
         PsiModificationTracker.MODIFICATION_COUNT));
     }
     else {
-      return tryCast(getNodeModule().findMember(getStub().getName()), Angular2MetadataElement.class);
+      return doIfNotNull(getNodeModule(), nodeModule ->
+        tryCast(nodeModule.findMember(getStub().getName()), Angular2MetadataElement.class));
     }
   }
 
   @Override
   public String toString() {
     String module = getStub().getModule();
-    return (module == null ? "" : module + "#") + getStub().getName() + " <metadata reference>";
+    String memberName = getStub().getMemberName();
+    return (memberName == null ? "" : memberName + ": ")
+           + (module == null ? "" : module + "#")
+           + getStub().getName() + " <metadata reference>";
   }
 }

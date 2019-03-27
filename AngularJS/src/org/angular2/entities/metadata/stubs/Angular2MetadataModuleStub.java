@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.stubs;
 
-import com.intellij.json.psi.JsonArray;
 import com.intellij.json.psi.JsonObject;
 import com.intellij.json.psi.JsonProperty;
 import com.intellij.psi.stubs.IndexSink;
@@ -46,9 +45,8 @@ public class Angular2MetadataModuleStub extends Angular2MetadataEntityStub<Angul
     super(memberName, parent, classSource, Angular2MetadataElementTypes.MODULE);
     for (String name : INTERESTED_IN) {
       JsonProperty property = initializer.findProperty(name);
-      if (property != null && property.getValue() instanceof JsonArray) {
-        new Angular2MetadataArrayStub(DECORATOR_FIELD_PREFIX + name,
-                                      property.getValue(), this);
+      if (property != null) {
+        createMember(DECORATOR_FIELD_PREFIX + name, property.getValue());
       }
     }
   }

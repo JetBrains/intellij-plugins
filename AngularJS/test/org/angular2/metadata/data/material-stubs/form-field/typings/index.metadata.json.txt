@@ -23,7 +23,7 @@ MetadataFile:index.metadata.json
     MatError <metadata directive>: selector=mat-error; inputs=[id]; outputs=[]; inOuts=[]('')
     MatFormFieldBase <metadata class>('')
     MatFormField <metadata component>: selector=mat-form-field; exportAs=matFormField; inputs=[hintLabel, appearance, color, hideRequiredMarker, floatLabel]; outputs=[]; inOuts=[]
-      _MatFormFieldMixinBase <metadata reference>('')
+      #ext: _MatFormFieldMixinBase <metadata reference>('')
     MatFormFieldControl <metadata class>('')
     MatHint <metadata directive>: selector=mat-hint; inputs=[align, id]; outputs=[]; inOuts=[]('')
     MatPlaceholder <metadata directive>: selector=mat-placeholder; inputs=[]; outputs=[]; inOuts=[]('')
