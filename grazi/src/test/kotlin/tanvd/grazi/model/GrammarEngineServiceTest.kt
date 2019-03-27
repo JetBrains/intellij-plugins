@@ -3,6 +3,8 @@ package tanvd.grazi.model
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import tanvd.grazi.grammar.GrammarEngineService
+import java.io.File
+import kotlin.system.measureTimeMillis
 
 class GrammarEngineServiceTest {
     @Test
@@ -31,5 +33,16 @@ class GrammarEngineServiceTest {
     fun testNotCorrectText() {
         val fixes = GrammarEngineService().getFixes("A sentence with a error in the Hitchhiker's Guide tot he Galaxy")
         assertEquals(2, fixes.size)
+    }
+
+    @Test
+    fun testPerformanceMiddle() {
+        val text = File("src/test/resources/english_big.txt").readText()
+        val grammar = GrammarEngineService()
+        var fixes = grammar.getFixes(text)
+        val totalTime = measureTimeMillis {
+            fixes = grammar.getFixes(text)
+        }
+        assert(0.01 > totalTime / 1000)
     }
 }
