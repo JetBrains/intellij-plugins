@@ -17,7 +17,7 @@ class GraziInspection : LocalInspectionTool() {
 
         fun typoToProblemDescriptors(fix: Typo, block: TextBlock, manager: InspectionManager,
                                      isOnTheFly: Boolean, ext: LanguageSupport): ProblemDescriptor {
-            val range = TextRange.create(fix.range.start, fix.range.endInclusive)
+            val range = TextRange.create(fix.range.start, fix.range.endInclusive + 1)
             val quickFixes = fix.fix?.map { GraziQuickFix(fix.category.description, ext, block, range, it) }?.toTypedArray() ?: emptyArray()
             @Suppress("SpreadOperator")
             return manager.createProblemDescriptor(block.element, range,

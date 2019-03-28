@@ -41,15 +41,14 @@ class JavaDocSupport : LanguageSupport {
                         } else {
                             mappings[i] = i - curAdd to curTokenInd
                         }
-                        curAdd += commentTokens[curTokenInd].text.length + 1
+                        curAdd += commentTokens[curTokenInd].text.length
                         curTokenInd += 1
                     }
                 }
 
                 val problemDescriptorsForComments = fixesForText.map {
                     val token = commentTokens[mappings[it.range.start]!!.second]
-                    // TODO fix bad crutch here. should be: mappings.get(it.range.endInclusive)!!.first
-                    it.range = IntRange(mappings[it.range.start]!!.first, mappings[it.range.endInclusive - 1]!!.first + 1)
+                    it.range = IntRange(mappings[it.range.start]!!.first, mappings[it.range.endInclusive]!!.first)
                     typoToProblemDescriptors(it, TextBlock(token, token.text), manager, isOnTheFly, ext)
                 }
 
