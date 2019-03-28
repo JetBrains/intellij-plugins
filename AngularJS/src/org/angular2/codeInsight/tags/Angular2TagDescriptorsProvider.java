@@ -8,12 +8,15 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.xml.XMLLanguage;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.html.HtmlTag;
+import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlTagNameProvider;
 import com.intellij.xml.util.XmlUtil;
 import icons.AngularJSIcons;
@@ -105,7 +108,9 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
       return null;
     }
     String tagName = xmlTag.getName();
-    if (XmlUtil.isTagDefinedByNamespace(xmlTag)) return null;
+    if (XmlUtil.isTagDefinedByNamespace(xmlTag)) {
+      return getWrappedDescriptorFromNamespace(xmlTag);
+    }
     tagName = XmlUtil.findLocalNameByQualifiedName(tagName);
     if (NG_SPECIAL_TAGS.contains(tagName.toLowerCase(Locale.ENGLISH))) {
       return new Angular2TagDescriptor(tagName, createDirective(xmlTag, tagName), !NG_CONTENT.equals(tagName));
@@ -121,6 +126,20 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
       .get(0)
       .getSelector()
       .getPsiElementForElement(tagName));
+  }
+
+  private static XmlElementDescriptor getWrappedDescriptorFromNamespace(@NotNull XmlTag xmlTag) {
+    XmlElementDescriptor elementDescriptor = null;
+    final XmlNSDescriptor nsDescriptor = xmlTag.getNSDescriptor(xmlTag.getNamespace(), false);
+
+    if (nsDescriptor != null) {
+      if (!DumbService.getInstance(xmlTag.getProject()).isDumb() || DumbService.isDumbAware(nsDescriptor)) {
+        elementDescriptor = nsDescriptor.getElementDescriptor(xmlTag);
+      }
+    }
+    return elementDescriptor instanceof HtmlElementDescriptorImpl
+           ? new Angular2StandardTagDescriptor((HtmlElementDescriptorImpl)elementDescriptor)
+           : null;
   }
 
   @NotNull

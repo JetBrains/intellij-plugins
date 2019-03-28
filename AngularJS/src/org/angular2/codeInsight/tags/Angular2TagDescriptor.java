@@ -15,10 +15,12 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static org.angular2.codeInsight.tags.Angular2StandardTagDescriptor.mergeWithAngularDescriptorIfPossible;
+
 public class Angular2TagDescriptor implements XmlElementDescriptor {
   private final String myName;
   private final PsiElement myDeclaration;
-  private boolean myCommonHtmlElement;
+  private final boolean myCommonHtmlElement;
 
   public Angular2TagDescriptor(@NotNull String name, @NotNull PsiElement declaration) {
     this(name, declaration, true);
@@ -57,7 +59,8 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   @Override
   @NotNull
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    return myCommonHtmlElement ? HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context) : XmlAttributeDescriptor.EMPTY;
+    return myCommonHtmlElement ? HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)
+                               : XmlAttributeDescriptor.EMPTY;
   }
 
   @Nullable
@@ -69,8 +72,8 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
-    return Angular2AttributeDescriptorsProvider.getAttributeDescriptor(
-      attributeName, context, this::getAttributesDescriptors);
+    return mergeWithAngularDescriptorIfPossible(Angular2AttributeDescriptorsProvider.getAttributeDescriptor(
+      attributeName, context, this::getAttributesDescriptors), attributeName, context);
   }
 
   @Nullable

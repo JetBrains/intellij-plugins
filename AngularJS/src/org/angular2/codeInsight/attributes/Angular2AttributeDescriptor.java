@@ -52,7 +52,6 @@ import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
 import static com.intellij.util.containers.ContainerUtil.*;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
@@ -119,7 +118,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   private final AttributePriority myPriority;
   @NotNull
-  private final PsiElement[] myElements;
+  private final List<PsiElement> myElements;
   @Nullable
   private final List<Angular2Directive> mySourceDirectives;
   @NotNull
@@ -172,22 +171,25 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                       @Nullable Collection<Angular2Directive> sourceDirectives,
                                       @NotNull Collection<PsiElement> elements) {
     myAttributeName = attributeName;
-    myElements = elements.toArray(PsiElement.EMPTY_ARRAY);
+    myElements = Collections.unmodifiableList(new ArrayList<>(elements));
     mySourceDirectives = sourceDirectives != null ? immutableList(sourceDirectives.toArray(Angular2Directive.EMPTY_ARRAY)) : null;
     myInfo = info;
     myPriority = priority;
   }
 
-  public Angular2AttributeDescriptor merge(XmlAttributeDescriptor other) {
-    if (other instanceof Angular2AttributeDescriptor) {
+  public Angular2AttributeDescriptor merge(@Nullable XmlAttributeDescriptor other) {
+    if (other == null) {
+      return this;
+    }
+    else if (other instanceof Angular2AttributeDescriptor) {
       Angular2AttributeDescriptor ngOther = (Angular2AttributeDescriptor)other;
       assert myAttributeName.equals(ngOther.myAttributeName)
              && myInfo.isEquivalent(ngOther.myInfo)
         : "Cannot merge attributes with different names or non-equivalent infos: "
           + myAttributeName + " " + myInfo.toString() + " != "
           + ngOther.myAttributeName + " " + ngOther.myInfo.toString();
-      Set<PsiElement> elements = new HashSet<>(asList(myElements));
-      elements.addAll(asList(ngOther.myElements));
+      Set<PsiElement> elements = new HashSet<>(myElements);
+      elements.addAll(ngOther.myElements);
       Set<Angular2Directive> sources;
       if (mySourceDirectives == null || ngOther.mySourceDirectives == null) {
         sources = null;
@@ -201,8 +203,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     }
     else {
       assert other.getName().equals(myAttributeName);
-      Set<PsiElement> elements = new HashSet<>(asList(myElements));
-      elements.add(other.getDeclaration());
+      Set<PsiElement> elements = new HashSet<>(myElements);
+      elements.addAll(other.getDeclarations());
       return new Angular2AttributeDescriptor(myAttributeName, false, elements);
     }
   }
@@ -280,7 +282,13 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Override
   public PsiElement getDeclaration() {
-    return ArrayUtil.getFirstElement(myElements);
+    return myElements.size() == 1 ? myElements.get(0) : null;
+  }
+
+  @NotNull
+  @Override
+  public Collection<PsiElement> getDeclarations() {
+    return myElements;
   }
 
   @Nullable
@@ -406,7 +414,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
         return types.get(0);
       }
       return JSCompositeTypeImpl.getCommonType(
-        types, createTypeSource(myElements[0], false), false);
+        types, createTypeSource(myElements.get(0), false), false);
     }
     return null;
   }

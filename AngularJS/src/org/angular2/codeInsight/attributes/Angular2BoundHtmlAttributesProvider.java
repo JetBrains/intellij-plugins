@@ -19,7 +19,6 @@ import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.notNull;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptor.AttributePriority.NONE;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 import static org.angular2.lang.html.parser.Angular2AttributeType.PROPERTY_BINDING;
@@ -102,7 +101,7 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
       super(notNull(PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName(), canonical),
                     () -> PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName())),
             false,
-            singletonList(originalDescriptor.getDeclaration()));
+            originalDescriptor.getDeclarations());
     }
 
     @Override
