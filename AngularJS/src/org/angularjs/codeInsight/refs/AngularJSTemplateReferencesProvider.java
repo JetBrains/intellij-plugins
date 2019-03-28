@@ -41,23 +41,22 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
 
     public static Map<String, Angular2TemplateReferenceData> encodeTemplateReferenceData(@Nullable PsiFile file) {
       Map<String, Angular2TemplateReferenceData> result = new HashMap<>();
-      visitFile(file, fileReferenceSet -> {
-        Angular2TemplateReferenceData referenceData = fileReferenceSet.encodeTemplateReferenceData();
-        fileReferenceSet.getElement().putCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY, referenceData);
+      visitFile(file, fileReferenceSet ->
         ContainerUtil.putIfNotNull(fileReferenceSet.getPathString(),
-                                   referenceData,
-                                   result);
-      });
+                                   fileReferenceSet.encodeTemplateReferenceData(),
+                                   result));
+      if (file != null && !result.isEmpty()) {
+        file.putCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY, result);
+      }
       return result;
     }
 
     public static void decodeTemplateReferenceData(@Nullable PsiFile file) {
-      visitFile(file, fileReferenceSet -> {
-        Angular2TemplateReferenceData referenceData = fileReferenceSet.getElement().getCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY);
-        if (referenceData != null) {
-          fileReferenceSet.decodeTemplateReferenceData(referenceData);
-        }
-      });
+      Map<String, Angular2TemplateReferenceData> map = file != null ? file.getCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY) : null;
+      if (map != null) {
+        file.putCopyableUserData(TEMPLATE_REFERENCE_DATA_KEY, null);
+        decodeTemplateReferenceData(file, map);
+      }
     }
 
     public static void decodeTemplateReferenceData(@Nullable PsiFile file, @NotNull Map<String, Angular2TemplateReferenceData> dataMap) {
@@ -69,7 +68,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       });
     }
 
-    private static final Key<Angular2TemplateReferenceData> TEMPLATE_REFERENCE_DATA_KEY =
+    private static final Key<Map<String, Angular2TemplateReferenceData>> TEMPLATE_REFERENCE_DATA_KEY =
       new Key<>("angular2.template-reference-data");
 
     public Angular2SoftFileReferenceSet(@NotNull PsiElement element) {
