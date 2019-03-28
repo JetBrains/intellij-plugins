@@ -30,13 +30,12 @@ class GraziQuickFix(private val ruleName: String, private val ext: LanguageSuppo
         val start = block.element.textRange.startOffset
         val document = block.element.containingFile.viewProvider.document
 
-        val adjusted = if (replacement.startsWith(".")) TextRange.create(textRange.startOffset - 1, textRange.endOffset) else textRange
-        ext.replace(block, adjusted, replacement)
+        ext.replace(block, textRange, replacement)
 
         val matcher = Pattern.compile("\\$\\w+\\$").matcher(replacement)
         val editor = FileEditorManager.getInstance(project).selectedTextEditor
         if (matcher.find() && editor?.document == document) {
-            val matchStart = start + adjusted.startOffset + matcher.start(0)
+            val matchStart = start + textRange.startOffset + matcher.start(0)
             val matchEnd = matchStart + matcher.end(0) - matcher.start(0)
             editor!!.caretModel.moveToOffset(matchStart)
             editor.selectionModel.setSelection(matchStart, matchEnd)
