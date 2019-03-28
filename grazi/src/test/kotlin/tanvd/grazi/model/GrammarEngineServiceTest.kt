@@ -3,6 +3,7 @@ package tanvd.grazi.model
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import tanvd.grazi.grammar.GrammarEngineService
+import tanvd.grazi.grammar.Typo
 import java.io.File
 import kotlin.system.measureTimeMillis
 

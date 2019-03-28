@@ -4,7 +4,6 @@ import com.intellij.openapi.components.*;
 import org.jetbrains.annotations.*;
 import tanvd.grazi.grammar.*;
 
-import java.io.*;
 import java.util.*;
 
 @State(

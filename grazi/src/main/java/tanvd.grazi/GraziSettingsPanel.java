@@ -15,10 +15,7 @@
  */
 package tanvd.grazi;
 
-import com.intellij.openapi.fileChooser.*;
 import com.intellij.openapi.options.*;
-import com.intellij.openapi.ui.*;
-import com.intellij.openapi.util.*;
 import com.intellij.ui.*;
 import org.jetbrains.annotations.*;
 

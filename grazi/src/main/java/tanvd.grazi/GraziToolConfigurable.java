@@ -1,7 +1,6 @@
 package tanvd.grazi;
 
 import com.intellij.openapi.options.*;
-import com.intellij.openapi.project.*;
 import org.jetbrains.annotations.*;
 
 public class GraziToolConfigurable extends ConfigurableBase<GraziSettingsPanel, GraziApplicationSettings> {

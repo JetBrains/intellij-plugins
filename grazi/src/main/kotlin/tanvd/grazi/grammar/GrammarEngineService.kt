@@ -3,7 +3,6 @@ package tanvd.grazi.grammar
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.progress.ProgressManager
 import org.languagetool.rules.RuleMatch
-import tanvd.grazi.model.Typo
 
 class GrammarEngineService {
     companion object {

@@ -33,7 +33,7 @@
         <languageSupport implementation="tanvd.grazi.ide.language.PlainTextSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.JavaDocSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.KDocSupport"/>
-<!--        <languageSupport implementation="tanvd.grazi.ide.language.HtmlSupport"/>-->
+        <!--        <languageSupport implementation="tanvd.grazi.ide.language.HtmlSupport"/>-->
         <languageSupport implementation="tanvd.grazi.ide.language.MarkdownSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.CommentsSupport"/>
     </extensions>

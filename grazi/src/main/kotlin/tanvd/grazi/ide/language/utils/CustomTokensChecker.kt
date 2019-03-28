@@ -2,8 +2,8 @@ package tanvd.grazi.ide.language.utils
 
 import com.intellij.psi.PsiElement
 import tanvd.grazi.grammar.GrammarEngineService
+import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.model.Typo
 
 class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: List<Char>,
                                           private val ignores: List<Char>,

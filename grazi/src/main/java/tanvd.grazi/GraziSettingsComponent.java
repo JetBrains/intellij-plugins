@@ -1,6 +1,6 @@
 package tanvd.grazi;
 
-import com.intellij.openapi.components.BaseComponent;
+import com.intellij.openapi.components.*;
 
 public class GraziSettingsComponent implements BaseComponent {
     @Override

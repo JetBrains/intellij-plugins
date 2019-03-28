@@ -5,8 +5,8 @@ import com.intellij.psi.JavaDocTokenType
 import com.intellij.psi.PsiFile
 import com.intellij.psi.javadoc.*
 import com.intellij.psi.util.PsiTreeUtil
+import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.utils.CustomTokensChecker
-import tanvd.grazi.model.Typo
 
 class JavaDocSupport : LanguageSupport {
     companion object {

@@ -1,10 +1,8 @@
-package tanvd.grazi.model
+package tanvd.grazi.grammar
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.ProblemGroup
 import org.languagetool.rules.RuleMatch
-import tanvd.grazi.grammar.toIntRange
-import tanvd.grazi.grammar.typoCategory
 
 data class Typo(val range: IntRange, val description: String, val category: Category, val fix: List<String>? = null) {
     constructor(match: RuleMatch) : this(match.toIntRange(), match.rule.description, match.typoCategory, match.suggestedReplacements)

@@ -4,8 +4,8 @@ package tanvd.grazi.ide.language
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.markdown.lang.psi.impl.*
+import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.utils.CustomTokensChecker
-import tanvd.grazi.model.Typo
 
 class MarkdownSupport : LanguageSupport {
     companion object {
