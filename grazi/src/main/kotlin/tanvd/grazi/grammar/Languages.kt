@@ -2,6 +2,7 @@ package tanvd.grazi.grammar
 
 import org.languagetool.JLanguageTool
 import org.languagetool.Language
+import org.languagetool.Languages
 import org.languagetool.language.AmericanEnglish
 import org.languagetool.language.LanguageIdentifier
 import java.io.Closeable
@@ -26,6 +27,14 @@ class Languages {
                 JLanguageTool(lang).apply {
                     Family[lang]?.configure(this)
                 }
+            }
+        }
+    }
+
+    fun initLangs(enabledLangs: List<String>) {
+        enabledLangs.map { Languages.getLanguageForShortCode(it) }.forEach {
+            langs[it] = JLanguageTool(it).apply {
+                Family[it]?.configure(this)
             }
         }
     }

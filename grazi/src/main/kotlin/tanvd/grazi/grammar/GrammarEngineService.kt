@@ -23,6 +23,7 @@ class GrammarEngineService {
         set(value) {
             field = value
             grammarCache.reset()
+            languages.initLangs(value)
         }
     private val disabledRules = arrayListOf(RuleMatch.Type.UnknownWord)
     private val disabledCategories = arrayListOf(Typo.Category.TYPOGRAPHY)
