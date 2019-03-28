@@ -95,7 +95,7 @@ class FlexQuickNavigateBuilder extends JSQuickNavigateBuilder {
       builder.append(info).append("\n");
     }
     builder.append(parent.getName()).append(" ").append(valuePair.getSimpleValue());
-    return buildResult(ObjectKind.SIMPLE_DECLARATION, builder.toString(), false, element, originalElement);
+    return buildResult(ObjectKind.SIMPLE_DECLARATION, builder.toString(), element, originalElement);
   }
 
   @Override
