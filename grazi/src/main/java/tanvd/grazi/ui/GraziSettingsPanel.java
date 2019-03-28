@@ -11,7 +11,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
     private JPanel myWholePanel;
     private CheckBoxList<String> enabledLanguages;
 
-    static private final HashMap<String, String> allLanguageShortCodes = new HashMap<>();
+    static private final TreeMap<String, String> allLanguageShortCodes = new TreeMap<>();
 
     static {
         allLanguageShortCodes.put("English", "en");
