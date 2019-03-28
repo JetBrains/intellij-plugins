@@ -17,3 +17,5 @@ fun <T> tryRun(body: () -> T): T? = try {
 }
 
 fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
+
+fun <T> List<T>.dropFirst() = this.drop(1)

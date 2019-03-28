@@ -5,19 +5,15 @@ import com.github.benmanes.caffeine.cache.LoadingCache
 import tanvd.grazi.model.Typo
 
 class GrammarCache {
-    private val cache: LoadingCache<Int, List<Typo>> = Caffeine.newBuilder()
-            .maximumSize(100_000)
+    private val cache: LoadingCache<Int, Set<Typo>> = Caffeine.newBuilder()
+            .maximumSize(30_000)
             .build { null }
 
-    fun contains(str: String): Boolean {
-        return cache.getIfPresent(str.hashCode()) != null
-    }
+    fun contains(str: String) = cache.getIfPresent(str.hashCode()) != null
 
-    fun get(str: String): List<Typo> {
-        return cache.getIfPresent(str.hashCode()) ?: return emptyList()
-    }
+    fun get(str: String) = cache.getIfPresent(str.hashCode()) ?: emptySet()
 
-    fun set(str: String, typos: List<Typo>) {
+    fun put(str: String, typos: Set<Typo>) {
         cache.put(str.hashCode(), typos)
     }
 
