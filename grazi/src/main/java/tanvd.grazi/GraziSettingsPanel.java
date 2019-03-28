@@ -1,6 +1,24 @@
-package tanvd.grazi.ui;
+/*
+ * Copyright 2000-2016 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package tanvd.grazi;
 
+import com.intellij.openapi.fileChooser.*;
 import com.intellij.openapi.options.*;
+import com.intellij.openapi.ui.*;
+import com.intellij.openapi.util.*;
 import com.intellij.ui.*;
 import org.jetbrains.annotations.*;
 
@@ -57,7 +75,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
     @Override
     public boolean isModified(@NotNull GraziApplicationSettings settings) {
         return !allLanguageShortCodes.values().stream().allMatch(shortCode ->
-                settings.getMyState().getLanguages().contains(shortCode) == enabledLanguages.isItemSelected(shortCode)
+                settings.getState().languages.contains(shortCode) == enabledLanguages.isItemSelected(shortCode)
         );
     }
 
@@ -65,9 +83,9 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
     public void apply(@NotNull GraziApplicationSettings settings) {
         for (String shortCode : allLanguageShortCodes.values()) {
             if (enabledLanguages.isItemSelected(shortCode)) {
-                settings.getMyState().getLanguages().add(shortCode);
+                settings.getState().languages.add(shortCode);
             } else {
-                settings.getMyState().getLanguages().remove(shortCode);
+                settings.getState().languages.remove(shortCode);
             }
         }
         settings.loadLanguages();
@@ -76,7 +94,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
     @Override
     public void reset(@NotNull GraziApplicationSettings settings) {
         for (String shortCode : allLanguageShortCodes.values()) {
-            enabledLanguages.setItemSelected(shortCode, settings.getMyState().getLanguages().contains(shortCode));
+            enabledLanguages.setItemSelected(shortCode, settings.getState().languages.contains(shortCode));
         }
     }
 }
