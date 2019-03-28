@@ -39,8 +39,6 @@ class GraziQuickFix(private val ruleName: String, private val replacements: List
                     val items = replacements.map { LookupElementBuilder.create(it) }
                     LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())
                 }
-
-
     }
 
     private fun getDocumentOffset(offset: Int, documentLength: Int): Int {

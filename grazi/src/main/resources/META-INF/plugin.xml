@@ -8,18 +8,18 @@
 
     <application-components>
         <component>
-            <implementation-class>tanvd.grazi.ui.GraziSettingsComponent</implementation-class>
+            <implementation-class>tanvd.grazi.GraziSettingsComponent</implementation-class>
         </component>
     </application-components>
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="tanvd.grazi.grammar.GrammarEngineService"/>
-        <applicationService serviceImplementation="tanvd.grazi.ui.GraziApplicationSettings"/>
+        <applicationService serviceImplementation="tanvd.grazi.GraziApplicationSettings"/>
 
         <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
 
-        <applicationConfigurable groupId="tools" instance="tanvd.grazi.ui.GraziToolConfigurable"
+        <applicationConfigurable groupId="tools" instance="tanvd.grazi.GraziToolConfigurable"
                                  id="reference.settingsdialog.project.grazi"
                                  key="grazi.name" bundle="messages.Grazi"/>
 
