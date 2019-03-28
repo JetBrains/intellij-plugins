@@ -30,10 +30,10 @@ class GrammarEngineService {
     private fun isSmall(str: String) = str.length < minChars
     private fun isBig(str: String) = str.length > maxChars
 
-    fun getFixes(str: String, seps: List<String> = separators): Set<Typo> {
+    fun getFixes(str: String, seps: List<String> = separators): List<Typo> {
         val curSeparator = seps.first()
 
-        val result = HashSet<Typo>()
+        val result = LinkedHashSet<Typo>()
         var cumulativeLen = 0
         for (s in str.split(curSeparator)) {
             val stringFixes: List<Typo> = if (isBig(s) && seps.isNotEmpty()) {
@@ -46,11 +46,11 @@ class GrammarEngineService {
             result.addAll(stringFixes)
             cumulativeLen += s.length + curSeparator.length
         }
-        return result
+        return result.toList()
     }
 
-    private fun getFixesSmall(str: String): Set<Typo> {
-        if (isSmall(str)) return emptySet()
+    private fun getFixesSmall(str: String): LinkedHashSet<Typo> {
+        if (isSmall(str)) return LinkedHashSet()
 
         if (grammarCache.contains(str)) return grammarCache.get(str)
 
@@ -59,7 +59,7 @@ class GrammarEngineService {
         val fixes = tryRun { languages.getLangChecker(str, enabledLangs).check(str) }.orEmpty()
                 .filterNotNull()
                 .filter { it.type !in disabledRules && it.typoCategory !in disabledCategories }
-                .map { Typo(it) }.toSet()
+                .map { Typo(it) }.let { LinkedHashSet(it) }
 
         grammarCache.put(str, fixes)
 
