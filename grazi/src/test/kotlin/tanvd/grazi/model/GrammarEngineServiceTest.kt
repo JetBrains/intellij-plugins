@@ -33,11 +33,11 @@ class GrammarEngineServiceTest {
     fun testRanges() {
         val fixes = GrammarEngineService().getFixes("hello. world,, tot he.\nThis are my friend")
         assertEquals(5, fixes.size)
-        assertEquals(IntRange(0, 5), fixes[0].range)
-        assertEquals(IntRange(7, 12), fixes[1].range)
-        assertEquals(IntRange(12, 14), fixes[2].range)
-        assertEquals(IntRange(15, 21), fixes[3].range)
-        assertEquals(IntRange(23, 31), fixes[4].range)
+        assertEquals(IntRange(0, 4), fixes[0].range)
+        assertEquals(IntRange(7, 11), fixes[1].range)
+        assertEquals(IntRange(12, 13), fixes[2].range)
+        assertEquals(IntRange(15, 20), fixes[3].range)
+        assertEquals(IntRange(23, 30), fixes[4].range)
     }
 
     @Test

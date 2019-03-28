@@ -6,7 +6,7 @@ import tanvd.grazi.model.Typo
 val RuleMatch.typoCategory: Typo.Category
     get() = Typo.Category[rule.category.id.toString()]
 
-fun RuleMatch.toIntRange(offset: Int = 0) = IntRange(fromPos + offset, toPos + offset)
+fun RuleMatch.toIntRange(offset: Int = 0) = IntRange(fromPos + offset, toPos + offset - 1)
 
 fun IntRange.withOffset(offset: Int) = IntRange(start + offset, endInclusive + offset)
 
