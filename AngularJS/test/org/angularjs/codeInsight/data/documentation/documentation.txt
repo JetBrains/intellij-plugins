@@ -1,4 +1,4 @@
-<div class='definition'><pre>ngController</pre></div><div class='content'><p>@param {expression} ngController Name of a globally accessible constructor function or an
+<div class='definition'><pre><span style="color:#660e7a;font-weight:bold;">ngController</span></pre></div><div class='content'><p>@param {expression} ngController Name of a globally accessible constructor function or an
 <p><a href="psi_element://guide/expression">expression</a> that on the current scope evaluates to a
 <p>constructor function. The controller instance can be published into a scope property
 <p>by specifying <code>as propertyName</code>.</div>
