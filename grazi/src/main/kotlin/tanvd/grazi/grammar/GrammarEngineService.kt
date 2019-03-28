@@ -26,7 +26,7 @@ class GrammarEngineService {
             languages.initLangs(value)
         }
     private val disabledRules = arrayListOf(RuleMatch.Type.UnknownWord)
-    private val disabledCategories = arrayListOf(Typo.Category.TYPOGRAPHY)
+    private val disabledCategories = arrayListOf(Typo.Category.TYPOGRAPHY, Typo.Category.CASING)
 
     private fun isSmall(str: String) = str.length < minChars
     private fun isBig(str: String) = str.length > maxChars

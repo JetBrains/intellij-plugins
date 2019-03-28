@@ -23,7 +23,7 @@ import tanvd.grazi.model.Typo
 class MarkdownSupport : LanguageSupport {
     companion object {
         class MarkdownParagraphImplWrapper(private val token: PsiElement) : LeafPsiElement(IJavaDocElementType("MARKDOWN_TEXT_ELEMENT"), "") {
-            private val newLine = Regex("((\\n+)|(\\n\\r)+)")
+            private val newLine = Regex("(\\n|\\n\\r)")
             private val trueText = token.text.replace(newLine, " ")
 
 
@@ -61,16 +61,16 @@ class MarkdownSupport : LanguageSupport {
     }
 
     private fun collectParagraphs(markdownFile: MarkdownFile): MutableCollection<MarkdownParagraphImplWrapper> {
-        var paragraphs = PsiTreeUtil.collectElementsOfType(markdownFile, MarkdownParagraphImpl::class.java)
+        val paragraphs = PsiTreeUtil.collectElementsOfType(markdownFile, MarkdownParagraphImpl::class.java)
         val headers = PsiTreeUtil.collectElementsOfType(markdownFile, MarkdownHeaderImpl::class.java)
-        val listItems = PsiTreeUtil.collectElementsOfType(markdownFile, MarkdownListItemImpl::class.java)
+//        val listItems = PsiTreeUtil.collectElementsOfType(markdownFile, MarkdownListItemImpl::class.java)
+//
+//        paragraphs = paragraphs.filter{ paragraph ->
+//            (listItems.any {
+//                it.text.endsWith(paragraph.text)
+//            }).not()
+//        }
 
-        paragraphs = paragraphs.filter{ paragraph ->
-            (listItems.any {
-                it.text.endsWith(paragraph.text)
-            }).not()
-        }
-
-        return (paragraphs + headers + listItems).map { MarkdownParagraphImplWrapper(it) }.toMutableList()
+        return (paragraphs + headers).map { MarkdownParagraphImplWrapper(it) }.toMutableList()
     }
 }
