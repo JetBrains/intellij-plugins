@@ -11,9 +11,11 @@ import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.tree.java.IJavaDocElementType
 import com.intellij.psi.util.PsiTreeUtil
+import org.intellij.plugins.markdown.lang.psi.impl.MarkdownListItemImpl
 import tanvd.grazi.grammar.GrammarEngineService
 import tanvd.grazi.ide.GraziInspection.Companion.typoToProblemDescriptors
 import tanvd.grazi.model.TextBlock
+import tanvd.grazi.model.Typo
 
 class JavaDocSupport : LanguageSupport {
     companion object {
@@ -36,12 +38,8 @@ class JavaDocSupport : LanguageSupport {
                     if (i < curAdd + commentTokens[curTokenInd].text.length) {
                         mappings[i] = i - curAdd to curTokenInd
                     } else if (i == curAdd + commentTokens[curTokenInd].text.length) {
-                        if (i == commentTokensText.length - 1) {
-                            mappings[i] = i - 1 - curAdd to curTokenInd
-                        } else {
-                            mappings[i] = i - curAdd to curTokenInd
-                        }
-                        curAdd += commentTokens[curTokenInd].text.length
+                        mappings[i] = i - curAdd to curTokenInd
+                        curAdd += commentTokens[curTokenInd].text.length + 1
                         curTokenInd += 1
                     }
                 }
@@ -54,7 +52,9 @@ class JavaDocSupport : LanguageSupport {
 
                 val problemDescriptorsForTags = tagTokens.map {
                     grammarEngineService.getFixes(it.text).map { fix -> it to fix }
-                }.flatten().map {
+                }.flatten().filter {
+                    it.second.range.first != 0 || it.second.category != Typo.Category.CASING
+                }.map {
                     typoToProblemDescriptors(it.second, TextBlock(it.first, it.first.text), manager, isOnTheFly, ext)
                 }
 
