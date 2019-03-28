@@ -2,6 +2,15 @@
     <id>tanvd.grazi</id>
     <name>Grazi</name>
     <vendor>TanVD</vendor>
+    <version>0.1.0.alpha</version>
+    <vendor email="vdtankov@gmail.com" url="https://github.com/TanVD">Vladislav Tankov</vendor>
+    <description>
+        This plugin provides local proofreading and grammar checking inspection for dozen of languages,
+        including JavaDoc, KDoc, Markdown.
+
+        It works with IntelliJ built-in spellchecker to improve the quality of any
+        natural-language texts written using IntelliJ Platform IDE.
+    </description>
 
     <depends optional="true">org.intellij.plugins.markdown</depends>
     <depends optional="true">org.jetbrains.kotlin</depends>

@@ -1,3 +1,6 @@
+group = "tanvd.grazi"
+version = "0.1.0.alpha"
+
 plugins {
     java apply true
     id("io.gitlab.arturbosch.detekt").version("1.0.0-RC14") apply true
