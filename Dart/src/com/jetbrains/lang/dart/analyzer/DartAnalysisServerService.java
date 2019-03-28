@@ -842,6 +842,7 @@ public class DartAnalysisServerService implements Disposable {
              HtmlUtil.isHtmlFile(file) ||
              file.getName().equals(PubspecYamlUtil.PUBSPEC_YAML) ||
              file.getName().equals("analysis_options.yaml") ||
+             file.getName().equals("AndroidManifest.xml") ||
              file.getName().equals(DartYamlFileTypeFactory.DOT_ANALYSIS_OPTIONS);
     }
     return false;
