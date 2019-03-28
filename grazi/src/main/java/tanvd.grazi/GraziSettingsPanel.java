@@ -27,7 +27,6 @@ import java.util.*;
 
 public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettings> {
     private JPanel myWholePanel;
-    private TextFieldWithBrowseButton myGraziPathField;
     private CheckBoxList<String> enabledLanguages;
 
     static private final HashMap<String, String> allLanguageShortCodes = new HashMap<>();
@@ -70,30 +69,18 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
         for (Map.Entry<String, String> languageShortCode : allLanguageShortCodes.entrySet()) {
             enabledLanguages.addItem(languageShortCode.getValue(), languageShortCode.getKey(), false);
         }
-        FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(true, false, false, false, false, false);
-
-        myGraziPathField.addBrowseFolderListener(
-                "",
-                "Grazi home path",
-                null,
-                fileChooserDescriptor,
-                TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT
-        );
-
         return myWholePanel;
     }
 
     @Override
     public boolean isModified(@NotNull GraziApplicationSettings settings) {
-        return !(Comparing.equal(myGraziPathField.getText(), settings.getGraziHome()) &&
-                allLanguageShortCodes.values().stream().allMatch(shortCode ->
-                        settings.getState().languages.contains(shortCode) == enabledLanguages.isItemSelected(shortCode)
-                ));
+        return !allLanguageShortCodes.values().stream().allMatch(shortCode ->
+                settings.getState().languages.contains(shortCode) == enabledLanguages.isItemSelected(shortCode)
+        );
     }
 
     @Override
     public void apply(@NotNull GraziApplicationSettings settings) {
-        settings.setGraziHome(myGraziPathField.getText());
         for (String shortCode : allLanguageShortCodes.values()) {
             if (enabledLanguages.isItemSelected(shortCode)) {
                 settings.getState().languages.add(shortCode);
@@ -106,7 +93,6 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
 
     @Override
     public void reset(@NotNull GraziApplicationSettings settings) {
-        myGraziPathField.setText(settings.getGraziHome());
         for (String shortCode : allLanguageShortCodes.values()) {
             enabledLanguages.setItemSelected(shortCode, settings.getState().languages.contains(shortCode));
         }

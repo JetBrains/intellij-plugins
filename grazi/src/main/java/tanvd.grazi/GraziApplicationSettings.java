@@ -18,7 +18,7 @@ public class GraziApplicationSettings implements PersistentStateComponent<GraziA
         return ServiceManager.getService(GraziApplicationSettings.class);
     }
 
-    @Nullable
+    @NotNull
     @Override
     public State getState() {
         return myState;
@@ -30,33 +30,15 @@ public class GraziApplicationSettings implements PersistentStateComponent<GraziA
         loadLanguages();
     }
 
-    public String getGraziHome() {
-        return myState.graziHome;
-    }
-
     public void loadLanguages() {
         GrammarEngineService.Companion.getInstance().setEnabledLangs(new ArrayList<>(myState.languages));
     }
 
-    public void setGraziHome(String graziHome) {
-        myState.graziHome = graziHome;
-    }
-
     public static class State {
-        public String graziHome = getDefaultGraziHome();
         public final Set<String> languages = new HashSet<>();
 
         {
             languages.add("en");
         }
-    }
-
-    public static String getDefaultGraziHome() {
-        File directory = new File(System.getProperty("user.home"), ".grazi");
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-
-        return directory.getAbsolutePath();
     }
 }
