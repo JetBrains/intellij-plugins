@@ -2,7 +2,6 @@ package tanvd.grazi.ide
 
 import com.intellij.codeInspection.*
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -23,7 +22,7 @@ class GraziInspection : LocalInspectionTool() {
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         val result = mutableListOf<ProblemDescriptor>()
-        for (ext in Extensions.getExtensions(EP_NAME)) {
+        for (ext in LanguageSupport.all) {
             val typos = ext.extract(file) ?: emptyList()
             result += typos.map { typoToProblemDescriptors(it.typo, it.element, manager, isOnTheFly) }
         }

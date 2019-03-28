@@ -15,7 +15,7 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
 
     fun check(vararg tokens: T) = check(tokens.toList())
 
-    fun check(tokens: List<T>): List<LanguageSupport.Result> {
+    fun check(tokens: List<T>): Set<LanguageSupport.Result> {
         var resultText = ""
 
         val indexMapping = HashMap<Int, Int>()
@@ -59,6 +59,6 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
                 val newRange = IntRange(indexMapping[typo.range.start]!!, indexMapping[typo.range.endInclusive]!!)
                 LanguageSupport.Result(Typo(newRange, typo.description, typo.category, typo.fix), firstToken)
             } else null
-        }
+        }.toSet()
     }
 }

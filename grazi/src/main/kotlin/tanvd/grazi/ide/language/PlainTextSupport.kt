@@ -8,6 +8,6 @@ import tanvd.grazi.ide.language.utils.CustomTokensChecker
 
 class PlainTextSupport : LanguageSupport {
     override fun extract(file: PsiFile): List<LanguageSupport.Result>? {
-        return CustomTokensChecker.default.check(PsiTreeUtil.collectElementsOfType(file, PsiPlainText::class.java).toList())
+        return CustomTokensChecker.default.check(PsiTreeUtil.collectElementsOfType(file, PsiPlainText::class.java).toList()).toList()
     }
 }
