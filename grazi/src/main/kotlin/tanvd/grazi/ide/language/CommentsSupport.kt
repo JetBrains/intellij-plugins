@@ -1,25 +1,20 @@
 package tanvd.grazi.ide.language
 
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
 import com.intellij.psi.util.PsiTreeUtil
-import tanvd.grazi.model.TextBlock
+import tanvd.grazi.ide.language.utils.CustomTokensChecker
 
 class CommentsSupport : LanguageSupport {
-    override fun replace(textBlock: TextBlock, range: TextRange, replacement: String) {
-        val newText = range.replace(textBlock.element.text, replacement)
-        (textBlock.element as? PsiCommentImpl)?.updateText(newText)
-    }
+    override fun extract(file: PsiFile): List<LanguageSupport.Result> {
+        val comments = PsiTreeUtil.collectElementsOfType(file, PsiCommentImpl::class.java)
 
-    override fun extract(file: PsiFile): List<TextBlock>? {
-        return collectParagraphs(file).map {
-            TextBlock(it, it.text)
+        val result = ArrayList<LanguageSupport.Result>()
+        for (comment in comments) {
+            result += CustomTokensChecker.default.check(listOf(comment))
         }
-    }
 
-    private fun collectParagraphs(file: PsiFile): MutableCollection<PsiCommentImpl> {
-        return PsiTreeUtil.collectElementsOfType(file, PsiCommentImpl::class.java)
+        return result
     }
 }

@@ -1,11 +1,12 @@
 package tanvd.grazi.ide.language
 
-import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import tanvd.grazi.model.TextBlock
+import tanvd.grazi.model.Typo
 
 interface LanguageSupport {
-    fun replace(textBlock: TextBlock, range: TextRange, replacement: String)
+    data class Result(val typo: Typo, val element: PsiElement)
 
-    fun extract(file: PsiFile): List<TextBlock>? = null
+    /** Don't forget to use ProgressManager.checkCancelled() */
+    fun extract(file: PsiFile): List<Result>?
 }

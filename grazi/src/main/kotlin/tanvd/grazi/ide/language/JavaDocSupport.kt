@@ -1,85 +1,37 @@
 package tanvd.grazi.ide.language
 
 
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
+import com.intellij.psi.JavaDocTokenType
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.javadoc.PsiDocTagImpl
-import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl
-import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.psi.tree.java.IJavaDocElementType
+import com.intellij.psi.javadoc.*
 import com.intellij.psi.util.PsiTreeUtil
-import org.intellij.plugins.markdown.lang.psi.impl.MarkdownListItemImpl
-import tanvd.grazi.grammar.GrammarEngineService
-import tanvd.grazi.ide.GraziInspection.Companion.typoToProblemDescriptors
-import tanvd.grazi.model.TextBlock
+import tanvd.grazi.ide.language.utils.CustomTokensChecker
 import tanvd.grazi.model.Typo
 
 class JavaDocSupport : LanguageSupport {
     companion object {
-        class JavaDocTextElement(tokens: List<PsiDocTokenImpl>) : LeafPsiElement(IJavaDocElementType("JAVA_DOC_TEXT_ELEMENT"), "") {
-            private val commentTokens = tokens.filter { it.parent::class != PsiDocTagImpl::class }
-            private val tagTokens = tokens.filter { it.parent::class == PsiDocTagImpl::class }
-
-            private val commentTokensText = commentTokens.joinToString(" ") { x -> x.text }
-
-            fun getFixes(manager: InspectionManager, isOnTheFly: Boolean, ext: LanguageSupport): MutableList<ProblemDescriptor> {
-                val grammarEngineService = GrammarEngineService.getInstance()
-                val fixesForText = grammarEngineService.getFixes(commentTokensText)
-
-                val mappings: MutableMap<Int, Pair<Int, Int>> = HashMap()
-
-                var curAdd = 0
-                var curTokenInd = 0
-
-                for (i in 0 until commentTokensText.length) {
-                    if (i < curAdd + commentTokens[curTokenInd].text.length) {
-                        mappings[i] = i - curAdd to curTokenInd
-                    } else if (i == curAdd + commentTokens[curTokenInd].text.length) {
-                        mappings[i] = i - curAdd to curTokenInd
-                        curAdd += commentTokens[curTokenInd].text.length + 1
-                        curTokenInd += 1
-                    }
-                }
-
-                val problemDescriptorsForComments = fixesForText.map {
-                    val token = commentTokens[mappings[it.range.start]!!.second]
-                    it.range = IntRange(mappings[it.range.start]!!.first, mappings[it.range.endInclusive]!!.first)
-                    typoToProblemDescriptors(it, TextBlock(token, token.text), manager, isOnTheFly, ext)
-                }
-
-                val problemDescriptorsForTags = tagTokens.map {
-                    grammarEngineService.getFixes(it.text).map { fix -> it to fix }
-                }.flatten().filter {
-                    it.second.range.first != 0 || it.second.category != Typo.Category.CASING
-                }.map {
-                    typoToProblemDescriptors(it.second, TextBlock(it.first, it.first.text), manager, isOnTheFly, ext)
-                }
-
-                return (problemDescriptorsForComments + problemDescriptorsForTags).toMutableList()
-            }
-        }
+        val tagsIgnoredCategories = listOf(Typo.Category.CASING)
     }
 
-    override fun extract(file: PsiFile): List<TextBlock>? {
-        return getCommentData(file)
-    }
+    private fun isTag(token: PsiDocToken) = token.parent is PsiDocTag
 
-    override fun replace(textBlock: TextBlock, range: TextRange, replacement: String) {
-        val newText = range.replace(textBlock.element.text, replacement)
-        (textBlock.element as? PsiDocTokenImpl)?.replaceWithText(newText)
-    }
+    override fun extract(file: PsiFile): List<LanguageSupport.Result> {
+        val docs = PsiTreeUtil.collectElementsOfType(file, PsiDocComment::class.java)
 
-    private fun getCommentData(elem: PsiElement): List<TextBlock>? {
-        val tokens = PsiTreeUtil.collectElementsOfType(elem, PsiDocTokenImpl::class.java).filter {
-            (it.elementType as? IJavaDocElementType)?.toString()?.equals("DOC_COMMENT_DATA")
-                    ?: false
+        val result = ArrayList<LanguageSupport.Result>()
+        for (doc in docs) {
+            result += CustomTokensChecker.default.check(
+                    PsiTreeUtil.collectElementsOfType(doc, PsiDocToken::class.java)
+                            .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
+                            .filterNot { isTag(it) })
+
+            result += CustomTokensChecker.default.check(
+                    PsiTreeUtil.collectElementsOfType(doc, PsiDocToken::class.java)
+                            .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
+                            .filter { isTag(it) })
+                    .filter { it.typo.category !in tagsIgnoredCategories }
         }
 
-        val element = JavaDocTextElement(tokens)
-
-        return listOf(TextBlock(element, ""))
+        return result
     }
 }

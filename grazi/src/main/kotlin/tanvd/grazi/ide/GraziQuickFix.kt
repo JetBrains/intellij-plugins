@@ -1,44 +1,49 @@
 package tanvd.grazi.ide
 
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.lookup.LookupManager
+import com.intellij.codeInspection.*
+import com.intellij.ide.DataManager
+import com.intellij.injected.editor.EditorWindow
+import com.intellij.lang.injection.InjectedLanguageManager
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
-import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.model.TextBlock
-import java.util.regex.Pattern
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.getInjectedEditorForInjectedFile
 
 
-class GraziQuickFix(private val ruleName: String, private val ext: LanguageSupport,
-                    private val block: TextBlock, private val textRange: TextRange,
-                    private val replacement: String) : LocalQuickFix {
-    companion object {
-        const val maxReplacementLength = 20
-    }
+class GraziQuickFix(private val ruleName: String, private val replacements: List<String>) : LocalQuickFix {
 
     override fun getName(): String {
-        return "Fix $ruleName, use: '${StringUtil.shortenTextWithEllipsis(replacement, maxReplacementLength, 0, true)}'"
+        return "Fix $ruleName rule mistake"
     }
 
     override fun getFamilyName(): String = "Fix typo"
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        if (!block.element.isValid) return
+        val element = descriptor.psiElement ?: return
+        DataManager.getInstance()
+                .dataContextFromFocusAsync
+                .onSuccess { context ->
+                    var editor = CommonDataKeys.EDITOR.getData(context)
 
-        val start = block.element.textRange.startOffset
-        val document = block.element.containingFile.viewProvider.document
+                    if (InjectedLanguageManager.getInstance(project).getInjectionHost(element) != null && editor !is EditorWindow) {
+                        editor = getInjectedEditorForInjectedFile(editor!!, element.containingFile)
+                    }
 
-        ext.replace(block, textRange, replacement)
+                    val textRange = (descriptor as ProblemDescriptorBase).textRange
+                    val documentLength = editor!!.document.textLength
+                    val endOffset = getDocumentOffset(textRange!!.endOffset, documentLength)
+                    val startOffset = getDocumentOffset(textRange.startOffset, documentLength)
+                    editor.selectionModel.setSelection(startOffset, endOffset)
 
-        val matcher = Pattern.compile("\\$\\w+\\$").matcher(replacement)
-        val editor = FileEditorManager.getInstance(project).selectedTextEditor
-        if (matcher.find() && editor?.document == document) {
-            val matchStart = start + textRange.startOffset + matcher.start(0)
-            val matchEnd = matchStart + matcher.end(0) - matcher.start(0)
-            editor!!.caretModel.moveToOffset(matchStart)
-            editor.selectionModel.setSelection(matchStart, matchEnd)
-        }
+                    val items = replacements.map { LookupElementBuilder.create(it) }
+                    LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())
+                }
+
+
+    }
+
+    private fun getDocumentOffset(offset: Int, documentLength: Int): Int {
+        return if (offset in 0..documentLength) offset else documentLength
     }
 }
