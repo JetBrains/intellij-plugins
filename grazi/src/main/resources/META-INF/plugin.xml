@@ -5,14 +5,20 @@
 
     <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
 
+    <application-components>
+        <component>
+            <implementation-class>tanvd.grazi.GraziSettingsComponent</implementation-class>
+        </component>
+    </application-components>
+
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="tanvd.grazi.grammar.GrammarEngineService"/>
-        <projectService serviceImplementation="tanvd.grazi.GraziToolProjectSettings"/>
+        <applicationService serviceImplementation="tanvd.grazi.GraziApplicationSettings"/>
 
         <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="Grazi.Typo"/>
 
-        <projectConfigurable groupId="tools" instance="tanvd.grazi.GraziToolConfigurable"
+        <applicationConfigurable groupId="tools" instance="tanvd.grazi.GraziToolConfigurable"
                              id="reference.settingsdialog.project.grazi"
                              key="grazi.name" bundle="messages.HCLBundle"/>
 

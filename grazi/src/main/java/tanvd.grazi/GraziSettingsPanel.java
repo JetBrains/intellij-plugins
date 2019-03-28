@@ -25,7 +25,7 @@ import org.jetbrains.annotations.*;
 import javax.swing.*;
 import java.util.*;
 
-public class GraziSettingsPanel implements ConfigurableUi<GraziToolProjectSettings> {
+public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettings> {
     private JPanel myWholePanel;
     private TextFieldWithBrowseButton myGraziPathField;
     private CheckBoxList<String> enabledLanguages;
@@ -84,7 +84,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziToolProjectSettin
     }
 
     @Override
-    public boolean isModified(@NotNull GraziToolProjectSettings settings) {
+    public boolean isModified(@NotNull GraziApplicationSettings settings) {
         return !(Comparing.equal(myGraziPathField.getText(), settings.getGraziHome()) &&
                 allLanguageShortCodes.values().stream().allMatch(shortCode ->
                         settings.getState().languages.contains(shortCode) == enabledLanguages.isItemSelected(shortCode)
@@ -92,7 +92,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziToolProjectSettin
     }
 
     @Override
-    public void apply(@NotNull GraziToolProjectSettings settings) {
+    public void apply(@NotNull GraziApplicationSettings settings) {
         settings.setGraziHome(myGraziPathField.getText());
         for (String shortCode : allLanguageShortCodes.values()) {
             if (enabledLanguages.isItemSelected(shortCode)) {
@@ -105,7 +105,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziToolProjectSettin
     }
 
     @Override
-    public void reset(@NotNull GraziToolProjectSettings settings) {
+    public void reset(@NotNull GraziApplicationSettings settings) {
         myGraziPathField.setText(settings.getGraziHome());
         for (String shortCode : allLanguageShortCodes.values()) {
             enabledLanguages.setItemSelected(shortCode, settings.getState().languages.contains(shortCode));

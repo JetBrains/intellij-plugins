@@ -19,11 +19,8 @@ class Languages {
 
     fun getLangChecker(str: String, enabledLangs: List<String>): JLanguageTool {
         PatchedLanguages(enabledLangs).use {
-            var lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str, emptyList())?.detectedLanguage
+            val lang = LanguageIdentifier(charsForLangDetection).detectLanguage(str, emptyList())?.detectedLanguage
                     ?: americanEnglish
-            if (lang.shortCode !in enabledLangs) {
-                lang = americanEnglish
-            }
 
             return langs.getOrPut(lang) {
                 JLanguageTool(lang).apply {

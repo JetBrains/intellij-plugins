@@ -4,18 +4,15 @@ import com.intellij.openapi.options.*;
 import com.intellij.openapi.project.*;
 import org.jetbrains.annotations.*;
 
-public class GraziToolConfigurable extends ConfigurableBase<GraziSettingsPanel, GraziToolProjectSettings> {
-    private final Project myProject;
-
-    public GraziToolConfigurable(Project project) {
+public class GraziToolConfigurable extends ConfigurableBase<GraziSettingsPanel, GraziApplicationSettings> {
+    public GraziToolConfigurable() {
         super("reference.settingsdialog.project.grazi", "Grazi", null);
-        myProject = project;
     }
 
     @NotNull
     @Override
-    protected GraziToolProjectSettings getSettings() {
-        return GraziToolProjectSettings.getInstance(myProject);
+    protected GraziApplicationSettings getSettings() {
+        return GraziApplicationSettings.getInstance();
     }
 
     @Override

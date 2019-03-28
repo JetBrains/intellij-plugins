@@ -1,7 +1,6 @@
 package tanvd.grazi;
 
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.project.*;
 import org.jetbrains.annotations.*;
 import tanvd.grazi.grammar.*;
 
@@ -9,14 +8,14 @@ import java.io.*;
 import java.util.*;
 
 @State(
-        name = "GraziToolProjectSettings",
+        name = "GraziApplicationSettings",
         storages = @Storage("grazi.xml")
 )
-public class GraziToolProjectSettings implements PersistentStateComponent<GraziToolProjectSettings.State> {
+public class GraziApplicationSettings implements PersistentStateComponent<GraziApplicationSettings.State> {
     private State myState = new State();
 
-    public static GraziToolProjectSettings getInstance(@NotNull final Project project) {
-        return ServiceManager.getService(project, GraziToolProjectSettings.class);
+    public static GraziApplicationSettings getInstance() {
+        return ServiceManager.getService(GraziApplicationSettings.class);
     }
 
     @Nullable
@@ -28,6 +27,7 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
     @Override
     public void loadState(@NotNull State state) {
         myState = state;
+        loadLanguages();
     }
 
     public String getGraziHome() {
@@ -59,5 +59,4 @@ public class GraziToolProjectSettings implements PersistentStateComponent<GraziT
 
         return directory.getAbsolutePath();
     }
-
 }
