@@ -1,6 +1,7 @@
 package tanvd.grazi.ide.language
 
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.JavaDocTokenType
 import com.intellij.psi.PsiFile
 import com.intellij.psi.javadoc.*
@@ -30,6 +31,8 @@ class JavaDocSupport : LanguageSupport {
                             .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
                             .filter { isTag(it) })
                     .filter { it.typo.category !in tagsIgnoredCategories }
+
+            ProgressManager.checkCanceled()
         }
 
         return result

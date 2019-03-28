@@ -5,7 +5,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache
 
 class GrammarCache {
     private val cache: LoadingCache<Int, LinkedHashSet<Typo>> = Caffeine.newBuilder()
-            .maximumSize(30_000)
+            .maximumSize(100_000)
             .build { null }
 
     fun contains(str: String) = cache.getIfPresent(str.hashCode()) != null

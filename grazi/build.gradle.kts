@@ -13,9 +13,10 @@ repositories {
 
 intellij {
     pluginName = "Grazi"
-    version = "2018.3.5"
+    version = "2019.1"
+    
     downloadSources = true
-    setPlugins("org.intellij.plugins.markdown:183.5153.1", "org.jetbrains.kotlin:1.3.21-release-IJ2018.3-1")
+    setPlugins("org.intellij.plugins.markdown:191.5849.16", "org.jetbrains.kotlin:1.3.21-release-IJ2019.1-2")
 }
 
 detekt {

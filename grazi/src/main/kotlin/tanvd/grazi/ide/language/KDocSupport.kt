@@ -1,5 +1,6 @@
 package tanvd.grazi.ide.language
 
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -14,6 +15,8 @@ class KDocSupport : LanguageSupport {
         val result = ArrayList<LanguageSupport.Result>()
         for (doc in docs) {
             result += CustomTokensChecker.default.check(PsiTreeUtil.collectElementsOfType(doc, KDocSection::class.java).toList())
+
+            ProgressManager.checkCanceled()
         }
 
         return result
