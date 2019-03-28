@@ -20,7 +20,7 @@
 
         <applicationConfigurable groupId="tools" instance="tanvd.grazi.GraziToolConfigurable"
                              id="reference.settingsdialog.project.grazi"
-                             key="grazi.name" bundle="messages.HCLBundle"/>
+                             key="grazi.name" bundle="messages.Grazi"/>
 
         <severitiesProvider implementation="tanvd.grazi.ide.GraziSeveritiesProvider"/>
 
