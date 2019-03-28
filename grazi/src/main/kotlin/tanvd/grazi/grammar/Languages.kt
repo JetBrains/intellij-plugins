@@ -1,7 +1,6 @@
 package tanvd.grazi.grammar
 
-import org.languagetool.JLanguageTool
-import org.languagetool.Language
+import org.languagetool.*
 import org.languagetool.Languages
 import org.languagetool.language.AmericanEnglish
 import org.languagetool.language.LanguageIdentifier
