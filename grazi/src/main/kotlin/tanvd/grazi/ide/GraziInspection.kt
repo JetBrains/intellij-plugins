@@ -8,6 +8,7 @@ import com.intellij.psi.PsiFile
 import tanvd.grazi.grammar.GrammarEngineService
 import tanvd.grazi.ide.language.JavaDocSupport
 import tanvd.grazi.ide.language.LanguageSupport
+import tanvd.grazi.ide.language.MarkdownSupport
 import tanvd.grazi.model.TextBlock
 import tanvd.grazi.model.Typo
 
@@ -42,6 +43,10 @@ class GraziInspection : LocalInspectionTool() {
         for (block in blocks) {
             if (block.element::class.java == JavaDocSupport.Companion.JavaDocTextElement::class.java) {
                 result += (block.element as JavaDocSupport.Companion.JavaDocTextElement).getFixes(manager, isOnTheFly, ext)
+                continue
+            }
+            if (block.element::class.java == MarkdownSupport.Companion.MarkdownParagraphImplWrapper::class.java) {
+                result += (block.element as MarkdownSupport.Companion.MarkdownParagraphImplWrapper).getFixes(manager, isOnTheFly, ext)
                 continue
             }
             val fixes = GrammarEngineService.getInstance().getFixes(block.text)
