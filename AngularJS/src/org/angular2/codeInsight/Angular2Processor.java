@@ -460,12 +460,12 @@ public class Angular2Processor {
   }
 
   private static class Angular2EventImplicitElement extends JSLocalImplicitElementImpl {
-    @Nullable private final PsiElement myDeclaration;
+    @Nullable private final Collection<PsiElement> myDeclarations;
 
     private Angular2EventImplicitElement(@NotNull XmlAttribute attribute) {
       super($EVENT, Angular2TypeEvaluator.resolveEventType(attribute), attribute, JSImplicitElement.Type.Variable);
       XmlAttributeDescriptor descriptor = attribute.getDescriptor();
-      myDeclaration = descriptor != null ? descriptor.getDeclaration() : null;
+      myDeclarations = descriptor != null ? descriptor.getDeclarations() : Collections.emptyList();
     }
 
     @Override
@@ -474,7 +474,7 @@ public class Angular2Processor {
       if (o == null || getClass() != o.getClass()) return false;
       Angular2EventImplicitElement element = (Angular2EventImplicitElement)o;
       if (!myName.equals(element.myName)) return false;
-      if (!Objects.equals(myDeclaration, element.myDeclaration)) return false;
+      if (!Objects.equals(myDeclarations, element.myDeclarations)) return false;
       if (!Objects.equals(myProvider, element.myProvider)) return false;
       if (myKind != element.myKind) return false;
       return true;
@@ -482,7 +482,7 @@ public class Angular2Processor {
 
     @Override
     public int hashCode() {
-      return Objects.hash(getClass(), myDeclaration, myName, myProvider, myKind);
+      return Objects.hash(getClass(), myDeclarations, myName, myProvider, myKind);
     }
   }
 

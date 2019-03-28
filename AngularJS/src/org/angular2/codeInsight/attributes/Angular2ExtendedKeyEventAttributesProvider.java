@@ -15,7 +15,6 @@ import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.openapi.util.text.StringUtil.notNullize;
 import static com.intellij.openapi.util.text.StringUtil.*;
 import static com.intellij.util.containers.ContainerUtil.*;
-import static java.util.Collections.singletonList;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptor.AttributePriority.*;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 import static org.angular2.lang.html.parser.Angular2AttributeType.EVENT;
@@ -178,7 +177,7 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
       super(Objects.requireNonNull(EVENT.buildName(notNullize(baseName) + keyName, canonical)),
             false,
             priority,
-            originalDescriptor == null ? Collections.emptySet() : singletonList(originalDescriptor.getDeclaration()));
+            originalDescriptor == null ? Collections.emptySet() : originalDescriptor.getDeclarations());
       myBaseName = baseName;
     }
 
