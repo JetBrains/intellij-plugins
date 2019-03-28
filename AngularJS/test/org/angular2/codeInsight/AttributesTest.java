@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -40,6 +41,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.containers.ContainerUtil.all;
 import static com.intellij.util.containers.ContainerUtil.sorted;
 import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
@@ -618,34 +620,44 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
         Pair<String, String> wrap = attrWrap.get(i);
         int offsetBySignature = AngularTestUtil.findOffsetBySignature(
           wrap.first + "<caret>" + name + wrap.second + "=", myFixture.getFile());
-        PsiReference ref = myFixture.getFile().findReferenceAt(offsetBySignature);
+        PsiPolyVariantReference ref = (PsiPolyVariantReference)myFixture.getFile().findReferenceAt(offsetBySignature);
         String messageStart = "Attribute " + wrap.first + name + wrap.second;
         switch (checks.charAt(i)) {
           case 'x':
             if (ref != null) {
-              assertNull(messageStart + " should not resolve", ref.resolve());
+              assertEquals(messageStart + " should not resolve",
+                           Collections.emptyList(), asList(ref.multiResolve(false)));
             }
             break;
           case 'p':
             assertNotNull(messageStart + " should have reference", ref);
-            assert ref.resolve() instanceof TypeScriptField :
-              messageStart + " should resolve to TypeScriptField instead of " + ref.resolve();
+            assert all(multiResolve(ref), TypeScriptField.class::isInstance) :
+              messageStart + " should resolve to TypeScriptField instead of " +
+              multiResolve(ref);
             break;
           case 's':
             assertNotNull(messageStart + " should have reference", ref);
-            assert ref.resolve() instanceof Angular2DirectiveSelectorPsiElement :
-              messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " + ref.resolve();
+            assert all(multiResolve(ref), Angular2DirectiveSelectorPsiElement.class::isInstance) :
+              messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " +
+              multiResolve(ref);
             break;
           case 'c':
             assertNotNull(messageStart + " should have reference", ref);
-            assert ref.resolve() instanceof TypeScriptClass :
-              messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " + ref.resolve();
+            assert all(multiResolve(ref), TypeScriptClass.class::isInstance) :
+              messageStart + " should resolve to Angular2DirectiveSelectorElement instead of " +
+              multiResolve(ref);
             break;
           default:
             throw new IllegalStateException("wrong char: " + checks.charAt(i));
         }
       }
     }
+  }
+
+  @NotNull
+  private static List<PsiElement> multiResolve(@NotNull PsiPolyVariantReference ref) {
+    return ContainerUtil.mapNotNull(ref.multiResolve(false),
+                                    result -> result.isValidResult() ? result.getElement() : null);
   }
 
   public void testExportAs() {
@@ -944,7 +956,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testTypeAttrWithFormsCompletion() {
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "common", "forms");
+    configureWithMetadataFiles(myFixture, "common", "forms");
     myFixture.configureByFiles("typeAttrWithForms.html", "typeAttrWithForms.ts");
     AngularTestUtil.moveToOffsetBySignature("<button <caret>>", myFixture);
     myFixture.completeBasic();

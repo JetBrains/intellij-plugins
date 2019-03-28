@@ -9,10 +9,7 @@ import com.intellij.lang.javascript.settings.JSRootConfiguration;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
@@ -86,6 +83,17 @@ public class AngularTestUtil {
     PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
     TestCase.assertNotNull("No reference at '" + signature + "'", ref);
     PsiElement resolve = ref.resolve();
+    if (resolve == null && ref instanceof PsiPolyVariantReference) {
+      List<ResolveResult> results = ContainerUtil.filter(((PsiPolyVariantReference)ref).multiResolve(false),
+                                                         ResolveResult::isValidResult);
+      if (results.size() > 1) {
+        throw new AssertionError("Reference resolves to more than one element at '" + signature + "': "
+                                 + results);
+      } else if (results.size() == 1) {
+        resolve = results.get(0).getElement();
+      }
+
+    }
     TestCase.assertNotNull("Reference resolves to null at '" + signature + "'", resolve);
     return resolve;
   }
