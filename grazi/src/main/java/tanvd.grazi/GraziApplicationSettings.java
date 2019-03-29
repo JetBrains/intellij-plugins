@@ -6,14 +6,11 @@ import tanvd.grazi.grammar.*;
 
 import java.util.*;
 
-@State(
-        name = "GraziApplicationSettings",
-        storages = @Storage("grazi.xml")
-)
+@State(name = "GraziApplicationSettings", storages = @Storage("grazi.xml"))
 public class GraziApplicationSettings implements PersistentStateComponent<GraziApplicationSettings.State> {
     private State myState = new State();
 
-    public static GraziApplicationSettings getInstance() {
+    static GraziApplicationSettings getInstance() {
         return ServiceManager.getService(GraziApplicationSettings.class);
     }
 
@@ -29,12 +26,12 @@ public class GraziApplicationSettings implements PersistentStateComponent<GraziA
         loadLanguages();
     }
 
-    public void loadLanguages() {
+    void loadLanguages() {
         GrammarEngineService.Companion.getInstance().setEnabledLangs(new ArrayList<>(myState.languages));
     }
 
-    public static class State {
-        public final Set<String> languages = new HashSet<>();
+    static class State {
+        final Set<String> languages = new HashSet<>();
 
         {
             languages.add("en");
