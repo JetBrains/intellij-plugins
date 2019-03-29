@@ -32,7 +32,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "test.html",
                     "*ng<caret>For",
                     "Import Angular module...",
-                    "\"@angular/common\"");
+                    "CommonModule - \"@angular/common\"");
   }
 
   public void testNgForCompletion() {
@@ -40,7 +40,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "*ngFor=\"let item of items\"",
                      "*ngFo\nlet item of items",
-                     "\"@angular/common\"");
+                     "CommonModule - \"@angular/common\"");
   }
 
   public void testNgClass() {
@@ -48,7 +48,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "test.html",
                     "[ng<caret>Class]",
                     "Import Angular module...",
-                    "\"@angular/common\"");
+                    "CommonModule - \"@angular/common\"");
   }
 
   public void testNgClassCompletion() {
@@ -56,7 +56,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "[ngClass]=\"'my'\"",
                      "[ngCl\n'my'",
-                     "\"@angular/common\"");
+                     "CommonModule - \"@angular/common\"");
   }
 
   public void testLowercasePipe() {
@@ -64,7 +64,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "test.html",
                     "lower<caret>case",
                     "Import Angular module...",
-                    "\"@angular/common\"");
+                    "CommonModule - \"@angular/common\"");
   }
 
   public void testLowercasePipeCompletion() {
@@ -72,7 +72,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "lowercase",
                      "lo\n",
-                     "\"@angular/common\"");
+                     "CommonModule - \"@angular/common\"");
   }
 
   public void testImportDirective() {
@@ -96,12 +96,12 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   public void testUndeclaredDirectiveDifferentModule() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in Angular module",
-                    "( module2.ts )");
+                    "Module2 - ( module2.ts )");
   }
 
   public void testUndeclaredDirectiveDifferentModuleCompletion() {
     doTagCompletionTest("test.html",
-                        "( module2.ts )");
+                        "Module2 - ( module2.ts )");
   }
 
   public void testNotExportedDirectiveNoModuleImport() {
@@ -125,12 +125,12 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   public void testNotExportedDirectiveMultiModuleImport() {
     doMultiFileTest("test.html",
                     "Export MyDirective",
-                    "\"./module3\"");
+                    "Module3 - \"./module3\"");
   }
 
   public void testNotExportedDirectiveMultiModuleImportCompletion() {
     doTagCompletionTest("test.html",
-                        "\"./module3\"");
+                        "Module3 - \"./module3\"");
   }
 
   public void testInlineTemplate() {
@@ -141,6 +141,39 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   public void testInlineTemplateCompletion() {
     doTagCompletionTest("component.ts");
   }
+
+  public void testFormsModule() {
+    doMultiFileTest("formsModule",
+                    "test.html",
+                    "[ngValue<caret>]",
+                    "Import Angular module...",
+                    "FormsModule - \"@angular/forms\"");
+  }
+
+  public void testFormsModuleCompletion() {
+    doCompletionTest("formsModule",
+                     "test.html",
+                     "[ngValue]=\"foo\"",
+                     "[ngVal\nfoo",
+                     "FormsModule - \"@angular/forms\"");
+  }
+
+  public void testReactiveFormsModule() {
+    doMultiFileTest("reactiveFormsModule",
+                    "test.html",
+                    "[ngValue<caret>]",
+                    "Import Angular module...",
+                    "ReactiveFormsModule - \"@angular/forms\"");
+  }
+
+  public void testReactiveFormsModuleCompletion() {
+    doCompletionTest("reactiveFormsModule",
+                     "test.html",
+                     "[ngValue]=\"foo\"",
+                     "[ngVal\nfoo",
+                     "ReactiveFormsModule - \"@angular/forms\"");
+  }
+
 
   private void doMultiFileTest(@NotNull String mainFile,
                                @NotNull String intention) {

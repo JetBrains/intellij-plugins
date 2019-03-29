@@ -1,16 +1,17 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.actions;
 
-import com.intellij.ide.util.PsiElementListCellRenderer;
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
-import com.intellij.lang.javascript.modules.ES6ImportAction;
 import com.intellij.lang.javascript.modules.JSModuleNameInfo;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import one.util.streamex.IntStreamEx;
 import one.util.streamex.StreamEx;
@@ -31,26 +32,18 @@ import java.util.function.Function;
 import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.Angular2DecoratorUtil.IMPORTS_PROP;
 
-public class NgModuleImportAction extends ES6ImportAction {
+public class NgModuleImportAction extends Angular2NgModuleSelectAction {
 
-  @NotNull private final String myActionName;
   private final boolean myCodeCompletion;
 
   NgModuleImportAction(@Nullable Editor editor, @NotNull PsiElement element, @NotNull String actionName, boolean codeCompletion) {
-    super(editor, element, "NgModule", DEFAULT_FILTER);
-    myActionName = actionName;
+    super(editor, element, "NgModule", DEFAULT_FILTER, actionName);
     myCodeCompletion = codeCompletion;
   }
 
   @Override
   protected String getModuleSelectionPopupTitle() {
     return Angular2Bundle.message("angular.quickfix.ngmodule.import.select");
-  }
-
-  @NotNull
-  @Override
-  public String getName() {
-    return myActionName;
   }
 
   @Override
@@ -91,8 +84,18 @@ public class NgModuleImportAction extends ES6ImportAction {
 
   @NotNull
   @Override
-  protected PsiElementListCellRenderer<JSElement> createRenderer(@NotNull Map<PsiElement, JSModuleNameInfo> preRenderedQNames) {
-    return super.createRenderer(preRenderedQNames);
+  protected List<JSElement> getFinalElements(@NotNull Project project,
+                                             @NotNull PsiFile file,
+                                             @NotNull List<JSElement> candidates,
+                                             @NotNull Collection<JSElement> elementsFromLibraries,
+                                             @NotNull Map<PsiElement, JSModuleNameInfo> renderedTexts) {
+    if (!file.isValid() || project.isDisposed() || !project.isOpen()) {
+      return ContainerUtil.emptyList();
+    }
+    candidates = removeMergedElements(candidates, elementsFromLibraries);
+    candidates = fillExternalModuleNamesAndFilterByBlacklist(renderedTexts, candidates, file);
+    return removeSrcLibraryFiles(candidates,
+                                 createLibraryOnlyModulesInfos(elementsFromLibraries, renderedTexts));
   }
 
   @Override

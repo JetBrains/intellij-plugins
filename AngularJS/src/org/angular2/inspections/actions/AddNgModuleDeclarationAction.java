@@ -2,7 +2,6 @@
 package org.angular2.inspections.actions;
 
 import com.intellij.lang.ecmascript6.psi.impl.ES6ImportPsiUtil;
-import com.intellij.lang.javascript.modules.ES6ImportAction;
 import com.intellij.lang.javascript.modules.JSModuleNameInfo;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
@@ -34,10 +33,9 @@ import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.Angular2DecoratorUtil.DECLARATIONS_PROP;
 import static org.angular2.Angular2DecoratorUtil.EXPORTS_PROP;
 
-public class AddNgModuleDeclarationAction extends ES6ImportAction {
+public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
 
   @NotNull private final String myDeclarationName;
-  @NotNull private final String myActionName;
   @NotNull private final SmartPsiElementPointer<ES6Decorator> myDecorator;
 
   AddNgModuleDeclarationAction(@Nullable Editor editor,
@@ -45,21 +43,14 @@ public class AddNgModuleDeclarationAction extends ES6ImportAction {
                                @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
                                @NotNull String declarationName,
                                @NotNull String actionName) {
-    super(editor, context, "", DEFAULT_FILTER);
+    super(editor, context, "", DEFAULT_FILTER, actionName);
     myDeclarationName = declarationName;
-    myActionName = actionName;
     myDecorator = declarationDecorator;
   }
 
   @Override
   protected String getModuleSelectionPopupTitle() {
     return Angular2Bundle.message("angular.quickfix.ngmodule.declare.select", myDeclarationName);
-  }
-
-  @NotNull
-  @Override
-  public String getName() {
-    return myActionName;
   }
 
   @NotNull
