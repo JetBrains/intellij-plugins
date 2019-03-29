@@ -105,6 +105,13 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                      "check.txt");
   }
 
+  public void testNgModuleWithConstant() {
+    doResolutionTest("ng-module-with-constant",
+                     "module.ts",
+                     "export class My<caret>Module {",
+                     "check.txt");
+  }
+
   public void testCommonNgClassModules() {
     doDeclarationModulesCheckText("common",
                                   "directives/ng_class.ts",

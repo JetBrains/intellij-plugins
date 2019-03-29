@@ -3,6 +3,7 @@ package org.angular2.entities.source;
 
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -23,7 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.angular2.Angular2DecoratorUtil.getProperty;
+import static org.angular2.Angular2DecoratorUtil.getObjectLiteralInitializer;
+import static org.angular2.Angular2DecoratorUtil.getReferencedObjectLiteralInitializer;
 
 public class Angular2SourceModule extends Angular2SourceEntity implements Angular2Module {
 
@@ -83,7 +85,12 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
   private static <T extends Angular2Entity> Pair<Set<T>, Boolean> collectSymbols(@NotNull ES6Decorator decorator,
                                                                                  @NotNull String propertyName,
                                                                                  @NotNull Class<T> symbolClazz) {
-    JSProperty property = getProperty(decorator, propertyName);
+    JSObjectLiteralExpression initializer = getObjectLiteralInitializer(decorator);
+    if (initializer == null) {
+      initializer = getReferencedObjectLiteralInitializer(decorator);
+    }
+    JSProperty property = initializer != null ? initializer.findProperty(propertyName)
+                                              : null;
     if (property == null) {
       return Pair.pair(Collections.emptySet(), true);
     }

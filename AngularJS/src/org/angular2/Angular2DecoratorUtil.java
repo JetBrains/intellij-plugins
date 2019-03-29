@@ -10,10 +10,13 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.AstLoadingFilter;
 import org.angularjs.index.AngularJSIndexingHandler;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 import static com.intellij.psi.util.PsiTreeUtil.getParentOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getStubChildrenOfTypeAsList;
@@ -145,6 +148,21 @@ public class Angular2DecoratorUtil {
       }
     }
     return null;
+  }
+
+  @StubUnsafe
+  @Nullable
+  public static JSObjectLiteralExpression getReferencedObjectLiteralInitializer(@NotNull ES6Decorator decorator) {
+    return AstLoadingFilter.forceAllowTreeLoading(decorator.getContainingFile(), () ->
+      Optional.ofNullable(decorator.getExpression())
+        .map(expr -> tryCast(expr, JSCallExpression.class))
+        .map(expr -> ArrayUtil.getFirstElement(expr.getArguments()))
+        .map(expr -> tryCast(expr, JSReferenceExpression.class))
+        .map(expr -> expr.resolve())
+        .map(expr -> tryCast(expr, JSVariable.class))
+        .map(var -> var.getInitializerOrStub())
+        .map(expr -> tryCast(expr, JSObjectLiteralExpression.class))
+        .orElse(null));
   }
 
   @StubSafe
