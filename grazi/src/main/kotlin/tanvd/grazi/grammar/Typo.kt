@@ -16,8 +16,7 @@ data class Typo(val range: IntRange, val description: String, val category: Cate
             return "${category.description}: $description"
         }
 
-    enum class Category(val value: String, val description: String,
-                        val highlight: ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING) : ProblemGroup {
+    enum class Category(val value: String, val description: String) : ProblemGroup {
         /** Rules about detecting uppercase words where lowercase is required and vice versa.  */
         CASING("CASING", "Wrong case"),
 
@@ -39,7 +38,7 @@ data class Typo(val range: IntRange, val description: String, val category: Cate
 
         REPETITIONS("REPETITIONS", "Repetition"),
 
-        REDUNDANCY("REDUNDANCY", "Redundancy", ProblemHighlightType.LIKE_UNUSED_SYMBOL),
+        REDUNDANCY("REDUNDANCY", "Redundancy"),
 
         /** General style issues not covered by other categories, like overly verbose wording.  */
         STYLE("STYLE", "Style"),
@@ -65,6 +64,8 @@ data class Typo(val range: IntRange, val description: String, val category: Cate
         MISC("MISC", "Miscellaneous"),
 
         OTHER("OTHER", "Other mistake");
+
+        val highlight: ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 
         override fun getProblemName() = description
 

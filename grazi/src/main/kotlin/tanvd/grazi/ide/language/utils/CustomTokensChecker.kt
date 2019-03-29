@@ -18,13 +18,15 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
     fun check(tokens: List<T>): Set<LanguageSupport.Result> {
         var resultText = ""
 
-        val indexMapping = HashMap<Int, Int>()
-        val tokenMapping = HashMap<Int, T>()
+        val indexesShift = HashMap<Int, Int>()
+        val tokenMapping = HashMap<IntRange, T>()
 
         var index = 0
         var previous: Char? = null
         for (token in tokens) {
-            for ((realIndex, char) in token.text.withIndex()) {
+            val tokenStartIndex = index
+            var totalExcluded = 0
+            for (char in token.text) {
                 val newChar = if (char in replaces.keys) {
                     replaces[char]
                 } else {
@@ -32,20 +34,22 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
                 }
 
                 if (newChar in ignores) {
+                    indexesShift[index] = ++totalExcluded
                     continue
                 }
 
                 if (newChar in ignoreIfPreviousEqual && previous == newChar) {
+                    indexesShift[index] = ++totalExcluded
                     continue
                 }
 
-                indexMapping[index] = realIndex
-                tokenMapping[index] = token
                 resultText += newChar
 
                 index++
                 previous = newChar
             }
+            tokenMapping[IntRange(tokenStartIndex, index)] = token
+
             resultText += " "
             index++
         }
@@ -53,10 +57,12 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
         val fixes = GrammarEngineService.getInstance().getFixes(resultText)
 
         return fixes.mapNotNull { typo ->
-            val firstToken = tokenMapping[typo.range.start]!!
-            val secondToken = tokenMapping[typo.range.endInclusive]!!
+            val (range, firstToken) = tokenMapping.filter { typo.range.start in it.key }.entries.first()
+            val secondToken = tokenMapping.filter { typo.range.endInclusive in it.key }.values.firstOrNull()
             if (firstToken == secondToken) {
-                val newRange = IntRange(indexMapping[typo.range.start]!!, indexMapping[typo.range.endInclusive]!!)
+                val startShift = indexesShift.filter { it.key <= typo.range.start }.values.lastOrNull() ?: 0
+                val endShift = indexesShift.filter { it.key <= typo.range.endInclusive }.values.lastOrNull() ?: 0
+                val newRange = IntRange(typo.range.start + startShift - range.start, typo.range.endInclusive + endShift - range.start)
                 LanguageSupport.Result(Typo(newRange, typo.description, typo.category, typo.fix), firstToken)
             } else null
         }.toSet()
