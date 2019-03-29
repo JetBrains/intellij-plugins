@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
@@ -277,9 +278,14 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
           result.add(new Angular2AttributeDescriptor(name, isInTemplateTag, emptyList()));
         }
       }
-      return CachedValueProvider.Result.create(Collections.unmodifiableList(result),
-                                               !dependencies.isEmpty() ? dependencies :
-                                               Collections.singleton(PsiModificationTracker.MODIFICATION_COUNT));
+      if (dependencies.isEmpty()) {
+        dependencies = Collections.singleton(PsiModificationTracker.MODIFICATION_COUNT);
+      }
+      else {
+        String tagName = xmlTag.getName();
+        dependencies.add((ModificationTracker)() -> tagName.equals(xmlTag.getName()) ? 0 : 1);
+      }
+      return CachedValueProvider.Result.create(Collections.unmodifiableList(result), dependencies);
     });
   }
 
