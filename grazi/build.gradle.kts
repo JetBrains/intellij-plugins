@@ -3,7 +3,7 @@ import org.jetbrains.intellij.tasks.PublishTask
 val channel = "alpha"
 
 group = "tanvd.grazi"
-version = "0.1.0.$channel"
+version = "0.1.1.$channel"
 
 
 plugins {
