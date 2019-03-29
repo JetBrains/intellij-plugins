@@ -1,6 +1,6 @@
 import org.jetbrains.intellij.tasks.PublishTask
 
-val channel = "alpha"
+val channel = "stable"
 
 group = "tanvd.grazi"
 version = "0.1.1.$channel"

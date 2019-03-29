@@ -4,13 +4,30 @@
     <vendor>TanVD</vendor>
     <version>0.1.0.alpha</version>
     <vendor email="vdtankov@gmail.com" url="https://github.com/TanVD">Vladislav Tankov</vendor>
-    <description>
-        This plugin provides local proofreading and grammar checking inspection for dozen of languages,
-        including JavaDoc, KDoc, Markdown.
+    <description><![CDATA[
+        This plugin provides proofreading and grammar checking inspection for dozen of languages,
+        including English, German, Russian and about 25 others.
+
+        <br/>
 
         It works with IntelliJ built-in spellchecker to improve the quality of any
         natural-language texts written using IntelliJ Platform IDE.
-    </description>
+
+        <br/>
+
+        The plugin supports as a source of natural language: JavaDocs, KotlinDocs, Markdown,
+        Plaintext and comments.
+
+        <br/>
+
+        Under the hood, it uses one of the leading proofreaders — LanguageTool, so it provides one of the
+        best performance and accuracy among free (and even non-free) alternatives
+
+        <br/>
+
+        Note, that all verification is performed locally, inside your IDE. The plugin does not
+        send any of your data anywhere.
+    ]]></description>
 
     <depends optional="true">org.intellij.plugins.markdown</depends>
     <depends optional="true">org.jetbrains.kotlin</depends>
