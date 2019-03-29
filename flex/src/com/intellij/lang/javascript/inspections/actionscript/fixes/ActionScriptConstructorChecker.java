@@ -49,7 +49,7 @@ public class ActionScriptConstructorChecker extends JSConstructorChecker {
   }
 
   private static JSCallExpression findBaseConstructorCall(final JSBlockStatement blockStatement) {
-    for (JSSourceElement statement : blockStatement.getStatementsInRange()) {
+    for (JSSourceElement statement : blockStatement.getStatementListItems()) {
       JSExpression expr;
       if (statement instanceof JSExpressionStatement &&
           (expr = ((JSExpressionStatement)statement).getExpression()) instanceof JSCallExpression &&
