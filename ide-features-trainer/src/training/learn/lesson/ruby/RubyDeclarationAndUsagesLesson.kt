@@ -21,7 +21,7 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
       caret(20, 45)
 
       task("GotoDeclaration") {
-        text("Use ${action(it)} to jump to the declaration of a attribute accessor")
+        text("Use ${action(it)} to jump to the declaration of an attribute accessor")
         trigger(it, { state() }) { before, _ ->
           before != null && !isInsidePsi(before.target.navigationElement, before.position)
         }
@@ -29,8 +29,8 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
       }
 
       task("GotoDeclaration") {
-        text("Now the editor caret is on attribute accessor declaration. Use the same shortcut ${action(it)}" +
-            "to see all its usages and select one of them.")
+        text("Now the caret is on the attribute accessor declaration." +
+            "Use the same shortcut ${action(it)} to see all of its usages, then select one of them.")
         trigger(it, { state() }, fun(before: MyInfo?, now: MyInfo?): Boolean {
           if (before == null || now == null) {
             return false
@@ -52,21 +52,22 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
         }
       }
       actionTask("FindUsages") {
-        "Use ${action(it)} to see more detailed view of usages. Note: it could be called from either some usage or declaration itself."
+        "Use ${action(it)} to see a more detailed view of usages. You can invoke ${action(it)} on either a declaration or usage."
       }
 
       actionTask("PinToolwindowTab") {
-        "From <strong>Find view</strong> you could navigate to any usage or declaration itself. " +
-            "Any next search will override these results in <strong>Find view</strong>. " +
-            "To prevent it pin them in menu on right mouse click over <strong>Usages of</strong> tab."
+        "From the <strong>Find view</strong> you can navigate to both usages and declarations." +
+            "The next search will override these results in the <strong>Find view</strong> window." +
+            "To prevent it, pin the results by right clicking the tab title, <strong>Usages of</strong>," +
+            "and selecting <strong>Pin tab</strong>"
       }
 
       actionTask("HideActiveWindow") {
-        "When you finish to browse usages use ${action(it)} to hide last focused view"
+        "When you have finished browsing usages, use ${action(it)} to hide the view"
       }
 
       actionTask("ActivateFindToolWindow") {
-        "Press ${action(it)} to open <strong>Find view</strong> again"
+        "Press ${action(it)} to open the <strong>Find view</strong> again"
       }
     }
 
