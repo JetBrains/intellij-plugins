@@ -132,6 +132,9 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
         }
         AngularJSProjectConfigurator.excludeDefault(item.getParent(), entry);
         modifiableModelsProvider.commitModuleModifiableModel(model);
+        for (VirtualFile vf: myNewFiles) {
+          AngularCliUtil.createRunConfigurations(module.getProject(), vf.getParent());
+        }
       }
     }
 
