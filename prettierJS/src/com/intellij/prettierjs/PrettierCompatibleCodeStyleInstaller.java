@@ -6,19 +6,18 @@ import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
+import com.intellij.lang.javascript.formatter.JSCodeStyleUtil;
 import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectConfigurator;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -55,26 +54,16 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
       }
       return;
     }
-    Pair<CodeStyleSettings, Boolean> previousSettings = install(project, config);
-    PrettierNotificationUtil.reportCodeStyleSettingsImported(project, configFile, () -> {
-      CodeStyleSettingsManager settingsManager = CodeStyleSettingsManager.getInstance(project);
-      settingsManager.setMainProjectCodeStyle(previousSettings.first);
-      settingsManager.USE_PER_PROJECT_SETTINGS = previousSettings.second;
-    });
+    install(project, config);
+    PrettierNotificationUtil.reportCodeStyleSettingsImported(project, configFile, null);
   }
 
-  @NotNull
-  private static Pair<CodeStyleSettings, Boolean> install(@NotNull Project project, @NotNull PrettierUtil.Config config) {
-    CodeStyleSettingsManager settingsManager = CodeStyleSettingsManager.getInstance(project);
-    boolean previousUsePerProjectSettings = settingsManager.USE_PER_PROJECT_SETTINGS;
-    CodeStyleSettings previousSettings = settingsManager.getCurrentSettings();
-    CodeStyleSettings newSettings = previousSettings.clone();
-    newSettings.LINE_SEPARATOR = config.lineSeparator;
-    installJSDialectSettings(newSettings, config, JavascriptLanguage.INSTANCE, JSCodeStyleSettings.class);
-    installJSDialectSettings(newSettings, config, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptCodeStyleSettings.class);
-    settingsManager.USE_PER_PROJECT_SETTINGS = true;
-    settingsManager.setMainProjectCodeStyle(newSettings);
-    return Pair.create(previousSettings, previousUsePerProjectSettings);
+  private static void install(@NotNull Project project, @NotNull PrettierUtil.Config config) {
+    JSCodeStyleUtil.updateProjectCodeStyle(project, newSettings -> {
+      newSettings.LINE_SEPARATOR = config.lineSeparator;
+      installJSDialectSettings(newSettings, config, JavascriptLanguage.INSTANCE, JSCodeStyleSettings.class);
+      installJSDialectSettings(newSettings, config, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptCodeStyleSettings.class);
+    });
   }
 
   public static boolean isInstalled(@NotNull Project project, @NotNull PrettierUtil.Config config) {
