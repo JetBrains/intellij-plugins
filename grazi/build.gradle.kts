@@ -1,6 +1,6 @@
 import org.jetbrains.intellij.tasks.PublishTask
-
-val channel = "stable"
+import tanvd.grazi.Versions
+import tanvd.grazi.channel
 
 group = "tanvd.grazi"
 version = "0.1.1.$channel"
@@ -50,10 +50,10 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(kotlin("reflect"))
 
-    compile("org.languagetool", "languagetool-core", "4.4") {
+    compile("org.languagetool", "languagetool-core", Versions.languageTool) {
         exclude("org.slf4j", "slf4j-api")
     }
-    compile("org.languagetool", "language-all", "4.4") {
+    compile("org.languagetool", "language-all", Versions.languageTool) {
         exclude("org.slf4j", "slf4j-api")
     }
 

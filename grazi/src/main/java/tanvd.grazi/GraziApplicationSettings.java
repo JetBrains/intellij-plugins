@@ -27,7 +27,7 @@ public class GraziApplicationSettings implements PersistentStateComponent<GraziA
     }
 
     void loadLanguages() {
-        GrammarEngineService.Companion.getInstance().setEnabledLangs(new ArrayList<>(myState.languages));
+        GrammarEngine.Companion.getInstance().setEnabledLangs(new ArrayList<>(myState.languages));
     }
 
     static class State {

@@ -16,6 +16,10 @@ class GrammarCache {
         cache.put(str.hashCode(), typos)
     }
 
+    fun invalidate(str: String) {
+        cache.invalidate(str.hashCode())
+    }
+
     fun reset() {
         cache.invalidateAll()
     }

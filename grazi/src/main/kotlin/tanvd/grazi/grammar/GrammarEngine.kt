@@ -3,11 +3,12 @@ package tanvd.grazi.grammar
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.progress.ProgressManager
 import org.languagetool.rules.RuleMatch
+import tanvd.grazi.language.*
 
-class GrammarEngineService {
+class GrammarEngine {
     companion object {
-        fun getInstance(): GrammarEngineService {
-            return ServiceManager.getService(GrammarEngineService::class.java)
+        fun getInstance(): GrammarEngine {
+            return ServiceManager.getService(GrammarEngine::class.java)
         }
 
         private const val maxChars = 1000
@@ -15,14 +16,13 @@ class GrammarEngineService {
     }
 
     private val grammarCache = GrammarCache()
-    private val languages = Languages()
     private val separators = listOf("\n", "?", "!", ".", " ")
 
-    var enabledLangs = arrayListOf("en")
+    var enabledLangs = listOf("en")
         set(value) {
             field = value
             grammarCache.reset()
-            languages.initLangs(value)
+            LangChecker.init(value.map { Lang[it]!! })
         }
     private val disabledRules = arrayListOf(RuleMatch.Type.UnknownWord)
     private val disabledCategories = arrayListOf(Typo.Category.TYPOGRAPHY)
@@ -56,7 +56,7 @@ class GrammarEngineService {
 
         ProgressManager.checkCanceled()
 
-        val fixes = tryRun { languages.getLangChecker(str, enabledLangs).check(str) }.orEmpty()
+        val fixes = tryRun { LangChecker[LangDetector.getLang(str, enabledLangs.map { Lang[it]!! })].check(str) }.orEmpty()
                 .filterNotNull()
                 .filter { it.type !in disabledRules && it.typoCategory !in disabledCategories }
                 .map { Typo(it) }.let { LinkedHashSet(it) }

@@ -17,7 +17,9 @@ package tanvd.grazi;
 
 import com.intellij.openapi.options.*;
 import com.intellij.ui.*;
+import org.codehaus.plexus.util.*;
 import org.jetbrains.annotations.*;
+import tanvd.grazi.language.*;
 
 import javax.swing.*;
 import java.util.*;
@@ -29,35 +31,9 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
     static private final TreeMap<String, String> allLanguageShortCodes = new TreeMap<>();
 
     static {
-        allLanguageShortCodes.put("English", "en");
-        allLanguageShortCodes.put("Persian", "fa");
-        allLanguageShortCodes.put("French", "fr");
-        allLanguageShortCodes.put("German", "de");
-        allLanguageShortCodes.put("Simple German", "de-DE-x-simple-language");
-        allLanguageShortCodes.put("Polish", "pl");
-        allLanguageShortCodes.put("Catalan", "ca");
-        allLanguageShortCodes.put("Italian", "it");
-        allLanguageShortCodes.put("Breton", "br");
-        allLanguageShortCodes.put("Dutch", "nl");
-        allLanguageShortCodes.put("Portugues", "pt");
-        allLanguageShortCodes.put("Russian", "ru");
-        allLanguageShortCodes.put("Asturian", "ast");
-        allLanguageShortCodes.put("Belarusian", "be");
-        allLanguageShortCodes.put("Chinese", "zh");
-        allLanguageShortCodes.put("Danish", "da");
-        allLanguageShortCodes.put("Esperanto", "eo");
-        allLanguageShortCodes.put("Galician", "gl");
-        allLanguageShortCodes.put("Greek", "el");
-        allLanguageShortCodes.put("Japanese", "ja");
-        allLanguageShortCodes.put("Khmer", "km");
-        allLanguageShortCodes.put("Romanian", "ro");
-        allLanguageShortCodes.put("Slovak", "sk");
-        allLanguageShortCodes.put("Slovenian", "sl");
-        allLanguageShortCodes.put("Spanish", "es");
-        allLanguageShortCodes.put("Swedish", "sv");
-        allLanguageShortCodes.put("Tamil", "ta");
-        allLanguageShortCodes.put("Tagalog", "tl");
-        allLanguageShortCodes.put("Ukrainian", "uk");
+        for (Lang lang : Lang.values()) {
+            allLanguageShortCodes.put(StringUtils.capitalise(lang.name().toLowerCase()), lang.getShortCode());
+        }
     }
 
     @NotNull

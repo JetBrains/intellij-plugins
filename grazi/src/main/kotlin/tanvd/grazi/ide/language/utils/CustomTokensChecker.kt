@@ -1,7 +1,7 @@
 package tanvd.grazi.ide.language.utils
 
 import com.intellij.psi.PsiElement
-import tanvd.grazi.grammar.GrammarEngineService
+import tanvd.grazi.grammar.GrammarEngine
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 
@@ -54,7 +54,7 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
             index++
         }
 
-        val fixes = GrammarEngineService.getInstance().getFixes(resultText)
+        val fixes = GrammarEngine.getInstance().getFixes(resultText)
 
         return fixes.mapNotNull { typo ->
             val (range, firstToken) = tokenMapping.filter { typo.range.start in it.key }.entries.first()

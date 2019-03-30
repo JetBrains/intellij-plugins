@@ -39,7 +39,7 @@
     </application-components>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="tanvd.grazi.grammar.GrammarEngineService"/>
+        <applicationService serviceImplementation="tanvd.grazi.grammar.GrammarEngine"/>
         <applicationService serviceImplementation="tanvd.grazi.GraziApplicationSettings"/>
 
         <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
