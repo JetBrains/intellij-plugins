@@ -3,10 +3,14 @@ package tanvd.grazi.language
 import org.languagetool.JLanguageTool
 import org.languagetool.Language
 import org.languagetool.Languages.getLanguageForShortCode
+import org.languagetool.language.BritishEnglish
+import org.languagetool.language.Russian
 
-enum class Lang(val shortCode: String, private val enableRules: List<String> = emptyList()) {
-    ENGLISH("en", listOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE")),
-    RUSSIAN("ru", listOf("ABREV_DOT2", "KAK_VVODNOE", "PARTICLE_JE", "po_povodu_togo", "tak_skazat", "kak_bi", "O_tom_chto", "kosvennaja_rech")),
+enum class Lang(val shortCode: String,
+                private val lang: Language = getLanguageForShortCode(shortCode, emptyList())!!,
+                private val enableRules: List<String> = emptyList()) {
+    ENGLISH("en", BritishEnglish(), listOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE")),
+    RUSSIAN("ru", Russian(), listOf("ABREV_DOT2", "KAK_VVODNOE", "PARTICLE_JE", "po_povodu_togo", "tak_skazat", "kak_bi", "O_tom_chto", "kosvennaja_rech")),
     PERSIAN("fa"),
     FRENCH("fr"),
     GERMAN("de"),
@@ -37,7 +41,7 @@ enum class Lang(val shortCode: String, private val enableRules: List<String> = e
         operator fun get(code: String): Lang? = values().find { it.shortCode == code }
     }
 
-    fun toLanguage() = getLanguageForShortCode(shortCode, emptyList())!!
+    fun toLanguage() = lang
 
     fun configure(tool: JLanguageTool) {
         val toEnable = tool.allRules.filter { rule -> enableRules.any { rule.id.contains(it) } }

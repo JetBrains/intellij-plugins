@@ -2,7 +2,6 @@
     <id>tanvd.grazi</id>
     <name>Grazi</name>
     <vendor>TanVD</vendor>
-    <version>0.1.0.alpha</version>
     <vendor email="vdtankov@gmail.com" url="https://github.com/TanVD">Vladislav Tankov</vendor>
     <description><![CDATA[
         This plugin provides proofreading and grammar checking inspection for dozen of languages,

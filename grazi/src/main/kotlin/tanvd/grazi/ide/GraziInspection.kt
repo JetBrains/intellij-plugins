@@ -14,9 +14,13 @@ class GraziInspection : LocalInspectionTool() {
 
         fun typoToProblemDescriptors(fix: Typo, element: PsiElement, manager: InspectionManager, isOnTheFly: Boolean): ProblemDescriptor {
             val range = TextRange.create(fix.range.start, fix.range.endInclusive + 1)
-            val fixes = ArrayList<GraziQuickFix>()
+            val fixes = ArrayList<LocalQuickFix>()
             if (fix.fix != null && fix.fix.isNotEmpty()) {
-                fixes += GraziQuickFix(fix.category.description, fix.fix)
+                fixes += GraziFixTypoQuickFix(fix.category.description, fix.fix)
+            }
+            if (fix.category == Typo.Category.TYPOS) {
+                val word = element.text.subSequence(fix.range).toString()
+                fixes += GraziAddWordQuickFix(word)
             }
             return manager.createProblemDescriptor(element, range, fix.fullDescription, fix.category.highlight, isOnTheFly, *fixes.toTypedArray())
         }

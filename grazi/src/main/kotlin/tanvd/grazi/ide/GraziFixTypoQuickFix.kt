@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.getInjectedEditorForInjectedFile
 
 
-class GraziQuickFix(private val ruleName: String, private val replacements: List<String>) : LocalQuickFix {
+class GraziFixTypoQuickFix(private val ruleName: String, private val replacements: List<String>) : LocalQuickFix {
 
     override fun getName(): String {
         return "Fix $ruleName rule mistake"

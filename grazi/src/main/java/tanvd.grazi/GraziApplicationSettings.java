@@ -3,14 +3,17 @@ package tanvd.grazi;
 import com.intellij.openapi.components.*;
 import org.jetbrains.annotations.*;
 import tanvd.grazi.grammar.*;
+import tanvd.grazi.language.*;
+import tanvd.grazi.spellcheck.*;
 
+import java.io.*;
 import java.util.*;
 
 @State(name = "GraziApplicationSettings", storages = @Storage("grazi.xml"))
 public class GraziApplicationSettings implements PersistentStateComponent<GraziApplicationSettings.State> {
     private State myState = new State();
 
-    static GraziApplicationSettings getInstance() {
+    public static GraziApplicationSettings getInstance() {
         return ServiceManager.getService(GraziApplicationSettings.class);
     }
 
@@ -23,15 +26,19 @@ public class GraziApplicationSettings implements PersistentStateComponent<GraziA
     @Override
     public void loadState(@NotNull State state) {
         myState = state;
-        loadLanguages();
+
+        init();
     }
 
-    void loadLanguages() {
+    void init() {
+        LangChecker.INSTANCE.clear();
+        SpellDictionary.Companion.setGraziFolder(myState.graziFolder);
         GrammarEngine.Companion.getInstance().setEnabledLangs(new ArrayList<>(myState.languages));
     }
 
-    static class State {
+    public static class State {
         final Set<String> languages = new HashSet<>();
+        public File graziFolder = new File(System.getProperty("user.home"), ".grazi");
 
         {
             languages.add("en");
