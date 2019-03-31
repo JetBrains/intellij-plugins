@@ -1,12 +1,13 @@
-package tanvd.grazi.language
+package tanvd.grazi.grammar
 
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
+import tanvd.grazi.language.Lang
 import tanvd.grazi.spellcheck.SpellDictionary
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-object LangChecker {
+object GrammarChecker {
     private val langs: MutableMap<Lang, JLanguageTool> = HashMap()
 
     private const val cacheMaxSize = 25_000L

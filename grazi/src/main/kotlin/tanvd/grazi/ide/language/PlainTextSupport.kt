@@ -3,7 +3,7 @@ package tanvd.grazi.ide.language
 
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import tanvd.grazi.grammar.CustomTokensChecker
+import tanvd.grazi.grammar.SanitizingGrammarChecker
 
 class PlainTextSupport : LanguageSupport {
     override fun isSupport(file: PsiFile): Boolean {
@@ -11,6 +11,6 @@ class PlainTextSupport : LanguageSupport {
     }
 
     override fun extract(file: PsiFile): List<LanguageSupport.Result> {
-        return CustomTokensChecker.default.check(PsiTreeUtil.collectElementsOfType(file, PsiPlainText::class.java).toList()).toList()
+        return SanitizingGrammarChecker.default.check(PsiTreeUtil.collectElementsOfType(file, PsiPlainText::class.java).toList()).toList()
     }
 }

@@ -4,7 +4,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.*
-import tanvd.grazi.grammar.CustomTokensChecker
+import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.ide.language.LanguageSupport
 
 class KStringSupport : LanguageSupport {
@@ -17,7 +17,7 @@ class KStringSupport : LanguageSupport {
 
         val result = ArrayList<LanguageSupport.Result>()
         for (str in strings) {
-            result += CustomTokensChecker.default.check(PsiTreeUtil.collectElementsOfType(str, KtLiteralStringTemplateEntry::class.java).toList())
+            result += SanitizingGrammarChecker.default.check(PsiTreeUtil.collectElementsOfType(str, KtLiteralStringTemplateEntry::class.java).toList())
 
             ProgressManager.checkCanceled()
         }

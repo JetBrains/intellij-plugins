@@ -2,8 +2,8 @@ package tanvd.grazi.grammar
 
 import com.intellij.openapi.progress.ProgressManager
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.language.LangChecker
 import tanvd.grazi.language.LangDetector
+import tanvd.grazi.spellcheck.SpellChecker
 import tanvd.grazi.utils.*
 
 object GrammarEngine {
@@ -41,15 +41,20 @@ object GrammarEngine {
 
         ProgressManager.checkCanceled()
 
-        val fixes = tryRun { LangChecker[LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList())].check(str) }
+        val allFixes = tryRun { GrammarChecker[LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList())].check(str) }
                 .orEmpty()
                 .filterNotNull()
                 .map { Typo(it, GrammarCache.hash(str)) }
-                .filter { GraziConfig.state.enabledSpellcheck || it.category != Typo.Category.TYPOS }
                 .let { LinkedHashSet(it) }
 
-        GrammarCache.put(str, fixes)
+        val withoutTypos = allFixes.filter { it.category != Typo.Category.TYPOS }
+        val verifiedTypos = allFixes.filter { it.category == Typo.Category.TYPOS }.filter { SpellChecker.check(str.subSequence(it.range).toString()).isNotEmpty() }
 
-        return fixes
+
+        val result = LinkedHashSet(withoutTypos + verifiedTypos)
+
+        GrammarCache.put(str, result)
+
+        return result
     }
 }

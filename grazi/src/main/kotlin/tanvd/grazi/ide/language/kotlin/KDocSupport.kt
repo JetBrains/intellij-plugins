@@ -6,7 +6,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.KtFile
-import tanvd.grazi.grammar.CustomTokensChecker
+import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.ide.language.LanguageSupport
 
 
@@ -20,7 +20,7 @@ class KDocSupport : LanguageSupport {
 
         val result = ArrayList<LanguageSupport.Result>()
         for (doc in docs) {
-            result += CustomTokensChecker.default.check(PsiTreeUtil.collectElementsOfType(doc, KDocSection::class.java).toList())
+            result += SanitizingGrammarChecker.default.check(PsiTreeUtil.collectElementsOfType(doc, KDocSection::class.java).toList())
 
             ProgressManager.checkCanceled()
         }

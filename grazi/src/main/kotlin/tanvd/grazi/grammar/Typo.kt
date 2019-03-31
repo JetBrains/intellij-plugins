@@ -7,9 +7,9 @@ import tanvd.grazi.utils.toIntRange
 import tanvd.grazi.utils.typoCategory
 
 data class Typo(var range: IntRange, val hash: Int, val description: String, val category: Category, val fix: List<String>? = null) {
-
-
     constructor(match: RuleMatch, hash: Int) : this(match.toIntRange(), hash, match.rule.description, match.typoCategory, match.suggestedReplacements)
+
+    fun withOffset(offset: Int) = copy(range = IntRange(range.start + offset, range.endInclusive + offset))
 
     val fullDescription: String
         get() {

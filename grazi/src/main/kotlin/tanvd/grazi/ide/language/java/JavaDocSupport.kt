@@ -5,7 +5,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.javadoc.*
 import com.intellij.psi.util.PsiTreeUtil
-import tanvd.grazi.grammar.CustomTokensChecker
+import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 
@@ -27,12 +27,12 @@ class JavaDocSupport : LanguageSupport {
 
         val result = ArrayList<LanguageSupport.Result>()
         for (doc in docs) {
-            result += CustomTokensChecker.default.check(
+            result += SanitizingGrammarChecker.default.check(
                     PsiTreeUtil.collectElementsOfType(doc, PsiDocToken::class.java)
                             .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
                             .filterNot { isTag(it) })
 
-            result += CustomTokensChecker.default.check(
+            result += SanitizingGrammarChecker.default.check(
                     PsiTreeUtil.collectElementsOfType(doc, PsiDocToken::class.java)
                             .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
                             .filter { isApplicableTag(it) })

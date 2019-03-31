@@ -5,12 +5,12 @@ import tanvd.grazi.ide.language.LanguageSupport
 import java.util.*
 import kotlin.collections.HashMap
 
-class CustomTokensChecker(private val ignoreIfPreviousEqual: List<Char>,
-                          private val ignores: List<Char>,
-                          private val replaces: Map<Char, Char>) {
+class SanitizingGrammarChecker(private val ignoreIfPreviousEqual: List<Char>,
+                               private val ignores: List<Char>,
+                               private val replaces: Map<Char, Char>) {
 
     companion object {
-        val default = CustomTokensChecker(listOf(' '), listOf('\t', '*'), mapOf('\n' to ' '))
+        val default = SanitizingGrammarChecker(listOf(' '), listOf('\t', '*'), mapOf('\n' to ' '))
     }
 
     fun <T : PsiElement> check(vararg tokens: T) = check(tokens.toList())

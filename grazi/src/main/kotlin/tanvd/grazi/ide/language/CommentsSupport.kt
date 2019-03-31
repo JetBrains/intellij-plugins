@@ -5,7 +5,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
 import com.intellij.psi.util.PsiTreeUtil
-import tanvd.grazi.grammar.CustomTokensChecker
+import tanvd.grazi.grammar.SanitizingGrammarChecker
 
 class CommentsSupport : LanguageSupport {
     override fun isSupport(file: PsiFile): Boolean {
@@ -17,7 +17,7 @@ class CommentsSupport : LanguageSupport {
 
         val result = ArrayList<LanguageSupport.Result>()
         for (comment in comments) {
-            result += CustomTokensChecker.default.check(listOf(comment))
+            result += SanitizingGrammarChecker.default.check(listOf(comment))
 
             ProgressManager.checkCanceled()
         }

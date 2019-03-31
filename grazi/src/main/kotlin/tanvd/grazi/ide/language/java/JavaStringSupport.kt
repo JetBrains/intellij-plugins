@@ -4,7 +4,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
 import com.intellij.psi.util.PsiTreeUtil
-import tanvd.grazi.grammar.CustomTokensChecker
+import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.ide.language.LanguageSupport
 
 class JavaStringSupport : LanguageSupport {
@@ -23,13 +23,13 @@ class JavaStringSupport : LanguageSupport {
 
         val result = ArrayList<LanguageSupport.Result>()
         for (str in literalStrings) {
-            result += CustomTokensChecker.default.check(literalStrings) { it.innerText ?: "" }.toList()
+            result += SanitizingGrammarChecker.default.check(literalStrings) { it.innerText ?: "" }.toList()
 
             ProgressManager.checkCanceled()
         }
 
         for (str in rawStrings) {
-            result += CustomTokensChecker.default.check(literalStrings) { it.rawString ?: "" }.toList()
+            result += SanitizingGrammarChecker.default.check(literalStrings) { it.rawString ?: "" }.toList()
 
             ProgressManager.checkCanceled()
         }
