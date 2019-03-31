@@ -27,7 +27,7 @@ object GrammarEngine {
             } else {
                 getFixesSmall(s)
             }.map {
-                Typo(it.range.withOffset(cumulativeLen), it.description, it.category, it.fix)
+                Typo(it.range.withOffset(cumulativeLen), it.hash, it.description, it.category, it.fix)
             }
             result.addAll(stringFixes)
             cumulativeLen += s.length + curSeparator.length
@@ -45,7 +45,7 @@ object GrammarEngine {
         val fixes = tryRun { LangChecker[LangDetector.getLang(str, enabledLangs)].check(str) }
                 .orEmpty()
                 .filterNotNull()
-                .map { Typo(it) }
+                .map { Typo(it, GrammarCache.hash(str)) }
                 .filter { spellCheckEnabled || it.category != Typo.Category.TYPOS }
                 .let { LinkedHashSet(it) }
 

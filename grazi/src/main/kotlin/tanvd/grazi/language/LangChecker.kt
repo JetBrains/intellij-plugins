@@ -12,11 +12,12 @@ object LangChecker {
     private const val cacheMaxSize = 25_000L
     private const val cacheExpireAfterMinutes = 5
 
+
     operator fun get(lang: Lang): JLanguageTool {
         return langs.getOrPut(lang) {
             val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-            val config = UserConfig(SpellDictionary.usersCustom().words)
-            JLanguageTool(lang.toLanguage(), GraziConfig.state.motherTongue.toLanguage(), cache, config).apply {
+            val userConfig = UserConfig(SpellDictionary.usersCustom().words)
+            JLanguageTool(lang.toLanguage(), GraziConfig.state.motherTongue.toLanguage(), cache, userConfig).apply {
                 lang.configure(this)
             }
         }

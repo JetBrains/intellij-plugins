@@ -39,6 +39,8 @@ enum class Lang(val shortCode: String,
     companion object {
         operator fun get(lang: Language): Lang? = values().find { it.shortCode == lang.shortCode }
         operator fun get(code: String): Lang? = values().find { it.shortCode == code }
+
+        fun sortedValues() = Lang.values().sortedBy { it.name }
     }
 
     val displayName: String = name.toLowerCase().capitalize()

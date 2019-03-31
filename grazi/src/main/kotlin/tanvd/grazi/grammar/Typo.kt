@@ -4,8 +4,8 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.ProblemGroup
 import org.languagetool.rules.RuleMatch
 
-data class Typo(val range: IntRange, val description: String, val category: Category, val fix: List<String>? = null) {
-    constructor(match: RuleMatch) : this(match.toIntRange(), match.rule.description, match.typoCategory, match.suggestedReplacements)
+data class Typo(var range: IntRange, val hash: Int, val description: String, val category: Category, val fix: List<String>? = null) {
+    constructor(match: RuleMatch, hash: Int) : this(match.toIntRange(), hash, match.rule.description, match.typoCategory, match.suggestedReplacements)
 
     val fullDescription: String
         get() {

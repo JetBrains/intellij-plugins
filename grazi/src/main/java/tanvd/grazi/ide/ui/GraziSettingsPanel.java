@@ -24,7 +24,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
     @NotNull
     @Override
     public JComponent getComponent() {
-        for (Lang lang : Lang.values()) {
+        for (Lang lang : Lang.Companion.sortedValues()) {
             enabledLanguages.addItem(lang.getShortCode(), lang.getDisplayName(), false);
         }
 

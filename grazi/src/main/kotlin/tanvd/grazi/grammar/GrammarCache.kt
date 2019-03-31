@@ -8,16 +8,18 @@ object GrammarCache {
             .maximumSize(50_000)
             .build { null }
 
-    fun contains(str: String) = cache.getIfPresent(str.hashCode()) != null
+    fun hash(str: String) = str.hashCode()
 
-    fun get(str: String) = cache.getIfPresent(str.hashCode()) ?: LinkedHashSet()
+    fun contains(str: String) = cache.getIfPresent(hash(str)) != null
+
+    fun get(str: String) = cache.getIfPresent(hash(str)) ?: LinkedHashSet()
 
     fun put(str: String, typos: LinkedHashSet<Typo>) {
-        cache.put(str.hashCode(), typos)
+        cache.put(hash(str), typos)
     }
 
-    fun invalidate(str: String) {
-        cache.invalidate(str.hashCode())
+    fun invalidate(hash: Int) {
+        cache.invalidate(hash)
     }
 
     fun reset() {

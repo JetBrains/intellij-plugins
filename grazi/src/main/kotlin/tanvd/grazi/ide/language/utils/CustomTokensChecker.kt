@@ -63,7 +63,7 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
                 val startShift = indexesShift.filter { it.key <= typo.range.start }.values.lastOrNull() ?: 0
                 val endShift = indexesShift.filter { it.key <= typo.range.endInclusive }.values.lastOrNull() ?: 0
                 val newRange = IntRange(typo.range.start + startShift - range.start, typo.range.endInclusive + endShift - range.start)
-                LanguageSupport.Result(Typo(newRange, typo.description, typo.category, typo.fix), firstToken)
+                LanguageSupport.Result(Typo(newRange, typo.hash, typo.description, typo.category, typo.fix), firstToken)
             } else null
         }.toSet()
     }
