@@ -31,7 +31,8 @@ class GraziApplicationSettings : PersistentStateComponent<GraziApplicationSettin
     fun init() {
         LangChecker.clear()
         SpellDictionary.graziFolder = myState.graziFolder
-        GrammarEngine.getInstance().enabledLangs = myState.enabledLanguages.toList()
+        GrammarEngine.enabledLangs = myState.enabledLanguages.toList()
+        GrammarEngine.spellCheckEnabled = myState.enabledSpellcheck
     }
 
 

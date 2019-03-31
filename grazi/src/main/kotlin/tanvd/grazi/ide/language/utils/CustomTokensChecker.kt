@@ -54,7 +54,7 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
             index++
         }
 
-        val fixes = GrammarEngine.getInstance().getFixes(resultText)
+        val fixes = GrammarEngine.getFixes(resultText)
 
         return fixes.mapNotNull { typo ->
             val (range, firstToken) = tokenMapping.filter { typo.range.start in it.key }.entries.first()

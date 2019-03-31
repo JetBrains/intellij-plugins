@@ -10,20 +10,20 @@ import kotlin.system.measureTimeMillis
 class GrammarEngineTest {
     @Test
     fun testCorrectText() {
-        val fixes = GrammarEngine().getFixes("Hello world")
+        val fixes = GrammarEngine.getFixes("Hello world")
         assertEquals(0, fixes.size)
     }
 
     @Test
     fun testFirstLetterText() {
-        val fixes = GrammarEngine().getFixes("hello world")
+        val fixes = GrammarEngine.getFixes("hello world")
         assertEquals(1, fixes.size)
         assertEquals("Hello", fixes[0].fix!![0])
     }
 
     @Test
     fun testDifferentTypos() {
-        val fixes = GrammarEngine().getFixes("Hello. world,, tot he")
+        val fixes = GrammarEngine.getFixes("Hello. world,, tot he")
         assertEquals(3, fixes.size)
         assertEquals(Typo.Category.CASING, fixes[0].category)
         assertEquals(Typo.Category.PUNCTUATION, fixes[1].category)
@@ -32,7 +32,7 @@ class GrammarEngineTest {
 
     @Test
     fun testRanges() {
-        val fixes = GrammarEngine().getFixes("hello. world,, tot he.\nThis are my friend")
+        val fixes = GrammarEngine.getFixes("hello. world,, tot he.\nThis are my friend")
         assertEquals(5, fixes.size)
         assertEquals(IntRange(0, 4), fixes[0].range)
         assertEquals(IntRange(7, 11), fixes[1].range)
@@ -43,14 +43,14 @@ class GrammarEngineTest {
 
     @Test
     fun testNotCorrectText() {
-        val fixes = GrammarEngine().getFixes("A sentence with a error in the Hitch-hiker's Guide tot he Galaxy")
+        val fixes = GrammarEngine.getFixes("A sentence with a error in the Hitch-hiker's Guide tot he Galaxy")
         assertEquals(2, fixes.size)
     }
 
     @Test
     fun testCachedMiddle() {
         val text = File("src/test/resources/english_big.txt").readText()
-        val grammar = GrammarEngine()
+        val grammar = GrammarEngine
         val fixes1 = grammar.getFixes(text)
         var fixes2: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
@@ -63,7 +63,7 @@ class GrammarEngineTest {
     @Test
     fun testCachedBig() {
         val text = File("src/test/resources/english_big2.txt").readText()
-        val grammar = GrammarEngine()
+        val grammar = GrammarEngine
         val fixes1 = grammar.getFixes(text)
         var fixes2: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {

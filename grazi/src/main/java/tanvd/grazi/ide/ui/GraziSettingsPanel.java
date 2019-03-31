@@ -61,6 +61,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
         }
         settings.getState().setGraziFolder(new File(graziFolder.getText()));
         settings.getState().setMotherTongue((Lang) motherTongue.getSelectedItem());
+        settings.getState().setEnabledSpellcheck(enableGraziSpellcheckCheckBox.isSelected());
         settings.init();
     }
 

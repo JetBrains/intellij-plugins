@@ -1,20 +1,15 @@
 package tanvd.grazi.grammar
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.progress.ProgressManager
 import tanvd.grazi.language.*
 
-class GrammarEngine {
-    companion object {
-        fun getInstance(): GrammarEngine {
-            return ServiceManager.getService(GrammarEngine::class.java)
-        }
-
-        private const val maxChars = 1000
-        private const val minChars = 2
-    }
+object GrammarEngine {
+    private const val maxChars = 1000
+    private const val minChars = 2
 
     private val separators = listOf("\n", "?", "!", ".", " ")
+
+    var spellCheckEnabled: Boolean = false
 
     var enabledLangs = listOf(Lang.ENGLISH)
         set(value) {
@@ -55,7 +50,9 @@ class GrammarEngine {
         val fixes = tryRun { LangChecker[LangDetector.getLang(str, enabledLangs)].check(str) }
                 .orEmpty()
                 .filterNotNull()
-                .map { Typo(it) }.let { LinkedHashSet(it) }
+                .map { Typo(it) }
+                .filter { spellCheckEnabled || it.category != Typo.Category.TYPOS }
+                .let { LinkedHashSet(it) }
 
         GrammarCache.put(str, fixes)
 
