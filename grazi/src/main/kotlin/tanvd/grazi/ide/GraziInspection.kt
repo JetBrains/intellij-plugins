@@ -31,8 +31,8 @@ class GraziInspection : LocalInspectionTool() {
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         val result = mutableListOf<ProblemDescriptor>()
-        for (ext in LanguageSupport.all) {
-            val typos = ext.extract(file) ?: emptyList()
+        for (ext in LanguageSupport.all.filter { it.isSupport(file) }) {
+            val typos = ext.extract(file)
             result += typos.map { typoToProblemDescriptors(it.typo, it.element, manager, isOnTheFly) }
         }
         return result.toTypedArray()

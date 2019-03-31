@@ -1,13 +1,16 @@
 package tanvd.grazi.ide.language
 
 
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiPlainText
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
-import tanvd.grazi.ide.language.utils.CustomTokensChecker
+import tanvd.grazi.grammar.CustomTokensChecker
 
 class PlainTextSupport : LanguageSupport {
-    override fun extract(file: PsiFile): List<LanguageSupport.Result>? {
+    override fun isSupport(file: PsiFile): Boolean {
+        return file is PsiPlainTextFile
+    }
+
+    override fun extract(file: PsiFile): List<LanguageSupport.Result> {
         return CustomTokensChecker.default.check(PsiTreeUtil.collectElementsOfType(file, PsiPlainText::class.java).toList()).toList()
     }
 }

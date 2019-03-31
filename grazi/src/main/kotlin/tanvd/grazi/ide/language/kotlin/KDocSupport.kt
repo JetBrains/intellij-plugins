@@ -1,14 +1,20 @@
-package tanvd.grazi.ide.language
+package tanvd.grazi.ide.language.kotlin
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
-import tanvd.grazi.ide.language.utils.CustomTokensChecker
+import org.jetbrains.kotlin.psi.KtFile
+import tanvd.grazi.grammar.CustomTokensChecker
+import tanvd.grazi.ide.language.LanguageSupport
 
 
 class KDocSupport : LanguageSupport {
+    override fun isSupport(file: PsiFile): Boolean {
+        return file is KtFile
+    }
+
     override fun extract(file: PsiFile): List<LanguageSupport.Result> {
         val docs = PsiTreeUtil.collectElementsOfType(file, KDoc::class.java)
 

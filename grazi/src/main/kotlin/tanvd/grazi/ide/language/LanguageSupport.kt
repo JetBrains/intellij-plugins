@@ -13,6 +13,8 @@ interface LanguageSupport {
 
     data class Result(val typo: Typo, val element: PsiElement)
 
+    fun isSupport(file: PsiFile): Boolean = true
+
     /** Don't forget to use ProgressManager.checkCancelled() */
-    fun extract(file: PsiFile): List<Result>?
+    fun extract(file: PsiFile): List<Result>
 }

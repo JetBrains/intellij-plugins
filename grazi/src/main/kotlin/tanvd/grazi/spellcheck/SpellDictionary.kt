@@ -1,5 +1,6 @@
 package tanvd.grazi.spellcheck
 
+import tanvd.grazi.GraziConfig
 import java.io.File
 
 class SpellDictionary(val file: File, words: List<String> = emptyList()) {
@@ -8,11 +9,9 @@ class SpellDictionary(val file: File, words: List<String> = emptyList()) {
 
 
     companion object {
-        var graziFolder: File? = null
 
         fun usersCustom(): SpellDictionary {
-            if (graziFolder == null) return SpellDictionary(File(""))
-            return load(File(graziFolder!!, "custom_dict.txt"))
+            return load(File(GraziConfig.state.graziFolder, "custom_dict.txt"))
         }
 
         private fun load(file: File): SpellDictionary {

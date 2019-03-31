@@ -1,6 +1,7 @@
-package tanvd.grazi.grammar
+package tanvd.grazi.utils
 
 import org.languagetool.rules.RuleMatch
+import tanvd.grazi.grammar.Typo
 
 val RuleMatch.typoCategory: Typo.Category
     get() = Typo.Category[rule.category.id.toString()]

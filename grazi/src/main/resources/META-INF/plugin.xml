@@ -60,11 +60,15 @@
     </extensionPoints>
 
     <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport implementation="tanvd.grazi.ide.language.PlainTextSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.JavaDocSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.KDocSupport"/>
-        <!--        <languageSupport implementation="tanvd.grazi.ide.language.HtmlSupport"/>-->
         <languageSupport implementation="tanvd.grazi.ide.language.MarkdownSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.PlainTextSupport"/>
+
+        <languageSupport implementation="tanvd.grazi.ide.language.java.JavaDocSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.java.JavaStringSupport"/>
+
+        <languageSupport implementation="tanvd.grazi.ide.language.kotlin.KDocSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.kotlin.KStringSupport"/>
+
         <languageSupport implementation="tanvd.grazi.ide.language.CommentsSupport"/>
     </extensions>
 </idea-plugin>

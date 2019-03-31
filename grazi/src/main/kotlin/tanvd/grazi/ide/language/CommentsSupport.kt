@@ -5,9 +5,13 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.PsiCommentImpl
 import com.intellij.psi.util.PsiTreeUtil
-import tanvd.grazi.ide.language.utils.CustomTokensChecker
+import tanvd.grazi.grammar.CustomTokensChecker
 
 class CommentsSupport : LanguageSupport {
+    override fun isSupport(file: PsiFile): Boolean {
+        return true
+    }
+
     override fun extract(file: PsiFile): List<LanguageSupport.Result> {
         val comments = PsiTreeUtil.collectElementsOfType(file, PsiCommentImpl::class.java)
 

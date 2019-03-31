@@ -5,12 +5,16 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.intellij.plugins.markdown.lang.psi.impl.*
+import tanvd.grazi.grammar.CustomTokensChecker
 import tanvd.grazi.grammar.Typo
-import tanvd.grazi.ide.language.utils.CustomTokensChecker
 
 class MarkdownSupport : LanguageSupport {
     companion object {
         val bulletsIgnoredCategories = listOf(Typo.Category.CASING)
+    }
+
+    override fun isSupport(file: PsiFile): Boolean {
+        return file is MarkdownFile
     }
 
     override fun extract(file: PsiFile): List<LanguageSupport.Result> {
