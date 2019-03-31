@@ -4,6 +4,8 @@ import com.intellij.psi.PsiElement
 import tanvd.grazi.grammar.GrammarEngine
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
+import java.util.*
+import kotlin.collections.HashMap
 
 class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: List<Char>,
                                           private val ignores: List<Char>,
@@ -18,7 +20,7 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
     fun check(tokens: List<T>): Set<LanguageSupport.Result> {
         var resultText = ""
 
-        val indexesShift = HashMap<Int, Int>()
+        val indexesShift = TreeMap<Int, Int> { ind, _ -> ind}
         val tokenMapping = HashMap<IntRange, T>()
 
         var index = 0

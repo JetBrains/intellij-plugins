@@ -8,9 +8,13 @@ import org.languagetool.language.Russian
 
 enum class Lang(val shortCode: String,
                 private val lang: Language = getLanguageForShortCode(shortCode, emptyList())!!,
-                private val enableRules: List<String> = emptyList()) {
-    ENGLISH("en", BritishEnglish(), listOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE")),
-    RUSSIAN("ru", Russian(), listOf("ABREV_DOT2", "KAK_VVODNOE", "PARTICLE_JE", "po_povodu_togo", "tak_skazat", "kak_bi", "O_tom_chto", "kosvennaja_rech")),
+                private val enabledRules: Set<String> = emptySet(),
+                private val disabledRules: Set<String> = emptySet()) {
+    ENGLISH("en", BritishEnglish(),
+            setOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE"),
+            setOf("WORD_CONTAINS_UNDERSCORE")),
+    RUSSIAN("ru", Russian(),
+            setOf("ABREV_DOT2", "KAK_VVODNOE", "PARTICLE_JE", "po_povodu_togo", "tak_skazat", "kak_bi", "O_tom_chto", "kosvennaja_rech")),
     PERSIAN("fa"),
     FRENCH("fr"),
     GERMAN("de"),
@@ -50,9 +54,14 @@ enum class Lang(val shortCode: String,
     override fun toString() = displayName
 
     fun configure(tool: JLanguageTool) {
-        val toEnable = tool.allRules.filter { rule -> enableRules.any { rule.id.contains(it) } }
+        val toEnable = tool.allRules.filter { rule -> enabledRules.any { rule.id.contains(it) } }
         toEnable.forEach {
             tool.enableRule(it.id)
+        }
+
+        val toDisable = tool.allRules.filter { rule -> disabledRules.any { rule.id.contains(it) } }
+        toDisable.forEach {
+            tool.disableRule(it.id)
         }
     }
 }

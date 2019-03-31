@@ -4,8 +4,10 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
 
 object GrammarCache {
+    private const val cacheSize = 50_000L
+
     private val cache: LoadingCache<Int, LinkedHashSet<Typo>> = Caffeine.newBuilder()
-            .maximumSize(50_000)
+            .maximumSize(cacheSize)
             .build { null }
 
     fun hash(str: String) = str.hashCode()
