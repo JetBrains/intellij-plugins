@@ -15,7 +15,7 @@ class MarkdownSupport : LanguageSupport {
 
     override fun extract(file: PsiFile): List<LanguageSupport.Result> {
         val result = ArrayList<LanguageSupport.Result>()
-        for (paragraph in PsiTreeUtil.collectElementsOfType(file, MarkdownParagraphImpl::class.java)) {
+        for (paragraph in PsiTreeUtil.collectElementsOfType(file, MarkdownParagraphImpl::class.java).filter { it.parent !is MarkdownListItemImpl }) {
             result += CustomTokensChecker.default.check(paragraph)
 
             ProgressManager.checkCanceled()
@@ -25,7 +25,7 @@ class MarkdownSupport : LanguageSupport {
 
             ProgressManager.checkCanceled()
         }
-        for (item in PsiTreeUtil.collectElementsOfType(file, MarkdownListItemImpl::class.java)) {
+        for (item in PsiTreeUtil.collectElementsOfType(file, MarkdownListItemImpl::class.java).filter { it.parent !is MarkdownListItemImpl }) {
             result += CustomTokensChecker.default.check(item).filter {
                 it.typo.category !in bulletsIgnoredCategories
             }
