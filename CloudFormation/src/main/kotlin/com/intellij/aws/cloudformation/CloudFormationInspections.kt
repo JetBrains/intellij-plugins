@@ -8,6 +8,7 @@ import com.google.common.primitives.Floats
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType
 import com.intellij.aws.cloudformation.metadata.CloudFormationResourceType.Companion.isCustomResourceType
 import com.intellij.aws.cloudformation.metadata.awsServerlessFunction
+import com.intellij.aws.cloudformation.metadata.awsServerlessNamePrefix
 import com.intellij.aws.cloudformation.model.CfnArrayValueNode
 import com.intellij.aws.cloudformation.model.CfnFunctionNode
 import com.intellij.aws.cloudformation.model.CfnGlobalsNode
@@ -581,6 +582,23 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     super.mappings(mappings)
   }
 
+  private fun calculateMissingProperties(presentProperties: List<String>, metadata: CloudFormationResourceType): List<String> {
+    val propertiesDefinedInGlobals = if (metadata.name.startsWith(awsServerlessNamePrefix)) {
+      val globalsSectionName = metadata.name.removePrefix(awsServerlessNamePrefix)
+
+      val globals = parsed.root.globalsNode?.
+          globals?.singleOrNull { it.name?.value == globalsSectionName }
+
+      globals?.properties?.mapNotNull { it.name?.value } ?: emptyList()
+    } else emptyList()
+
+    val missingProperties = metadata.requiredProperties.filter {
+      required -> !presentProperties.contains(required) && !propertiesDefinedInGlobals.contains(required)
+    }
+
+    return missingProperties.sorted()
+  }
+
   override fun resource(resource: CfnResourceNode) {
     currentResource = resource
 
@@ -593,29 +611,23 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
     val metadata = resourceType.metadata(parsed.root)
     if (metadata != null) {
       val propertiesNode = resource.properties
-      if (propertiesNode == null) {
-        val requiredProperties = metadata.requiredProperties.joinToString(" ")
-        if (requiredProperties.isNotEmpty()) {
-          addProblem(resource, CloudFormationBundle.getString("format.required.resource.properties.are.not.set", requiredProperties))
+      propertiesNode?.properties?.forEach {
+        val propertyName = it.name?.value
+        if (propertyName != null &&
+            propertyName != CloudFormationConstants.CommentResourcePropertyName &&
+            !isCustomResourceType(resourceType.value!!.value) &&
+            metadata.findProperty(propertyName) == null) {
+          addProblem(it, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName))
         }
-      } else {
-        propertiesNode.properties.forEach {
-          val propertyName = it.name?.value
-          if (propertyName != null &&
-              propertyName != CloudFormationConstants.CommentResourcePropertyName &&
-              !isCustomResourceType(resourceType.value!!.value) &&
-              metadata.findProperty(propertyName) == null) {
-            addProblem(it, CloudFormationBundle.getString("format.unknown.resource.type.property", propertyName))
-          }
-        }
+      }
 
-        val missingProperties = metadata.requiredProperties.filter {
-          required -> propertiesNode.properties.none { required == it.name?.value }
-        }.joinToString(separator = " ")
-
-        if (missingProperties.isNotEmpty()) {
-          addProblem(propertiesNode, CloudFormationBundle.getString("format.required.resource.properties.are.not.set", missingProperties))
-        }
+      val presentProperties = propertiesNode?.properties?.mapNotNull { it.name?.value } ?: emptyList()
+      val missingProperties = calculateMissingProperties(presentProperties, metadata)
+      if (missingProperties.isNotEmpty()) {
+        addProblem(
+            element = propertiesNode ?: resource,
+            description = CloudFormationBundle.getString("format.required.resource.properties.are.not.set", missingProperties.joinToString(separator = " "))
+        )
       }
     }
 

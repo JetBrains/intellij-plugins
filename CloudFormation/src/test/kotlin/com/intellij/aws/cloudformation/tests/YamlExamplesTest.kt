@@ -30,7 +30,8 @@ class YamlExamplesTest : LightPlatformCodeInsightTestCase() {
   fun test19() = runTest("serverless-multiple-transforms.yaml")
   fun test20() = runTest("issue-121-no-errors.yaml")
   fun test21() = runTest("globals1.yaml")
-  fun test22() = runTest("serverless-function-version.yaml")
+  fun test22() = runTest("globals2.yaml")
+  fun test23() = runTest("serverless-function-version.yaml")
 
   fun testParameters1() = runTest("parameters1.yaml")
   fun testParameters2() = runTest("parameters2.yaml")
