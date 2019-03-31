@@ -15,6 +15,8 @@ class JavaDocSupport : LanguageSupport {
     }
 
     private fun isTag(token: PsiDocToken) = token.parent is PsiDocTag
+    //JavaDocSupport should ignore code fragments
+    private fun isApplicableTag(token: PsiDocToken) = isTag(token) && ((token.parent as PsiDocTag).nameElement.text != "@code")
 
     override fun extract(file: PsiFile): List<LanguageSupport.Result> {
         val docs = PsiTreeUtil.collectElementsOfType(file, PsiDocComment::class.java)
@@ -29,7 +31,7 @@ class JavaDocSupport : LanguageSupport {
             result += CustomTokensChecker.default.check(
                     PsiTreeUtil.collectElementsOfType(doc, PsiDocToken::class.java)
                             .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
-                            .filter { isTag(it) })
+                            .filter { isApplicableTag(it) })
                     .filter { it.typo.category !in tagsIgnoredCategories }
 
             ProgressManager.checkCanceled()

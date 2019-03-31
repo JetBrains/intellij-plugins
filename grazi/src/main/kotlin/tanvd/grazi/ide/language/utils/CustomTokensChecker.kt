@@ -20,12 +20,12 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
     fun check(tokens: List<T>): Set<LanguageSupport.Result> {
         var resultText = ""
 
-        val indexesShift = TreeMap<Int, Int> { ind, _ -> ind}
+        val indexesShift = TreeMap<Int, Int> { ind, _ -> ind }
         val tokenMapping = HashMap<IntRange, T>()
 
         var index = 0
         var previous: Char? = null
-        for (token in tokens) {
+        for (token in tokens.filter { it.text.isNotBlank() }) {
             val tokenStartIndex = index
             var totalExcluded = 0
             for (char in token.text) {
@@ -52,8 +52,11 @@ class CustomTokensChecker<T : PsiElement>(private val ignoreIfPreviousEqual: Lis
             }
             tokenMapping[IntRange(tokenStartIndex, index)] = token
 
-            resultText += " "
-            index++
+            if (previous != ' ') {
+                resultText += " "
+                previous = ' '
+                index++
+            }
         }
 
         val fixes = GrammarEngine.getFixes(resultText)

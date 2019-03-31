@@ -13,7 +13,8 @@ class GraziInspection : LocalInspectionTool() {
         val EP_NAME = ExtensionPointName.create<LanguageSupport>("tanvd.grazi.languageSupport")
 
         fun typoToProblemDescriptors(fix: Typo, element: PsiElement, manager: InspectionManager, isOnTheFly: Boolean): ProblemDescriptor {
-            val range = TextRange.create(fix.range.start, fix.range.endInclusive + 1)
+            val end = if (element.textLength > fix.range.endInclusive + 1) fix.range.endInclusive + 1 else fix.range.endInclusive
+            val range = TextRange.create(fix.range.start, end)
             val fixes = ArrayList<LocalQuickFix>()
 
             if (fix.category == Typo.Category.TYPOS) {
