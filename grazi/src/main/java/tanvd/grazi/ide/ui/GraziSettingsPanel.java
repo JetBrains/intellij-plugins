@@ -34,7 +34,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
             enabledLanguages.addItem(languageShortCode.getValue(), languageShortCode.getKey(), false);
         }
 
-        graziFolder.addBrowseFolderListener("", "Grazi folder", null, new FileChooserDescriptor(true, false, false, false, false, false),
+        graziFolder.addBrowseFolderListener("", "Grazi folder", null, new FileChooserDescriptor(false, true, false, false, false, false),
                 TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
         return wholePanel;
@@ -46,7 +46,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
                 .allMatch(shortCode -> settings.getState().getEnabledLanguages().contains(Lang.Companion.get(shortCode)) == enabledLanguages.isItemSelected(shortCode))
                 || !settings.getState().getGraziFolder().getAbsolutePath().equals(graziFolder.getText())
                 || !settings.getState().getMotherTongue().equals(motherTongue.getSelectedItem())
-                || !settings.getState().getEnabledSpellcheck() == enableGraziSpellcheckCheckBox.isSelected();
+                || settings.getState().getEnabledSpellcheck() != enableGraziSpellcheckCheckBox.isSelected();
     }
 
 
