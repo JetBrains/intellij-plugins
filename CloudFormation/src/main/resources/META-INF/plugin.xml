@@ -3,7 +3,7 @@
   <name>AWS CloudFormation</name>
   <version>SNAPSHOT</version>
 
-  <vendor url="https://github.com/shalupov" email="leonid@shalupov.com">Leonid Shalupov</vendor>
+  <vendor email="support@jetbrains.com">JetBrains</vendor>
 
   <description><![CDATA[
     <p>Amazon AWS CloudFormation language support
@@ -94,8 +94,6 @@
     <liveTemplateContext implementation="com.intellij.aws.cloudformation.JsonCloudFormationCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.aws.cloudformation.YamlCloudFormationCodeContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.aws.cloudformation.CloudFormationDefaultLiveTemplateProvider"/>
-
-    <errorHandler implementation="com.intellij.aws.cloudformation.CloudFormationReportSubmitter"/>
 
     <json.catalog.exclusion implementation="com.intellij.aws.cloudformation.CloudFormationJsonCatalogExclusion" />
   </extensions>

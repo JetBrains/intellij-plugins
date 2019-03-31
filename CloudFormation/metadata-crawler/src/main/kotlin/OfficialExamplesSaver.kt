@@ -1,6 +1,7 @@
+import com.intellij.openapi.util.text.StringUtil
+import org.apache.commons.codec.binary.StringUtils
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
-import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import java.io.File
 import java.net.URL
@@ -23,7 +24,7 @@ object OfficialExamplesSaver {
 
       val fileUrl = URL(url, name.replace(" ", "%20"))
 
-      val localName = StringUtils.removeEnd(name.toLowerCase(), ".template") + "-" + DigestUtils.md5Hex(name).substring(0, 4) + ".template"
+      val localName = StringUtil.trimEnd(name.toLowerCase(), ".template") + "-" + DigestUtils.md5Hex(name).substring(0, 4) + ".template"
       val localFile = File("testData/officialExamples/src", localName)
 
       if (localFile.exists() && localFile.length() == size.toLong()) {
