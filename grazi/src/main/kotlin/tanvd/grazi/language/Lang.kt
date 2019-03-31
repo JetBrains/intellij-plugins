@@ -41,7 +41,11 @@ enum class Lang(val shortCode: String,
         operator fun get(code: String): Lang? = values().find { it.shortCode == code }
     }
 
+    val displayName: String = name.toLowerCase().capitalize()
+
     fun toLanguage() = lang
+
+    override fun toString() = displayName
 
     fun configure(tool: JLanguageTool) {
         val toEnable = tool.allRules.filter { rule -> enableRules.any { rule.id.contains(it) } }

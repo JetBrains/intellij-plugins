@@ -3,9 +3,9 @@ package tanvd.grazi.grammar
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
 
-class GrammarCache {
+object GrammarCache {
     private val cache: LoadingCache<Int, LinkedHashSet<Typo>> = Caffeine.newBuilder()
-            .maximumSize(100_000)
+            .maximumSize(50_000)
             .build { null }
 
     fun contains(str: String) = cache.getIfPresent(str.hashCode()) != null

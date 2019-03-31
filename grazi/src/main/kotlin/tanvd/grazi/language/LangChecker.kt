@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
 object LangChecker {
     private val langs: MutableMap<Lang, JLanguageTool> = HashMap()
 
-    private const val cacheMaxSize = 50_000L
+    private const val cacheMaxSize = 25_000L
     private const val cacheExpireAfterMinutes = 5
 
     operator fun get(lang: Lang): JLanguageTool {

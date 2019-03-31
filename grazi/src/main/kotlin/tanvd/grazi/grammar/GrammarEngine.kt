@@ -14,14 +14,13 @@ class GrammarEngine {
         private const val minChars = 2
     }
 
-    val grammarCache = GrammarCache()
     private val separators = listOf("\n", "?", "!", ".", " ")
 
-    var enabledLangs = listOf("en")
+    var enabledLangs = listOf(Lang.ENGLISH)
         set(value) {
             field = value
-            grammarCache.reset()
-            LangChecker.init(value.map { Lang[it]!! })
+            GrammarCache.reset()
+            LangChecker.init(value)
         }
 
     private fun isSmall(str: String) = str.length < minChars
@@ -49,16 +48,16 @@ class GrammarEngine {
     private fun getFixesSmall(str: String): LinkedHashSet<Typo> {
         if (isSmall(str)) return LinkedHashSet()
 
-        if (grammarCache.contains(str)) return grammarCache.get(str)
+        if (GrammarCache.contains(str)) return GrammarCache.get(str)
 
         ProgressManager.checkCanceled()
 
-        val fixes = tryRun { LangChecker[LangDetector.getLang(str, enabledLangs.map { Lang[it]!! })].check(str) }
+        val fixes = tryRun { LangChecker[LangDetector.getLang(str, enabledLangs)].check(str) }
                 .orEmpty()
                 .filterNotNull()
                 .map { Typo(it) }.let { LinkedHashSet(it) }
 
-        grammarCache.put(str, fixes)
+        GrammarCache.put(str, fixes)
 
         return fixes
     }
