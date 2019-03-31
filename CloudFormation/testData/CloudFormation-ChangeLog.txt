@@ -1,7 +1,7 @@
 [Amazon Web Services] <http://aws.amazon.com>
 Sign In to the Console <https://console.aws.amazon.com/console/home>
 <http://www.amazon.com/dp/B07641FR9Q>
-<https://github.com/awsdocs/aws-cloudformation-user-guide/tree/master/doc_source/../common/ReleaseHistory.xml>
+<https://github.com/awsdocs/aws-cloudformation-user-guide/tree/master/doc_source/ReleaseHistory.md>
 AWS CloudFormation
 User Guide (API Version 2010-05-15)
 
@@ -18,6 +18,188 @@ CloudFormation User Guide after May 2018. For notification about updates to
 this documentation, you can subscribe to an RSS feed.
 
 Change 	Description 	Date
+
+Updated resources
+
+The following resources were updated: AWS::AppStream::Fleet, 
+AWS::AppStream::ImageBuilder, AWS::AppStream::Stack, and AWS::EKS::Cluster.
+
+AWS::AppStream::Fleet, AWS::AppStream::ImageBuilder, and 
+AWS::AppStream::Stack
+
+    Use the Tags property to add or overwrite one or more tags for an
+    Amazon AppStream 2.0 fleet, stack, or image builder.
+
+AWS::EKS::Cluster
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-eks-cluster.html>
+
+    Updates to the Version property no longer require replacement.
+
+March 28, 2019
+
+New resource
+
+The following resources were added: AWS::AppMesh::Mesh, 
+AWS::AppMesh::Route, AWS::AppMesh::VirtualNode, 
+AWS::AppMesh::VirtualRouter, and AWS::AppMesh::VirtualService
+
+AWS::AppMesh::Mesh
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appmesh-mesh.html>
+
+    The AWS::AppMesh::Mesh resource to specify a service mesh. A service
+    mesh is a logical boundary for network traffic between the services
+    that reside within it.
+
+AWS::AppMesh::Route
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appmesh-route.html>
+
+    Use the AWS::AppMesh::Route resource to specify a route that is
+    associated with a virtual router.
+
+AWS::AppMesh::VirtualNode
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appmesh-virtualnode.html>
+
+    Use the AWS::AppMesh::VirtualNode resource to specify a virtual node
+    within a service mesh.
+
+AWS::AppMesh::VirtualRouter
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appmesh-virtualrouter.html>
+
+    Use the AWS::AppMesh::VirtualRouter resource to specify a virtual
+    router within a service mesh.
+
+AWS::AppMesh::VirtualService
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-appmesh-virtualservice.html.html>
+
+    Use the AWS::AppMesh::VirtualService resource to specify a virtual
+    service within a service mesh.
+
+March 27, 2019
+
+New resources
+
+The following resources were added: AWS::Greengrass::ConnectorDefinition, 
+AWS::Greengrass::ConnectorDefinitionVersion, 
+AWS::Greengrass::CoreDefinition, AWS::Greengrass::CoreDefinitionVersion, 
+AWS::Greengrass::DeviceDefinition, 
+AWS::Greengrass::DeviceDefinitionVersion, 
+AWS::Greengrass::FunctionDefinition, 
+AWS::Greengrass::FunctionDefinitionVersion, AWS::Greengrass::Group, 
+AWS::Greengrass::GroupVersion, AWS::Greengrass::LoggerDefinition, 
+AWS::Greengrass::LoggerDefinitionVersion, 
+AWS::Greengrass::ResourceDefinition, 
+AWS::Greengrass::ResourceDefinitionVersion, 
+AWS::Greengrass::SubscriptionDefinition, and 
+AWS::Greengrass::SubscriptionDefinitionVersion.
+
+AWS::Greengrass::ConnectorDefinition and 
+AWS::Greengrass::ConnectorDefinitionVersion
+
+    Use the AWS::Greengrass::ConnectorDefinition and 
+    AWS::Greengrass::ConnectorDefinitionVersion resources to create and
+    manage your connectors.
+
+AWS::Greengrass::CoreDefinition and AWS::Greengrass::CoreDefinitionVersion
+
+    Use the AWS::Greengrass::CoreDefinition and 
+    AWS::Greengrass::CoreDefinitionVersion resources to create and manage
+    your cores.
+
+AWS::Greengrass::DeviceDefinition and 
+AWS::Greengrass::DeviceDefinitionVersion
+
+    Use the AWS::Greengrass::DeviceDefinition and 
+    AWS::Greengrass::DeviceDefinitionVersion resources to create and manage
+    your devices.
+
+AWS::Greengrass::FunctionDefinition and 
+AWS::Greengrass::FunctionDefinitionVersion
+
+    Use the AWS::Greengrass::FunctionDefinition and 
+    AWS::Greengrass::FunctionDefinitionVersion resources to create and
+    manage your functions.
+
+AWS::Greengrass::Group and AWS::Greengrass::GroupVersion
+
+    Use the AWS::Greengrass::Group and AWS::Greengrass::GroupVersion 
+    resources to create and manage your Greengrass groups.
+
+AWS::Greengrass::LoggerDefinition and 
+AWS::Greengrass::LoggerDefinitionVersion
+
+    Use the AWS::Greengrass::LoggerDefinition and 
+    AWS::Greengrass::LoggerDefinitionVersion resources to create and manage
+    your logging configuration.
+
+AWS::Greengrass::ResourceDefinition and 
+AWS::Greengrass::ResourceDefinitionVersion
+
+    Use the AWS::Greengrass::ResourceDefinition and 
+    AWS::Greengrass::ResourceDefinitionVersion resources to create and
+    manage your local, machine learning, and secret resources.
+
+AWS::Greengrass::SubscriptionDefinition and 
+AWS::Greengrass::SubscriptionDefinitionVersion
+
+    Use the AWS::Greengrass::SubscriptionDefinition and 
+    AWS::Greengrass::SubscriptionDefinitionVersion resources to create and
+    manage your subscriptions.
+
+March 15, 2019
+
+Updated resources
+
+The following resources were updated: AWS::CodeBuild::Project, 
+AWS::OpsWorksCM::Server, and AWS::SageMaker::NotebookInstance.
+
+AWS::CodeBuild::Project
+
+    In the Source property type, use the GitSubmodulesConfig property to
+    get information about Git submodules for a project.
+
+    In the S3Logs property type, use the EncryptionDisabled property to
+    disable encryption on S3 build logs.
+
+AWS::OpsWorksCM::Server
+
+    Use the AssociatePublicIpAddress property to associate a public IP
+    address with the server.
+
+AWS::SageMaker::NotebookInstance
+
+    Use the RootAccess property to specify whether root access is enabled
+    or disabled for users of the notebook instance.
+
+March 14, 2019
+
+Updated resources
+
+The following resources were updated: AWS::StepFunctions::Activity and 
+AWS::StepFunctions::StateMachine.
+
+AWS::StepFunctions::Activity
+
+    Use the Tags property to specify the tags (key-value pairs) that you
+    want to attach to the Step Functions activity.
+
+AWS::StepFunctions::StateMachine
+
+    Use the Tags property to specify the tags (key-value pairs) that you
+    want to attach to the Step Functions state machine.
+
+March 7, 2019
+
+Updated resource
+
+The following resource was updated: AWS::SageMaker::NotebookInstance.
+
+AWS::SageMaker::NotebookInstance
+
+    Use the VolumeSizeInGB property to specify the size in GB of the
+    persisted machine learning storage volume that is provisioned and
+    attached to the Amazon SageMaker notebook instance.
+
+February 28, 2019
 
 Updated resources
 
@@ -126,6 +308,8 @@ AWS::KinesisAnalyticsV2::Application
     Use the AWS CloudFormation AWS::KinesisAnalyticsV2::Application 
     resource to create an Amazon Kinesis Data Analytics application.
 
+AWS::KinesisAnalyticsV2::ApplicationCloudWatchLoggingOption
+
     Use the AWS CloudFormation 
     AWS::KinesisAnalyticsV2::ApplicationCloudWatchLoggingOption resource to
     add an Amazon CloudWatch log stream to monitor application
@@ -158,14 +342,14 @@ AWS::OpsWorksCM::Server
 
 AWS::ServiceDiscovery::Instance
 
+    The InstanceAttributes property now takes a String map value.
+
+AWS::ServiceDiscovery::Service
+
     The DNSConfig property is no longer required.
 
     An update to the HealthCheckCustomConfig property now requires
     replacement.
-
-AWS::ServiceDiscovery::Service
-
-    The InstanceAttributes property now takes a String map value.
 
 February 8, 2019
 
@@ -1676,6 +1860,7 @@ New resource
 The following resource was released: AWS::EKS::Cluster.
 
 AWS::EKS::Cluster
+<https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-eks-cluster.html>
 
     Use the AWS::EKS::Cluster resource to create Amazon EKS clusters.
 

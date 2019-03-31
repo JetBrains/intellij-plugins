@@ -119,6 +119,10 @@ object ResourceTypesSaver {
       val attribute = row[1]
       val description = row[2]
 
+      if (resourceTypeName.isEmpty()) {
+        continue
+      }
+
       if (resourceTypeName == "AWS::CloudFormation::Stack" && attribute == "Outputs.NestedStackOutputName") {
         // Not an attribute name
         continue
