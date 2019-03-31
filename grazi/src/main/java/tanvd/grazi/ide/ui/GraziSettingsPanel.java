@@ -1,4 +1,4 @@
-package tanvd.grazi;
+package tanvd.grazi.ide.ui;
 
 import com.intellij.openapi.fileChooser.*;
 import com.intellij.openapi.options.*;
@@ -6,6 +6,7 @@ import com.intellij.openapi.ui.*;
 import com.intellij.ui.*;
 import org.codehaus.plexus.util.*;
 import org.jetbrains.annotations.*;
+import tanvd.grazi.ide.ui.*;
 import tanvd.grazi.language.*;
 
 import javax.swing.*;
@@ -41,8 +42,8 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
     @Override
     public boolean isModified(@NotNull GraziApplicationSettings settings) {
         return !allLanguageShortCodes.values().stream().allMatch(shortCode ->
-                settings.getState().languages.contains(shortCode) == enabledLanguages.isItemSelected(shortCode)
-        ) || !settings.getState().graziFolder.getAbsolutePath().equals(graziFolder.getText());
+                settings.getState().getLanguages().contains(shortCode) == enabledLanguages.isItemSelected(shortCode)
+        ) || !settings.getState().getGraziFolder().getAbsolutePath().equals(graziFolder.getText());
     }
 
 
@@ -50,20 +51,20 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
     public void apply(@NotNull GraziApplicationSettings settings) {
         for (String shortCode : allLanguageShortCodes.values()) {
             if (enabledLanguages.isItemSelected(shortCode)) {
-                settings.getState().languages.add(shortCode);
+                settings.getState().getLanguages().add(shortCode);
             } else {
-                settings.getState().languages.remove(shortCode);
+                settings.getState().getLanguages().remove(shortCode);
             }
         }
-        settings.getState().graziFolder = new File(graziFolder.getText());
+        settings.getState().setGraziFolder(new File(graziFolder.getText()));
         settings.init();
     }
 
     @Override
     public void reset(@NotNull GraziApplicationSettings settings) {
         for (String shortCode : allLanguageShortCodes.values()) {
-            enabledLanguages.setItemSelected(shortCode, settings.getState().languages.contains(shortCode));
+            enabledLanguages.setItemSelected(shortCode, settings.getState().getLanguages().contains(shortCode));
         }
-        graziFolder.setText(settings.getState().graziFolder.getAbsolutePath());
+        graziFolder.setText(settings.getState().getGraziFolder().getAbsolutePath());
     }
 }

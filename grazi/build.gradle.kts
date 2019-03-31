@@ -7,7 +7,6 @@ version = "0.1.1.$channel"
 
 
 plugins {
-    java apply true
     id("io.gitlab.arturbosch.detekt").version("1.0.0-RC14") apply true
     id("org.jetbrains.intellij") version "0.4.5" apply true
     kotlin("jvm") version "1.3.21" apply true
