@@ -14,8 +14,15 @@
     "InstanceType" : {
       "Description" : "WebServer EC2 instance type",
       "Type" : "String",
-      "Default" : "t2.small",
-      "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+      "Default" : "t3.large",
+      "AllowedValues" : [  "a1.medium", "a1.large", "a1.xlarge", "a1.2xlarge", "a1.4xlarge", 
+    "c5.large", "c5.xlarge", "c5.2xlarge", "c5.4xlarge", "c5.9xlarge", "c5.18xlarge",
+    "t3.micro", "t3.small", "t3.medium", "t3.large", "t3.xlarge", "t3.2xlarge",
+    "m5.large", "m5.xlarge", "m5.2xlarge", "m5.4xlarge", "m5.12xlarge", "m5.24xlarge",
+    "r5.large", "r5.xlarge", "r5.2xlarge", "r5.4xlarge", "r5.12xlarge", "r5.24xlarge",
+    "m5a.large", "m5a.xlarge", "m5a.2xlarge", "m5a.4xlarge", "m5a.12xlarge", "m5a.24xlarge",
+    "r5a.large", "r5a.xlarge", "r5a.2xlarge", "r5a.4xlarge", "r5a.12xlarge", "r5a.24xlarge" ]
+
 ,
       "ConstraintDescription" : "must be a valid EC2 instance type."
     },
@@ -73,137 +80,70 @@
 
   "Mappings" : {
     "AWSInstanceType2Arch" : {
-      "t1.micro"    : { "Arch" : "HVM64"  },
-      "t2.nano"     : { "Arch" : "HVM64"  },
-      "t2.micro"    : { "Arch" : "HVM64"  },
-      "t2.small"    : { "Arch" : "HVM64"  },
-      "t2.medium"   : { "Arch" : "HVM64"  },
-      "t2.large"    : { "Arch" : "HVM64"  },
-      "m1.small"    : { "Arch" : "HVM64"  },
-      "m1.medium"   : { "Arch" : "HVM64"  },
-      "m1.large"    : { "Arch" : "HVM64"  },
-      "m1.xlarge"   : { "Arch" : "HVM64"  },
-      "m2.xlarge"   : { "Arch" : "HVM64"  },
-      "m2.2xlarge"  : { "Arch" : "HVM64"  },
-      "m2.4xlarge"  : { "Arch" : "HVM64"  },
-      "m3.medium"   : { "Arch" : "HVM64"  },
-      "m3.large"    : { "Arch" : "HVM64"  },
-      "m3.xlarge"   : { "Arch" : "HVM64"  },
-      "m3.2xlarge"  : { "Arch" : "HVM64"  },
-      "m4.large"    : { "Arch" : "HVM64"  },
-      "m4.xlarge"   : { "Arch" : "HVM64"  },
-      "m4.2xlarge"  : { "Arch" : "HVM64"  },
-      "m4.4xlarge"  : { "Arch" : "HVM64"  },
-      "m4.10xlarge" : { "Arch" : "HVM64"  },
-      "c1.medium"   : { "Arch" : "HVM64"  },
-      "c1.xlarge"   : { "Arch" : "HVM64"  },
-      "c3.large"    : { "Arch" : "HVM64"  },
-      "c3.xlarge"   : { "Arch" : "HVM64"  },
-      "c3.2xlarge"  : { "Arch" : "HVM64"  },
-      "c3.4xlarge"  : { "Arch" : "HVM64"  },
-      "c3.8xlarge"  : { "Arch" : "HVM64"  },
-      "c4.large"    : { "Arch" : "HVM64"  },
-      "c4.xlarge"   : { "Arch" : "HVM64"  },
-      "c4.2xlarge"  : { "Arch" : "HVM64"  },
-      "c4.4xlarge"  : { "Arch" : "HVM64"  },
-      "c4.8xlarge"  : { "Arch" : "HVM64"  },
-      "g2.2xlarge"  : { "Arch" : "HVMG2"  },
-      "g2.8xlarge"  : { "Arch" : "HVMG2"  },
-      "r3.large"    : { "Arch" : "HVM64"  },
-      "r3.xlarge"   : { "Arch" : "HVM64"  },
-      "r3.2xlarge"  : { "Arch" : "HVM64"  },
-      "r3.4xlarge"  : { "Arch" : "HVM64"  },
-      "r3.8xlarge"  : { "Arch" : "HVM64"  },
-      "i2.xlarge"   : { "Arch" : "HVM64"  },
-      "i2.2xlarge"  : { "Arch" : "HVM64"  },
-      "i2.4xlarge"  : { "Arch" : "HVM64"  },
-      "i2.8xlarge"  : { "Arch" : "HVM64"  },
-      "d2.xlarge"   : { "Arch" : "HVM64"  },
-      "d2.2xlarge"  : { "Arch" : "HVM64"  },
-      "d2.4xlarge"  : { "Arch" : "HVM64"  },
-      "d2.8xlarge"  : { "Arch" : "HVM64"  },
-      "hi1.4xlarge" : { "Arch" : "HVM64"  },
-      "hs1.8xlarge" : { "Arch" : "HVM64"  },
-      "cr1.8xlarge" : { "Arch" : "HVM64"  },
-      "cc2.8xlarge" : { "Arch" : "HVM64"  }
+      "a1.medium"     : { "Arch" : "AL2arm64" },
+      "a1.large"      : { "Arch" : "AL2arm64" },
+      "a1.xlarge"     : { "Arch" : "AL2arm64" },
+      "a1.2xlarge"    : { "Arch" : "AL2arm64" },
+      "a1.4xlarge"    : { "Arch" : "AL2arm64" },
+      "t3.micro"      : { "Arch" : "AL2x86"  },
+      "t3.small"      : { "Arch" : "AL2x86"  },
+      "t3.medium"     : { "Arch" : "AL2x86"  },
+      "t3.large"      : { "Arch" : "AL2x86"  },
+      "t3.xlarge"     : { "Arch" : "AL2x86"  },
+      "t3.2xlarge"    : { "Arch" : "AL2x86"  },
+      "c5.large"      : { "Arch" : "AL2x86"  },
+      "c5.xlarge"     : { "Arch" : "AL2x86"  },
+      "c5.2xlarge"    : { "Arch" : "AL2x86"  },
+      "c5.4xlarge"    : { "Arch" : "AL2x86"  },
+      "c5.9xlarge"    : { "Arch" : "AL2x86"  },
+      "c5.18xlarge"   : { "Arch" : "AL2x86"  },
+      "m5.large"      : { "Arch" : "AL2x86"  },
+      "m5.xlarge"     : { "Arch" : "AL2x86"  },
+      "m5.2xlarge"    : { "Arch" : "AL2x86"  },
+      "m5.4xlarge"    : { "Arch" : "AL2x86"  },
+      "m5.12xlarge"   : { "Arch" : "AL2x86"  },
+      "m5.24xlarge"   : { "Arch" : "AL2x86"  },
+      "r5.large"      : { "Arch" : "AL2x86"  },
+      "r5.xlarge"     : { "Arch" : "AL2x86"  },
+      "r5.2xlarge"    : { "Arch" : "AL2x86"  },
+      "r5.4xlarge"    : { "Arch" : "AL2x86"  },
+      "r5.12xlarge"   : { "Arch" : "AL2x86"  },
+      "r5.24xlarge"   : { "Arch" : "AL2x86"  },
+      "m5a.large"     : { "Arch" : "AL2x86"  },
+      "m5a.xlarge"    : { "Arch" : "AL2x86"  },
+      "m5a.2xlarge"   : { "Arch" : "AL2x86"  },
+      "m5a.4xlarge"   : { "Arch" : "AL2x86"  },
+      "m5a.12xlarge"  : { "Arch" : "AL2x86"  },
+      "m5a.24xlarge"  : { "Arch" : "AL2x86"  },
+      "r5a.large"     : { "Arch" : "AL2x86"  },
+      "r5a.xlarge"    : { "Arch" : "AL2x86"  },
+      "r5a.2xlarge"   : { "Arch" : "AL2x86"  },
+      "r5a.4xlarge"   : { "Arch" : "AL2x86"  },
+      "r5a.12xlarge"  : { "Arch" : "AL2x86"  },
+      "r5a.24xlarge"  : { "Arch" : "AL2x86"  }
     },
 
-    "AWSInstanceType2NATArch" : {
-      "t1.micro"    : { "Arch" : "NATHVM64"  },
-      "t2.nano"     : { "Arch" : "NATHVM64"  },
-      "t2.micro"    : { "Arch" : "NATHVM64"  },
-      "t2.small"    : { "Arch" : "NATHVM64"  },
-      "t2.medium"   : { "Arch" : "NATHVM64"  },
-      "t2.large"    : { "Arch" : "NATHVM64"  },
-      "m1.small"    : { "Arch" : "NATHVM64"  },
-      "m1.medium"   : { "Arch" : "NATHVM64"  },
-      "m1.large"    : { "Arch" : "NATHVM64"  },
-      "m1.xlarge"   : { "Arch" : "NATHVM64"  },
-      "m2.xlarge"   : { "Arch" : "NATHVM64"  },
-      "m2.2xlarge"  : { "Arch" : "NATHVM64"  },
-      "m2.4xlarge"  : { "Arch" : "NATHVM64"  },
-      "m3.medium"   : { "Arch" : "NATHVM64"  },
-      "m3.large"    : { "Arch" : "NATHVM64"  },
-      "m3.xlarge"   : { "Arch" : "NATHVM64"  },
-      "m3.2xlarge"  : { "Arch" : "NATHVM64"  },
-      "m4.large"    : { "Arch" : "NATHVM64"  },
-      "m4.xlarge"   : { "Arch" : "NATHVM64"  },
-      "m4.2xlarge"  : { "Arch" : "NATHVM64"  },
-      "m4.4xlarge"  : { "Arch" : "NATHVM64"  },
-      "m4.10xlarge" : { "Arch" : "NATHVM64"  },
-      "c1.medium"   : { "Arch" : "NATHVM64"  },
-      "c1.xlarge"   : { "Arch" : "NATHVM64"  },
-      "c3.large"    : { "Arch" : "NATHVM64"  },
-      "c3.xlarge"   : { "Arch" : "NATHVM64"  },
-      "c3.2xlarge"  : { "Arch" : "NATHVM64"  },
-      "c3.4xlarge"  : { "Arch" : "NATHVM64"  },
-      "c3.8xlarge"  : { "Arch" : "NATHVM64"  },
-      "c4.large"    : { "Arch" : "NATHVM64"  },
-      "c4.xlarge"   : { "Arch" : "NATHVM64"  },
-      "c4.2xlarge"  : { "Arch" : "NATHVM64"  },
-      "c4.4xlarge"  : { "Arch" : "NATHVM64"  },
-      "c4.8xlarge"  : { "Arch" : "NATHVM64"  },
-      "g2.2xlarge"  : { "Arch" : "NATHVMG2"  },
-      "g2.8xlarge"  : { "Arch" : "NATHVMG2"  },
-      "r3.large"    : { "Arch" : "NATHVM64"  },
-      "r3.xlarge"   : { "Arch" : "NATHVM64"  },
-      "r3.2xlarge"  : { "Arch" : "NATHVM64"  },
-      "r3.4xlarge"  : { "Arch" : "NATHVM64"  },
-      "r3.8xlarge"  : { "Arch" : "NATHVM64"  },
-      "i2.xlarge"   : { "Arch" : "NATHVM64"  },
-      "i2.2xlarge"  : { "Arch" : "NATHVM64"  },
-      "i2.4xlarge"  : { "Arch" : "NATHVM64"  },
-      "i2.8xlarge"  : { "Arch" : "NATHVM64"  },
-      "d2.xlarge"   : { "Arch" : "NATHVM64"  },
-      "d2.2xlarge"  : { "Arch" : "NATHVM64"  },
-      "d2.4xlarge"  : { "Arch" : "NATHVM64"  },
-      "d2.8xlarge"  : { "Arch" : "NATHVM64"  },
-      "hi1.4xlarge" : { "Arch" : "NATHVM64"  },
-      "hs1.8xlarge" : { "Arch" : "NATHVM64"  },
-      "cr1.8xlarge" : { "Arch" : "NATHVM64"  },
-      "cc2.8xlarge" : { "Arch" : "NATHVM64"  }
-    }
-,
+
     "AWSRegionArch2AMI" : {
-      "us-east-1"        : {"HVM64" : "ami-0080e4c5bc078760e", "HVMG2" : "ami-0aeb704d503081ea6"},
-      "us-west-2"        : {"HVM64" : "ami-01e24be29428c15b2", "HVMG2" : "ami-0fe84a5b4563d8f27"},
-      "us-west-1"        : {"HVM64" : "ami-0ec6517f6edbf8044", "HVMG2" : "ami-0a7fc72dc0e51aa77"},
-      "eu-west-1"        : {"HVM64" : "ami-08935252a36e25f85", "HVMG2" : "ami-0d5299b1c6112c3c7"},
-      "eu-west-2"        : {"HVM64" : "ami-01419b804382064e4", "HVMG2" : "NOT_SUPPORTED"},
-      "eu-west-3"        : {"HVM64" : "ami-0dd7e7ed60da8fb83", "HVMG2" : "NOT_SUPPORTED"},
-      "eu-central-1"     : {"HVM64" : "ami-0cfbf4f6db41068ac", "HVMG2" : "ami-0aa1822e3eb913a11"},
-      "eu-north-1"       : {"HVM64" : "ami-86fe70f8", "HVMG2" : "ami-32d55b4c"},
-      "ap-northeast-1"   : {"HVM64" : "ami-00a5245b4816c38e6", "HVMG2" : "ami-09d0e0e099ecabba2"},
-      "ap-northeast-2"   : {"HVM64" : "ami-00dc207f8ba6dc919", "HVMG2" : "NOT_SUPPORTED"},
-      "ap-northeast-3"   : {"HVM64" : "ami-0b65f69a5c11f3522", "HVMG2" : "NOT_SUPPORTED"},
-      "ap-southeast-1"   : {"HVM64" : "ami-05b3bcf7f311194b3", "HVMG2" : "ami-0e46ce0d6a87dc979"},
-      "ap-southeast-2"   : {"HVM64" : "ami-02fd0b06f06d93dfc", "HVMG2" : "ami-0c0ab057a101d8ff2"},
-      "ap-south-1"       : {"HVM64" : "ami-0ad42f4f66f6c1cc9", "HVMG2" : "ami-0244c1d42815af84a"},
-      "us-east-2"        : {"HVM64" : "ami-0cd3dfa4e37921605", "HVMG2" : "NOT_SUPPORTED"},
-      "ca-central-1"     : {"HVM64" : "ami-07423fb63ea0a0930", "HVMG2" : "NOT_SUPPORTED"},
-      "sa-east-1"        : {"HVM64" : "ami-05145e0b28ad8e0b2", "HVMG2" : "NOT_SUPPORTED"},
-      "cn-north-1"       : {"HVM64" : "ami-053617c9d818c1189", "HVMG2" : "NOT_SUPPORTED"},
-      "cn-northwest-1"   : {"HVM64" : "ami-0f7937761741dc640", "HVMG2" : "NOT_SUPPORTED"}
+      "us-east-1"        : {"AL2x86" : "ami-02da3a138888ced85", "AL2arm64" : "ami-0d19f5402a2c1c6bc"},
+      "us-west-2"        : {"AL2x86" : "ami-095cd038eef3e5074", "AL2arm64" : "ami-05b186cbeb4bd0170"},
+      "us-west-1"        : {"AL2x86" : "ami-09bfcadb25ee95bec", "AL2arm64" : "NOT_SUPPORTED"},
+      "eu-west-1"        : {"AL2x86" : "ami-02a39bdb8e8ee056a", "AL2arm64" : "ami-0304903e40243f64e"},
+      "eu-west-2"        : {"AL2x86" : "ami-07a5200f3fa9c33d3", "AL2arm64" : "NOT_SUPPORTED"},
+      "eu-west-3"        : {"AL2x86" : "ami-0e9073d7ac75f4491", "AL2arm64" : "NOT_SUPPORTED"},
+      "eu-central-1"     : {"AL2x86" : "ami-07f1fbbff759e24dd", "AL2arm64" : "NOT_SUPPORTED"},
+      "eu-north-1"       : {"AL2x86" : "ami-244ac35a", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-northeast-1"   : {"AL2x86" : "ami-097473abce069b8e9", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-northeast-2"   : {"AL2x86" : "ami-045e355a6004a67c4", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-northeast-3"   : {"AL2x86" : "ami-0c1cd51d32b64af40", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-southeast-1"   : {"AL2x86" : "ami-00158b185c8cc09dc", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-southeast-2"   : {"AL2x86" : "ami-0c3228fd049cdb151", "AL2arm64" : "NOT_SUPPORTED"},
+      "ap-south-1"       : {"AL2x86" : "ami-03103e7ded4c02ef8", "AL2arm64" : "NOT_SUPPORTED"},
+      "us-east-2"        : {"AL2x86" : "ami-0de7daa7385332688", "AL2arm64" : "ami-07413a099547ecc89"},
+      "ca-central-1"     : {"AL2x86" : "ami-05f9d71283317f5c9", "AL2arm64" : "NOT_SUPPORTED"},
+      "sa-east-1"        : {"AL2x86" : "ami-095a33e72f6bb89c3", "AL2arm64" : "NOT_SUPPORTED"},
+      "cn-north-1"       : {"AL2x86" : "ami-0b21cff98273d9be0", "AL2arm64" : "NOT_SUPPORTED"},
+      "cn-northwest-1"   : {"AL2x86" : "ami-0a9a606a323de7111", "AL2arm64" : "NOT_SUPPORTED"}
     }
 
   },
@@ -225,7 +165,7 @@
       "Metadata" : {
         "AWS::CloudFormation::Init" : {
           "configSets" : {
-            "wordpress_install" : ["install_cfn", "install_wordpress", "configure_wordpress" ]
+            "wordpress_install" : ["install_cfn", "setup_extras", "install_wordpress", "configure_wordpress" ]
           },
           "install_cfn" : {
             "files": {
@@ -249,7 +189,7 @@
                           "         --resource WebServer ",
                           "         --configsets wordpress_install ",
                           "         --region ", { "Ref" : "AWS::Region" }, "\n"
-                ]]},          
+                ]]},
                 "mode"  : "000400",
                 "owner" : "root",
                 "group" : "root"
@@ -263,18 +203,23 @@
             }
           },
 
+          "setup_extras" : {
+            "commands" : {
+              "01_setup_extras" : {
+                "command" : "amazon-linux-extras install lamp-mariadb10.2-php7.2"
+              }
+            }
+          },
+
           "install_wordpress" : {
             "packages" : {
               "yum" : {
-                "php"          : [],
-                "php-mysql"    : [],
-                "mysql"        : [],
-                "mysql-server" : [],
-                "mysql-devel"  : [],
-                "mysql-libs"   : [],
-                "httpd"        : []
+                "php"            : [],
+                "mariadb-server" : [],
+                "httpd"          : []
               }
             },
+
             "sources" : {
               "/var/www/html" : "http://wordpress.org/latest.tar.gz"
             },
@@ -307,7 +252,7 @@
             "services" : {
               "sysvinit" : {
                 "httpd"  : { "enabled" : "true", "ensureRunning" : "true" },
-                "mysqld" : { "enabled" : "true", "ensureRunning" : "true" }
+                "mariadb" : { "enabled" : "true", "ensureRunning" : "true" }
               }
             }
           },

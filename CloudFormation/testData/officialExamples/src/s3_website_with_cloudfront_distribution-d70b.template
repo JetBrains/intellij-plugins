@@ -31,7 +31,8 @@
       "sa-east-1"      : { "Suffix": ".s3-website-sa-east-1.amazonaws.com" },
       "cn-north-1"     : { "Suffix": ".s3-website.cn-north-1.amazonaws.com.cn" },
       "cn-northwest-1" : { "Suffix": ".s3-website.cn-northwest-1.amazonaws.com.cn" },
-      "eu-central-1"   : { "Suffix": ".s3-website-eu-central-1.amazonaws.com" }
+      "eu-central-1"   : { "Suffix": ".s3-website-eu-central-1.amazonaws.com" },
+      "eu-north-1"     : { "Suffix": ".s3-website-eu-north-1.amazonaws.com" }
     }
 
   },

@@ -449,7 +449,7 @@ class CloudFormationInspections private constructor(val parsed: CloudFormationPa
   }
 
   private fun checkValueIsScalar(nameValue: CfnNameValueNode) {
-    if (nameValue.value !is CfnScalarValueNode) {
+    if (nameValue.value !is CfnScalarValueNode && nameValue.value != null) {
       addProblem(nameValue, "Expected a string")
     }
   }
