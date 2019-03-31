@@ -5,13 +5,14 @@ import com.intellij.openapi.options.*;
 import com.intellij.openapi.ui.*;
 import com.intellij.ui.*;
 import org.jetbrains.annotations.*;
+import tanvd.grazi.*;
 import tanvd.grazi.language.*;
 
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
-public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettings> {
+public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
     private JPanel wholePanel;
     private CheckBoxList<String> enabledLanguages;
     private TextFieldWithBrowseButton graziFolder;
@@ -19,19 +20,12 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
     private JCheckBox enableGraziSpellcheckCheckBox;
     private JComboBox motherTongue;
 
-    static private final TreeMap<String, String> allLanguageShortCodes = new TreeMap<>();
-
-    static {
-        for (Lang lang : Lang.values()) {
-            allLanguageShortCodes.put(lang.getDisplayName(), lang.getShortCode());
-        }
-    }
 
     @NotNull
     @Override
     public JComponent getComponent() {
-        for (Map.Entry<String, String> languageShortCode : allLanguageShortCodes.entrySet()) {
-            enabledLanguages.addItem(languageShortCode.getValue(), languageShortCode.getKey(), false);
+        for (Lang lang : Lang.values()) {
+            enabledLanguages.addItem(lang.getShortCode(), lang.getDisplayName(), false);
         }
 
         graziFolder.addBrowseFolderListener("", "Grazi folder", null, new FileChooserDescriptor(false, true, false, false, false, false),
@@ -41,9 +35,8 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
     }
 
     @Override
-    public boolean isModified(@NotNull GraziApplicationSettings settings) {
-        return !allLanguageShortCodes.values().stream()
-                .allMatch(shortCode -> settings.getState().getEnabledLanguages().contains(Lang.Companion.get(shortCode)) == enabledLanguages.isItemSelected(shortCode))
+    public boolean isModified(@NotNull GraziConfig settings) {
+        return !Arrays.stream(Lang.values()).allMatch(lang -> settings.getState().getEnabledLanguages().contains(lang) == enabledLanguages.isItemSelected(lang.getShortCode()))
                 || !settings.getState().getGraziFolder().getAbsolutePath().equals(graziFolder.getText())
                 || !settings.getState().getMotherTongue().equals(motherTongue.getSelectedItem())
                 || settings.getState().getEnabledSpellcheck() != enableGraziSpellcheckCheckBox.isSelected();
@@ -51,24 +44,25 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziApplicationSettin
 
 
     @Override
-    public void apply(@NotNull GraziApplicationSettings settings) {
-        for (String shortCode : allLanguageShortCodes.values()) {
-            if (enabledLanguages.isItemSelected(shortCode)) {
-                settings.getState().getEnabledLanguages().add(Lang.Companion.get(shortCode));
+    public void apply(@NotNull GraziConfig settings) {
+        for (Lang lang : Lang.values()) {
+            if (enabledLanguages.isItemSelected(lang.getShortCode())) {
+                settings.getState().getEnabledLanguages().add(lang);
             } else {
-                settings.getState().getEnabledLanguages().remove(Lang.Companion.get(shortCode));
+                settings.getState().getEnabledLanguages().remove(lang);
             }
         }
         settings.getState().setGraziFolder(new File(graziFolder.getText()));
         settings.getState().setMotherTongue((Lang) motherTongue.getSelectedItem());
         settings.getState().setEnabledSpellcheck(enableGraziSpellcheckCheckBox.isSelected());
-        settings.init();
+
+        GraziPlugin.Companion.init();
     }
 
     @Override
-    public void reset(@NotNull GraziApplicationSettings settings) {
-        for (String shortCode : allLanguageShortCodes.values()) {
-            enabledLanguages.setItemSelected(shortCode, settings.getState().getEnabledLanguages().contains(Lang.Companion.get(shortCode)));
+    public void reset(@NotNull GraziConfig settings) {
+        for (Lang lang : Lang.values()) {
+            enabledLanguages.setItemSelected(lang.getShortCode(), settings.getState().getEnabledLanguages().contains(lang));
         }
 
         graziFolder.setText(settings.getState().getGraziFolder().getAbsolutePath());

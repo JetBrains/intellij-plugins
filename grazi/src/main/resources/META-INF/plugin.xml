@@ -4,13 +4,13 @@
     <vendor>TanVD</vendor>
     <vendor email="vdtankov@gmail.com" url="https://github.com/TanVD">Vladislav Tankov</vendor>
     <description><![CDATA[
-        This plugin provides proofreading and grammar checking inspection for dozen of languages,
-        including English, German, Russian and about 25 others.
+        Grazi is a proofreader and grammar checker for 25+ languages, including English, German, Russian
+        Chinese and about 20 others.
 
         <br/>
 
-        It works with IntelliJ built-in spellchecker to improve the quality of any
-        natural-language texts written using IntelliJ Platform IDE.
+        It aims to improve the quality of any natural-language texts written using IntelliJ Platform IDE
+        via intelligent spell and grammar checking.
 
         <br/>
 
@@ -26,6 +26,12 @@
 
         Note, that all verification is performed locally, inside your IDE. The plugin does not
         send any of your data anywhere.
+
+        <br/>
+
+        To enable spellchecking or support of one of the languages (English is enabled) by default
+        use Grazi settings located at Settings -> Tools -> Grazi
+
     ]]></description>
 
     <depends optional="true">org.intellij.plugins.markdown</depends>
@@ -33,17 +39,17 @@
 
     <application-components>
         <component>
-            <implementation-class>tanvd.grazi.ide.ui.GraziSettingsComponent</implementation-class>
+            <implementation-class>tanvd.grazi.GraziPlugin</implementation-class>
         </component>
     </application-components>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="tanvd.grazi.ide.ui.GraziApplicationSettings"/>
+        <applicationService serviceImplementation="tanvd.grazi.GraziConfig"/>
 
         <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
 
-        <applicationConfigurable groupId="tools" instance="tanvd.grazi.ide.ui.GraziToolConfigurable"
+        <applicationConfigurable groupId="tools" instance="tanvd.grazi.ide.ui.GraziConfigurable"
                                  id="reference.settingsdialog.project.grazi"
                                  key="grazi.name" bundle="messages.Grazi"/>
 

@@ -12,11 +12,6 @@ object GrammarEngine {
     var spellCheckEnabled: Boolean = false
 
     var enabledLangs = listOf(Lang.ENGLISH)
-        set(value) {
-            field = value
-            GrammarCache.reset()
-            LangChecker.init(value)
-        }
 
     private fun isSmall(str: String) = str.length < minChars
     private fun isBig(str: String) = str.length > maxChars

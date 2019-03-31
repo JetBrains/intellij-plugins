@@ -1,13 +1,25 @@
 package tanvd.grazi.model
 
 import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import tanvd.grazi.GraziConfig
+import tanvd.grazi.GraziPlugin
 import tanvd.grazi.grammar.GrammarEngine
 import tanvd.grazi.grammar.Typo
 import java.io.File
 import kotlin.system.measureTimeMillis
 
 class GrammarEngineTest {
+    @BeforeEach
+    fun prepare() {
+        GraziPlugin.isTest = true
+        GraziPlugin.invalidateCaches()
+        GraziConfig.state.enabledSpellcheck = true
+
+        GraziPlugin.init()
+    }
+
     @Test
     fun testCorrectText() {
         val fixes = GrammarEngine.getFixes("Hello world")

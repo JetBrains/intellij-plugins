@@ -60,5 +60,14 @@ dependencies {
     compile("org.apache.commons", "commons-lang3", "3.5")
     compile("com.github.ben-manes.caffeine", "caffeine", "2.7.0")
 
-    testCompile("org.junit.jupiter", "junit-jupiter-api", "5.0.2")
+    testCompile("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
+    testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
