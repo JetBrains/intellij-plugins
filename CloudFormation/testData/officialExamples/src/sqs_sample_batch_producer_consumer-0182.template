@@ -1,0 +1,176 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  
+  "Description" : "Single EC2 m1.large producer-consumer processing (batch API) 1K messages for the specified duration",
+  
+  "Parameters" : {
+      
+    "DurationMinutes" : {
+      "Description" : "Run duration in minutes (max 60)",
+      "Type" : "Number",
+      "Default" : "20",
+      "MinValue" : "1",
+      "MaxValue" : "60",
+      "ConstraintDescription" : "must be number >= 1 and <= 60."
+    },
+    
+    "TerminateEC2Inst" : {
+      "Description" : "Terminate the producer-consumer EC2 instance once the run is complete?",
+      "Type" : "String",
+      "Default" : "true",
+      "AllowedValues" : [ "true", "false" ],
+      "ConstraintDescription" : "must be either true or false"
+    },
+    
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the producer-consumer instance",
+      "Type": "String",
+      "MinLength": "1",
+      "MaxLength": "255",
+      "AllowedPattern" : "[\\x20-\\x7E]*",
+      "ConstraintDescription" : "can contain only ASCII characters."
+    },
+    
+    "SSHLocation" : {
+      "Description" : " The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+    }  
+  },
+  
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "32" },
+      "m1.small"    : { "Arch" : "32" },
+      "m1.large"    : { "Arch" : "64" },
+      "m1.xlarge"   : { "Arch" : "64" },
+      "m2.xlarge"   : { "Arch" : "64" },
+      "m2.2xlarge"  : { "Arch" : "64" },
+      "m2.4xlarge"  : { "Arch" : "64" },
+      "m3.xlarge"   : { "Arch" : "64" },
+      "m3.2xlarge"  : { "Arch" : "64" },
+      "c1.medium"   : { "Arch" : "32" },
+      "c1.xlarge"   : { "Arch" : "64" },
+      "cc1.4xlarge" : { "Arch" : "64" }
+    },
+    "AWSRegionArch2AMI" : {
+      "us-east-1"      : { "32" : "ami-a0cd60c9", "64" : "ami-aecd60c7" },
+      "us-west-1"      : { "32" : "ami-7d4c6938", "64" : "ami-734c6936" },
+      "us-west-2"      : { "32" : "ami-46da5576", "64" : "ami-48da5578" },
+      "eu-west-1"      : { "32" : "ami-61555115", "64" : "ami-6d555119" },
+      "ap-southeast-1" : { "32" : "ami-220b4a70", "64" : "ami-3c0b4a6e" },
+      "ap-southeast-2" : { "32" : "ami-b3990e89", "64" : "ami-bd990e87" },
+      "ap-northeast-1" : { "32" : "ami-2a19aa2b", "64" : "ami-2819aa29" },
+      "sa-east-1"      : { "32" : "ami-f836e8e5", "64" : "ami-fe36e8e3" }
+    }
+  },
+    
+  "Resources" : {     
+      
+    "CfnUser" : {
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "root",
+          "PolicyDocument": { "Statement":[
+            {
+              "Effect":"Allow",
+              "Action":"cloudformation:DescribeStackResource",
+              "Resource":"*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": "SQS:*",
+              "Resource": { "Fn::GetAtt" : [ "SqsQueue", "Arn" ] }
+            },
+            {
+              "Effect": "Allow",
+              "Action": "EC2:TerminateInstances",
+              "Resource": "*"
+            }            
+          ]}
+        }]
+      }
+    },
+
+    "HostKeys" : {
+      "Type" : "AWS::IAM::AccessKey",
+      "Properties" : {
+        "UserName" : {"Ref": "CfnUser"}
+      }
+    },
+    
+    "SqsQueue" : {
+      "Type" : "AWS::SQS::Queue"
+    },
+
+    "SqsPerfSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable SSH access via port 22",
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}}
+        ]
+      }      
+    },
+    
+    "ProducerConsumer": {  
+      "Type": "AWS::EC2::Instance",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {
+          "config" : {
+            "sources" : {
+              "/tmp/sqs-producer-consumer-sample" : "https://s3.amazonaws.com/cloudformation-examples/sqs-producer-consumer-sample.tar"
+            }
+          }
+        }
+      },      
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                          { "Fn::FindInMap" : [ "AWSInstanceType2Arch", "m1.large", "Arch" ] } ] },
+        "InstanceType"   : "m1.large",
+        "SecurityGroups" : [ {"Ref" : "SqsPerfSecurityGroup"} ],
+        "KeyName"        : { "Ref" : "KeyName" },
+        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -v\n",
+
+          "# Install the perf sample\n",
+          "/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r ProducerConsumer ",
+          "    --region ", { "Ref" : "AWS::Region" }, "\n",
+          
+          "mkdir /cgi-bin", "\n",
+          "cp /tmp/sqs-producer-consumer-sample/scripts/log.sh /cgi-bin", "\n",
+          "chmod a+x /cgi-bin/log.sh", "\n", 
+          
+          "echo /tmp/sqs-producer-consumer-sample/scripts/runbatch.sh ", {"Ref" : "HostKeys" }, " ", {"Fn::GetAtt": ["HostKeys", "SecretAccessKey"]}, " ", { "Ref" : "AWS::Region" }, " ", {"Fn::GetAtt" : ["SqsQueue", "QueueName"]}, " ", { "Ref" : "DurationMinutes" }, " > /tmp/sqs-producer-consumer-sample/command.log 2>&1 &", "\n",
+
+          "nohup /tmp/sqs-producer-consumer-sample/scripts/runbatch.sh ", {"Ref" : "HostKeys" }, " ", {"Fn::GetAtt": ["HostKeys", "SecretAccessKey"]}, " ", { "Ref" : "AWS::Region" }, " ", {"Fn::GetAtt" : ["SqsQueue", "QueueName"]}, " ", { "Ref" : "DurationMinutes" }, " ", { "Ref" : "TerminateEC2Inst" }, " > /tmp/sqs-producer-consumer-sample/output.log 2>&1 &", "\n"
+        ]]}}        
+      }
+    }
+  },
+    
+  "Outputs" : {
+    "InstanceId" : {
+      "Description" : "InstanceId of the newly created EC2 instance",
+      "Value" : { "Ref" : "ProducerConsumer" }
+    },
+    "AZ" : {
+      "Description" : "Availability Zone of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "ProducerConsumer", "AvailabilityZone" ] }
+    },
+    "PublicIP" : {
+      "Description" : "Public IP address of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "ProducerConsumer", "PublicIp" ] }
+    },
+    "PrivateIP" : {
+      "Description" : "Private IP address of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "ProducerConsumer", "PrivateIp" ] }
+    }
+  }
+}

@@ -1,0 +1,5 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+Outputs:
+  A:
+    Value: !If [CreateProdResources, c1.xlarge, !If [CreateDevResources, m1.large, m1.small]]

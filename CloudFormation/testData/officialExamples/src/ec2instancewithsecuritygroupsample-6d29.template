@@ -1,0 +1,214 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template EC2InstanceWithSecurityGroupSample: Create an Amazon EC2 instance running the Amazon Linux AMI. The AMI is chosen based on the region in which the stack is run. This example creates an EC2 security group for the instance to give you SSH access. **WARNING** This template creates an Amazon EC2 instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+    },
+
+    "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "t2.small",
+      "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+,
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+
+    "SSHLocation" : {
+      "Description" : "The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+   }
+  },
+
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "HVM64"  },
+      "t2.nano"     : { "Arch" : "HVM64"  },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "t2.large"    : { "Arch" : "HVM64"  },
+      "m1.small"    : { "Arch" : "HVM64"  },
+      "m1.medium"   : { "Arch" : "HVM64"  },
+      "m1.large"    : { "Arch" : "HVM64"  },
+      "m1.xlarge"   : { "Arch" : "HVM64"  },
+      "m2.xlarge"   : { "Arch" : "HVM64"  },
+      "m2.2xlarge"  : { "Arch" : "HVM64"  },
+      "m2.4xlarge"  : { "Arch" : "HVM64"  },
+      "m3.medium"   : { "Arch" : "HVM64"  },
+      "m3.large"    : { "Arch" : "HVM64"  },
+      "m3.xlarge"   : { "Arch" : "HVM64"  },
+      "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.large"    : { "Arch" : "HVM64"  },
+      "m4.xlarge"   : { "Arch" : "HVM64"  },
+      "m4.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.4xlarge"  : { "Arch" : "HVM64"  },
+      "m4.10xlarge" : { "Arch" : "HVM64"  },
+      "c1.medium"   : { "Arch" : "HVM64"  },
+      "c1.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.large"    : { "Arch" : "HVM64"  },
+      "c3.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c3.4xlarge"  : { "Arch" : "HVM64"  },
+      "c3.8xlarge"  : { "Arch" : "HVM64"  },
+      "c4.large"    : { "Arch" : "HVM64"  },
+      "c4.xlarge"   : { "Arch" : "HVM64"  },
+      "c4.2xlarge"  : { "Arch" : "HVM64"  },
+      "c4.4xlarge"  : { "Arch" : "HVM64"  },
+      "c4.8xlarge"  : { "Arch" : "HVM64"  },
+      "g2.2xlarge"  : { "Arch" : "HVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "HVMG2"  },
+      "r3.large"    : { "Arch" : "HVM64"  },
+      "r3.xlarge"   : { "Arch" : "HVM64"  },
+      "r3.2xlarge"  : { "Arch" : "HVM64"  },
+      "r3.4xlarge"  : { "Arch" : "HVM64"  },
+      "r3.8xlarge"  : { "Arch" : "HVM64"  },
+      "i2.xlarge"   : { "Arch" : "HVM64"  },
+      "i2.2xlarge"  : { "Arch" : "HVM64"  },
+      "i2.4xlarge"  : { "Arch" : "HVM64"  },
+      "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "d2.xlarge"   : { "Arch" : "HVM64"  },
+      "d2.2xlarge"  : { "Arch" : "HVM64"  },
+      "d2.4xlarge"  : { "Arch" : "HVM64"  },
+      "d2.8xlarge"  : { "Arch" : "HVM64"  },
+      "hi1.4xlarge" : { "Arch" : "HVM64"  },
+      "hs1.8xlarge" : { "Arch" : "HVM64"  },
+      "cr1.8xlarge" : { "Arch" : "HVM64"  },
+      "cc2.8xlarge" : { "Arch" : "HVM64"  }
+    },
+
+    "AWSInstanceType2NATArch" : {
+      "t1.micro"    : { "Arch" : "NATHVM64"  },
+      "t2.nano"     : { "Arch" : "NATHVM64"  },
+      "t2.micro"    : { "Arch" : "NATHVM64"  },
+      "t2.small"    : { "Arch" : "NATHVM64"  },
+      "t2.medium"   : { "Arch" : "NATHVM64"  },
+      "t2.large"    : { "Arch" : "NATHVM64"  },
+      "m1.small"    : { "Arch" : "NATHVM64"  },
+      "m1.medium"   : { "Arch" : "NATHVM64"  },
+      "m1.large"    : { "Arch" : "NATHVM64"  },
+      "m1.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "m3.medium"   : { "Arch" : "NATHVM64"  },
+      "m3.large"    : { "Arch" : "NATHVM64"  },
+      "m3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.large"    : { "Arch" : "NATHVM64"  },
+      "m4.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m4.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.10xlarge" : { "Arch" : "NATHVM64"  },
+      "c1.medium"   : { "Arch" : "NATHVM64"  },
+      "c1.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c3.large"    : { "Arch" : "NATHVM64"  },
+      "c3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "c3.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "c3.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.large"    : { "Arch" : "NATHVM64"  },
+      "c4.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c4.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "g2.2xlarge"  : { "Arch" : "NATHVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "NATHVMG2"  },
+      "r3.large"    : { "Arch" : "NATHVM64"  },
+      "r3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "r3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "r3.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "r3.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "i2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "d2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "hi1.4xlarge" : { "Arch" : "NATHVM64"  },
+      "hs1.8xlarge" : { "Arch" : "NATHVM64"  },
+      "cr1.8xlarge" : { "Arch" : "NATHVM64"  },
+      "cc2.8xlarge" : { "Arch" : "NATHVM64"  }
+    }
+,
+    "AWSRegionArch2AMI" : {
+      "us-east-1"        : {"HVM64" : "ami-0080e4c5bc078760e", "HVMG2" : "ami-0aeb704d503081ea6"},
+      "us-west-2"        : {"HVM64" : "ami-01e24be29428c15b2", "HVMG2" : "ami-0fe84a5b4563d8f27"},
+      "us-west-1"        : {"HVM64" : "ami-0ec6517f6edbf8044", "HVMG2" : "ami-0a7fc72dc0e51aa77"},
+      "eu-west-1"        : {"HVM64" : "ami-08935252a36e25f85", "HVMG2" : "ami-0d5299b1c6112c3c7"},
+      "eu-west-2"        : {"HVM64" : "ami-01419b804382064e4", "HVMG2" : "NOT_SUPPORTED"},
+      "eu-west-3"        : {"HVM64" : "ami-0dd7e7ed60da8fb83", "HVMG2" : "NOT_SUPPORTED"},
+      "eu-central-1"     : {"HVM64" : "ami-0cfbf4f6db41068ac", "HVMG2" : "ami-0aa1822e3eb913a11"},
+      "eu-north-1"       : {"HVM64" : "ami-86fe70f8", "HVMG2" : "ami-32d55b4c"},
+      "ap-northeast-1"   : {"HVM64" : "ami-00a5245b4816c38e6", "HVMG2" : "ami-09d0e0e099ecabba2"},
+      "ap-northeast-2"   : {"HVM64" : "ami-00dc207f8ba6dc919", "HVMG2" : "NOT_SUPPORTED"},
+      "ap-northeast-3"   : {"HVM64" : "ami-0b65f69a5c11f3522", "HVMG2" : "NOT_SUPPORTED"},
+      "ap-southeast-1"   : {"HVM64" : "ami-05b3bcf7f311194b3", "HVMG2" : "ami-0e46ce0d6a87dc979"},
+      "ap-southeast-2"   : {"HVM64" : "ami-02fd0b06f06d93dfc", "HVMG2" : "ami-0c0ab057a101d8ff2"},
+      "ap-south-1"       : {"HVM64" : "ami-0ad42f4f66f6c1cc9", "HVMG2" : "ami-0244c1d42815af84a"},
+      "us-east-2"        : {"HVM64" : "ami-0cd3dfa4e37921605", "HVMG2" : "NOT_SUPPORTED"},
+      "ca-central-1"     : {"HVM64" : "ami-07423fb63ea0a0930", "HVMG2" : "NOT_SUPPORTED"},
+      "sa-east-1"        : {"HVM64" : "ami-05145e0b28ad8e0b2", "HVMG2" : "NOT_SUPPORTED"},
+      "cn-north-1"       : {"HVM64" : "ami-053617c9d818c1189", "HVMG2" : "NOT_SUPPORTED"},
+      "cn-northwest-1"   : {"HVM64" : "ami-0f7937761741dc640", "HVMG2" : "NOT_SUPPORTED"}
+    }
+
+  },
+
+  "Resources" : {
+    "EC2Instance" : {
+      "Type" : "AWS::EC2::Instance",
+      "Properties" : {
+        "InstanceType" : { "Ref" : "InstanceType" },
+        "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+        "KeyName" : { "Ref" : "KeyName" },
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                          { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] }
+      }
+    },
+
+    "InstanceSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable SSH access via port 22",
+        "SecurityGroupIngress" : [ {
+          "IpProtocol" : "tcp",
+          "FromPort" : "22",
+          "ToPort" : "22",
+          "CidrIp" : { "Ref" : "SSHLocation"}
+        } ]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "InstanceId" : {
+      "Description" : "InstanceId of the newly created EC2 instance",
+      "Value" : { "Ref" : "EC2Instance" }
+    },
+    "AZ" : {
+      "Description" : "Availability Zone of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "EC2Instance", "AvailabilityZone" ] }
+    },
+    "PublicDNS" : {
+      "Description" : "Public DNSName of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "EC2Instance", "PublicDnsName" ] }
+    },
+    "PublicIP" : {
+      "Description" : "Public IP address of the newly created EC2 instance",
+      "Value" : { "Fn::GetAtt" : [ "EC2Instance", "PublicIp" ] }
+    }
+  }
+}

@@ -1,0 +1,177 @@
+{
+
+  "Description" : "An example template which launches and bootstraps a cluster of CC1 EC2 instances for high performance computational tasks. Includes StarCluster, SGE, NFS and a Public Data Set.",
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Parameters" : {
+    "AccountNumber" : {
+      "Description" : "Twelve digit AWS account number",
+      "Type" : "String",
+      "NoEcho" : "True"
+    },
+    "KeyName" : {
+      "Description" : "The EC2 Key Pair to allow SSH access to the controller instance",
+      "Type" : "String"
+    },
+    "ClusterKeypair" : {
+      "Description" : "Unique name of the new keypair used for cluster control",
+      "Type" : "String"
+    },
+    "SSHLocation" : {
+      "Description" : "The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+   }
+
+  },
+
+  "Resources" : {
+     "ClusterUser" : {
+       "Type" : "AWS::IAM::User"
+     },	
+     "ClusterGroup" : {
+       "Type" : "AWS::IAM::Group"
+     },
+     "ClusterUsers" : {
+       "Type" : "AWS::IAM::UserToGroupAddition",
+       "Properties" : {
+         "GroupName": { "Ref" : "ClusterGroup" },
+         "Users" : [ { "Ref" : "ClusterUser" } ]
+       }
+     },
+     "CFNUserPolicies" : {
+       "Type" : "AWS::IAM::Policy",
+       "Properties" : {
+         "PolicyName" : "ClusterUsers",
+         "PolicyDocument" : {
+           "Statement": [{
+             "Effect"   : "Allow",
+             "Action"   : [
+               "ec2:*", 
+			   "s3:*", 
+			   "cloudformation:DescribeStackResource"
+               ],
+             "Resource" : "*"
+           }]
+         },
+         "Groups" : [{ "Ref" : "ClusterGroup" }]
+       }
+     },
+     "ClusterUserKeys" : {
+       "Type" : "AWS::IAM::AccessKey",
+       "Properties" : {
+         "UserName" : { "Ref": "ClusterUser" }
+       }
+     },
+	 "Ec2Instance" : {
+	      "Type" : "AWS::EC2::Instance",
+	      "Properties" : {
+	        "SecurityGroups" : [ { "Ref" : "InstanceSecurityGroup" } ],
+			"InstanceType" : "t1.micro",
+	        "ImageId" : "ami-7341831a",
+		    "KeyName" : { "Ref" : "KeyName" },
+	        "Tags" : [{
+	          "Key" : "Role",
+	          "Value" : "Controller"
+	        }],
+			"UserData" : { "Fn::Base64" : { "Fn::Join" : ["", 
+			           [
+						"#!/bin/sh\n",
+			            "/opt/aws/bin/cfn-init ", " -s ", { "Ref" : "AWS::StackId" }, " -r Ec2Instance ", "\n",
+						"cd /usr/src/pycrypto/pycrypto-2.4; /usr/bin/python setup.py build\n",
+						"cd /usr/src/pycrypto/pycrypto-2.4; /usr/bin/python setup.py install\n",
+						"cd /home/ec2-user/starcluster; /usr/bin/python distribute_setup.py\n",
+						"cd /home/ec2-user/starcluster; /usr/bin/python setup.py install\n",
+					    "/bin/mkdir /home/ec2-user/.starcluster\n",
+  					    "/bin/chown ec2-user:ec2-user -R /home/ec2-user/.starcluster\n",
+					    "/usr/bin/ruby /home/ec2-user/parser.rb /home/ec2-user/cc2-template.erb /home/ec2-user/values.yml > /home/ec2-user/.starcluster/config\n",
+					    "/usr/bin/starcluster -c /home/ec2-user/.starcluster/config createkey ", { "Ref" : "ClusterKeypair" }, " -o /home/ec2-user/.ssh/rsa-", { "Ref" : "ClusterKeypair" }, "\n",
+					    "/bin/chown ec2-user:ec2-user -R /home/ec2-user/.ssh/rsa-", { "Ref" : "ClusterKeypair" }, "\n",
+					    "cd /home/ec2-user/; /usr/bin/starcluster -c /home/ec2-user/.starcluster/config start ec2-cluster\n"						
+						]]}}	
+	      },
+	      "Metadata" : {
+	        "AWS::CloudFormation::Init" : {
+		      "config" : {
+				  "packages" : {
+			           "yum" : {
+			             "python-devel" : [],
+			             "gcc" : [],
+			             "make" : []
+			           }
+	    			},
+				"sources" : {
+					"/usr/src/pycrypto" : "https://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/pycrypto-2.4.tar.gz",
+					"/home/ec2-user/starcluster" : "https://github.com/mza/StarCluster/tarball/master"
+				},
+	            "files" : {
+					"/home/ec2-user/parser.rb" : {
+						"mode" : "000644", "owner" : "ec2-user", "group" : "ec2-user",
+						"source" : "http://cfn-cc.s3.amazonaws.com/parser.rb" 
+					},
+					"/home/ec2-user/cc2-template.erb" : {
+						"mode" : "000644", "owner" : "ec2-user", "group" : "ec2-user",
+						"source" : "http://cfn-cc.s3.amazonaws.com/cc2-template.erb" 
+					},					
+					"/home/ec2-user/values.yml" : {
+						"mode" : "000644", "owner" : "ec2-user", "group" : "ec2-user",
+						"content" : { "Fn::Join" : ["", [
+						    "values:\n",
+							"  access_key_id: ", { "Ref" : "ClusterUserKeys" }, "\n",
+							"  secret_access_key: ", { "Fn::GetAtt" : ["ClusterUserKeys", "SecretAccessKey"]}, "\n",
+							"  account_number: ", { "Ref" : "AccountNumber" }, "\n",
+							"  ensembl_volume: ", { "Ref" : "NewVolume" }, "\n",
+							"  cluster_keypair: ", { "Ref" : "ClusterKeypair" }, "\n"
+		             	] ] }
+		        	}
+				}	
+			  }
+			}
+		  }	
+	    },
+
+	    "InstanceSecurityGroup" : {
+	      "Type" : "AWS::EC2::SecurityGroup",
+	      "Properties" : {
+	        "GroupDescription" : "Enable SSH access via port 22",
+	        "SecurityGroupIngress" : [ {
+	          "IpProtocol" : "tcp",
+	          "FromPort" : "22",
+	          "ToPort" : "22",
+	          "CidrIp" : { "Ref" : "SSHLocation"}
+	        } ]
+	      }
+	    },
+
+	    "NewVolume" : {
+	      "Type" : "AWS::EC2::Volume",
+	      "Properties" : {
+	        "SnapshotId" : "snap-97a09af6",
+	        "AvailabilityZone" : "us-east-1a",
+	        "Tags" : [{
+	          "Key" : "Dataset",
+	          "Value" : "Ensembl"
+	        }]
+	      }
+	    }
+  	},
+
+  "Outputs" : {
+    "InstancePublicDNS" : {
+      "Description" : "Public DNS for the cluster controller instance",
+      "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "PublicDnsName" ] }
+    },
+    "VolumeId" : {
+      "Description" : "VolumeId of the newly created EBS Volume",
+      "Value" : { "Ref" : "NewVolume" }
+    },
+    "AvailabilityZone" : {
+      "Description" : "The Availability Zone in which the newly created EC2 instance was launched",
+      "Value" : { "Fn::GetAtt" : [ "Ec2Instance", "AvailabilityZone" ] }
+    }
+  }
+}

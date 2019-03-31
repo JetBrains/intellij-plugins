@@ -1,0 +1,302 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "AWS CloudFormation Sample Template: Provisions a minimal web application, and demonstrates how to stream the provisioning logs (cloud-init.log, cfn-init.log, cfn-hup.log, and cfn-wire.log) to CloudWatch Logs. This eliminates the need to SSH into an EC2 instance for debugging provisioning issues. Simply view the logs in the AWS CloudWatch console. **WARNING** You will be billed for the AWS resources if you create a stack from this template.",
+
+    "Mappings": {
+        "RegionMap": {
+            "us-east-1": { "AMI": "ami-fb8e9292" },
+            "us-west-1": { "AMI": "ami-7aba833f" },
+            "us-west-2": { "AMI": "ami-043a5034" },
+            "eu-west-1": { "AMI": "ami-2918e35e" },
+            "ap-southeast-1": { "AMI": "ami-b40d5ee6" },
+            "ap-southeast-2": { "AMI": "ami-3b4bd301" },
+            "ap-northeast-1": { "AMI": "ami-c9562fc8" },
+            "sa-east-1": { "AMI": "ami-215dff3c" }
+        }
+    },
+
+    "Resources": {
+        "LogRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ec2.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Path": "/",
+                "Policies": [
+                    {
+                        "PolicyName": "LogRolePolicy",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "logs:*"
+                                    ],
+                                    "Resource": [
+                                        "arn:aws:logs:*:*:*"
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "LogRoleInstanceProfile": {
+            "Type": "AWS::IAM::InstanceProfile",
+            "Properties": {
+                "Path": "/",
+                "Roles": [
+                    {
+                         "Ref": "LogRole"
+                    }
+                ]
+            }
+        },
+        "CloudFormationLogs": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+                "RetentionInDays": 7
+            }
+        },
+        "WebServerHost": {
+            "Type": "AWS::EC2::Instance",
+            "Metadata": {
+                "Comment": "Configures ClouwdWatch Logs agent, then the CloudFormation dameon for subsequent metadata updates - cfn-hup, and then a simple PHP application",
+                "AWS::CloudFormation::Init": {
+                    "configSets" : { "default" : [ "cfn-logs-config", "cfn-hup-config", "application-config" ] },
+                    "cfn-logs-config": {
+                        "files": {
+                            "/tmp/cwlogs/cfn-logs.conf": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "[general]\n",
+                                            "state_file= /var/awslogs/agent-state\n",
+
+                                            "[/var/log/cloud-init.log]\n",
+                                            "file = /var/log/cloud-init.log\n",
+                                            "log_group_name = ", { "Ref": "CloudFormationLogs" }, "\n",
+                                            "log_stream_name = {instance_id}/cloud-init.log\n",
+                                            "datetime_format = \n",
+
+                                            "[/var/log/cfn-init.log]\n",
+                                            "file = /var/log/cfn-init.log\n",
+                                            "log_group_name = ", { "Ref": "CloudFormationLogs" }, "\n",
+                                            "log_stream_name = {instance_id}/cfn-init.log\n",
+                                            "datetime_format = \n",
+
+                                            "[/var/log/cfn-hup.log]\n",
+                                            "file = /var/log/cfn-hup.log\n",
+                                            "log_group_name = ", { "Ref": "CloudFormationLogs" }, "\n",
+                                            "log_stream_name = {instance_id}/cfn-hup.log\n",
+                                            "datetime_format = \n",
+
+                                            "[/var/log/cfn-wire.log]\n",
+                                            "file = /var/log/cfn-wire.log\n",
+                                            "log_group_name = ", { "Ref": "CloudFormationLogs" }, "\n",
+                                            "log_stream_name = {instance_id}/cfn-wire.log\n",
+                                            "datetime_format = \n"
+                                        ]
+                                    ]
+                                },
+                                "mode": "000444",
+                                "owner": "root",
+                                "group": "root"
+                            },
+                            "/tmp/cwlogs/agent-setup.py" : {
+                                "source" : "https://s3.amazonaws.com/aws-cloudwatch/downloads/awslogs-agent-setup-v1.0.py",
+                                "mode": "000755",
+                                "owner": "root",
+                                "group": "root"
+                            }
+                        },
+                        "commands": {
+                            "install-logs-agent" : {
+                                "command" : { "Fn::Join" : ["", ["python /tmp/cwlogs/agent-setup.py -n -r ", { "Ref" : "AWS::Region" }, " -c /tmp/cwlogs/cfn-logs.conf"]]}
+                            }
+                        }
+                    },
+                    "cfn-hup-config": {
+                        "files": {
+                            "/etc/cfn/cfn-hup.conf": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "[main]\n",
+                                            "stack=", { "Ref": "AWS::StackId" }, "\n",
+                                            "region=", { "Ref": "AWS::Region" }, "\n"
+                                        ]
+                                    ]
+                                },
+                                "mode": "000400",
+                                "owner": "root",
+                                "group": "root"
+                            },
+                            "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "[cfn-auto-reloader-hook]\n",
+                                            "triggers=post.update\n",
+                                            "path=Resources.WebServerHost.Metadata.AWS::CloudFormation::Init\n",
+                                            "action=/opt/aws/bin/cfn-init --stack ", { "Ref": "AWS::StackId" }, " --resource WebServerHost ", " --region ", { "Ref": "AWS::Region" }, "\n"
+                                        ]
+                                    ]
+                                }
+                            }
+                        },
+                        "services": {
+                            "sysvinit": {
+                                "cfn-hup": {
+                                    "enabled": "true",
+                                    "ensureRunning": "true",
+                                    "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]
+                                }
+                            }
+                        }
+                    },
+                    "application-config": {
+                        "packages": {
+                            "yum": {
+                                "httpd": [],
+                                "php": [],
+                                "python-pip": []
+                            }
+                        },
+                        "files": {
+                            "/var/www/html/index.php": {
+                                "content": {
+                                    "Fn::Join": [
+                                        "",
+                                        [
+                                            "<?php\n",
+                                            "echo '<h1>AWS CloudFormation sample PHP application</h1>';\n",
+                                            "?>\n"
+                                        ]
+                                    ]
+                                },
+                                "mode": "000644",
+                                "owner": "apache",
+                                "group": "apache"
+                            }
+                        },
+                        "services": {
+                            "sysvinit": {
+                                "httpd": {
+                                    "enabled": "true",
+                                    "ensureRunning": "true"
+                                },
+                                "sendmail": {
+                                    "enabled": "false",
+                                    "ensureRunning": "false"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Properties": {
+                "ImageId": {
+                    "Fn::FindInMap": [
+                        "RegionMap",
+                        {
+                            "Ref": "AWS::Region"
+                        },
+                        "AMI"
+                    ]
+                },
+                "InstanceType": "m1.small",
+                "SecurityGroups": [ { "Ref": "WebServerSecurityGroup" } ],
+                "IamInstanceProfile": { "Ref": "LogRoleInstanceProfile" },
+                "UserData": {
+                    "Fn::Base64": {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash\n",
+                                
+                                "# Get the latest CloudFormation helper scripts package\n",
+                                 "yum update -y aws-cfn-bootstrap\n",
+                                
+                                "# Run cfn-init to configure the EC2 instance as per the AWS::CloudFormation::Init section \n",
+                                "/opt/aws/bin/cfn-init --stack ", { "Ref": "AWS::StackId" }, " --resource WebServerHost ", " --region ", { "Ref": "AWS::Region" }, "\n",
+                                
+                                "# Signal completion\n",
+                                "/opt/aws/bin/cfn-signal -e $? '", { "Ref": "WebServerWaitHandle" }, "'\n"
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        "WebServerWaitHandle": {
+            "Type": "AWS::CloudFormation::WaitConditionHandle"
+        },
+        "WebServerWaitCondition": {
+            "Type": "AWS::CloudFormation::WaitCondition",
+            "DependsOn": "WebServerHost",
+            "Properties": {
+                "Handle": {
+                    "Ref": "WebServerWaitHandle"
+                },
+                "Timeout": "300"
+            }
+        },
+        "WebServerSecurityGroup": {
+          "Type": "AWS::EC2::SecurityGroup",
+          "Properties": {
+            "GroupDescription": "Enable HTTP access via port 80",
+            "SecurityGroupIngress" : [
+              {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"}
+            ]
+          }
+        }
+    },
+
+    "Outputs": {
+        "InstanceId": {
+            "Description": "The instance ID of the web server",
+            "Value": {
+                "Ref": "WebServerHost"
+            }
+        },
+        "WebsiteURL" : {
+          "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServerHost", "PublicDnsName" ]}]] },
+          "Description" : "URL for newly created LAMP stack"
+        },
+        "PublicIP": {
+            "Description": "Public IP address of the web server",
+            "Value": {
+                "Fn::GetAtt": [
+                    "WebServerHost",
+                    "PublicIp"
+                ]
+            }
+        },
+        "CloudFormationLogGroupName": {
+            "Description": "The name of the CloudWatch log group storing CloudFormation logs",
+            "Value": {
+                "Ref": "CloudFormationLogs"
+            }
+        }
+    }
+}

@@ -1,0 +1,120 @@
+{
+    "AWSTemplateFormatVersion" : "2010-09-09",
+    "Description" : "A sample template to create a CloudFront distribution with multiple origins (2 origins) --- 1) a custom origin - Sample PHP application created using Elastic Beanstalk, 2) a s3 origin - S3 bucket to store image files in jpeg format. **WARNING** This template creates one or more AWS resources. You will be billed for the AWS resources used if you create a stack from this template.",
+    "Parameters" : {
+       "KeyName" : {
+            "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the AWS Elastic Beanstalk instance",
+            "Type" : "String"
+       }
+    },
+
+    "Resources" : {
+        "sampleS3OriginBucket" : {
+           "Type" : "AWS::S3::Bucket",
+           "Properties" : {
+                "AccessControl" : "PublicRead"
+            }
+         },
+
+        "sampleApplication" : {
+            "Type" : "AWS::ElasticBeanstalk::Application",
+            "Properties" : {
+                "Description" : "AWS Elastic Beanstalk PHP Sample Application",
+                "ApplicationVersions" : [{
+                    "VersionLabel" : "Initial Version",
+                    "Description" : "Version 1.0",
+                    "SourceBundle" : {
+                        "S3Bucket" : { "Fn::Join" : ["-", ["elasticbeanstalk-samples", { "Ref" : "AWS::Region" }]]},
+                        "S3Key" : "php-sample.zip"
+                    }
+                }],
+                "ConfigurationTemplates" : [{
+                    "TemplateName" : "DefaultConfiguration",
+                    "Description" : "Default Configuration Version 1.0 - with SSH access",
+                    "SolutionStackName" : "64bit Amazon Linux running PHP 5.3",
+                    "OptionSettings" : [{
+                        "Namespace" : "aws:autoscaling:launchconfiguration",
+                        "OptionName" : "EC2KeyName",
+                        "Value" : { "Ref" : "KeyName" }
+                    }]
+                }]
+            }
+        },
+
+        "sampleEnvironment" : {
+           "Type" : "AWS::ElasticBeanstalk::Environment",
+           "Properties" : {
+              "ApplicationName" : { "Ref" : "sampleApplication" },
+              "Description" :  "AWS Elastic Beanstalk Environment running PHP Sample Application",
+              "TemplateName" : "DefaultConfiguration",
+              "VersionLabel" : "Initial Version"
+           }
+        },
+
+        "sampleS3LoggingBucket" : {
+           "Type" : "AWS::S3::Bucket",
+           "Properties" : {
+                "AccessControl" : "PublicRead"
+            }
+         },
+
+        "sampleDistribution" : {
+            "Type" : "AWS::CloudFront::Distribution",
+            "Properties" : {
+               "DistributionConfig" : {
+                   "DefaultRootObject" : "index.php",
+                   "Origins" : [ {
+                           "Id" : "S3 Origin",
+                           "DomainName" : { "Fn::GetAtt" : [ "sampleS3OriginBucket", "DomainName" ] },
+                           "S3OriginConfig" : {}
+                       }, {
+                           "Id" : "Custom Origin",
+                           "DomainName" : { "Fn::GetAtt" : [ "sampleEnvironment", "EndpointURL" ] },
+                           "CustomOriginConfig" : {
+                               "OriginProtocolPolicy" : "match-viewer"
+                           }
+                       }
+                   ],
+                   "DefaultCacheBehavior" : {
+                       "TargetOriginId" : "Custom Origin",
+                       "ForwardedValues" : {
+                           "QueryString" : "true"
+                        },
+                       "ViewerProtocolPolicy" : "allow-all"
+                   },
+                   "CacheBehaviors" : [ {
+                            "TargetOriginId" : "S3 Origin",
+                            "ForwardedValues" : {
+                                "QueryString" : "false"
+                            },
+                            "ViewerProtocolPolicy" : "allow-all",
+                            "MinTTL" : "500",
+                            "PathPattern" : "*.jpg"
+                        }
+                   ],
+                   "Comment" : "Sample multi-origin CloudFront distribution created using CloudFormation.",
+                   "Logging" : {
+                       "Bucket" : { "Fn::GetAtt" : [ "sampleS3LoggingBucket", "DomainName"] },
+                       "Prefix" : "CloudFrontDistributionSampleLogs"
+                   },
+                   "Enabled" : "true"             
+                }
+            }
+        }
+    },
+    "Outputs" : {
+        "DistributionId" : {
+            "Description" : "CloudFront Distribution Id",
+            "Value" : { "Ref" : "sampleDistribution" }
+        },
+        "DistributionName" : {
+             "Description" : "URL to access the CloudFront distribution",
+             "Value" : { "Fn::Join" : [ "", ["http://", {"Fn::GetAtt" : ["sampleDistribution", "DomainName"]} ]]}
+        },
+        "S3OriginDNSName" : {
+             "Description" : "DNS Name of the S3 bucket created as a part of this stack, which is treated as an origin to serve .jpg files for the distribution. After the stack has been created, you can upload .jpg files to the S3 bucket, and access them using : <DistributionName>/<ObjectName>, where <DistributionName is the CloudFront distribution url and <ObjectName> is an image file (say Sample.jpg) uploaded to the S3 bucket.",
+             "Value" : { "Fn::GetAtt" : [ "sampleS3OriginBucket", "DomainName"] }
+        }
+  }
+}
+

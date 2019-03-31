@@ -1,0 +1,22 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Resources": {
+    "AutoScalingGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "NotificationConfiguration": [
+          {
+            "TopicARN": "XXX",
+            "NotificationTypes": [
+              "autoscaling:EC2_INSTANCE_LAUNCH",
+              "autoscaling:EC2_INSTANCE_TERMINATE"
+            ]
+          }
+        ],
+        "MinSize": "1",
+        "MaxSize": "5"
+      }
+    }
+  }
+}

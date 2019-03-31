@@ -1,0 +1,48 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Mappings": {
+    "map1": {
+      "t1.micro": {
+        "Arch": "32",
+        "Arch56": "32"
+      },
+      "m1.small": {
+        "A4": "32"
+      }
+    },
+    "map2": {
+      "t1.micro": {
+        "Arch": "32"
+      },
+      "m1.small": {
+        "Arch": "32",
+        "Arch2": "32"
+      },
+      "m2.small": {
+        "Arch3": "A"
+      }
+    }
+  },
+
+  "Resources": {
+    "WebServerUser": {
+      "Type": "AWS::IAM::User"
+    },
+
+    "WebServerKeys": {
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "UserName": {
+          "Fn::FindInMap": [ { "Ref": "WebServerUser" } , { "Ref": "WebServerUser" }, "<caret>"]
+        }
+      }
+    }
+  },
+
+  "Outputs": {
+  }
+}

@@ -1,0 +1,7 @@
+build
+classes
+out
+.idea/*
+!.idea/dictionaries
+/.gradle
+*.iml

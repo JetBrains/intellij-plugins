@@ -1,0 +1,252 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template Managed High Priority and Low Priority Batch Job Queue: This template demonstrates the usage of a high and low priority batch job queues. It uses simple EC2 and Spot style Compute Environments.  **WARNING** You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Resources" : {
+    "VPC" : {
+      "Type" : "AWS::EC2::VPC",
+      "Properties" : {
+        "CidrBlock" :"10.0.0.0/16"
+      }
+    },
+    "InternetGateway" : {
+      "Type" :"AWS::EC2::InternetGateway"
+    },
+    "RouteTable" : {
+      "Type" : "AWS::EC2::RouteTable",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" }
+      }
+    },
+    "VPCGatewayAttachment" : {
+      "Type" : "AWS::EC2::VPCGatewayAttachment",
+      "Properties" : {
+        "VpcId" : { "Ref" : "VPC" },
+        "InternetGatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+    "SecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Security Group for the EC2 instances launched into the VPC by Batch",
+        "VpcId" : { "Ref" : "VPC" }
+      }
+    },
+    "Subnet" : {
+      "Type" : "AWS::EC2::Subnet",
+      "Properties" : {
+        "CidrBlock" : "10.0.0.0/24",
+        "VpcId" : { "Ref" : "VPC" },
+        "MapPublicIpOnLaunch" : "True"
+      }
+    },
+    "Route" : {
+      "Type" : "AWS::EC2::Route",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "RouteTable" },
+        "DestinationCidrBlock" :"0.0.0.0/0",
+        "GatewayId" : { "Ref" : "InternetGateway" }
+      }
+    },
+    "SubnetRouteTableAssociation" : {
+      "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties" : {
+        "RouteTableId" : { "Ref" : "RouteTable" },
+        "SubnetId" : { "Ref" : "Subnet" }
+      }
+    },
+    "BatchServiceRole" : {
+      "Type" : "AWS::IAM::Role",
+      "Properties" : {
+        "AssumeRolePolicyDocument" : {
+          "Version" : "2012-10-17",
+          "Statement" : [
+            {
+              "Effect" : "Allow",
+              "Principal" : {
+                "Service" : "batch.amazonaws.com"
+              },
+              "Action" : "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns" : [
+          "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
+        ]
+      }
+    },
+    "IamInstanceProfile" : {
+      "Type" : "AWS::IAM::InstanceProfile",
+      "Properties" : {
+        "Roles" : [{ "Ref" : "EcsInstanceRole" }]
+      }
+    },
+    "EcsInstanceRole" : {
+      "Type" : "AWS::IAM::Role",
+      "Properties" : {
+        "AssumeRolePolicyDocument" : {
+          "Version" : "2008-10-17",
+          "Statement" : [
+            {
+              "Sid" : "",
+              "Effect" : "Allow",
+              "Principal" : {
+                "Service" : "ec2.amazonaws.com"
+              },
+              "Action" : "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns" : [
+          "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+        ]
+      }
+    },
+    "SpotIamFleetRole" : {
+      "Type" : "AWS::IAM::Role",
+      "Properties" : {
+        "AssumeRolePolicyDocument" : {
+          "Version" : "2012-10-17",
+          "Statement" : [
+            {
+              "Sid" : "",
+              "Effect" : "Allow",
+              "Principal" : {
+                "Service" : "spotfleet.amazonaws.com"
+              },
+              "Action" : "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns" : [
+          "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetRole"
+        ]
+      }
+    },
+    "ProdApplicationJob" : {
+      "Type" : "AWS::Batch::JobDefinition",
+      "Properties" : {
+        "Type" : "container",
+        "ContainerProperties" : {
+          "Image" : {
+            "Fn::Join" : [ "", [ "137112412989.dkr.ecr.", { "Ref" : "AWS::Region" }, ".amazonaws.com/amazonlinux:latest" ]]
+          },
+          "Vcpus" : 2,
+          "Memory" : 2000,
+          "Command" : [ "echo", "Hello World, I am a high priority job" ]
+        },
+        "RetryStrategy" : {
+          "Attempts" : 1
+        }
+      }
+    },
+    "TestApplicationJob" : {
+      "Type" : "AWS::Batch::JobDefinition",
+      "Properties" : {
+        "Type" : "container",
+        "ContainerProperties" : {
+          "Image" : { 
+              "Fn::Join" : [ "", ["137112412989.dkr.ecr.", { "Ref" : "AWS::Region" }, ".amazonaws.com/amazonlinux:latest" ]]
+          },
+          "Vcpus" : 2,
+          "Memory" : 2000,
+          "Command" : [ "echo", "Hello World, I am a low priority job" ]
+        },
+        "RetryStrategy" : {
+          "Attempts" : 1
+        }
+      }
+    },
+    "HighPriorityJobQueue" : {
+      "Type" : "AWS::Batch::JobQueue",
+      "Properties" : {
+        "Priority" : 1,
+        "ComputeEnvironmentOrder" : [
+          {
+            "Order" : 1,
+            "ComputeEnvironment" : { "Ref" : "OnDemandComputeEnvironment" }
+          },
+          {
+            "Order" : 2,
+            "ComputeEnvironment" : { "Ref" : "SpotComputeEnvironment" }
+          }
+        ]
+      }
+    },
+    "LowPriorityJobQueue" : {
+      "Type" : "AWS::Batch::JobQueue",
+      "Properties" : {
+        "JobQueueName" : "LowPriorityBatchCloudformationJobqueue",
+        "Priority" : 2,
+        "ComputeEnvironmentOrder" : [
+          {
+            "Order" : 1,
+            "ComputeEnvironment" : { "Ref" : "SpotComputeEnvironment" }
+          }
+        ]
+      }
+    },
+    "OnDemandComputeEnvironment" : {
+      "Type" : "AWS::Batch::ComputeEnvironment",
+      "Properties" : {
+        "Type" : "MANAGED",
+        "ComputeResources" : {
+          "Type" : "EC2",
+          "MinvCpus" : 0,
+          "DesiredvCpus" : 0,
+          "MaxvCpus" : 64,
+          "InstanceTypes" : [
+            "optimal"
+          ],
+          "Subnets" : [{ "Ref" : "Subnet" }],
+          "SecurityGroupIds" : [{ "Ref" : "SecurityGroup" }],
+          "InstanceRole" : { "Ref" : "IamInstanceProfile"}
+        },
+        "ServiceRole" : { "Ref" : "BatchServiceRole" }
+      }
+    },
+    "SpotComputeEnvironment" : {
+      "Type" : "AWS::Batch::ComputeEnvironment",
+      "Properties" : {
+        "Type" : "MANAGED",
+        "ComputeResources" : {
+          "Type" : "SPOT",
+          "MinvCpus" : 0,
+          "DesiredvCpus" : 0,
+          "MaxvCpus" : 64,
+          "InstanceTypes" : [
+            "optimal"
+          ],
+          "Subnets" : [{ "Ref" : "Subnet" }],
+          "SecurityGroupIds" : [{ "Ref" : "SecurityGroup" }],
+          "InstanceRole" : { "Ref" : "IamInstanceProfile" },
+          "BidPercentage" : 40,
+          "SpotIamFleetRole" : { "Ref" : "SpotIamFleetRole" }
+        },
+        "ServiceRole" : { "Ref" : "BatchServiceRole" }
+      }
+    }
+  },
+  "Outputs" : {
+    "ProdApplicationJobArn" : {
+      "Value" : { "Ref" : "ProdApplicationJob" }
+    },
+    "TestApplicationJobArn" : {
+      "Value" : { "Ref" : "TestApplicationJob" } 
+    },
+    "HighPriorityJobQueueArn" : {
+      "Value" : { "Ref" : "HighPriorityJobQueue" }
+    },
+    "LowPriorityJobQueueArn" : {
+      "Value" : { "Ref" : "LowPriorityJobQueue" }
+    },
+    "OnDemandComputeEnvironmentArn" : {
+      "Value" : { "Ref" : "OnDemandComputeEnvironment" }
+    },
+    "SpotComputeEnvironmentArn" : {
+      "Value" : { "Ref" : "SpotComputeEnvironment" }
+    }
+  }
+}
+

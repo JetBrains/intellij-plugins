@@ -1,0 +1,9 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+
+  0@<"Resources">: {
+  }
+}
+
+0: Resources section should declare at least one resource

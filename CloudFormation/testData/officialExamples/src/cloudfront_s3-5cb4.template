@@ -1,0 +1,32 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template CloudFront_S3: Sample template showing how to create an Amazon CloudFront distribution using an S3 origin. **WARNING** This template creates one or more AWS resources. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+    "S3DNSName" : {
+      "Type" : "String",
+      "Description" : "The DNS name of an existing S3 bucket to use as the Cloudfront distribution origin"
+    }
+  },
+
+  "Resources" : {
+    "myDistribution" : {
+      "Type" : "AWS::CloudFront::Distribution",
+      "Properties" : {
+         "DistributionConfig" : {
+           "S3Origin" : {"DNSName": { "Ref" : "S3DNSName" }},       
+           "Enabled" : "true"
+         }
+      }
+    }
+  },
+  "Outputs" : {
+    "DistributionId" : {
+       "Value" : { "Ref" : "myDistribution" }
+    },
+    "DistributionName" : {
+       "Value" : { "Fn::Join" : [ "", ["http://", {"Fn::GetAtt" : ["myDistribution", "DomainName"]} ]]}
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template RDS_Oracle: Sample template showing how to create an RDS Oracle DBInstance. **WARNING** This template creates an Amazon RDS database instance. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Resources" : {
+
+    "MyDB" : {
+      "Type" : "AWS::RDS::DBInstance",
+      "Properties" : {
+        "AllocatedStorage" : "10",
+        "DBInstanceClass" : "db.m1.small",
+        "Engine" : "oracle-ee",
+        "LicenseModel" : "bring-your-own-license",
+        "MasterUsername" : "MyName",
+        "MasterUserPassword" : "MyPassword"
+      }
+    }    
+  }
+}
+

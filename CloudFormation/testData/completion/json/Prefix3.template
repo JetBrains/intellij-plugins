@@ -1,0 +1,15 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Resources": {
+    "AAA": {
+      "Type": "AWS::EBApp<caret>",
+      "Properties": {
+        "Description": "aaa"
+      }
+    }
+  }
+}

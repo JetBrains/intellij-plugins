@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  ECSCluster:
+    <caret>
+    Type: String
+    Description: Name of an existing ECS Cluster.
+Resources:
+Resources:
+  RootBucket:
+    Type: AWS::S3::Bucket

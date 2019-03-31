@@ -1,0 +1,11 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  MyNestedStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/spg-test-bucket/cloudformation/nested.yml?versionId=HqlgDnuntMzkmK0398GPdJRUXMN_PMdn
+  RootBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      LoggingConfiguration:
+        DestinationBucketName: !GetAtt MyNestedStack.Outputs.NestedBucket

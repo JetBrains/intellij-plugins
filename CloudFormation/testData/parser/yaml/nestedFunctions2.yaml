@@ -1,0 +1,14 @@
+# https://github.com/shalupov/idea-cloudformation/issues/95
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  Subnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone:
+        Fn::Base64:
+          !Sub
+          - |
+              {
+                "JsonKey": "JsonValue: ${SSS}"
+              }
+          - SSS: SSSvalue

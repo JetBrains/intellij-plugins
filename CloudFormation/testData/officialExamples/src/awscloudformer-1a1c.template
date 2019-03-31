@@ -1,0 +1,780 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormer Beta - template creation prototype application. This tool allows you to create an AWS CloudFormation template from the AWS resources in your AWS account. **Warning** This template creates a single EC2 instance in your account to run the application - you will be billed for the instance at normal AWS EC2 rates.",
+
+  "Parameters" : {
+
+    "Username" : {
+      "Description" : "Username to log in to CloudFormer",
+      "Type" : "String"
+    },
+    "Password" : {
+      "Description" : "Password to log in to CloudFormer",
+      "Type" : "String",
+      "NoEcho" : "true"
+    },
+    "VPCSelection": {
+      "Description": "This setting will control if the Cloudformer Web server will launch in the default VPC or if a new VPC will be created, or if you wish to launch into an existing non-default VPC.",
+      "Type": "String",
+      "Default": "CreateNewVPC",
+      "AllowedValues": [
+        "Default",
+        "CreateNewVPC"
+      ],
+      "ConstraintDescription": "must be either Default or CreateNewVPC"
+    }
+  },
+  "Conditions": {
+    "DefaultVPC": {
+      "Fn::Equals": [
+        {
+          "Ref": "VPCSelection"
+        },
+        "Default"
+      ]
+    },
+    "CreateNewVPC": {
+      "Fn::Equals": [
+        {
+          "Ref": "VPCSelection"
+        },
+        "CreateNewVPC"
+      ]
+    }
+  },
+
+  "Mappings" : {
+    "Region2Examples" : {
+      "us-east-1"      : { "Examples" : "https://s3.amazonaws.com/cloudformation-examples-us-east-1" },
+      "us-west-2"      : { "Examples" : "https://s3-us-west-2.amazonaws.com/cloudformation-examples-us-west-2" },
+      "us-west-1"      : { "Examples" : "https://s3-us-west-1.amazonaws.com/cloudformation-examples-us-west-1" },
+      "eu-west-1"      : { "Examples" : "https://s3-eu-west-1.amazonaws.com/cloudformation-examples-eu-west-1" },
+      "eu-central-1"   : { "Examples" : "https://s3-eu-central-1.amazonaws.com/cloudformation-examples-eu-central-1" },
+      "ap-southeast-1" : { "Examples" : "https://s3-ap-southeast-1.amazonaws.com/cloudformation-examples-ap-southeast-1" },
+      "ap-northeast-1" : { "Examples" : "https://s3-ap-northeast-1.amazonaws.com/cloudformation-examples-ap-northeast-1" },
+      "ap-southeast-2" : { "Examples" : "https://s3-ap-southeast-2.amazonaws.com/cloudformation-examples-ap-southeast-2" },
+      "ap-northeast-2" : { "Examples" : "https://s3-ap-northeast-2.amazonaws.com/cloudformation-examples-ap-northeast-2" },
+      "ap-northeast-3" : { "Examples" : "https://s3-ap-northeast-3.amazonaws.com/cloudformation-examples-ap-northeast-3" },
+      "ap-south-1"     : { "Examples" : "https://s3-ap-south-1.amazonaws.com/cloudformation-examples-ap-south-1" },
+      "us-east-2"      : { "Examples" : "https://s3-us-east-2.amazonaws.com/cloudformation-examples-us-east-2" },
+      "sa-east-1"      : { "Examples" : "https://s3-sa-east-1.amazonaws.com/cloudformation-examples-sa-east-1" },
+      "cn-north-1"     : { "Examples" : "https://s3.cn-north-1.amazonaws.com.cn/cloudformation-examples-cn-north-1" },
+      "cn-northwest-1" : { "Examples" : "https://s3.cn-northwest-1.amazonaws.com.cn/cloudformation-examples-cn-northwest-1" },
+      "ca-central-1"   : { "Examples" : "https://s3-ca-central-1.amazonaws.com/cloudformation-examples-ca-central-1" },
+      "eu-west-2"      : { "Examples" : "https://s3-eu-west-2.amazonaws.com/cloudformation-examples-eu-west-2" },
+      "eu-west-3"      : { "Examples" : "https://s3-eu-west-3.amazonaws.com/cloudformation-examples-eu-west-3" }
+    }
+,
+    "Region2Principal" : {
+      "us-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "us-west-2"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "us-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "eu-west-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-southeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-northeast-1" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-southeast-2" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-northeast-2" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-northeast-3" : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ap-south-1"     : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "us-east-2"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "sa-east-1"      : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "cn-north-1"     : { "EC2Principal" : "ec2.amazonaws.com.cn", "OpsWorksPrincipal" : "opsworks.amazonaws.com.cn" },
+      "cn-northwest-1" : { "EC2Principal" : "ec2.amazonaws.com.cn", "OpsWorksPrincipal" : "opsworks.amazonaws.com.cn" },
+      "eu-central-1"   : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "eu-west-2"   : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "ca-central-1"   : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" },
+      "eu-west-3"   : { "EC2Principal" : "ec2.amazonaws.com", "OpsWorksPrincipal" : "opsworks.amazonaws.com" }
+    }
+,
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "PV64"   },
+      "t2.nano"     : { "Arch" : "HVM64"  },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "t2.large"    : { "Arch" : "HVM64"  },
+      "m1.small"    : { "Arch" : "PV64"   },
+      "m1.medium"   : { "Arch" : "PV64"   },
+      "m1.large"    : { "Arch" : "PV64"   },
+      "m1.xlarge"   : { "Arch" : "PV64"   },
+      "m2.xlarge"   : { "Arch" : "PV64"   },
+      "m2.2xlarge"  : { "Arch" : "PV64"   },
+      "m2.4xlarge"  : { "Arch" : "PV64"   },
+      "m3.medium"   : { "Arch" : "HVM64"  },
+      "m3.large"    : { "Arch" : "HVM64"  },
+      "m3.xlarge"   : { "Arch" : "HVM64"  },
+      "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.large"    : { "Arch" : "HVM64"  },
+      "m4.xlarge"   : { "Arch" : "HVM64"  },
+      "m4.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.4xlarge"  : { "Arch" : "HVM64"  },
+      "m4.10xlarge" : { "Arch" : "HVM64"  },
+      "c1.medium"   : { "Arch" : "PV64"   },
+      "c1.xlarge"   : { "Arch" : "PV64"   },
+      "c3.large"    : { "Arch" : "HVM64"  },
+      "c3.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c3.4xlarge"  : { "Arch" : "HVM64"  },
+      "c3.8xlarge"  : { "Arch" : "HVM64"  },
+      "c4.large"    : { "Arch" : "HVM64"  },
+      "c4.xlarge"   : { "Arch" : "HVM64"  },
+      "c4.2xlarge"  : { "Arch" : "HVM64"  },
+      "c4.4xlarge"  : { "Arch" : "HVM64"  },
+      "c4.8xlarge"  : { "Arch" : "HVM64"  },
+      "g2.2xlarge"  : { "Arch" : "HVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "HVMG2"  },
+      "r3.large"    : { "Arch" : "HVM64"  },
+      "r3.xlarge"   : { "Arch" : "HVM64"  },
+      "r3.2xlarge"  : { "Arch" : "HVM64"  },
+      "r3.4xlarge"  : { "Arch" : "HVM64"  },
+      "r3.8xlarge"  : { "Arch" : "HVM64"  },
+      "i2.xlarge"   : { "Arch" : "HVM64"  },
+      "i2.2xlarge"  : { "Arch" : "HVM64"  },
+      "i2.4xlarge"  : { "Arch" : "HVM64"  },
+      "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "d2.xlarge"   : { "Arch" : "HVM64"  },
+      "d2.2xlarge"  : { "Arch" : "HVM64"  },
+      "d2.4xlarge"  : { "Arch" : "HVM64"  },
+      "d2.8xlarge"  : { "Arch" : "HVM64"  },
+      "hi1.4xlarge" : { "Arch" : "HVM64"  },
+      "hs1.8xlarge" : { "Arch" : "HVM64"  },
+      "cr1.8xlarge" : { "Arch" : "HVM64"  },
+      "cc2.8xlarge" : { "Arch" : "HVM64"  }
+    },
+
+    "AWSInstanceType2NATArch" : {
+      "t1.micro"    : { "Arch" : "NATPV64"   },
+      "t2.nano"     : { "Arch" : "NATHVM64"  },
+      "t2.micro"    : { "Arch" : "NATHVM64"  },
+      "t2.small"    : { "Arch" : "NATHVM64"  },
+      "t2.medium"   : { "Arch" : "NATHVM64"  },
+      "t2.large"    : { "Arch" : "NATHVM64"  },
+      "m1.small"    : { "Arch" : "NATPV64"   },
+      "m1.medium"   : { "Arch" : "NATPV64"   },
+      "m1.large"    : { "Arch" : "NATPV64"   },
+      "m1.xlarge"   : { "Arch" : "NATPV64"   },
+      "m2.xlarge"   : { "Arch" : "NATPV64"   },
+      "m2.2xlarge"  : { "Arch" : "NATPV64"   },
+      "m2.4xlarge"  : { "Arch" : "NATPV64"   },
+      "m3.medium"   : { "Arch" : "NATHVM64"  },
+      "m3.large"    : { "Arch" : "NATHVM64"  },
+      "m3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.large"    : { "Arch" : "NATHVM64"  },
+      "m4.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m4.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.10xlarge" : { "Arch" : "NATHVM64"  },
+      "c1.medium"   : { "Arch" : "NATPV64"   },
+      "c1.xlarge"   : { "Arch" : "NATPV64"   },
+      "c3.large"    : { "Arch" : "NATHVM64"  },
+      "c3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "c3.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "c3.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.large"    : { "Arch" : "NATHVM64"  },
+      "c4.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c4.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "g2.2xlarge"  : { "Arch" : "NATHVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "NATHVMG2"  },
+      "r3.large"    : { "Arch" : "NATHVM64"  },
+      "r3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "r3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "r3.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "r3.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "i2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "d2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "hi1.4xlarge" : { "Arch" : "NATHVM64"  },
+      "hs1.8xlarge" : { "Arch" : "NATHVM64"  },
+      "cr1.8xlarge" : { "Arch" : "NATHVM64"  },
+      "cc2.8xlarge" : { "Arch" : "NATHVM64"  }
+    }
+,
+    "AWSRegionArch2AMI" : {
+      "us-east-1"        : {"PV64" : "ami-2a69aa47", "HVM64" : "ami-7f6aa912", "HVMG2" : "ami-3353c649"},
+      "us-west-2"        : {"PV64" : "ami-7f77b31f", "HVM64" : "ami-f469ad94", "HVMG2" : "ami-58ce1220"},
+      "us-west-1"        : {"PV64" : "ami-a2490dc2", "HVM64" : "ami-594b0f39", "HVMG2" : "ami-62ad9502"},
+      "eu-west-1"        : {"PV64" : "ami-4cdd453f", "HVM64" : "ami-c5da42b6", "HVMG2" : "ami-41bc0a38"},
+      "eu-west-2"        : {"PV64" : "NOT_SUPPORTED", "HVM64" : "ami-896369ed", "HVMG2" : "NOT_SUPPORTED"},
+      "eu-west-3"        : {"PV64" : "NOT_SUPPORTED", "HVM64" : "NOT_SUPPORTED", "HVMG2" : "NOT_SUPPORTED"},
+      "eu-central-1"     : {"PV64" : "ami-6527cf0a", "HVM64" : "ami-e526ce8a", "HVMG2" : "ami-b50d8fda"},
+      "ap-northeast-1"   : {"PV64" : "ami-3e42b65f", "HVM64" : "ami-7f4db91e", "HVMG2" : "ami-14e45872"},
+      "ap-northeast-2"   : {"PV64" : "NOT_SUPPORTED", "HVM64" : "ami-39448f57", "HVMG2" : "NOT_SUPPORTED"},
+      "ap-northeast-3"   : {"PV64" : "NOT_SUPPORTED", "HVM64" : "NOT_SUPPORTED", "HVMG2" : "NOT_SUPPORTED"},
+      "ap-southeast-1"   : {"PV64" : "ami-df9e4cbc", "HVM64" : "ami-a69b49c5", "HVMG2" : "ami-2a80d649"},
+      "ap-southeast-2"   : {"PV64" : "ami-63351d00", "HVM64" : "ami-10361e73", "HVMG2" : "ami-02c42e60"},
+      "ap-south-1"       : {"PV64" : "NOT_SUPPORTED", "HVM64" : "ami-fdbed492", "HVMG2" : "ami-f6165899"},
+      "us-east-2"        : {"PV64" : "NOT_SUPPORTED", "HVM64" : "ami-d90c57bc", "HVMG2" : "NOT_SUPPORTED"},
+      "ca-central-1"     : {"PV64" : "NOT_SUPPORTED", "HVM64" : "ami-33f34157", "HVMG2" : "NOT_SUPPORTED"},
+      "sa-east-1"        : {"PV64" : "ami-1ad34676", "HVM64" : "ami-aed144c2", "HVMG2" : "NOT_SUPPORTED"},
+      "cn-north-1"       : {"PV64" : "ami-77559f1a", "HVM64" : "ami-14519b79", "HVMG2" : "NOT_SUPPORTED"},
+      "cn-northwest-1"   : {"PV64" : "ami-80707be2", "HVM64" : "ami-ec868c8e", "HVMG2" : "NOT_SUPPORTED"}
+    }
+
+  },
+
+  "Resources" : {
+
+    "CFNRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": { "Service": { "Fn::FindInMap" : [ "Region2Principal", {"Ref" : "AWS::Region"}, "EC2Principal"]}},
+            "Action": [ "sts:AssumeRole" ]
+          }]
+        },
+        "Path": "/"
+      }
+    },
+
+    "CFNRolePolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CloudFormerPolicy",
+        "PolicyDocument": {
+          "Statement": [ {
+            "Effect": "Allow",
+            "Action"   : [
+              "autoscaling:Describe*",
+              "cloudformation:Describe*",
+              "cloudformation:List*",
+              "cloudfront:List*",
+              "cloudFront:Get*",
+              "cloudtrail:Describe*",
+              "cloudtrail:Get*",
+              "cloudwatch:Describe*",
+              "dynamodb:List*",
+              "dynamodb:Describe*",
+              "elasticbeanstalk:Describe*",
+              "ec2:Describe*",
+              "elasticloadbalancing:Describe*",
+              "elasticache:Describe*",
+              "rds:Describe*",
+              "rds:List*",
+              "route53:List*",
+              "route53:Get*",
+              "s3:List*",
+              "s3:Get*",
+              "s3:PutObject",
+              "sdb:Get*",
+              "sdb:List*",
+              "sns:Get*",
+              "sns:List*",
+              "sqs:Get*",
+              "sqs:List*",
+              "opsworks:Describe*",
+              "redshift:Describe*",
+              "kinesis:Describe*",
+              "kinesis:List*"
+            ],
+            "Resource": "*"
+          } ]
+        },
+        "Roles": [ { "Ref": "CFNRole" } ]
+      }
+    },
+
+    "CFNInstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Path": "/",
+        "Roles": [ { "Ref": "CFNRole" } ]
+      }
+    },
+
+    "WebServer": {
+      "Condition": "DefaultVPC",
+      "Type": "AWS::EC2::Instance",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {
+          "configSets" : {
+            "full_install" : ["base", "cloudformer"]
+          },
+          "base" : {
+            "packages" : {
+              "yum" : {
+                "gcc"              : [],
+                "gcc-c++"          : [],
+                "make"             : [],
+                "libxml2-devel"    : [],
+                "libxslt-devel"    : [],
+                "sqlite-devel"     : [],
+                "patch"            : [],
+                "readline"         : [],
+                "readline-devel"   : [],
+                "zlib"             : [],
+                "zlib-devel"       : [],
+                "libyaml-devel"    : [],
+                "libffi-devel"     : [],
+                "openssl-devel"    : [],
+                "bzip2"            : [],
+                "autoconf"         : [],
+                "automake"         : [],
+                "libtool"          : [],
+                "bison"            : [],
+                "ruby-devel"       : []
+              }
+            }
+          },
+          "cloudformer" : {
+            "sources" : {
+              "/home/ec2-user/cloudformer" : {"Fn::Join" : ["/", [
+                                              {"Fn::FindInMap" : ["Region2Examples", {"Ref" : "AWS::Region"}, "Examples"]},
+                                              "AWSCloudFormer041.zip" ]]}
+            },
+            "files" : {
+              "/home/ec2-user/setup_cloudformer" : {
+                "content" : { "Fn::Join" : ["", [
+                  "#!/usr/bin/env bash\n",
+                  "cd /home/ec2-user/cloudformer\n",
+                  "# Setup the CloudFormer service\n",
+                  "mkdir -p vendor/bundle\n",
+                  "gem install --local /home/ec2-user/cloudformer/vendor/cache/rake-10.4.2.gem\n",
+                  "gem install --local /home/ec2-user/cloudformer/vendor/cache/bundler-1.7.11.gem\n",
+                  "gem install --local /home/ec2-user/cloudformer/vendor/cache/bundle-0.0.1.gem\n",
+                  "/usr/local/bin/bundle install --local --path /home/ec2-user/cloudformer/vendor/bundle\n",
+                  "/usr/local/bin/rake RAILS_ENV=production db:migrate\n",
+                  "gem install --local /home/ec2-user/cloudformer/vendor/cache/rack-1.6.0.gem\n",
+                  "gem install --local /home/ec2-user/cloudformer/vendor/cache/eventmachine-1.0.4.gem\n",
+                  "gem install --local /home/ec2-user/cloudformer/vendor/cache/daemons-1.1.9.gem\n",
+                  "gem install --local /home/ec2-user/cloudformer/vendor/cache/thin-1.6.3.gem\n",
+                  "# Create certificate and private key for SSL\n",
+                  "mkdir -p /home/ec2-user/cloudformer/.ssl\n",
+                  "cd /home/ec2-user/cloudformer/.ssl\n",
+                  "openssl genrsa -des3 -passout pass:\"" , { "Ref" : "Password" }, "\" -out server.pass.key 1024\n",
+                  "openssl rsa -passin pass:\"", { "Ref" : "Password" }, "\" -in server.pass.key -out server.key\n",
+                  "openssl req -new -key server.key -out server.csr -subj \"/C=US/ST=Washington/L=Seattle/O=Amazon Web Services/OU=CloudFormer\"\n",
+                  "openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt\n",
+                  "rm server.pass.key server.csr\n"
+                ]]},
+                "mode"  : "000755",
+                "owner" : "root",
+                "group" : "root"
+              },
+              "/home/ec2-user/cloudformer/config/initializers/user.rb" : {
+                "content" : { "Fn::Join" : ["", [
+                  "USER_NAME = \"", { "Ref" : "Username" }, "\"\n",
+                  "PASSWORD = \"", { "Ref" : "Password" }, "\"\n"
+                ]]},
+                "mode"  : "000400",
+                "owner" : "root",
+                "group" : "root"
+              },
+              "/usr/bin/cloudformer" : {
+                "content" : { "Fn::Join" : ["", [
+                  "#!/usr/bin/env bash\n",
+                  "cd /home/ec2-user/cloudformer\n",
+                  "/usr/local/bin/thin start -p 443 -e production -d --ssl --ssl-key-file /home/ec2-user/cloudformer/.ssl/server.key --ssl-cert-file /home/ec2-user/cloudformer/.ssl/server.crt\n"
+                ]]},
+                "mode"  : "000755",
+                "owner" : "root",
+                "group" : "root"
+              }
+            },
+            "commands" : {
+              "01_install_cloudformer" : {
+                "command" : "/home/ec2-user/setup_cloudformer &> /var/log/setup_cloudformer.log",
+                "cwd" : "/home/ec2-user/cloudformer"
+              },
+              "02_setup_boot" : {
+                "command" : "echo '/usr/bin/cloudformer' >> /etc/rc.local",
+                "cwd" : "/"
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                          { "Fn::FindInMap" : [ "AWSInstanceType2Arch", "t2.small", "Arch" ] } ] },
+        "InstanceType"       : "t2.small",
+        "SecurityGroups"     : [ {"Ref" : "WebServerSecurityGroup"} ],
+        "IamInstanceProfile" : { "Ref" : "CFNInstanceProfile" },
+        "UserData"           : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -xe\n",
+          "yum update -y aws-cfn-bootstrap\n",
+
+          "/opt/aws/bin/cfn-init -v ",
+          "         --stack ", { "Ref" : "AWS::StackId" },
+          "         --resource WebServer ",
+          "         --configsets full_install ",
+          "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+          "/opt/aws/bin/cfn-signal -e $? ",
+          "         --stack ", { "Ref" : "AWS::StackId" },
+          "         --resource WebServer ",
+          "         --region ", { "Ref" : "AWS::Region" }, "\n"
+        ]]}}
+      },
+      "CreationPolicy" : {
+        "ResourceSignal" : {
+          "Timeout" : "PT30M"
+        }
+      }
+    },
+
+    "WebServerCustomVPC": {
+      "Condition": "CreateNewVPC",
+      "DependsOn": "RouteVPCAny",
+      "CreationPolicy": {
+        "ResourceSignal": {
+          "Timeout": "PT30M"
+        }
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Init": {
+          "base": {
+            "packages": {
+              "yum": {
+                "autoconf": [],
+                "automake": [],
+                "bison": [],
+                "bzip2": [],
+                "gcc": [],
+                "gcc-c++": [],
+                "libffi-devel": [],
+                "libtool": [],
+                "libxml2-devel": [],
+                "libxslt-devel": [],
+                "libyaml-devel": [],
+                "make": [],
+                "openssl-devel": [],
+                "patch": [],
+                "readline": [],
+                "readline-devel": [],
+                "ruby-devel": [],
+                "sqlite-devel": [],
+                "zlib": [],
+                "zlib-devel": []
+              }
+            }
+          },
+          "cloudformer": {
+            "commands": {
+              "01_install_cloudformer": {
+                "command": "/home/ec2-user/setup_cloudformer &> /var/log/setup_cloudformer.log",
+                "cwd": "/home/ec2-user/cloudformer"
+              },
+              "02_setup_boot": {
+                "command": "echo '/usr/bin/cloudformer' >> /etc/rc.local",
+                "cwd": "/"
+              }
+            },
+            "files": {
+              "/home/ec2-user/cloudformer/config/initializers/user.rb": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "USER_NAME = \"",
+                      {
+                        "Ref": "Username"
+                      },
+                      "\"\n",
+                      "PASSWORD = \"",
+                      {
+                        "Ref": "Password"
+                      },
+                      "\"\n"
+                    ]
+                  ]
+                },
+                "group": "root",
+                "mode": "000400",
+                "owner": "root"
+              },
+              "/home/ec2-user/setup_cloudformer": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "#!/usr/bin/env bash\n",
+                      "cd /home/ec2-user/cloudformer\n",
+                      "# Setup the CloudFormer service\n",
+                      "mkdir -p vendor/bundle\n",
+                      "gem install --local /home/ec2-user/cloudformer/vendor/cache/rake-10.4.2.gem\n",
+                      "gem install --local /home/ec2-user/cloudformer/vendor/cache/bundler-1.7.11.gem\n",
+                      "gem install --local /home/ec2-user/cloudformer/vendor/cache/bundle-0.0.1.gem\n",
+                      "/usr/local/bin/bundle install --local --path /home/ec2-user/cloudformer/vendor/bundle\n",
+                      "/usr/local/bin/rake RAILS_ENV=production db:migrate\n",
+                      "gem install --local /home/ec2-user/cloudformer/vendor/cache/rack-1.6.0.gem\n",
+                      "gem install --local /home/ec2-user/cloudformer/vendor/cache/eventmachine-1.0.4.gem\n",
+                      "gem install --local /home/ec2-user/cloudformer/vendor/cache/daemons-1.1.9.gem\n",
+                      "gem install --local /home/ec2-user/cloudformer/vendor/cache/thin-1.6.3.gem\n",
+                      "# Create certificate and private key for SSL\n",
+                      "mkdir -p /home/ec2-user/cloudformer/.ssl\n",
+                      "cd /home/ec2-user/cloudformer/.ssl\n",
+                      "openssl genrsa -des3 -passout pass:\"",
+                      {
+                        "Ref": "Password"
+                      },
+                      "\" -out server.pass.key 1024\n",
+                      "openssl rsa -passin pass:\"",
+                      {
+                        "Ref": "Password"
+                      },
+                      "\" -in server.pass.key -out server.key\n",
+                      "openssl req -new -key server.key -out server.csr -subj \"/C=US/ST=Washington/L=Seattle/O=Amazon Web Services/OU=CloudFormer\"\n",
+                      "openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt\n",
+                      "rm server.pass.key server.csr\n"
+                    ]
+                  ]
+                },
+                "group": "root",
+                "mode": "000755",
+                "owner": "root"
+              },
+              "/usr/bin/cloudformer": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "#!/usr/bin/env bash\n",
+                      "cd /home/ec2-user/cloudformer\n",
+                      "/usr/local/bin/thin start -p 443 -e production -d --ssl --ssl-key-file /home/ec2-user/cloudformer/.ssl/server.key --ssl-cert-file /home/ec2-user/cloudformer/.ssl/server.crt\n"
+                    ]
+                  ]
+                },
+                "group": "root",
+                "mode": "000755",
+                "owner": "root"
+              }
+            },
+            "sources": {
+              "/home/ec2-user/cloudformer": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    {
+                      "Fn::FindInMap": [
+                        "Region2Examples",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        "Examples"
+                      ]
+                    },
+                    "AWSCloudFormer041.zip"
+                  ]
+                ]
+              }
+            }
+          },
+          "configSets": {
+            "full_install": [
+              "base",
+              "cloudformer"
+            ]
+          }
+        }
+      },
+      "Properties": {
+        "IamInstanceProfile": {
+          "Ref": "CFNInstanceProfile"
+        },
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                          { "Fn::FindInMap" : [ "AWSInstanceType2Arch", "t2.small", "Arch" ] } ] },
+        "InstanceType": "t2.small",
+        "SubnetId": {
+          "Ref": "VPCSubnet"
+        },
+        "SecurityGroupIds": [
+          {
+            "Ref": "WebServerSecurityGroup"
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -xe\n",
+                "yum update -y aws-cfn-bootstrap\n",
+                "/opt/aws/bin/cfn-init -v ",
+                "         --stack ",
+                {
+                  "Ref": "AWS::StackId"
+                },
+                "         --resource WebServerCustomVPC ",
+                "         --configsets full_install ",
+                "         --region ",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "\n",
+                "/opt/aws/bin/cfn-signal -e $? ",
+                "         --stack ",
+                {
+                  "Ref": "AWS::StackId"
+                },
+                "         --resource WebServerCustomVPC ",
+                "         --region ",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "\n"
+              ]
+            ]
+          }
+        }
+      },
+      "Type": "AWS::EC2::Instance"
+    },
+
+    "WebServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTPS access via port 443",
+        "VpcId": {
+          "Fn::If" : [
+            "CreateNewVPC",
+            {"Ref" : "VPC"},
+            {"Ref" : "AWS::NoValue"}
+          ]
+        },
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "443", "ToPort" : "443", "CidrIp" : "0.0.0.0/0"}
+        ]
+      }
+    },
+    "VPC": {
+      "Condition": "CreateNewVPC",
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CloudformwerVPC"
+          }
+        ],
+        "CidrBlock": "10.10.10.0/24",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true"
+      }
+    },
+    "VPCSubnet": {
+      "Condition": "CreateNewVPC",
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "MapPublicIpOnLaunch": "true",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            "0",
+            {
+              "Fn::GetAZs": {
+                "Ref": "AWS::Region"
+              }
+            }
+          ]
+        },
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "CidrBlock": "10.10.10.0/24"
+      }
+    },
+    "VPCInternetGateway": {
+      "Condition": "CreateNewVPC",
+      "Type": "AWS::EC2::InternetGateway",
+      "Properties": {}
+    },
+    "VPCAttachGateway": {
+      "Condition": "CreateNewVPC",
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "InternetGatewayId": {
+          "Ref": "VPCInternetGateway"
+        }
+      }
+    },
+    "VPCRouteTable": {
+      "Condition": "CreateNewVPC",
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "CloudformerVPCRouteTable"
+          }
+        ],
+        "VpcId": {
+          "Ref": "VPC"
+        }
+      }
+    },
+    "VPCSubnetRouteTableAssociation": {
+      "Condition": "CreateNewVPC",
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "VPCSubnet"
+        },
+        "RouteTableId": {
+          "Ref": "VPCRouteTable"
+        }
+      }
+    },
+    "RouteVPCAny": {
+      "Condition": "CreateNewVPC",
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "VPCAttachGateway",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "VPCRouteTable"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "VPCInternetGateway"
+        }
+      }
+    }
+  },
+
+  "Outputs": {
+    "CustomVPCWebsiteURL": {
+      "Description": "URL for CloudFormer",
+      "Value": 
+      {
+        "Fn::Join": 
+        [
+          "",
+          [
+            "https://",
+            {
+              "Fn::If" : 
+              [
+                "CreateNewVPC",
+                {
+                  "Fn::GetAtt": [
+                    "WebServerCustomVPC",
+                    "PublicDnsName"
+                  ]
+                },
+                {
+                  "Fn::GetAtt": [
+                    "WebServer",
+                    "PublicDnsName"
+                  ]
+                }
+              ]
+            }
+          ]
+        ]
+      }
+    }
+  }
+}

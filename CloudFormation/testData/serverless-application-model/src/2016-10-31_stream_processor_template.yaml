@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: A function that processes data from a Kinesis stream.
+Resources:
+  StreamProcessor:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs6.10
+      CodeUri: src/
+      Events:
+        Stream:
+          Type: Kinesis
+          Properties:
+            Stream: !GetAtt Stream.Arn
+            StartingPosition: TRIM_HORIZON
+
+  Stream:
+    Type: AWS::Kinesis::Stream
+    Properties:
+      ShardCount: 1
+
+Outputs:
+
+    KinesisStream:
+      Description: "Kinesis Stream that will trigger Lambda function upon new records"
+      Value: !GetAtt Stream.Arn

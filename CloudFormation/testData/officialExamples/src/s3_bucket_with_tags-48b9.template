@@ -1,0 +1,29 @@
+{
+
+    "AWSTemplateFormatVersion": "2010-09-09",
+
+    "Description": "AWS CloudFormation Sample Template S3_Bucket_With_Tags: Sample template showing how to create a publicly accessible S3 bucket that has tags. **WARNING** This template creates an S3 bucket. You will be billed for the AWS resources used if you create a stack from this template.",
+
+    "Resources": {
+        "S3Bucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+                "AccessControl": "PublicRead",
+                "Tags" : [{
+                  "Key"   : "Name",
+                  "Value" : "My Bucket"
+                }]
+            }
+        }
+    },
+
+    "Outputs": {
+        "BucketName": {
+            "Value": {
+                "Ref": "S3Bucket"
+            },
+            "Description": "Name of S3 bucket to hold website content"
+        }
+    }
+
+}

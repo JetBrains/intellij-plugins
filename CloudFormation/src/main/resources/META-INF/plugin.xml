@@ -1,0 +1,102 @@
+<idea-plugin url="https://github.com/shalupov/idea-cloudformation">
+  <id>AWSCloudFormation</id>
+  <name>AWS CloudFormation</name>
+  <version>SNAPSHOT</version>
+
+  <vendor url="https://github.com/shalupov" email="leonid@shalupov.com">Leonid Shalupov</vendor>
+
+  <description><![CDATA[
+    <p>Amazon AWS CloudFormation language support
+    <p>
+    <p>Open any *.template, *.json or *.yaml file with CloudFormation language inside. There should be number of features available:
+    <ul>
+      <li>Template validation
+        <ul>
+          <li>Overall file structure</li>
+          <li>References to resources, conditions, parameters, mappings</li>
+          <li>Resource types and properties</li>
+        </ul>
+      </li>
+      <li>File structure (aka Go to member) (Ctrl-F12 on Windows): fast jump to any entity in the file</li>
+      <li>Completion in Ref clause</li>
+      <li>Completion of resources types and properties</li>
+      <li>Live template for Ref clause: type "ref" and press Tab</li>
+      <li>Ctrl-Click on any reference to jump to its definition</li>
+      <li>Quick Documentation for resource types and properties</li>
+      <li>Format file</li>
+    </ul>
+  ]]></description>
+
+  <change-notes><![CDATA[
+    <h4>0.5.24</h4>
+    <p>fix some exceptions, support Fn::Split</p>
+    <h4>0.5.19</h4>
+    <p>YAML: 'param' and 'ref' live templates</p>
+    <p>QuickDoc: Fix external links, fix quickdoc on resource types</p>
+    <p>YAML: better completion</p>
+    <p>Parameters section: 'param' live template, verify Parameters section, provide completion on parameter properties and type</p>
+  ]]></change-notes>
+
+  <!-- from IDEA 2018.2 to IDEA 2019.2 -->
+  <idea-version since-build="182.3684" until-build="192.*"/>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>org.jetbrains.plugins.yaml</depends>
+
+  <application-components>
+    <component>
+      <implementation-class>com.intellij.aws.cloudformation.CloudFormationUpdateComponent</implementation-class>
+    </component>
+  </application-components>
+
+  <project-components>
+  </project-components>
+
+  <actions>
+    <action id="NewJsonCloudFormationFile" class="com.intellij.aws.cloudformation.CreateJsonTemplateFileAction">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
+    </action>
+    <action id="NewYamlCloudFormationFile" class="com.intellij.aws.cloudformation.CreateYamlTemplateFileAction">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewDir"/>
+    </action>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <documentationProvider implementation="com.intellij.aws.cloudformation.CloudFormationDocumentationProvider"/>
+    <fileTypeFactory implementation="com.intellij.aws.cloudformation.CloudFormationFileTypeFactory"/>
+
+    <psi.referenceContributor implementation="com.intellij.aws.cloudformation.CloudFormationReferenceContributor"/>
+
+    <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+                     key="aws.cloudformation.inspections.formatViolation"
+                     groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.aws.cloudformation.inspections.JsonFormatViolationInspection"/>
+    <localInspection language="JSON" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+                     key="aws.cloudformation.inspections.unresolvedReference"
+                     groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.aws.cloudformation.inspections.JsonUnresolvedReferencesInspection"/>
+
+    <localInspection language="yaml" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+                     key="aws.cloudformation.inspections.formatViolation"
+                     groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.aws.cloudformation.inspections.YamlFormatViolationInspection"/>
+    <localInspection language="yaml" bundle="com.intellij.aws.cloudformation.CloudFormationBundle"
+                     key="aws.cloudformation.inspections.unresolvedReference"
+                     groupKey="aws.cloudformation.inspections.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="com.intellij.aws.cloudformation.inspections.YamlUnresolvedReferencesInspection"/>
+
+    <completion.contributor language="JSON" order="first" implementationClass="com.intellij.aws.cloudformation.JsonCloudFormationCompletionContributor"/>
+    <completion.contributor language="yaml" order="first" implementationClass="com.intellij.aws.cloudformation.YamlCloudFormationCompletionContributor"/>
+
+    <internalFileTemplate name="AWS CloudFormation Template (JSON)" />
+    <internalFileTemplate name="AWS CloudFormation Template (YAML)" />
+
+    <liveTemplateContext implementation="com.intellij.aws.cloudformation.JsonCloudFormationCodeContextType"/>
+    <liveTemplateContext implementation="com.intellij.aws.cloudformation.YamlCloudFormationCodeContextType"/>
+    <defaultLiveTemplatesProvider implementation="com.intellij.aws.cloudformation.CloudFormationDefaultLiveTemplateProvider"/>
+
+    <errorHandler implementation="com.intellij.aws.cloudformation.CloudFormationReportSubmitter"/>
+
+    <json.catalog.exclusion implementation="com.intellij.aws.cloudformation.CloudFormationJsonCatalogExclusion" />
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,369 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template ElastiCache: Sample template showing how to create an Amazon ElastiCache Cache Cluster with Auto Discovery and access it from a very simple PHP application. **WARNING** This template creates an Amazon EC2 Instance and an Amazon ElastiCache Cluster. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+
+    "KeyName": {
+      "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the web server",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription" : "must be the name of an existing EC2 KeyPair."
+    },
+
+     "InstanceType" : {
+      "Description" : "WebServer EC2 instance type",
+      "Type" : "String",
+      "Default" : "t2.small",
+      "AllowedValues" : [ "t1.micro", "t2.nano", "t2.micro", "t2.small", "t2.medium", "t2.large", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge", "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "m4.large", "m4.xlarge", "m4.2xlarge", "m4.4xlarge", "m4.10xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge", "c3.4xlarge", "c3.8xlarge", "c4.large", "c4.xlarge", "c4.2xlarge", "c4.4xlarge", "c4.8xlarge", "g2.2xlarge", "g2.8xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge", "i2.8xlarge", "d2.xlarge", "d2.2xlarge", "d2.4xlarge", "d2.8xlarge", "hi1.4xlarge", "hs1.8xlarge", "cr1.8xlarge", "cc2.8xlarge", "cg1.4xlarge"]
+,
+      "ConstraintDescription" : "must be a valid EC2 instance type."
+    },
+
+    "CacheNodeType" : {
+      "Description" : "The compute and memory capacity of the nodes in the Cache Cluster",
+      "Type" : "String",
+      "Default" : "cache.t2.small",
+      "AllowedValues" : [ "cache.m1.small", "cache.m1.large", "cache.m1.xlarge", "cache.m2.xlarge", "cache.m2.2xlarge", "cache.m2.4xlarge", "cache.c1.xlarge", "cache.t2.micro", "cache.t2.small", "cache.t2.medium", "cache.m3.medium", "cache.m3.large", "cache.m3.xlarge", "cache.m3.2xlarge", "cache.r3.large", "cache.r3.xlarge", "cache.r3.2xlarge", "cache.r3.4xlarge", "cache.r3.8xlarge" ]
+,
+      "ConstraintDescription" : "must select a valid Cache Node type."
+    },
+
+    "NumberOfCacheNodes" : {
+      "Default": "1",
+      "Description" : "The number of Cache Nodes the Cache Cluster should have",
+      "Type": "Number",
+      "MinValue": "1",
+      "MaxValue": "10",
+      "ConstraintDescription" : "must be between 5 and 10."
+    },
+
+    "SSHLocation" : {
+      "Description" : "The IP address range that can be used to SSH to the EC2 instances",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "0.0.0.0/0",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
+    }
+  },
+
+  "Mappings" : {
+    "AWSInstanceType2Arch" : {
+      "t1.micro"    : { "Arch" : "HVM64"  },
+      "t2.nano"     : { "Arch" : "HVM64"  },
+      "t2.micro"    : { "Arch" : "HVM64"  },
+      "t2.small"    : { "Arch" : "HVM64"  },
+      "t2.medium"   : { "Arch" : "HVM64"  },
+      "t2.large"    : { "Arch" : "HVM64"  },
+      "m1.small"    : { "Arch" : "HVM64"  },
+      "m1.medium"   : { "Arch" : "HVM64"  },
+      "m1.large"    : { "Arch" : "HVM64"  },
+      "m1.xlarge"   : { "Arch" : "HVM64"  },
+      "m2.xlarge"   : { "Arch" : "HVM64"  },
+      "m2.2xlarge"  : { "Arch" : "HVM64"  },
+      "m2.4xlarge"  : { "Arch" : "HVM64"  },
+      "m3.medium"   : { "Arch" : "HVM64"  },
+      "m3.large"    : { "Arch" : "HVM64"  },
+      "m3.xlarge"   : { "Arch" : "HVM64"  },
+      "m3.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.large"    : { "Arch" : "HVM64"  },
+      "m4.xlarge"   : { "Arch" : "HVM64"  },
+      "m4.2xlarge"  : { "Arch" : "HVM64"  },
+      "m4.4xlarge"  : { "Arch" : "HVM64"  },
+      "m4.10xlarge" : { "Arch" : "HVM64"  },
+      "c1.medium"   : { "Arch" : "HVM64"  },
+      "c1.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.large"    : { "Arch" : "HVM64"  },
+      "c3.xlarge"   : { "Arch" : "HVM64"  },
+      "c3.2xlarge"  : { "Arch" : "HVM64"  },
+      "c3.4xlarge"  : { "Arch" : "HVM64"  },
+      "c3.8xlarge"  : { "Arch" : "HVM64"  },
+      "c4.large"    : { "Arch" : "HVM64"  },
+      "c4.xlarge"   : { "Arch" : "HVM64"  },
+      "c4.2xlarge"  : { "Arch" : "HVM64"  },
+      "c4.4xlarge"  : { "Arch" : "HVM64"  },
+      "c4.8xlarge"  : { "Arch" : "HVM64"  },
+      "g2.2xlarge"  : { "Arch" : "HVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "HVMG2"  },
+      "r3.large"    : { "Arch" : "HVM64"  },
+      "r3.xlarge"   : { "Arch" : "HVM64"  },
+      "r3.2xlarge"  : { "Arch" : "HVM64"  },
+      "r3.4xlarge"  : { "Arch" : "HVM64"  },
+      "r3.8xlarge"  : { "Arch" : "HVM64"  },
+      "i2.xlarge"   : { "Arch" : "HVM64"  },
+      "i2.2xlarge"  : { "Arch" : "HVM64"  },
+      "i2.4xlarge"  : { "Arch" : "HVM64"  },
+      "i2.8xlarge"  : { "Arch" : "HVM64"  },
+      "d2.xlarge"   : { "Arch" : "HVM64"  },
+      "d2.2xlarge"  : { "Arch" : "HVM64"  },
+      "d2.4xlarge"  : { "Arch" : "HVM64"  },
+      "d2.8xlarge"  : { "Arch" : "HVM64"  },
+      "hi1.4xlarge" : { "Arch" : "HVM64"  },
+      "hs1.8xlarge" : { "Arch" : "HVM64"  },
+      "cr1.8xlarge" : { "Arch" : "HVM64"  },
+      "cc2.8xlarge" : { "Arch" : "HVM64"  }
+    },
+
+    "AWSInstanceType2NATArch" : {
+      "t1.micro"    : { "Arch" : "NATHVM64"  },
+      "t2.nano"     : { "Arch" : "NATHVM64"  },
+      "t2.micro"    : { "Arch" : "NATHVM64"  },
+      "t2.small"    : { "Arch" : "NATHVM64"  },
+      "t2.medium"   : { "Arch" : "NATHVM64"  },
+      "t2.large"    : { "Arch" : "NATHVM64"  },
+      "m1.small"    : { "Arch" : "NATHVM64"  },
+      "m1.medium"   : { "Arch" : "NATHVM64"  },
+      "m1.large"    : { "Arch" : "NATHVM64"  },
+      "m1.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "m3.medium"   : { "Arch" : "NATHVM64"  },
+      "m3.large"    : { "Arch" : "NATHVM64"  },
+      "m3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.large"    : { "Arch" : "NATHVM64"  },
+      "m4.xlarge"   : { "Arch" : "NATHVM64"  },
+      "m4.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "m4.10xlarge" : { "Arch" : "NATHVM64"  },
+      "c1.medium"   : { "Arch" : "NATHVM64"  },
+      "c1.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c3.large"    : { "Arch" : "NATHVM64"  },
+      "c3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "c3.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "c3.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.large"    : { "Arch" : "NATHVM64"  },
+      "c4.xlarge"   : { "Arch" : "NATHVM64"  },
+      "c4.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "c4.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "g2.2xlarge"  : { "Arch" : "NATHVMG2"  },
+      "g2.8xlarge"  : { "Arch" : "NATHVMG2"  },
+      "r3.large"    : { "Arch" : "NATHVM64"  },
+      "r3.xlarge"   : { "Arch" : "NATHVM64"  },
+      "r3.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "r3.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "r3.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "i2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "i2.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.xlarge"   : { "Arch" : "NATHVM64"  },
+      "d2.2xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.4xlarge"  : { "Arch" : "NATHVM64"  },
+      "d2.8xlarge"  : { "Arch" : "NATHVM64"  },
+      "hi1.4xlarge" : { "Arch" : "NATHVM64"  },
+      "hs1.8xlarge" : { "Arch" : "NATHVM64"  },
+      "cr1.8xlarge" : { "Arch" : "NATHVM64"  },
+      "cc2.8xlarge" : { "Arch" : "NATHVM64"  }
+    }
+,
+    "AWSRegionArch2AMI" : {
+      "us-east-1"        : {"HVM64" : "ami-0080e4c5bc078760e", "HVMG2" : "ami-0aeb704d503081ea6"},
+      "us-west-2"        : {"HVM64" : "ami-01e24be29428c15b2", "HVMG2" : "ami-0fe84a5b4563d8f27"},
+      "us-west-1"        : {"HVM64" : "ami-0ec6517f6edbf8044", "HVMG2" : "ami-0a7fc72dc0e51aa77"},
+      "eu-west-1"        : {"HVM64" : "ami-08935252a36e25f85", "HVMG2" : "ami-0d5299b1c6112c3c7"},
+      "eu-west-2"        : {"HVM64" : "ami-01419b804382064e4", "HVMG2" : "NOT_SUPPORTED"},
+      "eu-west-3"        : {"HVM64" : "ami-0dd7e7ed60da8fb83", "HVMG2" : "NOT_SUPPORTED"},
+      "eu-central-1"     : {"HVM64" : "ami-0cfbf4f6db41068ac", "HVMG2" : "ami-0aa1822e3eb913a11"},
+      "eu-north-1"       : {"HVM64" : "ami-86fe70f8", "HVMG2" : "ami-32d55b4c"},
+      "ap-northeast-1"   : {"HVM64" : "ami-00a5245b4816c38e6", "HVMG2" : "ami-09d0e0e099ecabba2"},
+      "ap-northeast-2"   : {"HVM64" : "ami-00dc207f8ba6dc919", "HVMG2" : "NOT_SUPPORTED"},
+      "ap-northeast-3"   : {"HVM64" : "ami-0b65f69a5c11f3522", "HVMG2" : "NOT_SUPPORTED"},
+      "ap-southeast-1"   : {"HVM64" : "ami-05b3bcf7f311194b3", "HVMG2" : "ami-0e46ce0d6a87dc979"},
+      "ap-southeast-2"   : {"HVM64" : "ami-02fd0b06f06d93dfc", "HVMG2" : "ami-0c0ab057a101d8ff2"},
+      "ap-south-1"       : {"HVM64" : "ami-0ad42f4f66f6c1cc9", "HVMG2" : "ami-0244c1d42815af84a"},
+      "us-east-2"        : {"HVM64" : "ami-0cd3dfa4e37921605", "HVMG2" : "NOT_SUPPORTED"},
+      "ca-central-1"     : {"HVM64" : "ami-07423fb63ea0a0930", "HVMG2" : "NOT_SUPPORTED"},
+      "sa-east-1"        : {"HVM64" : "ami-05145e0b28ad8e0b2", "HVMG2" : "NOT_SUPPORTED"},
+      "cn-north-1"       : {"HVM64" : "ami-053617c9d818c1189", "HVMG2" : "NOT_SUPPORTED"},
+      "cn-northwest-1"   : {"HVM64" : "ami-0f7937761741dc640", "HVMG2" : "NOT_SUPPORTED"}
+    }
+
+  },
+
+  "Resources" : {
+
+    "CacheCluster" : {
+      "Type": "AWS::ElastiCache::CacheCluster",
+      "Properties": {
+        "CacheNodeType"           : { "Ref" : "CacheNodeType" },
+        "CacheSecurityGroupNames" : [ { "Ref" : "CacheSecurityGroup" } ],
+        "Engine"                  : "memcached",
+        "NumCacheNodes"           : { "Ref" : "NumberOfCacheNodes" }
+      }
+    },
+
+    "CacheSecurityGroup": {
+      "Type": "AWS::ElastiCache::SecurityGroup",
+      "Properties": {
+        "Description"  : "Lock cache down to Web Server access only"
+      }
+    },
+
+    "CacheSecurityGroupIngress": {
+      "Type": "AWS::ElastiCache::SecurityGroupIngress",
+      "Properties": {
+        "CacheSecurityGroupName"  : { "Ref" : "CacheSecurityGroup" },
+        "EC2SecurityGroupName"    : { "Ref" : "WebServerSecurityGroup" }
+      }
+    },
+
+    "WebServerSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup",
+      "Properties" : {
+        "GroupDescription" : "Enable HTTP and SSH access",
+        "SecurityGroupIngress" : [
+          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"} },
+          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"}
+        ]
+      }
+    },
+
+    "WebServerInstance": {
+      "Type" : "AWS::EC2::Instance",
+      "Metadata" : {
+        "AWS::CloudFormation::Init" : {
+          "config" : {
+            "packages" : {
+              "yum" : {
+                "httpd"    : [],
+                "gcc-c++"  : [],
+                "php"      : [],
+                "php-pear" : []
+              }
+            },
+
+            "files" : {
+              "/var/www/html/index.php" : {
+                "content" : { "Fn::Join" : ["", [
+                  "<?php\n",
+                  "echo '<h1>AWS CloudFormation sample application for Amazon ElastiCache</h1>';\n",
+                  "\n",
+                  "$server_endpoint = '", { "Fn::GetAtt" : [ "CacheCluster", "ConfigurationEndpoint.Address" ]}, "';\n",
+                  "$server_port = ", { "Fn::GetAtt" : [ "CacheCluster", "ConfigurationEndpoint.Port" ]}, ";\n",
+                  "\n",
+                  "/**\n",
+                  " * The following will initialize a Mecached client to utilize the Auto Discovery feature.\n",
+                  " * \n",
+                  " * By configuring the client with the Dynamic client mode with single endpoint, the\n",
+                  " * client will periodically use the configuration endpoint to retrieve the current cache\n",
+                  " * cluster configuration. This allows scaling the cache cluster up or down in number of nodes\n",
+                  " * without requiring any changes to the PHP application. \n",
+                  " */\n",
+                  "\n",
+                  "$dynamic_client = new Memcached();\n",
+                  "$dynamic_client->setOption(Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE);\n",
+                  "$dynamic_client->addServer($server_endpoint, $server_port);\n",
+                  "\n",
+                  "$tmp_object = new stdClass;\n",
+                  "$tmp_object->str_attr = 'test';\n",
+                  "$tmp_object->int_attr = 123;\n",
+                  "\n",
+                  "$dynamic_client->set('key', $tmp_object, 10) or die ('Failed to save data to the cache');\n",
+                  "echo '<p>Store data in the cache (data will expire in 10 seconds)</p>';\n",
+                  "\n",
+                  "$get_result = $dynamic_client->get('key');\n",
+                  "echo '<p>Data from the cache:<br/>';\n",
+                  "\n",
+                  "var_dump($get_result);\n",
+                  "\n",
+                  "echo '</p>';\n",
+                  "?>\n"
+                ]]},
+                "mode"    : "000644",
+                "owner"   : "apache",
+                "group"   : "apache"
+              },
+              "/etc/cfn/cfn-hup.conf" : {
+                "content" : { "Fn::Join" : ["", [
+                  "[main]\n",
+                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
+                  "region=", { "Ref" : "AWS::Region" }, "\n"
+                ]]},
+                "mode"    : "000400",
+                "owner"   : "root",
+                "group"   : "root"
+              },
+
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
+                "content": { "Fn::Join" : ["", [
+                  "[cfn-auto-reloader-hook]\n",
+                  "triggers=post.update\n",
+                  "path=Resources.WebServerInstance.Metadata.AWS::CloudFormation::Init\n",
+                  "action=/opt/aws/bin/cfn-init -v ",
+                  "         --stack ", { "Ref" : "AWS::StackName" },
+                  "         --resource WebServerInstance ",
+                  "         --region ", { "Ref" : "AWS::Region" }, "\n",
+                  "runas=root\n"
+                ]]},
+                "mode"    : "000400",
+                "owner"   : "root",
+		"group"   : "root"
+              }
+            },
+
+            "commands" : {
+              "00_download_memcached_client" : {
+                "command" : "wget https://s3.amazonaws.com/elasticache-downloads/ClusterClient/PHP/latest-64bit"
+              },
+              "01_install_memcached_client" : {
+                "command" : "pecl install latest-64bit"
+              },
+              "02_enable_auto_discovery" : {
+                "command" : "echo 'extension=amazon-elasticache-cluster-client.so' > /etc/php.d/memcached.ini"
+              }
+            },
+
+            "services" : {
+              "sysvinit" : {
+                "httpd"    : { "enabled" : "true", "ensureRunning" : "true" },
+                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
+                              "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
+              }
+            }
+          }
+        }
+      },
+      "Properties": {
+        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
+                       { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch"  ]}]},
+        "InstanceType"   : { "Ref" : "InstanceType" },
+        "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
+        "KeyName"        : { "Ref" : "KeyName" },
+        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+          "#!/bin/bash -xe\n",
+          "yum update -y aws-cfn-bootstrap\n",
+
+          "# Setup the PHP sample application\n",
+          "/opt/aws/bin/cfn-init -v ",
+          "         --stack ", { "Ref" : "AWS::StackName" },
+          "         --resource WebServerInstance ",
+          "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+          "# Signal the status of cfn-init\n",
+          "/opt/aws/bin/cfn-signal -e $? ",
+          "         --stack ", { "Ref" : "AWS::StackName" },
+          "         --resource WebServerInstance ",
+          "         --region ", { "Ref" : "AWS::Region" }, "\n"
+        ]]}}
+      },
+      "CreationPolicy" : {
+        "ResourceSignal" : {
+          "Timeout" : "PT15M"
+        }
+      }
+    }
+  },
+
+  "Outputs" : {
+    "WebsiteURL" : {
+      "Description" : "Application URL",
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServerInstance", "PublicDnsName" ]} ]] }
+    }
+  }
+}

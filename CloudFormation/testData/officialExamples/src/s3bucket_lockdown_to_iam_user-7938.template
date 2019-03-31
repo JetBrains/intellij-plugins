@@ -1,0 +1,75 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+
+  "Description" : "AWS CloudFormation Sample Template S3Bucket_Lockdown_to_IAM_User: Simple test template showing how to create a bucket and an IAM user and lock the bucket down to be accessible by that new user. **WARNING** This template creates an Amazon S3 Bucket. You will be billed for the AWS resources used if you create a stack from this template.",
+
+  "Parameters" : {
+
+    "Password" : {
+      "Type" : "String",
+      "Description" : "IAM user login password",
+      "NoEcho" : "true",
+      "MinLength" : "3",
+      "MaxLength" : "50"
+    }
+  },
+
+  "Resources" : {
+
+    "S3Bucket" : {
+      "Type" : "AWS::S3::Bucket"
+    },
+
+    "BucketPolicy" : {
+      "Type" : "AWS::S3::BucketPolicy",
+      "Properties" : {
+        "PolicyDocument": {
+          "Id"           : "Give access to user",
+          "Statement"    : [{
+            "Sid"        : "AllAccess",
+            "Action"     : ["s3:*"],
+            "Effect"     : "Allow",
+            "Resource"   : { "Fn::Join" : ["", ["arn:aws:s3:::", {"Ref" : "S3Bucket"} ]]},
+            "Principal"  : { "AWS": {"Fn::GetAtt" : ["S3User", "Arn"]} }
+          }]
+        },
+        "Bucket" : {"Ref" : "S3Bucket"}
+      }
+    },
+
+    "S3User" : {
+      "Type" : "AWS::IAM::User",
+      "Properties" : {
+        "LoginProfile": {
+          "Password": { "Ref" : "Password" }
+        },
+        "Policies" : [{
+          "PolicyName" : "S3Access",
+          "PolicyDocument" : {
+            "Statement": [{
+              "Effect"   : "Allow",
+              "Action"   : "s3:ListAllMyBuckets",
+              "Resource" : "*"
+            },{
+              "Effect"   : "Allow",
+              "Action"   : "s3:*",
+              "Resource" : { "Fn::Join" : ["", ["arn:aws:s3:::", {"Ref" : "S3Bucket"} , "/*"]]}
+            }]
+          }
+        }]
+      }
+    }
+  },
+
+  "Outputs" : {
+    "IAMUser" : {
+      "Value" : { "Ref" : "S3User" },
+      "Description" : "IAM User for customer"
+    },
+
+    "BucketName" : {
+      "Value" : { "Ref" : "S3Bucket" },
+      "Description" : "Name of newly created customer S3 bucket"
+    }
+  }
+}

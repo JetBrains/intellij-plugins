@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>wrongSyntax.template</file>
+    <line>2</line>
+    <description>A string literal is expected</description>
+  </problem>
+  <problem>
+    <file>wrongSyntax.template</file>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
+    <file>wrongVersion.template</file>
+    <line>2</line>
+    <description>Unknown AWS CloudFormation template version &quot;2010-09-09 + 1&quot;. Supported versions: 2010-09-09</description>
+  </problem>
+  <problem>
+    <file>wrongVersion.json</file>
+    <line>2</line>
+    <description>Unknown AWS CloudFormation template version &quot;2010-09-09 + 1&quot;. Supported versions: 2010-09-09</description>
+  </problem>
+  <problem>
+    <file>wrongVersion.template</file>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
+    <file>wrongVersion.json</file>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
+    <file>noResourceType.template</file>
+    <line>6</line>
+    <description>Type property is required for resource</description>
+  </problem>
+  <problem>
+    <file>unknownResourceType.template</file>
+    <line>10</line>
+    <description>Unknown CloudFormation resource type: &quot;ZZZ&quot;</description>
+  </problem>
+  <problem>
+    <file>noRequiredResourceProperty1.template</file>
+    <line>11</line>
+    <description>Required resource properties are not set: UserName</description>
+  </problem>
+  <problem>
+    <file>noRequiredResourceProperty2.template</file>
+    <line>9</line>
+    <description>Required resource properties are not set: UserName</description>
+  </problem>
+  <problem>
+    <file>notStringDescr.template</file>
+    <line>3</line>
+    <description>A string literal is expected</description>
+  </problem>
+  <problem>
+    <file>notStringDescr.template</file>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
+    <file>unknownSection.template</file>
+    <line>8</line>
+    <description>Unknown section: XXX</description>
+  </problem>
+  <problem>
+    <file>unknownSection.template</file>
+    <line>5</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
+    <file>notObjExpr2.template</file>
+    <line>8</line>
+    <description>Expected JSON object</description>
+  </problem>
+  <problem>
+    <file>notObjExpr2.template</file>
+    <line>8</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
+    <file>notObjExpr1.template</file>
+    <line>11</line>
+    <description>Expected JSON object</description>
+  </problem>
+  <problem>
+    <file>notObjExpr1.template</file>
+    <line>11</line>
+    <description>Required resource properties are not set: UserName</description>
+  </problem>
+  <problem>
+    <file>maxParameters.template</file>
+    <line>4</line>
+    <description>Exceeded a maximum of 60 parameters in template</description>
+  </problem>
+  <problem>
+    <file>maxParameters.template</file>
+    <line>74</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
+    <file>maxMappings.template</file>
+    <line>4</line>
+    <description>Exceeded a maximum of 100 mappings in template</description>
+  </problem>
+  <problem>
+    <file>maxMappings.template</file>
+    <line>118</line>
+    <description>Resources section should declare at least one resource</description>
+  </problem>
+  <problem>
+    <file>noServiceTokenInCustomResourceType1.template</file>
+    <line>7</line>
+    <description>Required resource properties are not set: ServiceToken</description>
+  </problem>
+  <problem>
+    <file>noServiceTokenInCustomResourceType2.template</file>
+    <line>7</line>
+    <description>Required resource properties are not set: ServiceToken</description>
+  </problem>
+</problems>

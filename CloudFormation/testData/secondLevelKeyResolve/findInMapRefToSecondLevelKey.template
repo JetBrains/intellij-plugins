@@ -1,0 +1,68 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "desc",
+  "Parameters": {
+  },
+
+  "Mappings": {
+    "AWSInstanceType2Arch": {
+      "t1.micro": {
+        "Arch": "32"
+      },
+      "m1.small": {
+        "Arch": "32"
+      },
+      "m1.medium": {
+        "Arch": "64"
+      },
+      "m1.large": {
+        "Arch": "64"
+      },
+      "m1.xlarge": {
+        "Arch": "64"
+      },
+      "m2.xlarge": {
+        "Arch": "64"
+      },
+      "m2.2xlarge": {
+        "Arch": "64"
+      },
+      "m2.4xlarge": {
+        "Arch": "64"
+      },
+      "c1.medium": {
+        "Arch": "64"
+      },
+      "c1.xlarge": {
+        "Arch": "64"
+      },
+      "cc1.4xlarge": {
+        "Arch": "64HVM"
+      },
+      "cc2.8xlarge": {
+        "Arch": "64HVM"
+      },
+      "cg1.4xlarge": {
+        "Arch": "64HVM"
+      }
+    },
+  },
+
+  "Resources": {
+    "WebServerUser": {
+      "Type": "AWS::IAM::User"
+    },
+
+    "WebServerKeys": {
+      "Type": "AWS::IAM::AccessKey",
+      "Properties": {
+        "UserName": {
+          "Fn::FindInMap": [ "AWSInstanceType2Arch" , "m2.xlarge", "Ar<ref>ch"]
+        }
+      }
+    }
+  },
+
+  "Outputs": {
+  }
+}
