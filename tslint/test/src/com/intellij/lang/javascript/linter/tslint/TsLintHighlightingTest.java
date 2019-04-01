@@ -109,11 +109,18 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testHighlightJsFiles() {
-    doEditorHighlightingTest("test.js");
+    doEditorHighlightingTest("test.js", () -> {
+      TsLintConfiguration configuration = TsLintConfiguration.getInstance(myFixture.getProject());
+      TsLintState newState = configuration.getExtendedState()
+        .getState()
+        .builder()
+        .setAllowJs(true)
+        .build();
+      configuration.setExtendedState(configuration.isEnabled(), newState);
+    });
   }
 
-  public void testSuppressNoConfigFileForJs() {
-    //similarly to tslint **/*.*, if there are no jsRules, there shouldn't be an error for .js files
+  public void testNoJsFilesByDefault() {
     doEditorHighlightingTest("test.js");
   }
 
