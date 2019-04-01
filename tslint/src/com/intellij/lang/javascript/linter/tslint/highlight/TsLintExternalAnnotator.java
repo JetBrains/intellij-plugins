@@ -6,7 +6,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.ecmascript6.TypeScriptUtil;
+import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.linter.*;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
@@ -20,6 +20,7 @@ import com.intellij.lang.javascript.linter.tslint.service.TsLintLanguageService;
 import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.lang.javascript.validation.JSAnnotatorProblemGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -83,9 +84,11 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
 
   @Override
   protected boolean acceptPsiFile(@NotNull PsiFile file) {
-    return file instanceof JSFile
-           && (DialectDetector.JAVASCRIPT_FILE_TYPES.contains(file.getFileType()) ||
-               TypeScriptUtil.TYPESCRIPT_FILE_TYPES.contains(file.getFileType()));
+    if (!(file instanceof JSFile)) return false;
+    final TsLintConfiguration configuration = TsLintConfiguration.getInstance(file.getProject());
+    if (configuration.getExtendedState().getState().isAllowJs() && JSUtils.isJavaScriptFile(file)) return true;
+    final DialectOptionHolder holder = DialectDetector.dialectOfElement(file);
+    return holder != null && holder.isTypeScript;
   }
 
   @Nullable

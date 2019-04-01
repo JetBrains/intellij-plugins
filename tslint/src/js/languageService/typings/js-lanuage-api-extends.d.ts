@@ -47,8 +47,6 @@ interface CommandArguments {
      * Absolute config path
      */
     readonly configPath: string;
-    
-    readonly isJSFile: boolean;
 }
 
 interface GetErrorsArguments extends CommandArguments {
