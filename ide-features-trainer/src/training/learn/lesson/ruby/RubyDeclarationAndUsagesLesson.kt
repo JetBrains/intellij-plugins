@@ -29,7 +29,7 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
       }
 
       task("GotoDeclaration") {
-        text("Now the caret is on the attribute accessor declaration." +
+        text("Now the caret is on the attribute accessor declaration. " +
             "Use the same shortcut ${action(it)} to see all of its usages, then select one of them.")
         trigger(it, { state() }, fun(before: MyInfo?, now: MyInfo?): Boolean {
           if (before == null || now == null) {
@@ -56,18 +56,18 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
       }
 
       actionTask("PinToolwindowTab") {
-        "From the <strong>Find view</strong> you can navigate to both usages and declarations." +
-            "The next search will override these results in the <strong>Find view</strong> window." +
+        "From the <strong>Find view</strong> you can navigate to both usages and declarations. " +
+            "The next search will override these results in the <strong>Find view</strong> window. " +
             "To prevent it, pin the results by right clicking the tab title, <strong>Usages of</strong>," +
-            "and selecting <strong>Pin tab</strong>"
+            "and selecting <strong>Pin tab</strong>."
       }
 
       actionTask("HideActiveWindow") {
-        "When you have finished browsing usages, use ${action(it)} to hide the view"
+        "When you have finished browsing usages, use ${action(it)} to hide the view."
       }
 
       actionTask("ActivateFindToolWindow") {
-        "Press ${action(it)} to open the <strong>Find view</strong> again"
+        "Press ${action(it)} to open the <strong>Find view</strong> again."
       }
     }
 
