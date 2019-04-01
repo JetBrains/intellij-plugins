@@ -10,9 +10,9 @@ import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.buildSet
 import tanvd.grazi.utils.filterFor
 
-class JavaStringSupport : LanguageSupport {
+class JStringSupport : LanguageSupport {
     override fun isSupported(file: PsiFile): Boolean {
-        return file is JavaCodeFragment
+        return file is PsiJavaFile
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {

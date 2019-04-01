@@ -64,8 +64,9 @@
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.PlainTextSupport"/>
 
-        <languageSupport implementation="tanvd.grazi.ide.language.java.JavaDocSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.java.JavaStringSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.java.JDocSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.java.JStringSupport"/>
+        <languageSupport implementation="tanvd.grazi.ide.language.java.JConstructsSupport"/>
 
         <languageSupport implementation="tanvd.grazi.ide.language.CommentsSupport"/>
     </extensions>
