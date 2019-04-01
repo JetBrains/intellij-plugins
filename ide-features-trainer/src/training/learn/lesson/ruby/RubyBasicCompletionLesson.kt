@@ -64,7 +64,7 @@ end
       Thread.sleep(500)
       prepareSample(sample2)
       task("CodeCompletion") {
-        text("To activate Basic Completion explicitly, press ${action(it)}." +
+        text("To activate Basic Completion explicitly, press ${action(it)}. " +
             "Select <code>meow</code> and press <action>EditorEnter</action>.")
         trigger(it)
         trigger("EditorChooseLookupItem") { textBeforeCaret(editor, "meow") }
