@@ -1,6 +1,5 @@
 package com.intellij.aws.cloudformation
 
-import com.google.common.base.Charsets
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.fileTypes.LanguageFileType
@@ -17,7 +16,7 @@ class YamlCloudFormationFileType : LanguageFileType(YAMLLanguage.INSTANCE), File
   override fun getName(): String = "AWSCloudFormation (YAML)"
   override fun getDescription(): String = "AWS CloudFormation templates (YAML)"
   override fun getDefaultExtension(): String = ""
-  override fun getIcon(): Icon? = AllIcons.Nodes.DataTables
+  override fun getIcon(): Icon? = AllIcons.FileTypes.Yaml
 
   override fun isMyFileType(file: VirtualFile): Boolean {
     val extension = file.extension ?: return false
