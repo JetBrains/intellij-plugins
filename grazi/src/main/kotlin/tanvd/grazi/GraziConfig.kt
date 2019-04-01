@@ -11,7 +11,8 @@ class GraziConfig : PersistentStateComponent<GraziConfig.State> {
     data class State(@Property val enabledLanguages: MutableSet<Lang> = hashSetOf(Lang.ENGLISH),
                      @Property var graziFolder: File = File(System.getProperty("user.home"), ".grazi"),
                      @Property var motherTongue: Lang = enabledLanguages.first(),
-                     @Property var enabledSpellcheck: Boolean = false)
+                     @Property var enabledSpellcheck: Boolean = false,
+                     @Property var lastSeenVersion: String = "")
 
     companion object {
         val instance: GraziConfig by lazy { if (GraziPlugin.isTest) GraziConfig() else ServiceManager.getService(GraziConfig::class.java) }

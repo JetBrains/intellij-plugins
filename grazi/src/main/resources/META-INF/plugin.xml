@@ -37,11 +37,18 @@
     <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
     <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
 
+    <project-components>
+        <component>
+            <implementation-class>tanvd.grazi.ide.notification.GraziUpdateComponent</implementation-class>
+        </component>
+    </project-components>
+
     <application-components>
         <component>
             <implementation-class>tanvd.grazi.GraziPlugin</implementation-class>
         </component>
     </application-components>
+
 
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="tanvd.grazi.GraziConfig"/>
