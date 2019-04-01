@@ -34,8 +34,8 @@
 
     ]]></description>
 
-    <depends optional="true">org.intellij.plugins.markdown</depends>
-    <depends optional="true">org.jetbrains.kotlin</depends>
+    <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
+    <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
 
     <application-components>
         <component>
@@ -62,15 +62,10 @@
     </extensionPoints>
 
     <extensions defaultExtensionNs="tanvd.grazi">
-        <languageSupport implementation="tanvd.grazi.ide.language.MarkdownSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.PlainTextSupport"/>
 
         <languageSupport implementation="tanvd.grazi.ide.language.java.JavaDocSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.java.JavaStringSupport"/>
-
-        <languageSupport implementation="tanvd.grazi.ide.language.kotlin.KDocSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.kotlin.KStringSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.kotlin.KConstructsSupport"/>
 
         <languageSupport implementation="tanvd.grazi.ide.language.CommentsSupport"/>
     </extensions>
