@@ -211,6 +211,7 @@
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
 
     <!-- Angular 2 Expression Language contributions -->
+    <lang.syntaxHighlighterFactory language="Angular2" implementationClass="org.angular2.lang.expr.highlighting.Angular2HighlighterFactory"/>
     <codeInsight.template.postfixTemplateProvider language="Angular2"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
     <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
