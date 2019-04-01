@@ -57,9 +57,13 @@ public class NotificationCompletionResultsProcessor extends NotificationProcesso
 
     final List<String> includedElementKinds;
     final JsonElement includedElementKindsElement = paramsObject.get("includedElementKinds");
+    final JsonElement includedSuggestionKindsElement = paramsObject.get("includedSuggestionKinds");
     if (includedElementKindsElement != null) {
       final JsonArray includedElementKindsArray = includedElementKindsElement.getAsJsonArray();
       includedElementKinds = JsonUtilities.decodeStringList(includedElementKindsArray);
+    } else if (includedSuggestionKindsElement != null) {
+      final JsonArray includedSuggestionKindsArray = includedSuggestionKindsElement.getAsJsonArray();
+      includedElementKinds = JsonUtilities.decodeStringList(includedSuggestionKindsArray);
     } else {
       includedElementKinds = Collections.emptyList();
     }
