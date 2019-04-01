@@ -19,3 +19,15 @@ fun <T> tryRun(body: () -> T): T? = try {
 fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
 fun <T> List<T>.dropFirst() = this.drop(1)
+
+fun <T> buildList(body: MutableList<T>.() -> Unit): List<T> {
+    val result = ArrayList<T>()
+    result.body()
+    return result
+}
+
+fun <T> buildSet(body: MutableSet<T>.() -> Unit): Set<T> {
+    val result = HashSet<T>()
+    result.body()
+    return result
+}

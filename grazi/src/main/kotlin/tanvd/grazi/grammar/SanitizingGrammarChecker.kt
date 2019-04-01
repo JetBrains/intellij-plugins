@@ -1,7 +1,6 @@
 package tanvd.grazi.grammar
 
 import com.intellij.psi.PsiElement
-import tanvd.grazi.ide.language.LanguageSupport
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -15,7 +14,7 @@ class SanitizingGrammarChecker(private val ignoreIfPreviousEqual: List<Char>,
 
     fun <T : PsiElement> check(vararg tokens: T) = check(tokens.toList())
 
-    fun <T : PsiElement> check(tokens: List<T>, getText: (T) -> String = { it.text }): Set<LanguageSupport.Result> {
+    fun <T : PsiElement> check(tokens: Collection<T>, getText: (T) -> String = { it.text }): Set<Typo> {
         var resultText = ""
 
         val indexesShift = TreeMap<Int, Int> { ind, _ -> ind }
@@ -60,13 +59,13 @@ class SanitizingGrammarChecker(private val ignoreIfPreviousEqual: List<Char>,
         val fixes = GrammarEngine.getFixes(resultText)
 
         return fixes.mapNotNull { typo ->
-            val (range, firstToken) = tokenMapping.filter { typo.range.start in it.key }.entries.first()
-            val secondToken = tokenMapping.filter { typo.range.endInclusive in it.key }.values.firstOrNull()
+            val (range, firstToken) = tokenMapping.filter { typo.location.range.start in it.key }.entries.first()
+            val secondToken = tokenMapping.filter { typo.location.range.endInclusive in it.key }.values.firstOrNull()
             if (firstToken == secondToken) {
-                val startShift = indexesShift.filter { it.key <= typo.range.start }.values.lastOrNull() ?: 0
-                val endShift = indexesShift.filter { it.key <= typo.range.endInclusive }.values.lastOrNull() ?: 0
-                val newRange = IntRange(typo.range.start + startShift - range.start, typo.range.endInclusive + endShift - range.start)
-                LanguageSupport.Result(Typo(newRange, typo.hash, typo.description, typo.category, typo.fix), firstToken)
+                val startShift = indexesShift.filter { it.key <= typo.location.range.start }.values.lastOrNull() ?: 0
+                val endShift = indexesShift.filter { it.key <= typo.location.range.endInclusive }.values.lastOrNull() ?: 0
+                val newRange = IntRange(typo.location.range.start + startShift - range.start, typo.location.range.endInclusive + endShift - range.start)
+                typo.copy(location = typo.location.copy(range = newRange, element = firstToken))
             } else null
         }.toSet()
     }

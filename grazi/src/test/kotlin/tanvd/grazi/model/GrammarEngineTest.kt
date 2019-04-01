@@ -37,20 +37,20 @@ class GrammarEngineTest {
     fun testDifferentTypos() {
         val fixes = GrammarEngine.getFixes("Hello. world,, tot he")
         assertEquals(3, fixes.size)
-        assertEquals(Typo.Category.CASING, fixes[0].category)
-        assertEquals(Typo.Category.PUNCTUATION, fixes[1].category)
-        assertEquals(Typo.Category.TYPOS, fixes[2].category)
+        assertEquals(Typo.Category.CASING, fixes[0].info.category)
+        assertEquals(Typo.Category.PUNCTUATION, fixes[1].info.category)
+        assertEquals(Typo.Category.TYPOS, fixes[2].info.category)
     }
 
     @Test
     fun testRanges() {
         val fixes = GrammarEngine.getFixes("hello. world,, tot he.\nThis are my friend")
         assertEquals(5, fixes.size)
-        assertEquals(IntRange(0, 4), fixes[0].range)
-        assertEquals(IntRange(7, 11), fixes[1].range)
-        assertEquals(IntRange(12, 13), fixes[2].range)
-        assertEquals(IntRange(15, 20), fixes[3].range)
-        assertEquals(IntRange(23, 30), fixes[4].range)
+        assertEquals(IntRange(0, 4), fixes[0].location.range)
+        assertEquals(IntRange(7, 11), fixes[1].location.range)
+        assertEquals(IntRange(12, 13), fixes[2].location.range)
+        assertEquals(IntRange(15, 20), fixes[3].location.range)
+        assertEquals(IntRange(23, 30), fixes[4].location.range)
     }
 
     @Test

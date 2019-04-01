@@ -8,6 +8,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
+import tanvd.grazi.utils.buildSet
+import tanvd.grazi.utils.filterFor
 
 class JavaDocSupport : LanguageSupport {
     companion object {
@@ -18,29 +20,22 @@ class JavaDocSupport : LanguageSupport {
     //JavaDocSupport should ignore code fragments
     private fun isApplicableTag(token: PsiDocToken) = isTag(token) && ((token.parent as PsiDocTag).nameElement.text != "@code")
 
-    override fun isSupport(file: PsiFile): Boolean {
+    override fun isSupported(file: PsiFile): Boolean {
         return file is JavaCodeFragment
     }
 
-    override fun extract(file: PsiFile): List<LanguageSupport.Result> {
-        val docs = PsiTreeUtil.collectElementsOfType(file, PsiDocComment::class.java)
+    override fun check(file: PsiFile) = buildSet<Typo> {
+        val docs = file.filterFor<PsiDocComment>()
 
-        val result = ArrayList<LanguageSupport.Result>()
         for (doc in docs) {
-            result += SanitizingGrammarChecker.default.check(
-                    PsiTreeUtil.collectElementsOfType(doc, PsiDocToken::class.java)
-                            .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
-                            .filterNot { isTag(it) })
+            val allDocTokens = PsiTreeUtil.collectElementsOfType(doc, PsiDocToken::class.java)
+                    .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
+            addAll(SanitizingGrammarChecker.default.check(allDocTokens.filterNot { isTag(it) }))
 
-            result += SanitizingGrammarChecker.default.check(
-                    PsiTreeUtil.collectElementsOfType(doc, PsiDocToken::class.java)
-                            .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
-                            .filter { isApplicableTag(it) })
-                    .filter { it.typo.category !in tagsIgnoredCategories }
+            addAll(SanitizingGrammarChecker.default.check(allDocTokens.filter { isApplicableTag(it) })
+                    .filter { it.info.category !in tagsIgnoredCategories })
 
             ProgressManager.checkCanceled()
         }
-
-        return result
     }
 }

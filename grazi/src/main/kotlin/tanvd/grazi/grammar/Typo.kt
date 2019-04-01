@@ -2,23 +2,35 @@ package tanvd.grazi.grammar
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.ProblemGroup
+import com.intellij.psi.PsiElement
+import org.languagetool.rules.Rule
 import org.languagetool.rules.RuleMatch
-import tanvd.grazi.utils.toIntRange
-import tanvd.grazi.utils.typoCategory
+import tanvd.grazi.language.Lang
+import tanvd.grazi.utils.*
 
-data class Typo(var range: IntRange, val hash: Int, val description: String, val category: Category, val fix: List<String>? = null) {
-    constructor(match: RuleMatch, hash: Int) : this(match.toIntRange(), hash, match.rule.description, match.typoCategory, match.suggestedReplacements)
+data class Typo(val location: Location, val info: Info, val fix: List<String>? = null) {
+    data class Location(val range: IntRange, val element: PsiElement? = null, val hash: Int, val shouldUseRename: Boolean = false) {
+        fun withOffset(offset: Int) = copy(range = IntRange(range.start + offset, range.endInclusive + offset))
+    }
 
-    fun withOffset(offset: Int) = copy(range = IntRange(range.start + offset, range.endInclusive + offset))
 
-    val fullDescription: String
-        get() {
-            if (description.isBlank())
-                return category.description
-            if (description.contains(":"))
-                return description
-            return "${category.description}: $description"
-        }
+    data class Info(val lang: Lang, val rule: Rule, val description: String, val category: Category) {
+        val fullDescription: String
+            get() {
+                if (description.isBlank())
+                    return category.description
+                if (description.contains(":"))
+                    return description
+                return "${category.description}: $description"
+            }
+    }
+
+    val word by lazy { location.element!!.text.subSequence(location.range).toString() }
+
+    constructor(match: RuleMatch, lang: Lang, hash: Int, offset: Int = 0) : this(
+            Location(match.toIntRange().withOffset(offset), hash = hash),
+            Info(lang, match.rule, match.rule.description, match.typoCategory), match.suggestedReplacements)
+
 
     enum class Category(val value: String, val description: String) : ProblemGroup {
         /** Rules about detecting uppercase words where lowercase is required and vice versa.  */

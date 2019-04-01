@@ -53,6 +53,8 @@
                                  id="reference.settingsdialog.project.grazi"
                                  key="grazi.name" bundle="messages.Grazi"/>
 
+        <nameSuggestionProvider id="SpellCheckerSuggestions" implementation="tanvd.grazi.spellcheck.SpellCheckSuggestions" order="first"/>
+
     </extensions>
 
     <extensionPoints>

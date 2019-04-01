@@ -26,7 +26,7 @@ object GrammarEngine {
             } else {
                 getFixesSmall(s)
             }.map {
-                Typo(it.range.withOffset(cumulativeLen), it.hash, it.description, it.category, it.fix)
+                Typo(it.location.withOffset(cumulativeLen), it.info, it.fix)
             }
             result.addAll(stringFixes)
             cumulativeLen += s.length + curSeparator.length
@@ -41,14 +41,19 @@ object GrammarEngine {
 
         ProgressManager.checkCanceled()
 
-        val allFixes = tryRun { GrammarChecker[LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList())].check(str) }
+        val lang = LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList())
+        val allFixes = tryRun { GrammarChecker[lang].check(str) }
                 .orEmpty()
                 .filterNotNull()
-                .map { Typo(it, GrammarCache.hash(str)) }
+                .map { Typo(it, lang, GrammarCache.hash(str)) }
                 .let { LinkedHashSet(it) }
 
-        val withoutTypos = allFixes.filter { it.category != Typo.Category.TYPOS }
-        val verifiedTypos = allFixes.filter { it.category == Typo.Category.TYPOS }.filter { SpellChecker.check(str.subSequence(it.range).toString()).isNotEmpty() }
+        val withoutTypos = allFixes.filterNot { it.info.rule.isDictionaryBasedSpellingRule }
+        val verifiedTypos = allFixes.filter { it.info.rule.isDictionaryBasedSpellingRule }
+                .filter {
+                    str.subSequence(it.location.range).split(Regex("\\s"))
+                            .flatMap { part -> SpellChecker.check(part) }.isNotEmpty()
+                }
 
 
         val result = LinkedHashSet(withoutTypos + verifiedTypos)

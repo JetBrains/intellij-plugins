@@ -8,7 +8,7 @@
 //import tanvd.grazi.model.TextBlock
 //
 //class HtmlSupport : LanguageSupport() {
-//    override fun extract(file: PsiFile): List<TextBlock>? {
+//    override fun check(file: PsiFile): List<TextBlock>? {
 //        val htmlFile = file as? HtmlFileImpl ?: return null
 //        return collectParagraphs(htmlFile).map {
 //            TextBlock(it, it.text)

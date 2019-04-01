@@ -1,4 +1,4 @@
-package tanvd.grazi.ide
+package tanvd.grazi.ide.quickfix
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupManager
@@ -9,15 +9,16 @@ import com.intellij.lang.injection.InjectedLanguageManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.getInjectedEditorForInjectedFile
+import tanvd.grazi.grammar.Typo
 
 
-class GraziFixTypoQuickFix(private val ruleName: String, private val replacements: List<String>) : LocalQuickFix {
+class GraziReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix {
 
     override fun getName(): String {
-        return "Fix $ruleName rule mistake"
+        return "Fix ${typo.info.category.description} mistake"
     }
 
-    override fun getFamilyName(): String = "Fix typo"
+    override fun getFamilyName(): String = "Fix mistake"
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val element = descriptor.psiElement ?: return
@@ -36,7 +37,7 @@ class GraziFixTypoQuickFix(private val ruleName: String, private val replacement
                     val startOffset = getDocumentOffset(textRange.startOffset, documentLength)
                     editor.selectionModel.setSelection(startOffset, endOffset)
 
-                    val items = replacements.map { LookupElementBuilder.create(it) }
+                    val items = typo.fix!!.map { LookupElementBuilder.create(it) }
                     LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())
                 }
     }
