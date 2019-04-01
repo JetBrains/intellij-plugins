@@ -92,6 +92,6 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
 
   private data class MyPosition(val file: PsiFile, val offset: Int)
 
-  override val existedFile: String?
+  override val existedFile: String
     get() = "lib/active_support/core_ext/date/calculations.rb"
 }

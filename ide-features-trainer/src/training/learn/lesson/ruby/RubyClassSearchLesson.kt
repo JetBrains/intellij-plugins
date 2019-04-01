@@ -42,6 +42,6 @@ class RubyClassSearchLesson(module: Module) : KLesson("Class Search", module, "r
     return focusOwner is ExtendableTextField && focusOwner.text.toLowerCase() == expected.toLowerCase()
   }
 
-  override val existedFile: String?
+  override val existedFile: String
     get() = "lib/active_support.rb"
 }
