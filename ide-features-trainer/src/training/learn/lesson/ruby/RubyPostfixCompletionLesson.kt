@@ -42,7 +42,7 @@ end
         }
       }
       task("@user.save") {
-        text("Now choose the second item, <code>@user.save</code>")
+        text("Now choose the second item, <code>@user.save</code>.")
         stateCheck { editor.document.text == result }
         test {
           ideFrame {
