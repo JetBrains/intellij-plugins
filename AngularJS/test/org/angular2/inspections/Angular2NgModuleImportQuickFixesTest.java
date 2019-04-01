@@ -142,7 +142,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doTagCompletionTest("component.ts");
   }
 
-  public void testFormsModule() {
+  public void testFormsModule1() {
     doMultiFileTest("formsModule",
                     "test.html",
                     "[ngValue<caret>]",
@@ -150,7 +150,31 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "FormsModule - \"@angular/forms\"");
   }
 
-  public void testFormsModuleCompletion() {
+  public void testFormsModule2() {
+    doMultiFileTest("formsModule",
+                    "test.html",
+                    "ng<caret>Model",
+                    "Import Angular module...",
+                    "FormsModule - \"@angular/forms\"");
+  }
+
+  public void testFormsModule3() {
+    doMultiFileTest("formsModule",
+                    "test.html",
+                    "[ng<caret>Model]",
+                    "Import FormsModule",
+                    null);
+  }
+
+  public void testFormsModule4() {
+    doMultiFileTest("formsModule",
+                    "test.html",
+                    "[(ng<caret>Model)]",
+                    "Import FormsModule",
+                    null);
+  }
+
+  public void testFormsModuleCompletion1() {
     doCompletionTest("formsModule",
                      "test.html",
                      "[ngValue]=\"foo\"",
@@ -158,7 +182,31 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "FormsModule - \"@angular/forms\"");
   }
 
-  public void testReactiveFormsModule() {
+  public void testFormsModuleCompletion2() {
+    doCompletionTest("formsModule",
+                     "test.html",
+                     "ngModel ",
+                     "ngMod\n\b\b ",
+                     "FormsModule - \"@angular/forms\"");
+  }
+
+  public void testFormsModuleCompletion3() {
+    doCompletionTest("formsModule",
+                     "test.html",
+                     "[ngModel]=\"foo\"",
+                     "[ngMod\nfoo",
+                     null);
+  }
+
+  public void testFormsModuleCompletion4() {
+    doCompletionTest("formsModule",
+                     "test.html",
+                     "[(ngModel)]=\"foo\"",
+                     "[(ngMod\nfoo",
+                     null);
+  }
+
+  public void testReactiveFormsModule1() {
     doMultiFileTest("reactiveFormsModule",
                     "test.html",
                     "[ngValue<caret>]",
@@ -166,11 +214,27 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                     "ReactiveFormsModule - \"@angular/forms\"");
   }
 
-  public void testReactiveFormsModuleCompletion() {
+  public void testReactiveFormsModule2() {
+    doMultiFileTest("reactiveFormsModule",
+                    "test.html",
+                    "ng<caret>Model",
+                    "Import Angular module...",
+                    "ReactiveFormsModule - \"@angular/forms\"");
+  }
+
+  public void testReactiveFormsModuleCompletion1() {
     doCompletionTest("reactiveFormsModule",
                      "test.html",
                      "[ngValue]=\"foo\"",
                      "[ngVal\nfoo",
+                     "ReactiveFormsModule - \"@angular/forms\"");
+  }
+
+  public void testReactiveFormsModuleCompletion2() {
+    doCompletionTest("reactiveFormsModule",
+                     "test.html",
+                     "ngModel ",
+                     "ngMod\n\b\b ",
                      "ReactiveFormsModule - \"@angular/forms\"");
   }
 

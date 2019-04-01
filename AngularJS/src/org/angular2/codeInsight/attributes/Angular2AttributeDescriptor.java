@@ -411,7 +411,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return null;
   }
 
-  static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty property) {
+  public static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty property) {
     return !ONE_TIME_BINDING_EXCLUDES.contains(property.getName())
            && (property.isVirtual()
                || (property.getType() != null

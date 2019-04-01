@@ -24,7 +24,11 @@ import org.angular2.inspections.actions.Angular2ActionFactory;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser;
+import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
+import org.angular2.lang.html.psi.Angular2HtmlEvent;
+import org.angular2.lang.html.psi.PropertyBindingType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -35,6 +39,7 @@ import java.util.function.Supplier;
 
 import static com.intellij.util.ObjectUtils.notNull;
 import static com.intellij.util.ObjectUtils.tryCast;
+import static com.intellij.util.containers.ContainerUtil.exists;
 import static com.intellij.util.containers.ContainerUtil.getFirstItem;
 import static java.util.Objects.requireNonNull;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.*;
@@ -96,18 +101,49 @@ public class Angular2FixesFactory {
       if (attributeDescriptor == null) {
         return MultiMap.empty();
       }
+      AttributeInfo info = attributeDescriptor.getInfo();
       provider = new Angular2ApplicableDirectivesProvider(((XmlAttribute)element).getParent())::getMatched;
-      if (attributeDescriptor.getInfo().type == Angular2AttributeType.REFERENCE) {
-        secondaryProvider = null;
-        String exportName = ((XmlAttribute)element).getValue();
-        if (exportName == null || exportName.isEmpty()) {
+      secondaryProvider = info.type == Angular2AttributeType.REFERENCE ? null : attributeDescriptor::getSourceDirectives;
+
+      switch (info.type) {
+        case PROPERTY_BINDING:
+          if (((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType != PropertyBindingType.PROPERTY) {
+            return MultiMap.empty();
+          }
+          filter.set(declaration -> declaration instanceof Angular2Directive
+                                    && exists(((Angular2Directive)declaration).getInputs(),
+                                              input -> info.name.equals(input.getName())));
+          break;
+        case EVENT:
+          if (((Angular2AttributeNameParser.EventInfo)info).eventType != Angular2HtmlEvent.EventType.REGULAR) {
+            return MultiMap.empty();
+          }
+          filter.set(declaration -> declaration instanceof Angular2Directive
+                                    && exists(((Angular2Directive)declaration).getOutputs(),
+                                              output -> info.name.equals(output.getName())));
+        case BANANA_BOX_BINDING:
+          filter.set(declaration -> declaration instanceof Angular2Directive
+                                    && exists(((Angular2Directive)declaration).getInOuts(),
+                                              inout -> info.name.equals(inout.first.getName())));
+          break;
+        case REGULAR:
+          filter.set(declaration -> declaration instanceof Angular2Directive
+                                    && (exists(((Angular2Directive)declaration).getInputs(),
+                                               input -> info.name.equals(input.getName())
+                                                        && Angular2AttributeDescriptor.isOneTimeBindingProperty(input))
+                                        || exists(((Angular2Directive)declaration).getSelector().getSimpleSelectors(),
+                                                  selector -> exists(selector.getAttrNames(), info.name::equals))));
+          break;
+        case REFERENCE:
+          String exportName = ((XmlAttribute)element).getValue();
+          if (exportName == null || exportName.isEmpty()) {
+            return MultiMap.empty();
+          }
+          filter.set(declaration -> declaration instanceof Angular2Directive
+                                    && ((Angular2Directive)declaration).getExportAsList().contains(exportName));
+          break;
+        default:
           return MultiMap.empty();
-        }
-        filter.set(filter.get().and(declaration -> declaration instanceof Angular2Directive
-                                                   && ((Angular2Directive)declaration).getExportAsList().contains(exportName)));
-      }
-      else {
-        secondaryProvider = attributeDescriptor::getSourceDirectives;
       }
     }
     else if (element instanceof XmlTag) {
@@ -117,6 +153,13 @@ public class Angular2FixesFactory {
     else if (element instanceof Angular2TemplateBinding) {
       provider = new Angular2ApplicableDirectivesProvider((Angular2TemplateBindings)element.getParent())::getMatched;
       secondaryProvider = createSecondaryProvider((Angular2TemplateBindings)element.getParent());
+      if (((Angular2TemplateBinding)element).keyIsVar()) {
+        return MultiMap.empty();
+      }
+      String key = ((Angular2TemplateBinding)element).getKey();
+      filter.set(declaration -> declaration instanceof Angular2Directive
+                                && exists(((Angular2Directive)declaration).getInputs(),
+                                          input -> key.equals(input.getName())));
     }
     else if (element instanceof Angular2TemplateBindings) {
       provider = new Angular2ApplicableDirectivesProvider((Angular2TemplateBindings)element)::getMatched;
@@ -134,7 +177,6 @@ public class Angular2FixesFactory {
       throw new IllegalArgumentException(element.getClass().getName());
     }
     MultiMap<DeclarationProximity, Angular2Declaration> result = new MultiMap<>();
-
 
     Consumer<Supplier<List<? extends Angular2Declaration>>> declarationProcessor = p -> StreamEx.of(p.get())
       .filter(filter.get())
