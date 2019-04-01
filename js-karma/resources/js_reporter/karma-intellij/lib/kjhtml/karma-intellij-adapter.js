@@ -50,9 +50,7 @@
       jasmineEnv.configure(configuration);
     }
     else {
-      jasmineEnv.specFilter = function (spec) {
-        return filterPattern == null || filterPattern.test(spec.getFullName());
-      }
+      jasmineEnv.specFilter = specFilter;
     }
   };
 
