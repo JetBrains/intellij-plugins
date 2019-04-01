@@ -46,6 +46,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE;
+import static com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations.expandAndOptimizeTypeRecursive;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
@@ -327,10 +328,27 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
         directive.getInputs().forEach(property -> {
           JSExpression inputExpression = inputsMap.get(property.getName());
           if (inputExpression != null && property.getType() != null) {
-            JSGenericTypesEvaluatorBase.matchGenericTypes(
-              new JSGenericMappings(genericArguments), processingContext,
-                                    new JSLazyExpressionType(inputExpression, true), property.getType());
-            JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(property.getType()), null, null);
+            JSLazyExpressionType inputType = new JSLazyExpressionType(inputExpression, true);
+            if (inputType.getOriginalType() instanceof JSAnyType) {
+              // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.
+              // This is not correct according to TypeScript inferring rules for generics, but it's better for Angular type
+              // checking to be less strict here.
+              JSAnyType anyType = JSAnyType.get(inputType.getSource());
+              expandAndOptimizeTypeRecursive(property.getType()).accept(new JSRecursiveTypeVisitor(true) {
+                @Override
+                public void visitJSType(@NotNull JSType type) {
+                  if (type instanceof JSGenericParameterType) {
+                    genericArguments.putValue(((JSGenericParameterType)type).getGenericId(), anyType);
+                  }
+                  super.visitJSType(type);
+                }
+              });
+            }
+            else {
+              JSGenericTypesEvaluatorBase.matchGenericTypes(new JSGenericMappings(genericArguments), processingContext,
+                                                            inputType, property.getType());
+              JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(property.getType()), null, null);
+            }
           }
         });
       });

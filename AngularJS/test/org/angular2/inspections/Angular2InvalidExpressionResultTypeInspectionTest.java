@@ -3,6 +3,7 @@ package org.angular2.inspections;
 
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
+import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
@@ -20,6 +21,7 @@ public class Angular2InvalidExpressionResultTypeInspectionTest extends Angular2C
                                 AngularUndefinedBindingInspection.class,
                                 HtmlUnknownAttributeInspection.class,
                                 TypeScriptValidateTypesInspection.class,
+                                TypeScriptUnresolvedVariableInspection.class,
                                 TypeScriptUnresolvedFunctionInspection.class);
   }
 
@@ -46,6 +48,12 @@ public class Angular2InvalidExpressionResultTypeInspectionTest extends Angular2C
 
   public void testGenericsValidation() {
     myFixture.configureByFiles("generics.html", "generics.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
+  public void testNgForOfAnyType() {
+    myFixture.copyDirectoryToProject("node_modules", "./node_modules");
+    myFixture.configureByFiles("ngForOfAnyType.ts", "ng_for_of.ts", "package.json");
     myFixture.checkHighlighting();
   }
 }
