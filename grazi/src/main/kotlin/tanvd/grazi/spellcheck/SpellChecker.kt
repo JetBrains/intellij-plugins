@@ -25,7 +25,7 @@ object SpellChecker {
         }
     }
 
-    var checker: JLanguageTool = createChecker()
+    private var checker: JLanguageTool = createChecker()
 
     fun check(bigWord: String) = buildSet<Typo> {
         if (ignorePatters.any { it(bigWord) }) {
