@@ -1,0 +1,27 @@
+package tanvd.grazi.ide.language.python
+
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.PsiFile
+import com.jetbrains.python.psi.PyFile
+import com.jetbrains.python.psi.PyStringLiteralExpression
+import tanvd.grazi.grammar.SanitizingGrammarChecker
+import tanvd.grazi.grammar.Typo
+import tanvd.grazi.ide.language.LanguageSupport
+import tanvd.grazi.utils.buildSet
+import tanvd.grazi.utils.filterFor
+
+
+class PStringSupport : LanguageSupport {
+    override fun isSupported(file: PsiFile): Boolean {
+        return file is PyFile
+    }
+
+    override fun check(file: PsiFile) = buildSet<Typo> {
+        val docOwners = file.filterFor<PyStringLiteralExpression>()
+        for (doc in docOwners) {
+            addAll(SanitizingGrammarChecker.default.check(doc))
+
+            ProgressManager.checkCanceled()
+        }
+    }
+}

@@ -1,0 +1,6 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="tanvd.grazi">
+        <languageSupport implementation="tanvd.grazi.ide.language.python.PStringSupport"/>
+    </extensions>
+</idea-plugin>
+
