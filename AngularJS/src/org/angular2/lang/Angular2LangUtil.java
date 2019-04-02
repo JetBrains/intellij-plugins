@@ -1,10 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang;
 
-import com.intellij.javascript.nodejs.PackageJsonData;
-import com.intellij.javascript.nodejs.packageJson.PackageJsonFileManager;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -18,16 +15,16 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.testFramework.LightVirtualFileBase;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.hash.HashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES;
-import static org.angular2.lang.html.psi.impl.Angular2HtmlReferenceVariableImpl.ANGULAR_CORE_PACKAGE;
+import java.util.Set;
 
 public class Angular2LangUtil {
 
   @NonNls private static final Key<CachedValue<Boolean>> ANGULAR2_CONTEXT_KEY = new Key<>("angular2.isContext");
-  @NonNls private static final String NODE_MODULE_ANGULAR_CORE_PATH = "/" + NODE_MODULES + "/" + ANGULAR_CORE_PACKAGE + "/";
 
   public static boolean isAngular2Context(@NotNull PsiElement context) {
     if (!context.isValid()) {
@@ -60,9 +57,26 @@ public class Angular2LangUtil {
     if (psiDir == null) {
       return false;
     }
-    return CachedValuesManager.getCachedValue(psiDir, ANGULAR2_CONTEXT_KEY, () -> new CachedValueProvider.Result<>(
-      isAngular2ContextDir(psiDir),
-      PackageJsonFileManager.getInstance(project).getModificationTracker()));
+    return CachedValuesManager.getCachedValue(psiDir, ANGULAR2_CONTEXT_KEY, () -> {
+      Set<Object> dependencies = new HashSet<>();
+      boolean isContextDir = false;
+      for (Angular2ContextProvider provider : Angular2ContextProvider.ANGULAR_CONTEXT_PROVIDER_EP.getExtensionList()) {
+        CachedValueProvider.Result<Boolean> result = provider.isAngular2Context(psiDir);
+        // If any of the providers returns true, we need to keep only dependencies of those,
+        // which return true, otherwise we need to keep dependencies for all providers.
+        if (result.getValue()) {
+          if (!isContextDir) {
+            dependencies.clear();
+            isContextDir = true;
+          }
+          ContainerUtil.addAll(dependencies, result.getDependencyItems());
+        }
+        else if (!isContextDir) {
+          ContainerUtil.addAll(dependencies, result.getDependencyItems());
+        }
+      }
+      return new CachedValueProvider.Result<>(isContextDir, dependencies.toArray());
+    });
   }
 
   /**
@@ -72,27 +86,6 @@ public class Angular2LangUtil {
   public static boolean isAngular2Context(@NotNull Project project) {
     if (project.getBaseDir() != null) {
       return isAngular2Context(project, project.getBaseDir());
-    }
-    return false;
-  }
-
-  private static boolean isAngular2ContextDir(@NotNull PsiDirectory psiDir) {
-    VirtualFile dir = psiDir.getVirtualFile();
-    PackageJsonFileManager manager = PackageJsonFileManager.getInstance(psiDir.getProject());
-    String dirPath = dir.getPath() + "/";
-    for (VirtualFile config : manager.getValidPackageJsonFiles()) {
-      String configDirPath = config.getParent().getPath() + "/";
-      if (configDirPath.endsWith(NODE_MODULE_ANGULAR_CORE_PATH)) {
-        if (dirPath.startsWith(configDirPath.substring(0, configDirPath.length() - NODE_MODULE_ANGULAR_CORE_PATH.length()) + "/")) {
-          return true;
-        }
-      }
-      else if (dirPath.startsWith(configDirPath)) {
-        PackageJsonData data = PackageJsonUtil.getOrCreateData(config);
-        if (data.isDependencyOfAnyType(ANGULAR_CORE_PACKAGE)) {
-          return true;
-        }
-      }
     }
     return false;
   }
