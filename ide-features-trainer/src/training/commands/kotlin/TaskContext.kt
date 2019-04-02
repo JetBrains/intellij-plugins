@@ -53,9 +53,14 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
     steps.add(recorder.futureCheck { check.check() })
   }
 
-  /** Check that IDE state is as expected */
-  fun stateCheck(checkState: () -> Boolean) {
-    steps.add(recorder.futureCheck { checkState() })
+  /**
+   * Check that IDE state is as expected
+   * In some rare cases DSL could wish to complete a future by itself
+   */
+  fun stateCheck(checkState: () -> Boolean): CompletableFuture<Boolean> {
+    val future = recorder.futureCheck { checkState() }
+    steps.add(future)
+    return future
   }
 
   private fun <T : Any?> getCheck(calculateState: () -> T, checkState: (T, T) -> Boolean) : Check {
