@@ -59,23 +59,14 @@ public class Angular2LangUtil {
     }
     return CachedValuesManager.getCachedValue(psiDir, ANGULAR2_CONTEXT_KEY, () -> {
       Set<Object> dependencies = new HashSet<>();
-      boolean isContextDir = false;
       for (Angular2ContextProvider provider : Angular2ContextProvider.ANGULAR_CONTEXT_PROVIDER_EP.getExtensionList()) {
         CachedValueProvider.Result<Boolean> result = provider.isAngular2Context(psiDir);
-        // If any of the providers returns true, we need to keep only dependencies of those,
-        // which return true, otherwise we need to keep dependencies for all providers.
         if (result.getValue()) {
-          if (!isContextDir) {
-            dependencies.clear();
-            isContextDir = true;
-          }
-          ContainerUtil.addAll(dependencies, result.getDependencyItems());
+          return result;
         }
-        else if (!isContextDir) {
-          ContainerUtil.addAll(dependencies, result.getDependencyItems());
-        }
+        ContainerUtil.addAll(dependencies, result.getDependencyItems());
       }
-      return new CachedValueProvider.Result<>(isContextDir, dependencies.toArray());
+      return new CachedValueProvider.Result<>(false, dependencies.toArray());
     });
   }
 
