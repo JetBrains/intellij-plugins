@@ -40,7 +40,7 @@
 
     <project-components>
         <component>
-            <implementation-class>tanvd.grazi.ide.notification.GraziUpdateComponent</implementation-class>
+            <implementation-class>tanvd.grazi.ide.notification.GraziNotificationComponent</implementation-class>
         </component>
     </project-components>
 
@@ -59,7 +59,7 @@
 
         <applicationConfigurable groupId="tools" instance="tanvd.grazi.ide.ui.GraziConfigurable"
                                  id="reference.settingsdialog.project.grazi"
-                                 key="grazi.name" bundle="messages.Grazi"/>
+                                 key="grazi.name" bundle="messages.GraziBundle"/>
 
         <nameSuggestionProvider id="SpellCheckerSuggestions" implementation="tanvd.grazi.spellcheck.SpellCheckSuggestions" order="first"/>
 
@@ -71,6 +71,8 @@
 
     <extensions defaultExtensionNs="tanvd.grazi">
         <languageSupport implementation="tanvd.grazi.ide.language.PlainTextSupport"/>
+
+        <languageSupport implementation="tanvd.grazi.ide.language.XmlSupport"/>
 
         <languageSupport implementation="tanvd.grazi.ide.language.java.JDocSupport"/>
         <languageSupport implementation="tanvd.grazi.ide.language.java.JStringSupport"/>
