@@ -61,7 +61,7 @@ public class Angular2LangUtil {
       Set<Object> dependencies = new HashSet<>();
       for (Angular2ContextProvider provider : Angular2ContextProvider.ANGULAR_CONTEXT_PROVIDER_EP.getExtensionList()) {
         CachedValueProvider.Result<Boolean> result = provider.isAngular2Context(psiDir);
-        if (result.getValue()) {
+        if (result.getValue() == Boolean.TRUE) {
           return result;
         }
         ContainerUtil.addAll(dependencies, result.getDependencyItems());
