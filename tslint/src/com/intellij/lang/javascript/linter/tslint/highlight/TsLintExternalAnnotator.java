@@ -136,7 +136,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       result = JSLanguageServiceUtil.awaitLanguageService(future, service);
     }
     catch (ExecutionException e) {
-      return JSLinterAnnotationResult.create(collectedInfo, new JSLinterFileLevelAnnotation(e.getMessage()), config);
+      return createGlobalErrorMessage(collectedInfo, config, e.getMessage());
     }
     if (result == null || result.isEmpty()) return null;
 
