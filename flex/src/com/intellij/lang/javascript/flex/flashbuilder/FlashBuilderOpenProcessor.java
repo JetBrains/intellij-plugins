@@ -23,6 +23,7 @@ public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<Fl
     return ProjectImportBuilder.EXTENSIONS_POINT_NAME.findExtensionOrFail(FlashBuilderImporter.class);
   }
 
+  @NotNull
   @Override
   public String[] getSupportedExtensions() {
     // This method is called from:
@@ -34,7 +35,7 @@ public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<Fl
 
   @Override
   @Nullable
-  public Icon getIcon(final VirtualFile file) {
+  public Icon getIcon(@NotNull final VirtualFile file) {
     if ("zip".equalsIgnoreCase(file.getExtension())) return null; // standard icon is better for zip, it is not Flash Builder specific extension
     return super.getIcon(file);
   }
@@ -48,7 +49,7 @@ public final class FlashBuilderOpenProcessor extends ProjectOpenProcessorBase<Fl
   }
 
   @Override
-  protected boolean doQuickImport(final VirtualFile file, final WizardContext wizardContext) {
+  protected boolean doQuickImport(@NotNull final VirtualFile file, @NotNull final WizardContext wizardContext) {
     assert !file.isDirectory() : file.getPath();
     final String title = FlexBundle.message("open.project.0", file.getName());
 
