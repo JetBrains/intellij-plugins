@@ -31,6 +31,8 @@
   <extensionPoints>
     <extensionPoint qualifiedName="org.angular2.attributesProvider"
                     interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"/>
+    <extensionPoint qualifiedName="org.angular2.contextProvider"
+                    interface="org.angular2.lang.Angular2ContextProvider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -211,7 +213,8 @@
     <xml.xmlSuppressionProvider implementation="org.angular2.inspections.Angular2HtmlSuppressionProvider" order="first"/>
 
     <!-- Angular 2 Expression Language contributions -->
-    <lang.syntaxHighlighterFactory language="Angular2" implementationClass="org.angular2.lang.expr.highlighting.Angular2HighlighterFactory"/>
+    <lang.syntaxHighlighterFactory language="Angular2"
+                                   implementationClass="org.angular2.lang.expr.highlighting.Angular2HighlighterFactory"/>
     <codeInsight.template.postfixTemplateProvider language="Angular2"
                                                   implementationClass="com.intellij.codeInsight.template.postfix.templates.EmptyPostfixTemplateProvider"/>
     <lang.parserDefinition language="Angular2" implementationClass="org.angular2.lang.expr.parser.Angular2ParserDefinition"/>
@@ -260,6 +263,7 @@
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BoundHtmlAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2ExtendedKeyEventAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
+    <contextProvider implementation="org.angular2.lang.Angular2PackageJsonContextProvider"/>
   </extensions>
 
   <actions>
