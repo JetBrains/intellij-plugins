@@ -4,11 +4,13 @@ package org.angular2.lang;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.util.CachedValueProvider;
+import org.jetbrains.annotations.NotNull;
 
 public interface Angular2ContextProvider {
 
   ExtensionPointName<Angular2ContextProvider> ANGULAR_CONTEXT_PROVIDER_EP =
     ExtensionPointName.create("org.angular2.contextProvider");
 
-  CachedValueProvider.Result<Boolean> isAngular2Context(PsiDirectory directory);
+  @NotNull
+  CachedValueProvider.Result<Boolean> isAngular2Context(@NotNull PsiDirectory directory);
 }

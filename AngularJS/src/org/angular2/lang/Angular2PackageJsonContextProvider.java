@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.util.CachedValueProvider;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES;
 import static org.angular2.lang.html.psi.impl.Angular2HtmlReferenceVariableImpl.ANGULAR_CORE_PACKAGE;
@@ -16,8 +17,9 @@ public class Angular2PackageJsonContextProvider implements Angular2ContextProvid
 
   @NonNls private static final String NODE_MODULE_ANGULAR_CORE_PATH = "/" + NODE_MODULES + "/" + ANGULAR_CORE_PACKAGE + "/";
 
+  @NotNull
   @Override
-  public CachedValueProvider.Result<Boolean> isAngular2Context(PsiDirectory psiDir) {
+  public CachedValueProvider.Result<Boolean> isAngular2Context(@NotNull PsiDirectory psiDir) {
     VirtualFile dir = psiDir.getVirtualFile();
     PackageJsonFileManager manager = PackageJsonFileManager.getInstance(psiDir.getProject());
     String dirPath = dir.getPath() + "/";
