@@ -6,6 +6,7 @@ import com.intellij.openapi.extensions.PluginId
 import tanvd.grazi.grammar.GrammarCache
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.spellcheck.SpellChecker
+import tanvd.grazi.spellcheck.SpellCheckerCache
 
 class GraziPlugin : BaseComponent {
     companion object {
@@ -23,7 +24,9 @@ class GraziPlugin : BaseComponent {
         fun invalidateCaches() {
             GrammarCache.reset()
             GrammarChecker.reset()
+
             SpellChecker.reset()
+            SpellCheckerCache.reset()
         }
     }
 

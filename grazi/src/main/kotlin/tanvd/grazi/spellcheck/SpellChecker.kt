@@ -33,12 +33,19 @@ object SpellChecker {
         for ((bigWordRange, bigWord) in text.splitWithRanges(whiteSpaceSeparators)) {
             if (ignorePatters.any { it(bigWord) }) continue
 
+            if (SpellCheckerCache.contains(bigWord)) {
+                addAll(SpellCheckerCache.get(bigWord))
+                return@buildSet
+            }
+
             for ((onePieceWordRange, onePieceWord) in bigWord.splitWithRanges(nameSeparators, insideOf = bigWordRange)) {
                 for ((inWordRange, word) in onePieceWord.splitCamelCase(insideOf = onePieceWordRange)) {
                     val match = tryRun { checker.check(word.toLowerCase()) }?.firstOrNull()
                     match?.let { add(Typo(it, checkerLang, GrammarCache.hash(word), inWordRange.start)) }
                 }
             }
+
+            SpellCheckerCache.put(bigWord, LinkedHashSet(this))
         }
     }
 

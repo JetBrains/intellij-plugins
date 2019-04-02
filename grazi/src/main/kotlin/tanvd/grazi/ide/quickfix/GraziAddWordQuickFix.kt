@@ -4,8 +4,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import tanvd.grazi.grammar.*
-import tanvd.grazi.spellcheck.SpellChecker
-import tanvd.grazi.spellcheck.SpellDictionary
+import tanvd.grazi.spellcheck.*
 
 
 class GraziAddWordQuickFix(private val typo: Typo) : LocalQuickFix {
@@ -20,6 +19,8 @@ class GraziAddWordQuickFix(private val typo: Typo) : LocalQuickFix {
         SpellDictionary.usersCustom().add(typo.word.toLowerCase())
         GrammarCache.reset()
         GrammarChecker.reset()
+
+        SpellCheckerCache.reset()
         SpellChecker.reset()
     }
 }

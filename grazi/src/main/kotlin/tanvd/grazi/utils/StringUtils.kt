@@ -26,13 +26,15 @@ fun String.splitWithRanges(vararg separators: Char, insideOf: IntRange? = null) 
 /** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */
 fun String.splitWithRanges(separators: List<Char>, insideOf: IntRange? = null, ignoreBlank: Boolean = true): List<Pair<IntRange, String>> = buildList {
     var word = ""
-    var offset = insideOf?.start ?: 0
+    val offset = insideOf?.start ?: 0
     for ((index, char) in this@splitWithRanges.withIndex()) {
         if (char in separators) {
             if (ignoreBlank && word.isBlank()) {
+                word = ""
                 continue
             }
             add(IntRange(index - word.length, index).withOffset(offset) to word)
+            word = ""
             continue
         }
         word += char
