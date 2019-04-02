@@ -10,8 +10,7 @@ object GrammarEngine {
     private const val maxChars = 1000
     private const val minChars = 2
 
-    private val separators = listOf("\n", "?", "!", ".", " ")
-
+    private val separators = listOf('\n', '?', '!', '.', ' ', '\t')
 
     /** Grammar checker will perform only spellcheck for sentences with less words */
     private const val minNumberOfWords = 3
@@ -19,39 +18,41 @@ object GrammarEngine {
     private fun isSmall(str: String) = str.length < minChars
     private fun isBig(str: String) = str.length > maxChars
 
-    fun getFixes(str: String, seps: List<String> = separators): List<Typo> = buildList {
-        if (str.split(" ").size < minNumberOfWords) {
-            if (str.isBlankWithNewLines().not()) {
-                addAll(SpellChecker.check(str))
-            }
-            return@buildList
+    fun getFixes(str: String, seps: List<Char> = separators): Set<Typo> = buildSet {
+        if (str.isBlankWithNewLines()) return@buildSet
+
+        if (str.split(Regex("\\s+")).size < minNumberOfWords) {
+            addAll(SpellChecker.check(str))
+            return@buildSet
         }
 
 
         val curSeparator = seps.first()
 
-        var cumulativeLen = 0
-        for (s in str.split(curSeparator)) {
-            val stringFixes: List<Typo> = if (isBig(s) && seps.isNotEmpty()) {
-                getFixes(s, seps.dropFirst())
+        for ((range, sentence) in str.splitWithRanges(curSeparator)) {
+            val stringFixes = if (isBig(sentence) && seps.isNotEmpty()) {
+                getFixes(sentence, seps.dropFirst())
             } else {
-                getFixesSmall(s)
+                getFixesSmall(sentence)
             }.map {
-                Typo(it.location.withOffset(cumulativeLen), it.info, it.fix)
+                Typo(it.location.withOffset(range.start), it.info, it.fix)
             }
             addAll(stringFixes)
-            cumulativeLen += s.length + curSeparator.length
         }
     }
 
-    private fun getFixesSmall(str: String): LinkedHashSet<Typo> {
-        if (isSmall(str)) return LinkedHashSet()
+    private fun getFixesSmall(str: String) = buildSet<Typo> {
+        if (isSmall(str)) return@buildSet
 
-        if (GrammarCache.contains(str)) return GrammarCache.get(str)
+        if (GrammarCache.contains(str)) {
+            addAll(GrammarCache.get(str))
+            return@buildSet
+        }
 
         ProgressManager.checkCanceled()
 
         val lang = LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList())
+
         val allFixes = tryRun { GrammarChecker[lang].check(str) }
                 .orEmpty()
                 .filterNotNull()
@@ -66,10 +67,8 @@ object GrammarEngine {
                 }
 
 
-        val result = LinkedHashSet(withoutTypos + verifiedTypos)
+        addAll(withoutTypos + verifiedTypos)
 
-        GrammarCache.put(str, result)
-
-        return result
+        GrammarCache.put(str, LinkedHashSet(this))
     }
 }

@@ -17,9 +17,9 @@ class GraziAddWordQuickFix(private val typo: Typo) : LocalQuickFix {
     override fun getFamilyName(): String = "Save word"
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-        SpellDictionary.usersCustom().add(typo.word)
-        GrammarCache.invalidate(typo.location.hash)
-        GrammarChecker.clear()
+        SpellDictionary.usersCustom().add(typo.word.toLowerCase())
+        GrammarCache.reset()
+        GrammarChecker.reset()
         SpellChecker.reset()
     }
 }

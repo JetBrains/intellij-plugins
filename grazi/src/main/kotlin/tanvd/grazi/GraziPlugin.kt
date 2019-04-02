@@ -22,7 +22,7 @@ class GraziPlugin : BaseComponent {
 
         fun invalidateCaches() {
             GrammarCache.reset()
-            GrammarChecker.clear()
+            GrammarChecker.reset()
             SpellChecker.reset()
         }
     }

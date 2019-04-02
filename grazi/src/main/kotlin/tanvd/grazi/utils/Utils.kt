@@ -27,7 +27,7 @@ fun <T> buildList(body: MutableList<T>.() -> Unit): List<T> {
 }
 
 fun <T> buildSet(body: MutableSet<T>.() -> Unit): Set<T> {
-    val result = HashSet<T>()
+    val result = LinkedHashSet<T>()
     result.body()
     return result
 }

@@ -23,7 +23,7 @@ object GrammarChecker {
         }
     }
 
-    fun clear() {
+    fun reset() {
         langs.clear()
     }
 

@@ -29,55 +29,18 @@ object SpellChecker {
 
     private var checker: JLanguageTool = createChecker()
 
-    fun check(bigWord: String) = buildSet<Typo> {
-        var word = ""
-        var cumulativeIndex = 0
-        for (char in bigWord) {
-            if (char in whiteSpaceSeparators) {
-                if (word.isNotEmpty()) {
-                    addAll(checkSplitting(word, cumulativeIndex))
+    fun check(text: String) = buildSet<Typo> {
+        for ((bigWordRange, bigWord) in text.splitWithRanges(whiteSpaceSeparators)) {
+            if (ignorePatters.any { it(bigWord) }) continue
+
+            for ((onePieceWordRange, onePieceWord) in bigWord.splitWithRanges(nameSeparators, insideOf = bigWordRange)) {
+                for ((inWordRange, word) in onePieceWord.splitCamelCase(insideOf = onePieceWordRange)) {
+                    val match = tryRun { checker.check(word.toLowerCase()) }?.firstOrNull()
+                    match?.let { add(Typo(it, checkerLang, GrammarCache.hash(word), inWordRange.start)) }
                 }
-                cumulativeIndex++
-                continue
             }
-            word += char
-        }
-        if (word.isNotEmpty()) {
-            addAll(checkSplitting(word, cumulativeIndex))
         }
     }
-
-    private fun checkSplitting(bigWord: String, offset: Int) = buildSet<Typo> {
-        if (ignorePatters.any { it(bigWord) }) {
-            return@buildSet
-        }
-
-        var word = ""
-        var cumulativeIndex = offset
-        for (char in bigWord) {
-            if (char in nameSeparators) {
-                if (word.isNotEmpty()) {
-                    addAll(checkOnePiece(word, cumulativeIndex))
-                }
-                cumulativeIndex++
-                continue
-            }
-            word += char
-        }
-        if (word.isNotEmpty()) {
-            addAll(checkOnePiece(word, cumulativeIndex))
-        }
-    }
-
-    private fun checkOnePiece(onePieceWord: String, offset: Int) = buildSet<Typo> {
-        var cumulativeIndex = 0
-        for (word in onePieceWord.splitCamelCase()) {
-            val match = checker.check(word).firstOrNull()
-            match?.let { add(Typo(it, checkerLang, GrammarCache.hash(word), offset + cumulativeIndex)) }
-            cumulativeIndex += word.length
-        }
-    }
-
 
     fun reset() {
         checker = createChecker()
