@@ -12,13 +12,24 @@ object GrammarEngine {
 
     private val separators = listOf("\n", "?", "!", ".", " ")
 
+
+    /** Grammar checker will perform only spellcheck for sentences with less words */
+    private const val minNumberOfWords = 3
+
     private fun isSmall(str: String) = str.length < minChars
     private fun isBig(str: String) = str.length > maxChars
 
-    fun getFixes(str: String, seps: List<String> = separators): List<Typo> {
+    fun getFixes(str: String, seps: List<String> = separators): List<Typo> = buildList {
+        if (str.split(" ").size < minNumberOfWords) {
+            if (str.isBlankWithNewLines().not()) {
+                addAll(SpellChecker.check(str))
+            }
+            return@buildList
+        }
+
+
         val curSeparator = seps.first()
 
-        val result = LinkedHashSet<Typo>()
         var cumulativeLen = 0
         for (s in str.split(curSeparator)) {
             val stringFixes: List<Typo> = if (isBig(s) && seps.isNotEmpty()) {
@@ -28,10 +39,9 @@ object GrammarEngine {
             }.map {
                 Typo(it.location.withOffset(cumulativeLen), it.info, it.fix)
             }
-            result.addAll(stringFixes)
+            addAll(stringFixes)
             cumulativeLen += s.length + curSeparator.length
         }
-        return result.toList()
     }
 
     private fun getFixesSmall(str: String): LinkedHashSet<Typo> {

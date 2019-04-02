@@ -4,7 +4,6 @@ package tanvd.grazi.ide.language.java
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
 import com.intellij.psi.javadoc.*
-import com.intellij.psi.util.PsiTreeUtil
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport

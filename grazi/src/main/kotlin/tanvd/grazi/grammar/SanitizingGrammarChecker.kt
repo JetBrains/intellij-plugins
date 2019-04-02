@@ -1,12 +1,14 @@
 package tanvd.grazi.grammar
 
 import com.intellij.psi.PsiElement
+import tanvd.grazi.utils.isBlankWithNewLines
 import java.util.*
 import kotlin.collections.HashMap
 
 class SanitizingGrammarChecker(private val ignoreIfPreviousEqual: List<Char>,
                                private val ignores: List<Char>,
-                               private val replaces: Map<Char, Char>) {
+                               private val replaces: Map<Char, Char>,
+                               private val shouldIgnoreBlanks: Boolean = true) {
 
     companion object {
         val default = SanitizingGrammarChecker(listOf(' '), listOf('\t', '*'), mapOf('\n' to ' '))
@@ -22,7 +24,7 @@ class SanitizingGrammarChecker(private val ignoreIfPreviousEqual: List<Char>,
 
         var index = 0
         var previous: Char? = null
-        for (token in tokens.filter { it.text.isNotBlank() }) {
+        for (token in tokens.filter { !shouldIgnoreBlanks || it.text.isBlankWithNewLines().not() }) {
             val tokenStartIndex = index
             var totalExcluded = 0
             for (char in getText(token)) {
