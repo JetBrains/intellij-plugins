@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.ObjectUtils;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2DecoratorUtil;
@@ -47,8 +48,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   public Angular2DirectiveSelector getSelector() {
     return getCachedValue(() -> {
       JSProperty property = Angular2DecoratorUtil.getProperty(getDecorator(), Angular2DecoratorUtil.SELECTOR_PROP);
+      String value = null;
       if (property != null) {
-        String value;
         JSLiteralExpression initializer;
         JSPropertyStub stub = ((JSPropertyImpl)property).getStub();
         if (stub != null) {
@@ -67,8 +68,10 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
           return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(
             initializer, StringUtil.unquoteString(value), p -> new TextRange(1 + p.second, 1 + p.second + p.first.length())), property);
         }
+        value = AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(),
+                                                       () -> Angular2DecoratorUtil.getExpressionStringValue(property.getValue()));
       }
-      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), null, a -> new TextRange(0, 0)),
+      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), value, a -> new TextRange(0, 0)),
                                                getDecorator());
     });
   }
