@@ -1,17 +1,17 @@
-package tanvd.grazi.spellcheck
+package tanvd.grazi.utils
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
 import tanvd.grazi.grammar.Typo
 
-object SpellCheckerCache {
-    private const val cacheSize = 50_000L
+class TypoCache(cacheSize: Long) {
+    companion object {
+        fun hash(string: String) = string.hashCode()
+    }
 
     private val cache: LoadingCache<Int, LinkedHashSet<Typo>> = Caffeine.newBuilder()
             .maximumSize(cacheSize)
             .build { null }
-
-    fun hash(str: String) = str.hashCode()
 
     fun contains(str: String) = cache.getIfPresent(hash(str)) != null
 

@@ -17,10 +17,10 @@ class GraziAddWordQuickFix(private val typo: Typo) : LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         SpellDictionary.usersCustom().add(typo.word.toLowerCase())
-        GrammarCache.reset()
+
+        GrammarEngine.reset()
         GrammarChecker.reset()
 
-        SpellCheckerCache.reset()
         SpellChecker.reset()
     }
 }

@@ -10,6 +10,8 @@ object GrammarEngine {
     private const val maxChars = 1000
     private const val minChars = 2
 
+    private val cache = TypoCache(50_000L)
+
     private val separators = listOf('\n', '?', '!', '.', ' ', '\t')
 
     /** Grammar checker will perform only spellcheck for sentences with less words */
@@ -44,8 +46,8 @@ object GrammarEngine {
     private fun getFixesSmall(str: String) = buildSet<Typo> {
         if (isSmall(str)) return@buildSet
 
-        if (GrammarCache.contains(str)) {
-            addAll(GrammarCache.get(str))
+        if (cache.contains(str)) {
+            addAll(cache.get(str))
             return@buildSet
         }
 
@@ -56,7 +58,7 @@ object GrammarEngine {
         val allFixes = tryRun { GrammarChecker[lang].check(str) }
                 .orEmpty()
                 .filterNotNull()
-                .map { Typo(it, lang, GrammarCache.hash(str)) }
+                .map { Typo(it, lang, TypoCache.hash(str)) }
                 .let { LinkedHashSet(it) }
 
         val withoutTypos = allFixes.filterNot { it.info.rule.isDictionaryBasedSpellingRule }
@@ -69,6 +71,10 @@ object GrammarEngine {
 
         addAll(withoutTypos + verifiedTypos)
 
-        GrammarCache.put(str, LinkedHashSet(this))
+        cache.put(str, LinkedHashSet(this))
+    }
+
+    fun reset() {
+        cache.reset()
     }
 }

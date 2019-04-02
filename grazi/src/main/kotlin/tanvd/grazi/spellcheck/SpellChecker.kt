@@ -2,7 +2,6 @@ package tanvd.grazi.spellcheck
 
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.grammar.GrammarCache
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.language.Lang
 import tanvd.grazi.utils.*
@@ -13,6 +12,8 @@ object SpellChecker {
     private const val cacheMaxSize = 30_000L
     private const val cacheExpireAfterMinutes = 5
     private val checkerLang = Lang.ENGLISH
+
+    private val cache = TypoCache(50_000L)
 
     private val whiteSpaceSeparators = listOf(' ', '\t')
     private val nameSeparators = listOf('.', '_')
@@ -33,23 +34,24 @@ object SpellChecker {
         for ((bigWordRange, bigWord) in text.splitWithRanges(whiteSpaceSeparators)) {
             if (ignorePatters.any { it(bigWord) }) continue
 
-            if (SpellCheckerCache.contains(bigWord)) {
-                addAll(SpellCheckerCache.get(bigWord))
+            if (cache.contains(bigWord)) {
+                addAll(cache.get(bigWord))
                 return@buildSet
             }
 
             for ((onePieceWordRange, onePieceWord) in bigWord.splitWithRanges(nameSeparators, insideOf = bigWordRange)) {
                 for ((inWordRange, word) in onePieceWord.splitCamelCase(insideOf = onePieceWordRange)) {
                     val match = tryRun { checker.check(word.toLowerCase()) }?.firstOrNull()
-                    match?.let { add(Typo(it, checkerLang, GrammarCache.hash(word), inWordRange.start)) }
+                    match?.let { add(Typo(it, checkerLang, TypoCache.hash(word), inWordRange.start)) }
                 }
             }
 
-            SpellCheckerCache.put(bigWord, LinkedHashSet(this))
+            cache.put(bigWord, LinkedHashSet(this))
         }
     }
 
     fun reset() {
         checker = createChecker()
+        cache.reset()
     }
 }
