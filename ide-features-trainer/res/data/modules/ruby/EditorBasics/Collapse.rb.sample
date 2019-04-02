@@ -9,6 +9,6 @@ class Fred
   end
 
   def get
-    return @val
+    @val
   end
 end
