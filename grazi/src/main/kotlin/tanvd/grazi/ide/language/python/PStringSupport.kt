@@ -11,14 +11,16 @@ import tanvd.grazi.utils.filterFor
 
 
 class PStringSupport : LanguageSupport {
+    private val disabledRules = setOf("UPPERCASE_SENTENCE_START")
+
     override fun isSupported(file: PsiFile): Boolean {
         return file is PyFile
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {
         val strLiterals = file.filterFor<PyStringLiteralExpression>()
-        for (strElements in strLiterals.map{ it.stringElements }) {  // .filter{ !it.isDocString }
-            addAll(PUtils.python.check(strElements))
+        for (strElements in strLiterals.filter{ !it.isDocString }.map{ it.stringElements }) {
+            addAll(PUtils.python.check(strElements).filter{ it.info.rule.id !in disabledRules })
 
             ProgressManager.checkCanceled()
         }

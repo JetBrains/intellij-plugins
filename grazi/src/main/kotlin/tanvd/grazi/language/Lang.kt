@@ -12,7 +12,7 @@ enum class Lang(val shortCode: String,
                 private val disabledRules: Set<String> = emptySet()) {
     ENGLISH("en", BritishEnglish(),
             setOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE"),
-            setOf("WORD_CONTAINS_UNDERSCORE")),
+            setOf("WORD_CONTAINS_UNDERSCORE", "EN_QUOTES")),
     RUSSIAN("ru", Russian(),
             setOf("ABREV_DOT2", "KAK_VVODNOE", "PARTICLE_JE", "po_povodu_togo", "tak_skazat", "kak_bi", "O_tom_chto", "kosvennaja_rech")),
     PERSIAN("fa"),

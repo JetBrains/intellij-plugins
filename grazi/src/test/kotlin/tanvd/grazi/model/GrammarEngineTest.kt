@@ -60,6 +60,12 @@ class GrammarEngineTest {
     }
 
     @Test
+    fun testTextWithRedundancy() {
+        val fixes = GrammarEngine.getFixes("Now that it is daylight let him jump so that hell fill the sacks along his backbone with air and then he cannot go deep to die.")
+        assertEquals(Typo.Category.REDUNDANCY, fixes[0].info.category)
+    }
+
+    @Test
     fun testCachedMiddle() {
         val text = File("src/test/resources/english_big.txt").readText()
         val grammar = GrammarEngine
