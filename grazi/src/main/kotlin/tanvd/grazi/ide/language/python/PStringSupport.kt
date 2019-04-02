@@ -4,7 +4,6 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.jetbrains.python.psi.PyFile
 import com.jetbrains.python.psi.PyStringLiteralExpression
-import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.utils.buildSet
@@ -17,9 +16,9 @@ class PStringSupport : LanguageSupport {
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {
-        val docOwners = file.filterFor<PyStringLiteralExpression>()
-        for (doc in docOwners) {
-            addAll(SanitizingGrammarChecker.default.check(doc))
+        val strLiterals = file.filterFor<PyStringLiteralExpression>()
+        for (strElements in strLiterals.map{ it.stringElements }) {  // .filter{ !it.isDocString }
+            addAll(PUtils.python.check(strElements))
 
             ProgressManager.checkCanceled()
         }

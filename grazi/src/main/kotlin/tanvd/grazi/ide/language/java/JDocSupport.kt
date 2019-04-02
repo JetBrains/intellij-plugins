@@ -28,7 +28,7 @@ class JDocSupport : LanguageSupport {
         val docs = file.filterFor<PsiDocComment>()
 
         for (doc in docs) {
-            val allDocTokens = PsiTreeUtil.collectElementsOfType(doc, PsiDocToken::class.java)
+            val allDocTokens = doc.filterFor<PsiDocToken>()
                     .filter { (it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA) }
             addAll(SanitizingGrammarChecker.default.check(allDocTokens.filterNot { isTag(it) }))
 
