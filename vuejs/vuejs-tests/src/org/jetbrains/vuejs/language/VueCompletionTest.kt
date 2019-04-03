@@ -18,6 +18,7 @@ import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.lang.javascript.JSLightCompletionTestBase
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
@@ -1122,54 +1123,7 @@ Pair("""<template>
 """)
       myFixture.completeBasic()
 
-      assertSameElements(myFixture.lookupElementStrings!!, listOf("[Symbol.iterator]",
-                                                                  "anchor",
-                                                                  "big",
-                                                                  "blink",
-                                                                  "bold",
-                                                                  "charAt",
-                                                                  "charCodeAt",
-                                                                  "codePointAt",
-                                                                  "concat",
-                                                                  "constructor",
-                                                                  "endsWith",
-                                                                  "fixed",
-                                                                  "fontcolor",
-                                                                  "fontsize",
-                                                                  "hasOwnProperty",
-                                                                  "includes",
-                                                                  "indexOf",
-                                                                  "isPrototypeOf",
-                                                                  "italics",
-                                                                  "lastIndexOf",
-                                                                  "length",
-                                                                  "link",
-                                                                  "localeCompare",
-                                                                  "match",
-                                                                  "normalize",
-                                                                  "padEnd",
-                                                                  "padStart",
-                                                                  "propertyIsEnumerable",
-                                                                  "repeat",
-                                                                  "replace",
-                                                                  "search",
-                                                                  "slice",
-                                                                  "small",
-                                                                  "split",
-                                                                  "startsWith",
-                                                                  "strike",
-                                                                  "sub",
-                                                                  "substr",
-                                                                  "substring",
-                                                                  "sup",
-                                                                  "toLocaleLowerCase",
-                                                                  "toLocaleString",
-                                                                  "toLocaleUpperCase",
-                                                                  "toLowerCase",
-                                                                  "toString",
-                                                                  "toUpperCase",
-                                                                  "trim",
-                                                                  "valueOf"))
+      JSLightCompletionTestBase.checkJSStringCompletion(myFixture.lookupElements!!, true)
     })
   }
 
