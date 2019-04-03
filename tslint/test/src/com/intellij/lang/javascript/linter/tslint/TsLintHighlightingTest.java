@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
-import com.intellij.lang.javascript.service.JSLanguageServiceExecutorImpl;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.LineSeparator;
@@ -103,8 +102,8 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
 
   public void testTimeout() {
     JSLanguageServiceUtil.setTimeout(1, getTestRootDisposable());
-    myExpectedGlobalAnnotation =
-      new ExpectedGlobalAnnotation("TSLint: " + JSLanguageServiceExecutorImpl.LANGUAGE_SERVICE_EXECUTION_TIMEOUT, true, false);
+    String expectedMessage = "TSLint: " + JSLanguageServiceUtil.getTimeoutMessage("ts.ts");
+    myExpectedGlobalAnnotation = new ExpectedGlobalAnnotation(expectedMessage, true, false);
     doEditorHighlightingTest("ts.ts");
   }
 

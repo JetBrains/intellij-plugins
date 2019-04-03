@@ -79,7 +79,7 @@ public class TsLintFileFixAction extends JSLinterFixAction {
             }
             final Future<List<TsLinterError>> future = ReadAction.compute(() -> service.highlightAndFix(file, state));
             try {
-              JSLanguageServiceUtil.awaitLanguageService(future, service);
+              JSLanguageServiceUtil.awaitLanguageService(future, service, file);
             }
             catch (ExecutionException e) {
               JSLinterGuesser.NOTIFICATION_GROUP.createNotification("TSLint: " + e.getMessage(), MessageType.ERROR).notify(project);
