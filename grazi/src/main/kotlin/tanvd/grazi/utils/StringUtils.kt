@@ -49,4 +49,20 @@ fun String.splitWithRanges(separators: List<Char>, insideOf: IntRange? = null, i
     }
 }
 
+fun String.trimWithRange(trimmed: List<Char>, insideOf: IntRange? = null): Pair<IntRange?, String> {
+    var start = 0
+    while (start < length && this[start] in trimmed) {
+        start++
+    }
+    var end = this.length - 1
+    while (end >= 0 && this[end] in trimmed) {
+        end--
+    }
+    val offset = insideOf?.start ?: 0
+    if (start > end) {
+        return null to ""
+    }
+    return IntRange(offset + start, offset + end) to this.subSequence(start, end + 1).toString()
+}
+
 fun Regex.matches(char: Char) = this.matches(char.toString())

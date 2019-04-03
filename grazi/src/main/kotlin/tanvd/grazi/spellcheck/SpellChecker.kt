@@ -19,6 +19,7 @@ object SpellChecker {
 
     private val whiteSpaceSeparators = listOf(' ', '\t')
     private val nameSeparators = listOf('.', '_', '-')
+    private val trimmed = listOf('$', '%', '{', '}')
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(
             { it -> it.startsWith(".") },
@@ -45,7 +46,11 @@ object SpellChecker {
             }
 
             for ((onePieceWordRange, onePieceWord) in bigWord.splitWithRanges(nameSeparators, insideOf = bigWordRange)) {
-                for ((inWordRange, word) in onePieceWord.splitCamelCase(insideOf = onePieceWordRange)) {
+                val (trimmedWordRange, trimmedWord) = onePieceWord.trimWithRange(trimmed, insideOf = onePieceWordRange)
+                if (trimmedWordRange == null) continue
+
+                for ((inWordRange, word) in trimmedWord.splitCamelCase(insideOf = trimmedWordRange)) {
+
                     checkSingleWord(word, inWordRange, project)?.let { add(it) }
                 }
             }
