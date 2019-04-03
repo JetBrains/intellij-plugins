@@ -10,10 +10,7 @@ import com.intellij.lang.javascript.completion.JSLookupPriority;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser;
 import com.intellij.lang.javascript.ecmascript6.types.JSTypeSignatureChooser.FunctionTypeWithKind;
-import com.intellij.lang.javascript.psi.JSFunctionType;
-import com.intellij.lang.javascript.psi.JSParameterListElement;
-import com.intellij.lang.javascript.psi.JSPsiElementBase;
-import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
@@ -169,7 +166,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
         }
         result.stopHere();
       }
-      else if (ref instanceof JSReferenceExpressionImpl && ((JSReferenceExpressionImpl)ref).getQualifier() == null) {
+      else if (ref instanceof JSReferenceExpressionImpl
+               && (((JSReferenceExpressionImpl)ref).getQualifier() == null
+                   || ((JSReferenceExpressionImpl)ref).getQualifier() instanceof JSThisExpression)) {
         final Set<String> contributedElements = new HashSet<>();
         Angular2Processor.process(parameters.getPosition(), resolveResult -> {
           final JSPsiElementBase element = ObjectUtils.tryCast(resolveResult.getElement(), JSPsiElementBase.class);

@@ -32,4 +32,9 @@ public class Angular2EmbeddedExpressionImpl extends JSElementImpl implements JSS
       super.accept(visitor);
     }
   }
+
+  @Override
+  public boolean allowTopLevelThis() {
+    return true;
+  }
 }

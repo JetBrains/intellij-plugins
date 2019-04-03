@@ -1,0 +1,20 @@
+
+{{this.div | <error descr="Unresolved pipe json">json</error>}}
+
+{{this | <error descr="Unresolved pipe json">json</error>}}
+
+{{this.<error descr="Unresolved variable foo">foo</error>}}
+
+<div (click)="this.got_a_click()"></div>
+{{ this.get_title() }}
+
+<div [class]="this.get_title()">
+  {{ this.get_title() }}
+</div>
+
+<div #div></div>
+
+<script>
+  <warning descr="Top-level 'this' expression">this</warning>
+</script>
+

@@ -253,4 +253,10 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.type("}}bar");
     assertEquals("<div>{{foo}}bar</div>", doc.getText());
   }
+
+  public void testTopLevelThisCompletion() {
+    myFixture.configureByFiles("top-level-this.ts", "package.json");
+    myFixture.completeBasic();
+    assertSameElements(sorted(myFixture.getLookupElementStrings()), sorted(asList("getSomething", "$any", "ref1", "title")));
+  }
 }
