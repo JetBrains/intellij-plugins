@@ -17,7 +17,7 @@ fun <T> tryRun(body: () -> T): T? = try {
 }
 
 fun Boolean?.orFalse(): Boolean = this ?: false
-fun Boolean?.orTrue(): Boolean = this ?: false
+fun Boolean?.orTrue(): Boolean = this ?: true
 
 fun <T, E> Collection<T>.firstNotNull(body: (T) -> E?): E? {
     for (value in this) {

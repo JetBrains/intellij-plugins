@@ -5,14 +5,19 @@ import tanvd.grazi.utils.*
 
 class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
                                private val replace: List<(CharSequence, Char) -> Char?>,
-                               private val ignoreBlanks: Boolean = true) {
+                               private val ignoreToken: List<(String) -> Boolean>) {
 
     companion object {
-        val default = SanitizingGrammarChecker(listOf({ str, cur ->
-            str.lastOrNull()?.let { blankCharRegex.matches(it) }.orTrue() && blankCharRegex.matches(cur)
-        }, { _, cur -> cur == '*' }), listOf({ _, cur ->
-            newLineCharRegex.matches(cur).ifTrue { ' ' }
-        }))
+        val default = SanitizingGrammarChecker(
+                ignore = listOf({ str, cur ->
+                    str.lastOrNull()?.let { blankOrNewLineCharRegex.matches(it) }.orTrue() && blankOrNewLineCharRegex.matches(cur)
+                }, { _, cur -> cur == '*' }),
+                replace = listOf({ _, cur ->
+                    newLineCharRegex.matches(cur).ifTrue { ' ' }
+                }),
+                ignoreToken = listOf({ str ->
+                    str.all { !it.isLetter() }
+                }))
     }
 
     fun <T : PsiElement> check(vararg tokens: T) = check(tokens.toList())
@@ -23,7 +28,7 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
 
         val resultText = buildString {
             var index = 0
-            for (token in tokens.filter { !ignoreBlanks || !it.text.isBlankWithNewLines() }) {
+            for (token in tokens.filter { token -> !ignoreToken.any { it(getText(token)) } }) {
                 val tokenStartIndex = index
                 var totalExcluded = 0
                 indexesShift[index] = totalExcluded
@@ -42,7 +47,7 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
                 }
                 tokenMapping[IntRange(tokenStartIndex, index)] = token
 
-                if (this.lastOrNull()?.let { blankCharRegex.matches(it) }.orFalse()) {
+                if (!this.lastOrNull()?.let { blankCharRegex.matches(it) }.orTrue()) {
                     append(' ')
                     index++
                 }

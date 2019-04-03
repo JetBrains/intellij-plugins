@@ -2,6 +2,7 @@ package tanvd.grazi.utils
 
 val blankCharRegex = Regex("\\s")
 val newLineCharRegex = Regex("\\n")
+val blankOrNewLineCharRegex = Regex("[\\n\\s]")
 
 val blankWithNewLinesOrEmpty = Regex("[\\n\\s]*")
 /** Considers whitespaces, tabs and newlines */
