@@ -16,7 +16,7 @@ class JConstructsSupport : LanguageSupport {
         for (method in file.filterFor<PsiMethod>()) {
             method.name.let {
                 val indexOfName = method.text.indexOf(it)
-                addAll(SpellChecker.check(it).map { typo ->
+                addAll(SpellChecker.check(it, file.project).map { typo ->
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
                             element = method, shouldUseRename = true))
                 })
@@ -26,7 +26,7 @@ class JConstructsSupport : LanguageSupport {
         for (ident in file.filterFor<PsiNamedElement>()) {
             ident.name?.let {
                 val indexOfName = ident.text.indexOf(it)
-                addAll(SpellChecker.check(it).map { typo ->
+                addAll(SpellChecker.check(it, file.project).map { typo ->
                     typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
                             element = ident, shouldUseRename = true))
                 })

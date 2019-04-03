@@ -1,5 +1,7 @@
 package tanvd.grazi.spellcheck
 
+import com.intellij.openapi.project.Project
+import com.intellij.spellchecker.SpellCheckerManager
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
@@ -16,7 +18,7 @@ object SpellChecker {
     private val cache = TypoCache(50_000L)
 
     private val whiteSpaceSeparators = listOf(' ', '\t')
-    private val nameSeparators = listOf('.', '_')
+    private val nameSeparators = listOf('.', '_', '-')
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(
             { it -> it.startsWith(".") },
@@ -33,7 +35,7 @@ object SpellChecker {
 
     private var checker: JLanguageTool = createChecker()
 
-    fun check(text: String) = buildSet<Typo> {
+    fun check(text: String, project: Project) = buildSet<Typo> {
         for ((bigWordRange, bigWord) in text.splitWithRanges(whiteSpaceSeparators)) {
             if (ignorePatters.any { it(bigWord) }) continue
 
@@ -44,13 +46,26 @@ object SpellChecker {
 
             for ((onePieceWordRange, onePieceWord) in bigWord.splitWithRanges(nameSeparators, insideOf = bigWordRange)) {
                 for ((inWordRange, word) in onePieceWord.splitCamelCase(insideOf = onePieceWordRange)) {
-                    val match = tryRun { checker.check(word.toLowerCase()) }?.firstOrNull()
-                    match?.let { add(Typo(it, checkerLang, TypoCache.hash(word), inWordRange.start)) }
+                    checkSingleWord(word, inWordRange, project)?.let { add(it) }
                 }
             }
 
             cache.put(bigWord, LinkedHashSet(this))
         }
+    }
+
+    private fun checkSingleWord(word: String, inWordRange: IntRange, project: Project): Typo? {
+
+        val typo = tryRun { checker.check(word.toLowerCase()) }?.firstOrNull()
+                ?.let { Typo(it, checkerLang, TypoCache.hash(word), inWordRange.start) }
+
+        if (typo != null) {
+            val spellchecker = SpellCheckerManager.getInstance(project)
+            if (spellchecker.hasProblem(word)) {
+                return typo
+            }
+        }
+        return null
     }
 
     fun reset() {

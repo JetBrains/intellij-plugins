@@ -24,7 +24,7 @@ class KConstructsSupport : LanguageSupport {
                 else -> {
                     param.name?.let {
                         val indexOfName = param.text.indexOf(it)
-                        addAll(SpellChecker.check(it).map { typo ->
+                        addAll(SpellChecker.check(it, file.project).map { typo ->
                             typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
                                     element = param, shouldUseRename = true))
                         })
@@ -38,13 +38,17 @@ class KConstructsSupport : LanguageSupport {
             when {
                 ident is KtModifierListOwner && ident.hasModifier(KtTokens.OVERRIDE_KEYWORD) -> {
                 }
+                ident is KtScript -> {
+                }
                 else -> {
                     ident.name?.let {
                         val indexOfName = ident.text.indexOf(it)
-                        addAll(SpellChecker.check(it).map { typo ->
-                            typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
-                                    element = ident, shouldUseRename = true))
-                        })
+                        if (indexOfName != -1) {
+                            addAll(SpellChecker.check(it, file.project).map { typo ->
+                                typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
+                                        element = ident, shouldUseRename = true))
+                            })
+                        }
                     }
                 }
             }

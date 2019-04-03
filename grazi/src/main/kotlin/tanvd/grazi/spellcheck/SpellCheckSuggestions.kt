@@ -25,7 +25,7 @@ class SpellCheckSuggestions : PreferrableNameSuggestionProvider() {
             return null
         }
 
-        SpellChecker.check(text).forEach { typo ->
+        SpellChecker.check(text, element.project).forEach { typo ->
             typo.fix?.forEach {
                 result.add(text.replaceRange(typo.location.range, it))
             }

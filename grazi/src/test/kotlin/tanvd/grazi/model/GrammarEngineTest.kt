@@ -1,5 +1,6 @@
 package tanvd.grazi.model
 
+import com.intellij.openapi.project.ProjectManager
 import org.junit.Assert.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,20 +23,20 @@ class GrammarEngineTest {
 
     @Test
     fun testCorrectText() {
-        val fixes = GrammarEngine.getFixes("Hello world")
+        val fixes = GrammarEngine.getFixes("Hello world", ProjectManager.getInstance().defaultProject)
         assertEquals(0, fixes.size)
     }
 
     @Test
     fun testFirstLetterText() {
-        val fixes = GrammarEngine.getFixes("hello world, my dear friend").toList()
+        val fixes = GrammarEngine.getFixes("hello world, my dear friend", ProjectManager.getInstance().defaultProject).toList()
         assertEquals(1, fixes.size)
         assertEquals("Hello", fixes[0].fix!![0])
     }
 
     @Test
     fun testDifferentTypos() {
-        val fixes = GrammarEngine.getFixes("Hello. world,, tot he").toList()
+        val fixes = GrammarEngine.getFixes("Hello. world,, tot he", ProjectManager.getInstance().defaultProject).toList()
         assertEquals(3, fixes.size)
         assertEquals(Typo.Category.CASING, fixes[0].info.category)
         assertEquals(Typo.Category.PUNCTUATION, fixes[1].info.category)
@@ -44,7 +45,7 @@ class GrammarEngineTest {
 
     @Test
     fun testRanges() {
-        val fixes = GrammarEngine.getFixes("hello. world,, tot he.\nThis are my friend").toList()
+        val fixes = GrammarEngine.getFixes("hello. world,, tot he.\nThis are my friend", ProjectManager.getInstance().defaultProject).toList()
         assertEquals(5, fixes.size)
         assertEquals(IntRange(0, 4), fixes[0].location.range)
         assertEquals(IntRange(7, 11), fixes[1].location.range)
@@ -55,13 +56,13 @@ class GrammarEngineTest {
 
     @Test
     fun testNotCorrectText() {
-        val fixes = GrammarEngine.getFixes("A sentence with a error in the Hitch-hiker's Guide tot he Galaxy").toList()
+        val fixes = GrammarEngine.getFixes("A sentence with a error in the Hitch-hiker's Guide tot he Galaxy", ProjectManager.getInstance().defaultProject).toList()
         assertEquals(2, fixes.size)
     }
 
     @Test
     fun testTextWithRedundancy() {
-        val fixes = GrammarEngine.getFixes("Now that it is daylight let him jump so that hell fill the sacks along his backbone with air and then he cannot go deep to die.").toList()
+        val fixes = GrammarEngine.getFixes("Now that it is daylight let him jump so that hell fill the sacks along his backbone with air and then he cannot go deep to die.", ProjectManager.getInstance().defaultProject).toList()
         assertEquals(Typo.Category.REDUNDANCY, fixes[0].info.category)
     }
 
@@ -69,10 +70,10 @@ class GrammarEngineTest {
     fun testCachedMiddle() {
         val text = File("src/test/resources/english_big.txt").readText()
         val grammar = GrammarEngine
-        val fixes1 = grammar.getFixes(text).toList()
+        val fixes1 = grammar.getFixes(text, ProjectManager.getInstance().defaultProject).toList()
         var fixes2: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
-            fixes2 = grammar.getFixes(text).toList()
+            fixes2 = grammar.getFixes(text, ProjectManager.getInstance().defaultProject).toList()
         }
         assertEquals(fixes1, fixes2)
         assert(0.01 > totalTime / 1000)
@@ -82,10 +83,10 @@ class GrammarEngineTest {
     fun testCachedBig() {
         val text = File("src/test/resources/english_big2.txt").readText()
         val grammar = GrammarEngine
-        val fixes1 = grammar.getFixes(text).toList()
+        val fixes1 = grammar.getFixes(text, ProjectManager.getInstance().defaultProject).toList()
         var fixes2: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
-            fixes2 = grammar.getFixes(text).toList()
+            fixes2 = grammar.getFixes(text, ProjectManager.getInstance().defaultProject).toList()
         }
         assertEquals(fixes1, fixes2)
         assert(0.01 > totalTime / 1000)
