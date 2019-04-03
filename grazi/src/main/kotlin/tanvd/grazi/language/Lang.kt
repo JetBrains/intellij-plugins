@@ -5,42 +5,42 @@ import org.languagetool.Language
 import org.languagetool.Languages.getLanguageForShortCode
 import org.languagetool.language.*
 
-enum class Lang(val shortCode: String,
+enum class Lang(val shortCode: String, val displayName: String,
                 private val lang: Language = getLanguageForShortCode(shortCode, emptyList())!!,
                 private val enabledRules: Set<String> = emptySet(),
                 private val disabledRules: Set<String> = emptySet()) {
-    BRITISH_ENGLISH("en", BritishEnglish(),
+    BRITISH_ENGLISH("en", "British English", BritishEnglish(),
             setOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE"),
             setOf("WORD_CONTAINS_UNDERSCORE", "EN_QUOTES")),
-    AMERICAN_ENGLISH("en", AmericanEnglish(),
+    AMERICAN_ENGLISH("en", "American English", AmericanEnglish(),
             setOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE"),
             setOf("WORD_CONTAINS_UNDERSCORE", "EN_QUOTES")),
-    RUSSIAN("ru", Russian(),
+    RUSSIAN("ru", "Rusian", Russian(),
             setOf("ABREV_DOT2", "KAK_VVODNOE", "PARTICLE_JE", "po_povodu_togo", "tak_skazat", "kak_bi", "O_tom_chto", "kosvennaja_rech")),
-    PERSIAN("fa"),
-    FRENCH("fr"),
-    GERMAN("de"),
-    POLISH("pl"),
-    CATALAN("ca"),
-    ITALIAN("it"),
-    BRETON("br"),
-    DUTCH("nl"),
-    PORTUGUES("pt"),
-    BELARUSIAN("be"),
-    CHINESE("zh"),
-    DANISH("da"),
-    GALICIAN("gl"),
-    GREEK("el"),
-    JAPANESE("ja"),
-    KHMER("km"),
-    ROMANIAN("ro"),
-    SLOVAK("sk"),
-    SLOVENIAN("sl"),
-    SPANISH("es"),
-    SWEDISH("sv"),
-    TAMIL("ta"),
-    TAGALOG("tl"),
-    UKRANIAN("uk");
+    PERSIAN("fa", "Persian"),
+    FRENCH("fr", "French"),
+    GERMAN("de", "German"),
+    POLISH("pl", "Polish"),
+    CATALAN("ca", "Catalan"),
+    ITALIAN("it", "Italian"),
+    BRETON("br", "Breton"),
+    DUTCH("nl", "Dutch"),
+    PORTUGUESE("pt", "Portuguese"),
+    BELORUSSIAN("be", "Belorussian"),
+    CHINESE("zh", "Chinese"),
+    DANISH("da", "Danish"),
+    GALICIAN("gl", "Galician"),
+    GREEK("el", "Greek"),
+    JAPANESE("ja", "Japanese"),
+    KHMER("km", "Khmer"),
+    ROMANIAN("ro", "Romanian"),
+    SLOVAK("sk", "Slovak"),
+    SLOVENIAN("sl", "Slovenian"),
+    SPANISH("es", "Spanish"),
+    SWEDISH("sv", "Swedish"),
+    TAMIL("ta", "Tamil"),
+    TAGALOG("tl", "Tagalog"),
+    UKRAINIAN("uk", "Ukrainian");
 
     companion object {
         operator fun get(lang: Language): Lang? = values().find { it.shortCode == lang.shortCode }
@@ -48,8 +48,6 @@ enum class Lang(val shortCode: String,
 
         fun sortedValues() = Lang.values().sortedBy { it.name }
     }
-
-    val displayName: String = name.toLowerCase().capitalize()
 
     fun toLanguage() = lang
 

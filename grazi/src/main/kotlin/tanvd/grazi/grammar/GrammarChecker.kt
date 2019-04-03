@@ -16,7 +16,7 @@ object GrammarChecker {
         return langs.getOrPut(lang) {
             val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
             JLanguageTool(lang.toLanguage(), GraziConfig.state.nativeLanguage.toLanguage(),
-                    cache, UserConfig(GraziConfig.state.userWords)).apply {
+                    cache, UserConfig(GraziConfig.state.userWords.toList())).apply {
                 lang.configure(this)
                 disableRules(allActiveRules.map { it.id }.filter { it in GraziConfig.state.userDisabledRules })
             }
