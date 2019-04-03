@@ -67,7 +67,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
   public CucumberCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> inScenario = psiElement().inside(psiElement().withElementType(GherkinElementTypes.SCENARIOS));
-    final PsiElementPattern.Capture<PsiElement> inStep = psiElement().inside(psiElement().withElementType(GherkinElementTypes.STEP));
+    final PsiElementPattern.Capture<PsiElement> inStep = psiElement().inside(psiElement().withElementType(GherkinElementTypes.STEP))
+      .andNot(psiElement().inside(psiElement().withElementType(GherkinElementTypes.TABLE)));
 
     extend(CompletionType.BASIC, psiElement().inFile(psiElement(GherkinFile.class)), new CompletionProvider<CompletionParameters>() {
       @Override
