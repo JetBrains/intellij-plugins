@@ -6,7 +6,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.*
-import tanvd.grazi.spellcheck.SpellChecker
+import tanvd.grazi.spellcheck.GraziSpellchecker
 
 class GraziDisableRule(private val typo: Typo) : LocalQuickFix, PriorityAction {
     override fun getName(): String {
@@ -23,6 +23,6 @@ class GraziDisableRule(private val typo: Typo) : LocalQuickFix, PriorityAction {
         GrammarEngine.reset()
         GrammarChecker.reset()
 
-        SpellChecker.reset()
+        GraziSpellchecker.reset()
     }
 }

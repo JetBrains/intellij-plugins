@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFile
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.ide.quickfix.*
+import tanvd.grazi.spellcheck.IdeaSpellchecker
 import tanvd.grazi.utils.buildList
 
 class GraziInspection : LocalInspectionTool() {
@@ -22,11 +23,10 @@ class GraziInspection : LocalInspectionTool() {
             val fixes = buildList<LocalQuickFix> {
                 if (fix.info.category == Typo.Category.TYPOS) {
                     add(GraziAddWord(fix))
-
                 }
+
                 if (fix.location.shouldUseRename) {
                     add(GraziRenameTypo(fix))
-
                 } else {
                     add(GraziReplaceTypo(fix))
                 }
@@ -41,6 +41,8 @@ class GraziInspection : LocalInspectionTool() {
     }
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
+        IdeaSpellchecker.init(file.project)
+
         val result = mutableListOf<ProblemDescriptor>()
         for (ext in LanguageSupport.all.filter { it.isSupported(file) }) {
             val typos = ext.check(file)

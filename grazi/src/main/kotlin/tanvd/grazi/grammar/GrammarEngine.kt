@@ -1,10 +1,9 @@
 package tanvd.grazi.grammar
 
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.project.Project
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.LangDetector
-import tanvd.grazi.spellcheck.SpellChecker
+import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 
 object GrammarEngine {
@@ -21,11 +20,11 @@ object GrammarEngine {
     private fun isSmall(str: String) = str.length < minChars
     private fun isBig(str: String) = str.length > maxChars
 
-    fun getFixes(str: String, project: Project, seps: List<Char> = separators): Set<Typo> = buildSet {
+    fun getFixes(str: String, seps: List<Char> = separators): Set<Typo> = buildSet {
         if (str.isBlankWithNewLines()) return@buildSet
 
         if (str.split(Regex("\\s+")).size < minNumberOfWords) {
-            addAll(SpellChecker.check(str, project))
+            addAll(GraziSpellchecker.check(str))
             return@buildSet
         }
 
@@ -34,9 +33,9 @@ object GrammarEngine {
 
         for ((range, sentence) in str.splitWithRanges(curSeparator)) {
             val stringFixes = if (isBig(sentence) && seps.isNotEmpty()) {
-                getFixes(sentence, project, seps.dropFirst())
+                getFixes(sentence, seps.dropFirst())
             } else {
-                getFixesSmall(sentence, project)
+                getFixesSmall(sentence)
             }.map {
                 Typo(it.location.withOffset(range.start), it.info, it.fix)
             }
@@ -44,7 +43,7 @@ object GrammarEngine {
         }
     }
 
-    private fun getFixesSmall(str: String, project: Project) = buildSet<Typo> {
+    private fun getFixesSmall(str: String) = buildSet<Typo> {
         if (isSmall(str)) return@buildSet
 
         if (cache.contains(str)) {
@@ -66,7 +65,7 @@ object GrammarEngine {
         val verifiedTypos = allFixes.filter { it.info.rule.isDictionaryBasedSpellingRule }
                 .filter {
                     str.subSequence(it.location.range).split(Regex("\\s"))
-                            .flatMap { part -> SpellChecker.check(part, project) }.isNotEmpty()
+                            .flatMap { part -> GraziSpellchecker.check(part) }.isNotEmpty()
                 }
 
 

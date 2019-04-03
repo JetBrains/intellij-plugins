@@ -1,7 +1,5 @@
 package tanvd.grazi.spellcheck
 
-import com.intellij.openapi.project.Project
-import com.intellij.spellchecker.SpellCheckerManager
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
@@ -10,8 +8,8 @@ import tanvd.grazi.utils.*
 import java.util.concurrent.TimeUnit
 
 
-object SpellChecker {
-    private const val cacheMaxSize = 30_000L
+object GraziSpellchecker {
+    private const val cacheMaxSize = 25_000L
     private const val cacheExpireAfterMinutes = 5
     private val checkerLang = Lang.AMERICAN_ENGLISH
 
@@ -36,7 +34,7 @@ object SpellChecker {
 
     private var checker: JLanguageTool = createChecker()
 
-    fun check(text: String, project: Project) = buildSet<Typo> {
+    fun check(text: String) = buildSet<Typo> {
         for ((bigWordRange, bigWord) in text.splitWithRanges(whiteSpaceSeparators)) {
             if (ignorePatters.any { it(bigWord) }) continue
 
@@ -50,27 +48,16 @@ object SpellChecker {
                 if (trimmedWordRange == null) continue
 
                 for ((inWordRange, word) in trimmedWord.splitCamelCase(insideOf = trimmedWordRange)) {
-
-                    checkSingleWord(word, inWordRange, project)?.let { add(it) }
+                    val typo = tryRun { checker.check(word.toLowerCase()) }?.firstOrNull()
+                            ?.let { Typo(it, checkerLang, TypoCache.hash(word), inWordRange.start) }
+                    if (typo != null && IdeaSpellchecker.hasProblem(word)) {
+                        add(typo)
+                    }
                 }
             }
 
             cache.put(bigWord, LinkedHashSet(this))
         }
-    }
-
-    private fun checkSingleWord(word: String, inWordRange: IntRange, project: Project): Typo? {
-
-        val typo = tryRun { checker.check(word.toLowerCase()) }?.firstOrNull()
-                ?.let { Typo(it, checkerLang, TypoCache.hash(word), inWordRange.start) }
-
-        if (typo != null) {
-            val spellchecker = SpellCheckerManager.getInstance(project)
-            if (spellchecker.hasProblem(word)) {
-                return typo
-            }
-        }
-        return null
     }
 
     fun reset() {

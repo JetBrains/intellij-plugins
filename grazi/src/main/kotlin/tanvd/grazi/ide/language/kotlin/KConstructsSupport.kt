@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
-import tanvd.grazi.spellcheck.SpellChecker
+import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 
 class KConstructsSupport : LanguageSupport {
@@ -24,7 +24,7 @@ class KConstructsSupport : LanguageSupport {
                 else -> {
                     param.name?.let {
                         val indexOfName = param.text.indexOf(it)
-                        addAll(SpellChecker.check(it, file.project).map { typo ->
+                        addAll(GraziSpellchecker.check(it).map { typo ->
                             typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
                                     element = param, shouldUseRename = true))
                         })
@@ -44,7 +44,7 @@ class KConstructsSupport : LanguageSupport {
                     ident.name?.let {
                         val indexOfName = ident.text.indexOf(it)
                         if (indexOfName != -1) {
-                            addAll(SpellChecker.check(it, file.project).map { typo ->
+                            addAll(GraziSpellchecker.check(it).map { typo ->
                                 typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
                                         element = ident, shouldUseRename = true))
                             })

@@ -21,10 +21,6 @@ class TypoCache(cacheSize: Long) {
         cache.put(hash(str), typos)
     }
 
-    fun invalidate(hash: Int) {
-        cache.invalidate(hash)
-    }
-
     fun reset() {
         cache.invalidateAll()
     }

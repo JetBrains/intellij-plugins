@@ -20,16 +20,13 @@ class JStringSupport : LanguageSupport {
     override fun check(file: PsiFile) = buildSet<Typo> {
         val literals = file.filterFor<PsiLiteralExpressionImpl>()
 
-        val literalStrings = literals.filter { it.literalElementType == JavaTokenType.STRING_LITERAL }
-        val rawStrings = literals.filter { it.literalElementType == JavaTokenType.RAW_STRING_LITERAL }
-
         for (str in literals.filterForType(JavaTokenType.STRING_LITERAL)) {
-            addAll(SanitizingGrammarChecker.default.check(literalStrings) { it.innerText ?: "" }.filter { it.info.rule.id !in disabledRules })
+            addAll(SanitizingGrammarChecker.default.check(str) { it.innerText ?: "" }.filter { it.info.rule.id !in disabledRules })
             ProgressManager.checkCanceled()
         }
 
-        for (str in rawStrings.filterForType(JavaTokenType.RAW_STRING_LITERAL)) {
-            addAll(SanitizingGrammarChecker.default.check(literalStrings) { it.rawString ?: "" }.filter { it.info.rule.id !in disabledRules })
+        for (str in literals.filterForType(JavaTokenType.RAW_STRING_LITERAL)) {
+            addAll(SanitizingGrammarChecker.default.check(str) { it.rawString ?: "" }.filter { it.info.rule.id !in disabledRules })
 
             ProgressManager.checkCanceled()
         }

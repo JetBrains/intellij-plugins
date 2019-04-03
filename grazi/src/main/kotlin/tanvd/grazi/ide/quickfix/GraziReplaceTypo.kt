@@ -19,7 +19,7 @@ class GraziReplaceTypo(private val typo: Typo) : LocalQuickFix, PriorityAction {
         return "Fix ${typo.info.category.description} mistake"
     }
 
-    override fun getFamilyName(): String = "Fix mistake"
+    override fun getFamilyName(): String = "Fix mistake with replace"
 
     override fun getPriority() = PriorityAction.Priority.HIGH
 

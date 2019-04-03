@@ -5,7 +5,7 @@ import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.extensions.PluginId
 import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.GrammarEngine
-import tanvd.grazi.spellcheck.SpellChecker
+import tanvd.grazi.spellcheck.GraziSpellchecker
 
 class GraziPlugin : BaseComponent {
     companion object {
@@ -24,7 +24,7 @@ class GraziPlugin : BaseComponent {
             GrammarChecker.reset()
             GrammarEngine.reset()
 
-            SpellChecker.reset()
+            GraziSpellchecker.reset()
         }
     }
 

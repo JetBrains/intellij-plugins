@@ -30,7 +30,7 @@ open class GraziRenameTypo(private val typo: Typo) : LocalQuickFix, PriorityActi
         return "Fix ${typo.info.category.description} mistake"
     }
 
-    override fun getFamilyName(): String = "Fix mistake"
+    override fun getFamilyName(): String = "Fix mistake with rename"
 
     override fun getPriority() = PriorityAction.Priority.HIGH
 

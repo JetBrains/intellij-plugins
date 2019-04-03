@@ -20,7 +20,7 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
                 }))
     }
 
-    fun <T : PsiElement> check(vararg tokens: T) = check(tokens.toList())
+    fun <T : PsiElement> check(vararg tokens: T, getText: (T) -> String = { it.text }) = check(tokens.toList(), getText)
 
     fun <T : PsiElement> check(tokens: Collection<T>, getText: (T) -> String = { it.text }): Set<Typo> {
         if (tokens.isEmpty()) return emptySet()
@@ -56,7 +56,7 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
             }
         }
 
-        val fixes = GrammarEngine.getFixes(resultText, tokens.first().project)
+        val fixes = GrammarEngine.getFixes(resultText)
 
         val sortedIndexesShift = indexesShift.toList().sortedBy { it.first }
 
