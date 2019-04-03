@@ -8,6 +8,7 @@ import com.intellij.lang.html.HTMLParserDefinition
 import com.intellij.lang.html.HtmlParsing
 import com.intellij.lang.javascript.dialects.JSLanguageLevel
 import com.intellij.lang.javascript.settings.JSRootConfiguration
+import com.intellij.lang.javascript.types.JSFileElementType
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.FileViewProvider
@@ -50,6 +51,10 @@ class VueParserDefinition : HTMLParserDefinition() {
   }
 
   companion object {
-    internal var HTML_FILE: IFileElementType = IStubFileElementType<PsiFileStub<HtmlFileImpl>>(VueLanguage.INSTANCE)
+    internal var HTML_FILE: IFileElementType = object : IStubFileElementType<PsiFileStub<HtmlFileImpl>>(VueLanguage.INSTANCE) {
+      override fun getStubVersion(): Int {
+        return super.getStubVersion() + JSFileElementType.getVersion()
+      }
+    }
   }
 }
