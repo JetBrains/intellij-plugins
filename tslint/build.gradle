@@ -32,7 +32,7 @@ apply plugin: 'org.jetbrains.intellij'
 
 version="163.7000"
 intellij {
-  version 'IU-191-EAP-SNAPSHOT'
+  version 'IU-LATEST-EAP-SNAPSHOT'
   pluginName 'tslint'
   downloadSources false
   updateSinceUntilBuild false
