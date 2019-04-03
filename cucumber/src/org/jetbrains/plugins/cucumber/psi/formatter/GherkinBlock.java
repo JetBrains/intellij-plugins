@@ -17,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author yole
- */
 public class GherkinBlock implements ASTBlock {
   private final ASTNode myNode;
   private final Indent myIndent;
@@ -92,7 +89,17 @@ public class GherkinBlock implements ASTBlock {
       if (child.getElementType() == TokenType.WHITE_SPACE) {
         continue;
       }
-      Indent indent = BLOCKS_TO_INDENT.contains(child.getElementType()) ? Indent.getNormalIndent() : Indent.getNoneIndent();
+
+      boolean isTagInsideScenario = child.getElementType() == GherkinElementTypes.TAG &&
+                  myNode.getElementType() == GherkinElementTypes.SCENARIO_OUTLINE &&
+                  child.getStartOffset() > myNode.getStartOffset();
+      Indent indent;
+      if (BLOCKS_TO_INDENT.contains(child.getElementType()) || isTagInsideScenario) {
+        indent = Indent.getNormalIndent();
+      }
+      else {
+        indent = Indent.getNoneIndent();
+      }
       // skip epmty cells
       if (child.getElementType() == GherkinElementTypes.TABLE_CELL) {
         if (child.getChildren(null).length == 0) {

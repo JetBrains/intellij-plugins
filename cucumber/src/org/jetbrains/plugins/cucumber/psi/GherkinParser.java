@@ -101,7 +101,7 @@ public class GherkinParser implements PsiParser {
     while (!atScenarioEnd(builder)) {
       if (builder.getTokenType() == GherkinTokenTypes.TAG) {
         final PsiBuilder.Marker marker = builder.mark();
-        builder.advanceLexer();
+        parseTags(builder);
         if (atScenarioEnd(builder)) {
           marker.rollbackTo();
           break;

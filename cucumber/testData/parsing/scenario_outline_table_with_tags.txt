@@ -79,7 +79,8 @@ GherkinFile:scenario_outline_table_with_tags.feature
             PsiWhiteSpace('  ')
             PsiElement(PIPE)('|')
       PsiWhiteSpace('\n\n    ')
-      PsiElement(TAG)('@tag')
+      GherkinTag:@tag
+        PsiElement(TAG)('@tag')
       PsiWhiteSpace('\n    ')
       GherkinExamplesBlock:
         PsiElement(EXAMPLES_KEYWORD)('Examples')
