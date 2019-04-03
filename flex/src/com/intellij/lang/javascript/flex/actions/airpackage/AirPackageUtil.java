@@ -25,10 +25,7 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -834,7 +831,8 @@ public class AirPackageUtil {
   public static boolean launchOnIosSimulator(final Project project,
                                              final Sdk flexSdk,
                                              final String applicationId,
-                                             final String iOSSdkPath) {
+                                             final String iOSSdkPath,
+                                             final String simulatorDevice) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
       @Override
       protected void appendAdtOptions(final List<String> command) {
@@ -847,6 +845,13 @@ public class AirPackageUtil {
         command.add("ios-simulator");
         command.add("-appid");
         command.add(applicationId);
+      }
+
+      @Override
+      protected void prepareEnvVars(Map<String, String> envVars) {
+        if (!StringUtil.isEmpty(simulatorDevice)) {
+          envVars.put("AIR_IOS_SIMULATOR_DEVICE", simulatorDevice);
+        }
       }
     }, FlexBundle.message("launching.ios.application", applicationId), FlexBundle.message("launch.ios.application.title"));
   }

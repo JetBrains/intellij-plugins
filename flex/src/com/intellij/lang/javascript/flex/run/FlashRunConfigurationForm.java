@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
@@ -35,6 +35,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBTextField;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -89,6 +90,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JCheckBox myClearAndroidDataCheckBox;
   private JRadioButton myOnIOSSimulatorRadioButton;
   private TextFieldWithBrowseButton myIOSSimulatorSdkTextWithBrowse;
+  private JBLabel myIOSSimulatorDeviceLabel;
+  private JBTextField myIOSSimulatorDeviceTextField;
   private JRadioButton myOnIOSDeviceRadioButton;
   private JCheckBox myFastPackagingCheckBox;
 
@@ -241,6 +244,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myOnIOSSimulatorRadioButton.setEnabled(false);
       myOnIOSSimulatorRadioButton.setText(FlexBundle.message("ios.simulator.on.mac.only.button.text"));
       myIOSSimulatorSdkTextWithBrowse.setVisible(false);
+      myIOSSimulatorDeviceLabel.setVisible(false);
+      myIOSSimulatorDeviceTextField.setVisible(false);
     }
 
     myIOSSimulatorSdkTextWithBrowse
@@ -398,6 +403,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       }
 
       myIOSSimulatorSdkTextWithBrowse.setEnabled(myOnIOSSimulatorRadioButton.isSelected());
+      myIOSSimulatorDeviceLabel.setEnabled(myOnIOSSimulatorRadioButton.isSelected());
+      myIOSSimulatorDeviceTextField.setEnabled(myOnIOSSimulatorRadioButton.isSelected());
 
       if (myIOSSimulatorSdkTextWithBrowse.isEnabled() && myIOSSimulatorSdkTextWithBrowse.getText().isEmpty() && SystemInfo.isMac) {
         final String latestSelected = PropertiesComponent.getInstance().getValue(LATEST_SELECTED_IOS_SIMULATOR_SDK_PATH_KEY);
@@ -526,6 +533,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myClearAndroidDataCheckBox.setSelected(params.isClearAppDataOnEachLaunch());
     myOnIOSSimulatorRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSSimulator);
     myIOSSimulatorSdkTextWithBrowse.setText(FileUtil.toSystemDependentName(params.getIOSSimulatorSdkPath()));
+    myIOSSimulatorDeviceTextField.setText(params.getIOSSimulatorDevice());
     myOnIOSDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice);
     myFastPackagingCheckBox.setSelected(params.isFastPackaging());
 
@@ -631,6 +639,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     params.setClearAppDataOnEachLaunch(myClearAndroidDataCheckBox.isSelected());
 
     params.setIOSSimulatorSdkPath(FileUtil.toSystemIndependentName(myIOSSimulatorSdkTextWithBrowse.getText().trim()));
+    params.setIOSSimulatorDevice(myIOSSimulatorDeviceTextField.getText().trim());
 
     params.setFastPackaging(myFastPackagingCheckBox.isSelected());
 

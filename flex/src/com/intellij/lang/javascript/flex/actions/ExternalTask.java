@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -26,6 +27,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class ExternalTask {
 
@@ -58,6 +60,7 @@ public abstract class ExternalTask {
     processBuilder.redirectErrorStream(true);
 
     processBuilder.directory(getProcessDir());
+    prepareEnvVars(processBuilder.environment());
 
     myCommandLine = StringUtil.join(command, " ");
     debug("Executing task: " + myCommandLine);
@@ -70,6 +73,9 @@ public abstract class ExternalTask {
       myFinished = true;
       myMessages.add(e.getMessage());
     }
+  }
+
+  protected void prepareEnvVars(Map<String, String> envVars) {
   }
 
   @Nullable
