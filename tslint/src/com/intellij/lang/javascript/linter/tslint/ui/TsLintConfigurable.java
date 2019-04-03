@@ -1,10 +1,9 @@
 package com.intellij.lang.javascript.linter.tslint.ui;
 
-import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
-import com.intellij.lang.javascript.JSBundle;
+import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.linter.*;
-import com.intellij.lang.javascript.linter.NewLinterView;
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
@@ -50,7 +49,7 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
   @Nls
   @Override
   public String getDisplayName() {
-    return JSBundle.message("settings.javascript.linters.tslint.configurable.name");
+    return TsLintBundle.message("settings.javascript.linters.tslint.configurable.name");
   }
 
   @Override

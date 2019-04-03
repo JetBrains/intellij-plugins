@@ -1,10 +1,10 @@
 package com.intellij.lang.javascript.linter.tslint.config;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
-import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterDescriptor;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
+import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.codestyle.TsLintCodeStyleImporter;
 import com.intellij.openapi.application.ApplicationManager;
@@ -29,7 +29,7 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
   @NotNull
   @Override
   public String getDisplayName() {
-    return JSBundle.message("settings.javascript.linters.tslint.configurable.name");
+    return TsLintBundle.message("settings.javascript.linters.tslint.configurable.name");
   }
 
   @Override
