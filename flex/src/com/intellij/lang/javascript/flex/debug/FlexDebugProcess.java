@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.execution.CantRunException;
@@ -251,7 +252,8 @@ public class FlexDebugProcess extends XDebugProcess {
               final String iosSimulatorAppId =
                 FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
               sendCommand(new StartAppOnIosSimulatorCommand(bc.getSdk(), iosSimulatorAppId,
-                                                            ((FlashRunnerParameters)params).getIOSSimulatorSdkPath()));
+                                                            ((FlashRunnerParameters)params).getIOSSimulatorSdkPath(),
+                                                            ((FlashRunnerParameters)params).getIOSSimulatorDevice()));
               break;
             case iOSDevice:
               final String iosAppName =
@@ -1361,7 +1363,7 @@ public class FlexDebugProcess extends XDebugProcess {
     private final @Nullable VirtualFile myTempDirToDeleteWhenProcessFinished;
 
     StartAirAppDebuggingCommand(final GeneralCommandLine adlCommandLine,
-                                       final @Nullable VirtualFile tempDirToDeleteWhenProcessFinished) {
+                                final @Nullable VirtualFile tempDirToDeleteWhenProcessFinished) {
       myAdlCommandLine = adlCommandLine;
       myTempDirToDeleteWhenProcessFinished = tempDirToDeleteWhenProcessFinished;
     }
@@ -1466,17 +1468,19 @@ public class FlexDebugProcess extends XDebugProcess {
     private final Sdk myFlexSdk;
     private final String myAppId;
     private final String myIOSSdkPath;
+    private final String mySimulatorDevice;
 
-    StartAppOnIosSimulatorCommand(final Sdk flexSdk, final String appId, final String iOSSdkPath) {
+    StartAppOnIosSimulatorCommand(final Sdk flexSdk, final String appId, final String iOSSdkPath, String simulatorDevice) {
       myFlexSdk = flexSdk;
       myAppId = appId;
       myIOSSdkPath = iOSSdkPath;
+      mySimulatorDevice = simulatorDevice;
     }
 
     @Override
-    void launchDebuggedApplication() throws IOException {
+    void launchDebuggedApplication() {
       ApplicationManager.getApplication().invokeLater(
-        () -> FlexBaseRunner.launchOnIosSimulator(getSession().getProject(), myFlexSdk, myAppId, myIOSSdkPath, true));
+        () -> FlexBaseRunner.launchOnIosSimulator(getSession().getProject(), myFlexSdk, myAppId, myIOSSdkPath, mySimulatorDevice, true));
     }
   }
 
@@ -1690,7 +1694,9 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   @Override
-  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar, @NotNull final DefaultActionGroup topToolbar, @NotNull DefaultActionGroup settings) {
+  public void registerAdditionalActions(@NotNull final DefaultActionGroup leftToolbar,
+                                        @NotNull final DefaultActionGroup topToolbar,
+                                        @NotNull DefaultActionGroup settings) {
     topToolbar.addAction(ActionManager.getInstance().getAction("Flex.Debugger.FilterSwfLoadUnloadMessages"));
   }
 }

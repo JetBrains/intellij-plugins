@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.DefaultExecutionResult;
@@ -96,7 +97,8 @@ public class FlexRunner extends FlexBaseRunner {
               return null;
             }
             if (packAndInstallToIOSSimulator(module, bc, runnerParameters, adtVersionSimulator, iosSimulatorAppId, false)) {
-              launchOnIosSimulator(module.getProject(), bc.getSdk(), iosSimulatorAppId, runnerParameters.getIOSSimulatorSdkPath(), false);
+              launchOnIosSimulator(module.getProject(), bc.getSdk(), iosSimulatorAppId, runnerParameters.getIOSSimulatorSdkPath(),
+                                   runnerParameters.getIOSSimulatorDevice(), false);
             }
             return null;
           case iOSDevice:
