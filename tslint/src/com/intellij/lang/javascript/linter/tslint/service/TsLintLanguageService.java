@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.idea.RareLogger;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.javascript.nodejs.util.NodePackage;
@@ -15,6 +16,7 @@ import com.intellij.lang.javascript.service.*;
 import com.intellij.lang.javascript.service.protocol.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
@@ -229,6 +231,15 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
       result.pluginPath = LocalFilePath.create(
         JSLanguageServiceUtil.getPluginDirectory(getClass(), "js/languageService/tslint-plugin-provider.js").getAbsolutePath());
       return result;
+    }
+
+    @Override
+    protected void addNodeProcessAdditionalArguments(@NotNull GeneralCommandLine commandLine) {
+      super.addNodeProcessAdditionalArguments(commandLine);
+      if (myServiceName != null) {
+        JSLanguageServiceUtil.addNodeProcessArgumentsFromRegistry(commandLine, myServiceName,
+                                                                  () -> Registry.stringValue("tslint.service.node.arguments"));
+      }
     }
 
     @Override
