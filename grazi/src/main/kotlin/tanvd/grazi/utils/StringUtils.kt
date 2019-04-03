@@ -1,8 +1,11 @@
 package tanvd.grazi.utils
 
-val blankRegex = Regex("[\\n\\s]*")
+val blankCharRegex = Regex("\\s")
+val newLineCharRegex = Regex("\\n")
+
+val blankWithNewLinesOrEmpty = Regex("[\\n\\s]*")
 /** Considers whitespaces, tabs and newlines */
-fun String.isBlankWithNewLines() = blankRegex.matches(this)
+fun String.isBlankWithNewLines() = blankWithNewLinesOrEmpty.matches(this)
 
 val camelCaseRegex = Regex("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])")
 fun String.splitCamelCase(insideOf: IntRange? = null) = buildList<Pair<IntRange, String>> {
@@ -43,3 +46,5 @@ fun String.splitWithRanges(separators: List<Char>, insideOf: IntRange? = null, i
         add(IntRange(this@splitWithRanges.length - word.length, this@splitWithRanges.length - 1).withOffset(offset) to word)
     }
 }
+
+fun Regex.matches(char: Char) = this.matches(char.toString())

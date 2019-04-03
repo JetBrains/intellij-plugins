@@ -1,60 +1,52 @@
 package tanvd.grazi.grammar
 
 import com.intellij.psi.PsiElement
-import tanvd.grazi.utils.isBlankWithNewLines
+import tanvd.grazi.utils.*
 import java.util.*
 import kotlin.collections.HashMap
 
-class SanitizingGrammarChecker(private val ignoreIfPreviousEqual: List<Char>,
-                               private val ignores: List<Char>,
-                               private val replaces: Map<Char, Char>,
-                               private val shouldIgnoreBlanks: Boolean = true) {
+class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
+                               private val replace: List<(CharSequence, Char) -> Char?>,
+                               private val ignoreBlanks: Boolean = true) {
 
     companion object {
-        val default = SanitizingGrammarChecker(listOf(' '), listOf('\t', '*'), mapOf('\n' to ' '))
+        val default = SanitizingGrammarChecker(listOf({ str, cur ->
+            str.lastOrNull()?.let { blankCharRegex.matches(it) }.orTrue() && blankCharRegex.matches(cur)
+        }, { _, cur -> cur == '*' }), listOf({ _, cur ->
+            newLineCharRegex.matches(cur).ifTrue { ' ' }
+        }))
     }
 
     fun <T : PsiElement> check(vararg tokens: T) = check(tokens.toList())
 
     fun <T : PsiElement> check(tokens: Collection<T>, getText: (T) -> String = { it.text }): Set<Typo> {
-        var resultText = ""
-
         val indexesShift = TreeMap<Int, Int> { ind, _ -> ind }
         val tokenMapping = HashMap<IntRange, T>()
 
-        var index = 0
-        var previous: Char? = null
-        for (token in tokens.filter { !shouldIgnoreBlanks || it.text.isBlankWithNewLines().not() }) {
-            val tokenStartIndex = index
-            var totalExcluded = 0
-            for (char in getText(token)) {
-                val newChar = if (char in replaces.keys) {
-                    replaces[char]
-                } else {
-                    char
+        val resultText = buildString {
+            var index = 0
+            for (token in tokens.filter { !ignoreBlanks || !it.text.isBlankWithNewLines() }) {
+                val tokenStartIndex = index
+                var totalExcluded = 0
+                for (char in getText(token)) {
+                    @Suppress("NAME_SHADOWING")
+                    val char = replace.firstNotNull { it(this, char) } ?: char
+
+                    if (ignore.any { it(this, char) }) {
+                        indexesShift[index] = ++totalExcluded
+                        continue
+                    }
+
+                    append(char)
+
+                    index++
                 }
+                tokenMapping[IntRange(tokenStartIndex, index)] = token
 
-                if (newChar in ignores) {
-                    indexesShift[index] = ++totalExcluded
-                    continue
+                if (this.lastOrNull()?.let { blankCharRegex.matches(it) }.orFalse()) {
+                    append(' ')
+                    index++
                 }
-
-                if (newChar in ignoreIfPreviousEqual && previous == newChar) {
-                    indexesShift[index] = ++totalExcluded
-                    continue
-                }
-
-                resultText += newChar
-
-                index++
-                previous = newChar
-            }
-            tokenMapping[IntRange(tokenStartIndex, index)] = token
-
-            if (previous != ' ') {
-                resultText += " "
-                previous = ' '
-                index++
             }
         }
 

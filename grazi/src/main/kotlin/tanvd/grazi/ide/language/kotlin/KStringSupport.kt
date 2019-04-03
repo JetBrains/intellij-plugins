@@ -18,7 +18,7 @@ class KStringSupport : LanguageSupport {
 
     override fun check(file: PsiFile) = buildSet<Typo> {
         for (str in file.filterFor<KtStringTemplateEntry>()) {
-            addAll(SanitizingGrammarChecker.default.check(str.filterFor<KtLiteralStringTemplateEntry>()).filter{ it.info.rule.id !in disabledRules })
+            addAll(SanitizingGrammarChecker.default.check(str.filterFor<KtLiteralStringTemplateEntry>()).filter { it.info.rule.id !in disabledRules })
 
             ProgressManager.checkCanceled()
         }

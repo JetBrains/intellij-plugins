@@ -4,7 +4,8 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import tanvd.grazi.grammar.*
-import tanvd.grazi.spellcheck.*
+import tanvd.grazi.spellcheck.SpellChecker
+import tanvd.grazi.spellcheck.SpellDictionary
 
 
 class GraziAddWordQuickFix(private val typo: Typo) : LocalQuickFix {

@@ -24,12 +24,12 @@ class JStringSupport : LanguageSupport {
         val rawStrings = literals.filter { it.literalElementType == JavaTokenType.RAW_STRING_LITERAL }
 
         for (str in literals.filterForType(JavaTokenType.STRING_LITERAL)) {
-            addAll(SanitizingGrammarChecker.default.check(literalStrings) { it.innerText ?: "" }.filter{ it.info.rule.id !in disabledRules })
+            addAll(SanitizingGrammarChecker.default.check(literalStrings) { it.innerText ?: "" }.filter { it.info.rule.id !in disabledRules })
             ProgressManager.checkCanceled()
         }
 
         for (str in rawStrings.filterForType(JavaTokenType.RAW_STRING_LITERAL)) {
-            addAll(SanitizingGrammarChecker.default.check(literalStrings) { it.rawString ?: "" }.filter{ it.info.rule.id !in disabledRules })
+            addAll(SanitizingGrammarChecker.default.check(literalStrings) { it.rawString ?: "" }.filter { it.info.rule.id !in disabledRules })
 
             ProgressManager.checkCanceled()
         }

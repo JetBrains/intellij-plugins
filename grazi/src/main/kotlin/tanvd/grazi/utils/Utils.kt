@@ -16,6 +16,21 @@ fun <T> tryRun(body: () -> T): T? = try {
     null
 }
 
+fun Boolean?.orFalse(): Boolean = this ?: false
+fun Boolean?.orTrue(): Boolean = this ?: false
+
+fun <T, E> Collection<T>.firstNotNull(body: (T) -> E?): E? {
+    for (value in this) {
+        val result = body(value)
+        if (result != null) {
+            return result
+        }
+    }
+    return null
+}
+
+fun <T> Boolean.ifTrue(body: () -> T): T? = if (this) body() else null
+
 fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
 fun <T> List<T>.dropFirst() = this.drop(1)
