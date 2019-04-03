@@ -18,7 +18,10 @@ object SpellChecker {
     private val whiteSpaceSeparators = listOf(' ', '\t')
     private val nameSeparators = listOf('.', '_')
 
-    private val ignorePatters: List<(String) -> Boolean> = listOf({ it -> it.startsWith(".") }, { it -> it.isUrl() })
+    private val ignorePatters: List<(String) -> Boolean> = listOf(
+            { it -> it.startsWith(".") },
+            { it -> it.isUrl() },
+            { it -> it.isHtmlPlainTextTag() })
 
     private fun createChecker(): JLanguageTool {
         val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)

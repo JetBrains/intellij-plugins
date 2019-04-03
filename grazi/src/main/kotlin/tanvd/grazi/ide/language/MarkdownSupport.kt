@@ -3,6 +3,9 @@ package tanvd.grazi.ide.language
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.source.tree.TreeUtil
+import com.intellij.psi.tree.TokenSet
+import org.intellij.plugins.markdown.lang.MarkdownElementTypes
 import org.intellij.plugins.markdown.lang.psi.impl.*
 import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
@@ -12,6 +15,9 @@ import tanvd.grazi.utils.filterFor
 class MarkdownSupport : LanguageSupport {
     companion object {
         val bulletsIgnoredCategories = listOf(Typo.Category.CASING)
+        val noSpellcheckingType = arrayOf(MarkdownElementTypes.CODE_BLOCK, MarkdownElementTypes.CODE_FENCE,
+                MarkdownElementTypes.CODE_SPAN, MarkdownElementTypes.LINK_DESTINATION)
+
     }
 
     override fun isSupported(file: PsiFile): Boolean {
@@ -19,19 +25,23 @@ class MarkdownSupport : LanguageSupport {
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {
-        for (header in file.filterFor<MarkdownHeaderImpl>()) {
+        for (header in file.filterFor<MarkdownHeaderImpl> { TreeUtil.findParent(it.node, TokenSet.create(*noSpellcheckingType)) == null }) {
             addAll(SanitizingGrammarChecker.default.check(header))
 
             ProgressManager.checkCanceled()
         }
 
-        for (paragraph in file.filterFor<MarkdownParagraphImpl>().filter { it.parent !is MarkdownListItemImpl }) {
+        for (paragraph in file.filterFor<MarkdownParagraphImpl> {
+            TreeUtil.findParent(it.node, TokenSet.create(*noSpellcheckingType, MarkdownElementTypes.LIST_ITEM)) == null
+        }) {
             addAll(SanitizingGrammarChecker.default.check(paragraph))
 
             ProgressManager.checkCanceled()
         }
 
-        for (item in file.filterFor<MarkdownListItemImpl>()) {
+        for (item in file.filterFor<MarkdownListItemImpl> {
+            TreeUtil.findParent(it.node, TokenSet.create(*noSpellcheckingType, MarkdownElementTypes.LIST_ITEM)) == null
+        }) {
             addAll(SanitizingGrammarChecker.default.check(item).filter {
                 it.info.category !in bulletsIgnoredCategories
             })

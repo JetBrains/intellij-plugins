@@ -22,6 +22,7 @@ fun String.splitSnakeCase() = this.split("_")
 
 val urlRegex = Regex("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)")
 fun String.isUrl() = urlRegex.matches(this)
+fun String.isHtmlPlainTextTag() = startsWith("&")
 
 
 /** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */
