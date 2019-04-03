@@ -133,7 +133,7 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
                                                                             config, collectedInfo.getFileContent(), linterState);
     final List<TsLinterError> result;
     try {
-      result = JSLanguageServiceUtil.awaitLanguageService(future, service);
+      result = JSLanguageServiceUtil.awaitLanguageService(future, service, collectedInfo.getVirtualFile());
     }
     catch (ExecutionException e) {
       return createGlobalErrorMessage(collectedInfo, config, e.getMessage());
