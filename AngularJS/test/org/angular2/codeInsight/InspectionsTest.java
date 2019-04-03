@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.inspections.UnterminatedStatementJSInspectio
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedFunctionInspection;
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
+import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angularjs.AngularTestUtil;
 
 import static java.util.Arrays.asList;
@@ -78,4 +79,9 @@ public class InspectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.checkHighlighting();
   }
 
+  public void testGlobalThisInspection() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("top-level-this.html", "top-level-this.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
 }

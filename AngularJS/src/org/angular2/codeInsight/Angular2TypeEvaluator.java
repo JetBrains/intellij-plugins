@@ -30,6 +30,7 @@ import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.psi.Angular2Binding;
+import org.angular2.lang.expr.psi.Angular2EmbeddedExpression;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
@@ -143,6 +144,20 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
       return true;
     }
     return super.addTypeFromResolveResult(referenceName, resolveResult);
+  }
+
+  @Override
+  protected void processThisQualifierInExecutionScope(@NotNull JSThisExpression thisQualifier, PsiElement thisScope) {
+    if (thisScope instanceof Angular2EmbeddedExpression) {
+      TypeScriptClass componentClass = Angular2IndexingHandler.findComponentClass(thisQualifier);
+      if (componentClass != null) {
+        addType(componentClass.getJSType(), thisQualifier);
+      } else {
+        addType(JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, true), thisQualifier);
+      }
+      return;
+    }
+    super.processThisQualifierInExecutionScope(thisQualifier, thisScope);
   }
 
   @Contract("null -> null") //NON-NLS

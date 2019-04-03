@@ -5,6 +5,7 @@ import com.intellij.codeInspection.InspectionToolProvider;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.typescript.inspections.*;
+import com.sixrr.inspectjs.validity.ThisExpressionReferencesGlobalObjectJSInspection;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2TemplateInspectionsProvider implements InspectionToolProvider {
@@ -29,6 +30,7 @@ public class Angular2TemplateInspectionsProvider implements InspectionToolProvid
       TypeScriptValidateJSTypesInspection.class,
       TypeScriptAccessibilityCheckInspection.class,
 
+      ThisExpressionReferencesGlobalObjectJSInspection.class,
       JSUnusedGlobalSymbolsInspection.class,
       JSUnusedLocalSymbolsInspection.class,
     };

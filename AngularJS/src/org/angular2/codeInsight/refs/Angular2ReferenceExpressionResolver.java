@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSPsiElementBase;
+import com.intellij.lang.javascript.psi.JSThisExpression;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
@@ -45,7 +46,7 @@ public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpr
     if (myRef instanceof Angular2PipeReferenceExpression) {
       return resolvePipeNameReference(expression, incompleteCode);
     }
-    else if (myQualifier == null) {
+    else if (myQualifier == null || myQualifier instanceof JSThisExpression) {
       return resolveTemplateVariable(expression);
     }
     return super.resolve(expression, incompleteCode);
