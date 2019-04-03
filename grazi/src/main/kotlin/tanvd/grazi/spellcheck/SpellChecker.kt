@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 object SpellChecker {
     private const val cacheMaxSize = 30_000L
     private const val cacheExpireAfterMinutes = 5
-    private val checkerLang = Lang.ENGLISH
+    private val checkerLang = Lang.AMERICAN_ENGLISH
 
     private val cache = TypoCache(50_000L)
 
@@ -22,8 +22,8 @@ object SpellChecker {
 
     private fun createChecker(): JLanguageTool {
         val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-        val userConfig = UserConfig(SpellDictionary.usersCustom().words)
-        return JLanguageTool(checkerLang.toLanguage(), GraziConfig.state.motherTongue.toLanguage(), cache, userConfig).apply {
+        return JLanguageTool(checkerLang.toLanguage(), GraziConfig.state.nativeLanguage.toLanguage(),
+                cache, UserConfig(GraziConfig.state.userWords)).apply {
             disableRules(allActiveRules.filter { !it.isDictionaryBasedSpellingRule }.map { it.id })
         }
     }

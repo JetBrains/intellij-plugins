@@ -3,7 +3,6 @@ package tanvd.grazi.grammar
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
 import tanvd.grazi.language.Lang
-import tanvd.grazi.spellcheck.SpellDictionary
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -16,9 +15,10 @@ object GrammarChecker {
     operator fun get(lang: Lang): JLanguageTool {
         return langs.getOrPut(lang) {
             val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-            val userConfig = UserConfig(SpellDictionary.usersCustom().words)
-            JLanguageTool(lang.toLanguage(), GraziConfig.state.motherTongue.toLanguage(), cache, userConfig).apply {
+            JLanguageTool(lang.toLanguage(), GraziConfig.state.nativeLanguage.toLanguage(),
+                    cache, UserConfig(GraziConfig.state.userWords)).apply {
                 lang.configure(this)
+                disableRules(allActiveRules.map { it.id }.filter { it in GraziConfig.state.userDisabledRules })
             }
         }
     }

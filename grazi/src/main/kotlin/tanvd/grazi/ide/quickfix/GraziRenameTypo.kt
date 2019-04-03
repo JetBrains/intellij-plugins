@@ -1,5 +1,6 @@
 package tanvd.grazi.ide.quickfix
 
+import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.ide.DataManager
@@ -23,13 +24,15 @@ import tanvd.grazi.spellcheck.SpellCheckSuggestions
 import java.util.*
 
 
-open class GraziRenameTypoQuickFix(private val typo: Typo) : LocalQuickFix {
+open class GraziRenameTypo(private val typo: Typo) : LocalQuickFix, PriorityAction {
 
     override fun getName(): String {
         return "Fix ${typo.info.category.description} mistake"
     }
 
     override fun getFamilyName(): String = "Fix mistake"
+
+    override fun getPriority() = PriorityAction.Priority.HIGH
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val provider = findProvider()

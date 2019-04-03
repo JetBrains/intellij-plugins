@@ -14,9 +14,10 @@ data class Typo(val location: Location, val info: Info, val fix: List<String>? =
     }
 
 
-    data class Info(val lang: Lang, val rule: Rule, val description: String, val category: Category) {
-        val fullDescription: String
+    data class Info(val lang: Lang, val rule: Rule, val category: Category) {
+        val description: String
             get() {
+                val description = rule.description
                 if (description.isBlank())
                     return category.description
                 if (description.contains(":"))
@@ -29,7 +30,7 @@ data class Typo(val location: Location, val info: Info, val fix: List<String>? =
 
     constructor(match: RuleMatch, lang: Lang, hash: Int, offset: Int = 0) : this(
             Location(match.toIntRange().withOffset(offset), hash = hash),
-            Info(lang, match.rule, match.rule.description, match.typoCategory), match.suggestedReplacements)
+            Info(lang, match.rule, match.typoCategory), match.suggestedReplacements)
 
 
     enum class Category(val value: String, val description: String) : ProblemGroup {

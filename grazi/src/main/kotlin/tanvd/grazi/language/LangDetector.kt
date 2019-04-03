@@ -22,6 +22,6 @@ object LangDetector {
 
 
     private val profiles: List<LanguageProfile>
-        get() = LanguageProfileReader().read(Lang.values().filter { it != Lang.CHINESE }.map { it.shortCode } + listOf("zh-CN", "zh-TW"))
+        get() = LanguageProfileReader().read((Lang.values().filter { it != Lang.CHINESE }.map { it.shortCode } + listOf("zh-CN", "zh-TW")).toSet())
 
 }

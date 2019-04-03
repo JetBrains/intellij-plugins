@@ -2,7 +2,6 @@ package tanvd.grazi.grammar
 
 import com.intellij.psi.PsiElement
 import tanvd.grazi.utils.*
-import kotlin.collections.HashMap
 
 class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
                                private val replace: List<(CharSequence, Char) -> Char?>,

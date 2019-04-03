@@ -1,5 +1,6 @@
 package tanvd.grazi.ide.quickfix
 
+import com.intellij.codeInsight.intention.PriorityAction
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInspection.*
@@ -12,13 +13,15 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil.getInject
 import tanvd.grazi.grammar.Typo
 
 
-class GraziReplaceTypoQuickFix(private val typo: Typo) : LocalQuickFix {
+class GraziReplaceTypo(private val typo: Typo) : LocalQuickFix, PriorityAction {
 
     override fun getName(): String {
         return "Fix ${typo.info.category.description} mistake"
     }
 
     override fun getFamilyName(): String = "Fix mistake"
+
+    override fun getPriority() = PriorityAction.Priority.HIGH
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val element = descriptor.psiElement ?: return

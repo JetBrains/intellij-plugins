@@ -21,19 +21,21 @@ class GraziInspection : LocalInspectionTool() {
 
             val fixes = buildList<LocalQuickFix> {
                 if (fix.info.category == Typo.Category.TYPOS) {
-                    add(GraziAddWordQuickFix(fix))
+                    add(GraziAddWord(fix))
 
                 }
                 if (fix.location.shouldUseRename) {
-                    add(GraziRenameTypoQuickFix(fix))
+                    add(GraziRenameTypo(fix))
 
                 } else {
-                    add(GraziReplaceTypoQuickFix(fix))
+                    add(GraziReplaceTypo(fix))
                 }
+
+                add(GraziDisableRule(fix))
             }
 
             return manager.createProblemDescriptor(fix.location.element, TextRange.create(fix.location.range.start, end),
-                    fix.info.fullDescription, fix.info.category.highlight,
+                    fix.info.description, fix.info.category.highlight,
                     isOnTheFly, *fixes.toTypedArray())
         }
     }

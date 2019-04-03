@@ -3,15 +3,15 @@ package tanvd.grazi
 import com.intellij.openapi.components.*
 import com.intellij.util.xmlb.annotations.Property
 import tanvd.grazi.language.Lang
-import java.io.File
 
 
 @State(name = "GraziConfig", storages = [Storage("grazi.xml")])
 class GraziConfig : PersistentStateComponent<GraziConfig.State> {
-    data class State(@Property val enabledLanguages: MutableSet<Lang> = hashSetOf(Lang.ENGLISH),
-                     @Property var graziFolder: File = File(System.getProperty("user.home"), ".grazi"),
-                     @Property var motherTongue: Lang = enabledLanguages.first(),
+    data class State(@Property val enabledLanguages: MutableSet<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
+                     @Property var nativeLanguage: Lang = enabledLanguages.first(),
                      @Property var enabledSpellcheck: Boolean = false,
+                     @Property val userWords: MutableList<String> = ArrayList(),
+                     @Property val userDisabledRules: MutableList<String> = ArrayList(),
                      @Property var lastSeenVersion: String? = null)
 
     companion object {

@@ -3,14 +3,16 @@ package tanvd.grazi.language
 import org.languagetool.JLanguageTool
 import org.languagetool.Language
 import org.languagetool.Languages.getLanguageForShortCode
-import org.languagetool.language.BritishEnglish
-import org.languagetool.language.Russian
+import org.languagetool.language.*
 
 enum class Lang(val shortCode: String,
                 private val lang: Language = getLanguageForShortCode(shortCode, emptyList())!!,
                 private val enabledRules: Set<String> = emptySet(),
                 private val disabledRules: Set<String> = emptySet()) {
-    ENGLISH("en", BritishEnglish(),
+    BRITISH_ENGLISH("en", BritishEnglish(),
+            setOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE"),
+            setOf("WORD_CONTAINS_UNDERSCORE", "EN_QUOTES")),
+    AMERICAN_ENGLISH("en", AmericanEnglish(),
             setOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE"),
             setOf("WORD_CONTAINS_UNDERSCORE", "EN_QUOTES")),
     RUSSIAN("ru", Russian(),
