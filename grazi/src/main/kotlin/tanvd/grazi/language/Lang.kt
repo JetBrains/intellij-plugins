@@ -5,17 +5,17 @@ import org.languagetool.Language
 import org.languagetool.Languages.getLanguageForShortCode
 import org.languagetool.language.*
 
-enum class Lang(val shortCode: String, val displayName: String,
+enum class Lang(val shortCode: String, val displayName: String, val fullCode: String = shortCode,
                 private val lang: Language = getLanguageForShortCode(shortCode, emptyList())!!,
                 private val enabledRules: Set<String> = emptySet(),
                 private val disabledRules: Set<String> = emptySet()) {
-    BRITISH_ENGLISH("en", "British English", BritishEnglish(),
+    BRITISH_ENGLISH("en", "British English", "en_UK", BritishEnglish(),
             setOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE"),
             setOf("WORD_CONTAINS_UNDERSCORE", "EN_QUOTES")),
-    AMERICAN_ENGLISH("en", "American English", AmericanEnglish(),
+    AMERICAN_ENGLISH("en", "American English", "en_US", AmericanEnglish(),
             setOf("CAN_NOT", "ARTICLE_MISSING", "ARTICLE_UNNECESSARY", "COMMA_BEFORE_AND", "COMMA_WHICH", "USELESS_THAT", "AND_ALSO", "And", "PASSIVE_VOICE"),
             setOf("WORD_CONTAINS_UNDERSCORE", "EN_QUOTES")),
-    RUSSIAN("ru", "Rusian", Russian(),
+    RUSSIAN("ru", "Russian", "ru", Russian(),
             setOf("ABREV_DOT2", "KAK_VVODNOE", "PARTICLE_JE", "po_povodu_togo", "tak_skazat", "kak_bi", "O_tom_chto", "kosvennaja_rech")),
     PERSIAN("fa", "Persian"),
     FRENCH("fr", "French"),

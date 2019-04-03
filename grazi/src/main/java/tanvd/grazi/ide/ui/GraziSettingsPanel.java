@@ -21,14 +21,14 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
     @Override
     public JComponent getComponent() {
         for (Lang lang : Lang.Companion.sortedValues()) {
-            enabledLanguages.addItem(lang.getShortCode(), lang.getDisplayName(), false);
+            enabledLanguages.addItem(lang.getFullCode(), lang.getDisplayName(), false);
         }
         return wholePanel;
     }
 
     @Override
     public boolean isModified(@NotNull GraziConfig settings) {
-        return !Arrays.stream(Lang.values()).allMatch(lang -> settings.getState().getEnabledLanguages().contains(lang) == enabledLanguages.isItemSelected(lang.getShortCode()))
+        return !Arrays.stream(Lang.values()).allMatch(lang -> settings.getState().getEnabledLanguages().contains(lang) == enabledLanguages.isItemSelected(lang.getFullCode()))
                 || !settings.getState().getNativeLanguage().equals(nativeLanguage.getSelectedItem())
                 || settings.getState().getEnabledSpellcheck() != enableGraziSpellcheckCheckBox.isSelected();
     }
@@ -37,7 +37,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
     @Override
     public void apply(@NotNull GraziConfig settings) {
         for (Lang lang : Lang.values()) {
-            if (enabledLanguages.isItemSelected(lang.getShortCode())) {
+            if (enabledLanguages.isItemSelected(lang.getFullCode())) {
                 settings.getState().getEnabledLanguages().add(lang);
             } else {
                 settings.getState().getEnabledLanguages().remove(lang);
@@ -52,7 +52,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
     @Override
     public void reset(@NotNull GraziConfig settings) {
         for (Lang lang : Lang.values()) {
-            enabledLanguages.setItemSelected(lang.getShortCode(), settings.getState().getEnabledLanguages().contains(lang));
+            enabledLanguages.setItemSelected(lang.getFullCode(), settings.getState().getEnabledLanguages().contains(lang));
         }
 
         for (Lang lang : settings.getState().getEnabledLanguages()) {

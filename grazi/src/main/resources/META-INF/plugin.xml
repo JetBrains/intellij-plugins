@@ -14,8 +14,8 @@
 
         <br/>
 
-        The plugin supports as a source of natural language: JavaDocs, KotlinDocs, Markdown,
-        Plaintext and comments.
+        The plugin supports as a source of natural language constructs of Kotlin, Python and Java (it
+        includes literals, docs, comments), Markdown, XML and plain text.
 
         <br/>
 
