@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.ide.IdeView;
@@ -25,8 +26,7 @@ public class NewActionScriptClassAction extends AnAction {
 
     final boolean enabled = isAvailable(dataContext);
 
-    presentation.setVisible(enabled);
-    presentation.setEnabled(enabled);
+    presentation.setEnabledAndVisible(enabled);
   }
 
   private boolean isAvailable(DataContext dataContext) {

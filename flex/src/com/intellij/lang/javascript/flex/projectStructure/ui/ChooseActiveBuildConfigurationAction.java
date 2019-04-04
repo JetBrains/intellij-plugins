@@ -41,8 +41,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   public void update(@NotNull final AnActionEvent e) {
     boolean enabled = isEnabled(e.getDataContext());
     if (ActionPlaces.isPopupPlace(e.getPlace())) {
-      e.getPresentation().setVisible(enabled);
-      e.getPresentation().setEnabled(enabled);
+      e.getPresentation().setEnabledAndVisible(enabled);
     }
     else {
       //e.getPresentation().setDescription(FlexBundle.message());
