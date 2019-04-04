@@ -25,7 +25,6 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
@@ -36,7 +35,11 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.codeInsight.Angular2TypeEvaluator;
-import org.angular2.entities.*;
+import org.angular2.codeInsight.tags.Angular2XmlElementSourcesResolver;
+import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.Angular2DirectiveSelector;
+import org.angular2.entities.Angular2Element;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
@@ -131,12 +134,9 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return new DirectiveAttributesProvider(tag, directive).get();
   }
 
-  @Nullable
-  private final XmlTag myTag;
   @NotNull
   private final AttributePriority myPriority;
-  @NotNull
-  private final List<Object> mySources;
+  private final Angular2XmlElementSourcesResolver myResolver;
   @NotNull
   private final String myAttributeName;
   @NotNull
@@ -178,9 +178,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                         @NotNull AttributePriority priority,
                                         @NotNull Collection<?> sources,
                                         boolean implied) {
-    myTag = tag;
     myAttributeName = attributeName;
-    mySources = Collections.unmodifiableList(new ArrayList<>(sources));
+    myResolver = new Angular2XmlElementSourcesResolver(tag, sources);
     myInfo = info;
     myPriority = priority;
     myImplied = implied;
@@ -197,18 +196,18 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
         : "Cannot merge attributes with different names or non-equivalent infos: "
           + myAttributeName + " " + myInfo.toString() + " != "
           + ngOther.myAttributeName + " " + ngOther.myInfo.toString();
-      assert myTag == ngOther.myTag
+      assert myResolver.getScope() == ngOther.myResolver.getScope()
         : "Cannot merge attributes from different tags";
-      Set<Object> sources = new HashSet<>(mySources);
-      sources.addAll(ngOther.mySources);
-      return new Angular2AttributeDescriptor(myTag, myAttributeName, myInfo, myPriority,
+      Set<Object> sources = new HashSet<>(myResolver.getSources());
+      sources.addAll(ngOther.myResolver.getSources());
+      return new Angular2AttributeDescriptor(myResolver.getScope(), myAttributeName, myInfo, myPriority,
                                              sources, myImplied || ngOther.myImplied);
     }
     else {
       assert other.getName().equals(myAttributeName);
-      Set<Object> elements = new HashSet<>(mySources);
+      Set<Object> elements = new HashSet<>(myResolver.getSources());
       elements.addAll(other.getDeclarations());
-      return new Angular2AttributeDescriptor(myTag, myAttributeName, false, elements, true);
+      return new Angular2AttributeDescriptor(myResolver.getScope(), myAttributeName, false, elements, true);
     }
   }
 
@@ -252,7 +251,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @NotNull
   public List<Angular2Directive> getSourceDirectives() {
-    return filterIsInstance(mySources, Angular2Directive.class);
+    return myResolver.getSourceDirectives();
   }
 
   public boolean isImplied() {
@@ -296,61 +295,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   @Override
   public Collection<PsiElement> getDeclarations() {
-    Set<PsiElement> result = new HashSet<>(getNonDirectiveElements());
-    MultiMap<DeclarationProximity, Angular2Directive> directivesByProximity = getDeclarationsByProximity();
-    directivesByProximity.remove(NOT_REACHABLE);
-
-    MultiMap<DeclarationProximity, PsiElement> declarationByProximity = mapValues(directivesByProximity,
-                                                                                  this::getDeclarations);
-    if (!declarationByProximity.get(IN_SCOPE).isEmpty()) {
-      result.addAll(declarationByProximity.get(IN_SCOPE));
-      return result;
-    }
-    MultiMap<DeclarationProximity, PsiElement> selectorsByProximity = mapValues(directivesByProximity,
-                                                                                this::getSelectors);
-    if (!selectorsByProximity.get(IN_SCOPE).isEmpty()) {
-      result.addAll(selectorsByProximity.get(IN_SCOPE));
-      return result;
-    }
-
-    if (!declarationByProximity.isEmpty()) {
-      result.addAll(declarationByProximity.values());
-    } else {
-      result.addAll(selectorsByProximity.values());
-    }
-    return result;
-  }
-
-  @NotNull
-  private List<PsiElement> getNonDirectiveElements() {
-    List<PsiElement> result = new ArrayList<>(mySources.size());
-    for (Object source: mySources) {
-      if (source instanceof PsiElement && !(source instanceof Angular2Declaration)) {
-        result.add((PsiElement)source);
-      }
-    }
-    return result;
-  }
-
-  @NotNull
-  private MultiMap<DeclarationProximity, Angular2Directive> getDeclarationsByProximity() {
-    MultiMap<DeclarationProximity, Angular2Directive> result = new MultiMap<>();
-    Angular2DeclarationsScope scope = myTag != null ? new Angular2DeclarationsScope(myTag)
-                                                    : null;
-    for (Object source: mySources) {
-      if (source instanceof Angular2Directive) {
-        Angular2Directive directive = (Angular2Directive)source;
-        result.putValue(scope != null ? scope.getDeclarationProximity(directive) : IN_SCOPE,directive);
-      }
-    }
-    return result;
-  }
-
-  private static <K, V, T> MultiMap<K, T> mapValues(MultiMap<K, ? extends V> source, Function<? super V, Collection<? extends T>> mapper) {
-    MultiMap<K, T> result = MultiMap.createSet();
-    source.entrySet().forEach(entry -> entry.getValue().forEach(
-      value -> result.putValues(entry.getKey(), mapper.apply(value))));
-    return result;
+    return myResolver.getDeclarations(this::getProperties, this::getSelectors);
   }
 
   private Collection<? extends PsiElement> getSelectors(@NotNull Angular2Directive directive) {
@@ -363,7 +308,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   @NotNull
-  private Collection<PsiElement> getDeclarations(@NotNull Angular2Directive directive) {
+  private Collection<PsiElement> getProperties(@NotNull Angular2Directive directive) {
     switch (myInfo.type) {
       case PROPERTY_BINDING:
       case TEMPLATE_BINDINGS:
