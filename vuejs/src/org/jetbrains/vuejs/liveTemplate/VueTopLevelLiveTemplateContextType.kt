@@ -5,7 +5,7 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.VueFileType
 
 private const val CONTEXT_TYPE = "VUE_TOP_LEVEL"
 

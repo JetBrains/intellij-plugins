@@ -19,14 +19,14 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
+import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
 import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils.hasVuex
 import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils.normalizeName
 import org.jetbrains.vuejs.index.DELIMITER
 import org.jetbrains.vuejs.index.VueStoreIndex
 import org.jetbrains.vuejs.index.getForAllKeys
-import org.jetbrains.vuejs.lang.expr.VueJSLanguage
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.language.VueJSLanguage
 
 class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandlersFactory {
   companion object {

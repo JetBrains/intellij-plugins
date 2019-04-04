@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.actions.StopProcessAction;
@@ -27,9 +26,9 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
-import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.EmptyIcon;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -113,7 +112,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
                               @NotNull RunnerLayoutUi ui) {
     ConsoleView console = createConsole(project);
     KarmaServerLogComponent component = new KarmaServerLogComponent(console, server);
-    Icon emptyIcon = EmptyIcon.create(JBUIScale.scale(4));
+    Icon emptyIcon = EmptyIcon.create(JBUI.scale(4));
     final Content content = ui.createContent(KARMA_SERVER_CONTENT_ID,
                                              component,
                                              "Karma Server",

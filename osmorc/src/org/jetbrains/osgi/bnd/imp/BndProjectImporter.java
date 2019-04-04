@@ -1,4 +1,18 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2017 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.jetbrains.osgi.bnd.imp;
 
 import aQute.bnd.build.Container;
@@ -28,9 +42,9 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
@@ -233,9 +247,9 @@ public class BndProjectImporter {
 
     ApplicationManager.getApplication().runWriteAction(() -> {
       LanguageLevel projectLevel = LanguageLevelProjectExtension.getInstance(myProject).getLanguageLevel();
-      Map<Project, ModifiableRootModel> rootModels = new HashMap<>();
+      Map<Project, ModifiableRootModel> rootModels = ContainerUtil.newHashMap();
       ModifiableModuleModel moduleModel = ModuleManager.getInstance(myProject).getModifiableModel();
-      LibraryTable.ModifiableModel libraryModel = LibraryTablesRegistrar.getInstance().getLibraryTable(myProject).getModifiableModel();
+      LibraryTable.ModifiableModel libraryModel = ProjectLibraryTable.getInstance(myProject).getModifiableModel();
       try {
         for (Project project : myProjects) {
           try {
@@ -333,7 +347,7 @@ public class BndProjectImporter {
                                LibraryTable.ModifiableModel libraryModel,
                                ModifiableRootModel rootModel,
                                Project project) throws Exception {
-    List<String> warnings = new ArrayList<>();
+    List<String> warnings = ContainerUtil.newArrayList();
 
     Collection<Container> boot = project.getBootclasspath();
     Set<Container> bootSet = Collections.emptySet();
@@ -618,7 +632,7 @@ public class BndProjectImporter {
     try {
       refreshRepositories(workspace, indicator);
 
-      projects = new ArrayList<>(projectDirs.size());
+      projects = ContainerUtil.newArrayListWithCapacity(projectDirs.size());
       for (String dir : projectDirs) {
         if (indicator != null) indicator.checkCanceled();
         Project p = workspace.getProject(PathUtil.getFileName(dir));

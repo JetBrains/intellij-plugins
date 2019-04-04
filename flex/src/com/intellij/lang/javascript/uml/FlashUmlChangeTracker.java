@@ -63,7 +63,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
     }
 
     @Override
-    public Visitor<JSFunction> createVisitor(List<? super JSFunction> elements) {
+    public Visitor<JSFunction> createVisitor(List<JSFunction> elements) {
       return new InjectingVisitor<>(this, elements);
     }
   }
@@ -98,7 +98,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
     }
 
     @Override
-    public Visitor<JSVariable> createVisitor(List<? super JSVariable> elements) {
+    public Visitor<JSVariable> createVisitor(List<JSVariable> elements) {
       return new InjectingVisitor<>(this, elements);
     }
   };
@@ -248,13 +248,13 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
     }
 
     @Override
-    public Visitor<JSReferenceExpression> createVisitor(List<? super JSReferenceExpression> elements) {
+    public Visitor<JSReferenceExpression> createVisitor(List<JSReferenceExpression> elements) {
       return new InjectingVisitor<>(this, elements);
     }
   }
 
   private static class InjectingVisitor<T extends PsiElement> extends PsiFilter.Visitor<T> {
-    InjectingVisitor(PsiFilter<? super T> filter, List<? super T> elements) {
+    InjectingVisitor(PsiFilter<T> filter, List<T> elements) {
       super(filter, elements);
     }
 

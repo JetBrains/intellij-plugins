@@ -10,7 +10,7 @@ import com.intellij.openapi.roots.JdkOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
@@ -112,7 +111,7 @@ public class BundleManifestCache {
         }
 
         case OsmorcControlled: {
-          Map<String, String> map = new HashMap<>(configuration.getAdditionalPropertiesAsMap());
+          Map<String, String> map = ContainerUtil.newHashMap(configuration.getAdditionalPropertiesAsMap());
           map.put(Constants.BUNDLE_SYMBOLICNAME, configuration.getBundleSymbolicName());
           map.put(Constants.BUNDLE_VERSION, configuration.getBundleVersion());
           map.put(Constants.BUNDLE_ACTIVATOR, configuration.getBundleActivator());
@@ -168,7 +167,7 @@ public class BundleManifestCache {
     try {
       ByteArrayInputStream stream = new ByteArrayInputStream(manifestFile.getText().getBytes(StandardCharsets.UTF_8));
       Attributes attributes = new Manifest(stream).getMainAttributes();
-      Map<String, String> map = new HashMap<>();
+      Map<String, String> map = ContainerUtil.newHashMap();
       for (Object key : attributes.keySet()) {
         String name = key.toString();
         map.put(name, attributes.getValue(name));
@@ -185,7 +184,7 @@ public class BundleManifestCache {
     try {
       UTF8Properties properties = new UTF8Properties();
       properties.load(new StringReader(propertiesFile.getText()));
-      Map<String, String> map = new HashMap<>();
+      Map<String, String> map = ContainerUtil.newHashMap();
       for (Object key : properties.keySet()) {
         String name = key.toString();
         map.put(name, properties.getProperty(name));
@@ -194,7 +193,7 @@ public class BundleManifestCache {
         VirtualFile file = propertiesFile.getVirtualFile();
         if (file != null) {
           if (!BndProjectImporter.BND_FILE.equals(file.getName())) {
-            map.put(Constants.BUNDLE_SYMBOLICNAME, FileUtilRt.getNameWithoutExtension(file.getName()));
+            map.put(Constants.BUNDLE_SYMBOLICNAME, FileUtil.getNameWithoutExtension(file.getName()));
           }
           else if (file.getParent() != null) {
             map.put(Constants.BUNDLE_SYMBOLICNAME, file.getParent().getName());

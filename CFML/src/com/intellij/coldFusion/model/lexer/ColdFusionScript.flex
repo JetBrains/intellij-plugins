@@ -1,5 +1,4 @@
 package com.intellij.coldFusion.model.lexer;
-import com.intellij.openapi.util.text.StringUtil;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.lexer.FlexLexer;
@@ -13,13 +12,13 @@ import com.intellij.util.ArrayUtil;
 %%
 
 %{
-  Project myProject;
-  final CfscriptLexerConfiguration myCurrentConfiguration = new CfscriptLexerConfiguration();
+  CfscriptLexerConfiguration myCurrentConfiguration = new CfscriptLexerConfiguration();
+  private Project myProject;
 
   public class CfscriptLexerConfiguration {
       public int mySharpCounter = 0;
       public int myCommentCounter = 0;
-      public Stack<Integer> myReturnStack = new Stack<>();
+      public Stack<Integer> myReturnStack = new Stack<Integer>();
 
       public CfscriptLexerConfiguration() {}
 
@@ -41,7 +40,6 @@ import com.intellij.util.ArrayUtil;
     this((java.io.Reader)null);
     myProject = project;
   }
-
   private IElementType startComment(int stateToReturnTo) {
     myCurrentConfiguration.myCommentCounter = 0;
     myCurrentConfiguration.myReturnStack.push(stateToReturnTo);
@@ -88,7 +86,7 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
 %state DOUBLE_QUOTED_STRING, SINGLE_QUOTED_STRING, DOUBLEQUOTE_CLOSER, SINGLEQUOTE_CLOSER
 %state EXPRESSION, X, Y
 %state COMMENT, COMMENTEND
-
+ 
 %%
 
 <YYINITIAL> {MULTILINE_COMMENT} {return CfscriptTokenTypes.COMMENT;}
@@ -244,7 +242,7 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
 /* strings */
 /*<YYINITIAL> {IDENTIFIER}/("(")  { return CfscriptTokenTypes.FUNCTION; }*/
 <YYINITIAL> {IDENTIFIER} / (".")  {
-    if (ArrayUtil.find(CfmlUtil.getVariableScopes(myProject), StringUtil.toLowerCase(yytext().toString())) != -1) {
+    if (ArrayUtil.find(CfmlUtil.getVariableScopes(myProject), yytext().toString().toLowerCase()) != -1) {
         return CfscriptTokenTypes.SCOPE_KEYWORD;
     } else {
         return CfscriptTokenTypes.IDENTIFIER;

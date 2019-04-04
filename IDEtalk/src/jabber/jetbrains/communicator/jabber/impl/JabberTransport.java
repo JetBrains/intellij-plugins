@@ -1,8 +1,9 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+ */
 package jetbrains.communicator.jabber.impl;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.commands.NamedUserCommand;
@@ -37,7 +38,7 @@ import java.util.*;
 import java.util.concurrent.Future;
 
 import static jetbrains.communicator.core.users.UserEvent.Updated.*;
-import static jetbrains.communicator.util.CommunicatorStrings.getMsg;
+import static jetbrains.communicator.util.StringUtil.getMsg;
 
 /**
  * @author Kir
@@ -177,7 +178,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
   @Override
   public String[] getProjects(User user) {
-    return ArrayUtilRt.EMPTY_STRING_ARRAY;
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   @Override
@@ -370,7 +371,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   private void updateIsIDEtalkClient(String jabberId, User user) {
-    if (StringUtil.toLowerCase(getResource(jabberId)).startsWith(StringUtil.toLowerCase(JabberFacade.IDETALK_RESOURCE))) {
+    if (getResource(jabberId).toLowerCase().startsWith(JabberFacade.IDETALK_RESOURCE.toLowerCase())) {
       myIDEtalkUsers.add(user.getName());
     } else {
       myIDEtalkUsers.remove(user.getName());

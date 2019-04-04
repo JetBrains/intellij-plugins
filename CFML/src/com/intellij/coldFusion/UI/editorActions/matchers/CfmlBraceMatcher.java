@@ -16,7 +16,6 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint;
 import com.intellij.openapi.fileTypes.StdFileTypes;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
@@ -291,7 +290,7 @@ public class CfmlBraceMatcher implements BraceMatcher {
       }
       iterator.retreat();
     }
-    return name == null ? name : StringUtil.toLowerCase(name);
+    return name == null ? name : name.toLowerCase();
   }
 
   @Override

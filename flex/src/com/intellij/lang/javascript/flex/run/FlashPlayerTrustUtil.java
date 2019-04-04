@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -9,12 +8,11 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.intellij.openapi.util.SystemInfo.isWinVistaOrNewer;
+import static com.intellij.openapi.util.SystemInfo.*;
 
 public class FlashPlayerTrustUtil {
 
@@ -63,7 +61,7 @@ public class FlashPlayerTrustUtil {
       }
     }
 
-    updateTrustedStatus(module.getProject(), isTrusted, isDebug, ArrayUtilRt.toStringArray(paths));
+    updateTrustedStatus(module.getProject(), isTrusted, isDebug, ArrayUtil.toStringArray(paths));
   }
 
   public static void updateTrustedStatus(final Project project,
@@ -143,7 +141,7 @@ public class FlashPlayerTrustUtil {
       }
     }
 
-    return ArrayUtilRt.toStringArray(result);
+    return ArrayUtil.toStringArray(result);
   }
 
   @Nullable
@@ -181,8 +179,8 @@ public class FlashPlayerTrustUtil {
   @Nullable
   private static File getFlashPlayerTrustDir(final Project project, final boolean isDebug, final boolean runTrusted) {
     final String flashPlayerTrustDirRelPath =
-      SystemInfo.isWindows ? (isWinVistaOrNewer ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH : WINDOWS_XP_TRUST_DIR_REL_PATH) :
-      SystemInfo.isMac ? MAC_TRUST_DIR_REL_PATH :
+      isWindows ? (isWinVistaOrNewer ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH : WINDOWS_XP_TRUST_DIR_REL_PATH) :
+      isMac ? MAC_TRUST_DIR_REL_PATH :
       UNIX_TRUST_DIR_REL_PATH;
     final File flashPlayerTrustDir = new File(SystemProperties.getUserHome() + flashPlayerTrustDirRelPath);
 

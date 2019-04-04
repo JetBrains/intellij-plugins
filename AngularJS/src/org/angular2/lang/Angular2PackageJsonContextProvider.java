@@ -7,19 +7,32 @@ import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.util.CachedValueProvider;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.lang.javascript.library.JSLibraryUtil.NODE_MODULES;
 import static org.angular2.lang.html.psi.impl.Angular2HtmlReferenceVariableImpl.ANGULAR_CORE_PACKAGE;
 
 public class Angular2PackageJsonContextProvider implements Angular2ContextProvider {
+
+  @NonNls private static final String NODE_MODULE_ANGULAR_CORE_PATH = "/" + NODE_MODULES + "/" + ANGULAR_CORE_PACKAGE + "/";
+
   @NotNull
   @Override
   public CachedValueProvider.Result<Boolean> isAngular2Context(@NotNull PsiDirectory psiDir) {
+    VirtualFile dir = psiDir.getVirtualFile();
     PackageJsonFileManager manager = PackageJsonFileManager.getInstance(psiDir.getProject());
-    String dirPath = psiDir.getVirtualFile().getPath() + "/";
+    String dirPath = dir.getPath() + "/";
     boolean result = false;
     for (VirtualFile config : manager.getValidPackageJsonFiles()) {
-      if (dirPath.startsWith(config.getParent().getPath() + "/")) {
+      String configDirPath = config.getParent().getPath() + "/";
+      if (configDirPath.endsWith(NODE_MODULE_ANGULAR_CORE_PATH)) {
+        if (dirPath.startsWith(configDirPath.substring(0, configDirPath.length() - NODE_MODULE_ANGULAR_CORE_PATH.length()) + "/")) {
+          result = true;
+          break;
+        }
+      }
+      else if (dirPath.startsWith(configDirPath)) {
         PackageJsonData data = PackageJsonUtil.getOrCreateData(config);
         if (data.isDependencyOfAnyType(ANGULAR_CORE_PACKAGE)) {
           result = true;
@@ -27,6 +40,7 @@ public class Angular2PackageJsonContextProvider implements Angular2ContextProvid
         }
       }
     }
-    return CachedValueProvider.Result.create(result, manager.getModificationTracker());
+    return CachedValueProvider.Result.create(
+      result, PackageJsonFileManager.getInstance(psiDir.getProject()).getModificationTracker());
   }
 }

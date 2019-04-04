@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.wizard;
 
 import com.intellij.flex.model.bc.OutputType;
@@ -10,6 +9,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.NonFocusableCheckBox;
@@ -76,7 +76,7 @@ public class FlexModuleWizardForm {
         final String sampleApp = mySampleAppTextField.getText().trim();
         if (sampleApp.endsWith(".as") || sampleApp.endsWith(".mxml")) {
           mySampleAppTextField
-            .setText(FileUtilRt.getNameWithoutExtension(sampleApp) + (myPureActionScriptCheckBox.isSelected() ? ".as" : ".mxml"));
+            .setText(FileUtil.getNameWithoutExtension(sampleApp) + (myPureActionScriptCheckBox.isSelected() ? ".as" : ".mxml"));
         }
       }
     });
@@ -196,7 +196,7 @@ public class FlexModuleWizardForm {
           throw new ConfigurationException(FlexBundle.message("sample.app.name.empty"));
         }
 
-        final String extension = StringUtil.toLowerCase(FileUtilRt.getExtension(fileName));
+        final String extension = FileUtilRt.getExtension(fileName).toLowerCase();
         if (!"mxml".equals(extension) && !"as".equals(extension)) {
           throw new ConfigurationException(FlexBundle.message("sample.app.incorrect.extension"));
         }

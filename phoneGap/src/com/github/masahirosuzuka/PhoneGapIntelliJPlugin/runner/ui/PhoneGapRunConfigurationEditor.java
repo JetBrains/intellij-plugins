@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -31,7 +31,10 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import static com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine.*;
 
@@ -179,7 +182,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
         ApplicationManager.getApplication().executeOnPooledThread(() -> {
           final String currentText = myTarget.getTargetsField().getText();
-          final Set<String> targets = new LinkedHashSet<>(PhoneGapTargets.listTargets(targetsProvider, command));
+          final Set<String> targets = ContainerUtil.newLinkedHashSet(PhoneGapTargets.listTargets(targetsProvider, command));
           if (!StringUtil.isEmpty(currentText)) {
             targets.add(currentText);
           }
@@ -291,7 +294,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
 
 
   private static Set<String> getDefaultPlatforms() {
-    LinkedHashSet<String> set = new LinkedHashSet<>();
+    LinkedHashSet<String> set = ContainerUtil.newLinkedHashSet();
     set.add(PLATFORM_ANDROID);
     set.add(PLATFORM_IOS);
     set.add(PLATFORM_BROWSER);
@@ -299,7 +302,7 @@ public class PhoneGapRunConfigurationEditor extends SettingsEditor<PhoneGapRunCo
   }
 
   private static Set<String> getNonDefaultPlatforms() {
-    LinkedHashSet<String> set = new LinkedHashSet<>();
+    LinkedHashSet<String> set = ContainerUtil.newLinkedHashSet();
     set.add(PLATFORM_AMAZON_FIREOS);
     set.add(PLATFORM_FIREFOXOS);
     set.add(PLATFORM_BLACKBERRY_10);

@@ -8,7 +8,6 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.io.DigestUtil;
 import org.jdom.Element;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Random;
 
@@ -44,7 +43,7 @@ public class IdProvider implements JDOMExternalizable {
 
   private static String md5(String s) {
     MessageDigest md5 = DigestUtil.md5();
-    byte[] bytes = md5.digest(s.getBytes(StandardCharsets.UTF_8));
+    byte[] bytes = md5.digest(s.getBytes());
     char[] res = new char[bytes.length*2];
     for (int i = 0; i < bytes.length; i++) {
       res[2*i] = NUMS[(0xF0 & bytes[i]) >> 4];

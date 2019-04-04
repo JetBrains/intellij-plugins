@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.flex.model.bc.OutputType;
@@ -14,11 +13,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vcs.changes.IgnoredBeanFactory;
 import com.intellij.openapi.vcs.changes.IgnoredFileBean;
@@ -40,7 +39,6 @@ import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -176,7 +174,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
         try {
           if (file.isValid() &&
               file.getLength() == TEMPORARY_FILE_CONTENT.length() &&
-              new String(file.contentsToByteArray(), StandardCharsets.UTF_8).equals(TEMPORARY_FILE_CONTENT)) {
+              new String(file.contentsToByteArray()).equals(TEMPORARY_FILE_CONTENT)) {
             file.delete(Flexmojos3GenerateConfigTask.class);
           }
         }
@@ -197,10 +195,10 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(mainClassFile, sourceRoot, '/');
       final String mainClass = relativePath == null
                                ? mainClassFile.getNameWithoutExtension()
-                               : FileUtilRt.getNameWithoutExtension(relativePath).replace('/', '.');
+                               : FileUtil.getNameWithoutExtension(relativePath).replace('/', '.');
 
       final ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
-      final LibraryTable.ModifiableModel librariesModel = LibraryTablesRegistrar.getInstance().getLibraryTable(module.getProject()).getModifiableModel();
+      final LibraryTable.ModifiableModel librariesModel = ProjectLibraryTable.getInstance(module.getProject()).getModifiableModel();
       final FlexProjectConfigurationEditor flexEditor = FlexProjectConfigurationEditor
         .createEditor(module.getProject(), Collections.singletonMap(module, modifiableModel), librariesModel, null);
 

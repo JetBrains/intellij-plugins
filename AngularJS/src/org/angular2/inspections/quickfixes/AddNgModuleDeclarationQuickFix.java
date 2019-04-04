@@ -82,7 +82,7 @@ public class AddNgModuleDeclarationQuickFix extends LocalQuickFixAndIntentionAct
                      @NotNull PsiElement endElement) {
     if (myDeclarationDecorator.getElement() == null) return;
     AddNgModuleDeclarationAction action = Angular2ActionFactory.createAddNgModuleDeclarationAction(
-      editor, startElement, myDeclarationDecorator, myDeclarationName, getText(), false);
+      editor, startElement, myDeclarationDecorator, myDeclarationName, getText());
     List<JSElement> candidates = action.getCandidates();
     if (candidates.size() == 1 || editor != null) {
       action.execute();

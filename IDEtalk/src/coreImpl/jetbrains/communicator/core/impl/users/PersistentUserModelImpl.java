@@ -23,7 +23,7 @@ import jetbrains.communicator.core.IDEtalkEvent;
 import jetbrains.communicator.core.users.GroupEvent;
 import jetbrains.communicator.core.users.UserEvent;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.XStreamUtil;
+import jetbrains.communicator.util.XMLUtil;
 
 import java.io.File;
 
@@ -42,7 +42,7 @@ public class PersistentUserModelImpl extends UserModelImpl {
   public PersistentUserModelImpl(EventBroadcaster broadcaster, IDEFacade ideFacade) {
     super(broadcaster);
     myDataDir = ideFacade.getConfigDir();
-    myXStream = XStreamUtil.createXStream();
+    myXStream = XMLUtil.createXStream();
     myXStream.alias("user", UserImpl.class);
     myXStream.alias("users", getClass());
 
@@ -96,13 +96,13 @@ public class PersistentUserModelImpl extends UserModelImpl {
 
   void saveAll() {
     synchronized (myUsersGroupsLock) {
-      XStreamUtil.toXml(myXStream, getUsersFileName(), this);
+      XMLUtil.toXml(myXStream, getUsersFileName(), this);
     }
     mySaved = true;
   }
 
   private void readAll() {
-    Object persistentModel = XStreamUtil.fromXml(myXStream, getUsersFileName(), false);
+    Object persistentModel = XMLUtil.fromXml(myXStream, getUsersFileName(), false);
     if (persistentModel instanceof PersistentUserModelImpl) {
       PersistentUserModelImpl model = (PersistentUserModelImpl) persistentModel;
       myGroups.addAll(model.myGroups);

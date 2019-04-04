@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -285,7 +285,7 @@ public class CodeContext {
     for (FlexCompilerConfigFileUtil.NamespacesInfo info : FlexCompilerConfigFileUtil.getNamespacesInfos(configFile)) {
       if (onlyIncludedInSwc && !info.includedInSwc) continue;
 
-      final VirtualFile manifestFile = VfsUtilCore.findRelativeFile(info.manifest, configFile);
+      final VirtualFile manifestFile = VfsUtil.findRelativeFile(info.manifest, configFile);
       if (manifestFile != null && !manifestFile.isDirectory()) {
         processManifestFile(module, contextsOfModule, manifestFile, info.namespace, configFile);
       }
@@ -293,7 +293,7 @@ public class CodeContext {
 
     FlexUtils.processCompilerOption(module, bc, "compiler.namespaces.namespace", namespaceAndManifest -> {
       // namespaces configured in IDEA are always included in SWC
-      final VirtualFile manifestFile = VfsUtilCore.findRelativeFile(namespaceAndManifest.second, configFile);
+      final VirtualFile manifestFile = VfsUtil.findRelativeFile(namespaceAndManifest.second, configFile);
       if (manifestFile != null && !manifestFile.isDirectory()) {
         processManifestFile(module, contextsOfModule, manifestFile, namespaceAndManifest.first, configFile);
       }
@@ -462,7 +462,7 @@ public class CodeContext {
     if (sdkHome == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 
     FlexSdkUtils.processStandardNamespaces(bc, (namespace1, relativePath) -> {
-      final VirtualFile manifestFile = VfsUtilCore.findRelativeFile(relativePath, sdkHome);
+      final VirtualFile manifestFile = VfsUtil.findRelativeFile(relativePath, sdkHome);
 
       if (manifestFile != null) {
         handleStandardManifest(module, namespace1, manifestFile, sdkHome);

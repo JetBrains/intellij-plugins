@@ -8,7 +8,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
@@ -35,28 +34,28 @@ public class CfmlParser implements PsiParser {
   }
 
   public static IElementType getElementTypeForTag(@NotNull String tagName) {
-    if ("cfcomponent".equals(StringUtil.toLowerCase(tagName)) || "cfinterface".equals(StringUtil.toLowerCase(tagName))) {
+    if ("cfcomponent".equals(tagName.toLowerCase()) || "cfinterface".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.COMPONENT_TAG;
     }
-    else if ("cffunction".equals(StringUtil.toLowerCase(tagName))) {
+    else if ("cffunction".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.FUNCTION_TAG;
     }
-    else if ("cfinvoke".equals(StringUtil.toLowerCase(tagName))) {
+    else if ("cfinvoke".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.INVOKE_TAG;
     }
-    else if ("cfargument".equals(StringUtil.toLowerCase(tagName))) {
+    else if ("cfargument".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.ARGUMENT_TAG;
     }
-    else if ("cfscript".equals(StringUtil.toLowerCase(tagName))) {
+    else if ("cfscript".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.SCRIPT_TAG;
     }
-    else if ("cfproperty".equals(StringUtil.toLowerCase(tagName))) {
+    else if ("cfproperty".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.PROPERTY_TAG;
     }
-    else if ("cfimport".equals(StringUtil.toLowerCase(tagName))) {
+    else if ("cfimport".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.TAG_IMPORT;
     }
-    else if ("cfloop".endsWith(StringUtil.toLowerCase(tagName))) {
+    else if ("cfloop".endsWith(tagName.toLowerCase())) {
       return CfmlElementTypes.FORTAGEXPRESSION;
     }
     return CfmlElementTypes.TAG;
@@ -184,8 +183,8 @@ public class CfmlParser implements PsiParser {
     if (tagName == null) {
       return false;
     }
-    return !(StringUtil.toLowerCase(tagName).equals("cffunction") ||
-             StringUtil.toLowerCase(tagName).equals("cfargument"));
+    return !(tagName.toLowerCase().equals("cffunction") ||
+             tagName.toLowerCase().equals("cfargument"));
   }
 
   public static void parseAttributes(PsiBuilder builder, String tagName, IElementType attributeType, boolean strict) {
@@ -205,7 +204,7 @@ public class CfmlParser implements PsiParser {
           builder.getTokenType() == CfscriptTokenTypes.DEFAULT_KEYWORD ||
           (tagName.equalsIgnoreCase("cfproperty") && builder.getTokenType() ==
                                                      CfscriptTokenTypes.ABORT_KEYWORD)) {
-        @SuppressWarnings({"ConstantConditions"}) String attributeName = StringUtil.toLowerCase(builder.getTokenText());
+        @SuppressWarnings({"ConstantConditions"}) String attributeName = builder.getTokenText().toLowerCase();
         PsiBuilder.Marker attrMarker = builder.mark();
         // PsiBuilder.Marker attrNameMarker = myBuilder.mark();
         builder.advanceLexer();
@@ -277,7 +276,7 @@ public class CfmlParser implements PsiParser {
   private static boolean parseCloseTag(PsiBuilder builder, Stack<Tag> tagNamesStack) {
     builder.advanceLexer();
     if (builder.getTokenType() == CF_TAG_NAME) {
-      @SuppressWarnings({"ConstantConditions"}) String closeTagName = StringUtil.toLowerCase(builder.getTokenText());
+      @SuppressWarnings({"ConstantConditions"}) String closeTagName = builder.getTokenText().toLowerCase();
       // eating tag name
       builder.advanceLexer();
       // canParse = if in the stack somewhere (not necessary on the top) there is the same tag name
@@ -327,7 +326,7 @@ public class CfmlParser implements PsiParser {
 
       // parsing tag name
       if (builder.getTokenType() == CF_TAG_NAME) {
-        currentTagName = StringUtil.toLowerCase(builder.getTokenText());
+        currentTagName = builder.getTokenText().toLowerCase();
         builder.advanceLexer();
       }
       else {
@@ -367,7 +366,7 @@ public class CfmlParser implements PsiParser {
         tagNamesStack.push(new Tag(currentTagName, marker, builder.mark()));
         // marker.error(CfmlBundle.message("cfml.parsing.tag.is.not.done"));
       }
-      if (StringUtil.toLowerCase(currentTagName).equals("cfscript")) {
+      if (currentTagName.toLowerCase().equals("cfscript")) {
         (new CfscriptParser()).parseScript(builder, true);
         /*
         final String closing = swallowClosing(builder);

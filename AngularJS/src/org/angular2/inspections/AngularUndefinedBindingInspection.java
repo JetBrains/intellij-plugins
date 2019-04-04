@@ -30,7 +30,7 @@ import java.util.Set;
 
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
+import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 import static org.angular2.lang.Angular2Bundle.BUNDLE;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
@@ -41,7 +41,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
                                        @NotNull XmlAttribute attribute,
                                        @NotNull Angular2AttributeDescriptor descriptor) {
     AttributeInfo info = descriptor.getInfo();
-    boolean templateTag = isTemplateTag(attribute.getParent());
+    boolean templateTag = isTemplateTag(attribute.getParent().getName());
     if (info.type == TEMPLATE_BINDINGS) {
       if (templateTag) {
         return;

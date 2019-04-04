@@ -7,6 +7,7 @@ import com.intellij.openapi.vfs.VirtualFileFilter;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.testFramework.TestDataPath;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.util.containers.ContainerUtil;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +54,7 @@ public class PostCssGotoSymbolTest extends PostCssFixtureTestCase {
     ((PsiManagerEx)myFixture.getPsiManager()).setAssertOnFileLoadingFilter(VirtualFileFilter.ALL, myFixture.getTestRootDisposable());
     GotoSymbolModel2 model = new GotoSymbolModel2(myFixture.getProject());
     model.getNames(false);
-    final ArrayList<String> actual = new ArrayList<>();
+    final ArrayList<String> actual = ContainerUtil.newArrayList();
     for (Object o : model.getElementsByName(name, false, "")) {
       if (o instanceof NavigationItem) {
         final ItemPresentation presentation = ((NavigationItem)o).getPresentation();

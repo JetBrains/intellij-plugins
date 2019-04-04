@@ -49,7 +49,7 @@ public class LocalPackageCollector {
   }
 
   private static void addLocalPackages(File outputDirectory, Analyzer analyzer) {
-    Collection<String> packages = new LinkedHashSet<>();
+    Collection<String> packages = new LinkedHashSet<String>();
 
     if (outputDirectory != null && outputDirectory.isDirectory()) {
       // scan classes directory for potential packages

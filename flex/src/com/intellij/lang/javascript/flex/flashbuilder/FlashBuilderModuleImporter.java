@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -544,7 +543,7 @@ public class FlashBuilderModuleImporter {
             return CONTINUE;
           }
           else {
-            final String ext = StringUtil.toLowerCase(StringUtil.notNullize(file.getExtension()));
+            final String ext = StringUtil.notNullize(file.getExtension()).toLowerCase();
 
             if ("mxml".equals(ext) || "fxg".equals(ext)) {
               nonTestClassesFound.set(true);
@@ -590,7 +589,7 @@ public class FlashBuilderModuleImporter {
 
       final String libraryPath = getAbsolutePathWithLinksHandled(fbProject, libraryPathOrig);
 
-      if (StringUtil.toLowerCase(libraryPath).endsWith(".swc") || StringUtil.toLowerCase(libraryPath).endsWith(".ane")) {
+      if (libraryPath.toLowerCase().endsWith(".swc") || libraryPath.toLowerCase().endsWith(".ane")) {
         libraryModifiableModel.addRoot(VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, libraryPath) + JarFileSystem.JAR_SEPARATOR,
                                        OrderRootType.CLASSES);
       }
