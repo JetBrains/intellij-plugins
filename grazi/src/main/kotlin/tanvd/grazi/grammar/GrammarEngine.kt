@@ -68,8 +68,13 @@ object GrammarEngine {
                             .flatMap { part -> GraziSpellchecker.check(part) }.isNotEmpty()
                 }
 
+        val result = (withoutTypos + verifiedTypos).toSet()
 
-        addAll(withoutTypos + verifiedTypos)
+        if (GraziConfig.state.enabledSpellcheck) {
+            addAll(result)
+        } else {
+            addAll(result.filterNot { it.info.rule.isDictionaryBasedSpellingRule })
+        }
 
         cache.put(str, LinkedHashSet(this))
     }
