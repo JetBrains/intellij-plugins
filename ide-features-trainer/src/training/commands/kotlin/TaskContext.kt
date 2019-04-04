@@ -3,6 +3,7 @@ package training.commands.kotlin
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
 import org.jdom.input.SAXBuilder
 import training.check.Check
@@ -10,6 +11,7 @@ import training.learn.ActionsRecorder
 import training.learn.lesson.LessonManager
 import training.learn.lesson.kimpl.KLesson
 import training.ui.Message
+import java.awt.Component
 import java.util.concurrent.CompletableFuture
 
 class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
@@ -62,6 +64,9 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
     steps.add(future)
     return future
   }
+
+  val focusOwner: Component?
+    get() = IdeFocusManager.getInstance(project).focusOwner
 
   private fun <T : Any?> getCheck(calculateState: () -> T, checkState: (T, T) -> Boolean) : Check {
     return object : Check {
