@@ -120,10 +120,10 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
       }
       XmlAttributeDescriptor descriptor = getEventDescriptor(tag, keydown);
       for (String keyName : SPECIAL_KEY_NAMES) {
-        result.addDescriptor(new Angular2ExtendedKeyEventDescriptor(descriptor, itemBase, keyName, NORMAL, isCanonical));
+        result.addDescriptor(new Angular2ExtendedKeyEventDescriptor(tag, descriptor, itemBase, keyName, NORMAL, isCanonical));
       }
       for (String keyName : STD_KEY_NAMES) {
-        result.addDescriptor(new Angular2ExtendedKeyEventDescriptor(descriptor, itemBase, keyName, LOW, isCanonical));
+        result.addDescriptor(new Angular2ExtendedKeyEventDescriptor(tag, descriptor, itemBase, keyName, LOW, isCanonical));
       }
     }
     else {
@@ -146,7 +146,7 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
     if (info.type == EVENT
         && (info.name.startsWith(KEYDOWN_EVENT_BASE_PREFIX)
             || info.name.startsWith(KEYUP_EVENT_BASE_PREFIX))) {
-      return new Angular2ExtendedKeyEventDescriptor(getEventDescriptor(
+      return new Angular2ExtendedKeyEventDescriptor(tag, getEventDescriptor(
         tag, info.name.startsWith(KEYDOWN_EVENT_BASE_PREFIX)), null, info.name, NORMAL, info.isCanonical);
     }
     return null;
@@ -169,15 +169,18 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
 
     private final String myBaseName;
 
-    protected Angular2ExtendedKeyEventDescriptor(@Nullable XmlAttributeDescriptor originalDescriptor,
+    protected Angular2ExtendedKeyEventDescriptor(@NotNull XmlTag xmlTag,
+                                                 @Nullable XmlAttributeDescriptor originalDescriptor,
                                                  @Nullable String baseName,
                                                  @NotNull String keyName,
                                                  @NotNull AttributePriority priority,
                                                  boolean canonical) {
-      super(Objects.requireNonNull(EVENT.buildName(notNullize(baseName) + keyName, canonical)),
+      super(xmlTag,
+            Objects.requireNonNull(EVENT.buildName(notNullize(baseName) + keyName, canonical)),
             false,
             priority,
-            originalDescriptor == null ? Collections.emptySet() : originalDescriptor.getDeclarations());
+            originalDescriptor == null ? Collections.emptySet() : originalDescriptor.getDeclarations(),
+            true);
       myBaseName = baseName;
     }
 

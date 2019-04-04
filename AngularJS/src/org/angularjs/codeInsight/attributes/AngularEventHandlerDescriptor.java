@@ -8,10 +8,11 @@ import java.util.Collections;
 
 /**
  * @deprecated Kept for compatibility with NativeScript
+ * To be removed in 2019.2
  */
 @Deprecated
 public class AngularEventHandlerDescriptor extends Angular2EventHandlerDescriptor {
   public AngularEventHandlerDescriptor(PsiElement element, String attributeName) {
-    super(attributeName, false, AttributePriority.NONE, Collections.singletonList(element));
+    super(null, attributeName, false, AttributePriority.NONE, Collections.singletonList(element), true);
   }
 }

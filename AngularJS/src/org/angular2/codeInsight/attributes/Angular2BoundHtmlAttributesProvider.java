@@ -43,7 +43,7 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
       completionResultsConsumer.addDescriptors(mapNotNull(
         Angular2AttributeDescriptorsProvider.getDefaultAttributeDescriptors(tag), descr -> {
           if (!descr.getName().startsWith(EVENT_ATTR_PREFIX)) {
-            return new Angular2BoundHtmlAttributeDescriptor(descr, isCanonical);
+            return new Angular2BoundHtmlAttributeDescriptor(tag, descr, isCanonical);
           }
           return null;
         }));
@@ -66,7 +66,7 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
       String name = info.name;
       XmlAttributeDescriptor descriptor = find(Angular2AttributeDescriptorsProvider.getDefaultAttributeDescriptors(tag),
                                                attr -> name.equalsIgnoreCase(attr.getName()));
-      return descriptor != null ? new Angular2BoundHtmlAttributeDescriptor(descriptor, info.isCanonical) : null;
+      return descriptor != null ? new Angular2BoundHtmlAttributeDescriptor(tag, descriptor, info.isCanonical) : null;
     }
     return null;
   }
@@ -97,11 +97,15 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
 
   private static class Angular2BoundHtmlAttributeDescriptor extends Angular2AttributeDescriptor {
 
-    protected Angular2BoundHtmlAttributeDescriptor(@NotNull XmlAttributeDescriptor originalDescriptor, boolean canonical) {
-      super(notNull(PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName(), canonical),
+    protected Angular2BoundHtmlAttributeDescriptor(@NotNull XmlTag xmlTag,
+                                                   @NotNull XmlAttributeDescriptor originalDescriptor,
+                                                   boolean canonical) {
+      super(xmlTag,
+            notNull(PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName(), canonical),
                     () -> PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName())),
             false,
-            originalDescriptor.getDeclarations());
+            originalDescriptor.getDeclarations(),
+            true);
     }
 
     @Override

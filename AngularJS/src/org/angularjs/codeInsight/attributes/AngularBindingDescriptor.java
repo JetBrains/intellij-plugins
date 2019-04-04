@@ -9,11 +9,12 @@ import java.util.Collections;
 
 /**
  * @deprecated Kept for compatibility with NativeScript
+ * To be removed in 2019.2
  */
 @Deprecated
 public class AngularBindingDescriptor extends Angular2AttributeDescriptor {
   public AngularBindingDescriptor(@NotNull PsiElement element,
                                   @NotNull String attributeName) {
-    super(attributeName, false, AttributePriority.NORMAL, Collections.singletonList(element));
+    super(null, attributeName, false, AttributePriority.NORMAL, Collections.singletonList(element), true);
   }
 }

@@ -23,17 +23,20 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
+import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2CodeInsightUtils;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.codeInsight.Angular2TypeEvaluator;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.*;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
@@ -54,6 +57,8 @@ import static com.intellij.util.ObjectUtils.notNull;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE;
+import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getCustomNgAttrs;
 import static org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.NG_CLASS_ATTR;
@@ -66,27 +71,38 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   private static final Collection<String> ONE_TIME_BINDING_EXCLUDES = newArrayList(NG_CLASS_ATTR);
 
   @Nullable
-  public static Angular2AttributeDescriptor create(@NotNull String attributeName) {
-    return create(attributeName, emptyList());
+  public static Angular2AttributeDescriptor create(@NotNull XmlTag tag, @NotNull String attributeName) {
+    return create(tag, attributeName, emptyList());
   }
 
   @Nullable
+  public static Angular2AttributeDescriptor create(@NotNull XmlTag tag, @NotNull String attributeName, @NotNull PsiElement element) {
+    return create(tag, attributeName, singletonList(element));
+  }
+
+  /**
+   * @deprecated Kept for compatibility with NativeScript
+   * To be removed in 2019.2
+   */
+  @Nullable
+  @Deprecated
   public static Angular2AttributeDescriptor create(@NotNull String attributeName, @NotNull PsiElement element) {
-    return create(attributeName, singletonList(element));
+    return create(null, attributeName, singletonList(element));
   }
 
   @Nullable
-  private static Angular2AttributeDescriptor create(@NotNull String attributeName,
+  private static Angular2AttributeDescriptor create(@Nullable XmlTag tag,
+                                                    @NotNull String attributeName,
                                                     @NotNull List<PsiElement> elements) {
     if (getCustomNgAttrs().contains(attributeName)) {
-      return new Angular2AttributeDescriptor(attributeName, false, elements);
+      return new Angular2AttributeDescriptor(tag, attributeName, false, elements, true);
     }
     Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attributeName, true);
 
-    Collection<Angular2Directive> source;
     if (elements.isEmpty() && info.type == REGULAR) {
       return null;
     }
+    boolean implied;
     if (elements.isEmpty()
         && (info.type == TEMPLATE_BINDINGS
             || (info instanceof Angular2AttributeNameParser.EventInfo
@@ -95,86 +111,79 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
             || (info instanceof Angular2AttributeNameParser.PropertyBindingInfo
                 && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType
                    == PropertyBindingType.PROPERTY))) {
-      source = emptyList();
+      implied = false;
     }
     else {
-      source = null;
+      implied = true;
     }
     if (info.type == EVENT) {
-      return new Angular2EventHandlerDescriptor(attributeName, info, source, elements);
+      return new Angular2EventHandlerDescriptor(tag, attributeName, info, elements, implied);
     }
-    return new Angular2AttributeDescriptor(attributeName, info, source, elements);
+    return new Angular2AttributeDescriptor(tag, attributeName, info, elements, implied);
   }
 
   @NotNull
   public static List<Angular2AttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive,
-                                                                          boolean isTemplateTagContext) {
-    if (directive.isTemplate() && !isTemplateTagContext) {
+                                                                          @NotNull XmlTag tag) {
+    if (directive.isTemplate() && !Angular2Processor.isTemplateTag(tag.getName())) {
       return emptyList();
     }
-    return new DirectiveAttributesProvider().get(directive);
+    return new DirectiveAttributesProvider(tag, directive).get();
   }
 
+  @Nullable
+  private final XmlTag myTag;
   @NotNull
   private final AttributePriority myPriority;
   @NotNull
-  private final List<PsiElement> myElements;
-  @Nullable
-  private final List<Angular2Directive> mySourceDirectives;
+  private final List<Object> mySources;
   @NotNull
   private final String myAttributeName;
   @NotNull
   private final Angular2AttributeNameParser.AttributeInfo myInfo;
+  private final boolean myImplied;
 
-  protected Angular2AttributeDescriptor(@NotNull String attributeName,
+  // Note: xmlTag is nullable only because of compatibility with NativeScript with classes
+  // Angular2EventHandlerDescriptor and AngularBindingDescriptor, which are deprecated
+  protected Angular2AttributeDescriptor(@Nullable XmlTag xmlTag, //Nullable for compatibility with NativeScript
+                                        @NotNull String attributeName,
                                         boolean isInTemplateTag,
-                                        @NotNull Collection<PsiElement> elements) {
-    this(attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag),
-         AttributePriority.NORMAL, null, elements);
+                                        @NotNull Collection<?> sources,
+                                        boolean implied) {
+    this(xmlTag, attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag),
+         AttributePriority.NORMAL, sources, implied);
   }
 
-  protected Angular2AttributeDescriptor(@NotNull String attributeName,
+  protected Angular2AttributeDescriptor(@Nullable XmlTag tag, //Nullable for compatibility with NativeScript
+                                        @NotNull String attributeName,
                                         boolean isInTemplateTag,
-                                        @NotNull Collection<Angular2Directive> sourceDirectives,
-                                        @NotNull Collection<PsiElement> elements) {
-    this(attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag),
-         AttributePriority.NORMAL, sourceDirectives, elements);
+                                        @NotNull AttributePriority priority,
+                                        @NotNull Collection<?> sources,
+                                        boolean implied) {
+    this(tag, attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag),
+         priority, sources, implied);
   }
 
-  protected Angular2AttributeDescriptor(@NotNull String attributeName,
+  protected Angular2AttributeDescriptor(@Nullable XmlTag xmlTag, //Nullable for compatibility with NativeScript
+                                        @NotNull String attributeName,
                                         @NotNull Angular2AttributeNameParser.AttributeInfo info,
-                                        @Nullable Collection<Angular2Directive> sourceDirectives,
-                                        @NotNull Collection<PsiElement> elements) {
-    this(attributeName, info, AttributePriority.NORMAL, sourceDirectives, elements);
+                                        @NotNull Collection<?> sources,
+                                        boolean implied) {
+    this(xmlTag, attributeName, info, AttributePriority.NORMAL, sources, implied);
   }
 
-  protected Angular2AttributeDescriptor(@NotNull String attributeName,
-                                        boolean isInTemplateTag,
+  protected Angular2AttributeDescriptor(@Nullable XmlTag tag, //Nullable for compatibility with NativeScript
+                                        @NotNull String attributeName,
+                                        @NotNull Angular2AttributeNameParser.AttributeInfo info,
                                         @NotNull AttributePriority priority,
-                                        @NotNull Collection<PsiElement> elements) {
-    this(attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag), priority,
-         null, elements);
-  }
-
-  protected Angular2AttributeDescriptor(@NotNull String attributeName,
-                                        boolean isInTemplateTag,
-                                        @NotNull AttributePriority priority,
-                                        @NotNull Collection<Angular2Directive> sourceDirectives,
-                                        @NotNull Collection<PsiElement> elements) {
-    this(attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag), priority,
-         sourceDirectives, elements);
-  }
-
-  private Angular2AttributeDescriptor(@NotNull String attributeName,
-                                      @NotNull Angular2AttributeNameParser.AttributeInfo info,
-                                      @NotNull AttributePriority priority,
-                                      @Nullable Collection<Angular2Directive> sourceDirectives,
-                                      @NotNull Collection<PsiElement> elements) {
+                                        @NotNull Collection<?> sources,
+                                        boolean implied) {
+    myTag = tag;
     myAttributeName = attributeName;
-    myElements = Collections.unmodifiableList(new ArrayList<>(elements));
-    mySourceDirectives = sourceDirectives != null ? immutableList(sourceDirectives.toArray(Angular2Directive.EMPTY_ARRAY)) : null;
+    mySources = Collections.unmodifiableList(new ArrayList<>(sources));
     myInfo = info;
     myPriority = priority;
+    myImplied = implied;
   }
 
   public Angular2AttributeDescriptor merge(@Nullable XmlAttributeDescriptor other) {
@@ -188,24 +197,18 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
         : "Cannot merge attributes with different names or non-equivalent infos: "
           + myAttributeName + " " + myInfo.toString() + " != "
           + ngOther.myAttributeName + " " + ngOther.myInfo.toString();
-      Set<PsiElement> elements = new HashSet<>(myElements);
-      elements.addAll(ngOther.myElements);
-      Set<Angular2Directive> sources;
-      if (mySourceDirectives == null || ngOther.mySourceDirectives == null) {
-        sources = null;
-      }
-      else {
-        sources = new HashSet<>(mySourceDirectives);
-        sources.addAll(ngOther.mySourceDirectives);
-      }
-      return new Angular2AttributeDescriptor(myAttributeName, myInfo, myPriority,
-                                             sources, elements);
+      assert myTag == ngOther.myTag
+        : "Cannot merge attributes from different tags";
+      Set<Object> sources = new HashSet<>(mySources);
+      sources.addAll(ngOther.mySources);
+      return new Angular2AttributeDescriptor(myTag, myAttributeName, myInfo, myPriority,
+                                             sources, myImplied || ngOther.myImplied);
     }
     else {
       assert other.getName().equals(myAttributeName);
-      Set<PsiElement> elements = new HashSet<>(myElements);
+      Set<Object> elements = new HashSet<>(mySources);
       elements.addAll(other.getDeclarations());
-      return new Angular2AttributeDescriptor(myAttributeName, false, elements);
+      return new Angular2AttributeDescriptor(myTag, myAttributeName, false, elements, true);
     }
   }
 
@@ -247,9 +250,13 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return null;
   }
 
-  @Nullable
+  @NotNull
   public List<Angular2Directive> getSourceDirectives() {
-    return mySourceDirectives;
+    return filterIsInstance(mySources, Angular2Directive.class);
+  }
+
+  public boolean isImplied() {
+    return myImplied;
   }
 
   @Override
@@ -282,13 +289,103 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Override
   public PsiElement getDeclaration() {
-    return myElements.size() == 1 ? myElements.get(0) : null;
+    Collection<PsiElement> declarations = getDeclarations();
+    return declarations.size() == 1 ? getFirstItem(declarations) : null;
   }
 
   @NotNull
   @Override
   public Collection<PsiElement> getDeclarations() {
-    return myElements;
+    Set<PsiElement> result = new HashSet<>(getNonDirectiveElements());
+    MultiMap<DeclarationProximity, Angular2Directive> directivesByProximity = getDeclarationsByProximity();
+    directivesByProximity.remove(NOT_REACHABLE);
+
+    MultiMap<DeclarationProximity, PsiElement> declarationByProximity = mapValues(directivesByProximity,
+                                                                                  this::getDeclarations);
+    if (!declarationByProximity.get(IN_SCOPE).isEmpty()) {
+      result.addAll(declarationByProximity.get(IN_SCOPE));
+      return result;
+    }
+    MultiMap<DeclarationProximity, PsiElement> selectorsByProximity = mapValues(directivesByProximity,
+                                                                                this::getSelectors);
+    if (!selectorsByProximity.get(IN_SCOPE).isEmpty()) {
+      result.addAll(selectorsByProximity.get(IN_SCOPE));
+      return result;
+    }
+
+    if (!declarationByProximity.isEmpty()) {
+      result.addAll(declarationByProximity.values());
+    } else {
+      result.addAll(selectorsByProximity.values());
+    }
+    return result;
+  }
+
+  @NotNull
+  private List<PsiElement> getNonDirectiveElements() {
+    List<PsiElement> result = new ArrayList<>(mySources.size());
+    for (Object source: mySources) {
+      if (source instanceof PsiElement && !(source instanceof Angular2Declaration)) {
+        result.add((PsiElement)source);
+      }
+    }
+    return result;
+  }
+
+  @NotNull
+  private MultiMap<DeclarationProximity, Angular2Directive> getDeclarationsByProximity() {
+    MultiMap<DeclarationProximity, Angular2Directive> result = new MultiMap<>();
+    Angular2DeclarationsScope scope = myTag != null ? new Angular2DeclarationsScope(myTag)
+                                                    : null;
+    for (Object source: mySources) {
+      if (source instanceof Angular2Directive) {
+        Angular2Directive directive = (Angular2Directive)source;
+        result.putValue(scope != null ? scope.getDeclarationProximity(directive) : IN_SCOPE,directive);
+      }
+    }
+    return result;
+  }
+
+  private static <K, V, T> MultiMap<K, T> mapValues(MultiMap<K, ? extends V> source, Function<? super V, Collection<? extends T>> mapper) {
+    MultiMap<K, T> result = MultiMap.createSet();
+    source.entrySet().forEach(entry -> entry.getValue().forEach(
+      value -> result.putValues(entry.getKey(), mapper.apply(value))));
+    return result;
+  }
+
+  private Collection<? extends PsiElement> getSelectors(@NotNull Angular2Directive directive) {
+    return StreamEx.of(directive.getSelector().getSimpleSelectorsWithPsi())
+      .flatMap(selector -> StreamEx.of(selector.getNotSelectors())
+        .flatCollection(Angular2DirectiveSelector.SimpleSelectorWithPsi::getAttributes)
+        .prepend(selector.getAttributes()))
+      .filter(s -> myInfo.name.equals(s.getName()))
+      .toList();
+  }
+
+  @NotNull
+  private Collection<PsiElement> getDeclarations(@NotNull Angular2Directive directive) {
+    switch (myInfo.type) {
+      case PROPERTY_BINDING:
+      case TEMPLATE_BINDINGS:
+      case EVENT:
+        return StreamEx.of(myInfo.type == EVENT ? directive.getOutputs() : directive.getInputs())
+          .filter(input -> myInfo.name.equals(input.getName()))
+          .map(Angular2Element::getNavigableElement)
+          .toList();
+      case BANANA_BOX_BINDING:
+        return StreamEx.of(directive.getInOuts())
+          .filter(inout -> myInfo.name.equals(inout.first.getName()))
+          .flatCollection(inout -> newArrayList(inout.first.getNavigableElement(), inout.second.getNavigableElement()))
+          .toList();
+      case REGULAR:
+        return StreamEx.of(directive.getInputs())
+          .filter(input -> myInfo.name.equals(input.getName())
+                           && isOneTimeBindingProperty(input))
+          .map(Angular2Element::getNavigableElement)
+          .toList();
+      default:
+        return emptyList();
+    }
   }
 
   @Nullable
@@ -335,24 +432,24 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                              pair -> currentPrefix.startsWith(pair.first)),
                                         () -> pair("", ""));
     String name = StringUtil.trimStart(info.elementName, hide.first);
-    DeclarationProximity proximity = mySourceDirectives == null
-                                     ? DeclarationProximity.IN_SCOPE
-                                     : moduleScope.getDeclarationsProximity(mySourceDirectives);
-    if (proximity == DeclarationProximity.NOT_REACHABLE) {
+    DeclarationProximity proximity = myImplied
+                                     ? IN_SCOPE
+                                     : moduleScope.getDeclarationsProximity(getSourceDirectives());
+    if (proximity == NOT_REACHABLE) {
       return pair(null, name);
     }
     LookupElementBuilder element = LookupElementBuilder.create(name)
       .withPresentableText(StringUtil.trimEnd(name, hide.second))
-      .withCaseSensitivity(myInfo.type != REGULAR || mySourceDirectives != null)
+      .withCaseSensitivity(myInfo.type != REGULAR || !myImplied)
       .withIcon(getIcon())
-      .withBoldness(proximity == DeclarationProximity.IN_SCOPE && myPriority == AttributePriority.HIGH)
+      .withBoldness(proximity == IN_SCOPE && myPriority == AttributePriority.HIGH)
       .withInsertHandler(new Angular2AttributeInsertHandler(shouldInsertHandlerRemoveLeftover(), shouldCompleteValue(), null));
     if (info.lookupStrings != null) {
       element = element.withLookupStrings(map(info.lookupStrings, str -> StringUtil.trimStart(str, hide.first)));
     }
-    if (proximity != DeclarationProximity.IN_SCOPE) {
+    if (proximity != IN_SCOPE) {
       element = Angular2CodeInsightUtils.wrapWithImportDeclarationModuleHandler(
-        Angular2CodeInsightUtils.decorateLookupElementWithModuleSource(element, mySourceDirectives, proximity, moduleScope),
+        Angular2CodeInsightUtils.decorateLookupElementWithModuleSource(element, getSourceDirectives(), proximity, moduleScope),
         myInfo.type == TEMPLATE_BINDINGS ? Angular2TemplateBindings.class : XmlAttribute.class);
     }
     String typeName = getTypeName();
@@ -397,7 +494,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Nullable
   public JSType getJSType() {
-    List<JSType> types = mapNotNull(myElements, element -> {
+    Collection<PsiElement> declarations = getDeclarations();
+    List<JSType> types = mapNotNull(declarations, element -> {
       if (element instanceof JSFunction) {
         JSParameterListElement[] params = ((JSFunction)element).getParameters();
         if (((JSFunction)element).isSetProperty() && params.length == 1) {
@@ -414,7 +512,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
         return types.get(0);
       }
       return JSCompositeTypeImpl.getCommonType(
-        types, createTypeSource(myElements.get(0), false), false);
+        types, createTypeSource(getFirstItem(declarations), false), false);
     }
     return null;
   }
@@ -450,7 +548,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     }
 
     public double getValue(DeclarationProximity proximity) {
-      return proximity == DeclarationProximity.IN_SCOPE
+      return proximity == IN_SCOPE
              || proximity == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE
              ? myValue : 0;
     }
@@ -471,11 +569,16 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   private static class DirectiveAttributesProvider {
-    private Angular2Directive myDirective;
+    private final Angular2Directive myDirective;
+    private final XmlTag myTag;
     private List<Angular2AttributeDescriptor> myResult;
 
-    public List<Angular2AttributeDescriptor> get(@NotNull Angular2Directive directive) {
+    DirectiveAttributesProvider(@NotNull XmlTag tag, @NotNull Angular2Directive directive) {
+      myTag = tag;
       myDirective = directive;
+    }
+
+    public List<Angular2AttributeDescriptor> get() {
       myResult = new ArrayList<>();
       collectDirectiveDescriptors(myDirective.getInOuts(), this::createBananaBoxBinding);
       collectDirectiveDescriptors(myDirective.getInputs(), this::createBinding);
@@ -492,34 +595,34 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
     @NotNull
     private Angular2AttributeDescriptor createBinding(@NotNull Angular2DirectiveProperty info) {
-      return new Angular2AttributeDescriptor(PROPERTY_BINDING.buildName(info.getName()),
+      return new Angular2AttributeDescriptor(myTag,
+                                             PROPERTY_BINDING.buildName(info.getName()),
                                              false, AttributePriority.HIGH,
                                              singletonList(myDirective),
-                                             singletonList(info.getNavigableElement()));
+                                             false);
     }
 
     @NotNull
     private Angular2AttributeDescriptor createBananaBoxBinding(@NotNull Pair<Angular2DirectiveProperty, Angular2DirectiveProperty> info) {
-      return new Angular2AttributeDescriptor(BANANA_BOX_BINDING.buildName(info.first.getName()), false, AttributePriority.HIGH,
+      return new Angular2AttributeDescriptor(myTag, BANANA_BOX_BINDING.buildName(info.first.getName()), false, AttributePriority.HIGH,
                                              singletonList(myDirective),
-                                             newArrayList(info.first.getNavigableElement(),
-                                                          info.second.getNavigableElement()));
+                                             false);
     }
 
     @Nullable
     private Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
       return isOneTimeBindingProperty(info)
-             ? new Angular2AttributeDescriptor(info.getName(), false, AttributePriority.HIGH,
+             ? new Angular2AttributeDescriptor(myTag, info.getName(), false, AttributePriority.HIGH,
                                                singletonList(myDirective),
-                                               singletonList(info.getNavigableElement()))
+                                               false)
              : null;
     }
 
     @NotNull
     private Angular2EventHandlerDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
-      return new Angular2EventHandlerDescriptor(EVENT.buildName(info.getName()), false, AttributePriority.HIGH,
+      return new Angular2EventHandlerDescriptor(myTag, EVENT.buildName(info.getName()), false, AttributePriority.HIGH,
                                                 singletonList(myDirective),
-                                                singletonList(info.getNavigableElement()));
+                                                false);
     }
   }
 }
