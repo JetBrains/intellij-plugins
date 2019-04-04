@@ -1,6 +1,5 @@
 package training.learn.lesson.ruby
 
-import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.ui.components.fields.ExtendableTextField
 import training.commands.kotlin.TaskContext
 import training.learn.interfaces.Module
@@ -33,10 +32,8 @@ class RubyClassSearchLesson(module: Module) : KLesson("Class Search", module, "r
       }
     }
 
-  private fun TaskContext.checkWordInSearch(expected: String): Boolean {
-    val focusOwner = IdeFocusManager.getInstance(project).focusOwner
-    return focusOwner is ExtendableTextField && focusOwner.text.toLowerCase() == expected.toLowerCase()
-  }
+  private fun TaskContext.checkWordInSearch(expected: String): Boolean =
+      (focusOwner as? ExtendableTextField)?.text?.toLowerCase() == expected.toLowerCase()
 
   override val existedFile: String
     get() = "lib/active_support.rb"
