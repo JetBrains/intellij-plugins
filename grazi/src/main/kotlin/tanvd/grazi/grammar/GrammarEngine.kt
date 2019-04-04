@@ -7,12 +7,12 @@ import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 
 object GrammarEngine {
-    private const val maxChars = 1000
+    private const val maxChars = 10_000
     private const val minChars = 2
 
     private val cache = TypoCache(50_000L)
 
-    private val separators = listOf('\n', '?', '!', '.', ' ', '\t')
+    private val separators = listOf('\n', '?', '!', '.', ';', ',', ' ', '\t')
 
     /** Grammar checker will perform only spellcheck for sentences with less words */
     private const val minNumberOfWords = 3

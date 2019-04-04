@@ -47,7 +47,9 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
 
                     index++
                 }
-                tokenMapping[IntRange(tokenStartIndex, index)] = token
+                if (tokenStartIndex < index) {
+                    tokenMapping[IntRange(tokenStartIndex, index - 1)] = token
+                }
 
                 if (!this.lastOrNull()?.let { blankCharRegex.matches(it) }.orTrue()) {
                     append(' ')
