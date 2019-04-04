@@ -32,10 +32,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
 
@@ -107,25 +104,23 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     if (!(xmlTag instanceof HtmlTag && Angular2LangUtil.isAngular2Context(xmlTag))) {
       return null;
     }
-    String tagName = xmlTag.getName();
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) {
       return getWrappedDescriptorFromNamespace(xmlTag);
     }
-    tagName = XmlUtil.findLocalNameByQualifiedName(tagName);
+    String tagName = XmlUtil.findLocalNameByQualifiedName(xmlTag.getName());
     if (NG_SPECIAL_TAGS.contains(tagName.toLowerCase(Locale.ENGLISH))) {
-      return new Angular2TagDescriptor(tagName, createDirective(xmlTag, tagName), !NG_CONTENT.equals(tagName));
+      return new Angular2TagDescriptor(xmlTag, tagName, Collections.singleton(createDirective(xmlTag, tagName)),
+                                       !NG_CONTENT.equals(tagName));
     }
 
     Angular2ApplicableDirectivesProvider provider = new Angular2ApplicableDirectivesProvider(xmlTag, true);
     if (provider.getCandidates().isEmpty()) {
       return null;
     }
-    return new Angular2TagDescriptor(tagName, (provider.getMatched().isEmpty()
-                                               ? provider.getCandidates()
-                                               : provider.getMatched())
-      .get(0)
-      .getSelector()
-      .getPsiElementForElement(tagName));
+    return new Angular2TagDescriptor(xmlTag, tagName,
+                                     provider.getMatched().isEmpty() ? provider.getCandidates()
+                                                                     : provider.getMatched(),
+                                     true);
   }
 
   private static XmlElementDescriptor getWrappedDescriptorFromNamespace(@NotNull XmlTag xmlTag) {
