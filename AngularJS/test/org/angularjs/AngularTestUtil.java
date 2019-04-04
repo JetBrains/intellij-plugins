@@ -155,4 +155,12 @@ public class AngularTestUtil {
       return result.toString();
     });
   }
+
+  public static void testES6(@NotNull CodeInsightTestFixture fixture) {
+    JSRootConfiguration configuration = JSRootConfiguration.getInstance(fixture.getProject());
+    JSLanguageLevel previousLevel = configuration.getLanguageLevel();
+    configuration.storeLanguageLevelAndUpdateCaches(JSLanguageLevel.ES6);
+    Disposer.register(fixture.getProjectDisposable(), () ->
+      configuration.storeLanguageLevelAndUpdateCaches(previousLevel == JSLanguageLevel.DEFAULT ? null : previousLevel));
+  }
 }

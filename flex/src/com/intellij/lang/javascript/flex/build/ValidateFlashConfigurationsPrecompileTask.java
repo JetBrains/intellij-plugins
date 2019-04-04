@@ -37,7 +37,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -137,7 +136,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
                                             final Pair<Module, FlexBuildConfiguration> moduleAndBC,
                                             final Map<String, Pair<Module, FlexBuildConfiguration>> outputPathToModuleAndBC,
                                             final Consumer<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> errorConsumer) {
-    final String caseAwarePath = SystemInfo.isFileSystemCaseSensitive ? outputPath : StringUtil.toLowerCase(outputPath);
+    final String caseAwarePath = SystemInfo.isFileSystemCaseSensitive ? outputPath : outputPath.toLowerCase();
 
     final Pair<Module, FlexBuildConfiguration> existing = outputPathToModuleAndBC.put(caseAwarePath, moduleAndBC);
     if (existing != null) {
@@ -215,20 +214,20 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     }
 
     if (info.getOutputFileName() == null && info.getOutputFolderPath() == null) {
-      if (FileUtilRt.getNameWithoutExtension(bc.getOutputFileName()).isEmpty()) {
+      if (FileUtil.getNameWithoutExtension(bc.getOutputFileName()).isEmpty()) {
         errorConsumer.consume(FlashProjectStructureProblem
                                 .createGeneralOptionProblem(ProjectStructureProblemType.Severity.ERROR, bc.getName(), FlexBundle.message("output.file.name.not.set"),
                                                             FlexBCConfigurable.Location.OutputFileName));
       }
       else {
-        if (!nature.isLib() && !StringUtil.toLowerCase(bc.getOutputFileName()).endsWith(".swf")) {
+        if (!nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
           errorConsumer.consume(
             FlashProjectStructureProblem.createGeneralOptionProblem(ProjectStructureProblemType.Severity.ERROR, bc.getName(),
                                                                     FlexBundle.message("output.file.wrong.extension", "swf"),
                                                                     FlexBCConfigurable.Location.OutputFileName));
         }
 
-        if (nature.isLib() && !StringUtil.toLowerCase(bc.getOutputFileName()).endsWith(".swc")) {
+        if (nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swc")) {
           errorConsumer.consume(
             FlashProjectStructureProblem.createGeneralOptionProblem(ProjectStructureProblemType.Severity.ERROR, bc.getName(),
                                                                     FlexBundle.message("output.file.wrong.extension", "swc"),
@@ -350,7 +349,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
                                                               FlexBCConfigurable.Location.RLMs));
         }
         else {
-          if (!StringUtil.toLowerCase(rlm.OUTPUT_FILE).endsWith(".swf")) {
+          if (!rlm.OUTPUT_FILE.toLowerCase().endsWith(".swf")) {
             errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(ProjectStructureProblemType.Severity.ERROR, bc.getName(), FlexBundle.message(
               "rlm.output.file.must.have.swf.extension"), FlexBCConfigurable.Location.RLMs));
           }
@@ -358,7 +357,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
       }
 
       for (String cssPath : bc.getCssFilesToCompile()) {
-        if (!StringUtil.toLowerCase(cssPath).endsWith(".css")) {
+        if (!cssPath.toLowerCase().endsWith(".css")) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(ProjectStructureProblemType.Severity.ERROR, bc.getName(), FlexBundle
             .message("not.a.css.runtime.stylesheet", FileUtil.toSystemDependentName(cssPath)),
                                                                                         FlexBCConfigurable.Location.RuntimeStyleSheets));

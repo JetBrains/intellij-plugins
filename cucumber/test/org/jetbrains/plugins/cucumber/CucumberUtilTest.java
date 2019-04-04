@@ -5,10 +5,9 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.plugins.cucumber.CucumberUtil.*;
-import static org.jetbrains.plugins.cucumber.CucumberUtil.isCucumberExpression;
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.buildRegexpFromCucumberExpression;
+import static org.jetbrains.plugins.cucumber.CucumberUtil.replaceNotNecessaryTextTemplateByRegexp;
+import static org.junit.Assert.assertEquals;
 
 public class CucumberUtilTest {
   @Test
@@ -17,7 +16,8 @@ public class CucumberUtilTest {
     outlineTableMap.put("name", "Foo");
     outlineTableMap.put("count", "10");
 
-    OutlineStepSubstitution substitution = substituteTableReferences("Project with name: <name> and <count> participants", outlineTableMap);
+    OutlineStepSubstitution substitution =
+      CucumberUtil.substituteTableReferences("Project with name: <name> and <count> participants", outlineTableMap);
 
     assertEquals("Project with name: Foo and 10 participants", substitution.getSubstitution());
     assertEquals(19, substitution.getOffsetInOutlineStep(19));
@@ -43,23 +43,13 @@ public class CucumberUtilTest {
   
   @Test
   public void testGetTheBiggestWordToSearchByIndex() {
-    String actual = getTheBiggestWordToSearchByIndex("I have cucumber(s) text");
+    String actual = CucumberUtil.getTheBiggestWordToSearchByIndex("I have cucumber(s) text");
     assertEquals("have", actual);
     
-    actual = getTheBiggestWordToSearchByIndex("I have cucumber/gherkin value");
+    actual = CucumberUtil.getTheBiggestWordToSearchByIndex("I have cucumber/gherkin value");
     assertEquals("value", actual);
     
-    actual = getTheBiggestWordToSearchByIndex("I have cucumber\\d");
+    actual = CucumberUtil.getTheBiggestWordToSearchByIndex("I have cucumber\\d");
     assertEquals("have", actual);
-  }
-
-  @Test
-  public void testIsCucumberExpression() {
-    assertTrue(isCucumberExpression("def {int}"));
-    assertFalse(isCucumberExpression("def {int"));
-    assertFalse(isCucumberExpression("def \\d{1}"));
-    assertFalse(isCucumberExpression("def \\d{1,2}"));
-    assertFalse(isCucumberExpression("text"));
-    assertFalse(isCucumberExpression("text (\\d)"));
   }
 }

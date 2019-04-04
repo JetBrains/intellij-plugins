@@ -52,7 +52,7 @@ public class ActionScriptGenerateTest extends JSGenerateTestBase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testGenerateGetterAndSetter() {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
     doGenerateTest("Generate.GetSetAccessor.JavaScript");
   }
 

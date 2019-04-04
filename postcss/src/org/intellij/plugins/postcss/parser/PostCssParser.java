@@ -21,7 +21,7 @@ public class PostCssParser extends CssParser2 {
   private boolean myAmpersandAllowed;
   private IElementType myAdditionalIdent;
 
-  private final CssMathParser POST_CSS_MATH_PARSER = new PostCssMathParser(this);
+  private CssMathParser POST_CSS_MATH_PARSER = new PostCssMathParser(this);
 
   @Override
   protected CssMathParser getMathParser() {
@@ -57,14 +57,14 @@ public class PostCssParser extends CssParser2 {
   protected boolean isSimpleSelectorStart() {
     return super.isSimpleSelectorStart() ||
            getTokenType() == PostCssTokenTypes.AMPERSAND ||
-           getTokenType() == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN;
+           getTokenType() == PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE;
   }
 
   @Override
   protected void parseSimpleSelector() {
-    if (getTokenType() == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN) {
+    if (getTokenType() == PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE) {
       PsiBuilder.Marker simpleSelector = createCompositeElement();
-      parseSimpleVariable();
+      addToken();
       simpleSelector.done(CssElementTypes.CSS_SIMPLE_SELECTOR);
     }
     else {
@@ -79,46 +79,24 @@ public class PostCssParser extends CssParser2 {
   }
 
   private boolean parseVariableDeclaration() {
-    if (getTokenType() != PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN || lookAhead(1) != CssElementTypes.CSS_COLON) {
+    if (getTokenType() != PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE || lookAhead(1) != CssElementTypes.CSS_COLON) {
       return false;
     }
 
     PsiBuilder.Marker variableDeclaration = createCompositeElement();
-    parseSimpleVariable();
+    addSingleToken();
     addTokenOrError(CssElementTypes.CSS_COLON, "':'");
-    parseTermList(true, PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN);
+    parseTermList(true, PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE);
     addTokenOrError(CssElementTypes.CSS_SEMICOLON, "';'");
     variableDeclaration.done(PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE_DECLARATION);
     return true;
   }
 
-  void parseSimpleVariable() {
-    assert getTokenType() == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN;
-    PsiBuilder.Marker term = createCompositeElement();
-    addToken();
-    term.done(PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE);
-  }
-
-  @Override
-  protected void parsePropertyOfDeclaration() {
-    if (getTokenType() == CssElementTypes.CSS_IDENT && rawLookup(1) == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN) {
-      addToken();
-      addToken();
-    }
-    else {
-      super.parsePropertyOfDeclaration();
-    }
-  }
-
   @Override
   protected boolean _parseTerm(boolean strict, boolean nameValuePairSyntax) {
-    if ((getTokenType() == CssElementTypes.CSS_MINUS && lookAhead(1) == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN) ||
-        getTokenType() == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN) {
+    if (getTokenType() == PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE) {
       PsiBuilder.Marker term = createCompositeElement();
-      if (getTokenType() == CssElementTypes.CSS_MINUS) {
-        addToken();
-      }
-      parseSimpleVariable();
+      addToken();
       term.done(CssElementTypes.CSS_TERM);
       return true;
     }
@@ -197,12 +175,14 @@ public class PostCssParser extends CssParser2 {
         mediaFeature.done(CssElementTypes.CSS_MEDIA_FEATURE);
         return true;
       }
+      parseComparisonOperator();
+      parseNumberTerm();
     }
     else {
       addIdentOrError();
+      parseComparisonOperator();
+      parseNumberTerm();
     }
-    parseComparisonOperator();
-    parseNumberTerm();
     mediaFeature.done(CssElementTypes.CSS_MEDIA_FEATURE);
     return true;
   }
@@ -253,7 +233,7 @@ public class PostCssParser extends CssParser2 {
     return true;
   }
 
-  private void parseCustomSelector() {
+  private boolean parseCustomSelector() {
     PsiBuilder.Marker customSelectorName = createCompositeElement();
     if (getTokenType() == CssElementTypes.CSS_COLON) {
       addSingleToken();
@@ -262,6 +242,7 @@ public class PostCssParser extends CssParser2 {
       addSingleToken();
     }
     customSelectorName.done(PostCssElementTypes.POST_CSS_CUSTOM_SELECTOR);
+    return true;
   }
 
   private boolean parseAtRuleNesting() {
@@ -397,11 +378,13 @@ public class PostCssParser extends CssParser2 {
 
   @Override
   public boolean addIdentOrError() {
+    if (getTokenType() == PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE) addSingleToken();
     return myAmpersandAllowed ? addIdentOrAmpersandOrError() : super.addIdentOrError();
   }
 
   @Override
   public boolean isIdent(IElementType type) {
+    if (type == PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE) return true;
     return myAmpersandAllowed ? isIdentOrAmpersand(type) : super.isIdent(type);
   }
 

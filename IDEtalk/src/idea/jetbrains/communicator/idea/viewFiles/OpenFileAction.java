@@ -6,7 +6,7 @@ package jetbrains.communicator.idea.viewFiles;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ import javax.swing.*;
 class OpenFileAction extends BaseVFileAction {
 
   OpenFileAction(JTree fileTree, IDEFacade ideFacade) {
-    super(CommunicatorStrings.getMsg("open.local.version"), "", AllIcons.Actions.EditSource,
+    super(StringUtil.getMsg("open.local.version"), "", AllIcons.Actions.EditSource,
           fileTree, ideFacade);
   }
 

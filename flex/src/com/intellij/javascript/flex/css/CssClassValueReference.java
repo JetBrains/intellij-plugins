@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -15,10 +14,10 @@ import com.intellij.psi.css.resolve.impl.CssResolverImpl;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiPolyVariantCachingReference;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -166,7 +165,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
   }
 
   private static class MyCandidatesProcessor extends MyCssElementProcessor {
-    Set<String> myStyleNames = new LinkedHashSet<>();
+    Set<String> myStyleNames = ContainerUtil.newLinkedHashSet();
 
     @Override
     protected void handleSelector(@NotNull CssSelectorSuffix selectorSuffix, @NotNull String text) {
@@ -176,7 +175,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
 
   private static class MyResolveProcessor extends MyCssElementProcessor {
     private final String myReferenceText;
-    private final Set<CssSelectorSuffix> myTargets = new LinkedHashSet<>();
+    private final Set<CssSelectorSuffix> myTargets = ContainerUtil.newLinkedHashSet();
 
     private MyResolveProcessor(@NotNull String referenceText) {
       myReferenceText = referenceText;

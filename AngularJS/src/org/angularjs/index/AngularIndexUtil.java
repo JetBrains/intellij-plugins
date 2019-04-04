@@ -34,6 +34,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
+import org.angular2.lang.Angular2LangUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,34 +55,27 @@ public class AngularIndexUtil {
   public static final Function<JSImplicitElement, ResolveResult> JS_IMPLICIT_TO_RESOLVE_RESULT = JSResolveResult::new;
 
   @Nullable
-  public static JSImplicitElement resolve(@NotNull Project project,
-                                          @NotNull StubIndexKey<? super String, JSImplicitElementProvider> index,
-                                          @NotNull String lookupKey) {
-    Ref<JSImplicitElement> result = new Ref<>(null);
-    Processor<JSImplicitElement> processor = element -> {
+  public static JSImplicitElement resolve(@NotNull final Project project,
+                                          @NotNull final StubIndexKey<? super String, JSImplicitElementProvider> index,
+                                          @NotNull final String lookupKey) {
+    final Ref<JSImplicitElement> result = new Ref<>(null);
+    final Processor<JSImplicitElement> processor = element -> {
       result.set(element);
       if (DialectDetector.isTypeScript(element)) {
         return false;
       }
       return true;
     };
-    multiResolve(project, GlobalSearchScope.allScope(project), index, lookupKey, processor);
+    multiResolve(project, index, lookupKey, processor);
 
     return result.get();
   }
 
   public static void multiResolve(@NotNull Project project,
-                                  @NotNull StubIndexKey<? super String, JSImplicitElementProvider> index,
-                                  @NotNull String lookupKey,
-                                  @NotNull Processor<? super JSImplicitElement> processor) {
-    multiResolve(project, GlobalSearchScope.allScope(project), index, lookupKey, processor);
-  }
-
-  public static void multiResolve(@NotNull Project project,
-                                  @NotNull GlobalSearchScope scope,
-                                  @NotNull StubIndexKey<? super String, JSImplicitElementProvider> index,
-                                  @NotNull String lookupKey,
-                                  @NotNull Processor<? super JSImplicitElement> processor) {
+                                  @NotNull final StubIndexKey<? super String, JSImplicitElementProvider> index,
+                                  @NotNull final String lookupKey,
+                                  @NotNull final Processor<? super JSImplicitElement> processor) {
+    final GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     StubIndex.getInstance().processElements(
       index, lookupKey, project, scope, JSImplicitElementProvider.class, provider -> {
         final JSElementIndexingData indexingData = provider.getIndexingData();
@@ -148,6 +142,15 @@ public class AngularIndexUtil {
   public static boolean hasAngularJS(@NotNull final Project project) {
     if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
     return getAngularJSVersion(project) > 0;
+  }
+
+  /**
+   * @deprecated Kept for compatibility with NativeScript. Use Angular2LangUtil.isAngular2Context().
+   */
+  @Deprecated
+  public static boolean hasAngularJS2(@NotNull final Project project) {
+    if (ApplicationManager.getApplication().isUnitTestMode() && "disabled".equals(System.getProperty("angular.js"))) return false;
+    return Angular2LangUtil.isAngular2Context(project);
   }
 
   private static int getAngularJSVersion(@NotNull final Project project) {

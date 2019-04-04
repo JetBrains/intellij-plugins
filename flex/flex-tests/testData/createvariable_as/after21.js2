@@ -1,4 +1,4 @@
-// "Create variable 'localVar'" "true"
+// "Create Variable 'localVar'" "true"
 public class A3 {
     function A3() {
         var localVar<caret>:int;

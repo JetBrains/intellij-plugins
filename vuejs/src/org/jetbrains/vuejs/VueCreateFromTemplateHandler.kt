@@ -6,7 +6,6 @@ import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplate.ATTRIBUTE_NAME
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx
 import org.jetbrains.vuejs.CreateVueSingleFileComponentAction.Companion.VUE_TEMPLATE_NAME
-import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
   override fun handlesTemplate(template: FileTemplate): Boolean {

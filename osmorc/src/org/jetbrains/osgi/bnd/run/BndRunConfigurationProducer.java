@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.run;
 
 import com.intellij.execution.Location;
@@ -14,7 +14,7 @@ import org.jetbrains.osgi.bnd.BndFileType;
 
 abstract class BndRunConfigurationProducer extends LazyRunConfigurationProducer<BndRunConfigurationBase> {
   @Override
-  protected boolean setupConfigurationFromContext(@NotNull BndRunConfigurationBase configuration, @NotNull ConfigurationContext context, @NotNull Ref<PsiElement> source) {
+  protected boolean setupConfigurationFromContext(BndRunConfigurationBase configuration, ConfigurationContext context, Ref<PsiElement> source) {
     Location location = context.getLocation();
     if (location != null) {
       VirtualFile file = location.getVirtualFile();
@@ -36,7 +36,7 @@ abstract class BndRunConfigurationProducer extends LazyRunConfigurationProducer<
   }
 
   @Override
-  public boolean isConfigurationFromContext(@NotNull BndRunConfigurationBase configuration, @NotNull ConfigurationContext context) {
+  public boolean isConfigurationFromContext(BndRunConfigurationBase configuration, ConfigurationContext context) {
     if (getConfigurationFactory() == configuration.getFactory()) {
       Location location = context.getLocation();
       if (location != null) {

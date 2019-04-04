@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.openapi.compiler.CompileContext;
@@ -44,7 +43,7 @@ public class CompilerMessagesBuffer {
   public CompilerMessagesBuffer(final @Nullable CompileContext compileContext, final boolean bufferingEnabled) {
     this.compileContext = compileContext;
     this.bufferingEnabled = bufferingEnabled;
-    messages = bufferingEnabled ? Collections.synchronizedList(new ArrayList<>()) : null;
+    messages = bufferingEnabled ? Collections.synchronizedList(new ArrayList<CompilerMessage>()) : null;
   }
 
   public void addMessage(final CompilerMessageCategory category, final String message, final String url, final int line, final int column) {

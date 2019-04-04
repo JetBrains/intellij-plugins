@@ -1,0 +1,66 @@
+<!--
+ * Copyright 2012 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+-->
+<idea-plugin url="https://confluence.jetbrains.com/display/WI/JsTestDriver+IntelliJ+plugin">
+  <name>JSTestDriver Plugin</name>
+  <description>Allows running, debugging JavaScript unit tests and measure test coverage.</description>
+  <vendor>Google, JetBrains</vendor>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>JavaScript</depends>
+
+  <depends optional="true" config-file="jstd-yaml.xml">org.jetbrains.plugins.yaml</depends>
+
+  <depends optional="true" config-file="jstd-coverage.xml">com.intellij.modules.coverage</depends>
+
+  <depends optional="true" config-file="jstd-javascript-debugger.xml">JavaScriptDebugger</depends>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <testFileStructureBuilderProvider implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBuilderProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileTypeFactory"/>
+    <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
+    <programRunner implementation="com.google.jstestdriver.idea.execution.JstdRunProgramRunner"/>
+    <runConfigurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRunConfigurationProducer"/>
+    <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdTestFilePathIndex"/>
+    <projectService serviceImplementation="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager"/>
+
+    <localInspection language="JavaScript"
+                     groupPath="JavaScript"
+                     groupName="JsTestDriver"
+                     displayName="Reports about JsTestDriver TestCase without tests"
+                     shortName="JsTestDriverTestCaseWithoutTests"
+                     enabledByDefault="false"
+                     level="WARNING"
+                     implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JsTestDriverTestCaseWithoutTestsInspection"
+        />
+
+    <languageInjector implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdFixtureHtmlLanguageInjector"/>
+    <!--<codeInsight.lineMarkerProvider language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkLineMarkerProvider"/>-->
+    <implicitUsageProvider implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdImplicitUsageProvider"/>
+  </extensions>
+
+  <actions>
+    <group id="JstdGenerateCodeInsideGroup">
+      <action id="JstdCreateTestAction" text="JsTestDriver Test" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateNewTestAction"/>
+      <action id="JstdCreateSetupAction" text="JsTestDriver Setup" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateSetupAction"/>
+      <action id="JstdCreateTearDownAction" text="JsTestDriver TearDown" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateTearDownAction"/>
+      <add-to-group group-id="GenerateGroup" anchor="first"/>
+    </group>
+  </actions>
+
+</idea-plugin>

@@ -42,16 +42,15 @@ public class AddNgModuleDeclarationAction extends Angular2NgModuleSelectAction {
                                @NotNull PsiElement context,
                                @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
                                @NotNull String declarationName,
-                               @NotNull String actionName,
-                               boolean codeCompletion) {
-    super(editor, context, "", DEFAULT_FILTER, actionName, codeCompletion);
+                               @NotNull String actionName) {
+    super(editor, context, "", DEFAULT_FILTER, actionName);
     myDeclarationName = declarationName;
     myDecorator = declarationDecorator;
   }
 
   @Override
   protected String getModuleSelectionPopupTitle() {
-    return Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.module", myDeclarationName);
+    return Angular2Bundle.message("angular.quickfix.ngmodule.declare.select", myDeclarationName);
   }
 
   @NotNull

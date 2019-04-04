@@ -1,8 +1,7 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.info;
 
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Pattern;
@@ -33,7 +32,7 @@ public class CfmlAttributeDescription implements Comparable<CfmlAttributeDescrip
 
   public void addValue(String value) {
     if (myValues == null) {
-      myValues = ArrayUtilRt.EMPTY_STRING_ARRAY;
+      myValues = ArrayUtil.EMPTY_STRING_ARRAY;
     }
     myValues = ArrayUtil.append(myValues, value);
   }

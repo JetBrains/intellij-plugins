@@ -25,12 +25,12 @@
 package org.osmorc.run.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
 
 import javax.swing.*;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -59,7 +59,7 @@ public class GenericRunPropertiesEditor implements FrameworkRunPropertiesEditor 
 
   @Override
   public void applyEditorTo(@NotNull OsgiRunConfiguration runConfiguration) throws ConfigurationException {
-    Map<String, String> properties = new HashMap<>();
+    Map<String, String> properties = ContainerUtil.newHashMap();
     GenericRunProperties.setSystemPackages(properties, mySystemPackages.getText());
     GenericRunProperties.setBootDelegation(properties, myBootDelegation.getText());
     GenericRunProperties.setDebugMode(properties, myDebugCheckbox.isSelected());

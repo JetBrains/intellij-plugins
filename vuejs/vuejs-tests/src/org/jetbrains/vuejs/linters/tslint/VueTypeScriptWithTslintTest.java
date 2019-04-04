@@ -10,7 +10,7 @@ import com.intellij.util.LineSeparator;
 
 import java.io.IOException;
 
-import static org.jetbrains.vuejs.lang.VueTestUtilKt.vueRelativeTestDataPath;
+import static org.jetbrains.vuejs.language.VueTestUtilKt.vueRelativeTestDataPath;
 
 public class VueTypeScriptWithTslintTest extends TypeScriptServiceWithTslintTestBase {
   @Override

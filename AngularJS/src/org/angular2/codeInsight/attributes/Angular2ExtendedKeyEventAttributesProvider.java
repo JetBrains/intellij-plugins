@@ -70,7 +70,7 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
     "printScreen"
   );
 
-  private static final List<String> STD_KEY_NAMES = new ArrayList<>();
+  private static final List<String> STD_KEY_NAMES = newArrayList();
 
   static {
     for (int i = 1; i <= 20; i++) {
@@ -177,6 +177,7 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
                                                  boolean canonical) {
       super(xmlTag,
             Objects.requireNonNull(EVENT.buildName(notNullize(baseName) + keyName, canonical)),
+            false,
             priority,
             originalDescriptor == null ? Collections.emptySet() : originalDescriptor.getDeclarations(),
             true);

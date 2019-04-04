@@ -1,7 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.codeHighlighting.*;
+import com.intellij.codeHighlighting.Pass;
+import com.intellij.codeHighlighting.TextEditorHighlightingPass;
+import com.intellij.codeHighlighting.TextEditorHighlightingPassFactory;
+import com.intellij.codeHighlighting.TextEditorHighlightingPassRegistrar;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -42,10 +45,15 @@ import java.util.List;
 /**
  * @author Maxim.Mossienko
  */
-final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlightingPassFactory, TextEditorHighlightingPassFactoryRegistrar {
-  @Override
-  public void registerHighlightingPassFactory(@NotNull TextEditorHighlightingPassRegistrar registrar, @NotNull Project project) {
-    registrar.registerTextEditorHighlightingPass(this, new int[]{Pass.UPDATE_ALL}, null, true, -1);
+public class ActionScriptUnusedImportsPassFactory implements TextEditorHighlightingPassFactory {
+  public ActionScriptUnusedImportsPassFactory(TextEditorHighlightingPassRegistrar registrar) {
+    registrar.registerTextEditorHighlightingPass(
+        this,
+        new int[]{Pass.UPDATE_ALL},
+        null,
+        true,
+        -1
+    );
   }
 
   @Override

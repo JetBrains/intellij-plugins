@@ -38,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -296,7 +295,7 @@ public class KarmaServer {
 
   void fireOnPortBound() {
     UIUtil.invokeLaterIfNeeded(() -> {
-      List<Runnable> callbacks = new ArrayList<>(myOnPortBoundCallbacks);
+      List<Runnable> callbacks = ContainerUtil.newArrayList(myOnPortBoundCallbacks);
       myOnPortBoundCallbacks.clear();
       myOnPortBoundCallbacks = null;
       for (Runnable callback : callbacks) {
@@ -326,7 +325,7 @@ public class KarmaServer {
   void fireOnBrowsersReady(boolean browsersReady) {
     UIUtil.invokeLaterIfNeeded(() -> {
       if (browsersReady) {
-        List<Runnable> callbacks = new ArrayList<>(myOnBrowsersReadyCallbacks);
+        List<Runnable> callbacks = ContainerUtil.newArrayList(myOnBrowsersReadyCallbacks);
         myOnBrowsersReadyCallbacks.clear();
         myOnBrowsersReadyCallbacks = null;
         for (Runnable callback : callbacks) {
@@ -360,7 +359,7 @@ public class KarmaServer {
   private void fireOnTerminated(final int exitCode) {
     UIUtil.invokeLaterIfNeeded(() -> {
       myExitCode = exitCode;
-      List<KarmaServerTerminatedListener> listeners = new ArrayList<>(myTerminationCallbacks);
+      List<KarmaServerTerminatedListener> listeners = ContainerUtil.newArrayList(myTerminationCallbacks);
       myTerminationCallbacks.clear();
       for (KarmaServerTerminatedListener listener : listeners) {
         listener.onTerminated(exitCode);

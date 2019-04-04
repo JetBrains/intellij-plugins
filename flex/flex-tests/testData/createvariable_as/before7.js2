@@ -1,4 +1,4 @@
-// "Create 'get' property 'selectionManager'" "true"
+// "Create Get Property 'selectionManager'" "true"
 interface IA {}
 class A {
   public function getSelectionManager():ISelectionManager {

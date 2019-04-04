@@ -9,7 +9,7 @@ public class DartWordSelectionTest extends DartCodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    DartTestUtils.configureDartSdk(getModule(), myFixture.getTestRootDisposable(), false);
+    DartTestUtils.configureDartSdk(myModule, myFixture.getTestRootDisposable(), false);
     myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 

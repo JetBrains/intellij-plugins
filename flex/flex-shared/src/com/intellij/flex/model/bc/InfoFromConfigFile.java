@@ -1,10 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.model.bc;
 
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.util.PathUtilRt;
 import gnu.trove.THashMap;
 import org.jdom.Element;
@@ -77,7 +75,7 @@ public class InfoFromConfigFile {
       mainClassFile = new File(baseDir + File.pathSeparator + mainClassPath);
     }
     if (!mainClassFile.isFile()) {
-      return FileUtilRt.getNameWithoutExtension(FileUtilRt.getNameWithoutExtension(PathUtilRt.getFileName(mainClassPath)));
+      return FileUtil.getNameWithoutExtension(FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(mainClassPath)));
     }
 
     String mainClassCanonicalPath;
@@ -93,11 +91,11 @@ public class InfoFromConfigFile {
       if (FileUtil.isAncestor(sourcePath, mainClassCanonicalPath, true)) {
         final String relativePath = FileUtil.getRelativePath(sourcePath, mainClassCanonicalPath, '/');
         if (relativePath != null) {
-          return FileUtilRt.getNameWithoutExtension(relativePath).replace("/", ".");
+          return FileUtil.getNameWithoutExtension(relativePath).replace("/", ".");
         }
       }
     }
-    return FileUtilRt.getNameWithoutExtension(mainClassCanonicalPath);
+    return FileUtil.getNameWithoutExtension(mainClassCanonicalPath);
   }
 
   @NotNull

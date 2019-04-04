@@ -1,7 +1,21 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2006 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package jetbrains.communicator.jabber.impl;
 
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.users.PresenceMode;
@@ -11,9 +25,9 @@ import jetbrains.communicator.jabber.AccountInfo;
 import jetbrains.communicator.jabber.ConnectionListener;
 import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.VCardInfo;
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.WaitFor;
-import jetbrains.communicator.util.XStreamUtil;
+import jetbrains.communicator.util.XMLUtil;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -52,8 +66,8 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
 
   private void initSettingsIfNeeded() {
     if (mySettings == null) {
-      myXStream = XStreamUtil.createXStream();
-      mySettings = (JabberSettings) XStreamUtil.fromXml(myXStream, myIdeFacade.getConfigDir(), FILE_NAME, false);
+      myXStream = XMLUtil.createXStream();
+      mySettings = (JabberSettings) XMLUtil.fromXml(myXStream, myIdeFacade.getConfigDir(), FILE_NAME, false);
       if (mySettings == null) {
         mySettings = new JabberSettings();
       }
@@ -85,7 +99,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
         Element element = (Element) aChildren;
         result.add(element.getAttributeValue("jid"));
       }
-      return ArrayUtilRt.toStringArray(result);
+      return ArrayUtil.toStringArray(result);
     } catch (JDOMException e) {
       LOG.error(e.getMessage(), e);
     } catch (IOException e) {
@@ -154,14 +168,14 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
         connection.getAccountManager().createAccount(user, password.replaceAll("&", "&amp;"));
       }
 
-      if (!connection.isConnected()) return CommunicatorStrings.getMsg("unable.to.connect.to", server, port);
+      if (!connection.isConnected()) return StringUtil.getMsg("unable.to.connect.to", server, port);
       connection.login(user, password, IDETALK_RESOURCE);
 
       saveAccountData(server, port, username, password, forceOldSSL);
 
       if (rosterIsNotAvailable(connection)) {
         connection.close();
-        return CommunicatorStrings.getMsg("no.roster.try.again");
+        return StringUtil.getMsg("no.roster.try.again");
       }
 
       myConnection = connection;
@@ -290,7 +304,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     if (!mySettings.getAccount().shouldRememberPassword()) {
       mySettings.getAccount().setPassword("");
     }
-    XStreamUtil.toXml(myXStream, myIdeFacade.getConfigDir(), FILE_NAME, mySettings);
+    XMLUtil.toXml(myXStream, myIdeFacade.getConfigDir(), FILE_NAME, mySettings);
   }
 
   @Override
@@ -308,8 +322,8 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
           }
           roster.createEntry(id, JabberTransport.getSimpleId(id), new String[]{group});
         } catch (XMPPException e) {
-          myIdeFacade.showMessage(CommunicatorStrings.getMsg("jabber.error.while.adding.user.title", id)
-              , CommunicatorStrings.getMsg("jabber.error.while.adding.user.text", id, getMessage(e))
+          myIdeFacade.showMessage(StringUtil.getMsg("jabber.error.while.adding.user.title", id)
+              ,StringUtil.getMsg("jabber.error.while.adding.user.text", id, getMessage(e))
           );
           LOG.info(getMessage(e), e);
         }

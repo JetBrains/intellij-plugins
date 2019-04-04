@@ -1,8 +1,6 @@
 package com.intellij.lang.javascript.validation.fixes;
 
-import com.intellij.codeInsight.template.Expression;
 import com.intellij.codeInsight.template.Template;
-import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -68,7 +66,7 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
   }
 
   protected static void addVarName(Template template, String varName) {
-    Expression expression = new ConstantNode(varName);
+    MyExpression expression = new MyExpression(varName);
     template.addVariable("name", expression, expression, true);
   }
 

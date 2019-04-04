@@ -2,7 +2,6 @@
 package org.angular2.entities;
 
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
-import com.intellij.openapi.util.NotNullFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -20,9 +19,9 @@ import java.util.function.Function;
 
 public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector {
 
-  private final NotNullFactory<PsiElement> mySelectorElement;
+  private final PsiElement mySelectorElement;
   private final String myText;
-  private final Function<? super Pair<String, Integer>, ? extends TextRange> myCreateRange;
+  private final Function<Pair<String, Integer>, TextRange> myCreateRange;
   private final AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>> mySimpleSelectors =
     new AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>>() {
       @NotNull
@@ -63,16 +62,10 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
 
   public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
                                        @Nullable String text,
-                                       @Nullable Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
-    this(() -> element, text, createRange);
-  }
-
-  public Angular2DirectiveSelectorImpl(@NotNull NotNullFactory<PsiElement> element,
-                                       @Nullable String text,
-                                       @Nullable Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
+                                       @NotNull Function<Pair<String, Integer>, TextRange> createRange) {
     mySelectorElement = element;
     myText = text;
-    myCreateRange = createRange != null ? createRange : a -> TextRange.EMPTY_RANGE;
+    myCreateRange = createRange;
   }
 
   @NotNull
@@ -141,19 +134,16 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       }
     }
 
-    @Nullable
     @Override
     public Angular2DirectiveSelectorPsiElement getElement() {
       return myElement;
     }
 
-    @NotNull
     @Override
     public List<Angular2DirectiveSelectorPsiElement> getAttributes() {
       return myAttributes;
     }
 
-    @NotNull
     @Override
     public List<SimpleSelectorWithPsi> getNotSelectors() {
       return myNotSelectors;

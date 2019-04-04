@@ -1,4 +1,4 @@
-// "Create constant field 'ccccc'" "true"
+// "Create Constant Field 'ccccc'" "true"
 public class A2____ {
     public static const ccccc: = ;
 }
