@@ -12,7 +12,7 @@ fun IntRange.withOffset(offset: Int) = IntRange(start + offset, endInclusive + o
 
 fun <T> tryRun(body: () -> T): T? = try {
     body()
-} catch (e: Exception) {
+} catch (e: Throwable) {
     null
 }
 
