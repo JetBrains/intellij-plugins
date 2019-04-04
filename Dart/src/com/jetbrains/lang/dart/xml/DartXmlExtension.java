@@ -15,6 +15,9 @@ import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Creates DartAngular-specific tag name references using info from the Dart Analysis Server.
+ */
 public class DartXmlExtension extends HtmlXmlExtension {
   @Override
   public boolean isAvailable(PsiFile file) {
@@ -32,6 +35,7 @@ public class DartXmlExtension extends HtmlXmlExtension {
     DartServerData.DartNavigationRegion navRegion = DartResolver.findRegion(file, range.getStartOffset(), range.getLength());
     if (navRegion != null) {
       for (DartServerData.DartNavigationTarget target : navRegion.getTargets()) {
+        // html_dart2js.dart means it's a standard HTML tags - no need in Dart-specific support.
         if (!FileUtil.toSystemIndependentName(target.getFile()).endsWith("lib/html/dart2js/html_dart2js.dart")) {
           return new DartTagNameReference(nameElement, startTagFlag, target);
         }
