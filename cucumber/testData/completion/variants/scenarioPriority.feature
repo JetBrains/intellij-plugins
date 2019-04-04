@@ -5,5 +5,4 @@ BASIC 1 INCLUDES
 Scenario:
 Scenario Outline:
 Background:
-Rule:
 

@@ -1,4 +1,4 @@
-// "Create method 'create'" "true"
+// "Create Method 'create'" "true"
 class Interface {
     internal static function create(interface1:Interface):void {
         <caret>

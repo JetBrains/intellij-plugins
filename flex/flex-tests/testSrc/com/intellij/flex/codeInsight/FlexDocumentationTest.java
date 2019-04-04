@@ -67,7 +67,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   private PsiElement getDocElementForLookupItem(DocumentationProvider provider, String fileName) {
@@ -348,7 +348,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
     VirtualFile swc = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + BASE_PATH + "CustomSdk.swc");
     swc = JarFileSystem.getInstance().getJarRootForLocalFile(swc);
     VirtualFile asdoc = HttpFileSystem.getInstance().findFileByPath("livedocs.adobe.com/flex/3/langref");
-    FlexTestUtils.setupCustomSdk(getModule(), swc, null, asdoc);
+    FlexTestUtils.setupCustomSdk(myModule, swc, null, asdoc);
 
     doTest(files, getTestName(false), false, Check.Url);
   }
@@ -454,11 +454,11 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   }
 
   private void testWithLibrary(String swc, String sources, String docs, Runnable test) {
-    FlexTestUtils.addLibrary(getModule(), "TestLib", getTestDataPath() + BASE_PATH, swc, sources, docs);
+    FlexTestUtils.addLibrary(myModule, "TestLib", getTestDataPath() + BASE_PATH, swc, sources, docs);
     try {
       test.run();
     } finally {
-      FlexTestUtils.removeLibrary(getModule(), "TestLib");
+      FlexTestUtils.removeLibrary(myModule, "TestLib");
     }
   }
 
@@ -466,7 +466,7 @@ public class FlexDocumentationTest extends JSAbstractDocumentationTest {
   public void testGenericType() {
     setUpJdk();
     final String testName = getTestName(false);
-    FlexTestUtils.addASDocToSdk(getModule(), getClass(), testName);
+    FlexTestUtils.addASDocToSdk(myModule, getClass(), testName);
     doTest(new String[]{testName}, "as", testName);
   }
 

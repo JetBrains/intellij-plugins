@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.settings.ui;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.PhoneGapBundle;
@@ -14,6 +14,7 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,15 +48,15 @@ public class PhoneGapConfigurable implements Configurable {
     private List<String> myRepoList;
 
     public RepositoryStore() {
-      setReposInner(new ArrayList<>());
+      setReposInner(ContainerUtil.newArrayList());
     }
 
     private void setReposInner(List<String> repos) {
-      myRepoList = repos == null ? new ArrayList<>() : new ArrayList<>(repos);
+      myRepoList = repos == null ? ContainerUtil.newArrayList() : ContainerUtil.newArrayList(repos);
     }
 
     public List<String> getRepositories() {
-      return new ArrayList<>(myRepoList);
+      return ContainerUtil.newArrayList(myRepoList);
     }
 
     public void addRepository(String repo) {

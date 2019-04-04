@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.*
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 
 class VueComponentOwnDetailsProvider {
   companion object {

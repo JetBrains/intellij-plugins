@@ -6,13 +6,17 @@ import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class JsonGherkinKeywordProviderTest extends AbstractGherkinKeywordProviderTest {
+  private static final String TEST_DATA_PATH = "/keywords";
+
   @Override
-  protected GherkinKeywordProvider buildKeywordProvider() {
-    ClassLoader classLoader = JsonGherkinKeywordProvider.class.getClassLoader();
-    InputStream inputStream = classLoader.getResourceAsStream("i18n.json");
-    return new JsonGherkinKeywordProvider(inputStream);
+  protected GherkinKeywordProvider buildKeywordProvider() throws IOException {
+    File keywordsFile = new File(getTestDataPath(), "i18n.json");
+    return new JsonGherkinKeywordProvider(keywordsFile);
+  }
+
+  protected String getTestDataPath() {
+    return CucumberTestUtil.getTestDataPath() + TEST_DATA_PATH;
   }
 }

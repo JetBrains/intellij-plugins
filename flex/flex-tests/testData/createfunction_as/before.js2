@@ -1,4 +1,4 @@
-// "Create method '_bbb'" "true"
+// "Create Method '_bbb'" "true"
 class C {
   function C() {
     _b<caret>bb("1","2");

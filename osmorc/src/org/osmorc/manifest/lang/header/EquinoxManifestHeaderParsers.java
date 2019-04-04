@@ -24,12 +24,12 @@
  */
 package org.osmorc.manifest.lang.header;
 
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.header.HeaderParserProvider;
 import org.jetbrains.lang.manifest.header.impl.StandardHeaderParser;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,7 +39,7 @@ public class EquinoxManifestHeaderParsers implements HeaderParserProvider {
   private final Map<String, HeaderParser> myParsers;
 
   public EquinoxManifestHeaderParsers() {
-    myParsers = new HashMap<>();
+    myParsers = ContainerUtil.newHashMap();
     myParsers.put("Eclipse-LazyStart", StandardHeaderParser.INSTANCE);
     myParsers.put("Eclipse-PlatformFilter", StandardHeaderParser.INSTANCE);
     myParsers.put("Eclipse-BuddyPolicy", StandardHeaderParser.INSTANCE);

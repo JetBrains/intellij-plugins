@@ -8,7 +8,6 @@ import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.presentable.JSFormatUtil;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
@@ -20,6 +19,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
 import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
@@ -82,7 +82,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
   public static boolean packageExists(final Project project, final String packageName, final GlobalSearchScope scope) {
-    return FlexUtils.packageExists(packageName, scope) || FlexResolveHelper.mxmlPackageExists(packageName, project, scope);
+    return JSUtils.packageExists(packageName, scope) || FlexResolveHelper.mxmlPackageExists(packageName, project, scope);
   }
 
   @Override

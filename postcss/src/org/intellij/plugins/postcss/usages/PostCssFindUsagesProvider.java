@@ -15,7 +15,6 @@ import org.intellij.plugins.postcss.lexer.PostCssLexer;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.intellij.plugins.postcss.psi.PostCssCustomMedia;
 import org.intellij.plugins.postcss.psi.PostCssCustomSelector;
-import org.intellij.plugins.postcss.psi.PostCssSimpleVariableDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,8 +30,7 @@ public class PostCssFindUsagesProvider implements FindUsagesProvider {
   @Override
   public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
     return psiElement instanceof PostCssCustomSelector ||
-           psiElement instanceof PostCssCustomMedia ||
-           psiElement instanceof PostCssSimpleVariableDeclaration;
+           psiElement instanceof PostCssCustomMedia;
   }
 
   @Override
@@ -45,12 +43,8 @@ public class PostCssFindUsagesProvider implements FindUsagesProvider {
   public String getType(@NotNull PsiElement element) {
     if (element instanceof PostCssCustomSelector) {
       return PostCssBundle.message("custom.selector");
-    }
-    else if (element instanceof PostCssCustomMedia) {
+    } else if (element instanceof PostCssCustomMedia){
       return PostCssBundle.message("custom.media");
-    }
-    else if (element instanceof PostCssSimpleVariableDeclaration) {
-      return PostCssBundle.message("simple.var");
     }
     return "";
   }

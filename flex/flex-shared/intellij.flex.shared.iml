@@ -13,6 +13,5 @@
     <orderEntry type="module" module-name="intellij.platform.jps.model.impl" />
     <orderEntry type="module" module-name="intellij.platform.jps.model.serialization" />
     <orderEntry type="module" module-name="intellij.platform.jps.build" />
-    <orderEntry type="module" module-name="intellij.platform.util.ui" />
   </component>
 </module>

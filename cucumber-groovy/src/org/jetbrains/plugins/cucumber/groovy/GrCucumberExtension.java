@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.groovy;
 
 import com.intellij.openapi.module.JavaModuleType;
@@ -28,7 +27,10 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Max Medvedev
@@ -73,7 +75,7 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
   @Override
   public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
     if (gluesFromOtherFiles == null) {
-      gluesFromOtherFiles = new HashSet<>();
+      gluesFromOtherFiles = ContainerUtil.newHashSet();
     }
     final Set<String> glues = gluesFromOtherFiles;
 

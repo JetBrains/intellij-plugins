@@ -42,8 +42,8 @@ import org.jetbrains.annotations.Nullable;
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static com.intellij.psi.util.CachedValuesManager.getCachedValue;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
-import static org.angular2.codeInsight.template.Angular2TemplateScopesResolver.getHtmlElementClassType;
+import static org.angular2.codeInsight.Angular2Processor.getHtmlElementClassType;
+import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
 
 public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariableStub<JSVariable>, JSVariable>
@@ -80,7 +80,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
         .map(TypeScriptClass::getJSType)
         .findFirst()
         .orElseGet(() -> hasExport ? null
-                                   : isTemplateTag(tag)
+                                   : isTemplateTag(tag.getName())
                                      ? getTemplateRefType(getComponentClass())
                                      : getHtmlElementClassType(this, tag.getName()));
     }
@@ -163,7 +163,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   }
 
   @Override
-  public boolean useTypesFromJSDoc() {
+  protected boolean useTypesFromJSDoc() {
     return false;
   }
 

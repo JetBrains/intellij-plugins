@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.vuejs.index.DELIMITER
-import org.jetbrains.vuejs.index.isVueContext
+import org.jetbrains.vuejs.index.hasVue
 
 object VueStoreUtils {
   private const val VUEX = "vuex"
@@ -19,7 +19,7 @@ object VueStoreUtils {
 
   fun hasVuex(context: PsiElement): Boolean {
     val project = context.project
-    if (!isVueContext(context)) return false
+    if (!hasVue(project)) return false
     val psiFile = context.containingFile?.originalFile
     if (psiFile == null) return false
     return CachedValuesManager.getManager(project).getCachedValue(psiFile) {

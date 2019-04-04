@@ -30,9 +30,11 @@
   <depends>com.intellij.java-i18n</depends>
 
   <!-- optional dependencies -->
+  <depends optional="true">HtmlTools</depends>
   <depends optional="true" config-file="struts2-freemarker.xml">com.intellij.freemarker</depends>
   <depends optional="true" config-file="struts2-spring.xml">com.intellij.spring</depends>
   <depends optional="true" config-file="struts2-groovy.xml">org.intellij.groovy</depends>
+  <depends optional="true" config-file="struts2-tiles.xml">StrutsAssistant</depends>
   <depends optional="true" config-file="struts2-velocity.xml">com.intellij.velocity</depends>
 
   <vendor>Yann Cébron, JetBrains</vendor>
@@ -84,6 +86,7 @@
 
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
     <problemFileHighlightFilter implementation="com.intellij.struts2.Struts2ProblemFileHighlightFilter"/>
+    <elementDescriptionProvider implementation="com.intellij.struts2.structure.StrutsTreeDescriptionProvider"/>
 
     <localInspection language="XML" groupPath="Struts" shortName="Struts2ModelInspection" applyToDialects="false"
                      bundle="resources.Struts2Bundle" key="inspections.struts2.model.display.name"

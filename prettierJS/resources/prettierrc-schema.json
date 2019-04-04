@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Schema for .prettierrc",
-  "type": ["object", "string"],
+  "type": "object",
   "id": "http://json.schemastore.org/prettierrc",
   "definitions": {
     "optionsDefinition": {
@@ -229,14 +229,8 @@
       }
     }
   },
-  "oneOf": [
-    { "type": "string" },
-    {
-      "type": "object",
-      "allOf": [
-        { "$ref": "#/definitions/optionsDefinition" },
-        { "$ref": "#/definitions/overridesDefinition" }
-      ]
-    }
+  "allOf": [
+    { "$ref": "#/definitions/optionsDefinition" },
+    { "$ref": "#/definitions/overridesDefinition" }
   ]
 }

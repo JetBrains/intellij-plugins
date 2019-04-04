@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.icons.AllIcons;
@@ -7,8 +6,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.ui.IconManager;
-import com.intellij.ui.icons.RowIcon;
+import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.psi.*;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 abstract public class DartFunctionExpressionBase extends DartExpressionImpl {
-  private static final RowIcon ICON = IconManager.getInstance().createRowIcon(AllIcons.Nodes.Lambda, PlatformIcons.PRIVATE_ICON);
+
+  private static final RowIcon ICON = new RowIcon(AllIcons.Nodes.Function, PlatformIcons.PRIVATE_ICON);
 
   public DartFunctionExpressionBase(ASTNode node) {
     super(node);

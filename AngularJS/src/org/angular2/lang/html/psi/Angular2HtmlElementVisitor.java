@@ -40,8 +40,4 @@ public class Angular2HtmlElementVisitor extends XmlElementVisitor {
   public void visitTemplateBindings(Angular2HtmlTemplateBindings bindings) {
     visitBoundAttribute(bindings);
   }
-
-  public void visitNgContentSelector(Angular2HtmlNgContentSelector ngContentSelect) {
-    visitElement(ngContentSelect);
-  }
 }

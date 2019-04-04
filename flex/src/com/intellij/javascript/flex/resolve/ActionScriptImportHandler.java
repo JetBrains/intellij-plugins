@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -54,7 +54,7 @@ public class ActionScriptImportHandler extends JSImportHandler {
       @Override
       protected CachedValue<Map<String, JSImportedElementResolveResult>> compute(final PsiElement psiElement, final Object p) {
         return CachedValuesManager
-          .getManager(psiElement.getProject()).createCachedValue(() -> new CachedValueProvider.Result<>(
+          .getManager(psiElement.getProject()).createCachedValue(() -> new CachedValueProvider.Result<Map<String, JSImportedElementResolveResult>>(
             ContainerUtil.newConcurrentMap(),
             PsiModificationTracker.MODIFICATION_COUNT), false);
       }

@@ -22,19 +22,19 @@ MetadataFile:index.metadata.json
         @angular/cdk/observers#ObserversModule <metadata reference>('')
     MatError <metadata directive>: selector=mat-error; inputs=[id]; outputs=[]; inOuts=[]('')
     MatFormFieldBase <metadata class>('')
-    _MatFormFieldMixinBase: <metadata call>
+    _MatFormFieldMixinBase: : <metadata call>
       #expression: @angular/material/core#mixinColor <metadata reference>('')
-    MatFormField <metadata component>: selector=mat-form-field; ngContentSelectors=[[matPrefix], mat-placeholder, mat-label, [matSuffix], mat-error, mat-hint:not([align='end']), mat-hint[align='end']]; exportAs=matFormField; inputs=[hintLabel, appearance, color, hideRequiredMarker, floatLabel]; outputs=[]; inOuts=[]
+    MatFormField <metadata component>: selector=mat-form-field; exportAs=matFormField; inputs=[hintLabel, appearance, color, hideRequiredMarker, floatLabel]; outputs=[]; inOuts=[]
       #ext: _MatFormFieldMixinBase <metadata reference>('')
     MatFormFieldControl <metadata class>('')
     getMatFormFieldPlaceholderConflictError <metadata function>
-      #value: <metadata call>
+      #value: : <metadata call>
         #expression: Error <metadata reference>('')
     getMatFormFieldDuplicatedHintError <metadata function>
-      #value: <metadata call>
+      #value: : <metadata call>
         #expression: Error <metadata reference>('')
     getMatFormFieldMissingControlError <metadata function>
-      #value: <metadata call>
+      #value: : <metadata call>
         #expression: Error <metadata reference>('')
     MatHint <metadata directive>: selector=mat-hint; inputs=[align, id]; outputs=[]; inOuts=[]('')
     MatPlaceholder <metadata directive>: selector=mat-placeholder; inputs=[]; outputs=[]; inOuts=[]('')
@@ -42,5 +42,5 @@ MetadataFile:index.metadata.json
     MatSuffix <metadata directive>: selector=[matSuffix]; inputs=[]; outputs=[]; inOuts=[]('')
     MatLabel <metadata directive>: selector=mat-label; inputs=[]; outputs=[]; inOuts=[]('')
     matFormFieldAnimations <metadata object>
-      transitionMessages: <metadata call>
+      transitionMessages: : <metadata call>
         #expression: @angular/animations#trigger <metadata reference>('')

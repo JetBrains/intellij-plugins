@@ -21,7 +21,7 @@ import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
@@ -153,7 +153,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       }
     }
 
-    return ArrayUtilRt.toStringArray(result);
+    return ArrayUtil.toStringArray(result);
   }
 
   @Override

@@ -11,7 +11,6 @@ import org.angular2.entities.metadata.Angular2MetadataElementTypes;
 import org.angular2.entities.metadata.psi.Angular2MetadataElement;
 import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
 import org.angular2.index.Angular2MetadataFunctionIndex;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +22,7 @@ import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public class Angular2MetadataFunctionStub extends Angular2MetadataElementStub<Angular2MetadataFunction> {
 
-  @NonNls private static final String VALUE_OBJ = "#value";
+  private static final String VALUE_OBJ = "#value";
 
   public static Angular2MetadataFunctionStub createFunctionStub(@Nullable String memberName,
                                                                 @NotNull JsonValue source,

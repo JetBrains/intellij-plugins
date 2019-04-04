@@ -18,8 +18,6 @@ public class PlainGherkinKeywordProvider implements GherkinKeywordProvider {
     DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.FEATURE_KEYWORD, "Feature");
     DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.BACKGROUND_KEYWORD, "Background");
     DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.SCENARIO_KEYWORD, "Scenario");
-    DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.RULE_KEYWORD, "Rule");
-    DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.SCENARIO_KEYWORD, "Example");
     DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD, "Scenario Outline");
     DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.EXAMPLES_KEYWORD, "Examples");
     DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.EXAMPLES_KEYWORD, "Scenarios");

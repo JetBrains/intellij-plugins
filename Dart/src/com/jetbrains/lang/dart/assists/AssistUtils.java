@@ -8,7 +8,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.codeInsight.lookup.LookupElementRenderer;
 import com.intellij.codeInsight.template.*;
-import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -25,7 +24,6 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
@@ -295,7 +293,7 @@ public class AssistUtils {
           if (firstPosition) {
             firstPosition = false;
             final String text = editor.getDocument().getText(range);
-            ConstantNode expression = new ConstantNode(text).withLookupItems(ContainerUtil.map(group.getSuggestions(), AssistUtils::createLookupElement));
+            DartLookupExpression expression = new DartLookupExpression(text, group.getSuggestions());
             builder.replaceRange(range, mainVar, expression, true);
           }
           else {
@@ -333,17 +331,45 @@ public class AssistUtils {
       this.normalizedReplacement = normalizedReplacement;
     }
   }
+}
 
-  private static LookupElement createLookupElement(LinkedEditSuggestion suggestion) {
-    String value = suggestion.getValue();
-    return LookupElementBuilder.create(value).withRenderer(new LookupElementRenderer<LookupElement>() {
-      @Override
-      public void renderElement(final LookupElement element, final LookupElementPresentation presentation) {
-        final Icon icon = getIcon(suggestion.getKind());
-        presentation.setIcon(icon);
-        presentation.setItemText(value);
-      }
-    });
+class DartLookupExpression extends Expression {
+  private final @NotNull String myText;
+  private final @NotNull List<? extends LinkedEditSuggestion> mySuggestions;
+
+  DartLookupExpression(@NotNull String text, @NotNull List<? extends LinkedEditSuggestion> suggestions) {
+    myText = text;
+    mySuggestions = suggestions;
+  }
+
+  @Nullable
+  @Override
+  public LookupElement[] calculateLookupItems(final ExpressionContext context) {
+    final int length = mySuggestions.size();
+    final LookupElement[] elements = new LookupElement[length];
+    for (int i = 0; i < length; i++) {
+      final LinkedEditSuggestion suggestion = mySuggestions.get(i);
+      final String value = suggestion.getValue();
+      elements[i] = LookupElementBuilder.create(value).withRenderer(new LookupElementRenderer<LookupElement>() {
+        @Override
+        public void renderElement(final LookupElement element, final LookupElementPresentation presentation) {
+          final Icon icon = getIcon(suggestion.getKind());
+          presentation.setIcon(icon);
+          presentation.setItemText(value);
+        }
+      });
+    }
+    return elements;
+  }
+
+  @Override
+  public Result calculateQuickResult(ExpressionContext context) {
+    return new TextResult(myText);
+  }
+
+  @Override
+  public Result calculateResult(ExpressionContext context) {
+    return calculateQuickResult(context);
   }
 
   private static Icon getIcon(String suggestionKind) {
@@ -361,7 +387,6 @@ public class AssistUtils {
     }
     return null;
   }
-
 }
 
 class ChangeTarget {

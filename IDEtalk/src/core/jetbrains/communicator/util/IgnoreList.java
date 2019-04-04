@@ -15,7 +15,6 @@
  */
 package jetbrains.communicator.util;
 
-import com.intellij.openapi.util.text.StringUtil;
 import jetbrains.communicator.ide.IDEFacade;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
@@ -57,7 +56,7 @@ public class IgnoreList {
         fillIgnoreList(ignoreList);
       }
       for (String ignorePattern : myIgnored) {
-        if (StringUtil.toLowerCase(from).indexOf(ignorePattern) >= 0) {
+        if (from.toLowerCase().indexOf(ignorePattern) >= 0) {
           return true;
         }
       }
@@ -73,7 +72,7 @@ public class IgnoreList {
         String line = bufferedReader.readLine();
         while(line != null) {
           if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(line)) {
-            myIgnored.add(StringUtil.toLowerCase(line));
+            myIgnored.add(line.toLowerCase());
           }
           line = bufferedReader.readLine();
         }

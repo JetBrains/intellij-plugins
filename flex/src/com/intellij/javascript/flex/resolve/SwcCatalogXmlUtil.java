@@ -13,7 +13,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilder;
 import com.intellij.psi.impl.source.parsing.xml.XmlBuilderDriver;
 import com.intellij.util.Consumer;
-import com.intellij.util.containers.Interner;
 import com.intellij.util.containers.Stack;
 import com.intellij.util.containers.StringInterner;
 import gnu.trove.THashMap;
@@ -265,7 +264,7 @@ public class SwcCatalogXmlUtil {
         }
       }
 
-      private final Interner<String> myStringInterner = new StringInterner();
+      private final StringInterner myStringInterner = new StringInterner();
 
       @Override
       public void endTag(CharSequence localName, String namespace, int start, int end) {

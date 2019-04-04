@@ -19,7 +19,7 @@ public class FlexCompletionInUmlTextFieldsTest extends FlexCompletionInTextField
     setUpJdk();
     myFixture.configureByFiles(getTestName(false) + "_2.js2");
     PsiFile fragment =
-      JSCreateFieldDialog.createTypeField(getProject(), JSCreateFieldDialog.getTypeFieldScope(getModule(), getProject())).getPsiFile();
+      JSCreateFieldDialog.createTypeField(getProject(), JSCreateFieldDialog.getTypeFieldScope(myModule, getProject())).getPsiFile();
     String[] included = new String[]{"Z111", "Z222", "int", "String", "uint", "Number", "EventDispatcher", "void", "*"};
     String[] excluded = ArrayUtil.mergeArrays(DEFALUT_VALUES, "public", "function", "while");
     checkTextFieldCompletion((JSExpressionCodeFragment)fragment, included, excluded, "Z111", getTestName(false) + ".txt");
