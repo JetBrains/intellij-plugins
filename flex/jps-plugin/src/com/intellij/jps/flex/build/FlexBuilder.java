@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -16,7 +15,6 @@ import com.intellij.flex.model.sdk.JpsFlexSdkType;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.concurrency.Semaphore;
@@ -252,7 +250,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     cssBC.setOutputType(OutputType.Application);
 
     cssBC.setMainClass(cssPath);
-    cssBC.setOutputFileName(FileUtilRt.getNameWithoutExtension(PathUtilRt.getFileName(cssPath)) + ".swf");
+    cssBC.setOutputFileName(FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(cssPath)) + ".swf");
 
     final String cssDirPath = PathUtilRt.getParentPath(cssPath);
     String relativeToRoot = FlexCommonUtils.getPathRelativeToSourceRoot(mainBC.getModule(), cssDirPath);
@@ -275,7 +273,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     String additionalOptions = compilerOptions.getAdditionalOptions();
     additionalOptions = FlexCommonUtils.removeOptions(additionalOptions, "link-report");
     additionalOptions =
-      FlexCommonUtils.fixSizeReportOption(additionalOptions, FileUtilRt.getNameWithoutExtension(PathUtilRt.getFileName(cssPath)));
+      FlexCommonUtils.fixSizeReportOption(additionalOptions, FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(cssPath)));
     compilerOptions.setAdditionalOptions(additionalOptions);
 
     return cssBC;

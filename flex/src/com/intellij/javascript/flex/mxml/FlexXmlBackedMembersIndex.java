@@ -10,21 +10,35 @@ import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.lang.javascript.structureView.JSStructureItemPresentation;
 import com.intellij.lang.javascript.types.JSFileElementType;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.NavigationItem;
+import com.intellij.navigation.PsiElementNavigationItem;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiRecursiveElementVisitor;
-import com.intellij.psi.ResolveState;
+import com.intellij.pom.Navigatable;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.FakePsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
+import java.util.HashMap;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 
 public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
@@ -60,7 +74,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     };
   }
 
-  static void process(XmlFile file, Consumer<PsiElement> consumer, boolean isPhysical) {
+  private static void process(XmlFile file, final Consumer<PsiElement> consumer, boolean isPhysical) {
     visitScriptTagInjectedFilesForIndexing(file, new JSResolveUtil.JSInjectedFilesVisitor() {
       @Override
       protected void process(JSFile file) {
@@ -122,9 +136,41 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     return JSFileElementType.getVersion() + INDEX_VERSION;
   }
 
+  public static Collection<String> getSymbolNames(Project project) {
+    return FileBasedIndex.getInstance().getAllKeys(NAME, project);
+  }
+
+  public static Collection<NavigationItem> getItemsByName(final String name, Project project) {
+    Collection<VirtualFile> files = FileBasedIndex.getInstance().getContainingFiles(NAME, name, GlobalSearchScope.projectScope(project));
+    final Collection<NavigationItem> result = new ArrayList<>();
+    for (VirtualFile vFile : files) {
+      PsiFile file = PsiManager.getInstance(project).findFile(vFile);
+      if (!(file instanceof XmlFile)) {
+        continue;
+      }
+      process((XmlFile)file, element -> {
+        if (name.equals(getName(element))) {
+          if (element instanceof JSNamedElement) {
+            result.add((JSNamedElement)element);
+          }
+          else {
+            XmlAttribute id = ((XmlTag)element).getAttribute("id");
+            if (id != null) {
+              XmlAttributeValue valueElement = id.getValueElement();
+              PsiElement[] children;
+              if (valueElement != null && (children = valueElement.getChildren()).length == 3) {
+                result.add(new TagNavigationItem(children[1], name));
+              }
+            }
+          }
+        }
+      }, true);
+    }
+    return result;
+  }
 
   @Nullable
-  static String getName(PsiElement element) {
+  private static String getName(PsiElement element) {
     if (element instanceof XmlTag) {
       return ((XmlTag)element).getAttributeValue("id");
     }
@@ -133,13 +179,79 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     }
   }
 
+  private static class TagNavigationItem extends FakePsiElement implements PsiElementNavigationItem, ItemPresentation {
+    private final PsiElement myElement;
+    private final String myName;
+
+    TagNavigationItem(PsiElement element, String name) {
+      myElement = element;
+      myName = name;
+    }
+
+    @Override
+    public String getName() {
+      return myName;
+    }
+
+    @Override
+    public ItemPresentation getPresentation() {
+      return this;
+    }
+
+    @Override
+    public PsiElement getTargetElement() {
+      return myElement;
+    }
+
+    @Override
+    public void navigate(boolean requestFocus) {
+      ((Navigatable)myElement).navigate(requestFocus);
+    }
+
+    @Override
+    public boolean canNavigate() {
+      return ((Navigatable)myElement).canNavigate();
+    }
+
+    @Override
+    public boolean canNavigateToSource() {
+      return ((Navigatable)myElement).canNavigateToSource();
+    }
+
+    @Override
+    public String getPresentableText() {
+      return getName();
+    }
+
+    @Override
+    public String getLocationString() {
+      PsiFile file = myElement.getContainingFile();
+      String packageName = JSResolveUtil.getExpectedPackageNameFromFile(file.getVirtualFile(), myElement.getProject());
+      StringBuilder result = new StringBuilder();
+      result.append(StringUtil.getQualifiedName(packageName, FileUtil.getNameWithoutExtension(file.getName())));
+      result.append("(").append(file.getName()).append(")");
+      return result.toString();
+    }
+
+    @Override
+    public Icon getIcon(boolean open) {
+      return JSStructureItemPresentation.getIcon(PsiTreeUtil.getParentOfType(myElement, XmlTag.class));
+    }
+    @Override
+    public PsiElement getParent() {
+      return myElement.getParent();
+    }
+
+    @Override
+    public PsiFile getContainingFile() {
+      return myElement.getContainingFile();
+    }
+  }
+
+
   // We use light version of visitInjectedFiles that process injections only for Script tags,
   // all other tags / attributes need cross file resolve
-  public static void visitScriptTagInjectedFilesForIndexing(XmlFile file,
-                                                            XmlBackedJSClassImpl.InjectedFileVisitor visitor,
-                                                            boolean physical) {
-    new XmlBackedJSClassImpl.InjectedScriptsVisitor(
-      XmlBackedJSClassFactory.getRootTag(file), MxmlJSClassProvider.getInstance(),
-      false, true, visitor, physical).go();
+  public static void visitScriptTagInjectedFilesForIndexing(XmlFile file, final XmlBackedJSClassImpl.InjectedFileVisitor visitor, boolean physical) {
+    new XmlBackedJSClassImpl.InjectedScriptsVisitor(XmlBackedJSClassFactory.getRootTag(file), MxmlJSClassProvider.getInstance(), false, true, visitor, physical).go();
   }
 }

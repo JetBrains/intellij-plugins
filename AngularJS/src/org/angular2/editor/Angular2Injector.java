@@ -6,8 +6,8 @@ import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSInjectionBracesUtil;
-import com.intellij.lang.javascript.injections.JSFormattableInjectionUtil;
-import com.intellij.lang.javascript.injections.JSInjectionUtil;
+import com.intellij.lang.javascript.JSInjectionController;
+import com.intellij.lang.javascript.inject.JSFormattableInjectionUtil;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
@@ -137,8 +137,7 @@ public class Angular2Injector implements MultiHostInjector {
     return parent instanceof JSProperty
            && propertyName.equals(((JSProperty)parent).getName())
            && injectIntoDecoratorExpr(registrar, context, parent,
-                                      decoratorName -> Angular2DecoratorUtil.isDirective(decoratorName)
-                                                       || Angular2DecoratorUtil.VIEW_DEC.equals(decoratorName),
+                                      decoratorName -> Angular2DecoratorUtil.isDirective(decoratorName) || "View".equals(decoratorName),
                                       language, fileExtension);
   }
 
@@ -146,7 +145,7 @@ public class Angular2Injector implements MultiHostInjector {
   private static boolean injectIntoDecoratorExpr(@NotNull MultiHostRegistrar registrar,
                                                  @NotNull JSLiteralExpression context,
                                                  @Nullable PsiElement parent,
-                                                 @NotNull Predicate<? super String> decoratorNameAcceptor,
+                                                 @NotNull Predicate<String> decoratorNameAcceptor,
                                                  @NotNull Language language,
                                                  @Nullable String fileExtension) {
     final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(parent, JSCallExpression.class);
@@ -165,6 +164,6 @@ public class Angular2Injector implements MultiHostInjector {
 
   private static void inject(@NotNull MultiHostRegistrar registrar, @NotNull JSLiteralExpression context, @NotNull Language language,
                              @Nullable String extension) {
-    JSInjectionUtil.injectInQuotedLiteral(registrar, language, extension, context, null, null);
+    JSInjectionController.injectInQuotedLiteral(registrar, language, extension, context, null, null);
   }
 }

@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.impl.java.stubs.index.JavaMethodNameIndex;
@@ -25,7 +24,7 @@ import com.intellij.tapestry.core.resource.IResourceFinder;
 import com.intellij.tapestry.core.util.LocalizationUtils;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -192,19 +191,19 @@ public class TapestryProject {
    */
   @Nullable
   public Page findPage(String pageName) {
-    return (Page)ourNameToPageMap.get(myModule).get(StringUtil.toLowerCase(pageName));
+    return (Page)ourNameToPageMap.get(myModule).get(pageName.toLowerCase());
   }
 
   @NotNull
   public String[] getAvailablePageNames() {
     final Set<String> names = ourNameToPageMap.get(myModule).keySet();
-    return ArrayUtilRt.toStringArray(names);
+    return ArrayUtil.toStringArray(names);
   }
 
   private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourNameToPageMap", false, true, false) {
     @Override
     protected String computeKey(PresentationLibraryElement element) {
-      return StringUtil.toLowerCase(element.getName());
+      return element.getName().toLowerCase();
     }
   };
 
@@ -235,7 +234,7 @@ public class TapestryProject {
    */
   @Nullable
   public Component findComponent(@NotNull String componentName) {
-    return (Component)ourNameToComponentMap.get(myModule).get(StringUtil.toLowerCase(componentName));
+    return (Component)ourNameToComponentMap.get(myModule).get(componentName.toLowerCase());
   }
 
   /**
@@ -246,7 +245,7 @@ public class TapestryProject {
    */
   @Nullable
   public Mixin findMixin(String mixinName) {
-    return (Mixin)ourNameToMixinMap.get(myModule).get(StringUtil.toLowerCase(mixinName));
+    return (Mixin)ourNameToMixinMap.get(myModule).get(mixinName.toLowerCase());
   }
 
   @NotNull
@@ -287,20 +286,20 @@ public class TapestryProject {
   @NotNull
   public String[] getAvailableComponentNames() {
     final Set<String> names = ourNameToComponentMap.get(myModule).keySet();
-    return ArrayUtilRt.toStringArray(names);
+    return ArrayUtil.toStringArray(names);
   }
 
   private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourNameToComponentMap", true, false, false) {
     @Override
     protected String computeKey(PresentationLibraryElement element) {
-      return StringUtil.toLowerCase(element.getName());
+      return element.getName().toLowerCase();
     }
   };
 
   private static final ElementsCachedMap ourNameToMixinMap = new ElementsCachedMap("ourNameToMixinMap", false, false, true) {
     @Override
     protected String computeKey(PresentationLibraryElement element) {
-      return StringUtil.toLowerCase(element.getName());
+      return element.getName().toLowerCase();
     }
   };
 

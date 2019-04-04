@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -16,6 +15,7 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
@@ -79,7 +79,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     else {
       final String[] contentRootUrls = ModuleRootManager.getInstance(module).getContentRootUrls();
       final String path = contentRootUrls.length > 0
-                          ? FileUtil.toSystemDependentName(VfsUtilCore.urlToPath(contentRootUrls[0]) + "/" + HTML_TEMPLATE_FOLDER_NAME)
+                          ? FileUtil.toSystemDependentName(VfsUtil.urlToPath(contentRootUrls[0]) + "/" + HTML_TEMPLATE_FOLDER_NAME)
                           : FileUtil.toSystemDependentName(PathUtil.getParentPath(module.getModuleFilePath())
                                                            + "/" + HTML_TEMPLATE_FOLDER_NAME);
       myWrapperFolderComponent.getComponent().setText(path);
@@ -105,7 +105,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     final String wrapperFolderPath = getWrapperFolderPath();
 
     for (String url : ModuleRootManager.getInstance(myModule).getContentRootUrls()) {
-      final String path = VfsUtilCore.urlToPath(url);
+      final String path = VfsUtil.urlToPath(url);
       if (FileUtil.isAncestor(wrapperFolderPath, path, false)) {
         return new ValidationInfo(
           FlexBundle.message("html.wrapper.folder.clash.for.dialog", "module content root", FileUtil.toSystemDependentName(path)),
@@ -114,7 +114,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     }
 
     for (String url : ModuleRootManager.getInstance(myModule).getSourceRootUrls()) {
-      final String path = VfsUtilCore.urlToPath(url);
+      final String path = VfsUtil.urlToPath(url);
       if (FileUtil.isAncestor(wrapperFolderPath, path, false)) {
         return new ValidationInfo(
           FlexBundle.message("html.wrapper.folder.clash.for.dialog", "source folder", FileUtil.toSystemDependentName(path)),

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi;
 
 import com.intellij.codeInsight.completion.InsertHandler;
@@ -23,7 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopesCore;
+import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
@@ -125,7 +125,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
         CfmlFile cfmlConteiningFile = originalFile;
         PsiDirectory directory = cfmlConteiningFile.getParent();
         if (directory != null) {
-          GlobalSearchScope searchScope = GlobalSearchScopesCore.directoryScope(directory, false);
+          GlobalSearchScope searchScope = GlobalSearchScopes.directoryScope(directory, false);
 
           final Collection<CfmlComponent> components = CfmlIndex.getInstance(project).getComponentsByNameInScope(
             componentQualifiedName, searchScope);
@@ -187,7 +187,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
           if (file != null) {
             PsiDirectory directory = file.getParent();
             if (directory != null) {
-              GlobalSearchScope searchScope = GlobalSearchScopesCore.directoryScope(directory, false);
+              GlobalSearchScope searchScope = GlobalSearchScopes.directoryScope(directory, false);
 
               final Collection<CfmlComponent> componentsFromGlobalScope = CfmlIndex.getInstance(project).getComponentsByNameInScope(
                 componentName, searchScope);
@@ -209,7 +209,7 @@ public class CfmlComponentReference extends CfmlCompositeElement implements Cfml
         String libtag = cfmlImport.getImportString();
         final VirtualFile folder = CfmlUtil.findFileByLibTag(originalFile, libtag);
         if (folder != null && folder.isDirectory()) {
-          final GlobalSearchScope scope = GlobalSearchScopesCore.directoryScope(originalFile.getProject(), folder, true);
+          final GlobalSearchScope scope = GlobalSearchScopes.directoryScope(originalFile.getProject(), folder, true);
           result.addAll(CfmlIndex.getInstance(originalFile.getProject()).getComponentsByNameInScope(componentName, scope));
         }
       }

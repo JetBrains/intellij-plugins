@@ -2,7 +2,7 @@
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.javascript.debugger.JSDebuggerSupportUtils;
+import com.intellij.javascript.JSDebuggerSupportUtils;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;

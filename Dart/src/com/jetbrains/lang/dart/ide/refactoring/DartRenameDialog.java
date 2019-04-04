@@ -8,7 +8,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -37,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -112,7 +112,7 @@ class DartRenameDialog extends ServerRefactoringDialog<ServerRenameRefactoring> 
 
   @NotNull
   private String getLabelText() {
-    final String kindName = StringUtil.toLowerCase(myRefactoring.getElementKindName());
+    final String kindName = myRefactoring.getElementKindName().toLowerCase(Locale.US);
     final String name = myRefactoring.getOldName().isEmpty() ? kindName : kindName + " " + myRefactoring.getOldName();
     return RefactoringBundle.message("rename.0.and.its.usages.to", name);
   }

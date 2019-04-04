@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.flex.model.bc.*;
@@ -21,7 +20,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -166,7 +164,7 @@ public class Flexmojos3Configurator {
 
     final BuildConfigurationNature nature = mainBC.getNature();
     if (nature.isApp() && isNewBC) {
-      final String packageFileName = FileUtilRt.getNameWithoutExtension(fileName);
+      final String packageFileName = FileUtil.getNameWithoutExtension(fileName);
       if (nature.isDesktopPlatform()) {
         mainBC.getAirDesktopPackagingOptions().setPackageFileName(packageFileName);
       }
@@ -520,7 +518,7 @@ public class Flexmojos3Configurator {
       final String path = moduleFilePathElement.getTextNormalize();
       if (path.endsWith(".mxml") || path.endsWith(".as")) {
         final String mainClassRelativePath = FileUtil.toSystemIndependentName(path);
-        final String mainClass = FileUtilRt.getNameWithoutExtension(mainClassRelativePath.replace('/', '.'));
+        final String mainClass = FileUtil.getNameWithoutExtension(mainClassRelativePath.replace('/', '.'));
         final String rlmName = StringUtil.getShortName(mainClass);
         final String outputFileName = myMavenProject.getFinalName() + "-" + rlmName + ".swf";
         final String outputFolderPath = FileUtil.toSystemIndependentName(myMavenProject.getBuildDirectory());

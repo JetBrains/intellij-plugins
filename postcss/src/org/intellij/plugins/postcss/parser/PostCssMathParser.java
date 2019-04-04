@@ -1,21 +1,19 @@
 package org.intellij.plugins.postcss.parser;
 
 import com.intellij.psi.css.impl.parsing.CssMathParser;
+import com.intellij.psi.css.impl.parsing.CssParser;
 import com.intellij.psi.tree.IElementType;
-import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
+import org.intellij.plugins.postcss.PostCssElementTypes;
 
 public class PostCssMathParser extends CssMathParser {
-  private final PostCssParser myParser;
-
-  public PostCssMathParser(PostCssParser parser) {
+  public PostCssMathParser(CssParser parser) {
     super(parser);
-    myParser = parser;
   }
 
   @Override
   protected boolean parseTerm(IElementType prevOperation) {
-    if (getTokenType() == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN) {
-      myParser.parseSimpleVariable();
+    if (getTokenType() == PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE) {
+      advance();
       return true;
     }
     else {

@@ -1,4 +1,16 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.intellij.execution.ExecutionException;
@@ -23,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.text.StringUtil.contains;
+import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 public class PhoneGapCommandLine {
   private static final Logger LOGGER = Logger.getInstance(PhoneGapCommandLine.class);
@@ -95,7 +108,7 @@ public class PhoneGapCommandLine {
   }
 
   public PhoneGapCommandLine(@NotNull String path, @Nullable String dir) {
-    this(path, dir, true, new HashMap<>());
+    this(path, dir, true, ContainerUtil.newHashMap());
   }
 
   @NotNull
@@ -247,7 +260,7 @@ public class PhoneGapCommandLine {
 
   static List<String> parsePluginList(String out) {
     if (StringUtil.isEmpty(out) || contains(out.toLowerCase(Locale.getDefault()), "no plugins")) {
-      return new ArrayList<>();
+      return newArrayList();
     }
 
     if (out.startsWith("[") && out.endsWith("]")) {
@@ -384,7 +397,7 @@ public class PhoneGapCommandLine {
   }
 
   public static List<String> parseArgs(String paramList) {
-    ArrayList<String> list = new ArrayList<>();
+    ArrayList<String> list = newArrayList();
 
     if (StringUtil.isEmpty(paramList)) return list;
 

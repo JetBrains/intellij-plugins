@@ -93,7 +93,7 @@ public class ActivatorRenameTest extends LightOsgiFixtureTestCase {
   }
 
   private void renamePackage() {
-    VirtualFile sourceRoot = ModuleRootManager.getInstance(getModule()).getSourceRoots()[0];
+    VirtualFile sourceRoot = ModuleRootManager.getInstance(myModule).getSourceRoots()[0];
     JavaRefactoringFactory factory = JavaRefactoringFactory.getInstance(getProject());
     MoveDestination moveDestination = factory.createSourceRootMoveDestination("tx", sourceRoot);
     factory.createMoveClassesOrPackages(new PsiElement[]{myActivator}, moveDestination).run();

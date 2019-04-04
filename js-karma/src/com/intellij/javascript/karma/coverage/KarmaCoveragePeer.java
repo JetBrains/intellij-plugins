@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.coverage;
 
 import com.google.gson.JsonElement;
@@ -6,7 +5,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.StreamEventHandler;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,7 @@ public class KarmaCoveragePeer {
   public void startCoverageSession(@NotNull KarmaCoverageSession coverageSession) {
     // clear directory
     if (myCoverageTempDir.isDirectory()) {
-      File[] children = ObjectUtils.notNull(myCoverageTempDir.listFiles(), ArrayUtilRt.EMPTY_FILE_ARRAY);
+      File[] children = ObjectUtils.notNull(myCoverageTempDir.listFiles(), ArrayUtil.EMPTY_FILE_ARRAY);
       for (File child : children) {
         FileUtil.delete(child);
       }

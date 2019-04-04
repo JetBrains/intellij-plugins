@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -23,9 +24,9 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
+import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
-import org.jetbrains.vuejs.lang.html.VueFileType
 
 const val VUE: String = "vue"
 const val VUETIFY: String = "vuetify"
@@ -68,20 +69,19 @@ fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JS
   return if (result.isEmpty()) null else result
 }
 
-fun isVueContext(element: PsiElement): Boolean {
-  return hasVue(element.project)
-}
-
 fun hasVue(project: Project): Boolean {
   if (DumbService.isDumb(project)) return false
 
   return CachedValuesManager.getManager(project).getCachedValue(project) {
     var hasVue = false
-    val packageJson = PackageJsonUtil.findChildPackageJsonFile(project.baseDir)
-    if (packageJson != null) {
-      val packageJsonData = PackageJsonData.getOrCreate(packageJson)
-      if (packageJsonData.isDependencyOfAnyType(VUE)) {
-        hasVue = true
+    var packageJson: VirtualFile? = null
+    if (project.baseDir != null) {
+      packageJson = project.baseDir.findChild(PackageJsonUtil.FILE_NAME)
+      if (packageJson != null) {
+        val packageJsonData = PackageJsonData.getOrCreate(packageJson)
+        if (packageJsonData.isDependencyOfAnyType(VUE)) {
+          hasVue = true
+        }
       }
     }
 

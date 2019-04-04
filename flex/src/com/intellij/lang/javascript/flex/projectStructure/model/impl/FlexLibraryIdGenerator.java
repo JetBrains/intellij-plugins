@@ -1,7 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ex.ApplicationManagerEx;
 
 import java.util.UUID;
 
@@ -14,7 +13,7 @@ public class FlexLibraryIdGenerator {
   }
 
   public static String generateId() {
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
+    if (ApplicationManagerEx.getApplicationEx().isUnitTestMode()) {
       return String.valueOf(ourTestId++);
     }
     else {

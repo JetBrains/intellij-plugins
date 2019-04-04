@@ -1,0 +1,234 @@
+Index: src/com/google/jstestdriver/javascript/TestRunner.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/com/google/jstestdriver/javascript/TestRunner.js	(date 1349494137000)
++++ src/com/google/jstestdriver/javascript/TestRunner.js	(revision )
+@@ -80,19 +80,22 @@
+ jstestdriver.TestRunner.prototype.runConfiguration = function(config,
+                                                               onTestDone,
+                                                               onComplete) {
+-  if (this.captureConsole_) {
+-    this.overrideConsole_();
++  var self = this;
++  if (self.captureConsole_) {
++    self.overrideConsole_();
+   }
+ 
+   jstestdriver.log("running configuration " + config);
+   this.pluginRegistrar_.runTestConfiguration(
+       config,
+       onTestDone,
+-      onComplete);
+-
+-  if (this.captureConsole_) {
+-    this.resetConsole_();
++      function() {
++        if (self.captureConsole_) {
++          self.resetConsole_();
+-  }
++        }
++        onComplete.apply(this, arguments);
++      }
++  );
+ };
+ 
+ 
+Index: src/com/google/jstestdriver/server/handlers/TestResourceHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/com/google/jstestdriver/server/handlers/TestResourceHandler.java	(date 1349494137000)
++++ src/com/google/jstestdriver/server/handlers/TestResourceHandler.java	(revision )
+@@ -52,18 +52,16 @@
+   @Override
+   public void handleIt() throws IOException {
+     String fileName = request.getPathInfo().substring(1); /* remove the first / */
++    response.setCharacterEncoding("UTF-8");
+     service(fileName, response.getWriter());
+   }
+ 
+   public void service(String fileName, PrintWriter writer) throws IOException {
+     try {
+       String fileContent = store.getFileContent(fileName);
+-      String mimeType = parseMimeType(fileName);
+-      if (mimeType != null) {
++      String parsedMimeType = parseMimeType(fileName);
++      String mimeType = parsedMimeType == null ? "text/plain" : parsedMimeType;
+-        response.setContentType(mimeType);
++      response.setContentType(mimeType);
+-      } else {
+-        response.setHeader("Content-Type", "text/plain");
+-      }
+       writer.write(fileContent);
+       writer.flush();
+     } catch (FilesCache.MissingFileException e) {
+Index: src/com/google/jstestdriver/html/InlineHtmlProcessor.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/com/google/jstestdriver/html/InlineHtmlProcessor.java	(date 1349494137000)
++++ src/com/google/jstestdriver/html/InlineHtmlProcessor.java	(revision )
+@@ -25,6 +25,8 @@
+ import java.io.ByteArrayInputStream;
+ import java.io.CharArrayWriter;
+ import java.io.IOException;
++import java.io.InputStreamReader;
++import java.io.Reader;
+ import java.io.Writer;
+ 
+ /**
+@@ -50,9 +52,32 @@
+       Writer writer = new CharArrayWriter();
+       parser.parse(
+           lexer.createStream(
+-              new ByteArrayInputStream(source.getBytes()))).write(writer);
++              new ByteArrayInputStream(source.getBytes("UTF-8")))).write(writer);
+       writer.flush();
+-      return file.load(writer.toString(), file.getTimestamp());
++      return file.load(utf8ToUnicode(writer.toString()), file.getTimestamp());
++    } catch (IOException e) {
++      e.printStackTrace();
++      throw new RuntimeException(e);
++    }
++  }
++
++  /**
++   * Convert a java string which contains UTF-8 characters into a java string
++   * which has unicode characters.  For example, the input string might be
++   * "Ã¡" (0xc3 0xa1). But, this is just the utf-8 form of the unicode string "á".
++   * So return  the latter string
++   */
++  private String utf8ToUnicode(String source) {
++    try {
++      byte[] raw = source.getBytes("ISO-8859-1");
++      Reader hackReader = new InputStreamReader(new ByteArrayInputStream(raw), "UTF-8");
++      Writer hackWriter = new CharArrayWriter();
++      int nextChar = hackReader.read();
++      while (nextChar != -1) {
++        hackWriter.append((char) nextChar);
++        nextChar = hackReader.read();
++      }
++      return hackWriter.toString();
+     } catch (IOException e) {
+       e.printStackTrace();
+       throw new RuntimeException(e);
+Index: src/com/google/jstestdriver/server/handlers/CommandGetHandler.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/com/google/jstestdriver/server/handlers/CommandGetHandler.java	(date 1349494137000)
++++ src/com/google/jstestdriver/server/handlers/CommandGetHandler.java	(revision )
+@@ -67,6 +67,7 @@
+     } else if (request.getParameter("nextBrowserId") != null) {
+       response.getWriter().write(capturedBrowsers.getUniqueId());
+     } else {
++      response.setCharacterEncoding("UTF-8");
+       streamResponse(request.getParameter("id"), response.getWriter());
+     }
+     response.getWriter().flush();
+Index: src/com/google/jstestdriver/javascript/Utils.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/com/google/jstestdriver/javascript/Utils.js	(date 1349494137000)
++++ src/com/google/jstestdriver/javascript/Utils.js	(revision )
+@@ -164,7 +164,21 @@
+       'async' : false,
+       'data' : data,
+       'type' : 'POST',
+-      'url' : url
++      'url' : url,
++      'contentType': 'application/x-www-form-urlencoded; charset=UTF-8'
++    });
++  });
++};
++
++jstestdriver.createAsynchPost = function(jQuery) {
++  return jstestdriver.convertToJson(function(url, data, callback, type) {
++    return jQuery.ajax({
++      'data' : data,
++      'type' : 'POST',
++      'url' : url,
++      'success' : callback,
++      'dataType' : type,
++      'contentType': 'application/x-www-form-urlencoded; charset=UTF-8'
+     });
+   });
+ };
+Index: src/com/google/jstestdriver/javascript/config.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/com/google/jstestdriver/javascript/config.js	(date 1349494137000)
++++ src/com/google/jstestdriver/javascript/config.js	(revision )
+@@ -139,7 +139,7 @@
+     var streamingService = new jstestdriver.StreamingService(
+             url,
+             now,
+-            jstestdriver.convertToJson(jstestdriver.jQuery.post),
++            jstestdriver.createAsynchPost(jstestdriver.jQuery),
+             jstestdriver.createSynchPost(jstestdriver.jQuery),
+             jstestdriver.setTimeout,
+             unloadSignal);
+Index: src/com/google/jstestdriver/HttpServer.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/com/google/jstestdriver/HttpServer.java	(date 1349494137000)
++++ src/com/google/jstestdriver/HttpServer.java	(revision )
+@@ -22,10 +22,7 @@
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ 
+-import java.io.IOException;
+-import java.io.InputStream;
+-import java.io.OutputStreamWriter;
+-import java.io.UnsupportedEncodingException;
++import java.io.*;
+ import java.net.HttpURLConnection;
+ import java.net.MalformedURLException;
+ import java.net.URL;
+@@ -38,6 +35,7 @@
+  */
+ public class HttpServer implements Server {
+   private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
++  private static final String UTF8_ENCODING = "UTF-8";
+   private final StopWatch stopWatch;
+   
+   @Inject
+@@ -94,12 +92,13 @@
+ 
+   private String toString(InputStream inputStream) throws IOException {
+     StringBuilder sb = new StringBuilder();
++    Reader reader = new InputStreamReader(inputStream, UTF8_ENCODING);
+     int ch;
+ 
+-    while ((ch = inputStream.read()) != -1) {
++    while ((ch = reader.read()) != -1) {
+       sb.append((char) ch);
+     }
+-    inputStream.close();
++    reader.close();
+     return sb.toString();
+   }
+ 
+@@ -116,9 +115,9 @@
+       connection.setRequestMethod("POST");
+       connection.setDoOutput(true);
+       connection.setDoInput(true);
+-      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
++      connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=" + UTF8_ENCODING);
+       connection.setRequestProperty("Content-Length", Integer
+-          .toString(paramsString.getBytes().length));
++          .toString(paramsString.getBytes(UTF8_ENCODING).length));
+       OutputStreamWriter oWriter = new OutputStreamWriter(connection.getOutputStream());
+ 
+       oWriter.write(paramsString);

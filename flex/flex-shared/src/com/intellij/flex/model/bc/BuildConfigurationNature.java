@@ -1,7 +1,6 @@
 package com.intellij.flex.model.bc;
 
 import com.intellij.flex.FlexCommonBundle;
-import com.intellij.openapi.util.text.StringUtil;
 import icons.FlexSharedIcons;
 
 import javax.swing.*;
@@ -81,6 +80,6 @@ public class BuildConfigurationNature {
 
   public String getPresentableText() {
     return FlexCommonBundle.message("bc.nature.presentable.text",
-                                    pureAS ? 1 : 0, StringUtil.toLowerCase(outputType.getPresentableText()), targetPlatform.ordinal());
+                                    pureAS ? 1 : 0, outputType.getPresentableText().toLowerCase(), targetPlatform.ordinal());
   }
 }

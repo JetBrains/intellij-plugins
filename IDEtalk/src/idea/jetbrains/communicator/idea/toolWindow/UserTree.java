@@ -1,4 +1,6 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+ */
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.util.SystemInfo;
@@ -13,8 +15,8 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.idea.IDEAFacade;
 import jetbrains.communicator.idea.IdeaLocalMessage;
 import jetbrains.communicator.idea.actions.BaseAction;
-import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.KirTree;
+import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.TreeUtils;
 import jetbrains.communicator.util.UIUtil;
 import org.picocontainer.MutablePicoContainer;
@@ -69,7 +71,7 @@ public class UserTree extends KirTree {
   }
 
   private static MyTreeUI createUI() {
-    if (SystemInfo.isMac && isUnderAquaLookAndFeel()) {
+    if (SystemInfo.isMac  && isUnderAquaLookAndFeel()) {
       return new MyWideSelectionTreeUIImpl();
     }
     return new MyBasicTreeUIImpl();
@@ -115,7 +117,7 @@ public class UserTree extends KirTree {
         User user = (User) userObject;
         StringBuilder result = new StringBuilder();
         if (!user.getName().equals(user.getDisplayName())) {
-          result.append(CommunicatorStrings.getMsg("user.tooltip", user.getName())).append("\n");
+          result.append(StringUtil.getMsg("user.tooltip", user.getName())).append("\n");
         }
 
         Message[] pendingMessages = myLocalMessageDispatcher.getPendingMessages(user);

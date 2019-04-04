@@ -18,7 +18,6 @@ package com.intellij.lang.javascript.inspections.actionscript;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
-import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.codeInsight.template.impl.MacroCallNode;
 import com.intellij.codeInsight.template.macro.MacroFactory;
 import com.intellij.codeInspection.*;
@@ -136,7 +135,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
         if (ApplicationManager.getApplication().isUnitTestMode()) {
           t.addTextSegment(defaultValue);
         } else {
-          t.addVariable("a", new MacroCallNode(MacroFactory.createMacro("complete")), new ConstantNode(defaultValue), true);
+          t.addVariable("a", new MacroCallNode(MacroFactory.createMacro("complete")), new BaseCreateFix.MyExpression(defaultValue), true);
         }
       }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -18,7 +18,10 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.*;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.PairConsumer;
+import com.intellij.util.PathUtilRt;
+import com.intellij.util.SystemProperties;
 import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -41,7 +44,6 @@ import org.jetbrains.jps.util.JpsPathUtil;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -113,7 +115,7 @@ public class FlexCommonUtils {
   }
 
   public static boolean isRuntimeStyleSheetBC(final JpsFlexBuildConfiguration bc) {
-    return bc.isTempBCForCompilation() && StringUtil.toLowerCase(bc.getMainClass()).endsWith(".css");
+    return bc.isTempBCForCompilation() && bc.getMainClass().toLowerCase().endsWith(".css");
   }
 
   public static boolean isRLMTemporaryBC(final JpsFlexBuildConfiguration bc) {
@@ -363,7 +365,7 @@ public class FlexCommonUtils {
       return playerFolder.list((dir, name) -> new File(playerFolder, name + "/playerglobal.swc").isFile());
     }
 
-    return ArrayUtilRt.EMPTY_STRING_ARRAY;
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   /**
@@ -451,7 +453,7 @@ public class FlexCommonUtils {
     if (lastSlashIndex <= 0 || lastSlashIndex == swcPath.length() - 1) {
       LOG.error("Unexpected Flex SDK root: " + swcPath);
     }
-    final String swcName = StringUtil.toLowerCase(swcPath.substring(lastSlashIndex + 1));
+    final String swcName = swcPath.substring(lastSlashIndex + 1).toLowerCase();
     final String folderPath = swcPath.substring(0, lastSlashIndex);
 
     if (folderPath.endsWith("/frameworks/libs")) {
@@ -825,7 +827,7 @@ public class FlexCommonUtils {
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
-    final String d32 = getD32IfNeeded(customJavaHomeSet, javaHome);
+    final String d32 = getD32IfNeed(customJavaHomeSet, javaHome);
 
     final List<String> result = new ArrayList<>();
 
@@ -860,7 +862,7 @@ public class FlexCommonUtils {
     return result;
   }
 
-  public static String getD32IfNeeded(boolean customJavaHomeSet, String javaHome) {
+  public static String getD32IfNeed(boolean customJavaHomeSet, String javaHome) {
     return (!customJavaHomeSet && SystemInfo.isMac && is64BitJava6(javaHome)) ? "-d32" : null;
   }
 
@@ -886,7 +888,7 @@ public class FlexCommonUtils {
   }
 
   public static String getWrapperFileName(final JpsFlexBuildConfiguration bc) {
-    return FileUtilRt.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + ".html";
+    return FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + ".html";
   }
 
 
@@ -895,7 +897,7 @@ public class FlexCommonUtils {
                           ? "-descriptor.xml"
                           : packagingOptions instanceof JpsAndroidPackagingOptions ? "-android-descriptor.xml"
                                                                                    : "-ios-descriptor.xml";
-    return FileUtilRt.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + suffix;
+    return FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + suffix;
   }
 
   public static String replace(final String text, final Map<String, String> replacementMap) {
@@ -1171,14 +1173,14 @@ public class FlexCommonUtils {
       return new InputStreamReader(inputStream, SDK_TOOLS_ENCODING);
     }
     catch (UnsupportedEncodingException e) {
-      return new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+      return new InputStreamReader(inputStream);
     }
   }
 
   public static String fixSizeReportOption(final String additionalOptions, final String postfix) {
     final List<String> values = getOptionValues(additionalOptions, "size-report");
     final StringBuilder result = new StringBuilder(removeOptions(additionalOptions, "size-report"));
-    if (values.size() == 1 && StringUtil.toLowerCase(values.get(0)).endsWith(".xml")) {
+    if (values.size() == 1 && values.get(0).toLowerCase().endsWith(".xml")) {
       final String path = values.get(0);
       result.append(" -size-report=");
       if (path.contains(" ")) {
@@ -1226,7 +1228,7 @@ public class FlexCommonUtils {
   public static void deleteTempFlexConfigFiles(final String projectName) {
     if (KEEP_TEMP_FILES) return;
 
-    final String hash1 = StringUtil.toUpperCase(Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()));
+    final String hash1 = Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
     final File dir = new File(getTempFlexConfigsDirPath());
 
     if (!dir.isDirectory()) return;

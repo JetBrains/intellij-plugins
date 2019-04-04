@@ -1,11 +1,10 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XExecutionStack;
@@ -181,7 +180,7 @@ public class FlexSuspendContext extends XSuspendContext {
       prev = m.end(1);
     }
     result.add(s.substring(prev));
-    return ArrayUtilRt.toStringArray(result);
+    return ArrayUtil.toStringArray(result);
   }
 
   static String extractScope(final String stackFrame) {

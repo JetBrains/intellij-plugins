@@ -62,9 +62,9 @@ public abstract class AngularJSBaseCompletionTest extends ReSharperCompletionTes
     WriteAction.runAndWait(() -> {
       VirtualFile angularFile = ReSharperTestUtil.fetchVirtualFile(
         AngularTestUtil.getBaseTestDataPath(getClass()),VERSIONS.get(myAngularVersion),getTestRootDisposable());
-      PsiTestUtil.addSourceContentToRoots(getModule(), angularFile);
+      PsiTestUtil.addSourceContentToRoots(myModule, angularFile);
       Disposer.register(myFixture.getTestRootDisposable(),
-                        () -> PsiTestUtil.removeContentEntry(getModule(), angularFile));
+                        () -> PsiTestUtil.removeContentEntry(myModule, angularFile));
     });
     super.doSingleTest(testFile, path);
   }

@@ -17,7 +17,7 @@ public class FileTypeComboboxItem {
 
   @Override
   public String toString() {
-    final String fileType = StringUtil.capitalizeWords(StringUtil.toLowerCase(myFrameworkType.getFileType().getName()), true);
+    final String fileType = StringUtil.capitalizeWords(myFrameworkType.getFileType().getName().toLowerCase(), true);
     final String additionalInfo = myFrameworkType.getAdditionalInfo();
     if (additionalInfo != null && (fileType.equals("Javascript") || fileType.equals("Typescript"))) return additionalInfo;
     // Display additional info in brackets (if exists)

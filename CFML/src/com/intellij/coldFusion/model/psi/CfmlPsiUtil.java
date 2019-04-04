@@ -318,7 +318,7 @@ public class CfmlPsiUtil {
   }
 
   private static <Result extends PsiNamedElement> Result[] componentHierarchyGatherer(CfmlComponent component,
-                                                                                      Getter<Result[], ? super CfmlComponent> gatherer,
+                                                                                      Getter<Result[], CfmlComponent> gatherer,
                                                                                       Result[] EMPTY_ARRAY, boolean isSuperPriority) {
     CfmlComponent currentComponent = isSuperPriority ? component.getSuper() : component;
     Set<String> names = new HashSet<>();

@@ -30,7 +30,6 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.reference.TaglibUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ProcessingContext;
 import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
@@ -114,7 +113,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
     @NotNull
     public Object[] getVariants() {
       if (action == null) {
-        return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 
       return ArrayUtil.toObjectArray(action.getActionMethods());

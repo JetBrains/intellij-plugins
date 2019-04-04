@@ -2,6 +2,7 @@
 package org.angular2.editor;
 
 import com.intellij.lang.javascript.JSAbstractStructureViewTest;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.StructureViewTestUtil;
 import org.angularjs.AngularTestUtil;
 
@@ -17,7 +18,9 @@ public class ComponentStructureViewTest extends JSAbstractStructureViewTest {
   }
 
   public void testStructure() {
-    myFixture.configureByFiles("Structure.ts", "package.json");
-    StructureViewTestUtil.checkStructureView(myFixture.getEditor());
+    JSTestUtils.testES6(getProject(), () -> {
+      myFixture.configureByFiles("Structure.ts", "package.json");
+      StructureViewTestUtil.checkStructureView(myFixture.getEditor());
+    });
   }
 }

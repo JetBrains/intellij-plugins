@@ -1,4 +1,4 @@
-// "Create method '_bbb2'" "true"
+// "Create Method '_bbb2'" "true"
 interface D2 {}
 class C {
   var aaa:D2

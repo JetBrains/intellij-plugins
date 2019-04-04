@@ -143,7 +143,7 @@ public abstract class ExternalTask {
             while (tokenizer.hasMoreElements()) {
               final String message = tokenizer.nextElement();
               if (!StringUtil.isEmptyOrSpaces(message)) {
-                if (StringUtil.toLowerCase(message.trim()).startsWith("usage:")) {
+                if (message.trim().toLowerCase().startsWith("usage:")) {
                   usageStarted = true;
                   break;
                 }

@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 
 import static com.intellij.util.containers.ContainerUtil.newHashSet;
 
@@ -22,11 +21,11 @@ public class Angular2AttributeInsertHandler implements InsertHandler<LookupEleme
   private static final Set<Character> HTML_ATTR_NOT_ALLOWED_CHARS = newHashSet('=', '\'', '\"', '<', '>', '/', '\0');
 
   private final boolean myShouldRemoveLeftover;
-  private final BooleanSupplier myShouldCompleteValue;
+  private final boolean myShouldCompleteValue;
   private final String myAddSuffix;
 
   public Angular2AttributeInsertHandler(boolean shouldRemoveLeftover,
-                                        @NotNull BooleanSupplier shouldCompleteValue,
+                                        boolean shouldCompleteValue,
                                         @Nullable String addSuffix) {
     myShouldRemoveLeftover = shouldRemoveLeftover;
     myShouldCompleteValue = shouldCompleteValue;
@@ -56,7 +55,7 @@ public class Angular2AttributeInsertHandler implements InsertHandler<LookupEleme
         document.deleteString(caretOffset, deleteOffset);
       }
     }
-    if (myShouldCompleteValue.getAsBoolean()) {
+    if (myShouldCompleteValue) {
       XmlAttributeInsertHandler.INSTANCE.handleInsert(context, item);
     }
     if (myAddSuffix != null) {
