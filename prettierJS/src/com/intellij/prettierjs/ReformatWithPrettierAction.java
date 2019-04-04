@@ -136,7 +136,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       processFileInEditor(project, editor, nodePackage);
     }
     else {
-      VirtualFile[] virtualFiles = CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(e.getDataContext());
+      VirtualFile[] virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY);
       if (!ArrayUtil.isEmpty(virtualFiles)) {
         processVirtualFiles(project, Arrays.asList(virtualFiles), nodePackage);
       }

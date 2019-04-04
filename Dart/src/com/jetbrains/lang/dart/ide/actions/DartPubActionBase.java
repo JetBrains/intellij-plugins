@@ -100,8 +100,8 @@ abstract public class DartPubActionBase extends AnAction implements DumbAware {
 
   @Nullable
   private static Pair<Module, VirtualFile> getModuleAndPubspecYamlFile(final AnActionEvent e) {
-    final Module module = LangDataKeys.MODULE.getData(e.getDataContext());
-    final PsiFile psiFile = CommonDataKeys.PSI_FILE.getData(e.getDataContext());
+    final Module module = e.getData(LangDataKeys.MODULE);
+    final PsiFile psiFile = e.getData(CommonDataKeys.PSI_FILE);
 
     if (module != null && psiFile != null && psiFile.getName().equalsIgnoreCase(PUBSPEC_YAML)) {
       final VirtualFile file = psiFile.getOriginalFile().getVirtualFile();

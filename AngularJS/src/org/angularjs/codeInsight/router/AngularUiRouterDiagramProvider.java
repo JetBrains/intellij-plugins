@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.router;
 
 import com.intellij.diagram.*;
@@ -566,7 +567,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-      final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+      final Project project = e.getData(CommonDataKeys.PROJECT);
       if (project == null) {
         e.getPresentation().setEnabled(false);
         return;
@@ -577,7 +578,7 @@ public class AngularUiRouterDiagramProvider extends BaseDiagramProvider<DiagramO
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+      final Project project = e.getData(CommonDataKeys.PROJECT);
       if (project == null) return;
       final List<DiagramNode> nodes = JSModulesDiagramUtils.getSelectedNodes(e);
       if (nodes == null || nodes.size() != 1 || !(nodes.get(0) instanceof AngularUiRouterNode)) return;
