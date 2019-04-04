@@ -18,6 +18,12 @@ public class XmlModuleConstants {
     public final static String MODULE_SDK_TYPE = "sdkType";
     public final static String MODULE_FILE_TYPE = "fileType";
 
+    /**
+     * Some lessons could be unfinished or badly implemented and does not fit for release.
+     * Nevertheless they are accessible from master snapshots.
+     */
+    public final static String MODULE_LESSON_UNFINISHED_ATTR = "unfinished";
+
     public final static String MODULE_LESSONS_PATH_ATTR = "lessonsPath";
     public final static String MODULE_LESSON_FILENAME_ATTR = "filename";
     public final static String MODULE_LESSON_IMPLEMENTATION_ATTR = "implementationClass";
