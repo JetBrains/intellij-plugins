@@ -34,6 +34,6 @@ public class Angular2MetadataCall extends Angular2MetadataElement<Angular2Metada
   public String toString() {
     String memberName = getStub().getMemberName();
     return (memberName == null ? "" : memberName + ": ")
-           + "<metadata call>";
+           + ": <metadata call>";
   }
 }

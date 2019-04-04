@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.CommonBundle;
@@ -8,15 +7,11 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
@@ -34,7 +29,7 @@ public class FlashBuilderProjectFinder {
   private static final String DOT_LOCATION = ".location";
 
   static boolean isFlashBuilderWorkspace(final VirtualFile file) {
-    return file != null && file.isDirectory() && VfsUtilCore.findRelativeFile(PROJECT_PREFS_RELATIVE_PATH, file) != null;
+    return file != null && file.isDirectory() && VfsUtil.findRelativeFile(PROJECT_PREFS_RELATIVE_PATH, file) != null;
   }
 
   static boolean isFlashBuilderWorkspace(final String dirPath) {
@@ -164,7 +159,7 @@ public class FlashBuilderProjectFinder {
   }
 
   static boolean hasFxpExtension(final String path) {
-    final String lowercased = StringUtil.toLowerCase(path);
+    final String lowercased = path.toLowerCase();
     return lowercased.endsWith(FlashBuilderImporter.DOT_FXP) || lowercased.endsWith(FlashBuilderImporter.DOT_FXPL);
   }
 

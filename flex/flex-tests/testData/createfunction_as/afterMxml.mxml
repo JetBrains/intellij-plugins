@@ -1,4 +1,4 @@
-<!-- "Create method '_bbb'" "true" -->
+<!-- "Create Method '_bbb'" "true" -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
 <mx:Script>
 _bbb("1","2");

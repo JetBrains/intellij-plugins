@@ -36,6 +36,7 @@ public class Angular2LangUtil {
     }
     final VirtualFile file = psiFile.getOriginalFile().getVirtualFile();
     if (file == null || !file.isInLocalFileSystem()) {
+      //noinspection deprecation
       return isAngular2Context(psiFile.getProject());
     }
     return isAngular2Context(psiFile.getProject(), file);
@@ -69,7 +70,11 @@ public class Angular2LangUtil {
     });
   }
 
-  private static boolean isAngular2Context(@NotNull Project project) {
+  /**
+   * @deprecated kept for compatibility with NativeScript
+   */
+  @Deprecated
+  public static boolean isAngular2Context(@NotNull Project project) {
     if (project.getBaseDir() != null) {
       return isAngular2Context(project, project.getBaseDir());
     }

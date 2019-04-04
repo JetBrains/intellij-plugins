@@ -1,6 +1,5 @@
 package com.intellij.tapestry.intellij.lang.descriptor;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.NonNls;
@@ -17,7 +16,7 @@ public class TapestryUnknownTagDescriptor extends BasicTapestryTagDescriptor {
                                       @Nullable String namespacePrefix,
                                       TapestryNamespaceDescriptor descriptor) {
     super(namespacePrefix, descriptor);
-    myQualifiedName = getPrefixWithColon() + StringUtil.toLowerCase(componentName);
+    myQualifiedName = getPrefixWithColon() + componentName.toLowerCase();
   }
 
   @Override

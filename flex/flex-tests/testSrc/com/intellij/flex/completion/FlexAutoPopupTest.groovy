@@ -33,7 +33,7 @@ class FlexAutoPopupTest extends CompletionAutoPopupTestCase {
     FlexTestUtils.allowFlexVfsRootsFor(getTestRootDisposable(), "")
 
     super.setUp()
-    runInEdtAndWait { FlexTestUtils.setupFlexSdk(module, getTestName(false), FlexAutoPopupTest.class, myFixture.getProjectDisposable()) }
+    runInEdtAndWait { FlexTestUtils.setupFlexSdk(myModule, getTestName(false), FlexAutoPopupTest.class, myFixture.getProjectDisposable()) }
     CodeInsightSettings.instance.selectAutopopupSuggestionsByChars = true
   }
 

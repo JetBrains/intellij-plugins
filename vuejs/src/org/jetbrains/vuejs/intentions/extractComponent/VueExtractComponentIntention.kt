@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlElementType
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.VueFileType
 
 class VueExtractComponentIntention : JavaScriptIntention() {
   override fun getFamilyName(): String {

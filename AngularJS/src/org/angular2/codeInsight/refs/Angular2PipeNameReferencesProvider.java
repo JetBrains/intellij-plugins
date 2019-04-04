@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.refs;
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import org.angular2.entities.Angular2Element;
 import org.angular2.entities.Angular2EntitiesProvider;
@@ -51,7 +51,7 @@ public class Angular2PipeNameReferencesProvider extends PsiReferenceProvider {
     @NotNull
     @Override
     public Object[] getVariants() {
-      return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
   }
 }

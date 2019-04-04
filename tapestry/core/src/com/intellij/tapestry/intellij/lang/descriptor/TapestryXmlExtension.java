@@ -12,7 +12,7 @@ import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.xml.DefaultXmlExtension;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.impl.dtd.XmlNSDescriptorImpl;
@@ -124,6 +124,6 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
   }
 
   public static String[] tapestryTemplateNamespaces() {
-    return ArrayUtilRt.toStringArray(ourTapestryTemplateNamespaces);
+    return ArrayUtil.toStringArray(ourTapestryTemplateNamespaces);
   }
 }

@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.icons.AllIcons;
@@ -19,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor {
@@ -61,7 +60,7 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
   @Override
   @NotNull
   public List<? extends AttachRootButtonDescriptor> createAttachButtons() {
-    return Collections.singletonList(new AddDocUrlDescriptor());
+    return Arrays.asList(new AddDocUrlDescriptor());
   }
 
   private static class AddDocUrlDescriptor extends AttachRootButtonDescriptor {

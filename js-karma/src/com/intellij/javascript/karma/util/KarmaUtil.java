@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.util;
 
 import com.intellij.execution.ExecutionResult;
@@ -21,12 +20,12 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.LocalFileFinder;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class KarmaUtil {
   public static List<VirtualFile> listPossibleConfigFilesInProject(@NotNull Project project) {
     GlobalSearchScope contentScope = ProjectScope.getContentScope(project);
     GlobalSearchScope scope = contentScope.intersectWith(GlobalSearchScope.notScope(ProjectScope.getLibrariesScope(project)));
-    List<VirtualFile> result = new ArrayList<>();
+    List<VirtualFile> result = ContainerUtil.newArrayList();
     for (FileType type : JSLanguageUtil.getFileTypesCompilableToJavaScript()) {
       Collection<VirtualFile> files = FileTypeIndex.getFiles(type, scope);
       for (VirtualFile file : files) {

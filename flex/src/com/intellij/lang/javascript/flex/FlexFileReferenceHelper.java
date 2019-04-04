@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInspection.LocalQuickFix;
@@ -10,7 +9,7 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.validation.fixes.FixAndIntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.text.StringUtil;
@@ -52,7 +51,7 @@ public class FlexFileReferenceHelper extends FileReferenceHelper {
     final String value = ((JSAttributeNameValuePair)element).getSimpleValue();
     if (value.startsWith("/")) return Collections.emptyList();
 
-    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
+    final Module module = ModuleUtil.findModuleForPsiElement(element);
     if (module == null) return Collections.emptyList();
 
     final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);

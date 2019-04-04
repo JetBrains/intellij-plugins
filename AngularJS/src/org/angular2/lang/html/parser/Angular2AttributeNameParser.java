@@ -2,9 +2,8 @@
 package org.angular2.lang.html.parser;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.codeInsight.tags.Angular2NgContentDescriptor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
@@ -13,12 +12,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.psi.PropertyBindingType.*;
 
 public class Angular2AttributeNameParser {
@@ -35,23 +32,14 @@ public class Angular2AttributeNameParser {
 
   @NotNull
   public static AttributeInfo parseBound(@NotNull String name) {
-    AttributeInfo info = parse(name);
+    AttributeInfo info = parse(name, true);
     return info.type != Angular2AttributeType.REGULAR ? info :
            new PropertyBindingInfo(info.name, info.isCanonical, false, PROPERTY);
   }
 
-  public static AttributeInfo parse(@NotNull String name) {
-    return parse(name, NG_TEMPLATE);
-  }
-
-  @NotNull
-  public static AttributeInfo parse(@NotNull String name, @Nullable XmlTag tag) {
-    return parse(name, tag != null ? tag.getLocalName() : NG_TEMPLATE);
-  }
-
   @SuppressWarnings("HardCodedStringLiteral")
   @NotNull
-  public static AttributeInfo parse(@NotNull String name, @NotNull String tagName) {
+  public static AttributeInfo parse(@NotNull String name, boolean isInTemplateTag) {
     name = normalizeAttributeName(name);
     if (name.startsWith("bindon-")) {
       return parsePropertyBindingCanonical(name.substring(7), true);
@@ -75,7 +63,7 @@ public class Angular2AttributeNameParser {
       return parseTemplateBindings(name.substring(1));
     }
     else if (name.startsWith("let-")) {
-      return parseVariable(name.substring(4), isTemplateTag(tagName));
+      return parseVariable(name.substring(4), isInTemplateTag);
     }
     else if (name.startsWith("#")) {
       return parseReference(name.substring(1), false);
@@ -85,9 +73,6 @@ public class Angular2AttributeNameParser {
     }
     else if (name.startsWith("@")) {
       return new PropertyBindingInfo(name.substring(1), false, false, ANIMATION);
-    }
-    else if (name.equals(Angular2NgContentDescriptor.ATTR_SELECT) && tagName.equals(NG_CONTENT)) {
-      return new AttributeInfo(name, false, Angular2AttributeType.NG_CONTENT_SELECTOR);
     }
     return new AttributeInfo(name, false, Angular2AttributeType.REGULAR);
   }
@@ -162,7 +147,7 @@ public class Angular2AttributeNameParser {
                            Angular2Bundle.message("angular.parse.template.animation-trigger-missing-phase-value",
                                                   name));
     }
-    String phase = StringUtil.toLowerCase(name.substring(dot + 1));
+    String phase = name.substring(dot + 1).toLowerCase(Locale.ENGLISH);
     name = name.substring(0, dot);
     //noinspection HardCodedStringLiteral
     if ("done".equals(phase)) {
@@ -207,6 +192,12 @@ public class Angular2AttributeNameParser {
     public final String name;
     @Nullable
     public final String error;
+    /**
+     * @deprecated Use {@code type} field instead
+     */
+    @NotNull
+    @Deprecated
+    public final IElementType elementType;
     @NotNull
     public final Angular2AttributeType type;
     public final boolean isCanonical;
@@ -220,6 +211,8 @@ public class Angular2AttributeNameParser {
       this.error = error;
       this.type = type;
       this.isCanonical = isCanonical;
+      //noinspection deprecation
+      this.elementType = type.getElementType();
     }
 
     public boolean isEquivalent(@Nullable AttributeInfo otherInfo) {

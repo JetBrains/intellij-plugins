@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@angular/core": "0.0.0",
+    "@angular/common": "0.0.0",
     "@angular/material": "0.0.0"
   }
 }

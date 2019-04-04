@@ -13,7 +13,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 public class PrettierImportCodeStyleAction extends AnAction {
-  public static final String ACTION_ID = "PrettierImportCodeStyleAction";
+  public PrettierImportCodeStyleAction() {
+  }
 
   @Override
   public void update(@NotNull AnActionEvent e) {
@@ -50,6 +51,6 @@ public class PrettierImportCodeStyleAction extends AnAction {
     if (virtualFile == null || project == null) {
       return;
     }
-    new PrettierCodeStyleImporter(false).importConfigFile(psiFile);
+    PrettierCompatibleCodeStyleInstaller.install(project, virtualFile, true);
   }
 }

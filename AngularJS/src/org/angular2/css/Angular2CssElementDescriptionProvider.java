@@ -11,7 +11,7 @@ import com.intellij.psi.css.CssElementDescriptorProvider;
 import com.intellij.psi.css.CssSimpleSelector;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.util.HtmlUtil;
 import org.angular2.codeInsight.refs.Angular2SelectorReferencesProvider;
@@ -67,7 +67,7 @@ public class Angular2CssElementDescriptionProvider extends CssElementDescriptorP
   @NotNull
   @Override
   public String[] getSimpleSelectors(@NotNull PsiElement context) {
-    return ArrayUtilRt.toStringArray(Angular2EntitiesProvider.getAllElementDirectives(context.getProject())
+    return ArrayUtil.toStringArray(Angular2EntitiesProvider.getAllElementDirectives(context.getProject())
                                      .keySet());
   }
 

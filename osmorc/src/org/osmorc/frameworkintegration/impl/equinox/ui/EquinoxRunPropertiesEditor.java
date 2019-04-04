@@ -26,6 +26,7 @@ package org.osmorc.frameworkintegration.impl.equinox.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.equinox.EquinoxRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
@@ -35,7 +36,6 @@ import org.osmorc.run.ui.GenericRunPropertiesEditor;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -117,7 +117,7 @@ public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor 
   public void applyEditorTo(@NotNull OsgiRunConfiguration runConfiguration) throws ConfigurationException {
     myGenericRunPropertiesEditor.applyEditorTo(runConfiguration);
 
-    Map<String, String> properties = new HashMap<>();
+    Map<String, String> properties = ContainerUtil.newHashMap();
     EquinoxRunProperties.setEquinoxProduct(properties, myProductTextField.getText());
     EquinoxRunProperties.setEquinoxApplication(properties, myApplicationTextField.getText());
     runConfiguration.putAdditionalProperties(properties);

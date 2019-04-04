@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
@@ -32,7 +31,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.text.StringTokenizer;
 import com.intellij.xml.*;
@@ -478,7 +476,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     @NonNls String[] enumerationValues = myEnumeratedValues;
 
     if (enumerationValues == null) {
-      enumerationValues = ArrayUtilRt.EMPTY_STRING_ARRAY;
+      enumerationValues = ArrayUtil.EMPTY_STRING_ARRAY;
 
       if (myEnumerated) {
         if (JSCommonTypeNames.BOOLEAN_CLASS_NAME.equals(type)) {
@@ -639,7 +637,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
   @Nullable
   private static String checkColorAlias(final String s) {
-    if (!ArrayUtil.contains(StringUtil.toLowerCase(s), COLOR_ALIASES)) {
+    if (!ArrayUtil.contains(s.toLowerCase(), COLOR_ALIASES)) {
       return FlexBundle.message("unknown.color.error", s);
     }
     return null;
@@ -989,7 +987,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       }
     }
 
-    return ArrayUtilRt.toStringArray(result);
+    return ArrayUtil.toStringArray(result);
   }
 
   private static String lowercaseStart(final String s) {
@@ -1001,7 +999,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       i++;
     }
     i = i <= 1 ? 1 : i == s.length() ? i : i - 1;
-    return StringUtil.toLowerCase(s.substring(0, i)) + s.substring(i);
+    return s.substring(0, i).toLowerCase() + s.substring(i);
   }
 
   private static Set<String> getNamedElementsVisibleAt(@NotNull final PsiElement context) {

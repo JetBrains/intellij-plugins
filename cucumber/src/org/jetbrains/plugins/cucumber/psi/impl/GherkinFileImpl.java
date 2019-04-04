@@ -34,7 +34,7 @@ public class GherkinFileImpl extends PsiFileBase implements GherkinFile {
 
   @Override
   public List<String> getStepKeywords() {
-    final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider(this);
+    final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider();
     List<String> result = new ArrayList<>();
 
     // find language comment

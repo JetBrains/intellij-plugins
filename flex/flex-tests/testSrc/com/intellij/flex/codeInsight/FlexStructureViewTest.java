@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.util.FlexTestUtils;
@@ -17,7 +16,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.icons.RowIcon;
+import com.intellij.ui.RowIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,10 +29,6 @@ import static com.intellij.flex.util.FlexTestUtils.getPathToMockFlex;
 import static com.intellij.lang.javascript.StructureViewTestUtil.getIcon;
 
 public class FlexStructureViewTest extends JSAbstractStructureViewTest {
-  @Override
-  protected boolean isIconRequired() {
-    return true;
-  }
 
   private static final String BASE_PATH = "/as_fileStructure/";
   private static final int OBJECT_METHODS_COUNT = 11;
@@ -61,7 +56,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
       }
     };
   }
-
+  
 
   @Override
   protected String getBasePath() {
@@ -87,19 +82,19 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals(4 + OBJECT_METHODS_COUNT, treeNodes.size());
 
     assertEquals("EE", getText(treeNodes.get(0)));
-    assertEquals("aaa:*", getText(treeNodes.get(OBJECT_METHODS_COUNT + 1)));
-    assertEquals("c2:*", getText(treeNodes.get(OBJECT_METHODS_COUNT + 2)));
-    assertEquals("ttt:*", getText(treeNodes.get(OBJECT_METHODS_COUNT + 3)));
+    assertEquals("aaa", getText(treeNodes.get(OBJECT_METHODS_COUNT + 1)));
+    assertEquals("c2", getText(treeNodes.get(OBJECT_METHODS_COUNT + 2)));
+    assertEquals("ttt", getText(treeNodes.get(OBJECT_METHODS_COUNT + 3)));
 
     treeNodes = getChildren(items[0]);
     assertEquals(7 + OBJECT_METHODS_COUNT, treeNodes.size());
 
-    assertEquals("automation:Object", getText(treeNodes.get(0)));
-    assertEquals("initialized:Boolean", getText(treeNodes.get(3)));
+    assertEquals("automation():Object", getText(treeNodes.get(0)));
+    assertEquals("initialized():Boolean", getText(treeNodes.get(3)));
     assertEquals("register(c:Object):void", getText(treeNodes.get(8)));
     assertEquals("_automation:Object", getText(treeNodes.get(OBJECT_METHODS_COUNT + 3)));
-    assertEquals("aaa:*", getText(treeNodes.get(OBJECT_METHODS_COUNT + 4)));
-    assertEquals("c2:*", getText(treeNodes.get(OBJECT_METHODS_COUNT + 5)));
+    assertEquals("aaa", getText(treeNodes.get(OBJECT_METHODS_COUNT + 4)));
+    assertEquals("c2", getText(treeNodes.get(OBJECT_METHODS_COUNT + 5)));
     assertEquals("delegate:Object", getText(treeNodes.get(OBJECT_METHODS_COUNT + 6)));
   }
 
@@ -123,11 +118,11 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals(2, treeNodes2.size());
     Iterator<? extends AbstractTreeNode> iterator2 = treeNodes2.iterator();
 
-    assertEquals("aaa:*", getText(iterator2.next()));
-    assertEquals("c2:*", getText(iterator2.next()));
+    assertEquals("aaa", getText(iterator2.next()));
+    assertEquals("c2", getText(iterator2.next()));
 
-    assertEquals("automation:Object", getText(iterator.next()));
-    assertEquals("initialized:Boolean", getText(iterator.next()));
+    assertEquals("automation():Object", getText(iterator.next()));
+    assertEquals("initialized():Boolean", getText(iterator.next()));
     assertEquals("register(c:Object):void", getText(iterator.next()));
     assertEquals("_automation:Object", getText(iterator.next()));
     assertEquals("delegate:Object", getText(iterator.next()));
@@ -152,8 +147,8 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     List<AbstractTreeNode> treeNodes2 = getChildren(treeNodes.get(0));
     assertEquals(2, treeNodes2.size());
 
-    assertEquals("aaa:*", getText(treeNodes2.get(0)));
-    assertEquals("c2:*", getText(treeNodes2.get(1)));
+    assertEquals("aaa", getText(treeNodes2.get(0)));
+    assertEquals("c2", getText(treeNodes2.get(1)));
 
     checkIfCurrentEditorElementIsValid(treeNodes.get(2), JSFunction.class);
   }
@@ -167,11 +162,11 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
 
     List<AbstractTreeNode> treeNodes = getChildren(items[0]);
     assertEquals(3 + OBJECT_METHODS_COUNT, treeNodes.size());
-    assertEquals("constructor:*", getText(treeNodes.get(0)));
-    assertEquals("aaa:*", getText(treeNodes.get(OBJECT_METHODS_COUNT + 1)));
-    assertEquals("bbb:*", getText(treeNodes.get(OBJECT_METHODS_COUNT + 2)));
+    assertEquals("constructor():*", getText(treeNodes.get(0)));
+    assertEquals("aaa", getText(treeNodes.get(OBJECT_METHODS_COUNT + 1)));
+    assertEquals("bbb", getText(treeNodes.get(OBJECT_METHODS_COUNT + 2)));
     AbstractTreeNode node = treeNodes.get(OBJECT_METHODS_COUNT - 5);
-    assertEquals("staticFun():*", getText(node));
+    assertEquals("staticFun()", getText(node));
 
     Icon icon = getIcon(node);
     assertTrue(icon instanceof RowIcon);
@@ -180,8 +175,8 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
 
     treeNodes = getChildren(items[1]);
     assertEquals(2 + OBJECT_METHODS_COUNT, treeNodes.size());
-    assertEquals("aaa:*", getText(treeNodes.get(OBJECT_METHODS_COUNT)));
-    assertEquals("bbb:*", getText(treeNodes.get(OBJECT_METHODS_COUNT + 1)));
+    assertEquals("aaa", getText(treeNodes.get(OBJECT_METHODS_COUNT)));
+    assertEquals("bbb", getText(treeNodes.get(OBJECT_METHODS_COUNT + 1)));
   }
 
   public void testPrivateIconsForClassMembers()  {
@@ -207,7 +202,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
     assertEquals("C", getText(items[0]));
     List<AbstractTreeNode> treeNodes = getChildren(items[0]);
     assertEquals(2 + OBJECT_METHODS_COUNT, treeNodes.size());
-    assertEquals("__aaa__():*", getText(treeNodes.get(0)));
+    assertEquals("__aaa__()", getText(treeNodes.get(0)));
   }
 
   public void testInherited1()  {

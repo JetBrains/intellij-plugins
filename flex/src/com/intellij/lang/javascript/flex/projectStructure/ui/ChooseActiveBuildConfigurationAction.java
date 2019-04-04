@@ -15,11 +15,10 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.ui.IconManager;
+import com.intellij.ui.RowIcon;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.ui.icons.RowIcon;
 import com.intellij.ui.navigation.Place;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.PopupListElementRenderer;
@@ -118,7 +117,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
               isActive = false;
             }
 
-            RowIcon rowIcon = IconManager.getInstance().createRowIcon(2);
+            RowIcon rowIcon = new RowIcon(2);
             rowIcon.setIcon(isActive ? (isSelected ? ICON_ACTIVE_SELECTED : ICON_ACTIVE) : ICON_EMPTY, 0);
             rowIcon.setIcon(icon, 1);
             p.setIcon(rowIcon);
