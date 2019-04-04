@@ -1,4 +1,4 @@
-// "Create method 'create'" "true"
+// "Create Method 'create'" "true"
 class Foo {
 }
 Foo.cr<caret>eate(null as Class);

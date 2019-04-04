@@ -15,7 +15,6 @@
  */
 package com.intellij.coldFusion.model.info;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,7 +64,7 @@ public class CfmlTypesInfo {
     if (s == null) {
       return ANY_TYPE;
     }
-    final int find = ArrayUtil.find(ourTypeNames, StringUtil.toLowerCase(s));
+    final int find = ArrayUtil.find(ourTypeNames, s.toLowerCase());
     if (find != -1) {
       return find;
     }

@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy.call;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
@@ -11,7 +10,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.jetbrains.lang.dart.ide.findUsages.DartServerFindUsagesHandler;
 import com.jetbrains.lang.dart.ide.hierarchy.DartHierarchyUtil;
 import com.jetbrains.lang.dart.psi.*;
@@ -59,16 +57,16 @@ public abstract class DartCallHierarchyTreeStructure extends HierarchyTreeStruct
       final DartHierarchyNodeDescriptor dartDescriptor = (DartHierarchyNodeDescriptor)descriptor;
       PsiElement element = dartDescriptor.getPsiElement();
       if (element == null) {
-        return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
       boolean isCallable = DartHierarchyUtil.isExecutable(element);
       HierarchyNodeDescriptor nodeDescriptor = getBaseDescriptor();
       if (!(element instanceof DartComponent) || !isCallable || nodeDescriptor == null) {
-        return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
       DartComponentName name = ((DartComponent)element).getComponentName();
       if (name == null) {
-        return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 
       final List<PsiElement> children = getChildren(name);

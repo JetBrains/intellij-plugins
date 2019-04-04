@@ -76,7 +76,7 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
   }
 
   @Override
-  public boolean useTypesFromJSDoc() {
+  protected boolean useTypesFromJSDoc() {
     return false;
   }
 }

@@ -1,13 +1,14 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.attributes;
 
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider;
+import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.xml.XmlElement;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
+import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
 import icons.AngularJSIcons;
@@ -27,6 +28,17 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
   private final String myAttributeName;
   private final StubIndexKey<String, JSImplicitElementProvider> myIndex;
 
+  /**
+   * NativeScript compatibility
+   *
+   * @deprecated to be removed in 2017.3
+   */
+  @Deprecated
+  public AngularAttributeDescriptor(@Nullable Project project,
+                                    @NotNull String attributeName,
+                                    @Nullable StubIndexKey<String, JSImplicitElementProvider> index) {
+    this(project, attributeName, index, null);
+  }
 
   public AngularAttributeDescriptor(@Nullable Project project,
                                     @NotNull String attributeName,
@@ -36,6 +48,15 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
     myAttributeName = attributeName;
     myIndex = index;
     myElement = element;
+  }
+
+  /**
+   * Kept for source-level compatibility with NativeScript.
+   */
+  @Deprecated
+  @NotNull
+  public static XmlAttributeDescriptor[] getFieldBasedDescriptors(JSImplicitElement declaration) {
+    return XmlAttributeDescriptor.EMPTY;
   }
 
   @Override
@@ -78,8 +99,8 @@ public class AngularAttributeDescriptor extends BasicXmlAttributeDescriptor impl
 
   @Override
   public String[] getEnumeratedValues() {
-    if (myProject == null || myIndex == null) return ArrayUtilRt.EMPTY_STRING_ARRAY;
-    return ArrayUtilRt.toStringArray(AngularIndexUtil.getAllKeys(myIndex, myProject));
+    if (myProject == null || myIndex == null) return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtil.toStringArray(AngularIndexUtil.getAllKeys(myIndex, myProject));
   }
 
   @Override

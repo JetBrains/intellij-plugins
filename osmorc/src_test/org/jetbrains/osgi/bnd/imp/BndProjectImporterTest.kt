@@ -25,13 +25,13 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.pom.java.LanguageLevel
-import com.intellij.testFramework.JavaProjectTestCase
+import com.intellij.testFramework.IdeaTestCase
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.osgi.jps.model.ManifestGenerationMode
 import org.osmorc.facet.OsmorcFacet
 import java.io.File
 
-class BndProjectImporterTest : JavaProjectTestCase() {
+class BndProjectImporterTest : IdeaTestCase() {
   private lateinit var myProjectDir: String
   private lateinit var myWorkspace: Workspace
   private lateinit var myImporter: BndProjectImporter

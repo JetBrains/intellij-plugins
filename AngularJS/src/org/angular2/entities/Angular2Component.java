@@ -14,7 +14,4 @@ public interface Angular2Component extends Angular2Directive {
 
   @NotNull
   List<PsiFile> getCssFiles();
-
-  @NotNull
-  List<Angular2DirectiveSelector> getNgContentSelectors();
 }

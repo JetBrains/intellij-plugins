@@ -151,7 +151,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
             if (configFile == null) return;
 
             final XmlFile webXmlFile = configFile.getXmlFile();
-            final WebApp webApp = JamCommonUtil.getRootElement(webXmlFile, WebApp.class);
+            final WebApp webApp = JamCommonUtil.getRootElement(webXmlFile, WebApp.class, null);
             if (webApp == null) return;
             if (!FileModificationService.getInstance().prepareFileForWrite(webXmlFile)) return;
 

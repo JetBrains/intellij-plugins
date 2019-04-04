@@ -6,6 +6,8 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.javascript.JSRunConfigurationBuilder;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
+import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager;
 import com.intellij.javascript.nodejs.packageJson.PackageJsonGetDependenciesAction;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.notification.Notification;
@@ -69,8 +71,13 @@ public class AngularCliUtil {
   }
 
   public static boolean hasAngularCLIPackageInstalled(@NotNull Project project, @NotNull VirtualFile cli) {
+    NodeJsInterpreter interpreter = NodeJsInterpreterManager.getInstance(project).getInterpreter();
+    if (interpreter == null) {
+      return false;
+    }
     List<CompletionModuleInfo> modules = new ArrayList<>();
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null);
+    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli,
+                                             false, interpreter);
     return !modules.isEmpty() && modules.get(0).getVirtualFile() != null;
   }
 

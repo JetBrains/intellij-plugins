@@ -1,7 +1,6 @@
 package com.intellij.tapestry.intellij.actions.safedelete;
 
 import com.intellij.ide.DeleteProvider;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
@@ -39,7 +38,7 @@ public class SafeDeleteProvider implements DeleteProvider {
     @Override
     public void deleteElement(@NotNull DataContext dataContext) {
         SafeDeleteRefactoring safeDeleteRefactoring;
-        final Project project = (Project) dataContext.getData(CommonDataKeys.PROJECT.getName());
+        final Project project = (Project) dataContext.getData(DataKeys.PROJECT.getName());
         int numberChildren;
 
         List<PsiElement> totalElementsToDelete = new ArrayList<>();
@@ -111,7 +110,7 @@ public class SafeDeleteProvider implements DeleteProvider {
      */
     @Override
     public boolean canDeleteElement(@NotNull DataContext dataContext) {
-        final Project project = (Project) dataContext.getData(CommonDataKeys.PROJECT.getName());
+        final Project project = (Project) dataContext.getData(DataKeys.PROJECT.getName());
 
         if (project == null || TapestryProjectViewPane.getInstance(project).getSelectionPaths() == null) {
             return false;

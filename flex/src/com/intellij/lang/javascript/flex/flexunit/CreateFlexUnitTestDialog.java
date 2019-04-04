@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.codeInsight.CodeInsightBundle;
@@ -16,7 +15,7 @@ import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -131,7 +130,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
   }
 
   private void createUIComponents() {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(myContextClass);
+    final Module module = ModuleUtil.findModuleForPsiElement(myContextClass);
     assert module != null;
 
     myPackageCombo = JSReferenceEditor.forPackageName(StringUtil.getPackageName(myContextClass.getQualifiedName()), module.getProject(),

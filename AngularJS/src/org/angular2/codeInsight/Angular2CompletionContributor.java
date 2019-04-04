@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
@@ -15,7 +15,7 @@ import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.types.JSFunctionTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType;
+import com.intellij.lang.javascript.psi.types.JSLazyExpressionType;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -42,9 +42,6 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.*;
 import org.angular2.codeInsight.attributes.Angular2AttributesProvider.CompletionResultsConsumer;
-import org.angular2.codeInsight.tags.Angular2TagDescriptor;
-import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider;
-import org.angular2.codeInsight.template.Angular2TemplateScopesResolver;
 import org.angular2.css.Angular2CssAttributeNameCompletionProvider;
 import org.angular2.css.Angular2CssExpressionCompletionProvider;
 import org.angular2.entities.Angular2EntitiesProvider;
@@ -143,7 +140,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                                                      || bestMatch.second == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE
                                                                      ? NG_VARIABLE_PRIORITY.getPriorityValue()
                                                                      : NG_PRIVATE_VARIABLE_PRIORITY.getPriorityValue()));
-          List<TypeScriptFunction> transformMethods = new ArrayList<>(match.getTransformMethods());
+          List<TypeScriptFunction> transformMethods = ContainerUtil.newArrayList(match.getTransformMethods());
           if (!transformMethods.isEmpty() && actualType != null) {
             Collections.sort(transformMethods, Comparator.
               <TypeScriptFunction>comparingInt(f -> isNullOrUndefinedType(f.getReturnType()) ? 1 : 0)
@@ -174,19 +171,18 @@ public class Angular2CompletionContributor extends CompletionContributor {
                && (((JSReferenceExpressionImpl)ref).getQualifier() == null
                    || ((JSReferenceExpressionImpl)ref).getQualifier() instanceof JSThisExpression)) {
         final Set<String> contributedElements = new HashSet<>();
-        Angular2TemplateScopesResolver.resolve(parameters.getPosition(), resolveResult -> {
+        Angular2Processor.process(parameters.getPosition(), resolveResult -> {
           final JSPsiElementBase element = ObjectUtils.tryCast(resolveResult.getElement(), JSPsiElementBase.class);
           if (element == null) {
-            return true;
+            return;
           }
           final String name = element.getName();
           if (name != null && !NG_LIFECYCLE_HOOKS.contains(name)
               && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, null).getTailAndType())) {
             result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(
-              element, name, calcPriority(element)
-            ));
+              element, name, calcPriority(element), false,
+              false));
           }
-          return true;
         });
         result.stopHere();
       }
@@ -203,7 +199,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     private static JSType calcActualType(Angular2PipeReferenceExpression ref) {
       Angular2PipeExpression pipeCall = (Angular2PipeExpression)ref.getParent();
       return doIfNotNull(ArrayUtil.getFirstElement(pipeCall.getArguments()),
-                         expression -> new JSPsiBasedTypeOfType(expression, true));
+                         expression -> new JSLazyExpressionType(expression, true));
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
@@ -239,7 +235,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
 
     private static JSLookupPriority calcPriority(@NotNull JSPsiElementBase element) {
-      if (Angular2StandardSymbolsScopesProvider.$ANY.equals(element.getName())) {
+      if (Angular2Processor.$ANY.equals(element.getName())) {
         return NG_$ANY_PRIORITY;
       }
       return Angular2DecoratorUtil.isPrivateMember(element)
@@ -268,15 +264,12 @@ public class Angular2CompletionContributor extends CompletionContributor {
         final XmlAttribute attribute = ((XmlAttributeReference)reference).getElement();
         final XmlTag tag = attribute.getParent();
         final XmlElementDescriptor parentDescriptor = tag.getDescriptor();
-        if (parentDescriptor != null
-            && (!(parentDescriptor instanceof Angular2TagDescriptor)
-                || ((Angular2TagDescriptor)parentDescriptor).allowContributions())) {
+        if (parentDescriptor != null) {
           List<Angular2AttributesProvider> providers =
             Angular2AttributesProvider.ANGULAR_ATTRIBUTES_PROVIDER_EP.getExtensionList();
 
           List<Angular2AttributeDescriptor> descriptors = new ArrayList<>();
-          Angular2DeclarationsScope moduleScope = new Angular2DeclarationsScope(tag);
-          MyCompletionResultsConsumer consumer = new MyCompletionResultsConsumer(result, descriptors, moduleScope);
+          MyCompletionResultsConsumer consumer = new MyCompletionResultsConsumer(result, descriptors);
 
           providers.forEach(provider -> provider.contributeCompletionResults(
             consumer, tag, result.getPrefixMatcher().getPrefix()));
@@ -284,6 +277,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
           final PsiFile file = tag.getContainingFile();
           final XmlExtension extension = XmlExtension.getExtension(file);
 
+          Angular2DeclarationsScope moduleScope = new Angular2DeclarationsScope(tag);
           final XmlAttribute[] attributes = tag.getAttributes();
           Set<String> providedAttributes = StreamEx.of(attributes)
             .map(attr -> attr.getDescriptor())
@@ -330,22 +324,12 @@ public class Angular2CompletionContributor extends CompletionContributor {
 
     private final CompletionResultSet myResult;
     private final List<Angular2AttributeDescriptor> myDescriptors;
-    @NotNull private final Angular2DeclarationsScope myScope;
     private final Set<String> myPrefixes = new HashSet<>();
     private final List<Runnable> myAbbreviations = new ArrayList<>();
 
-    private MyCompletionResultsConsumer(@NotNull CompletionResultSet result,
-                                        @NotNull List<Angular2AttributeDescriptor> descriptors,
-                                        @NotNull Angular2DeclarationsScope scope) {
+    private MyCompletionResultsConsumer(CompletionResultSet result, List<Angular2AttributeDescriptor> descriptors) {
       myResult = result;
       myDescriptors = descriptors;
-      myScope = scope;
-    }
-
-    @Override
-    @NotNull
-    public Angular2DeclarationsScope getScope() {
-      return myScope;
     }
 
     public void flushChanges() {
@@ -385,7 +369,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
               .withIcon(AngularJSIcons.Angular2)
               .withInsertHandler((@NotNull InsertionContext context, @NotNull LookupElement item) -> {
                 if (suffix != null) {
-                  new Angular2AttributeInsertHandler(false, () -> false, suffix)
+                  new Angular2AttributeInsertHandler(false, false, suffix)
                     .handleInsert(context, item);
                 }
                 context.setLaterRunnable(() -> CodeCompletionHandlerBase.createHandler(CompletionType.BASIC)

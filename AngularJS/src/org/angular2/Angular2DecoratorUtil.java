@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2;
 
-import com.intellij.lang.javascript.injections.JSInjectionUtil;
+import com.intellij.lang.javascript.JSInjectionController;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -32,9 +32,7 @@ public class Angular2DecoratorUtil {
   @NonNls public static final String MODULE_DEC = "NgModule";
   @NonNls public static final String INPUT_DEC = "Input";
   @NonNls public static final String OUTPUT_DEC = "Output";
-  @NonNls public static final String ATTRIBUTE_DEC = "Attribute";
   @NonNls public static final String VIEW_CHILD_DEC = "ViewChild";
-  @NonNls public static final String VIEW_DEC = "View";
 
   @NonNls public static final String NAME_PROP = "name";
   @NonNls public static final String SELECTOR_PROP = "selector";
@@ -117,7 +115,7 @@ public class Angular2DecoratorUtil {
   @Nullable
   public static String getExpressionStringValue(@Nullable JSExpression value) {
     if (value instanceof JSBinaryExpression) {
-      return JSInjectionUtil.getConcatenationText(value);
+      return JSInjectionController.getConcatenationText(value);
     }
     if (value instanceof JSLiteralExpression && ((JSLiteralExpression)value).isQuotedLiteral()) {
       return AngularJSIndexingHandler.unquote(value);

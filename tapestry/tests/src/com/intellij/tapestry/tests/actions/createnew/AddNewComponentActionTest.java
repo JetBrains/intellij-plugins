@@ -1,6 +1,5 @@
 package com.intellij.tapestry.tests.actions.createnew;
 
-import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
@@ -55,7 +54,7 @@ public class AddNewComponentActionTest extends BaseTestCase {
         PsiDirectory psiDirectoryMock = createMock(PsiDirectory.class);
         expect(IdeaUtils.getPackage(psiDirectoryMock)).andReturn(psiPackageMock);
         replay(psiDirectoryMock, psiPackageMock);
-        actionMockHelper.addDataContext(CommonDataKeys.PSI_ELEMENT.getName(), psiDirectoryMock);
+        actionMockHelper.addDataContext(DataKeys.PSI_ELEMENT.getName(), psiDirectoryMock);
 
         TapestryProject tapestryProjectMock = actionMockHelper.getTapestryProjectMock();
         org.easymock.EasyMock.expect(tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();
@@ -92,7 +91,7 @@ public class AddNewComponentActionTest extends BaseTestCase {
         PsiDirectory psiDirectoryMock = createMock(PsiDirectory.class);
         expect(IdeaUtils.getPackage(psiDirectoryMock)).andReturn(psiPackageMock);
         replay(psiDirectoryMock, psiPackageMock);
-        actionMockHelper.addDataContext(CommonDataKeys.PSI_ELEMENT.getName(), psiDirectoryMock);
+        actionMockHelper.addDataContext(DataKeys.PSI_ELEMENT.getName(), psiDirectoryMock);
 
         TapestryProject tapestryProjectMock = actionMockHelper.getTapestryProjectMock();
         org.easymock.EasyMock.expect(tapestryProjectMock.getApplicationRootPackage()).andReturn("com.app").anyTimes();

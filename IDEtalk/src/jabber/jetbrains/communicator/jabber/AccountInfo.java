@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.jabber;
 
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 
 /**
  * @author Kir
@@ -32,7 +32,7 @@ public class AccountInfo {
   private boolean myShouldLogin = true;
 
   public AccountInfo() {
-    this(CommunicatorStrings.getMyUsername(), null, "jabber.org", DEFAULT_PORT);
+    this(StringUtil.getMyUsername(), null, "jabber.org", DEFAULT_PORT);
   }
 
   public AccountInfo(String user, String password, String server, int port) {
@@ -71,7 +71,7 @@ public class AccountInfo {
   }
 
   public final void setPassword(String password) {
-    myPassword = CommunicatorStrings.toXMLSafeString(encode(password));
+    myPassword = StringUtil.toXMLSafeString(encode(password));
   }
 
   public boolean isForceSSL() {
@@ -113,7 +113,7 @@ public class AccountInfo {
   }
 
   private String decode(String password) {
-    return encode(CommunicatorStrings.fromXMLSafeString(password));
+    return encode(StringUtil.fromXMLSafeString(password));
   }
 
   private String getKit() {

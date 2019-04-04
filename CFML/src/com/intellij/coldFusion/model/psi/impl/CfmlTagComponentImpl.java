@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.model.CfmlUtil;
@@ -12,7 +12,6 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.stubs.NamedStub;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -127,7 +126,7 @@ public CfmlTagComponentImpl(ASTNode astNode) {
 
   @Override
   public String[] getInterfaceNames() {
-    return ArrayUtilRt.EMPTY_STRING_ARRAY;
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
   @Override

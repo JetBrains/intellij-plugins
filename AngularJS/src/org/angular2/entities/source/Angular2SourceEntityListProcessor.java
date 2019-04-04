@@ -37,7 +37,6 @@ import java.util.Set;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
-import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 import static java.util.Arrays.asList;
 import static org.angular2.entities.Angular2ModuleResolver.NG_MODULE_PROP;
 
@@ -100,73 +99,35 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       public void visitJSObjectLiteralExpression(JSObjectLiteralExpression node) {
         if (myAcceptNgModuleWithProviders) {
           AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
-            addIfNotNull(result, doIfNotNull(node.findProperty(NG_MODULE_PROP), JSProperty::getValue)));
+            ContainerUtil.addIfNotNull(result, doIfNotNull(node.findProperty(NG_MODULE_PROP),
+                                                           JSProperty::getValue)));
         }
       }
 
       @Override
       public void visitJSReferenceExpression(JSReferenceExpression node) {
-        addIfNotNull(result, node.resolve());
+        ContainerUtil.addIfNotNull(result, node.resolve());
       }
 
       @Override
       public void visitJSVariable(JSVariable node) {
         AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () ->
-          addIfNotNull(result, node.getInitializer()));
+          ContainerUtil.addIfNotNull(result, node.getInitializer()));
       }
 
       @Override
       public void visitES6ImportSpecifierAlias(ES6ImportSpecifierAlias specifierAlias) {
-        addIfNotNull(result, specifierAlias.findAliasedElement());
+        ContainerUtil.addIfNotNull(result, specifierAlias.findAliasedElement());
       }
 
       @Override
       public void visitJSSpreadExpression(JSSpreadExpression spreadExpression) {
-        AstLoadingFilter.forceAllowTreeLoading(spreadExpression.getContainingFile(), () ->
-          addIfNotNull(result, spreadExpression.getExpression()));
-      }
-
-      @Override
-      public void visitJSConditionalExpression(JSConditionalExpression node) {
-        AstLoadingFilter.forceAllowTreeLoading(node.getContainingFile(), () -> {
-          addIfNotNull(result, node.getThen());
-          addIfNotNull(result, node.getElse());
-        });
+        ContainerUtil.addIfNotNull(result, spreadExpression.getExpression());
       }
 
       @Override
       public void visitJSCallExpression(JSCallExpression node) {
-        addIfNotNull(result, node.getStubSafeMethodExpression());
-      }
-
-      @Override
-      public void visitJSFunctionDeclaration(JSFunction node) {
-        collectFunctionReturningArrayItems(node);
-      }
-
-      @Override
-      public void visitJSFunctionExpression(JSFunctionExpression node) {
-        collectFunctionReturningArrayItems(node);
-      }
-
-      private void collectFunctionReturningArrayItems(@NotNull JSFunction function) {
-        JSType type = function.getReturnType();
-        if (JSTypeUtils.isArrayLikeType(type)) {
-          // None of the required information is stubbed here
-          AstLoadingFilter.forceAllowTreeLoading(function.getContainingFile(), () ->
-            function.acceptChildren(new JSElementVisitor() {
-              @Override
-              public void visitJSReturnStatement(JSReturnStatement node) {
-                addIfNotNull(result, node.getExpression());
-              }
-
-              @Override
-              public void visitJSStatement(JSStatement node) {
-                node.acceptChildren(this);
-              }
-            })
-          );
-        }
+        ContainerUtil.addIfNotNull(result, node.getStubSafeMethodExpression());
       }
     };
   }
@@ -191,20 +152,13 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
 
   }
 
-  protected void processCacheDependency(PsiElement element) {
-
-  }
-
   private void resolveFunctionReturnType(@NotNull JSFunction function) {
     Set<JSResolvedTypeId> visitedTypes = new HashSet<>();
     boolean lookingForModule = myEntityClass.isAssignableFrom(Angular2Module.class);
     JSClass resolvedClazz = null;
     if (lookingForModule) {
-      Angular2MetadataFunction metadataFunction = Angular2EntitiesProvider.findMetadataFunction(function);
-      Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
+      Angular2MetadataModule metadataModule = resolveFunctionValue(Angular2EntitiesProvider.findMetadataFunction(function));
       if (metadataModule != null) {
-        processCacheDependency(metadataFunction);
-        processCacheDependency(metadataModule);
         //noinspection unchecked
         processEntity((T)metadataModule);
         return;
@@ -216,9 +170,6 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
            && visitedTypes.add(type.getResolvedTypeId())) {
       NotNullLazyValue<JSRecordType> recordType = NotNullLazyValue.createValue(type::asRecordType);
       JSRecordType.PropertySignature ngModuleSignature;
-      if (type.getSourceElement() != null) {
-        processCacheDependency(type.getSourceElement());
-      }
       if (lookingForModule
           && (ngModuleSignature = recordType.getValue().findPropertySignature(NG_MODULE_PROP)) != null) {
         type = evaluateModuleWithProvidersType(ngModuleSignature, type.getSource());
@@ -232,7 +183,6 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
             resolvedClazz = tryCast(expression.resolve(), JSClass.class);
             T entity = getEntity(resolvedClazz);
             if (entity != null) {
-              processCacheDependency(resolvedClazz);
               processEntity(entity);
               return;
             }
@@ -242,7 +192,6 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
           resolvedClazz = (JSClass)sourceElement;
           T entity = getEntity(resolvedClazz);
           if (entity != null) {
-            processCacheDependency(resolvedClazz);
             processEntity(entity);
             return;
           }

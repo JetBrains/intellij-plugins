@@ -2,7 +2,6 @@
 package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.options.ConfigurationException;
@@ -70,7 +69,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
     final DefaultActionGroup group = new DefaultActionGroup();
     group.add(new AnAction("Copy") {
       {
-        ActionUtil.copyFrom(this, IdeActions.ACTION_COPY);
+        copyFrom(ActionManager.getInstance().getAction(IdeActions.ACTION_COPY));
       }
 
       @Override

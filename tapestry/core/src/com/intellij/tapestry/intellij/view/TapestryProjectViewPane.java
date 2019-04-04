@@ -47,6 +47,7 @@ import com.intellij.ui.treeStructure.actions.CollapseAllAction;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import icons.TapestryIcons;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +62,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -362,11 +364,11 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
    */
   @Override
   public Object getData(@NotNull String dataId) {
-    if (CommonDataKeys.PROJECT.is(dataId)) {
+    if (DataKeys.PROJECT.is(dataId)) {
       return myProject;
     }
 
-    if (LangDataKeys.IDE_VIEW.is(dataId)) {
+    if (DataKeys.IDE_VIEW.is(dataId)) {
       if (getSelectedDescriptor() == null) {
         return null;
       }
@@ -380,7 +382,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       return myIdeView;
     }
 
-    if (LangDataKeys.MODULE.is(dataId)) {
+    if (DataKeys.MODULE.is(dataId)) {
       final NodeDescriptor nodeDescriptor = getSelectedDescriptor();
       if (nodeDescriptor != null) {
         if (nodeDescriptor instanceof TapestryNode) {
@@ -392,7 +394,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       }
     }
 
-    if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
+    if (DataKeys.NAVIGATABLE.is(dataId)) {
       if (getSelectedDescriptor() == null) {
         return null;
       }
@@ -403,7 +405,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       }
     }
 
-    if (PlatformDataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
+    if (DataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
       return new SafeDeleteProvider();
     }
 
@@ -486,8 +488,8 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
             }
 
             if (selectedNode instanceof PageNode || selectedNode instanceof ComponentNode || selectedNode instanceof MixinNode) {
-              toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), selectedNode.getElement(),
-                                Collections.singletonList(((PresentationLibraryElement)selectedNode.getElement()).getElementClass()));
+              toolWindow.update((Module)getData(DataKeys.MODULE.getName()), selectedNode.getElement(),
+                                Arrays.asList(((PresentationLibraryElement)selectedNode.getElement()).getElementClass()));
             }
 
             if (selectedNode instanceof ClassNode || selectedNode instanceof FileNode) {
@@ -496,9 +498,8 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                       .getParent()).getUserObject());
 
               if (parentSelectedNode.getElement() instanceof PresentationLibraryElement) {
-                toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), parentSelectedNode.getElement(),
-                                  Collections
-                                    .singletonList(((PresentationLibraryElement)parentSelectedNode.getElement()).getElementClass()));
+                toolWindow.update((Module)getData(DataKeys.MODULE.getName()), parentSelectedNode.getElement(),
+                                  Arrays.asList(((PresentationLibraryElement)parentSelectedNode.getElement()).getElementClass()));
               }
               else {
 
@@ -529,8 +530,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                 }
 
                 if (component != null) {
-                  toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), component,
-                                    Collections.singletonList(component.getElementClass()));
+                  toolWindow.update((Module)getData(DataKeys.MODULE.getName()), component, Arrays.asList(component.getElementClass()));
                 }
               }
             }

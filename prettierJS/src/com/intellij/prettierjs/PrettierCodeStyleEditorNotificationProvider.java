@@ -54,6 +54,7 @@ public final class PrettierCodeStyleEditorNotificationProvider extends EditorNot
       VirtualFile configVFile = PrettierUtil.findSingleConfigInDirectory(file.getParent());
       if (configVFile != null) {
         config = PrettierUtil.parseConfig(project, configVFile);
+        file = configVFile;
       }
       else {
         config = PrettierUtil.parseConfig(project, file);
@@ -63,13 +64,19 @@ public final class PrettierCodeStyleEditorNotificationProvider extends EditorNot
       return null;
     }
     myLinterSourceTracker.registerPsiChangedListener();
-    if (config.isInstalled(project)) {
+    if (PrettierCompatibleCodeStyleInstaller.isInstalled(project, config)) {
       return null;
     }
     final EditorNotificationPanel panel = new EditorNotificationPanel(EditorColors.GUTTER_BACKGROUND);
     panel.setText(PrettierBundle.message("editor.notification.title"));
 
-    panel.createActionLabel("Yes", PrettierImportCodeStyleAction.ACTION_ID);
+    PrettierUtil.Config finalConfig = config;
+    VirtualFile finalFile = file;
+    panel.createActionLabel(PrettierBundle.message("editor.notification.yes.text"),
+                            () -> {
+                              PrettierCompatibleCodeStyleInstaller.install(project, finalFile, finalConfig, false);
+                              EditorNotifications.getInstance(project).updateAllNotifications();
+                            });
     panel.createActionLabel(PrettierBundle.message("editor.notification.no.text"), myLinterSourceTracker.getDismissAction());
 
     return panel;

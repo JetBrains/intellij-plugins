@@ -4,7 +4,6 @@ package org.angular2.codeInsight.attributes;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlAttributeDescriptor;
-import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor.AttributePriority;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.jetbrains.annotations.NotNull;
@@ -32,8 +31,6 @@ public interface Angular2AttributesProvider {
   Collection<String> getRelatedAttributes(@NotNull XmlAttributeDescriptor descriptor);
 
   interface CompletionResultsConsumer {
-
-    Angular2DeclarationsScope getScope();
 
     void addDescriptors(@NotNull List<Angular2AttributeDescriptor> descriptors);
 

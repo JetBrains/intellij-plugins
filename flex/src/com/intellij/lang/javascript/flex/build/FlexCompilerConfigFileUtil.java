@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -18,7 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class FlexCompilerConfigFileUtil {
@@ -128,8 +126,7 @@ public class FlexCompilerConfigFileUtil {
 
       try {
         final InputStream inputStream =
-          cachedDocument == null ? configFile.getInputStream() : new ByteArrayInputStream(cachedDocument.getText().getBytes(
-            StandardCharsets.UTF_8));
+          cachedDocument == null ? configFile.getInputStream() : new ByteArrayInputStream(cachedDocument.getText().getBytes());
         final Map<String, List<String>> map = FlexUtils.findXMLElements(inputStream, xmlElements);
 
         final List<String> fileSpecList = map.get(FILE_SPEC_ELEMENT);

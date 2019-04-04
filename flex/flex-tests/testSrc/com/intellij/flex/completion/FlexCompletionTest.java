@@ -31,7 +31,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
-import com.jetbrains.performancePlugin.profilers.YourKitProfilerHandler;
+import com.jetbrains.performancePlugin.utils.ProfilingUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 
@@ -88,7 +88,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override
@@ -99,13 +99,12 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Override
-  protected LookupElement[] complete() {
+  protected void complete() {
     if (myCompletionPerformer != null) {
       myCompletionPerformer.run();
     }
-    
-    return myFixture.getLookupElements();
   }
+
 
   private Runnable createMultiCompletionPerformerWithVariantsCheck() {
     return createMultiCompletionPerformerWithVariantsCheck(true);
@@ -666,7 +665,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testComponentFromManifestCompletion() {
     final String name = getTestName(false);
 
-    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
       final String manifest = getTestDataPath() + "/" + "/" + name + "_manifest.xml";
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest));
     });
@@ -679,7 +678,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testComponentFromManifestCompletionWithNamespaceAutoInsert() {
     final String name = getTestName(false);
 
-    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
       final String manifest = getTestDataPath() + "/" + "/" + name + "_manifest.xml";
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace",
                                                                      "schema://www.MyNamespace.com/2010\t" + manifest));
@@ -716,8 +715,8 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testAssetFromAnotherSourceRoot() {
     final String testName = getTestName(false);
     final VirtualFile secondSourceRoot = VfsUtil.findFileByIoFile(new File(getTestDataPath() + testName), false);
-    PsiTestUtil.addSourceRoot(getModule(), secondSourceRoot);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> PsiTestUtil.removeContentEntry(getModule(), secondSourceRoot));
+    PsiTestUtil.addSourceRoot(myModule, secondSourceRoot);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> PsiTestUtil.removeContentEntry(myModule, secondSourceRoot));
     withNoAbsoluteReferences(() -> doTest("", "mxml"));
   }
 
@@ -741,7 +740,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testResourceBundleFromSdk() {
     final String testName = getTestName(false);
 
-    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(getModule());
+    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(myModule);
     final SdkModificator sdkModificator = flexSdk.getSdkModificator();
     final VirtualFile swcFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + testName + ".swc");
@@ -754,9 +753,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testResourceBundleFromLib() {
-    FlexTestUtils.addFlexLibrary(false, getModule(), "Lib", false, getTestDataPath(), getTestName(false) + ".swc", null,
-                                 null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "Lib"));
+    FlexTestUtils.addFlexLibrary(false, myModule, "Lib", false, getTestDataPath(), getTestName(false) + ".swc", null,
+                        null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "Lib"));
     doTest("", "as");
     doTest("", "mxml");
   }
@@ -765,15 +764,15 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testIgnoreClassesFromOnlyLibSources() {
     final String testName = getTestName(false);
 
-    FlexTestUtils.addLibrary(getModule(), "library", getTestDataPath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
-                             null);
+    FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
+                  null);
     //Disposer.register(myFixture.getTestRootDisposable(), () -> );
 
 
     assertEmpty(doTest("_1", "as"));
     assertEmpty(doTest("_2", "as"));
     assertEmpty(doTest("_3", "as"));
-    FlexTestUtils.removeLibrary(getModule(), "library");
+    FlexTestUtils.removeLibrary(myModule, "library");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
@@ -783,7 +782,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     final VirtualFile srcFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + testName + "_sdk_src/");
 
-    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(getModule());
+    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(myModule);
     final SdkModificator modificator = flexSdk.getSdkModificator();
     modificator.addRoot(srcFile, OrderRootType.SOURCES);
     modificator.commitChanges();
@@ -904,13 +903,13 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationConstantsInAs() {
-    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
       bc.getCompilerOptions()
         .setAdditionalConfigFilePath(getTestDataPath() + "/" + "/" + getTestName(false) + "_custom_config.xml");
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", ""));
     });
     // following is ignored because overridden at bc level
-    FlexBuildConfigurationManager.getInstance(getModule()).getModuleLevelCompilerOptions()
+    FlexBuildConfigurationManager.getInstance(myModule).getModuleLevelCompilerOptions()
       .setAllOptions(Collections.singletonMap("compiler.define", "UNKNOWN::defined1\tfalse"));
 
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
@@ -919,7 +918,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationConstantsInMxml() {
-    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
+    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", "CONFIG1::defined1\t\nCONFIG1::defined2\t-1"));
       bc.getCompilerOptions().setAdditionalOptions("-compiler.define=CONFIG2::defined3,true");
     });
@@ -1253,7 +1252,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexLib, JSTestOption.WithSmartCompletion})
   public void testNonApplicableInheritors() {
-    FlexTestUtils.addFlexLibrary(false, getModule(), "Flex Lib", true, getTestDataPath() + "../flexlib", "flexlib.swc", null, null);
+    FlexTestUtils.addFlexLibrary(false, myModule, "Flex Lib", true, getTestDataPath() + "../flexlib", "flexlib.swc", null, null);
 
     LookupElement[] elements = doTest("", "as");
 
@@ -1263,7 +1262,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("ImageMap", elements[2].getLookupString());
 
     FlexTestUtils.modifyConfigs(getProject(), editor -> {
-      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(getModule())[0];
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
       bc1.getDependencies().getModifiableEntries().clear();
     });
 
@@ -1333,18 +1332,18 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testVectorObject() {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, myFixture.getTestRootDisposable());
     FlexTestUtils.modifyConfigs(getProject(), editor -> {
-      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(getModule())[0];
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
       FlexTestUtils.setSdk(bc1, sdk45);
     });
     final LookupElement[] elements = doTest("", "as");
     assertStartsWith(elements, "concat", "every", "filter");
-    assertTrue(isStrictMatched(elements[0]));
+    assertTrue(getBoldStatus(elements[0]));
   }
 
   public void testCompletionPerformance() {
-    FlexTestUtils.addFlexLibrary(false, getModule(), "playerglobal", false, getTestDataPath(), "playerglobal.swc",
-                                 null, null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "playerglobal"));
+    FlexTestUtils.addFlexLibrary(false, myModule, "playerglobal", false, getTestDataPath(), "playerglobal.swc",
+                                   null, null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "playerglobal"));
 
     //final PsiElement clazz = ActionScriptClassResolver
       //  .findClassByQNameStatic("flash.display3D.textures.CubeTexture", GlobalSearchScope.moduleWithLibrariesScope(myModule));
@@ -1353,21 +1352,21 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     myFixture.configureByFile(getTestName(false) + ".as");
 
     final boolean doProfiling = false;
-    if (doProfiling) YourKitProfilerHandler.startCPUProfiling();
+    if (doProfiling) ProfilingUtil.startCPUProfiling();
     try {
       PlatformTestUtil.startPerformanceTest("ActionScript class completion", 300, () -> complete())
         .setup(() -> getPsiManager().dropPsiCaches())
         .assertTiming();
     }
     finally {
-      if (doProfiling) YourKitProfilerHandler.captureCPUSnapshot();
+      if (doProfiling) ProfilingUtil.captureCPUSnapshot();
     }
   }
 
   public void testOnlyValidPackageNamesInCompletion() {
     myFixture.configureByText(ActionScriptFileType.INSTANCE, "var a: String = new <caret>");
 
-    VirtualFile srcRoot = ModuleRootManager.getInstance(getModule()).getSourceRoots(false)[0];
+    VirtualFile srcRoot = ModuleRootManager.getInstance(myModule).getSourceRoots(false)[0];
     WriteCommandAction.runWriteCommandAction(getProject(), ()-> {
       try {
         srcRoot.createChildDirectory(null, ".idea");

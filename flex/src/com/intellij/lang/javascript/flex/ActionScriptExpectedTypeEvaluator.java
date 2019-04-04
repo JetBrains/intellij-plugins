@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
-  public ActionScriptExpectedTypeEvaluator(PsiElement parent, JSExpectedTypeKind expectedTypeKind) {
+  public ActionScriptExpectedTypeEvaluator(JSExpression parent, JSExpectedTypeKind expectedTypeKind) {
     super(parent, expectedTypeKind);
   }
 
@@ -50,41 +49,36 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
       if (methodExpression instanceof JSReferenceExpression) {
         JSExpression qualifier = ((JSReferenceExpression)methodExpression).getQualifier();
         if (qualifier != null) {
-          qualifiedExpressionType = getQualifiedExpressionType(qualifier);
+          qualifiedExpressionType = JSResolveUtil.getQualifiedExpressionJSType(qualifier, qualifier.getContainingFile());
         }
       }
 
       if (qualifiedExpressionType != null) {
         if ("push".equals(name) || "unshift".equals(name) || "splice".equals(name)) {
           if (qualifiedExpressionType instanceof JSGenericTypeImpl) {
-            setResult(ContainerUtil.getFirstItem(((JSGenericTypeImpl)qualifiedExpressionType).getArguments()));
+            myResult = ContainerUtil.getFirstItem(((JSGenericTypeImpl)qualifiedExpressionType).getArguments());
           }
         }
         else if ("concat".equals(name)) {
-          setResult(qualifiedExpressionType);
+          myResult = qualifiedExpressionType;
         }
       }
     }
     else {
-      setResult(createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myParent));
+      myResult = createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myParent);
     }
-  }
-
-  @Override
-  protected JSType getQualifiedExpressionType(JSExpression qualifier) {
-    return ActionScriptResolveUtil.getQualifiedExpressionJSType(qualifier, qualifier.getContainingFile());
   }
 
   @Override
   protected void evaluateIndexedAccessType(JSIndexedPropertyAccessExpression node) {
     if (isASDictionaryAccess(node)) {
-      setResult(createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myGrandParent));
+      myResult = createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myGrandParent);
     }
     else {
       final JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(myGrandParent, true);
-      setResult(new JSCompositeTypeImpl(typeSource,
-                                         JSNamedTypeFactory.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSContext.INSTANCE),
-                                        JSNamedTypeFactory.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSContext.INSTANCE)));
+      myResult = new JSCompositeTypeImpl(typeSource,
+                                         JSNamedType.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSContext.INSTANCE),
+                                         JSNamedType.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSContext.INSTANCE));
     }
   }
 
@@ -95,20 +89,19 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     final PsiElement resolve = qualifier instanceof JSReferenceExpression ? ((JSReferenceExpression)qualifier).resolve() : null;
     final String type = resolve instanceof JSVariable ? ((JSVariable)resolve).getTypeString() : null;
 
-    return type != null && ActionScriptResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, type, expression);
+    return type != null && JSResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, type, expression);
   }
 
   @Override
   public void visitJSArgumentList(@NotNull JSArgumentList node) {
-    if (!(myParent instanceof JSExpression)) return;
-    JSParameterItem param = JSResolveUtil.findParameterForUsedArgument((JSExpression)myParent, node);
+    JSParameterItem param = JSResolveUtil.findParameterForUsedArgument(myParent, node);
 
     if (param != null) {
       if (param.isRest()) {
         findRestParameterExpectedType(param);
       }
       else {
-        setResult(param.getSimpleType());
+        myResult = param.getSimpleType();
       }
     }
   }
@@ -116,9 +109,9 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
   @Override
   public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
     if (myGrandParent.getParent() instanceof JSNewExpression) {
-      JSType type = getQualifiedExpressionType((JSExpression)myGrandParent.getParent());
+      JSType type = JSResolveUtil.getQualifiedExpressionJSType((JSExpression)myGrandParent.getParent(), myGrandParent.getContainingFile());
       if (type instanceof JSGenericTypeImpl) {
-        setResult(ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments()));
+        myResult = ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments());
       }
     }
   }

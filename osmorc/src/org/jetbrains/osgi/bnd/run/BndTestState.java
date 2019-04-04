@@ -1,4 +1,16 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2017 JetBrains s.r.o.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
@@ -43,8 +55,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -191,7 +201,7 @@ public class BndTestState extends JavaCommandLineState {
     private void startProtocolListener() {
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
         try (Socket socket = mySocket.accept();
-             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
+             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
           reader.lines().forEach(this::processEventLine);
         }
         catch (IOException e) {
@@ -272,7 +282,7 @@ public class BndTestState extends JavaCommandLineState {
           myFailingTest = line;
         }
         else if (Proto.TRACE.equals(line)) {
-          myTrace = new ArrayList<>(20);
+          myTrace = ContainerUtil.newArrayListWithCapacity(20);
         }
         else if (line.startsWith(Proto.TEST_END)) {
           processTestEnd(line);

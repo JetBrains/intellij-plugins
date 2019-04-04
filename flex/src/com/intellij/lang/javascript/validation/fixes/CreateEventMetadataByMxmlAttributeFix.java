@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.validation.fixes;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
-import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -71,7 +70,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends FixAndIntentionAction
       template.addTextSegment("\n");
     }
     template.addTextSegment("[Event(name=\"" + myEventName + "\", type=\"");
-    template.addVariable(new ConstantNode(FlexCommonTypeNames.FLASH_EVENT_FQN), true);
+    template.addVariable(new BaseCreateFix.MyExpression(FlexCommonTypeNames.FLASH_EVENT_FQN), true);
     template.addTextSegment("\")]");
     if (!addingToMxml) {
       template.addTextSegment("\n");

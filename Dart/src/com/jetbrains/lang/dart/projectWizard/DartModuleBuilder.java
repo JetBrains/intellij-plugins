@@ -98,18 +98,15 @@ public class DartModuleBuilder extends ModuleBuilder {
                            @NotNull final VirtualFile baseDir,
                            @NotNull final DartProjectWizardData wizardData) {
     setupSdk(modifiableRootModel, wizardData);
-
     if (wizardData.myTemplate != null) {
-      ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        try {
-          final Collection<VirtualFile> filesToOpen =
-            wizardData.myTemplate.generateProject(wizardData.dartSdkPath, modifiableRootModel.getModule(), baseDir);
-          if (!filesToOpen.isEmpty()) {
-            scheduleFilesOpeningAndPubGet(modifiableRootModel.getModule(), filesToOpen);
-          }
+      try {
+        final Collection<VirtualFile> filesToOpen =
+          wizardData.myTemplate.generateProject(wizardData.dartSdkPath, modifiableRootModel.getModule(), baseDir);
+        if (!filesToOpen.isEmpty()) {
+          scheduleFilesOpeningAndPubGet(modifiableRootModel.getModule(), filesToOpen);
         }
-        catch (IOException ignore) {/*unlucky*/}
-      });
+      }
+      catch (IOException ignore) {/*unlucky*/}
     }
   }
 
