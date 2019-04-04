@@ -84,21 +84,6 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     testMetadataStubBuilding("@syncfusion-ej2-angular-dropdowns/ej2-angular-dropdowns.metadata.json");
   }
 
-  public void testNgxsLabsDispatchMetadataStubBuilding() {
-    myFixture.configureByFiles("ngxs-labs-dispatch.d.ts", "package.json");
-    testMetadataStubBuilding("ngxs-labs-dispatch.metadata.json");
-  }
-
-  public void testDirectiveAttributesMetadataStubBuilding() {
-    myFixture.configureByFiles("test-ng-attr.d.ts", "package.json");
-    testMetadataStubBuilding("test-ng-attr.metadata.json");
-  }
-
-  public void testSpreadOperatorMetadataStubBuilding() {
-    myFixture.configureByFiles("spread-operator/evo-ui-kit.d.ts", "package.json");
-    testMetadataStubBuilding("spread-operator/evo-ui-kit.metadata.json");
-  }
-
   public void testJsonFileType() {
     PsiFile file = myFixture.configureByFile("package.json");
     assert file != null;
@@ -135,15 +120,11 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMaterialMetadataResolution() {
-    //Test component matching and indirect node module indexing
     myFixture.copyDirectoryToProject("material", ".");
     myFixture.enableInspections(AngularAmbiguousComponentTagInspection.class,
                                 AngularUndefinedTagInspection.class);
     myFixture.configureFromTempProjectFile("module.ts");
     myFixture.checkHighlighting();
-    AngularTestUtil.moveToOffsetBySignature("mat-form<caret>-field", myFixture);
-    assertEquals("form-field.d.ts",
-                 myFixture.getElementAtCaret().getContainingFile().getName());
   }
 
   public void testMaterialMetadataStubGeneration() {

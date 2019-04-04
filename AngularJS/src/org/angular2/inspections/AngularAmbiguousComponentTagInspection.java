@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
+import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 
 public class AngularAmbiguousComponentTagInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
@@ -34,7 +34,7 @@ public class AngularAmbiguousComponentTagInspection extends AngularHtmlLikeTempl
       new Angular2ApplicableDirectivesProvider(tag).getMatched(), d -> d.isComponent() && scope.contains(d));
     final TextRange startTag = ObjectUtils.notNull(XmlTagUtil.getStartTagRange(tag), () -> tag.getTextRange())
       .shiftLeft(tag.getTextOffset());
-    if (isTemplateTag(tag)) {
+    if (isTemplateTag(tag.getName())) {
       if (!components.isEmpty()) {
         holder.registerProblem(tag, startTag, Angular2Bundle.message("angular.inspection.template.embedded.components",
                                                                      Angular2EntityUtils.renderEntityList(components)));
@@ -53,7 +53,7 @@ public class AngularAmbiguousComponentTagInspection extends AngularHtmlLikeTempl
                                        @NotNull XmlAttribute attribute,
                                        @NotNull Angular2AttributeDescriptor descriptor) {
     if (descriptor.getInfo().type == Angular2AttributeType.TEMPLATE_BINDINGS
-        && !isTemplateTag(attribute.getParent())) {
+        && !isTemplateTag(attribute.getParent().getName())) {
       Angular2DeclarationsScope scope = new Angular2DeclarationsScope(attribute);
       List<Angular2Directive> components = ContainerUtil.filter(
         new Angular2ApplicableDirectivesProvider(Angular2TemplateBindings.get(attribute)).getMatched(),

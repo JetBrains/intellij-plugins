@@ -10,39 +10,39 @@ import static com.jetbrains.lang.dart.lexer.DartLexer.*;
 %%
 %{
     private static final class State {
-            final int lBraceCount;
-            final int state;
+        final int lBraceCount;
+        final int state;
 
-            public State(int state, int lBraceCount) {
-                this.state = state;
-                this.lBraceCount = lBraceCount;
-            }
-
-            @Override
-            public String toString() {
-                return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
-            }
+        public State(int state, int lBraceCount) {
+            this.state = state;
+            this.lBraceCount = lBraceCount;
         }
 
-        protected final Stack<State> myStateStack = new Stack<>();
-        protected int myLeftBraceCount;
-
-        private void pushState(int state) {
-            myStateStack.push(new State(yystate(), myLeftBraceCount));
-            myLeftBraceCount = 0;
-            yybegin(state);
+        @Override
+        public String toString() {
+            return "yystate = " + state + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount);
         }
+    }
 
-        private void popState() {
-            State state = myStateStack.pop();
-            myLeftBraceCount = state.lBraceCount;
-            yybegin(state.state);
-        }
+    protected final Stack<State> myStateStack = new Stack<State>();
+    protected int myLeftBraceCount;
 
-        public _DartLexer() {
-          this((java.io.Reader)null);
-        }
-    %}
+    private void pushState(int state) {
+        myStateStack.push(new State(yystate(), myLeftBraceCount));
+        myLeftBraceCount = 0;
+        yybegin(state);
+    }
+
+    private void popState() {
+        State state = myStateStack.pop();
+        myLeftBraceCount = state.lBraceCount;
+        yybegin(state.state);
+    }
+
+    public _DartLexer() {
+      this((java.io.Reader)null);
+    }
+%}
 
 %class _DartLexer
 %implements FlexLexer

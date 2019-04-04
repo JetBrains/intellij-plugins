@@ -547,7 +547,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     if (appDir.isDirectory()) {
       final String relPath = "/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs";
       final File[] xCodeDirs = appDir.listFiles(file -> {
-        final String name = StringUtil.toLowerCase(file.getName());
+        final String name = file.getName().toLowerCase();
         return file.isDirectory() && name.startsWith("xcode") && name.endsWith(".app")
                && new File(file.getPath() + relPath).isDirectory();
       });
@@ -555,7 +555,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       if (xCodeDirs.length > 0) {
         final File sdksDir = new File(xCodeDirs[0] + relPath);
         final File[] simulatorSdkDirs = sdksDir.listFiles(file -> {
-          final String filename = StringUtil.toLowerCase(file.getName());
+          final String filename = file.getName().toLowerCase();
           return file.isDirectory() && filename.startsWith("iphonesimulator") && filename.endsWith(".sdk");
         });
 
@@ -657,7 +657,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
   public static void updateOutputFileName(final JTextField textField, final boolean isLib) {
     final String outputFileName = textField.getText();
-    final String lowercase = StringUtil.toLowerCase(outputFileName);
+    final String lowercase = outputFileName.toLowerCase();
     final String withoutExtension = lowercase.endsWith(".swf") || lowercase.endsWith(".swc")
                                     ? outputFileName.substring(0, outputFileName.length() - ".sw_".length())
                                     : outputFileName;

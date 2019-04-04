@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli.actions;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -42,7 +42,6 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
-import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.speedSearch.ListWithFilter;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.ui.EmptyIcon;
@@ -175,7 +174,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
       .setTitle(Angular2Bundle.message("angular.action.ng-add.title"))
       .setCancelOnClickOutside(true)
       .setDimensionServiceKey(project, "org.angular.cli.generate", true)
-      .setMinSize(new Dimension(JBUIScale.scale(350), JBUIScale.scale(300)))
+      .setMinSize(new Dimension(JBUI.scale(350), JBUI.scale(300)))
       .setCancelButton(new IconButton(Angular2Bundle.message("angular.action.ng-add.button-close"),
                                       AllIcons.Actions.Close, AllIcons.Actions.CloseHovered));
 
@@ -232,7 +231,8 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     }
     try {
       List<CompletionModuleInfo> modules = new ArrayList<>();
-      NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null);
+      NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli,
+                                               false, interpreter);
       if (modules.isEmpty() || modules.get(0).getVirtualFile() == null) {
         throw new ExecutionException("Angular CLI package is not installed.");
       }

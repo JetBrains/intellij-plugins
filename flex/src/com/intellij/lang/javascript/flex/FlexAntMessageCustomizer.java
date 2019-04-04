@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.lang.ant.config.execution.AntBuildMessageView;
 import com.intellij.lang.ant.config.execution.AntMessage;
 import com.intellij.lang.ant.config.execution.AntMessageCustomizer;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +34,7 @@ public class FlexAntMessageCustomizer extends AntMessageCustomizer {
       final int braceIndex = pathAndInfoAndPosition.indexOf('(');
       if (braceIndex > 0) {
         final String potentialPath = pathAndInfoAndPosition.substring(0, braceIndex);
-        final String lowercasedPath = StringUtil.toLowerCase(potentialPath);
+        final String lowercasedPath = potentialPath.toLowerCase();
         if (lowercasedPath.endsWith(".as") || lowercasedPath.endsWith(".mxml") ||
             lowercasedPath.endsWith(".fxg") || lowercasedPath.endsWith(".css")) {
           final String infoAndPosition = pathAndInfoAndPosition.substring(lowercasedPath.length());

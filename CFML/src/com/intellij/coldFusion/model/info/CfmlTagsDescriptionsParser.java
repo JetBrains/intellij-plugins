@@ -1,8 +1,8 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.info;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -147,7 +147,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
       if (localName.equals("scope")) {
         int aType = CfmlTypesInfo.getTypeByString(attr.getValue("type"));
         String aName = attr.getValue("value");
-        myPredefinedVariables.put(StringUtil.toLowerCase(aName), aType);
+        myPredefinedVariables.put(aName.toLowerCase(), aType);
       }
     }
     else if (myState == SCOPE_STATE) {
@@ -169,7 +169,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     else if (localName.equals("function") && myCurrentFunction != null) {
       String functioName = myCurrentFunction.getName();
       myFunctionUpperCased.add(functioName);
-      myFunctions.put(StringUtil.toLowerCase(functioName), myCurrentFunction);
+      myFunctions.put(functioName.toLowerCase(), myCurrentFunction);
       myCurrentFunction = null;
     }
     else if (localName.equals("parameter") && myCurrentTag != null && myCurrentAttribute != null) {
@@ -179,7 +179,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     else if (localName.equals("scopevar")) {
       if (!StringUtil.isEmpty(myCurrentScope)) {
         if (myCurrentScope.charAt(myCurrentScope.length() - 1) != '.') {
-          myPredefinedVariables.put(StringUtil.toLowerCase(myCurrentScope), CfmlTypesInfo.ANY_TYPE);
+          myPredefinedVariables.put(myCurrentScope.toLowerCase(), CfmlTypesInfo.ANY_TYPE);
         }
         else {
           myCurrentScope = myCurrentScope.substring(0, myCurrentScope.length() - 1);
@@ -200,11 +200,11 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
   }
 
   public String[] getFunctionsList() {
-    return ArrayUtilRt.toStringArray(myFunctionUpperCased);
+    return ArrayUtil.toStringArray(myFunctionUpperCased);
   }
 
   public String[] getFunctionsListLowerCased() {
-    return ArrayUtilRt.toStringArray(myFunctions.keySet());
+    return ArrayUtil.toStringArray(myFunctions.keySet());
   }
 
   public Map<String, Integer> getPredefinedVariables() {

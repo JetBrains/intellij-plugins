@@ -8,7 +8,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PsiTestUtil;
 import org.angular2.Angular2MultiFileFixtureTestCase;
-import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +81,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   }
 
   public void testImportDirectiveCompletion() {
-    doTagCompletionTest("test.html", "Module2 - \"./module2\"");
+    doTagCompletionTest("test.html");
   }
 
   public void testUndeclaredDirective() {
@@ -91,18 +90,18 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   }
 
   public void testUndeclaredDirectiveCompletion() {
-    doTagCompletionTest("test.html", "MyModule - (module.ts)");
+    doTagCompletionTest("test.html");
   }
 
   public void testUndeclaredDirectiveDifferentModule() {
     doMultiFileTest("test.html",
                     "Declare MyDirective in Angular module",
-                    "Module2 - (module2.ts)");
+                    "Module2 - ( module2.ts )");
   }
 
   public void testUndeclaredDirectiveDifferentModuleCompletion() {
     doTagCompletionTest("test.html",
-                        "Module2 - (module2.ts)");
+                        "Module2 - ( module2.ts )");
   }
 
   public void testNotExportedDirectiveNoModuleImport() {
@@ -111,7 +110,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   }
 
   public void testNotExportedDirectiveNoModuleImportCompletion() {
-    doTagCompletionTest("test.html", null);
+    doTagCompletionTest("test.html");
   }
 
   public void testNotExportedDirectiveSingleModuleImport() {
@@ -120,7 +119,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   }
 
   public void testNotExportedDirectiveSingleModuleImportCompletion() {
-    doTagCompletionTest("test.html", "Module2 - \"./module2\"");
+    doTagCompletionTest("test.html");
   }
 
   public void testNotExportedDirectiveMultiModuleImport() {
@@ -140,7 +139,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
   }
 
   public void testInlineTemplateCompletion() {
-    doTagCompletionTest("component.ts", "MyModule - (module.ts)");
+    doTagCompletionTest("component.ts");
   }
 
   public void testFormsModule1() {
@@ -196,7 +195,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "[ngModel]=\"foo\"",
                      "[ngMod\nfoo",
-                     "FormsModule - \"@angular/forms\"");
+                     null);
   }
 
   public void testFormsModuleCompletion4() {
@@ -204,7 +203,7 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
                      "test.html",
                      "[(ngModel)]=\"foo\"",
                      "[(ngMod\nfoo",
-                     "FormsModule - \"@angular/forms\"");
+                     null);
   }
 
   public void testReactiveFormsModule1() {
@@ -271,6 +270,10 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     }, testName);
   }
 
+  private void doTagCompletionTest(@NotNull String mainFile) {
+    doTagCompletionTest(mainFile, null);
+  }
+
   private void doTagCompletionTest(@NotNull String mainFile,
                                    @Nullable String importToSelect) {
     doCompletionTest(StringUtil.trimEnd(getTestName(true), "Completion"),
@@ -285,7 +288,6 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
     doTest((rootDir, rootAfter) -> {
       initNodeModules();
       myFixture.configureFromTempProjectFile(mainFile);
-      myFixture.getEditor().putUserData(Angular2FixesFactory.DECLARATION_TO_CHOOSE, "MyDirective");
       if (importToSelect != null) {
         myFixture.getEditor().putUserData(NAME_TO_IMPORT, importToSelect);
       }
@@ -309,9 +311,9 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
 
   private void initNodeModules() {
     VirtualFile nodeModules = getNodeModules();
-    PsiTestUtil.addSourceContentToRoots(getModule(), nodeModules);
+    PsiTestUtil.addSourceContentToRoots(myModule, nodeModules);
     Disposer.register(myFixture.getTestRootDisposable(),
-                      () -> PsiTestUtil.removeContentEntry(getModule(), nodeModules));
+                      () -> PsiTestUtil.removeContentEntry(myModule, nodeModules));
   }
 
   @NotNull

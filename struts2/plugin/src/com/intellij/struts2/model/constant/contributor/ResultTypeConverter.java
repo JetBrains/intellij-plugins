@@ -22,7 +22,7 @@ import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
@@ -75,7 +75,7 @@ class ResultTypeConverter extends DelimitedListConverter<ResultType> {
                                           final GenericDomValue<? extends List<ResultType>> listGenericDomValue) {
     final StrutsModel strutsModel = ConverterUtil.getStrutsModelOrCombined(convertContext);
     if (strutsModel == null) {
-      return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     return ElementPresentationManager.getInstance()

@@ -148,7 +148,7 @@ class Angular2HtmlFileHighlighter extends HtmlFileHighlighter {
 
   @NotNull
   private static TextAttributesKey getTsMappedKey(@NotNull TextAttributesKey key, @NotNull IElementType tokenType) {
-    return !key.getExternalName().startsWith("JS.") //NON-NLS
+    return !key.getExternalName().startsWith("JS.")
            ? key
            : ourTsKeyMap.computeIfAbsent(pair(key, tokenType), p -> {
              TextAttributesKey[] jsHighlights = ourJsHighlighter.getTokenHighlights(p.second);

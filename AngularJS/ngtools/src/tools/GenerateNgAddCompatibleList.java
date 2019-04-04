@@ -41,10 +41,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -92,9 +90,7 @@ public class GenerateNgAddCompatibleList {
     System.out.println("Current directory: " + new File(".").getCanonicalPath());
     System.out.println("Reading existing list of packages");
 
-    JsonObject root = (JsonObject)new JsonParser().parse(
-      new InputStreamReader(new FileInputStream("contrib/AngularJS/resources/org/angularjs/cli/ng-packages.json"),
-                            StandardCharsets.UTF_8));
+    JsonObject root = (JsonObject)new JsonParser().parse(new FileReader("contrib/AngularJS/resources/org/angular2/cli/ng-packages.json"));
     if (root.get("ng-add") != null) {
       ((JsonObject)root.get("ng-add")).entrySet()
         .forEach(e -> addPkg.consume(new NodePackageBasicInfo(e.getKey(), e.getValue().getAsString())));
@@ -180,7 +176,7 @@ public class GenerateNgAddCompatibleList {
     }).filter(info -> info != null).collect(
       Collectors.toMap(NodePackageBasicInfo::getName, info -> StringUtil.notNullize(info.getDescription())));
 
-    ngAddPkgs = new TreeMap<>(ngAddPkgs);
+    ngAddPkgs = ContainerUtil.newTreeMap(ngAddPkgs);
 
     System.out.println("\nFound " + ngAddPkgs.size() + " packages which support ng-add:");
     System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(ngAddPkgs));

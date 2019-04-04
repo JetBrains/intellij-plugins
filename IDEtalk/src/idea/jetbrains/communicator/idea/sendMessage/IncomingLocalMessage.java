@@ -7,7 +7,7 @@ import com.intellij.execution.ui.ConsoleView;
 import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.transport.MessageEvent;
 import jetbrains.communicator.idea.BaseIncomingLocalMessage;
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 
 import javax.swing.*;
 
@@ -27,7 +27,7 @@ public class IncomingLocalMessage extends BaseIncomingLocalMessage {
 
   @Override
   public String getTitle() {
-    return CommunicatorStrings.getMsg("message");
+    return StringUtil.getMsg("message");
   }
 
   @Override

@@ -12,8 +12,8 @@ import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.actions.BaseRefactoringAction
 import icons.VuejsIcons
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.VueFileType
+import org.jetbrains.vuejs.VueLanguage
 
 class VueExtractComponentAction : BaseRefactoringAction() {
   init {

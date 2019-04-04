@@ -16,8 +16,7 @@ public enum Angular2AttributeType {
   BANANA_BOX_BINDING(Angular2HtmlElementTypes.BANANA_BOX_BINDING, "[(", ")]", "bindon-"),
   PROPERTY_BINDING(Angular2HtmlElementTypes.PROPERTY_BINDING, "[", "]", "bind-"),
   EVENT(Angular2HtmlElementTypes.EVENT, "(", ")", "on-"),
-  TEMPLATE_BINDINGS(Angular2HtmlElementTypes.TEMPLATE_BINDINGS, "*", "", null),
-  NG_CONTENT_SELECTOR(Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR, "", "", null);
+  TEMPLATE_BINDINGS(Angular2HtmlElementTypes.TEMPLATE_BINDINGS, "*", "", null);
 
   private final IElementType myElementType;
   private final String myPrefix;
@@ -59,4 +58,5 @@ public enum Angular2AttributeType {
   public String getCanonicalPrefix() {
     return myCanonicalPrefix;
   }
+
 }

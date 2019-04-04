@@ -7,7 +7,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.*;
 import com.intellij.tapestry.core.TapestryConstants;
@@ -335,7 +334,7 @@ public class TapestryUtils {
       }
       return null;
     }
-    final String tagLocalName = StringUtil.toLowerCase(tag.getLocalName()).replace('.', '/');
+    final String tagLocalName = tag.getLocalName().toLowerCase().replace('.', '/');
     // element names are delimited by slashes but tag names may not contain slashes 
     return tapestryProject.findComponent(tagLocalName);
   }

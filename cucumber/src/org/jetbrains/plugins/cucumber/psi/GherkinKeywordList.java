@@ -1,66 +1,62 @@
 package org.jetbrains.plugins.cucumber.psi;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ArrayUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * @author yole, Roman.Chernyatchik
- */
+* @author yole, Roman.Chernyatchik
+*/
 public class GherkinKeywordList {
-  // i18n.json file contains list of keywords and some meta-information about the language. At the moment it's three attributes below. 
-  private static final Collection<String> GHERKIN_LANGUAGE_META_ATTRIBUTES = Arrays.asList("name", "native", "encoding");
-
   // maps custom language keyword to base (English) keyword
   private final Map<String, String> myKeyword2BaseNameTable = new THashMap<>();
-  private final Set<String> mySpaceAfterKeywords = new THashSet<>();
+  private final Set<String> myKeywordsWithNoSpaceAfter = new THashSet<>();
   private final GherkinKeywordTable myKeywordsTable = new GherkinKeywordTable();
 
   public GherkinKeywordList() {
   }
 
-  public GherkinKeywordList(@NotNull Map<String, Object> map) {
-    for (Map.Entry<String, Object> e : map.entrySet()) {
-      String key = e.getKey();
-      if (!GHERKIN_LANGUAGE_META_ATTRIBUTES.contains(key)) {
-        @SuppressWarnings("unchecked")
-        List<String> values = (List<String>)e.getValue();
-        String[] translatedKeywords = ArrayUtil.toStringArray(values);
+  public GherkinKeywordList(HashMap<Object, Object> hashMap) {
+    Boolean forceSpaceAfterKeyword = null;
 
-        String keyword = capitalizeAndFixSpace(key);
-        IElementType type = getTokenTypeByBaseKeyword(keyword);
+    for (Map.Entry e : hashMap.entrySet()) {
+      String key = e.getKey().toString();
+      String value = e.getValue().toString();
 
-        for (String translatedKeyword : translatedKeywords) {
-          if (translatedKeyword.endsWith(" ")) {
-            translatedKeyword = translatedKeyword.substring(0, translatedKeyword.length() - 1);
-            mySpaceAfterKeywords.add(translatedKeyword);
+      if (key.equals("space_after_keyword")) {
+        forceSpaceAfterKeyword = Boolean.valueOf(value);
+      }
+      else if (!key.equals("name") && !key.equals("native") && !key.equals("encoding")) {
+        final String[] keywords = value.split("\\|");
+        final String baseKeyword = StringUtil.toTitleCase(key.replace("_", " "));
+        final IElementType type = getTokenTypeByBaseKeyword(baseKeyword);
+
+        for (String keyword : keywords) {
+          if (keyword.endsWith("<")) {
+            keyword = keyword.substring(0, keyword.length()-1);
+            myKeywordsWithNoSpaceAfter.add(keyword);
           }
-          myKeyword2BaseNameTable.put(translatedKeyword, keyword);
-          myKeywordsTable.put(type, translatedKeyword);
+          myKeyword2BaseNameTable.put(keyword, baseKeyword);
+          myKeywordsTable.put(type, keyword);
+        }
+      }
+      if (forceSpaceAfterKeyword != null) {
+        if (forceSpaceAfterKeyword.booleanValue()) {
+          myKeywordsWithNoSpaceAfter.clear();
+        }
+        else {
+          myKeywordsWithNoSpaceAfter.addAll(myKeyword2BaseNameTable.keySet());
         }
       }
     }
   }
 
-  @NotNull
-  private static String capitalizeAndFixSpace(@NotNull String s) {
-    StringBuilder result = new StringBuilder();
-    for (int i = 0; i < s.length(); i++) {
-      char c = s.charAt(i);
-      if (i == 0) {
-        c = Character.toUpperCase(c);
-      }
-      if (Character.isUpperCase(c) && i > 0) {
-        result.append(' ');
-      }
-      result.append(c);
-    }
-    return result.toString();
-  }
 
   public Collection<String> getAllKeywords() {
     return myKeyword2BaseNameTable.keySet();
@@ -71,7 +67,7 @@ public class GherkinKeywordList {
   }
 
   public boolean isSpaceAfterKeyword(String keyword) {
-    return mySpaceAfterKeywords.contains(keyword);
+    return !myKeywordsWithNoSpaceAfter.contains(keyword);
   }
 
   public IElementType getTokenType(String keyword) {

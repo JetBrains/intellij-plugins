@@ -26,26 +26,26 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
 
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "as_refactoring/inlineFunction/");
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
-  private void defaultTest() {
+  private void defaultTest() throws Exception {
     doTest(getTestName(false), "js2");
   }
 
-  public void testDefaultParams() {
+  public void testDefaultParams() throws Exception {
     defaultTest();
   }
 
-  public void testJustStatements2() {
+  public void testJustStatements2() throws Exception {
     defaultTest();
   }
 
-  public void testJustStatements2_2() {
+  public void testJustStatements2_2() throws Exception {
     defaultTest();
   }
 
-  public void testJustStatements2_3() {
+  public void testJustStatements2_3() throws Exception {
     defaultTest();
   }
 
@@ -53,42 +53,42 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
     doTestFailure(getTestName(false), "js2", JSBundle.message("javascript.refactoring.cannot.inline.function.with.multiple.returns"));
   }
 
-  public void testJustStatements2_5() {
+  public void testJustStatements2_5() throws Exception {
     defaultTest();
   }
 
-  public void testJustStatements2_6() {
+  public void testJustStatements2_6() throws Exception {
     defaultTest();
   }
 
-  public void testJustOneCall() {
+  public void testJustOneCall() throws Exception {
     doTest(new String[]{getTestName(false) + ".js2"}, true);
   }
 
-  public void testJustStatementsInMxml() {
+  public void testJustStatementsInMxml() throws Exception {
     doTest(getTestName(false), "mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testInsideAttribute() {
+  public void testInsideAttribute() throws Exception {
     doTest(getTestName(false), "mxml");
     doTest(getTestName(false) + "_2", "mxml");
     doTest(getTestName(false) + "_3", "mxml");
   }
 
-  public void testReplacingThis() {
+  public void testReplacingThis() throws Exception {
     defaultTest();
   }
 
-  public void testNoReplacingThis() {
+  public void testNoReplacingThis() throws Exception {
     defaultTest();
   }
 
-  public void testQualifyStatics() {
+  public void testQualifyStatics() throws Exception {
     defaultTest();
   }
 
-  public void testStaticCall() {
+  public void testStaticCall() throws Exception {
     defaultTest();
   }
 
@@ -128,13 +128,13 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testMethodFromExternalLibrary() {
-    FlexTestUtils.addLibrary(getModule(), "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "library"));
+    FlexTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "library"));
 
     shouldFail("Can not inline function defined in external library");
   }
 
-  public void testNonCallUsage() {
+  public void testNonCallUsage() throws Exception {
     defaultTest();
   }
 

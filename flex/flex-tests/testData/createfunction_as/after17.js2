@@ -1,4 +1,4 @@
-// "Create method 'foo3'" "true"
+// "Create Method 'foo3'" "true"
 class Sub7_ {
     var x:int;
 private function foo() : void

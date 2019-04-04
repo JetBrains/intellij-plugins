@@ -1,4 +1,4 @@
-// "Create method '_bbb'" "true"
+// "Create Method '_bbb'" "true"
 class D {
     internal function _bbb(s:String, s2:String):void {
         <caret>

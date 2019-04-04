@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import static com.intellij.psi.PsiModifier.*;
@@ -63,7 +64,7 @@ public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
     }
     myElement = element;
     myIsForCompletion = referenceName == null;
-    myReferenceName = referenceName != null ? StringUtil.toLowerCase(referenceName) : null;
+    myReferenceName = referenceName != null ? referenceName.toLowerCase() : null;
     myIsMethodCall = parent instanceof CfmlFunctionCallExpression || parent instanceof CfmlTagInvokeImpl;
     if (parent instanceof CfmlFunctionCallExpression && !myIsForCompletion) {
       final PsiType[] parameterTypes = ((CfmlFunctionCallExpression)parent).getArgumentTypes();
@@ -160,7 +161,7 @@ public abstract class CfmlVariantsProcessor<T> implements PsiScopeProcessor {
 
     // continue if names differ
     if (!myIsForCompletion) {
-      final String referenceNameLoweCase = StringUtil.toLowerCase(myReferenceName);
+      final String referenceNameLoweCase = myReferenceName.toLowerCase(Locale.ENGLISH);
       if (myIsMethodCall &&
           (referenceNameLoweCase.startsWith("get") || referenceNameLoweCase.startsWith("set")) &&
           referenceNameLoweCase.substring(3).equalsIgnoreCase(elementName)

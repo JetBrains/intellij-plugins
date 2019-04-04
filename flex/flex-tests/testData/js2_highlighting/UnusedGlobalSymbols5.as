@@ -8,7 +8,7 @@ public class <warning descr="Unused class UnusedGlobalSymbols5">UnusedGlobalSymb
     }
 
     public function <warning descr="Unused method foo">foo</warning>():UnusedGlobalSymbols5 {
-        if (<warning descr="If statement can be simplified">true</warning>) foo();
+        if (true) foo();
         return new UnusedGlobalSymbols5("");
     }
 

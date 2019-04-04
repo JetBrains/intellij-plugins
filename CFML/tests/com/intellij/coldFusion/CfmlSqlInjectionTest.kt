@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion
 
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
@@ -22,6 +21,7 @@ import com.intellij.sql.dialects.SqlDialectMappings
 import com.intellij.sql.psi.SqlCommonKeywords
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.FileContentUtil
+import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.isNullOrEmpty
 import junit.framework.TestCase
 import org.junit.Test
@@ -124,7 +124,7 @@ class CfmlSqlInjectionTest : CfmlCodeInsightFixtureTestCase() {
 
 fun CodeInsightTestFixture.createDataSource(vararg ddlFiles: String): DbDataSource {
   val dialect = DbSqlUtil.getSqlDialect(Dbms.SQLITE)
-  val urls = mutableListOf<String>()
+  val urls = ContainerUtil.newArrayList<String>()
   val project = project
   for (file in ddlFiles) {
     val virtualFile = copyFileToProject(file)

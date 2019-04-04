@@ -31,7 +31,7 @@ import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.lang.descriptor.TapestryXmlExtension;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -225,7 +225,7 @@ public class TapestryReferenceContributor extends PsiReferenceContributor {
       @NotNull
       public Object[] getVariants() {
         List<String> fieldsIds = TapestryUtils.getEmbeddedComponentIds(tag);
-        return ArrayUtilRt.toStringArray(fieldsIds);
+        return ArrayUtil.toStringArray(fieldsIds);
       }
     }};
   }

@@ -46,6 +46,7 @@ import org.jetbrains.plugins.ruby.tasks.rake.RakeUtilBase;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Locale;
 
 /**
  * @author Dennis.Ushakov
@@ -197,7 +198,7 @@ public class RubyMotionUtilImpl extends RubyMotionUtil {
     };
     final MergingCommandLineArgumentsProvider resultProvider =
       new MergingCommandLineArgumentsProvider(new String[] {getRubyMotionPath() + "/bin/motion", "create",
-        "--template=" + StringUtil.toLowerCase(projectType.name()), module.getName()},
+        "--template=" + projectType.name().toLowerCase(Locale.US), module.getName()},
                                               null, null, null, sdk);
     ConsoleRunner.run(project, module, null, processListener, filters, null, ConsoleRunner.ProcessLaunchMode.BACKGROUND_TASK_WITH_PROGRESS,
                       "Generating RubyMotion Application '" + module.getName() + "'...", tempDirectory.getAbsolutePath(), resultProvider,

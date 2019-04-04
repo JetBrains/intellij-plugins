@@ -25,7 +25,7 @@ import jetbrains.communicator.core.vfs.CodePointer;
 import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 
 import javax.swing.*;
 
@@ -41,7 +41,7 @@ public class MockUser extends BaseUserImpl {
 
 
   public MockUser() {
-    this(CommunicatorStrings.getMyUsername(), "", true);
+    this(StringUtil.getMyUsername(), "", true);
     mySelf = true;
   }
 

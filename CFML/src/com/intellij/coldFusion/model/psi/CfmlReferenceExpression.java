@@ -128,8 +128,8 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       String name = ((CfmlProperty)element).getName();
       String referenceText = getText();
 
-      if ((StringUtil.toLowerCase(referenceText).startsWith("get") ||
-           StringUtil.toLowerCase(referenceText).startsWith("set")) &&
+      if ((referenceText.toLowerCase().startsWith("get") ||
+           referenceText.toLowerCase().startsWith("set")) &&
           referenceText.substring(3).equalsIgnoreCase(name)) {
         return true;
       }

@@ -21,7 +21,7 @@ import com.intellij.struts2.dom.ConverterUtil;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackageExtendsResolveConverter;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomUtil;
@@ -57,7 +57,7 @@ public class StrutsPackageExtendsResolveConverterImpl extends StrutsPackageExten
   protected Object[] getReferenceVariants(ConvertContext context, GenericDomValue<? extends List<StrutsPackage>> genericDomValue) {
     final StrutsModel strutsModel = ConverterUtil.getStrutsModel(context);
     if (strutsModel == null) {
-      return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     final Collection<StrutsPackage> variants = removeCurrentElementFromVariants(context, strutsModel.getStrutsPackages());
