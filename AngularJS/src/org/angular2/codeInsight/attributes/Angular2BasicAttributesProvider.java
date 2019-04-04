@@ -42,7 +42,7 @@ public class Angular2BasicAttributesProvider implements Angular2AttributesProvid
   public Angular2AttributeDescriptor getDescriptor(@NotNull XmlTag tag,
                                                    @NotNull String attributeName,
                                                    @NotNull Angular2AttributeNameParser.AttributeInfo info) {
-    return Angular2AttributeDescriptor.create(attributeName);
+    return Angular2AttributeDescriptor.create(tag, attributeName);
   }
 
   @NotNull

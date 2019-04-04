@@ -35,8 +35,7 @@ public class AngularInsecureBindingToEventInspection extends AngularHtmlLikeTemp
             break;
           case PROPERTY:
             Angular2DeclarationsScope scope = new Angular2DeclarationsScope(attribute);
-            if (descriptor.getSourceDirectives() == null
-                || ContainerUtil.find(descriptor.getSourceDirectives(), scope::contains) == null) {
+            if (ContainerUtil.find(descriptor.getSourceDirectives(), scope::contains) == null) {
               holder.registerProblem(attribute.getNameElement(),
                                      Angular2Bundle.message("angular.inspection.template.binding-to-event-property", propertyName),
                                      new ConvertToEventQuickFix(propertyName.substring(2)),

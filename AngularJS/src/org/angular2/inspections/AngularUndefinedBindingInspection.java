@@ -55,7 +55,7 @@ public class AngularUndefinedBindingInspection extends AngularHtmlLikeTemplateLo
     List<Angular2Directive> sourceDirectives = descriptor.getSourceDirectives();
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(attribute);
     DeclarationProximity proximity;
-    if (sourceDirectives == null) {
+    if (descriptor.isImplied()) {
       if (templateTag) {
         proximity = NOT_REACHABLE;
       }
