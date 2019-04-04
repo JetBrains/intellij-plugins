@@ -7,12 +7,12 @@ import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
+import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiFile
-import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.VueFileType
 
 class DataFunctionInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -49,8 +49,8 @@ class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(ps
     val expression = startElement as JSObjectLiteralExpression
     val property = expression.parent as JSProperty
 
-    val newProperty = JSPsiElementFactory.createJSExpression(
-      "{ data() {return ${expression.text}}}", property, JSObjectLiteralExpression::class.java).firstProperty!!
+    val newProperty = (JSChangeUtil.createExpressionWithContext(
+      "{ data() {return ${expression.text}}}", property)!!.psi as JSObjectLiteralExpression).firstProperty!!
     property.replace(newProperty)
   }
 

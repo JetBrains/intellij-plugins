@@ -9,7 +9,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -27,7 +27,7 @@ import jetbrains.communicator.ide.NullProgressIndicator;
 import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.p2p.commands.AddOnlineUserP2PCommand;
 import jetbrains.communicator.p2p.commands.SendXmlMessageP2PCommand;
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.UIUtil;
 import jetbrains.communicator.util.WaitFor;
 import org.apache.log4j.Logger;
@@ -271,7 +271,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   @Override
   public boolean isSelf(User user) {
     InetAddress address = getAddress(user);
-    return CommunicatorStrings.getMyUsername().equals(user.getName()) && NetworkUtil.isOwnAddress(address);
+    return StringUtil.getMyUsername().equals(user.getName()) && NetworkUtil.isOwnAddress(address);
   }
 
   @Override
@@ -285,7 +285,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @Override
   public String[] getProjects(User user) {
-    return ArrayUtilRt.toStringArray(getNotNullOnlineInfo(user).getProjects());
+    return ArrayUtil.toStringArray(getNotNullOnlineInfo(user).getProjects());
   }
 
   @NotNull

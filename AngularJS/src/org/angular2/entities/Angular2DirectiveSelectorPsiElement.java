@@ -3,8 +3,6 @@ package org.angular2.entities;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
-import com.intellij.openapi.util.NotNullFactory;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.pom.PomTarget;
 import com.intellij.psi.PsiElement;
@@ -17,16 +15,16 @@ import javax.swing.*;
 
 public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implements PomTarget, NavigationItem {
 
-  private final AtomicNotNullLazyValue<PsiElement> myParent;
+  private final PsiElement myParent;
   private final TextRange myRange;
   private final String myName;
   private final boolean myIsElement;
 
-  public Angular2DirectiveSelectorPsiElement(@NotNull NotNullFactory<PsiElement> parent,
+  public Angular2DirectiveSelectorPsiElement(@NotNull PsiElement parent,
                                              @NotNull TextRange range,
                                              @NotNull String name,
                                              boolean isElement) {
-    myParent = AtomicNotNullLazyValue.createValue(parent);
+    myParent = parent;
     myRange = range;
     myName = name;
     myIsElement = isElement;
@@ -40,18 +38,18 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
 
   @Override
   public PsiElement getParent() {
-    return myParent.getValue();
+    return myParent;
   }
 
   @Override
   public int getTextOffset() {
-    return myParent.getValue().getTextOffset() + myRange.getStartOffset();
+    return myParent.getTextOffset() + myRange.getStartOffset();
   }
 
   @Nullable
   @Override
   public TextRange getTextRange() {
-    int startOffset = myParent.getValue().getTextOffset() + myRange.getStartOffset();
+    int startOffset = myParent.getTextOffset() + myRange.getStartOffset();
     return new TextRange(startOffset, startOffset + myName.length());
   }
 
@@ -90,10 +88,9 @@ public class Angular2DirectiveSelectorPsiElement extends FakePsiElement implemen
   @Nullable
   @Override
   public String getLocationString() {
-    PsiElement parent = myParent.getValue();
-    TypeScriptClass clazz = PsiTreeUtil.getContextOfType(parent, TypeScriptClass.class, false);
-    return clazz != null ? "(" + clazz.getName() + ", " + parent.getContainingFile().getName() + ")"
-                         : parent.getContainingFile().getName() + ":" + getTextOffset();
+    TypeScriptClass clazz = PsiTreeUtil.getContextOfType(myParent, TypeScriptClass.class, false);
+    return clazz != null ? "(" + clazz.getName() + ", " + myParent.getContainingFile().getName() + ")"
+                         : myParent.getContainingFile().getName() + ":" + getTextOffset();
   }
 
   @Nullable

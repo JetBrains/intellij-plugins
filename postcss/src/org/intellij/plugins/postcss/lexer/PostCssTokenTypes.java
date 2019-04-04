@@ -17,8 +17,6 @@ public interface PostCssTokenTypes {
   IElementType GE = new PostCssElementType("POST_CSS_GE");
   IElementType POST_CSS_COMMENT = new PostCssCommentElementType("POST_CSS_LINE_COMMENT");
 
-  IElementType POST_CSS_SIMPLE_VARIABLE_TOKEN = new PostCssElementType("POST_CSS_SIMPLE_VARIABLE_TOKEN");
-
   TokenSet KEYWORDS = TokenSet.create(POST_CSS_NEST_SYM, POST_CSS_CUSTOM_SELECTOR_SYM, POST_CSS_CUSTOM_MEDIA_SYM);
   TokenSet IDENTIFIERS = TokenSet.create(AMPERSAND, HASH_SIGN);
   // only comparison operators allowed in media feature range (see https://www.w3.org/TR/mediaqueries-4/#typedef-mf-range)

@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -296,7 +297,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
         break;
 
       case Package:
-        if (!FlexUtils.packageExists(getPackageName(), searchScope)) {
+        if (!JSUtils.packageExists(getPackageName(), searchScope)) {
           throw new RuntimeConfigurationError(FlexBundle.message("package.not.valid", getPackageName()));
         }
         break;

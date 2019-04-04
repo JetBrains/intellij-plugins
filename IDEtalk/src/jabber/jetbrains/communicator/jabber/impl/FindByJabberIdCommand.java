@@ -8,7 +8,7 @@ import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.JabberUI;
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class FindByJabberIdCommand implements NamedUserCommand {
 
   @Override
   public String getName() {
-    return CommunicatorStrings.getMsg("jabber.findByIdCommandName");
+    return StringUtil.getMsg("jabber.findByIdCommandName");
   }
 
   @Override

@@ -3,7 +3,6 @@ package org.angular2.entities.metadata.psi;
 
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.lang.ecmascript6.psi.ES6ExportSpecifierAlias;
-import com.intellij.lang.ecmascript6.psi.ES6ImportSpecifier;
 import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil;
 import com.intellij.lang.javascript.ecmascript6.TypeScriptQualifiedItemProcessor;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -30,6 +29,7 @@ import static com.intellij.lang.javascript.ui.NodeModuleNamesUtil.PACKAGE_JSON;
 import static com.intellij.openapi.util.Pair.create;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
+import static com.intellij.util.containers.ContainerUtil.findInstance;
 import static org.angular2.entities.metadata.Angular2MetadataFileType.D_TS_SUFFIX;
 import static org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX;
 
@@ -49,17 +49,10 @@ public class Angular2MetadataNodeModule extends Angular2MetadataElement<Angular2
 
       List<PsiElement> results = sink.getResults();
       if (results != null) {
-        for (PsiElement res : results) {
-          if (res instanceof ES6ExportSpecifierAlias) {
-            res = ((ES6ExportSpecifierAlias)res).findAliasedElement();
-          }
-          else if (res instanceof ES6ImportSpecifier) {
-            res = ((ES6ImportSpecifier)res).resolve();
-          }
-          result = tryCast(res, memberClass);
-          if (result != null) {
-            break;
-          }
+        result = findInstance(results, memberClass);
+        if (result == null) {
+          result = doIfNotNull(findInstance(results, ES6ExportSpecifierAlias.class),
+                               alias -> tryCast(alias.findAliasedElement(), memberClass));
         }
       }
     }

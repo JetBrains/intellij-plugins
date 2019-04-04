@@ -26,7 +26,10 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angular2.entities.*;
+import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveProperty;
+import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
@@ -41,7 +44,6 @@ import java.util.stream.Collectors;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
 import static org.angularjs.AngularTestUtil.renderLookupItems;
 
@@ -183,8 +185,6 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                  component.getInputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
     assertEquals(Collections.singleton("complete"),
                  component.getOutputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
-    assertEquals(newHashSet("testAttrOne", "testAttrTwo"),
-                 component.getAttributes().stream().map(Angular2DirectiveAttribute::getName).collect(Collectors.toSet()));
   }
 
   public void testBindingCompletionViaBase2TypeScript() {
@@ -462,7 +462,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     configureWithMetadataFiles(myFixture, "common");
     myFixture.configureByFiles("templates_completion2.html");
     myFixture.completeBasic();
-    assertEquals(asList("*ngComponentOutlet", "*ngPluralCase", "*ngSwitchCase", "[ngClass]", "[ngComponentOutlet]", "ngComponentOutlet"),
+    assertEquals(asList("*ngPluralCase", "*ngSwitchCase", "[ngClass]", "[ngComponentOutlet]", "ngComponentOutlet"),
                  sorted(myFixture.getLookupElementStrings()));
   }
 
@@ -657,7 +657,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   @NotNull
   private static List<PsiElement> multiResolve(@NotNull PsiPolyVariantReference ref) {
     return mapNotNull(ref.multiResolve(false),
-                      result -> result.isValidResult() ? result.getElement() : null);
+                                    result -> result.isValidResult() ? result.getElement() : null);
   }
 
   public void testExportAs() {
@@ -979,7 +979,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                            "     * change it.\n" +
                            "     */\n" +
                            "    id: string", "id: /*c1*/ string")),
-      pair("[attr.id]=", singletonList("id")),
+      pair("[attr.id]=", Collections.singletonList("id")),
       pair("bar=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
       pair("[bar]=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
       pair("boo=", asList("boo: /*c1*/ number", "boo: /*c2*/ string")),
@@ -1002,35 +1002,5 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                            .collect(Collectors.toList()),
                          sorted(entry.getValue()));
     }
-  }
-
-  public void testNgTemplateOutletCompletion() {
-    myFixture.configureByFiles("ng-template-outlet-test.html", "ng_template_outlet.ts", "ng_if.ts", "package.json");
-    myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), asList("*ngIf", "*ngTemplateOutlet"));
-  }
-
-  public void testNgContentCompletion() {
-    myFixture.configureByFiles("ng-content-completion.html", "package.json");
-    myFixture.completeBasic();
-    assertEquals(singletonList("select"), myFixture.getLookupElementStrings());
-  }
-
-  public void testNgContentInspection() {
-    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
-                                AngularUndefinedBindingInspection.class);
-    myFixture.configureByFiles("ng-content-inspection.html", "package.json");
-    myFixture.checkHighlighting();
-  }
-
-  public void testDirectiveAttributesCompletion() {
-    myFixture.configureByFiles("directive_attrs_completion.ts", "package.json");
-    myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), "foo");
-    assertDoesntContain(myFixture.getLookupElementStrings(), "bar", "[bar]", "[foo]", "test", "[test]");
-    myFixture.type("foo=\" ");
-    myFixture.completeBasic();
-    assertContainsElements(myFixture.getLookupElementStrings(), "bar", "test", "[test]");
-    assertDoesntContain(myFixture.getLookupElementStrings(), "[bar]", "foo", "[foo]");
   }
 }

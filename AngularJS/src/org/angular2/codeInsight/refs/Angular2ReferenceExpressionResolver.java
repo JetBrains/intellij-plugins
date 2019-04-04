@@ -20,7 +20,7 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.Angular2ComponentPropertyResolveResult;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
-import org.angular2.codeInsight.template.Angular2TemplateScopesResolver;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
@@ -79,14 +79,12 @@ public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpr
       .getExpressionAccess(expression);
 
     List<ResolveResult> results = new SmartList<>();
-    Angular2TemplateScopesResolver.resolve(myRef, resolveResult -> {
+    Angular2Processor.process(myRef, resolveResult -> {
       JSPsiElementBase element = tryCast(resolveResult.getElement(), JSPsiElementBase.class);
       if (element != null
           && myReferencedName.equals(element.getName())) {
         remapSetterGetterIfNeeded(results, resolveResult, access);
-        return false;
       }
-      return true;
     });
     return results.toArray(ResolveResult.EMPTY_ARRAY);
   }

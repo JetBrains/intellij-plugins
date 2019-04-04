@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.execution.filters.Filter;
@@ -11,7 +10,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.WindowManager;
@@ -93,7 +91,7 @@ public class FlexStackTraceFilter implements Filter {
 
       final int dotIndex = fileName.lastIndexOf('.');
       final String dotExtension = dotIndex < 0 ? "" : fileName.substring(dotIndex);
-      final String fileNameWithoutExtension = FileUtilRt.getNameWithoutExtension(fileName);
+      final String fileNameWithoutExtension = FileUtil.getNameWithoutExtension(fileName);
 
       if (somethingLikeFqn.equals(fileNameWithoutExtension) || somethingLikeFqn.endsWith("::" + fileNameWithoutExtension)) {
         final String relativePath =

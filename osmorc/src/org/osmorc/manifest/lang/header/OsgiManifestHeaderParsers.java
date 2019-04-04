@@ -24,12 +24,12 @@
  */
 package org.osmorc.manifest.lang.header;
 
-import aQute.bnd.osgi.Constants;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.header.HeaderParserProvider;
+import aQute.bnd.osgi.Constants;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,7 +39,7 @@ public class OsgiManifestHeaderParsers implements HeaderParserProvider {
   private final Map<String, HeaderParser> myParsers;
 
   public OsgiManifestHeaderParsers() {
-    myParsers = new HashMap<>();
+    myParsers = ContainerUtil.newHashMap();
 
     myParsers.put(Constants.BUNDLE_ACTIVATOR, BundleActivatorParser.INSTANCE);
     myParsers.put(Constants.REQUIRE_BUNDLE, RequireBundleParser.INSTANCE);

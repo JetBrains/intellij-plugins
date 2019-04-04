@@ -3,57 +3,46 @@ package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.openapi.util.NotNullComputable;
 import com.intellij.psi.PsiElement;
-import org.angular2.codeInsight.Angular2LibrariesHacks;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
-import static com.intellij.util.ObjectUtils.doIfNotNull;
-
 public class Angular2MetadataDirectiveProperty implements Angular2DirectiveProperty {
 
-  private final Supplier<JSRecordType.PropertySignature> mySignatureSupplier;
-  private final NotNullComputable<? extends PsiElement> mySourceSupplier;
-  private final String myName;
+  private final JSRecordType.PropertySignature signature;
+  private final PsiElement source;
+  private final String name;
 
-  Angular2MetadataDirectiveProperty(@NotNull Supplier<JSRecordType.PropertySignature> signatureSupplier,
-                                    @NotNull NotNullComputable<? extends PsiElement> sourceSupplier,
+  Angular2MetadataDirectiveProperty(@Nullable JSRecordType.PropertySignature signature, @NotNull PsiElement source,
                                     @NotNull String name) {
-    this.mySignatureSupplier = signatureSupplier;
-    this.mySourceSupplier = sourceSupplier;
-    this.myName = name;
+    this.signature = signature;
+    this.source = source;
+    this.name = name;
   }
 
   @NotNull
   @Override
   public String getName() {
-    return myName;
+    return name;
   }
 
   @Nullable
   @Override
   public JSType getType() {
-    return doIfNotNull(mySignatureSupplier.get(),
-                       signature -> Angular2LibrariesHacks.hackQueryListTypeInNgForOf(signature.getJSType(), this));
+    return signature != null ? signature.getJSType() : null;
   }
 
   @Override
   public boolean isVirtual() {
-    return mySignatureSupplier.get() == null;
+    return signature == null;
   }
 
   @NotNull
   @Override
   public PsiElement getSourceElement() {
-    return Optional.ofNullable(mySignatureSupplier.get())
-      .map(sig -> sig.getMemberSource().getSingleElement())
-      .orElse(mySourceSupplier.compute());
+    return source;
   }
 
   @Override

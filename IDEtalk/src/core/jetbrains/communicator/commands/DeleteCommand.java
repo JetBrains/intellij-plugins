@@ -20,7 +20,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.UserListComponent;
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -138,7 +138,7 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
 
   private void appendItems(StringBuffer question, List items, String itemName, boolean useCommasOnly, ItemTextExtractor extractor) {
     if (!items.isEmpty()) {
-      CommunicatorStrings.appendItemName(question, itemName, items.size());
+      StringUtil.appendItemName(question, itemName, items.size());
       question.append(' ');
       appendCommaSeparated(question, items, extractor);
       appendTail(question, items, extractor, useCommasOnly);
@@ -190,11 +190,11 @@ public class DeleteCommand extends EnabledWhenFocusedCommand {
       }
       if (myGroupsToDelete.size() == 1 && !myHasBothUsersAndGroups) {
         sb.append(" with its ");
-        CommunicatorStrings.appendItems(sb, "user", numberOfUsers);
+        StringUtil.appendItems(sb, "user", numberOfUsers);
       }
       else {
         sb.append('(');
-        CommunicatorStrings.appendItems(sb, "user", numberOfUsers);
+        StringUtil.appendItems(sb, "user", numberOfUsers);
         sb.append(')');
       }
       return sb.toString();

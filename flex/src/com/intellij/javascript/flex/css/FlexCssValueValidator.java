@@ -14,6 +14,8 @@ import com.intellij.xml.util.ColorMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 class FlexCssValueValidator extends CssValueValidatorImpl {
   FlexCssValueValidator(@NotNull FlexCssElementDescriptorProvider provider) {
     super(provider);
@@ -58,14 +60,14 @@ class FlexCssValueValidator extends CssValueValidatorImpl {
           return isInteger(text.substring(2));
         }
         else if (containsOnlyLetters(text)) {
-          return ColorMap.isStandardColor(StringUtil.toLowerCase(text));
+          return ColorMap.isStandardColor(text.toLowerCase(Locale.US));
         }
       }
       return false;
     }
 
     if (containsOnlyLetters(text)) {
-      return ColorMap.isStandardColor(StringUtil.toLowerCase(text));
+      return ColorMap.isStandardColor(text.toLowerCase(Locale.US));
     }
     return true;
   }

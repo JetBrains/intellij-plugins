@@ -11,6 +11,8 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
+import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryTable;
@@ -198,13 +200,13 @@ public class DartFileListener implements VirtualFileListener {
 
   @NotNull
   public static Library updatePackagesLibraryRoots(@NotNull final Project project, @NotNull final DartLibInfo libInfo) {
-    final LibraryTable projectLibraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
+    final LibraryTable projectLibraryTable = ProjectLibraryTable.getInstance(project);
     final Library existingLibrary = projectLibraryTable.getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     final Library library =
       existingLibrary != null ? existingLibrary
                               : WriteAction.compute(() -> {
-                                final LibraryTable.ModifiableModel libTableModel =
-                                  LibraryTablesRegistrar.getInstance().getLibraryTable(project).getModifiableModel();
+                                final LibraryTableBase.ModifiableModel libTableModel =
+                                  ProjectLibraryTable.getInstance(project).getModifiableModel();
                                 final Library lib = libTableModel
                                   .createLibrary(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME, DartPackagesLibraryType.LIBRARY_KIND);
                                 libTableModel.commit();
@@ -256,9 +258,9 @@ public class DartFileListener implements VirtualFileListener {
       removeDependencyOnDartPackagesLibrary(module);
     }
 
-    final Library library = LibraryTablesRegistrar.getInstance().getLibraryTable(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
+    final Library library = ProjectLibraryTable.getInstance(project).getLibraryByName(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME);
     if (library != null) {
-      ApplicationManager.getApplication().runWriteAction(() -> LibraryTablesRegistrar.getInstance().getLibraryTable(project).removeLibrary(library));
+      ApplicationManager.getApplication().runWriteAction(() -> ProjectLibraryTable.getInstance(project).removeLibrary(library));
     }
   }
 

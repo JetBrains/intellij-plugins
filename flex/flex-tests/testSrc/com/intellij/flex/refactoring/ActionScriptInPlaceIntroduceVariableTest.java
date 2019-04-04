@@ -23,14 +23,14 @@ public class ActionScriptInPlaceIntroduceVariableTest extends JSInplaceIntroduce
   protected void setUp() throws Exception {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "refactoring/introduceVariable/");
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
-  public void testInplaceBasicAS() {
+  public void testInplaceBasicAS() throws Exception {
     doTest(getTestName(false), ".as");
   }
 
-  public void testInplaceSecondOccurrence() {
+  public void testInplaceSecondOccurrence() throws Exception {
     doTest(getTestName(false), ".as");
   }
 
