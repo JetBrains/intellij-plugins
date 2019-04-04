@@ -24,7 +24,6 @@ import com.intellij.execution.PsiLocation;
 import com.intellij.execution.testframework.sm.runner.SMTestLocator;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -36,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class CfmlUnitQualifiedNameLocationProvider implements SMTestLocator, DumbAware {
   private static final String PROTOCOL_ID = "cfml_qn";
@@ -77,7 +77,7 @@ public class CfmlUnitQualifiedNameLocationProvider implements SMTestLocator, Dum
         return result;
       }
       for (CfmlTag tag : tags) {
-        if ("cfcomponent".equals(StringUtil.toLowerCase(tag.getTagName()))) {
+        if ("cfcomponent".equals(tag.getTagName().toLowerCase(Locale.ENGLISH))) {
           result = tag;
           break;
         }

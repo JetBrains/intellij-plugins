@@ -30,7 +30,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -46,10 +45,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
 
@@ -513,8 +509,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         overriddenBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.None);
       }
 
-      overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtilRt.getNameWithoutExtension(myOverriddenOutputFileName));
-      overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtilRt.getNameWithoutExtension(myOverriddenOutputFileName));
+      overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
+      overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
 
       return Pair.create(moduleAndBC.first, overriddenBC);
     }
@@ -550,7 +546,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       if (myOverriddenOutputFileName.isEmpty()) {
         throw new RuntimeConfigurationError(FlexBundle.message("output.file.name.not.specified"));
       }
-      if (!StringUtil.toLowerCase(myOverriddenOutputFileName).endsWith(".swf")) {
+      if (!myOverriddenOutputFileName.toLowerCase(Locale.US).endsWith(".swf")) {
         throw new RuntimeConfigurationError(FlexBundle.message("output.file.must.have.swf.extension"));
       }
     }

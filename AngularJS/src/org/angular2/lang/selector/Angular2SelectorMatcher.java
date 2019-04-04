@@ -152,7 +152,7 @@ public class Angular2SelectorMatcher<T> {
   private boolean _matchTerminal(@Nullable Map<String, List<SelectorContext<T>>> map,
                                  @Nullable String name,
                                  @NotNull Angular2DirectiveSimpleSelector cssSelector,
-                                 @Nullable BiConsumer<? super Angular2DirectiveSimpleSelector, ? super T> matchedCallback) {
+                                 @Nullable BiConsumer<Angular2DirectiveSimpleSelector, T> matchedCallback) {
     if (map == null || name == null) {
       return false;
     }
@@ -215,7 +215,7 @@ public class Angular2SelectorMatcher<T> {
     }
 
     boolean finalize(@NotNull Angular2DirectiveSimpleSelector cssSelector,
-                     @Nullable BiConsumer<? super Angular2DirectiveSimpleSelector, ? super T> callback) {
+                     @Nullable BiConsumer<Angular2DirectiveSimpleSelector, T> callback) {
       boolean result = true;
       if (!notSelectors.isEmpty() && (listContext == null || listContext.alreadyMatched)) {
         Angular2SelectorMatcher<T> notMatcher = createNotMatcher(notSelectors);

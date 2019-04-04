@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.impl.JSExpressionImpl;
 import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
-import com.intellij.lang.javascript.psi.types.JSPsiBasedTypeOfType;
+import com.intellij.lang.javascript.psi.types.JSLazyExpressionType;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ObjectUtils;
@@ -54,7 +54,7 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
   @NotNull
   @Override
   public List<JSType> getArgumentTypes(boolean contextual) {
-    return JSPsiBasedTypeOfType.mapAsArguments(getArguments(), contextual);
+    return JSLazyExpressionType.mapAsArguments(getArguments(), contextual);
   }
 
   @Override

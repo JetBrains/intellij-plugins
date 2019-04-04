@@ -4,6 +4,7 @@ import com.intellij.psi.css.impl.*;
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.openapi.util.text.StringUtil;
+import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 
 %%
@@ -54,7 +55,7 @@ CSS_URL=([!#\$%&\*-\~]|{CSS_NONASCII}|{CSS_ESCAPE})*
 EL_EMBEDDMENT= ("#{" | "${" ) [^\}]* "}"
 CSS_HACKS="\\0/"|"\\9"|"\\0"|"!"{I}{E}
 
-POST_CSS_SIMPLE_VARIABLE_TOKEN="$"{CSS_IDENT} | "$" "(" {CSS_IDENT} ")"?
+POST_CSS_SIMPLE_VARIABLE="$"{CSS_IDENT}
 
 A=[Aa]
 B=[Bb]
@@ -192,5 +193,5 @@ URL_PREFIX_DOMAIN={U}{R}{L}|{U}{R}{L}-{P}{R}{E}{F}{I}{X}|{D}{O}{M}{A}{I}{N}
 <YYINITIAL> {MARGIN_SYM} { return CssElementTypes.CSS_PAGE_MARGIN_SYM; }
 <YYINITIAL> @{CSS_IDENT} { return CssElementTypes.CSS_ATKEYWORD; }
 <YYINITIAL> {EL_EMBEDDMENT} { return CssElementTypes.CSS_IDENT; }
-<YYINITIAL, CSS_URI> {POST_CSS_SIMPLE_VARIABLE_TOKEN} { return PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN; }
+<YYINITIAL, CSS_URI> {POST_CSS_SIMPLE_VARIABLE} { return PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE; }
 <YYINITIAL> [^] { return CssElementTypes.CSS_BAD_CHARACTER; }

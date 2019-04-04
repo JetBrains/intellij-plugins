@@ -7,8 +7,6 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
-import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.index.*
 
 class VueDirectivesProvider {

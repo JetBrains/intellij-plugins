@@ -1,4 +1,4 @@
-// "Create method 'create'" "true"
+// "Create Method 'create'" "true"
 class Foo {
     internal static function create(cls:Class):void {
         <caret>

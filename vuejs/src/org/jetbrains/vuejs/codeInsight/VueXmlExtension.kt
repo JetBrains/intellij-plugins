@@ -12,9 +12,7 @@ import com.intellij.psi.impl.source.xml.TagNameReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.HtmlXmlExtension
-import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
-import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
-import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.VueLanguage
 
 class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage

@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.vueMixinDescriptorFinder
-import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.index.LOCAL
 import org.jetbrains.vuejs.index.MIXINS
 import org.jetbrains.vuejs.index.VueMixinBindingIndex

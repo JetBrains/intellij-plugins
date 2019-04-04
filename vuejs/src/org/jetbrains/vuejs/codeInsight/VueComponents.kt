@@ -18,7 +18,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.index.getVueIndexData
-import org.jetbrains.vuejs.model.source.VueComponentsCalculation
 
 /**
  * Basic resolve from index here (when we have the name literal and the descriptor literal/reference)

@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
@@ -6,10 +5,7 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
-import com.intellij.lang.javascript.psi.JSField;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -20,7 +16,7 @@ import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -66,7 +62,7 @@ public class FlexUnitSupport {
 
   @Nullable
   public static Pair<Module, FlexUnitSupport> getModuleAndSupport(@NotNull PsiElement context) {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(context);
+    final Module module = ModuleUtil.findModuleForPsiElement(context);
     final FlexUnitSupport support = getSupport(module);
     return support != null ? Pair.create(module, support) : null;
   }

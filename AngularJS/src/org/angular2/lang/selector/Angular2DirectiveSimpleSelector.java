@@ -10,6 +10,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.xml.util.XmlUtil;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -156,16 +158,17 @@ public class Angular2DirectiveSimpleSelector {
 
     cssSelector.setElement(elNameNoNs);
 
+    boolean isTemplateTag = Angular2Processor.isTemplateTag(element.getName());
     for (XmlAttribute attr : element.getAttributes()) {
       String attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.getName());
-      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrNameNoNs, element);
+      Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrNameNoNs, isTemplateTag);
       if (info.type == Angular2AttributeType.TEMPLATE_BINDINGS
           || info.type == Angular2AttributeType.VARIABLE
           || info.type == Angular2AttributeType.REFERENCE) {
         continue;
       }
       cssSelector.addAttribute(info.name, attr.getValue());
-      if (StringUtil.toLowerCase(attr.getName()).equals("class") && attr.getValue() != null) {
+      if (attr.getName().toLowerCase().equals("class") && attr.getValue() != null) {
         StringUtil.split(attr.getValue(), " ")
           .forEach(clsName -> cssSelector.addClassName(clsName));
       }
@@ -229,11 +232,11 @@ public class Angular2DirectiveSimpleSelector {
 
   public void addAttribute(@NotNull String name, @Nullable String value) {
     attrs.add(name);
-    attrs.add(value != null ? StringUtil.toLowerCase(value) : "");
+    attrs.add(value != null ? value.toLowerCase(Locale.ENGLISH) : "");
   }
 
   public void addClassName(@NotNull String name) {
-    classNames.add(StringUtil.toLowerCase(name));
+    classNames.add(name.toLowerCase(Locale.ENGLISH));
   }
 
   @NotNull

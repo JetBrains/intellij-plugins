@@ -1,7 +1,21 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2006 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package jetbrains.communicator.commands;
 
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.OptionFlag;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.impl.BaseTestCase;
@@ -39,7 +53,7 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
 
   public void testEnabled() {
     myUserListComponent.expects(once()).method("getSelectedNodes")
-        .will(returnValue(ArrayUtilRt.EMPTY_OBJECT_ARRAY));
+        .will(returnValue(ArrayUtil.EMPTY_OBJECT_ARRAY));
     assertFalse(myCommand.isEnabled());
 
     myUserListComponent.expects(atLeastOnce()).method("getSelectedNodes")
@@ -49,14 +63,14 @@ public class ToggleFileAccessCommandTest extends BaseTestCase {
 
   public void testGetText() {
     myUserListComponent.expects(once()).method("getSelectedNodes")
-        .will(returnValue(ArrayUtilRt.EMPTY_OBJECT_ARRAY));
+        .will(returnValue(ArrayUtil.EMPTY_OBJECT_ARRAY));
     assertNotNull(myCommand.getText());
 
     myUserListComponent.expects(atLeastOnce()).method("getSelectedNodes")
         .will(returnValue(new Object[]{"some group"}));
     assertNotNull(myCommand.getText());
   }
-
+  
   public void testEnableAccessToUser() {
     MockUser user = new MockUser();
 

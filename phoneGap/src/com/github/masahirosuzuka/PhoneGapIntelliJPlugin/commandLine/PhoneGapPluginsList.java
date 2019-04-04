@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 import com.google.gson.JsonElement;
@@ -14,8 +13,6 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -69,7 +66,7 @@ public class PhoneGapPluginsList {
   }
 
   public static List<RepoPackage> listCached() {
-    return new ArrayList<>(mapCached().values());
+    return ContainerUtil.newArrayList(mapCached().values());
   }
 
   public static Map<String, PhoneGapRepoPackage> mapCached() {
@@ -110,7 +107,7 @@ public class PhoneGapPluginsList {
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(e.getMessage(), e);
       }
-      return new HashMap<>();
+      return ContainerUtil.newHashMap();
     }
   }
 

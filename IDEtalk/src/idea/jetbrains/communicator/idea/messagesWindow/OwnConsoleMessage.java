@@ -4,7 +4,7 @@ package jetbrains.communicator.idea.messagesWindow;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.idea.ConsoleMessage;
 import jetbrains.communicator.idea.ConsoleUtil;
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 
 import java.util.Date;
 
@@ -39,10 +39,10 @@ public abstract class OwnConsoleMessage implements ConsoleMessage {
 
   @Override
   public String getUsername() {
-    return CommunicatorStrings.getMyUsername();
+    return StringUtil.getMyUsername();
   }
 
   private String buildHeader() {
-    return CommunicatorStrings.getMsg("console.selfline", ConsoleUtil.formatDate(myDate));
+    return StringUtil.getMsg("console.selfline", ConsoleUtil.formatDate(myDate));
   }
 }

@@ -14,7 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.VueLanguage
 
 class DuplicateTagInspection : LocalInspectionTool() {
   override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {

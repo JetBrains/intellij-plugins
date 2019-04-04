@@ -8,7 +8,6 @@ import com.intellij.lang.typescript.library.TypeScriptLibraryProvider
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueElementResolveScopeProvider : JSElementResolveScopeProvider {
   private val tsProvider = object : TypeScriptResolveScopeProvider() {

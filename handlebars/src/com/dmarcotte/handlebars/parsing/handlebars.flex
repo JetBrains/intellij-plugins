@@ -21,17 +21,17 @@ import com.intellij.util.containers.Stack;
 %type IElementType
 
 %{
-    private Stack<Integer> stack = new Stack<>();
+    private Stack<Integer> stack = new Stack<Integer>();
 
-        public void yypushState(int newState) {
-          stack.push(yystate());
-          yybegin(newState);
-        }
+    public void yypushState(int newState) {
+      stack.push(yystate());
+      yybegin(newState);
+    }
 
-        public void yypopState() {
-          yybegin(stack.pop());
-        }
-    %}
+    public void yypopState() {
+      yybegin(stack.pop());
+    }
+%}
 
 LineTerminator = \r|\n|\r\n
 WhiteSpace = {LineTerminator} | [ \t\f]
@@ -137,8 +137,8 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "{{"\~?">" { return HbTokenTypes.OPEN_PARTIAL; }
   "{{"\~?"#>" { return HbTokenTypes.OPEN_PARTIAL_BLOCK; }
   "{{"\~?"#""*"? { return HbTokenTypes.OPEN_BLOCK; }
-  "{{$" { return HbTokenTypes.OPEN_BLOCK; }
-  "{{<" { return HbTokenTypes.OPEN_BLOCK; }
+  "{{$" { return HbTokenTypes.OPEN_BLOCK; } 
+  "{{<" { return HbTokenTypes.OPEN_BLOCK; } 
   "{{"\~?"/" { return HbTokenTypes.OPEN_ENDBLOCK; }
   // NOTE: the standard Handlebars lexer would checks for "{{^}}" and "{{else}}" here and lexes the simple inverse directly.
   // We lex it in pieces and identify simple inverses in the parser

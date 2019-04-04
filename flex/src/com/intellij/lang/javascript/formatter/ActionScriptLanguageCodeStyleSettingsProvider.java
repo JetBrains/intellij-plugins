@@ -1,12 +1,13 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.formatter;
 
 import com.intellij.application.options.IndentOptionsEditor;
+import com.intellij.application.options.codeStyle.properties.AbstractCodeStylePropertyMapper;
+import com.intellij.application.options.codeStyle.properties.LanguageCodeStylePropertyMapper;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.psi.codeStyle.*;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,7 +89,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                 JSBundle.message("spaces.within.array.initializer"),
                                 CodeStyleSettingsCustomizable.SPACES_WITHIN);
       consumer.renameStandardOption("SPACE_WITHIN_BRACKETS", JSBundle.message("spaces.within.indexer.brackets"));
-
+      
       consumer
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_BEFORE_TYPE_COLON",
                           JSBundle.message("space.before.type.colon"),
@@ -97,7 +98,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
         .showCustomOption(ECMA4CodeStyleSettings.class, "SPACE_AFTER_TYPE_COLON",
                           JSBundle.message("space.after.type.colon"),
                           CodeStyleSettingsCustomizable.SPACES_OTHER);
-
+      
       consumer.showCustomOption(ECMA4CodeStyleSettings.class,
                                 "SPACES_WITHIN_OBJECT_LITERAL_BRACES",
                                 JSBundle.message("spaces.within.object.literal.braces"),
@@ -122,7 +123,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
                                            "EXTENDS_LIST_WRAP",
                                            "ALIGN_MULTILINE_EXTENDS_LIST",
                                            "EXTENDS_KEYWORD_WRAP"));
-      consumer.showStandardOptions(ArrayUtilRt.toStringArray(wrappingOptions));
+      consumer.showStandardOptions(ArrayUtil.toStringArray(wrappingOptions));
       consumer.renameStandardOption("ARRAY_INITIALIZER_LBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.after.left.bracket"));
       consumer.renameStandardOption("ARRAY_INITIALIZER_RBRACE_ON_NEXT_LINE", JSBundle.message("js.array.new.line.before.right.bracket"));
       consumer.showCustomOption(ECMA4CodeStyleSettings.class, "FUNCTION_EXPRESSION_BRACE_STYLE",
@@ -136,7 +137,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
       consumer.showCustomOption(ECMA4CodeStyleSettings.class, "REFORMAT_C_STYLE_COMMENTS",
                                 JSBundle.message("js.format.cstyle.comments"),
                                 CodeStyleSettingsCustomizable.WRAPPING_COMMENTS);
-
+      
       //object literals
       consumer.showCustomOption(ECMA4CodeStyleSettings.class,
                                 "OBJECT_LITERAL_WRAP",
@@ -319,7 +320,7 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     "}\n" +
     "\n" +
     "}";
-
+  
   public final static String INDENT_CODE_SAMPLE =
     "package {\n" +
     "class Foo {\n" +
