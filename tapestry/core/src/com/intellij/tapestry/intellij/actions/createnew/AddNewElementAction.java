@@ -50,8 +50,7 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
     }
 
     if (!TapestryUtils.isTapestryModule(module)) {
-      presentation.setEnabled(false);
-      presentation.setVisible(false);
+      presentation.setEnabledAndVisible(false);
       return;
     }
 
@@ -63,14 +62,12 @@ public abstract class AddNewElementAction<T extends PackageNode> extends AnActio
       PsiElement eventPsiElement = (PsiElement)event.getDataContext().getData(CommonDataKeys.PSI_ELEMENT.getName());
       final TapestryProject tapestryProject = TapestryModuleSupportLoader.getTapestryProject(module);
       if (tapestryProject == null) {
-        presentation.setEnabled(false);
-        presentation.setVisible(false);
+        presentation.setEnabledAndVisible(false);
         return;
       }
       final String aPackage = getElementsRootPackage(tapestryProject);
       if (aPackage == null) {
-        presentation.setEnabled(false);
-        presentation.setVisible(false);
+        presentation.setEnabledAndVisible(false);
         return;
       }
 

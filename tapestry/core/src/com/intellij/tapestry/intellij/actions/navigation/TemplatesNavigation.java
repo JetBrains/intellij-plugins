@@ -36,8 +36,7 @@ public class TemplatesNavigation extends ActionGroup implements DumbAware {
     public void update(@NotNull AnActionEvent event) {
         final boolean isTapestryModule = TapestryUtils.isTapestryModule(event.getData(DataKeys.MODULE));
         final Presentation presentation = event.getPresentation();
-        presentation.setEnabled(isTapestryModule);
-        presentation.setVisible(isTapestryModule);
+        presentation.setEnabledAndVisible(isTapestryModule);
     }
 
     /**

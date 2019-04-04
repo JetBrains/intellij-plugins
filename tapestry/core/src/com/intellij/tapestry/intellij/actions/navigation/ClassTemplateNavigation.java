@@ -45,14 +45,12 @@ public class ClassTemplateNavigation extends AnAction {
       module = (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
     }
     catch (Throwable ex) {
-      presentation.setEnabled(false);
-      presentation.setVisible(false);
+      presentation.setEnabledAndVisible(false);
       return;
     }
 
     if (!TapestryUtils.isTapestryModule(module)) {
-      presentation.setEnabled(false);
-      presentation.setVisible(false);
+      presentation.setEnabledAndVisible(false);
       return;
     }
 
@@ -64,8 +62,7 @@ public class ClassTemplateNavigation extends AnAction {
       return;
     }
 
-    presentation.setEnabled(true);
-    presentation.setVisible(true);
+    presentation.setEnabledAndVisible(true);
   }
 
   /**

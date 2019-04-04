@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.openapi.actionSystem.AnAction;
@@ -54,8 +55,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
     final int caretOffset = editor == null ? -1 : editor.getCaretModel().getOffset();
     final boolean enable = psiFile != null && doEnable(PsiTreeUtil.getParentOfType(psiFile.findElementAt(caretOffset), DartClass.class));
 
-    e.getPresentation().setEnabled(enable);
-    e.getPresentation().setVisible(enable);
+    e.getPresentation().setEnabledAndVisible(enable);
   }
 
   protected boolean doEnable(@Nullable final DartClass dartClass) {
