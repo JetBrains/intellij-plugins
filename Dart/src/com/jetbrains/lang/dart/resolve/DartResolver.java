@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.project.Project;
@@ -7,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Consumer;
@@ -105,11 +107,10 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     PsiFile file = findPsiFile(project, targetPath);
     if (file != null) {
       int targetOffset = target.getOffset(project, file.getVirtualFile());
-
-      PsiElement elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartComponentName.class, false);
-      if (elementAt == null) elementAt = PsiTreeUtil.findElementOfClassAtOffset(file, targetOffset, DartLibraryNameElement.class, false);
-
-      return elementAt;
+      PsiElement elementAtOffset = file.findElementAt(targetOffset);
+      PsiNameIdentifierOwner nameOwner =
+        PsiTreeUtil.getNonStrictParentOfType(elementAtOffset, DartComponentName.class, DartLibraryNameElement.class);
+      return nameOwner != null ? nameOwner : elementAtOffset;
     }
 
     return null;
@@ -133,14 +134,14 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
                                                 final int offset,
                                                 final int length) {
     int i = findOffsetIndex(regions, offset);
-    if (i>= 0) {
+    if (i >= 0) {
       DartNavigationRegion midVal = regions.get(i);
       return midVal.getLength() == length ? midVal : null;
     }
     return null;
   }
 
-  static int findOffsetIndex(@NotNull List<? extends DartNavigationRegion> regions, int offset) {
+  private static int findOffsetIndex(@NotNull List<? extends DartNavigationRegion> regions, int offset) {
     return ObjectUtils.binarySearch(0, regions.size(), mid -> Integer.compare(regions.get(mid).getOffset(), offset));
   }
 
@@ -152,7 +153,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     // first find the first region that has minimal allowed offset
 
     int i = ObjectUtils.binarySearch(0, regions.size(), mid -> regions.get(mid).getOffset() < range.getStartOffset() ? -1 : 1);
-    i = Math.max(0,-i-2);
+    i = Math.max(0, -i - 2);
     DartNavigationRegion region = regions.get(i);
     if (region.getOffset() < range.getStartOffset()) {
       i++;

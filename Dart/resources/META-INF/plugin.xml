@@ -74,6 +74,7 @@
                               order="last"/>
     <psi.referenceContributor language="Dart" implementation="com.jetbrains.lang.dart.psi.DartReferenceContributor"/>
     <psi.referenceContributor language="XML" implementation="com.jetbrains.lang.dart.psi.DartReferenceContributor"/>
+    <xml.xmlExtension implementation="com.jetbrains.lang.dart.xml.DartXmlExtension" order="first"/>
     <include.provider implementation="com.jetbrains.lang.dart.psi.DartPackageAwareFileIncludeProvider" order="first"/>
     <typeHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.type.DartTypeHierarchyProvider"/>
     <callHierarchyProvider language="Dart" implementationClass="com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyProvider"/>
