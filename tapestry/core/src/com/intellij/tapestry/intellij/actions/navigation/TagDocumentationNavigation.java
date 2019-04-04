@@ -26,7 +26,6 @@ import java.util.Arrays;
 public class TagDocumentationNavigation extends AnAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
-    super.update(e);
     e.getPresentation().setEnabled(getTapestryComponent(e) != null);
   }
 
