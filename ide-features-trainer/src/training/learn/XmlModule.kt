@@ -16,6 +16,7 @@ import training.util.DataLoader
 import training.util.DataLoader.getResourceAsStream
 import training.util.XmlModuleConstants
 import training.util.XmlModuleConstants.*
+import training.util.isFeatureTrainerSnapshot
 import java.io.IOException
 import java.net.URISyntaxException
 import java.util.*
@@ -85,6 +86,9 @@ class XmlModule(override val name: String,
       val lessonsPath = modulePath + root.getAttribute(MODULE_LESSONS_PATH_ATTR).value
 
       for (lessonElement in root.children) {
+        if (!isFeatureTrainerSnapshot && lessonElement.getAttributeValue(MODULE_LESSON_UNFINISHED_ATTR) == "true") {
+          continue // do not show unfinished lessons in release
+        }
         when (lessonElement.name) {
           MODULE_XML_LESSON_ELEMENT -> addXmlLesson(lessonElement, lessonsPath)
           MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath)

@@ -1,6 +1,8 @@
 package training.util
 
 import com.intellij.ide.DataManager
+import com.intellij.ide.plugins.PluginManager
+import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.components.ServiceManager
@@ -9,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.util.ui.UIUtil
+import training.learn.CourseManager
 import java.awt.Point
 import java.io.File
 import java.io.FileFilter
@@ -130,3 +133,8 @@ fun createBalloon(text: String, delay: Long): Balloon =
         .setAnimationCycle(0)
         .setFadeoutTime(delay)
         .createBalloon()
+
+val isFeatureTrainerSnapshot: Boolean by lazy {
+  val pluginId = PluginManagerCore.getPluginByClassName(CourseManager::class.java.name)
+  PluginManager.getPlugin(pluginId)?.version?.contains("SNAPSHOT") ?: false
+}
