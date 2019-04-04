@@ -67,8 +67,7 @@ public class DartQuickFixSet {
     final Consumer<List<AnalysisErrorFixes>> consumer = fixes -> {
       final long psiModCountWhenReceivedFixes = myPsiManager.getModificationTracker().getModificationCount();
       final long vfsModCountWhenReceivedFixes = VirtualFileManager.getInstance().getModificationCount();
-
-      if (psiModCount != psiModCountWhenReceivedFixes || vfsModCount != vfsModCountWhenReceivedFixes) {
+      if (myPsiModCountWhenRequestSent != psiModCountWhenReceivedFixes || myVfsModCountWhenRequestSent != vfsModCountWhenReceivedFixes) {
         return;
       }
 

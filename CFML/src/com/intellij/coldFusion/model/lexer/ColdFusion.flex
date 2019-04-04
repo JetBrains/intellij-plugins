@@ -1,7 +1,6 @@
 package com.intellij.coldFusion.model.lexer;
 
 import com.intellij.lexer.FlexLexer;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.psi.CfmlElementType;
@@ -13,8 +12,8 @@ import com.intellij.util.containers.Stack;
 %%
 
 %{
-  Project myProject;
   final CfmlLexerConfiguration myCurrentConfiguration = new CfmlLexerConfiguration();
+  private Project myProject;
 
   public _CfmlLexer(Project project) {
     this((java.io.Reader)null);
@@ -26,7 +25,7 @@ import com.intellij.util.containers.Stack;
       int myCommentCounter = 0;
       int mySharpCounter = 0;
       boolean myIfReturnExpression = false;
-      Stack<Integer> myReturnStack = new Stack<>();
+      Stack<Integer> myReturnStack = new Stack<Integer>();
       // to give to other lexer
       IElementType myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
       boolean myStartExpression = true;
@@ -159,7 +158,7 @@ TAG_END = "</"
 
 CFML_TAG_START={TAG_START}{WHITE_SPACE_CHAR}{CF_TAG_NAME}
 
-PERIODICAL_NAME = {IDENTIFIER}("."{IDENTIFIER})*
+PERIODICAL_NAME = {IDENTIFIER}("."{IDENTIFIER})* 
 IMPORT = "import"({DOUBLEQUOTED_STRING} | {SINGLEQUOTED_STRING} | {PERIODICAL_NAME})
 SCRIPT_COMPONENT_DEF = ((("/*")~("*/"))? {WHITE_SPACE_CHAR} {IMPORT}? {WHITE_SPACE_CHAR})* ("component" | "interface"){NOTCFMLSTART_NOTSHARP}
 
@@ -193,7 +192,7 @@ WHAT_EVER=[^]*
 <YYINITIAL> {VARIABLE_TYPE_DECL} { return CfmlTokenTypes.VAR_ANNOTATION; }
 <YYINITIAL> {TAG_START} {CF_TAG_NAME}  {
     String tagName = yytext().subSequence(1, yylength()).toString();
-    boolean startTemplateText =  !"cfinclude".equalsIgnoreCase(tagName) &&
+    boolean startTemplateText =  !"cfinclude".equalsIgnoreCase(tagName) &&  
       (myCurrentConfiguration.myBlockType != CfmlElementTypes.SQL ||
        !"cfqueryparam".equals(tagName)
       );
@@ -217,13 +216,13 @@ WHAT_EVER=[^]*
 <YYINITIAL> {NOTCFMLSTART_NOTSHARP} { return myCurrentConfiguration.myBlockType; }
 
 /*<TAGOPEN> {CF_CUSTOM_TAG} {
-    myCurrentConfiguration.myCurrentTag = StringUtil.toLowerCase(yytext().toString());
+    myCurrentConfiguration.myCurrentTag = yytext().toString().toLowerCase();
     myCurrentConfiguration.myStartExpression = true;
     yybegin(TAGATTR);
     return CfmlTokenTypes.CF_CUSTOM_TAG_NAME;
 }*/
 <TAGOPEN> {CFTAG_NAME_WITH_PREFIX}  {
-    myCurrentConfiguration.myCurrentTag = StringUtil.toLowerCase(yytext().toString());
+    myCurrentConfiguration.myCurrentTag = yytext().toString().toLowerCase();
     if (!CfmlUtil.hasAnyAttributes(myCurrentConfiguration.myCurrentTag, myProject)) {
         myCurrentConfiguration.myStartExpression = false;
         yybegin(SCRIPT_EXPRESSION);
@@ -235,7 +234,7 @@ WHAT_EVER=[^]*
 }
 
 <TAGOPEN> {CF_STANDART_TAG}  {
-    myCurrentConfiguration.myCurrentTag = StringUtil.toLowerCase(yytext().toString());
+    myCurrentConfiguration.myCurrentTag = yytext().toString().toLowerCase();
     if (!CfmlUtil.hasAnyAttributes(myCurrentConfiguration.myCurrentTag, myProject)) {
         myCurrentConfiguration.myStartExpression = false;
         yybegin(SCRIPT_EXPRESSION);

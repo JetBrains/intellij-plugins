@@ -10,5 +10,6 @@ public abstract class Angular2CodeInsightFixtureTestCase extends LightPlatformCo
   protected void setUp() throws Exception {
     super.setUp();
     AngularTestUtil.enableAstLoadingFilter(this);
+    AngularTestUtil.testES6(myFixture);
   }
 }

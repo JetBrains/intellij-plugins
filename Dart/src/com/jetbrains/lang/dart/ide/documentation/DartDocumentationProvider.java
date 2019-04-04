@@ -56,6 +56,11 @@ public class DartDocumentationProvider implements DocumentationProvider {
   }
 
   @Override
+  public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
+    return null;
+  }
+
+  @Override
   public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
     return object instanceof DartLookupObject ? ((DartLookupObject)object).findPsiElement() : null;
   }
@@ -88,8 +93,9 @@ public class DartDocumentationProvider implements DocumentationProvider {
   public static String buildHoverTextServer(@NotNull final HoverInformation hover) {
     final String elementDescription = hover.getElementDescription();
     final String staticType = elementDescription == null || elementDescription.equals(hover.getStaticType()) ? null : hover.getStaticType();
-    final String containingLibraryName = hover.getContainingLibraryName();
-    return DartDocUtil.generateDoc(elementDescription, false, null, containingLibraryName, null, staticType, true);
+    final String propagatedType =
+      elementDescription == null || elementDescription.equals(hover.getPropagatedType()) ? null : hover.getPropagatedType();
+    return DartDocUtil.generateDoc(elementDescription, false, null, null, null, staticType, propagatedType, true);
   }
 
   @NotNull
@@ -98,9 +104,10 @@ public class DartDocumentationProvider implements DocumentationProvider {
     final String containingLibraryName = hover.getContainingLibraryName();
     final String containingClassDescription = hover.getContainingClassDescription();
     final String staticType = hover.getStaticType();
+    final String propagatedType = hover.getPropagatedType();
     final String docText = hover.getDartdoc();
-    return DartDocUtil
-      .generateDoc(elementDescription, false, docText, containingLibraryName, containingClassDescription, staticType, false);
+    return DartDocUtil.generateDoc(elementDescription, false, docText, containingLibraryName, containingClassDescription,
+                                   staticType, propagatedType, false);
   }
 
   @Nullable

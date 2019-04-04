@@ -11,7 +11,7 @@ public class DomElementSchemaRegistry {
 
   @NotNull
   public static Set<String> getElementProperties(@NotNull String tagName) {
-    return SCHEMA.getOrDefault(StringUtil.toLowerCase(tagName), DEFAULT_ELEMENT_PROPERTIES);
+    return SCHEMA.getOrDefault(tagName.toLowerCase(Locale.ENGLISH), DEFAULT_ELEMENT_PROPERTIES);
   }
 
   @NonNls private static final String[] SCHEMA_DEF = new String[]{
@@ -179,9 +179,9 @@ public class DomElementSchemaRegistry {
       List<String> strType_strProperties = StringUtil.split(encodedType, "|", true, false);
       List<String> properties = StringUtil.split(strType_strProperties.get(1), ",");
       List<String> typeNames_superName = StringUtil.split(strType_strProperties.get(0), "^", true, false);
-      StringUtil.split(typeNames_superName.get(0), ",").forEach(tag -> SCHEMA.put(StringUtil.toLowerCase(tag),
+      StringUtil.split(typeNames_superName.get(0), ",").forEach(tag -> SCHEMA.put(tag.toLowerCase(Locale.ENGLISH),
                                                                                   Collections.unmodifiableSet(type)));
-      Set<String> superType = typeNames_superName.size() > 1 ? SCHEMA.get(StringUtil.toLowerCase(typeNames_superName.get(1))) : null;
+      Set<String> superType = typeNames_superName.size() > 1 ? SCHEMA.get(typeNames_superName.get(1).toLowerCase(Locale.ENGLISH)) : null;
       if (superType != null) {
         type.addAll(superType);
       }
@@ -203,6 +203,6 @@ public class DomElementSchemaRegistry {
       });
     }
     //noinspection HardCodedStringLiteral
-    DEFAULT_ELEMENT_PROPERTIES = SCHEMA.get(StringUtil.toLowerCase("[HTMLElement]"));
+    DEFAULT_ELEMENT_PROPERTIES = SCHEMA.get("[HTMLElement]".toLowerCase(Locale.ENGLISH));
   }
 }

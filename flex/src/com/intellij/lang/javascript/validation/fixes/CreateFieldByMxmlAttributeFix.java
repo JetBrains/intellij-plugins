@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.template.Template;
-import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -30,7 +29,7 @@ public class CreateFieldByMxmlAttributeFix extends CreateJSVariableIntentionActi
   }
 
   protected static void addTypeVariableByMxmlAttributeValue(final Template template, final String attributeValue) {
-    template.addVariable(new ConstantNode(guessMxmlAttributeType(attributeValue)), true);
+    template.addVariable(new MyExpression(guessMxmlAttributeType(attributeValue)), true);
   }
 
   @NotNull

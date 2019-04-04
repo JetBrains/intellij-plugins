@@ -2,7 +2,10 @@ package org.intellij.plugins.postcss;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.intellij.plugins.postcss.completion.*;
+import org.intellij.plugins.postcss.completion.PostCssCustomMediaCompletionTest;
+import org.intellij.plugins.postcss.completion.PostCssCustomPropertiesSetCompletionTest;
+import org.intellij.plugins.postcss.completion.PostCssCustomSelectorCompletionTest;
+import org.intellij.plugins.postcss.completion.PostCssNestCompletionTest;
 import org.intellij.plugins.postcss.editor.PostCssCommenterTest;
 import org.intellij.plugins.postcss.editor.PostCssCopyrightTest;
 import org.intellij.plugins.postcss.editor.breadcrumbs.PostCssBreadcrumbsTest;
@@ -15,7 +18,6 @@ import org.intellij.plugins.postcss.rename.PostCssRenameTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomMediaResolveTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomPropertySetResolveTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomSelectorResolveTest;
-import org.intellij.plugins.postcss.resolve.PostCssSimpleVarsTest;
 import org.intellij.plugins.postcss.smartEnter.PostCssSmartEnterTest;
 import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
 
@@ -78,11 +80,9 @@ public class PostCssTestSuite {
     public static Test suite() {
       TestSuite suite = new TestSuite("Completion PostCSS");
       suite.addTestSuite(PostCssNestCompletionTest.class);
-      suite.addTestSuite(PostCssNestingCompletionTest.class);
       suite.addTestSuite(PostCssCustomSelectorCompletionTest.class);
       suite.addTestSuite(PostCssCustomMediaCompletionTest.class);
       suite.addTestSuite(PostCssCustomPropertiesSetCompletionTest.class);
-      suite.addTestSuite(PostCssOtherCompletionTest.class);
       return suite;
     }
   }
@@ -94,7 +94,6 @@ public class PostCssTestSuite {
       suite.addTestSuite(PostCssCustomMediaResolveTest.class);
       suite.addTestSuite(PostCssCustomPropertySetResolveTest.class);
       suite.addTestSuite(PostCssFindUsagesTest.class);
-      suite.addTestSuite(PostCssSimpleVarsTest.class);
       return suite;
     }
   }

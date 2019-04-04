@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.javascript.flex.FlexAnnotationNames;
@@ -14,7 +13,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSClassStub;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -24,6 +23,7 @@ import com.intellij.psi.stubs.StubTree;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.*;
 import gnu.trove.THashMap;
@@ -33,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,7 +65,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
     @Override
     public Set<FlexStyleIndexInfo> read(@NotNull DataInput in) throws IOException {
       int size = DataInputOutputUtil.readINT(in);
-      Set<FlexStyleIndexInfo> result = new LinkedHashSet<>();
+      Set<FlexStyleIndexInfo> result = ContainerUtil.newLinkedHashSet();
       for (int i = 0; i < size; i++) {
         String className = readUTF(in);
         assert className != null;
@@ -104,7 +103,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
   private static <TKey, TValue> void addElement(Map<TKey, Set<TValue>> map, TKey key, TValue value) {
     Set<TValue> list = map.get(key);
     if (list == null) {
-      list = new LinkedHashSet<>();
+      list = ContainerUtil.newLinkedHashSet();
       map.put(key, list);
     }
     list.add(value);
@@ -112,7 +111,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   @NotNull
   private static String getQualifiedNameByMxmlFile(@NotNull VirtualFile file, @NotNull Project project) {
-    String name = FileUtilRt.getNameWithoutExtension(file.getName());
+    String name = FileUtil.getNameWithoutExtension(file.getName());
     final String packageName = JSResolveUtil.getExpectedPackageNameFromFile(file, project);
     if (packageName != null && packageName.length() > 0) {
       return packageName + "." + name;

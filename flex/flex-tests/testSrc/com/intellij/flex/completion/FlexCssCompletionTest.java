@@ -38,7 +38,7 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override
@@ -205,7 +205,7 @@ public class FlexCssCompletionTest extends BaseJSCompletionTestCase {
   }
 
   private void addDifferentStyleDeclarationsLibrary() {
-    FlexTestUtils.addLibrary(getModule(), "Lib", getTestDataPath(), "DifferentStyleDeclarations.swc", null, null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "Lib"));
+    FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath(), "DifferentStyleDeclarations.swc", null, null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "Lib"));
   }
 }

@@ -18,15 +18,13 @@ MetadataFile:core.module.metadata.json
         #value <metadata object>
           ngModule: AgmCoreModule <metadata reference>('')
           providers <metadata array>
-            <metadata spread>
-              #expression: ./utils/browser-globals#BROWSER_GLOBALS_PROVIDERS <metadata reference>('')
             <metadata object>
               provide: ./services/maps-api-loader/maps-api-loader#MapsAPILoader <metadata reference>('')
               useClass: ./services/maps-api-loader/lazy-maps-api-loader#LazyMapsAPILoader <metadata reference>('')
             <metadata object>
               provide: ./services/maps-api-loader/lazy-maps-api-loader#LAZY_MAPS_API_CONFIG <metadata reference>('')
               useValue: lazyMapsAPILoaderConfig <metadata reference>('')
-      ___dec.declarations: <metadata call>
+      ___dec.declarations: : <metadata call>
         #expression: coreDirectives <metadata reference>('')
-      ___dec.exports: <metadata call>
+      ___dec.exports: : <metadata call>
         #expression: coreDirectives <metadata reference>('')

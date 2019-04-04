@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.ide.fileTemplates.FileTemplate;
@@ -29,7 +28,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -65,7 +63,7 @@ public class CreateFlexComponentFix extends ActionScriptCreateClassOrInterfaceFi
   public static String[] getAllowedBuiltInTemplates(final Module module) {
     FlexBuildConfiguration c = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     if (c.isPureAs()) {
-      return ArrayUtilRt.EMPTY_STRING_ARRAY;
+      return ArrayUtil.EMPTY_STRING_ARRAY;
     }
 
     Sdk sdk = c.getSdk();

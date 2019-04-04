@@ -24,7 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.beanProperties.CreateBeanPropertyFixes;
 import com.intellij.psi.util.PropertyUtilBase;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +71,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
   public Object[] getVariants() {
     final PsiClass psiClass = getPsiClass();
     if (psiClass == null) {
-      return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
+      return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     final Map<String, PsiMethod> properties =

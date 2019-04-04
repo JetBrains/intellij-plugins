@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.actionscript.arrangement;
 
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
@@ -26,11 +25,15 @@ import com.intellij.psi.codeStyle.arrangement.match.StdArrangementMatchRule;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementSettingsToken;
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementSettings;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.EntryType.*;
 import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Grouping.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER;
@@ -135,7 +138,7 @@ public class ActionScriptRearranger extends JSRearrangerBase {
   @Override
   @NotNull
   protected Set<ArrangementSettingsToken> detectModifiers(@NotNull final JSAttributeListOwner fieldOrMethod) {
-    final Set<ArrangementSettingsToken> result = new HashSet<>();
+    final Set<ArrangementSettingsToken> result = ContainerUtil.newHashSet();
 
     final JSAttributeList attributes = fieldOrMethod.getAttributeList();
 

@@ -581,11 +581,11 @@ public class Flexmojos3ImporterTest extends FlexmojosImporterTestBase {
             "en_US", "target/project-1.0-config-report.xml");
   }
 
-  public void testThatRbSwcPlaceholdersFixedForDefaultLocale() {
+  public void testThatRbSwcPlaceholdersFixedForDefaultLocale() throws Exception {
     commonTestForRbSwcPlaceholders();
   }
 
-  public void testThatRbSwcPlaceholdersFixedForAllLocales() {
+  public void testThatRbSwcPlaceholdersFixedForAllLocales() throws Exception {
     commonTestForRbSwcPlaceholders("ja_JP", "it_IT");
   }
 

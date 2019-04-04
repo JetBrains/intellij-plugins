@@ -31,7 +31,7 @@ import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -177,7 +177,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     final BuildConfigurationNature nature = bc.getNature();
 
     if (myCreateSampleApp) {
-      final String className = FileUtilRt.getNameWithoutExtension(mySampleAppName);
+      final String className = FileUtil.getNameWithoutExtension(mySampleAppName);
 
       bc.setMainClass(className);
       bc.setOutputFileName(className + (myOutputType == OutputType.Library ? ".swc" : ".swf"));

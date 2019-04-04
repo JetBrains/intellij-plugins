@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.webcore.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class KarmaConfig {
 
@@ -136,7 +136,7 @@ public class KarmaConfig {
       LOG.warn("Can not parse Karma config.hostname from " + all.toString());
       hostname = "localhost";
     }
-    hostname = StringUtil.toLowerCase(hostname);
+    hostname = hostname.toLowerCase(Locale.ENGLISH);
     return hostname;
   }
 

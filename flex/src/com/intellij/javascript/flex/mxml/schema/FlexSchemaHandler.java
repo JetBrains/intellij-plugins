@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
@@ -34,7 +33,6 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
@@ -249,7 +247,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     if (MxmlJSClass.MXML_URI6.equals(namespace)) return "mx";
     if ("*".equals(namespace)) return "local";
 
-    namespace = FileUtil.toSystemIndependentName(StringUtil.toLowerCase(namespace));
+    namespace = FileUtil.toSystemIndependentName(namespace.toLowerCase());
     String prefix = namespace;
 
     if (namespace.endsWith(".*") && namespace.length() > 2) {
@@ -296,6 +294,6 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
       }
       return knownPrefixes;
     }
-    return ArrayUtilRt.EMPTY_STRING_ARRAY;
+    return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 }

@@ -10,7 +10,7 @@ public class PostCssTreeElementFactory extends CssTreeElementFactory {
 
   @Override
   @NotNull
-  public CompositeElement createComposite(@NotNull final IElementType type) {
+  public CompositeElement createComposite(final IElementType type) {
     if (type == PostCssElementTypes.POST_CSS_NEST) {
       return new PostCssNestImpl();
     }
@@ -19,9 +19,6 @@ public class PostCssTreeElementFactory extends CssTreeElementFactory {
     }
     else if (type == PostCssElementTypes.POST_CSS_CUSTOM_MEDIA_RULE) {
       return new PostCssCustomMediaAtRuleImpl();
-    }
-    else if (type == PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE) {
-      return new PostCssSimpleVariableImpl();
     }
     else if (type == PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE_DECLARATION) {
       return new PostCssSimpleVariableDeclarationImpl();

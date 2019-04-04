@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.template.Expression;
 import com.intellij.codeInsight.template.Template;
-import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.util.Computable;
@@ -19,7 +18,7 @@ public class CreateJSEventMethod extends CreateJSFunctionIntentionActionBase {
 
   @Override
   protected void addParameters(Template template, JSReferenceExpression refExpr, @NotNull PsiElement anchorParent) {
-    Expression expression = new ConstantNode("event");
+    Expression expression = new MyExpression("event");
 
     template.addVariable("$event$", expression, expression, true);
     template.addTextSegment(":");

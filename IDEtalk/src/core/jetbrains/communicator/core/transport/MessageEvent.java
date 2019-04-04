@@ -16,7 +16,7 @@
 package jetbrains.communicator.core.transport;
 
 import jetbrains.communicator.core.EventVisitor;
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 
 /**
  * @author kir
@@ -40,7 +40,7 @@ public class MessageEvent extends TransportEvent {
   }
 
   public String toString() {
-    return CommunicatorStrings.toString(getClass(), new Object[]{
+    return StringUtil.toString(getClass(), new Object[]{
       myComment,
       getRemoteUser(),
       getTransport()

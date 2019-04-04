@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.tags;
 
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.MultiMap;
@@ -9,6 +8,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2Directive;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -20,23 +20,16 @@ import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProx
 public class Angular2XmlElementSourcesResolver {
   private final XmlTag myScope;
   private final Collection<?> mySources;
-  private final AtomicNotNullLazyValue<Collection<PsiElement>> myDeclarations;
 
-  public Angular2XmlElementSourcesResolver(@NotNull XmlTag scope,
-                                           @NotNull Collection<?> sources,
-                                           @NotNull Function<Angular2Directive, Collection<? extends PsiElement>> getProperties,
-                                           @NotNull Function<Angular2Directive, Collection<? extends PsiElement>> getSelectors) {
+  public Angular2XmlElementSourcesResolver(@Nullable XmlTag scope, @NotNull Collection<?> sources) {
     myScope = scope;
     mySources = new ArrayList<>(sources);
-    myDeclarations = AtomicNotNullLazyValue.createValue(() -> buildDeclarations(getProperties, getSelectors));
   }
 
-  @NotNull
   public XmlTag getScope() {
     return myScope;
   }
 
-  @NotNull
   public Collection<?> getSources() {
     return mySources;
   }
@@ -47,13 +40,8 @@ public class Angular2XmlElementSourcesResolver {
   }
 
   @NotNull
-  public Collection<PsiElement> getDeclarations() {
-    return myDeclarations.getValue();
-  }
-
-  @NotNull
-  public Collection<PsiElement> buildDeclarations(@NotNull Function<Angular2Directive, Collection<? extends PsiElement>> getProperties,
-                                                  @NotNull Function<Angular2Directive, Collection<? extends PsiElement>> getSelectors) {
+  public Collection<PsiElement> getDeclarations(@NotNull Function<Angular2Directive, Collection<? extends PsiElement>> getProperties,
+                                                @NotNull Function<Angular2Directive, Collection<? extends PsiElement>> getSelectors) {
     Set<PsiElement> result = new HashSet<>(getNonDirectiveElements());
     MultiMap<Angular2DeclarationsScope.DeclarationProximity, Angular2Directive> directivesByProximity = getDeclarationsByProximity();
     directivesByProximity.remove(NOT_REACHABLE);
@@ -95,11 +83,12 @@ public class Angular2XmlElementSourcesResolver {
   @NotNull
   private MultiMap<Angular2DeclarationsScope.DeclarationProximity, Angular2Directive> getDeclarationsByProximity() {
     MultiMap<Angular2DeclarationsScope.DeclarationProximity, Angular2Directive> result = new MultiMap<>();
-    Angular2DeclarationsScope scope = new Angular2DeclarationsScope(myScope);
+    Angular2DeclarationsScope scope = myScope != null ? new Angular2DeclarationsScope(myScope)
+                                                      : null;
     for (Object source : mySources) {
       if (source instanceof Angular2Directive) {
         Angular2Directive directive = (Angular2Directive)source;
-        result.putValue(scope.getDeclarationProximity(directive), directive);
+        result.putValue(scope != null ? scope.getDeclarationProximity(directive) : IN_SCOPE, directive);
       }
     }
     return result;

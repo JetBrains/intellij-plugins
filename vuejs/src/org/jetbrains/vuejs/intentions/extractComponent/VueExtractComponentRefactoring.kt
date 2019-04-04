@@ -14,8 +14,8 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.PathUtilRt
 import com.intellij.xml.DefaultXmlExtension
 import org.jetbrains.vuejs.VueBundle
+import org.jetbrains.vuejs.codeInsight.VueTagProvider
 import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.codeInsight.tags.VueTagProvider
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.intentions.extractComponent.VueComponentInplaceIntroducer.Companion.GROUP_ID
 

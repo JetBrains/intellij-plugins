@@ -19,8 +19,7 @@ public class Angular2ActionFactory {
   @Nullable
   public static AddNgModuleDeclarationAction createAddNgModuleDeclarationAction(@Nullable Editor editor,
                                                                                 @NotNull PsiElement element,
-                                                                                @NotNull Angular2Declaration declaration,
-                                                                                boolean codeCompletion) {
+                                                                                @NotNull Angular2Declaration declaration) {
 
     Angular2SourceDeclaration sourceDeclaration = tryCast(declaration, Angular2SourceDeclaration.class);
     String className;
@@ -29,8 +28,7 @@ public class Angular2ActionFactory {
            : createAddNgModuleDeclarationAction(editor, element,
                                                 SmartPointerManager.createPointer(sourceDeclaration.getDecorator()), className,
                                                 Angular2Bundle.message("angular.quickfix.ngmodule.declare.name.choice",
-                                                                       className),
-                                                codeCompletion);
+                                                                       className));
   }
 
   @NotNull
@@ -38,9 +36,8 @@ public class Angular2ActionFactory {
                                                                                 @NotNull PsiElement element,
                                                                                 @NotNull SmartPsiElementPointer<ES6Decorator> declarationDecorator,
                                                                                 @NotNull String declarationName,
-                                                                                @NotNull String actionName,
-                                                                                boolean codeCompletion) {
-    return new AddNgModuleDeclarationAction(editor, element, declarationDecorator, declarationName, actionName, codeCompletion);
+                                                                                @NotNull String actionName) {
+    return new AddNgModuleDeclarationAction(editor, element, declarationDecorator, declarationName, actionName);
   }
 
   @NotNull

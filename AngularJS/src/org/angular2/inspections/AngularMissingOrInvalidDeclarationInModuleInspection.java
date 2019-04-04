@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testIntegration.TestFinderHelper;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
@@ -41,9 +40,6 @@ public class AngularMissingOrInvalidDeclarationInModuleInspection extends LocalI
              || DIRECTIVE_DEC.equals(decorator.getDecoratorName())
              || PIPE_DEC.equals(decorator.getDecoratorName()))
             && Angular2LangUtil.isAngular2Context(decorator)) {
-          if (TestFinderHelper.isTest(decorator)) {
-            return;
-          }
           Angular2Declaration declaration = tryCast(Angular2EntitiesProvider.getEntity(decorator),
                                                     Angular2Declaration.class);
           if (declaration != null) {

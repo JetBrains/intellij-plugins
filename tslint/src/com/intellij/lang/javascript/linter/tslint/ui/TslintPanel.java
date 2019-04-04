@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.ui;
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterField;
@@ -15,13 +14,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Collections;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
@@ -45,7 +44,7 @@ public final class TslintPanel {
     myAddLeftIndent = addLeftIndent;
     myConfigFileView.setAdditionalConfigFilesProducer(() -> TslintUtil.findAllConfigsInScope(project));
     myNodeInterpreterField = new NodeJsInterpreterField(project, false);
-    myNodePackageField = AutodetectLinterPackage.createNodePackageField(Collections.singletonList(TslintUtil.PACKAGE_NAME),
+    myNodePackageField = AutodetectLinterPackage.createNodePackageField(ContainerUtil.list(TslintUtil.PACKAGE_NAME),
                                                                         myNodeInterpreterField, myConfigFileView);
   }
 

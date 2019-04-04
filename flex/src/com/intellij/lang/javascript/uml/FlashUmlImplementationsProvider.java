@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.extras.providers.ImplementationsProvider;
@@ -19,7 +18,7 @@ public class FlashUmlImplementationsProvider extends ImplementationsProvider<Obj
   @Override
   public Object[] getElements(Object element, Project project) {
     JSClass clazz = (JSClass)element;
-    final Collection<PsiElement> inheritors = Collections.synchronizedSet(new THashSet<>());
+    final Collection<PsiElement> inheritors = Collections.synchronizedSet(new THashSet<PsiElement>());
 
     final Processor<JSClass> p = aClass -> {
       final PsiElement navigationElement = aClass.getNavigationElement();

@@ -1,4 +1,18 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2000-2006 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package jetbrains.communicator.p2p;
 
 import jetbrains.communicator.ide.IDEFacade;
@@ -10,7 +24,6 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -24,7 +37,7 @@ class MulticastPingThread extends Thread {
   public static final int MULTICAST_PORT = 2863;
   static final String PING_MESSAGE = "Is there anybody out there?";
   private static final String MULTICAST_ADORES = "239.203.13.64";
-  private static final int BUFFER_SIZE = PING_MESSAGE.getBytes(StandardCharsets.UTF_8).length + 6;
+  private static final int BUFFER_SIZE = PING_MESSAGE.getBytes().length + 6;
   private static final int ALLOWED_FAILURES = 3000;
 
   private volatile boolean myIsRunning;
@@ -41,7 +54,7 @@ class MulticastPingThread extends Thread {
     super(address.toString() + " IDEtalk Multicast Thread");
     setDaemon(true); //Sometimes this thread lives forever, that's why idea.exe process never ends
                      // see jetbrains.communicator.p2p.NetworkUtil.sendMessage(...) inside try/catch block
-                     //TODO: make it not a Daemon thread again and fix the problem somewhere else. Where...?
+                     //TODO: make it not a Daemon thread again and fix the problem somewhere else. Where...? 
     mySelfAddress = address;
     myIdeFacade = ideFacade;
     myUserMonitorClient = userMonitorClient;
@@ -75,8 +88,8 @@ class MulticastPingThread extends Thread {
   }
 
   private static void sendMessage(MulticastSocket datagramSocket, String msg) throws IOException {
-    DatagramPacket packet = new DatagramPacket(msg.getBytes(StandardCharsets.UTF_8), 0, msg.getBytes(StandardCharsets.UTF_8).length,
-                                               InetAddress.getByName(MULTICAST_ADORES), MULTICAST_PORT);
+    DatagramPacket packet = new DatagramPacket(msg.getBytes(), 0, msg.getBytes().length,
+            InetAddress.getByName(MULTICAST_ADORES), MULTICAST_PORT);
     datagramSocket.send(packet);
   }
 
@@ -106,7 +119,7 @@ class MulticastPingThread extends Thread {
           LOG.debug(getName() + ": Listening for multicast messages... ");
           myStarted = true;
           myDatagramSocket.receive(datagramPacket);
-          String message = new String(buffer, 0, datagramPacket.getLength(), StandardCharsets.UTF_8);
+          String message = new String(buffer, 0, datagramPacket.getLength());
           final InetAddress remoteAddress = datagramPacket.getAddress();
 
           if (LOG.isDebugEnabled()) {

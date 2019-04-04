@@ -1,4 +1,4 @@
-<!-- "Create field 'aaaxxx'" "true" -->
+<!-- "Create Field 'aaaxxx'" "true" -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
 <mx:Script>
     private var aaaxxx:int;

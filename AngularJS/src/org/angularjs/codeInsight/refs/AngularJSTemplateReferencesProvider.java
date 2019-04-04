@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.javascript.JSFileReference;
@@ -15,7 +14,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.SoftFileReferenceSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
@@ -26,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -85,7 +82,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       if (Angular2LangUtil.isAngular2Context(element)) {
         final PsiFile file = element.getContainingFile().getOriginalFile();
         String pathString = StringUtil.trimStart(getPathString(), "./");
-        Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
+        Collection<PsiFileSystemItem> contexts = ContainerUtil.newLinkedHashSet();
         if (!pathString.startsWith("../") && addParentPathContexts(file, pathString, contexts)) {
           return contexts;
         }
@@ -98,8 +95,8 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     @Override
     public FileReference createFileReference(TextRange range, int index, String text) {
       return Angular2LangUtil.isAngular2Context(getElement())
-             ? new Angular2FileReference(text, index, range, this, ArrayUtilRt.EMPTY_STRING_ARRAY)
-             : new JSFileReference(text, index, range, this, ArrayUtilRt.EMPTY_STRING_ARRAY);
+             ? new Angular2FileReference(text, index, range, this, ArrayUtil.EMPTY_STRING_ARRAY)
+             : new JSFileReference(text, index, range, this, ArrayUtil.EMPTY_STRING_ARRAY);
     }
 
     private static void visitFile(@Nullable PsiFile file, @NotNull Consumer<Angular2SoftFileReferenceSet> action) {
@@ -117,7 +114,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     private Angular2TemplateReferenceData encodeTemplateReferenceData() {
       final PsiFile file = getElement().getContainingFile().getOriginalFile();
       String pathString = StringUtil.trimStart(getPathString(), "./");
-      Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
+      Collection<PsiFileSystemItem> contexts = ContainerUtil.newLinkedHashSet();
       if (!pathString.startsWith("../") && addParentPathContexts(file, pathString, contexts)) {
         PsiFileSystemItem firstItem = ContainerUtil.getFirstItem(contexts);
         if (firstItem instanceof PsiFile) {

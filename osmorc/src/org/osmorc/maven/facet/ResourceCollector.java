@@ -23,7 +23,7 @@ package org.osmorc.maven.facet;
 import aQute.bnd.osgi.Analyzer;
 import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenResource;
@@ -82,14 +82,14 @@ public class ResourceCollector {
 
         scanner.setBasedir(sourcePath);
         if (resource.getIncludes() != null && !resource.getIncludes().isEmpty()) {
-          scanner.setIncludes(ArrayUtilRt.toStringArray(resource.getIncludes()));
+          scanner.setIncludes(ArrayUtil.toStringArray(resource.getIncludes()));
         }
         else {
           scanner.setIncludes(DEFAULT_INCLUDES);
         }
 
         if (resource.getExcludes() != null && !resource.getExcludes().isEmpty()) {
-          scanner.setExcludes(ArrayUtilRt.toStringArray(resource.getExcludes()));
+          scanner.setExcludes(ArrayUtil.toStringArray(resource.getExcludes()));
         }
 
         scanner.addDefaultExcludes();

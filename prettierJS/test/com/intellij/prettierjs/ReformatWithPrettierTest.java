@@ -23,6 +23,11 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   @Override
+  protected String getRootDirName() {
+    return "Prettier";
+  }
+
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
@@ -82,14 +87,6 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     doReformatFile("toReformat", "js");
     FileDocumentManager.getInstance().saveAllDocuments();
     assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
-  }
-
-  public void testNotSupportedFile() {
-    assertError(s -> s.contains("unsupported type"), () -> doReformatFile("test", "txt"));
-  }
-
-  public void testFileDetectedByShebangLine() {
-    doReformatFile("test", "");
   }
 
   private void doReformatFile(final String extension) {
