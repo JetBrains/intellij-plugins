@@ -6,30 +6,34 @@ import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlDescriptorUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
+import org.angular2.entities.Angular2Directive;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.angular2.codeInsight.tags.Angular2StandardTagDescriptor.mergeWithAngularDescriptorIfPossible;
 
 public class Angular2TagDescriptor implements XmlElementDescriptor {
   private final String myName;
-  private final PsiElement myDeclaration;
-  private final boolean myCommonHtmlElement;
+  private final Angular2XmlElementSourcesResolver myResolver;
+  private final boolean myHasAttributes;
 
-  public Angular2TagDescriptor(@NotNull String name, @NotNull PsiElement declaration) {
-    this(name, declaration, true);
-  }
-
-  public Angular2TagDescriptor(@NotNull String name, @NotNull PsiElement declaration, boolean commonHtmlElement) {
+  public Angular2TagDescriptor(@NotNull XmlTag tag,
+                               @NotNull String name,
+                               @NotNull Collection<?> sources,
+                               boolean hasAttributes) {
+    myResolver = new Angular2XmlElementSourcesResolver(tag, sources);
     myName = name;
-    myDeclaration = declaration;
-    myCommonHtmlElement = commonHtmlElement;
+    myHasAttributes = hasAttributes;
   }
 
   @NotNull
@@ -59,8 +63,8 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   @Override
   @NotNull
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    return myCommonHtmlElement ? HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)
-                               : XmlAttributeDescriptor.EMPTY;
+    return myHasAttributes ? HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)
+                           : XmlAttributeDescriptor.EMPTY;
   }
 
   @Nullable
@@ -102,7 +106,11 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   @NotNull
   @Override
   public PsiElement getDeclaration() {
-    return myDeclaration;
+    return ContainerUtil.getFirstItem(myResolver.getDeclarations(x -> Collections.emptyList(), this::getSelectors));
+  }
+
+  private Collection<? extends PsiElement> getSelectors(Angular2Directive directive) {
+    return Collections.singleton(directive.getSelector().getPsiElementForElement(myName));
   }
 
   @NotNull
