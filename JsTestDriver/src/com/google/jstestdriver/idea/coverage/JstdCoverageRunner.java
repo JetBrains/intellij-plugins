@@ -61,16 +61,19 @@ public class JstdCoverageRunner extends CoverageRunner {
   }
 
   @Override
+  @NotNull
   public String getPresentableName() {
     return "JstdPresentableName";
   }
 
   @Override
+  @NotNull
   public String getId() {
     return JstdCoverageEngine.ID;
   }
 
   @Override
+  @NotNull
   public String getDataFileExtension() {
     return "dat";
   }
