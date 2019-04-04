@@ -64,11 +64,7 @@ class ActionsRecorder(private val project: Project,
           ApplicationManager.getApplication().invokeLater {
             val complete = checkComplete()
             if (!complete) {
-              commandListener = object : CommandListener {
-                override fun commandFinished(event: CommandEvent) {
-                  checkComplete()
-                }
-              }
+              addSimpleCommandListener { checkComplete() }
             }
           }
         }
@@ -120,17 +116,26 @@ class ActionsRecorder(private val project: Project,
 
   fun futureCheck(checkFunction: () -> Boolean): CompletableFuture<Boolean> {
     val future: CompletableFuture<Boolean> = CompletableFuture()
-    val listener = createDocumentListener {
-      if (!future.isDone && !future.isCancelled && checkFunction())
-        future.complete(true)
-    }
-    addKeyEventListener {
+
+    val check = {
       if (!future.isDone && !future.isCancelled && checkFunction()) {
         future.complete(true)
       }
     }
-    document.addDocumentListener(listener)
+
+    addKeyEventListener { check() }
+    document.addDocumentListener(createDocumentListener { check() })
+    addSimpleCommandListener(check)
+
     return future
+  }
+
+  private fun addSimpleCommandListener(check: () -> Unit) {
+    commandListener = object : CommandListener {
+      override fun commandFinished(event: CommandEvent) {
+        check()
+      }
+    }
   }
 
   private val myMessageBusConnection: MessageBusConnection
