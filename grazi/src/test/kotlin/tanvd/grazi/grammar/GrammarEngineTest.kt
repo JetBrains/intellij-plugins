@@ -96,28 +96,25 @@ class GrammarEngineTest {
     }
 
     @Test
-    fun getFixes_performance_cachedMiddleSize() {
-        val text = File("src/test/resources/english_big.txt").readText()
+    fun getFixes_performance_middleSize() {
+        val text = File("src/test/resources/sonnet_10.txt").readText()
         val grammar = GrammarEngine
-        val fixes1 = grammar.getFixes(text).toList()
-        var fixes2: List<Typo> = emptyList()
+        var fixes: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
-            fixes2 = grammar.getFixes(text).toList()
+            fixes = grammar.getFixes(text).toList()
         }
-        assertEquals(fixes1, fixes2)
-        assert(0.01 > totalTime / 1000)
+        assert(fixes.size > 100)
+        assert(totalTime < 4000)
     }
 
     @Test
     fun getFixes_performance_cachedBigSize() {
-        val text = File("src/test/resources/english_big2.txt").readText()
-        val grammar = GrammarEngine
-        val fixes1 = grammar.getFixes(text).toList()
-        var fixes2: List<Typo> = emptyList()
+        val text = File("src/test/resources/sonnet_50.txt").readText()
+        var fixes: List<Typo> = emptyList()
         val totalTime = measureTimeMillis {
-            fixes2 = grammar.getFixes(text).toList()
+            fixes = GrammarEngine.getFixes(text).toList()
         }
-        assertEquals(fixes1, fixes2)
-        assert(0.01 > totalTime / 1000)
+        assert(fixes.size > 500)
+        assert(totalTime < 10000)
     }
 }
