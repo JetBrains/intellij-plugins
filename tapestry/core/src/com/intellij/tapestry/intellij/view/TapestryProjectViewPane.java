@@ -431,7 +431,6 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
     myTree.setRootVisible(false);
     myTree.setShowsRootHandles(true);
-    UIUtil.setLineStyleAngled(myTree);
     myTree.expandPath(new TreePath(myTree.getModel().getRoot()));
     TreeUtil.expandRootChildIfOnlyOne(myTree);
 

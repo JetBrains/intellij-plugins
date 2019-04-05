@@ -45,7 +45,6 @@ public class DependenciesTab {
     public DependenciesTab() {
         _splitPane.setDividerLocation(0.5);
 
-        UIUtil.setLineStyleAngled(_dependenciesTree);
         _dependenciesTree.setCellRenderer(new DependenciesTreeCellRenderer());
 
         _navigateToElementAction = new NavigateToElementAction();
