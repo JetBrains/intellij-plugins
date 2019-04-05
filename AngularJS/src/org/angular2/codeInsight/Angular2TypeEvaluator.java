@@ -9,8 +9,6 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.types.*;
-import com.intellij.lang.javascript.psi.types.primitives.JSNullType;
-import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
@@ -47,6 +45,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import static com.intellij.lang.javascript.psi.JSTypeUtils.*;
 import static com.intellij.lang.javascript.psi.types.JSUnionOrIntersectionType.OptimizedKind.OPTIMIZED_SIMPLE;
 import static com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations.expandAndOptimizeTypeRecursive;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
@@ -68,7 +67,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
       return null;
     }
     List<JSType> result = new ArrayList<>();
-    JSTypeUtils.processExpandedType(subType -> {
+    processExpandedType(subType -> {
       if (subType instanceof JSGenericTypeImpl) {
         List<JSType> arguments = ((JSGenericTypeImpl)subType).getArguments();
         if (arguments.size() == 1) {
@@ -304,7 +303,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     @Nullable
     public JSType resolveTemplateContextType() {
       return myTypeSubstitutor != null
-             ? JSTypeUtils.applyGenericArguments(myRawTemplateContextType, myTypeSubstitutor)
+             ? applyGenericArguments(myRawTemplateContextType, myTypeSubstitutor)
              : myRawTemplateContextType;
     }
 
@@ -316,7 +315,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
         return null;
       }
       if (myTypeSubstitutor != null) {
-        types = map(types, type -> JSTypeUtils.applyGenericArguments(type, myTypeSubstitutor));
+        types = map(types, type -> applyGenericArguments(type, myTypeSubstitutor));
       }
       return merge(source, types, false);
     }
@@ -346,10 +345,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
           JSExpression inputExpression = inputsMap.get(property.getName());
           if (inputExpression != null && property.getType() != null) {
             JSLazyExpressionType inputType = new JSLazyExpressionType(inputExpression, true);
-            JSType evaluatedInputType = inputType.getOriginalType();
-            if (JSTypeUtils.isAnyType(evaluatedInputType)
-                || evaluatedInputType instanceof JSNullType
-                || evaluatedInputType instanceof JSUndefinedType) {
+            if (isAnyType(getApparentType(inputType.getOriginalType()))) {
               // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.
               // This is not correct according to TypeScript inferring rules for generics, but it's better for Angular type
               // checking to be less strict here. Additionally, if `any` type is passed to e.g. async pipe it's going to be resolved
