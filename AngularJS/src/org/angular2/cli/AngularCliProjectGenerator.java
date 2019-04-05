@@ -42,9 +42,12 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.util.containers.ContainerUtil.exists;
+
 /**
  * @author Dennis.Ushakov
  */
+@SuppressWarnings("MethodDoesntCallSuperMethod")
 public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
   @NonNls public static final String PACKAGE_NAME = "@angular/cli";
@@ -100,7 +103,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     }
 
     if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0)) {
-      if (!result.contains("--defaults")) {
+      if (!exists(result, param -> param.startsWith("--defaults"))) {
         result.add("--defaults");
       }
     }
@@ -300,7 +303,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
                   List<Option> list = ContainerUtil.newArrayList(schematic.getOptions());
                   list.add(createOption("verbose", "Boolean", false, "Adds more details to output logging."));
                   list.add(createOption("collection", "String", null, "Schematics collection to use"));
-                  Collections.sort(list, Comparator.comparing(Option::getName));
+                  list.sort(Comparator.comparing(Option::getName));
                   return list;
                 })
                 .orElse(Collections.emptyList());
