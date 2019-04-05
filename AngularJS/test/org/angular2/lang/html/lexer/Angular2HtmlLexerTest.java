@@ -215,6 +215,30 @@ public class Angular2HtmlLexerTest extends LexerTestCase {
            false);
   }
 
+  public void testStyleAfterBinding() {
+    doTest("<div *foo style=\"width: 13px\">\n" +
+           "  <span (click)=\"foo\"></span>\n" +
+           "</div>",
+           // TODO improve CSS lexer to have less states
+           false);
+  }
+
+  public void testStyleAfterStyle() {
+    doTest("<div style style *foo='bar'>\n" +
+           "  <span style='width: 13px' (click)=\"foo\"></span>\n" +
+           "</div>",
+           // TODO improve CSS lexer to have less states
+           false);
+  }
+
+  public void testBindingAfterStyle() {
+    doTest("<div style *foo='bar'>\n" +
+           "  <span style='width: 13px' (click)=\"foo\"></span>\n" +
+           "</div>",
+           // TODO improve CSS lexer to have less states
+           false);
+  }
+
   public void testEmptyStructuralDirective() {
     doTest("<div *foo [bar]=\"\"></div>\n" +
            "<div [bar]=\"some\"></div>");
