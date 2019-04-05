@@ -53,7 +53,8 @@ public class Angular2InvalidExpressionResultTypeInspectionTest extends Angular2C
 
   public void testNgForOfAnyType() {
     myFixture.copyDirectoryToProject("node_modules", "./node_modules");
-    myFixture.configureByFiles("ngForOfAnyType.ts", "ng_for_of.ts", "package.json");
+    AngularTestUtil.configureWithMetadataFiles(myFixture, "common");
+    myFixture.configureByFiles("ngForOfAnyType.ts", "ng_for_of.ts", "async_pipe.d.ts", "package.json");
     myFixture.checkHighlighting();
   }
 }
