@@ -9,6 +9,8 @@ import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSGenericTypesEvaluatorBase;
 import com.intellij.lang.javascript.psi.resolve.JSTypeProcessor;
 import com.intellij.lang.javascript.psi.types.*;
+import com.intellij.lang.javascript.psi.types.primitives.JSNullType;
+import com.intellij.lang.javascript.psi.types.primitives.JSUndefinedType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
@@ -152,7 +154,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
       TypeScriptClass componentClass = Angular2IndexingHandler.findComponentClass(thisQualifier);
       if (componentClass != null) {
         addType(componentClass.getJSType(), thisQualifier);
-      } else {
+      }
+      else {
         addType(JSAnyType.getWithLanguage(JSTypeSource.SourceLanguage.TS, true), thisQualifier);
       }
       return;
@@ -343,10 +346,14 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
           JSExpression inputExpression = inputsMap.get(property.getName());
           if (inputExpression != null && property.getType() != null) {
             JSLazyExpressionType inputType = new JSLazyExpressionType(inputExpression, true);
-            if (JSTypeUtils.isAnyType(inputType.getOriginalType())) {
+            JSType evaluatedInputType = inputType.getOriginalType();
+            if (JSTypeUtils.isAnyType(evaluatedInputType)
+                || evaluatedInputType instanceof JSNullType
+                || evaluatedInputType instanceof JSUndefinedType) {
               // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.
               // This is not correct according to TypeScript inferring rules for generics, but it's better for Angular type
-              // checking to be less strict here.
+              // checking to be less strict here. Additionally, if `any` type is passed to e.g. async pipe it's going to be resolved
+              // with `null`, so we need to check for `null` and `undefined` as well
               JSAnyType anyType = JSAnyType.get(inputType.getSource());
               expandAndOptimizeTypeRecursive(property.getType()).accept(new JSRecursiveTypeVisitor(true) {
                 @Override
