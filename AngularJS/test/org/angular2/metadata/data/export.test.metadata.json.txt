@@ -9,6 +9,8 @@ MetadataFile:export.test.metadata.json
     CdkHeaderCellDef <metadata template>: selector=[cdkHeaderCellDef]; inputs=[]; outputs=[]; inOuts=[]('')
     CdkFooterCellDef <metadata template>: selector=[cdkFooterCellDef]; inputs=[]; outputs=[]; inOuts=[]('')
     CdkColumnDefBase <metadata class>('')
+    _CdkColumnDefBase: : <metadata call>
+      #expression: mixinHasStickyInput <metadata reference>('')
     CdkColumnDef <metadata directive>: selector=[cdkColumnDef]; inputs=[cdkColumnDef, sticky, stickyEnd]; outputs=[]; inOuts=[]
       #ext: _CdkColumnDefBase <metadata reference>('')
     BaseCdkCell <metadata class>('')
@@ -21,10 +23,14 @@ MetadataFile:export.test.metadata.json
     BaseRowDef <metadata class>('')
     CdkHeaderRowDefBase <metadata class>
       #ext: BaseRowDef <metadata reference>('')
+    _CdkHeaderRowDefBase: : <metadata call>
+      #expression: mixinHasStickyInput <metadata reference>('')
     CdkHeaderRowDef <metadata template>: selector=[cdkHeaderRowDef]; inputs=[cdkHeaderRowDefSticky, cdkHeaderRowDef]; outputs=[]; inOuts=[]
       #ext: _CdkHeaderRowDefBase <metadata reference>('')
     CdkFooterRowDefBase <metadata class>
       #ext: BaseRowDef <metadata reference>('')
+    _CdkFooterRowDefBase: : <metadata call>
+      #expression: mixinHasStickyInput <metadata reference>('')
     CdkFooterRowDef <metadata template>: selector=[cdkFooterRowDef]; inputs=[cdkFooterRowDefSticky, cdkFooterRowDef]; outputs=[]; inOuts=[]
       #ext: _CdkFooterRowDefBase <metadata reference>('')
     CdkRowDef <metadata template>: selector=[cdkRowDef]; inputs=[cdkRowDefWhen, cdkRowDefColumns]; outputs=[]; inOuts=[]
@@ -76,3 +82,5 @@ MetadataFile:export.test.metadata.json
         @angular/common#CommonModule <metadata reference>('')
     STICKY_DIRECTIONS <metadata array>('')
     StickyStyler <metadata class>('')
+    mixinHasStickyInput <metadata function>
+      #value <metadata class>('')

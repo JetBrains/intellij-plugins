@@ -1,0 +1,73 @@
+MainModule: Angular2SourceModule
+  imports:
+    AgmCoreModule: Angular2MetadataModule
+      imports:
+      declarations:
+        AgmCircle: Angular2MetadataDirective
+        AgmDataLayer: Angular2MetadataDirective
+        AgmFitBounds: Angular2MetadataDirective
+        AgmInfoWindow: Angular2MetadataComponent
+        AgmKmlLayer: Angular2MetadataDirective
+        AgmMap: Angular2MetadataComponent
+        AgmMarker: Angular2MetadataDirective
+        AgmPolygon: Angular2MetadataDirective
+        AgmPolyline: Angular2MetadataDirective
+        AgmPolylinePoint: Angular2MetadataDirective
+        AgmRectangle: Angular2MetadataDirective
+      exports:
+        AgmCircle: Angular2MetadataDirective
+        AgmDataLayer: Angular2MetadataDirective
+        AgmFitBounds: Angular2MetadataDirective
+        AgmInfoWindow: Angular2MetadataComponent
+        AgmKmlLayer: Angular2MetadataDirective
+        AgmMap: Angular2MetadataComponent
+        AgmMarker: Angular2MetadataDirective
+        AgmPolygon: Angular2MetadataDirective
+        AgmPolyline: Angular2MetadataDirective
+        AgmPolylinePoint: Angular2MetadataDirective
+        AgmRectangle: Angular2MetadataDirective
+      all-exported-declarations:
+        AgmCircle: Angular2MetadataDirective
+        AgmDataLayer: Angular2MetadataDirective
+        AgmFitBounds: Angular2MetadataDirective
+        AgmInfoWindow: Angular2MetadataComponent
+        AgmKmlLayer: Angular2MetadataDirective
+        AgmMap: Angular2MetadataComponent
+        AgmMarker: Angular2MetadataDirective
+        AgmPolygon: Angular2MetadataDirective
+        AgmPolyline: Angular2MetadataDirective
+        AgmPolylinePoint: Angular2MetadataDirective
+        AgmRectangle: Angular2MetadataDirective
+      scope:
+        AgmCircle: Angular2MetadataDirective
+        AgmDataLayer: Angular2MetadataDirective
+        AgmFitBounds: Angular2MetadataDirective
+        AgmInfoWindow: Angular2MetadataComponent
+        AgmKmlLayer: Angular2MetadataDirective
+        AgmMap: Angular2MetadataComponent
+        AgmMarker: Angular2MetadataDirective
+        AgmPolygon: Angular2MetadataDirective
+        AgmPolyline: Angular2MetadataDirective
+        AgmPolylinePoint: Angular2MetadataDirective
+        AgmRectangle: Angular2MetadataDirective
+      scope fully resolved: true
+      exports fully resolved: true
+      declarations fully resolved: true
+  declarations:
+  exports:
+  all-exported-declarations:
+  scope:
+    AgmCircle: Angular2MetadataDirective
+    AgmDataLayer: Angular2MetadataDirective
+    AgmFitBounds: Angular2MetadataDirective
+    AgmInfoWindow: Angular2MetadataComponent
+    AgmKmlLayer: Angular2MetadataDirective
+    AgmMap: Angular2MetadataComponent
+    AgmMarker: Angular2MetadataDirective
+    AgmPolygon: Angular2MetadataDirective
+    AgmPolyline: Angular2MetadataDirective
+    AgmPolylinePoint: Angular2MetadataDirective
+    AgmRectangle: Angular2MetadataDirective
+  scope fully resolved: true
+  exports fully resolved: true
+  declarations fully resolved: true

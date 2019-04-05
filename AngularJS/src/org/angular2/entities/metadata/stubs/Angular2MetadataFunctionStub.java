@@ -8,6 +8,7 @@ import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import org.angular2.entities.metadata.Angular2MetadataElementTypes;
+import org.angular2.entities.metadata.psi.Angular2MetadataElement;
 import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
 import org.angular2.index.Angular2MetadataFunctionIndex;
 import org.jetbrains.annotations.NotNull;
@@ -15,26 +16,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-import static org.angular2.entities.Angular2ModuleResolver.NG_MODULE_PROP;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.ObjectUtils.tryCast;
 import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public class Angular2MetadataFunctionStub extends Angular2MetadataElementStub<Angular2MetadataFunction> {
 
+  private static final String VALUE_OBJ = "#value";
 
   public static Angular2MetadataFunctionStub createFunctionStub(@Nullable String memberName,
                                                                 @NotNull JsonValue source,
                                                                 @Nullable StubElement parent) {
     JsonObject sourceObject = (JsonObject)source;
     if (memberName != null && SYMBOL_FUNCTION.equals(readStringPropertyValue(sourceObject.findProperty(SYMBOL_TYPE)))) {
-      JsonProperty value = sourceObject.findProperty(FUNCTION_VALUE);
-      // so far we are interested only in functions, which would return NgModuleWithProviders
-      JsonProperty ngModuleProp;
-      if (value != null
-          && value.getValue() instanceof JsonObject
-          && (ngModuleProp = ((JsonObject)value.getValue()).findProperty(NG_MODULE_PROP)) != null
-          && ngModuleProp.getValue() instanceof JsonObject
-          && SYMBOL_REFERENCE.equals(readStringPropertyValue(((JsonObject)ngModuleProp.getValue()).findProperty(SYMBOL_TYPE)))) {
-        return new Angular2MetadataFunctionStub(memberName, ngModuleProp.getValue(), parent);
+      JsonValue value = doIfNotNull(sourceObject.findProperty(FUNCTION_VALUE), JsonProperty::getValue);
+      if (value != null) {
+        return new Angular2MetadataFunctionStub(memberName, value, parent);
       }
     }
     return null;
@@ -45,19 +42,16 @@ public class Angular2MetadataFunctionStub extends Angular2MetadataElementStub<An
   }
 
   public Angular2MetadataFunctionStub(@NotNull String memberName,
-                                      @NotNull JsonValue ngModulePropValue,
+                                      @NotNull JsonValue value,
                                       @Nullable StubElement parent) {
     super(memberName, parent, Angular2MetadataElementTypes.FUNCTION);
-    Angular2MetadataReferenceStub.createReferenceStub(NG_MODULE_PROP, ngModulePropValue, this);
+    createMember(VALUE_OBJ, value);
   }
 
   @Nullable
-  public Angular2MetadataReferenceStub getNgModuleReference() {
-    return (Angular2MetadataReferenceStub)getChildrenStubs().stream()
-      .filter(child -> child instanceof Angular2MetadataReferenceStub
-                       && NG_MODULE_PROP.equals(((Angular2MetadataReferenceStub)child).getMemberName()))
-      .findFirst()
-      .orElse(null);
+  public Angular2MetadataElementStub<? extends Angular2MetadataElement> getFunctionValue() {
+    //noinspection unchecked
+    return tryCast(findMember(VALUE_OBJ), Angular2MetadataElementStub.class);
   }
 
   @Override

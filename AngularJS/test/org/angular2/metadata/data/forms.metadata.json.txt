@@ -111,17 +111,32 @@ MetadataFile:forms.metadata.json
       #ext: AbstractControl <metadata reference>('')
     FormGroup <metadata class>
       #ext: AbstractControl <metadata reference>('')
-    Validators <metadata class>('')
+    Validators <metadata class>
+      min <metadata function>('')
+      max <metadata function>('')
+      required <metadata function>('')
+      requiredTrue <metadata function>('')
+      minLength <metadata function>('')
+      maxLength <metadata function>('')
+      nullValidator <metadata function>('')
     FormsModule <metadata module>: imports=[]; declarations=[NgForm, NgFormSelectorWarning, NgModel, NgModelGroup]; exports=[NgForm, NgFormSelectorWarning, NgModel, NgModelGroup, ɵangular_packages_forms_forms_bc]; scopeFullyResolved=true; exportsFullyResolved=true
       withConfig <metadata function>
-        ngModule: FormsModule <metadata reference>('')
+        #value <metadata object>
+          ngModule: FormsModule <metadata reference>('')
+          providers <metadata array>
+            <metadata object>
+              provide: ɵangular_packages_forms_forms_f <metadata reference>('')
       ___dec.declarations: ɵangular_packages_forms_forms_ba <metadata reference>('')
       ___dec.exports <metadata array>
         ɵangular_packages_forms_forms_bc <metadata reference>('')
         ɵangular_packages_forms_forms_ba <metadata reference>('')
     ReactiveFormsModule <metadata module>: imports=[]; declarations=[FormArrayName, FormControlDirective, FormControlName, FormGroupDirective, FormGroupName]; exports=[FormArrayName, FormControlDirective, FormControlName, FormGroupDirective, FormGroupName, ɵangular_packages_forms_forms_bc]; scopeFullyResolved=true; exportsFullyResolved=true
       withConfig <metadata function>
-        ngModule: ReactiveFormsModule <metadata reference>('')
+        #value <metadata object>
+          ngModule: ReactiveFormsModule <metadata reference>('')
+          providers <metadata array>
+            <metadata object>
+              provide: ɵangular_packages_forms_forms_k <metadata reference>('')
       ___dec.declarations <metadata array>
         ɵangular_packages_forms_forms_bb <metadata reference>('')
       ___dec.exports <metadata array>

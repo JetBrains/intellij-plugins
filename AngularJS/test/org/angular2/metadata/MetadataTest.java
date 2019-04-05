@@ -76,6 +76,15 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "ng-zorro-antd.metadata.resolved.psi.txt").toString(), result);
   }
 
+  public void testAgmCoreModuleStubBuilding() {
+    myFixture.configureByFiles("@agm-core/core.module.d.ts", "package.json");
+    VirtualFile vFile = myFixture.copyFileToProject("@agm-core/core.module.metadata.json");
+    PsiFile file = myFixture.getPsiManager().findFile(vFile);
+    assert file instanceof MetadataFileImpl;
+    String result = DebugUtil.psiToString(file, false, false);
+    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "@agm-core/core.module.metadata.psi.txt").toString(), result);
+  }
+
   public void testFormsMetadataStubBuilding() {
     myFixture.configureByFiles("package.json", "forms.d.ts");
     VirtualFile vFile = myFixture.copyFileToProject("forms.metadata.json");
@@ -206,4 +215,5 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
       Disposer.dispose(loggerDisposable);
     }
   }
+
 }

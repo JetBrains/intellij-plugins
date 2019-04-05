@@ -1,0 +1,1 @@
+[{"__symbolic":"module","version":4,"metadata":{"MapsAPILoader":{"__symbolic":"class","decorators":[{"__symbolic":"call","expression":{"__symbolic":"reference","module":"@angular/core","name":"Injectable","line":2,"character":1}}],"members":{"load":[{"__symbolic":"method"}]}}}}]
