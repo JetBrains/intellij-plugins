@@ -37,9 +37,10 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   @NonNls protected static final String SYMBOL_PROPERTY = "property";
   @NonNls protected static final String SYMBOL_FUNCTION = "function";
   @NonNls protected static final String SYMBOL_METHOD = "method";
+  @NonNls protected static final String SYMBOL_CALL = "call";
+  @NonNls protected static final String SYMBOL_CLASS = "class";
 
   @NonNls protected static final String DECORATORS = "decorators";
-  @NonNls protected static final String CALL = "call";
   @NonNls protected static final String EXPRESSION = "expression";
   @NonNls protected static final String ARGUMENTS = "arguments";
   @NonNls protected static final String MEMBERS = "members";
@@ -178,7 +179,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
     return list.getValueList().stream()
       .map(v -> tryCast(v, JsonObject.class))
       .filter(obj -> obj != null
-                     && CALL.equals(readStringPropertyValue(obj.findProperty(SYMBOL_TYPE))))
+                     && SYMBOL_CALL.equals(readStringPropertyValue(obj.findProperty(SYMBOL_TYPE))))
       .map(obj -> tryCast(doIfNotNull(obj.findProperty(EXPRESSION), JsonProperty::getValue), JsonObject.class))
       .filter(obj -> obj != null
                      && SYMBOL_REFERENCE.equals(readStringPropertyValue(obj.findProperty(SYMBOL_TYPE))))

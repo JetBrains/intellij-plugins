@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.psi;
 
+import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -49,7 +50,22 @@ public class ExternalNodeModuleResolver {
                                                       file -> PsiTreeUtil.getStubChildOfType(file, Angular2MetadataNodeModule.class));
       return module != null ? memberExtractor.apply(module) : null;
     }
-    MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates = new MultiMap<>();
+    Angular2MetadataElement result = resolveFromFileSystem(memberExtractor);
+    return result != null ? result : resolveFromIndex(memberExtractor);
+  }
+
+  @Nullable
+  private Angular2MetadataElement resolveFromFileSystem(@NotNull Function<Angular2MetadataNodeModule, Angular2MetadataElement> memberExtractor) {
+    return doIfNotNull(NodeModuleSearchUtil.findAncestorNodeModulesDir(mySource.getContainingFile().getVirtualFile()), dir -> {
+      Angular2MetadataNodeModule module = doIfNotNull(mySource.loadRelativeFile(dir, myModuleName, METADATA_SUFFIX),
+                                                      file -> PsiTreeUtil.getStubChildOfType(file, Angular2MetadataNodeModule.class));
+      return module != null ? memberExtractor.apply(module) : null;
+    });
+  }
+
+  @Nullable
+  private Angular2MetadataElement resolveFromIndex(@NotNull Function<Angular2MetadataNodeModule, Angular2MetadataElement> memberExtractor) {
+    MultiMap<Angular2MetadataElement, Angular2MetadataNodeModule> candidates = MultiMap.createSet();
     StubIndex.getInstance().processElements(
       Angular2MetadataNodeModuleIndex.KEY, myModuleName, mySource.getProject(),
       GlobalSearchScope.allScope(mySource.getProject()), Angular2MetadataNodeModule.class,
@@ -71,7 +87,7 @@ public class ExternalNodeModuleResolver {
     }
     if (candidates.size() > 1 && ourReportedErrors.add(myModuleName + "/" + myMemberName)) {
       LOG.error("Ambiguous resolution for import '" + myModuleName + "/" + myMemberName
-                + "' in module '" + mySource.getNodeModule().getName() + "'; candidates: " +
+                + "' in module '" + doIfNotNull(mySource.getNodeModule(), Angular2MetadataNodeModule::getName) + "'; candidates: " +
                 StreamEx.of(candidates.values())
                   .map(ExternalNodeModuleResolver::renderFileName)
                   .sorted()

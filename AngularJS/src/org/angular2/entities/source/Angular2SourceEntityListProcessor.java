@@ -24,11 +24,15 @@ import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.metadata.psi.Angular2MetadataFunction;
+import org.angular2.entities.metadata.psi.Angular2MetadataModule;
+import org.angular2.entities.metadata.psi.Angular2MetadataObject;
+import org.angular2.entities.metadata.psi.Angular2MetadataReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
@@ -153,11 +157,10 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
     boolean lookingForModule = myEntityClass.isAssignableFrom(Angular2Module.class);
     JSClass resolvedClazz = null;
     if (lookingForModule) {
-      Angular2MetadataFunction metadataFunction = Angular2EntitiesProvider.findMetadataFunction(function);
-      if (metadataFunction != null
-          && metadataFunction.getReferencedModule() != null) {
+      Angular2MetadataModule metadataModule = resolveFunctionValue(Angular2EntitiesProvider.findMetadataFunction(function));
+      if (metadataModule != null) {
         //noinspection unchecked
-        processEntity((T)metadataFunction.getReferencedModule());
+        processEntity((T)metadataModule);
         return;
       }
     }
@@ -235,6 +238,15 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
       result = doIfNotNull(ngModuleSignature, JSRecordType.PropertySignature::getJSType);
     }
     return result;
+  }
+
+  @Nullable
+  private static Angular2MetadataModule resolveFunctionValue(@Nullable Angular2MetadataFunction function) {
+    return Optional.ofNullable(function)
+      .map(f -> tryCast(f.getValue(), Angular2MetadataObject.class))
+      .map(value -> tryCast(value.findMember(NG_MODULE_PROP), Angular2MetadataReference.class))
+      .map(reference -> tryCast(reference.resolve(), Angular2MetadataModule.class))
+      .orElse(null);
   }
 
   private T getEntity(@Nullable JSClass aClass) {
