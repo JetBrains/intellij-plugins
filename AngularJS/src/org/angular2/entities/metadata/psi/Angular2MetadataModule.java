@@ -98,6 +98,9 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
       else if (element instanceof Angular2MetadataReference) {
         resolveQueue.push(((Angular2MetadataReference)element).resolve());
       }
+      else if (element instanceof Angular2MetadataCall) {
+        resolveQueue.push(((Angular2MetadataCall)element).getValue());
+      }
       else if (element != null
                && entityClass.isAssignableFrom(element.getClass())) {
         result.add(entityClass.cast(element));

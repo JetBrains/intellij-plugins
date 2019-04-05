@@ -3,7 +3,8 @@ MetadataFile:ng-zorro-antd.metadata.json
     export * from ./core/public-api <metadata module export>('')
     NgZorroAntdModule <metadata module>: imports=[]; declarations=[]; exports=[ɵa, ɵbb, ɵbe, ɵbi, ɵbs, ɵbx, ɵbz, ɵcj, ɵco, ɵcu, ɵcx, ɵcz, ɵdg, ɵdj, ɵdl, ɵdo, ɵdr, ɵdv, ɵdx, ɵee, ɵei, ɵek, ɵem, ɵeo, ɵeq, ɵes, ɵez, ɵff, ɵfh, ɵfk, ɵfo, ɵfr, ɵfu, ɵgc, ɵge, ɵhf, ɵhh, ɵhm, ɵhv, ɵhz, ɵi, ɵid, ɵij, ɵil, ɵiu, ɵjc, ɵjf, ɵji, ɵjq, ɵjs, ɵju, ɵjy, ɵk, ɵkc, ɵl]; scopeFullyResolved=true; exportsFullyResolved=true
       forRoot <metadata function>
-        ngModule: NgZorroAntdModule <metadata reference>('')
+        #value <metadata object>
+          ngModule: NgZorroAntdModule <metadata reference>('')
       ___dec.exports <metadata array>
         ɵa <metadata reference>('')
         ɵl <metadata reference>('')
@@ -114,6 +115,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵbi <metadata reference>('')
     ɵm <metadata component>: selector=nz-calendar-header; inputs=[mode, activeDate, fullscreen]; outputs=[modeChange, monthChange, yearChange]; inOuts=[<mode,modeChange>]('')
     ɵn <metadata class>('')
+    ɵo <metadata function>('')
     ɵp <metadata object>
       provide: ɵn <metadata reference>('')
       useFactory: ɵo <metadata reference>('')
@@ -124,6 +126,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵs <metadata reference>('')
         @angular/common#DatePipe <metadata reference>('')
     ɵs <metadata class>('')
+    ɵu <metadata function>('')
     ɵv <metadata object>
       provide: ɵs <metadata reference>('')
       useFactory: ɵu <metadata reference>('')
@@ -245,6 +248,8 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵcb <metadata directive>: selector=[nz-menu-item]; inputs=[nzDisabled, nzSelected]; outputs=[]; inOuts=[]('')
     ɵcc <metadata component>: selector=[nz-submenu]; inputs=[nzDisabled, nzOpen]; outputs=[nzOpenChange]; inOuts=[<nzOpen,nzOpenChange>]('')
     ɵcd <metadata component>: selector=nz-dropdown; inputs=[nzDisabled, nzVisible, nzPlacement, nzClickHide, hasFilterButton, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
+    ɵce: : <metadata call>
+      #expression: @angular/animations#trigger <metadata reference>('')
     ɵcf <metadata directive>: selector=[nz-dropdown]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵcg <metadata component>: selector=nz-dropdown-button; inputs=[nzType, nzDisabled, nzVisible, nzPlacement, nzClickHide, nzSize, hasFilterButton, nzTrigger]; outputs=[nzVisibleChange, nzClick]; inOuts=[<nzVisible,nzVisibleChange>]
       #ext: ɵcd <metadata reference>('')
@@ -282,6 +287,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵcu <metadata reference>('')
     ɵcp <metadata component>: selector=nz-anchor; inputs=[nzTarget, nzAffix, nzBounds, nzShowInkInFixed, nzOffsetTop]; outputs=[nzScroll, nzClick]; inOuts=[]('')
     ɵcq <metadata class>('')
+    ɵcr <metadata function>('')
     ɵcs <metadata object>
       provide: ɵcq <metadata reference>('')
       useFactory: ɵcr <metadata reference>('')
@@ -298,6 +304,7 @@ MetadataFile:ng-zorro-antd.metadata.json
       ___dec.imports <metadata array>
         @angular/common#CommonModule <metadata reference>('')
     ɵcv <metadata component>: selector=nz-affix; inputs=[nzTarget, nzOffsetBottom, nzOffsetTop]; outputs=[nzChange]; inOuts=[]('')
+    ɵcw <metadata function>('')
     ɵcx <metadata module>: imports=[ɵa, ɵbz, ɵk]; declarations=[ɵcd, ɵcf, ɵcg, ɵcy]; exports=[ɵcd, ɵcf, ɵcg]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵcd <metadata reference>('')
@@ -445,6 +452,8 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/common#CommonModule <metadata reference>('')
         @angular/cdk/overlay#OverlayModule <metadata reference>('')
     ɵef <metadata component>: selector=nz-tooltip; inputs=[nzOverlayClassName, nzTitle, nzOverlayStyle, nzVisible, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
+    ɵeg: : <metadata call>
+      #expression: @angular/animations#trigger <metadata reference>('')
     ɵeh <metadata directive>: selector=[nz-tooltip]; inputs=[nz-tooltip, nzOverlayClassName, nzOverlayStyle, nzVisible, nzTitle, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
     ɵei <metadata module>: imports=[ɵk]; declarations=[ɵej]; exports=[ɵej]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
@@ -720,6 +729,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵgw <metadata component>: selector=<null>; inputs=[nzDisabledDate, nzDateRender, nzStyle, nzValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzShowTime, nzOpen, nzClassName, nzDisabledTime, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzRanges, nzFormat, nzSize, nzShowToday, nzMode]; outputs=[nzOnPanelChange, nzOnOpenChange, nzOnOk]; inOuts=[]
       #ext: ɵgx <metadata reference>('')
     ɵgx <metadata class>('')
+    ɵgy <metadata function>('')
     ɵgz <metadata component>: selector=nz-picker; inputs=[size, format, disabled, className, style, placeholder, autoFocus, allowClear, value, open, isRange]; outputs=[openChange, valueChange]; inOuts=[<open,openChange>, <value,valueChange>]('')
     ɵha <metadata component>: selector=nz-range-picker; inputs=[nzDisabledDate, nzDateRender, nzStyle, nzValue, nzAutoFocus, nzDisabled, nzPopupStyle, nzShowTime, nzOpen, nzClassName, nzDisabledTime, nzPlaceHolder, nzRenderExtraFooter, nzAllowClear, nzDropdownClassName, nzLocale, nzRanges, nzFormat, nzSize, nzShowToday, nzMode]; outputs=[nzOnPanelChange, nzOnOpenChange, nzOnOk]; inOuts=[]
       #ext: ɵgw <metadata reference>('')
@@ -983,6 +993,10 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵju <metadata reference>('')
         ɵk <metadata reference>('')
     ɵjz <metadata component>: selector=nz-tree-select; inputs=[nzMultiple, nzDisabled, nzShowExpand, nzShowSearch, nzOpen, nzCheckable, nzDefaultExpandedKeys, nzPlaceHolder, nzAllowClear, nzShowLine, nzDisplayWith, nzDefaultExpandAll, nzDropdownMatchSelectWidth, nzDropdownStyle, nzAsyncData, nzSize, nzNodes]; outputs=[nzCleared, nzTreeCheckBoxChange, nzRemoved, nzExpandChange, nzOpenChange, nzTreeClick]; inOuts=[<nzOpen,nzOpenChange>]('')
+    ɵka: : <metadata call>
+      #expression: @angular/animations#trigger <metadata reference>('')
+    ɵkb: : <metadata call>
+      #expression: @angular/animations#trigger <metadata reference>('')
     ɵkc <metadata module>: imports=[]; declarations=[ɵkd]; exports=[ɵkd]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵkd <metadata reference>('')

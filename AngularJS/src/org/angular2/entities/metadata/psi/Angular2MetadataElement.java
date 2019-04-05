@@ -42,15 +42,16 @@ public abstract class Angular2MetadataElement<Stub extends Angular2MetadataEleme
   }
 
   protected PsiFile loadRelativeFile(@NotNull String path, @NotNull String extension) {
-    VirtualFile sourceDir = getContainingFile().getViewProvider().getVirtualFile().getParent();
-    if (sourceDir == null) {
-      return null;
-    }
-    VirtualFile moduleFile = sourceDir.findFileByRelativePath(path + extension);
+    return doIfNotNull(getContainingFile().getViewProvider().getVirtualFile().getParent(),
+                       baseDir -> loadRelativeFile(baseDir, path, extension));
+  }
+
+  protected PsiFile loadRelativeFile(@NotNull VirtualFile baseDir, @NotNull String path, @NotNull String extension) {
+    VirtualFile moduleFile = baseDir.findFileByRelativePath(path + extension);
     if (moduleFile != null) {
       return getManager().findFile(moduleFile);
     }
-    VirtualFile moduleDir = sourceDir.findFileByRelativePath(path);
+    VirtualFile moduleDir = baseDir.findFileByRelativePath(path);
     if (moduleDir == null || !moduleDir.isDirectory()) {
       return null;
     }
