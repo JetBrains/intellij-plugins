@@ -79,8 +79,8 @@ class SanitizingGrammarCheckerTests {
     }
 
     @Test
-    fun check_fewTypos_oneLine() {
-        val text = listOf("Hello. world,, tot he.\n", "This are my friend")
+    fun check_fewLines_fewTypos() {
+        val text = listOf("Hello. world,, tot he.\n", "This are my friend.")
         val tokens = plain(text)
         val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
         Assert.assertEquals(4, fixes.size)
@@ -88,6 +88,32 @@ class SanitizingGrammarCheckerTests {
         fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(12, 13), listOf(","), text[0])
         fixes[2].assertTypoIs(Typo.Category.TYPOS, IntRange(15, 20), listOf("to the"), text[0])
         fixes[3].assertTypoIs(Typo.Category.GRAMMAR, IntRange(0, 7), listOf("This is"), text[1])
+    }
+
+
+    @Test
+    fun check_javaDocFewLines_fewTypos() {
+        val text = listOf("* Hello. world,, tot he.\n", "* * This is the next Javadoc string.\n", " * This are my friend.")
+        val tokens = plain(text)
+        val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
+        Assert.assertEquals(4, fixes.size)
+        fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(9, 13), listOf("World"), text[0])
+        fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(14, 15), listOf(","), text[0])
+        fixes[2].assertTypoIs(Typo.Category.TYPOS, IntRange(17, 22), listOf("to the"), text[0])
+        fixes[3].assertTypoIs(Typo.Category.GRAMMAR, IntRange(3, 10), listOf("This is"), text[2])
+    }
+
+    @Test
+    fun check_whiteSpacesFewLines_fewTypos() {
+        val text = listOf("  Hello.    world,, tot    he.  \n  ", "     This   is the     next Javadoc string.   \n",
+                "    This are my friend.    ")
+        val tokens = plain(text)
+        val fixes = SanitizingGrammarChecker.default.check(tokens).toList()
+        Assert.assertEquals(4, fixes.size)
+        fixes[0].assertTypoIs(Typo.Category.CASING, IntRange(12, 16), listOf("World"), text[0])
+        fixes[1].assertTypoIs(Typo.Category.PUNCTUATION, IntRange(17, 18), listOf(","), text[0])
+        fixes[2].assertTypoIs(Typo.Category.TYPOS, IntRange(20, 28), listOf("to the"), text[0])
+        fixes[3].assertTypoIs(Typo.Category.GRAMMAR, IntRange(4, 11), listOf("This is"), text[2])
     }
 
     @Test
