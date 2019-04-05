@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.AstLoadingFilter;
@@ -112,9 +113,15 @@ public class Angular2SourceModule extends Angular2SourceEntity implements Angula
       if (value == null) {
         return Pair.pair(myResult, false);
       }
+      Set<PsiElement> visited = new HashSet<>();
       myResolveQueue.push(value);
       while (!myResolveQueue.empty()) {
+        ProgressManager.checkCanceled();
         PsiElement element = myResolveQueue.pop();
+        if (!visited.add(element)) {
+          // Protect against cyclic references or visiting same thing several times
+          continue;
+        }
         List<PsiElement> children = resolve(element);
         if (children.isEmpty()) {
           element.accept(getResultsVisitor());

@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.psi;
 
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
@@ -83,8 +84,14 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
     boolean allResolved = true;
     Set<T> result = new HashSet<>();
     Stack<PsiElement> resolveQueue = new Stack<>(propertyStub.getPsi());
+    Set<PsiElement> visited = new HashSet<>();
     while (!resolveQueue.empty()) {
+      ProgressManager.checkCanceled();
       PsiElement element = resolveQueue.pop();
+      if (!visited.add(element)) {
+        // Protect against cyclic references or visiting same thing several times
+        continue;
+      }
       if (element instanceof Angular2MetadataArray) {
         resolveQueue.addAll(asList(element.getChildren()));
       }
