@@ -22,7 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 
+import static com.intellij.testFramework.UsefulTestCase.assertEmpty;
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
+import static com.intellij.util.containers.ContainerUtil.map;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -98,11 +100,25 @@ public class AngularTestUtil {
     return resolve;
   }
 
+  @NotNull
+  public static List<PsiElement> multiResolveReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
+    int offsetBySignature = findOffsetBySignature(signature, fixture.getFile());
+    PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
+    TestCase.assertNotNull("No reference at '" + signature + "'", ref);
+    TestCase.assertTrue("PsiPolyVariantReference expected", ref instanceof PsiPolyVariantReference);
+    ResolveResult[] resolveResult = ((PsiPolyVariantReference)ref).multiResolve(false);
+    TestCase.assertFalse("Empty reference resolution at '" + signature + "'", resolveResult.length == 0);
+    return map(resolveResult, ResolveResult::getElement);
+  }
+
   public static void assertUnresolvedReference(@NotNull String signature, @NotNull CodeInsightTestFixture fixture) {
     int offsetBySignature = findOffsetBySignature(signature, fixture.getFile());
     PsiReference ref = fixture.getFile().findReferenceAt(offsetBySignature);
     TestCase.assertNotNull(ref);
     TestCase.assertNull(ref.resolve());
+    if (ref instanceof PsiPolyVariantReference) {
+      assertEmpty(((PsiPolyVariantReference)ref).multiResolve(false));
+    }
   }
 
   @SuppressWarnings("unchecked")

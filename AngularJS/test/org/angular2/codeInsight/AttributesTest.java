@@ -30,6 +30,7 @@ import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
 import org.angularjs.AngularTestUtil;
@@ -41,8 +42,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static com.intellij.util.containers.ContainerUtil.all;
-import static com.intellij.util.containers.ContainerUtil.sorted;
+import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
 import static org.angularjs.AngularTestUtil.renderLookupItems;
@@ -181,7 +181,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assert cls != null;
     Angular2Directive component = Angular2EntitiesProvider.getComponent(cls);
     assert component != null;
-    assertEquals(ContainerUtil.newHashSet("model", "id", "oneTime", "oneTimeList"),
+    assertEquals(newHashSet("model", "id", "oneTime", "oneTimeList"),
                  component.getInputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
     assertEquals(Collections.singleton("complete"),
                  component.getOutputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
@@ -594,7 +594,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   public void testSelectorBasedAttributesNavigation() {
     myFixture.configureByFiles("selectorBasedAttributes.ts", "package.json");
 
-    final List<Pair<String, String>> attrWrap = ContainerUtil.newArrayList(
+    final List<Pair<String, String>> attrWrap = newArrayList(
       pair("", ""),
       pair("[", "]"),
       pair("(", ")"),
@@ -656,7 +656,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
 
   @NotNull
   private static List<PsiElement> multiResolve(@NotNull PsiPolyVariantReference ref) {
-    return ContainerUtil.mapNotNull(ref.multiResolve(false),
+    return mapNotNull(ref.multiResolve(false),
                                     result -> result.isValidResult() ? result.getElement() : null);
   }
 
@@ -714,7 +714,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("lifecycleHooks.ts", "package.json");
     myFixture.completeBasic();
     assertEquals(sorted(myFixture.getLookupElementStrings()),
-                 ContainerUtil.newArrayList("$any", "testOne", "testTwo", "testing"));
+                 newArrayList("$any", "testOne", "testTwo", "testing"));
   }
 
   public void testDecoratorInGetter() {
@@ -965,5 +965,42 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     AngularTestUtil.moveToOffsetBySignature("<input <caret>/>", myFixture);
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), "type");
+  }
+
+  public void testMultiResolve() {
+    myFixture.enableInspections(new Angular2TemplateInspectionsProvider());
+    myFixture.configureByFiles("multi-resolve.html", "multi-resolve.ts", "package.json");
+    myFixture.checkHighlighting();
+
+    Map<String, List<String>> data = newLinkedHashMap(
+      pair("id=", asList("id", "id: /*c1*/ string")),
+      pair("[id]=", asList("/**\n" +
+                           "     * Returns the value of element's id content attribute. Can be set to\n" +
+                           "     * change it.\n" +
+                           "     */\n" +
+                           "    id: string", "id: /*c1*/ string")),
+      pair("[attr.id]=", Collections.singletonList("id")),
+      pair("bar=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
+      pair("[bar]=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
+      pair("boo=", asList("boo: /*c1*/ number", "boo: /*c2*/ string")),
+      pair("[boo]=", asList("boo: /*c1*/ number", "boo: /*c2*/ string"))
+    );
+
+    for (Map.Entry<String, List<String>> entry : data.entrySet()) {
+      String location = entry.getKey();
+      assertSameElements(AngularTestUtil.multiResolveReference(location.charAt(0) + "<caret>" + location.substring(1), myFixture)
+                           .stream()
+                           .map(el -> {
+                             if (el.getText() != null) {
+                               return el.getText();
+                             }
+                             else {
+                               return el.getParent().getText();
+                             }
+                           })
+                           .sorted()
+                           .collect(Collectors.toList()),
+                         sorted(entry.getValue()));
+    }
   }
 }
