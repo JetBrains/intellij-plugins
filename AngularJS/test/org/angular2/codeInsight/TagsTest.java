@@ -156,11 +156,11 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
   public void testComponentNavigation() {
     myFixture.copyDirectoryToProject("component-navigation", ".");
     for (int i = 1; i <= 4; i++) {
-      myFixture.openFileInEditor(myFixture.getTempDirFixture().getFile("app" + i + "/app/app.component.html"));
+      myFixture.configureFromTempProjectFile("app" + i + "/app/app.component.html");
       String filePath = AngularTestUtil.resolveReference("<app-<caret>test>", myFixture).getContainingFile()
         .getVirtualFile()
         .getPath();
-      assertTrue(filePath, filePath.endsWith("/app" + i + "/app/test.component.ts"));
+      assertTrue(filePath + " should have " + i, filePath.endsWith("/app" + i + "/app/test.component.ts"));
     }
   }
 }
