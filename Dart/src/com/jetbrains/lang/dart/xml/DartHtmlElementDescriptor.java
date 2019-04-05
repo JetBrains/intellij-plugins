@@ -2,8 +2,8 @@
 package com.jetbrains.lang.dart.xml;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
@@ -19,44 +19,52 @@ import org.jetbrains.annotations.Nullable;
  * {@link com.intellij.codeInspection.htmlInspections.HtmlUnknownTagInspection} happy.
  * Information from the Dart Analysis Server is used.
  */
-class DartHtmlElementDescriptor implements XmlElementDescriptor {
-  @NotNull private final Project myProject;
-  @NotNull private final String myName;
-  @NotNull private final DartServerData.DartNavigationTarget myTarget;
+class DartHtmlElementDescriptor extends DartHtmlDescriptorBase implements XmlElementDescriptor {
 
   DartHtmlElementDescriptor(@NotNull Project project,
                             @NotNull String name,
                             @NotNull DartServerData.DartNavigationTarget target) {
-    myProject = project;
-    myName = name;
-    myTarget = target;
-  }
-
-  @Nullable
-  @Override
-  public PsiElement getDeclaration() {
-    return DartResolver.getElementForNavigationTarget(myProject, myTarget);
-  }
-
-  @NotNull
-  @Override
-  public String getName() {
-    return myName;
-  }
-
-  @Override
-  public String getName(PsiElement context) {
-    return myName;
+    super(project, name, target);
   }
 
   @Override
   public String getDefaultName() {
-    return myName;
+    return getName();
   }
 
   @Override
   public String getQualifiedName() {
-    return myName;
+    return getName();
+  }
+
+  @Nullable
+  @Override
+  public XmlAttributeDescriptor getAttributeDescriptor(@NotNull XmlAttribute attribute) {
+    XmlElement nameElement = attribute.getNameElement();
+    if (nameElement == null) return null;
+
+    String attrName = nameElement.getText();
+    int startOffset = nameElement.getTextRange().getStartOffset();
+    int endOffset = nameElement.getTextRange().getEndOffset();
+    if (attrName.startsWith("*") || attrName.startsWith("[") || attrName.startsWith("(")) startOffset++;
+    if (attrName.endsWith("]") || attrName.endsWith(")")) endOffset--;
+
+    DartServerData.DartNavigationRegion navRegion =
+      DartResolver.findRegion(attribute.getContainingFile(), startOffset, endOffset - startOffset);
+    if (navRegion == null || navRegion.getTargets().isEmpty()) return null;
+
+    return new DartHtmlAttributeDescriptor(attribute.getProject(), attrName, navRegion.getTargets().get(0));
+  }
+
+  @Nullable
+  @Override
+  public XmlAttributeDescriptor getAttributeDescriptor(String attributeName, @Nullable XmlTag context) {
+    return null;
+  }
+
+  @Override
+  public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
+    return XmlAttributeDescriptor.EMPTY;
   }
 
   @Override
@@ -67,23 +75,6 @@ class DartHtmlElementDescriptor implements XmlElementDescriptor {
   @Nullable
   @Override
   public XmlElementDescriptor getElementDescriptor(XmlTag childTag, XmlTag contextTag) {
-    return null;
-  }
-
-  @Override
-  public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    return XmlAttributeDescriptor.EMPTY;
-  }
-
-  @Nullable
-  @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(String attributeName, @Nullable XmlTag context) {
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {
     return null;
   }
 
@@ -109,7 +100,4 @@ class DartHtmlElementDescriptor implements XmlElementDescriptor {
   public String getDefaultValue() {
     return null;
   }
-
-  @Override
-  public void init(PsiElement element) {}
 }
