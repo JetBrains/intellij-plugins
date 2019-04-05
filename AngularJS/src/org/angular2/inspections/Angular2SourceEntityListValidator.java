@@ -7,16 +7,21 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.containers.TreeTraversal;
+import com.intellij.util.containers.hash.HashSet;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.source.Angular2SourceEntityListProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.angular2.Angular2DecoratorUtil.getProperty;
@@ -26,7 +31,7 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
 
   private final String myPropertyName;
   private ES6Decorator myDecorator;
-  private ValidationResults<E> myResults;
+  private ValidationResults<? super E> myResults;
   private TreeTraversal.TracingIt<PsiElement> myIterator;
 
   protected Angular2SourceEntityListValidator(@NotNull Class<T> entityClass, String propertyName) {
@@ -34,7 +39,7 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
     myPropertyName = propertyName;
   }
 
-  public void validate(@NotNull ES6Decorator decorator, @NotNull ValidationResults<E> results) {
+  public void validate(@NotNull ES6Decorator decorator, @NotNull ValidationResults<? super E> results) {
     myDecorator = decorator;
     myResults = results;
     JSProperty property = getProperty(myDecorator, myPropertyName);
@@ -46,10 +51,14 @@ abstract class Angular2SourceEntityListValidator<T extends Angular2Entity, E ext
       if (value == null) {
         return;
       }
+      Set<PsiElement> visited = new HashSet<>();
       myIterator = TreeTraversal.LEAVES_DFS
-        .traversal(singletonList(value), this::resolve)
+        .traversal(singletonList(value), (PsiElement element) ->
+          // Protect against cyclic references or visiting same thing several times
+          visited.add(element) ? resolve(element) : Collections.emptyList())
         .typedIterator();
       while (myIterator.advance()) {
+        ProgressManager.checkCanceled();
         myIterator.current().accept(getResultsVisitor());
       }
     });
