@@ -121,6 +121,7 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     catch (DartSourceEditException e) {
       CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
     }
+    DartAnalysisServerService.getInstance(project).fireQuickFixEvent(this, editor, file);
   }
 
   @Override

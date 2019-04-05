@@ -76,6 +76,8 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
       catch (DartSourceEditException e) {
         CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
       }
+
+      DartAnalysisServerService.getInstance(project).fireQuickAssistIntentionEvent(this, editor, file);
     }
   }
 
