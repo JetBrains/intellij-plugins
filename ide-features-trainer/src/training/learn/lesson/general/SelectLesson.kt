@@ -34,8 +34,5 @@ class SelectLesson(module: Module, lang: String, private val sample: LessonSampl
       actionTask("\$SelectAll") {
         "Now select the whole file instantly with ${action(it)}."
       }
-      task {
-        text("Awesome! Click the button below to start the next lesson, or use ${action("learn.next.lesson")}.")
-      }
     }
 }
