@@ -21,7 +21,7 @@ class GraziInspection : LocalInspectionTool() {
                 fix.location.range.endInclusive
 
             val fixes = buildList<LocalQuickFix> {
-                if (fix.info.category == Typo.Category.TYPOS) {
+                if (fix.info.rule.isDictionaryBasedSpellingRule) {
                     add(GraziAddWord(fix))
                 }
 
