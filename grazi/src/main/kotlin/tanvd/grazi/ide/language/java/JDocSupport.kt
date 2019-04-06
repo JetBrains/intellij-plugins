@@ -13,6 +13,7 @@ import tanvd.grazi.utils.filterFor
 class JDocSupport : LanguageSupport {
     companion object {
         val tagsIgnoredCategories = listOf(Typo.Category.CASING)
+        private val disabledRules = setOf("PUNCTUATION_PARAGRAPH_END")
     }
 
     private fun isTag(token: PsiDocToken) = token.parent is PsiDocTag
@@ -28,10 +29,12 @@ class JDocSupport : LanguageSupport {
 
         for (doc in docs) {
             val allDocTokens = doc.filterFor<PsiDocToken> { it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA }
-            addAll(SanitizingGrammarChecker.default.check(allDocTokens.filterNot { isTag(it) }))
+            addAll(SanitizingGrammarChecker.default.check(allDocTokens.filterNot { isTag(it) })
+                    .filter { it.info.rule.id !in disabledRules })
 
             addAll(SanitizingGrammarChecker.default.check(allDocTokens.filter { isApplicableTag(it) })
-                    .filter { it.info.category !in tagsIgnoredCategories })
+                    .filter { it.info.category !in tagsIgnoredCategories }
+                    .filter { it.info.rule.id !in disabledRules })
 
             ProgressManager.checkCanceled()
         }

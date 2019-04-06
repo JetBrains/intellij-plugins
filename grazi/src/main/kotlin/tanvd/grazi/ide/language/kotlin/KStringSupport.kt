@@ -10,7 +10,9 @@ import tanvd.grazi.utils.buildSet
 import tanvd.grazi.utils.filterFor
 
 class KStringSupport : LanguageSupport {
-    private val disabledRules = setOf("UPPERCASE_SENTENCE_START")
+    companion object {
+        private val disabledRules = setOf("UPPERCASE_SENTENCE_START", "PUNCTUATION_PARAGRAPH_END")
+    }
 
     override fun isSupported(file: PsiFile): Boolean {
         return file is KtFile
@@ -18,7 +20,8 @@ class KStringSupport : LanguageSupport {
 
     override fun check(file: PsiFile) = buildSet<Typo> {
         for (str in file.filterFor<KtStringTemplateEntry>()) {
-            addAll(SanitizingGrammarChecker.default.check(str.filterFor<KtLiteralStringTemplateEntry>()).filter { it.info.rule.id !in disabledRules })
+            addAll(SanitizingGrammarChecker.default.check(str.filterFor<KtLiteralStringTemplateEntry>())
+                    .filter { it.info.rule.id !in disabledRules })
 
             ProgressManager.checkCanceled()
         }

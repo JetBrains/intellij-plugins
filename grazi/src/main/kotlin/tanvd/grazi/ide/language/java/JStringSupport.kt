@@ -11,7 +11,9 @@ import tanvd.grazi.utils.buildSet
 import tanvd.grazi.utils.filterFor
 
 class JStringSupport : LanguageSupport {
-    private val disabledRules = setOf("UPPERCASE_SENTENCE_START")
+    companion object {
+        private val disabledRules = setOf("UPPERCASE_SENTENCE_START", "PUNCTUATION_PARAGRAPH_END")
+    }
 
     override fun isSupported(file: PsiFile): Boolean {
         return file is PsiJavaFile
@@ -21,12 +23,14 @@ class JStringSupport : LanguageSupport {
         val literals = file.filterFor<PsiLiteralExpressionImpl>()
 
         for (str in literals.filterForType(JavaTokenType.STRING_LITERAL)) {
-            addAll(SanitizingGrammarChecker.default.check(str) { it.innerText ?: "" }.filter { it.info.rule.id !in disabledRules })
+            addAll(SanitizingGrammarChecker.default.check(str) { it.innerText ?: "" }
+                    .filter { it.info.rule.id !in disabledRules })
             ProgressManager.checkCanceled()
         }
 
         for (str in literals.filterForType(JavaTokenType.RAW_STRING_LITERAL)) {
-            addAll(SanitizingGrammarChecker.default.check(str) { it.rawString ?: "" }.filter { it.info.rule.id !in disabledRules })
+            addAll(SanitizingGrammarChecker.default.check(str) { it.rawString ?: "" }
+                    .filter { it.info.rule.id !in disabledRules })
 
             ProgressManager.checkCanceled()
         }

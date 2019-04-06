@@ -11,7 +11,9 @@ import tanvd.grazi.utils.filterFor
 
 
 class PStringSupport : LanguageSupport {
-    private val disabledRules = setOf("UPPERCASE_SENTENCE_START")
+    companion object {
+        private val disabledRules = setOf("UPPERCASE_SENTENCE_START", "PUNCTUATION_PARAGRAPH_END")
+    }
 
     override fun isSupported(file: PsiFile): Boolean {
         return file is PyFile
