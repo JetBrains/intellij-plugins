@@ -847,7 +847,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     };
     myTable.setRootVisible(false);
     myTable.getTree().setShowsRootHandles(true);
-    myTable.getTree().setLineStyleAngled();
 
     myTablePanel.add(
       ToolbarDecorator.createDecorator(myTable)
