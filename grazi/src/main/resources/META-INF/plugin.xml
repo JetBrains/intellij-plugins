@@ -1,8 +1,10 @@
 <idea-plugin>
     <id>tanvd.grazi</id>
     <name>Grazi</name>
-    <vendor>TanVD</vendor>
     <vendor email="vdtankov@gmail.com" url="https://github.com/TanVD">Vladislav Tankov</vendor>
+
+    <idea-version since-build="2019.1"/>
+
     <description><![CDATA[
         Grazi is a proofreader and grammar checker for 25+ languages, including English, German, Russian
         Chinese and about 20 others.
@@ -36,7 +38,7 @@
 
     <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
     <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
-    <depends optional="true" config-file="python.xml">PythonCore</depends>
+    <depends optional="true" config-file="python.xml">com.intellij.modules.python</depends>
 
     <project-components>
         <component>
