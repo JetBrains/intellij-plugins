@@ -9,7 +9,7 @@ import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 
-class PConstructsSupport : LanguageSupport {
+class PConstructsSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {
         return file is PyFile
     }
@@ -18,13 +18,14 @@ class PConstructsSupport : LanguageSupport {
         for (ident in file.filterFor<PsiNamedElement>()) {
             ident.name?.let {
                 val indexOfName = ident.text.indexOf(it)
-                addAll(GraziSpellchecker.check(it).map { typo ->
-                    typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
-                            element = ident, shouldUseRename = true))
-                })
-            }
-        }
 
-        ProgressManager.checkCanceled()
+                if (indexOfName != -1) {
+                    addAll(GraziSpellchecker.check(it).map { typo ->
+                        typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName), element = ident, shouldUseRename = true))
+                    })
+                }
+            }
+            ProgressManager.checkCanceled()
+        }
     }
 }

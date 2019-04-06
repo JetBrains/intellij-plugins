@@ -1,6 +1,7 @@
 package tanvd.grazi.ide.language
 
 
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.TreeUtil
@@ -12,11 +13,13 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.buildSet
 import tanvd.grazi.utils.filterFor
 
-class MarkdownSupport : LanguageSupport {
+class MarkdownSupport : LanguageSupport() {
     companion object {
         val bulletsIgnoredCategories = listOf(Typo.Category.CASING)
         val noSpellcheckingType = arrayOf(MarkdownElementTypes.CODE_BLOCK, MarkdownElementTypes.CODE_FENCE,
                 MarkdownElementTypes.CODE_SPAN, MarkdownElementTypes.LINK_DESTINATION)
+
+        private fun ASTNode.noParentOfTypes(tokenSet: TokenSet) = TreeUtil.findParent(this, tokenSet) == null
 
     }
 
@@ -25,23 +28,19 @@ class MarkdownSupport : LanguageSupport {
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {
-        for (header in file.filterFor<MarkdownHeaderImpl> { TreeUtil.findParent(it.node, TokenSet.create(*noSpellcheckingType)) == null }) {
+        for (header in file.filterFor<MarkdownHeaderImpl> { it.node.noParentOfTypes(TokenSet.create(*noSpellcheckingType)) }) {
             addAll(SanitizingGrammarChecker.default.check(header))
 
             ProgressManager.checkCanceled()
         }
 
-        for (paragraph in file.filterFor<MarkdownParagraphImpl> {
-            TreeUtil.findParent(it.node, TokenSet.create(*noSpellcheckingType, MarkdownElementTypes.LIST_ITEM)) == null
-        }) {
+        for (paragraph in file.filterFor<MarkdownParagraphImpl> { it.node.noParentOfTypes(TokenSet.create(*noSpellcheckingType, MarkdownElementTypes.LIST_ITEM)) }) {
             addAll(SanitizingGrammarChecker.default.check(paragraph))
 
             ProgressManager.checkCanceled()
         }
 
-        for (item in file.filterFor<MarkdownListItemImpl> {
-            TreeUtil.findParent(it.node, TokenSet.create(*noSpellcheckingType, MarkdownElementTypes.LIST_ITEM)) == null
-        }) {
+        for (item in file.filterFor<MarkdownListItemImpl> { it.node.noParentOfTypes(TokenSet.create(*noSpellcheckingType, MarkdownElementTypes.LIST_ITEM)) }) {
             addAll(SanitizingGrammarChecker.default.check(item).filter {
                 it.info.category !in bulletsIgnoredCategories
             })

@@ -7,7 +7,7 @@ import tanvd.grazi.grammar.SanitizingGrammarChecker
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.*
 
-class XmlSupport : LanguageSupport {
+class XmlSupport : LanguageSupport() {
     companion object {
         val xmlChecker = SanitizingGrammarChecker(
                 ignore = listOf({ str, cur ->

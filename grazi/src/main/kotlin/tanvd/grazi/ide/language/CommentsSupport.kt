@@ -9,7 +9,7 @@ import tanvd.grazi.grammar.Typo
 import tanvd.grazi.utils.buildSet
 import tanvd.grazi.utils.filterFor
 
-class CommentsSupport : LanguageSupport {
+class CommentsSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {
         return true
     }

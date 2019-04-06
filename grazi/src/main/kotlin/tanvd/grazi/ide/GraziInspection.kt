@@ -45,7 +45,7 @@ class GraziInspection : LocalInspectionTool() {
 
         val result = mutableListOf<ProblemDescriptor>()
         for (ext in LanguageSupport.all.filter { it.isSupported(file) }) {
-            val typos = ext.check(file)
+            val typos = ext.getFixes(file)
             result += typos.map { createProblemDescriptor(it, manager, isOnTheFly) }
         }
         return result.toTypedArray()

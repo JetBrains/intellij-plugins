@@ -10,7 +10,7 @@ import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 
-class KConstructsSupport : LanguageSupport {
+class KConstructsSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {
         return file is KtFile
     }
@@ -24,10 +24,12 @@ class KConstructsSupport : LanguageSupport {
                 else -> {
                     param.name?.let {
                         val indexOfName = param.text.indexOf(it)
-                        addAll(GraziSpellchecker.check(it).map { typo ->
-                            typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
-                                    element = param, shouldUseRename = true))
-                        })
+
+                        if (indexOfName != -1) {
+                            addAll(GraziSpellchecker.check(it).map { typo ->
+                                typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName), element = param, shouldUseRename = true))
+                            })
+                        }
                     }
                 }
             }
@@ -36,17 +38,15 @@ class KConstructsSupport : LanguageSupport {
 
         for (ident in file.filterFor<PsiNameIdentifierOwner>()) {
             when {
-                ident is KtModifierListOwner && ident.hasModifier(KtTokens.OVERRIDE_KEYWORD) -> {
-                }
-                ident is KtScript -> {
+                ident is KtScript || (ident is KtModifierListOwner && ident.hasModifier(KtTokens.OVERRIDE_KEYWORD)) -> {
                 }
                 else -> {
                     ident.name?.let {
                         val indexOfName = ident.text.indexOf(it)
+
                         if (indexOfName != -1) {
                             addAll(GraziSpellchecker.check(it).map { typo ->
-                                typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName),
-                                        element = ident, shouldUseRename = true))
+                                typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName), element = ident, shouldUseRename = true))
                             })
                         }
                     }

@@ -11,20 +11,14 @@ import tanvd.grazi.utils.buildSet
 import tanvd.grazi.utils.filterFor
 
 
-class KDocSupport : LanguageSupport {
-    companion object {
-        private val disabledRules = setOf("PUNCTUATION_PARAGRAPH_END")
-    }
-
+class KDocSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {
         return file is KtFile
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {
         for (doc in file.filterFor<KDocSection>()) {
-            addAll(SanitizingGrammarChecker.default.check(doc.filterFor<KDocSection>())
-                    .filter { it.info.rule.id !in disabledRules })
-
+            addAll(SanitizingGrammarChecker.default.check(doc.filterFor<KDocSection>()))
             ProgressManager.checkCanceled()
         }
     }
