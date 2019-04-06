@@ -5,7 +5,7 @@ import com.intellij.util.xmlb.annotations.Property
 import tanvd.grazi.language.Lang
 
 
-@State(name = "GraziConfig", storages = [Storage("grazi.xml")])
+@State(name = "GraziConfig", storages = [Storage("grazi_global.xml")])
 class GraziConfig : PersistentStateComponent<GraziConfig.State> {
     data class State(@Property val enabledLanguages: MutableSet<Lang> = hashSetOf(Lang.AMERICAN_ENGLISH),
                      @Property var nativeLanguage: Lang = enabledLanguages.first(),
