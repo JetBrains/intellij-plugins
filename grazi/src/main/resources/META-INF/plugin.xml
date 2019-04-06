@@ -4,8 +4,8 @@
     <vendor email="vdtankov@gmail.com" url="https://github.com/TanVD">Vladislav Tankov</vendor>
 
     <description><![CDATA[
-        Grazi is a proofreader and grammar checker for 25+ languages, including English, German, Russian
-        Chinese and about 20 others.
+        Grazi is a proofreader and grammar checker for 15+ languages, including English, German, Russian
+        Chinese and others.
 
         <br/>
 
@@ -15,7 +15,7 @@
         <br/>
 
         The plugin supports as a source of natural language constructs of Kotlin, Python and Java (it
-        includes literals, docs, comments), Markdown, XML and plain text.
+        includes literals, docs), any comments, Markdown, XML and plain text.
 
         <br/>
 
@@ -29,9 +29,8 @@
 
         <br/>
 
-        To enable spellchecking or support of one of the languages (English is enabled) by default
+        To enable spellchecking or support of one of the languages (English is enabled by default)
         use Grazi settings located at Settings -> Tools -> Grazi
-
     ]]></description>
 
     <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
