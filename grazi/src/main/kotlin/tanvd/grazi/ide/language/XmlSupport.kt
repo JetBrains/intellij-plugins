@@ -18,8 +18,7 @@ class XmlSupport : LanguageSupport() {
                 }),
                 ignoreToken = listOf({ str ->
                     str.all { !it.isLetter() && it !in punctuationChars }
-                }),
-                trim = { str -> str.trimWithRange(emptyList()) })
+                }))
     }
 
     override fun isSupported(file: PsiFile): Boolean {

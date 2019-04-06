@@ -126,7 +126,7 @@ class SanitizingGrammarCheckerTests {
         }
         fixes.forEach { it.verify(text) }
         assert(fixes.size < 50)
-        assert(totalTime < 4000)
+        assert(totalTime < 10_000)
     }
 
     @Test
@@ -139,7 +139,7 @@ class SanitizingGrammarCheckerTests {
         }
         fixes.forEach { it.verify(text) }
         assert(fixes.size < 500)
-        assert(totalTime < 10000)
+        assert(totalTime < 20_000)
     }
 
     @Disabled

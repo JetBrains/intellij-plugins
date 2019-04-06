@@ -5,8 +5,7 @@ import tanvd.grazi.utils.*
 
 class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
                                private val replace: List<(CharSequence, Char) -> Char?>,
-                               private val ignoreToken: List<(String) -> Boolean>,
-                               private val trim: (String) -> Pair<IntRange?, String>) {
+                               private val ignoreToken: List<(String) -> Boolean>) {
 
     companion object {
         val default = SanitizingGrammarChecker(
@@ -18,13 +17,12 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
                 }),
                 ignoreToken = listOf({ str ->
                     str.all { !it.isLetter() }
-                }),
-                trim = { str -> str.trimWithRange(emptyList()) })
+                }))
     }
 
     fun <T : PsiElement> check(vararg tokens: T, getText: (T) -> String = { it.text }) = check(tokens.toList(), getText)
 
-    fun <T : PsiElement> check(tokens: Collection<T>, getText: (T) -> String = { it.text }): Set<Typo> {
+    fun <T : PsiElement> check(tokens: Collection<T>, getText: (T) -> String = { it.text }, indexBasedIgnore: (T, Int) -> Boolean = { _, _ -> false }): Set<Typo> {
         if (tokens.isEmpty()) return emptySet()
 
         val indexesShift = HashMap<Int, Int>()
@@ -36,20 +34,15 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
             for (token in tokens.filter { token -> !ignoreToken.any { it(getText(token)) } }) {
                 val tokenStartIndex = index
 
-                //trim text
-                val text = getText(token)
-                val (range, trimmedText) = trim(text)
-                if (range == null) continue
-
-                var totalExcluded = range.start
+                var totalExcluded = 0
                 indexesShift[index] = totalExcluded
-                for (char in trimmedText) {
+                for ((tokenIndex, char) in getText(token).withIndex()) {
                     //perform replacing of chan (depending on already seen string)
                     @Suppress("NAME_SHADOWING")
                     val char = replace.firstNotNull { it(this, char) } ?: char
 
                     //check if char should be ignored
-                    if (ignore.any { it(this, char) }) {
+                    if (ignore.any { it(this, char) } || indexBasedIgnore(token, tokenIndex)) {
                         indexesShift[index] = ++totalExcluded
                         continue
                     }

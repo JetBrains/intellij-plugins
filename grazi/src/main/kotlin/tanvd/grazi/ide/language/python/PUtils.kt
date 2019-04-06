@@ -13,8 +13,5 @@ object PUtils {
             }),
             ignoreToken = listOf({ str ->
                 str.all { !it.isLetter() }
-            }),
-            trim = { str ->
-                str.trimWithRange(listOf('"', '\''))
-            })
+            }))
 }
