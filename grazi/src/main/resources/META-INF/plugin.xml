@@ -3,8 +3,6 @@
     <name>Grazi</name>
     <vendor email="vdtankov@gmail.com" url="https://github.com/TanVD">Vladislav Tankov</vendor>
 
-    <idea-version since-build="2019.1"/>
-
     <description><![CDATA[
         Grazi is a proofreader and grammar checker for 25+ languages, including English, German, Russian
         Chinese and about 20 others.
