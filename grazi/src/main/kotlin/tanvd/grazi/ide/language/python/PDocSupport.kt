@@ -22,7 +22,7 @@ class PDocSupport : LanguageSupport {
     override fun check(file: PsiFile) = buildSet<Typo> {
         val strLiterals = file.filterFor<PyStringLiteralExpression>()
         for (strElements in strLiterals.filter { it.isDocString }.map { it.stringElements }) {
-            addAll(PUtils.python.check(strElements).filter { it.info.rule.id !in disabledRules })
+            addAll(PUtils.python.check(strElements.filter { !it.isFormatted }).filter { it.info.rule.id !in disabledRules })
 
             ProgressManager.checkCanceled()
         }
