@@ -3,7 +3,7 @@ package tanvd.grazi.ide.language.python
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
-import com.jetbrains.python.psi.*
+import com.jetbrains.python.psi.PyFile
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker

@@ -3,8 +3,8 @@ package tanvd.grazi
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.extensions.PluginId
-import tanvd.grazi.grammar.GrammarChecker
 import tanvd.grazi.grammar.GrammarEngine
+import tanvd.grazi.language.LangTool
 import tanvd.grazi.spellcheck.GraziSpellchecker
 
 class GraziPlugin : BaseComponent {
@@ -17,14 +17,19 @@ class GraziPlugin : BaseComponent {
             get() = PluginManager.getPlugin(PluginId.getId(id))!!.version
 
         fun init() {
-            GrammarChecker.init(GraziConfig.state.enabledLanguages)
+            LangTool.init(GraziConfig.state.enabledLanguages)
         }
 
         fun invalidateCaches() {
-            GrammarChecker.reset()
+            LangTool.reset()
             GrammarEngine.reset()
 
             GraziSpellchecker.reset()
+        }
+
+        fun reinit() {
+            invalidateCaches()
+            init()
         }
     }
 

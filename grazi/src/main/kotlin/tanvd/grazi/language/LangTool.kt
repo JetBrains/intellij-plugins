@@ -1,12 +1,11 @@
-package tanvd.grazi.grammar
+package tanvd.grazi.language
 
 import org.languagetool.*
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.language.Lang
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-object GrammarChecker {
+object LangTool {
     private val langs: MutableMap<Lang, JLanguageTool> = HashMap()
 
     private const val cacheMaxSize = 25_000L
@@ -15,7 +14,7 @@ object GrammarChecker {
     operator fun get(lang: Lang): JLanguageTool {
         return langs.getOrPut(lang) {
             val cache = ResultCache(cacheMaxSize, cacheExpireAfterMinutes, TimeUnit.MINUTES)
-            JLanguageTool(lang.toLanguage(), GraziConfig.state.nativeLanguage.toLanguage(),
+            JLanguageTool(lang.jlanguage, GraziConfig.state.nativeLanguage.jlanguage,
                     cache, UserConfig(GraziConfig.state.userWords.toList())).apply {
                 lang.configure(this)
                 disableRules(allActiveRules.map { it.id }.filter { it in GraziConfig.state.userDisabledRules })

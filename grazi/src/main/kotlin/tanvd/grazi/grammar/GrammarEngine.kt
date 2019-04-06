@@ -2,7 +2,7 @@ package tanvd.grazi.grammar
 
 import com.intellij.openapi.progress.ProgressManager
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.language.LangDetector
+import tanvd.grazi.language.*
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 
@@ -55,25 +55,21 @@ object GrammarEngine {
 
         val lang = LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList())
 
-        val allFixes = tryRun { GrammarChecker[lang].check(str) }
+        val allFixes = tryRun { LangTool[lang].check(str) }
                 .orEmpty()
                 .filterNotNull()
                 .map { Typo(it, lang, TypoCache.hash(str)) }
                 .let { LinkedHashSet(it) }
 
-        val withoutTypos = allFixes.filterNot { it.info.rule.isDictionaryBasedSpellingRule }
-        val verifiedTypos = allFixes.filter { it.info.rule.isDictionaryBasedSpellingRule }
-                .filter {
-                    str.subSequence(it.location.range).split(Regex("\\s"))
-                            .flatMap { part -> GraziSpellchecker.check(part) }.isNotEmpty()
-                }
-
-        val result = (withoutTypos + verifiedTypos).toSet()
+        val withoutTypos = allFixes.filterNot { it.info.rule.isDictionaryBasedSpellingRule }.toSet()
+        val verifiedTypos = allFixes.filter { it.info.rule.isDictionaryBasedSpellingRule }.filter {
+            !lang.isEnglish() || str.subSequence(it.location.range).split(Regex("\\s")).flatMap { part -> GraziSpellchecker.check(part) }.isNotEmpty()
+        }.toSet()
 
         if (GraziConfig.state.enabledSpellcheck) {
-            addAll(result)
+            addAll(withoutTypos + verifiedTypos)
         } else {
-            addAll(result.filterNot { it.info.rule.isDictionaryBasedSpellingRule })
+            addAll(withoutTypos)
         }
 
         cache.put(str, LinkedHashSet(this))

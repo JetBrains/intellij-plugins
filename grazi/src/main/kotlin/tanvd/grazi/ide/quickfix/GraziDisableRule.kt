@@ -5,8 +5,8 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.grammar.*
-import tanvd.grazi.spellcheck.GraziSpellchecker
+import tanvd.grazi.GraziPlugin
+import tanvd.grazi.grammar.Typo
 
 class GraziDisableRule(private val typo: Typo) : LocalQuickFix, PriorityAction {
     override fun getName(): String {
@@ -20,9 +20,6 @@ class GraziDisableRule(private val typo: Typo) : LocalQuickFix, PriorityAction {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         GraziConfig.state.userDisabledRules.add(typo.info.rule.id)
 
-        GrammarEngine.reset()
-        GrammarChecker.reset()
-
-        GraziSpellchecker.reset()
+        GraziPlugin.invalidateCaches()
     }
 }

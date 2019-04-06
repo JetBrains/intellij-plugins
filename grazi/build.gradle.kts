@@ -1,4 +1,5 @@
 import org.jetbrains.intellij.tasks.PublishTask
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 import tanvd.grazi.Versions
 import tanvd.grazi.channel
 
@@ -30,6 +31,14 @@ intellij {
     )
 }
 
+tasks.withType<KotlinJvmCompile> {
+    kotlinOptions {
+        jvmTarget = "1.8"
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+    }
+}
+
 tasks.withType<PublishTask> {
     username(System.getenv("publish_username"))
     token(System.getenv("publish_token"))
@@ -50,6 +59,8 @@ detekt {
     }
 }
 
+val langs = setOf("en", "ru", "fr", "de", "pl", "it", "zh", "ja", "uk", "el", "ro", "es", "pt", "sk", "fa", "nl")
+
 dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(kotlin("reflect"))
@@ -57,12 +68,16 @@ dependencies {
     compile("org.languagetool", "languagetool-core", Versions.languageTool) {
         exclude("org.slf4j", "slf4j-api")
     }
-    compile("org.languagetool", "language-all", Versions.languageTool) {
-        exclude("org.slf4j", "slf4j-api")
+    for (lang in langs) {
+        compile("org.languagetool", "language-$lang", Versions.languageTool) {
+            exclude("org.slf4j", "slf4j-api")
+        }
     }
 
     compile("org.apache.commons", "commons-lang3", "3.5")
+
     compile("com.github.ben-manes.caffeine", "caffeine", "2.7.0")
+    compile("com.beust", "klaxon", "5.0.1")
 
     testCompile("org.junit.jupiter", "junit-jupiter-api", "5.2.0")
     testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.2.0")
