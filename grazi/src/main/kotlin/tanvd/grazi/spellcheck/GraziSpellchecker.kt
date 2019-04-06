@@ -16,8 +16,8 @@ object GraziSpellchecker {
     private val cache = TypoCache(50_000L)
 
     private val whiteSpaceSeparators = listOf(' ', '\t')
-    private val nameSeparators = listOf('.', '_', '-')
-    private val trimmed = listOf('$', '%', '{', '}')
+    private val nameSeparators = listOf('.', '_', '-', '&')
+    private val trimmed = listOf('$', '%', '{', '}', ';', '\\')
 
     private val ignorePatters: List<(String) -> Boolean> = listOf(
             { it -> it.startsWith(".") },

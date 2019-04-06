@@ -1,5 +1,7 @@
 package tanvd.grazi.utils
 
+val punctuationChars = listOf('.', ',', ':', ';')
+
 val blankCharRegex = Regex("\\s")
 val newLineCharRegex = Regex("\\n")
 val blankOrNewLineCharRegex = Regex("[\\n\\s]")

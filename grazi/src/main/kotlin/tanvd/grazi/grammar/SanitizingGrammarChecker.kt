@@ -60,7 +60,6 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
                 }
                 if (tokenStartIndex < index) {
                     tokenMapping[IntRange(tokenStartIndex, index - 1)] = token
-                    continue
                 }
 
                 if (!lastOrNull()?.let { blankCharRegex.matches(it) }.orTrue()) {
@@ -75,14 +74,15 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
         val sortedIndexesShift = indexesShift.toList().sortedBy { it.first }
 
         return fixes.mapNotNull { typo ->
-            val (range, firstToken) = tokenMapping.filter { typo.location.range.start in it.key }.entries.first()
-            val secondToken = tokenMapping.filter { typo.location.range.endInclusive in it.key }.values.firstOrNull()
-            if (firstToken == secondToken) {
-                val startShift = sortedIndexesShift.lastOrNull { it.first <= typo.location.range.start }?.second ?: 0
-                val endShift = sortedIndexesShift.lastOrNull { it.first <= typo.location.range.endInclusive }?.second ?: 0
-                val newRange = IntRange(typo.location.range.start + startShift - range.start, typo.location.range.endInclusive + endShift - range.start)
-                typo.copy(location = typo.location.copy(range = newRange, element = firstToken))
-            } else null
+            tokenMapping.filter { typo.location.range.start in it.key }.entries.firstOrNull()?.let { (range, firstToken) ->
+                val secondToken = tokenMapping.filter { typo.location.range.endInclusive in it.key }.values.firstOrNull()
+                if (firstToken == secondToken) {
+                    val startShift = sortedIndexesShift.lastOrNull { it.first <= typo.location.range.start }?.second ?: 0
+                    val endShift = sortedIndexesShift.lastOrNull { it.first <= typo.location.range.endInclusive }?.second ?: 0
+                    val newRange = IntRange(typo.location.range.start + startShift - range.start, typo.location.range.endInclusive + endShift - range.start)
+                    typo.copy(location = typo.location.copy(range = newRange, element = firstToken))
+                } else null
+            }
         }.toSet()
     }
 }
