@@ -5,7 +5,8 @@ import tanvd.grazi.utils.*
 
 class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> Boolean>,
                                private val replace: List<(CharSequence, Char) -> Char?>,
-                               private val ignoreToken: List<(String) -> Boolean>) {
+                               private val ignoreToken: List<(String) -> Boolean>,
+                               private val trim: (String) -> Pair<IntRange?, String>) {
 
     companion object {
         val default = SanitizingGrammarChecker(
@@ -17,7 +18,8 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
                 }),
                 ignoreToken = listOf({ str ->
                     str.all { !it.isLetter() }
-                }))
+                }),
+                trim = { str -> str.trimWithRange(emptyList()) })
     }
 
     fun <T : PsiElement> check(vararg tokens: T, getText: (T) -> String = { it.text }) = check(tokens.toList(), getText)
@@ -30,14 +32,23 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
 
         val resultText = buildString {
             var index = 0
+            //iterate through non-ignored tokens
             for (token in tokens.filter { token -> !ignoreToken.any { it(getText(token)) } }) {
                 val tokenStartIndex = index
-                var totalExcluded = 0
+
+                //trim text
+                val text = getText(token)
+                val (range, trimmedText) = trim(text)
+                if (range == null) continue
+
+                var totalExcluded = range.start
                 indexesShift[index] = totalExcluded
-                for (char in getText(token)) {
+                for (char in trimmedText) {
+                    //perform replacing of chan (depending on already seen string)
                     @Suppress("NAME_SHADOWING")
                     val char = replace.firstNotNull { it(this, char) } ?: char
 
+                    //check if char should be ignored
                     if (ignore.any { it(this, char) }) {
                         indexesShift[index] = ++totalExcluded
                         continue
