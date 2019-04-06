@@ -37,6 +37,7 @@
     <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
     <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
     <depends optional="true" config-file="python.xml">com.intellij.modules.python</depends>
+    <depends optional="true" config-file="java.xml">com.intellij.modules.java</depends>
 
     <project-components>
         <component>
@@ -73,10 +74,6 @@
         <languageSupport implementation="tanvd.grazi.ide.language.PlainTextSupport"/>
 
         <languageSupport implementation="tanvd.grazi.ide.language.XmlSupport"/>
-
-        <languageSupport implementation="tanvd.grazi.ide.language.java.JDocSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.java.JStringSupport"/>
-        <languageSupport implementation="tanvd.grazi.ide.language.java.JConstructsSupport"/>
 
         <languageSupport implementation="tanvd.grazi.ide.language.CommentsSupport"/>
     </extensions>
