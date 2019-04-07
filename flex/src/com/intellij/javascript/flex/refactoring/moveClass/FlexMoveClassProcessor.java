@@ -72,13 +72,13 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   @NotNull
   @Override
   protected UsageInfo[] findUsages() {
-    Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<UsageInfo>());
+    Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<>());
     result.addAll(Arrays.asList(super.findUsages()));
     for (JSQualifiedNamedElement element : myElements) {
       if (element instanceof JSClass) {
         JSRefactoringUtil.addConstructorUsages((JSClass)element, result);
       }
-      TextOccurrencesUtil.findNonCodeUsages(element, element.getQualifiedName(), mySearchInComments, mySearchInNonJavaFiles,
+      TextOccurrencesUtil.findNonCodeUsages(element, myRefactoringScope, element.getQualifiedName(), mySearchInComments, mySearchInNonJavaFiles,
                                             StringUtil.getQualifiedName(myTargetPackage, StringUtil.notNullize(element.getName())), result);
     }
     return result.toArray(UsageInfo.EMPTY_ARRAY);

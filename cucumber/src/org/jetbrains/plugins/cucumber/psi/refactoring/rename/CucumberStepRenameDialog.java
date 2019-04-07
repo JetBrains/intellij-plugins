@@ -34,8 +34,8 @@ public class CucumberStepRenameDialog extends RenameDialog {
 
   @Override
   protected RenameProcessor createRenameProcessor(String newName) {
-    return new RenameProcessor(getProject(), getPsiElement(), newName, isSearchInComments(),
-                                                          isSearchInNonJavaFiles());
+    return new RenameProcessor(getProject(), getPsiElement(), newName,
+                               getRefactoringScope(), isSearchInComments(), isSearchInNonJavaFiles());
   }
 
   @Override

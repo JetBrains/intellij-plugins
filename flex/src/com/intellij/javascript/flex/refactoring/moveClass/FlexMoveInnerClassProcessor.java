@@ -82,7 +82,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   @NotNull
   @Override
   protected UsageInfo[] findUsages() {
-    final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<UsageInfo>());
+    final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<>());
     ReferencesSearch.search(myElement, new LocalSearchScope(myElement.getContainingFile())).forEach(reference -> {
       final PsiElement element = reference.getElement();
       if (!(element instanceof JSReferenceExpression)) {
@@ -102,7 +102,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
         JSRefactoringUtil.addConstructorUsages((JSClass)myElement, result);
       }
     }
-    TextOccurrencesUtil.findNonCodeUsages(myElement, myElement.getName(), mySearchInComments, mySearchTextOccurences,
+    TextOccurrencesUtil.findNonCodeUsages(myElement, myRefactoringScope, myElement.getName(), mySearchInComments, mySearchTextOccurences,
                                           StringUtil.getQualifiedName(myPackageName, myClassName), result);
     return UsageViewUtil.removeDuplicatedUsages(result.toArray(UsageInfo.EMPTY_ARRAY));
   }
