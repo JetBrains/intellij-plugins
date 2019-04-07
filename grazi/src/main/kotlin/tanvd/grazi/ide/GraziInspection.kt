@@ -25,10 +25,12 @@ class GraziInspection : LocalInspectionTool() {
                     add(GraziAddWord(fix))
                 }
 
-                if (fix.location.shouldUseRename) {
-                    add(GraziRenameTypo(fix))
-                } else {
-                    add(GraziReplaceTypo(fix))
+                if (fix.fixes.isNotEmpty() && isOnTheFly) {
+                    if (fix.location.shouldUseRename) {
+                        add(GraziRenameTypo(fix))
+                    } else {
+                        add(GraziReplaceTypo(fix))
+                    }
                 }
 
                 add(GraziDisableRule(fix))

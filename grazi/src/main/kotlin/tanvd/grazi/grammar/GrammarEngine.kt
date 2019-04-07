@@ -37,7 +37,7 @@ object GrammarEngine {
             } else {
                 getFixesSmall(sentence)
             }.map {
-                Typo(it.location.withOffset(range.start), it.info, it.fix)
+                Typo(it.location.withOffset(range.start), it.info, it.fixes)
             }
             addAll(stringFixes)
         }

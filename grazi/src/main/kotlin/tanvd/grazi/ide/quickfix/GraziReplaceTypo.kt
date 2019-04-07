@@ -16,7 +16,7 @@ import tanvd.grazi.grammar.Typo
 class GraziReplaceTypo(private val typo: Typo) : LocalQuickFix, PriorityAction {
 
     override fun getName(): String {
-        return "Fix ${typo.info.category.description} mistake"
+        return "Fix ${typo.info.category.description}"
     }
 
     override fun getFamilyName(): String = "Fix mistake with replace"
@@ -29,19 +29,20 @@ class GraziReplaceTypo(private val typo: Typo) : LocalQuickFix, PriorityAction {
                 .dataContextFromFocusAsync
                 .onSuccess { context ->
                     var editor = CommonDataKeys.EDITOR.getData(context)
+                    if (editor != null) {
+                        if (InjectedLanguageManager.getInstance(project).getInjectionHost(element) != null && editor !is EditorWindow) {
+                            editor = getInjectedEditorForInjectedFile(editor, element.containingFile)
+                        }
 
-                    if (InjectedLanguageManager.getInstance(project).getInjectionHost(element) != null && editor !is EditorWindow) {
-                        editor = getInjectedEditorForInjectedFile(editor!!, element.containingFile)
+                        val textRange = (descriptor as ProblemDescriptorBase).textRange
+                        val documentLength = editor.document.textLength
+                        val endOffset = getDocumentOffset(textRange!!.endOffset, documentLength)
+                        val startOffset = getDocumentOffset(textRange.startOffset, documentLength)
+                        editor.selectionModel.setSelection(startOffset, endOffset)
+
+                        val items = typo.fixes.map { LookupElementBuilder.create(it) }
+                        LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())
                     }
-
-                    val textRange = (descriptor as ProblemDescriptorBase).textRange
-                    val documentLength = editor!!.document.textLength
-                    val endOffset = getDocumentOffset(textRange!!.endOffset, documentLength)
-                    val startOffset = getDocumentOffset(textRange.startOffset, documentLength)
-                    editor.selectionModel.setSelection(startOffset, endOffset)
-
-                    val items = typo.fix!!.map { LookupElementBuilder.create(it) }
-                    LookupManager.getInstance(project).showLookup(editor, *items.toTypedArray())
                 }
     }
 

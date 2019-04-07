@@ -26,7 +26,7 @@ class SpellCheckSuggestions : PreferrableNameSuggestionProvider() {
         }
 
         GraziSpellchecker.check(text).forEach { typo ->
-            typo.fix?.forEach {
+            typo.fixes.forEach {
                 result.add(text.replaceRange(typo.location.range, it))
             }
         }

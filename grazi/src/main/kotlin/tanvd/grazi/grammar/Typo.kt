@@ -8,7 +8,7 @@ import org.languagetool.rules.RuleMatch
 import tanvd.grazi.language.Lang
 import tanvd.grazi.utils.*
 
-data class Typo(val location: Location, val info: Info, val fix: List<String>? = null) {
+data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
     data class Location(val range: IntRange, val element: PsiElement? = null, val hash: Int, val shouldUseRename: Boolean = false) {
         fun withOffset(offset: Int) = copy(range = IntRange(range.start + offset, range.endInclusive + offset))
     }

@@ -22,7 +22,7 @@ fun Typo.verify(text: String? = null) {
 fun Typo.assertTypoIs(category: Typo.Category, range: IntRange, fixes: List<String> = emptyList(), text: String? = null) {
     assertEquals(category, info.category)
     assertEquals(range, location.range)
-    assertTrue { fix?.containsAll(fixes) ?: false }
+    assertTrue { fixes.containsAll(fixes) }
 
     verify(text)
 }

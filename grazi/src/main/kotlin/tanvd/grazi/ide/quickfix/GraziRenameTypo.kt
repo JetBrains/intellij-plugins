@@ -27,7 +27,7 @@ import java.util.*
 open class GraziRenameTypo(private val typo: Typo) : LocalQuickFix, PriorityAction {
 
     override fun getName(): String {
-        return "Fix ${typo.info.category.description} mistake"
+        return "Fix ${typo.info.category.description}"
     }
 
     override fun getFamilyName(): String = "Fix mistake with rename"
