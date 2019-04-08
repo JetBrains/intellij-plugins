@@ -31,7 +31,7 @@ class GrammarEngineCacheTests {
             fixes2 = GrammarEngine.getFixes(text).toList()
         }
         Assert.assertEquals(fixes1, fixes2)
-        assert(totalTime < 100)
+        assert(totalTime < 200)
     }
 
     @Test
@@ -44,6 +44,6 @@ class GrammarEngineCacheTests {
             fixes2 = GrammarEngine.getFixes(text).toList()
         }
         Assert.assertEquals(fixes1, fixes2)
-        assert(totalTime < 200)
+        assert(totalTime < 400)
     }
 }
