@@ -60,7 +60,7 @@ import java.util.*;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration {
+public class OsgiRunConfiguration extends RunConfigurationBase<Element> implements ModuleRunConfiguration {
   private static final Logger LOG = Logger.getInstance("#org.osmorc.run.OsgiRunConfiguration");
 
   private static final String BUNDLE_ELEMENT = "bundle";

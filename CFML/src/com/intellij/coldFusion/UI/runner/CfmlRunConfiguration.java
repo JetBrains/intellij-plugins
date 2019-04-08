@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.execution.Executor;
@@ -20,10 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by Lera Nikolaenko
- */
-public class CfmlRunConfiguration extends RunConfigurationBase implements LocatableConfiguration{
+public class CfmlRunConfiguration extends RunConfigurationBase<Element> implements LocatableConfiguration{
   private CfmlRunnerParameters myRunnerParameters = new CfmlRunnerParameters();
   private boolean fromDefaultHost = false;
 
