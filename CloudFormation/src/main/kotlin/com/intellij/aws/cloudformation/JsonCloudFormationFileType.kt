@@ -12,8 +12,6 @@ import org.jetbrains.yaml.YAMLFileType
 import javax.swing.Icon
 
 class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), FileTypeIdentifiableByVirtualFile {
-  private val fileTypeRecursionGuard = RecursionManager.createGuard(javaClass.simpleName)
-
   override fun getName(): String = "AWSCloudFormation (JSON)"
   override fun getDescription(): String = "AWS CloudFormation templates (JSON)"
   override fun getDefaultExtension(): String = ""
@@ -22,7 +20,7 @@ class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), File
   override fun isMyFileType(file: VirtualFile): Boolean {
     val extension = file.extension ?: return false
 
-    return fileTypeRecursionGuard.doPreventingRecursion(javaClass, false, {
+    return RecursionManager.doPreventingRecursion(javaClass, false) {
       val fileTypeByFile = FileTypeManager.getInstance().getFileTypeByFile(file)
 
       if (fileTypeByFile === YamlCloudFormationFileType.INSTANCE ||
@@ -30,19 +28,19 @@ class JsonCloudFormationFileType : LanguageFileType(JsonLanguage.INSTANCE), File
         return@doPreventingRecursion false
 
       if (JsonFileType.DEFAULT_EXTENSION.equals(extension, ignoreCase = true) ||
-          JsonCloudFormationFileType.EXTENSION.equals(extension, ignoreCase = true) ||
+          EXTENSION.equals(extension, ignoreCase = true) ||
           fileTypeByFile === JsonFileType.INSTANCE) {
         return@doPreventingRecursion signatureDetector.detectSignature(file)
       }
 
       return@doPreventingRecursion false
-    }) ?: false
+    } ?: false
   }
 
   companion object {
     val INSTANCE = JsonCloudFormationFileType()
 
-    private val EXTENSION = "template"
+    private const val EXTENSION = "template"
 
     private val signatureDetector = FileContentDetector(
         INSTANCE.name,
