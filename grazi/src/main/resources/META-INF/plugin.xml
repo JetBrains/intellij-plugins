@@ -5,21 +5,15 @@
 
     <description><![CDATA[
         Grazi is a proofreader and grammar checker covering over 15 languages,
-        including English, German, Russian, Chinese, and others.
-
-        <br/>
-
-        It improves the quality of texts written using IntelliJ Platform IDEs
-        by providing intelligent spelling and grammar checking.
+        including English, German, Russian, Chinese, and others. It improves the
+        quality of texts written using IntelliJ Platform IDEs by providing
+        intelligent spelling and grammar checking.
 
         <br/>
 
         The plugin supports natural language constructs wherever they are: Kotlin,
-        Python, and Java (including literals and docs), comments, Markdown, XML, and plain text.
-
-        <br/>
-
-        Under the hood, it uses LanguageTool, to provide you with the unrivaled
+        Python, and Java (including literals and docs), comments, Markdown, XML, and
+        plain text. Under the hood, it uses LanguageTool, to provide you with the unrivaled
         performance and accuracy of the leading proofreading and grammar checking engine.
 
         <br/>
@@ -35,11 +29,13 @@
 
     <change-notes><![CDATA[
     <h4>2019.1-1</h4>
-    <p>Spellcheck by Grazi. 25 languages supported. (Enable it in settings)</p>
-    <p>Native language based inspections</p>
-    <p>Extended support of Kotlin and Java</p>\
-    <p>Support of Python and XML</p>
-    <p>A lot of bug fixes</p>
+    <ul>
+        <li>Spellcheck by Grazi. 25 languages supported. (Enable it in settings)</li>
+        <li>Native language based inspections</li>
+        <li>Extended support of Kotlin and Java</li>
+        <li>Support of Python and XML</li>
+        <li>A lot of bug fixes</li>
+    </ul>
     ]]>
     </change-notes>
 
