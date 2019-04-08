@@ -24,7 +24,7 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
       caret(0)
 
       actionTask("FileStructurePopup") {
-        "Navigation through large sources is complicated, and sometimes you need an overview of a file. " +
+        "A large source file can be difficult to read and navigate, sometimes you only need an overview of the file." +
             "Use ${action(it)} to see the file structure."
       }
       task("ch") {
@@ -41,13 +41,12 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
         }
       }
       task {
-        text("Go to the the selected item or just close the popup.")
+        text("Press <strong>Enter</strong> to jump to the selected item.")
         stateCheck { focusOwner is EditorComponentImpl }
         test { GuiTestUtil.shortcut(Key.ENTER) }
       }
       task("ActivateStructureToolWindow") {
-        text("Alternatively IDE has a special view for the file structure. Open it with ${action(it)}. " +
-            "Also it is accessible via tab at the left window border.")
+        text("The IDE can also show you the file structure as a tool window. Open it with ${action(it)}.")
         stateCheck { focusOwner?.javaClass?.name?.contains("StructureViewComponent") ?: false }
         test { actions(it) }
       }
