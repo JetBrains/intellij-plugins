@@ -6,8 +6,6 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.testGuiFramework.framework.GuiTestUtil.shortcut
-import com.intellij.testGuiFramework.framework.Timeouts
-import com.intellij.testGuiFramework.impl.waitUntilFound
 import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.table.JBTable
 import training.commands.kotlin.TaskContext
@@ -44,9 +42,7 @@ class RubyDeclarationAndUsagesLesson(module: Module) : KLesson("Declaration and 
         test {
           actions(it)
           ideFrame {
-            waitUntilFound(null, JBTable::class.java, Timeouts.seconds02) { popup ->
-              popup.javaClass.name.contains("ShowUsagesTable") && popup.isShowing
-            }
+            waitComponent(JBTable::class.java, "ShowUsagesTable")
             shortcut(Key.ENTER)
           }
         }

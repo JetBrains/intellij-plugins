@@ -8,7 +8,9 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
 import com.intellij.testGuiFramework.framework.GuiTestUtil
+import com.intellij.testGuiFramework.framework.Timeouts
 import com.intellij.testGuiFramework.impl.GuiTestCase
+import com.intellij.testGuiFramework.impl.waitUntilFound
 
 class TaskTestContext(val task: TaskContext) {
 
@@ -35,6 +37,13 @@ class TaskTestContext(val task: TaskContext) {
       ideFrame { // Note: It is not recursive call here. It is GuiTestCase#ideFrame
         action()
       }
+    }
+  }
+
+  fun <ComponentType : java.awt.Component>  waitComponent(componentClass: java.lang.Class<ComponentType>,
+                                                          partOfName: String) {
+    waitUntilFound(null, componentClass, Timeouts.seconds02) {
+      it.javaClass.name.contains(partOfName) && it.isShowing
     }
   }
 
