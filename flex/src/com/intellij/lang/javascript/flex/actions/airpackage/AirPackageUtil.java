@@ -603,22 +603,30 @@ public class AirPackageUtil {
                                               final Sdk flexSdk,
                                               final String ipaPath,
                                               final String applicationId,
-                                              final String iOSSdkPath) {
-    return uninstallFromIosSimulator(project, flexSdk, applicationId, iOSSdkPath) &&
+                                              final String iOSSdkPath,
+                                              final String simulatorDevice) {
+    return uninstallFromIosSimulator(project, flexSdk, applicationId, iOSSdkPath, simulatorDevice) &&
            ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
-             @Override
-             protected void appendAdtOptions(final List<String> command) {
-               command.add("-installApp");
-               command.add("-platform");
-               command.add("ios");
-               command.add("-platformsdk");
-               command.add(iOSSdkPath);
-               command.add("-device");
-               command.add("ios-simulator");
-               command.add("-package");
-               command.add(ipaPath);
-             }
-           }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
+                                          @Override
+                                          protected void appendAdtOptions(final List<String> command) {
+                                            command.add("-installApp");
+                                            command.add("-platform");
+                                            command.add("ios");
+                                            command.add("-platformsdk");
+                                            command.add(iOSSdkPath);
+                                            command.add("-device");
+                                            command.add("ios-simulator");
+                                            command.add("-package");
+                                            command.add(ipaPath);
+                                          }
+
+                                          @Override
+                                          protected void prepareEnvVars(Map<String, String> envVars) {
+                                            if (!StringUtil.isEmpty(simulatorDevice)) {
+                                              envVars.put("AIR_IOS_SIMULATOR_DEVICE", simulatorDevice);
+                                            }
+                                          }
+                                        }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
                                         FlexBundle.message("install.ipa.on.simulator.title"));
   }
 
@@ -754,7 +762,8 @@ public class AirPackageUtil {
   private static boolean uninstallFromIosSimulator(final Project project,
                                                    final Sdk sdk,
                                                    final String applicationId,
-                                                   final String iOSSdkPath) {
+                                                   final String iOSSdkPath,
+                                                   final String simulatorDevice) {
     return ExternalTask.runWithProgress(new AdtTask(project, sdk) {
       @Override
       protected void appendAdtOptions(final List<String> command) {
@@ -767,6 +776,13 @@ public class AirPackageUtil {
         command.add("ios-simulator");
         command.add("-appid");
         command.add(applicationId);
+      }
+
+      @Override
+      protected void prepareEnvVars(Map<String, String> envVars) {
+        if (!StringUtil.isEmpty(simulatorDevice)) {
+          envVars.put("AIR_IOS_SIMULATOR_DEVICE", simulatorDevice);
+        }
       }
 
       @Override
