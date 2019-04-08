@@ -76,7 +76,6 @@ dependencies {
 
     compile("org.apache.commons", "commons-lang3", "3.5")
 
-    compile("com.github.ben-manes.caffeine", "caffeine", "2.7.0")
     compile("com.beust", "klaxon", "5.0.1")
 
     testCompile("org.junit.jupiter", "junit-jupiter-api", "5.2.0")

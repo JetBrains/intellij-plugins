@@ -2,6 +2,7 @@ package tanvd.grazi.ide.language.java
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.*
+import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker
@@ -9,7 +10,7 @@ import tanvd.grazi.utils.*
 
 class JConstructsSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {
-        return file is PsiJavaFile
+        return file is PsiJavaFile && GraziConfig.state.enabledSpellcheck
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {

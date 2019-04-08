@@ -5,6 +5,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker
@@ -12,7 +13,7 @@ import tanvd.grazi.utils.*
 
 class KConstructsSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {
-        return file is KtFile
+        return file is KtFile && GraziConfig.state.enabledSpellcheck
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {

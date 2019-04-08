@@ -33,6 +33,8 @@ object GraziSpellchecker {
     private var checker: JLanguageTool = createChecker()
 
     fun check(text: String) = buildSet<Typo> {
+        if (!GraziConfig.state.enabledSpellcheck) return@buildSet
+
         for ((bigWordRange, bigWord) in text.splitWithRanges(whiteSpaceSeparators)) {
             if (ignorePatters.any { it(bigWord) }) continue
 

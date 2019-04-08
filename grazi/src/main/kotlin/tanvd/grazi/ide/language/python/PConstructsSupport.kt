@@ -4,6 +4,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import com.jetbrains.python.psi.PyFile
+import tanvd.grazi.GraziConfig
 import tanvd.grazi.grammar.Typo
 import tanvd.grazi.ide.language.LanguageSupport
 import tanvd.grazi.spellcheck.GraziSpellchecker
@@ -11,7 +12,7 @@ import tanvd.grazi.utils.*
 
 class PConstructsSupport : LanguageSupport() {
     override fun isSupported(file: PsiFile): Boolean {
-        return file is PyFile
+        return file is PyFile && GraziConfig.state.enabledSpellcheck
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {
