@@ -57,8 +57,10 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
     val focusOwner = focusOwner
     if (focusOwner is DnDAwareTree && focusOwner.javaClass.name.contains("FileStructurePopup")) {
       val model = focusOwner.model
-      model.addTreeModelListener(listener)
-      listener.model = model
+      if (listener.model != model) {
+        listener.model = model
+        model.addTreeModelListener(listener)
+      }
     }
     return false
   }
