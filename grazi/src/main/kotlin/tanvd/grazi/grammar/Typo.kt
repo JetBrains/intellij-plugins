@@ -9,7 +9,7 @@ import tanvd.grazi.language.Lang
 import tanvd.grazi.utils.*
 
 data class Typo(val location: Location, val info: Info, val fixes: List<String> = emptyList()) {
-    data class Location(val range: IntRange, val element: PsiElement? = null, val hash: Int, val shouldUseRename: Boolean = false) {
+    data class Location(val range: IntRange, val element: PsiElement? = null, val shouldUseRename: Boolean = false) {
         fun withOffset(offset: Int) = copy(range = IntRange(range.start + offset, range.endInclusive + offset))
     }
 
@@ -28,8 +28,8 @@ data class Typo(val location: Location, val info: Info, val fixes: List<String> 
 
     val word by lazy { location.element!!.text.subSequence(location.range).toString() }
 
-    constructor(match: RuleMatch, lang: Lang, hash: Int, offset: Int = 0) : this(
-            Location(match.toIntRange().withOffset(offset), hash = hash),
+    constructor(match: RuleMatch, lang: Lang, offset: Int = 0) : this(
+            Location(match.toIntRange().withOffset(offset)),
             Info(lang, match.rule, match.typoCategory), match.suggestedReplacements)
 
 

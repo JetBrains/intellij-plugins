@@ -42,7 +42,7 @@ object GraziSpellchecker {
 
                 for ((inWordRange, word) in trimmedWord.splitCamelCase(insideOf = trimmedWordRange)) {
                     val typo = tryRun { checker.check(word.toLowerCase()) }?.firstOrNull()
-                            ?.let { Typo(it, checkerLang, TypoCache.hash(word), inWordRange.start) }
+                            ?.let { Typo(it, checkerLang, inWordRange.start) }
                     if (typo != null && IdeaSpellchecker.hasProblem(word)) {
                         add(typo)
                     }
