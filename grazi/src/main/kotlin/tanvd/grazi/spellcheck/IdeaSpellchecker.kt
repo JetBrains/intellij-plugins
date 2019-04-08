@@ -5,7 +5,7 @@ import com.intellij.spellchecker.SpellCheckerManager
 import org.jetbrains.annotations.TestOnly
 
 object IdeaSpellchecker {
-    private var hasProblemChecker = ThreadLocal<(String) -> Boolean>()
+    private var hasProblemChecker = ThreadLocal.withInitial<(String) -> Boolean> { { true } }
 
     fun init(project: Project) {
         val manager = SpellCheckerManager.getInstance(project)
