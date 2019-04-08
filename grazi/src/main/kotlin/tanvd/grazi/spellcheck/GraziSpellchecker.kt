@@ -13,8 +13,6 @@ object GraziSpellchecker {
     private const val cacheExpireAfterMinutes = 5
     private val checkerLang = Lang.AMERICAN_ENGLISH
 
-    private val cache = TypoCache(50_000L)
-
     private val whiteSpaceSeparators = listOf(' ', '\t')
     private val nameSeparators = listOf('.', '_', '-', '&')
     private val trimmed = listOf('$', '%', '{', '}', ';', '\\')
@@ -38,11 +36,6 @@ object GraziSpellchecker {
         for ((bigWordRange, bigWord) in text.splitWithRanges(whiteSpaceSeparators)) {
             if (ignorePatters.any { it(bigWord) }) continue
 
-            if (cache.contains(bigWord)) {
-                addAll(cache.get(bigWord))
-                return@buildSet
-            }
-
             for ((onePieceWordRange, onePieceWord) in bigWord.splitWithRanges(nameSeparators, insideOf = bigWordRange)) {
                 val (trimmedWordRange, trimmedWord) = onePieceWord.trimWithRange(trimmed, insideOf = onePieceWordRange)
                 if (trimmedWordRange == null) continue
@@ -55,13 +48,10 @@ object GraziSpellchecker {
                     }
                 }
             }
-
-            cache.put(bigWord, LinkedHashSet(this))
         }
     }
 
     fun reset() {
         checker = createChecker()
-        cache.reset()
     }
 }
