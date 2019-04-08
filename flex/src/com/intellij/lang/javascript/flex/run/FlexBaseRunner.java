@@ -375,7 +375,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     return (AirPackageUtil.packageIpaForSimulator(module, bc, runnerParameters, isDebug) &&
             AirPackageUtil.installOnIosSimulator(module.getProject(), sdk, ipaPath, applicationId,
-                                                 runnerParameters.getIOSSimulatorSdkPath()));
+                                                 runnerParameters.getIOSSimulatorSdkPath(), runnerParameters.getIOSSimulatorDevice()));
   }
 
   public static boolean packAndInstallToIOSDevice(final Module module,
