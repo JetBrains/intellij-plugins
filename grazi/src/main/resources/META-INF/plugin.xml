@@ -33,6 +33,17 @@
         Use the Grazi settings located at Settings -> Tools -> Grazi
     ]]></description>
 
+    <change-notes><![CDATA[
+    <h4>2019.1-1</h4>
+    <p>Spellcheck by Grazi. 25 languages supported. (Enable it in settings)</p>
+    <p>Native language based inspections</p>
+    <p>Extended support of Kotlin and Java</p>\
+    <p>Support of Python and XML</p>
+    <p>A lot of bug fixes</p>
+    ]]>
+    </change-notes>
+
+
     <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
     <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
     <depends optional="true" config-file="python.xml">com.intellij.modules.python</depends>
