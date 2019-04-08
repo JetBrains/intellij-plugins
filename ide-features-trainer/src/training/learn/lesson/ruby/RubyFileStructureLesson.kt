@@ -4,8 +4,6 @@ import com.intellij.ide.dnd.aware.DnDAwareTree
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.impl.EditorComponentImpl
 import com.intellij.testGuiFramework.framework.GuiTestUtil
-import com.intellij.testGuiFramework.framework.Timeouts
-import com.intellij.testGuiFramework.impl.waitUntilFound
 import com.intellij.testGuiFramework.util.Key
 import training.commands.kotlin.TaskContext
 import training.learn.interfaces.Module
@@ -33,9 +31,7 @@ class RubyFileStructureLesson(module: Module) : KLesson("File structure", module
         listener.complete = stateCheck { checkWordInSearch(listener) }
         test {
           ideFrame {
-            waitUntilFound(null, DnDAwareTree::class.java, Timeouts.seconds02) { popup ->
-              popup.javaClass.name.contains("FileStructurePopup") && popup.isShowing
-            }
+            waitComponent(DnDAwareTree::class.java, "FileStructurePopup")
           }
           type(it)
         }
