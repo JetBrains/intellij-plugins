@@ -146,28 +146,26 @@ public class OsgiRunState extends JavaCommandLineState {
                 }
               }
               else {
-                // if the user selected a dependency as runnable library, we need to replace the dependency with
-                // the runnable library part
+                // if a user selected a dependency as runnable library, we need to replace the dependency with the runnable library part
                 selectedBundles.remove(selectedBundle);
                 selectedBundles.add(selectedBundle);
               }
             }
 
-            // filter out bundles which have the same symbolic name
-            Map<String, SelectedBundle> filteredBundles = new HashMap<>();
+            // detects bundles which have the same symbolic name
+            Map<String, SelectedBundle> filter = new HashMap<>();
             for (SelectedBundle selectedBundle : selectedBundles) {
               String path = selectedBundle.getBundlePath();
               if (path != null) {
-                String name = CachingBundleInfoProvider.getBundleSymbolicName(path);
-                String version = CachingBundleInfoProvider.getBundleVersion(path);
-                String key = name + version;
-                if (!filteredBundles.containsKey(key)) {
-                  filteredBundles.put(key, selectedBundle);
+                String key = CachingBundleInfoProvider.getBundleSymbolicName(path) + ':' + CachingBundleInfoProvider.getBundleVersion(path);
+                SelectedBundle previous = filter.put(key, selectedBundle);
+                if (previous != null) {
+                  throw new CantRunException("Bundles have same symbolic name and version (" + key + "):\n" + previous + "\n" + selectedBundle);
                 }
               }
             }
 
-            List<SelectedBundle> sortedBundles = ContainerUtil.newArrayList(filteredBundles.values());
+            List<SelectedBundle> sortedBundles = ContainerUtil.newArrayList(selectedBundles);
             Collections.sort(sortedBundles, START_LEVEL_COMPARATOR);
             result.set(sortedBundles);
           }
