@@ -11,8 +11,8 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
@@ -147,7 +147,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
 
   public static void processRegionsInRange(@NotNull final List<? extends DartNavigationRegion> regions,
                                            @NotNull final TextRange range,
-                                           @NotNull final Consumer<? super DartNavigationRegion> processor) {
+                                           @NotNull final Processor<? super DartNavigationRegion> processor) {
     if (regions.isEmpty()) return;
 
     // first find the first region that has minimal allowed offset
@@ -165,7 +165,10 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
       }
     }
     while (region.getOffset() + region.getLength() <= range.getEndOffset()) {
-      processor.consume(region);
+      if (!processor.process(region)) {
+        return;
+      }
+
       i++;
       if (i < regions.size()) {
         region = regions.get(i);
