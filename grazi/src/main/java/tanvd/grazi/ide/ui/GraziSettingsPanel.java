@@ -23,6 +23,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
     public JComponent getComponent() {
         for (Lang lang : Lang.Companion.getSortedValues()) {
             enabledLanguages.addItem(lang.name(), lang.getDisplayName(), false);
+            nativeLanguage.addItem(lang);
         }
         return wholePanel;
     }
@@ -60,8 +61,7 @@ public class GraziSettingsPanel implements ConfigurableUi<GraziConfig> {
             enabledLanguages.setItemSelected(lang.name(), settings.getState().getEnabledLanguages().contains(lang));
         }
 
-        for (Lang lang : settings.getState().getEnabledLanguages()) {
-            nativeLanguage.addItem(lang);
+        for (Lang lang : Lang.values()) {
             if (lang.equals(settings.getState().getNativeLanguage())) {
                 nativeLanguage.setSelectedItem(lang);
             }
