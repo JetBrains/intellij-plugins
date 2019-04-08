@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>org.intellij.plugins.markdown</id>
   <name>Markdown support</name>
-  <vendor url="http://www.jetbrains.com">JetBrains</vendor>
+  <vendor url="https://www.jetbrains.com">JetBrains</vendor>
 
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="plugin-intelliLang.xml">org.intellij.intelliLang</depends>
@@ -19,10 +19,6 @@ Includes the following features:</p>
 <li>Ability to use custom stylesheets for a live preview.</li>
 </ul>
 ]]></description>
-
-  <change-notes><![CDATA[
-    ]]>
-  </change-notes>
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.intellij.markdown.html.panel.provider"
