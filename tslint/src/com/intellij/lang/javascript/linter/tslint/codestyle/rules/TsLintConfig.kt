@@ -35,33 +35,14 @@ class TsLintConfigWrapper(private val rules: Map<String, TslintJsonOption>, priv
   private fun language(settings: CodeStyleSettings) = settings.getCommonSettings(JavaScriptSupportLoader.TYPESCRIPT)
   private fun custom(settings: CodeStyleSettings) = settings.getCustomSettings(TypeScriptCodeStyleSettings::class.java)
 
-  fun getCurrentSettings(project: Project, rules: Collection<TsLintSimpleRule<*>>): Map<TsLintSimpleRule<*>, Any?> {
-    ApplicationManager.getApplication().assertReadAccessAllowed()
-    val settings = current(project)
-    val languageSettings = language(settings)
-    val jsCodeStyleSettings = custom(settings)
-
-    return rules.associate { Pair(it, it.getSettingsValue(languageSettings, jsCodeStyleSettings)) }
-  }
-
-  fun applyValues(project: Project, values: Map<TsLintSimpleRule<*>, *>) {
-    JSCodeStyleUtil.updateProjectCodeStyle(project, { newSettings ->
-      val languageSettings = language(newSettings)
-      val jsCodeStyleSettings = custom(newSettings)
-      WriteAction.run<RuntimeException> {
-        values.forEach { key, value -> key.setDirectValue(languageSettings, jsCodeStyleSettings, value) }
-      }
-    })
-  }
-
   fun applyRules(project: Project, rules: Collection<TsLintSimpleRule<*>>) {
-    JSCodeStyleUtil.updateProjectCodeStyle(project, { newSettings ->
+    JSCodeStyleUtil.updateProjectCodeStyle(project) { newSettings ->
       WriteAction.run<RuntimeException> {
         val newLanguageSettings = language(newSettings)
         val newJsCodeStyleSettings = custom(newSettings)
         rules.forEach { rule -> rule.apply(project, newLanguageSettings, newJsCodeStyleSettings, this) }
       }
-    })
+    }
   }
 
   companion object {

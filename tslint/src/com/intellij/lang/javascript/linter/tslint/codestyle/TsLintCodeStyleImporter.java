@@ -35,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceUtil.getPluginDirectory;
@@ -107,13 +106,12 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
     if (rules.isEmpty()) {
       return Pair.create(ContainerUtil.emptyList(), null);
     }
-    Map<TsLintSimpleRule<?>, Object> oldValues = configWrapper.getCurrentSettings(project, rules);
     configWrapper.applyRules(project, rules);
     List<String> appliedRuleCodes = rules.stream()
       .map(TsLintSimpleRule::getOptionId)
       //in the current implementation, a single TSLint rule code will be duplicated if it changes several IDE settings 
       .distinct()
       .collect(Collectors.toList());
-    return Pair.create(appliedRuleCodes, () -> configWrapper.applyValues(project, oldValues));
+    return Pair.create(appliedRuleCodes, null);
   }
 }
