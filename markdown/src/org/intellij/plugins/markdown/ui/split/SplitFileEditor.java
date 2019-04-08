@@ -2,6 +2,11 @@ package org.intellij.plugins.markdown.ui.split;
 
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.*;
@@ -12,6 +17,7 @@ import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.JBSplitter;
+import com.intellij.util.ui.JBEmptyBorder;
 import org.intellij.plugins.markdown.MarkdownBundle;
 import org.intellij.plugins.markdown.settings.MarkdownApplicationSettings;
 import org.jetbrains.annotations.NotNull;
@@ -105,13 +111,14 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     mySplitter.setFirstComponent(myMainEditor.getComponent());
     mySplitter.setSecondComponent(mySecondEditor.getComponent());
 
-    myToolbarWrapper = new SplitEditorToolbar(mySplitter);
+    myToolbarWrapper = createMarkdownToolbarWrapper(mySplitter);
     if (myMainEditor instanceof TextEditor) {
       myToolbarWrapper.addGutterToTrack(((EditorGutterComponentEx)((TextEditor)myMainEditor).getEditor().getGutter()));
     }
     if (mySecondEditor instanceof TextEditor) {
       myToolbarWrapper.addGutterToTrack(((EditorGutterComponentEx)((TextEditor)mySecondEditor).getEditor().getGutter()));
     }
+    Disposer.register(this, myToolbarWrapper);
 
     final JPanel result = new JPanel(new BorderLayout());
     result.add(myToolbarWrapper, BorderLayout.NORTH);
@@ -119,6 +126,33 @@ public abstract class SplitFileEditor<E1 extends FileEditor, E2 extends FileEdit
     adjustEditorsVisibility();
 
     return result;
+  }
+
+  @NotNull
+  private static SplitEditorToolbar createMarkdownToolbarWrapper(@NotNull JComponent targetComponentForActions) {
+    ActionToolbar leftToolbar = createToolbarFromGroupId("Markdown.Toolbar.Left");
+    leftToolbar.setTargetComponent(targetComponentForActions);
+
+    ActionToolbar rightToolbar = createToolbarFromGroupId("Markdown.Toolbar.Right");
+    rightToolbar.setTargetComponent(targetComponentForActions);
+
+    return new SplitEditorToolbar(leftToolbar, rightToolbar);
+  }
+
+  @NotNull
+  private static ActionToolbar createToolbarFromGroupId(@NotNull String groupId) {
+    final ActionManager actionManager = ActionManager.getInstance();
+
+    if (!actionManager.isGroup(groupId)) {
+      throw new IllegalStateException(groupId + " should have been a group");
+    }
+    final ActionGroup group = ((ActionGroup)actionManager.getAction(groupId));
+    final ActionToolbarImpl editorToolbar =
+      ((ActionToolbarImpl)actionManager.createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, group, true));
+    editorToolbar.setOpaque(false);
+    editorToolbar.setBorder(new JBEmptyBorder(0, 2, 0, 2));
+
+    return editorToolbar;
   }
 
   public void triggerLayoutChange() {
