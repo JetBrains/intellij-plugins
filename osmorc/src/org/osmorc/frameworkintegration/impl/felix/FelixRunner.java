@@ -56,8 +56,12 @@ public class FelixRunner extends AbstractFrameworkRunner {
     Map<Integer, Pair<List<String>, List<String>>> bundles = collectBundles();
     for (Integer startLevel : bundles.keySet()) {
       Pair<List<String>, List<String>> lists = bundles.get(startLevel);
-      vmParameters.addProperty("felix.auto.start." + startLevel, StringUtil.join(lists.first, " "));
-      vmParameters.addProperty("felix.auto.install." + startLevel, StringUtil.join(lists.first, " "));
+      if (!lists.first.isEmpty()) {
+        vmParameters.addProperty("felix.auto.start." + startLevel, StringUtil.join(lists.first, " "));
+      }
+      if (!lists.second.isEmpty()) {
+        vmParameters.addProperty("felix.auto.install." + startLevel, StringUtil.join(lists.second, " "));
+      }
     }
 
     int startLevel = getFrameworkStartLevel();
