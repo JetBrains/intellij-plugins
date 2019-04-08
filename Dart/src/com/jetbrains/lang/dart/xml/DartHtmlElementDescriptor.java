@@ -3,14 +3,12 @@ package com.jetbrains.lang.dart.xml;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
-import com.jetbrains.lang.dart.resolve.DartResolver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,20 +38,7 @@ class DartHtmlElementDescriptor extends DartHtmlDescriptorBase implements XmlEle
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NotNull XmlAttribute attribute) {
-    XmlElement nameElement = attribute.getNameElement();
-    if (nameElement == null) return null;
-
-    String attrName = nameElement.getText();
-    int startOffset = nameElement.getTextRange().getStartOffset();
-    int endOffset = nameElement.getTextRange().getEndOffset();
-    if (attrName.startsWith("*") || attrName.startsWith("[") || attrName.startsWith("(")) startOffset++;
-    if (attrName.endsWith("]") || attrName.endsWith(")")) endOffset--;
-
-    DartServerData.DartNavigationRegion navRegion =
-      DartResolver.findRegion(attribute.getContainingFile(), startOffset, endOffset - startOffset);
-    if (navRegion == null || navRegion.getTargets().isEmpty()) return null;
-
-    return new DartHtmlAttributeDescriptor(attribute.getProject(), attrName, navRegion.getTargets().get(0));
+    return DartHtmlAttributeDescriptorProvider.getAttributeDescriptor(attribute);
   }
 
   @Nullable
