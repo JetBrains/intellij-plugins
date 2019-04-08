@@ -13,7 +13,11 @@
 
         The plugin supports natural language constructs wherever they are: Kotlin,
         Python, and Java (including literals and docs), comments, Markdown, XML, and
-        plain text. Under the hood, it uses LanguageTool, to provide you with the unrivaled
+        plain text.
+
+        <br/>
+
+        Under the hood, it uses LanguageTool, to provide you with the unrivaled
         performance and accuracy of the leading proofreading and grammar checking engine.
 
         <br/>
