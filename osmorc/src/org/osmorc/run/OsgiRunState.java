@@ -110,7 +110,7 @@ public class OsgiRunState extends JavaCommandLineState {
     final Ref<List<SelectedBundle>> result = Ref.create();
     final Ref<ExecutionException> error = Ref.create();
 
-    ProgressManager.getInstance().run(new Task.Modal(myRunConfiguration.getProject(), "Preparing bundles...", false) {
+    ProgressManager.getInstance().run(new Task.Modal(myRunConfiguration.getProject(), "Preparing Bundles...", false) {
       @Override
       public void run(@NotNull ProgressIndicator progressIndicator) {
         progressIndicator.setIndeterminate(false);
@@ -194,5 +194,5 @@ public class OsgiRunState extends JavaCommandLineState {
     }
   }
 
-  public static final Comparator<SelectedBundle> START_LEVEL_COMPARATOR = (b1, b2) -> b1.getStartLevel() - b2.getStartLevel();
+  public static final Comparator<SelectedBundle> START_LEVEL_COMPARATOR = Comparator.comparingInt(SelectedBundle::getStartLevel);
 }

@@ -36,7 +36,9 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import org.jdom.Attribute;
 import org.jdom.Element;
@@ -143,6 +145,11 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       String url = child.getAttributeValue(URL_ATTRIBUTE);
       String startLevel = child.getAttributeValue(START_LEVEL_ATTRIBUTE);
       String typeName = child.getAttributeValue(TYPE_ATTRIBUTE);
+
+      if (StringUtil.isEmptyOrSpaces(name)) {
+        LOG.error("missing name attribute: " + JDOMUtil.writeElement(element));
+        continue;
+      }
 
       SelectedBundle.BundleType type;
       try {
