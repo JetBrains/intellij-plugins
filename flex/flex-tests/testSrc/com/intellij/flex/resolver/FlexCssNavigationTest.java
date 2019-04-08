@@ -90,6 +90,7 @@ public class FlexCssNavigationTest extends CodeInsightTestCase {
     for (PsiElement element : elements) {
       if (element instanceof CssSelectorSuffix) {
         flag = true;
+        break;
       }
     }
     assertTrue(flag);
