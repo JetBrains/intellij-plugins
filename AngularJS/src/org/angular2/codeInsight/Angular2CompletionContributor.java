@@ -177,7 +177,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
           }
           final String name = element.getName();
           if (name != null && !NG_LIFECYCLE_HOOKS.contains(name)
-              && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, null))) {
+              && contributedElements.add(name + "#" + JSLookupUtilImpl.getTypeAndTailTexts(element, null).getTailAndType())) {
             result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(
               element, name, calcPriority(element), false,
               false));
