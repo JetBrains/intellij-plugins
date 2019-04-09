@@ -116,7 +116,9 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag) {
-    return getAttributeDescriptor(attrName, xmlTag, this::getAttributeDescriptors);
+    return xmlTag != null && Angular2LangUtil.isAngular2Context(xmlTag)
+           ? getAttributeDescriptor(attrName, xmlTag, this::getAttributeDescriptors)
+           : null;
   }
 
   @NotNull
