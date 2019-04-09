@@ -6,8 +6,6 @@ import com.intellij.psi.css.CssMediaFeature;
 import com.intellij.psi.css.CssPseudoClass;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTokenImpl;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
@@ -27,21 +25,14 @@ public class PostCssReferenceContributor extends PsiReferenceContributor {
     @Override
     @NotNull
     public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
-      return CachedValuesManager.getCachedValue(element, () -> CachedValueProvider.Result.create(getReferences(element), element));
-    }
-
-    @NotNull
-    private static PsiReference[] getReferences(@NotNull PsiElement element) {
-      if (element.getNode().getElementType() == CssElementTypes.CSS_IDENT) {
-        PsiElement parent = element.getParent();
-        if (parent instanceof CssPseudoClass && parent.getText().startsWith(":--")) {
-          return new PsiReference[]{new PostCssCustomSelectorReference(element)};
-        }
-        if (parent instanceof CssMediaFeature
-            && element.getText().startsWith("--")
-            && ObjectUtils.notNull(PsiTreeUtil.getChildrenOfType(parent, CssTokenImpl.class)).length == 1) {
-          return new PsiReference[]{new PostCssCustomMediaReference(element)};
-        }
+      PsiElement parent = element.getParent();
+      if (parent instanceof CssPseudoClass && parent.getText().startsWith(":--")) {
+        return new PsiReference[]{new PostCssCustomSelectorReference(element)};
+      }
+      if (parent instanceof CssMediaFeature
+          && element.getText().startsWith("--")
+          && ObjectUtils.notNull(PsiTreeUtil.getChildrenOfType(parent, CssTokenImpl.class)).length == 1) {
+        return new PsiReference[]{new PostCssCustomMediaReference(element)};
       }
       return PsiReference.EMPTY_ARRAY;
     }
@@ -54,8 +45,7 @@ public class PostCssReferenceContributor extends PsiReferenceContributor {
 
     @Override
     public boolean accepts(@NotNull PsiElement element, ProcessingContext context) {
-      if (!PostCssPsiUtil.isInsidePostCss(element)) return false;
-      return element.getNode().getElementType() == CssElementTypes.CSS_IDENT;
+      return element.getNode().getElementType() == CssElementTypes.CSS_IDENT && PostCssPsiUtil.isInsidePostCss(element);
     }
   }
 }
