@@ -281,7 +281,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase<Element> implemen
           modules.add(module);
         }
         else {
-          LOG.error("no module [" + selectedBundle.getName() + "]");
+          LOG.debug("module not found: " + selectedBundle.getName());
         }
       }
     }
