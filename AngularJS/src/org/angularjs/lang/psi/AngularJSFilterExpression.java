@@ -54,13 +54,6 @@ public class AngularJSFilterExpression extends JSExpressionImpl implements JSCal
     return argumentList != null ? (JSArgumentList)argumentList.getPsi() : null;
   }
 
-  @NotNull
-  @Override
-  public JSExpression[] getArguments() {
-    JSArgumentList argumentList = getArgumentList();
-    return argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
-  }
-
   @Override
   public boolean isRequireCall() {
     return false;

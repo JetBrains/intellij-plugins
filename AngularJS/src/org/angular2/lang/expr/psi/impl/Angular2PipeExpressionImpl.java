@@ -80,12 +80,6 @@ public class Angular2PipeExpressionImpl extends JSExpressionImpl implements Angu
     return node.getPsi(Angular2PipeLeftSideArgument.class);
   }
 
-  @NotNull
-  @Override
-  public JSExpression[] getArguments() {
-    return getArgumentList().getArguments();
-  }
-
   @Override
   public boolean isRequireCall() {
     return false;
