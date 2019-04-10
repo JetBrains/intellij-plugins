@@ -119,12 +119,13 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMetadataWithExportAliases() {
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "export.test");
+    myFixture.copyDirectoryToProject("node_modules/export-aliases",".");
+    myFixture.configureByFile("package.json");
     VirtualFile vFile = myFixture.getTempDirFixture().getFile("export.test.metadata.json");
     PsiFile file = myFixture.getPsiManager().findFile(vFile);
     assert file instanceof MetadataFileImpl;
     String result = DebugUtil.psiToString(file, false, false);
-    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "export.test.metadata.json.txt").toString(), result);
+    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "node_modules/export-aliases/export.test.metadata.json.txt").toString(), result);
   }
 
   public void testMaterialMetadataResolution() {

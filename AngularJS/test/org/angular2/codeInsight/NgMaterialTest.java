@@ -17,8 +17,8 @@ public class NgMaterialTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.enableInspections(UnterminatedStatementJSInspection.class,
                                 HtmlUnknownAttributeInspection.class,
                                 AngularUndefinedBindingInspection.class);
-    AngularTestUtil.configureWithMetadataFiles(myFixture, "table", "cdk-index");
-    myFixture.configureByFiles("templateTest.html", "cell.d.ts", "row.ts", "cdk_cell.d.ts", "cdk_row.ts");
+    myFixture.copyDirectoryToProject("node_modules",".");
+    myFixture.configureByFiles("templateTest.html", "package.json");
     myFixture.checkHighlighting();
   }
 }

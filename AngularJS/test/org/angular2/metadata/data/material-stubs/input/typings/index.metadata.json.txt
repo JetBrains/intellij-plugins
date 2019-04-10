@@ -11,7 +11,7 @@ MetadataFile:index.metadata.json
     getMatInputUnsupportedTypeError <metadata function>
       #value: : <metadata call>
         #expression: Error <metadata reference>('')
-    MatInputModule <metadata module>: imports=[MatFormFieldModule]; declarations=[MatInput, MatTextareaAutosize]; exports=[MatFormFieldModule, MatInput, MatTextareaAutosize]; scopeFullyResolved=false; exportsFullyResolved=false
+    MatInputModule <metadata module>: imports=[CommonModule, MatFormFieldModule]; declarations=[MatInput, MatTextareaAutosize]; exports=[MatFormFieldModule, MatInput, MatTextareaAutosize]; scopeFullyResolved=false; exportsFullyResolved=false
       ___dec.declarations <metadata array>
         MatInput <metadata reference>('')
         MatTextareaAutosize <metadata reference>('')
