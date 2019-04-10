@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.expr.psi.impl;
 
+import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.impl.JSArgumentListImpl;
 import com.intellij.psi.tree.IElementType;
@@ -38,5 +39,10 @@ public class Angular2PipeArgumentsListImpl extends JSArgumentListImpl implements
                          .findChildByType(Angular2ElementTypes.PIPE_LEFT_SIDE_ARGUMENT),
                        node -> doIfNotNull(node.getPsi(Angular2PipeLeftSideArgumentImpl.class),
                                            Angular2PipeLeftSideArgumentImpl::getPipeLeftSideExpression));
+  }
+
+  @Override
+  public IElementType getDelimiter() {
+    return JSTokenTypes.COLON;
   }
 }

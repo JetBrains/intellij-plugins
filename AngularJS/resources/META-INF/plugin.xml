@@ -226,6 +226,7 @@
     <annotator language="Angular2" implementationClass="com.intellij.lang.javascript.validation.JSAnnotator"/>
     <implicitUsageProvider implementation="org.angular2.codeInsight.refs.Angular2ImplicitUsageProvider"/>
     <renamePsiElementProcessor implementation="org.angular2.refactoring.Angular2PipeRenameProcessor" order="first"/>
+    <codeInsight.parameterInfo language="Angular2" implementationClass="com.intellij.lang.typescript.hint.TypeScriptParameterInfoHandler"/>
 
     <!-- Angular2 metadata JSON contributions -->
     <stubElementTypeHolder class="org.angular2.entities.metadata.Angular2MetadataElementTypes" externalIdPrefix="METADATA_JSON:"/>
