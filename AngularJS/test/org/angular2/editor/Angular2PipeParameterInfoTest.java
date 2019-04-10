@@ -21,6 +21,7 @@ public class Angular2PipeParameterInfoTest extends Angular2CodeInsightFixtureTes
     doTest("value: number, exponent: string");
   }
 
+  @SuppressWarnings("SameParameterValue")
   private void doTest(String expected) {
     myFixture.configureByFiles(getTestName(false) + ".ts", "package.json");
     final CreateParameterInfoContext parameterInfoContext = new MockCreateParameterInfoContext(myFixture.getEditor(), myFixture.getFile());

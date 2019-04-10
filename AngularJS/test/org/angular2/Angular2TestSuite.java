@@ -6,6 +6,7 @@ import org.angular2.codeInsight.*;
 import org.angular2.css.CssClassTest;
 import org.angular2.css.CssCompletionTest;
 import org.angular2.css.CssInspectionsTest;
+import org.angular2.editor.Angular2ParameterHintsTest;
 import org.angular2.editor.Angular2PipeParameterInfoTest;
 import org.angular2.editor.ComponentDeclarationNavigationTest;
 import org.angular2.formatting.FormattingTest;
@@ -58,6 +59,7 @@ import org.junit.runners.Suite;
   Angular2TemplateInspectionsTest.class,
   Angular2DecoratorInspectionsTest.class,
   Angular2PipeParameterInfoTest.class,
+  Angular2ParameterHintsTest.class,
   Angular2InvalidExpressionResultTypeInspectionTest.class,
   Angular2SuppressionsTest.class,
   Angular2NgModuleImportQuickFixesTest.class,

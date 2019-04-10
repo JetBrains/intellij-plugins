@@ -9,9 +9,4 @@ public interface Angular2PipeExpression extends JSCallExpression {
   @Override
   @Nullable
   String getName();
-
-  @Override
-  default int getFirstArgumentIndex() {
-    return 1;
-  }
 }
