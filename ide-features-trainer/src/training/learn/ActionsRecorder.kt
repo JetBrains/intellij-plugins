@@ -13,12 +13,12 @@ import com.intellij.openapi.command.CommandListener
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.fileEditor.FileEditorManagerEvent
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
+import com.intellij.openapi.fileEditor.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.Pair
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.util.messages.MessageBusConnection
 import training.check.Check
 import java.awt.event.KeyEvent
 import java.util.concurrent.CompletableFuture
@@ -30,17 +30,89 @@ class ActionsRecorder(private val project: Project,
                       private val document: Document) : Disposable {
 
   private val documentListeners: MutableList<DocumentListener> = mutableListOf()
+  // TODO: do we really need a lot of listeners?
   private val actionListeners: MutableList<AnActionListener> = mutableListOf()
   private val eventDispatchers: MutableList<IdeEventQueue.EventDispatcher> = mutableListOf()
 
   private var disposed = false
 
+  private val busConnection = ApplicationManager.getApplication().messageBus.connect(this)
+
+  /** Currently registered command listener */
+  @Volatile
+  var commandListener: CommandListener? = null
+
+  // TODO: I suspect that editor listener could be replaced by command listener. Need to check it
+  @Volatile
+  var editorListener: FileEditorManagerListener? = null
+
   init {
     Disposer.register(project, this)
+
+    // We could not unregister a listener (it will be done in dispose)
+    // So the simple solution is to use a proxy
+
+    busConnection.subscribe(AnActionListener.TOPIC, object : AnActionListener{
+      override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
+        actionListeners.forEach { it.beforeActionPerformed(action, dataContext, event) }
+      }
+
+      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
+        actionListeners.forEach { it.afterActionPerformed(action, dataContext, event) }
+      }
+
+      override fun beforeEditorTyping(c: Char, dataContext: DataContext) {
+        actionListeners.forEach { it.beforeEditorTyping(c, dataContext) }
+      }
+    })
+
+    // This listener allows to track a lot of IDE state changes
+    busConnection.subscribe(CommandListener.TOPIC, object : CommandListener {
+      override fun commandStarted(event: CommandEvent) {
+        commandListener?.commandStarted(event)
+      }
+
+      override fun beforeCommandFinished(event: CommandEvent) {
+        commandListener?.beforeCommandFinished(event)
+      }
+
+      override fun commandFinished(event: CommandEvent) {
+        commandListener?.commandFinished(event)
+      }
+
+      override fun undoTransparentActionStarted() {
+        commandListener?.undoTransparentActionStarted()
+      }
+
+      override fun beforeUndoTransparentActionFinished() {
+        commandListener?.beforeUndoTransparentActionFinished()
+      }
+
+      override fun undoTransparentActionFinished() {
+        commandListener?.undoTransparentActionFinished()
+      }
+    })
+    busConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+      override fun fileClosed(source: FileEditorManager, file: VirtualFile) {
+        editorListener?.fileClosed(source, file)
+      }
+
+      override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+        editorListener?.fileOpened(source, file)
+      }
+
+      override fun fileOpenedSync(source: FileEditorManager, file: VirtualFile, editors: Pair<Array<FileEditor>, Array<FileEditorProvider>>) {
+        editorListener?.fileOpenedSync(source, file, editors)
+      }
+
+      override fun selectionChanged(event: FileEditorManagerEvent) {
+        editorListener?.selectionChanged(event)
+      }
+    })
   }
 
   override fun dispose() {
-    removeListeners(document, ActionManager.getInstance())
+    removeListeners(document)
     disposed = true
     Disposer.dispose(this)
   }
@@ -81,28 +153,23 @@ class ActionsRecorder(private val project: Project,
       }
     }
     actionListeners.add(actionListener)
-    ActionManager.getInstance().addAnActionListener(actionListener, this)
     return future
   }
 
   fun futureAction(actionId: String): CompletableFuture<Boolean> {
     val future: CompletableFuture<Boolean> = CompletableFuture()
-    val listener = createActionListener { caughtActionId, _ -> if (actionId == caughtActionId) future.complete(true) }
-    ActionManager.getInstance().addAnActionListener(listener, this)
+    registerActionListener { caughtActionId, _ -> if (actionId == caughtActionId) future.complete(true) }
     return future
   }
 
   fun futureListActions(listOfActions: List<String>): CompletableFuture<Boolean> {
     val future: CompletableFuture<Boolean> = CompletableFuture()
     val mutableListOfActions = listOfActions.toMutableList()
-    val listener = createActionListener { caughtActionId, _ ->
+    registerActionListener { caughtActionId, _ ->
       if (mutableListOfActions.isNotEmpty() && mutableListOfActions.first() == caughtActionId) mutableListOfActions.removeAt(0)
       if (mutableListOfActions.isEmpty()) future.complete(true)
     }
-    ActionManager.getInstance().addAnActionListener(listener, this)
-    // Message bus is here to track switching to other files in lessons; do not remove it.
-    // One can specify the file name as a trigger. It means that specific step won't be marked as completed until user navigates to the correct file.
-    myMessageBusConnection.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+    editorListener = object : FileEditorManagerListener {
       override fun selectionChanged(event: FileEditorManagerEvent) {
         System.out.println(event.newFile?.name)
         event.newFile?.name.let {
@@ -110,7 +177,7 @@ class ActionsRecorder(private val project: Project,
           if (mutableListOfActions.isEmpty()) future.complete(true)
         }
       }
-    })
+    }
     return future
   }
 
@@ -137,11 +204,6 @@ class ActionsRecorder(private val project: Project,
       }
     }
   }
-
-  private val myMessageBusConnection: MessageBusConnection
-    get() {
-      return project.messageBus.connect()
-    }
 
   private fun addKeyEventListener(onKeyEvent: () -> Unit) {
     val myEventDispatcher: IdeEventQueue.EventDispatcher = IdeEventQueue.EventDispatcher { e ->
@@ -172,7 +234,7 @@ class ActionsRecorder(private val project: Project,
     return documentListener
   }
 
-  private fun createActionListener(processAction: (actionId: String, project: Project) -> Unit): AnActionListener {
+  private fun registerActionListener(processAction: (actionId: String, project: Project) -> Unit): AnActionListener {
     val actionListener = object : AnActionListener {
 
       private var projectAvailable: Boolean = false
@@ -184,61 +246,22 @@ class ActionsRecorder(private val project: Project,
       override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
         processAction(getActionId(action), project)
       }
-
-      override fun beforeEditorTyping(c: Char, dataContext: DataContext) {}
     }
     actionListeners.add(actionListener)
     return actionListener
   }
 
 
-  fun removeListeners(document: Document, actionManager: ActionManager) {
-    if (actionListeners.isNotEmpty()) actionListeners.forEach { actionManager.removeAnActionListener(it) }
+  fun removeListeners(document: Document) {
     if (documentListeners.isNotEmpty()) documentListeners.forEach { document.removeDocumentListener(it) }
     if (eventDispatchers.isNotEmpty()) eventDispatchers.forEach { IdeEventQueue.getInstance().removeDispatcher(it) }
-    myMessageBusConnection.disconnect()
     actionListeners.clear()
     documentListeners.clear()
     eventDispatchers.clear()
     commandListener = null
+    editorListener = null
   }
 
   private fun getActionId(action: AnAction): String =
       ActionManager.getInstance().getId(action) ?: action.javaClass.name
-
-
-  companion object {
-    @Volatile
-    var commandListener: CommandListener? = null
-
-    init {
-      // This listener allows to track a lot of IDE state changes
-      val messageBus = ApplicationManager.getApplication().messageBus
-      messageBus.connect().subscribe(CommandListener.TOPIC, object: CommandListener {
-        override fun commandStarted(event: CommandEvent) {
-          commandListener?.commandStarted(event)
-        }
-
-        override fun beforeCommandFinished(event: CommandEvent) {
-          commandListener?.beforeCommandFinished(event)
-        }
-
-        override fun commandFinished(event: CommandEvent) {
-          commandListener?.commandFinished(event)
-        }
-
-        override fun undoTransparentActionStarted() {
-          commandListener?.undoTransparentActionStarted()
-        }
-
-        override fun beforeUndoTransparentActionFinished() {
-          commandListener?.beforeUndoTransparentActionFinished()
-        }
-
-        override fun undoTransparentActionFinished() {
-          commandListener?.undoTransparentActionFinished()
-        }
-      })
-    }
-  }
 }
