@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.linter.tslint;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
 import com.intellij.lang.javascript.linter.LinterHighlightingTest;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
@@ -96,8 +97,7 @@ public class TsLintHighlightingTest extends LinterHighlightingTest {
   }
 
   public void testLineSeparatorsWin() {
-    doEditorHighlightingTest("data.ts",
-                             () -> ensureLineSeparators(myFixture.getFile().getVirtualFile(), LineSeparator.CRLF.getSeparatorString()));
+    doEditorHighlightingTest("data.ts",() -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF));
   }
 
   public void testTimeout() {
