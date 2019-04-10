@@ -5,6 +5,7 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.openapi.util.Disposer
 import com.intellij.ui.awt.RelativePoint
 import training.editor.MouseListenerHolder
 import training.editor.actions.BlockCaretAction
@@ -182,7 +183,7 @@ class LessonManager {
 
   private fun removeActionsRecorders() {
     for (actionsRecorder in actionsRecorders) {
-      actionsRecorder.dispose()
+      Disposer.dispose(actionsRecorder)
     }
     actionsRecorders.clear()
   }
