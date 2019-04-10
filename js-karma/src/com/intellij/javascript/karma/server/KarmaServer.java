@@ -217,7 +217,7 @@ public class KarmaServer {
         if (configPath == null) {
           configPath = configFile.getAbsolutePath();
         }
-        commandLine.addParameters("--config", configPath);
+        commandLine.addParameters("--config", configurator.convertLocalPathToRemote(configPath));
         commandLineFolder.addPlaceholderText("--config=" + userConfigFileName);
       }
     }
