@@ -193,6 +193,11 @@ class ActionsRecorder(private val project: Project,
     addKeyEventListener { check() }
     document.addDocumentListener(createDocumentListener { check() })
     addSimpleCommandListener(check)
+    actionListeners.add(object : AnActionListener {
+      override fun afterActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
+        check()
+      }
+    })
 
     return future
   }
