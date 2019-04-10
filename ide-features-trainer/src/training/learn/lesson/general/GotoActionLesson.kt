@@ -51,17 +51,24 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
           type(it)
         }
       }
-      if (false) {
-        // This code works for "Enter" but does not work for mouse click option change.
-        // There currently no way to trigger on the setting change in IDEA :(
-        val lineNumbersShown = isLineNumbersShown()
-        task {
-          text("Try to switch ${if (lineNumbersShown) "off" else "on"} line numbers.")
-          stateCheck { isLineNumbersShown() == !lineNumbersShown }
+
+      // This code works for "Enter" but does not work for mouse click option change.
+      // There currently no way to trigger on the setting change in IDEA :(
+      val lineNumbersShown = isLineNumbersShown()
+      task {
+        text("Try to switch ${if (lineNumbersShown) "off" else "on"} line numbers.")
+        stateCheck { isLineNumbersShown() == !lineNumbersShown }
+        test {
+          Thread.sleep(300) // there could be a more proper wait solution
+          GuiTestUtil.shortcut(Key.ENTER)
         }
-        task {
-          text("Switch ${if (lineNumbersShown) "on" else "off"} back line numbers.")
-          stateCheck { isLineNumbersShown() == lineNumbersShown }
+      }
+      task {
+        text("Switch ${if (lineNumbersShown) "on" else "off"} back line numbers.")
+        stateCheck { isLineNumbersShown() == lineNumbersShown }
+        test {
+          Thread.sleep(300) // there could be a more proper wait solution
+          GuiTestUtil.shortcut(Key.ENTER)
         }
       }
 
