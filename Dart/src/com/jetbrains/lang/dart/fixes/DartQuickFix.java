@@ -19,6 +19,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PathUtil;
 import com.jetbrains.lang.dart.DartBundle;
+import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
 import com.jetbrains.lang.dart.assists.DartSourceEditException;
 import com.jetbrains.lang.dart.ide.annotator.DartProblemGroup;
@@ -75,6 +76,11 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
 
   @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+    if (editor == null || file == null) {
+      // not sure this can ever happen
+      return;
+    }
+
     if (mySuppressActionDelegate != null) {
       mySuppressActionDelegate.invoke(project, editor, file);
       return;
@@ -121,10 +127,17 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     catch (DartSourceEditException e) {
       CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
     }
+
+    DartAnalysisServerService.getInstance(project).fireQuickFixInvoked(this, editor, file);
   }
 
   @Override
   public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {
+    if (editor == null || file == null) {
+      // not sure this can ever happen
+      return false;
+    }
+
     myQuickFixSet.ensureInitialized();
 
     if (mySuppressActionDelegate != null) {
