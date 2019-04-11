@@ -35,7 +35,6 @@
     <externalAnnotator language="HTML" implementationClass="com.intellij.lang.javascript.linter.tslint.highlight.TsLintExternalAnnotator"/>
     <psi.referenceContributor language="JSON" implementation="com.intellij.lang.javascript.linter.tslint.TsLintConfigReferenceContributor"/>
     <json.jsonStandardComplianceProvider implementation="com.intellij.lang.javascript.linter.tslint.TslintJsonStandardComplianceProvider"/>
-    <registryKey description="Enable TSLint support for multiple instances in one project" key="tslint.enable.multiroot" defaultValue="true"/>
     <registryKey key="tslint.service.node.arguments" description="Command line options for TSLint service process"/>
     <statistics.projectUsagesCollector implementation="com.intellij.lang.javascript.linter.tslint.config.TslintOptionsUsageCollector"/>
     <lang.typescript.languageService.extension implementation="com.intellij.lang.javascript.linter.tslint.typescript.TslintTypescriptExtension"/>

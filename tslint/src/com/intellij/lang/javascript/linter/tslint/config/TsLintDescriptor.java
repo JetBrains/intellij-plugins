@@ -39,7 +39,7 @@ public final class TsLintDescriptor extends JSLinterDescriptor {
 
   @Override
   public boolean supportsMultipleRoots() {
-    return TslintUtil.isMultiRootEnabled();
+    return true;
   }
 
   @Override

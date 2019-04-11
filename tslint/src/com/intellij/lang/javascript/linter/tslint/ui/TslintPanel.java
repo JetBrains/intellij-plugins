@@ -45,8 +45,7 @@ public final class TslintPanel {
     myConfigFileView.setAdditionalConfigFilesProducer(() -> TslintUtil.findAllConfigsInScope(project));
     myNodeInterpreterField = new NodeJsInterpreterField(project, false);
     myNodePackageField = AutodetectLinterPackage.createNodePackageField(ContainerUtil.list(TslintUtil.PACKAGE_NAME),
-                                                                        myNodeInterpreterField, myConfigFileView,
-                                                                        TslintUtil.isMultiRootEnabled());
+                                                                        myNodeInterpreterField, myConfigFileView);
   }
 
 

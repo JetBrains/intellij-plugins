@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.linter.tslint.config;
 import com.intellij.javascript.nodejs.util.JSLinterPackage;
 import com.intellij.lang.javascript.linter.JSLinterConfiguration;
 import com.intellij.lang.javascript.linter.JSLinterInspection;
-import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.highlight.TsLintInspection;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -29,7 +28,7 @@ public class TsLintConfiguration extends JSLinterConfiguration<TsLintState> {
 
   public TsLintConfiguration(@NotNull Project project) {
     super(project);
-    myPackage = new JSLinterPackage(project, "tslint", TslintUtil.isMultiRootEnabled());
+    myPackage = new JSLinterPackage(project, "tslint", true);
   }
 
   @NotNull
