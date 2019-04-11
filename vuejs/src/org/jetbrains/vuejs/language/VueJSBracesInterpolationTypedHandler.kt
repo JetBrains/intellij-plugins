@@ -22,8 +22,7 @@ private val myBracesCompleter: JSInjectionBracesUtil.InterpolationBracesComplete
 
 class VueJSBracesInterpolationTypedHandler : TypedHandlerDelegate() {
   override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): TypedHandlerDelegate.Result {
-    if (!org.jetbrains.vuejs.index.hasVue(project) ||
-        fileType != VueFileType.INSTANCE && fileType != HtmlFileType.INSTANCE) return Result.CONTINUE
+    if (fileType != VueFileType.INSTANCE && fileType != HtmlFileType.INSTANCE || !org.jetbrains.vuejs.index.hasVue(project)) return Result.CONTINUE
     return myBracesCompleter.beforeCharTyped(c, project, editor, file)
   }
 }
