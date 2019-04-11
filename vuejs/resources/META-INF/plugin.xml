@@ -4,7 +4,7 @@
   <description><![CDATA[
 Support for <a href="https://vuejs.org">Vue.js</a> projects.
 
-Getting started
+<h3>Getting started</h3>
 
 <ul>
     <li>Open your Vue.js project.</li>
@@ -12,7 +12,7 @@ Getting started
     <li>Now, you will get Vue-specific code completion, navigation, and many other features in .vue files.</li>
 </ul>
 
-Features
+<h3>Features</h3>
 
 <ul>
     <li>Completion for components, directives, props and methods in templates</li>
@@ -27,9 +27,8 @@ Features
 Learn more about Vue.js support in the <a href="https://www.jetbrains.com/help/webstorm/vue-js.html">IDE
     documentation</a>.
 
-Limitations
-The IDE uses its own TypeScript support instead of the TypeScript language service inside the script tag in .vue files:
-<a href="https://youtrack.jetbrains.com/issue/WEB-33130">WEB-33130</a>.
+<h3>Limitations</h3>
+Vue components defined using separate .html, .js, and .css files are not supported: <a href="https://youtrack.jetbrains.com/issue/WEB-32274">WEB-32274</a>.
   ]]></description>
   <vendor>JetBrains</vendor>
 
