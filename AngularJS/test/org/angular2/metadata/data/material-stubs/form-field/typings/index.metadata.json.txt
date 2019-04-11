@@ -1,6 +1,6 @@
 MetadataFile:index.metadata.json
   @angular/material/form-field <metadata node module>
-    MatFormFieldModule <metadata module>: imports=[]; declarations=[MatError, MatFormField, MatHint, MatLabel, MatPlaceholder, MatPrefix, MatSuffix]; exports=[MatError, MatFormField, MatHint, MatLabel, MatPlaceholder, MatPrefix, MatSuffix]; scopeFullyResolved=false; exportsFullyResolved=true
+    MatFormFieldModule <metadata module>: imports=[CommonModule]; declarations=[MatError, MatFormField, MatHint, MatLabel, MatPlaceholder, MatPrefix, MatSuffix]; exports=[MatError, MatFormField, MatHint, MatLabel, MatPlaceholder, MatPrefix, MatSuffix]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         MatError <metadata reference>('')
         MatFormField <metadata reference>('')
