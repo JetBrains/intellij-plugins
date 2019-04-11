@@ -23,6 +23,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -48,6 +49,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.SearchScope;
@@ -62,7 +64,10 @@ import com.jetbrains.lang.dart.DartFileListener;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartYamlFileTypeFactory;
 import com.jetbrains.lang.dart.assists.DartQuickAssistIntention;
+import com.jetbrains.lang.dart.assists.DartQuickAssistIntentionListener;
 import com.jetbrains.lang.dart.assists.QuickAssistSet;
+import com.jetbrains.lang.dart.fixes.DartQuickFix;
+import com.jetbrains.lang.dart.fixes.DartQuickFixListener;
 import com.jetbrains.lang.dart.ide.actions.DartPubActionBase;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartFeedbackBuilder;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
@@ -177,6 +182,8 @@ public class DartAnalysisServerService implements Disposable {
   @NotNull private final List<AnalysisServerListener> myAdditionalServerListeners = new SmartList<>();
   @NotNull private final List<RequestListener> myRequestListeners = new SmartList<>();
   @NotNull private final List<ResponseListener> myResponseListeners = new SmartList<>();
+  @NotNull private final List<DartQuickAssistIntentionListener> myQuickAssistIntentionListeners = new SmartList<>();
+  @NotNull private final List<DartQuickFixListener> myQuickFixListeners = new SmartList<>();
 
   private static final String ENABLE_ANALYZED_FILES_SUBSCRIPTION_KEY =
     "com.jetbrains.lang.dart.analyzer.DartAnalysisServerService.enableAnalyzedFilesSubscription";
@@ -622,6 +629,38 @@ public class DartAnalysisServerService implements Disposable {
     if (myServer != null) {
       myServer.removeResponseListener(responseListener);
     }
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void addQuickAssistIntentionListener(@NotNull DartQuickAssistIntentionListener listener) {
+    if (!myQuickAssistIntentionListeners.contains(listener)) {
+      myQuickAssistIntentionListeners.add(listener);
+    }
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void removeQuickAssistIntentionListener(@NotNull DartQuickAssistIntentionListener listener) {
+    myQuickAssistIntentionListeners.remove(listener);
+  }
+
+  public void fireQuickAssistIntentionInvoked(@NotNull DartQuickAssistIntention intention, @NotNull Editor editor, @NotNull PsiFile file) {
+    myQuickAssistIntentionListeners.forEach(listener -> listener.onQuickAssistIntentionInvoked(intention, editor, file));
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void addQuickFixListener(@NotNull DartQuickFixListener listener) {
+    if (!myQuickFixListeners.contains(listener)) {
+      myQuickFixListeners.add(listener);
+    }
+  }
+
+  @SuppressWarnings("unused") // for Flutter plugin
+  public void removeQuickFixListener(@NotNull DartQuickFixListener listener) {
+    myQuickFixListeners.remove(listener);
+  }
+
+  public void fireQuickFixInvoked(@NotNull DartQuickFix fix, @NotNull Editor editor, @NotNull PsiFile file) {
+    myQuickFixListeners.forEach(listener -> listener.onQuickFixInvoked(fix, editor, file));
   }
 
   private static void setDasLogger() {

@@ -69,6 +69,11 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
 
   @Override
   public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    if (editor == null || file == null) {
+      // not sure this can ever happen
+      return;
+    }
+
     if (sourceChange != null) {
       try {
         AssistUtils.applySourceChange(project, sourceChange, true);
@@ -76,11 +81,18 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
       catch (DartSourceEditException e) {
         CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
       }
+
+      DartAnalysisServerService.getInstance(project).fireQuickAssistIntentionInvoked(this, editor, file);
     }
   }
 
   @Override
   public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    if (editor == null || file == null) {
+      // not sure this can ever happen
+      return false;
+    }
+
     if (quickAssistSet == null || !(file instanceof DartFile) || !DartAnalysisServerService.isLocalAnalyzableFile(file.getVirtualFile())) {
       return false;
     }
