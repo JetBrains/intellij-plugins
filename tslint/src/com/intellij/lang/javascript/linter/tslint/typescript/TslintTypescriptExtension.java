@@ -47,6 +47,11 @@ public class TslintTypescriptExtension implements TypescriptServiceExtension {
     return JSLinterUtil.convertLineSeparatorsToFileOriginal(project, original, fileToHighlight);
   }
 
+  @Override
+  public boolean shouldReformatAfterFix() {
+    return false;
+  }
+
   private static boolean hasTslint(@NotNull Project project, @NotNull VirtualFile virtualFile) {
     PsiFile psi = PsiManager.getInstance(project).findFile(virtualFile);
     return psi != null && hasTslint(psi);

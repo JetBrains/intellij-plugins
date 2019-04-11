@@ -12,5 +12,5 @@
   export default {
     name: 'main'
   };
-  const z = () => ({foo: 1})
+  const z = () =>({foo: 1})
 </script>

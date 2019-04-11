@@ -11,16 +11,16 @@
 <script lang="ts">
   export abstract class Greeter<T> {
     greetNTimes(to, {from, times}: { from: string[], times: number }) {
-        return range(times).map(item => this.greet(to, from));
+        return range(times).map(item =>this.greet(to, from));
     }
 
-      abstract greet(to: string, from: string[]): T;
+    abstract greet(to: string, from: string[]): T;
   }
 
   export class ConsoleGreeter extends Greeter<string> {
-      greet(to: string, from: string[]): string {
-          return "Hello, " + to + " from " + from.join(",");
-      }
+    greet(to: string, from: string[]): string {
+        return "Hello, " + to + " from " + from.join(",");
+    }
   }
 
   var anotherArrow = () => {
