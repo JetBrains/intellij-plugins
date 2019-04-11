@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.ProjectTopics;
@@ -133,7 +133,18 @@ public class DartServerRootsHandler {
       if (fileIndex.isInLibraryClasses(vFile)) return true;
 
       final Module module = fileIndex.getModuleForFile(vFile);
-      return (module != null && DartSdkLibUtil.isDartSdkEnabled(module));
+      if (module != null && DartSdkLibUtil.isDartSdkEnabled(module)) {
+        return true;
+      }
+      else if (vFile.getName().equals("AndroidManifest.xml")) {
+        // These types of files can be part of an android module, not dart sdk enabled,
+        // but should still be considered in the root for Dart Analysis errors and warnings.
+        for (String root : myIncludedRoots) {
+          if (vFile.getPath().startsWith(FileUtil.toSystemIndependentName(root) + "/")) {
+            return true;
+          }
+        }
+      }
     }
     else if (scopedAnalysisMode == DartProblemsViewSettings.ScopedAnalysisMode.DartPackage) {
       for (String root : myIncludedRoots) {
