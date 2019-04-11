@@ -3,7 +3,12 @@ package org.jetbrains.vuejs.linters.tslint;
 
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.tslint.TypescriptServiceWithTslintTestBase;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.LineSeparator;
+
+import java.io.IOException;
 
 import static org.jetbrains.vuejs.language.VueTestUtilKt.vueRelativeTestDataPath;
 
@@ -18,7 +23,7 @@ public class VueTypescriptWithTslintTest extends TypescriptServiceWithTslintTest
   }
 
   public void testFixAllErrorsWithWhitespaceRules() {
-    doFixTest("main", "vue", "Fix all auto-fixable tslint failures");
+    doFixAllTest();
   }
 
   public void testMatchingLineEndingsNotHighlighted() {
@@ -27,5 +32,22 @@ public class VueTypescriptWithTslintTest extends TypescriptServiceWithTslintTest
 
   public void testMismatchedLineEndingsHighlighted() {
     doHighlightingTest("main", "vue", () -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.LF));
+  }
+
+  public void testFixAllWithUpdatingLineSeparators() throws IOException {
+    doFixAllTest();
+    FileDocumentManager.getInstance().saveAllDocuments();
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
+  }
+
+  public void testFixAllWithCrlfLineSeparator() throws IOException {
+    doFixTest("main", "vue", "Fix all auto-fixable tslint failures",
+              () -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF));
+    FileDocumentManager.getInstance().saveAllDocuments();
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
+  }
+
+  private void doFixAllTest() {
+    doFixTest("main", "vue", "Fix all auto-fixable tslint failures");
   }
 }
