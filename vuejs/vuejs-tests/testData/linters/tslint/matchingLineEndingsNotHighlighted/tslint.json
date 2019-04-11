@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "linebreak-style": [true, "CRLF"],
+    "no-console": true
+  }
+}
