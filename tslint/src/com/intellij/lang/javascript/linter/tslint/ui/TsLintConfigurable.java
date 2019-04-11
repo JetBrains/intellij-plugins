@@ -2,9 +2,11 @@ package com.intellij.lang.javascript.linter.tslint.ui;
 
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterRef;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.linter.*;
+import com.intellij.lang.javascript.linter.AutodetectLinterPackage;
+import com.intellij.lang.javascript.linter.JSLinterConfigurable;
+import com.intellij.lang.javascript.linter.JSLinterView;
+import com.intellij.lang.javascript.linter.NewLinterView;
 import com.intellij.lang.javascript.linter.tslint.TsLintBundle;
-import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintState;
 import com.intellij.lang.javascript.linter.tslint.service.TslintLanguageServiceManager;
@@ -15,8 +17,6 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
@@ -35,9 +35,7 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
   @NotNull
   @Override
   protected JSLinterView<TsLintState> createView() {
-    return TslintUtil.isMultiRootEnabled() && JSLinterUtil.newAutodetectUiEnabled()
-           ? new NewTslintView(myProject, getDisplayName(), new TslintPanel(getProject(), isFullModeDialog(), false))
-           : new OldTslintView(new TslintPanel(getProject(), isFullModeDialog(), true));
+    return new NewTslintView(myProject, getDisplayName(), new TslintPanel(getProject(), isFullModeDialog(), false));
   }
 
   @NotNull
@@ -67,31 +65,6 @@ public class TsLintConfigurable extends JSLinterConfigurable<TsLintState> {
 
   private static boolean checkPackageVersionForJs(@Nullable SemVer semVer) {
     return semVer != null && semVer.getMajor() >= 4;
-  }
-
-  private static class OldTslintView extends JSLinterBaseView<TsLintState> {
-    private final TslintPanel myPanel;
-
-    OldTslintView(TslintPanel panel) {
-      myPanel = panel;
-    }
-
-    @NotNull
-    @Override
-    protected Component createCenterComponent() {
-      return myPanel.createComponent();
-    }
-
-    @NotNull
-    @Override
-    protected TsLintState getState() {
-      return myPanel.getState();
-    }
-
-    @Override
-    protected void setState(@NotNull TsLintState state) {
-      myPanel.setState(state);
-    }
   }
 
   private static class NewTslintView extends NewLinterView<TsLintState> {
