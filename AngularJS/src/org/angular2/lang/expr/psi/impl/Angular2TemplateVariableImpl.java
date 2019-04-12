@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.impl.JSVariableImpl;
-import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSVariableStub;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
@@ -49,7 +48,7 @@ public class Angular2TemplateVariableImpl extends JSVariableImpl<JSVariableStub<
       }
     }
     if (propertyName != null && (propertyType == null || propertyType instanceof JSAnyType)) {
-      JSType contextType = JSResolveUtil.getElementJSType(bindings, JSEvaluateContext.JSEvaluationPlace.DEFAULT);
+      JSType contextType = JSResolveUtil.getElementJSType(bindings);
       if (contextType != null) {
         JSRecordType.PropertySignature signature = contextType.asRecordType().findPropertySignature(propertyName);
         propertyType = signature != null ? signature.getJSType() : null;

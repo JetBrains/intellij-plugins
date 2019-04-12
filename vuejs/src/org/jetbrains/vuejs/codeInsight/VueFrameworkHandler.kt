@@ -122,13 +122,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
     val typeSource = JSTypeSourceFactory.createTypeSource(typeAlias, false)
     val vueType = JSNamedTypeFactory.createType(VUE_INSTANCE, typeSource, JSContext.INSTANCE)
     val vue = JSNamedTypeFactory.createType(VUE, typeSource, JSContext.INSTANCE)
-    val methodPropertyType = JSResolveUtil.getElementJSType((parent as JSObjectLiteralExpression).findProperty(METHOD),
-                                                            JSEvaluateContext.JSEvaluationPlace.DEFAULT)
-    val computedPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(COMPUTED), JSEvaluateContext.JSEvaluationPlace.DEFAULT)
-    val propsPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(PROPS), JSEvaluateContext.JSEvaluationPlace.DEFAULT)
+    val methodPropertyType = JSResolveUtil.getElementJSType((parent as JSObjectLiteralExpression).findProperty(METHOD))
+    val computedPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(COMPUTED))
+    val propsPropertyType = JSResolveUtil.getElementJSType(parent.findProperty(PROPS))
     val dataFunction = (parent.findProperty(DATA) as? ES6FunctionProperty)
     val dataStream = JSTypeUtils.getFunctionType(
-      JSResolveUtil.getElementJSType(dataFunction, JSEvaluateContext.JSEvaluationPlace.DEFAULT),
+      JSResolveUtil.getElementJSType(dataFunction),
       false,
       context)
       .filter { it is JSFunctionType }.findFirst()

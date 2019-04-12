@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
-import com.intellij.lang.javascript.psi.resolve.JSEvaluateContext;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
@@ -220,7 +219,7 @@ public class AngularJSProcessor {
           .stream()
           .filter(el -> el.getName() != null)
           .map(el -> new JSRecordTypeImpl.PropertySignatureImpl(
-            el.getName(), JSResolveUtil.getElementJSType(el, JSEvaluateContext.JSEvaluationPlace.DEFAULT),
+            el.getName(), JSResolveUtil.getElementJSType(el),
             true, el))
           .forEach(processor);
       }
