@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.debug;
 
 import com.google.common.collect.BiMap;
@@ -30,7 +30,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
@@ -53,6 +52,7 @@ import org.jetbrains.debugger.connection.VmConnection;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 
 public class KarmaDebugProgramRunner extends AsyncProgramRunner {
   private static final Logger LOG = Logger.getInstance(KarmaDebugProgramRunner.class);
@@ -211,7 +211,7 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
     if (process.isAlive()) {
       try {
         OutputStream processInput = process.getOutputStream();
-        processInput.write("resume-test-running\n".getBytes(CharsetToolkit.UTF8_CHARSET));
+        processInput.write("resume-test-running\n".getBytes(StandardCharsets.UTF_8));
         processInput.flush();
       }
       catch (IOException e) {

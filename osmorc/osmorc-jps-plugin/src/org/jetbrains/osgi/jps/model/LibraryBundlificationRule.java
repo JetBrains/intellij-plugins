@@ -26,13 +26,13 @@ package org.jetbrains.osgi.jps.model;
 
 import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -109,7 +109,7 @@ public class LibraryBundlificationRule {
   public Map<String, String> getAdditionalPropertiesMap() {
     try {
       Properties p = new Properties();
-      p.load(new ByteArrayInputStream(myAdditionalProperties.getBytes(CharsetToolkit.UTF8_CHARSET)));
+      p.load(new ByteArrayInputStream(myAdditionalProperties.getBytes(StandardCharsets.UTF_8)));
 
       Map<String, String> result = ContainerUtil.newHashMap();
       for (Map.Entry<Object, Object> entry : p.entrySet()) {
@@ -143,7 +143,7 @@ public class LibraryBundlificationRule {
 
     if (!StringUtil.isEmptyOrSpaces(myAdditionalProperties)) {
       try {
-        new Properties().load(new ByteArrayInputStream(myAdditionalProperties.getBytes(CharsetToolkit.UTF8_CHARSET)));
+        new Properties().load(new ByteArrayInputStream(myAdditionalProperties.getBytes(StandardCharsets.UTF_8)));
       }
       catch (Exception e) {
         throw new IllegalArgumentException("Malformed manifest entries");

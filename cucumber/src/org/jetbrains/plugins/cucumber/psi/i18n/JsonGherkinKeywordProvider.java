@@ -1,16 +1,17 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.psi.i18n;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.MalformedJsonException;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.*;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
@@ -50,7 +51,7 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   public JsonGherkinKeywordProvider(final InputStream inputStream) {
     Map<String, HashMap<Object, Object>> fromJson;
     try {
-      final Reader in = new InputStreamReader(inputStream, CharsetToolkit.UTF8_CHARSET);
+      final Reader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
       try {
         fromJson = new Gson().fromJson(in, new TypeToken<HashMap<String, HashMap<Object, Object>>>() {}.getType());
 
