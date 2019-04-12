@@ -10,6 +10,7 @@ import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.Types
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.fqn.FQN
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.structure.SymbolUtil
 import org.jetbrains.plugins.ruby.ruby.codeInsight.symbols.v2.ClassModuleSymbol
+import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -98,6 +99,5 @@ end
     return subSequence.toString() == text
   }
 
-  override val existedFile: String
-    get() = "app/Completions.rb"
+  override val existedFile = RubyLangSupport.sandboxFile
 }
