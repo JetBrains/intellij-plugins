@@ -1,13 +1,19 @@
 package com.intellij.prettierjs;
 
+import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.linter.JSExternalToolIntegrationTest;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.util.LineSeparator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
+
+import java.io.IOException;
 
 public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
 
@@ -76,8 +82,16 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     assertError((s) -> s.contains("tabWidth"), () -> doReformatFile("js"));
   }
 
-  public void testWithExplicitCrlf() {
+  public void testWithCrlf() throws IOException {
+    doReformatFile("toReformat", "js", () -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF));
+    FileDocumentManager.getInstance().saveAllDocuments();
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
+  }
+
+  public void testWithUpdatingLfToCrlf() throws IOException {
     doReformatFile("toReformat", "js");
+    FileDocumentManager.getInstance().saveAllDocuments();
+    assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
   }
 
   private void doReformatFile(final String extension) {
@@ -85,10 +99,19 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   private void doReformatFile(final String fileNamePrefix, final String extension) {
+    doReformatFile(fileNamePrefix, extension, null);
+  }
+
+  private void doReformatFile(final String fileNamePrefix,
+                              final String extension,
+                              @Nullable Runnable configureFixture) {
     String dirName = getTestName(true);
     myFixture.copyDirectoryToProject(dirName, "");
     String extensionWithDot = StringUtil.isEmpty(extension) ? "" : "." + extension;
-    myFixture.configureByFile(fileNamePrefix + extensionWithDot);
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir(fileNamePrefix + extensionWithDot));
+    if (configureFixture != null) {
+      configureFixture.run();
+    }
     myFixture.testAction(new ReformatWithPrettierAction((new ReformatWithPrettierAction.ErrorHandler() {
       @Override
       public void showError(@NotNull Project project, @Nullable Editor editor,
