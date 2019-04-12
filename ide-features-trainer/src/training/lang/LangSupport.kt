@@ -50,4 +50,7 @@ interface LangSupport {
     fun importLearnProject(): Project?
 
     fun createProject(projectName: String, projectToClose: Project?): Project?
+
+    /** This method is called from ProjectLifecycleListener and the projcet could be initialized only partly */
+    fun setProjectListeners(project: Project) {}
 }

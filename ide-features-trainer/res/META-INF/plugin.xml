@@ -7,6 +7,11 @@
   <description><![CDATA[
       This IntelliJ IDEA plugin helps use IDE productively.<br>
     ]]></description>
+    <application-components>
+        <component>
+            <implementation-class>training.learn.TrainingProjectLifecycleListener</implementation-class>
+        </component>
+    </application-components>
 
   <change-notes><![CDATA[
       Menu items has been implemented.
