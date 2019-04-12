@@ -37,6 +37,7 @@ import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.listeners.NextLessonListener
 import training.learn.lesson.listeners.StatisticLessonListener
+import training.project.ProjectUtils
 import training.ui.LearnToolWindowFactory
 import training.ui.UiManager
 import training.util.findLanguageByID
@@ -127,10 +128,15 @@ class OpenLessonAction : AnAction() {
           throw Exception("Unable to start Learn project")
         }
       }
+      if (vf == null) return  //if user aborts opening lesson in LearnProject or Virtual File couldn't be computed
 
       LOG.debug("${projectWhereToStartLesson.name}: VirtualFile for lesson has been created/found")
-      val currentProject = if (lesson.module.moduleType != ModuleType.SCRATCH) CourseManager.instance.learnProject!! else projectWhereToStartLesson
-      if (vf == null) return  //if user aborts opening lesson in LearnProject or Virtual File couldn't be computed
+      val currentProject =
+          if (lesson.module.moduleType != ModuleType.SCRATCH) CourseManager.instance.learnProject!!.also {
+            // close all tabs in the currently opened learning project
+            ProjectUtils.closeAllEditorsInProject(it)
+          }
+          else projectWhereToStartLesson
 
       LOG.debug("${projectWhereToStartLesson.name}: Add listeners to lesson")
       addNextLessonListenerIfNeeded(currentProject, lesson)

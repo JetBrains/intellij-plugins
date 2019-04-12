@@ -3,6 +3,7 @@ package training.project
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VfsUtil.findFileByIoFile
@@ -43,8 +44,10 @@ object ProjectUtils {
     return projectRef.get()
   }
 
-  private fun checkProjectExistence(projectName: String): Boolean {
-    return File(ideProjectsBasePath, projectName).exists()
-  }
 
+  fun closeAllEditorsInProject(project: Project) {
+    FileEditorManagerEx.getInstanceEx(project).windows.forEach {
+      it.files.forEach { file -> it.closeFile(file) }
+    }
+  }
 }
