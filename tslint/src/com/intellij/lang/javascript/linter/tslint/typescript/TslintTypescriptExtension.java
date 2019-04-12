@@ -3,10 +3,12 @@ package com.intellij.lang.javascript.linter.tslint.typescript;
 
 import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult;
 import com.intellij.lang.typescript.compiler.languageService.TypescriptServiceExtension;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -48,8 +50,8 @@ public class TslintTypescriptExtension implements TypescriptServiceExtension {
   }
 
   @Override
-  public boolean shouldReformatAfterFix() {
-    return false;
+  public boolean shouldReformatAfterFix(@NotNull TypeScriptLanguageServiceAnnotationResult result) {
+    return !StringUtil.equals(result.getSource(), "tslint");
   }
 
   private static boolean hasTslint(@NotNull Project project, @NotNull VirtualFile virtualFile) {
