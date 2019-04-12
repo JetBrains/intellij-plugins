@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.typing;
 
 import com.intellij.ide.highlighter.HtmlFileType;
@@ -370,6 +371,8 @@ public class DartTypingTest extends DartCodeInsightFixtureTestCase {
 
   public void testEnterInSingleLineDocComment() {
     doTypingTest('\n', "///<caret>", "///\n/// <caret>");
+    doTypingTest('\n', "///<caret>\nvar a;", "///\n/// <caret>\nvar a;");
+    doTypingTest('\n', "///\n<caret>\nvar a;", "///\n\n<caret>\nvar a;");
     doTypingTest('\n', "///     q<caret>", "///     q\n///     <caret>");
     doTypingTest('\n', "///     <caret>q", "///     \n///     <caret>q");
     doTypingTest('\n', "/// Hello<caret>Dart", "/// Hello\n/// <caret>Dart");
