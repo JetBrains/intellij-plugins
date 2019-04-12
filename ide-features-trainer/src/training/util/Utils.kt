@@ -134,7 +134,12 @@ fun createBalloon(text: String, delay: Long): Balloon =
         .setFadeoutTime(delay)
         .createBalloon()
 
-val isFeatureTrainerSnapshot: Boolean by lazy {
-  val pluginId = PluginManagerCore.getPluginByClassName(CourseManager::class.java.name)
-  PluginManager.getPlugin(pluginId)?.version?.contains("SNAPSHOT") ?: false
-}
+
+  val featureTrainerVersion: String by lazy {
+    val featureTrainerPluginId = PluginManagerCore.getPluginByClassName(CourseManager::class.java.name)
+    PluginManager.getPlugin(featureTrainerPluginId)?.version ?: "UNKNOWN"
+  }
+
+  val isFeatureTrainerSnapshot: Boolean by lazy {
+    featureTrainerVersion.contains("SNAPSHOT")
+  }
