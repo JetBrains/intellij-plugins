@@ -30,4 +30,12 @@ export class ExpressionsComponent {
         return false;
     }
 
+    async asyncInferred() {
+
+    }
+
+    async asyncInferredString() {
+        return "string";
+    }
+
 }

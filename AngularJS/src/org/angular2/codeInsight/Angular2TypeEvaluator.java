@@ -141,8 +141,10 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
 
   @Override
   protected boolean addTypeFromResolveResult(String referenceName, ResolveResult resolveResult) {
-    if (resolveResult instanceof Angular2ComponentPropertyResolveResult && resolveResult.getElement() != null) {
-      addType(((Angular2ComponentPropertyResolveResult)resolveResult).getJSType(), resolveResult.getElement());
+    PsiElement psiElement = resolveResult.getElement();
+    if (resolveResult instanceof Angular2ComponentPropertyResolveResult && psiElement != null) {
+      myContext.setSource(psiElement);
+      addType(((Angular2ComponentPropertyResolveResult)resolveResult).getJSType(), resolveResult.getElement(), false);
       return true;
     }
     return super.addTypeFromResolveResult(referenceName, resolveResult);

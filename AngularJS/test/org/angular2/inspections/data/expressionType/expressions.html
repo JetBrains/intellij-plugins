@@ -70,3 +70,7 @@
 
 <my-comp [predicate]="foo"></my-comp>
 <my-comp [predicate]="<warning descr="Type (arg: number) => boolean is not assignable to type (arg: string) => false">bar</warning>"></my-comp>
+
+<div (click)="asyncInferred().then()"></div>
+<div (click)="asyncInferred().<error descr="Unresolved function or method foo()">foo</error>()"></div>
+<div (click)="asyncInferredString().then()"></div>
