@@ -50,4 +50,10 @@
     </action>
   </actions>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <registryKey key="ide.features.trainer.mode"
+                     description="This is internal option to use different development modes"
+                     defaultValue="normal"
+                     restartRequired="false"/>
+    </extensions>
 </idea-plugin>

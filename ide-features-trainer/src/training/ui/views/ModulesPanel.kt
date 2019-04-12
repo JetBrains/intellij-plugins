@@ -3,6 +3,7 @@ package training.ui.views
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.LinkLabel
@@ -11,17 +12,17 @@ import com.intellij.util.ui.UIUtil
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Module
+import training.learn.lesson.LessonStateManager
 import training.ui.LearnIcons
 import training.ui.UISettings
+import training.ui.UiManager
 import training.util.DataLoader
 import training.util.createBalloon
 import java.awt.*
+import java.awt.event.ActionEvent
 import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
-import javax.swing.Box
-import javax.swing.BoxLayout
-import javax.swing.JPanel
-import javax.swing.JTextPane
+import javax.swing.*
 import javax.swing.border.EmptyBorder
 import javax.swing.text.BadLocationException
 import javax.swing.text.SimpleAttributeSet
@@ -88,6 +89,12 @@ class ModulesPanel : JPanel() {
             CourseManager.instance.initXmlModules()
             module2linklabel!!.clear()
         }
+
+        @Suppress("InvalidBundleOrProperty")
+        if ("public-demo" == Registry.stringValue("ide.features.trainer.mode")) {
+            addResetButton()
+        }
+
         for (module in modules) {
             if (module.lessons.size == 0) continue
             val moduleHeader = JPanel()
@@ -158,6 +165,33 @@ class ModulesPanel : JPanel() {
             lessonPanel!!.add(Box.createVerticalStrut(UISettings.instance.moduleGap))
         }
         lessonPanel!!.add(Box.createVerticalGlue())
+    }
+
+    private fun addResetButton() {
+        val modules = CourseManager.instance.modules
+        lessonPanel!!.add(JButton().apply {
+            action = object : AbstractAction() {
+                override fun actionPerformed(actionEvent: ActionEvent) {
+                    LessonStateManager.resetPassedStatus()
+                    modules.forEach { module ->
+                        module.lessons.forEach { lesson ->
+                            lesson.passed = false
+                        }
+                    }
+                    val project = guessCurrentProject(lessonPanel)
+                    val firstLesson = modules.first().lessons.first()
+                    CourseManager.instance.openLesson(project, firstLesson)
+                    UiManager.setLessonView()
+                }
+            }
+            margin = Insets(0, 0, 0, 0)
+            isFocusable = true
+            isVisible = true
+            isSelected = true
+            isEnabled = true
+            isOpaque = false
+            text = "Start from the Beginning"
+        })
     }
 
     private fun delegateToLinkLabel(descriptionPane: MyJTextPane, moduleName: LinkLabel<*>): MouseListener {
