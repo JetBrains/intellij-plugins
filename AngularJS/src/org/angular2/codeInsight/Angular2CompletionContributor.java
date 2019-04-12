@@ -14,8 +14,8 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSFunctionTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSLazyExpressionType;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -62,6 +62,7 @@ import static com.intellij.codeInsight.completion.XmlAttributeReferenceCompletio
 import static com.intellij.lang.javascript.psi.types.JSCompositeTypeBaseImpl.isNullOrUndefinedType;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.StandardPatterns.string;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.containers.ContainerUtil.newHashSet;
 
 public class Angular2CompletionContributor extends CompletionContributor {
@@ -121,7 +122,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
           .getAllPipes(((Angular2PipeReferenceExpression)ref).getProject()).entrySet()) {
           Pair<Angular2Pipe, DeclarationProximity> bestMatch = scope.getClosestDeclaration(pipeEntry.getValue());
           if (bestMatch == null || bestMatch.second == DeclarationProximity.NOT_REACHABLE) {
-            return;
+            continue;
           }
           Angular2Pipe match = bestMatch.first;
           LookupElementBuilder builder = LookupElementBuilder.create(pipeEntry.getKey())
@@ -194,9 +195,11 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                       type.getReturnType());
     }
 
+    @Nullable
     private static JSType calcActualType(Angular2PipeReferenceExpression ref) {
       Angular2PipeExpression pipeCall = (Angular2PipeExpression)ref.getParent();
-      return JSResolveUtil.getExpressionJSType(ArrayUtil.getFirstElement(pipeCall.getArguments()));
+      return doIfNotNull(ArrayUtil.getFirstElement(pipeCall.getArguments()),
+                         expression -> new JSLazyExpressionType(expression, true));
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
