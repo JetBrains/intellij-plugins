@@ -6,5 +6,5 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 public interface DartQuickAssistIntentionListener {
-  void onQuickAssistIntentionInvoked(@NotNull DartQuickAssistIntention intention, @NotNull Editor editor, @NotNull PsiFile file);
+  void beforeQuickAssistIntentionInvoked(@NotNull DartQuickAssistIntention intention, @NotNull Editor editor, @NotNull PsiFile file);
 }

@@ -643,8 +643,15 @@ public class DartAnalysisServerService implements Disposable {
     myQuickAssistIntentionListeners.remove(listener);
   }
 
-  public void fireQuickAssistIntentionInvoked(@NotNull DartQuickAssistIntention intention, @NotNull Editor editor, @NotNull PsiFile file) {
-    myQuickAssistIntentionListeners.forEach(listener -> listener.onQuickAssistIntentionInvoked(intention, editor, file));
+  public void fireBeforeQuickAssistIntentionInvoked(@NotNull DartQuickAssistIntention intention,
+                                                    @NotNull Editor editor,
+                                                    @NotNull PsiFile file) {
+    try {
+      myQuickAssistIntentionListeners.forEach(listener -> listener.beforeQuickAssistIntentionInvoked(intention, editor, file));
+    }
+    catch (Throwable t) {
+      LOG.error(t);
+    }
   }
 
   @SuppressWarnings("unused") // for Flutter plugin
@@ -659,8 +666,13 @@ public class DartAnalysisServerService implements Disposable {
     myQuickFixListeners.remove(listener);
   }
 
-  public void fireQuickFixInvoked(@NotNull DartQuickFix fix, @NotNull Editor editor, @NotNull PsiFile file) {
-    myQuickFixListeners.forEach(listener -> listener.onQuickFixInvoked(fix, editor, file));
+  public void fireBeforeQuickFixInvoked(@NotNull DartQuickFix fix, @NotNull Editor editor, @NotNull PsiFile file) {
+    try {
+      myQuickFixListeners.forEach(listener -> listener.beforeQuickFixInvoked(fix, editor, file));
+    }
+    catch (Throwable t) {
+      LOG.error(t);
+    }
   }
 
   private static void setDasLogger() {
