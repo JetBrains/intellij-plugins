@@ -123,15 +123,15 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
     elements = doTest("_3");
     assertNotNull(elements);
-    assertEquals("____", elements[3].getLookupString());
-    assertTrue(getBoldStatus(elements[3]));
+    assertEquals("____", elements[4].getLookupString());
+    assertTrue(getBoldStatus(elements[4]));
     assertEquals("lVar", elements[0].getLookupString());
     assertTrue(getBoldStatus(elements[0]));
     assertEquals("param", elements[1].getLookupString());
     assertTrue(getBoldStatus(elements[1]));
 
-    assertFalse(getBoldStatus(elements[4]));
-    assertEquals("Bar", elements[4].getLookupString());
+    assertFalse(getBoldStatus(elements[5]));
+    assertEquals("Bar", elements[5].getLookupString());
   }
 
   public final void testKeywords() {
@@ -731,7 +731,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   public void testClassHierarchyMembersOrder2() {
     final LookupElement[] lookupElements = doTest("");
-    assertStartsWith(lookupElements, "e", "param", "Extended", "a", "Base", "zbb", "zzz", "Object", "zaa", "constructor");
+    assertStartsWith(lookupElements, "e", "param", "return", "Extended", "a", "Base", "zbb", "zzz", "Object", "zaa", "constructor");
   }
 
   public void testUseKeyword() {
