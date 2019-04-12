@@ -26,4 +26,12 @@ public class Angular2ComponentPropertyResolveResult extends JSResolveResult {
   public Angular2ComponentPropertyResolveResult copyWith(@NotNull PsiElement element) {
     return new Angular2ComponentPropertyResolveResult(element, myPropertySignature);
   }
+
+  @Override
+  public String toString() {
+    return "Angular2ComponentPropertyResolveResult{" +
+           "myElement=" + getElement() +
+           ", myType=" + getJSType() +
+           '}';
+  }
 }
