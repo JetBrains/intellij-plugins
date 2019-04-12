@@ -64,6 +64,12 @@ object LessonStateManager {
     LessonStateBase.instance.myMap.put(lesson.id, if (lesson.passed) LessonState.PASSED else LessonState.NOT_PASSED)
   }
 
+  fun resetPassedStatus() {
+    for (lesson in LessonStateBase.instance.myMap) {
+      lesson.setValue(LessonState.NOT_PASSED)
+    }
+  }
+
   fun getStateFromBase(id: String): LessonState {
     return if (LessonStateBase.instance.myMap.containsKey(id)) {
       LessonStateBase.instance.myMap[id]!!
