@@ -1,11 +1,16 @@
 package training.lang
 
+import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.FileEditorManagerListener
+import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.plugins.ruby.gem.GemDependency
 import org.jetbrains.plugins.ruby.gem.GemInstallUtil
@@ -85,6 +90,10 @@ class RubyLangSupport : AbstractLangSupport() {
     return ProjectUtils.importOrOpenProject("/learnProjects/ruby/RubyLearnProject", projectName)
   }
 
+  override fun setProjectListeners(project: Project) {
+    project.messageBus.connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileListener)
+  }
+
   private val Project.module: Module
     get() {
       val modules = ModuleManager.getInstance(this).modules
@@ -94,5 +103,20 @@ class RubyLangSupport : AbstractLangSupport() {
 
   companion object {
     const val sandboxFile = "app/sandbox.rb"
+
+    private val fileListener = object : FileEditorManagerListener {
+      override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
+        val project = source.project
+        if (com.intellij.ide.scratch.ScratchFileService.isInScratchRoot(file)) {
+          return
+        }
+        if (file.path == project.basePath + '/' + sandboxFile) {
+          return
+        }
+        source.getAllEditors(file).forEach {
+          ((it as? TextEditor)?.editor as? EditorEx)?.isViewer = true
+        }
+      }
+    }
   }
 }
