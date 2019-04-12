@@ -1,13 +1,13 @@
 "use strict";
 var schematic_command_1 = require("@angular/cli/models/schematic-command");
-var command = new schematic_command_1.SchematicCommand({}, null);
-command.getEngineHost();
+var config_1 = require("@angular/cli/utilities/config");
+var command = new schematic_command_1.SchematicCommand({ workspace: config_1.getWorkspace() }, null, null);
 var schematicsProvider = {
     getCollection: function (collectionName) {
         return command.getCollection(collectionName);
     },
     getEngineHost: function () {
-        return command.getEngineHost();
+        return command.createWorkflow({ interactive: false }).engineHost;
     },
     getSchematic: function (collection, schematicName, allowPrivate) {
         return command.getSchematic(collection, schematicName, allowPrivate);
