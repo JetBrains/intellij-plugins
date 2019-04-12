@@ -24,16 +24,14 @@ object NewLearnProjectUtil {
     val unitTestMode = ApplicationManager.getApplication().isUnitTestMode
     val projectManager = ProjectManagerEx.getInstanceEx()
 
-    val allProjectsDir = ProjectUtil.getBaseDir()
-    val projectName = langSupport.defaultProjectName
-    val projectFilePath = allProjectsDir / projectName
+    val projectFilePath = projectFilePath(langSupport)
 //    val projectDir = File(projectFilePath).parentFile
 //    FileUtil.ensureExists(projectDir)
 //    val ideaDir = File(projectFilePath, Project.DIRECTORY_STORE_FOLDER)
 //    FileUtil.ensureExists(ideaDir)
 
     val newProject: Project =
-        langSupport.createProject(projectName, projectToClose) ?: return projectToClose
+        langSupport.createProject(langSupport.defaultProjectName, projectToClose) ?: return projectToClose
 
     try {
       val sdkForProject = langSupport.getSdkForProject(newProject)
@@ -70,15 +68,13 @@ object NewLearnProjectUtil {
 
   }
 
+  fun projectFilePath(langSupport: LangSupport): String =
+      ProjectUtil.getBaseDir() + File.separatorChar + langSupport.defaultProjectName
+
   fun showDialogOpenLearnProject(project: Project): Boolean {
     //        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
     val dialog = LearnProjectWarningDialog(project)
     dialog.show()
     return dialog.isOK
   }
-}
-
-//overload div operator as a path separator
-private operator fun String.div(path: String): String? {
-  return this + File.separatorChar + path
 }
