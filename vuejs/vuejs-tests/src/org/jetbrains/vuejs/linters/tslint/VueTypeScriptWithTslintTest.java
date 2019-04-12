@@ -2,7 +2,7 @@
 package org.jetbrains.vuejs.linters.tslint;
 
 import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.linter.tslint.TypescriptServiceWithTslintTestBase;
+import com.intellij.lang.javascript.linter.tslint.TypeScriptServiceWithTslintTestBase;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -12,7 +12,7 @@ import java.io.IOException;
 
 import static org.jetbrains.vuejs.language.VueTestUtilKt.vueRelativeTestDataPath;
 
-public class VueTypescriptWithTslintTest extends TypescriptServiceWithTslintTestBase {
+public class VueTypeScriptWithTslintTest extends TypeScriptServiceWithTslintTestBase {
   @Override
   protected String getBasePath() {
     return vueRelativeTestDataPath() + "/linters/tslint/";

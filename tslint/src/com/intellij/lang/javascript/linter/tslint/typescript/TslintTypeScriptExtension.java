@@ -4,7 +4,7 @@ package com.intellij.lang.javascript.linter.tslint.typescript;
 import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.tslint.TslintUtil;
 import com.intellij.lang.typescript.compiler.languageService.TypeScriptLanguageServiceAnnotationResult;
-import com.intellij.lang.typescript.compiler.languageService.TypescriptServiceExtension;
+import com.intellij.lang.typescript.compiler.languageService.TypeScriptServiceExtension;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfig;
 import com.intellij.lang.typescript.tsconfig.TypeScriptConfigUtil;
 import com.intellij.openapi.project.Project;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.Set;
 
-public class TslintTypescriptExtension implements TypescriptServiceExtension {
+public class TslintTypeScriptExtension implements TypeScriptServiceExtension {
   @NotNull
   @Override
   public Set<VirtualFile> getConfigFilesToWatch(@NotNull PsiFile fileToHighlight) {
