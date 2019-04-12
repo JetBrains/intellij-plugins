@@ -4,6 +4,7 @@ import com.intellij.testGuiFramework.framework.GuiTestUtil.shortcut
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText
 import com.intellij.testGuiFramework.impl.jList
 import com.intellij.testGuiFramework.util.Key
+import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -54,6 +55,5 @@ end
       }
     }
 
-  override val existedFile: String
-    get() = "app/Completions.rb"
+  override val existedFile = RubyLangSupport.sandboxFile
 }
