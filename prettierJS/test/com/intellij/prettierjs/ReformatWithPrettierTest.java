@@ -34,12 +34,6 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     PrettierConfiguration.getInstance(getProject()).update(getNodeInterpreter(), getNodePackage());
   }
 
-  @Override
-  protected boolean shouldRunTest() {
-    //skip tests requiring npm package under teamcity for now.
-    return !IS_UNDER_TEAMCITY;
-  }
-
   public void testWithoutConfig() {
     doReformatFile("js");
   }
