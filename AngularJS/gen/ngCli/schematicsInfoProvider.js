@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* Initialize access to schematics registry */
 var provider;
 //find appropriate support
-for (var _i = 0, _a = ["60", "62", "70"]; _i < _a.length; _i++) {
+for (var _i = 0, _a = ["60", "62", "70", "80"]; _i < _a.length; _i++) {
     var version = _a[_i];
     try {
         provider = require("./schematicsProvider" + version);
