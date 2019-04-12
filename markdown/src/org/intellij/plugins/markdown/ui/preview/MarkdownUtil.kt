@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.ui.preview
 
 import com.intellij.openapi.diagnostic.Logger
@@ -12,7 +13,6 @@ import org.intellij.plugins.markdown.lang.parser.MarkdownParserManager
 import org.jetbrains.annotations.NonNls
 import java.io.File
 import java.math.BigInteger
-import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
@@ -29,8 +29,8 @@ object MarkdownUtil {
       LOG.error("Cannot find 'md5' algorithm; ", e)
     }
 
-    Objects.requireNonNull<MessageDigest>(md5).update(buffer?.toByteArray(StandardCharsets.UTF_8))
-    val code = md5!!.digest(key.toByteArray(StandardCharsets.UTF_8))
+    Objects.requireNonNull<MessageDigest>(md5).update(buffer?.toByteArray(Charsets.UTF_8))
+    val code = md5!!.digest(key.toByteArray(Charsets.UTF_8))
     val bi = BigInteger(code).abs()
     return bi.abs().toString(16)
   }

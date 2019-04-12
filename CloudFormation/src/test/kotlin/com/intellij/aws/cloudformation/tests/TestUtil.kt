@@ -7,7 +7,6 @@ import com.intellij.aws.cloudformation.model.CfnNode
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiFile
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import junit.framework.TestCase
@@ -61,7 +60,7 @@ object TestUtil {
 
     val expectText: String
     try {
-      expectText = StringUtil.convertLineSeparators(FileUtil.loadFile(expectFile, CharsetToolkit.UTF8_CHARSET))
+      expectText = StringUtil.convertLineSeparators(FileUtil.loadFile(expectFile, Charsets.UTF_8))
     } catch (e: IOException) {
       throw RuntimeException(e)
     }
