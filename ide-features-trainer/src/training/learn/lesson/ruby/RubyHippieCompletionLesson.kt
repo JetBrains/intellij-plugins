@@ -1,5 +1,6 @@
 package training.learn.lesson.ruby
 
+import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
@@ -35,6 +36,5 @@ end
   private fun calculateResult(insert: String) =
       StringBuffer(sample.text).insert(sample.getInfo(START_TAG).startOffset, insert).toString()
 
-  override val existedFile: String
-    get() = "app/Completions.rb"
+  override val existedFile = RubyLangSupport.sandboxFile
 }

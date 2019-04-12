@@ -92,4 +92,7 @@ class RubyLangSupport : AbstractLangSupport() {
       return modules[0]
     }
 
+  companion object {
+    const val sandboxFile = "app/sandbox.rb"
+  }
 }
