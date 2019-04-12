@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.annotator;
 
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -172,15 +172,17 @@ public class DartAnnotator implements Annotator {
       session.putUserData(DART_SERVER_DATA_HANDLED, Boolean.TRUE);
 
       final VirtualFile vFile = element.getContainingFile().getVirtualFile();
-      final DartAnalysisServerService service = DartAnalysisServerService.getInstance(element.getProject());
-      if (canBeAnalyzedByServer(element.getProject(), vFile) && service.serverReadyForRequest()) {
-        service.updateFilesContent();
+      if (canBeAnalyzedByServer(element.getProject(), vFile)) {
+        final DartAnalysisServerService service = DartAnalysisServerService.getInstance(element.getProject());
+        if (service.serverReadyForRequest()) {
+          service.updateFilesContent();
 
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-          service.waitForAnalysisToComplete_TESTS_ONLY(vFile);
+          if (ApplicationManager.getApplication().isUnitTestMode()) {
+            service.waitForAnalysisToComplete_TESTS_ONLY(vFile);
+          }
+
+          applyServerHighlighting(vFile, holder);
         }
-
-        applyServerHighlighting(vFile, holder);
       }
     }
 
