@@ -19,12 +19,11 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
     get() = {
       prepareSample(sample)
       actionTask("GotoAction") {
-        "One of the most important IDE feature is feature discoverability. " +
-            "All shortcut actions and much more could be found by ${action(it)}. " +
-            "Try to use now."
+        "One of the most useful shortcuts is Find Action. It allows you to search through all available actions" +
+            "without having to know their individual shortcuts. Try it now with ${action(it)}."
       }
       actionTask("About") {
-        "Suppose you want to read about IDE. Type <strong>about</strong> now and press Enter."
+        "Let's say you want to read about the IDE, type <strong>about</strong> and press Enter."
       }
       task {
         text("Return to the editor.")
@@ -41,10 +40,10 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         }
       }
       actionTask("GotoAction") {
-        "Also ${action(it)} could be used to change some settings. Use it one more time."
+        "${action(it)} can also be used to change the settings, invoke it again now."
       }
       task("line num") {
-        text("Type <strong>$it</strong> and try to toggle <strong>Show line number</strong> option.")
+        text("Type <strong>$it</strong> and toggle the <strong>Show line number</strong> option.")
         stateCheck { checkWordInSearch(it) }
         test {
           waitComponent(SearchEverywhereUI::class.java, "SearchEverywhere")
@@ -52,11 +51,9 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         }
       }
 
-      // This code works for "Enter" but does not work for mouse click option change.
-      // There currently no way to trigger on the setting change in IDEA :(
       val lineNumbersShown = isLineNumbersShown()
       task {
-        text("Try to switch ${if (lineNumbersShown) "off" else "on"} line numbers.")
+        text("Switch the line numbers ${if (lineNumbersShown) "off" else "on"}.")
         stateCheck { isLineNumbersShown() == !lineNumbersShown }
         test {
           Thread.sleep(300) // there could be a more proper wait solution
@@ -64,7 +61,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
         }
       }
       task {
-        text("Switch ${if (lineNumbersShown) "on" else "off"} back line numbers.")
+        text("Now switch the line numbers back ${if (lineNumbersShown) "on" else "off"}.")
         stateCheck { isLineNumbersShown() == lineNumbersShown }
         test {
           Thread.sleep(300) // there could be a more proper wait solution
