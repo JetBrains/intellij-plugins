@@ -121,14 +121,13 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     final Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
     if (document == null) return;
 
+    DartAnalysisServerService.getInstance(project).fireBeforeQuickFixInvoked(this, editor, file);
     try {
       AssistUtils.applySourceChange(project, mySourceChange, true);
     }
     catch (DartSourceEditException e) {
       CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
     }
-
-    DartAnalysisServerService.getInstance(project).fireQuickFixInvoked(this, editor, file);
   }
 
   @Override

@@ -75,14 +75,13 @@ public class DartQuickAssistIntention implements IntentionAction, Comparable<Int
     }
 
     if (sourceChange != null) {
+      DartAnalysisServerService.getInstance(project).fireBeforeQuickAssistIntentionInvoked(this, editor, file);
       try {
         AssistUtils.applySourceChange(project, sourceChange, true);
       }
       catch (DartSourceEditException e) {
         CommonRefactoringUtil.showErrorHint(project, editor, e.getMessage(), CommonBundle.getErrorTitle(), null);
       }
-
-      DartAnalysisServerService.getInstance(project).fireQuickAssistIntentionInvoked(this, editor, file);
     }
   }
 
