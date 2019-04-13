@@ -8,6 +8,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.html.HtmlTagImpl
+import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import com.intellij.refactoring.rename.RenameUtil
@@ -34,8 +35,10 @@ class VueJSComponentRenameProcessor : JSDefaultRenameProcessor() {
     }
   }
 
-  override fun findReferences(element: PsiElement, searchInCommentsAndStrings: Boolean): MutableCollection<PsiReference> {
-    return ReferencesSearch.search(element).findAll()
+  override fun findReferences(element: PsiElement,
+                              searchScope: SearchScope,
+                              searchInCommentsAndStrings: Boolean): MutableCollection<PsiReference> {
+    return ReferencesSearch.search(element, searchScope).findAll()
   }
 
   override fun canProcessElement(element: PsiElement): Boolean {
