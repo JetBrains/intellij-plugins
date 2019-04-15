@@ -689,7 +689,7 @@ Vue.component('global-comp-literal', {
   fun testNoCreateClassQuickFix() {
     myFixture.configureByText("NoCreateClassQuickFix.vue", """
 <template>
-<div onclick="new <caret>NotExistingClass().a()"></div>
+<div @click="new <caret>NotExistingClass().a()"></div>
 </template>
 """)
     val intentions = myFixture.filterAvailableIntentions("Create Class 'NotExistingClass'")
