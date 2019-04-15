@@ -10,7 +10,10 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.WebModuleBuilder;
+import com.intellij.openapi.module.WebModuleTypeBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
@@ -94,8 +97,6 @@ public class DartModuleBuilder extends ModuleBuilder {
   static void setupProject(@NotNull final ModifiableRootModel modifiableRootModel,
                            @NotNull final VirtualFile baseDir,
                            @NotNull final DartProjectWizardData wizardData) {
-    final String templateName = wizardData.myTemplate == null ? "Empty project" : wizardData.myTemplate.getName();
-
     setupSdk(modifiableRootModel, wizardData);
     if (wizardData.myTemplate != null) {
       try {
