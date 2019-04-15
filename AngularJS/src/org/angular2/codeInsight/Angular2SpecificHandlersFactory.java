@@ -37,6 +37,12 @@ public class Angular2SpecificHandlersFactory extends JavaScriptSpecificHandlersF
 
   @NotNull
   @Override
+  public JSImportHandler getImportHandler() {
+    return new Angular2ImportHandler();
+  }
+
+  @NotNull
+  @Override
   public JSTypeEvaluator newTypeEvaluator(@NotNull JSEvaluateContext context, @NotNull JSTypeProcessor processor) {
     return new Angular2TypeEvaluator(context, processor);
   }
