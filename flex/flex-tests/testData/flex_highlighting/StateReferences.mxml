@@ -5,7 +5,7 @@
     function bar() {}
     var xxx:Boolean;
     import mypackage.ResourceManager
-    <warning>ResourceManager.getInstance</warning>
+    <weak_warning>ResourceManager.getInstance</weak_warning>
   </mx:Script>
   <mx:Button label.state4="a" label.<error>incorrect1</error>="b">
     <mx:label.state5>a</mx:label.state5>
