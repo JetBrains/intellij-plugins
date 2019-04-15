@@ -74,3 +74,9 @@
 <div (click)="asyncInferred().then()"></div>
 <div (click)="asyncInferred().<error descr="Unresolved function or method foo()">foo</error>()"></div>
 <div (click)="asyncInferredString().then()"></div>
+
+<input type='text' #inputElement value='123'>
+
+<div>Value - {{inputElement}}</div>
+<div>Value - {{inputElement.value}}</div>
+<div>Value - {{inputElement.<error descr="Unresolved variable foo">foo</error>}}</div>
