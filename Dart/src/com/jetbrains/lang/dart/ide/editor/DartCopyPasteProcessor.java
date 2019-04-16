@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.editor;
 
 import com.intellij.codeInsight.CodeInsightSettings;
@@ -103,7 +103,7 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
 
     if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.NO) return;
 
-    final SourceFileEdit edit = DartAnalysisServerService.getInstance(project).edit_importElements(file, data.getImportedElements());
+    final SourceFileEdit edit = DartAnalysisServerService.getInstance(project).edit_importElements(file, data.getImportedElements(), caretOffset);
 
     if (edit != null && edit.getEdits() != null && !edit.getEdits().isEmpty()) {
       if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK &&

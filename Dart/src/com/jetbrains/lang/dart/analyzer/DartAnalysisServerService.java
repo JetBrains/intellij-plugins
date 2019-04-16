@@ -109,7 +109,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
   private static final long STATEMENT_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
-  private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
+  private static final long GET_SUGGESTIONS_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
   private static final long GET_SUGGESTION_DETAILS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long FIND_ELEMENT_REFERENCES_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_TYPE_HIERARCHY_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
@@ -133,7 +133,7 @@ public class DartAnalysisServerService implements Disposable {
 
   // Do not wait for server response under lock. Do not take read/write action under lock.
   private final Object myLock = new Object();
-  @Nullable private AnalysisServer myServer;
+  @Nullable private RemoteAnalysisServerImpl myServer;
   @Nullable private StdioServerSocket myServerSocket;
 
   @NotNull private String myServerVersion = "";
@@ -1545,7 +1545,8 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public SourceFileEdit edit_importElements(@NotNull final VirtualFile file, @NotNull final List<ImportedElements> importedElements) {
+  public SourceFileEdit edit_importElements(@NotNull final VirtualFile file, @NotNull final List<ImportedElements> importedElements,
+                                            final int offset) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<SourceFileEdit> resultRef = new Ref<>();
 
@@ -1553,7 +1554,7 @@ public class DartAnalysisServerService implements Disposable {
     if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) return null;
 
     final CountDownLatch latch = new CountDownLatch(1);
-    server.edit_importElements(filePath, importedElements, new ImportElementsConsumer() {
+    server.edit_importElements(filePath, importedElements, offset, new ImportElementsConsumer() {
       @Override
       public void computedImportedElements(final SourceFileEdit edit) {
         resultRef.set(edit);
@@ -1677,10 +1678,10 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   public void analysis_reanalyze() {
-    final AnalysisServer server = myServer;
+    final RemoteAnalysisServerImpl server = myServer;
     if (server == null) return;
 
-    server.analysis_reanalyze(null);
+    server.analysis_reanalyze();
 
     ApplicationManager.getApplication().invokeLater(this::clearAllErrors, ModalityState.NON_MODAL);
   }
@@ -1915,7 +1916,7 @@ public class DartAnalysisServerService implements Disposable {
       myServerSocket.setClientId(getClientId());
       myServerSocket.setClientVersion(getClientVersion());
 
-      final AnalysisServer startedServer = new RemoteAnalysisServerImpl(myServerSocket);
+      final RemoteAnalysisServerImpl startedServer = new RemoteAnalysisServerImpl(myServerSocket);
 
       try {
         startedServer.start();
@@ -2352,7 +2353,7 @@ public class DartAnalysisServerService implements Disposable {
    */
   @SuppressWarnings("unused") // for Flutter plugin
   public String generateUniqueId() {
-    final AnalysisServer server = myServer;
+    final RemoteAnalysisServerImpl server = myServer;
     if (server == null) {
       return null;
     }
@@ -2364,7 +2365,7 @@ public class DartAnalysisServerService implements Disposable {
    */
   @SuppressWarnings("unused") // for Flutter plugin
   public void sendRequest(String id, JsonObject request) {
-    final AnalysisServer server = myServer;
+    final RemoteAnalysisServerImpl server = myServer;
     if (server != null) {
       server.sendRequestToServer(id, request);
     }
@@ -2375,7 +2376,7 @@ public class DartAnalysisServerService implements Disposable {
    */
   @SuppressWarnings("unused") // for Flutter plugin
   public void sendRequestToServer(String id, JsonObject request, com.google.dart.server.Consumer consumer) {
-    final AnalysisServer server = myServer;
+    final RemoteAnalysisServerImpl server = myServer;
     if (server != null) {
       server.sendRequestToServer(id, request, consumer);
     }
