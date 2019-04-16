@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.InsertionContext
@@ -142,11 +142,13 @@ class VueInsertHandler : XmlTagInsertHandler() {
           if (anchorPair.first) {
             addedExport = JSChangeUtil.doAddAfter(content, dummyExport, anchorPair.second) as JSExportAssignment
             JSChangeUtil.addWsAfter(content, addedExport, "\n")
-          } else {
+          }
+          else {
             addedExport = JSChangeUtil.doAddBefore(content, dummyExport, anchorPair.second) as JSExportAssignment
           }
           forReformat(addedExport)
-        } else {
+        }
+        else {
           val replacedScript = scriptTag.replace(dummyScript)
           forReformat(replacedScript)
           content = PsiTreeUtil.findChildOfType(replacedScript, JSEmbeddedContent::class.java)!!
@@ -209,7 +211,8 @@ class VueInsertHandler : XmlTagInsertHandler() {
       val anchor: PsiElement?
       anchor = if ("name" == firstProperty?.name) {
         PsiTreeUtil.findSiblingForward(firstProperty, JSTokenTypes.COMMA, null) ?: firstProperty
-      } else {
+      }
+      else {
         obj.node.findChildByType(JSTokenTypes.LBRACE)?.psi
       }
       val addedProperty: JSProperty
@@ -220,7 +223,8 @@ class VueInsertHandler : XmlTagInsertHandler() {
         val addedComma = JSChangeUtil.doDoAddAfter(obj, comma, firstProperty)
         addedProperty = JSChangeUtil.doDoAddAfter(obj, newProperty, addedComma) as JSProperty
         lastAdded = addedProperty
-      } else {
+      }
+      else {
         val needsComma = anchor != null && (anchor.node.elementType == JSTokenTypes.COMMA || !obj.properties.isEmpty())
         addedProperty = JSChangeUtil.doDoAddAfter(obj, newProperty, anchor) as JSProperty
         lastAdded = addedProperty

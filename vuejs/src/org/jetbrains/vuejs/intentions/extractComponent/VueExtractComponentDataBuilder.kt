@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.ecmascript6.psi.ES6ImportDeclaration
@@ -85,10 +73,11 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     val declarations = JSResolveUtil.getStubbedChildren(content, ES6_IMPORT_DECLARATION)
     val foundImport = declarations.firstOrNull { declaration ->
       val importDeclaration = declaration as ES6ImportDeclaration
-      val byName = importDeclaration.importedBindings.firstOrNull { !it.isNamespaceImport && it.name != null &&
-                                                                    fromAsset(
-                                                                      ref.nameElement.text) == fromAsset(
-        it.name!!)
+      val byName = importDeclaration.importedBindings.firstOrNull {
+        !it.isNamespaceImport && it.name != null &&
+        fromAsset(
+          ref.nameElement.text) == fromAsset(
+          it.name!!)
       }
       return@firstOrNull byName != null
     } as? ES6ImportDeclaration ?: return
@@ -162,7 +151,8 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
         if (existing != null && state != existing) {
           hasDirectUsageSet.add(refName)
           true
-        } else {
+        }
+        else {
           hasReplaceMap[refName] = state
           false
         }
@@ -171,7 +161,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
 
     var newText =
 
-"""<template${langAttribute(templateLanguage)}>
+      """<template${langAttribute(templateLanguage)}>
 ${generateNewTemplateContents(hasDirectUsageSet)}
 </template>
 <script${langAttribute(scriptLanguage)}>${generateImports()}
@@ -181,7 +171,9 @@ export default {
 </script>${copyStyles()}"""
 
     newText = psiOperationOnText(newText, { optimizeAndRemoveEmptyStyles(it) })
-    newText = psiOperationOnText(newText, { CodeStyleManager.getInstance(containingFile.project).reformatText(it, 0, it.textRange.endOffset) })
+    newText = psiOperationOnText(newText, {
+      CodeStyleManager.getInstance(containingFile.project).reformatText(it, 0, it.textRange.endOffset)
+    })
 
     return newText
   }
@@ -221,17 +213,19 @@ export default {
 
   private fun generateImports(): String {
     if (importsToCopy.isEmpty()) return ""
-    return importsToCopy.keys.sorted().joinToString("\n", "\n") { "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}" }
+    return importsToCopy.keys.sorted().joinToString("\n", "\n") {
+      "import ${it} from ${importsToCopy[it]!!.fromClause?.referenceText ?: "''"}"
+    }
   }
 
   private fun generateDescriptorMembers(mapHasDirectUsage: MutableSet<String>): String {
     val members = mutableListOf<String>()
     if (!importsToCopy.isEmpty()) {
-      members.add(importsToCopy.keys.sorted().joinToString ( ", ", ",\ncomponents: {", "}" ))
+      members.add(importsToCopy.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
     }
     if (!refDataMap.isEmpty()) {
       members.add(sortedProps(true).joinToString(",\n", ",\nprops: {\n", "\n}")
-      { "${it.getRefName()}: ${if (mapHasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}" }" })
+      { "${it.getRefName()}: ${if (mapHasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"}" })
     }
     return members.joinToString("")
   }
@@ -284,7 +278,7 @@ export default {
   }
 
   private fun generateProps(): String {
-    return sortedProps(true).joinToString(" "){
+    return sortedProps(true).joinToString(" ") {
       ":${fromAsset(it.getRefName())}=\"${it.getExpressionText()}\""
     }
   }
@@ -300,7 +294,7 @@ export default {
       return JSResolveUtil.getLeftmostQualifier(jsRef).referenceName ?: ref.canonicalText
     }
 
-    fun resolve() : PsiElement? {
+    fun resolve(): PsiElement? {
       val jsRef = ref as? JSReferenceExpression ?: return ref.resolve()
       return JSResolveUtil.getLeftmostQualifier(jsRef).resolve()
     }

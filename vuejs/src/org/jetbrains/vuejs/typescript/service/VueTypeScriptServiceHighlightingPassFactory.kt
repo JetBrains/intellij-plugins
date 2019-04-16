@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.service.highlighting.JSLanguageServiceHighli
 import com.intellij.lang.typescript.compiler.TypeScriptServiceHighlightingPassFactory
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.vuejs.VueFileType
 
 class VueTypeScriptServiceHighlightingPassFactory(project: Project, highlightingPassRegistrar: TextEditorHighlightingPassRegistrar) :

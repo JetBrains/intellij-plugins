@@ -31,7 +31,8 @@ class VueOptimizeImportTest : JSOptimizeImportTestBase() {
   fun testUnusedImportStatement() {
     JSTestUtils.testES6<RuntimeException>(project) {
       myFixture.configureByFiles("VueSimpleOptimize_2.ts")
-      myFixture.configureByText("UnusedImportStatement.vue", """<script lang="ts">import {Foo, Foo2} from './VueSimpleOptimize_2';</script>""")
+      myFixture.configureByText("UnusedImportStatement.vue",
+                                """<script lang="ts">import {Foo, Foo2} from './VueSimpleOptimize_2';</script>""")
       OptimizeImportsAction.actionPerformedImpl(DataManager.getInstance().getDataContext(myFixture.editor.contentComponent))
       FileDocumentManager.getInstance().saveAllDocuments()
       myFixture.checkResult("<script lang=\"ts\"></script>")

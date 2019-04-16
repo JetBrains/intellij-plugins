@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
@@ -13,7 +14,7 @@ import org.jetbrains.vuejs.index.*
  */
 class VueDirectivesProvider {
   companion object {
-    fun getAttributes(descriptor: JSObjectLiteralExpression?, project: Project) : List<VueAttributeDescriptor> {
+    fun getAttributes(descriptor: JSObjectLiteralExpression?, project: Project): List<VueAttributeDescriptor> {
       val result = mutableListOf<VueAttributeDescriptor>()
       result.addAll(getForAllKeys(createSearchScope(descriptor, project), VueGlobalDirectivesIndex.KEY).map { createDescriptor(it) })
 
@@ -21,13 +22,13 @@ class VueDirectivesProvider {
       val fileScope = createContainingFileScope(directives)
       if (directives != null && fileScope != null) {
         result.addAll(getForAllKeys(fileScope, VueLocalDirectivesIndex.KEY)
-          .filter { PsiTreeUtil.isAncestor(directives, it.parent, false) }
-          .map { createDescriptor(it) })
+                        .filter { PsiTreeUtil.isAncestor(directives, it.parent, false) }
+                        .map { createDescriptor(it) })
       }
       return result
     }
 
-    fun resolveAttribute(descriptor: JSObjectLiteralExpression?, attrName: String, project: Project) : VueAttributeDescriptor? {
+    fun resolveAttribute(descriptor: JSObjectLiteralExpression?, attrName: String, project: Project): VueAttributeDescriptor? {
       val searchName = attrName.substringAfter("v-", "")
       if (searchName.isEmpty()) return null
       val searchScope = createSearchScope(descriptor, project)

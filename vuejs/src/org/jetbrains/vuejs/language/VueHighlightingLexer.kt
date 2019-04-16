@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.HtmlScriptContentProvider
@@ -9,7 +10,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
 class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHighlightingLexer(), VueHandledLexer {
-  private var seenTemplate:Boolean = false
+  private var seenTemplate: Boolean = false
   private var seenVueAttribute: Boolean = false
 
   init {
@@ -58,7 +59,7 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHig
     seenStylesheetType = true
   }
 
-  override fun setSeenTemplate(template:Boolean) {
+  override fun setSeenTemplate(template: Boolean) {
     seenTemplate = template
   }
 
@@ -88,7 +89,7 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHig
       else 0)
   }
 
-  override fun endOfTheEmbeddment(name:String?):Boolean {
+  override fun endOfTheEmbeddment(name: String?): Boolean {
     return super.endOfTheEmbeddment(name) ||
            seenTemplate && "template" == name
   }

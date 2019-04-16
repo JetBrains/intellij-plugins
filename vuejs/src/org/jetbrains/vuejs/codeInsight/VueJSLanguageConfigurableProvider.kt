@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ASTFactory
@@ -11,7 +12,7 @@ import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 
 class VueJSLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvider() {
   override fun isNeedToBeTerminated(element: PsiElement): Boolean = false
-  
+
   override fun createExpressionFromText(text: String,
                                         element: PsiElement): PsiElement? {
     val created = JSChangeUtil.createJSTreeFromTextWithContext("($text)", element)

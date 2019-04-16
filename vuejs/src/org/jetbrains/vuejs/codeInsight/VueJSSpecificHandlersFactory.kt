@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
@@ -41,11 +42,9 @@ class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
 
 class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,
                                        ignorePerformanceLimits: Boolean) :
-    JSReferenceExpressionResolver(referenceExpression!!, ignorePerformanceLimits) {
+  JSReferenceExpressionResolver(referenceExpression!!, ignorePerformanceLimits) {
   override fun resolve(ref: JSReferenceExpressionImpl, incompleteCode: Boolean): Array<ResolveResult> =
-    resolveInLocalContext(ref) ?:
-    resolveInCurrentComponentDefinition(ref) ?:
-    super.resolve(ref, incompleteCode)
+    resolveInLocalContext(ref) ?: resolveInCurrentComponentDefinition(ref) ?: super.resolve(ref, incompleteCode)
 
   private fun resolveInLocalContext(ref: JSReferenceExpressionImpl): Array<ResolveResult>? {
     if (ref.qualifier != null) return null
@@ -98,14 +97,15 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
   }
 }
 
-fun findInMountedVueInstance(reference : JSReferenceExpression) : JSObjectLiteralExpression? {
+fun findInMountedVueInstance(reference: JSReferenceExpression): JSObjectLiteralExpression? {
   val xmlHost = InjectedLanguageManager.getInstance(reference.project).getInjectionHost(reference) ?: return null
-  val ref : Ref<JSObjectLiteralExpression?> = Ref(null)
+  val ref: Ref<JSObjectLiteralExpression?> = Ref(null)
   PsiTreeUtil.findFirstParent(xmlHost, Condition {
     if (it is PsiFile) return@Condition true
     val idValue = (it as? XmlTag)?.getAttribute("id")?.valueElement?.value ?: return@Condition false
     if (!StringUtil.isEmptyOrSpaces(idValue)) {
-      val elements = resolve("#" + idValue, GlobalSearchScope.projectScope(reference.project), VueOptionsIndex.KEY) ?: return@Condition false
+      val elements = resolve("#" + idValue, GlobalSearchScope.projectScope(reference.project), VueOptionsIndex.KEY)
+                     ?: return@Condition false
       val element = onlyLocal(elements).firstOrNull()
       val obj = element as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java)
       ref.set(obj)
@@ -116,12 +116,12 @@ fun findInMountedVueInstance(reference : JSReferenceExpression) : JSObjectLitera
   return ref.get()
 }
 
-fun findScriptWithExport(element: PsiElement) : Pair<PsiElement, ES6ExportDefaultAssignment>? {
+fun findScriptWithExport(element: PsiElement): Pair<PsiElement, ES6ExportDefaultAssignment>? {
   val xmlFile = getContainingXmlFile(element) ?: return null
 
   val module = org.jetbrains.vuejs.codeInsight.findModule(xmlFile) ?: return null
   val defaultExport = com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.findDefaultExport(module)
-                      as? ES6ExportDefaultAssignment ?: return null
+                        as? ES6ExportDefaultAssignment ?: return null
   if (defaultExport.stubSafeElement is JSObjectLiteralExpression) {
     return Pair(module, defaultExport)
   }
@@ -129,5 +129,6 @@ fun findScriptWithExport(element: PsiElement) : Pair<PsiElement, ES6ExportDefaul
 }
 
 fun getContainingXmlFile(element: PsiElement): XmlFile? =
-  (element.containingFile as? XmlFile ?: element as? XmlFile ?:
-   InjectedLanguageManager.getInstance(element.project).getInjectionHost(element)?.containingFile as? XmlFile)
+  (element.containingFile as? XmlFile
+   ?: element as? XmlFile
+   ?: InjectedLanguageManager.getInstance(element.project).getInjectionHost(element)?.containingFile as? XmlFile)

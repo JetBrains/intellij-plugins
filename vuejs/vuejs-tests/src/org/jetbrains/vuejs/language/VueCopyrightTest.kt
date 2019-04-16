@@ -24,11 +24,11 @@ class VueCopyrightTest : LightPlatformCodeInsightFixtureTestCase() {
 
   fun testUpdateCopyright() {
     myFixture.configureByText("UpdateCopyright.vue",
-"""<template>Hello!</template>
+                              """<template>Hello!</template>
 """)
     updateCopyright()
     myFixture.checkResult(
-"""<!--
+      """<!--
   - first line
   - second line
   -->

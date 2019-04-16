@@ -54,7 +54,7 @@ class VueResolveTest : LightPlatformCodeInsightFixtureTestCase() {
   }
   let message25620 = 111;
 </script>""")
-    val reference =  myFixture.file.findReferenceAt(myFixture.editor.caretModel.offset)
+    val reference = myFixture.file.findReferenceAt(myFixture.editor.caretModel.offset)
     TestCase.assertNotNull(reference)
     TestCase.assertTrue(reference is JSReferenceExpression)
     val resolver = VueJSSpecificHandlersFactory().createReferenceExpressionResolver(
@@ -435,7 +435,7 @@ export default {
           }
 }</script>
 """, "carrot")
-}
+  }
 
   private fun doTestResolveLocallyInsideComponent(text: String, expectedPropertyName: String?) {
     myFixture.configureByText("ResolveLocallyInsideComponent.vue", text)
@@ -444,7 +444,8 @@ export default {
     val property = reference!!.resolve()
     if (expectedPropertyName == null) {
       TestCase.assertNull(property)
-    } else {
+    }
+    else {
       TestCase.assertTrue(property is JSProperty)
       TestCase.assertEquals(expectedPropertyName, (property as JSProperty).name)
     }
@@ -900,17 +901,17 @@ export default {
 
   fun testGlobalComponentNameInReference() {
     myFixture.configureByText("WiseComp.vue",
-"""
+                              """
 <script>export default { name: 'wise-comp', props: {} }</script>
 """)
     myFixture.configureByText("register.es6",
-"""
+                              """
 import WiseComp from 'WiseComp'
 const alias = 'wise-comp-alias'
 Vue.component(alias, WiseComp)
 """)
     myFixture.configureByText("use.vue",
-"""
+                              """
 <template><<caret>wise-comp-alias</template>
 """)
     doResolveAliasIntoLibraryComponent("wise-comp", "WiseComp.vue")
@@ -1387,7 +1388,7 @@ const props = {seeMe: {}}
     }
   }
 
-  private fun doTestResolveIntoDirective(directive: String, fileName : String) {
+  private fun doTestResolveIntoDirective(directive: String, fileName: String) {
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
     val property = reference!!.resolve()
@@ -1395,11 +1396,13 @@ const props = {seeMe: {}}
     if (property is JSProperty) {
       TestCase.assertEquals(directive, property.name)
       TestCase.assertEquals(fileName, property.containingFile.name)
-    } else if (property is JSCallExpression) {
+    }
+    else if (property is JSCallExpression) {
       TestCase.assertNotNull(property.text)
       TestCase.assertEquals(directive, (property.arguments[0] as JSLiteralExpression).stringValue)
       TestCase.assertEquals(fileName, property.containingFile.name)
-    } else {
+    }
+    else {
       TestCase.assertTrue(false)
     }
   }
@@ -1466,7 +1469,8 @@ const props = {seeMe: {}}
         TestCase.assertNotNull(target)
         TestCase.assertEquals(it.third, target!!.containingFile.name)
         TestCase.assertTrue(target.parent is JSCallExpression)
-      } else {
+      }
+      else {
         doResolveIntoLibraryComponent(it.second, it.third)
       }
     }
@@ -1500,7 +1504,7 @@ export default DatePicker;
   fun testResolveSimpleObjectMemberComponent() {
     myFixture.configureByText("a.vue", "")
     myFixture.configureByText("lib-comp.es6",
-"""
+                              """
 export default {
   name: 'lib-comp',
   template: '',
@@ -1508,7 +1512,7 @@ export default {
 }
 """)
     myFixture.configureByText("lib.es6",
-"""
+                              """
 import LibComp from './lib-comp';
 const obj = { LibComp };
 
@@ -1517,14 +1521,14 @@ Object.keys(obj).forEach(key => {
     });
 """)
     myFixture.configureByText("ResolveSimpleObjectMemberComponent.vue",
-"""<template><<caret>lib-comp/></template>""")
+                              """<template><<caret>lib-comp/></template>""")
     doResolveIntoLibraryComponent("lib-comp", "lib-comp.es6")
   }
 
   fun testResolveAliasedObjectMemberComponent() {
     myFixture.configureByText("a.vue", "")
     myFixture.configureByText("lib-comp-for-alias.es6",
-"""
+                              """
 export default {
   name: 'lib-comp',
   template: '',
@@ -1532,7 +1536,7 @@ export default {
 }
 """)
     myFixture.configureByText("libAlias.es6",
-"""
+                              """
 import Alias from './lib-comp-for-alias';
 const obj = { Alias };
 
@@ -1541,7 +1545,7 @@ Object.keys(obj).forEach(key => {
     });
 """)
     myFixture.configureByText("ResolveAliasedObjectMemberComponent.vue",
-"""<template><<caret>alias/></template>""")
+                              """<template><<caret>alias/></template>""")
 
     val reference = myFixture.getReferenceAtCaretPosition()
     TestCase.assertNotNull(reference)
@@ -1822,8 +1826,8 @@ export default class UsageComponent extends Vue {
         export default app;
         const app = { name: 'app', components: { HelloWorld } };
       </script>""")
-    val reference =  myFixture.file.findReferenceAt(myFixture.editor.caretModel.offset)
-    TestCase.assertEquals("name: 'HelloWorld'", reference!!.resolve()!!.parent.text);
+    val reference = myFixture.file.findReferenceAt(myFixture.editor.caretModel.offset)
+    TestCase.assertEquals("name: 'HelloWorld'", reference!!.resolve()!!.parent.text)
   }
 }
 

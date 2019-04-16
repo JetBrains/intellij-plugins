@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.intentions.extractComponent
 
 import com.intellij.lang.Language
@@ -30,7 +18,7 @@ import org.jetbrains.vuejs.VueLanguage
 /**
  * @author Irina.Chernushina on 3/9/2018.
  */
-class VueExtractComponentAction: BaseRefactoringAction() {
+class VueExtractComponentAction : BaseRefactoringAction() {
   init {
     templatePresentation.text = VueBundle.message("vue.template.intention.extract.component")
     templatePresentation.description = VueBundle.message("vue.template.intention.extract.component.description")
@@ -49,7 +37,7 @@ class VueExtractComponentAction: BaseRefactoringAction() {
   override fun isAvailableForFile(file: PsiFile?): Boolean = VueFileType.INSTANCE == file?.fileType
 
   override fun getHandler(dataContext: DataContext): RefactoringActionHandler? {
-    return object: RefactoringActionHandler {
+    return object : RefactoringActionHandler {
       override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
         editor ?: return
         val element = PsiUtilBase.getElementAtCaret(editor) ?: return

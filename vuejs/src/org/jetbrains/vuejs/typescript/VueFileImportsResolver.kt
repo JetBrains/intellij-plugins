@@ -23,7 +23,7 @@ class VueFileImportsResolver(project: Project,
     StubIndex.getInstance().processElements(
       TypeScriptScriptContentIndex.KEY, TypeScriptScriptContentIndex.DEFAULT_INDEX_KEY, project,
       includeScope, null, JSExecutionScope::class.java) {
-      
+
       ProgressManager.checkCanceled()
       val virtualFile = it.containingFile.virtualFile
       if (virtualFile != null) {

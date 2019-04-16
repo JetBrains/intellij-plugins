@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
@@ -57,6 +45,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
       if (DEFAULT.contains(attributeName!!)) return VueAttributeDescriptor(attributeName)
       return null
     }
+
     fun getDefaultVueAttributes(): Array<VueAttributeDescriptor> = DEFAULT.map { VueAttributeDescriptor(it) }.toTypedArray()
 
     fun isBinding(name: String): Boolean = name.startsWith(":") || name.startsWith("v-bind:")
@@ -108,8 +97,8 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
                                                             tag.containingFile?.language == VueLanguage.INSTANCE
 }
 
-class VueAttributeDescriptor(private val name:String,
-                             private val element:PsiElement? = null,
+class VueAttributeDescriptor(private val name: String,
+                             private val element: PsiElement? = null,
                              private val isDirective: Boolean = false,
                              private val isNonProp: Boolean = false) : BasicXmlAttributeDescriptor(), PsiPresentableMetaData {
   override fun getName(): String = name
@@ -132,16 +121,18 @@ class VueAttributeDescriptor(private val name:String,
   override fun getDefaultValue(): Nothing? = null
   override fun isEnumerated(): Boolean = isDirective || isNonProp ||
                                          VueAttributesProvider.HAVE_NO_PARAMS.contains(name) || attributeAllowsNoValue(name)
+
   override fun getEnumeratedValues(): Array<out String> {
     if (isEnumerated) {
       return arrayOf(name)
     }
     return ArrayUtil.EMPTY_STRING_ARRAY
   }
+
   override fun getTypeName(): String? = null
   override fun getIcon(): Icon = VuejsIcons.Vue
 
-  fun createNameVariant(newName: String) : VueAttributeDescriptor {
+  fun createNameVariant(newName: String): VueAttributeDescriptor {
     if (newName == name) return this
     return VueAttributeDescriptor(newName, element)
   }
@@ -149,4 +140,4 @@ class VueAttributeDescriptor(private val name:String,
   fun isDirective(): Boolean = isDirective
 }
 
-fun findProperty(obj: JSObjectLiteralExpression?, name:String): JSProperty? = obj?.properties?.find { it.name == name }
+fun findProperty(obj: JSObjectLiteralExpression?, name: String): JSProperty? = obj?.properties?.find { it.name == name }

@@ -41,7 +41,7 @@ fun getModifiedVueDocumentText(project: Project, document: Document): String? {
   if (psiFile == null) return ""
 
   val module = findModule(psiFile) ?: return ""
-  if (!DialectDetector.isTypeScript(module)) return "" 
+  if (!DialectDetector.isTypeScript(module)) return ""
 
   val text = module.node
   val textRange = text.textRange
@@ -147,8 +147,6 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
 
     return configForFile != null
   }
-  
-  
 
   private fun addConfigureCommand(result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>>) {
     val arguments = ConfigureRequestArguments()
@@ -165,7 +163,7 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
 
   override fun getDocumentText(file: VirtualFile, instance: FileDocumentManager, document: Document): CharSequence? {
     if (!isVueFile(file)) return super.getDocumentText(file, instance, document)
-    
+
     return getModifiedVueDocumentText(myProject, document) ?: ""
   }
 

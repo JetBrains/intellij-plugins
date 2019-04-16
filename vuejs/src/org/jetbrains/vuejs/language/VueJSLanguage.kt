@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.PsiBuilder
@@ -19,7 +20,8 @@ class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6, Jav
     return VueJSParser(builder)
   }
 
-  class VueJSParser(builder: PsiBuilder) : ES6Parser<ES6ExpressionParser<*>, ES6StatementParser<*>, ES6FunctionParser<*>, JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder) {
+  class VueJSParser(builder: PsiBuilder) : ES6Parser<ES6ExpressionParser<*>, ES6StatementParser<*>,
+    ES6FunctionParser<*>, JSPsiTypeParser<JavaScriptParser<*, *, *, *>>>(builder) {
     init {
       myStatementParser = object : ES6StatementParser<VueJSParser>(this) {
         override fun parseSourceElement() {
@@ -33,22 +35,25 @@ class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6, Jav
     private fun parseVForContents(): Boolean {
       val vForExpr = builder.mark()
       if (builder.tokenType == JSTokenTypes.LPAR) {
-        if(!parseVForVariables()) {
+        if (!parseVForVariables()) {
           vForExpr.rollbackTo()
           return false
         }
-      } else if (isIdentifierToken(builder.tokenType)) {
+      }
+      else if (isIdentifierToken(builder.tokenType)) {
         val statement = builder.mark()
         buildTokenElement(VueElementTypes.V_FOR_VARIABLE)
         statement.done(JSStubElementTypes.VAR_STATEMENT)
-      } else {
+      }
+      else {
         builder.error("identifier(s) expected")
         builder.advanceLexer()
       }
       if (builder.tokenType !== JSTokenTypes.IN_KEYWORD && builder.tokenType !== JSTokenTypes.OF_KEYWORD) {
         vForExpr.rollbackTo()
         return false
-      } else {
+      }
+      else {
         builder.advanceLexer()
       }
       if (parseExpectedExpression(builder, true)) {
@@ -101,7 +106,7 @@ class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6, Jav
       rootMarker.done(root)
     }
 
-    private fun parseExpectedExpression(builder: PsiBuilder, isOnlyStandardJS: Boolean) : Boolean {
+    private fun parseExpectedExpression(builder: PsiBuilder, isOnlyStandardJS: Boolean): Boolean {
       if (!isOnlyStandardJS && parseVForContents()) return true
       if (!myExpressionParser.parseExpressionOptional()) {
         builder.error(JSBundle.message("javascript.parser.message.expected.expression"))

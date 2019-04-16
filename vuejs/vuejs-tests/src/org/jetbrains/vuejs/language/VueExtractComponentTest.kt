@@ -14,13 +14,13 @@ import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefact
 /**
  * @author Irina.Chernushina on 12/19/2017.
  */
-class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
+class VueExtractComponentTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testExtractSingleTag() = doExtractTest(
-"""<template>
+    """<template>
 <selection><p>Paragraph!</p></selection>
 </template>""",
 
-"""<template>
+    """<template>
     <NewComponent/>
 </template>
 <script>
@@ -30,7 +30,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>""",
 
-"""<template>
+    """<template>
     <p>Paragraph!</p>
 </template>
 <script>
@@ -40,7 +40,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>""")
 
   fun testExtractSingleTagWithName() = doExtractTest(
-"""<template>
+    """<template>
 <selection><p>Paragraph!</p></selection>
 </template>
 <script>
@@ -50,7 +50,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>
 """,
 
-"""<template>
+    """<template>
     <NewComponent/>
 </template>
 <script>
@@ -62,7 +62,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>
 """,
 
-"""<template>
+    """<template>
     <p>Paragraph!</p>
 </template>
 <script>
@@ -159,7 +159,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
   fun testExtractComponentWithOtherComponentInside() {
     myFixture.configureByText("OtherComp.vue", "<script>export default { name: 'other-comp' }</script>")
     doExtractTest(
-"""<template>
+      """<template>
   <caret><div>
     <other-comp>123 -> {{ prop }}</other-comp>
   </div>
@@ -174,7 +174,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>
 """.trimMargin(),
 
-"""<template>
+      """<template>
     <NewComponent :prop="prop"/>
 </template>
 <script>
@@ -186,7 +186,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>""",
 
-"""<template>
+      """<template>
     <div>
         <other-comp>123 -> {{ prop }}</other-comp>
     </div>
@@ -206,7 +206,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
   fun testExtractComponentWithOtherComponentInsideTS() {
     myFixture.configureByText("OtherComp.vue", "<script>export default { name: 'other-comp' }</script>")
     doExtractTest(
-"""<template>
+      """<template>
   <caret><div>
     <other-comp>123 -> {{ prop }}</other-comp>
     <unknown-comp/>
@@ -222,7 +222,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>
 """.trimMargin(),
 
-"""<template>
+      """<template>
     <NewComponent :prop="prop"/>
 </template>
 <script lang="ts">
@@ -235,7 +235,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>""",
 
-"""<template>
+      """<template>
     <div>
         <other-comp>123 -> {{ prop }}</other-comp>
         <unknown-comp/>
@@ -255,7 +255,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun testExtractWithVFor() = doExtractTest(
-"""<template>
+    """<template>
     <div v-for="item in items">
         <caret><span>Text: {{ item }}</span>
     </div>
@@ -272,7 +272,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     };
 </script>""",
 
-"""<template>
+    """<template>
     <div v-for="item in items">
         <NewComponent :item="item"/>
     </div>
@@ -291,7 +291,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     };
 </script>""",
 
-"""<template>
+    """<template>
     <span>Text: {{ item }}</span>
 </template>
 <script>
@@ -305,7 +305,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
   )
 
   fun testExtractForPug() = doExtractTest(
-"""<template lang ="pug">
+    """<template lang ="pug">
     div(v-for="item in items")
         <selection>span Text: {{ item + data1 }}</selection>
 </template>
@@ -322,7 +322,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     };
 </script>""",
 
-"""<template lang ="pug">
+    """<template lang ="pug">
     div(v-for="item in items")
         NewComponent(:data1="data1" :item="item")
 </template>
@@ -341,7 +341,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     };
 </script>""",
 
-"""<template lang="pug">
+    """<template lang="pug">
     span Text: {{ item + data1 }}
 </template>
 <script>
@@ -356,7 +356,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
   )
 
   fun testSameNamedFunctionCalls() = doExtractTest(
-"""<template>
+    """<template>
     <selection><p>Very first paragraph {{oneMore}}</p>
     <p>Second paragraph {{oneMore}}</p>
     <p>Third paragraph {{oneMore()}}</p>
@@ -371,7 +371,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>
 """,
 
-"""<template>
+    """<template>
     <NewComponent :one-more="oneMore"/>
 </template>
 <script>
@@ -385,7 +385,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>
 """,
 
-"""<template>
+    """<template>
     <p>Very first paragraph {{oneMore}}</p>
     <p>Second paragraph {{oneMore}}</p>
     <p>Third paragraph {{oneMore()}}</p>
@@ -401,7 +401,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>""", 4)
 
   fun testSameNamedProps() = doExtractTest(
-"""<template>
+    """<template>
     <selection><p>Very first paragraph {{propWithCamel}}</p>
     <p>Second paragraph {{propWithCamel}}</p></selection>
 </template>
@@ -414,7 +414,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>
 """,
 
-"""<template>
+    """<template>
     <NewComponent :prop-with-camel="propWithCamel"/>
 </template>
 <script>
@@ -428,7 +428,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 </script>
 """,
 
-"""<template>
+    """<template>
     <p>Very first paragraph {{propWithCamel}}</p>
     <p>Second paragraph {{propWithCamel}}</p>
 </template>
@@ -501,11 +501,11 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 
   fun testFindImport() {
     myFixture.configureByText("OtherName.vue",
-"""
+                              """
 <script>export default { name: "cool-stuck" }</script>
 """)
     doExtractTest(
-"""
+      """
 <template>
   <caret><cool-stuck>
     <p>
@@ -520,8 +520,8 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """
-,
-"""
+      ,
+      """
 <template>
     <NewComponent/>
 </template>
@@ -532,7 +532,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """,
-"""<template>
+      """<template>
     <cool-stuck>
         <p>
             Inner Text
@@ -577,7 +577,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """,
-"""<template>
+      """<template>
     <cool-stuck>
         <p>
             Inner Text
@@ -595,7 +595,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 
   fun testExtractWithMemberAccess() {
     doExtractTest(
-"""
+      """
 <template>
     <caret><div v-if="item">
         <p>
@@ -609,7 +609,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """,
-"""
+      """
 <template>
     <NewComponent :item="item"/>
 </template>
@@ -621,7 +621,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """,
-"""<template>
+      """<template>
     <div v-if="item">
         <p>
             {{ item.kids ? item.descendants + ' comments' : 'No comments yet.' }}
@@ -641,7 +641,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 
   fun testExtractWithStyle() {
     doExtractTest(
-"""
+      """
 <style scoped>
     .example {
         color: red;
@@ -661,7 +661,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """,
-"""<style>
+      """<style>
     .other {}
 </style>
 
@@ -677,7 +677,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
     }
 </script>
 """,
-"""<template>
+      """<template>
     <div class="example">hi</div>
 </template>
 <script>
@@ -696,7 +696,7 @@ class VueExtractComponentTest: LightPlatformCodeInsightFixtureTestCase() {
 
   fun testExtractWithStylusStyle() {
     doExtractTest(
-"""
+      """
 <template>
   <transition>
     <caret><svg class="spinner" :class="{ show: show }" v-show="show" width="44px" height="44px" viewBox="0 0 44 44">
@@ -755,7 +755,7 @@ ${'$'}duration = 1.4s
     transform rotate(450deg)
 </style>
 """,
-"""
+      """
 <template>
   <transition>
       <NewComponent :show="show"/>
@@ -796,7 +796,7 @@ ${'$'}duration = 1.4s
     transform rotate(450deg)
 </style>
 """,
-"""<template>
+      """<template>
     <svg class="spinner" :class="{ show: show }" v-show="show" width="44px" height="44px" viewBox="0 0 44 44">
         <circle class="path" fill="none" stroke-width="4" stroke-linecap="round" cx="22" cy="22" r="20"></circle>
     </svg>
@@ -817,8 +817,8 @@ ${'$'}duration = 1.4s
         transition opacity .15s ease
         animation rotator ${'$'}duration linear infinite
         animation-play-state paused""" +
-// TODO fix the refactoring: below should be only 1 blank line!
-"""
+      // TODO fix the refactoring: below should be only 1 blank line!
+      """
 
 
     @keyframes rotator
@@ -848,7 +848,7 @@ ${'$'}duration = 1.4s
 
   fun testExtractWithScss() {
     doExtractTest(
-"""
+      """
 <template>
     <caret><header class="">
         <h1>TEXT <a class="t-btn" @click="showTools"><span></span></a></h1>
@@ -916,7 +916,7 @@ ${'$'}duration = 1.4s
     }
 </style>
 """,
-"""
+      """
 <template>
     <NewComponent :show-tools="showTools"/>
 </template>
@@ -975,7 +975,7 @@ ${'$'}duration = 1.4s
     }
 </style>
 """,
-"""<template>
+      """<template>
     <header class="">
         <h1>TEXT <a class="t-btn" @click="showTools"><span></span></a></h1>
     </header>
@@ -1030,7 +1030,7 @@ ${'$'}duration = 1.4s
         }
     }
 </style>"""
-      )
+    )
   }
 
   fun testExtractSingleTagWithImportInStyle() = doExtractTest(
@@ -1041,7 +1041,7 @@ ${'$'}duration = 1.4s
   @import './stylus/main'
 </style>""",
 
-"""<template>
+    """<template>
     <NewComponent/>
 </template>
 <style lang="stylus">
@@ -1086,7 +1086,7 @@ ${'$'}duration = 1.4s
         TestCase.assertEquals(numTags, context!!.size)
 
         VueExtractComponentRefactoring(myFixture.project, context,
-                                                                                       myFixture.editor).perform(newCompName)
+                                       myFixture.editor).perform(newCompName)
 
         myFixture.checkResult(modified)
 
@@ -1097,7 +1097,8 @@ ${'$'}duration = 1.4s
           myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
           myFixture.checkResult(newText)
         }
-      } finally {
+      }
+      finally {
         currentSettings.BLANK_LINES_BEFORE_IMPORTS = before
         currentSettings.BLANK_LINES_AFTER_IMPORTS = after
       }

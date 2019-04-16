@@ -23,7 +23,7 @@ class VueParameterInfoTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testTypeScriptParametersHint() {
     myFixture.addFileToProject("api.vue", "<script lang='ts'>\n" +
                                           "    export function isApiResponse(s:String,b:boolean){}\n" +
-                                          "</script>");
+                                          "</script>")
     myFixture.configureByText("a.vue", "<script lang='ts'>\n" +
                                        "    import {isApiResponse} from 'api'\n" +
                                        "    isApiResponse(<caret>)\n" +

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.liveTemplate
 
 import com.intellij.codeInsight.template.EverywhereContextType
@@ -32,7 +33,7 @@ class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", Everywh
       val element = file.findElementAt(offset) ?: return false
 
       if (VueFileType.INSTANCE != file.fileType) {
-        return hasVue(file.project) &&  notVueFileType != null && notVueFileType.invoke(element)
+        return hasVue(file.project) && notVueFileType != null && notVueFileType.invoke(element)
       }
 
       val parentTag = PsiTreeUtil.getParentOfType(element, XmlTag::class.java) ?: return false
@@ -60,8 +61,10 @@ class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", Everywh
         }
         if (HtmlUtil.isScriptTag(tag)) {
           scriptContextEvaluator != null && scriptContextEvaluator.invoke(element)
-        } else tag != null && forTagInsert
-      } else {
+        }
+        else tag != null && forTagInsert
+      }
+      else {
         parentXml != null && forAttributeInsert
       }
     }

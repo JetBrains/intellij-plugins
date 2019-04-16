@@ -47,7 +47,8 @@ open class VueLexerTest : LexerTestCase() {
   override fun tearDown() {
     try {
       onTearDown.forEach(Runnable::run)
-    } finally {
+    }
+    finally {
       super.tearDown()
     }
   }
@@ -60,7 +61,7 @@ open class VueLexerTest : LexerTestCase() {
     }
   }
 
-  private fun <T, KeyT> addExplicitExtension(collector: KeyedExtensionCollector<T, KeyT>, key : KeyT, t : T) {
+  private fun <T, KeyT> addExplicitExtension(collector: KeyedExtensionCollector<T, KeyT>, key: KeyT, t: T) {
     if (!collector.forKey(key).isEmpty()) return
     collector.addExplicitExtension(key, t)
     onTearDown.add(Runnable { collector.removeExplicitExtension(key, t) })
@@ -72,7 +73,8 @@ open class VueLexerTest : LexerTestCase() {
     val extensionName = EmbeddedTokenTypesProvider.EXTENSION_POINT_NAME
     val area = Extensions.getRootArea()
     if (!area.hasExtensionPoint(extensionName)) {
-      area.registerExtensionPoint(extensionName, EmbeddedTokenTypesProvider::class.java.name, ExtensionPoint.Kind.INTERFACE, testRootDisposable)
+      area.registerExtensionPoint(extensionName, EmbeddedTokenTypesProvider::class.java.name, ExtensionPoint.Kind.INTERFACE,
+                                  testRootDisposable)
     }
     val extensionPoint = area.getExtensionPoint<EmbeddedTokenTypesProvider>(extensionName)
     val sassTokenTypesProvider = SassTokenTypesProvider()
@@ -93,7 +95,8 @@ open class VueLexerTest : LexerTestCase() {
     addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavaScriptSupportLoader.ECMA_SCRIPT_6, ECMA6SyntaxHighlighterFactory())
 
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptContentProvider())
-    addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptSyntaxHighlighterFactory())
+    addExplicitExtension(SyntaxHighlighterFactory.LANGUAGE_FACTORY, JavaScriptSupportLoader.TYPESCRIPT,
+                         TypeScriptSyntaxHighlighterFactory())
 
     addExplicitExtension(LanguageHtmlScriptContentProvider.INSTANCE, JavaScriptSupportLoader.TYPESCRIPT_JSX,
                          TypeScriptJsxContentProvider())

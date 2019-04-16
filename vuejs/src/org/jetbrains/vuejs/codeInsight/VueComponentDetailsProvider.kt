@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.lookup.LookupElement
@@ -40,30 +28,30 @@ class VueComponentDetailsProvider {
     private val EVENT_MODIFIERS = setOf(".stop", ".prevent", ".capture", ".self", ".once", ".passive", ".native")
     private val NO_VALUE = mapOf(Pair("@", EVENT_MODIFIERS), Pair("v-on:", EVENT_MODIFIERS))
 
-    fun attributeAllowsNoValue(attributeName : String) : Boolean {
+    fun attributeAllowsNoValue(attributeName: String): Boolean {
       return NO_VALUE.any {
         val cutPrefix = attributeName.substringAfter(it.key, "")
         !cutPrefix.isEmpty() && it.value.any { cutPrefix.endsWith(it) }
       }
     }
 
-    fun getBoundName(attributeName : String): String? {
+    fun getBoundName(attributeName: String): String? {
       return PREFIX_VARIANTS.mapNotNull {
         val after = attributeName.substringAfter(it.key, "")
         if (after.isNotEmpty()) {
           return after.substringBefore(".", after)
         }
         return@mapNotNull null
-      }.firstOrNull() ?:
-        if (attributeName.contains('.')) {
-          // without prefix, but might be with postfix
-          attributeName.substringBefore(".", "")
-        } else
-          // if just attribute name should be used, return null
-          null
+      }.firstOrNull()
+             ?: if (attributeName.contains('.')) {
+               // without prefix, but might be with postfix
+               attributeName.substringBefore(".", "")
+             }
+             // if just attribute name should be used, return null
+             else null
     }
 
-    fun nameVariantsFilter(attributeName : String) : (String, PsiElement) -> Boolean {
+    fun nameVariantsFilter(attributeName: String): (String, PsiElement) -> Boolean {
       val prefix = PREFIX_VARIANTS.keys.find { attributeName.startsWith(it) }
       val normalizedName = if (prefix != null) attributeName.substring(prefix.length) else attributeName
       val nameVariants = getNameVariants(normalizedName, true)
@@ -116,7 +104,7 @@ class VueComponentDetailsProvider {
     val filter = nameVariantsFilter(attrName)
     val direct = VueComponentOwnDetailsProvider.getDetails(descriptor, filter, onlyPublic, true).firstOrNull()
     if (direct != null) return direct
-    val holder : Ref<VueAttributeDescriptor> = Ref()
+    val holder: Ref<VueAttributeDescriptor> = Ref()
     iterateProviders(descriptor, descriptor.project, {
       holder.set(VueComponentOwnDetailsProvider.getDetails(it, filter, onlyPublic, true).firstOrNull())
       holder.isNull
@@ -142,7 +130,9 @@ class VueComponentDetailsProvider {
     })
   }
 
-  private fun iterateProviders(descriptor: JSObjectLiteralExpression?, project: Project, processor : (JSObjectLiteralExpression) -> Boolean) {
+  private fun iterateProviders(descriptor: JSObjectLiteralExpression?,
+                               project: Project,
+                               processor: (JSObjectLiteralExpression) -> Boolean) {
     val visited = mutableSetOf<JSObjectLiteralExpression>()
     val queue = ArrayDeque<Ref<JSObjectLiteralExpression>>()
     queue.add(Ref(descriptor))

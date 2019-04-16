@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.cli
 
 import com.intellij.ide.RecentProjectsManager
@@ -200,7 +188,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   private fun addInput(message: String, defaultValue: String): () -> String {
     val formBuilder = questionHeader(message)
     val field = JBTextField(defaultValue)
-    field.addKeyListener(object: KeyAdapter() {
+    field.addKeyListener(object : KeyAdapter() {
       override fun keyReleased(e: KeyEvent?) {
         validationListener.invoke(field.text.isNotBlank())
       }
@@ -216,7 +204,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
     panel.removeAll()
     val formBuilder = FormBuilder.createFormBuilder()
     val progressText = if (isOldPackage) "Running \"vue-init\" with the \"$generatorName\" template"
-      else "Running \"vue create\""
+    else "Running \"vue create\""
     val titleLabel = JLabel(progressText)
     RelativeFont.ITALIC.install<JLabel>(titleLabel)
     formBuilder.addComponent(titleLabel)
@@ -234,7 +222,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   private fun addChoices(message: String, choices: List<VueCreateProjectProcess.Choice>): () -> String {
     val formBuilder = questionHeader(message)
     val box = ComboBox<VueCreateProjectProcess.Choice>(choices.toTypedArray())
-    box.renderer = object: ListCellRendererWrapper<VueCreateProjectProcess.Choice?>() {
+    box.renderer = object : ListCellRendererWrapper<VueCreateProjectProcess.Choice?>() {
       override fun customize(list: JList<*>?, value: VueCreateProjectProcess.Choice?, index: Int, selected: Boolean, hasFocus: Boolean) {
         if (value != null) {
           setText(value.name)
@@ -295,11 +283,14 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   fun question(question: VueCreateProjectProcess.Question) {
     if (question.type == VueCreateProjectProcess.QuestionType.Input) {
       currentControl = addInput(question.message, question.defaultVal)
-    } else if (question.type == VueCreateProjectProcess.QuestionType.Confirm) {
+    }
+    else if (question.type == VueCreateProjectProcess.QuestionType.Confirm) {
       currentControl = addConfirm(question.message)
-    } else if (question.type == VueCreateProjectProcess.QuestionType.List) {
+    }
+    else if (question.type == VueCreateProjectProcess.QuestionType.List) {
       currentControl = addChoices(question.message, question.choices)
-    } else if (question.type == VueCreateProjectProcess.QuestionType.Checkbox) {
+    }
+    else if (question.type == VueCreateProjectProcess.QuestionType.Checkbox) {
       currentCheckboxControl = addCheckboxes(question.message, question.choices)
     }
     if (currentPrefferdFocusOwner != null) currentPrefferdFocusOwner!!.requestFocus()

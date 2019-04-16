@@ -32,11 +32,13 @@ class VueHighlightingLexerTest : VueLexerTest() {
 
     val area = Extensions.getRootArea()
     if (!area.hasExtensionPoint(CodeStyleSettingsProvider.EXTENSION_POINT_NAME)) {
-      area.registerExtensionPoint(CodeStyleSettingsProvider.EXTENSION_POINT_NAME, CodeStyleSettingsProvider::class.java.name, ExtensionPoint.Kind.INTERFACE, testRootDisposable)
+      area.registerExtensionPoint(CodeStyleSettingsProvider.EXTENSION_POINT_NAME, CodeStyleSettingsProvider::class.java.name,
+                                  ExtensionPoint.Kind.INTERFACE, testRootDisposable)
     }
 
     if (!area.hasExtensionPoint(LanguageCodeStyleSettingsProvider.EP_NAME)) {
-      area.registerExtensionPoint(LanguageCodeStyleSettingsProvider.EP_NAME, LanguageCodeStyleSettingsProvider::class.java.name, ExtensionPoint.Kind.INTERFACE, testRootDisposable)
+      area.registerExtensionPoint(LanguageCodeStyleSettingsProvider.EP_NAME, LanguageCodeStyleSettingsProvider::class.java.name,
+                                  ExtensionPoint.Kind.INTERFACE, testRootDisposable)
     }
 
     val settings = CodeStyleSettings()
@@ -48,7 +50,8 @@ class VueHighlightingLexerTest : VueLexerTest() {
   override fun tearDown() {
     try {
       CodeStyleSettingsManager.getInstance().dropTemporarySettings()
-    } finally {
+    }
+    finally {
       super.tearDown()
     }
   }

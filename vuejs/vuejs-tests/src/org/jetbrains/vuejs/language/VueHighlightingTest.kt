@@ -99,7 +99,7 @@ class VueHighlightingTest : LightPlatformCodeInsightFixtureTestCase() {
   }
 
   fun testShorthandArrowFunctionParsedInECMAScript5InTemplate() {
-    testWithinLanguageLevel(JSLanguageLevel.ES5, myFixture.project, ThrowableRunnable<Exception>  {
+    testWithinLanguageLevel(JSLanguageLevel.ES5, myFixture.project, ThrowableRunnable<Exception> {
       myFixture.configureByText("ShorthandArrowFunctionInTemplate.vue", """
   <template>
       <div id="app">
@@ -371,7 +371,7 @@ export default {
 
   fun testVForInPug() {
     JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
-    myFixture.configureByText("VForInPug.vue", """
+      myFixture.configureByText("VForInPug.vue", """
 <template lang="pug">
   ul
     li(v-for="itemP in itemsP") {{ itemP.message }}
@@ -388,13 +388,13 @@ export default {
   }
 </script>
     """)
-    com.intellij.testFramework.runInInitMode{ myFixture.checkHighlighting() }
+      com.intellij.testFramework.runInInitMode { myFixture.checkHighlighting() }
     })
   }
 
   fun testTopLevelThisInInjection() {
     JSTestUtils.testES6(myFixture.project, ThrowableRunnable<Exception> {
-    myFixture.configureByText("TopLevelThisInInjection.vue", """
+      myFixture.configureByText("TopLevelThisInInjection.vue", """
 <template>
 {{ this.topLevelProp }}
 </template>
@@ -404,19 +404,19 @@ export default {
   }
 </script>
 """)
-    myFixture.checkHighlighting()
-  })
+      myFixture.checkHighlighting()
+    })
   }
 
   fun testGlobalComponentLiteral() {
-      myFixture.configureByText("index.js", """
+    myFixture.configureByText("index.js", """
 Vue.component('global-comp-literal', {
   props: {
     insideGlobalCompLiteral: {}
   }
 });
 """)
-      myFixture.configureByText("GlobalComponentLiteral.vue", """
+    myFixture.configureByText("GlobalComponentLiteral.vue", """
 <template>
   <global-comp-literal inside-global-comp-literal=222></global-comp-literal>
 </template>
@@ -561,8 +561,8 @@ Vue.component('global-comp-literal', {
     var someObject = []
 </script>
 """)
-    val list = myFixture.doHighlighting().filter { it.severity.name == "TYPO"}
-    val typoRanges : MutableSet<Pair<Int, Int>> = mutableSetOf()
+    val list = myFixture.doHighlighting().filter { it.severity.name == "TYPO" }
+    val typoRanges: MutableSet<Pair<Int, Int>> = mutableSetOf()
     for (info in list) {
       val pair = Pair(info.startOffset, info.endOffset)
       if (!typoRanges.add(pair)) TestCase.assertTrue("Duplicate $pair", false)
@@ -718,7 +718,7 @@ Vue.component('global-comp-literal', {
   fun testEmptyTagsForVueAreAllowed() {
     JSTestUtils.testES6<Exception>(myFixture.project, {
       myFixture.configureByText("EmptyTagsForVueAreAllowed.vue",
-"""
+                                """
 <template>
   <test-empty-tags/>
   <test-empty-tags></test-empty-tags>
@@ -793,7 +793,7 @@ Vue.component('global-comp-literal', {
 
   fun testTsxIsNormallyParsed() {
     myFixture.configureByText("TsxIsNormallyParsed.vue",
-"""
+                              """
 <script lang="tsx">
     export default {
         name: "with-tsx",
@@ -1190,7 +1190,7 @@ var <info descr="local variable">i</info>:<info descr="class">SpaceInterface</in
 fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = false) {
   val lang = if (tsLang) " lang=\"ts\"" else ""
   fixture.configureByText("LongComponent.vue",
-                            """
+                          """
   <script$lang>
   import { Component, Vue } from 'vue-property-decorator';
   @Component({
@@ -1201,7 +1201,7 @@ fun createTwoClassComponents(fixture: CodeInsightTestFixture, tsLang: Boolean = 
   </script>
   """)
   fixture.configureByText("ShortComponent.vue",
-                            """
+                          """
   <script$lang>
   import { Component, Vue } from 'vue-property-decorator';
   @Component

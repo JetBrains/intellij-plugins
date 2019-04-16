@@ -13,8 +13,8 @@ import com.intellij.util.ThrowableRunnable
 
 private const val BASE_PATH = "/ts_imports"
 
-class VueModuleImportTest: JSImportHighlightingAndCompletionLightTestBase() {
-  
+class VueModuleImportTest : JSImportHighlightingAndCompletionLightTestBase() {
+
   override fun getBasePath(): String = BASE_PATH
   override fun getExtension(): String = "vue"
   override fun getTestDataPath(): String = getVueTestDataPath() + basePath
@@ -54,10 +54,10 @@ class VueModuleImportTest: JSImportHighlightingAndCompletionLightTestBase() {
   }
 
   fun testAutoImportFromVueWithJs() {
-    JavaScriptFormatterTest.setTempSettings(project, JavascriptLanguage.INSTANCE, Consumer<JSCodeStyleSettings> { 
+    JavaScriptFormatterTest.setTempSettings(project, JavascriptLanguage.INSTANCE, Consumer<JSCodeStyleSettings> {
       it.USE_EXPLICIT_JS_EXTENSION = JSCodeStyleSettings.BooleanWithGlobalOption.TRUE
     })
-    
+
     JSTestUtils.testES6(project, ThrowableRunnable<RuntimeException> {
       doTestActionWithCopyDirectory("Insert 'import HelloWorld from \"./src/HelloWorld.vue\"'", "vue", null, null)
     })

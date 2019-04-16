@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language
 
 import com.intellij.lang.HtmlScriptContentProvider
@@ -12,9 +12,9 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
 class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHandledLexer {
-//  companion object {
-//    val SEEN_INTERPOLATION:Int = 0x1000
-//  }
+  //  companion object {
+  //    val SEEN_INTERPOLATION:Int = 0x1000
+  //  }
   companion object {
     const val SEEN_VUE_ATTRIBUTE: Int = 0x10000
   }
@@ -61,7 +61,7 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
     seenStylesheetType = true
   }
 
-  override fun setSeenTemplate(template:Boolean) {
+  override fun setSeenTemplate(template: Boolean) {
     seenTemplate = template
   }
 
@@ -91,10 +91,10 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
       (if (seenTemplate) VueTemplateTagHandler.SEEN_TEMPLATE
       else if (seenVueAttribute) SEEN_VUE_ATTRIBUTE
       else 0)
-//     or (if (interpolationLexer != null) SEEN_INTERPOLATION else 0)
+    //     or (if (interpolationLexer != null) SEEN_INTERPOLATION else 0)
   }
 
-  override fun endOfTheEmbeddment(name:String?):Boolean {
+  override fun endOfTheEmbeddment(name: String?): Boolean {
     return super.endOfTheEmbeddment(name) ||
            seenTemplate && "template" == name
   }
@@ -109,61 +109,61 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
     if (seenVueAttribute && type == XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
       return VueElementTypes.EMBEDDED_JS
     }
-//    if (interpolationLexer != null) return interpolationLexer!!.tokenType
+    //    if (interpolationLexer != null) return interpolationLexer!!.tokenType
     return type
   }
 
   //  override fun getTokenStart(): Int {
-//    if (interpolationLexer != null) {
-//      return interpolationStart + interpolationLexer!!.tokenStart
-//    }
-//    return super.getTokenStart()
-//  }
-//
-//  override fun getTokenEnd(): Int {
-//    if (interpolationLexer != null) {
-//      return interpolationStart + interpolationLexer!!.tokenEnd
-//    }
-//    return super.getTokenEnd()
-//  }
+  //    if (interpolationLexer != null) {
+  //      return interpolationStart + interpolationLexer!!.tokenStart
+  //    }
+  //    return super.getTokenStart()
+  //  }
+  //
+  //  override fun getTokenEnd(): Int {
+  //    if (interpolationLexer != null) {
+  //      return interpolationStart + interpolationLexer!!.tokenEnd
+  //    }
+  //    return super.getTokenEnd()
+  //  }
 
-//  override fun advance() {
-//    if (interpolationLexer != null) {
-//      interpolationLexer!!.advance()
-//      try {
-//        if (interpolationLexer!!.tokenType != null) {
-//          return
-//        }
-//      }
-//      catch (error: Error) {
-//        Logger.getInstance(VueLexer::class.java).error(interpolationLexer!!.bufferSequence)
-//      }
-//
-//      interpolationLexer = null
-//      interpolationStart = -1
-//      return
-//    }
-//    super.advance()
-//    val originalType = super.getTokenType()
-//    if (originalType === XmlTokenType.XML_DATA_CHARACTERS || originalType === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
-//      var type: IElementType? = originalType!!
-//      interpolationStart = super.getTokenStart()
-//      val text = StringBuilder()
-//      while (type === XmlTokenType.XML_DATA_CHARACTERS ||
-//             type === XmlTokenType.XML_REAL_WHITE_SPACE ||
-//             type === XmlTokenType.XML_WHITE_SPACE ||
-//             type === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN ||
-//             type === XmlTokenType.XML_CHAR_ENTITY_REF ||
-//             type === XmlTokenType.XML_ENTITY_REF_TOKEN) {
-//        text.append(super.getTokenText())
-//        super.advance()
-//        type = tokenType
-//      }
-//      val lexer = VueInterpolationLexer("{{", "}}", originalType)
-//      lexer.start(text)
-//      lexer.advance()
-//      interpolationLexer = lexer
-//    }
-//  }
+  //  override fun advance() {
+  //    if (interpolationLexer != null) {
+  //      interpolationLexer!!.advance()
+  //      try {
+  //        if (interpolationLexer!!.tokenType != null) {
+  //          return
+  //        }
+  //      }
+  //      catch (error: Error) {
+  //        Logger.getInstance(VueLexer::class.java).error(interpolationLexer!!.bufferSequence)
+  //      }
+  //
+  //      interpolationLexer = null
+  //      interpolationStart = -1
+  //      return
+  //    }
+  //    super.advance()
+  //    val originalType = super.getTokenType()
+  //    if (originalType === XmlTokenType.XML_DATA_CHARACTERS || originalType === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN) {
+  //      var type: IElementType? = originalType!!
+  //      interpolationStart = super.getTokenStart()
+  //      val text = StringBuilder()
+  //      while (type === XmlTokenType.XML_DATA_CHARACTERS ||
+  //             type === XmlTokenType.XML_REAL_WHITE_SPACE ||
+  //             type === XmlTokenType.XML_WHITE_SPACE ||
+  //             type === XmlTokenType.XML_ATTRIBUTE_VALUE_TOKEN ||
+  //             type === XmlTokenType.XML_CHAR_ENTITY_REF ||
+  //             type === XmlTokenType.XML_ENTITY_REF_TOKEN) {
+  //        text.append(super.getTokenText())
+  //        super.advance()
+  //        type = tokenType
+  //      }
+  //      val lexer = VueInterpolationLexer("{{", "}}", originalType)
+  //      lexer.start(text)
+  //      lexer.advance()
+  //      interpolationLexer = lexer
+  //    }
+  //  }
 }
 

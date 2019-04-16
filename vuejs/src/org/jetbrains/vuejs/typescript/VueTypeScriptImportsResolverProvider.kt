@@ -20,7 +20,7 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
 
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return false
     val module = findModule(psiFile)
-    
+
     return module != null && DialectDetector.isTypeScript(module)
   }
 
@@ -39,7 +39,7 @@ class VueTypeScriptImportsResolverProvider : TypeScriptImportsResolverProvider {
 
   override fun createResolver(project: Project, config: TypeScriptConfig): TypeScriptFileImportsResolver? {
     if (!hasVue(project)) return null
-    
+
     val defaultProvider = TypeScriptImportsResolverProvider.getDefaultProvider(project, config)
     val nodeProcessor = typeScriptNodeResolver(project)
     val vueResolver = VueFileImportsResolver(project, config.resolveContext, nodeProcessor)

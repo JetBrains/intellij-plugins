@@ -8,9 +8,7 @@ import com.intellij.lang.javascript.service.JSLanguageServiceBase;
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider;
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestBase;
 import com.intellij.lang.javascript.typescript.service.TypeScriptServiceTestRunner;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +17,6 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static org.jetbrains.vuejs.language.VueTestUtilKt.getVueTestDataPath;
 import static org.jetbrains.vuejs.language.VueTestUtilKt.vueRelativeTestDataPath;
 
 @RunWith(TypeScriptServiceTestRunner.class)
@@ -76,7 +73,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   @TypeScriptVersion(TypeScriptVersions.TS28)
   public void testSimpleVueNoTs() throws Exception {
     doTestWithCopyDirectory();
-    
+
     myFixture.configureByFile("SimpleVue.vue");
     checkHighlightingByOptions(false);
   }
@@ -85,7 +82,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   public void testSimpleVueEditing() throws Exception {
     doTestWithCopyDirectory();
     myFixture.type('\b');
-    
+
     checkAfterFile("vue");
     myFixture.type('s');
     checkAfterFile("2.vue");
@@ -109,5 +106,4 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
     myFixture.type('/');
     checkAfterFile("2.vue");
   }
-
 }

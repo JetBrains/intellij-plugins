@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.Language
@@ -12,13 +13,13 @@ import org.jetbrains.vuejs.language.VueHandledLexer
 /**
  * @author Irina.Chernushina on 9/21/2017.
  */
-class VueReferenceContributor: PsiReferenceContributor() {
+class VueReferenceContributor : PsiReferenceContributor() {
   companion object {
     private val SRC_ATTRIBUTE = XmlPatterns.xmlAttributeValue("src").inside(XmlPatterns.xmlTag().withLocalName("style"))
   }
 
   override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-    registrar.registerReferenceProvider(SRC_ATTRIBUTE, object: PsiReferenceProvider() {
+    registrar.registerReferenceProvider(SRC_ATTRIBUTE, object : PsiReferenceProvider() {
       override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
         val text = ElementManipulators.getValueText(element)
         if (!HtmlUtil.hasHtmlPrefix(text)) {

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.language
 
 import com.intellij.lexer.LexerBase
@@ -5,10 +6,10 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
-class VueInterpolationLexer(val prefix:String, val suffix:String, val type:IElementType) : LexerBase() {
+class VueInterpolationLexer(val prefix: String, val suffix: String, val type: IElementType) : LexerBase() {
   private var buffer: CharSequence? = null
   private var state = 0
-  private var element:IElementType? = null
+  private var element: IElementType? = null
   private var start = 0
   private var end = 0
 
@@ -34,17 +35,19 @@ class VueInterpolationLexer(val prefix:String, val suffix:String, val type:IElem
       0 -> {
         if (buffer!![start] == '\n') {
           element = XmlTokenType.XML_REAL_WHITE_SPACE
-          while(end < buffer!!.length && StringUtil.isWhiteSpace(buffer!![end])) end++
+          while (end < buffer!!.length && StringUtil.isWhiteSpace(buffer!![end])) end++
           return
         }
         val lineEnd = buffer!!.indexOf('\n', end)
         val prefixStart = buffer!!.indexOf(prefix, end)
         if (lineEnd >= 0 && (lineEnd < prefixStart || prefixStart < 0)) {
           end = lineEnd
-        } else if (prefixStart >= 0) {
+        }
+        else if (prefixStart >= 0) {
           end = prefixStart + prefix.length
           state = 1
-        } else {
+        }
+        else {
           end = buffer!!.length
         }
         element = type
@@ -54,7 +57,8 @@ class VueInterpolationLexer(val prefix:String, val suffix:String, val type:IElem
         if (suffixStart >= 0) {
           end = suffixStart
           state = 0
-        } else {
+        }
+        else {
           end = buffer!!.length
         }
         element = VueElementTypes.EMBEDDED_JS

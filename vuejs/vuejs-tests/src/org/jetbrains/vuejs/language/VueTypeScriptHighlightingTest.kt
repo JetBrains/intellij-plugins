@@ -47,7 +47,7 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
     "ExtendStandardInterface"
   )
 
-  override fun doTestWithExplicitAssertOnRecursion(assertOnRecursion: Boolean, 
+  override fun doTestWithExplicitAssertOnRecursion(assertOnRecursion: Boolean,
                                                    checkWeakWarnings: Boolean, vararg fileNames: String?) {
     LOG.info("Running overridden code for vue")
     if (skipTest()) {
@@ -83,11 +83,11 @@ class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
 
   override fun checkHighlightingByRelativePath(relativePath: String?) {
     val text = surroundWithScriptTag(JSDaemonAnalyzerLightTestCase.loadText(relativePath))
-    JSDaemonAnalyzerLightTestCase.checkHighlightByFile(myFixture, relativePath,text)
+    JSDaemonAnalyzerLightTestCase.checkHighlightByFile(myFixture, relativePath, text)
   }
 
   private fun surroundWithScriptTag(text: Any) = "<script lang=\"ts\">\n$text\n</script>"
-  
+
   // these tests need to be ignored with additional code:
   override fun testIntermediateResultsNotCachedForRecursiveTypes() {
     LOG.info("Skipping muted test")

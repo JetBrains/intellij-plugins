@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.cli
 
 import com.google.gson.JsonObject
@@ -58,15 +46,20 @@ class VueCreateProjectProcess(private val folder: Path,
     private const val DOMAIN = "vue-create-project"
     val LOG: Logger = Logger.getInstance(VueCreateProjectProcess::class.java)
   }
+
   private val processHandlerRef = AtomicReference<KillableProcessHandler>()
   private val questionRef = AtomicReference<Question>()
-  @Volatile private var error: String? = null
-  @Volatile private var processState = VueProjectCreationState.Starting
+  @Volatile
+  private var error: String? = null
+  @Volatile
+  private var processState = VueProjectCreationState.Starting
 
   private val serverDisposer = Disposable {}
   private val rpcServer: JsonRpcServer
-  @Volatile private var lastMessage: String? = null
-  @Volatile var listener: (() -> Unit)? = null
+  @Volatile
+  private var lastMessage: String? = null
+  @Volatile
+  var listener: (() -> Unit)? = null
 
   init {
     if (parentDisposable != null) Disposer.register(parentDisposable, this)
@@ -108,7 +101,8 @@ class VueCreateProjectProcess(private val folder: Path,
       fun notifyStarted() {
         logProgress("notify started")
         val packagePath = Paths.get(vuePackage.systemDependentPath)
-        rpcServer.send(DOMAIN, "start", packagePath.parent.normalize().toString(), packagePath.fileName.toString(), templateName, projectName)
+        rpcServer.send(DOMAIN, "start", packagePath.parent.normalize().toString(), packagePath.fileName.toString(),
+                       templateName, projectName)
       }
     }), false, serverDisposer)
 
@@ -131,7 +125,8 @@ class VueCreateProjectProcess(private val folder: Path,
     }
     if (ProjectManager.getInstance().openProjects.isEmpty()) {
       ApplicationManager.getApplication().executeOnPooledThread { task.run(EmptyProgressIndicator()) }
-    } else {
+    }
+    else {
       ProgressManager.getInstance().run(task)
     }
   }
@@ -165,7 +160,7 @@ class VueCreateProjectProcess(private val folder: Path,
     val handler = processHandlerRef.get() ?: return
     val lastMessageCopy = lastMessage
     if (lastMessageCopy != null) indicator.text = filterProgressText(lastMessageCopy)
-    handler.addProcessListener(object: ProcessAdapter() {
+    handler.addProcessListener(object : ProcessAdapter() {
       override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
         if (event.text.any { Character.isLetter(it) }) {
           indicator.text = filterProgressText(event.text)
@@ -195,7 +190,7 @@ class VueCreateProjectProcess(private val folder: Path,
 
     indicator.text = "Installing packages to create a new Vue project..."
     val npmPkg = NpmManager.getInstance(ProjectManager.getInstance().defaultProject).getPackage(interpreter)
-    val installCommandLine : GeneralCommandLine
+    val installCommandLine: GeneralCommandLine
     if (npmPkg != null && npmPkg.isValid) {
       installCommandLine = NpmUtil.createNpmCommandLine(folder, interpreter, npmPkg, NpmCommand.ADD, listOf("ij-rpc-client"))
     }
@@ -208,7 +203,8 @@ class VueCreateProjectProcess(private val folder: Path,
     }
 
     indicator.text = "Starting Vue CLI..."
-    val commandLine = createCommandLine(folder, localInterpreter.interpreterSystemDependentPath) ?: return reportError("Can not run Vue project generation service")
+    val commandLine = createCommandLine(folder, localInterpreter.interpreterSystemDependentPath)
+                      ?: return reportError("Can not run Vue project generation service")
     val processHandler: KillableProcessHandler?
     try {
       processHandler = KillableProcessHandler(commandLine)
@@ -268,7 +264,7 @@ class VueCreateProjectProcess(private val folder: Path,
     FileUtil.copyFileOrDir(targetPath.toFile(), copy)
     val commandLine = GeneralCommandLine(interpreterPath)
     commandLine.workDirectory = this.folder.toFile()
-//    commandLine.addParameter("--inspect-brk=61389")
+    //    commandLine.addParameter("--inspect-brk=61389")
     commandLine.addParameter(FileUtil.toSystemDependentName(copy.path))
     commandLine.addParameter(BuiltInServerManager.getInstance().port.toString())
     return commandLine
@@ -322,7 +318,11 @@ class VueCreateProjectProcess(private val folder: Path,
 
   class State(val processState: VueProjectCreationState, val globalProblem: String?, val question: Question?)
 
-  class Question(val type: QuestionType, val message: String, val defaultVal: String, val choices: List<Choice>, val validationError: String?)
+  class Question(val type: QuestionType,
+                 val message: String,
+                 val defaultVal: String,
+                 val choices: List<Choice>,
+                 val validationError: String?)
 
   class Choice(val name: String, val value: String)
 

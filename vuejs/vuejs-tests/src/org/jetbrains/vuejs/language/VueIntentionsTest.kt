@@ -37,12 +37,12 @@ class VueIntentionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
   private fun doIntentionTest(name: String) {
     val intention = myFixture.getAvailableIntention(name, getTestName(true) + ".vue")
-    if (intention == null){
+    if (intention == null) {
       TestCase.fail("Intention by name $name not found")
       return
     }
     WriteCommandAction.runWriteCommandAction(myFixture.project, { intention.invoke(myFixture.project, myFixture.editor, myFixture.file) })
-    
+
     myFixture.checkResultByFile(getTestName(true) + "_after.vue")
   }
 }

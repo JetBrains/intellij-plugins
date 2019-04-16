@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
@@ -41,23 +29,23 @@ class VueComponents {
     fun onlyLocal(elements: Collection<JSImplicitElement>): List<JSImplicitElement> {
       return elements.filter(this::isNotInLibrary)
     }
-    
+
     fun literalFor(element: PsiElement?): JSObjectLiteralExpression? {
       if (element is JSObjectLiteralExpression) return element
-      if (element  == null) return null
+      if (element == null) return null
       return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element)
         .mapNotNull { it as? JSObjectLiteralExpression }
         .firstOrNull()
     }
-    
+
     fun meaningfulExpression(element: PsiElement?): PsiElement? {
       if (element == null) return element
-      
+
       return JSStubBasedPsiTreeUtil.calculateMeaningfulElements(element)
         .firstOrNull { it !is JSEmbeddedContent }
     }
 
-    fun isNotInLibrary(element : JSImplicitElement): Boolean {
+    fun isNotInLibrary(element: JSImplicitElement): Boolean {
       val file = element.containingFile.viewProvider.virtualFile
       return !JSProjectUtil.isInLibrary(file, element.project) && !JSLibraryUtil.isProbableLibraryFile(file)
     }
@@ -126,7 +114,8 @@ class VueComponents {
       val callExpression = decorator.expression as? JSCallExpression
       if (callExpression != null) {
         return "Component" == (callExpression.methodExpression as? JSReferenceExpression)?.referenceName
-      } else {
+      }
+      else {
         val reference = decorator.expression as? JSReferenceExpression
         return "Component" == reference?.referenceName
       }
