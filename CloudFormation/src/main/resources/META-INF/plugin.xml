@@ -1,4 +1,4 @@
-<idea-plugin url="https://github.com/shalupov/idea-cloudformation">
+<idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/CloudFormation">
   <id>AWSCloudFormation</id>
   <name>AWS CloudFormation</name>
 
