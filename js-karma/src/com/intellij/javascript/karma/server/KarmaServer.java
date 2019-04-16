@@ -421,7 +421,7 @@ public class KarmaServer {
           myOnBrowsersReadyCallbacks.clear();
         }
       });
-      shutdown();
+      shutdownAsync();
     });
 
     @Override
