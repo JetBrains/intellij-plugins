@@ -217,9 +217,13 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void analysis_reanalyze(List<String> roots) {
+  public void analysis_getSignature(String file, int offset, GetSignatureConsumer consumer) {
+  }
+
+  @Override
+  public void analysis_reanalyze() {
     String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities.generateAnalysisReanalyze(id, roots));
+    sendRequestToServer(id, RequestUtilities.generateAnalysisReanalyze(id));
   }
 
   @Override
@@ -319,6 +323,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void completion_listTokenDetails(String file, ListTokenDetailsConsumer consumer) {
+  }
+
+  @Override
   public void completion_setSubscriptions(List<String> subscriptions) {
     String id = generateUniqueId();
     if (subscriptions == null) {
@@ -339,6 +347,14 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void edit_dartfix(List<String> included,
+                           List<String> includedFixes,
+                           boolean includeRequiredFixes,
+                           List<String> excludedFixes,
+                           DartfixConsumer consumer) {
+  }
+
+  @Override
   public void edit_format(String file, int selectionOffset, int selectionLength, int lineLength, FormatConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditFormat(id, file, selectionOffset, selectionLength, lineLength), consumer);
@@ -354,6 +370,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void edit_getAvailableRefactorings(String file, int offset, int length, GetAvailableRefactoringsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateEditGetAvaliableRefactorings(id, file, offset, length), consumer);
+  }
+
+  @Override
+  public void edit_getDartfixInfo(GetDartfixInfoConsumer consumer) {
   }
 
   @Override
@@ -397,9 +417,9 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
-  public void edit_importElements(String file, List<ImportedElements> elements, ImportElementsConsumer consumer) {
+  public void edit_importElements(String file, List<ImportedElements> elements, int offset, ImportElementsConsumer consumer) {
     String id = generateUniqueId();
-    sendRequestToServer(id, RequestUtilities.generateEditImportElements(id, file, elements), consumer);
+    sendRequestToServer(id, RequestUtilities.generateEditImportElements(id, file, elements, offset), consumer);
   }
 
   @Override
@@ -460,8 +480,20 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   }
 
   @Override
+  public void flutter_getChangeAddForDesignTimeConstructor(String file, int offset, GetChangeAddForDesignTimeConstructorConsumer consumer) {
+  }
+
+  @Override
+  public void flutter_setSubscriptions(Map<String, List<String>> subscriptions) {
+  }
+
+  @Override
   public boolean isSocketOpen() {
     return socket.isOpen();
+  }
+
+  @Override
+  public void kythe_getKytheEntries(String file, GetKytheEntriesConsumer consumer) {
   }
 
   @Override
@@ -505,6 +537,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
   public void search_findTopLevelDeclarations(String pattern, FindTopLevelDeclarationsConsumer consumer) {
     String id = generateUniqueId();
     sendRequestToServer(id, RequestUtilities.generateSearchFindTopLevelDeclarations(id, pattern), consumer);
+  }
+
+  @Override
+  public void search_getElementDeclarations(String file, String pattern, int maxResults, GetElementDeclarationsConsumer consumer) {
   }
 
   @Override
@@ -571,7 +607,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    *
    * @return a unique {@link String} id to be used in the requests sent to the analysis server
    */
-  @Override
   public String generateUniqueId() {
     return Integer.toString(nextId.getAndIncrement());
   }
@@ -837,7 +872,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    * @param id      the identifier of the request
    * @param request the request to send
    */
-  @Override
   public void sendRequestToServer(String id, JsonObject request) {
     sendRequestToServer(id, request, new LocalConsumer(request));
     notifyRequestListeners(request);
@@ -850,7 +884,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    * @param request  the request to send
    * @param consumer the {@link Consumer} to process a response
    */
-  @Override
   public void sendRequestToServer(String id, JsonObject request, Consumer consumer) {
     synchronized (consumerMapLock) {
       consumerMap.put(id, consumer);

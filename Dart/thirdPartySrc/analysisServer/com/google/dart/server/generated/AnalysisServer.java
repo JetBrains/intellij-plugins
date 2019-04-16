@@ -1,23 +1,14 @@
 /*
- * Copyright (c) 2015, the Dart project authors.
+ * Copyright (c) 2019, the Dart project authors. Please see the AUTHORS file
+ * for details. All rights reserved. Use of this source code is governed by a
+ * BSD-style license that can be found in the LICENSE file.
  *
- * Licensed under the Eclipse Public License v1.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- *
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- *
- * This file has been automatically generated.  Please do not edit it manually.
+ * This file has been automatically generated. Please do not edit it manually.
  * To regenerate the file, use the script "pkg/analysis_server/tool/spec/generate_files".
  */
 package com.google.dart.server.generated;
 
 import com.google.dart.server.*;
-import com.google.gson.JsonObject;
 import org.dartlang.analysis.server.protocol.*;
 
 import java.util.List;
@@ -42,12 +33,16 @@ public interface AnalysisServer {
   /**
    * Add the given listener to the list of listeners that will receive notification when
    * requests are made by an analysis server client.
+   *
+   * @param listener the listener to be added
    */
   public void addRequestListener(RequestListener listener);
 
   /**
-   * Add the given listener to the list of listeners that will receive every response from
-   * the analysis server.
+   * Add the given listener to the list of listeners that will receive notification when
+   * responses are received by an analysis server client.
+   *
+   * @param listener the listener to be added
    */
   public void addResponseListener(ResponseListener listener);
 
@@ -159,24 +154,39 @@ public interface AnalysisServer {
    * generated.
    *
    * @param file The file for which reachable source information is being requested.
+   *
+   * @deprecated
    */
   public void analysis_getReachableSources(String file, GetReachableSourcesConsumer consumer);
 
   /**
+   * {@code analysis.getSignature}
+   *
+   * Return the signature information associated with the given location in the given file. If the
+   * signature information for the given file has not yet been computed, or the most recently
+   * computed signature information for the given file is out of date, then the response for this
+   * request will be delayed until it has been computed. If a request is made for a file which does
+   * not exist, or which is not currently subject to analysis (e.g. because it is not associated with
+   * any analysis root specified to analysis.setAnalysisRoots), an error of type
+   * GET_SIGNATURE_INVALID_FILE will be generated. If the location given is not inside the argument
+   * list for a function (including method and constructor) invocation, then an error of type
+   * GET_SIGNATURE_INVALID_OFFSET will be generated. If the location is inside an argument list but
+   * the function is not defined or cannot be determined (such as a method invocation where the
+   * target has type 'dynamic') then an error of type GET_SIGNATURE_UNKNOWN_FUNCTION will be
+   * generated.
+   *
+   * @param file The file in which signature information is being requested.
+   * @param offset The location for which signature information is being requested.
+   */
+  public void analysis_getSignature(String file, int offset, GetSignatureConsumer consumer);
+
+  /**
    * {@code analysis.reanalyze}
    *
-   * Force the re-analysis of everything contained in the specified analysis roots. This will cause
-   * all previously computed analysis results to be discarded and recomputed, and will cause all
-   * subscribed notifications to be re-sent.
-   *
-   * If no analysis roots are provided, then all current analysis roots will be re-analyzed. If an
-   * empty list of analysis roots is provided, then nothing will be re-analyzed. If the list contains
-   * one or more paths that are not currently analysis roots, then an error of type
-   * INVALID_ANALYSIS_ROOT will be generated.
-   *
-   * @param roots A list of the analysis roots that are to be re-analyzed.
+   * Force re-reading of all potentially changed files, re-resolving of all referenced URIs, and
+   * corresponding re-analysis of everything affected in the current analysis roots.
    */
-  public void analysis_reanalyze(List<String> roots);
+  public void analysis_reanalyze();
 
   /**
    * {@code analysis.setAnalysisRoots}
@@ -382,11 +392,17 @@ public interface AnalysisServer {
   /**
    * {@code completion.getSuggestionDetails}
    *
-   * Request that completion suggestions for the given offset in the given file be returned.
+   * Clients must make this request when the user has selected a completion suggestion from an
+   * AvailableSuggestionSet. Analysis server will respond with the text to insert as well as any
+   * SourceChange that needs to be applied in case the completion requires an additional import to be
+   * added. It is an error if the id is no longer valid, for instance if the library has been removed
+   * after the completion suggestion is accepted.
    *
-   * @param file The file containing the point at which suggestions are to be made.
-   * @param id The identifier of the <tt>AvailableSuggestionSet</tt> containing the selected label.
-   * @param label The label from the <tt>AvailableSuggestionSet</tt> with the `id` for which insertion information is requested.
+   * @param file The path of the file into which this completion is being inserted.
+   * @param id The identifier of the AvailableSuggestionSet containing the selected label.
+   * @param label The label from the AvailableSuggestionSet with the `id` for which insertion
+   *         information is requested.
+   * @param offset The offset in the file where the completion will be inserted.
    */
   public void completion_getSuggestionDetails(String file, int id, String label, int offset, GetSuggestionDetailsConsumer consumer);
 
@@ -399,6 +415,16 @@ public interface AnalysisServer {
    * @param offset The offset within the file at which suggestions are to be made.
    */
   public void completion_getSuggestions(String file, int offset, GetSuggestionsConsumer consumer);
+
+  /**
+   * {@code completion.listTokenDetails}
+   *
+   * Inspect analysis server's knowledge about all of a file's tokens including their lexeme, type,
+   * and what element kinds would have been appropriate for the token's program location.
+   *
+   * @param file The path to the file from which tokens should be returned.
+   */
+  public void completion_listTokenDetails(String file, ListTokenDetailsConsumer consumer);
 
   /**
    * {@code completion.registerLibraryPaths}
@@ -419,8 +445,8 @@ public interface AnalysisServer {
   /**
    * {@code completion.setSubscriptions}
    *
-   * Subscribe for completion services.
-   * All previous subscriptions are replaced by the given set of services.
+   * Subscribe for completion services. All previous subscriptions are replaced by the given set of
+   * services.
    *
    * It is an error if any of the elements in the list are not valid services. If there is an error,
    * then the current subscriptions will remain unchanged.
@@ -444,6 +470,35 @@ public interface AnalysisServer {
    * DEBUG_PORT_COULD_NOT_BE_OPENED.
    */
   public void diagnostic_getServerPort(GetServerPortConsumer consumer);
+
+  /**
+   * {@code edit.dartfix}
+   *
+   * Analyze the specified sources for recommended changes and return a set of suggested edits for
+   * those sources. These edits may include changes to sources outside the set of specified sources
+   * if a change in a specified source requires it.
+   *
+   * If includedFixes is specified, then those fixes will be applied. If includeRequiredFixes is
+   * specified, then "required" fixes will be applied in addition to whatever fixes are specified in
+   * includedFixes if any. If neither includedFixes nor includeRequiredFixes is specified, then all
+   * fixes will be applied. If excludedFixes is specified, then those fixes will not be applied
+   * regardless of whether they are "required" or specified in includedFixes.
+   *
+   * @param included A list of the files and directories for which edits should be suggested. If a
+   *         request is made with a path that is invalid, e.g. is not absolute and normalized, an
+   *         error of type INVALID_FILE_PATH_FORMAT will be generated. If a request is made for a
+   *         file which does not exist, or which is not currently subject to analysis (e.g. because
+   *         it is not associated with any analysis root specified to analysis.setAnalysisRoots), an
+   *         error of type FILE_NOT_ANALYZED will be generated.
+   * @param includedFixes A list of names indicating which fixes should be applied. If a name is
+   *         specified that does not match the name of a known fix, an error of type UNKNOWN_FIX will
+   *         be generated.
+   * @param includeRequiredFixes A flag indicating that "required" fixes should be applied.
+   * @param excludedFixes A list of names indicating which fixes should not be applied. If a name is
+   *         specified that does not match the name of a known fix, an error of type UNKNOWN_FIX will
+   *         be generated.
+   */
+  public void edit_dartfix(List<String> included, List<String> includedFixes, boolean includeRequiredFixes, List<String> excludedFixes, DartfixConsumer consumer);
 
   /**
    * {@code edit.format}
@@ -490,6 +545,14 @@ public interface AnalysisServer {
    * @param length The length of the code on which the refactoring would be based.
    */
   public void edit_getAvailableRefactorings(String file, int offset, int length, GetAvailableRefactoringsConsumer consumer);
+
+  /**
+   * {@code edit.getDartfixInfo}
+   *
+   * Request information about edit.dartfix such as the list of known fixes that can be specified in
+   * an edit.dartfix request.
+   */
+  public void edit_getDartfixInfo(GetDartfixInfoConsumer consumer);
 
   /**
    * {@code edit.getFixes}
@@ -561,8 +624,12 @@ public interface AnalysisServer {
    *
    * @param file The file in which the specified elements are to be made accessible.
    * @param elements The elements to be made accessible in the specified file.
+   * @param offset The offset at which the specified elements need to be made accessible. If
+   *         provided, this is used to guard against adding imports for text that would be inserted
+   *         into a comment, string literal, or other location where the imports would not be
+   *         necessary.
    */
-  public void edit_importElements(String file, List<ImportedElements> elements, ImportElementsConsumer consumer);
+  public void edit_importElements(String file, List<ImportedElements> elements, int offset, ImportElementsConsumer consumer);
 
   /**
    * {@code edit.isPostfixCompletionApplicable}
@@ -712,17 +779,63 @@ public interface AnalysisServer {
   public void execution_setSubscriptions(List<String> subscriptions);
 
   /**
-   * Generate and return a unique {@link String} id to be used in the requests sent to the analysis
-   * server.
+   * {@code flutter.getChangeAddForDesignTimeConstructor}
    *
-   * @return a unique {@link String} id to be used in the requests sent to the analysis server
+   * Return the change that adds the forDesignTime() constructor for the widget class at the given
+   * offset.
+   *
+   * @param file The file containing the code of the class.
+   * @param offset The offset of the class in the code.
    */
-  public String generateUniqueId();
+  public void flutter_getChangeAddForDesignTimeConstructor(String file, int offset, GetChangeAddForDesignTimeConstructorConsumer consumer);
+
+  /**
+   * {@code flutter.setSubscriptions}
+   *
+   * Subscribe for services that are specific to individual files. All previous subscriptions are
+   * replaced by the current set of subscriptions. If a given service is not included as a key in the
+   * map then no files will be subscribed to the service, exactly as if the service had been included
+   * in the map with an explicit empty list of files.
+   *
+   * Note that this request determines the set of requested subscriptions. The actual set of
+   * subscriptions at any given time is the intersection of this set with the set of files currently
+   * subject to analysis. The files currently subject to analysis are the set of files contained
+   * within an actual analysis root but not excluded, plus all of the files transitively reachable
+   * from those files via import, export and part directives. (See analysis.setAnalysisRoots for an
+   * explanation of how the actual analysis roots are determined.) When the actual analysis roots
+   * change, the actual set of subscriptions is automatically updated, but the set of requested
+   * subscriptions is unchanged.
+   *
+   * If a requested subscription is a directory it is ignored, but remains in the set of requested
+   * subscriptions so that if it later becomes a file it can be included in the set of actual
+   * subscriptions.
+   *
+   * It is an error if any of the keys in the map are not valid services. If there is an error, then
+   * the existing subscriptions will remain unchanged.
+   *
+   * @param subscriptions A table mapping services to a list of the files being subscribed to the
+   *         service.
+   */
+  public void flutter_setSubscriptions(Map<String, List<String>> subscriptions);
 
   /**
    * Return {@code true} if the socket is open.
    */
   public boolean isSocketOpen();
+
+  /**
+   * {@code kythe.getKytheEntries}
+   *
+   * Return the list of KytheEntry objects for some file, given the current state of the file system
+   * populated by "analysis.updateContent".
+   *
+   * If a request is made for a file that does not exist, or that is not currently subject to
+   * analysis (e.g. because it is not associated with any analysis root specified to
+   * analysis.setAnalysisRoots), an error of type GET_KYTHE_ENTRIES_INVALID_FILE will be generated.
+   *
+   * @param file The file containing the code for which the Kythe Entry objects are being requested.
+   */
+  public void kythe_getKytheEntries(String file, GetKytheEntriesConsumer consumer);
 
   /**
    * Remove the given listener from the list of listeners that will receive notification when new
@@ -735,12 +848,16 @@ public interface AnalysisServer {
   /**
    * Remove the given listener from the list of listeners that will receive notification when
    * requests are made by an analysis server client.
+   *
+   * @param listener the listener to be removed
    */
   public void removeRequestListener(RequestListener listener);
 
   /**
-   * Remove the given listener from the list of listeners that will receive every response from
-   * the analysis server.
+   * Remove the given listener from the list of listeners that will receive notification when
+   * responses are received by an analysis server client.
+   *
+   * @param listener the listener to be removed
    */
   public void removeResponseListener(ResponseListener listener);
 
@@ -759,16 +876,6 @@ public interface AnalysisServer {
    * @param includePotential True if potential matches are to be included in the results.
    */
   public void search_findElementReferences(String file, int offset, boolean includePotential, FindElementReferencesConsumer consumer);
-
-  /**
-   * Send the request for which the client that does not expect a response.
-   */
-  public void sendRequestToServer(String id, JsonObject request);
-
-  /**
-   * Send the request and associate it with the passed {@link Consumer}.
-   */
-  public void sendRequestToServer(String id, JsonObject request, Consumer consumer);
 
   /**
    * {@code search.findMemberDeclarations}
@@ -808,6 +915,20 @@ public interface AnalysisServer {
    * @param pattern The regular expression used to match the names of the declarations to be found.
    */
   public void search_findTopLevelDeclarations(String pattern, FindTopLevelDeclarationsConsumer consumer);
+
+  /**
+   * {@code search.getElementDeclarations}
+   *
+   * Return top-level and class member declarations.
+   *
+   * @param file If this field is provided, return only declarations in this file. If this field is
+   *         missing, return declarations in all files.
+   * @param pattern The regular expression used to match the names of declarations. If this field is
+   *         missing, return all declarations.
+   * @param maxResults The maximum number of declarations to return. If this field is missing, return
+   *         all matching declarations.
+   */
+  public void search_getElementDeclarations(String file, String pattern, int maxResults, GetElementDeclarationsConsumer consumer);
 
   /**
    * {@code search.getTypeHierarchy}
@@ -855,15 +976,4 @@ public interface AnalysisServer {
    */
   public void start() throws Exception;
 
-  /**
-   * Return the number of milliseconds that have passed since the last request was sent
-   * to the analysis server.
-   */
-  public long getLastRequestMillis();
-
-  /**
-   * Return the number of milliseconds that have passed since the last response was received
-   * from the analysis server.
-   */
-  public long getLastResponseMillis();
 }

@@ -103,7 +103,7 @@ public class DartCopyPasteProcessor extends CopyPastePostProcessor<DartCopyPaste
 
     if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.NO) return;
 
-    final SourceFileEdit edit = DartAnalysisServerService.getInstance(project).edit_importElements(file, data.getImportedElements());
+    final SourceFileEdit edit = DartAnalysisServerService.getInstance(project).edit_importElements(file, data.getImportedElements(), caretOffset);
 
     if (edit != null && edit.getEdits() != null && !edit.getEdits().isEmpty()) {
       if (DartCodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE == CodeInsightSettings.ASK &&

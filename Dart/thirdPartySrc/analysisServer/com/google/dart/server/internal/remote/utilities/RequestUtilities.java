@@ -284,21 +284,11 @@ public class RequestUtilities {
    * request: {
    *   "id": String
    *   "method": "analysis.reanalyze"
-   *   "params": {
-   *     "roots": optional List<FilePath>
-   *    }
    * }
    * </pre>
    */
-  public static JsonObject generateAnalysisReanalyze(String id, List<String> roots) {
-    if (roots != null) {
-      JsonObject params = new JsonObject();
-      params.add("roots", buildJsonElement(roots));
-      return buildJsonObjectRequest(id, METHOD_ANALYSIS_REANALYZE, params);
-    }
-    else {
-      return buildJsonObjectRequest(id, METHOD_ANALYSIS_REANALYZE);
-    }
+  public static JsonObject generateAnalysisReanalyze(String id) {
+    return buildJsonObjectRequest(id, METHOD_ANALYSIS_REANALYZE);
   }
 
   /**
@@ -666,10 +656,11 @@ public class RequestUtilities {
     return buildJsonObjectRequest(idValue, METHOD_EDIT_GET_STATEMENT_COMPLETION, params);
   }
 
-  public static JsonObject generateEditImportElements(String id, String file, List<ImportedElements> elements) {
+  public static JsonObject generateEditImportElements(String id, String file, List<ImportedElements> elements, int offset) {
     JsonObject params = new JsonObject();
     params.addProperty(FILE, file);
     params.add(ELEMENTS, buildJsonElement(elements));
+    params.addProperty(OFFSET, offset);
     return buildJsonObjectRequest(id, METHOD_EDIT_IMPORT_ELEMENTS, params);
   }
 
