@@ -5,14 +5,15 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.openapi.wm.ex.IdeFrameEx
 import com.intellij.openapi.wm.impl.IdeFrameImpl
+import org.jetbrains.annotations.SystemDependent
 import training.lang.LangSupport
 import training.learn.dialogs.LearnProjectWarningDialog
 import training.learn.exceptons.NoSdkException
-import java.io.File
 import java.lang.Boolean.TRUE
 
 /**
@@ -68,8 +69,8 @@ object NewLearnProjectUtil {
 
   }
 
-  fun projectFilePath(langSupport: LangSupport): String =
-      ProjectUtil.getBaseDir() + File.separatorChar + langSupport.defaultProjectName
+  fun projectFilePath(langSupport: LangSupport): @SystemDependent String =
+      FileUtil.join(ProjectUtil.getBaseDir(), langSupport.defaultProjectName)
 
   fun showDialogOpenLearnProject(project: Project): Boolean {
     //        final SdkProblemDialog dialog = new SdkProblemDialog(project, "at least JDK 1.6 or IDEA SDK with corresponding JDK");
