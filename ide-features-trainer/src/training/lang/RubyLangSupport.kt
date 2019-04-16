@@ -1,5 +1,6 @@
 package training.lang
 
+import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -10,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.plugins.ruby.gem.GemDependency
@@ -107,10 +109,10 @@ class RubyLangSupport : AbstractLangSupport() {
     private val fileListener = object : FileEditorManagerListener {
       override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
         val project = source.project
-        if (com.intellij.ide.scratch.ScratchFileService.isInScratchRoot(file)) {
+        if (ScratchFileService.isInScratchRoot(file)) {
           return
         }
-        if (file.path == project.basePath + '/' + sandboxFile) {
+        if (file.path == project.basePath + VfsUtilCore.VFS_SEPARATOR_CHAR + sandboxFile) {
           return
         }
         source.getAllEditors(file).forEach {
