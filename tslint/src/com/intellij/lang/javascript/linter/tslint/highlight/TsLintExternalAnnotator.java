@@ -212,8 +212,9 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     if (annotationResult == null) return;
     TsLintConfigurable configurable = new TsLintConfigurable(file.getProject(), true);
     final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+    long documentModificationStamp = document != null ? document.getModificationStamp() : -1;
     IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
-
+    
     JSLinterStandardFixes fixes = new JSLinterStandardFixes();
     fixes.setErrorToIntentionConverter(errorBase -> {
       if (!(errorBase instanceof TsLinterError)) {
@@ -223,17 +224,17 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
       ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
       if (tslintError.hasFix()) {
         if (document != null && isOnTheFly()) {
-          result.add(new TsLintErrorFixAction(file, tslintError, document.getModificationStamp()));
+          result.add(new TsLintErrorFixAction(file, tslintError, documentModificationStamp));
         }
         result.add(fixAllFileIntention);
       }
       else {
-        ContainerUtil.addIfNotNull(result, TsLintSuppressionUtil.INSTANCE.getHighPrioritySuppressForLineAction(tslintError));
+        ContainerUtil.addIfNotNull(result, TsLintSuppressionUtil.INSTANCE.getHighPrioritySuppressForLineAction(tslintError, documentModificationStamp));
       }
       return result;
     }).setProblemGroup(error -> {
       if (isOnTheFly() && error instanceof TsLinterError) {
-        return new JSAnnotatorProblemGroup(TsLintSuppressionUtil.INSTANCE.getSuppressionsForError((TsLinterError)error), null);
+        return new JSAnnotatorProblemGroup(TsLintSuppressionUtil.INSTANCE.getSuppressionsForError((TsLinterError)error, documentModificationStamp), null);
       }
       return null;
     });
