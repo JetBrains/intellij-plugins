@@ -1,6 +1,8 @@
 <idea-plugin url="https://github.com/JetBrains/intellij-plugins/tree/master/tslint">
   <name>tslint</name>
-  <description>Support for tslint</description>
+  <description><![CDATA[
+  Integrates <a href="https://palantir.github.io/tslint/">tslint</a>, a static analysis tool for TypeScript
+  ]]></description>
   <vendor>JetBrains</vendor>
 
   <depends>JavaScript</depends>

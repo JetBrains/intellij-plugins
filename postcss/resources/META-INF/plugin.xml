@@ -1,11 +1,11 @@
 <idea-plugin>
-  <name>PostCSS support</name>
+  <name>PostCSS</name>
   <id>org.intellij.plugins.postcss</id>
   <category>HTML/JavaScript Development</category>
   <vendor>JetBrains</vendor>
   <description>
     <![CDATA[
-      <p>This plugin brings support for <a href="http://postcss.org">PostCSS</a>:</p>
+      <p>Brings support for <a href="http://postcss.org">PostCSS</a>:</p>
       <ul>
           <li>The IDE now recognises .pcss files. You can also enable PostCSS support for your .css files in <em>Preferences | Languages & Frameworks | Stylesheets | Dialects</em>.</li>
           <li>Syntax highlighting for PostCSS syntax. You can additionally configure it in <em>Preferences | Editor | Colors & Fonts</em>.</li>

@@ -1,5 +1,5 @@
 <idea-plugin>
-  <name>Flash/Flex Support</name>
+  <name>Flash/Flex</name>
   <description>
     <![CDATA[
       Provides integration with the Flex SDK and thus lets you develop content for the various Adobe runtimes. Using this plugin, you can:<br>
