@@ -13,8 +13,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.ResolveResultSink;
-import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.psi.ResolveResult;
 import com.intellij.util.ObjectUtils;
@@ -50,14 +48,6 @@ public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpr
       return resolveTemplateVariable(expression);
     }
     return super.resolve(expression, incompleteCode);
-  }
-
-  @Override
-  protected ResolveResult[] resolveFromIndices(@NotNull final SinkResolveProcessor<ResolveResultSink> localProcessor,
-                                               boolean excludeJsLibs,
-                                               boolean includeTypeOnlyContextSymbols) {
-    // do not guess anything from indices
-    return ResolveResult.EMPTY_ARRAY;
   }
 
   @NotNull

@@ -60,7 +60,7 @@ import org.junit.runners.Suite;
   Angular2DecoratorInspectionsTest.class,
   Angular2PipeParameterInfoTest.class,
   Angular2ParameterHintsTest.class,
-  Angular2InvalidExpressionResultTypeInspectionTest.class,
+  Angular2ExpressionTypesInspectionTest.class,
   Angular2SuppressionsTest.class,
   Angular2NgModuleImportQuickFixesTest.class,
   AngularChangeSignatureTest.class,
