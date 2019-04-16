@@ -3,7 +3,7 @@
   <name>AWS CloudFormation</name>
   <version>SNAPSHOT</version>
 
-  <vendor email="support@jetbrains.com">JetBrains</vendor>
+  <vendor>JetBrains</vendor>
 
   <description><![CDATA[
     <p>Amazon AWS CloudFormation language support

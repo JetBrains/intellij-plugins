@@ -11,7 +11,7 @@
         </ul>
       ]]>
   </description>
-  <vendor email="support@jetbrains.com">JetBrains</vendor>
+  <vendor>JetBrains</vendor>
   <resource-bundle>messages.CfmlBundle</resource-bundle>
 
   <depends>com.intellij.modules.sql</depends>
