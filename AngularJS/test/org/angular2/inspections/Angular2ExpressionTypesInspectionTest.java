@@ -8,7 +8,7 @@ import com.intellij.lang.typescript.inspections.TypeScriptValidateTypesInspectio
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 
-public class Angular2InvalidExpressionResultTypeInspectionTest extends Angular2CodeInsightFixtureTestCase {
+public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "expressionType";
@@ -57,4 +57,10 @@ public class Angular2InvalidExpressionResultTypeInspectionTest extends Angular2C
     myFixture.configureByFiles("ngForOfAnyType.ts", "ng_for_of.ts", "async_pipe.d.ts", "package.json");
     myFixture.checkHighlighting();
   }
+
+  public void testAnyType() {
+    myFixture.configureByFiles("any-type.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
 }

@@ -56,7 +56,7 @@ import org.junit.runners.Suite;
   FormattingTest.class,
   Angular2TemplateInspectionsTest.class,
   Angular2DecoratorInspectionsTest.class,
-  Angular2InvalidExpressionResultTypeInspectionTest.class,
+  Angular2ExpressionTypesInspectionTest.class,
   Angular2SuppressionsTest.class,
   Angular2NgModuleImportQuickFixesTest.class,
   AngularChangeSignatureTest.class,
