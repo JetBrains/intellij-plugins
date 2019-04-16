@@ -13,36 +13,34 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.jetbrains.vuejs.language.parser.VueHighlightingLexerTest;
 import org.jetbrains.vuejs.language.parser.VueLexerTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+  VueTypedHandlerTest.class,
+  VueTypeScriptHighlightingTest.class,
+  VueResolveTest.class,
+  VueRenameTest.class,
+  VueParameterInfoTest.class,
+  VueOptimizeImportTest.class,
+  VueLiveTemplatesTest.class,
+  VueIntentionsTest.class,
+  VueInjectionTest.class,
+  VueHighlightingTest.class,
+  VueFormatterTest.class,
+  VueExtractComponentTest.class,
+  VueDocumentationTest.class,
+  VueCreateTsVariableTest.class,
+  VueCopyrightTest.class,
+  VueCompletionTest.class,
+  VueAutoPopupTest.class,
+  VueHighlightingLexerTest.class,
+  VueLexerTest.class,
+  VueEmmetTest.class,
+  VueModuleImportTest.class
+})
 public class VueTestSuite {
-  public static Test suite() {
-    final TestSuite testSuite = new TestSuite(VueTestSuite.class.getSimpleName());
-    testSuite.addTestSuite(VueTypedHandlerTest.class);
-    testSuite.addTestSuite(VueTypeScriptHighlightingTest.class);
-    testSuite.addTestSuite(VueResolveTest.class);
-    testSuite.addTestSuite(VueRenameTest.class);
-    testSuite.addTestSuite(VueParameterInfoTest.class);
-    testSuite.addTestSuite(VueOptimizeImportTest.class);
-    testSuite.addTestSuite(VueLiveTemplatesTest.class);
-    testSuite.addTestSuite(VueIntentionsTest.class);
-    testSuite.addTestSuite(VueInjectionTest.class);
-    testSuite.addTestSuite(VueHighlightingTest.class);
-    testSuite.addTestSuite(VueFormatterTest.class);
-    testSuite.addTestSuite(VueExtractComponentTest.class);
-    testSuite.addTestSuite(VueDocumentationTest.class);
-    testSuite.addTestSuite(VueCreateTsVariableTest.class);
-    testSuite.addTestSuite(VueCopyrightTest.class);
-    testSuite.addTestSuite(VueCompletionTest.class);
-    testSuite.addTestSuite(VueAutoPopupTest.class);
-    testSuite.addTestSuite(VueHighlightingLexerTest.class);
-    testSuite.addTestSuite(VueLexerTest.class);
-    testSuite.addTestSuite(VueEmmetTest.class);
-    testSuite.addTestSuite(VueModuleImportTest.class);
-    
-    return testSuite;
-  }
 }
