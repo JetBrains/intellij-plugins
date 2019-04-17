@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Angular2MetadataElementTypes {
 
+  MetadataElementType<Angular2MetadataStringStub> STRING =
+    new Angular2MetadataElementType<>("STRING", Angular2MetadataStringStub::new, Angular2MetadataString::new);
   MetadataElementType<Angular2MetadataArrayStub> ARRAY =
     new Angular2MetadataElementType<>("ARRAY", Angular2MetadataArrayStub::new, Angular2MetadataArray::new);
   MetadataElementType<Angular2MetadataObjectStub> OBJECT =

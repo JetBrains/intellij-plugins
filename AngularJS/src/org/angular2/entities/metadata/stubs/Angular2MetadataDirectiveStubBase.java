@@ -9,8 +9,8 @@ import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.StringRef;
-import org.angular2.Angular2DecoratorUtil;
 import org.angular2.entities.Angular2EntityUtils;
 import org.angular2.entities.metadata.psi.Angular2MetadataDirectiveBase;
 import org.angular2.index.Angular2MetadataDirectiveIndex;
@@ -23,8 +23,7 @@ import java.util.Map;
 
 import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.tryCast;
-import static org.angular2.Angular2DecoratorUtil.EXPORT_AS_PROP;
-import static org.angular2.Angular2DecoratorUtil.SELECTOR_PROP;
+import static org.angular2.Angular2DecoratorUtil.*;
 import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2MetadataDirectiveBase> extends Angular2MetadataEntityStub<Psi> {
@@ -48,8 +47,8 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     String selector = readStringPropertyValue(initializer.findProperty(SELECTOR_PROP));
     mySelector = StringRef.fromString(selector);
     myExportAs = StringRef.fromString(readStringPropertyValue(initializer.findProperty(EXPORT_AS_PROP)));
-    loadAdditionalBindingMappings(myInputMappings, initializer, Angular2DecoratorUtil.INPUTS_PROP);
-    loadAdditionalBindingMappings(myOutputMappings, initializer, Angular2DecoratorUtil.OUTPUTS_PROP);
+    loadAdditionalBindingMappings(myInputMappings, initializer, INPUTS_PROP);
+    loadAdditionalBindingMappings(myOutputMappings, initializer, OUTPUTS_PROP);
   }
 
   public Angular2MetadataDirectiveStubBase(@NotNull StubInputStream stream,
@@ -94,11 +93,11 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     return FLAGS_STRUCTURE;
   }
 
-  private static void loadAdditionalBindingMappings(@NotNull Map<String, String> mappings,
-                                                    @NotNull JsonObject initializer,
-                                                    @NotNull String propertyName) {
+  private void loadAdditionalBindingMappings(@NotNull Map<String, String> mappings,
+                                             @NotNull JsonObject initializer,
+                                             @NotNull String propertyName) {
     JsonArray list = tryCast(doIfNotNull(initializer.findProperty(propertyName), JsonProperty::getValue), JsonArray.class);
-    if (list != null) {
+    if (list != null && ContainerUtil.all(list.getValueList(), JsonStringLiteral.class::isInstance)) {
       for (JsonValue v : list.getValueList()) {
         if (v instanceof JsonStringLiteral) {
           String value = ((JsonStringLiteral)v).getValue();
@@ -106,6 +105,9 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
           mappings.putIfAbsent(p.first, p.second);
         }
       }
+    }
+    else {
+      stubDecoratorFields(initializer, propertyName);
     }
   }
 }

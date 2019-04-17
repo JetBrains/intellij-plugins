@@ -1,10 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.lang.metadata.stubs;
 
-import com.intellij.json.psi.JsonArray;
-import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonProperty;
-import com.intellij.json.psi.JsonValue;
+import com.intellij.json.psi.*;
 import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
 import com.intellij.lang.javascript.index.flags.FlagsStructure;
 import com.intellij.lang.javascript.index.flags.FlagsStructureElement;
@@ -53,6 +50,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
 
   @NonNls protected static final String FUNCTION_VALUE = "value";
 
+  @NonNls protected static final String STRING_TYPE = "#string";
   @NonNls protected static final String ARRAY_TYPE = "#array";
   @NonNls protected static final String OBJECT_TYPE = "#object";
 
@@ -136,6 +134,9 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
     else if (member instanceof JsonObject) {
       String type = readStringPropertyValue(((JsonObject)member).findProperty(SYMBOL_TYPE));
       constructor = getTypeFactory().get(type == null ? OBJECT_TYPE : type);
+    }
+    else if (member instanceof JsonStringLiteral) {
+      constructor = getTypeFactory().get(STRING_TYPE);
     }
     if (constructor != null) {
       constructor.construct(name, member, this);
