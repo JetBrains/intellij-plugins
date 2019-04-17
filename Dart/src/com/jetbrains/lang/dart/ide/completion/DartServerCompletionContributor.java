@@ -155,8 +155,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                    CompletionSuggestion completionSuggestion =
                      createCompletionSuggestionFromAvailableSuggestion(suggestion, includedSet.getRelevance(), includedRelevanceTags);
+                   String displayUri = includedSet.getDisplayUri() != null ? includedSet.getDisplayUri() : suggestionSet.getUri();
                    LookupElementBuilder lookupElement =
-                     createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true, suggestionSet.getUri());
+                     createLookupElement(project, completionSuggestion, suggestionSet.getId(), targetFile, true, displayUri);
 
                    resultSet.addElement(lookupElement);
                  }
