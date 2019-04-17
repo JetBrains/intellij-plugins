@@ -12,7 +12,7 @@ import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.css.CSSParserDefinition;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.JavascriptParserDefinition;
-import com.intellij.lang.javascript.dialects.JS15ParserDefinition;
+import com.intellij.lang.javascript.dialects.ECMA6ParserDefinition;
 import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
@@ -63,8 +63,8 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                                new CssElementDescriptorFactory2(ProgressManager.getInstance(), "css-parsing-tests.xml"));
 
     // Update parser definition if version is changed
-    assert JSLanguageLevel.DEFAULT == JSLanguageLevel.ES5;
-    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JSLanguageLevel.ES5.getDialect(), new JS15ParserDefinition());
+    assert JSLanguageLevel.DEFAULT == JSLanguageLevel.ES6;
+    addExplicitExtension(LanguageParserDefinitions.INSTANCE, JSLanguageLevel.ES6.getDialect(), new ECMA6ParserDefinition());
   }
 
   @Override
