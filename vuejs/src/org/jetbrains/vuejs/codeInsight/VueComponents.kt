@@ -20,8 +20,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.index.getVueIndexData
 
 /**
- * @author Irina.Chernushina on 9/26/2017.
- *
  * Basic resolve from index here (when we have the name literal and the descriptor literal/reference)
  */
 class VueComponents {

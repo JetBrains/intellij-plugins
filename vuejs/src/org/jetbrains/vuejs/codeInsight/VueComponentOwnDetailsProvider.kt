@@ -7,9 +7,6 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 
-/**
- * @author Irina.Chernushina on 10/13/2017.
- */
 class VueComponentOwnDetailsProvider {
   companion object {
     private val FUNCTION_FILTER = { element: PsiElement ->

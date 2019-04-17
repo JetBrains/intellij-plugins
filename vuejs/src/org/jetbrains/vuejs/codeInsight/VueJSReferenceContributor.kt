@@ -18,9 +18,6 @@ import com.intellij.psi.util.PsiTreeUtil.isAncestor
 import com.intellij.util.ProcessingContext
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 8/1/2017.
- */
 class VueJSReferenceContributor : PsiReferenceContributor() {
   companion object {
     private val FUNCTION_INSIDE_SCRIPT: ElementPattern<out PsiElement> = createFunctionInsideScript()

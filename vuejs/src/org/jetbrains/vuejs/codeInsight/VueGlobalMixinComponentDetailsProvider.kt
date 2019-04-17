@@ -10,9 +10,6 @@ import org.jetbrains.vuejs.index.GLOBAL
 import org.jetbrains.vuejs.index.VueMixinBindingIndex
 import org.jetbrains.vuejs.index.resolve
 
-/**
- * @author Irina.Chernushina on 10/16/2017.
- */
 class VueGlobalMixinComponentDetailsProvider : VueAdvancedComponentDetailsProvider {
   override fun getIndexedData(descriptor: JSObjectLiteralExpression?, project: Project): Collection<JSImplicitElement> {
     return resolve(GLOBAL, GlobalSearchScope.projectScope(project), VueMixinBindingIndex.KEY) ?: emptyList()

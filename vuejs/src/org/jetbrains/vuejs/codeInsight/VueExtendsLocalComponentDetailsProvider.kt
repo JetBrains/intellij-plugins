@@ -11,9 +11,6 @@ import org.jetbrains.vuejs.index.LOCAL
 import org.jetbrains.vuejs.index.VueExtendsBindingIndex
 import org.jetbrains.vuejs.index.resolve
 
-/**
- * @author Irina.Chernushina on 3/13/2018.
- */
 class VueExtendsLocalComponentDetailsProvider : VueAdvancedComponentDetailsProvider {
   override fun getIndexedData(descriptor: JSObjectLiteralExpression?, project: Project): Collection<JSImplicitElement> {
     if (descriptor == null) return emptyList()

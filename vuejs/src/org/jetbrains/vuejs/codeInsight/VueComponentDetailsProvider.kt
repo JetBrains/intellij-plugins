@@ -12,9 +12,6 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import java.util.*
 
-/**
- * @author Irina.Chernushina on 10/13/2017.
- */
 class VueComponentDetailsProvider {
   companion object {
     val INSTANCE: VueComponentDetailsProvider = VueComponentDetailsProvider()

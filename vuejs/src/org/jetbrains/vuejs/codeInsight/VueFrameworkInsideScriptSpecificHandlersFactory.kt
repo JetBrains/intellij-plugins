@@ -28,9 +28,6 @@ import org.jetbrains.vuejs.index.VueStoreIndex
 import org.jetbrains.vuejs.index.getForAllKeys
 import org.jetbrains.vuejs.language.VueJSLanguage
 
-/**
- * @author Irina.Chernushina on 11/10/2017.
- */
 class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandlersFactory {
   companion object {
     fun isInsideScript(element: PsiElement): Boolean {

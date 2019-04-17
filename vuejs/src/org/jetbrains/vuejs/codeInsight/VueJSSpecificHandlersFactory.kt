@@ -31,9 +31,6 @@ import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.language.VueVForExpression
 
-/**
- * @author Irina.Chernushina on 7/28/2017.
- */
 class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   override fun createReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,
                                                  ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =

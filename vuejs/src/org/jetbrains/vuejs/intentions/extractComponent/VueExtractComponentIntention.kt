@@ -12,9 +12,6 @@ import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 12/13/2017.
- */
 class VueExtractComponentIntention : JavaScriptIntention() {
   override fun getFamilyName(): String {
     return VueBundle.message("vue.template.intention.extract.component.family.name")

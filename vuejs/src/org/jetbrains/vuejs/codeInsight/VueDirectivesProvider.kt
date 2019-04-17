@@ -9,9 +9,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.index.*
 
-/**
- * @author Irina.Chernushina on 10/23/2017.
- */
 class VueDirectivesProvider {
   companion object {
     fun getAttributes(descriptor: JSObjectLiteralExpression?, project: Project): List<VueAttributeDescriptor> {

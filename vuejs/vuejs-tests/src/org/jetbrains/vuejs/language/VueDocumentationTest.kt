@@ -5,9 +5,6 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import junit.framework.TestCase
 
-/**
- * @author Irina.Chernushina on 11/15/2017.
- */
 class VueDocumentationTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/"
 

@@ -15,9 +15,6 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.VueLanguage
 
-/**
- * @author Irina.Chernushina on 3/9/2018.
- */
 class VueExtractComponentAction : BaseRefactoringAction() {
   init {
     templatePresentation.text = VueBundle.message("vue.template.intention.extract.component")

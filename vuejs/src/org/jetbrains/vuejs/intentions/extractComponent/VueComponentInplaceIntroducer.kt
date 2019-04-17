@@ -33,9 +33,6 @@ import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.codeInsight.VueInsertHandler.Companion.reformatElement
 import java.util.*
 
-/**
- * @author Irina.Chernushina on 12/22/2017.
- */
 class VueComponentInplaceIntroducer(elementToRename: XmlTag,
                                     editor: Editor,
                                     private val data: VueExtractComponentDataBuilder,

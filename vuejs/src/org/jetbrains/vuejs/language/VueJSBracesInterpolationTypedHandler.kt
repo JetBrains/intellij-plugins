@@ -15,9 +15,6 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 7/24/2017.
- */
 private val myBracesCompleter: JSInjectionBracesUtil.InterpolationBracesCompleter =
   VueInterpolationBracesCompleter(VueInjector.BRACES_FACTORY)
 

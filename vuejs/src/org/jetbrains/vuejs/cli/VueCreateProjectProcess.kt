@@ -33,9 +33,6 @@ import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-/**
- * @author Irina.Chernushina on 1/26/2018.
- */
 class VueCreateProjectProcess(private val folder: Path,
                               private val projectName: String,
                               private val templateName: String,

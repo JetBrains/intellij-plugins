@@ -8,9 +8,6 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 
-/**
- * @author Irina.Chernushina on 10/26/2017.
- */
 private const val CONTEXT_TYPE = "VUE_COMPONENT_DESCRIPTOR"
 
 class VueComponentDescriptorLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE, "Vue component",

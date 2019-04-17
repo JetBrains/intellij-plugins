@@ -29,9 +29,6 @@ import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory
 
-/**
- * @author Irina.Chernushina on 7/28/2017.
- */
 class VueResolveTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/resolve/"
 

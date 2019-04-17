@@ -23,9 +23,6 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 7/25/2017.
- */
 class VueTypedHandlerTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testBracketsClosing() {
     myFixture.configureByText(VueFileType.INSTANCE, "{<caret>")

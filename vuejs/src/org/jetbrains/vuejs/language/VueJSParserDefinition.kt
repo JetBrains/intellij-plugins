@@ -10,9 +10,6 @@ import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IFileElementType
 
-/**
- * @author Irina.Chernushina on 7/21/2017.
- */
 class VueJSParserDefinition : JavascriptParserDefinition() {
   private val FILE: IFileElementType = JSFileElementType.create(VueJSLanguage.INSTANCE)
 

@@ -11,9 +11,6 @@ import junit.framework.TestCase
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
 
-/**
- * @author Irina.Chernushina on 12/19/2017.
- */
 class VueExtractComponentTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testExtractSingleTag() = doExtractTest(
     """<template>

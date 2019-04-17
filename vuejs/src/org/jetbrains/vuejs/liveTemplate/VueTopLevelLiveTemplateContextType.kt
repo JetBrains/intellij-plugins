@@ -7,9 +7,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 10/26/2017.
- */
 private const val CONTEXT_TYPE = "VUE_TOP_LEVEL"
 
 class VueTopLevelLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE, "Vue top-level", VueBaseLiveTemplateContextType::class.java) {

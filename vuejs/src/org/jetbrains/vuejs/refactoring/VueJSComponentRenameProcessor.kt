@@ -17,10 +17,6 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.VueComponentsIndex
 
-/**
- * @author Artem.Gainanov
- */
-
 class VueJSComponentRenameProcessor : JSDefaultRenameProcessor() {
 
 
