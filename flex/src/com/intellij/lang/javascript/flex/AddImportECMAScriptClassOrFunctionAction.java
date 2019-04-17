@@ -186,6 +186,17 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
   }
 
   @Override
+  public boolean fixSilently(@NotNull Editor editor) {
+    Collection<JSQualifiedNamedElement> candidates = getCandidates(editor, myReference.getElement().getContainingFile());
+    if (candidates.size() == 1) {
+      JSQualifiedNamedElement element = candidates.iterator().next();
+      CommandProcessor.getInstance().runUndoTransparentAction(() -> doImport(element.getQualifiedName()));
+      return true;
+    }
+    return false;
+  }
+
+  @Override
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) {
     final Collection<JSQualifiedNamedElement> candidates = getCandidates(editor, file);
 
