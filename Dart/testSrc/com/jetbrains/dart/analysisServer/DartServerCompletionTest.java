@@ -166,7 +166,9 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
     myFixture.completeBasic();
     myFixture.assertPreferredCompletionItems(0, "AXX.one", "AXX.two", "main", "const", "false", "new", "null", "true",
                                              "AXB", "AXB.four", "AXB.three", "AXX",
-                                             "AbstractClassInstantiationError", "ArgumentError", "AssertionError", "BidirectionalIterator");
+                                             "AbstractClassInstantiationError", "AbstractClassInstantiationError", "ArgumentError",
+                                             "ArgumentError", "ArgumentError.notNull", "ArgumentError.value", "AssertionError",
+                                             "AssertionError", "BidirectionalIterator");
   }
 
   public void testNoCompletionAfterDigit() {
