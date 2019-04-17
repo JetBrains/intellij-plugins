@@ -83,10 +83,11 @@ class VueHighlightingLexer(private val languageLevel: JSLanguageLevel) : HtmlHig
 
   override fun getState(): Int {
     val state = super.getState()
-    return state or
-      (if (seenTemplate) VueTemplateTagHandler.SEEN_TEMPLATE
-      else if (seenVueAttribute) VueLexer.SEEN_VUE_ATTRIBUTE
-      else 0)
+    return state or when {
+      seenTemplate -> VueTemplateTagHandler.SEEN_TEMPLATE
+      seenVueAttribute -> VueLexer.SEEN_VUE_ATTRIBUTE
+      else -> 0
+    }
   }
 
   override fun endOfTheEmbeddment(name: String?): Boolean {

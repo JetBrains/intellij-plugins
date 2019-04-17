@@ -105,7 +105,7 @@ class VueComponents {
           val parentExport = element.parent as? ES6ExportDefaultAssignment ?: return null
           return getExportedDescriptor(parentExport)
         }
-        val objLiteral = VueComponents.literalFor(element!!) ?: return null
+        val objLiteral = literalFor(element!!) ?: return null
         return VueComponentDescriptor(obj = objLiteral)
       }).firstOrNull()
     }
@@ -139,7 +139,7 @@ class VueComponents {
 
       val attrList = PsiTreeUtil.getChildOfType(defaultExport, JSAttributeList::class.java) ?: return null
       val decorator = PsiTreeUtil.getChildOfType(attrList, ES6Decorator::class.java) ?: return null
-      val objectDescriptor = VueComponents.getDescriptorFromDecorator(decorator)
+      val objectDescriptor = getDescriptorFromDecorator(decorator)
       val classDescriptor = defaultExport.stubSafeElement as? JSClassExpression<*>
       if (objectDescriptor == null && classDescriptor == null) return null
       return VueComponentDescriptor(objectDescriptor, classDescriptor)

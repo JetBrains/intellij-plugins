@@ -58,13 +58,12 @@ class VueCliRunningGeneratorController internal constructor(generationLocation: 
     val projectName = generationLocation.fileName.toString()
 
     val isOldPackage = settings.myPackage.nameMatches("vue-cli")
-    questionUi = VueCliGeneratorQuestioningPanel(isOldPackage, templateName, projectName,
-                                                 {
-                                                   if (state == VueProjectCreationState.User) {
-                                                     if (it) listener.enableNext()
-                                                     else listener.disableNext(null)
-                                                   }
-                                                 })
+    questionUi = VueCliGeneratorQuestioningPanel(isOldPackage, templateName) {
+      if (state == VueProjectCreationState.User) {
+        if (it) listener.enableNext()
+        else listener.disableNext(null)
+      }
+    }
     process = VueCreateProjectProcess(generationLocation.parent, projectName, templateName, settings.myInterpreterRef,
                                       settings.myPackage, this)
     process!!.listener = {

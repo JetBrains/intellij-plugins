@@ -26,7 +26,7 @@ class VueComponentOwnDetailsProvider {
       // since Kotlin "streams" seems to be not lazy
       for (compMember in detailsList) {
         val details = compMember.readMembers(descriptor, filter)
-        if (onlyFirst && !details.isEmpty()) return details
+        if (onlyFirst && details.isNotEmpty()) return details
         result.addAll((details))
       }
       return result
@@ -38,7 +38,7 @@ class VueComponentOwnDetailsProvider {
       val result = mutableListOf<VueAttributeDescriptor>()
       // since Kotlin "streams" seems to be not lazy
       val details = CompMember.Components.readMembers(descriptor, filter)
-      if (onlyFirst && !details.isEmpty()) return details
+      if (onlyFirst && details.isNotEmpty()) return details
       result.addAll((details))
       return result
     }
@@ -63,7 +63,7 @@ class VueComponentOwnDetailsProvider {
 
     companion object {
       private fun findReturnedObjectLiteral(resolved: PsiElement): JSObjectLiteralExpression? {
-        resolved as? JSFunction ?: return null
+        if (resolved !is JSFunction) return null
         return JSStubBasedPsiTreeUtil.findDescendants<JSObjectLiteralExpression>(
           resolved, TokenSet.create(
           JSStubElementTypes.OBJECT_LITERAL_EXPRESSION))

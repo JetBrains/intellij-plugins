@@ -31,7 +31,7 @@ class VueComponentDetailsProvider {
     fun attributeAllowsNoValue(attributeName: String): Boolean {
       return NO_VALUE.any {
         val cutPrefix = attributeName.substringAfter(it.key, "")
-        !cutPrefix.isEmpty() && it.value.any { cutPrefix.endsWith(it) }
+        cutPrefix.isNotEmpty() && it.value.any { eventModifier -> cutPrefix.endsWith(eventModifier) }
       }
     }
 
@@ -68,10 +68,10 @@ class VueComponentDetailsProvider {
       result.addAll(VueComponentOwnDetailsProvider.getDetails(descriptor, EMPTY_FILTER, onlyPublic, false))
       result.addAll(VueDirectivesProvider.getAttributes(descriptor, descriptor.project))
     }
-    iterateProviders(descriptor, project, {
+    iterateProviders(descriptor, project) {
       result.addAll(VueComponentOwnDetailsProvider.getDetails(it, EMPTY_FILTER, onlyPublic, false))
       true
-    })
+    }
 
     return result.map {
       when {
@@ -87,7 +87,7 @@ class VueComponentDetailsProvider {
     val defaultExport = scriptWithExport.second
     val obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression
     val vueVariants = ArrayList<LookupElement>()
-    VueComponentDetailsProvider.INSTANCE.getAttributes(obj, location.project, false, false)
+    INSTANCE.getAttributes(obj, location.project, false, xmlContext = false)
       // do not suggest directives in injected javascript fragments
       .filter { !it.isDirective() }
       .forEach {
@@ -105,10 +105,10 @@ class VueComponentDetailsProvider {
     val direct = VueComponentOwnDetailsProvider.getDetails(descriptor, filter, onlyPublic, true).firstOrNull()
     if (direct != null) return direct
     val holder: Ref<VueAttributeDescriptor> = Ref()
-    iterateProviders(descriptor, descriptor.project, {
+    iterateProviders(descriptor, descriptor.project) {
       holder.set(VueComponentOwnDetailsProvider.getDetails(it, filter, onlyPublic, true).firstOrNull())
       holder.isNull
-    })
+    }
     if (holder.isNull) {
       holder.set(VueDirectivesProvider.resolveAttribute(descriptor, attrName, descriptor.project))
     }
@@ -125,9 +125,9 @@ class VueComponentDetailsProvider {
       val direct = VueComponentOwnDetailsProvider.getLocalComponents(component, filter, true)
       if (direct.isNotEmpty()) return
     }
-    iterateProviders(component, project, { mixedInDescriptor ->
+    iterateProviders(component, project) { mixedInDescriptor ->
       VueComponentOwnDetailsProvider.getLocalComponents(mixedInDescriptor, filter, true).isEmpty()
-    })
+    }
   }
 
   private fun iterateProviders(descriptor: JSObjectLiteralExpression?,

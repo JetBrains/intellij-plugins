@@ -87,10 +87,11 @@ class VueLexer(private val languageLevel: JSLanguageLevel) : HtmlLexer(), VueHan
 
   override fun getState(): Int {
     val state = super.getState()
-    return state or
-      (if (seenTemplate) VueTemplateTagHandler.SEEN_TEMPLATE
-      else if (seenVueAttribute) SEEN_VUE_ATTRIBUTE
-      else 0)
+    return state or when {
+      seenTemplate -> VueTemplateTagHandler.SEEN_TEMPLATE
+      seenVueAttribute -> SEEN_VUE_ATTRIBUTE
+      else -> 0
+    }
     //     or (if (interpolationLexer != null) SEEN_INTERPOLATION else 0)
   }
 

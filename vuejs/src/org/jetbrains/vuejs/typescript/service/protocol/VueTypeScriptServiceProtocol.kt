@@ -8,9 +8,6 @@ import com.intellij.lang.typescript.compiler.languageService.protocol.commands.T
 import com.intellij.openapi.project.Project
 import com.intellij.util.Consumer
 
-const val vueService = "vueLanguageService"
-const val vuePlugin = "vuePluginIDE"
-
 class VueTypeScriptServiceProtocol(project: Project,
                                    settings: TypeScriptCompilerSettings,
                                    readyConsumer: Consumer<*>,

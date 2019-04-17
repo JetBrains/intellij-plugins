@@ -239,7 +239,7 @@ export default {
   }
 
   fun testResolveLocallyInsideComponentArrayFunctionInsideExport() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("ResolveLocallyInsideComponentArrayFunctionInsideExport.vue", """
 <script>
 let props = ['parentMsg'];
@@ -259,7 +259,7 @@ export default {
       TestCase.assertTrue(literal is JSLiteralExpression)
       TestCase.assertTrue((literal as JSLiteralExpression).isQuotedLiteral)
       TestCase.assertEquals("'parentMsg'", literal.text)
-    })
+    }
   }
 
   fun testResolveLocallyInsideComponent() {
@@ -1200,7 +1200,7 @@ const props = {seeMe: {}}
   }
 </script>
 """)
-    JSTestUtils.testES6<Exception>(project, {
+    JSTestUtils.testES6<Exception>(project) {
       myFixture.checkHighlighting(true, false, true)
 
       val checkResolve = { propName: String, file: String ->
@@ -1220,7 +1220,7 @@ const props = {seeMe: {}}
       TestCase.assertNotNull(attribute)
       myFixture.editor.caretModel.moveToOffset(attribute.textOffset)
       checkResolve("SecondMixinProp", "SecondMixin.vue")
-    })
+    }
   }
 
   fun testResolveIntoLocalMixin() {
@@ -1393,17 +1393,17 @@ const props = {seeMe: {}}
     TestCase.assertNotNull(reference)
     val property = reference!!.resolve()
     TestCase.assertNotNull(directive, property)
-    if (property is JSProperty) {
-      TestCase.assertEquals(directive, property.name)
-      TestCase.assertEquals(fileName, property.containingFile.name)
-    }
-    else if (property is JSCallExpression) {
-      TestCase.assertNotNull(property.text)
-      TestCase.assertEquals(directive, (property.arguments[0] as JSLiteralExpression).stringValue)
-      TestCase.assertEquals(fileName, property.containingFile.name)
-    }
-    else {
-      TestCase.assertTrue(false)
+    when (property) {
+      is JSProperty -> {
+        TestCase.assertEquals(directive, property.name)
+        TestCase.assertEquals(fileName, property.containingFile.name)
+      }
+      is JSCallExpression -> {
+        TestCase.assertNotNull(property.text)
+        TestCase.assertEquals(directive, (property.arguments[0] as JSLiteralExpression).stringValue)
+        TestCase.assertEquals(fileName, property.containingFile.name)
+      }
+      else -> TestCase.assertTrue(false)
     }
   }
 
@@ -1635,7 +1635,7 @@ Object.keys(other).forEach(key => {
   }
 
   fun testResolveWithExplicitForInComponentsBindingEs6() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("a.vue", "")
       myFixture.configureByText("CompForForIn.es6",
                                 """export default {
@@ -1662,11 +1662,11 @@ components.install = (Vue, options = {}) => {
       myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
                                 """<template><<caret>CompForForIn/></template>""")
       doResolveIntoLibraryComponent("compForForIn", "CompForForIn.es6")
-    })
+    }
   }
 
   fun testResolveWithExplicitForInComponentsBinding() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("a.vue", "")
       myFixture.configureByText("CompForForIn.vue",
                                 """<script>export default {
@@ -1693,11 +1693,11 @@ components.install = (Vue, options = {}) => {
       myFixture.configureByText("ResolveWithExplicitForInComponentsBinding.vue",
                                 """<template><<caret>CompForForIn/></template>""")
       doResolveIntoLibraryComponent("compForForIn", "CompForForIn.vue")
-    })
+    }
   }
 
   fun testResolveWithClassComponent() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       createTwoClassComponents(myFixture)
       myFixture.configureByText("ResolveWithClassComponent.vue",
                                 """
@@ -1721,11 +1721,11 @@ export default class UsageComponent extends Vue {
 </script>
 """)
       doResolveIntoClassComponent("ShortComponent.vue")
-    })
+    }
   }
 
   fun testResolveWithClassComponentTs() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       createTwoClassComponents(myFixture, true)
       myFixture.configureByText("ResolveWithClassComponentTs.vue",
                                 """
@@ -1749,16 +1749,16 @@ export default class UsageComponent extends Vue {
 </script>
 """)
       doResolveIntoLibraryComponent("long-vue", "LongComponent.vue")
-    })
+    }
   }
 
   fun testLocalComponentsExtendsResolve() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       createLocalComponentsExtendsData(myFixture, false)
       myFixture.type("prop-from-a=\"\"")
       myFixture.editor.caretModel.moveToOffset(myFixture.editor.caretModel.offset - 5)
       doTestResolveIntoProperty("propFromA")
-    })
+    }
   }
 
   private fun doResolveIntoClassComponent(fileName: String, checkType: Boolean = true) {
@@ -1783,7 +1783,7 @@ export default class UsageComponent extends Vue {
   }
 
   fun testResolveWithRecursiveMixins() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       defineRecursiveMixedMixins(myFixture)
       myFixture.configureByText("ResolveWithRecursiveMixins.vue", """
         <template>
@@ -1797,7 +1797,7 @@ export default class UsageComponent extends Vue {
         </template>
       """)
       doResolveIntoClassComponent("OneMoreComponent.vue", false)
-    })
+    }
   }
 
   fun testCssClassInPug() {

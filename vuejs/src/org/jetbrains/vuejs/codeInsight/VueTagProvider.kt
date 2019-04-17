@@ -44,7 +44,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       val name = tag.name
 
       val localComponents = findLocalComponents(name, tag)
-      if (!localComponents.isEmpty()) return multiDefinitionDescriptor(localComponents)
+      if (localComponents.isNotEmpty()) return multiDefinitionDescriptor(localComponents)
 
       val normalized = fromAsset(name)
       val globalComponents = findGlobalComponents(normalized, tag)
@@ -77,7 +77,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       else {
         // if global component was defined with literal name, that's the "source of true"
         val globalExact = resolvedVariants.filter { isGlobalExact(it) }
-        if (!globalExact.isEmpty()) globalExact
+        if (globalExact.isNotEmpty()) globalExact
         else {
           // prefer library definitions of components for resolve
           // i.e. prefer the place where the name is defined, not the place where it is registered with Vue.component
@@ -133,7 +133,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     if (obj == null) {
       val compDefaultExport = meaningfulElement.parent as? ES6ExportDefaultAssignment
       if (compDefaultExport != null) {
-        val descriptor = VueComponents.getExportedDescriptor(compDefaultExport)
+        val descriptor = getExportedDescriptor(compDefaultExport)
         obj = descriptor?.obj
         clazz = descriptor?.clazz
       }
@@ -149,7 +149,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
                                                  sourceElement: PsiElement?): Boolean {
     if (obj != null) {
       val elements = findProperty(obj, "name")?.indexingData?.implicitElements?.filter { it.userString == VueComponentsIndex.JS_KEY }
-      if (elements != null && !elements.isEmpty()) {
+      if (elements != null && elements.isNotEmpty()) {
         if (elements.any { !processor.invoke(localName, it) }) return false
         return true
       }
@@ -187,11 +187,11 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       val allComponents = VueComponentsCache.getAllComponentsGroupedByModules(tag.project,
                                                                               { key -> variants.any { key.contains(it, true) } }, false)
       for (entry in allComponents) {
-        entry.value.keys
-          .filter { !files.contains(entry.value[it]!!.first.containingFile) }
+        entry.value
+          .filter { !files.contains(it.value.first.containingFile) }
           .forEach {
-            val value = entry.value[it]!!
-            addLookupVariants(elements, tag, scriptLanguage, value.first, it, value.second, entry.key)
+            val value = it.value
+            addLookupVariants(elements, tag, scriptLanguage, value.first, it.key, value.second, entry.key)
           }
       }
       elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
@@ -343,7 +343,7 @@ class VueElementDescriptor(val element: JSImplicitElement, val variants: List<JS
     result.addAll(VueAttributesProvider.getDefaultVueAttributes())
 
     val obj = VueComponents.findComponentDescriptor(declaration)
-    result.addAll(VueComponentDetailsProvider.INSTANCE.getAttributes(obj, element.project, true, true))
+    result.addAll(VueComponentDetailsProvider.INSTANCE.getAttributes(obj, element.project, true, xmlContext = true))
     return result.toTypedArray()
   }
 

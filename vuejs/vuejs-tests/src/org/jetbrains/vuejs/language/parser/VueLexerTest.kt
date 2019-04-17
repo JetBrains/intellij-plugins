@@ -35,7 +35,7 @@ import java.util.*
 
 @TestDataPath("\$CONTENT_ROOT/testData/lexer")
 open class VueLexerTest : LexerTestCase() {
-  val onTearDown = ArrayList<Runnable>()
+  private val onTearDown = ArrayList<Runnable>()
 
   override fun setUp() {
     super.setUp()
@@ -62,7 +62,7 @@ open class VueLexerTest : LexerTestCase() {
   }
 
   private fun <T, KeyT> addExplicitExtension(collector: KeyedExtensionCollector<T, KeyT>, key: KeyT, t: T) {
-    if (!collector.forKey(key).isEmpty()) return
+    if (collector.forKey(key).isNotEmpty()) return
     collector.addExplicitExtension(key, t)
     onTearDown.add(Runnable { collector.removeExplicitExtension(key, t) })
   }

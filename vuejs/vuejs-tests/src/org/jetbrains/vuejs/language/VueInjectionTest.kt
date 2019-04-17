@@ -182,7 +182,7 @@ new Vue({
     TestCase.assertNotNull(host)
     TestCase.assertEquals(text.replace("<caret>", ""), host!!.text)
     val expected = mutableSetOf("interpolation", "another", "two")
-    InjectedLanguageManager.getInstance(project).enumerate(host, { injectedPsi, _ -> expected.remove(injectedPsi.text) })
+    InjectedLanguageManager.getInstance(project).enumerate(host) { injectedPsi, _ -> expected.remove(injectedPsi.text) }
     TestCase.assertEquals(emptySet<String>(), expected)
   }
 
@@ -202,7 +202,7 @@ another}}{{two}}"""
 
 """, """
 another""", "two")
-    InjectedLanguageManager.getInstance(project).enumerate(host, { injectedPsi, _ -> expected.remove(injectedPsi.text) })
+    InjectedLanguageManager.getInstance(project).enumerate(host) { injectedPsi, _ -> expected.remove(injectedPsi.text) }
     TestCase.assertEquals(emptySet<String>(), expected)
   }
 
@@ -254,8 +254,8 @@ Vue.options.delimiters = ['<%', '%>']
   }
 
   private fun toParseTreeText(file: PsiFile): String {
-    return DebugUtil.psiToString(file, false, false, { psiElement, consumer ->
+    return DebugUtil.psiToString(file, false, false) { psiElement, consumer ->
       InjectedLanguageManager.getInstance(project).enumerate(psiElement) { injectedPsi, _ -> consumer.consume(injectedPsi) }
-    })
+    }
   }
 }

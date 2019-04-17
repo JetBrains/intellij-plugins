@@ -31,7 +31,7 @@ class DuplicateTagInspection : LocalInspectionTool() {
   }
 }
 
-class DeleteTagFix(tag: XmlTag, val tagName: String = tag.name) : LocalQuickFixOnPsiElement(tag) {
+class DeleteTagFix(tag: XmlTag, private val tagName: String = tag.name) : LocalQuickFixOnPsiElement(tag) {
   override fun getFamilyName(): String = "Remove Tag"
   override fun getText(): String = "Remove ${tagName} Tag"
 

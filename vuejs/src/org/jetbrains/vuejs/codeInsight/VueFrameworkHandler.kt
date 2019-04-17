@@ -376,12 +376,12 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator,
                                         context: JSEvaluateContext,
                                         result: PsiElement): Boolean {
-    if (!org.jetbrains.vuejs.index.hasVue(result.project)) return false
+    if (!hasVue(result.project)) return false
     if (result is JSVariable && result.language is VueJSLanguage) {
       val vFor = result.parent as? VueVForExpression ?: result.parent.parent as? VueVForExpression
       val vForRef = vFor?.getReferenceExpression()
       val variables = vFor?.getVarStatement()?.variables
-      if (vForRef != null && variables != null && !variables.isEmpty() && result == variables[0]) {
+      if (vForRef != null && variables != null && variables.isNotEmpty() && result == variables[0]) {
         if (JSPsiImplUtils.calculateTypeOfVariableForIteratedExpression(evaluator, vForRef, vFor)) return true
       }
     }

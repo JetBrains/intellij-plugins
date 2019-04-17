@@ -20,6 +20,6 @@ class VueCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
 
   override fun prepareProperties(props: MutableMap<String, Any>) {
     val name = props[ATTRIBUTE_NAME] as? String ?: return
-    props.put("COMPONENT_NAME", name)
+    props["COMPONENT_NAME"] = name
   }
 }

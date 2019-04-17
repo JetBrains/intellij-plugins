@@ -36,10 +36,10 @@ class VueInjector : MultiHostInjector {
     private val delimitersOptionHolders = setOf("Vue.config.delimiters", "Vue.options.delimiters")
 
     val BRACES_FACTORY: NullableFunction<PsiElement, Pair<String, String>> = JSInjectionBracesUtil.delimitersFactory(
-      VueJSLanguage.INSTANCE.displayName, { project, key ->
+      VueJSLanguage.INSTANCE.displayName) { project, key ->
       if (project == null || key == null) return@delimitersFactory null
       calculateDelimitersFromIndex(project, key) ?: calculateDelimitersFromAssignment(project, key)
-    })
+    }
 
     private fun calculateDelimitersFromIndex(project: Project, key: String): Pair<String, PsiElement>? {
       val elements = resolve("", GlobalSearchScope.projectScope(project), VueOptionsIndex.KEY) ?: return null
@@ -81,7 +81,7 @@ class VueInjector : MultiHostInjector {
     if (fileType != HtmlFileType.INSTANCE && fileType != VueFileType.INSTANCE) return
 
     // this supposed to work in <template lang="jade"> attribute values
-    if (context is XmlAttributeValueImpl && !context.value.isNullOrBlank() && context.parent is XmlAttribute
+    if (context is XmlAttributeValueImpl && !context.value.isBlank() && context.parent is XmlAttribute
         && VueAttributesProvider.isInjectJS((context.parent as XmlAttribute).name)) {
       val embedded = PsiTreeUtil.getChildOfType(context, JSEmbeddedContent::class.java)
       if (embedded != null && VueJSLanguage.INSTANCE != embedded.language) {
