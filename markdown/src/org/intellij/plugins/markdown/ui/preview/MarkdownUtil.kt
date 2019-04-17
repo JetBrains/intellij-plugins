@@ -1,10 +1,10 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.ui.preview
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.io.DigestUtil
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.html.HtmlGenerator
 import org.intellij.markdown.parser.LinkMap
@@ -14,23 +14,13 @@ import org.jetbrains.annotations.NonNls
 import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import java.util.*
 
 object MarkdownUtil {
-  private val LOG = Logger.getInstance(MarkdownUtil::class.java)
-
   fun md5(buffer: String?, @NonNls key: String): String {
-    var md5: MessageDigest? = null
-    try {
-      md5 = MessageDigest.getInstance("MD5")
-    }
-    catch (e: NoSuchAlgorithmException) {
-      LOG.error("Cannot find 'md5' algorithm; ", e)
-    }
-
+    val md5 = DigestUtil.md5()
     Objects.requireNonNull<MessageDigest>(md5).update(buffer?.toByteArray(Charsets.UTF_8))
-    val code = md5!!.digest(key.toByteArray(Charsets.UTF_8))
+    val code = md5.digest(key.toByteArray(Charsets.UTF_8))
     val bi = BigInteger(code).abs()
     return bi.abs().toString(16)
   }
