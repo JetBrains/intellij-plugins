@@ -7,9 +7,6 @@ import com.intellij.ide.fileTemplates.FileTemplate.ATTRIBUTE_NAME
 import com.intellij.openapi.fileTypes.ex.FileTypeManagerEx
 import org.jetbrains.vuejs.CreateVueSingleFileComponentAction.Companion.VUE_TEMPLATE_NAME
 
-/**
- * @author Irina.Chernushina on 10/5/2017.
- */
 class VueCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
   override fun handlesTemplate(template: FileTemplate): Boolean {
     val fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(template.extension)
@@ -20,6 +17,6 @@ class VueCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
 
   override fun prepareProperties(props: MutableMap<String, Any>) {
     val name = props[ATTRIBUTE_NAME] as? String ?: return
-    props.put("COMPONENT_NAME", name)
+    props["COMPONENT_NAME"] = name
   }
 }

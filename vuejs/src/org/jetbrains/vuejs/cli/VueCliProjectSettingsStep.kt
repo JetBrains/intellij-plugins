@@ -144,7 +144,7 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
   }
 
   private fun onError(errorText: String) {
-    setErrorText("Error: " + errorText)
+    setErrorText("Error: $errorText")
     myCreateButton.text = "Close"
     myCreateButton.isEnabled = true
     if (process != null) {
@@ -168,7 +168,6 @@ class VueCliProjectSettingsStep(projectGenerator: DirectoryProjectGenerator<NpmP
 
 class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
                                       private val generatorName: String,
-                                      private val projectName: String,
                                       private val validationListener: (Boolean) -> Unit) {
   private var currentPrefferdFocusOwner: JComponent? = null
   private var currentControl: (() -> String)? = null
@@ -244,7 +243,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
       val box = JBCheckBox(it.name)
       if (currentPrefferdFocusOwner == null) currentPrefferdFocusOwner = box
       formBuilder.addComponent(box)
-      selectors.add({ list -> if (box.isSelected) list.add(it.value) })
+      selectors.add { list -> if (box.isSelected) list.add(it.value) }
     }
     panel.add(SwingHelper.wrapWithHorizontalStretch(formBuilder.panel), BorderLayout.CENTER)
     return {
@@ -281,17 +280,11 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   }
 
   fun question(question: VueCreateProjectProcess.Question) {
-    if (question.type == VueCreateProjectProcess.QuestionType.Input) {
-      currentControl = addInput(question.message, question.defaultVal)
-    }
-    else if (question.type == VueCreateProjectProcess.QuestionType.Confirm) {
-      currentControl = addConfirm(question.message)
-    }
-    else if (question.type == VueCreateProjectProcess.QuestionType.List) {
-      currentControl = addChoices(question.message, question.choices)
-    }
-    else if (question.type == VueCreateProjectProcess.QuestionType.Checkbox) {
-      currentCheckboxControl = addCheckboxes(question.message, question.choices)
+    when (question.type) {
+      VueCreateProjectProcess.QuestionType.Input -> currentControl = addInput(question.message, question.defaultVal)
+      VueCreateProjectProcess.QuestionType.Confirm -> currentControl = addConfirm(question.message)
+      VueCreateProjectProcess.QuestionType.List -> currentControl = addChoices(question.message, question.choices)
+      VueCreateProjectProcess.QuestionType.Checkbox -> currentCheckboxControl = addCheckboxes(question.message, question.choices)
     }
     if (currentPrefferdFocusOwner != null) currentPrefferdFocusOwner!!.requestFocus()
     panel.revalidate()

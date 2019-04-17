@@ -89,10 +89,10 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     val refs = mutableListOf<RefData>()
     val injManager = InjectedLanguageManager.getInstance(list[0].project)
     list.forEach { tag ->
-      PsiTreeUtil.processElements(tag, {
+      PsiTreeUtil.processElements(tag) {
         refs.addAll(addElementReferences(it, tag, 0))
         true
-      })
+      }
       val tagOffset = tag.textRange.startOffset
       val hosts = PsiTreeUtil.findChildrenOfType(tag, PsiLanguageInjectionHost::class.java)
       hosts.forEach { host ->
@@ -129,7 +129,7 @@ class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
     }
   }
 
-  private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0], { "template" == (it as? XmlTag)?.name }) as? XmlTag
+  private fun findTemplate(): XmlTag? = PsiTreeUtil.findFirstParent(list[0]) { "template" == (it as? XmlTag)?.name } as? XmlTag
 
   fun createNewComponent(newComponentName: String): VirtualFile? {
     val newText = generateNewComponentText(newComponentName) ?: return null
@@ -170,10 +170,10 @@ export default {
 }
 </script>${copyStyles()}"""
 
-    newText = psiOperationOnText(newText, { optimizeAndRemoveEmptyStyles(it) })
-    newText = psiOperationOnText(newText, {
+    newText = psiOperationOnText(newText) { optimizeAndRemoveEmptyStyles(it) }
+    newText = psiOperationOnText(newText) {
       CodeStyleManager.getInstance(containingFile.project).reformatText(it, 0, it.textRange.endOffset)
-    })
+    }
 
     return newText
   }
@@ -201,7 +201,7 @@ export default {
     currentlyUnused.forEach { suffix -> RemoveUnusedSymbolIntentionAction.removeUnused(file.project, suffix, false) }
     val toDelete = findStyles(file).filter { styleTag ->
       styleTag.isValid &&
-      PsiTreeUtil.processElements(styleTag, { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) })
+      PsiTreeUtil.processElements(styleTag) { !(CssElementTypes.CSS_RULESET_LIST == it.node.elementType && hasMeaningfulChildren(it)) }
     }
     toDelete.forEach { styleTag -> styleTag.delete() }
   }
@@ -209,7 +209,7 @@ export default {
   private fun hasMeaningfulChildren(element: PsiElement) =
     !PsiTreeUtil.processElements({ !(it !is PsiWhiteSpace && it !is PsiComment) }, element.children)
 
-  private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"" + lang + "\""
+  private fun langAttribute(lang: String?) = if (lang == null) "" else " lang=\"$lang\""
 
   private fun generateImports(): String {
     if (importsToCopy.isEmpty()) return ""
@@ -220,10 +220,10 @@ export default {
 
   private fun generateDescriptorMembers(mapHasDirectUsage: MutableSet<String>): String {
     val members = mutableListOf<String>()
-    if (!importsToCopy.isEmpty()) {
+    if (importsToCopy.isNotEmpty()) {
       members.add(importsToCopy.keys.sorted().joinToString(", ", ",\ncomponents: {", "}"))
     }
-    if (!refDataMap.isEmpty()) {
+    if (refDataMap.isNotEmpty()) {
       members.add(sortedProps(true).joinToString(",\n", ",\nprops: {\n", "\n}")
       { "${it.getRefName()}: ${if (mapHasDirectUsage.contains(it.getRefName())) "{ type: Function }" else "{}"}" })
     }
@@ -260,7 +260,7 @@ export default {
     val component = defaultExport?.stubSafeElement as? JSObjectLiteralExpression
 
     val components = (component?.findProperty("components")?.value as? JSObjectLiteralExpression)?.properties
-    if (components != null && !components.isEmpty()) {
+    if (components != null && components.isNotEmpty()) {
       val names = components.map { toAsset(it.name ?: "").capitalize() }.toMutableSet()
       (file as XmlFile).accept(object : VueFileVisitor() {
         override fun visitElement(element: PsiElement?) {

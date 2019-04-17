@@ -31,9 +31,6 @@ import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.language.VueVForExpression
 
-/**
- * @author Irina.Chernushina on 7/28/2017.
- */
 class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   override fun createReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,
                                                  ignorePerformanceLimits: Boolean): ResolveCache.PolyVariantResolver<JSReferenceExpressionImpl> =
@@ -59,7 +56,7 @@ class VueJSReferenceExpressionResolver(referenceExpression: JSReferenceExpressio
       val valueElement = (it as? XmlTag)?.getAttribute("v-for")?.valueElement ?: return@Condition false
       // vue v-for embedded in attribute value in vue file & html template language
       val vFor = getCachedVForInsideAttribute(valueElement, injectedLanguageManager) ?: return@Condition false
-      elRef.set(vFor.getVarStatement()?.variables?.firstOrNull { it.name == ref.referenceName })
+      elRef.set(vFor.getVarStatement()?.variables?.firstOrNull { jsVariable -> jsVariable.name == ref.referenceName })
       return@Condition !elRef.isNull
     })
     val foundElement = elRef.get() ?: return null
@@ -104,7 +101,7 @@ fun findInMountedVueInstance(reference: JSReferenceExpression): JSObjectLiteralE
     if (it is PsiFile) return@Condition true
     val idValue = (it as? XmlTag)?.getAttribute("id")?.valueElement?.value ?: return@Condition false
     if (!StringUtil.isEmptyOrSpaces(idValue)) {
-      val elements = resolve("#" + idValue, GlobalSearchScope.projectScope(reference.project), VueOptionsIndex.KEY)
+      val elements = resolve("#$idValue", GlobalSearchScope.projectScope(reference.project), VueOptionsIndex.KEY)
                      ?: return@Condition false
       val element = onlyLocal(elements).firstOrNull()
       val obj = element as? JSObjectLiteralExpression ?: PsiTreeUtil.getParentOfType(element, JSObjectLiteralExpression::class.java)
@@ -119,7 +116,7 @@ fun findInMountedVueInstance(reference: JSReferenceExpression): JSObjectLiteralE
 fun findScriptWithExport(element: PsiElement): Pair<PsiElement, ES6ExportDefaultAssignment>? {
   val xmlFile = getContainingXmlFile(element) ?: return null
 
-  val module = org.jetbrains.vuejs.codeInsight.findModule(xmlFile) ?: return null
+  val module = findModule(xmlFile) ?: return null
   val defaultExport = com.intellij.lang.ecmascript6.resolve.ES6PsiUtil.findDefaultExport(module)
                         as? ES6ExportDefaultAssignment ?: return null
   if (defaultExport.stubSafeElement is JSObjectLiteralExpression) {

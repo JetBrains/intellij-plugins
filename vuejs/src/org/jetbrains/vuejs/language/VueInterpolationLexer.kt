@@ -6,7 +6,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.xml.XmlTokenType
 
-class VueInterpolationLexer(val prefix: String, val suffix: String, val type: IElementType) : LexerBase() {
+class VueInterpolationLexer(private val prefix: String, private val suffix: String, val type: IElementType) : LexerBase() {
   private var buffer: CharSequence? = null
   private var state = 0
   private var element: IElementType? = null

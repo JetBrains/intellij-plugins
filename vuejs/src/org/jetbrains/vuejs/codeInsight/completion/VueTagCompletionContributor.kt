@@ -210,7 +210,7 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
     // see also VueElementDescriptor.getAttributesDescriptors()
     val jsElement = (attr.parent?.descriptor as? VueElementDescriptor)?.declaration ?: return
     val obj = VueComponents.findComponentDescriptor(jsElement)
-    for (attribute in VueComponentDetailsProvider.INSTANCE.getAttributes(obj, attr.project, true, true)) {
+    for (attribute in VueComponentDetailsProvider.INSTANCE.getAttributes(obj, attr.project, true, xmlContext = true)) {
       newResult.addElement(LookupElementBuilder
                              .create(lookupItemPrefix + attribute.name)
                              .withInsertHandler(XmlAttributeInsertHandler.INSTANCE))

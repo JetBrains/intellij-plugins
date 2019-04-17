@@ -55,7 +55,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
 
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
-  public void testSimpleVue() throws Exception {
+  public void testSimpleVue() {
     doTestWithCopyDirectory();
 
     myFixture.configureByFile("SimpleVueNoTs.vue");
@@ -71,7 +71,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
-  public void testSimpleVueNoTs() throws Exception {
+  public void testSimpleVueNoTs() {
     doTestWithCopyDirectory();
 
     myFixture.configureByFile("SimpleVue.vue");
@@ -79,7 +79,7 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
-  public void testSimpleVueEditing() throws Exception {
+  public void testSimpleVueEditing() {
     doTestWithCopyDirectory();
     myFixture.type('\b');
 
@@ -89,17 +89,17 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
-  public void testSimpleVueEditingNoTs() throws Exception {
+  public void testSimpleVueEditingNoTs() {
     completeTsLangAndAssert();
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
-  public void testSimpleVueEditingNoTsNoRefs() throws Exception {
+  public void testSimpleVueEditingNoTsNoRefs() {
     completeTsLangAndAssert();
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
-  public void testSimpleVueEditingCloseTag() throws Exception {
+  public void testSimpleVueEditingCloseTag() {
     doTestWithCopyDirectory();
     myFixture.type('\b');
     checkAfterFile("vue");

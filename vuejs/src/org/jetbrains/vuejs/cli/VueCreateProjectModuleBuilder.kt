@@ -95,6 +95,6 @@ class VueCreateProjectModuleBuilder(generator: VueCliProjectGenerator) : WebModu
   }
 
   override fun getParentGroup(): String {
-    return WebModuleBuilder.GROUP_NAME
+    return GROUP_NAME
   }
 }

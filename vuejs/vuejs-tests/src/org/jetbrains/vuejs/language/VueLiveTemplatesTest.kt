@@ -9,9 +9,6 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import junit.framework.TestCase
 import org.jetbrains.vuejs.liveTemplate.*
 
-/**
- * @author Irina.Chernushina on 10/26/2017.
- */
 class VueLiveTemplatesTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testTopLevelVueApplicable() {
     val cases = listOf(

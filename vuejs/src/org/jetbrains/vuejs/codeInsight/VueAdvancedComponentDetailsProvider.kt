@@ -5,9 +5,6 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.openapi.project.Project
 
-/**
- * @author Irina.Chernushina on 10/16/2017.
- */
 interface VueAdvancedComponentDetailsProvider {
   fun getIndexedData(descriptor: JSObjectLiteralExpression?, project: Project): Collection<JSImplicitElement>
   fun getDescriptorFinder(): (JSImplicitElement) -> JSObjectLiteralExpression?

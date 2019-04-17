@@ -472,7 +472,7 @@ Vue.component('global-comp-literal', {
 </script>
 """)
 
-    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+    JSTestUtils.testES6<Exception>(project) { myFixture.checkHighlighting(true, false, true) }
   }
 
   fun testTwoExternalMixins() {
@@ -504,7 +504,7 @@ Vue.component('global-comp-literal', {
   }
 </script>
 """)
-    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+    JSTestUtils.testES6<Exception>(project) { myFixture.checkHighlighting(true, false, true) }
   }
 
   fun testTwoGlobalMixins() {
@@ -521,7 +521,7 @@ Vue.component('global-comp-literal', {
     }
 </script>
 """)
-    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+    JSTestUtils.testES6<Exception>(project) { myFixture.checkHighlighting(true, false, true) }
   }
 
   fun testNotImportedComponentIsUnknown() {
@@ -618,7 +618,7 @@ Vue.component('global-comp-literal', {
     }
 </script>
 """)
-    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+    JSTestUtils.testES6<Exception>(project) { myFixture.checkHighlighting(true, false, true) }
   }
 
   fun testComponentNameAsStringTemplate() {
@@ -635,7 +635,7 @@ Vue.component('global-comp-literal', {
     }
 </script>
 """)
-    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+    JSTestUtils.testES6<Exception>(project) { myFixture.checkHighlighting(true, false, true) }
   }
 
   fun testTypeScriptTypesInVue() {
@@ -655,7 +655,7 @@ Vue.component('global-comp-literal', {
 
   fun testCustomDirectives() {
     directivesTestCase(myFixture)
-    JSTestUtils.testES6<Exception>(project, { myFixture.checkHighlighting(true, false, true) })
+    JSTestUtils.testES6<Exception>(project) { myFixture.checkHighlighting(true, false, true) }
   }
 
   fun testEmptyAttributeValue() {
@@ -716,7 +716,7 @@ Vue.component('global-comp-literal', {
   }
 
   fun testEmptyTagsForVueAreAllowed() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("EmptyTagsForVueAreAllowed.vue",
                                 """
 <template>
@@ -735,11 +735,11 @@ Vue.component('global-comp-literal', {
 </script>
 """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testBuiltinTagsHighlighting() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       createPackageJsonWithVueDependency(myFixture, "")
       myFixture.copyDirectoryToProject("./types/node_modules", "./node_modules")
       myFixture.configureByText("BuiltinTagsHighlighting.vue", """
@@ -760,11 +760,11 @@ Vue.component('global-comp-literal', {
     </slot>
 </template>""")
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testNonPropsAttributesAreNotHighlighted() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("EmptyTagsForVueAreAllowed.vue",
                                 """
 <template>
@@ -779,7 +779,7 @@ Vue.component('global-comp-literal', {
 </script>
 """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testVueAttributeWithoutValueWithFollowingAttrubute() {
@@ -836,7 +836,7 @@ Vue.component('global-comp-literal', {
   }
 
   fun testClassComponentAnnotationWithLocalComponent() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       createTwoClassComponents(myFixture)
       myFixture.configureByText("ClassComponentAnnotationWithLocalComponent.vue",
                                 """
@@ -862,7 +862,7 @@ export default class UsageComponent extends Vue {
 </script>
 """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testClassComponentAnnotationWithLocalComponentTs() {
@@ -899,14 +899,14 @@ export default class UsageComponent extends Vue {
   }
 
   fun testLocalComponentExtends() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       createLocalComponentsExtendsData(myFixture)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testLocalComponentExtendsInClassSyntax() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("CompAForClass.vue", """
 <template>
     <div>{{ propFromA1 }}</div>
@@ -941,11 +941,11 @@ export default class UsageComponent extends Vue {
 </script>
 """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testLocalComponentInClassSyntax() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("CompForClass.vue", """
 <template>
     <div>{{ propFromA2 }}</div>
@@ -988,11 +988,11 @@ export default class UsageComponent extends Vue {
 </script>
 """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testLocalComponentInMixin() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("b-component.vue", """
 <template>
     <div>Hello</div>
@@ -1031,11 +1031,11 @@ export default {
 </script>
 """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testLocalComponentInMixinRecursion() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("hidden-component.vue", """
 <script>
     export default {
@@ -1105,11 +1105,11 @@ import BComponent from 'b-component'
 </script>
 """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testRecursiveMixedMixins() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       defineRecursiveMixedMixins(myFixture)
       myFixture.configureByText("RecursiveMixedMixins.vue", """
         <template>
@@ -1118,7 +1118,7 @@ import BComponent from 'b-component'
         </template>
       """)
       myFixture.checkHighlighting()
-    })
+    }
   }
 
   fun testFlowJSEmbeddedContent() {

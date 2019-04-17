@@ -8,9 +8,6 @@ import java.lang.ref.Reference
 import java.lang.ref.SoftReference
 import java.util.*
 
-/**
- * @author Irina.Chernushina on 10/4/2017.
- */
 class VueBundle {
   companion object {
     private const val BUNDLE = "messages.VueBundle"

@@ -89,7 +89,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
       var obj = defaultExport.stubSafeElement as? JSObjectLiteralExpression ?: VueComponents.getExportedDescriptor(defaultExport)?.obj
 
       if (obj == null) {
-        val decorator = VueComponents.getElementComponentDecorator(defaultExport) ?: return
+        val decorator = getElementComponentDecorator(defaultExport) ?: return
         val newClass = JSChangeUtil.createStatementFromTextWithContext("@Component({}) class A {}", decorator)!!.getPsi(JSClass::class.java)
         val newDecorator = getElementComponentDecorator(newClass)!!
         val replacedDecorator = decorator.replace(newDecorator)
@@ -225,7 +225,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
         lastAdded = addedProperty
       }
       else {
-        val needsComma = anchor != null && (anchor.node.elementType == JSTokenTypes.COMMA || !obj.properties.isEmpty())
+        val needsComma = anchor != null && (anchor.node.elementType == JSTokenTypes.COMMA || obj.properties.isNotEmpty())
         addedProperty = JSChangeUtil.doDoAddAfter(obj, newProperty, anchor) as JSProperty
         lastAdded = addedProperty
         if (needsComma) {

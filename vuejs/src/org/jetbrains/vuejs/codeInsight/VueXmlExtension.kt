@@ -44,8 +44,8 @@ class VueXmlExtension : HtmlXmlExtension() {
         val child = jsEmbeddedContent?.firstChild
         if (child is JSReferenceExpression && child.nextSibling == null) {
           val resolve = child.resolve()
-          (resolve as? JSProperty)?.objectLiteralExpressionInitializer?.properties?.forEach {
-            if (it.name == toAssetName) return@find true
+          (resolve as? JSProperty)?.objectLiteralExpressionInitializer?.properties?.forEach { property ->
+            if (property.name == toAssetName) return@find true
           }
         }
         return@find false

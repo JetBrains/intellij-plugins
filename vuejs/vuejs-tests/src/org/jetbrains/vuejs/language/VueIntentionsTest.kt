@@ -41,7 +41,7 @@ class VueIntentionsTest : LightPlatformCodeInsightFixtureTestCase() {
       TestCase.fail("Intention by name $name not found")
       return
     }
-    WriteCommandAction.runWriteCommandAction(myFixture.project, { intention.invoke(myFixture.project, myFixture.editor, myFixture.file) })
+    WriteCommandAction.runWriteCommandAction(myFixture.project) { intention.invoke(myFixture.project, myFixture.editor, myFixture.file) }
 
     myFixture.checkResultByFile(getTestName(true) + "_after.vue")
   }

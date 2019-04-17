@@ -4,9 +4,6 @@ package org.jetbrains.vuejs.index
 import com.intellij.lang.javascript.psi.JSImplicitElementProvider
 import com.intellij.psi.stubs.StubIndexKey
 
-/**
- * @author Irina.Chernushina on 7/19/2017.
- */
 class VueOptionsIndex : VueIndexBase(KEY, JS_KEY) {
   companion object {
     val KEY: StubIndexKey<String, JSImplicitElementProvider> =

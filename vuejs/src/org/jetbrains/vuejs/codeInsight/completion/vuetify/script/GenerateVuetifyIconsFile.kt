@@ -13,14 +13,14 @@ private object GenerateVuetifyIconsFile {
                    "  val materialAndFontAwesome = listOf(\n" +
                    "    //  https://github.com/google/material-design-icons/blob/master/iconfont/codepoints")
     File("materialIcons.txt").inputStream().bufferedReader().use {
-      it.readLines().forEach {
-        writer.println("\"" + it.substringBefore(" ") + "\",")
+      it.readLines().forEach { line ->
+        writer.println("\"" + line.substringBefore(" ") + "\",")
       }
     }
     writer.println("//  https://github.com/FortAwesome/Font-Awesome/blob/master/svg-with-js/js/fontawesome-all.js")
     File("fontAwesome.txt").inputStream().bufferedReader().use {
-      it.readLines().forEach {
-        writer.println("\"fa-" + it.substringBefore(":").substringAfter(" \"") + ",")
+      it.readLines().forEach { line ->
+        writer.println("\"fa-" + line.substringBefore(":").substringAfter(" \"") + ",")
       }
     }
     writer.println(("  )\n" +

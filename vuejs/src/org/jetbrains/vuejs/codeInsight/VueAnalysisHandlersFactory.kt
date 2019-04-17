@@ -9,9 +9,6 @@ import com.intellij.lang.javascript.validation.JSReferenceChecker
 import com.intellij.lang.javascript.validation.JSReferenceInspectionProblemReporter
 import com.intellij.psi.ResolveResult
 
-/**
- * @author Irina.Chernushina on 11/7/2017.
- */
 class VueAnalysisHandlersFactory : JSAnalysisHandlersFactory() {
   override fun getReferenceChecker(reporter: JSReferenceInspectionProblemReporter): JSReferenceChecker {
     return object : JSReferenceChecker((reporter)) {

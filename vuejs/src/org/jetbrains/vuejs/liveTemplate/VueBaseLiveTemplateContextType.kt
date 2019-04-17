@@ -15,9 +15,6 @@ import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.hasVue
 
-/**
- * @author Irina.Chernushina on 10/26/2017.
- */
 class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", EverywhereContextType::class.java) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
     return VueFileType.INSTANCE == file.fileType

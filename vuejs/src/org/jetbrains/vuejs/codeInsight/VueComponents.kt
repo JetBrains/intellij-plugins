@@ -20,8 +20,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.index.getVueIndexData
 
 /**
- * @author Irina.Chernushina on 9/26/2017.
- *
  * Basic resolve from index here (when we have the name literal and the descriptor literal/reference)
  */
 class VueComponents {
@@ -105,7 +103,7 @@ class VueComponents {
           val parentExport = element.parent as? ES6ExportDefaultAssignment ?: return null
           return getExportedDescriptor(parentExport)
         }
-        val objLiteral = VueComponents.literalFor(element!!) ?: return null
+        val objLiteral = literalFor(element!!) ?: return null
         return VueComponentDescriptor(obj = objLiteral)
       }).firstOrNull()
     }
@@ -139,7 +137,7 @@ class VueComponents {
 
       val attrList = PsiTreeUtil.getChildOfType(defaultExport, JSAttributeList::class.java) ?: return null
       val decorator = PsiTreeUtil.getChildOfType(attrList, ES6Decorator::class.java) ?: return null
-      val objectDescriptor = VueComponents.getDescriptorFromDecorator(decorator)
+      val objectDescriptor = getDescriptorFromDecorator(decorator)
       val classDescriptor = defaultExport.stubSafeElement as? JSClassExpression<*>
       if (objectDescriptor == null && classDescriptor == null) return null
       return VueComponentDescriptor(objectDescriptor, classDescriptor)

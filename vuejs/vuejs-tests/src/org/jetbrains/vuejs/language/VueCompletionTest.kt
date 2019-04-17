@@ -556,7 +556,7 @@ export default {
 </script>
 """)
     noAutoComplete(Runnable {
-      JSTestUtils.testES6<Exception>(project, {
+      JSTestUtils.testES6<Exception>(project) {
         myFixture.completeBasic()
         UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
                                               "first-mixin-prop", "second-mixin-prop", "hi2dden",
@@ -565,7 +565,7 @@ export default {
                                            "FirstMixinProp", "firstMixinProp",
                                            "SecondMixinProp", "secondMixinProp", "Hi2dden",
                                            "InterestingProp", "interestingProp")
-      })
+      }
     })
   }
 
@@ -596,19 +596,19 @@ export default {
 </script>
 """)
     noAutoComplete(Runnable {
-      JSTestUtils.testES6<Exception>(project, {
+      JSTestUtils.testES6<Exception>(project) {
         myFixture.completeBasic()
         UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "hi2dden", "interesting-prop")
         UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
                                            "Hi2dden", "interestingProp", "InterestingProp",
                                            "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
                                            "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
-      })
+      }
     })
   }
 
   fun testNoCompletionInVueAttributes() {
-    JSTestUtils.withNoLibraries(project, {
+    JSTestUtils.withNoLibraries(project) {
       myFixture.configureByText("NoCompletionInVueAttributes.vue", """
 <template>
     <ul v-show="open<caret>">
@@ -617,11 +617,11 @@ export default {
 """)
       myFixture.completeBasic()
       assertSameElements(myFixture.lookupElementStrings!!)
-    })
+    }
   }
 
   fun testTypeScriptCompletionFromPredefined() {
-    JSTestUtils.withNoLibraries(project, {
+    JSTestUtils.withNoLibraries(project) {
       myFixture.configureByText("TypeScriptCompletionFromPredefined.vue", """
 <script lang="ts">
     open<caret>
@@ -629,7 +629,7 @@ export default {
 """)
       myFixture.completeBasic()
       assertSameElements(myFixture.lookupElementStrings!!, "open", "opener", "openDatabase")
-    })
+    }
   }
 
   fun testCustomDirectivesInCompletion() {
@@ -947,7 +947,7 @@ $script""")
   }
 
   fun testClassComponentCompletion() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       createTwoClassComponents(myFixture)
       myFixture.configureByText("ClassComponentCompletion.vue",
                                 """
@@ -958,11 +958,11 @@ $script""")
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
                                             listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
-    })
+    }
   }
 
   fun testClassComponentCompletionTs() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       createTwoClassComponents(myFixture, true)
       myFixture.configureByText("ClassComponentCompletionTs.vue",
                                 """
@@ -973,7 +973,7 @@ $script""")
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
                                             listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
-    })
+    }
   }
 
   fun testComponentInsertion() {
@@ -1082,7 +1082,7 @@ $script""")
 </script>
 """)
     )
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("package.json", """{
           dependencies: {
             "vue-class-component" : "latest"
@@ -1095,11 +1095,11 @@ $script""")
         myFixture.completeBasic()
         myFixture.checkResult(it.second)
       }
-    })
+    }
   }
 
   fun testTypescriptVForItemCompletion() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       myFixture.configureByText("TypescriptVForItemCompletion.vue", """
 <template>
     <ul>
@@ -1129,19 +1129,19 @@ $script""")
       myFixture.completeBasic()
 
       JSLightCompletionTestBase.checkJSStringCompletion(myFixture.lookupElements!!, true)
-    })
+    }
   }
 
   fun testLocalComponentsExtendsCompletion() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       createLocalComponentsExtendsData(myFixture, false)
       myFixture.completeBasic()
       assertContainsElements(myFixture.lookupElementStrings!!, "prop-from-a")
-    })
+    }
   }
 
   fun testCompletionWithRecursiveMixins() {
-    JSTestUtils.testES6<Exception>(myFixture.project, {
+    JSTestUtils.testES6<Exception>(myFixture.project) {
       defineRecursiveMixedMixins(myFixture)
       myFixture.configureByText("CompletionWithRecursiveMixins.vue", """
         <template>
@@ -1158,7 +1158,7 @@ $script""")
       """)
       myFixture.completeBasic()
       assertContainsElements(myFixture.lookupElementStrings!!, listOf("from-d", "from-hidden"))
-    })
+    }
   }
 
   fun testNoImportInsertedForRecursivelyLocalComponent() {
@@ -1493,7 +1493,7 @@ fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
     "name": "test",
     "version": "0.0.1",
     "dependencies": {
-      "vue": "2.5.3" ${if (additionalDependencies.isBlank()) "" else ", " + additionalDependencies}
+      "vue": "2.5.3" ${if (additionalDependencies.isBlank()) "" else ", $additionalDependencies"}
     },
     "typings": "types/index.d.ts"
   }

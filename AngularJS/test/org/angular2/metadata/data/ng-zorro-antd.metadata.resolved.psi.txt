@@ -895,7 +895,10 @@ MetadataFile:ng-zorro-antd.metadata.json
       #ext: ɵim <metadata reference>('')
     ɵja <metadata object>
       provide: ɵiy <metadata reference>('')
-      useValue <metadata object>('')
+      useValue <metadata object>
+        nzTop: 24px <metadata string>('')
+        nzBottom: 24px <metadata string>('')
+        nzPlacement: topRight <metadata string>('')
     ɵjb <metadata class>
       #ext: ɵis <metadata reference>('')
     ɵjc <metadata module>: imports=[]; declarations=[ɵjd, ɵje]; exports=[ɵjd, ɵje]; scopeFullyResolved=false; exportsFullyResolved=true

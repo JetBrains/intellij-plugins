@@ -28,9 +28,6 @@ import org.jetbrains.vuejs.index.VueStoreIndex
 import org.jetbrains.vuejs.index.getForAllKeys
 import org.jetbrains.vuejs.language.VueJSLanguage
 
-/**
- * @author Irina.Chernushina on 11/10/2017.
- */
 class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandlersFactory {
   companion object {
     fun isInsideScript(element: PsiElement): Boolean {
@@ -79,16 +76,21 @@ class VueFrameworkInsideScriptSpecificHandlersFactory : JSFrameworkSpecificHandl
 
   private fun createExportedObjectLiteralTypeEvaluator(obj: JSObjectLiteralExpression): JSType? {
     val typeAlias = JSFileReferencesUtil.resolveModuleReference(obj.containingFile, "vue")
+                      .asSequence()
                       .mapNotNull {
-                        it as? JSElement ?: return@mapNotNull null
-                        ES6PsiUtil.resolveSymbolInModule("Component", obj, it).filter { it.isValidResult }
+                        if (it !is JSElement) return@mapNotNull null
+                        ES6PsiUtil.resolveSymbolInModule("Component", obj, it)
+                          .filter { resolveResult ->
+                            resolveResult.isValidResult
+                          }
                       }
                       .flatten()
                       .filter {
                         val psiFile = it.element?.containingFile
                         psiFile != null && TypeScriptUtil.isDefinitionFile(psiFile)
                       }
-                      .mapNotNull { (it.element as? TypeScriptTypeAlias)?.typeDeclaration }.firstOrNull() ?: return null
+                      .mapNotNull { (it.element as? TypeScriptTypeAlias)?.typeDeclaration }
+                      .firstOrNull() ?: return null
 
     var typeFromTypeScript = typeAlias.jsType
     if (typeFromTypeScript is JSCompositeTypeImpl) {

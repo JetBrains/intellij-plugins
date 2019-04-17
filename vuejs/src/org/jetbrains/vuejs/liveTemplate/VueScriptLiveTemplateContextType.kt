@@ -9,9 +9,6 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType.Companion.evaluateContext
 import org.jetbrains.vuejs.liveTemplate.VueBaseLiveTemplateContextType.Companion.isTagEnd
 
-/**
- * @author Irina.Chernushina on 10/26/2017.
- */
 private const val CONTEXT_TYPE = "VUE_SCRIPT"
 
 class VueScriptLiveTemplateContextType : TemplateContextType(CONTEXT_TYPE, "Vue script tag contents",

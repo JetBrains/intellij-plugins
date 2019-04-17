@@ -33,9 +33,6 @@ import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
-/**
- * @author Irina.Chernushina on 1/26/2018.
- */
 class VueCreateProjectProcess(private val folder: Path,
                               private val projectName: String,
                               private val templateName: String,
@@ -71,8 +68,8 @@ class VueCreateProjectProcess(private val folder: Path,
         processState = VueProjectCreationState.Process
         val question = deserializeQuestion(serializedObject, validationError)
         if (question == null) {
-          LOG.info("Vue Create Project: Can not parse question: " + serializedObject)
-          error = "Can not parse question: " + serializedObject
+          LOG.info("Vue Create Project: Can not parse question: $serializedObject")
+          error = "Can not parse question: $serializedObject"
           processState = VueProjectCreationState.Error
           listener?.invoke()
           return
@@ -152,8 +149,8 @@ class VueCreateProjectProcess(private val folder: Path,
   }
 
   private fun logProgress(message: String, error: Boolean = false) {
-    if (error) LOG.info("From service: " + message)
-    else LOG.debug("From service: " + message)
+    if (error) LOG.info("From service: $message")
+    else LOG.debug("From service: $message")
   }
 
   fun waitForProcessTermination(indicator: ProgressIndicator) {
@@ -183,7 +180,7 @@ class VueCreateProjectProcess(private val folder: Path,
       FileUtil.delete(folder)
     }
     if (!FileUtil.createDirectory(folder)) {
-      return reportError("Can not create service directory " + path)
+      return reportError("Can not create service directory $path")
     }
     val interpreter = interpreterRef.resolveNotNull(ProjectManager.getInstance().defaultProject)
     val localInterpreter = NodeJsLocalInterpreter.cast(interpreter)
@@ -278,7 +275,7 @@ class VueCreateProjectProcess(private val folder: Path,
     if (VueProjectCreationState.Starting == currentProcessState ||
         VueProjectCreationState.Finished == currentProcessState ||
         VueProjectCreationState.QuestionsFinished == currentProcessState)
-      return VueCreateProjectProcess.State(currentProcessState, null, null)
+      return State(currentProcessState, null, null)
     if (VueProjectCreationState.Error == currentProcessState) return State(currentProcessState, error, null)
     return State(currentProcessState, null, questionRef.get())
   }

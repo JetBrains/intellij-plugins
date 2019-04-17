@@ -8,7 +8,21 @@ MetadataFile:forms.metadata.json
       useExisting: DefaultValueAccessor <metadata reference>('')
     ɵangular_packages_forms_forms_c <metadata class>('')
     ɵangular_packages_forms_forms_d <metadata object>
-      $quoted$ <metadata array>('')
+      [class.ng-untouched]: ngClassUntouched <metadata string>('')
+      [class.ng-touched]: ngClassTouched <metadata string>('')
+      [class.ng-pristine]: ngClassPristine <metadata string>('')
+      [class.ng-dirty]: ngClassDirty <metadata string>('')
+      [class.ng-valid]: ngClassValid <metadata string>('')
+      [class.ng-invalid]: ngClassInvalid <metadata string>('')
+      [class.ng-pending]: ngClassPending <metadata string>('')
+      $quoted$ <metadata array>
+        [class.ng-untouched] <metadata string>('')
+        [class.ng-touched] <metadata string>('')
+        [class.ng-pristine] <metadata string>('')
+        [class.ng-dirty] <metadata string>('')
+        [class.ng-valid] <metadata string>('')
+        [class.ng-invalid] <metadata string>('')
+        [class.ng-pending] <metadata string>('')
     ɵangular_packages_forms_forms_e <metadata object>
       provide: ControlContainer <metadata reference>('')
       useExisting: NgForm <metadata reference>('')

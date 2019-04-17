@@ -11,7 +11,7 @@ import org.jetbrains.vuejs.index.DELIMITER
 import org.jetbrains.vuejs.index.hasVue
 
 object VueStoreUtils {
-  const val VUEX = "vuex"
+  private const val VUEX = "vuex"
   const val ACTION = "actions"
   const val MUTATION = "mutations"
   const val STATE = "state"

@@ -12,9 +12,6 @@ import com.intellij.psi.xml.XmlTag
 import org.jetbrains.vuejs.VueBundle
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 12/13/2017.
- */
 class VueExtractComponentIntention : JavaScriptIntention() {
   override fun getFamilyName(): String {
     return VueBundle.message("vue.template.intention.extract.component.family.name")
@@ -72,7 +69,7 @@ class VueExtractComponentIntention : JavaScriptIntention() {
         if (start == end) break
         val tag = PsiTreeUtil.findElementOfClassAtOffset(file, start, XmlTag::class.java, true) ?: return null
         val textRange = tag.textRange
-        if (textRange.startOffset !in start..(end - 1)) break
+        if (textRange.startOffset !in start until end) break
         if (textRange.endOffset > end) return null
         list.add(tag)
         start = textRange.endOffset

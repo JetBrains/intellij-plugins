@@ -7,9 +7,6 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 
-/**
- * @author Irina.Chernushina on 10/13/2017.
- */
 class VueComponentOwnDetailsProvider {
   companion object {
     private val FUNCTION_FILTER = { element: PsiElement ->
@@ -26,7 +23,7 @@ class VueComponentOwnDetailsProvider {
       // since Kotlin "streams" seems to be not lazy
       for (compMember in detailsList) {
         val details = compMember.readMembers(descriptor, filter)
-        if (onlyFirst && !details.isEmpty()) return details
+        if (onlyFirst && details.isNotEmpty()) return details
         result.addAll((details))
       }
       return result
@@ -38,7 +35,7 @@ class VueComponentOwnDetailsProvider {
       val result = mutableListOf<VueAttributeDescriptor>()
       // since Kotlin "streams" seems to be not lazy
       val details = CompMember.Components.readMembers(descriptor, filter)
-      if (onlyFirst && !details.isEmpty()) return details
+      if (onlyFirst && details.isNotEmpty()) return details
       result.addAll((details))
       return result
     }
@@ -63,7 +60,7 @@ class VueComponentOwnDetailsProvider {
 
     companion object {
       private fun findReturnedObjectLiteral(resolved: PsiElement): JSObjectLiteralExpression? {
-        resolved as? JSFunction ?: return null
+        if (resolved !is JSFunction) return null
         return JSStubBasedPsiTreeUtil.findDescendants<JSObjectLiteralExpression>(
           resolved, TokenSet.create(
           JSStubElementTypes.OBJECT_LITERAL_EXPRESSION))

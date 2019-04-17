@@ -20,9 +20,6 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 10/24/2017.
- */
 class VueTypeScriptHighlightingTest : TypeScriptHighlightingTest() {
   private val toFix = setOf(
     "NodeDefTypes153",

@@ -14,9 +14,6 @@ import org.jetbrains.vuejs.codeInsight.findModule
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.refactoring.VueRefactoringUtils
 
-/**
- * @author Artem.Gainanov
- */
 class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {
 
   override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {

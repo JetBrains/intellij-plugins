@@ -19,9 +19,6 @@ import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.intentions.extractComponent.VueComponentInplaceIntroducer.Companion.GROUP_ID
 
-/**
- * @author Irina.Chernushina on 12/14/2017.
- */
 class VueExtractComponentRefactoring(private val project: Project,
                                      private val list: List<XmlTag>,
                                      private val editor: Editor) {

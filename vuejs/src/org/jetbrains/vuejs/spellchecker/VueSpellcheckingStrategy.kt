@@ -8,9 +8,6 @@ import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy
 import com.intellij.spellchecker.tokenizer.Tokenizer
 
-/**
- * @author Irina.Chernushina on 10/12/2017.
- */
 class VueSpellcheckingStrategy : SpellcheckingStrategy() {
   override fun getTokenizer(element: PsiElement?): Tokenizer<*> {
     if (element is XmlAttributeValue) {

@@ -8,6 +8,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElementVisitor;
@@ -58,40 +59,29 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
 
   public void testMetadataStubBuilding() {
     myFixture.configureByFiles("package.json", "ng-zorro-antd.d.ts");
-    VirtualFile vFile = myFixture.copyFileToProject("ng-zorro-antd.metadata.json");
-    PsiFile file = myFixture.getPsiManager().findFile(vFile);
-    assert file instanceof MetadataFileImpl;
-    String result = DebugUtil.psiToString(file, false, false);
-    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "ng-zorro-antd.metadata.psi.txt").toString(), result);
+    testMetadataStubBuilding("ng-zorro-antd.metadata.json");
   }
 
   public void testMetadataStubBuildingWithResolution() {
     AngularTestUtil.configureWithMetadataFiles(myFixture, "ant-design-icons-angular");
     myFixture.configureByFiles("ng-zorro-antd.d.ts", "nz-icon.directive.d.ts", "icon.directive.ts",
                                "nz-col.component.d.ts", "nz-form-control.component.d.ts");
-    VirtualFile vFile = myFixture.copyFileToProject("ng-zorro-antd.metadata.json");
-    PsiFile file = myFixture.getPsiManager().findFile(vFile);
-    assert file instanceof MetadataFileImpl;
-    String result = DebugUtil.psiToString(file, false, false);
-    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "ng-zorro-antd.metadata.resolved.psi.txt").toString(), result);
+    testMetadataStubBuilding("ng-zorro-antd.metadata.json", "ng-zorro-antd.metadata.resolved.psi.txt");
   }
 
   public void testAgmCoreModuleStubBuilding() {
     myFixture.configureByFiles("@agm-core/core.module.d.ts", "package.json");
-    VirtualFile vFile = myFixture.copyFileToProject("@agm-core/core.module.metadata.json");
-    PsiFile file = myFixture.getPsiManager().findFile(vFile);
-    assert file instanceof MetadataFileImpl;
-    String result = DebugUtil.psiToString(file, false, false);
-    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "@agm-core/core.module.metadata.psi.txt").toString(), result);
+    testMetadataStubBuilding("@agm-core/core.module.metadata.json");
   }
 
   public void testFormsMetadataStubBuilding() {
     myFixture.configureByFiles("package.json", "forms.d.ts");
-    VirtualFile vFile = myFixture.copyFileToProject("forms.metadata.json");
-    PsiFile file = myFixture.getPsiManager().findFile(vFile);
-    assert file instanceof MetadataFileImpl;
-    String result = DebugUtil.psiToString(file, false, false);
-    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "forms.metadata.json.txt").toString(), result);
+    testMetadataStubBuilding("forms.metadata.json");
+  }
+
+  public void testSyncFusionDropdownsMetadataStubBuilding() {
+    myFixture.configureByFiles("@syncfusion-ej2-angular-dropdowns/ej2-angular-dropdowns.d.ts", "package.json");
+    testMetadataStubBuilding("@syncfusion-ej2-angular-dropdowns/ej2-angular-dropdowns.metadata.json");
   }
 
   public void testJsonFileType() {
@@ -119,13 +109,14 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMetadataWithExportAliases() {
-    myFixture.copyDirectoryToProject("node_modules/export-aliases",".");
+    myFixture.copyDirectoryToProject("node_modules/export-aliases", ".");
     myFixture.configureByFile("package.json");
     VirtualFile vFile = myFixture.getTempDirFixture().getFile("export.test.metadata.json");
     PsiFile file = myFixture.getPsiManager().findFile(vFile);
     assert file instanceof MetadataFileImpl;
     String result = DebugUtil.psiToString(file, false, false);
-    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), "node_modules/export-aliases/export.test.metadata.json.txt").toString(), result);
+    UsefulTestCase
+      .assertSameLinesWithFile(new File(getTestDataPath(), "node_modules/export-aliases/export.test.metadata.json.txt").toString(), result);
   }
 
   public void testMaterialMetadataResolution() {
@@ -217,4 +208,15 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     }
   }
 
+  private void testMetadataStubBuilding(String metadataJson) {
+    testMetadataStubBuilding(metadataJson, StringUtil.trimEnd(metadataJson, ".json") + ".psi.txt");
+  }
+
+  private void testMetadataStubBuilding(String metadataJson, String psiOutput) {
+    VirtualFile vFile = myFixture.copyFileToProject(metadataJson);
+    PsiFile file = myFixture.getPsiManager().findFile(vFile);
+    assert file instanceof MetadataFileImpl;
+    String result = DebugUtil.psiToString(file, false, false);
+    UsefulTestCase.assertSameLinesWithFile(new File(getTestDataPath(), psiOutput).toString(), result);
+  }
 }

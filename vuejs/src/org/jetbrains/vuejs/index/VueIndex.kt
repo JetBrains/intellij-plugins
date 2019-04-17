@@ -98,7 +98,7 @@ fun hasVue(project: Project): Boolean {
 
 fun hasVueClassComponentLibrary(project: Project): Boolean {
   if (DumbService.isDumb(project)) return false
-  return CachedValuesManager.getManager(project).getCachedValue(project, {
+  return CachedValuesManager.getManager(project).getCachedValue(project) {
     val packageJsonFiles = FilenameIndex.getVirtualFilesByName(project, PackageJsonUtil.FILE_NAME, GlobalSearchScope.projectScope(project))
 
     var recordedDependency = packageJsonFiles.any { PackageJsonUtil.getOrCreateData(it).isDependencyOfAnyType(VUE_CLASS_COMPONENT) }
@@ -111,7 +111,7 @@ fun hasVueClassComponentLibrary(project: Project): Boolean {
     }
     CachedValueProvider.Result(recordedDependency, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS,
                                ProjectRootModificationTracker.getInstance(project))
-  })
+  }
 }
 
 fun isGlobal(element: JSImplicitElement): Boolean = getVueIndexData(element).isGlobal
@@ -136,7 +136,7 @@ fun createImplicitElement(name: String, provider: PsiElement, indexKey: String,
 private fun normalizeNameForIndex(name: String) = fromAsset(name.substringBeforeLast(GLOBAL_BINDING_MARK))
 
 fun getVueIndexData(element: JSImplicitElement): VueIndexData {
-  val typeStr = element.typeString ?: return VueIndexData(element.name, null, null, false, false)
+  val typeStr = element.typeString ?: return VueIndexData(element.name, null, null, false, isGlobal = false)
   val originalName = typeStr.substringAfterLast(DELIMITER)
   val s = typeStr.substringBeforeLast(DELIMITER)
   val parts = s.split(DELIMITER)

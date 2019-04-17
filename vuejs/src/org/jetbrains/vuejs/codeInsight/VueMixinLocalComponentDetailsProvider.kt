@@ -14,9 +14,6 @@ import org.jetbrains.vuejs.index.MIXINS
 import org.jetbrains.vuejs.index.VueMixinBindingIndex
 import org.jetbrains.vuejs.index.resolve
 
-/**
- * @author Irina.Chernushina on 10/12/2017.
- */
 class VueMixinLocalComponentDetailsProvider : VueAdvancedComponentDetailsProvider {
   override fun getIndexedData(descriptor: JSObjectLiteralExpression?, project: Project): Collection<JSImplicitElement> {
     if (descriptor == null) return emptyList()

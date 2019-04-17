@@ -22,10 +22,10 @@ class VueTypeScriptServiceCache(project: Project) : TypeScriptLanguageServiceCac
     val filesToClose: Set<VirtualFile> = super.getFilesToClose(currentChangedFiles)
 
     val toCloseByChangedType = mutableSetOf<VirtualFile>()
-    currentChangedFiles.forEach { file, _ -> addFileIfInvalid(file, filesToClose, toCloseByChangedType) }
+    currentChangedFiles.forEach { (file, _) -> addFileIfInvalid(file, filesToClose, toCloseByChangedType) }
     myOpenedFilesByEvent.forEach { file -> addFileIfInvalid(file, filesToClose, toCloseByChangedType) }
 
-    if (!toCloseByChangedType.isEmpty()) {
+    if (toCloseByChangedType.isNotEmpty()) {
       myOpenedFilesByEvent.removeAll(toCloseByChangedType)
       return filesToClose + toCloseByChangedType
     }

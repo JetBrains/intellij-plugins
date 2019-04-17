@@ -2,7 +2,6 @@
 package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.JsonObject;
-import com.intellij.json.psi.JsonProperty;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -10,8 +9,6 @@ import org.angular2.entities.metadata.Angular2MetadataElementTypes;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.index.Angular2MetadataModuleIndex;
-import org.angular2.lang.metadata.stubs.MetadataElementStub;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,9 +18,7 @@ import static org.angular2.Angular2DecoratorUtil.*;
 
 public class Angular2MetadataModuleStub extends Angular2MetadataEntityStub<Angular2MetadataModule> {
 
-  private static final String[] INTERESTED_IN = new String[]{DECLARATIONS_PROP, EXPORTS_PROP, IMPORTS_PROP};
-
-  @NonNls private static final String DECORATOR_FIELD_PREFIX = "___dec.";
+  private static final String[] STUBBED_DECORATOR_FIELDS = new String[]{DECLARATIONS_PROP, EXPORTS_PROP, IMPORTS_PROP};
 
   @SuppressWarnings("unused")
   @Nullable
@@ -43,27 +38,12 @@ public class Angular2MetadataModuleStub extends Angular2MetadataEntityStub<Angul
                                     @NotNull JsonObject classSource,
                                     @NotNull JsonObject initializer) {
     super(memberName, parent, classSource, Angular2MetadataElementTypes.MODULE);
-    for (String name : INTERESTED_IN) {
-      JsonProperty property = initializer.findProperty(name);
-      if (property != null) {
-        createMember(DECORATOR_FIELD_PREFIX + name, property.getValue());
-      }
-    }
+    stubDecoratorFields(initializer, STUBBED_DECORATOR_FIELDS);
   }
 
   public Angular2MetadataModuleStub(@NotNull StubInputStream stream,
                                     @Nullable StubElement parent) throws IOException {
     super(stream, parent, Angular2MetadataElementTypes.MODULE);
-  }
-
-  public StubElement getModuleConfigPropertyValueStub(@NotNull String name) {
-    name = DECORATOR_FIELD_PREFIX + name;
-    for (StubElement stub : getChildrenStubs()) {
-      if (name.equals(((MetadataElementStub)stub).getMemberName())) {
-        return stub;
-      }
-    }
-    return null;
   }
 
   @Override

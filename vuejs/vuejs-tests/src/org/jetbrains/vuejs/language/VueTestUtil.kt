@@ -3,9 +3,6 @@ package org.jetbrains.vuejs.language
 import com.intellij.openapi.application.PathManager
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 
-/**
- * @author Irina.Chernushina on 10/23/2017.
- */
 fun directivesTestCase(myFixture: CodeInsightTestFixture) {
   myFixture.configureByText("CustomDirectives.js", """
 Vue.directive('focus', {

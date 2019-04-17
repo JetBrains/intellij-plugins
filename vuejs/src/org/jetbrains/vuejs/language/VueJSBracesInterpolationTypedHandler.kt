@@ -15,14 +15,11 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.VueFileType
 
-/**
- * @author Irina.Chernushina on 7/24/2017.
- */
 private val myBracesCompleter: JSInjectionBracesUtil.InterpolationBracesCompleter =
   VueInterpolationBracesCompleter(VueInjector.BRACES_FACTORY)
 
 class VueJSBracesInterpolationTypedHandler : TypedHandlerDelegate() {
-  override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): TypedHandlerDelegate.Result {
+  override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): Result {
     if (fileType != VueFileType.INSTANCE
         && fileType != HtmlFileType.INSTANCE
         || !org.jetbrains.vuejs.index.hasVue(project)) return Result.CONTINUE

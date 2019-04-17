@@ -5,9 +5,6 @@ import com.maddyhome.idea.copyright.CopyrightProfile
 import com.maddyhome.idea.copyright.psi.UpdateCopyrightFactory
 import junit.framework.TestCase
 
-/**
- * @author Irina.Chernushina on 11/15/2017.
- */
 class VueCopyrightTest : LightPlatformCodeInsightFixtureTestCase() {
   @Throws(Exception::class)
 

@@ -11,9 +11,6 @@ import junit.framework.TestCase
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentIntention
 import org.jetbrains.vuejs.intentions.extractComponent.VueExtractComponentRefactoring
 
-/**
- * @author Irina.Chernushina on 12/19/2017.
- */
 class VueExtractComponentTest : LightPlatformCodeInsightFixtureTestCase() {
   fun testExtractSingleTag() = doExtractTest(
     """<template>
@@ -1068,7 +1065,7 @@ ${'$'}duration = 1.4s
 
   private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
                             newCompName: String = "NewComponent") {
-    JSTestUtils.testES6<Exception>(project, {
+    JSTestUtils.testES6<Exception>(project) {
       val currentSettings = CodeStyle.getSettings(myFixture.project).getCommonSettings(JavascriptLanguage.INSTANCE)
       val before = currentSettings.BLANK_LINES_BEFORE_IMPORTS
       val after = currentSettings.BLANK_LINES_AFTER_IMPORTS
@@ -1102,6 +1099,6 @@ ${'$'}duration = 1.4s
         currentSettings.BLANK_LINES_BEFORE_IMPORTS = before
         currentSettings.BLANK_LINES_AFTER_IMPORTS = after
       }
-    })
+    }
   }
 }

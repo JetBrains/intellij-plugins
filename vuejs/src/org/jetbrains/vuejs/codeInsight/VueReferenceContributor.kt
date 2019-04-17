@@ -10,9 +10,6 @@ import com.intellij.util.ProcessingContext
 import com.intellij.xml.util.HtmlUtil
 import org.jetbrains.vuejs.language.VueHandledLexer
 
-/**
- * @author Irina.Chernushina on 9/21/2017.
- */
 class VueReferenceContributor : PsiReferenceContributor() {
   companion object {
     private val SRC_ATTRIBUTE = XmlPatterns.xmlAttributeValue("src").inside(XmlPatterns.xmlTag().withLocalName("style"))

@@ -23,7 +23,7 @@ class VueOptimizeImportTest : JSOptimizeImportTestBase() {
 
     JSTestUtils.testES6<RuntimeException>(project) {
       val name = getTestName(false)
-      myFixture.configureByFiles(name + ".vue", name + "_2.ts")
+      myFixture.configureByFiles("$name.vue", name + "_2.ts")
       runOptimizeAction(defaultExtension)
     }
   }
