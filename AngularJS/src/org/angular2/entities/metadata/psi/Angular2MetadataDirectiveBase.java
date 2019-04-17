@@ -9,11 +9,9 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.StubElement;
 import org.angular2.codeInsight.Angular2LibrariesHacks;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2DirectiveProperty;
-import org.angular2.entities.Angular2DirectiveSelector;
-import org.angular2.entities.Angular2DirectiveSelectorImpl;
+import org.angular2.entities.*;
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase;
 import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStubBase;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static org.angular2.Angular2DecoratorUtil.INPUTS_PROP;
+import static org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP;
 
 public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2MetadataDirectiveStubBase<?>>
   extends Angular2MetadataDeclaration<Stub>
@@ -107,6 +107,8 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
       inputs.putAll(current.getStub().getInputMappings());
       outputs.putAll(current.getStub().getOutputMappings());
     }
+    inputs.putAll(resolveMappings(INPUTS_PROP));
+    outputs.putAll(resolveMappings(OUTPUTS_PROP));
     return pair(inputs, outputs);
   }
 
@@ -125,5 +127,21 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
       }
     }
     return new Angular2MetadataDirectiveProperty(null, getSourceElement(), bindingName);
+  }
+
+  @NotNull
+  private Map<String, String> resolveMappings(@NotNull String prop) {
+    StubElement propertyStub = getStub().getDecoratorFieldValueStub(prop);
+    if (propertyStub == null) {
+      return Collections.emptyMap();
+    }
+    Map<String, String> result = new HashMap<>();
+    collectReferencedElements(propertyStub.getPsi(), element -> {
+      if (element instanceof Angular2MetadataString) {
+        Pair<String, String> p = Angular2EntityUtils.parsePropertyMapping(((Angular2MetadataString)element).getValue());
+        result.putIfAbsent(p.first, p.second);
+      }
+    });
+    return result;
   }
 }
