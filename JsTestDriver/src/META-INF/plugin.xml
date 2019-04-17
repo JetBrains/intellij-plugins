@@ -63,9 +63,4 @@
     </group>
   </actions>
 
-  <change-notes>
-    <![CDATA[
-Bundled with <a href="https://confluence.jetbrains.com/display/WI/Patched+JsTestDriver-1.3.5">patched JsTestDriver-1.3.5</a>
-  ]]>
-  </change-notes>
 </idea-plugin>

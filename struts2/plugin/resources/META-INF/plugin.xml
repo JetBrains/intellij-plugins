@@ -22,12 +22,6 @@
   <name>Struts 2</name>
   <description>Provides full integration of Apache Struts 2.</description>
 
-  <change-notes>
-    <![CDATA[
-  Please see <a href="https://confluence.jetbrains.com/display/IDEADEV/Struts2PluginChangeNotes">Struts2PluginChangeNotes</a>.
-  ]]>
-  </change-notes>
-
   <category>Web/JavaEE Technologies</category>
 
   <!-- required dependencies -->

@@ -46,6 +46,7 @@
   <category>Framework integration</category>
   <vendor>JetBrains</vendor>
 
+  <!--suppress PluginXmlValidity -->
   <change-notes>
     <![CDATA[
       <b>Version 1.4.12</b>
