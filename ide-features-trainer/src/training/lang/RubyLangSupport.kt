@@ -1,6 +1,7 @@
 package training.lang
 
 import com.intellij.ide.scratch.ScratchFileService
+import com.intellij.openapi.editor.EditorModificationUtil
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -21,6 +22,7 @@ import org.jetbrains.plugins.ruby.ruby.RModuleUtil
 import org.jetbrains.plugins.ruby.ruby.sdk.RubySdkType
 import org.jetbrains.plugins.ruby.ruby.sdk.RubyVersionUtil
 import org.jetbrains.plugins.ruby.version.management.SdkRefresher
+import training.learn.LearnBundle
 import training.learn.exceptons.InvalidSdkException
 import training.learn.exceptons.NoSdkException
 import training.project.ProjectUtils
@@ -116,7 +118,13 @@ class RubyLangSupport : AbstractLangSupport() {
           return
         }
         source.getAllEditors(file).forEach {
-          ((it as? TextEditor)?.editor as? EditorEx)?.isViewer = true
+          ((it as? TextEditor)?.editor as? EditorEx)?.let { editorEx ->
+            //TODO: replace with EditorModificationUtil#setReadOnlyHint in 2019.2 API or
+            // implement WritingAccessProvider (it has no getReadOnlyMessage in 2019.1)
+            // also it will provide lock icon
+            EditorModificationUtil.READ_ONLY_VIEW_MESSAGE_KEY.set(editorEx, LearnBundle.message("learn.project.read.only.hint"))
+            editorEx.isViewer = true
+          }
         }
       }
     }
