@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 import static com.intellij.lang.javascript.service.JSLanguageServiceQueue.LOGGER;
 
@@ -144,10 +143,10 @@ public class PrettierLanguageServiceImpl extends JSLanguageServiceBase implement
 
   private static class GetSupportedFilesCommand implements JSLanguageServiceObject, JSLanguageServiceSimpleCommand {
     @NotNull
-    public final String prettierPath;
+    public final LocalFilePath prettierPath;
 
     private GetSupportedFilesCommand(@NotNull String path) {
-      prettierPath = path;
+      prettierPath = LocalFilePath.create(path);
     }
 
     @NotNull
