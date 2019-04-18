@@ -260,6 +260,9 @@
     <analysisHandlersFactory language="Angular2" implementationClass="org.angular2.inspections.Angular2AnalysisHandlersFactory"/>
     <inheritedLanguagesConfigurableProvider language="Angular2"
                                             implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
+
+    <!-- Angular2 metadata JSON contributions -->
+    <typeScriptIndexableExtensionsProvider implementation="org.angular2.index.Angular2IndexableExtensionsProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
