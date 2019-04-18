@@ -185,19 +185,13 @@
       <category>Dart</category>
     </intentionAction>
 
-    <projectService serviceInterface="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"
-                    serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
-    <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
-                    serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
-    <projectService serviceInterface="com.jetbrains.lang.dart.pubServer.PubServerManager"
-                    serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
-    <projectService serviceInterface="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"
-                    serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
+    <projectService serviceImplementation="com.jetbrains.lang.dart.analyzer.DartAnalysisServerService"/>
+    <projectService serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
+    <projectService serviceImplementation="com.jetbrains.lang.dart.pubServer.PubServerManager"/>
+    <projectService serviceImplementation="com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView"/>
 
-    <applicationService serviceInterface="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"
-                        serviceImplementation="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"/>
-    <applicationService serviceInterface="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"
-                        serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
+    <applicationService serviceImplementation="com.jetbrains.lang.dart.analyzer.DartClosingLabelManager"/>
+    <applicationService serviceImplementation="com.jetbrains.lang.dart.folding.DartCodeFoldingSettings"/>
 
     <codeFoldingOptionsProvider instance="com.jetbrains.lang.dart.folding.DartCodeFoldingOptionsProvider"/>
     <editorNotificationProvider implementation="com.jetbrains.lang.dart.ide.actions.DartEditorNotificationsProvider"/>
@@ -221,8 +215,7 @@
     <lineIndentProvider implementation="com.jetbrains.lang.dart.ide.editor.DartLineIndentProvider"/>
     <testSourcesFilter implementation="com.jetbrains.lang.dart.test.DartTestSourcesFilter"/>
 
-    <applicationService serviceInterface="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"
-                        serviceImplementation="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"/>
+    <applicationService serviceImplementation="com.jetbrains.lang.dart.ide.codeInsight.DartCodeInsightSettings"/>
     <editorSmartKeysConfigurable instance="com.jetbrains.lang.dart.ide.editor.DartSmartKeysConfigurable"/>
 
     <postStartupActivity implementation="com.jetbrains.lang.dart.DartDumbAwareStartupActivity"/>

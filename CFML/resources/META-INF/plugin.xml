@@ -99,8 +99,7 @@
                                implementationClass="com.intellij.coldFusion.UI.editorActions.CfmlParameterInfoHandler"/>
     <projectConfigurable groupId="language" instance="com.intellij.coldFusion.UI.config.CfmlProjectConfigurable"
                          id="reference.plugin.settings.project.settings.cfml" displayName="ColdFusion" nonDefaultProject="true"/>
-    <projectService serviceInterface="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"
-                    serviceImplementation="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"/>
+    <projectService serviceImplementation="com.intellij.coldFusion.UI.config.CfmlProjectConfiguration"/>
     <projectService serviceImplementation="com.intellij.coldFusion.model.info.CfmlLangInfo"/>
 
     <configurationType implementation="com.intellij.coldFusion.mxunit.CfmlUnitRunConfigurationType"/>
