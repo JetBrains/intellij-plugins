@@ -270,6 +270,7 @@
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2ExtendedKeyEventAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
     <contextProvider implementation="org.angular2.lang.Angular2PackageJsonContextProvider"/>
+    <contextProvider implementation="org.angular2.lang.Angular2NodeModulesContextProvider"/>
   </extensions>
 
   <actions>

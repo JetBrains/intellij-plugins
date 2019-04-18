@@ -13,18 +13,15 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.lang.Angular2ContextProvider;
@@ -172,22 +169,13 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testNodeModulesBasedInclusionCheck1() {
-    VirtualFile root = myFixture.copyDirectoryToProject("node-modules-check", ".");
+    myFixture.copyDirectoryToProject("node-modules-check", ".");
 
-    VirtualFile nodeModules1 = root.findFileByRelativePath("inner2/node_modules/@angular/core");
-    PsiTestUtil.addContentRoot(myModule, nodeModules1);
-    try {
-      myFixture.openFileInEditor(root.findFileByRelativePath("inner/event.html"));
-      int offsetBySignature = findOffsetBySignature("callAnonymous<caret>Api()", myFixture.getFile());
-      assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
+    myFixture.configureFromTempProjectFile("inner/event.html");
+    checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
 
-      myFixture.openFileInEditor(root.findFileByRelativePath("inner2/event.html"));
-      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
-    }
-    finally {
-      ModuleRootModificationUtil.updateModel(myModule, model -> model.removeContentEntry(
-        ContainerUtil.find(model.getContentEntries(), entry -> nodeModules1.equals(entry.getFile()))));
-    }
+    myFixture.configureFromTempProjectFile("inner2/event.html");
+    checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
   }
 
   public void testCustomContextProvider() {

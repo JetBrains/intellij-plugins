@@ -120,11 +120,15 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testMaterialMetadataResolution() {
+    //Test component matching and indirect node module indexing
     myFixture.copyDirectoryToProject("material", ".");
     myFixture.enableInspections(AngularAmbiguousComponentTagInspection.class,
                                 AngularUndefinedTagInspection.class);
     myFixture.configureFromTempProjectFile("module.ts");
     myFixture.checkHighlighting();
+    AngularTestUtil.moveToOffsetBySignature("mat-form<caret>-field", myFixture);
+    assertEquals("form-field.d.ts",
+                 myFixture.getElementAtCaret().getContainingFile().getName());
   }
 
   public void testMaterialMetadataStubGeneration() {
