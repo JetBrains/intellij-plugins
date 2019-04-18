@@ -1,4 +1,5 @@
 <idea-plugin>
+  <id>CFML Support</id>
   <name>CFML</name>
   <description>
     <![CDATA[
