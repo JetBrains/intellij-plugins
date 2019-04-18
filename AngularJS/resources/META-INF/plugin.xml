@@ -262,7 +262,7 @@
                                             implementationClass="org.angular2.codeInsight.Angular2LanguageConfigurableProvider"/>
 
     <!-- Angular2 metadata JSON contributions -->
-    <typeScriptIndexableExtensionsProvider implementation="org.angular2.index.Angular2IndexableExtensionsProvider"/>
+    <typeScriptIndexableFileNamesProvider implementation="org.angular2.index.Angular2IndexableFileNamesProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.angular2">
