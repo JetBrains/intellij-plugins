@@ -89,6 +89,11 @@ public class CreateEventMetadataByMxmlAttributeFix extends FixAndIntentionAction
     templateManager.startTemplate(editor, template);
   }
 
+  @Override
+  public boolean startInWriteAction() {
+    return false;
+  }
+
   private static XmlTag createOrGetMetadataTag(final XmlFile xmlFile) throws IncorrectOperationException {
     assert JavaScriptSupportLoader.isFlexMxmFile(xmlFile) : xmlFile;
     final XmlTag rootTag = XmlBackedJSClassFactory.getRootTag(xmlFile);

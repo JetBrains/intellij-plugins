@@ -47,4 +47,9 @@ public class DeclareConditionalCompilerDefinitionFix extends FixAndIntentionActi
     configurable.navigateTo(place, true);
     });
   }
+
+  @Override
+  public boolean startInWriteAction() {
+    return false;
+  }
 }
