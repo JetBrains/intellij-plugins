@@ -25,7 +25,7 @@
 
 <idea-plugin>
   <id>Osmorc</id>
-  <name>Osmorc</name>
+  <name>OSGi</name>
   <description><![CDATA[
     <p>Adds support for the development of OSGi-based applications.</p>
 

@@ -1,8 +1,8 @@
 <idea-plugin>
-  <name>CFML Support</name>
+  <name>CFML</name>
   <description>
     <![CDATA[
-      This plugin provides editing support for ColdFusion files, and facilities for deploying applications to the <a href="http://www.adobe.com/products/coldfusion-family.html">ColdFusion server</a>.
+      Provides editing support for ColdFusion files, and facilities for deploying applications to the <a href="http://www.adobe.com/products/coldfusion-family.html">ColdFusion server</a>.
       The following features are available:
         <ul>
         <li>File type.</li>

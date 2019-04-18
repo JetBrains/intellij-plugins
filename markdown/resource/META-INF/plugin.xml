@@ -1,13 +1,13 @@
 <idea-plugin>
   <id>org.intellij.plugins.markdown</id>
-  <name>Markdown support</name>
+  <name>Markdown</name>
   <vendor>JetBrains</vendor>
 
   <depends>com.intellij.modules.lang</depends>
   <depends optional="true" config-file="plugin-intelliLang.xml">org.intellij.intelliLang</depends>
 
   <description><![CDATA[
-<p>Provides the capability to edit markdown files within the IDE and see the rendered HTML in a live preview.
+<p>Provides the capability to edit Markdown files within the IDE and see the rendered HTML in a live preview.
 </br>
 </br>
 Includes the following features:</p>
