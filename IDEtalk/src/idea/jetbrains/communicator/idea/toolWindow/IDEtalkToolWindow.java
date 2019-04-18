@@ -1,29 +1,13 @@
-/*
- * Copyright 2000-2006 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.components.SettingsSavingComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
-import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.JBColor;
@@ -41,15 +25,13 @@ import jetbrains.communicator.idea.actions.DropDownButton;
 import jetbrains.communicator.idea.actions.FindUsersAction;
 import jetbrains.communicator.idea.actions.OptionsButton;
 import jetbrains.communicator.util.UIUtil;
-import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 import org.picocontainer.MutablePicoContainer;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternalizable {
+public class IDEtalkToolWindow extends BaseToolWindow implements SettingsSavingComponent {
   @NonNls public static final String PLACE_TOOLBAR = "TOOLBAR";
   @NonNls private static final String TOOL_WINDOW_ID = "IDEtalk";
 
@@ -87,8 +69,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
   }
 
   private void initializeTransports(String projectName) {
-    java.util.List transports = Pico.getInstance().getComponentInstancesOfType(Transport.class);
-    for (Object transport1 : transports) {
+    for (Object transport1 : Pico.getInstance().getComponentInstancesOfType(Transport.class)) {
       Transport transport = (Transport) transport1;
       transport.initializeProject(projectName, myContainer);
     }
@@ -101,26 +82,14 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
   }
 
   @Override
-  @NotNull
-  public String getComponentName() {
-    return "IDEtalkToolWindow";
-  }
-
-  @Override
-  public void readExternal(Element element) throws InvalidDataException {
-  }
-
-  @Override
-  public void writeExternal(Element element) throws WriteExternalException {
+  public void save() {
     if (myUserListComponent != null) {
       myUserListComponent.saveState();
     }
-    throw new WriteExternalException();
   }
 
   @Override
   protected void createToolWindowComponent() {
-
     StartupManager.getInstance(myProject).registerPostStartupActivity(() -> initializeTransports(myProject.getName()));
 
     StatusToolbar statusToolbar = ((StatusToolbar) myContainer.getComponentInstanceOfType(StatusToolbar.class));
