@@ -1,6 +1,7 @@
 package org.intellij.plugins.postcss.psi.impl;
 
 import com.intellij.psi.css.CssElementVisitor;
+import org.intellij.plugins.postcss.psi.PostCssSimpleVariableDeclaration;
 
 abstract public class PostCssElementVisitor extends CssElementVisitor {
   public void visitPostCssNest(final PostCssNestImpl postCssNest) {
@@ -17,5 +18,9 @@ abstract public class PostCssElementVisitor extends CssElementVisitor {
 
   public void visitPostCssCustomMediaAtRule(final PostCssCustomMediaAtRuleImpl postCssCustomMediaAtRule) {
     visitElement(postCssCustomMediaAtRule);
+  }
+
+  public void visitPostCssSimpleVariableDeclaration(final PostCssSimpleVariableDeclaration postCssSimpleVariableDeclaration) {
+    visitElement(postCssSimpleVariableDeclaration);
   }
 }

@@ -51,6 +51,7 @@ public class PostCssTestSuite {
       suite.addTestSuite(PostCssParsingCustomMediaTest.class);
       suite.addTestSuite(PostCssParsingMediaRangesTest.class);
       suite.addTestSuite(PostCssParsingApplyTest.class);
+      suite.addTestSuite(PostCssParsingOtherTest.class);
       suite.addTestSuite(PostCssHighlightingLexerTest.class);
       return suite;
     }
