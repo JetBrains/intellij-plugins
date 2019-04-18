@@ -77,6 +77,7 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   public void testWithCrlf() throws IOException {
+    enableDetailedLogs();
     doReformatFile("toReformat", "js", () -> JSTestUtils.ensureLineSeparators(myFixture.getFile(), LineSeparator.CRLF));
     FileDocumentManager.getInstance().saveAllDocuments();
     assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
