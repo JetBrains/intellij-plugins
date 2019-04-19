@@ -63,56 +63,56 @@ public class FlexMoveTest extends JSMoveTestBase {
                                       targetDirName.replace("/", ".").replace("\\", "."), true, true, null);
   }
 
-  public void testMovePackage() throws Exception {
+  public void testMovePackage() {
     doTest("foo", "bar");
   }
 
-  public void testMoveFile() throws Exception {
+  public void testMoveFile() {
     doTest("bar/MoveFile.as", "foo");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMoveFile2() throws Exception {
+  public void testMoveFile2() {
     doTest("MoveFile2.mxml", "xxx");
   }
 
-  public void testMoveFileWithImport() throws Exception {
+  public void testMoveFileWithImport() {
     doTest("foo/MoveFileWithImport.as", "");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMoveMxmlFileWithImport() throws Exception {
+  public void testMoveMxmlFileWithImport() {
     doTest("foo/MoveMxmlFileWithImport.mxml", "");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMoveFileWithImportInMxml() throws Exception {
+  public void testMoveFileWithImportInMxml() {
     doTest("Two.as", "foo");
   }
 
   // IDEADEV-40449: short references in the moved file may become ambiguous
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void _testAmbiguous1() throws Exception {
+  public void _testAmbiguous1() {
     doTest("foo/Test.as", "bar");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMxmlUsagesUpdated() throws Exception {
+  public void testMxmlUsagesUpdated() {
     doTest("one/Foo.mxml", "two");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testNoImport() throws Exception {
+  public void testNoImport() {
     doTest("two/Baz.mxml", "one");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMxmlNamespacesUpdated() throws Exception {
+  public void testMxmlNamespacesUpdated() {
     doTest("pack/Bar.as", "pack/sub");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testConfigUpdatedOnClassMove() throws Exception {
+  public void testConfigUpdatedOnClassMove() {
     final RunManager runManager = RunManager.getInstance(myProject);
     FlexTestUtils
       .createFlexUnitRunConfig(runManager, "SomeClass.testSomething()", myModule, FlexUnitRunnerParameters.Scope.Method, "",
@@ -130,7 +130,7 @@ public class FlexMoveTest extends JSMoveTestBase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testConfigUpdatedOnPackageMove() throws Exception {
+  public void testConfigUpdatedOnPackageMove() {
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> bc.setMainClass("foo.SomeClass"));
 
     final RunManager runManager = RunManager.getInstance(myProject);
@@ -152,17 +152,17 @@ public class FlexMoveTest extends JSMoveTestBase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testReferencesToAssetsUpdated() throws Exception {
+  public void testReferencesToAssetsUpdated() {
     doTest("one/asset.css", "two");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxmlWithReferencesToAssetsMoved() throws Exception {
+  public void testMxmlWithReferencesToAssetsMoved() {
     doTest("one/Foo.mxml", "");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testMxmlImplementsList() throws Exception {
+  public void testMxmlImplementsList() {
     doTest("from/MyInterface.as", "to");
   }
 
