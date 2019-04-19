@@ -6,6 +6,7 @@ import com.intellij.codeInsight.actions.FormatChangedTextUtil;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
+import com.intellij.codeStyle.AbstractConvertLineSeparatorsAction;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
@@ -38,6 +39,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.text.StringUtil;
@@ -190,13 +192,17 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
        * this is enough to detect if separators were changed by the external process
        */
       LineSeparator newLineSeparator = StringUtil.detectSeparators(newContent);
-      boolean lineSeparatorUpdated = setDetectedLineSeparator(vFile, newLineSeparator);
-      if (!StringUtil.equals(textBefore, newContent)) {
-        String documentContent = StringUtil.convertLineSeparators(newContent);
-        runWriteCommandAction(project, () -> document.setText(documentContent));
-        caretVisualPositionKeeper.restoreOriginalLocation(true);
-      }
-      showHintLater(editor, buildNotificationMessage(document, textBefore, lineSeparatorUpdated), false, null);
+      String newDocumentContent = StringUtil.convertLineSeparators(newContent);
+
+      Ref<Boolean> lineSeparatorUpdated = new Ref<>(Boolean.FALSE);
+      runWriteCommandAction(project, () -> {
+        if (!StringUtil.equals(textBefore, newContent)) {
+          document.setText(newDocumentContent);
+          caretVisualPositionKeeper.restoreOriginalLocation(true);
+        }
+        lineSeparatorUpdated.set(setDetectedLineSeparator(project, vFile, newLineSeparator));
+      });
+      showHintLater(editor, buildNotificationMessage(document, textBefore, lineSeparatorUpdated.get()), false, null);
     }
   }
 
@@ -278,11 +284,11 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
         if (document != null && StringUtil.isEmpty(result.error) && !result.ignored) {
           CharSequence textBefore = document.getCharsSequence();
           LineSeparator newlineSeparator = StringUtil.detectSeparators(result.result);
-          setDetectedLineSeparator(virtualFile, newlineSeparator);
           String newContent = StringUtil.convertLineSeparators(result.result);
           if (!StringUtil.equals(textBefore, newContent)) {
             document.setText(newContent);
           }
+          setDetectedLineSeparator(project, virtualFile, newlineSeparator);
         }
       }
     });
@@ -381,11 +387,13 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   /**
    * @returns true if line separator was updated
    */
-  private static boolean setDetectedLineSeparator(@NotNull VirtualFile vFile, @Nullable LineSeparator newSeparator) {
+  private static boolean setDetectedLineSeparator(@NotNull Project project,
+                                                  @NotNull VirtualFile vFile,
+                                                  @Nullable LineSeparator newSeparator) {
     if (newSeparator != null) {
       String newSeparatorString = newSeparator.getSeparatorString();
       if (!StringUtil.equals(vFile.getDetectedLineSeparator(), newSeparatorString)) {
-        vFile.setDetectedLineSeparator(newSeparatorString);
+        AbstractConvertLineSeparatorsAction.changeLineSeparators(project, vFile, newSeparatorString);
         return true;
       }
     }
