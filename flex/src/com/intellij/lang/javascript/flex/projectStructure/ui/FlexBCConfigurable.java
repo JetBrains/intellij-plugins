@@ -217,14 +217,11 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     initCSSControls();
 
     myOptimizeForCombo.setModel(new CollectionComboBoxModel(Arrays.asList(""), ""));
-    myOptimizeForCombo.setRenderer(new ListCellRendererWrapper() {
-      @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        if ("".equals(value)) {
-          setText("<no optimization>");
-        }
+    myOptimizeForCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      if ("".equals(value)) {
+        label.setText("<no optimization>");
       }
-    });
+    }));
 
     myMainClassWarning.setIcon(AllIcons.General.BalloonWarning12);
     myOutputFileNameWarning.setIcon(AllIcons.General.BalloonWarning12);

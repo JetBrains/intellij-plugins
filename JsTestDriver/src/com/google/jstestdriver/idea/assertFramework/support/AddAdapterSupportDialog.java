@@ -19,11 +19,11 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.CollectionListModel;
 import com.intellij.ui.Gray;
 import com.intellij.ui.HyperlinkLabel;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBList;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.SwingHelper;
 import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -126,7 +126,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
     JPanel panel = new JPanel(new BorderLayout(0, 2));
     panel.add(new JLabel("Files to add:"), BorderLayout.NORTH);
 
-    final JBList fileList = new JBList(ArrayUtil.EMPTY_STRING_ARRAY);
+    JBList<VirtualFile> fileList = new JBList<>(new CollectionListModel<>(files));
     fileList.setBorder(BorderFactory.createLineBorder(Color.lightGray));
     fileList.addListSelectionListener(new ListSelectionListener() {
       @Override
@@ -137,13 +137,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
     fileList.setFocusable(false);
     fileList.setRequestFocusEnabled(false);
     fileList.setBackground(Gray._242);
-    fileList.setCellRenderer(new ListCellRendererWrapper<VirtualFile>() {
-      @Override
-      public void customize(JList list, VirtualFile value, int index, boolean selected, boolean hasFocus) {
-        setText(" " + value.getName());
-      }
-    });
-    fileList.setListData(files.toArray());
+    fileList.setCellRenderer(SimpleListCellRenderer.create("", value -> " " + value.getName()));
     panel.add(fileList, BorderLayout.CENTER);
     return panel;
   }

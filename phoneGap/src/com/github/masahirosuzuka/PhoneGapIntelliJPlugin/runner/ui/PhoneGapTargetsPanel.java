@@ -38,7 +38,7 @@ public class PhoneGapTargetsPanel extends ReloadableComboBoxPanel<String> {
 
   @NotNull
   @Override
-  protected JComboBox createValuesComboBox() {
+  protected JComboBox<String> createValuesComboBox() {
     return new TextFieldWithHistory();
   }
 }

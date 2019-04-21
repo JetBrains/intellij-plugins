@@ -32,8 +32,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.PathUtil;
@@ -95,7 +95,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JRadioButton myOnIOSDeviceRadioButton;
   private JCheckBox myFastPackagingCheckBox;
 
-  private JComboBox myEmulatorCombo;
+  private JComboBox<Emulator> myEmulatorCombo;
   private JPanel myEmulatorScreenSizePanel;
   private JTextField myScreenWidth;
   private JTextField myScreenHeight;
@@ -264,25 +264,20 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
                                       () -> myBCCombo.getBC());
   }
 
-  public static void initAppDescriptorForEmulatorCombo(final JComboBox appDescriptorForEmulatorCombo,
+  public static void initAppDescriptorForEmulatorCombo(final JComboBox<AppDescriptorForEmulator> appDescriptorForEmulatorCombo,
                                                        final NullableComputable<? extends FlexBuildConfiguration> bcComputable) {
-    appDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(AppDescriptorForEmulator.values()));
-    appDescriptorForEmulatorCombo
-      .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>() {
-        @Override
-        public void customize(JList list, AppDescriptorForEmulator value, int index, boolean selected, boolean hasFocus) {
-          final FlexBuildConfiguration bc = bcComputable.compute();
-
-          switch (value) {
-            case Android:
-              setText(getDescriptorForEmulatorText("Android", bc == null ? null : bc.getAndroidPackagingOptions()));
-              break;
-            case IOS:
-              setText(getDescriptorForEmulatorText("iOS", bc == null ? null : bc.getIosPackagingOptions()));
-              break;
-          }
+    appDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel<>(AppDescriptorForEmulator.values()));
+    appDescriptorForEmulatorCombo.setRenderer(SimpleListCellRenderer.create(
+      "", value -> {
+        FlexBuildConfiguration bc = bcComputable.compute();
+        if (value == AppDescriptorForEmulator.Android) {
+          return getDescriptorForEmulatorText("Android", bc == null ? null : bc.getAndroidPackagingOptions());
         }
-      });
+        else if (value == AppDescriptorForEmulator.IOS) {
+          return getDescriptorForEmulatorText("iOS", bc == null ? null : bc.getIosPackagingOptions());
+        }
+        throw new IllegalArgumentException(String.valueOf(value));
+      }));
   }
 
   private static String getDescriptorForEmulatorText(final String mobilePlatform, final @Nullable AirPackagingOptions packagingOptions) {
@@ -305,14 +300,9 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   private void initEmulatorRelatedControls() {
-    myEmulatorCombo.setModel(new DefaultComboBoxModel(Emulator.ALL_EMULATORS.toArray()));
+    myEmulatorCombo.setModel(new DefaultComboBoxModel<>(Emulator.ALL_EMULATORS.toArray(new Emulator[0])));
 
-    myEmulatorCombo.setRenderer(new ListCellRendererWrapper<Emulator>() {
-      @Override
-      public void customize(JList list, Emulator value, int index, boolean selected, boolean hasFocus) {
-        setText(value.name);
-      }
-    });
+    myEmulatorCombo.setRenderer(SimpleListCellRenderer.create("", value -> value.name));
 
     myEmulatorCombo.addActionListener(new ActionListener() {
       @Override

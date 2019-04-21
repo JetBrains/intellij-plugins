@@ -7,7 +7,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.CollectionComboBoxModel;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.util.containers.ContainerUtil;
@@ -162,13 +163,8 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
 
     @NotNull
     private JComboBox createTestTypeComboBox(@NotNull List<TestTypeListItem> testTypeListItems) {
-      JComboBox comboBox = new ComboBox(testTypeListItems.toArray());
-      comboBox.setRenderer(new ListCellRendererWrapper<TestTypeListItem>() {
-        @Override
-        public void customize(JList list, TestTypeListItem value, int index, boolean selected, boolean hasFocus) {
-          setText(value.getDisplayName());
-        }
-      });
+      JComboBox<TestTypeListItem> comboBox = new ComboBox<>(new CollectionComboBoxModel<>(testTypeListItems));
+      comboBox.setRenderer(SimpleListCellRenderer.create("", TestTypeListItem::getDisplayName));
       comboBox.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {

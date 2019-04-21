@@ -29,7 +29,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.CollectionListModel;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.HttpConfigurable;
 
@@ -66,12 +66,7 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
       }
     });
 
-    _obrBox.setRenderer(new ListCellRendererWrapper<Obr>() {
-      @Override
-      public void customize(JList list, Obr value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getDisplayName());
-      }
-    });
+    _obrBox.setRenderer(SimpleListCellRenderer.create("", Obr::getDisplayName));
     _resultList.addListSelectionListener(new ListSelectionListener() {
       @Override
       public void valueChanged(ListSelectionEvent e) {
@@ -210,7 +205,7 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
   private JButton _searchButton;
   private JButton _cancelButton;
   private JLabel _statusLabel;
-  private JComboBox _obrBox;
+  private JComboBox<Obr> _obrBox;
   private final QueryType _queryType;
   private final List<PropertyChangeListener> propertyChangeListeners = ContainerUtil.createLockFreeCopyOnWriteList();
 }

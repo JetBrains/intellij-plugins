@@ -60,7 +60,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
   private JBCheckBox myCheckSdkUpdateCheckBox;
   // disabled and unchecked, shown in UI instead of myCheckSdkUpdateCheckBox if selected Dart SDK is a part of a Flutter SDK
   private JBCheckBox myCheckSdkUpdateCheckBoxFake;
-  private ComboBox mySdkUpdateChannelCombo;
+  private ComboBox<DartSdkUpdateOption> mySdkUpdateChannelCombo;
   private JButton myCheckSdkUpdateButton;
   private PortField myPortField;
 
@@ -126,13 +126,8 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
       }
     });
 
-    mySdkUpdateChannelCombo.setModel(new DefaultComboBoxModel(DartSdkUpdateOption.OPTIONS_TO_SHOW_IN_COMBO));
-    mySdkUpdateChannelCombo.setRenderer(new ListCellRendererWrapper<DartSdkUpdateOption>() {
-      @Override
-      public void customize(JList list, DartSdkUpdateOption value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableName());
-      }
-    });
+    mySdkUpdateChannelCombo.setModel(new DefaultComboBoxModel<>(DartSdkUpdateOption.OPTIONS_TO_SHOW_IN_COMBO));
+    mySdkUpdateChannelCombo.setRenderer(SimpleListCellRenderer.create("", DartSdkUpdateOption::getPresentableName));
 
     myCheckSdkUpdateButton.addActionListener(e -> {
       final Runnable runnable = this::checkSdkUpdate;

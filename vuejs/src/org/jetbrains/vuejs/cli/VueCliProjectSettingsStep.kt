@@ -15,8 +15,8 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.platform.DirectoryProjectGenerator
 import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.ui.AncestorListenerAdapter
-import com.intellij.ui.ListCellRendererWrapper
 import com.intellij.ui.RelativeFont
+import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.components.*
 import com.intellij.util.PathUtil
 import com.intellij.util.ui.AsyncProcessIcon
@@ -221,13 +221,7 @@ class VueCliGeneratorQuestioningPanel(private val isOldPackage: Boolean,
   private fun addChoices(message: String, choices: List<VueCreateProjectProcess.Choice>): () -> String {
     val formBuilder = questionHeader(message)
     val box = ComboBox<VueCreateProjectProcess.Choice>(choices.toTypedArray())
-    box.renderer = object : ListCellRendererWrapper<VueCreateProjectProcess.Choice?>() {
-      override fun customize(list: JList<*>?, value: VueCreateProjectProcess.Choice?, index: Int, selected: Boolean, hasFocus: Boolean) {
-        if (value != null) {
-          setText(value.name)
-        }
-      }
-    }
+    box.renderer = SimpleListCellRenderer.create("", VueCreateProjectProcess.Choice::name)
     box.isEditable = false
     currentPrefferdFocusOwner = box
     formBuilder.addComponent(box)

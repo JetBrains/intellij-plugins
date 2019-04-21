@@ -22,7 +22,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
@@ -69,50 +69,44 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     rebuildSdkListAndSelectSdk(null); // if SDKs exist first will be selected automatically
 
     final JComboBox sdkCombo = getComboBox();
-    sdkCombo.setRenderer(new ListCellRendererWrapper() {
-      @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        if (value instanceof BCSdk) {
-          final Sdk sdk = ((BCSdk)value).mySdk;
-          if (sdk == null) {
-            if (sdkCombo.isEnabled()) {
-              setText("<html>SDK set for the build configuration <font color='red'>[not set]</font></html>");
-              setIcon(null);
-            }
-            else {
-              setText("SDK set for the build configuration [not set]");
-              setIcon(null);
-            }
-          }
-          else {
-            setText("SDK set for the build configuration [" + sdk.getName() + "]");
-            setIcon(((SdkType)((BCSdk)value).mySdk.getSdkType()).getIcon());
-          }
-        }
-        else if (value instanceof String) {
+    sdkCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      if (value instanceof BCSdk) {
+        final Sdk sdk = ((BCSdk)value).mySdk;
+        if (sdk == null) {
           if (sdkCombo.isEnabled()) {
-            setText("<html><font color='red'>" + value + " [Invalid]</font></html>");
-            setIcon(null);
+            label.setText("<html>SDK set for the build configuration <font color='red'>[not set]</font></html>");
           }
           else {
-            setText(value + " [Invalid]");
-            setIcon(null);
+            label.setText("SDK set for the build configuration [not set]");
           }
-        }
-        else if (value instanceof Sdk) {
-          setText(((Sdk)value).getName());
-          setIcon(((SdkType)((Sdk)value).getSdkType()).getIcon());
         }
         else {
-          if (sdkCombo.isEnabled()) {
-            setText("<html><font color='red'>[none]</font></html>");
-          }
-          else {
-            setText("[none]");
-          }
+          label.setText("SDK set for the build configuration [" + sdk.getName() + "]");
+          label.setIcon(((SdkType)((BCSdk)value).mySdk.getSdkType()).getIcon());
         }
       }
-    });
+      else if (value instanceof String) {
+        if (sdkCombo.isEnabled()) {
+          label.setText("<html><font color='red'>" + value + " [Invalid]</font></html>");
+          label.setIcon(null);
+        }
+        else {
+          label.setText(value + " [Invalid]");
+        }
+      }
+      else if (value instanceof Sdk) {
+        label.setText(((Sdk)value).getName());
+        label.setIcon(((SdkType)((Sdk)value).getSdkType()).getIcon());
+      }
+      else {
+        if (sdkCombo.isEnabled()) {
+          label.setText("<html><font color='red'>[none]</font></html>");
+        }
+        else {
+          label.setText("[none]");
+        }
+      }
+    }));
 
     addActionListener(new ActionListener() {
       @Override

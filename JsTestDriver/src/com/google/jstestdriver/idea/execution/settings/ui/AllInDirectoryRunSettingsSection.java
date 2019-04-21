@@ -12,11 +12,13 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.CollectionComboBoxModel;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Functions;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -104,19 +106,14 @@ public class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection
     JPanel panel = new JPanel(new BorderLayout());
     panel.add(new JLabel("Matched configuration files (*.jstd and jsTestDriver.conf):"), BorderLayout.NORTH);
 
-    final JBList fileList = new JBList(ArrayUtil.EMPTY_STRING_ARRAY);
+    final JBList<String> fileList = new JBList<>(ArrayUtil.EMPTY_STRING_ARRAY);
     fileList.setBorder(BorderFactory.createLineBorder(JBColor.GRAY));
-    fileList.setCellRenderer(new ListCellRendererWrapper<String>() {
-      @Override
-      public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
-        setText(value);
-      }
-    });
+    fileList.setCellRenderer(SimpleListCellRenderer.create("", Functions.id()));
     SwingUtils.addTextChangeListener(directoryTextField, new TextChangeListener() {
       @Override
       public void textChanged(String oldText, @NotNull String newText) {
         List<String> configs = getConfigsInDir(project, newText);
-        fileList.setListData(configs.toArray());
+        fileList.setModel(new CollectionComboBoxModel<>(configs));
       }
     });
 

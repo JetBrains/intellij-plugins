@@ -57,7 +57,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private JPanel myEditorPanel;
   private JPanel myCssTitledSeparator;
   private ComboBox myPreviewProvider;
-  private ComboBox myDefaultSplitLayout;
+  private ComboBox<SplitFileEditor.SplitEditorLayout> myDefaultSplitLayout;
   private JBCheckBox myUseGrayscaleRenderingForJBCheckBox;
   private JPanel myPreviewTitledSeparator;
   private JBCheckBox myAutoScrollCheckBox;
@@ -291,12 +291,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
     myPreviewTitledSeparator = new TitledSeparator(MarkdownBundle.message("markdown.settings.preview.name"));
     mySplitLayoutModel = new EnumComboBoxModel<>(SplitFileEditor.SplitEditorLayout.class);
     myDefaultSplitLayout = new ComboBox<>(mySplitLayoutModel);
-    myDefaultSplitLayout.setRenderer(new ListCellRendererWrapper<SplitFileEditor.SplitEditorLayout>() {
-      @Override
-      public void customize(JList list, SplitFileEditor.SplitEditorLayout value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentationText());
-      }
-    });
+    myDefaultSplitLayout.setRenderer(SimpleListCellRenderer.create("", SplitFileEditor.SplitEditorLayout::getPresentationText));
 
     createMultipleProvidersSettings();
   }

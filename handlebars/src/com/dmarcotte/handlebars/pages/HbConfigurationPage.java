@@ -11,19 +11,20 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class HbConfigurationPage implements SearchableConfigurable {
   private JCheckBox myAutoGenerateClosingTagCheckBox;
   private JPanel myWholePanel;
   private JCheckBox myFormattingCheckBox;
-  private JComboBox myCommenterLanguage;
+  private JComboBox<Language> myCommenterLanguage;
   private JCheckBox myAutocompleteMustaches;
   private JCheckBox htmlAsHb;
   private final Project myProject;
@@ -95,29 +96,26 @@ public class HbConfigurationPage implements SearchableConfigurable {
   }
 
   private void resetCommentLanguageCombo(@NotNull Language commentLanguage) {
-    final DefaultComboBoxModel model = (DefaultComboBoxModel)myCommenterLanguage.getModel();
+    final DefaultComboBoxModel<Language> model = (DefaultComboBoxModel<Language>)myCommenterLanguage.getModel();
     final List<Language> languages = TemplateDataLanguageMappings.getTemplateableLanguages();
 
     // add using the native Handlebars commenter as an option
     languages.add(HbLanguage.INSTANCE);
 
-    Collections.sort(languages, (o1, o2) -> o1.getID().compareTo(o2.getID()));
+    Collections.sort(languages, Comparator.comparing(Language::getID));
     for (Language language : languages) {
       model.addElement(language);
     }
 
-    myCommenterLanguage.setRenderer(new ListCellRendererWrapper() {
-      @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        setText(value == null ? "" : ((Language)value).getDisplayName());
-        if (value != null) {
-          final FileType type = ((Language)value).getAssociatedFileType();
-          if (type != null) {
-            setIcon(type.getIcon());
-          }
+    myCommenterLanguage.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      label.setText(value == null ? "" : value.getDisplayName());
+      if (value != null) {
+        FileType type = value.getAssociatedFileType();
+        if (type != null) {
+          label.setIcon(type.getIcon());
         }
       }
-    });
+    }));
     myCommenterLanguage.setSelectedItem(commentLanguage);
   }
 }

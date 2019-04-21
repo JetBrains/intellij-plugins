@@ -30,7 +30,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -119,13 +119,10 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   private static void showPopup(@NotNull MouseEvent e, @NotNull final PsiElement psiElement, final String displayName) {
     JBPopupFactory.getInstance()
       .createPopupChooserBuilder(ContainerUtil.newArrayList(getAvailableTypes()))
-      .setRenderer(new ListCellRendererWrapper<Type>() {
-        @Override
-        public void customize(JList list, Type value, int index, boolean selected, boolean hasFocus) {
-          setIcon(value.getIcon());
-          setText(value.getTitle(displayName));
-        }
-      })
+      .setRenderer(SimpleListCellRenderer.<Type>create((label, value, index) -> {
+        label.setIcon(value.getIcon());
+        label.setText(value.getTitle(displayName));
+      }))
       .setMovable(true)
       .setItemChosenCallback((type) -> {
         if (psiElement.isValid()) {

@@ -1,17 +1,19 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
-import com.intellij.javascript.testFramework.TestFileStructureManager;
-import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;
+import com.intellij.javascript.testFramework.TestFileStructureManager;
+import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.util.Functions;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -99,13 +101,8 @@ public class TestCaseRunSettingsSection extends AbstractRunSettingsSection {
   }
 
   private static JComboBox createComboBox() {
-    JComboBox comboBox = new JComboBox();
-    comboBox.setRenderer(new ListCellRendererWrapper<String>() {
-      @Override
-      public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
-        setText(value);
-      }
-    });
+    ComboBox<String> comboBox = new ComboBox<>();
+    comboBox.setRenderer(SimpleListCellRenderer.create("", Functions.id()));
     comboBox.setEditable(true);
     return comboBox;
   }

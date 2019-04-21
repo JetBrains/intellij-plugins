@@ -93,18 +93,7 @@ public class DartRemoteDebugConfigurationEditor extends SettingsEditor<DartRemot
   }
 
   private void initDartProjectsCombo(@NotNull final Project project) {
-    myDartProjectCombo.getComboBox().setRenderer(new ListCellRendererWrapper<NameAndPath>() {
-      @Override
-      public void customize(final JList list,
-                            final NameAndPath value,
-                            final int index,
-                            final boolean selected,
-                            final boolean hasFocus) {
-        if (value != null) {
-          setText(value.getPresentableText());
-        }
-      }
-    });
+    myDartProjectCombo.getComboBox().setRenderer(SimpleListCellRenderer.create("", NameAndPath::getPresentableText));
 
     for (VirtualFile pubspecFile : FilenameIndex.getVirtualFilesByName(project, PUBSPEC_YAML, GlobalSearchScope.projectScope(project))) {
       myComboItems.add(new NameAndPath(PubspecYamlUtil.getDartProjectName(pubspecFile), pubspecFile.getParent().getPath()));

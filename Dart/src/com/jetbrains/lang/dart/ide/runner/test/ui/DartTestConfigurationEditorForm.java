@@ -14,7 +14,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.ui.UIUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
@@ -31,7 +31,7 @@ import static com.jetbrains.lang.dart.ide.runner.test.DartTestRunnerParameters.S
 public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunConfiguration> {
 
   private JPanel myMainPanel;
-  private JComboBox myScopeCombo;
+  private JComboBox<DartTestRunnerParameters.Scope> myScopeCombo;
   private JLabel myTestFileLabel;
   private TextFieldWithBrowseButton myFileField;
   private JLabel myDirLabel;
@@ -53,16 +53,7 @@ public class DartTestConfigurationEditorForm extends SettingsEditor<DartTestRunC
     myScopeCombo.setModel(
       new DefaultComboBoxModel<>(new DartTestRunnerParameters.Scope[]{FOLDER, FILE, GROUP_OR_TEST_BY_NAME}));
 
-    myScopeCombo.setRenderer(new ListCellRendererWrapper<DartTestRunnerParameters.Scope>() {
-      @Override
-      public void customize(final JList list,
-                            final DartTestRunnerParameters.Scope value,
-                            final int index,
-                            final boolean selected,
-                            final boolean hasFocus) {
-        setText(value.getPresentableName());
-      }
-    });
+    myScopeCombo.setRenderer(SimpleListCellRenderer.create("", DartTestRunnerParameters.Scope::getPresentableName));
 
     myScopeCombo.addActionListener(e -> onScopeChanged());
 

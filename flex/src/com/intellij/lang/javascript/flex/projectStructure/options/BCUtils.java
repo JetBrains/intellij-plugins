@@ -20,8 +20,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.SimpleColoredText;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
@@ -208,25 +208,17 @@ public class BCUtils {
     return mainClass.replace('.', '/') + ".swf";
   }
 
-  public static void initTargetPlatformCombo(final JComboBox targetPlatformCombo) {
-    targetPlatformCombo.setModel(new DefaultComboBoxModel(TargetPlatform.values()));
-    targetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>() {
-      @Override
-      public void customize(JList list, TargetPlatform value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
-        setIcon(value.getIcon());
-      }
-    });
+  public static void initTargetPlatformCombo(final JComboBox<TargetPlatform> targetPlatformCombo) {
+    targetPlatformCombo.setModel(new DefaultComboBoxModel<>(TargetPlatform.values()));
+    targetPlatformCombo.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
+      label.setText(value.getPresentableText());
+      label.setIcon(value.getIcon());
+    }));
   }
 
-  public static void initOutputTypeCombo(final JComboBox outputTypeCombo) {
-    outputTypeCombo.setModel(new DefaultComboBoxModel(OutputType.values()));
-    outputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>() {
-      @Override
-      public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
-      }
-    });
+  public static void initOutputTypeCombo(final JComboBox<OutputType> outputTypeCombo) {
+    outputTypeCombo.setModel(new DefaultComboBoxModel<>(OutputType.values()));
+    outputTypeCombo.setRenderer(SimpleListCellRenderer.create("", OutputType::getPresentableText));
   }
 
   public static List<String> getThemes(final Module module, final FlexBuildConfiguration bc) {
