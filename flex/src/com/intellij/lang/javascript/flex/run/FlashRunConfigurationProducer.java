@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.RunManager;
@@ -84,7 +84,8 @@ public final class FlashRunConfigurationProducer extends LazyRunConfigurationPro
   }
 
   @Override
-  public boolean isConfigurationFromContext(final FlashRunConfiguration configuration, final ConfigurationContext context) {
+  public boolean isConfigurationFromContext(@NotNull final FlashRunConfiguration configuration,
+                                            @NotNull final ConfigurationContext context) {
     final Module module = context.getModule();
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
     if (!module.getName().equals(configuration.getRunnerParameters().getModuleName())) return false;

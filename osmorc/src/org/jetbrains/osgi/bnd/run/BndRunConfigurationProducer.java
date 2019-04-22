@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.run;
 
 import com.intellij.execution.Location;
@@ -36,7 +36,7 @@ abstract class BndRunConfigurationProducer extends LazyRunConfigurationProducer<
   }
 
   @Override
-  public boolean isConfigurationFromContext(BndRunConfigurationBase configuration, ConfigurationContext context) {
+  public boolean isConfigurationFromContext(@NotNull BndRunConfigurationBase configuration, @NotNull ConfigurationContext context) {
     if (getConfigurationFactory() == configuration.getFactory()) {
       Location location = context.getLocation();
       if (location != null) {

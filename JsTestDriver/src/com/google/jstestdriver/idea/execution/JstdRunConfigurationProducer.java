@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
@@ -123,7 +123,7 @@ public final class JstdRunConfigurationProducer extends LazyRunConfigurationProd
   }
 
   @Override
-  public boolean isConfigurationFromContext(JstdRunConfiguration configuration, ConfigurationContext context) {
+  public boolean isConfigurationFromContext(@NotNull JstdRunConfiguration configuration, @NotNull ConfigurationContext context) {
     Project project = configuration.getProject();
     if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
       return false;
