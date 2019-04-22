@@ -14,7 +14,7 @@ import org.jetbrains.osgi.bnd.BndFileType;
 
 abstract class BndRunConfigurationProducer extends LazyRunConfigurationProducer<BndRunConfigurationBase> {
   @Override
-  protected boolean setupConfigurationFromContext(BndRunConfigurationBase configuration, ConfigurationContext context, Ref<PsiElement> source) {
+  protected boolean setupConfigurationFromContext(@NotNull BndRunConfigurationBase configuration, @NotNull ConfigurationContext context, @NotNull Ref<PsiElement> source) {
     Location location = context.getLocation();
     if (location != null) {
       VirtualFile file = location.getVirtualFile();

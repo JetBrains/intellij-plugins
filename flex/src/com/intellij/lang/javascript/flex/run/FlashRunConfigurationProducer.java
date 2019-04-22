@@ -36,9 +36,9 @@ public final class FlashRunConfigurationProducer extends LazyRunConfigurationPro
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(final FlashRunConfiguration configuration,
-                                                  final ConfigurationContext context,
-                                                  final Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull final FlashRunConfiguration configuration,
+                                                  @NotNull final ConfigurationContext context,
+                                                  @NotNull final Ref<PsiElement> sourceElement) {
     final Module module = context.getModule();
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
 

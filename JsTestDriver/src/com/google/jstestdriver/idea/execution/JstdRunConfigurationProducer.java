@@ -88,9 +88,9 @@ public final class JstdRunConfigurationProducer extends LazyRunConfigurationProd
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(JstdRunConfiguration configuration,
-                                                  ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull JstdRunConfiguration configuration,
+                                                  @NotNull ConfigurationContext context,
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     Project project = configuration.getProject();
     if (!JstdSettingsUtil.areJstdConfigFilesInProjectCached(project)) {
       return false;

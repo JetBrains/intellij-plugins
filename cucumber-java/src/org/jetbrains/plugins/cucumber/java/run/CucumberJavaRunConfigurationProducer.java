@@ -67,9 +67,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   protected abstract VirtualFile getFileToRun(ConfigurationContext context);
 
   @Override
-  protected boolean setupConfigurationFromContext(CucumberJavaRunConfiguration configuration,
-                                                  ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull CucumberJavaRunConfiguration configuration,
+                                                  @NotNull ConfigurationContext context,
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     final VirtualFile virtualFile = getFileToRun(context);
     if (virtualFile == null) {
       return false;

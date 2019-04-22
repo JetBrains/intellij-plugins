@@ -39,9 +39,9 @@ final class CfmlRunConfigurationProducer extends LazyRunConfigurationProducer<Cf
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(CfmlRunConfiguration configuration,
-                                                  ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull CfmlRunConfiguration configuration,
+                                                  @NotNull ConfigurationContext context,
+                                                  @NotNull Ref<PsiElement> sourceElement) {
 
     final Location location = context.getLocation();
     if (!(location instanceof PsiLocation)) return false;
