@@ -4,6 +4,6 @@
   <lesson-kt implementationClass="training.learn.lesson.java.completion.SmartTypeCompletionLesson"/>
   <lesson-kt implementationClass="training.learn.lesson.java.completion.PostfixCompletionLesson"/>
   <lesson-kt implementationClass="training.learn.lesson.java.completion.StatementCompletionLesson"/>
-  <lesson-kt implementationClass="training.learn.lesson.java.completion.CompletionWithTabLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.java.completion.JavaCompletionWithTabLesson"/>
 </module>
 
