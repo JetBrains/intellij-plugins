@@ -402,10 +402,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
 
       // If this is a class or similar global symbol, try to show which package it's coming from.
-      if (displayUri != null &&
-          element.getTypeParameters() == null &&
-          element.getParameters() == null) {
-        lookup = lookup.appendTailText(" (" + displayUri + ")", true);
+      if (!StringUtils.isEmpty(displayUri)) {
+        String packageInfo = "(" + displayUri + ")";
+        lookup = lookup.withTypeText(StringUtils.isEmpty(returnType) ? packageInfo : returnType + " " + packageInfo, true);
       }
 
       // icon
