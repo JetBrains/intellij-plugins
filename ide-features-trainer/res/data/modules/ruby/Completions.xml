@@ -3,4 +3,5 @@
     <lesson-kt implementationClass="training.learn.lesson.ruby.RubyBasicCompletionLesson"/>
     <lesson-kt implementationClass="training.learn.lesson.ruby.RubyHippieCompletionLesson"/>
     <lesson-kt implementationClass="training.learn.lesson.ruby.RubyPostfixCompletionLesson"/>
+    <lesson-kt implementationClass="training.learn.lesson.ruby.RubyCompletionWithTabLesson"/>
 </module>
