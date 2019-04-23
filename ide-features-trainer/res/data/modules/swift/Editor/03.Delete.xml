@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Delete" id="swift.editorbasics.deleteline" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Delete" id="swift.editorbasics.deleteline" lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation
 import UIKit

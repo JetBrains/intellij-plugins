@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Run" id="swift.rdt.run" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Run" id="swift.rdt.run" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class RunExample: UIViewController {

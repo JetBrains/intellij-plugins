@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Quick Popups" id="swift.codeassistance.quickpopups" subtype="aimless" projectTree="hide"
+<xml type="Scenario" name="Quick Popups" id="swift.codeassistance.quickpopups"
      lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation

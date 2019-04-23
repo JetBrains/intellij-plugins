@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Rename" id="Refactorings.Rename" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Rename" id="Refactorings.Rename" lang="JAVA">
         <CopyText><![CDATA[import java.lang.String;
 
 class Rename{

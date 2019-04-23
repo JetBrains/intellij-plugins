@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Folding" version="0.1" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Folding" version="0.1" lang="JAVA">
   <MouseBlock>
     <CopyText><![CDATA[import java.lang.Runnable;
 

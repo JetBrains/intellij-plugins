@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Multiple Selections"  id="swift.editorbasics.multipleselections" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Multiple Selections"  id="swift.editorbasics.multipleselections" lang="Swift">
     <MouseBlock><CopyText><![CDATA[
 import Foundation
 

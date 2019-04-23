@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Rename" id="swift.refactorings.rename" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Rename" id="swift.refactorings.rename" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class Rename: UIViewController {

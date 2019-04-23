@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Folding" id="swift.editorbasics.collapse" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Folding" id="swift.editorbasics.collapse" lang="Swift">
     <ShowLineNumber/>
     <MouseBlock>
         <CopyText><![CDATA[import Foundation

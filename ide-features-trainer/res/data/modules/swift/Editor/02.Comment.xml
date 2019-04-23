@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Comment" id="swift.editorbasics.commentline" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Comment" id="swift.editorbasics.commentline" lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation
 import UIKit

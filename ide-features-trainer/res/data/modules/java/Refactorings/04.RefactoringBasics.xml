@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Refactoring Basics" id="Refactorings.RefactoringBasics" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Refactoring Basics" id="Refactorings.RefactoringBasics" lang="JAVA">
     <MouseBlock><CopyText><![CDATA[import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
