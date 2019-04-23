@@ -1,6 +1,5 @@
 package training.learn.lesson
 
-import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -8,9 +7,6 @@ import org.jdom.Element
 import training.commands.Command
 import training.commands.CommandFactory
 import training.commands.ExecutionList
-import training.editor.actions.HideProjectTreeAction
-import training.util.PerformActionUtil
-import java.util.*
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -28,7 +24,6 @@ object LessonProcessor {
 
   fun process(project: Project, lesson: XmlLesson, editor: Editor) {
 
-    val myEditorParameters = LessonProcessor.getEditorParameters(lesson.scenario.root)
     val myQueueOfElements = LessonProcessor.createQueueOfCommands(lesson.scenario.root)
 
     //Initialize lesson in the editor
@@ -36,7 +31,6 @@ object LessonProcessor {
 
     //Prepare environment before execution
     with(LessonProcessor) {
-      prepareEnvironment(editor, project, myEditorParameters)
       currentExecutionList = ExecutionList(myQueueOfElements, lesson, project)
       CommandFactory.buildCommand(myQueueOfElements.peek()).execute(currentExecutionList!!)
     }
@@ -76,25 +70,6 @@ object LessonProcessor {
       }
     }
     return commandsQueue
-  }
-
-
-  private fun getEditorParameters(root: Element): HashMap<String, String> {
-    val editorParameters = HashMap<String, String>()
-    if (root.getAttribute(XmlLesson.EditorParameters.PROJECT_TREE) != null) {
-      editorParameters.put(XmlLesson.EditorParameters.PROJECT_TREE, root.getAttributeValue(XmlLesson.EditorParameters.PROJECT_TREE))
-    }
-    return editorParameters
-  }
-
-  private fun prepareEnvironment(editor: Editor, project: Project, editorParameters: HashMap<String, String>) {
-    if (editorParameters.containsKey(XmlLesson.EditorParameters.PROJECT_TREE)) {
-      if (ActionManager.getInstance().getAction(HideProjectTreeAction.Companion.myActionId) == null) {
-        val hideAction = HideProjectTreeAction()
-        ActionManager.getInstance().registerAction(hideAction.actionId, hideAction)
-      }
-      PerformActionUtil.performAction(HideProjectTreeAction.Companion.myActionId, editor, project)
-    }
   }
 
   private fun isMouseBlock(el: Element): Boolean {

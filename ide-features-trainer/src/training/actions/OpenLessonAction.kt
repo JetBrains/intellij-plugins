@@ -19,6 +19,7 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.ToolWindowId
 import com.intellij.openapi.wm.ToolWindowManager
 import training.lang.LangManager
 import training.lang.LangSupport
@@ -43,6 +44,7 @@ import training.ui.UiManager
 import training.util.findLanguageByID
 import java.awt.FontFormatException
 import java.io.IOException
+import java.lang.reflect.Modifier
 import java.util.concurrent.ExecutionException
 import kotlin.concurrent.thread
 
@@ -138,6 +140,8 @@ class OpenLessonAction : AnAction() {
           }
           else projectWhereToStartLesson
 
+      hideOtherViews(lesson, projectWhereToStartLesson)
+
       LOG.debug("${projectWhereToStartLesson.name}: Add listeners to lesson")
       addNextLessonListenerIfNeeded(currentProject, lesson)
       addStatisticLessonListenerIfNeeded(currentProject, lesson)
@@ -206,6 +210,23 @@ class OpenLessonAction : AnAction() {
       e.printStackTrace()
     }
 
+  }
+
+  private fun hideOtherViews(lesson: Lesson, project: Project) {
+    if (lesson.module.moduleType == ModuleType.SCRATCH && CourseManager.instance.learnProject != project) {
+      // do not change view environment for scratch lessons in user project
+      return
+    }
+    ApplicationManager.getApplication().invokeLater {
+      val windowManager = ToolWindowManager.getInstance(project)
+      val declaredFields = ToolWindowId::class.java.declaredFields
+      for (field in declaredFields) {
+          if (Modifier.isStatic(field.modifiers) && field.type == String::class.java) {
+            val id = field.get(null) as String
+            windowManager.getToolWindow(id)?.hide(null)
+          }
+      }
+    }
   }
 
   private fun addNextLessonListenerIfNeeded(currentProject: Project, lesson: Lesson) {
