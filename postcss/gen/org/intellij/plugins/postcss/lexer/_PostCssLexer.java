@@ -6,7 +6,6 @@ import com.intellij.psi.css.impl.*;
 import com.intellij.lexer.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.openapi.util.text.StringUtil;
-import org.intellij.plugins.postcss.PostCssElementTypes;
 import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 
 
@@ -1481,7 +1480,7 @@ public class _PostCssLexer implements FlexLexer {
             // fall through
           case 118: break;
           case 38: 
-            { return PostCssElementTypes.POST_CSS_SIMPLE_VARIABLE;
+            { return PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN;
             } 
             // fall through
           case 119: break;

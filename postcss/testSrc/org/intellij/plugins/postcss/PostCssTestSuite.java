@@ -18,6 +18,7 @@ import org.intellij.plugins.postcss.rename.PostCssRenameTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomMediaResolveTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomPropertySetResolveTest;
 import org.intellij.plugins.postcss.resolve.PostCssCustomSelectorResolveTest;
+import org.intellij.plugins.postcss.resolve.PostCssSimpleVarsTest;
 import org.intellij.plugins.postcss.smartEnter.PostCssSmartEnterTest;
 import org.intellij.plugins.postcss.usages.PostCssFindUsagesTest;
 
@@ -94,6 +95,7 @@ public class PostCssTestSuite {
       suite.addTestSuite(PostCssCustomMediaResolveTest.class);
       suite.addTestSuite(PostCssCustomPropertySetResolveTest.class);
       suite.addTestSuite(PostCssFindUsagesTest.class);
+      suite.addTestSuite(PostCssSimpleVarsTest.class);
       return suite;
     }
   }
