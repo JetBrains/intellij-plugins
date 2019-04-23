@@ -10,9 +10,14 @@ import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.roots.ExcludeFolder;
+import com.intellij.openapi.roots.ModuleRootModificationUtil;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.EmptyRunnable;
@@ -176,6 +181,35 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
 
     myFixture.configureFromTempProjectFile("inner2/event.html");
     checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+  }
+
+  public void testAngularCliLibrary() {
+    myFixture.copyDirectoryToProject("angular-cli-lib", ".");
+
+    // Add "dist" folder to excludes
+    ModuleRootModificationUtil.updateModel(myModule, model -> {
+      ExcludeFolder folder = model.getContentEntries()[0].addExcludeFolder(
+        myFixture.getTempDirFixture().getFile("dist"));
+      Disposer.register(myFixture.getProjectDisposable(), () ->
+        ModuleRootModificationUtil.updateModel(myModule, model2 ->
+          model2.getContentEntries()[0].removeExcludeFolder(folder)));
+    });
+
+    // This should trigger immediate library update
+    TypeScriptConfigService.Provider.get(getProject()).getConfigFiles();
+
+    // Ensure we are set up correctly
+    ReadAction.run(() -> {
+      assertTrue(ProjectFileIndex.getInstance(getProject()).isExcluded(
+        myFixture.getTempDirFixture().getFile("dist/check")));
+      assertTrue(ProjectFileIndex.getInstance(getProject()).isInLibrary(
+        myFixture.getTempDirFixture().getFile("dist/my-common-ui-lib/package.json")));
+    });
+
+    myFixture.configureFromTempProjectFile("src/app/home.component.html");
+    PsiElement transform = AngularTestUtil.resolveReference("| trans<caret>late", myFixture);
+    assertEquals("translate.pipe.d.ts", transform.getContainingFile().getName());
+    assertInstanceOf(transform, TypeScriptFunction.class);
   }
 
   public void testCustomContextProvider() {
