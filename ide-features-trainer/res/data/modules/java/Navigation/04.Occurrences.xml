@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Next/Previous Occurrences" id="Navigation.Next/PreviousOccurrences" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Next/Previous Occurrences" id="Navigation.Next/PreviousOccurrences" lang="JAVA">
     <MouseBlock>
         <CopyText><![CDATA[class FileStructureDemo{
 

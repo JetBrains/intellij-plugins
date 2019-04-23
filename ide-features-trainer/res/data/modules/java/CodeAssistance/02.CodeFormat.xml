@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Code Formatting" id="CodeAssistance.CodeFormatting" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Code Formatting" id="CodeAssistance.CodeFormatting" lang="JAVA">
         <CopyText><![CDATA[class CodeFormatDemo{
 
     final static int a_const = 10000;

@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Debug" id="swift.rdt.debug" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Debug" id="swift.rdt.debug" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class DebugExample: UIViewController {

@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Comment Line" id="EditorBasics.CommentLine" subtype="aimless" projectTree="hide" lang="go">
+<xml type="Scenario" name="Comment Line" id="EditorBasics.CommentLine" lang="go">
     <MouseBlock>
         <CopyText><![CDATA[package main
 

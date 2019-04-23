@@ -1,4 +1,4 @@
-<xml type="Scenario" name="File Structure" id="Navigation.FileStructure" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="File Structure" id="Navigation.FileStructure" lang="JAVA">
     <MouseBlock>
         <CopyText><![CDATA[class FileStructureDemo{
 

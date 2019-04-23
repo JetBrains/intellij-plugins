@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Selection" id="EditorBasics.Selection" subtype="aimless" projectTree="hide" lang="Python">
+<xml type="Scenario" name="Selection" id="EditorBasics.Selection" lang="Python">
     <MouseBlock>
         <CopyText><![CDATA[def fib(n):
     a = 1

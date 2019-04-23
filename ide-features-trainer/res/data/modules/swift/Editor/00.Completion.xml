@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Completion" id="swift.completions.basiccompletion" version="0.1" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Completion" id="swift.completions.basiccompletion" version="0.1" lang="Swift">
     <CopyText><![CDATA[import Foundation
 import UIKit
 class Completion: UIViewController {

@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Selection" id="swift.editorbasics.selection" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Selection" id="swift.editorbasics.selection" lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation
 import UIKit

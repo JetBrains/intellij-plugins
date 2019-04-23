@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Declaration/Implementation" id="Navigation.Declaration/Implementation" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Declaration/Implementation" id="Navigation.Declaration/Implementation" lang="JAVA">
         <CopyText><![CDATA[import java.util.LinkedList;
 import java.util.List;
 

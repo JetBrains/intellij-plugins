@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Delete Line" id="EditorBasics.DeleteLine" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Delete Line" id="EditorBasics.DeleteLine" lang="JAVA">
     <MouseBlock>
         <CopyText><![CDATA[class DeleteDemo{
 

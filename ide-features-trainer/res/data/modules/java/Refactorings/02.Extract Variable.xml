@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Extract Variable/Field" id="Refactorings.ExtractVariable/Field" subtype="aimless" projectTree="hide" lang="JAVA">
+<xml type="Scenario" name="Extract Variable/Field" id="Refactorings.ExtractVariable/Field" lang="JAVA">
     <MouseBlock>
         <CopyText><![CDATA[class ExtractVar{
 
