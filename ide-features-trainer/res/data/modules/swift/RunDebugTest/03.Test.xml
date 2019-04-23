@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Test" id="swift.rdt.test" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Test" id="swift.rdt.test" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class TestExample: UIViewController {

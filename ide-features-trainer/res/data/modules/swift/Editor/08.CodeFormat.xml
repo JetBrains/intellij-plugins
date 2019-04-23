@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Code Formatting" id="swift.codeassistance.codeformatting" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Code Formatting" id="swift.codeassistance.codeformatting" lang="Swift">
         <CopyText><![CDATA[
 import UIKit
 

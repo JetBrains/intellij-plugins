@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Duplicate" id="swift.editorbasics.duplicate" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Duplicate" id="swift.editorbasics.duplicate" lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation
 import UIKit

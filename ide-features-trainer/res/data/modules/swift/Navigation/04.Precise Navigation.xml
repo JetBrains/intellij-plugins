@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Precise Navigation" id="swift.navigation.search" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Precise Navigation" id="swift.navigation.search" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class PreciseNavigationController : UIViewController {

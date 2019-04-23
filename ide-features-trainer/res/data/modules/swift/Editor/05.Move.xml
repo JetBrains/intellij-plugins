@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Move" id="swift.editorbasics.move" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Move" id="swift.editorbasics.move" lang="Swift">
     <MouseBlock>
         <CopyText><![CDATA[import Foundation
 import UIKit

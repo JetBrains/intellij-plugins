@@ -1,4 +1,4 @@
-<xml type="Scenario" name="Override / Implement" id="swift.codegeneration.overrideimplement" subtype="aimless" projectTree="hide" lang="Swift">
+<xml type="Scenario" name="Override / Implement" id="swift.codegeneration.overrideimplement" lang="Swift">
     <CopyText><![CDATA[import UIKit
 
 class OverrideImplement: UIViewController, UITableViewDataSource {
