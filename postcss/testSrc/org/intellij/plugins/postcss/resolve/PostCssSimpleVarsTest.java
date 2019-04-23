@@ -1,8 +1,10 @@
 package org.intellij.plugins.postcss.resolve;
 
 import com.intellij.codeInsight.TargetElementUtil;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
 import com.intellij.testFramework.TestDataPath;
 import org.intellij.plugins.postcss.PostCssFixtureTestCase;
@@ -66,5 +68,21 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
                           "    width: calc(4 * $bar);\n" +
                           "    height: $ba<caret>r);\n" +
                           "}");
+  }
+
+  public void testFormat() {
+    myFixture.configureByText("foo.pcss",
+                              "$dir: top; $blue: #056ef0;\n" +
+                              "$column: 200px;\n" +
+                              ".menu_link {}\n");
+    WriteCommandAction.runWriteCommandAction(getProject(), () -> {
+      CodeStyleManager.getInstance(getProject()).reformat(myFixture.getFile());
+    });
+    myFixture.checkResult("$dir: top;\n" +
+                          "$blue: #056ef0;\n" +
+                          "$column: 200px;\n" +
+                          "\n" +
+                          ".menu_link {\n" +
+                          "}\n");
   }
 }
