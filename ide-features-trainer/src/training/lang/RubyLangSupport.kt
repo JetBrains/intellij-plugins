@@ -30,7 +30,7 @@ import java.io.File
 
 class RubyLangSupport : AbstractLangSupport() {
   private val rubyProjectName: String
-    get() = "RubyLearnProject"
+    get() = "RubyMineLearningProject"
 
   override fun checkSdk(sdk: Sdk?, project: Project) {
     if (project.name != rubyProjectName) return
@@ -91,7 +91,7 @@ class RubyLangSupport : AbstractLangSupport() {
   }
 
   override fun createProject(projectName: String, projectToClose: Project?): Project? {
-    return ProjectUtils.importOrOpenProject("/learnProjects/ruby/RubyLearnProject", projectName)
+    return ProjectUtils.importOrOpenProject("/learnProjects/ruby/$rubyProjectName", projectName)
   }
 
   override fun setProjectListeners(project: Project) {
