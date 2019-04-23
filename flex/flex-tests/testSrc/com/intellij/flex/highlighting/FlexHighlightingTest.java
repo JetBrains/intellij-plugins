@@ -46,6 +46,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSUseNamespaceDirective;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -1660,7 +1661,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
     PsiElement element = InjectedLanguageManager.getInstance(myProject).findInjectedElementAt(myFile, myEditor.getCaretModel().getOffset());
     JSExpression expression = PsiTreeUtil.getParentOfType(element, JSExpression.class);
-    assertEquals("mx.containers.Panel[]", JSResolveUtil.getQualifiedExpressionType(expression, myFile));
+    assertEquals("mx.containers.Panel[]", ActionScriptResolveUtil.getQualifiedExpressionType(expression, myFile));
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})

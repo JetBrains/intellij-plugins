@@ -7,9 +7,11 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
 import com.intellij.lang.javascript.psi.types.JSGenericTypeEvaluationFunction;
+import com.intellij.lang.javascript.psi.types.JSNamedType;
 import com.intellij.lang.javascript.psi.types.primitives.JSObjectType;
 import com.intellij.lang.javascript.validation.JSFunctionSignatureChecker;
 import com.intellij.lang.javascript.validation.JSTypeChecker;
@@ -56,8 +58,7 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
 
   @Override
   protected boolean isCallableType(boolean inNewExpression, @NotNull JSType type, PsiElement context) {
-    final String typeText = type.getTypeText();
-    return "Class".equals(typeText) ||
+    return JSNamedType.isNamedTypeWithName(type, "Class") ||
            inNewExpression && type instanceof JSObjectType ||
            JSTypeUtils.hasFunctionType(type, false, null);
   }
@@ -106,8 +107,8 @@ public class ActionScriptFunctionSignatureChecker extends JSFunctionSignatureChe
   }
 
   private void checkE4XFilterQuery(JSCallExpression node, String type, JSArgumentList argumentList) {
-    if (!JSResolveUtil.isAssignableType("XML", type, argumentList) &&
-        !JSResolveUtil.isAssignableType("XMLList", type, argumentList)
+    if (!ActionScriptResolveUtil.isAssignableType("XML", type, argumentList) &&
+        !ActionScriptResolveUtil.isAssignableType("XMLList", type, argumentList)
       ) {
       myTypeChecker.registerProblem(
         node.getMethodExpression(),
