@@ -5,7 +5,6 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
@@ -27,12 +26,12 @@ import org.jetbrains.annotations.Nullable;
 public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement> implements CssReference {
   private static final ResolveCache.AbstractResolver<PostCssSimpleVariableReference, PostCssSimpleVariableDeclaration> RESOLVER =
     (reference, incompleteCode) -> {
-      final String text = StringUtil.trimStart(reference.getValue(), "$");
-      if (text.isEmpty()) return null;
+      String varName = reference.getValue();
+      if (varName.isEmpty()) return null;
 
       final Ref<PostCssSimpleVariableDeclaration> result = Ref.create();
       processSimpleVariableDeclarations(reference.getElement(), element -> {
-        if (text.equals(element.getName())) {
+        if (varName.equals(element.getName())) {
           result.set(element);
           return false;
         }
@@ -48,7 +47,16 @@ public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement>
 
   @Override
   protected TextRange calculateDefaultRangeInElement() {
-    return TextRange.create(1, myElement.getTextLength()); // skip leading $
+    String text = myElement.getText();
+    if (text.startsWith("$(")) {
+      if (text.endsWith(")")) {
+        return TextRange.create(2, myElement.getTextLength() - 1); // interpolation :$(foo)
+      }
+      else {
+        return TextRange.create(2, myElement.getTextLength()); // incomplete interpolation :$(foo
+      }
+    }
+    return TextRange.create(1, myElement.getTextLength()); // skip leading $ in $foo
   }
 
   @NotNull
@@ -82,7 +90,15 @@ public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement>
 
   @Override
   public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
-    PsiFile file = PsiFileFactory.getInstance(myElement.getProject()).createFileFromText(PostCssLanguage.INSTANCE, "$" + newElementName);
+    String text = myElement.getText();
+    String newText;
+    if (text.startsWith("$(")) {
+      newText = "$(" + newElementName + ")";
+    }
+    else {
+      newText = "$" + newElementName;
+    }
+    PsiFile file = PsiFileFactory.getInstance(myElement.getProject()).createFileFromText(PostCssLanguage.INSTANCE, newText);
     PsiElement oldVarToken = myElement.getFirstChild();
     PsiElement newVarToken = PsiTreeUtil.getDeepestFirst(file);
     if (oldVarToken != null &&

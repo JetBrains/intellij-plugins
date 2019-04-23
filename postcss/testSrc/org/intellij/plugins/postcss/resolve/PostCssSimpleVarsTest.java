@@ -45,28 +45,56 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
     );
   }
 
+  public void testResolvePropertyValueInterpolation() {
+    doResolveTest("$foo: 10px;\n" +
+                  ".header {\n" +
+                  "    width: calc(4 * $(<caret>foo));\n" +
+                  "}",
+                  "$foo: 10px;"
+    );
+  }
+
+  public void testResolveSelectorInterpolation() {
+    doResolveTest("$foo: 20px;\n" +
+                  "$(foo<caret>) { }",
+                  "$foo: 20px;"
+    );
+  }
+
   public void testFindUsages() {
     doTestFindUsages("$f<caret>oo: 10px;\n" +
-                     "$foo {\n" +
+                     "$foo $(foo) {\n" +
                      "    width: calc(4 * $foo);\n" +
-                     "    height: $foo);\n" +
+                     "    height: $foo;\n" +
+                     "    width: calc(4 * $(foo));\n" +
+                     "    height: $(foo);\n" +
+                     "    height: a$(foo);\n" +
+                     "    height: $(foo)b;\n" +
                      "}",
-                     3
+                     8
     );
   }
 
   public void testRename() {
     myFixture.configureByText("foo.pcss",
                               "$foo: 10px;\n" +
-                              "$foo {\n" +
+                              "$foo, $(foo) {\n" +
                               "    width: calc(4 * $foo);\n" +
-                              "    height: $fo<caret>o);\n" +
+                              "    height: $fo<caret>o;\n" +
+                              "    width: calc(4 * $(foo));\n" +
+                              "    height: $(foo);\n" +
+                              "    height: a$(foo);\n" +
+                              "    height: $(foo)b;\n" +
                               "}");
     myFixture.renameElementAtCaret("bar");
     myFixture.checkResult("$bar: 10px;\n" +
-                          "$bar {\n" +
+                          "$bar, $(bar) {\n" +
                           "    width: calc(4 * $bar);\n" +
-                          "    height: $ba<caret>r);\n" +
+                          "    height: $ba<caret>r;\n" +
+                          "    width: calc(4 * $(bar));\n" +
+                          "    height: $(bar);\n" +
+                          "    height: a$(bar);\n" +
+                          "    height: $(bar)b;\n" +
                           "}");
   }
 
@@ -74,7 +102,13 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
     myFixture.configureByText("foo.pcss",
                               "$dir: top; $blue: #056ef0;\n" +
                               "$column: 200px;\n" +
-                              ".menu_link {}\n");
+                              ".menu_link, a-$(dir) {\n" +
+                              "    width: calc(4 * $(foo));\n" +
+                              "    height: $(foo);\n" +
+                              "    margin-$(dir): 0;\n" +
+                              "    height: a$(foo);\n" +
+                              "    height: $(foo)b;\n" +
+                              "}\n");
     WriteCommandAction.runWriteCommandAction(getProject(), () -> {
       CodeStyleManager.getInstance(getProject()).reformat(myFixture.getFile());
     });
@@ -82,7 +116,12 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
                           "$blue: #056ef0;\n" +
                           "$column: 200px;\n" +
                           "\n" +
-                          ".menu_link {\n" +
+                          ".menu_link, a-$(dir) {\n" +
+                          "    width: calc(4 * $(foo));\n" +
+                          "    height: $(foo);\n" +
+                          "    margin-$(dir): 0;\n" +
+                          "    height: a$(foo);\n" +
+                          "    height: $(foo)b;\n" +
                           "}\n");
   }
 }
