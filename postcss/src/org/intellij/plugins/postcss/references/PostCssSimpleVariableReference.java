@@ -7,14 +7,19 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.css.CssRulesetList;
 import com.intellij.psi.css.CssTermList;
 import com.intellij.psi.css.reference.CssReference;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
+import org.intellij.plugins.postcss.PostCssLanguage;
+import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.intellij.plugins.postcss.psi.PostCssSimpleVariableDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,6 +78,19 @@ public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement>
     });
 
     return result.toArray();
+  }
+
+  @Override
+  public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
+    PsiFile file = PsiFileFactory.getInstance(myElement.getProject()).createFileFromText(PostCssLanguage.INSTANCE, "$" + newElementName);
+    PsiElement oldVarToken = myElement.getFirstChild();
+    PsiElement newVarToken = PsiTreeUtil.getDeepestFirst(file);
+    if (oldVarToken != null &&
+        oldVarToken.getNode().getElementType() == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN &&
+        newVarToken.getNode().getElementType() == PostCssTokenTypes.POST_CSS_SIMPLE_VARIABLE_TOKEN) {
+      oldVarToken.replace(newVarToken);
+    }
+    return myElement;
   }
 
   private static void processSimpleVariableDeclarations(@NotNull PsiElement context,

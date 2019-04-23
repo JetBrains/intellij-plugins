@@ -52,4 +52,19 @@ public class PostCssSimpleVarsTest extends PostCssFixtureTestCase {
                      3
     );
   }
+
+  public void testRename() {
+    myFixture.configureByText("foo.pcss",
+                              "$foo: 10px;\n" +
+                              "$foo {\n" +
+                              "    width: calc(4 * $foo);\n" +
+                              "    height: $fo<caret>o);\n" +
+                              "}");
+    myFixture.renameElementAtCaret("bar");
+    myFixture.checkResult("$bar: 10px;\n" +
+                          "$bar {\n" +
+                          "    width: calc(4 * $bar);\n" +
+                          "    height: $ba<caret>r);\n" +
+                          "}");
+  }
 }
