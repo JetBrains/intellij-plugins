@@ -83,10 +83,6 @@ data class XmlLesson(val scenario: Scenario, override val lang: String, override
     onItemPassed()
   }
 
-  internal object EditorParameters {
-    val PROJECT_TREE = "projectTree"
-  }
-
   override fun equals(other: Any?): Boolean {
     return other != null && other is XmlLesson && other.name == this.name
   }
