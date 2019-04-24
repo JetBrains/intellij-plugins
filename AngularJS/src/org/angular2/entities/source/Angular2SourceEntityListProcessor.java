@@ -152,13 +152,20 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
 
   }
 
+  protected void processCacheDependency(PsiElement element) {
+
+  }
+
   private void resolveFunctionReturnType(@NotNull JSFunction function) {
     Set<JSResolvedTypeId> visitedTypes = new HashSet<>();
     boolean lookingForModule = myEntityClass.isAssignableFrom(Angular2Module.class);
     JSClass resolvedClazz = null;
     if (lookingForModule) {
-      Angular2MetadataModule metadataModule = resolveFunctionValue(Angular2EntitiesProvider.findMetadataFunction(function));
+      Angular2MetadataFunction metadataFunction = Angular2EntitiesProvider.findMetadataFunction(function);
+      Angular2MetadataModule metadataModule = resolveFunctionValue(metadataFunction);
       if (metadataModule != null) {
+        processCacheDependency(metadataFunction);
+        processCacheDependency(metadataModule);
         //noinspection unchecked
         processEntity((T)metadataModule);
         return;
@@ -170,6 +177,9 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
            && visitedTypes.add(type.getResolvedTypeId())) {
       NotNullLazyValue<JSRecordType> recordType = NotNullLazyValue.createValue(type::asRecordType);
       JSRecordType.PropertySignature ngModuleSignature;
+      if (type.getSourceElement() != null) {
+        processCacheDependency(type.getSourceElement());
+      }
       if (lookingForModule
           && (ngModuleSignature = recordType.getValue().findPropertySignature(NG_MODULE_PROP)) != null) {
         type = evaluateModuleWithProvidersType(ngModuleSignature, type.getSource());
@@ -183,6 +193,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
             resolvedClazz = tryCast(expression.resolve(), JSClass.class);
             T entity = getEntity(resolvedClazz);
             if (entity != null) {
+              processCacheDependency(resolvedClazz);
               processEntity(entity);
               return;
             }
@@ -192,6 +203,7 @@ public abstract class Angular2SourceEntityListProcessor<T extends Angular2Entity
           resolvedClazz = (JSClass)sourceElement;
           T entity = getEntity(resolvedClazz);
           if (entity != null) {
+            processCacheDependency(resolvedClazz);
             processEntity(entity);
             return;
           }
