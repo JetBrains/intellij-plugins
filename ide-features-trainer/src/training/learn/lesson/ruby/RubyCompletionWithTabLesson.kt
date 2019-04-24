@@ -1,21 +1,20 @@
 package training.learn.lesson.ruby
 
-import training.lang.JavaLangSupport
 import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.general.CompletionWithTabLesson
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyCompletionWithTabLesson(module: Module) :
-    CompletionWithTabLesson(module, JavaLangSupport.lang, "goodbye") {
+    CompletionWithTabLesson(module, "ruby", "goodbye") {
 
   override val sample = parseLessonSample("""class DemoClass
   def hello
-    print 'Hello'
+    puts 'Hello'
   end
 
   def goodbye
-    print 'Goodbye'
+    puts 'Goodbye'
   end
 end
 
