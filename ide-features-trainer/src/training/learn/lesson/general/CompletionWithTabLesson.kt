@@ -17,7 +17,7 @@ abstract class CompletionWithTabLesson(module: Module, lang: String, private val
       actionTask("CodeCompletion") { "Press ${action(it)} to show completion options." }
 
       actionTask("EditorChooseLookupItemReplace") {
-        "Choose <code>$proposal</code>, for example, and press ${action("EditorTab")}." +
+        "Choose <code>$proposal</code>, for example, and press ${action("EditorTab")}. " +
           "This overwrites the word at the caret rather than simply inserting it."
       }
     }
