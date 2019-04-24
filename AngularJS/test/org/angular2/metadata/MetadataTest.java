@@ -84,6 +84,11 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     testMetadataStubBuilding("@syncfusion-ej2-angular-dropdowns/ej2-angular-dropdowns.metadata.json");
   }
 
+  public void testNgxsLabsDispatchMetadataStubBuilding() {
+    myFixture.configureByFiles("ngxs-labs-dispatch.d.ts", "package.json");
+    testMetadataStubBuilding("ngxs-labs-dispatch.metadata.json");
+  }
+
   public void testJsonFileType() {
     PsiFile file = myFixture.configureByFile("package.json");
     assert file != null;
