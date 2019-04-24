@@ -120,6 +120,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.intellij.codeInsight.daemon.impl.HighlightInfoFilter.EXTENSION_POINT_NAME;
@@ -1378,7 +1379,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   private void replaceText(final String fileRelativePath, final String oldText, final String newText) {
     final VirtualFile file = VfsUtilCore.findRelativeFile(fileRelativePath, ModuleRootManager.getInstance(myModule).getSourceRoots()[0]);
     try {
-      final String newContent = StringUtil.convertLineSeparators(new String(file.contentsToByteArray())).replace(oldText, newText);
+      final String newContent = StringUtil.convertLineSeparators(new String(file.contentsToByteArray(),
+                                                                            StandardCharsets.UTF_8)).replace(oldText, newText);
       createEditor(file).getDocument().setText(newContent);
       PsiDocumentManager.getInstance(myProject).commitAllDocuments();
     }

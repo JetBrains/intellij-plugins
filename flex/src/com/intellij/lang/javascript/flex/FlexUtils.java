@@ -65,6 +65,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -116,7 +117,8 @@ public class FlexUtils {
     final String helloWorldTemplate = "HelloWorld_" + sampleTechnology + suffix + "." + extension + ".ft";
     final InputStream stream = FlexUtils.class.getResourceAsStream(helloWorldTemplate);
     assert stream != null : helloWorldTemplate;
-    final String sampleFileContent = FileUtil.loadTextAndClose(new InputStreamReader(stream)).replace("${class.name}", sampleClassName);
+    final String sampleFileContent = FileUtil.loadTextAndClose(new InputStreamReader(stream,
+                                                                                     StandardCharsets.UTF_8)).replace("${class.name}", sampleClassName);
     final VirtualFile sampleApplicationFile = addFileWithContent(sampleFileName, sampleFileContent, sourceRoot);
     if (sampleApplicationFile != null) {
       final Runnable runnable = () -> FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);

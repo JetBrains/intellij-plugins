@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -44,6 +44,7 @@ import org.jetbrains.jps.util.JpsPathUtil;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1173,7 +1174,7 @@ public class FlexCommonUtils {
       return new InputStreamReader(inputStream, SDK_TOOLS_ENCODING);
     }
     catch (UnsupportedEncodingException e) {
-      return new InputStreamReader(inputStream);
+      return new InputStreamReader(inputStream, StandardCharsets.UTF_8);
     }
   }
 

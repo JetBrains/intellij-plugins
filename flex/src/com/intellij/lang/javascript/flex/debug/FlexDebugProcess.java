@@ -81,6 +81,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
@@ -998,7 +999,7 @@ public class FlexDebugProcess extends XDebugProcess {
     setSuspended(
       command.getOutputProcessingMode() == CommandOutputProcessingType.NO_PROCESSING && command.getEndVMState() == VMState.SUSPENDED);
     log("Sent:" + text);
-    fdbProcess.getOutputStream().write((text + "\n").getBytes());
+    fdbProcess.getOutputStream().write((text + "\n").getBytes(StandardCharsets.UTF_8));
     try {
       fdbProcess.getOutputStream().flush();
     }
@@ -1091,7 +1092,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private void scheduleFdbErrorStreamReading() {
     ApplicationManager.getApplication().executeOnPooledThread(() -> {
-      InputStreamReader myErrorStreamReader = new InputStreamReader(fdbProcess.getErrorStream());
+      InputStreamReader myErrorStreamReader = new InputStreamReader(fdbProcess.getErrorStream(), StandardCharsets.UTF_8);
       try {
         char[] buf = new char[1024];
         int read;
@@ -1383,7 +1384,7 @@ public class FlexDebugProcess extends XDebugProcess {
       }
 
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        InputStreamReader reader12 = new InputStreamReader(adlProcess.getInputStream());
+        InputStreamReader reader12 = new InputStreamReader(adlProcess.getInputStream(), StandardCharsets.UTF_8);
         try {
           char[] buf = new char[1024];
           int read;
@@ -1422,7 +1423,7 @@ public class FlexDebugProcess extends XDebugProcess {
       });
 
       ApplicationManager.getApplication().executeOnPooledThread(() -> {
-        InputStreamReader reader1 = new InputStreamReader(adlProcess.getErrorStream());
+        InputStreamReader reader1 = new InputStreamReader(adlProcess.getErrorStream(), StandardCharsets.UTF_8);
         try {
           char[] buf = new char[1024];
           int read;
