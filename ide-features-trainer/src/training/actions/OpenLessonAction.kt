@@ -53,29 +53,25 @@ import kotlin.concurrent.thread
  */
 class OpenLessonAction : AnAction() {
 
-  private val LOG = Logger.getInstance(this.javaClass)
-  private var myProject: Project? = null
-
   override fun actionPerformed(e: AnActionEvent) {
-
     val lesson = e.getData(LESSON_DATA_KEY)
     val whereToStartLessonProject = e.getData(PROJECT_WHERE_TO_OPEN_DATA_KEY)
-    myProject = e.project
+    val project = e.project
 
-    if (lesson != null && myProject != null && whereToStartLessonProject != null) {
-      LOG.debug("${myProject?.name}: Action performed -> openLesson(${lesson.name})")
-      openLesson(myProject!!, whereToStartLessonProject, lesson)
+    if (lesson != null && project != null && whereToStartLessonProject != null) {
+      LOG.debug("${project.name}: Action performed -> openLesson(${lesson.name})")
+      openLesson(whereToStartLessonProject, lesson)
     } else {
       //in case of starting from Welcome Screen
-      LOG.debug("${myProject?.name}: Action performed -> openLearnToolWindowAndShowModules(${lesson?.name}))")
-      val myLearnProject = initLearnProject(myProject)
-      openLearnToolWindowAndShowModules(myLearnProject!!)
+      // Or user activated `Open Lesson` action manually.
+      LOG.debug("${project?.name}: Action performed -> openLearnToolWindowAndShowModules(${lesson?.name}))")
+      openLearnProjectFromWelcomeScreen(project)
     }
   }
 
   @Synchronized
   @Throws(BadModuleException::class, BadLessonException::class, IOException::class, FontFormatException::class, InterruptedException::class, ExecutionException::class, LessonIsOpenedException::class)
-  private fun openLesson(project: Project, projectWhereToStartLesson: Project, lesson: Lesson) {
+  private fun openLesson(projectWhereToStartLesson: Project, lesson: Lesson) {
     LOG.debug("${projectWhereToStartLesson.name}: start openLesson method")
     try {
       val langSupport = LangManager.getInstance().getLangSupport() ?: throw Exception("Language for learning plugin is not defined")
@@ -140,7 +136,10 @@ class OpenLessonAction : AnAction() {
           }
           else projectWhereToStartLesson
 
-      hideOtherViews(lesson, projectWhereToStartLesson)
+      if (lesson.module.moduleType != ModuleType.SCRATCH || CourseManager.instance.learnProject == projectWhereToStartLesson) {
+        // do not change view environment for scratch lessons in user project
+        hideOtherViews(projectWhereToStartLesson)
+      }
 
       LOG.debug("${projectWhereToStartLesson.name}: Add listeners to lesson")
       addNextLessonListenerIfNeeded(currentProject, lesson)
@@ -191,19 +190,19 @@ class OpenLessonAction : AnAction() {
         is KLesson -> {
           LessonManager.getInstance(lesson).initLesson(textEditor.editor)
           thread(name = "IdeFeaturesTrainer") {
-            lesson.lessonContent(LessonContext(lesson, textEditor.editor, project))
+            lesson.lessonContent(LessonContext(lesson, textEditor.editor, projectWhereToStartLesson))
             lesson.pass()
-            LessonManager.getInstance(lesson).passLesson(project, textEditor.editor)
+            LessonManager.getInstance(lesson).passLesson(projectWhereToStartLesson, textEditor.editor)
           }
         }
       }
 
     } catch (noSdkException: NoSdkException) {
       Messages.showMessageDialog(projectWhereToStartLesson, LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()), LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
-      if (ProjectSettingsService.getInstance(projectWhereToStartLesson).chooseAndSetSdk() != null) openLesson(projectWhereToStartLesson, projectWhereToStartLesson, lesson)
+      if (ProjectSettingsService.getInstance(projectWhereToStartLesson).chooseAndSetSdk() != null) openLesson(projectWhereToStartLesson, lesson)
     } catch (noSdkException: InvalidSdkException) {
       Messages.showMessageDialog(projectWhereToStartLesson, LearnBundle.message("dialog.noSdk.message", LangManager.getInstance().getLanguageDisplayName()), LearnBundle.message("dialog.noSdk.title"), Messages.getErrorIcon())
-      if (ProjectSettingsService.getInstance(projectWhereToStartLesson).chooseAndSetSdk() != null) openLesson(projectWhereToStartLesson, projectWhereToStartLesson, lesson)
+      if (ProjectSettingsService.getInstance(projectWhereToStartLesson).chooseAndSetSdk() != null) openLesson(projectWhereToStartLesson, lesson)
     } catch (noJavaModuleException: NoJavaModuleException) {
       showModuleProblemDialog(projectWhereToStartLesson)
     } catch (e: Exception) {
@@ -212,11 +211,7 @@ class OpenLessonAction : AnAction() {
 
   }
 
-  private fun hideOtherViews(lesson: Lesson, project: Project) {
-    if (lesson.module.moduleType == ModuleType.SCRATCH && CourseManager.instance.learnProject != project) {
-      // do not change view environment for scratch lessons in user project
-      return
-    }
+  private fun hideOtherViews(project: Project) {
     ApplicationManager.getApplication().invokeLater {
       val windowManager = ToolWindowManager.getInstance(project)
       val declaredFields = ToolWindowId::class.java.declaredFields
@@ -241,12 +236,11 @@ class OpenLessonAction : AnAction() {
       lesson.addLessonListener(statLessonListener)
   }
 
-  //
-  private fun openLearnToolWindowAndShowModules(myLearnProject: Project) {
-    if (myLearnProject.isOpen && myLearnProject.isInitialized) {
-      showModules(myLearnProject)
-    } else {
-      StartupManager.getInstance(myLearnProject).registerPostStartupActivity { showModules(myLearnProject) }
+  private fun openLearnProjectFromWelcomeScreen(projectToClose: Project?) {
+    val project = initLearnProject(projectToClose)!!
+    StartupManager.getInstance(project).registerPostStartupActivity {
+      hideOtherViews(project)
+      showModules(project)
     }
   }
 
@@ -264,7 +258,7 @@ class OpenLessonAction : AnAction() {
     }
   }
 
-  private fun openLessonWhenLearnProjectStart(lesson: Lesson?, myLearnProject: Project) {
+  private fun openLessonWhenLearnProjectStart(lesson: Lesson, myLearnProject: Project) {
     val startupManager = StartupManager.getInstance(myLearnProject)
     if (startupManager is StartupManagerEx && startupManager.postStartupActivityPassed()) LOG.warn("Post startup activity has been already passed")
     startupManager.registerPostStartupActivity {
@@ -272,13 +266,7 @@ class OpenLessonAction : AnAction() {
       val learnToolWindow = toolWindowManager.getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)
       if (learnToolWindow != null) {
         learnToolWindow.show(null)
-        try {
-          UiManager.setLessonView()
-          LOG.debug("${myProject?.name}: openLessonWhenLearnProjectStart: lesson: (${lesson?.name}) learnProject: (${myLearnProject.name})")
-          CourseManager.instance.openLesson(myLearnProject, lesson)
-        } catch (e: Exception) {
-          e.printStackTrace()
-        }
+        openLesson(myLearnProject, lesson)
       }
     }
   }
@@ -425,6 +413,7 @@ class OpenLessonAction : AnAction() {
   companion object {
     val LESSON_DATA_KEY = DataKey.create<Lesson>("LESSON_DATA_KEY")
     val PROJECT_WHERE_TO_OPEN_DATA_KEY = DataKey.create<Project>("PROJECT_WHERE_TO_OPEN_DATA_KEY")
-  }
 
+    private val LOG = Logger.getInstance(OpenLessonAction::class.java)
+  }
 }
