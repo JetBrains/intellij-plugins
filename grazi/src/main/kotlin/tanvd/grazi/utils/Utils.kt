@@ -31,6 +31,14 @@ fun <T, E> Collection<T>.firstNotNull(body: (T) -> E?): E? {
 
 fun <T> Boolean.ifTrue(body: () -> T): T? = if (this) body() else null
 
+fun <T> String.ifContains(value: String, body: (Int) -> T): T? {
+    val index = value.indexOf(this)
+    if (index != -1) {
+        return body(index)
+    }
+    return null
+}
+
 fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
 fun <T> List<T>.dropFirst() = this.drop(1)

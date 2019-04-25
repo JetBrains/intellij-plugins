@@ -19,39 +19,26 @@ class KConstructsSupport : LanguageSupport() {
     override fun check(file: PsiFile) = buildSet<Typo> {
         for (param in file.filterFor<KtParameter>()) {
             val function = (param.parent as? KtParameterList)?.parent as? KtNamedFunction
-            when {
-                function?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true -> {
-                }
-                else -> {
-                    param.name?.let {
-                        val indexOfName = param.text.indexOf(it)
-
-                        if (indexOfName != -1) {
-                            addAll(GraziSpellchecker.check(it).map { typo ->
-                                typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName), element = param, shouldUseRename = true))
-                            })
-                        }
-                    }
-                }
+            if (function?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) continue
+            val paramName = param.name ?: continue
+            param.text.ifContains(paramName) { index ->
+                addAll(GraziSpellchecker.check(paramName).map { typo ->
+                    typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
+                            element = param, shouldUseRename = true))
+                })
             }
             ProgressManager.checkCanceled()
         }
 
         for (ident in file.filterFor<PsiNameIdentifierOwner>()) {
-            when {
-                ident is KtScript || (ident is KtModifierListOwner && ident.hasModifier(KtTokens.OVERRIDE_KEYWORD)) -> {
-                }
-                else -> {
-                    ident.name?.let {
-                        val indexOfName = ident.text.indexOf(it)
+            if (ident is KtScript || (ident is KtModifierListOwner && ident.hasModifier(KtTokens.OVERRIDE_KEYWORD))) continue
 
-                        if (indexOfName != -1) {
-                            addAll(GraziSpellchecker.check(it).map { typo ->
-                                typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName), element = ident, shouldUseRename = true))
-                            })
-                        }
-                    }
-                }
+            val identName = ident.name ?: continue
+            ident.text.ifContains(identName) { index ->
+                addAll(GraziSpellchecker.check(identName).map { typo ->
+                    typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
+                            element = ident, shouldUseRename = true))
+                })
             }
             ProgressManager.checkCanceled()
         }

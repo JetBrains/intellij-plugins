@@ -23,6 +23,9 @@ val urlRegex = Regex("(http(s)?://.)?(www\\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-
 fun String.isUrl() = urlRegex.matches(this)
 fun String.isHtmlPlainTextTag() = startsWith("&")
 
+val filePathRegex = Regex("([/A-z0-9-_+])*(/[A-z0-9-_+.]*)+")
+fun String.isFilePath() = filePathRegex.matches(this)
+
 
 /** Split by separators and return pairs of ranges to strings. Removes all blank lines from result */
 fun String.splitWithRanges(vararg separators: Char, insideOf: IntRange? = null) = splitWithRanges(separators.toList(), insideOf)

@@ -5,7 +5,6 @@ import com.intellij.lang.ASTNode
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.intellij.plugins.markdown.lang.MarkdownElementTypes
@@ -21,9 +20,6 @@ class MarkdownSupport : LanguageSupport() {
         val noSpellcheckingType = arrayOf(MarkdownElementTypes.CODE_BLOCK, MarkdownElementTypes.CODE_FENCE,
                 MarkdownElementTypes.CODE_SPAN, MarkdownElementTypes.LINK_DESTINATION)
 
-        private fun ASTNode.noParentOfTypes(tokenSet: TokenSet) = TreeUtil.findParent(this, tokenSet) == null
-
-        private fun ASTNode.hasParentOfTypes(tokenSet: TokenSet) = TreeUtil.findParent(this, tokenSet) != null
         private fun ASTNode.hasType(vararg tokens: IElementType) = this.elementType in tokens
 
 

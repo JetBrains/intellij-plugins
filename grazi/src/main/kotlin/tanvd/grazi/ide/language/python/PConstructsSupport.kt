@@ -17,16 +17,15 @@ class PConstructsSupport : LanguageSupport() {
 
     override fun check(file: PsiFile) = buildSet<Typo> {
         for (ident in file.filterFor<PsiNamedElement>()) {
-            ident.name?.let {
-                val indexOfName = ident.text.indexOf(it)
-
-                if (indexOfName != -1) {
-                    addAll(GraziSpellchecker.check(it).map { typo ->
-                        typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(indexOfName), element = ident, shouldUseRename = true))
-                    })
-                }
+            val identName = ident.name ?: continue
+            ident.text.ifContains(identName) { index ->
+                addAll(GraziSpellchecker.check(identName).map { typo ->
+                    typo.copy(location = typo.location.copy(range = typo.location.range.withOffset(index),
+                            element = ident, shouldUseRename = true))
+                })
             }
             ProgressManager.checkCanceled()
         }
     }
 }
+
