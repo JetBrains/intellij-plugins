@@ -11,7 +11,7 @@ class SanitizingGrammarChecker(private val ignore: List<(CharSequence, Char) -> 
         val default = SanitizingGrammarChecker(
                 ignore = listOf({ str, cur ->
                     str.lastOrNull()?.let { blankOrNewLineCharRegex.matches(it) }.orTrue() && blankOrNewLineCharRegex.matches(cur)
-                }, { _, cur -> cur == '*' }),
+                }, { _, cur -> cur == '*' || cur == '`' }),
                 replace = listOf({ _, cur ->
                     newLineCharRegex.matches(cur).ifTrue { ' ' }
                 }),

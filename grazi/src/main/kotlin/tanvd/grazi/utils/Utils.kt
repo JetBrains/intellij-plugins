@@ -35,6 +35,8 @@ fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
 fun <T> List<T>.dropFirst() = this.drop(1)
 
+fun <T> List<T>.dropFirstIf(body: (T) -> Boolean) = this.getOrNull(0)?.let { if (body(it)) dropFirst() else this } ?: this
+
 fun <T> buildList(body: MutableList<T>.() -> Unit): List<T> {
     val result = ArrayList<T>()
     result.body()
