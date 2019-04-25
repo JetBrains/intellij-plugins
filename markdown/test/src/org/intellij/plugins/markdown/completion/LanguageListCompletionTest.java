@@ -9,6 +9,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.LanguageParserDefinitions;
 import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.openapi.fileTypes.PlainTextParserDefinition;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.intellij.plugins.markdown.MarkdownTestingUtil;
 import org.intellij.plugins.markdown.injection.CodeFenceLanguageProvider;
@@ -34,7 +35,10 @@ public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureT
     super.setUp();
     assert JavascriptLanguage.INSTANCE != null;
     // Because injector handles the code in the fence and gets parser definition for that lang
-    LanguageParserDefinitions.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, new PlainTextParserDefinition());
+    PlainTextParserDefinition parserDefinition = new PlainTextParserDefinition();
+    LanguageParserDefinitions.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, parserDefinition);
+    Disposer.register(getTestRootDisposable(),
+                      () -> LanguageParserDefinitions.INSTANCE.removeExplicitExtension(JavascriptLanguage.INSTANCE, parserDefinition));
   }
 
   private void doTest(@NotNull String toType) {
@@ -124,7 +128,10 @@ public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureT
       super.setUp();
       assert JavascriptLanguage.INSTANCE != null;
       // Because injector handles the code in the fence and gets parser definition for that lang
-      LanguageParserDefinitions.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, new PlainTextParserDefinition());
+      PlainTextParserDefinition parserDefinition = new PlainTextParserDefinition();
+      LanguageParserDefinitions.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, parserDefinition);
+      Disposer.register(getTestRootDisposable(),
+                        () -> LanguageParserDefinitions.INSTANCE.removeExplicitExtension(JavascriptLanguage.INSTANCE, parserDefinition));
     }
 
     public void testAutopopup() {
