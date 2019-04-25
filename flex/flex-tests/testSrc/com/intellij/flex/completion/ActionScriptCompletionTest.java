@@ -7,6 +7,7 @@ import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.flex.editor.FlexProjectDescriptor;
 import com.intellij.flex.util.FlexTestUtils;
+import com.intellij.idea.Bombed;
 import com.intellij.javaee.ExternalResourceManagerExImpl;
 import com.intellij.lang.javascript.BaseJSCompletionTestCase;
 import com.intellij.lang.javascript.JSTestOption;
@@ -32,6 +33,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
+import java.util.Calendar;
 
 public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected static final String BASE_PATH = "/js2_completion/";
@@ -922,6 +924,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     checkResultByFile("_2", "js2");
   }
 
+  @Bombed(day = 29, month = Calendar.APRIL, user = "Konstantin Ulitin")
   @JSTestOptions(JSTestOption.WithSmartCompletion)
   public final void testSmartCompletion2_21() {
     defaultTest();
@@ -1055,6 +1058,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     defaultTest();
   }
 
+  @Bombed(day = 29, month = Calendar.APRIL, user = "Konstantin Ulitin")
   @JSTestOptions(JSTestOption.WithSmartCompletion)
   public final void testVectorReverse() {
     defaultTest();
