@@ -9,10 +9,10 @@ import java.util.List;
 
 import static org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_SUFFIX;
 
-public class Angular2IndexableFileNamesProvider implements TypeScriptIndexableFileNamesProvider {
+public class Angular2IndexableFileNamesProvider extends TypeScriptIndexableFileNamesProvider {
   @NotNull
   @Override
-  public List<String> getIndexableExtensions() {
+  protected List<String> getIndexableExtensions() {
     return Collections.singletonList(METADATA_SUFFIX);
   }
 }
