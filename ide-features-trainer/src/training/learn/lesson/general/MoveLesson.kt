@@ -28,15 +28,17 @@ class MoveLesson(module: Module, lang: String, private val sample: LessonSample)
       task("MoveStatementUp") {
         text("Now try moving the whole method up with ${action(it)}.")
         trigger(it, { editor.document.text }, { before, now ->
-          val changes = ContainerUtil.newArrayList(
-              compareLines(before, now, LineOffsetsUtil.create(before), LineOffsetsUtil.create(now)
-              ).iterateChanges())
-
-          // Check, that more than 2 lines where changed
-          !changes.isEmpty() &&
-              (changes[0].end1 - changes[0].start1 > 1 || changes[0].end2 - changes[0].start2 > 1)
+          checkSwapMoreThan2Lines(before, now)
         })
         test { actions("EditorUp", it) }
       }
     }
+}
+
+fun checkSwapMoreThan2Lines(before: String, now: String): Boolean {
+  val changes = ContainerUtil.newArrayList(
+      compareLines(before, now, LineOffsetsUtil.create(before), LineOffsetsUtil.create(now)
+      ).iterateChanges())
+
+  return changes.size > 1
 }
