@@ -52,6 +52,7 @@
     <project-components>
         <component>
             <implementation-class>tanvd.grazi.ide.notification.GraziNotificationComponent</implementation-class>
+            <implementation-class>tanvd.grazi.ide.init.GraziProjectInit</implementation-class>
         </component>
     </project-components>
 
@@ -67,6 +68,11 @@
 
         <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
+
+
+
+        <localInspection displayName="Grazi Commit proofreading inspection" groupName="Grazi" enabledByDefault="true"
+                         shortName="GraziCommitInspection" implementationClass="tanvd.grazi.ide.GraziCommitInspection" level="TYPO"/>
 
         <applicationConfigurable groupId="tools" instance="tanvd.grazi.ide.ui.GraziConfigurable"
                                  id="reference.settingsdialog.project.grazi"
