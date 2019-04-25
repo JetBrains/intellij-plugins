@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.openapi.project.Project;
@@ -8,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.util.DartBuildFileUtil;
 import com.jetbrains.lang.dart.util.PubspecYamlUtil;
@@ -39,9 +41,14 @@ public class DartProblem {
     return myAnalysisError.getMessage();
   }
 
-  @NotNull
+  @Nullable
   public String getCorrectionMessage() {
     return StringUtil.notNullize(myAnalysisError.getCorrection());
+  }
+
+  @Nullable
+  public String getUrl() {
+    return myAnalysisError.getUrl();
   }
 
   @NotNull
@@ -156,5 +163,18 @@ public class DartProblem {
   public VirtualFile getContentRoot() {
     ensureInitialized();
     return myContentRoot;
+  }
+
+  @NotNull
+  public static String generateTooltipText(@NotNull String message, @Nullable String correction, @Nullable String url) {
+    final StringBuilder tooltip = new StringBuilder("<html><p>").append(XmlStringUtil.escapeString(message)).append("</p>");
+    if (StringUtil.isNotEmpty(correction)) {
+      tooltip.append("<br/><p>").append(correction).append("</p>");
+    }
+    if (!StringUtil.isEmpty(url)) {
+      tooltip.append("<a href='").append(url).append("'>Documentation</a>");
+    }
+    tooltip.append("</html>");
+    return tooltip.toString();
   }
 }

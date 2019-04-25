@@ -512,10 +512,12 @@ public class DartServerData {
   }
 
   public static class DartError extends DartRegion {
-    private final String myAnalysisErrorFileSD;
-    private final String mySeverity;
+    @NotNull private final String myAnalysisErrorFileSD;
+    @NotNull private final String mySeverity;
     @Nullable private final String myCode;
-    private final String myMessage;
+    @NotNull private final String myMessage;
+    @Nullable private final String myCorrection;
+    @Nullable private final String myUrl;
 
     private DartError(@NotNull final AnalysisError error, final int correctedOffset, final int correctedLength) {
       super(correctedOffset, correctedLength);
@@ -523,12 +525,16 @@ public class DartServerData {
       mySeverity = error.getSeverity().intern();
       myCode = error.getCode() == null ? null : error.getCode().intern();
       myMessage = error.getMessage();
+      myCorrection = error.getCorrection();
+      myUrl = error.getUrl();
     }
 
+    @NotNull
     public String getAnalysisErrorFileSD() {
       return myAnalysisErrorFileSD;
     }
 
+    @NotNull
     public String getSeverity() {
       return mySeverity;
     }
@@ -542,8 +548,19 @@ public class DartServerData {
       return myCode;
     }
 
+    @NotNull
     public String getMessage() {
       return myMessage;
+    }
+
+    @Nullable
+    public String getCorrection() {
+      return myCorrection;
+    }
+
+    @Nullable
+    public String getUrl() {
+      return myUrl;
     }
   }
 
