@@ -15,22 +15,27 @@ class JDocSupport : LanguageSupport() {
         val tagsIgnoredCategories = listOf(Typo.Category.CASING)
 
         private fun isTag(token: PsiDocToken) = token.parent is PsiDocTag
-        //JDocSupport should ignore code fragments
-        private fun isApplicableTag(token: PsiDocToken) = isTag(token) && ((token.parent as PsiDocTag).nameElement.text != "@code")
+        private fun isCodeTag(token: PsiDocToken) = isTag(token) && ((token.parent as PsiDocTag).nameElement.text == "@code")
     }
 
     override fun isSupported(file: PsiFile): Boolean {
         return file is PsiJavaFile
     }
 
+    /**
+     * Checks:
+     * * Body lines -- lines, which are a DOC_COMMENT_DATA, and their parent is not PsiDocTag
+     * * Tag lines -- lines, which are a DOC_COMMENT_DATA, and their parent is PsiDocTag
+     *
+     * Note: Tag lines ignores casing.
+     */
     override fun check(file: PsiFile) = buildSet<Typo> {
-        val docs = file.filterFor<PsiDocComment>()
-
-        for (doc in docs) {
+        for (doc in file.filterFor<PsiDocComment>()) {
             val allDocTokens = doc.filterFor<PsiDocToken> { it.tokenType == JavaDocTokenType.DOC_COMMENT_DATA }
 
             addAll(SanitizingGrammarChecker.default.check(allDocTokens.filterNot { isTag(it) }))
-            addAll(SanitizingGrammarChecker.default.check(allDocTokens.filter { isApplicableTag(it) }).filter { it.info.category !in tagsIgnoredCategories })
+            addAll(SanitizingGrammarChecker.default.check(allDocTokens.filter { isTag(it) && !isCodeTag(it) })
+                    .filter { it.info.category !in tagsIgnoredCategories })
 
             ProgressManager.checkCanceled()
         }

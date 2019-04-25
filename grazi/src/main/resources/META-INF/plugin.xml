@@ -17,7 +17,7 @@
 
         <br/>
 
-        Under the hood, it uses LanguageTool, to provide you with the unrivaled
+        Under the hood, it uses LanguageTool to provide you with the unrivaled
         performance and accuracy of the leading proofreading and grammar checking engine.
 
         <br/>
@@ -27,11 +27,15 @@
 
         <br/>
 
-        To enable spellchecking or support for other languages (by default English is enabled)
-        Use the Grazi settings located at Settings -> Tools -> Grazi
+        To enable spellchecking or support for other languages (by default English is enabled),
+        use the Grazi settings located at Settings -> Tools -> Grazi
     ]]></description>
 
     <change-notes><![CDATA[
+    <h4>2019.1-2</h4>
+    <ul>
+        <li>Support of commit messages proofreading</li>
+    </ul>
     <h4>2019.1-1</h4>
     <ul>
         <li>Spellcheck by Grazi. 25 languages supported. (Enable it in settings)</li>
