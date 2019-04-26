@@ -2,8 +2,8 @@ package training.ui;
 
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.jdom.Element;
 import org.jdom.Text;
 import org.jdom.output.XMLOutputter;
@@ -52,7 +52,7 @@ public class Message {
                 MessageType type = MessageType.TEXT_REGULAR;
                 Element elementContent = (Element) content;
                 String text = outputter.outputString(elementContent.getContent());
-                text = StringEscapeUtils.unescapeXml(text);
+                text = StringUtil.unescapeXmlEntities(text);
                 String link = null;
                 switch (elementContent.getName()) {
                     case "icon":
