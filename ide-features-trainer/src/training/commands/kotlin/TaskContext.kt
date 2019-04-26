@@ -3,9 +3,9 @@ package training.commands.kotlin
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
-import org.apache.commons.lang3.StringEscapeUtils
 import org.jdom.input.SAXBuilder
 import training.check.Check
 import training.learn.ActionsRecorder
@@ -106,7 +106,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
   }
 
   fun code(sourceSample: String): String {
-    return "<code>${StringEscapeUtils.escapeXml11(sourceSample)}</code>"
+    return "<code>${StringUtil.escapeXmlEntities(sourceSample)}</code>"
   }
 
   companion object {
