@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.application.ApplicationInfo;
@@ -30,7 +30,7 @@ import java.util.Objects;
 public class PreviewStaticServer extends HttpRequestHandler {
   public static final String INLINE_CSS_FILENAME = "inline.css";
   private static final Logger LOG = Logger.getInstance(PreviewStaticServer.class);
-  private static final String PREFIX = "/api/markdown-preview/";
+  private static final String PREFIX = "/4f800f8a-bbed-4dd8-b03c-00449c9f6698/";
 
   @Nullable
   private byte[] myInlineStyleBytes = null;
