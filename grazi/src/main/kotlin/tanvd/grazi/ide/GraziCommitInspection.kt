@@ -14,4 +14,8 @@ class GraziCommitInspection : BaseCommitMessageInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return graziInspection.buildVisitor(holder, isOnTheFly)
     }
+
+    override fun getDisplayName(): String {
+        return "Grazi Commit proofreading inspection"
+    }
 }
