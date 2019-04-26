@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>tanvd.grazi</id>
     <name>Grazi</name>
-    <vendor email="vladislav.tankov@jetbrains.com" url="https://jetbrains.com">Vladislav Tankov</vendor>
+    <vendor email="vladislav.tankov@jetbrains.com" url="https://jetbrains.com">jetbrains</vendor>
 
     <description><![CDATA[
         Grazi is a proofreader and grammar checker covering over 15 languages,
@@ -35,6 +35,7 @@
     <h4>2019.1-2</h4>
     <ul>
         <li>Support of commit messages proofreading</li>
+        <li>Bug fixes for Kotlin formatted strings and more</li>
     </ul>
     <h4>2019.1-1</h4>
     <ul>
