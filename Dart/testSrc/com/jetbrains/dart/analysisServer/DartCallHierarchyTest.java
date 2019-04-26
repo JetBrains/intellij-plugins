@@ -1,54 +1,29 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
 import com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyTreeStructure;
 import com.jetbrains.lang.dart.ide.hierarchy.call.DartCalleeTreeStructure;
 import com.jetbrains.lang.dart.ide.hierarchy.call.DartCallerTreeStructure;
 import com.jetbrains.lang.dart.ide.index.DartClassIndex;
 import com.jetbrains.lang.dart.ide.index.DartSymbolIndex;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.CALL_EXPRESSION;
 
-public class DartCallHierarchyTest extends HierarchyViewTestBase {
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    // Some tests do this here but resolution does not work if the server is initialized prior to copying the files.
-    //DartAnalysisServerService.getInstance().serverReadyForRequest(getProject());
-  }
-
+public class DartCallHierarchyTest extends DartHierarchyTestBase {
   @Override
   protected String getBasePath() {
-    return "analysisServer/callHierarchy/" + getTestName(false);
-  }
-
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return DartTestUtils.BASE_TEST_DATA_PATH;
-  }
-
-  @Override
-  protected VirtualFile configureByFiles(@Nullable final File rawProjectRoot, @NotNull final VirtualFile... vFiles) throws IOException {
-    VirtualFile root = super.configureByFiles(rawProjectRoot, vFiles);
-    return DartTestUtils.configureNavigation(this, root, vFiles);
+    return "/analysisServer/callHierarchy/" + getTestName(false);
   }
 
   private void doCallHierarchyTest(final String className,

@@ -1,39 +1,22 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
-import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.ide.hierarchy.type.DartServerSupertypesHierarchyTreeStructure;
 import com.jetbrains.lang.dart.ide.hierarchy.type.DartServerTypeHierarchyTreeStructure;
 import com.jetbrains.lang.dart.ide.index.DartClassIndex;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.util.DartTestUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DartTypeHierarchyTest extends HierarchyViewTestBase {
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    DartTestUtils.configureDartSdk(myModule, getTestRootDisposable(), true);
-    DartAnalysisServerService.getInstance(getProject()).serverReadyForRequest();
-  }
-
+public class DartTypeHierarchyTest extends DartHierarchyTestBase {
   @Override
   protected String getBasePath() {
-    return "analysisServer/typeHierarchy/" + getTestName(false);
-  }
-
-  @NotNull
-  @Override
-  protected String getTestDataPath() {
-    return DartTestUtils.BASE_TEST_DATA_PATH;
+    return "/analysisServer/typeHierarchy/" + getTestName(false);
   }
 
   private void doDartTypeHierarchyTest(final String className, final boolean subtype, final String... fileNames) throws Exception {
