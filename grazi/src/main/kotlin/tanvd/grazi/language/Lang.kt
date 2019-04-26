@@ -40,6 +40,8 @@ enum class Lang(val jlanguage: Language,
 
     val displayName = jlanguage.name!!
 
+    fun isEnglish() = this.shortCode == "en"
+
     override fun toString() = displayName
 
     fun configure(tool: JLanguageTool) {
@@ -53,4 +55,3 @@ enum class Lang(val jlanguage: Language,
     }
 }
 
-fun Lang.isEnglish() = this.shortCode == "en"

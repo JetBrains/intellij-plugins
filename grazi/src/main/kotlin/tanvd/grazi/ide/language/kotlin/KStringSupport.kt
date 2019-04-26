@@ -17,7 +17,7 @@ class KStringSupport : LanguageSupport(GraziBundle.langConfigSet("global.literal
     }
 
     override fun check(file: PsiFile) = buildSet<Typo> {
-        for (str in file.filterFor<KtStringTemplateEntry>()) {
+        for (str in file.filterFor<KtStringTemplateExpression>()) {
             addAll(SanitizingGrammarChecker.default.check(str.filterFor<KtLiteralStringTemplateEntry>()))
             ProgressManager.checkCanceled()
         }
