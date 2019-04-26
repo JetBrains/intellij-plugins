@@ -39,7 +39,7 @@ class CourseManager internal constructor() {
       return lastFocusedFrame.project
     }
 
-  var showGotMessage = false
+  var showGotMessage = true
 
   init {
     initXmlModules()
