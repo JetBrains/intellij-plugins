@@ -1,5 +1,3 @@
-# "Move Statement Up" action has a bug for methods in Ruby now (issue RUBY-23442)
-# Blank line between 2 methods was temporary removed
 class Fred
   def initialize(v)
     @val = v
