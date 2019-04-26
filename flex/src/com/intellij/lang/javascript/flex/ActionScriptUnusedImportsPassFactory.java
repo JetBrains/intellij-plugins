@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeHighlighting.Pass;
@@ -29,7 +29,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiCompiledElement;
@@ -45,14 +47,15 @@ import java.util.List;
 /**
  * @author Maxim.Mossienko
  */
-public class ActionScriptUnusedImportsPassFactory implements TextEditorHighlightingPassFactory {
-  public ActionScriptUnusedImportsPassFactory(TextEditorHighlightingPassRegistrar registrar) {
-    registrar.registerTextEditorHighlightingPass(
-        this,
-        new int[]{Pass.UPDATE_ALL},
-        null,
-        true,
-        -1
+final class ActionScriptUnusedImportsPassFactory implements TextEditorHighlightingPassFactory, StartupActivity, DumbAware {
+  @Override
+  public void runActivity(@NotNull Project project) {
+    TextEditorHighlightingPassRegistrar.getInstance(project).registerTextEditorHighlightingPass(
+      this,
+      new int[]{Pass.UPDATE_ALL},
+      null,
+      true,
+      -1
     );
   }
 
