@@ -1,5 +1,6 @@
 package training.learn.lesson.ruby
 
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.ui.components.fields.ExtendableTextField
 import training.commands.kotlin.TaskContext
 import training.learn.interfaces.Module
@@ -29,6 +30,13 @@ class RubyClassSearchLesson(module: Module) : KLesson("Class Search", module, "r
         text("To check the selected class before navigating to it, you can use ${action(it)} to see its quick definition.")
         trigger(it)
         test { actions(it) }
+      }
+      task {
+        text("Suppose you are looking for ${code("DateAndTimeBehavior")}." +
+            "Choose it and then press <strong>Enter</strong> to navigate.")
+        stateCheck {
+          FileEditorManager.getInstance(project).selectedEditor?.file?.name.equals("date_and_time_behavior.rb")
+        }
       }
     }
 
