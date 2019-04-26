@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -24,7 +25,7 @@ class DartContributedReference implements PsiPolyVariantReference {
   @NotNull private final String myRefText;
 
   DartContributedReference(@NotNull final PsiElement element,
-                                  @NotNull final DartServerData.DartNavigationRegion navigationRegion) {
+                           @NotNull final DartServerData.DartNavigationRegion navigationRegion) {
     myElement = element;
     myNavigationRegion = navigationRegion;
     final int startOffset =
@@ -90,7 +91,7 @@ class DartContributedReference implements PsiPolyVariantReference {
 
   @Override
   public boolean isSoft() {
-    return false;
+    return true;
   }
 
   private static class DartContributedReferenceResolver

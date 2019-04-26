@@ -1545,8 +1545,9 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public SourceFileEdit edit_importElements(@NotNull final VirtualFile file, @NotNull final List<ImportedElements> importedElements,
-                                            final int offset) {
+  public SourceFileEdit edit_importElements(@NotNull final VirtualFile file,
+                                            @NotNull final List<ImportedElements> importedElements,
+                                            final int _offset) {
     final String filePath = FileUtil.toSystemDependentName(file.getPath());
     final Ref<SourceFileEdit> resultRef = new Ref<>();
 
@@ -1554,6 +1555,7 @@ public class DartAnalysisServerService implements Disposable {
     if (server == null || StringUtil.compareVersionNumbers(mySdkVersion, "1.25") < 0) return null;
 
     final CountDownLatch latch = new CountDownLatch(1);
+    final int offset = getOriginalOffset(file, _offset);
     server.edit_importElements(filePath, importedElements, offset, new ImportElementsConsumer() {
       @Override
       public void computedImportedElements(final SourceFileEdit edit) {
@@ -1678,7 +1680,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   public void analysis_reanalyze() {
-    final RemoteAnalysisServerImpl server = myServer;
+    final AnalysisServer server = myServer;
     if (server == null) return;
 
     server.analysis_reanalyze();
