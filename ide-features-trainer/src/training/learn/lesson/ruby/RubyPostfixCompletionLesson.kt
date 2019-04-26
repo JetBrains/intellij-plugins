@@ -11,17 +11,17 @@ import training.learn.lesson.kimpl.LessonContext
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyPostfixCompletionLesson(module: Module) : KLesson("Postfix Completion", module, "ruby") {
-  private val sample = parseLessonSample("""class UsersController
-  def create
-    @user = User.new(user_params)
-    @user.save<caret>
+  private val sample = parseLessonSample("""class SomeExampleClass
+  # @param string_array [Array<String>]
+  def second_value(string_array)
+     string_array.length > 1<caret>
   end
 end
 """.trimIndent())
-  private val result = parseLessonSample("""class UsersController
-  def create
-    @user = User.new(user_params)
-    if @user.save
+  private val result = parseLessonSample("""class SomeExampleClass
+  # @param string_array [Array<String>]
+  def second_value(string_array)
+    if string_array.length > 1
       <caret>
     end
   end
@@ -32,7 +32,7 @@ end
     get() = {
       prepareSample(sample)
       task {
-        text("The IDE can offer postfix shortcuts. Type <code>.if</code> and press <action>EditorEnter</action>.")
+        text("The IDE can offer postfix shortcuts. Type ${code(".if")} and press ${action("EditorEnter")}.")
         trigger("EditorChooseLookupItem")
         test {
           ideFrame {
@@ -42,8 +42,8 @@ end
           }
         }
       }
-      task("@user.save") {
-        text("Now choose the second item, <code>@user.save</code>.")
+      task("string_array.length > 1") {
+        text("Now choose the second item, ${code(it)}.")
         stateCheck { editor.document.text == result }
         test {
           ideFrame {
