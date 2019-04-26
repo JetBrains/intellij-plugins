@@ -53,6 +53,9 @@
     <depends optional="true" config-file="python.xml">com.intellij.modules.python</depends>
     <depends optional="true" config-file="java.xml">com.intellij.modules.java</depends>
 
+    <idea-version since-build="191"/>
+
+
     <project-components>
         <component>
             <implementation-class>tanvd.grazi.ide.notification.GraziNotificationComponent</implementation-class>
@@ -72,7 +75,6 @@
 
         <localInspection displayName="Grazi proofreading inspection" groupName="Grazi" enabledByDefault="true"
                          shortName="GraziInspection" implementationClass="tanvd.grazi.ide.GraziInspection" level="TYPO"/>
-
 
 
         <localInspection displayName="Grazi Commit proofreading inspection" groupName="Grazi" enabledByDefault="true"

@@ -24,6 +24,8 @@ intellij {
     version = "2019.1"
     downloadSources = true
 
+    updateSinceUntilBuild = false
+
     setPlugins(
             "org.intellij.plugins.markdown:191.5849.16",
             "org.jetbrains.kotlin:1.3.21-release-IJ2019.1-2",
