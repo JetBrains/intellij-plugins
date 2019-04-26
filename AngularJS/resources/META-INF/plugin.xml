@@ -33,6 +33,8 @@
                     interface="org.angular2.codeInsight.attributes.Angular2AttributesProvider"/>
     <extensionPoint qualifiedName="org.angular2.contextProvider"
                     interface="org.angular2.lang.Angular2ContextProvider"/>
+    <extensionPoint qualifiedName="org.angular2.templateScopesProvider"
+                    interface="org.angular2.codeInsight.template.Angular2TemplateScopesProvider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -264,7 +266,15 @@
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BoundHtmlAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2ExtendedKeyEventAttributesProvider"/>
     <attributesProvider implementation="org.angular2.codeInsight.attributes.Angular2BasicAttributesProvider" order="last"/>
+
     <contextProvider implementation="org.angular2.lang.Angular2PackageJsonContextProvider"/>
+
+    <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider"
+                            id="standardSymbols"/>
+    <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider"
+                            id="templateElements" order="after standardSymbols"/>
+    <templateScopesProvider implementation="org.angular2.codeInsight.template.Angular2ComponentScopeProvider"
+                            id="component" order="after templateElements"/>
   </extensions>
 
   <actions>
