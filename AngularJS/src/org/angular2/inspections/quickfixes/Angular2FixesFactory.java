@@ -23,7 +23,10 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.entities.*;
+import org.angular2.entities.Angular2Declaration;
+import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.Angular2Entity;
 import org.angular2.inspections.actions.Angular2ActionFactory;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
@@ -43,8 +46,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static com.intellij.util.ObjectUtils.*;
-import static com.intellij.util.containers.ContainerUtil.*;
+import static com.intellij.util.ObjectUtils.notNull;
+import static com.intellij.util.ObjectUtils.tryCast;
+import static com.intellij.util.containers.ContainerUtil.exists;
+import static com.intellij.util.containers.ContainerUtil.find;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.*;
 
 public class Angular2FixesFactory {
@@ -58,14 +63,12 @@ public class Angular2FixesFactory {
       Angular2ActionFactory.createNgModuleImportAction(editor, element, true).execute();
     }
     else if (!candidates.get(NOT_DECLARED_IN_ANY_MODULE).isEmpty()) {
-      selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable",
-                                                  getCommonNameForDeclarations(candidates.get(NOT_EXPORTED_BY_MODULE))),
+      selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable"),
                    candidates.get(NOT_DECLARED_IN_ANY_MODULE), candidate ->
                      Angular2ActionFactory.createAddNgModuleDeclarationAction(editor, element, candidate, true));
     }
     else if (!candidates.get(NOT_EXPORTED_BY_MODULE).isEmpty()) {
-      selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable",
-                                                  getCommonNameForDeclarations(candidates.get(NOT_EXPORTED_BY_MODULE))),
+      selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable"),
                    candidates.get(NOT_EXPORTED_BY_MODULE), candidate ->
                      Angular2ActionFactory.createExportNgModuleDeclarationAction(editor, element, candidate, true));
     }
@@ -201,34 +204,12 @@ public class Angular2FixesFactory {
       .orElse(Collections.emptyList());
   }
 
-  private static String getCommonNameForDeclarations(@NotNull Collection<Angular2Declaration> declarations) {
-    if (getFirstItem(declarations) instanceof Angular2Pipe) {
-      return Angular2Bundle.message("angular.entity.pipe");
-    }
-    boolean hasDirective = false;
-    boolean hasComponent = false;
-    for (Angular2Declaration declaration: declarations) {
-      if (declaration instanceof Angular2Component) {
-        hasComponent = true;
-      } else {
-        hasDirective = true;
-      }
-    }
-    return hasComponent == hasDirective ? Angular2Bundle.message("angular.entity.component.or.directive")
-                                        : hasComponent ? Angular2Bundle.message("angular.entity.component")
-                                                       : Angular2Bundle.message("angular.entity.directive");
-  }
 
   private static void selectAndRun(@NotNull Editor editor,
                                    @NotNull String title,
                                    @NotNull Collection<Angular2Declaration> declarations,
                                    @NotNull Function<Angular2Declaration, QuestionAction> actionFactory) {
     if (declarations.isEmpty()) {
-      return;
-    }
-
-    if (declarations.size() == 1) {
-      doIfNotNull(actionFactory.apply(getFirstItem(declarations)), QuestionAction::execute);
       return;
     }
 

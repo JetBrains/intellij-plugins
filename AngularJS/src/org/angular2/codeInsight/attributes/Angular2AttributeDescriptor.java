@@ -36,6 +36,7 @@ import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2CodeInsightUtils;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.codeInsight.tags.Angular2XmlElementSourcesResolver;
 import org.angular2.entities.Angular2Directive;
@@ -67,7 +68,6 @@ import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProx
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getCustomNgAttrs;
 import static org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.NG_CLASS_ATTR;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
@@ -131,7 +131,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   public static List<Angular2AttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive,
                                                                           @NotNull XmlTag tag) {
-    if (directive.isTemplate() && !isTemplateTag(tag.getName())) {
+    if (directive.isTemplate() && !Angular2Processor.isTemplateTag(tag.getName())) {
       return emptyList();
     }
     return new DirectiveAttributesProvider(tag, directive).get();

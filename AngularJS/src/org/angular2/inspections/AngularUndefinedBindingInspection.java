@@ -30,7 +30,7 @@ import java.util.Set;
 
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
+import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 import static org.angular2.lang.Angular2Bundle.BUNDLE;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 

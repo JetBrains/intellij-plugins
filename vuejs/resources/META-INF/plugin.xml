@@ -96,8 +96,6 @@ Vue components defined using separate .html, .js, and .css files are not support
     <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueTagCompletionContributor"/>
     <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler" />
     <include.provider implementation="org.jetbrains.vuejs.index.VueES6ModuleFileIncludeProvider"/>
-
-    <highlightingPassFactory implementation="org.jetbrains.vuejs.typescript.service.VueTypeScriptServiceHighlightingPassFactoryRegistrar"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
@@ -108,6 +106,11 @@ Vue components defined using separate .html, .js, and .css files are not support
     </action>
   </actions>
 
+  <project-components>
+    <component>
+      <implementation-class>org.jetbrains.vuejs.typescript.service.VueTypeScriptServiceHighlightingPassFactory</implementation-class>
+    </component>
+  </project-components>
   <extensions defaultExtensionNs="JavaScript">
     <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider" />
     <indexedFileTypeProvider implementation="org.jetbrains.vuejs.VueIndexedFileTypeProvider"/>
