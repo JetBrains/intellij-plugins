@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>tanvd.grazi</id>
     <name>Grazi</name>
-    <vendor email="vdtankov@gmail.com" url="https://github.com/TanVD">Vladislav Tankov</vendor>
+    <vendor email="vladislav.tankov@jetbrains.com" url="https://jetbrains.com">Vladislav Tankov</vendor>
 
     <description><![CDATA[
         Grazi is a proofreader and grammar checker covering over 15 languages,
