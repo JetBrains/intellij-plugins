@@ -44,7 +44,7 @@ object GrammarEngine {
     private fun getFixesSmall(str: String) = buildSet<Typo> {
         if (isSmall(str)) return@buildSet
 
-        val lang = LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList())
+        val lang = LangDetector.getLang(str, GraziConfig.state.enabledLanguages.toList()) ?: return@buildSet
 
         val allFixes = tryRun { LangTool[lang].check(str) }
                 .orEmpty()
