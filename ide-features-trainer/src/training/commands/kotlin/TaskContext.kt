@@ -5,6 +5,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.IdeFocusManager
 import com.intellij.psi.PsiDocumentManager
+import org.apache.commons.lang3.StringEscapeUtils
 import org.jdom.input.SAXBuilder
 import training.check.Check
 import training.learn.ActionsRecorder
@@ -102,6 +103,10 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
 
   fun action(id: String): String {
     return "<action>$id</action>"
+  }
+
+  fun code(sourceSample: String): String {
+    return "<code>${StringEscapeUtils.escapeXml11(sourceSample)}</code>"
   }
 
   companion object {
