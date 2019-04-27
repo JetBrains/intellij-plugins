@@ -25,6 +25,7 @@ Right now Grazi supports following natural language sources:
 * Plaintext - all the text if extension is *.txt*, otherwise Grazi will use spellcheck only
 * XML - all the text elements
 * Comments - any comments in almost any code 
+* Commit messages - commits made via standard IDEA VCS support
 
 As for languages, Grazi supports (including dialects):
 * English (British, American, Canadian)
@@ -55,4 +56,8 @@ For local development and testing Gradle is used:
 * Import project as a Gradle project with IntelliJ IDEA (version `2018.3.+`)
 * Run `runIde` task to run IntelliJ IDEA Community (downloaded by Gradle) 
   with installed Grazi plugin from current build
+  
+## Special thanks
+Special thanks goes to:
+* Alexandra Pavlova (aka sunalex) for our beautiful icon
 

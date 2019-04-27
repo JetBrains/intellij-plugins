@@ -12,8 +12,8 @@
         <br/>
 
         The plugin supports natural language constructs wherever they are: Kotlin,
-        Python, and Java (including literals and docs), comments, Markdown, XML, and
-        plain text.
+        Python, and Java (including literals and docs), comments, Markdown, XML,
+        commit messages and plain text.
 
         <br/>
 
