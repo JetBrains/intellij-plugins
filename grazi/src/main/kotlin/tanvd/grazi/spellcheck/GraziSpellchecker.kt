@@ -44,14 +44,18 @@ object GraziSpellchecker {
                 if (trimmedWordRange == null) continue
 
                 for ((inWordRange, word) in trimmedWord.splitCamelCase(insideOf = trimmedWordRange)) {
-                    val typo = tryRun { checker.check(word.toLowerCase()) }?.firstOrNull()
+                    val typo = tryRun { checker.check(word) }?.firstOrNull()
                             ?.let { Typo(it, checkerLang, inWordRange.start) }
-                    if (typo != null && IdeaSpellchecker.hasProblem(word)) {
+                    if (typo != null && IdeaSpellchecker.hasProblem(word) && !isCasingProblem(typo)) {
                         add(typo)
                     }
                 }
             }
         }
+    }
+
+    private fun isCasingProblem(typo: Typo) : Boolean {
+        return typo.fixes.any { it.toLowerCase() == typo.word.toLowerCase() }
     }
 
     fun reset() {
