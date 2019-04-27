@@ -15,8 +15,22 @@ fun ASTNode.noParentOfTypes(tokenSet: TokenSet) = TreeUtil.findParent(this, toke
 
 fun ASTNode.hasParentOfTypes(vararg tokens: IElementType) = hasParentOfTypes(TokenSet.create(*tokens))
 fun ASTNode.hasParentOfTypes(tokenSet: TokenSet) = TreeUtil.findParent(this, tokenSet) != null
-fun ASTNode.hasType(vararg tokens: IElementType) = this.elementType in tokens
+
+fun ASTNode.hasType(vararg tokens: IElementType) = hasType(tokens.toSet())
+fun ASTNode.hasType(tokens: Set<IElementType>) = this.elementType in tokens
 
 inline fun <reified T : PsiElement> PsiElement.filterForTokens(vararg tokens: IElementType): List<T> = filterFor { token ->
     tokens.contains(token.node.elementType)
+}
+
+/**
+ * Will traverse through PsiElements using [take] function while [cond] is true.
+ * Starts on `take(this)` element
+ */
+fun <T : PsiElement> T.traverse(take: (T) -> T?, cond: (T) -> Boolean): PsiElement? {
+    var current: T? = take(this)
+    while (current != null && cond(current)) {
+        current = take(current)
+    }
+    return current
 }

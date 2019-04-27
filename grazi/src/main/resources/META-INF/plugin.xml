@@ -35,7 +35,8 @@
     <h4>2019.1-2</h4>
     <ul>
         <li>Support of commit messages proofreading</li>
-        <li>Bug fixes for Kotlin formatted strings and more</li>
+        <li>Extended support of formatted strings and inline code fragments</li>
+        <li>A lot of bug fixes </li>
     </ul>
     <h4>2019.1-1</h4>
     <ul>
