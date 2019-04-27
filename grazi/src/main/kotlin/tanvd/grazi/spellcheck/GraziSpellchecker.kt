@@ -33,6 +33,14 @@ object GraziSpellchecker {
 
     private var checker: JLanguageTool = createChecker()
 
+    /**
+     * Checks text for spelling mistakes.
+     * It separates text by whitespaces, then words in it by default name separators (like `_`, `.`), then trims the word.
+     * Firstly word is checked with LanguageTool spellcheck, then with IDEA built-in (if typos were found).
+     * If LanguageTool considers word as a mistake and IDEA built-in spellcheck agrees typo is returned.
+     *
+     * Note, that casing typos (suggestion includes the same word but in different casing) are ignored.
+     */
     fun check(text: String) = buildSet<Typo> {
         if (!GraziConfig.state.enabledSpellcheck) return@buildSet
 
@@ -46,7 +54,7 @@ object GraziSpellchecker {
                 for ((inWordRange, word) in trimmedWord.splitCamelCase(insideOf = trimmedWordRange)) {
                     val typo = tryRun { checker.check(word) }?.firstOrNull()
                             ?.let { Typo(it, checkerLang, inWordRange.start) }
-                    if (typo != null && IdeaSpellchecker.hasProblem(word) && !isCasingProblem(typo)) {
+                    if (typo != null && IdeaSpellchecker.hasProblem(word) && !isCasingProblem(word, typo)) {
                         add(typo)
                     }
                 }
@@ -54,8 +62,9 @@ object GraziSpellchecker {
         }
     }
 
-    private fun isCasingProblem(typo: Typo): Boolean {
-        return typo.fixes.any { it.toLowerCase() == typo.word.toLowerCase() }
+    private fun isCasingProblem(word: String, typo: Typo): Boolean {
+        val lowerWord = word.toLowerCase()
+        return typo.fixes.any { it.toLowerCase() == lowerWord }
     }
 
     fun reset() {
