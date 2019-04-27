@@ -12,7 +12,7 @@ open class GraziProjectInit(private val project: Project) : ProjectComponent {
     }
 
     override fun projectOpened() {
-        val inspectionProfile =CommitMessageInspectionProfile.getInstance(project)
+        val inspectionProfile = CommitMessageInspectionProfile.getInstance(project)
         inspectionProfile.addTool(project, LocalInspectionToolWrapper(GraziCommitInspection()), emptyMap())
         inspectionProfile.enableTool("GraziCommit", project)
     }

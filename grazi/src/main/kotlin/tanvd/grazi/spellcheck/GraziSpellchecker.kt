@@ -54,7 +54,7 @@ object GraziSpellchecker {
         }
     }
 
-    private fun isCasingProblem(typo: Typo) : Boolean {
+    private fun isCasingProblem(typo: Typo): Boolean {
         return typo.fixes.any { it.toLowerCase() == typo.word.toLowerCase() }
     }
 

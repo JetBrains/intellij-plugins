@@ -2,7 +2,8 @@ package tanvd.grazi.grammar
 
 import com.intellij.openapi.progress.ProgressManager
 import tanvd.grazi.GraziConfig
-import tanvd.grazi.language.*
+import tanvd.grazi.language.LangDetector
+import tanvd.grazi.language.LangTool
 import tanvd.grazi.spellcheck.GraziSpellchecker
 import tanvd.grazi.utils.*
 
@@ -12,7 +13,7 @@ object GrammarEngine {
 
     private val separators = listOf('\n', '?', '!', '.', ';', ',', ' ', '\t')
 
-    /** Grammar checker will perform only spellcheck for sentences with less words */
+    /** Grammar checker will perform only spellcheck for sentences with fewer words */
     private const val minNumberOfWords = 3
 
     private fun isSmall(str: String) = str.length < minChars
