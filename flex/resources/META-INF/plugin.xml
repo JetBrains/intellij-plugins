@@ -20,7 +20,7 @@
   <depends optional="true" config-file="flex-copyright.xml">com.intellij.copyright</depends>
 
   <extensions defaultExtensionNs="com.intellij">
-    <postStartupActivity implementation="com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory"/>
+    <highlightingPassFactory implementation="com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory"/>
 
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider"/>
