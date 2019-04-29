@@ -21,7 +21,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlAttributeDescriptorsProvider;
-import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
@@ -41,6 +40,8 @@ import java.util.function.Function;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
+import static org.angular2.codeInsight.template.Angular2TemplateScopesResolver.getHtmlElementClassType;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
@@ -137,7 +138,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     getStandardPropertyAndEventDescriptors(xmlTag).forEach(
       attr -> knownAttributes.add(attr.getName()));
 
-    boolean isTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
+    boolean isTemplateTag = isTemplateTag(xmlTag.getName());
     MultiMap<String, Angular2Directive> attrsFromSelectors = MultiMap.createSet();
     Map<String, Angular2DirectiveProperty> inputs = new HashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new HashMap<>();
@@ -237,10 +238,10 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       Set<String> allowedElementProperties = new HashSet<>(DomElementSchemaRegistry.getElementProperties(xmlTag.getName()));
       allowedElementProperties.addAll(ContainerUtil.map(
         getStandardTagEventAttributeNames(xmlTag), eventName -> EVENT.buildName(eventName.substring(2))));
-      JSType tagClass = Angular2Processor.getHtmlElementClassType(xmlTag, xmlTag.getName());
+      JSType tagClass = getHtmlElementClassType(xmlTag, xmlTag.getName());
       List<XmlAttributeDescriptor> result = new ArrayList<>();
       Set<Object> dependencies = new HashSet<>();
-      boolean isInTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
+      boolean isInTemplateTag = isTemplateTag(xmlTag.getName());
       if (tagClass != null) {
         for (JSRecordType.PropertySignature property : tagClass.asRecordType().getProperties()) {
           if (property.getMemberSource().getSingleElement() instanceof JSAttributeListOwner) {
@@ -287,7 +288,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   @NotNull
   public static List<XmlAttributeDescriptor> getExistingVarsAndRefsDescriptors(@NotNull XmlTag xmlTag) {
     List<XmlAttributeDescriptor> result = new ArrayList<>();
-    boolean isInTemplateTag = Angular2Processor.isTemplateTag(xmlTag.getName());
+    boolean isInTemplateTag = isTemplateTag(xmlTag.getName());
     xmlTag.acceptChildren(new Angular2HtmlElementVisitor() {
       @Override
       public void visitVariable(Angular2HtmlVariable variable) {

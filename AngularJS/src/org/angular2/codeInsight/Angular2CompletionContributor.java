@@ -42,6 +42,8 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.*;
 import org.angular2.codeInsight.attributes.Angular2AttributesProvider.CompletionResultsConsumer;
+import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider;
+import org.angular2.codeInsight.template.Angular2TemplateScopesResolver;
 import org.angular2.css.Angular2CssAttributeNameCompletionProvider;
 import org.angular2.css.Angular2CssExpressionCompletionProvider;
 import org.angular2.entities.Angular2EntitiesProvider;
@@ -171,7 +173,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
                && (((JSReferenceExpressionImpl)ref).getQualifier() == null
                    || ((JSReferenceExpressionImpl)ref).getQualifier() instanceof JSThisExpression)) {
         final Set<String> contributedElements = new HashSet<>();
-        Angular2Processor.process(parameters.getPosition(), resolveResult -> {
+        Angular2TemplateScopesResolver.resolve(parameters.getPosition(), resolveResult -> {
           final JSPsiElementBase element = ObjectUtils.tryCast(resolveResult.getElement(), JSPsiElementBase.class);
           if (element == null) {
             return;
@@ -235,7 +237,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     }
 
     private static JSLookupPriority calcPriority(@NotNull JSPsiElementBase element) {
-      if (Angular2Processor.$ANY.equals(element.getName())) {
+      if (Angular2StandardSymbolsScopesProvider.$ANY.equals(element.getName())) {
         return NG_$ANY_PRIORITY;
       }
       return Angular2DecoratorUtil.isPrivateMember(element)
