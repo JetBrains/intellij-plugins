@@ -13,23 +13,11 @@ import java.io.IOException;
 
 public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStubBase<Angular2MetadataComponent> {
 
-  @Nullable
-  public static Angular2MetadataComponentStub createComponentStub(@Nullable String memberName,
-                                                                  @Nullable StubElement parent,
-                                                                  @NotNull JsonObject classSource,
-                                                                  @NotNull JsonObject decoratorSource) {
-    JsonObject decoratorArg = getDecoratorInitializer(decoratorSource, JsonObject.class);
-    if (decoratorArg != null) {
-      return new Angular2MetadataComponentStub(memberName, parent, classSource, decoratorArg);
-    }
-    return null;
-  }
-
   public Angular2MetadataComponentStub(@Nullable String memberName,
                                        @Nullable StubElement parent,
                                        @NotNull JsonObject source,
-                                       @NotNull JsonObject initializer) {
-    super(memberName, parent, source, initializer, Angular2MetadataElementTypes.COMPONENT);
+                                       @NotNull JsonObject decoratorSource) {
+    super(memberName, parent, source, decoratorSource, Angular2MetadataElementTypes.COMPONENT);
   }
 
   public Angular2MetadataComponentStub(@NotNull StubInputStream stream,

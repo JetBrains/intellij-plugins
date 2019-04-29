@@ -10,6 +10,5 @@ public abstract class Angular2MultiFileFixtureTestCase extends LightPlatformMult
   protected void setUp() throws Exception {
     super.setUp();
     AngularTestUtil.enableAstLoadingFilter(this);
-    AngularTestUtil.testES6(myFixture);
   }
 }

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
@@ -149,10 +150,10 @@ public class FlexBuilderUtils {
         try {
           byte[] bytes;
           try {
-            bytes = encoding == null ? fixedText.getBytes() : fixedText.getBytes(encoding);
+            bytes = encoding == null ? fixedText.getBytes(StandardCharsets.UTF_8) : fixedText.getBytes(encoding);
           }
           catch (UnsupportedEncodingException e) {
-            bytes = fixedText.getBytes();
+            bytes = fixedText.getBytes(StandardCharsets.UTF_8);
           }
 
           final File outputFile = new File(outputDir, wrapperFileName);

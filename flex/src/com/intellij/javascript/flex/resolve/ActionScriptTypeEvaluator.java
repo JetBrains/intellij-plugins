@@ -58,7 +58,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   }
 
   @Override
-  protected void evaluateNewExpressionTypes(JSNewExpression newExpression, @NotNull JSEvaluateContext.JSEvaluationPlace place) {
+  protected void evaluateNewExpressionTypes(JSNewExpression newExpression) {
     JSExpression methodExpr = newExpression.getMethodExpression();
     if (methodExpr != null) {
       if (methodExpr instanceof JSArrayLiteralExpression) {

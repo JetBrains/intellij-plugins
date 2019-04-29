@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -264,7 +265,7 @@ public class TestRunner {
     TreeManager treeManager = new TreeManager(settings.getRunAllConfigsInDirectory());
     if (settings.isDebug()) {
       @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
       String line;
       while ((line = reader.readLine()) != null) {
         if (DEBUG_SESSION_STARTED.equals(line)) {

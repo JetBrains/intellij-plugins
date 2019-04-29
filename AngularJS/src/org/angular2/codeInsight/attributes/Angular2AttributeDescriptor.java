@@ -21,6 +21,9 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.meta.PsiPresentableMetaData;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
@@ -33,7 +36,6 @@ import one.util.streamex.StreamEx;
 import org.angular2.codeInsight.Angular2CodeInsightUtils;
 import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
-import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.codeInsight.tags.Angular2XmlElementSourcesResolver;
 import org.angular2.entities.Angular2Directive;
@@ -65,6 +67,7 @@ import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProx
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.EVENT_ATTR_PREFIX;
 import static org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider.getCustomNgAttrs;
 import static org.angular2.codeInsight.attributes.Angular2AttributeValueProvider.NG_CLASS_ATTR;
+import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.parser.Angular2AttributeType.*;
 
 public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor implements XmlAttributeDescriptorEx, PsiPresentableMetaData {
@@ -128,7 +131,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   public static List<Angular2AttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive,
                                                                           @NotNull XmlTag tag) {
-    if (directive.isTemplate() && !Angular2Processor.isTemplateTag(tag.getName())) {
+    if (directive.isTemplate() && !isTemplateTag(tag.getName())) {
       return emptyList();
     }
     return new DirectiveAttributesProvider(tag, directive).get();
@@ -463,10 +466,14 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   public static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty property) {
-    return !ONE_TIME_BINDING_EXCLUDES.contains(property.getName())
-           && (property.isVirtual()
-               || (property.getType() != null
-                   && expandStringLiteralTypes(property.getType()).isDirectlyAssignableType(STRING_TYPE, null)));
+    if (ONE_TIME_BINDING_EXCLUDES.contains(property.getName())) return false;
+    if (property.isVirtual()) return true;
+    if (property.getType() == null) return false;
+
+    Map<Angular2DirectiveProperty, Boolean> cache = CachedValuesManager.getCachedValue(property.getSourceElement(), () ->
+      CachedValueProvider.Result.create(new HashMap<>(), PsiModificationTracker.MODIFICATION_COUNT));
+    return cache.computeIfAbsent(property, prop ->
+      expandStringLiteralTypes(prop.getType()).isDirectlyAssignableType(STRING_TYPE, null)) == Boolean.TRUE;
   }
 
   @Contract("null->null") //NON-NLS

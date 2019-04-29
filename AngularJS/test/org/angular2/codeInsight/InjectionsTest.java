@@ -10,21 +10,23 @@ import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
+import com.intellij.lang.typescript.tsconfig.TypeScriptConfigService;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.roots.ExcludeFolder;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
+import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.lang.Angular2ContextProvider;
@@ -172,22 +174,42 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
   }
 
   public void testNodeModulesBasedInclusionCheck1() {
-    VirtualFile root = myFixture.copyDirectoryToProject("node-modules-check", ".");
+    myFixture.copyDirectoryToProject("node-modules-check", ".");
 
-    VirtualFile nodeModules1 = root.findFileByRelativePath("inner2/node_modules/@angular/core");
-    PsiTestUtil.addContentRoot(myModule, nodeModules1);
-    try {
-      myFixture.openFileInEditor(root.findFileByRelativePath("inner/event.html"));
-      int offsetBySignature = findOffsetBySignature("callAnonymous<caret>Api()", myFixture.getFile());
-      assertNull(myFixture.getFile().findReferenceAt(offsetBySignature));
+    myFixture.configureFromTempProjectFile("inner/event.html");
+    checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
 
-      myFixture.openFileInEditor(root.findFileByRelativePath("inner2/event.html"));
-      checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
-    }
-    finally {
-      ModuleRootModificationUtil.updateModel(myModule, model -> model.removeContentEntry(
-        ContainerUtil.find(model.getContentEntries(), entry -> nodeModules1.equals(entry.getFile()))));
-    }
+    myFixture.configureFromTempProjectFile("inner2/event.html");
+    checkVariableResolve("callAnonymous<caret>Api()", "callAnonymousApi", TypeScriptFunction.class);
+  }
+
+  public void testAngularCliLibrary() {
+    myFixture.copyDirectoryToProject("angular-cli-lib", ".");
+
+    // Add "dist" folder to excludes
+    ModuleRootModificationUtil.updateModel(myModule, model -> {
+      ExcludeFolder folder = model.getContentEntries()[0].addExcludeFolder(
+        myFixture.getTempDirFixture().getFile("dist"));
+      Disposer.register(myFixture.getProjectDisposable(), () ->
+        ModuleRootModificationUtil.updateModel(myModule, model2 ->
+          model2.getContentEntries()[0].removeExcludeFolder(folder)));
+    });
+
+    // This should trigger immediate library update
+    TypeScriptConfigService.Provider.get(getProject()).getConfigFiles();
+
+    // Ensure we are set up correctly
+    ReadAction.run(() -> {
+      assertTrue(ProjectFileIndex.getInstance(getProject()).isExcluded(
+        myFixture.getTempDirFixture().getFile("dist/check")));
+      assertTrue(ProjectFileIndex.getInstance(getProject()).isInLibrary(
+        myFixture.getTempDirFixture().getFile("dist/my-common-ui-lib/package.json")));
+    });
+
+    myFixture.configureFromTempProjectFile("src/app/home.component.html");
+    PsiElement transform = AngularTestUtil.resolveReference("| trans<caret>late", myFixture);
+    assertEquals("translate.pipe.d.ts", transform.getContainingFile().getName());
+    assertInstanceOf(transform, TypeScriptFunction.class);
   }
 
   public void testCustomContextProvider() {

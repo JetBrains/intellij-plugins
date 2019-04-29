@@ -151,6 +151,12 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   }
 
   @Override
+  protected boolean processFunction(@NotNull JSFunction function) {
+    return Angular2LibrariesHacks.hackSlicePipeType(this, this.myContext, function)
+      || super.processFunction(function);
+  }
+
+  @Override
   protected void processThisQualifierInExecutionScope(@NotNull JSThisExpression thisQualifier, PsiElement thisScope) {
     if (thisScope instanceof Angular2EmbeddedExpression) {
       TypeScriptClass componentClass = Angular2IndexingHandler.findComponentClass(thisQualifier);

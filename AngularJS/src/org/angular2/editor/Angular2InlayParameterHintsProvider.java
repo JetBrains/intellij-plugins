@@ -5,6 +5,7 @@ import com.intellij.codeInsight.hints.Option;
 import com.intellij.lang.javascript.psi.JSCallLikeExpression;
 import com.intellij.lang.typescript.editing.TypeScriptInlayParameterHintsProvider;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,9 +13,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class Angular2InlayParameterHintsProvider extends TypeScriptInlayParameterHintsProvider {
-  public static final Option NAMES_FOR_ALL_ARGS = new Option("angular.show.names.for.all.args", "Show name for all arguments", false);
-  public static final Option NAMES_FOR_TAGGED_TEMPLATES = new Option("angular.show.names.for.tagged", "Show name for tagged template arguments", true);
-  public static final Option NAMES_FOR_PIPES = new Option("angular.show.names.for.pipes", "Show name for pipe arguments", true);
+  public static final Option NAMES_FOR_ALL_ARGS = new Option(
+    "angular.show.names.for.all.args", Angular2Bundle.message("angular.inlay.params.option.all.arguments"), false);
+  public static final Option NAMES_FOR_TAGGED_TEMPLATES = new Option(
+    "angular.show.names.for.tagged", Angular2Bundle.message("angular.inlay.params.option.tagged.template.arguments"), true);
+  public static final Option NAMES_FOR_PIPES = new Option(
+    "angular.show.names.for.pipes", Angular2Bundle.message("angular.inlay.params.option.pipe.arguments"), true);
 
   @Override
   protected Option getShowNameForAllArgsOption() {

@@ -34,7 +34,8 @@ public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureT
     super.setUp();
     assert JavascriptLanguage.INSTANCE != null;
     // Because injector handles the code in the fence and gets parser definition for that lang
-    LanguageParserDefinitions.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, new PlainTextParserDefinition());
+    LanguageParserDefinitions.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, new PlainTextParserDefinition(),
+                                                            getTestRootDisposable());
   }
 
   private void doTest(@NotNull String toType) {
@@ -124,7 +125,8 @@ public class LanguageListCompletionTest extends LightPlatformCodeInsightFixtureT
       super.setUp();
       assert JavascriptLanguage.INSTANCE != null;
       // Because injector handles the code in the fence and gets parser definition for that lang
-      LanguageParserDefinitions.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, new PlainTextParserDefinition());
+      LanguageParserDefinitions.INSTANCE.addExplicitExtension(JavascriptLanguage.INSTANCE, new PlainTextParserDefinition(),
+                                                              getTestRootDisposable());
     }
 
     public void testAutopopup() {

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.JavaExecutionUtil;
@@ -67,9 +67,9 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   protected abstract VirtualFile getFileToRun(ConfigurationContext context);
 
   @Override
-  protected boolean setupConfigurationFromContext(CucumberJavaRunConfiguration configuration,
-                                                  ConfigurationContext context,
-                                                  Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull CucumberJavaRunConfiguration configuration,
+                                                  @NotNull ConfigurationContext context,
+                                                  @NotNull Ref<PsiElement> sourceElement) {
     final VirtualFile virtualFile = getFileToRun(context);
     if (virtualFile == null) {
       return false;
@@ -142,7 +142,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   }
 
   @Override
-  public boolean isConfigurationFromContext(CucumberJavaRunConfiguration runConfiguration, ConfigurationContext context) {
+  public boolean isConfigurationFromContext(@NotNull CucumberJavaRunConfiguration runConfiguration, @NotNull ConfigurationContext context) {
     Location location = context.getLocation();
     if (location == null) {
       return false;

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.maven;
 
 import com.intellij.flex.model.bc.OutputType;
@@ -39,6 +40,7 @@ import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -174,7 +176,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
         try {
           if (file.isValid() &&
               file.getLength() == TEMPORARY_FILE_CONTENT.length() &&
-              new String(file.contentsToByteArray()).equals(TEMPORARY_FILE_CONTENT)) {
+              new String(file.contentsToByteArray(), StandardCharsets.UTF_8).equals(TEMPORARY_FILE_CONTENT)) {
             file.delete(Flexmojos3GenerateConfigTask.class);
           }
         }

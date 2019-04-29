@@ -46,6 +46,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSUseNamespaceDirective;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSClassResolver;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -119,6 +120,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.intellij.codeInsight.daemon.impl.HighlightInfoFilter.EXTENSION_POINT_NAME;
@@ -1377,7 +1379,8 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   private void replaceText(final String fileRelativePath, final String oldText, final String newText) {
     final VirtualFile file = VfsUtilCore.findRelativeFile(fileRelativePath, ModuleRootManager.getInstance(myModule).getSourceRoots()[0]);
     try {
-      final String newContent = StringUtil.convertLineSeparators(new String(file.contentsToByteArray())).replace(oldText, newText);
+      final String newContent = StringUtil.convertLineSeparators(new String(file.contentsToByteArray(),
+                                                                            StandardCharsets.UTF_8)).replace(oldText, newText);
       createEditor(file).getDocument().setText(newContent);
       PsiDocumentManager.getInstance(myProject).commitAllDocuments();
     }
@@ -1660,7 +1663,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
     PsiElement element = InjectedLanguageManager.getInstance(myProject).findInjectedElementAt(myFile, myEditor.getCaretModel().getOffset());
     JSExpression expression = PsiTreeUtil.getParentOfType(element, JSExpression.class);
-    assertEquals("mx.containers.Panel[]", JSResolveUtil.getQualifiedExpressionType(expression, myFile));
+    assertEquals("mx.containers.Panel[]", ActionScriptResolveUtil.getQualifiedExpressionType(expression, myFile));
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})

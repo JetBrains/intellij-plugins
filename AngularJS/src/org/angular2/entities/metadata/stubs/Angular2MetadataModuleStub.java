@@ -20,25 +20,16 @@ public class Angular2MetadataModuleStub extends Angular2MetadataEntityStub<Angul
 
   private static final String[] STUBBED_DECORATOR_FIELDS = new String[]{DECLARATIONS_PROP, EXPORTS_PROP, IMPORTS_PROP};
 
-  @SuppressWarnings("unused")
-  @Nullable
-  static Angular2MetadataClassStubBase createModuleStub(@Nullable String memberName,
-                                                        @Nullable StubElement parent,
-                                                        @NotNull JsonObject classSource,
-                                                        @NotNull JsonObject decoratorSource) {
-    JsonObject decoratorArg = getDecoratorInitializer(decoratorSource, JsonObject.class);
-    if (decoratorArg != null) {
-      return new Angular2MetadataModuleStub(memberName, parent, classSource, decoratorArg);
-    }
-    return null;
-  }
-
   public Angular2MetadataModuleStub(@Nullable String memberName,
                                     @Nullable StubElement parent,
                                     @NotNull JsonObject classSource,
-                                    @NotNull JsonObject initializer) {
+                                    @NotNull JsonObject decoratorSource) {
     super(memberName, parent, classSource, Angular2MetadataElementTypes.MODULE);
-    stubDecoratorFields(initializer, STUBBED_DECORATOR_FIELDS);
+
+    JsonObject initializer = getDecoratorInitializer(decoratorSource, JsonObject.class);
+    if (initializer != null) {
+      stubDecoratorFields(initializer, STUBBED_DECORATOR_FIELDS);
+    }
   }
 
   public Angular2MetadataModuleStub(@NotNull StubInputStream stream,

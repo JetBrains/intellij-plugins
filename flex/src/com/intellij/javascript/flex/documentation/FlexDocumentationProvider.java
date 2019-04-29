@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.jsdoc.impl.JSDocReferenceSet;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.types.primitives.JSVoidType;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -894,7 +895,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
   protected void appendFunctionInfoDoc(@NotNull JSFunction function, @NotNull StringBuilder builder) {
     JSType type = JSPsiImplUtils.getTypeFromDeclaration(function);
 
-    if (type != null && !"void".equals(type.getTypeText()) && !function.isGetProperty()) {
+    if (type != null && !(type instanceof JSVoidType) && !function.isGetProperty()) {
       builder.append("* @return ");
 
       //builder.append(s);

@@ -40,10 +40,10 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       @Override
       protected Map<String, EntityFactory> compute() {
         return ContainerUtil.<String, EntityFactory>immutableMapBuilder()
-          .put(MODULE_DEC, Angular2MetadataModuleStub::createModuleStub)
+          .put(MODULE_DEC, Angular2MetadataModuleStub::new)
           .put(PIPE_DEC, Angular2MetadataPipeStub::createPipeStub)
-          .put(COMPONENT_DEC, Angular2MetadataComponentStub::createComponentStub)
-          .put(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::createDirectiveStub)
+          .put(COMPONENT_DEC, Angular2MetadataComponentStub::new)
+          .put(DIRECTIVE_DEC, Angular2MetadataDirectiveStub::new)
           .build();
       }
     };

@@ -51,6 +51,7 @@
     <lang.findUsagesProvider language="PostCSS" implementationClass="org.intellij.plugins.postcss.usages.PostCssFindUsagesProvider"/>
     <referencesSearch implementation="org.intellij.plugins.postcss.usages.PostCssUsageSearcher"/>
     <idIndexer filetype="PostCSS" implementationClass="org.intellij.plugins.postcss.usages.PostCssIdIndexer"/>
+    <lang.formatter language="PostCSS" implementationClass="org.intellij.plugins.postcss.formatter.PostCssFormattingModelBuilder"/>
 
     <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomSelectorIndex"/>
     <stubIndex implementation="org.intellij.plugins.postcss.psi.stubs.PostCssCustomMediaIndex"/>

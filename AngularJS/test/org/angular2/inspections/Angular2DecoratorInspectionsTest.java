@@ -49,6 +49,11 @@ public class Angular2DecoratorInspectionsTest extends Angular2CodeInsightFixture
            "declaration-membership-in-module.2a.ts", "declaration-membership-in-module.2b.ts");
   }
 
+  public void testDeclarationMembershipInModuleSpecFile() {
+    doTest(AngularMissingOrInvalidDeclarationInModuleInspection.class,
+           "app.component.check.ts");
+  }
+
   public void testModuleEntityTypeMismatch() {
     doTest(AngularInvalidImportedOrDeclaredSymbolInspection.class,
            "module-entity-type-mismatch.ts");

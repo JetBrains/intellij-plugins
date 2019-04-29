@@ -63,4 +63,9 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
+  public void testSlicePipe() {
+    myFixture.configureByFiles("slice_pipe_test.ts", "slice_pipe.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
+
 }
