@@ -372,6 +372,11 @@ class DartLookupExpression extends Expression {
     return calculateQuickResult(context);
   }
 
+  @Override
+  public boolean requiresCommittedPSI() {
+    return false;
+  }
+
   private static Icon getIcon(String suggestionKind) {
     if (LinkedEditSuggestionKind.METHOD.equals(suggestionKind)) {
       return PlatformIcons.METHOD_ICON;
