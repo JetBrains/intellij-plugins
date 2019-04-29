@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSSuperExpression;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
@@ -124,7 +123,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     if (usages < 2) {
       final Collection<String> toImport = new ArrayList<>();
       for (JSExpression argument : node.getArguments()) {
-        String type = ActionScriptResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());
+        String type = JSResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());
         if (StringUtil.isNotEmpty(type) && ImportUtils.needsImport(jsClass, StringUtil.getPackageName(type))) {
           toImport.add(type);
         }
@@ -331,7 +330,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       assert jsClass != null;
       
       for (JSExpression argument : node.getArguments()) {
-        String type = ActionScriptResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());
+        String type = JSResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());
         if (StringUtil.isNotEmpty(type) && ImportUtils.needsImport(jsClass, StringUtil.getPackageName(type))) {
           toImport.add(type);
         }

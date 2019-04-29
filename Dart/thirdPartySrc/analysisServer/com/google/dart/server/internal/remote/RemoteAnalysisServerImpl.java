@@ -851,7 +851,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     synchronized (requestListenerList) {
       List<RequestListener> listeners = ImmutableList.copyOf(requestListenerList);
       for (RequestListener listener : listeners) {
-        listener.onRequest(request.toString());
+        listener.onRequest(request);
       }
     }
   }
@@ -860,7 +860,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     synchronized (responseListenerList) {
       List<ResponseListener> listeners = ImmutableList.copyOf(responseListenerList);
       for (ResponseListener listener : listeners) {
-        listener.onResponse(response.toString());
+        listener.onResponse(response);
       }
     }
   }

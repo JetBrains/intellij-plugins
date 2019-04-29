@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
+import static org.angular2.codeInsight.Angular2Processor.isTemplateTag;
 
 public class AngularAmbiguousComponentTagInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 

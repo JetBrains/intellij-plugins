@@ -11,23 +11,19 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Map;
 
 public class Angular2NgModuleSelectAction extends ES6ImportAction {
 
   @NotNull private final String myActionName;
-  protected final boolean myCodeCompletion;
 
   public Angular2NgModuleSelectAction(@Nullable Editor editor,
                                       @Nullable PsiElement context,
                                       @Nullable String name,
                                       @NotNull ImportElementFilter filter,
-                                      @NotNull String actionName,
-                                      boolean codeCompletion) {
+                                      @NotNull String actionName) {
     super(editor, context, name, filter);
     myActionName = actionName;
-    myCodeCompletion = codeCompletion;
   }
 
   @NotNull
@@ -45,8 +41,4 @@ public class Angular2NgModuleSelectAction extends ES6ImportAction {
                                           JSQualifiedNamedElementRenderer.getContainerText(element));
   }
 
-  @Override
-  protected boolean shouldShowPopup(@NotNull List<JSElement> candidates) {
-    return myCodeCompletion || super.shouldShowPopup(candidates);
-  }
 }

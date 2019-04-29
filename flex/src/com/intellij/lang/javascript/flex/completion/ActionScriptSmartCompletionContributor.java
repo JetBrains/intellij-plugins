@@ -242,7 +242,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
 
     if (qualifier != null) {
       qualifier = PsiUtilBase.getOriginalElement(qualifier, qualifier.getClass());
-      clazzToProcess = qualifier != null ? ActionScriptResolveUtil.findClassOfQualifier(qualifier, qualifier.getContainingFile()) : null;
+      clazzToProcess = qualifier != null ? JSResolveUtil.findClassOfQualifier(qualifier, qualifier.getContainingFile()) : null;
     }
 
     if (clazzToProcess == null) {

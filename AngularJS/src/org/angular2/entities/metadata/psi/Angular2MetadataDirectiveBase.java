@@ -10,8 +10,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.psi.util.CachedValueProvider.Result;
-import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.Angular2LibrariesHacks;
 import org.angular2.entities.*;
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase;
@@ -20,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.Angular2DecoratorUtil.INPUTS_PROP;
@@ -74,10 +71,10 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
 
   @NotNull
   private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getCachedProperties() {
-    return getCachedValueWithClassDependencies(this::getProperties);
+    return getCachedClassBasedValue(this::getProperties);
   }
 
-  private Result<Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>>> getProperties(
+  private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getProperties(
     @Nullable TypeScriptClass cls) {
 
     List<Angular2DirectiveProperty> inputs = new ArrayList<>();
@@ -87,16 +84,15 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
                              ? TypeScriptTypeParser.buildTypeFromClass(cls, false)
                              : null;
 
-    Result<Pair<Map<String, String>, Map<String, String>>> mappings = getAllMappings();
-    collectProperties(mappings.getValue().first, classType, inputs);
-    collectProperties(mappings.getValue().second, classType, outputs);
+    Pair<Map<String, String>, Map<String, String>> mappings = getAllMappings();
+    collectProperties(mappings.first, classType, inputs);
+    collectProperties(mappings.second, classType, outputs);
 
-    return Result.create(pair(Collections.unmodifiableCollection(inputs),
-                              Collections.unmodifiableCollection(outputs)),
-                         mappings.getDependencyItems());
+    return pair(Collections.unmodifiableCollection(inputs),
+                Collections.unmodifiableCollection(outputs));
   }
 
-  private Result<Pair<Map<String, String>, Map<String, String>>> getAllMappings() {
+  private Pair<Map<String, String>, Map<String, String>> getAllMappings() {
     Map<String, String> inputs = new HashMap<>();
     Map<String, String> outputs = new HashMap<>();
     Stack<Angular2MetadataClassBase<? extends Angular2MetadataClassStubBase>> classes = new Stack<>();
@@ -111,15 +107,9 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
       inputs.putAll(current.getStub().getInputMappings());
       outputs.putAll(current.getStub().getOutputMappings());
     }
-    Set<Object> cacheDependencies = new HashSet<>();
-    BiConsumer<Map<String, String>, String> collectAdditionalMappings = (map, prop) -> {
-      Result<Map<String, String>> mappings = resolveMappings(prop);
-      map.putAll(mappings.getValue());
-      ContainerUtil.addAll(cacheDependencies, mappings.getDependencyItems());
-    };
-    collectAdditionalMappings.accept(inputs, INPUTS_PROP);
-    collectAdditionalMappings.accept(outputs, OUTPUTS_PROP);
-    return Result.create(pair(inputs, outputs), cacheDependencies);
+    inputs.putAll(resolveMappings(INPUTS_PROP));
+    outputs.putAll(resolveMappings(OUTPUTS_PROP));
+    return pair(inputs, outputs);
   }
 
   private void collectProperties(Map<String, String> mappings, JSRecordType classType, List<? super Angular2DirectiveProperty> result) {
@@ -140,19 +130,18 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   }
 
   @NotNull
-  private Result<Map<String, String>> resolveMappings(@NotNull String prop) {
+  private Map<String, String> resolveMappings(@NotNull String prop) {
     StubElement propertyStub = getStub().getDecoratorFieldValueStub(prop);
     if (propertyStub == null) {
-      return Result.create(Collections.emptyMap(), this);
+      return Collections.emptyMap();
     }
     Map<String, String> result = new HashMap<>();
-    Set<PsiElement> cacheDependencies = new HashSet<>();
     collectReferencedElements(propertyStub.getPsi(), element -> {
       if (element instanceof Angular2MetadataString) {
         Pair<String, String> p = Angular2EntityUtils.parsePropertyMapping(((Angular2MetadataString)element).getValue());
         result.putIfAbsent(p.first, p.second);
       }
-    }, cacheDependencies);
-    return Result.create(result, cacheDependencies);
+    });
+    return result;
   }
 }

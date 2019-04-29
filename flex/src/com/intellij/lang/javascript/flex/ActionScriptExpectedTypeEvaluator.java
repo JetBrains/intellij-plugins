@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.validation.ValidateTypesUtil;
@@ -90,7 +89,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
     final PsiElement resolve = qualifier instanceof JSReferenceExpression ? ((JSReferenceExpression)qualifier).resolve() : null;
     final String type = resolve instanceof JSVariable ? ((JSVariable)resolve).getTypeString() : null;
 
-    return type != null && ActionScriptResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, type, expression);
+    return type != null && JSResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, type, expression);
   }
 
   @Override

@@ -63,7 +63,8 @@ open class VueLexerTest : LexerTestCase() {
 
   private fun <T, KeyT> addExplicitExtension(collector: KeyedExtensionCollector<T, KeyT>, key: KeyT, t: T) {
     if (collector.forKey(key).isNotEmpty()) return
-    collector.addExplicitExtension(key, t, testRootDisposable)
+    collector.addExplicitExtension(key, t)
+    onTearDown.add(Runnable { collector.removeExplicitExtension(key, t) })
   }
 
   private fun registerEmbeddedTokens() {

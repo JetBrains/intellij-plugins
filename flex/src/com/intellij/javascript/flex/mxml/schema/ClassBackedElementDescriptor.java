@@ -244,9 +244,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
       else {
         final PsiElement declaration = descriptor.getDeclaration();
-        descriptor.isContainerClass =
-          ActionScriptResolveUtil.isAssignableType(FlexCommonTypeNames.ICONTAINER, descriptor.className, declaration) ||
-          ActionScriptResolveUtil.isAssignableType(CONTAINER_CLASS_NAME_2, descriptor.className, declaration);
+        descriptor.isContainerClass = JSResolveUtil.isAssignableType(FlexCommonTypeNames.ICONTAINER, descriptor.className, declaration) ||
+                                      JSResolveUtil.isAssignableType(CONTAINER_CLASS_NAME_2, descriptor.className, declaration);
       }
       descriptor.isContainerClassInitialized = true;
     }
@@ -343,7 +342,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       return false;
     }
 
-    if (ActionScriptResolveUtil.isAssignableType(RADIO_BUTTON_GROUP_CLASS, childDescriptor.className, parentTag)) {
+    if (JSResolveUtil.isAssignableType(RADIO_BUTTON_GROUP_CLASS, childDescriptor.className, parentTag)) {
       return false;
     }
 
@@ -985,7 +984,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         }
 
         if (declaration instanceof JSClass) {
-          if (!ActionScriptResolveUtil.isAssignableType(arrayElementType, ((JSClass)declaration).getQualifiedName(), declaration)) {
+          if (!JSResolveUtil.isAssignableType(arrayElementType, ((JSClass)declaration).getQualifiedName(), declaration)) {
             return null;
           }
         }

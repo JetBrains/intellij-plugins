@@ -1,4 +1,3 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.ExecutionException;
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 public class SwfPolicyFileConnection extends ServerConnectionBase {
 
@@ -35,7 +33,7 @@ public class SwfPolicyFileConnection extends ServerConnectionBase {
 
   @Override
   protected void run(InputStream inputStream) throws IOException {
-    InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+    InputStreamReader reader = new InputStreamReader(inputStream);
 
     BufferExposingByteArrayOutputStream buffer = new BufferExposingByteArrayOutputStream(100);
     while (!isStopped()) {
@@ -45,7 +43,7 @@ public class SwfPolicyFileConnection extends ServerConnectionBase {
       if (i == 0) break;
       buffer.write(i);
     }
-    final String request = new String(buffer.getInternalBuffer(), 0, buffer.size(), StandardCharsets.UTF_8);
+    final String request = new String(buffer.getInternalBuffer(), 0, buffer.size());
     LOG.debug("Policy file request: " + request);
 
     if (POLICY_FILE_REQUEST.equals(request)) {

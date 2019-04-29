@@ -10,6 +10,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.xml.util.XmlUtil;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
@@ -28,7 +29,6 @@ import java.util.regex.Pattern;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 
 public class Angular2DirectiveSimpleSelector {
 
@@ -158,7 +158,7 @@ public class Angular2DirectiveSimpleSelector {
 
     cssSelector.setElement(elNameNoNs);
 
-    boolean isTemplateTag = isTemplateTag(element.getName());
+    boolean isTemplateTag = Angular2Processor.isTemplateTag(element.getName());
     for (XmlAttribute attr : element.getAttributes()) {
       String attrNameNoNs = XmlUtil.findLocalNameByQualifiedName(attr.getName());
       Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attrNameNoNs, isTemplateTag);

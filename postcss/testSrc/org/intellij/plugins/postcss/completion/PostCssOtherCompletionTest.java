@@ -14,18 +14,6 @@ public class PostCssOtherCompletionTest extends PostCssCompletionTest {
     doTestCompletionVariants("foo", "bar", "baz");
   }
 
-  public void testSimpleVarInterpolationStart() {
-    doTestCompletionVariants("foo", "bar", "baz");
-  }
-
-  public void testSimpleVarInterpolationMiddle() {
-    doTestCompletionVariants("bar", "baz");
-  }
-
-  public void testSimpleVarInterpolationEnd() {
-    doTest();
-  }
-
   public void testSimpleVarAsSelector() {
     doTestCompletionVariants("foo", "bar", "baz");
   }

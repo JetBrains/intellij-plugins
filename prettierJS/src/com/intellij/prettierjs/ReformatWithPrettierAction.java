@@ -64,8 +64,10 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.util.*;
+import java.util.concurrent.Future;
 
 public class ReformatWithPrettierAction extends AnAction implements DumbAware {
+  private static final int REQUEST_TIMEOUT = 3000;
   private final ErrorHandler myErrorHandler;
 
   public ReformatWithPrettierAction(@NotNull ErrorHandler errorHandler) {
@@ -310,7 +312,12 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     String text = JSLinterUtil.convertLineSeparatorsToFileOriginal(project, currentFile.getText(), currentVFile).toString();
     VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
     String ignoreFilePath = ignoreVFile != null ? ignoreVFile.getPath() : null;
-    return JSLanguageServiceUtil.awaitFuture(service.format(filePath, ignoreFilePath, text, nodePackage, range));
+    return awaitFuture(service.format(filePath, ignoreFilePath, text, nodePackage, range));
+  }
+
+  @Nullable
+  private static PrettierLanguageService.FormatResult awaitFuture(@Nullable Future<PrettierLanguageService.FormatResult> future) {
+    return JSLanguageServiceUtil.awaitFuture(future, REQUEST_TIMEOUT);
   }
 
   private static <T> T executeUnderProgress(@NotNull Project project, @NotNull NullableFunction<ProgressIndicator, T> handler) {
@@ -400,7 +407,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return false;
     }
     PrettierLanguageServiceImpl languageService = PrettierLanguageService.getInstance(project);
-    PrettierLanguageService.SupportedFilesInfo supportedFiles = JSLanguageServiceUtil.awaitFuture(languageService.getSupportedFiles(nodePackage));
+    PrettierLanguageService.SupportedFilesInfo supportedFiles = JSLanguageServiceUtil.awaitFuture(languageService.getSupportedFiles(nodePackage), REQUEST_TIMEOUT);
     if (supportedFiles != null) {
 
       String nameWithoutExtension = virtualFile.getNameWithoutExtension();

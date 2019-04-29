@@ -49,9 +49,7 @@ public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntity
     return Angular2EntityUtils.toString(this);
   }
 
-  protected static void collectReferencedElements(@NotNull PsiElement root,
-                                                  @NotNull NullableConsumer<? super PsiElement> consumer,
-                                                  @Nullable Set<PsiElement> cacheDependencies) {
+  protected static void collectReferencedElements(@NotNull PsiElement root, @NotNull NullableConsumer<? super PsiElement> consumer) {
     Stack<PsiElement> resolveQueue = new Stack<>(root);
     Set<PsiElement> visited = new HashSet<>();
     while (!resolveQueue.empty()) {
@@ -60,9 +58,6 @@ public abstract class Angular2MetadataEntity<Stub extends Angular2MetadataEntity
       if (!visited.add(element)) {
         // Protect against cyclic references or visiting same thing several times
         continue;
-      }
-      if (cacheDependencies != null && element != null) {
-        cacheDependencies.add(notNull(element.getContainingFile(), element));
       }
       if (element instanceof Angular2MetadataArray) {
         resolveQueue.addAll(asList(element.getChildren()));

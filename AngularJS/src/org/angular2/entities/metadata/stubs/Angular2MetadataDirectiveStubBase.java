@@ -41,16 +41,11 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
   public Angular2MetadataDirectiveStubBase(@Nullable String memberName,
                                            @Nullable StubElement parent,
                                            @NotNull JsonObject source,
-                                           @NotNull JsonObject decoratorSource,
+                                           @NotNull JsonObject initializer,
                                            @NotNull MetadataElementType elementType) {
     super(memberName, parent, source, elementType);
-    JsonObject initializer = getDecoratorInitializer(decoratorSource, JsonObject.class);
-    if (initializer == null) {
-      mySelector = null;
-      myExportAs = null;
-      return;
-    }
-    mySelector = StringRef.fromString(readStringPropertyValue(initializer.findProperty(SELECTOR_PROP)));
+    String selector = readStringPropertyValue(initializer.findProperty(SELECTOR_PROP));
+    mySelector = StringRef.fromString(selector);
     myExportAs = StringRef.fromString(readStringPropertyValue(initializer.findProperty(EXPORT_AS_PROP)));
     loadAdditionalBindingMappings(myInputMappings, initializer, INPUTS_PROP);
     loadAdditionalBindingMappings(myOutputMappings, initializer, OUTPUTS_PROP);

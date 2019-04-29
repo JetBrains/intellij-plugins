@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.entities.Angular2Directive;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.entities.Angular2EntitiesProvider.findElementDirectivesCandidates;
 
 public class Angular2ApplicableDirectivesProvider {
@@ -53,7 +53,7 @@ public class Angular2ApplicableDirectivesProvider {
     directiveCandidates.forEach(d -> matcher.addSelectables(d.getSelector().getSimpleSelectors(), d));
     myDirectiveCandidates = NotNullLazyValue.createValue(() -> ContainerUtil.newArrayList(directiveCandidates));
 
-    boolean isTemplateTag = isTemplateTag(tagName);
+    boolean isTemplateTag = Angular2Processor.isTemplateTag(tagName);
     Set<Angular2Directive> matchedDirectives = new HashSet<>();
     matcher.match(cssSelector, (selector, directive) -> {
       if (!directive.isTemplate() || isTemplateTag) {

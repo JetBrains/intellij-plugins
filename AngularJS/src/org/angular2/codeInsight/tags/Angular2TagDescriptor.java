@@ -103,6 +103,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     return null;
   }
 
+  @NotNull
   @Override
   public PsiElement getDeclaration() {
     return ContainerUtil.getFirstItem(myResolver.getDeclarations(x -> Collections.emptyList(), this::getSelectors));

@@ -187,8 +187,6 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
 
   @Override
   public boolean fixSilently(@NotNull Editor editor) {
-    if (!ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly()) return false;
-    
     Collection<JSQualifiedNamedElement> candidates = getCandidates(editor, myReference.getElement().getContainingFile());
     if (candidates.size() == 1) {
       JSQualifiedNamedElement element = candidates.iterator().next();

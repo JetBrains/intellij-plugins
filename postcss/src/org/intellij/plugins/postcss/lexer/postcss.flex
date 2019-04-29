@@ -54,7 +54,7 @@ CSS_URL=([!#\$%&\*-\~]|{CSS_NONASCII}|{CSS_ESCAPE})*
 EL_EMBEDDMENT= ("#{" | "${" ) [^\}]* "}"
 CSS_HACKS="\\0/"|"\\9"|"\\0"|"!"{I}{E}
 
-POST_CSS_SIMPLE_VARIABLE_TOKEN="$"{CSS_IDENT} | "$" "(" {CSS_IDENT} ")"?
+POST_CSS_SIMPLE_VARIABLE_TOKEN="$"{CSS_IDENT}
 
 A=[Aa]
 B=[Bb]

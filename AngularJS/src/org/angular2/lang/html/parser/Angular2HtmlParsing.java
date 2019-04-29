@@ -11,13 +11,13 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.xml.XmlElementType;
 import com.intellij.psi.xml.XmlTokenType;
 import com.intellij.xml.util.XmlUtil;
+import org.angular2.codeInsight.Angular2Processor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.*;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
@@ -153,7 +153,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
     PsiBuilder.Marker att = mark();
     final AttributeInfo attributeInfo = Angular2AttributeNameParser.parse(
       Objects.requireNonNull(getBuilder().getTokenText()),
-      isTemplateTag(XmlUtil.findLocalNameByQualifiedName(peekTagName())));
+      Angular2Processor.isTemplateTag(XmlUtil.findLocalNameByQualifiedName(peekTagName())));
 
     if (attributeInfo.error != null) {
       PsiBuilder.Marker attrName = mark();
