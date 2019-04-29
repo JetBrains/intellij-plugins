@@ -2,6 +2,7 @@ package org.intellij.plugins.markdown.settings;
 
 import com.intellij.ide.ui.LafManager;
 import com.intellij.ide.ui.LafManagerListener;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +38,9 @@ class MarkdownLAFListener implements LafManagerListener {
       currentCssSettings.getStylesheetText()
     ));
     isLastLAFWasDarcula = isDarcula;
+
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(MarkdownApplicationSettings.SettingsChangedListener.TOPIC)
+      .settingsChanged(MarkdownApplicationSettings.getInstance());
   }
 
   public static boolean isDarcula(@Nullable UIManager.LookAndFeelInfo laf) {
