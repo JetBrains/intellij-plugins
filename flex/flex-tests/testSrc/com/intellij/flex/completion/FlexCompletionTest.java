@@ -31,7 +31,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
-import com.jetbrains.performancePlugin.utils.ProfilingUtil;
+import com.jetbrains.performancePlugin.profilers.YourKitProfilerHandler;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 
@@ -1352,14 +1352,14 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     myFixture.configureByFile(getTestName(false) + ".as");
 
     final boolean doProfiling = false;
-    if (doProfiling) ProfilingUtil.startCPUProfiling();
+    if (doProfiling) YourKitProfilerHandler.startCPUProfiling();
     try {
       PlatformTestUtil.startPerformanceTest("ActionScript class completion", 300, () -> complete())
         .setup(() -> getPsiManager().dropPsiCaches())
         .assertTiming();
     }
     finally {
-      if (doProfiling) ProfilingUtil.captureCPUSnapshot();
+      if (doProfiling) YourKitProfilerHandler.captureCPUSnapshot();
     }
   }
 
