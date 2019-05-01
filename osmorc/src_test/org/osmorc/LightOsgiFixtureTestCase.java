@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc;
 
 import com.intellij.facet.FacetManager;
@@ -27,6 +27,7 @@ public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTe
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, @NotNull ContentEntry contentEntry) {
       super.configureModule(module, model, contentEntry);
 
+      PsiTestUtil.addProjectLibrary(model, "bndlib", getModuleLibrary("intellij.osgi.jps", "bndlib").getClassesPaths());
       PsiTestUtil.addProjectLibrary(model, "bndlib-repository", getModuleLibrary("intellij.osgi.jps", "bndlib-repository").getClassesPaths());
       PsiTestUtil.addProjectLibrary(model, "plexus-utils", getProjectLibrary("plexus-utils").getClassesPaths());
 
