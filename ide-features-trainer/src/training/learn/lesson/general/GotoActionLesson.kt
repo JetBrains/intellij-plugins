@@ -19,7 +19,7 @@ class GotoActionLesson(module: Module, lang: String, private val sample: LessonS
     get() = {
       prepareSample(sample)
       actionTask("GotoAction") {
-        "One of the most useful shortcuts is Find Action. It allows you to search through all available actions" +
+        "One of the most useful shortcuts is Find Action. It allows you to search through all available actions " +
             "without having to know their individual shortcuts. Try it now with ${action(it)}."
       }
       actionTask("About") {
