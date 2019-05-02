@@ -7,7 +7,7 @@ import com.intellij.codeInspection.LocalQuickFixOnPsiElement
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.lang.ecmascript6.psi.JSExportAssignment
 import com.intellij.lang.javascript.psi.*
-import com.intellij.lang.javascript.psi.impl.JSChangeUtil
+import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
@@ -49,8 +49,8 @@ class WrapWithFunctionFix(psiElement: PsiElement) : LocalQuickFixOnPsiElement(ps
     val expression = startElement as JSObjectLiteralExpression
     val property = expression.parent as JSProperty
 
-    val newProperty = (JSChangeUtil.createExpressionWithContext(
-      "{ data() {return ${expression.text}}}", property)!!.psi as JSObjectLiteralExpression).firstProperty!!
+    val newProperty = JSPsiElementFactory.createJSExpression(
+      "{ data() {return ${expression.text}}}", property, JSObjectLiteralExpression::class.java).firstProperty!!
     property.replace(newProperty)
   }
 

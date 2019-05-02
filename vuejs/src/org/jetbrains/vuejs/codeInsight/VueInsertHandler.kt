@@ -19,8 +19,8 @@ import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
-import com.intellij.lang.javascript.psi.ecmal4.JSClass
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
+import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.lang.xml.XMLLanguage
@@ -90,7 +90,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
 
       if (obj == null) {
         val decorator = getElementComponentDecorator(defaultExport) ?: return
-        val newClass = JSChangeUtil.createStatementFromTextWithContext("@Component({}) class A {}", decorator)!!.getPsi(JSClass::class.java)
+        val newClass = JSPsiElementFactory.createJSClass("@Component({}) class A {}", decorator)
         val newDecorator = getElementComponentDecorator(newClass)!!
         val replacedDecorator = decorator.replace(newDecorator)
         forReformat(replacedDecorator)
@@ -101,8 +101,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
       val decapitalized = toAsset(name).decapitalize()
       val capitalizedName = decapitalized.capitalize()
       if (components.findProperty(decapitalized) != null || components.findProperty(capitalizedName) != null) return
-      val newProperty = (JSChangeUtil.createExpressionWithContext("{ $capitalizedName }",
-                                                                  obj)!!.psi as JSObjectLiteralExpression).firstProperty!!
+      val newProperty = JSPsiElementFactory.createJSExpression("{ $capitalizedName }", obj, JSObjectLiteralExpression::class.java).firstProperty!!
       forReformat(addProperty(newProperty, components, false))
       ES6ImportPsiUtil.insertJSImport(defaultExport.parent, capitalizedName, ImportExportType.DEFAULT, importedFile, editor)
       if (toReformat != null) {
@@ -174,7 +173,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
       val exportedExpr = if (isDefault) exportedName else "{$exportedName}"
       val quote = JSCodeStyleSettings.getQuote(content)
       val text = "import $exportedExpr from $quote$module$quote" + JSCodeStyleSettings.getSemicolon(content)
-      val dummyImport = JSChangeUtil.createStatementFromTextWithContext(text, content)!!.psi
+      val dummyImport = JSPsiElementFactory.createJSSourceElement(text, content)
       ES6CreateImportUtil.findPlaceAndInsertES6Import(content, dummyImport, module, null)
     }
 
@@ -197,8 +196,7 @@ class VueInsertHandler : XmlTagInsertHandler() {
     private fun componentProperty(obj: JSObjectLiteralExpression): JSProperty {
       val property = obj.findProperty("components")
       if (property != null) return property
-      val newProperty = (JSChangeUtil.createExpressionWithContext("{ components: {} }",
-                                                                  obj)!!.psi as JSObjectLiteralExpression).firstProperty!!
+      val newProperty = JSPsiElementFactory.createJSExpression("{ components: {} }", obj, JSObjectLiteralExpression::class.java).firstProperty!!
       val addedProperty: PsiElement = addProperty(newProperty, obj, true)
       forReformat(addedProperty)
       return addedProperty as JSProperty
