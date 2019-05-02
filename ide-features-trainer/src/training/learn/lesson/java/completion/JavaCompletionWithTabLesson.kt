@@ -15,7 +15,7 @@ class FrameDemo {
         JFrame frame = new JFrame("FrameDemo");
         frame.setSize(175, 100);
 
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.<caret>DISPOSE_ON_CLOSE);
         frame.setVisible(true);
     }
 }""".trimIndent())
