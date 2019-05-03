@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.configuration.EnvironmentVariablesTextFieldWithBrowseButton;
@@ -33,6 +34,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +48,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private final TextFieldWithHistoryWithBrowseButton myConfigPathField;
   private final EnvironmentVariablesTextFieldWithBrowseButton myEnvVarsComponent;
   private final RawCommandLineEditor myKarmaOptionsEditor;
-  private final Map<KarmaScopeKind, JRadioButton> myRadioButtonMap = ContainerUtil.newHashMap();
-  private final Map<KarmaScopeKind, KarmaScopeView> myScopeKindViewMap = ContainerUtil.newHashMap();
+  private final Map<KarmaScopeKind, JRadioButton> myRadioButtonMap = new HashMap<>();
+  private final Map<KarmaScopeKind, KarmaScopeView> myScopeKindViewMap = new HashMap<>();
   private final JPanel mySelectedScopeKindPanel;
   private final JPanel myRootComponent;
   private final int myLongestLabelWidth = new JLabel("Environment variables:").getPreferredSize().width;

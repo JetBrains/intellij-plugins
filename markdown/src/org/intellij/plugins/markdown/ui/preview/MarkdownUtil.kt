@@ -3,7 +3,6 @@ package org.intellij.plugins.markdown.ui.preview
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.DigestUtil
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.html.HtmlGenerator
@@ -33,7 +32,7 @@ object MarkdownUtil {
     val cacheCollector = MarkdownCodeFencePluginCacheCollector(file)
 
     val linkMap = LinkMap.buildLinkMap(parsedTree, text)
-    val map = ContainerUtil.newHashMap(MarkdownParserManager.FLAVOUR.createHtmlGeneratingProviders(linkMap, baseUri))
+    val map = MarkdownParserManager.FLAVOUR.createHtmlGeneratingProviders(linkMap, baseUri).toMutableMap()
     map.putAll(MarkdownParserManager.CODE_FENCE_PLUGIN_FLAVOUR.createHtmlGeneratingProviders(cacheCollector))
     if (project != null) {
       map[MarkdownElementTypes.IMAGE] = IntelliJImageGeneratingProvider(linkMap, baseUri, project)

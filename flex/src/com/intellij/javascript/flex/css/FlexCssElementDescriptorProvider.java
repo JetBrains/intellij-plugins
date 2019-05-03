@@ -74,7 +74,7 @@ import static com.intellij.psi.util.PsiUtilCore.toPsiElementArray;
  */
 public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvider {
   private final FlexCssValueValidator FLEX_CSS_VALUE_VALIDATOR = new FlexCssValueValidator(this);
-  private final Map<String, CssFunctionDescriptor> myFunctionDescriptors = ContainerUtil.newHashMap();
+  private final Map<String, CssFunctionDescriptor> myFunctionDescriptors = new HashMap<>();
 
   public FlexCssElementDescriptorProvider() {
     CssElementDescriptorFactory2 descriptorFactory = CssElementDescriptorFactory2.getInstance();

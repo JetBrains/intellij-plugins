@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
@@ -111,7 +112,7 @@ public class BundleManifestCache {
         }
 
         case OsmorcControlled: {
-          Map<String, String> map = ContainerUtil.newHashMap(configuration.getAdditionalPropertiesAsMap());
+          Map<String, String> map = new HashMap<>(configuration.getAdditionalPropertiesAsMap());
           map.put(Constants.BUNDLE_SYMBOLICNAME, configuration.getBundleSymbolicName());
           map.put(Constants.BUNDLE_VERSION, configuration.getBundleVersion());
           map.put(Constants.BUNDLE_ACTIVATOR, configuration.getBundleActivator());
@@ -167,7 +168,7 @@ public class BundleManifestCache {
     try {
       ByteArrayInputStream stream = new ByteArrayInputStream(manifestFile.getText().getBytes(StandardCharsets.UTF_8));
       Attributes attributes = new Manifest(stream).getMainAttributes();
-      Map<String, String> map = ContainerUtil.newHashMap();
+      Map<String, String> map = new HashMap<>();
       for (Object key : attributes.keySet()) {
         String name = key.toString();
         map.put(name, attributes.getValue(name));
@@ -184,7 +185,7 @@ public class BundleManifestCache {
     try {
       UTF8Properties properties = new UTF8Properties();
       properties.load(new StringReader(propertiesFile.getText()));
-      Map<String, String> map = ContainerUtil.newHashMap();
+      Map<String, String> map = new HashMap<>();
       for (Object key : properties.keySet()) {
         String name = key.toString();
         map.put(name, properties.getProperty(name));

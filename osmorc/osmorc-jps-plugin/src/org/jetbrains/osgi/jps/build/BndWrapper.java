@@ -97,7 +97,7 @@ public class BndWrapper {
     }
 
     File targetFile = new File(outputDir, sourceFile.getName());
-    Map<String, String> additionalProperties = ContainerUtil.newHashMap();
+    Map<String, String> additionalProperties = new HashMap<>();
 
     long lastModified = Long.MIN_VALUE;
     for (LibraryBundlificationRule bundlificationRule : rules) {
