@@ -13,112 +13,112 @@ import com.intellij.util.containers.Stack;
 
 %{
   final CfmlLexerConfiguration myCurrentConfiguration = new CfmlLexerConfiguration();
-  private Project myProject;
+    private Project myProject;
 
-  public _CfmlLexer(Project project) {
-    this((java.io.Reader)null);
-    myProject =  project;
-  }
-
-  public class CfmlLexerConfiguration {
-      int myArePoundsEvaluated = 0;
-      int myCommentCounter = 0;
-      int mySharpCounter = 0;
-      boolean myIfReturnExpression = false;
-      Stack<Integer> myReturnStack = new Stack<Integer>();
-      // to give to other lexer
-      IElementType myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
-      boolean myStartExpression = true;
-      String myCurrentTag = "cfelse";
-
-      public CfmlLexerConfiguration() {}
-
-      public void reset() {
-          myCommentCounter = 0;
-          mySharpCounter = 0;
-          myIfReturnExpression = false;
-          myReturnStack.clear();
-          myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
-          myStartExpression = true;
-          myCurrentTag = "cfelse";
-          myArePoundsEvaluated = 0;
-      }
-
-      public int getExtraState() {
-        return myArePoundsEvaluated != 0 ? FINAL_STATE : 0;
-      }
-  }
-
-  private void releaseExpressionState() {
-    myCurrentConfiguration.mySharpCounter = 0;
-    myCurrentConfiguration.myIfReturnExpression = false;
-    myCurrentConfiguration.myReturnStack.clear();
-  }
-
-  private IElementType startComment(int stateToReturnTo) {
-    myCurrentConfiguration.myReturnStack.push(stateToReturnTo);
-    myCurrentConfiguration.myCommentCounter++;
-    yybegin(COMMENT);
-    return CfmlTokenTypes.COMMENT;
-  }
-
-  private IElementType startTag() {
-    releaseExpressionState();
-    yybegin(TAGOPEN); return CfmlTokenTypes.OPENER;
-  }
-
-  private IElementType startCloseTag() {
-    // myCurrentConfiguration.myArePoundsEvaluated --;
-    yybegin(TAGCLOSE); return CfmlTokenTypes.LSLASH_ANGLEBRACKET;
-  }
-
-  private void processCloseTag(String tagName) {
-    if ("cfquery".equalsIgnoreCase(tagName) ||
-        "cfqueryparam".equalsIgnoreCase(tagName) ||
-        "cfoutput".equalsIgnoreCase(tagName) ||
-        "cfmail".equalsIgnoreCase(tagName)) {
-        myCurrentConfiguration.myArePoundsEvaluated --;
+    public _CfmlLexer(Project project) {
+      this((java.io.Reader)null);
+      myProject =  project;
     }
-  }
 
-  private IElementType closeStartedTag() {
-        myCurrentConfiguration.myStartExpression = true;
-        if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfscript")) {
-            myCurrentConfiguration.myStartExpression = false;
-            myCurrentConfiguration.myBlockType = CfmlTokenTypes.SCRIPT_EXPRESSION;
-            yybegin(YYINITIAL);
-        } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfquery")) {
-            myCurrentConfiguration.myArePoundsEvaluated++;
-            yybegin(YYINITIAL);
-        } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfqueryparam")) {
-            yybegin(YYINITIAL);
-        } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfoutput") ||
-                   myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfmail")) {
-            myCurrentConfiguration.myArePoundsEvaluated++;
-            // yybegin(TEXT);
-            yybegin(YYINITIAL);
-        } else {
-            yybegin(YYINITIAL);
+    public class CfmlLexerConfiguration {
+        int myArePoundsEvaluated = 0;
+        int myCommentCounter = 0;
+        int mySharpCounter = 0;
+        boolean myIfReturnExpression = false;
+        Stack<Integer> myReturnStack = new Stack<>();
+        // to give to other lexer
+        IElementType myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+        boolean myStartExpression = true;
+        String myCurrentTag = "cfelse";
+
+        public CfmlLexerConfiguration() {}
+
+        public void reset() {
+            myCommentCounter = 0;
+            mySharpCounter = 0;
+            myIfReturnExpression = false;
+            myReturnStack.clear();
+            myBlockType = CfmlElementTypes.TEMPLATE_TEXT;
+            myStartExpression = true;
+            myCurrentTag = "cfelse";
+            myArePoundsEvaluated = 0;
         }
-        if (CfmlUtil.isSingleCfmlTag(myCurrentConfiguration.myCurrentTag, myProject))
-            return CfmlTokenTypes.CLOSER;
-        return CfmlTokenTypes.R_ANGLEBRACKET;
-  }
 
-  private IElementType startExpression(int stateToReturn) {
-        myCurrentConfiguration.mySharpCounter++;
-        myCurrentConfiguration.myReturnStack.push(stateToReturn);
-        yybegin(SCRIPT_EXPRESSION);
-        if (myCurrentConfiguration.mySharpCounter == 1) {
-            return myCurrentConfiguration.myStartExpression ? CfmlTokenTypes.START_EXPRESSION : CfmlTokenTypes.SCRIPT_EXPRESSION;
+        public int getExtraState() {
+          return myArePoundsEvaluated != 0 ? FINAL_STATE : 0;
         }
-        return CfmlTokenTypes.SCRIPT_EXPRESSION;
-  }
+    }
 
-  private IElementType closeTag() {
-    yybegin(YYINITIAL); return CfmlTokenTypes.CLOSER;
-  }
-%}
+    private void releaseExpressionState() {
+      myCurrentConfiguration.mySharpCounter = 0;
+      myCurrentConfiguration.myIfReturnExpression = false;
+      myCurrentConfiguration.myReturnStack.clear();
+    }
+
+    private IElementType startComment(int stateToReturnTo) {
+      myCurrentConfiguration.myReturnStack.push(stateToReturnTo);
+      myCurrentConfiguration.myCommentCounter++;
+      yybegin(COMMENT);
+      return CfmlTokenTypes.COMMENT;
+    }
+
+    private IElementType startTag() {
+      releaseExpressionState();
+      yybegin(TAGOPEN); return CfmlTokenTypes.OPENER;
+    }
+
+    private IElementType startCloseTag() {
+      // myCurrentConfiguration.myArePoundsEvaluated --;
+      yybegin(TAGCLOSE); return CfmlTokenTypes.LSLASH_ANGLEBRACKET;
+    }
+
+    private void processCloseTag(String tagName) {
+      if ("cfquery".equalsIgnoreCase(tagName) ||
+          "cfqueryparam".equalsIgnoreCase(tagName) ||
+          "cfoutput".equalsIgnoreCase(tagName) ||
+          "cfmail".equalsIgnoreCase(tagName)) {
+          myCurrentConfiguration.myArePoundsEvaluated --;
+      }
+    }
+
+    private IElementType closeStartedTag() {
+          myCurrentConfiguration.myStartExpression = true;
+          if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfscript")) {
+              myCurrentConfiguration.myStartExpression = false;
+              myCurrentConfiguration.myBlockType = CfmlTokenTypes.SCRIPT_EXPRESSION;
+              yybegin(YYINITIAL);
+          } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfquery")) {
+              myCurrentConfiguration.myArePoundsEvaluated++;
+              yybegin(YYINITIAL);
+          } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfqueryparam")) {
+              yybegin(YYINITIAL);
+          } else if (myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfoutput") ||
+                     myCurrentConfiguration.myCurrentTag.equalsIgnoreCase("cfmail")) {
+              myCurrentConfiguration.myArePoundsEvaluated++;
+              // yybegin(TEXT);
+              yybegin(YYINITIAL);
+          } else {
+              yybegin(YYINITIAL);
+          }
+          if (CfmlUtil.isSingleCfmlTag(myCurrentConfiguration.myCurrentTag, myProject))
+              return CfmlTokenTypes.CLOSER;
+          return CfmlTokenTypes.R_ANGLEBRACKET;
+    }
+
+    private IElementType startExpression(int stateToReturn) {
+          myCurrentConfiguration.mySharpCounter++;
+          myCurrentConfiguration.myReturnStack.push(stateToReturn);
+          yybegin(SCRIPT_EXPRESSION);
+          if (myCurrentConfiguration.mySharpCounter == 1) {
+              return myCurrentConfiguration.myStartExpression ? CfmlTokenTypes.START_EXPRESSION : CfmlTokenTypes.SCRIPT_EXPRESSION;
+          }
+          return CfmlTokenTypes.SCRIPT_EXPRESSION;
+    }
+
+    private IElementType closeTag() {
+      yybegin(YYINITIAL); return CfmlTokenTypes.CLOSER;
+    }
+  %}
 
 %class _CfmlLexer
 %implements FlexLexer
@@ -158,7 +158,7 @@ TAG_END = "</"
 
 CFML_TAG_START={TAG_START}{WHITE_SPACE_CHAR}{CF_TAG_NAME}
 
-PERIODICAL_NAME = {IDENTIFIER}("."{IDENTIFIER})* 
+PERIODICAL_NAME = {IDENTIFIER}("."{IDENTIFIER})*
 IMPORT = "import"({DOUBLEQUOTED_STRING} | {SINGLEQUOTED_STRING} | {PERIODICAL_NAME})
 SCRIPT_COMPONENT_DEF = ((("/*")~("*/"))? {WHITE_SPACE_CHAR} {IMPORT}? {WHITE_SPACE_CHAR})* ("component" | "interface"){NOTCFMLSTART_NOTSHARP}
 
@@ -192,7 +192,7 @@ WHAT_EVER=[^]*
 <YYINITIAL> {VARIABLE_TYPE_DECL} { return CfmlTokenTypes.VAR_ANNOTATION; }
 <YYINITIAL> {TAG_START} {CF_TAG_NAME}  {
     String tagName = yytext().subSequence(1, yylength()).toString();
-    boolean startTemplateText =  !"cfinclude".equalsIgnoreCase(tagName) &&  
+    boolean startTemplateText =  !"cfinclude".equalsIgnoreCase(tagName) &&
       (myCurrentConfiguration.myBlockType != CfmlElementTypes.SQL ||
        !"cfqueryparam".equals(tagName)
       );

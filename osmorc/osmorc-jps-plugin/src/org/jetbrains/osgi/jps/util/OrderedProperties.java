@@ -23,7 +23,7 @@ public class OrderedProperties extends Properties {
 
   @NotNull
   public Map<String, String> toMap() {
-    Map<String, String> result = new LinkedHashMap<String, String>(size());
+    Map<String, String> result = new LinkedHashMap<>(size());
     for (String name : stringPropertyNames()) {
       result.put(name, getProperty(name));
     }

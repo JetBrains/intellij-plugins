@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.FileModificationService;
@@ -46,8 +47,8 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   @NotNull private final SmartPsiElementPointer<JSCallExpression> myNode;
   @NotNull private final String myName;
 
-  private ActionScriptCreateConstructorFix(@NotNull JSClass clazz, 
-                                           @NotNull JSReferenceExpression refExpr, 
+  private ActionScriptCreateConstructorFix(@NotNull JSClass clazz,
+                                           @NotNull JSReferenceExpression refExpr,
                                            @NotNull JSCallExpression node) {
     super(clazz.getName(), true, false);
     SmartPointerManager manager = SmartPointerManager.getInstance(clazz.getProject());
@@ -101,7 +102,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
   protected Pair<JSReferenceExpression, PsiElement> calculateAnchors(PsiElement psiElement) {
     JSClass element = myClass.getElement();
     if (element == null) return Pair.create(null, null);
-    
+
     ASTNode lbrace = element.getNode().findChildByType(JSTokenTypes.LBRACE);
     return Pair.create(myRefExpr.getElement(), lbrace.getPsi());
   }
@@ -112,7 +113,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     JSClass jsClass = myClass.getElement();
     JSCallExpression node = myNode.getElement();
     if (jsClass == null || node == null) return;
-    
+
     ReferencesSearch.search(jsClass, jsClass.getUseScope()).forEach(
       psiReference -> !isClassInstantiation(psiReference) || count.incrementAndGet() < 2);
 
@@ -194,7 +195,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
     assert jsClass != null;
     JSCallExpression node = myNode.getElement();
     assert node != null;
-    
+
     writeFunctionAndName(template, jsClass.getName(), jsClass, jsClass, referenceExpression);
     template.addTextSegment("(");
     addParameters(template, node.getArguments(), node, jsClass);
@@ -262,10 +263,10 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
 
     @Override
     protected List<JSFunction> computeCallers() {
-      final Collection<PsiReference> refs = Collections.synchronizedCollection(new ArrayList<PsiReference>());
+      final Collection<PsiReference> refs = Collections.synchronizedCollection(new ArrayList<>());
       JSClass jsClass = myClass.getElement();
       assert jsClass != null;
-      
+
       ReferencesSearch.search(jsClass, jsClass.getUseScope(), true).forEach(psiReference -> {
         if (isClassInstantiation(psiReference)) {
           refs.add(psiReference);
@@ -303,7 +304,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
 
       JSClass jsClass = myClass.getElement();
       assert jsClass != null;
-      
+
       ReferencesSearch.search(jsClass, jsClass.getUseScope()).forEach(psiReference -> {
         if (isClassInstantiation(psiReference)) {
           PsiElement element = psiReference.getElement();
@@ -329,7 +330,7 @@ public class ActionScriptCreateConstructorFix extends CreateJSFunctionIntentionA
       assert node != null;
       JSClass jsClass = myClass.getElement();
       assert jsClass != null;
-      
+
       for (JSExpression argument : node.getArguments()) {
         String type = ActionScriptResolveUtil.getQualifiedExpressionType(argument, argument.getContainingFile());
         if (StringUtil.isNotEmpty(type) && ImportUtils.needsImport(jsClass, StringUtil.getPackageName(type))) {

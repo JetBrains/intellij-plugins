@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
@@ -107,7 +108,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       return UsageInfo.EMPTY_ARRAY; // user doesn't want to update usages
     }
 
-    final Collection<JSReferenceExpression> candidates = Collections.synchronizedCollection(new ArrayList<JSReferenceExpression>());
+    final Collection<JSReferenceExpression> candidates = Collections.synchronizedCollection(new ArrayList<>());
     ReferencesSearch.search(mySourceClass, mySourceClass.getUseScope()).forEach(psiReference -> {
       PsiElement element = psiReference.getElement();
       if (!(element instanceof JSReferenceExpression)) {
@@ -129,7 +130,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       util = new JSConvertReferencesToSuperUtil(myMembersToMove, myMembersAfterMove, myMode, mySourceClass, myTargetClass);
 
     final Map<PsiElement, JSConvertReferencesToSuperUtil.Status> variablesResults = new HashMap<>();
-    final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<UsageInfo>());
+    final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<>());
     for (JSReferenceExpression candidate : candidates) {
       if (util.canTurnReferenceToSuper(candidate, variablesResults) ^ myMode == JSExtractSuperMode.RenameImplementation) {
         result.add(new UsageInfo((PsiElement)candidate));

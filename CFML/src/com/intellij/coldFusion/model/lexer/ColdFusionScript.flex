@@ -13,41 +13,41 @@ import com.intellij.util.ArrayUtil;
 
 %{
   CfscriptLexerConfiguration myCurrentConfiguration = new CfscriptLexerConfiguration();
-  private Project myProject;
+    private Project myProject;
 
-  public class CfscriptLexerConfiguration {
-      public int mySharpCounter = 0;
-      public int myCommentCounter = 0;
-      public Stack<Integer> myReturnStack = new Stack<Integer>();
+    public class CfscriptLexerConfiguration {
+        public int mySharpCounter = 0;
+        public int myCommentCounter = 0;
+        public Stack<Integer> myReturnStack = new Stack<>();
 
-      public CfscriptLexerConfiguration() {}
+        public CfscriptLexerConfiguration() {}
 
-      public CfscriptLexerConfiguration(int sharpCounter, int commentCounter,
-                                        Stack<Integer> returnStack) {
-          mySharpCounter = sharpCounter;
-          myCommentCounter = commentCounter;
-          myReturnStack = returnStack;
-      }
+        public CfscriptLexerConfiguration(int sharpCounter, int commentCounter,
+                                          Stack<Integer> returnStack) {
+            mySharpCounter = sharpCounter;
+            myCommentCounter = commentCounter;
+            myReturnStack = returnStack;
+        }
 
-      public void reset() {
-          mySharpCounter = 0;
-          myCommentCounter = 0;
-          myReturnStack.clear();
-      }
-  }
+        public void reset() {
+            mySharpCounter = 0;
+            myCommentCounter = 0;
+            myReturnStack.clear();
+        }
+    }
 
-  public _CfscriptLexer(Project project) {
-    this((java.io.Reader)null);
-    myProject = project;
-  }
-  private IElementType startComment(int stateToReturnTo) {
-    myCurrentConfiguration.myCommentCounter = 0;
-    myCurrentConfiguration.myReturnStack.push(stateToReturnTo);
-    myCurrentConfiguration.myCommentCounter++;
-    yybegin(COMMENT);
-    return CfmlTokenTypes.COMMENT;
-  }
-%}
+    public _CfscriptLexer(Project project) {
+      this((java.io.Reader)null);
+      myProject = project;
+    }
+    private IElementType startComment(int stateToReturnTo) {
+      myCurrentConfiguration.myCommentCounter = 0;
+      myCurrentConfiguration.myReturnStack.push(stateToReturnTo);
+      myCurrentConfiguration.myCommentCounter++;
+      yybegin(COMMENT);
+      return CfmlTokenTypes.COMMENT;
+    }
+  %}
 
 %class _CfscriptLexer
 %implements FlexLexer
@@ -86,7 +86,7 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
 %state DOUBLE_QUOTED_STRING, SINGLE_QUOTED_STRING, DOUBLEQUOTE_CLOSER, SINGLEQUOTE_CLOSER
 %state EXPRESSION, X, Y
 %state COMMENT, COMMENTEND
- 
+
 %%
 
 <YYINITIAL> {MULTILINE_COMMENT} {return CfscriptTokenTypes.COMMENT;}
