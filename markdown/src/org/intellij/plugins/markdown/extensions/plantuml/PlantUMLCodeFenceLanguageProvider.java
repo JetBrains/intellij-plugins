@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PlantUMLCodeFenceLanguageProvider implements CodeFenceLanguageProvider {
@@ -26,6 +27,6 @@ public class PlantUMLCodeFenceLanguageProvider implements CodeFenceLanguageProvi
   @NotNull
   @Override
   public List<LookupElement> getCompletionVariantsForInfoString(@NotNull CompletionParameters parameters) {
-    return Arrays.asList(LookupElementBuilder.create(PUML));
+    return Collections.singletonList(LookupElementBuilder.create(PUML));
   }
 }

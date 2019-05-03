@@ -47,7 +47,6 @@ import com.intellij.ui.treeStructure.actions.CollapseAllAction;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import icons.TapestryIcons;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +61,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -489,7 +487,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
             if (selectedNode instanceof PageNode || selectedNode instanceof ComponentNode || selectedNode instanceof MixinNode) {
               toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), selectedNode.getElement(),
-                                Arrays.asList(((PresentationLibraryElement)selectedNode.getElement()).getElementClass()));
+                                Collections.singletonList(((PresentationLibraryElement)selectedNode.getElement()).getElementClass()));
             }
 
             if (selectedNode instanceof ClassNode || selectedNode instanceof FileNode) {
@@ -499,7 +497,8 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
 
               if (parentSelectedNode.getElement() instanceof PresentationLibraryElement) {
                 toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), parentSelectedNode.getElement(),
-                                  Arrays.asList(((PresentationLibraryElement)parentSelectedNode.getElement()).getElementClass()));
+                                  Collections
+                                    .singletonList(((PresentationLibraryElement)parentSelectedNode.getElement()).getElementClass()));
               }
               else {
 
@@ -530,7 +529,8 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                 }
 
                 if (component != null) {
-                  toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), component, Arrays.asList(component.getElementClass()));
+                  toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), component,
+                                    Collections.singletonList(component.getElementClass()));
                 }
               }
             }

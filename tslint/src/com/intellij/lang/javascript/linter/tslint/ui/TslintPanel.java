@@ -21,7 +21,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author Irina.Chernushina on 6/3/2015.
@@ -45,7 +45,7 @@ public final class TslintPanel {
     myAddLeftIndent = addLeftIndent;
     myConfigFileView.setAdditionalConfigFilesProducer(() -> TslintUtil.findAllConfigsInScope(project));
     myNodeInterpreterField = new NodeJsInterpreterField(project, false);
-    myNodePackageField = AutodetectLinterPackage.createNodePackageField(Arrays.asList(TslintUtil.PACKAGE_NAME),
+    myNodePackageField = AutodetectLinterPackage.createNodePackageField(Collections.singletonList(TslintUtil.PACKAGE_NAME),
                                                                         myNodeInterpreterField, myConfigFileView);
   }
 

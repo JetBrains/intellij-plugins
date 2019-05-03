@@ -1,6 +1,9 @@
 package com.intellij.tapestry.intellij.actions.navigation;
 
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -16,7 +19,7 @@ import com.intellij.tapestry.intellij.util.TapestryUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Allows navigation from a tag to it's corresponding documentation.
@@ -47,7 +50,7 @@ public class TagDocumentationNavigation extends AnAction {
       toolWindow.show(null);
     }
 
-    metatoolWindow.update(module, component, Arrays.asList(component.getElementClass()));
+    metatoolWindow.update(module, component, Collections.singletonList(component.getElementClass()));
   }
 
   @Nullable

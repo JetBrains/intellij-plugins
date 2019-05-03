@@ -21,7 +21,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectConfigurator {
@@ -121,7 +121,7 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
     customSettings.ENFORCE_TRAILING_COMMA = convertTrailingCommaOption(config.trailingComma);
 
     customSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH = false;
-    settings.setSoftMargins(language, Arrays.asList(config.printWidth));
+    settings.setSoftMargins(language, Collections.singletonList(config.printWidth));
   }
 
   @NotNull
