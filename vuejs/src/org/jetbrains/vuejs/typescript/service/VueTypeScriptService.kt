@@ -27,7 +27,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.util.Consumer
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.findModule
 import org.jetbrains.vuejs.index.hasVue
@@ -77,7 +76,7 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
     if (super.isAcceptableNonTsFile(project, service, virtualFile)) return true
     if (!isVueFile(virtualFile)) return false
 
-    //lightweight check -> only parent configs, no indirect deps 
+    //lightweight check -> only parent configs, no indirect deps
     val configs = TypeScriptConfigUtil.getNearestParentConfigFiles(virtualFile, service.configFiles)
     return configs.any { service.parseConfigFile(it)?.include?.accept(virtualFile) ?: false }
   }
@@ -123,7 +122,7 @@ class VueTypeScriptService(project: Project, settings: TypeScriptCompilerSetting
   override fun getInitialCommands(): Map<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> {
     //commands
     val initialCommands = super.getInitialCommands()
-    val result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> = ContainerUtil.newLinkedHashMap()
+    val result: MutableMap<JSLanguageServiceSimpleCommand, Consumer<JSLanguageServiceObject>> = linkedMapOf()
     addConfigureCommand(result)
 
     result.putAll(initialCommands)
