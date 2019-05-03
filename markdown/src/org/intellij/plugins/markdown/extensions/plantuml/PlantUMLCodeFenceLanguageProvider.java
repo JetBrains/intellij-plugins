@@ -1,20 +1,21 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.extensions.plantuml;
 
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.Language;
-import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.markdown.injection.CodeFenceLanguageProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class PlantUMLCodeFenceLanguageProvider implements CodeFenceLanguageProvider {
   private static final String PLANTUML = "plantuml";
   private static final String PUML = "puml";
-  private static final List<String> PLANT_UML_LANGS = ContainerUtil.list(PLANTUML, PUML);
+  private static final List<String> PLANT_UML_LANGS = Arrays.asList(PLANTUML, PUML);
 
   @Nullable
   @Override
@@ -25,6 +26,6 @@ public class PlantUMLCodeFenceLanguageProvider implements CodeFenceLanguageProvi
   @NotNull
   @Override
   public List<LookupElement> getCompletionVariantsForInfoString(@NotNull CompletionParameters parameters) {
-    return ContainerUtil.list(LookupElementBuilder.create(PUML));
+    return Arrays.asList(LookupElementBuilder.create(PUML));
   }
 }

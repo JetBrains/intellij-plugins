@@ -19,9 +19,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectConfigurator;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectConfigurator {
@@ -121,7 +121,7 @@ public class PrettierCompatibleCodeStyleInstaller implements DirectoryProjectCon
     customSettings.ENFORCE_TRAILING_COMMA = convertTrailingCommaOption(config.trailingComma);
 
     customSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH = false;
-    settings.setSoftMargins(language, ContainerUtil.list(config.printWidth));
+    settings.setSoftMargins(language, Arrays.asList(config.printWidth));
   }
 
   @NotNull

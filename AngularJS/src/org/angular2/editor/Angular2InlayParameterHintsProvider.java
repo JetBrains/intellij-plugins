@@ -4,12 +4,12 @@ package org.angular2.editor;
 import com.intellij.codeInsight.hints.Option;
 import com.intellij.lang.javascript.psi.JSCallLikeExpression;
 import com.intellij.lang.typescript.editing.TypeScriptInlayParameterHintsProvider;
-import com.intellij.util.containers.ContainerUtil;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2PipeExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Angular2InlayParameterHintsProvider extends TypeScriptInlayParameterHintsProvider {
@@ -33,9 +33,7 @@ public class Angular2InlayParameterHintsProvider extends TypeScriptInlayParamete
   @NotNull
   @Override
   public List<Option> getSupportedOptions() {
-    return ContainerUtil.list(getShowNameForAllArgsOption(),
-                              getShowNameForTaggedOption(),
-                              NAMES_FOR_PIPES);
+    return Arrays.asList(getShowNameForAllArgsOption(), getShowNameForTaggedOption(), NAMES_FOR_PIPES);
   }
 
   @Override

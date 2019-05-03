@@ -36,7 +36,7 @@ public class PrettierUtil {
 
   public static final Icon ICON = null;
   public static final String PACKAGE_NAME = "prettier";
-  public static final List<String> CONFIG_FILE_EXTENSIONS = ContainerUtil.list(".yaml", ".yml", ".json", ".js");
+  public static final List<String> CONFIG_FILE_EXTENSIONS = Arrays.asList(".yaml", ".yml", ".json", ".js");
   public static final String RC_FILE_NAME = ".prettierrc";
   private static final String IGNORE_FILE_NAME = ".prettierignore";
   public static final String JS_CONFIG_FILE_NAME = "prettier.config.js";
