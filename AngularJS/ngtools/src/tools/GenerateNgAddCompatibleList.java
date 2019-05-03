@@ -43,6 +43,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -176,7 +177,7 @@ public class GenerateNgAddCompatibleList {
     }).filter(info -> info != null).collect(
       Collectors.toMap(NodePackageBasicInfo::getName, info -> StringUtil.notNullize(info.getDescription())));
 
-    ngAddPkgs = ContainerUtil.newTreeMap(ngAddPkgs);
+    ngAddPkgs = new TreeMap<>(ngAddPkgs);
 
     System.out.println("\nFound " + ngAddPkgs.size() + " packages which support ng-add:");
     System.out.println(new GsonBuilder().setPrettyPrinting().create().toJson(ngAddPkgs));
