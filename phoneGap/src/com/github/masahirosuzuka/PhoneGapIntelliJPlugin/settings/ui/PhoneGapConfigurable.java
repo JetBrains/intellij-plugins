@@ -14,7 +14,6 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.JBLabel;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.FormBuilder;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -53,11 +52,11 @@ public class PhoneGapConfigurable implements Configurable {
     }
 
     private void setReposInner(List<String> repos) {
-      myRepoList = repos == null ? new ArrayList<>() : ContainerUtil.newArrayList(repos);
+      myRepoList = repos == null ? new ArrayList<>() : new ArrayList<>(repos);
     }
 
     public List<String> getRepositories() {
-      return ContainerUtil.newArrayList(myRepoList);
+      return new ArrayList<>(myRepoList);
     }
 
     public void addRepository(String repo) {

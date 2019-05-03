@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight;
 
 import com.intellij.codeInsight.completion.*;
@@ -142,7 +142,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
                                                                      || bestMatch.second == DeclarationProximity.EXPORTED_BY_PUBLIC_MODULE
                                                                      ? NG_VARIABLE_PRIORITY.getPriorityValue()
                                                                      : NG_PRIVATE_VARIABLE_PRIORITY.getPriorityValue()));
-          List<TypeScriptFunction> transformMethods = ContainerUtil.newArrayList(match.getTransformMethods());
+          List<TypeScriptFunction> transformMethods = new ArrayList<>(match.getTransformMethods());
           if (!transformMethods.isEmpty() && actualType != null) {
             Collections.sort(transformMethods, Comparator.
               <TypeScriptFunction>comparingInt(f -> isNullOrUndefinedType(f.getReturnType()) ? 1 : 0)

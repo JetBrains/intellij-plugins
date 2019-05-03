@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.ui.preview.javafx;
 
 import com.intellij.ide.BrowserUtil;
@@ -34,10 +35,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 class SafeOpener {
   private static final Logger LOG = Logger.getInstance(SafeOpener.class);
@@ -161,7 +159,7 @@ class SafeOpener {
 
   private static void showHeadersPopup(@NotNull Collection<PsiElement> headers, @NotNull RelativePoint point) {
     ListPopupStep headersPopup =
-      new BaseListPopupStep<PsiElement>(MarkdownBundle.message("markdown.navigate.to.header"), ContainerUtil.newArrayList(headers)) {
+      new BaseListPopupStep<PsiElement>(MarkdownBundle.message("markdown.navigate.to.header"), new ArrayList<>(headers)) {
         @NotNull
         @Override
         public String getTextFor(PsiElement value) {

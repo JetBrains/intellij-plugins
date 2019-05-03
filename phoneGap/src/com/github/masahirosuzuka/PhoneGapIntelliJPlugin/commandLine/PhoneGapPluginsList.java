@@ -14,6 +14,7 @@ import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class PhoneGapPluginsList {
   }
 
   public static List<RepoPackage> listCached() {
-    return ContainerUtil.newArrayList(mapCached().values());
+    return new ArrayList<>(mapCached().values());
   }
 
   public static Map<String, PhoneGapRepoPackage> mapCached() {

@@ -11,10 +11,7 @@ import org.angular2.lang.selector.Angular2DirectiveSimpleSelector;
 import org.angular2.lang.selector.Angular2SelectorMatcher;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
@@ -51,7 +48,7 @@ public class Angular2ApplicableDirectivesProvider {
 
     Angular2SelectorMatcher<Angular2Directive> matcher = new Angular2SelectorMatcher<>();
     directiveCandidates.forEach(d -> matcher.addSelectables(d.getSelector().getSimpleSelectors(), d));
-    myDirectiveCandidates = NotNullLazyValue.createValue(() -> ContainerUtil.newArrayList(directiveCandidates));
+    myDirectiveCandidates = NotNullLazyValue.createValue(() -> new ArrayList<>(directiveCandidates));
 
     boolean isTemplateTag = isTemplateTag(tagName);
     Set<Angular2Directive> matchedDirectives = new HashSet<>();

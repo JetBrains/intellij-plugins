@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.cli;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TextAccessor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
@@ -300,7 +299,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
                 .filter(s -> "ng-new".equals(s.getName()))
                 .findFirst()
                 .map(schematic -> {
-                  List<Option> list = ContainerUtil.newArrayList(schematic.getOptions());
+                  List<Option> list = new ArrayList<>(schematic.getOptions());
                   list.add(createOption("verbose", "Boolean", false, "Adds more details to output logging."));
                   list.add(createOption("collection", "String", null, "Schematics collection to use"));
                   list.sort(Comparator.comparing(Option::getName));

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.service;
 
 import com.google.gson.*;
@@ -25,6 +26,7 @@ import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -119,7 +121,7 @@ public final class TsLintLanguageService extends JSLanguageServiceBase {
     final SemVer tsLintVersion = SemVer.parseFromText(version);
     final boolean isZeroBased = TsLintOutputJsonParser.isVersionZeroBased(tsLintVersion);
     final TsLintOutputJsonParser parser = new TsLintOutputJsonParser(path, body, isZeroBased, gson);
-    return ContainerUtil.newArrayList(parser.getErrors());
+    return new ArrayList<>(parser.getErrors());
   }
 
   private static JsonElement parseBody(@NotNull JsonObject element) {
