@@ -34,7 +34,6 @@
   <depends optional="true" config-file="struts2-freemarker.xml">com.intellij.freemarker</depends>
   <depends optional="true" config-file="struts2-spring.xml">com.intellij.spring</depends>
   <depends optional="true" config-file="struts2-groovy.xml">org.intellij.groovy</depends>
-  <depends optional="true" config-file="struts2-tiles.xml">StrutsAssistant</depends>
   <depends optional="true" config-file="struts2-velocity.xml">com.intellij.velocity</depends>
 
   <vendor>Yann Cébron, JetBrains</vendor>
