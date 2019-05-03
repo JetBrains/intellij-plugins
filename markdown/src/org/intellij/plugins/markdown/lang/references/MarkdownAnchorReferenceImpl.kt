@@ -8,7 +8,6 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.util.Processor
-import com.intellij.util.containers.ContainerUtil
 import org.intellij.plugins.markdown.MarkdownBundle
 import org.intellij.plugins.markdown.lang.index.MarkdownHeadersIndex
 import org.intellij.plugins.markdown.lang.psi.impl.MarkdownHeaderImpl
@@ -37,7 +36,7 @@ class MarkdownAnchorReferenceImpl internal constructor(private val myAnchor: Str
 
   override fun getVariants(): Array<Any> {
     val project = myPsiElement.project
-    val list = ContainerUtil.newArrayList<String>()
+    val list = mutableListOf<String>()
 
     StubIndex.getInstance().getAllKeys(MarkdownHeadersIndex.KEY, project)
       .forEach { key ->
