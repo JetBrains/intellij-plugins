@@ -87,7 +87,7 @@ public class Angular2ModuleResolver<T extends PsiElement> {
                               ? (Angular2Module)source
                               : Angular2EntitiesProvider.getModule(source);
       if (module != null) {
-        Set<Angular2Module> processedModules = ContainerUtil.newHashSet();
+        Set<Angular2Module> processedModules = new HashSet<>();
         Stack<Angular2Module> moduleQueue = new Stack<>(module);
         while (!moduleQueue.empty()) {
           Angular2Module current = moduleQueue.pop();

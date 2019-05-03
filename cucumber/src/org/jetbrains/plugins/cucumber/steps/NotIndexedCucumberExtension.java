@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.steps;
 
 import com.intellij.ProjectTopics;
@@ -14,7 +15,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
@@ -111,7 +111,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   public Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
     final Set<PsiDirectory> stepDefRoots = findStepDefsRoots(featureFile);
 
-    final Set<PsiFile> stepDefs = ContainerUtil.newHashSet();
+    final Set<PsiFile> stepDefs = new HashSet<>();
     for (PsiDirectory root : stepDefRoots) {
       stepDefs.addAll(gatherStepDefinitionsFilesFromDirectory(root, true));
     }

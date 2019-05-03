@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
@@ -171,7 +172,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
 
   private static void addValuesFromTypes2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssValueDescriptor> children) {
-    Set<String> types = ContainerUtil.newHashSet();
+    Set<String> types = new HashSet<>();
     for (FlexStyleIndexInfo info : infos) {
       ContainerUtil.addIfNotNull(types, info.getType());
     }

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.ui.preview;
 
 import com.intellij.openapi.Disposable;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,7 +67,7 @@ public class MarkdownCodeFencePluginCache implements Disposable {
   }
 
   private static Collection<File> processSourceFileToDelete(@NotNull VirtualFile sourceFile, @NotNull Collection<File> aliveCachedFiles) {
-    Collection<File> filesToDelete = ContainerUtil.newHashSet();
+    Collection<File> filesToDelete = new HashSet<>();
     for (File codeFencePluginSystemPath : getPluginSystemPaths()) {
       for (File sourceFileCacheDirectory : getChildren(codeFencePluginSystemPath)) {
         if (isCachedSourceFile(sourceFileCacheDirectory, sourceFile) && aliveCachedFiles.isEmpty()) {
