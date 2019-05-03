@@ -364,11 +364,11 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
    */
   @Override
   public Object getData(@NotNull String dataId) {
-    if (DataKeys.PROJECT.is(dataId)) {
+    if (CommonDataKeys.PROJECT.is(dataId)) {
       return myProject;
     }
 
-    if (DataKeys.IDE_VIEW.is(dataId)) {
+    if (LangDataKeys.IDE_VIEW.is(dataId)) {
       if (getSelectedDescriptor() == null) {
         return null;
       }
@@ -382,7 +382,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       return myIdeView;
     }
 
-    if (DataKeys.MODULE.is(dataId)) {
+    if (LangDataKeys.MODULE.is(dataId)) {
       final NodeDescriptor nodeDescriptor = getSelectedDescriptor();
       if (nodeDescriptor != null) {
         if (nodeDescriptor instanceof TapestryNode) {
@@ -394,7 +394,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       }
     }
 
-    if (DataKeys.NAVIGATABLE.is(dataId)) {
+    if (CommonDataKeys.NAVIGATABLE.is(dataId)) {
       if (getSelectedDescriptor() == null) {
         return null;
       }
@@ -405,7 +405,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
       }
     }
 
-    if (DataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
+    if (PlatformDataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
       return new SafeDeleteProvider();
     }
 
@@ -488,7 +488,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
             }
 
             if (selectedNode instanceof PageNode || selectedNode instanceof ComponentNode || selectedNode instanceof MixinNode) {
-              toolWindow.update((Module)getData(DataKeys.MODULE.getName()), selectedNode.getElement(),
+              toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), selectedNode.getElement(),
                                 Arrays.asList(((PresentationLibraryElement)selectedNode.getElement()).getElementClass()));
             }
 
@@ -498,7 +498,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                       .getParent()).getUserObject());
 
               if (parentSelectedNode.getElement() instanceof PresentationLibraryElement) {
-                toolWindow.update((Module)getData(DataKeys.MODULE.getName()), parentSelectedNode.getElement(),
+                toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), parentSelectedNode.getElement(),
                                   Arrays.asList(((PresentationLibraryElement)parentSelectedNode.getElement()).getElementClass()));
               }
               else {
@@ -530,7 +530,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
                 }
 
                 if (component != null) {
-                  toolWindow.update((Module)getData(DataKeys.MODULE.getName()), component, Arrays.asList(component.getElementClass()));
+                  toolWindow.update((Module)getData(LangDataKeys.MODULE.getName()), component, Arrays.asList(component.getElementClass()));
                 }
               }
             }
