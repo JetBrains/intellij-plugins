@@ -181,7 +181,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     if (qName != null && possibleQNames.contains(qName)) {
       return qName;
     }
-    Set<String> includes = ContainerUtil.newLinkedHashSet();
+    Set<String> includes = new LinkedHashSet<>();
     FlexCssUtil.collectAllIncludes(root, includes);
     String fileName = null;
     for (String include : includes) {
@@ -203,7 +203,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
                                                  List<CssSimpleSelector> selectors,
                                                  @NotNull GlobalSearchScope scope,
                                                  @Nullable Module module) {
-    Set<String> allNames = ContainerUtil.newLinkedHashSet();
+    Set<String> allNames = new LinkedHashSet<>();
     for (Collection<FlexStyleIndexInfo> collection : collections) {
       for (FlexStyleIndexInfo info : collection) {
         allNames.add(info.getClassOrFileName());
@@ -211,13 +211,13 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
     Set<String> namesFromSelectors = null;
     if (selectors.size() > 0 && !containsGlobalSelectors(selectors)) {
-      namesFromSelectors = ContainerUtil.newLinkedHashSet();
+      namesFromSelectors = new LinkedHashSet<>();
       for (CssSimpleSelector selector : selectors) {
 
         if (module != null) {
           final JSClass jsClass = getClassFromMxmlDescriptor(selector, module);
           if (jsClass != null) {
-            String classOrFileName = findJsClassOrFile(jsClass, ContainerUtil.newLinkedHashSet(), allNames);
+            String classOrFileName = findJsClassOrFile(jsClass, new LinkedHashSet<>(), allNames);
             if (classOrFileName != null) {
               namesFromSelectors.add(classOrFileName);
             }
@@ -229,7 +229,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
         Collection<JSQualifiedNamedElement> elements = JSResolveUtil.findElementsByName(selectorName, scope.getProject(), scope);
         for (PsiElement element : elements) {
           if (element instanceof JSClass) {
-            String classOrFileName = findJsClassOrFile((JSClass)element, ContainerUtil.newLinkedHashSet(), allNames);
+            String classOrFileName = findJsClassOrFile((JSClass)element, new LinkedHashSet<>(), allNames);
             if (classOrFileName != null) {
               namesFromSelectors.add(classOrFileName);
             }
@@ -352,8 +352,8 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
                                                                                                @NotNull Module module) {
     FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
     GlobalSearchScope scope = module.getModuleWithDependenciesAndLibrariesScope(false);
-    Set<JSClass> visited = ContainerUtil.newLinkedHashSet();
-    Set<CssPropertyDescriptor> result = ContainerUtil.newLinkedHashSet();
+    Set<JSClass> visited = new LinkedHashSet<>();
+    Set<CssPropertyDescriptor> result = new LinkedHashSet<>();
     Project project = module.getProject();
 
     for (CssSimpleSelector selector : selectors) {
@@ -507,7 +507,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     Collection<JSQualifiedNamedElement> elements = getClasses(className, context);
     if (elements != null && elements.size() > 0) {
       List<PsiElement> result = new ArrayList<>();
-      Set<String> qNames = ContainerUtil.newLinkedHashSet();
+      Set<String> qNames = new LinkedHashSet<>();
       for (JSQualifiedNamedElement c : elements) {
         if (c instanceof JSClass) {
           // do not add classes with same qualified names

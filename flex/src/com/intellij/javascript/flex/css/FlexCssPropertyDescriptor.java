@@ -72,8 +72,8 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     myShorthand = containsShorthand(infos);
     myValue = createPropertyValue(infos, myShorthand);
     myValueDescriptor = createPropertyValueDescriptor(infos, myShorthand);
-    myClassNames = ContainerUtil.newLinkedHashSet();
-    myFileNames = ContainerUtil.newLinkedHashSet();
+    myClassNames = new LinkedHashSet<>();
+    myFileNames = new LinkedHashSet<>();
     for (FlexStyleIndexInfo info : infos) {
       if (info.isInClass()) {
         myClassNames.add(info.getClassOrFileName());
@@ -96,7 +96,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
 
   private static void addValuesFromEnumerations2(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Collection<CssValueDescriptor> children) {
-    Set<String> constantSet = ContainerUtil.newLinkedHashSet();
+    Set<String> constantSet = new LinkedHashSet<>();
     for (FlexStyleIndexInfo info : infos) {
       String enumeration = info.getEnumeration();
       if (enumeration != null) {
@@ -114,7 +114,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
 
   private static void addValuesFromEnumerations(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Collection<CssPropertyValue> children) {
-    Set<String> constantSet = ContainerUtil.newLinkedHashSet();
+    Set<String> constantSet = new LinkedHashSet<>();
     for (FlexStyleIndexInfo info : infos) {
       String enumeration = info.getEnumeration();
       if (enumeration != null) {
@@ -138,7 +138,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
   @NotNull
   private static Set<String> addValuesFromFormats(@NotNull List<CssValueDescriptor> children, @NotNull Collection<FlexStyleIndexInfo> infos) {
-    Set<String> formats = ContainerUtil.newLinkedHashSet();
+    Set<String> formats = new LinkedHashSet<>();
     for (FlexStyleIndexInfo info : infos) {
       ContainerUtil.addIfNotNull(formats, info.getFormat());
     }
@@ -154,7 +154,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
   @NotNull
   private static Set<String> addValuesFromFormats(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull List<CssPropertyValue> children) {
-    Set<String> formats = ContainerUtil.newLinkedHashSet();
+    Set<String> formats = new LinkedHashSet<>();
     for (FlexStyleIndexInfo info : infos) {
       String format = info.getFormat();
       if (format != null) {
@@ -185,7 +185,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
 
   private static void addValuesFromTypes(@NotNull Collection<FlexStyleIndexInfo> infos, @NotNull Set<String> formats, @NotNull List<CssPropertyValue> children) {
-    Set<String> types = ContainerUtil.newLinkedHashSet();
+    Set<String> types = new LinkedHashSet<>();
     for (FlexStyleIndexInfo info : infos) {
       String type = info.getType();
       if (type != null) {
@@ -342,7 +342,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
   }
 
   private boolean checkIncludes(JSClass c) {
-    Set<String> includes = ContainerUtil.newLinkedHashSet();
+    Set<String> includes = new LinkedHashSet<>();
     FlexCssUtil.collectAllIncludes(c, includes);
     for (String name : myFileNames) {
       if (includes.contains(name)) {
@@ -420,7 +420,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     final Project project = context.getProject();
 
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
-    Set<JSClass> visited = ContainerUtil.newLinkedHashSet();
+    Set<JSClass> visited = new LinkedHashSet<>();
     for (String className : myClassNames) {
       Collection<JSQualifiedNamedElement> candidates = StubIndex.getElements(JSQualifiedElementIndex.KEY, className.hashCode(), project,
                                                                              scope, JSQualifiedNamedElement.class);
@@ -432,7 +432,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
       }
     }
 
-    Set<JSFile> visitedFiles = ContainerUtil.newLinkedHashSet();
+    Set<JSFile> visitedFiles = new LinkedHashSet<>();
     for (String fileName : myFileNames) {
       Collection<VirtualFile> files = FilenameIndex.getVirtualFilesByName(project, fileName, scope);
       for (final VirtualFile file : files) {

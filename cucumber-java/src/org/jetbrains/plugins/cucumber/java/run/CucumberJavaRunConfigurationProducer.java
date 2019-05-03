@@ -29,6 +29,7 @@ import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.jetbrains.plugins.cucumber.java.CucumberJavaVersionUtil.*;
@@ -174,7 +175,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRunConfig
   }
 
   protected Set<String> getHookGlue(final PsiElement element) {
-    final Set<String> packages = ContainerUtil.newLinkedHashSet();
+    final Set<String> packages = new LinkedHashSet<>();
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (module == null) {

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.javascript.JSFileReference;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -82,7 +84,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
       if (Angular2LangUtil.isAngular2Context(element)) {
         final PsiFile file = element.getContainingFile().getOriginalFile();
         String pathString = StringUtil.trimStart(getPathString(), "./");
-        Collection<PsiFileSystemItem> contexts = ContainerUtil.newLinkedHashSet();
+        Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
         if (!pathString.startsWith("../") && addParentPathContexts(file, pathString, contexts)) {
           return contexts;
         }
@@ -114,7 +116,7 @@ public class AngularJSTemplateReferencesProvider extends PsiReferenceProvider {
     private Angular2TemplateReferenceData encodeTemplateReferenceData() {
       final PsiFile file = getElement().getContainingFile().getOriginalFile();
       String pathString = StringUtil.trimStart(getPathString(), "./");
-      Collection<PsiFileSystemItem> contexts = ContainerUtil.newLinkedHashSet();
+      Collection<PsiFileSystemItem> contexts = new LinkedHashSet<>();
       if (!pathString.startsWith("../") && addParentPathContexts(file, pathString, contexts)) {
         PsiFileSystemItem firstItem = ContainerUtil.getFirstItem(contexts);
         if (firstItem instanceof PsiFile) {
