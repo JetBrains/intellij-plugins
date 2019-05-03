@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.jps.build;
 
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildTargetLoader;
@@ -11,6 +10,7 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.osgi.jps.model.JpsOsmorcExtensionService;
 import org.jetbrains.osgi.jps.model.JpsOsmorcModuleExtension;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ public class OsmorcBuildTargetType extends ModuleBasedBuildTargetType<OsmorcBuil
   @NotNull
   @Override
   public List<OsmorcBuildTarget> computeAllTargets(@NotNull JpsModel model) {
-    List<OsmorcBuildTarget> targets = ContainerUtil.newArrayList();
+    List<OsmorcBuildTarget> targets = new ArrayList<>();
     for (JpsModule module : model.getProject().getModules()) {
       JpsOsmorcModuleExtension extension = JpsOsmorcExtensionService.getExtension(module);
       if (extension != null) {

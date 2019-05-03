@@ -333,7 +333,7 @@ public class BndProjectImporter {
                                LibraryTable.ModifiableModel libraryModel,
                                ModifiableRootModel rootModel,
                                Project project) throws Exception {
-    List<String> warnings = ContainerUtil.newArrayList();
+    List<String> warnings = new ArrayList<>();
 
     Collection<Container> boot = project.getBootclasspath();
     Set<Container> bootSet = Collections.emptySet();
@@ -618,7 +618,7 @@ public class BndProjectImporter {
     try {
       refreshRepositories(workspace, indicator);
 
-      projects = ContainerUtil.newArrayListWithCapacity(projectDirs.size());
+      projects = new ArrayList<>(projectDirs.size());
       for (String dir : projectDirs) {
         if (indicator != null) indicator.checkCanceled();
         Project p = workspace.getProject(PathUtil.getFileName(dir));

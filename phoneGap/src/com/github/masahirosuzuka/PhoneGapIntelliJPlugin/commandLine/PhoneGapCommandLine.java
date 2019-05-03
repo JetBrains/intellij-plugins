@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.text.StringUtil.contains;
-import static com.intellij.util.containers.ContainerUtil.newArrayList;
 
 public class PhoneGapCommandLine {
   private static final Logger LOGGER = Logger.getInstance(PhoneGapCommandLine.class);
@@ -248,7 +247,7 @@ public class PhoneGapCommandLine {
 
   static List<String> parsePluginList(String out) {
     if (StringUtil.isEmpty(out) || contains(out.toLowerCase(Locale.getDefault()), "no plugins")) {
-      return newArrayList();
+      return new ArrayList<>();
     }
 
     if (out.startsWith("[") && out.endsWith("]")) {
@@ -385,7 +384,7 @@ public class PhoneGapCommandLine {
   }
 
   public static List<String> parseArgs(String paramList) {
-    ArrayList<String> list = newArrayList();
+    ArrayList<String> list = new ArrayList<>();
 
     if (StringUtil.isEmpty(paramList)) return list;
 

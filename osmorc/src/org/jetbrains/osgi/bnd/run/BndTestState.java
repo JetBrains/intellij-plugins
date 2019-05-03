@@ -44,6 +44,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -271,7 +272,7 @@ public class BndTestState extends JavaCommandLineState {
           myFailingTest = line;
         }
         else if (Proto.TRACE.equals(line)) {
-          myTrace = ContainerUtil.newArrayListWithCapacity(20);
+          myTrace = new ArrayList<>(20);
         }
         else if (line.startsWith(Proto.TEST_END)) {
           processTestEnd(line);

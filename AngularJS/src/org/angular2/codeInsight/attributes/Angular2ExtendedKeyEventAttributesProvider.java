@@ -70,7 +70,7 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
     "printScreen"
   );
 
-  private static final List<String> STD_KEY_NAMES = newArrayList();
+  private static final List<String> STD_KEY_NAMES = new ArrayList<>();
 
   static {
     for (int i = 1; i <= 20; i++) {

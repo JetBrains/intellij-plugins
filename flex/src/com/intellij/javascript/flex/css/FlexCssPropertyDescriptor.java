@@ -199,7 +199,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
 
   @NotNull
   private static CssValueDescriptor createPropertyValueDescriptor(@NotNull Collection<FlexStyleIndexInfo> infos, boolean shorthand) {
-    List<CssValueDescriptor> children = ContainerUtil.newArrayList();
+    List<CssValueDescriptor> children = new ArrayList<>();
     Set<String> formats = addValuesFromFormats(children, infos);
     addValuesFromEnumerations2(infos, children);
     addValuesFromTypes2(infos, formats, children);

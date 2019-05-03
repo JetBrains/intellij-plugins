@@ -561,7 +561,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @NotNull
   private static List<CssSimpleSelector> findSimpleSelectorsAbove(@NotNull PsiElement context) {
-    List<CssSimpleSelector> result = ContainerUtil.newArrayList();
+    List<CssSimpleSelector> result = new ArrayList<>();
     CssRuleset ruleset = PsiTreeUtil.getParentOfType(context, CssRuleset.class);
     if (ruleset != null) {
       for (CssSelector selector : ruleset.getSelectors()) {

@@ -32,7 +32,6 @@ import aQute.service.reporter.Report;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
@@ -66,7 +65,7 @@ public class BndWrapper {
   public List<String> bundlifyLibraries(@NotNull Collection<File> dependencies,
                                         @NotNull File outputDir,
                                         @NotNull List<LibraryBundlificationRule> rules) {
-    List<String> result = ContainerUtil.newArrayListWithCapacity(dependencies.size());
+    List<String> result = new ArrayList<>(dependencies.size());
 
     for (File dependency : dependencies) {
       String path = dependency.getPath();

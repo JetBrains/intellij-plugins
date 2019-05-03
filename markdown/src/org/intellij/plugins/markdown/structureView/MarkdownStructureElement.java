@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.intellij.plugins.markdown.structureView;
 
 import com.intellij.ide.IdeBundle;
@@ -11,7 +12,6 @@ import com.intellij.openapi.ui.Queryable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.PsiFileImpl;
-import com.intellij.util.containers.ContainerUtil;
 import org.intellij.plugins.markdown.util.MarkdownPsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,7 +109,7 @@ public class MarkdownStructureElement extends PsiTreeElementBase<PsiElement> imp
   @NotNull
   @Override
   public Collection<StructureViewTreeElement> getChildrenBase() {
-    final ArrayList<StructureViewTreeElement> elements = ContainerUtil.newArrayList();
+    final ArrayList<StructureViewTreeElement> elements = new ArrayList<>();
     MarkdownPsiUtil.processContainer(getElement(), element -> elements.add(new MarkdownStructureElement(element)), element -> {});
     return elements;
   }
