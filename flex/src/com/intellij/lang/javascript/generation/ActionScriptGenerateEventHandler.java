@@ -1,8 +1,10 @@
 package com.intellij.lang.javascript.generation;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.codeInsight.template.*;
+import com.intellij.codeInsight.template.Expression;
+import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.TemplateBuilderImpl;
+import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.resolve.ActionScriptClassResolver;
 import com.intellij.lang.ASTNode;
@@ -323,12 +325,12 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
       templateBuilder.setEndVariableBefore((prevElement != null ? prevElement : lastElement));
 
       templateBuilder
-        .replaceElement(addedElement.getAttributeList().findAccessTypeElement(), new MyExpression("private", "protected", "public"));
+        .replaceElement(addedElement.getAttributeList().findAccessTypeElement(), createExpression("private", "protected", "public"));
       templateBuilder
-        .replaceElement(addedElement.findNameIdentifier().getPsi(), "handlerName", new MyExpression(eventHandlerName, eventHandlerName2),
+        .replaceElement(addedElement.findNameIdentifier().getPsi(), "handlerName", createExpression(eventHandlerName, eventHandlerName2),
                         true);
       templateBuilder
-        .replaceElement(addedElement.getParameterVariables()[0].findNameIdentifier().getPsi(), new MyExpression("event", "e"));
+        .replaceElement(addedElement.getParameterVariables()[0].findNameIdentifier().getPsi(), createExpression("event", "e"));
 
       if (referenceElement != null && referenceElement.isValid()) {
         templateBuilder.replaceElement(referenceElement, "handlerReference", "handlerName", false);
@@ -530,35 +532,11 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
       eventHandlerName2 = "on" + (eventName.isEmpty() ? "Event" : Character.toUpperCase(eventName.charAt(0)) + eventName.substring(1));
     }
 
-    private static class MyExpression extends Expression {
-      private final TextResult myResult;
-      private final LookupElement[] myLookupItems;
-
-      MyExpression(final String... variants) {
-        myResult = new TextResult(variants[0]);
-        myLookupItems = variants.length == 1 ? LookupElement.EMPTY_ARRAY : new LookupElement[variants.length];
-        if (variants.length > 1) {
-          for (int i = 0; i < variants.length; i++) {
-            myLookupItems[i] = LookupElementBuilder.create(variants[i]);
-          }
-        }
-      }
-
-      @Override
-      public Result calculateResult(ExpressionContext context) {
-        return myResult;
-      }
-
-      @Override
-      public Result calculateQuickResult(ExpressionContext context) {
-        return myResult;
-      }
-
-      @Override
-      public LookupElement[] calculateLookupItems(ExpressionContext context) {
-        return myLookupItems;
-      }
+    @NotNull
+    private static Expression createExpression(String... variants) {
+      return new ConstantNode(variants[0]).withLookupStrings(variants);
     }
+
   }
 
   @Override
