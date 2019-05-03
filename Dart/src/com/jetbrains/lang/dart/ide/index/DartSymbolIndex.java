@@ -1,25 +1,13 @@
 package com.jetbrains.lang.dart.ide.index;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.PsiElementProcessor;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.CommonProcessors;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
-import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 public class DartSymbolIndex extends ScalarIndexExtension<String> {
   public static final ID<String, Void> DART_SYMBOL_INDEX = ID.create("DartSymbolIndex");
@@ -59,32 +47,6 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
     return true;
   }
 
-  public static String[] getAllSymbols(@NotNull final GlobalSearchScope scope) {
-    final CommonProcessors.CollectProcessor<String> processor = new CommonProcessors.CollectProcessor<>();
-    FileBasedIndex.getInstance().processAllKeys(DART_SYMBOL_INDEX, processor, scope, null);
-    return ArrayUtil.toStringArray(processor.getResults());
-  }
-
-  public static List<DartComponentName> getItemsByName(@NotNull final String name,
-                                                       @NotNull final Project project,
-                                                       @NotNull final GlobalSearchScope searchScope) {
-    final Collection<VirtualFile> files =
-      FileBasedIndex.getInstance().getContainingFiles(DART_SYMBOL_INDEX, name, searchScope);
-    final Set<DartComponentName> result = new THashSet<>();
-    for (VirtualFile vFile : files) {
-      final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);
-      for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
-        processComponents(root, component -> {
-          if (name.equals(component.getName())) {
-            result.add(component.getComponentName());
-          }
-          return true;
-        });
-      }
-    }
-    return new ArrayList<>(result);
-  }
-
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {
     @Override
     @NotNull
@@ -96,52 +58,5 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
       }
       return result;
     }
-  }
-
-  private static void processComponents(PsiElement context, PsiElementProcessor<DartComponent> processor) {
-    // top-level components
-    final DartComponent[] components = PsiTreeUtil.getChildrenOfType(context, DartComponent.class);
-    if (components != null) {
-      for (DartComponent component : components) {
-        if (!processComponent(processor, component)) {
-          return;
-        }
-      }
-    }
-    // top-level variables
-    final DartVarDeclarationList[] varLists = PsiTreeUtil.getChildrenOfType(context, DartVarDeclarationList.class);
-    if (varLists != null) {
-      for (DartVarDeclarationList varList : varLists) {
-        if (!processComponent(processor, varList.getVarAccessDeclaration())) {
-          return;
-        }
-        for (DartVarDeclarationListPart part : varList.getVarDeclarationListPartList()) {
-          if (!processComponent(processor, part)) {
-            return;
-          }
-        }
-      }
-    }
-  }
-
-  private static boolean processComponent(PsiElementProcessor<DartComponent> processor, DartComponent component) {
-    final String componentName = component.getName();
-    if (componentName == null) {
-      return true;
-    }
-    if (!processor.execute(component)) {
-      return false;
-    }
-    if (component instanceof DartClass) {
-      for (DartComponent subComponent : DartResolveUtil.getNamedSubComponents((DartClass)component)) {
-        if (subComponent.isConstructor() && componentName.equals(subComponent.getName())) {
-          continue;
-        }
-        if (!processor.execute(subComponent)) {
-          return false;
-        }
-      }
-    }
-    return true;
   }
 }
