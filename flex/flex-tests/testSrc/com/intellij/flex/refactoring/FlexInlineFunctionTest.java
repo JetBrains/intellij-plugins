@@ -26,7 +26,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
 
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "as_refactoring/inlineFunction/");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   private void defaultTest() {
@@ -128,8 +128,8 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testMethodFromExternalLibrary() {
-    FlexTestUtils.addLibrary(myModule, "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "library"));
+    FlexTestUtils.addLibrary(getModule(), "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "library"));
 
     shouldFail("Can not inline function defined in external library");
   }

@@ -17,7 +17,7 @@ public class CreateASFunctionIntentionTest extends CreateJSFunctionIntentionTest
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
   }
 

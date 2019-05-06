@@ -88,7 +88,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override
@@ -665,7 +665,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testComponentFromManifestCompletion() {
     final String name = getTestName(false);
 
-    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
       final String manifest = getTestDataPath() + "/" + "/" + name + "_manifest.xml";
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest));
     });
@@ -678,7 +678,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testComponentFromManifestCompletionWithNamespaceAutoInsert() {
     final String name = getTestName(false);
 
-    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
       final String manifest = getTestDataPath() + "/" + "/" + name + "_manifest.xml";
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.namespaces.namespace",
                                                                      "schema://www.MyNamespace.com/2010\t" + manifest));
@@ -715,8 +715,8 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testAssetFromAnotherSourceRoot() {
     final String testName = getTestName(false);
     final VirtualFile secondSourceRoot = VfsUtil.findFileByIoFile(new File(getTestDataPath() + testName), false);
-    PsiTestUtil.addSourceRoot(myModule, secondSourceRoot);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> PsiTestUtil.removeContentEntry(myModule, secondSourceRoot));
+    PsiTestUtil.addSourceRoot(getModule(), secondSourceRoot);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> PsiTestUtil.removeContentEntry(getModule(), secondSourceRoot));
     withNoAbsoluteReferences(() -> doTest("", "mxml"));
   }
 
@@ -740,7 +740,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testResourceBundleFromSdk() {
     final String testName = getTestName(false);
 
-    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(myModule);
+    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(getModule());
     final SdkModificator sdkModificator = flexSdk.getSdkModificator();
     final VirtualFile swcFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + testName + ".swc");
@@ -753,9 +753,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
   public void testResourceBundleFromLib() {
-    FlexTestUtils.addFlexLibrary(false, myModule, "Lib", false, getTestDataPath(), getTestName(false) + ".swc", null,
-                        null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "Lib"));
+    FlexTestUtils.addFlexLibrary(false, getModule(), "Lib", false, getTestDataPath(), getTestName(false) + ".swc", null,
+                                 null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "Lib"));
     doTest("", "as");
     doTest("", "mxml");
   }
@@ -764,15 +764,15 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testIgnoreClassesFromOnlyLibSources() {
     final String testName = getTestName(false);
 
-    FlexTestUtils.addLibrary(myModule, "library", getTestDataPath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
-                  null);
+    FlexTestUtils.addLibrary(getModule(), "library", getTestDataPath() + "/", testName + "/empty.swc", testName + "/LibSources.zip",
+                             null);
     //Disposer.register(myFixture.getTestRootDisposable(), () -> );
 
 
     assertEmpty(doTest("_1", "as"));
     assertEmpty(doTest("_2", "as"));
     assertEmpty(doTest("_3", "as"));
-    FlexTestUtils.removeLibrary(myModule, "library");
+    FlexTestUtils.removeLibrary(getModule(), "library");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
@@ -782,7 +782,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     final VirtualFile srcFile =
       LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + "/" + testName + "_sdk_src/");
 
-    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(myModule);
+    final Sdk flexSdk = FlexUtils.getSdkForActiveBC(getModule());
     final SdkModificator modificator = flexSdk.getSdkModificator();
     modificator.addRoot(srcFile, OrderRootType.SOURCES);
     modificator.commitChanges();
@@ -903,13 +903,13 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationConstantsInAs() {
-    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
       bc.getCompilerOptions()
         .setAdditionalConfigFilePath(getTestDataPath() + "/" + "/" + getTestName(false) + "_custom_config.xml");
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", ""));
     });
     // following is ignored because overridden at bc level
-    FlexBuildConfigurationManager.getInstance(myModule).getModuleLevelCompilerOptions()
+    FlexBuildConfigurationManager.getInstance(getModule()).getModuleLevelCompilerOptions()
       .setAllOptions(Collections.singletonMap("compiler.define", "UNKNOWN::defined1\tfalse"));
 
     myCompletionPerformer = createMultiCompletionPerformerWithVariantsCheck();
@@ -918,7 +918,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testConditionalCompilationConstantsInMxml() {
-    FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
+    FlexTestUtils.modifyBuildConfiguration(getModule(), bc -> {
       bc.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.define", "CONFIG1::defined1\t\nCONFIG1::defined2\t-1"));
       bc.getCompilerOptions().setAdditionalOptions("-compiler.define=CONFIG2::defined3,true");
     });
@@ -1252,7 +1252,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
 
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexLib, JSTestOption.WithSmartCompletion})
   public void testNonApplicableInheritors() {
-    FlexTestUtils.addFlexLibrary(false, myModule, "Flex Lib", true, getTestDataPath() + "../flexlib", "flexlib.swc", null, null);
+    FlexTestUtils.addFlexLibrary(false, getModule(), "Flex Lib", true, getTestDataPath() + "../flexlib", "flexlib.swc", null, null);
 
     LookupElement[] elements = doTest("", "as");
 
@@ -1262,7 +1262,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     assertEquals("ImageMap", elements[2].getLookupString());
 
     FlexTestUtils.modifyConfigs(getProject(), editor -> {
-      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      final ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(getModule())[0];
       bc1.getDependencies().getModifiableEntries().clear();
     });
 
@@ -1332,7 +1332,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testVectorObject() {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, myFixture.getTestRootDisposable());
     FlexTestUtils.modifyConfigs(getProject(), editor -> {
-      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(getModule())[0];
       FlexTestUtils.setSdk(bc1, sdk45);
     });
     final LookupElement[] elements = doTest("", "as");
@@ -1341,9 +1341,9 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   public void testCompletionPerformance() {
-    FlexTestUtils.addFlexLibrary(false, myModule, "playerglobal", false, getTestDataPath(), "playerglobal.swc",
-                                   null, null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "playerglobal"));
+    FlexTestUtils.addFlexLibrary(false, getModule(), "playerglobal", false, getTestDataPath(), "playerglobal.swc",
+                                 null, null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "playerglobal"));
 
     //final PsiElement clazz = ActionScriptClassResolver
       //  .findClassByQNameStatic("flash.display3D.textures.CubeTexture", GlobalSearchScope.moduleWithLibrariesScope(myModule));
@@ -1366,7 +1366,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   public void testOnlyValidPackageNamesInCompletion() {
     myFixture.configureByText(ActionScriptFileType.INSTANCE, "var a: String = new <caret>");
 
-    VirtualFile srcRoot = ModuleRootManager.getInstance(myModule).getSourceRoots(false)[0];
+    VirtualFile srcRoot = ModuleRootManager.getInstance(getModule()).getSourceRoots(false)[0];
     WriteCommandAction.runWriteCommandAction(getProject(), ()-> {
       try {
         srcRoot.createChildDirectory(null, ".idea");

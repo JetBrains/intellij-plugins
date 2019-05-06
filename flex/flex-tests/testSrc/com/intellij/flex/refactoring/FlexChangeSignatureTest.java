@@ -18,7 +18,7 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
   public void setUp() throws Exception {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
 
   }
 
@@ -212,8 +212,8 @@ public class FlexChangeSignatureTest extends JSChangeSignatureTestBase {
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testNoPropagateToSdkInheritor() {
-    FlexTestUtils.addLibrary(myModule, "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
-    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(myModule, "Lib"));
+    FlexTestUtils.addLibrary(getModule(), "Lib", getTestDataPath() + getTestRoot() + getTestName(false), "Flex_small.swc", null, null);
+    Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "Lib"));
     doDefaultTest((rootDir, rootAfter) -> {
       assertPropagationCandidates(new String[]{"bar", "listener"});
       performRefactoring("abc", JSAttributeList.AccessType.PACKAGE_LOCAL, "");
