@@ -53,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import static com.intellij.lang.javascript.psi.types.JSTypeSourceFactory.createTypeSource;
@@ -471,7 +472,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     if (property.getType() == null) return false;
 
     Map<Angular2DirectiveProperty, Boolean> cache = CachedValuesManager.getCachedValue(property.getSourceElement(), () ->
-      CachedValueProvider.Result.create(new HashMap<>(), PsiModificationTracker.MODIFICATION_COUNT));
+      CachedValueProvider.Result.create(new ConcurrentHashMap<>(), PsiModificationTracker.MODIFICATION_COUNT));
     return cache.computeIfAbsent(property, prop ->
       expandStringLiteralTypes(prop.getType()).isDirectlyAssignableType(STRING_TYPE, null)) == Boolean.TRUE;
   }
