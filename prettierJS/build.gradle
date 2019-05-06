@@ -16,14 +16,10 @@ sourceSets {
     java {
       srcDirs 'src'
       srcDirs 'gen'
+      exclude 'com/intellij/prettierjs/fileWatcher'
     }
     resources {
       srcDirs 'resources'
-    }
-  }
-  test {
-    java {
-      srcDirs 'test'
     }
   }
 }

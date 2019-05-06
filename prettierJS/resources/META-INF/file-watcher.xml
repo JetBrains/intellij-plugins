@@ -1,5 +1,5 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij.plugins.watcher">
-    <consumer implementation="com.intellij.prettierjs.PrettierBackgroundTaskConsumer"/>
+    <consumer implementation="com.intellij.prettierjs.fileWatcher.PrettierBackgroundTaskConsumer"/>
   </extensions>
 </idea-plugin>

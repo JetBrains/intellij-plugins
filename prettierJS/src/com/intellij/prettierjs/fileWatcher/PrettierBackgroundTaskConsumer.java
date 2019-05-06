@@ -1,11 +1,12 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.prettierjs;
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+package com.intellij.prettierjs.fileWatcher;
 
 import com.intellij.ide.macro.FilePathRelativeToProjectRootMacro;
 import com.intellij.ide.macro.ProjectFileDirMacro;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.plugins.watcher.config.BackgroundTaskConsumer;
 import com.intellij.plugins.watcher.model.TaskOptions;
+import com.intellij.prettierjs.PrettierBundle;
 import com.intellij.psi.PsiBundle;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
