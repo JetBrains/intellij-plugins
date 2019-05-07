@@ -45,18 +45,18 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     return FlexProjectDescriptor.DESCRIPTOR;
   }
 
-  public void testClassName() throws Exception {
+  public void testClassName() {
     runTemplateTest(getTestName(false), "js2", "jsClassName()");
     runTemplateTest(getTestName(false), "mxml", "jsClassName()");
     runTemplateTest(getTestName(false), "as", "jsClassName()");
     runTemplateTest(getTestName(false) + "2", "as", "jsQualifiedClassName()");
   }
 
-  protected void doTest(final String templateName, final String extension) throws Exception {
+  protected void doTest(final String templateName, final String extension) {
     doTest(templateName, extension, "ActionScript");
   }
 
-  protected void doTest(final String templateName, final String extension, final Consumer<Integer> segmentHandler) throws Exception {
+  protected void doTest(final String templateName, final String extension, final Consumer<Integer> segmentHandler) {
     final Template template = TemplateSettings.getInstance().getTemplate(templateName, "ActionScript");
     doTest(template, segmentHandler, getBasePath() + getTestName(false) + "." + extension);
   }
