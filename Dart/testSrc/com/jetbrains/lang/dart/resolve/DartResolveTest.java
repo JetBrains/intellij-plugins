@@ -54,7 +54,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
       final VirtualFile inTest = myFixture.addFileToProject("DartProject1/test/inTest.dart", "").getVirtualFile();
       final VirtualFile inExample = myFixture.addFileToProject("DartProject1/example/inExample.dart", "").getVirtualFile();
 
-      DartStartupActivity.excludeBuildAndPackagesFolders(getModule(), pubspec);
+      DartStartupActivity.excludeBuildAndPackagesFolders(myModule, pubspec);
 
       //doTestResolveScope(/*inExcluded,*/ null, null, true);
       doTestResolveScope(new VirtualFile[]{inSdk1, inSdk2},
@@ -134,7 +134,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                        inExample, inProject2Web, inProject2Lib});
     }
     finally {
-      DartTestUtils.resetModuleRoots(getModule());
+      DartTestUtils.resetModuleRoots(myModule);
     }
   }
 
@@ -202,7 +202,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
   private void configureLibrary(final VirtualFile root) {
     ApplicationManager.getApplication().runWriteAction(() -> {
-      final ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
+      final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
       final Library library = model.getModuleLibraryTable().createLibrary();
       final Library.ModifiableModel libModel = library.getModifiableModel();
       libModel.addRoot(root, OrderRootType.CLASSES);

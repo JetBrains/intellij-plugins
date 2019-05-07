@@ -287,7 +287,7 @@ public class CompilerConfigGeneratorRt {
 
     for (final String swcUrl : mySdk.getParent().getRootUrls(JpsOrderRootType.COMPILED)) {
       final String swcPath = JpsPathUtil.urlToPath(swcUrl);
-      if (!StringUtil.toLowerCase(swcPath).endsWith(".swc")) {
+      if (!swcPath.toLowerCase().endsWith(".swc")) {
         Logger.getInstance(CompilerConfigGeneratorRt.class.getName()).warn("Unexpected URL in Flex SDK classes: " + swcUrl);
         continue;
       }
@@ -347,7 +347,7 @@ public class CompilerConfigGeneratorRt {
 
     if (myBC.getNature().isLib()) {
       final String theme = getValueAndSource(CompilerOptionInfo.getOptionInfo("compiler.theme")).first;
-      if (theme != null && StringUtil.toLowerCase(theme).endsWith(".swc")) {
+      if (theme != null && theme.toLowerCase().endsWith(".swc")) {
         addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, theme);
       }
     }
@@ -431,15 +431,15 @@ public class CompilerConfigGeneratorRt {
         addOption(rootElement, CompilerOptionInfo.SOURCE_PATH_INFO, libFile.getPath());
       }
       else if (libFile.isFile()) {
-        if (StringUtil.toLowerCase(libFilePath).endsWith(".ane")) {
+        if (libFilePath.toLowerCase().endsWith(".ane")) {
           addLib(rootElement, libFilePath, LinkageType.External);
         }
-        else if (StringUtil.toLowerCase(libFilePath).endsWith(".swc")) {
+        else if (libFilePath.toLowerCase().endsWith(".swc")) {
           // "airglobal.swc" and "playerglobal.swc" file names are hardcoded in Flex compiler
           // including libraries like "playerglobal-3.5.0.12683-9.swc" may lead to error at runtime like "VerifyError Error #1079: Native methods are not allowed in loaded code."
           // so here we just skip including such libraries in config file.
           // Compilation should be ok because base flexmojos config file contains correct reference to its copy in target/classes/libraries/playerglobal.swc
-          final String libFileName = StringUtil.toLowerCase(libFile.getName());
+          final String libFileName = libFile.getName().toLowerCase();
           if (libFileName.startsWith("airglobal") && !libFileName.equals("airglobal.swc") ||
               libFileName.startsWith("playerglobal") && !libFileName.equals("playerglobal.swc")) {
             continue;
@@ -762,8 +762,8 @@ public class CompilerConfigGeneratorRt {
   private static String getConfigFileName(final JpsFlexBuildConfiguration bc, final @Nullable String postfix) {
     final String prefix = "idea"; // PlatformUtils.getPlatformPrefix().toLowerCase()
     final String hash1 =
-      StringUtil.toUpperCase(Integer.toHexString((SystemProperties.getUserName() + bc.getModule().getProject().getName()).hashCode()));
-    final String hash2 = StringUtil.toUpperCase(Integer.toHexString((bc.getModule().getName() + StringUtil.notNullize(bc.getName())).hashCode()));
+      Integer.toHexString((SystemProperties.getUserName() + bc.getModule().getProject().getName()).hashCode()).toUpperCase();
+    final String hash2 = Integer.toHexString((bc.getModule().getName() + StringUtil.notNullize(bc.getName())).hashCode()).toUpperCase();
     return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + postfix.replace(' ', '-') + ".xml"));
   }
 
@@ -809,7 +809,7 @@ public class CompilerConfigGeneratorRt {
   }
 
   private static boolean isSourceFileWithPublicDeclaration(final File file) {
-    final String fileNameLowercased = StringUtil.toLowerCase(file.getName());
+    final String fileNameLowercased = file.getName().toLowerCase();
     if (fileNameLowercased.endsWith(".mxml") || fileNameLowercased.endsWith(".fxg")) {
       return true;
     }

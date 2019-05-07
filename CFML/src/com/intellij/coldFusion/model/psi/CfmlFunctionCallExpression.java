@@ -3,7 +3,6 @@ package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
 import com.intellij.util.ArrayUtil;
@@ -11,6 +10,8 @@ import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
 
 /**
  * Created by Lera Nikolaenko
@@ -32,14 +33,14 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
     String create = lastChild.getText();
     PsiElement secondChild = firstChild.getFirstChild();
 
-    if (!(StringUtil.toLowerCase(create).equals("create") && secondChild instanceof CfmlReferenceExpression)) {
+    if (!(create.toLowerCase(Locale.US).equals("create") && secondChild instanceof CfmlReferenceExpression)) {
       return false;
     }
     PsiType type = ((CfmlReferenceExpression)secondChild).getPsiType();
     if (type == null) {
       return false;
     }
-    return StringUtil.toLowerCase(type.getCanonicalText()).equals("javaloader");
+    return type.getCanonicalText().toLowerCase(Locale.US).equals("javaloader");
   }
 
   public class PsiClassStaticType extends PsiClassReferenceType {
@@ -62,7 +63,7 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
 
     final CfmlReference referenceExpression = getReferenceExpression();
     // createObject specific code
-    if ("createobject".equals(StringUtil.toLowerCase(functionName))) {
+    if ("createobject".equals(functionName.toLowerCase(Locale.US))) {
       final CfmlArgumentList cfmlArgumentList = findArgumentList();
       if (cfmlArgumentList == null) {
         return null;
@@ -72,7 +73,7 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
         return null;
       }
       if (argumentsList[0] instanceof CfmlStringLiteralExpression) {
-        final String secondParameterName = StringUtil.toLowerCase(((CfmlStringLiteralExpression)argumentsList[0]).getValue());
+        final String secondParameterName = ((CfmlStringLiteralExpression)argumentsList[0]).getValue().toLowerCase(Locale.US);
         if ("java".equals(secondParameterName) && argumentsList.length >= 2) {
           String className = argumentsList[1].getText();
           className = className.substring(1, className.length() - 1);
@@ -90,7 +91,7 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
         }
       }
     }
-    else if ("init".equals(StringUtil.toLowerCase(getFunctionShortName()))) {
+    else if ("init".equals(getFunctionShortName().toLowerCase(Locale.US))) {
       CfmlReference qualifier = CfmlPsiUtil.getQualifierInner(this);
       CfmlReference sourceObject = CfmlPsiUtil.getQualifierInner(qualifier);
 
@@ -156,7 +157,7 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
     final CfmlExpression[] args = argumentListEl.getArguments();
     return ContainerUtil.map(args, cfmlExpression -> {
       if (cfmlExpression instanceof CfmlStringLiteralExpression) {
-        return StringUtil.toLowerCase(((CfmlStringLiteralExpression)cfmlExpression).getValue());
+        return ((CfmlStringLiteralExpression)cfmlExpression).getValue().toLowerCase(Locale.US);
       }
       return "";
     }, ArrayUtil.EMPTY_STRING_ARRAY);
@@ -181,11 +182,11 @@ public class CfmlFunctionCallExpression extends CfmlCompositeElement implements 
   }
 
   public boolean isCreateObject() {
-    return StringUtil.toLowerCase(getFunctionName()).equals("createobject");
+    return getFunctionName().toLowerCase(Locale.US).equals("createobject");
   }
 
   public boolean isExpandPath() {
-    return StringUtil.toLowerCase(getFunctionName()).equals("expandpath");
+    return getFunctionName().toLowerCase(Locale.US).equals("expandpath");
   }
 
   @Override

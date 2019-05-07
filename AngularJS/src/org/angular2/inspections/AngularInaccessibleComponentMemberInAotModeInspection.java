@@ -5,24 +5,20 @@ import com.intellij.codeInspection.*;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
+import com.intellij.lang.javascript.inspections.unusedsymbols.JSUnusedGlobalSymbolCache;
 import com.intellij.lang.javascript.intentions.TypeScriptPublicModifierIntention;
-import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
-import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
-import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.hash.HashSet;
@@ -38,14 +34,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.intellij.lang.javascript.presentable.JSFormatUtil.ANONYMOUS_ELEMENT_PRESENTATION;
-import static com.intellij.lang.javascript.refactoring.JSVisibilityUtil.getPresentableAccessModifier;
-import static com.intellij.openapi.util.text.StringUtil.capitalize;
 import static com.intellij.util.ObjectUtils.notNull;
 
 public class AngularInaccessibleComponentMemberInAotModeInspection extends LocalInspectionTool {
@@ -65,11 +57,10 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
               || node.getQualifier() instanceof JSThisExpression) {
             PsiElement resolved = node.resolve();
             TypeScriptClass clazz = PsiTreeUtil.getContextOfType(resolved, TypeScriptClass.class);
-            if (clazz != null && resolved instanceof JSElement && accept(resolved)) {
+            if (clazz != null && accept(resolved)) {
               holder.registerProblem(
                 notNull(node.getReferenceNameElement(), node),
-                capitalize(Angular2Bundle.message("angular.inspection.template.aot.inaccessible.symbol",
-                                                  getAccessModifier((JSElement)resolved), getKind(resolved), getName(resolved))),
+                Angular2Bundle.message("angular.inspection.template.aot.inaccessible.symbol", getType(resolved)),
                 new AngularMakeAccessibleQuickFix());
             }
           }
@@ -84,19 +75,18 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
           Angular2Component component = Angular2EntitiesProvider.getComponent(typeScriptClass);
           PsiFile template;
           if (component == null || (template = component.getTemplateFile()) == null) return;
-          Set<JSElement> candidates = new HashSet<>();
+          Set<PsiElement> candidates = new HashSet<>();
           for (JSElement member : typeScriptClass.getMembers()) {
             if (accept(member)) {
               candidates.add(member);
             }
           }
           retainReferenced(template, candidates);
-          for (JSElement member : candidates) {
+          for (PsiElement member : candidates) {
             holder.registerProblem(
               notNull(member instanceof PsiNameIdentifierOwner ? ((PsiNameIdentifierOwner)member).getNameIdentifier()
                                                                : null, member),
-              capitalize(Angular2Bundle.message("angular.inspection.component.aot.inaccessible.member",
-                                                getAccessModifier(member), getKind(member), getName(member))),
+              Angular2Bundle.message("angular.inspection.component.aot.inaccessible.member", getType(member)),
               new AngularMakeAccessibleQuickFix());
           }
         }
@@ -118,28 +108,22 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
     return false;
   }
 
-  private static String getKind(@NotNull PsiElement member) {
-    return new JSNamedElementPresenter(member).describeElementKind();
+  private static String getType(PsiElement member) {
+    return member instanceof JSFunction && !((JSFunction)member).isGetProperty() && !((JSFunction)member).isSetProperty()
+           ? Angular2Bundle.message("angular.member.method")
+           : Angular2Bundle.message("angular.member.property");
   }
 
-  @NotNull
-  private static String getAccessModifier(@NotNull JSElement member) {
-    return Optional.ofNullable(getPresentableAccessModifier(member))
-      .map(JSVisibilityUtil.PresentableAccessModifier::getText)
-      .orElse("");
-  }
-
-  @NotNull
-  private static String getName(@NotNull PsiElement member) {
-    return notNull(member instanceof PsiNamedElement ? ((PsiNamedElement)member).getName() : null,
-                   ANONYMOUS_ELEMENT_PRESENTATION);
-  }
-
-  private static void retainReferenced(@NotNull PsiFile template, @NotNull Set<? extends PsiElement> candidates) {
+  private static void retainReferenced(@NotNull PsiFile template, @NotNull Set<PsiElement> candidates) {
     LocalSearchScope fileScope = new LocalSearchScope(template);
-    Iterator<? extends PsiElement> iterator = candidates.iterator();
+    Iterator<PsiElement> iterator = candidates.iterator();
     while (iterator.hasNext()) {
-      if (ReferencesSearch.search(iterator.next(), fileScope, true).findFirst() == null) {
+      PsiElement elementToSearch = iterator.next();
+      PsiReference reference = JSUnusedGlobalSymbolCache.findAnyReference(elementToSearch, fileScope);
+      if (reference != null) {
+        JSUnusedGlobalSymbolCache.saveFoundReference(reference, elementToSearch);
+      }
+      else {
         iterator.remove();
       }
     }
@@ -147,8 +131,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
 
   private static class AngularMakeAccessibleQuickFix extends TypeScriptPublicModifierIntention implements LocalQuickFix {
 
-    @NonNls private static final String INTERNAL_TAG = "internal";
-    @NonNls private static final String INTERNAL_COMMENT = "/** @" + INTERNAL_TAG + " */";
+    @NonNls private static final String INTERNAL_COMMENT = "/** @internal */";
 
     @Nls(capitalization = Nls.Capitalization.Sentence)
     @NotNull
@@ -190,17 +173,11 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
       SmartPsiElementPointer<PsiElement> memberPointer = SmartPointerManager.createPointer(member);
       super.invoke(project, editor, member instanceof TypeScriptFunction ? member.getFirstChild() : member);
       Optional.ofNullable(memberPointer.getElement())
-        .ifPresent(m -> WriteAction.run(() -> {
-          PsiComment comment = JSDocumentationUtils.findDocComment(member);
-          if (comment instanceof JSDocComment) {
-            JSDocumentationUtils.createOrUpdateTagsInDocComment(member, Collections.singletonList(INTERNAL_TAG), null, null);
-          }
-          else {
-            comment = JSChangeUtil.createCommentFromText(INTERNAL_COMMENT, m);
-            PsiElement added = JSChangeUtil.doDoAddBeforePure(m.getParent(), comment, m);
-            JSChangeUtil.addWs(m.getParent().getNode(), m.getNode(), "\n");
-            FormatFixer.create(added, FormatFixer.Mode.Reformat).fixFormat();
-          }
+        .ifPresent(f -> WriteAction.run(() -> {
+          PsiComment comment = JSChangeUtil.createCommentFromText(INTERNAL_COMMENT, f);
+          JSChangeUtil.doDoAddBeforePure(f.getParent(), comment, f);
+          JSChangeUtil.addWs(f.getParent().getNode(), f.getNode(), "\n");
+          FormatFixer.create(f, FormatFixer.Mode.Reformat).fixFormat();
         }));
     }
 

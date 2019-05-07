@@ -187,11 +187,11 @@ public class InjectionsTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.copyDirectoryToProject("angular-cli-lib", ".");
 
     // Add "dist" folder to excludes
-    ModuleRootModificationUtil.updateModel(getModule(), model -> {
+    ModuleRootModificationUtil.updateModel(myModule, model -> {
       ExcludeFolder folder = model.getContentEntries()[0].addExcludeFolder(
         myFixture.getTempDirFixture().getFile("dist"));
       Disposer.register(myFixture.getProjectDisposable(), () ->
-        ModuleRootModificationUtil.updateModel(getModule(), model2 ->
+        ModuleRootModificationUtil.updateModel(myModule, model2 ->
           model2.getContentEntries()[0].removeExcludeFolder(folder)));
     });
 

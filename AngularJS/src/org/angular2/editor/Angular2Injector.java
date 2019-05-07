@@ -145,7 +145,7 @@ public class Angular2Injector implements MultiHostInjector {
   private static boolean injectIntoDecoratorExpr(@NotNull MultiHostRegistrar registrar,
                                                  @NotNull JSLiteralExpression context,
                                                  @Nullable PsiElement parent,
-                                                 @NotNull Predicate<? super String> decoratorNameAcceptor,
+                                                 @NotNull Predicate<String> decoratorNameAcceptor,
                                                  @NotNull Language language,
                                                  @Nullable String fileExtension) {
     final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(parent, JSCallExpression.class);

@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -72,7 +71,7 @@ public abstract class CfmlIndex implements Disposable {
   @NotNull
   public Collection<CfmlComponent> getComponentsByNameInScope(@Nullable final String name, GlobalSearchScope scope) {
     if (name == null) return Collections.emptyList();
-    Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlComponentIndex.KEY, StringUtil.toLowerCase(name), project, scope,
+    Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlComponentIndex.KEY, name.toLowerCase(), project, scope,
                                                                      CfmlComponent.class);
     return workaroundIndexBug(cfmlComponents, CfmlComponent.class, CfmlComponentIndex.KEY);
   }
@@ -80,7 +79,7 @@ public abstract class CfmlIndex implements Disposable {
   @NotNull
   public Collection<CfmlComponent> getInterfacesByNameInScope(@Nullable final String name, GlobalSearchScope scope) {
     if (name == null) return Collections.emptyList();
-    Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlInterfaceIndex.KEY, StringUtil.toLowerCase(name), project, scope,
+    Collection<CfmlComponent> cfmlComponents = StubIndex.getElements(CfmlInterfaceIndex.KEY, name.toLowerCase(), project, scope,
                                                                      CfmlComponent.class);
     return workaroundIndexBug(cfmlComponents, CfmlComponent.class, CfmlInterfaceIndex.KEY);
   }

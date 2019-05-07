@@ -17,10 +17,11 @@ export class MyComponent {
   private set privateUsedSet(value) {}
   private set privateUnusedSet(value) {}
 
-  // Something
-    /** @internal */
-    set protectedUsedSet(value) {}
-  protected set protectedUnusedSet(value) {}
+  /** @internal */
+  set protectedUsedSet(value) {
+  }
+
+    protected set protectedUnusedSet(value) {}
 
   public set publicUsedSet(value) {}
   public set publicUnusedSet(value) {}

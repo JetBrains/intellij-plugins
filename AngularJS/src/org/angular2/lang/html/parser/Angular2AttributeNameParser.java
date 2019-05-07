@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
@@ -146,7 +147,7 @@ public class Angular2AttributeNameParser {
                            Angular2Bundle.message("angular.parse.template.animation-trigger-missing-phase-value",
                                                   name));
     }
-    String phase = StringUtil.toLowerCase(name.substring(dot + 1));
+    String phase = name.substring(dot + 1).toLowerCase(Locale.ENGLISH);
     name = name.substring(0, dot);
     //noinspection HardCodedStringLiteral
     if ("done".equals(phase)) {

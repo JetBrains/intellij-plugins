@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
@@ -18,8 +17,8 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
   private static final String NATIVE_INSTALLER_EXTENSION =
     SystemInfo.isWindows ? ".exe"
                          : SystemInfo.isMac ? ".dmg"
-                                            : StringUtil.toLowerCase(SystemInfo.OS_NAME).contains("ubuntu") ? ".deb"
-                                                                                                            : ".rpm";
+                                            : SystemInfo.OS_NAME.toLowerCase().contains("ubuntu") ? ".deb"
+                                                                                                  : ".rpm";
 
   public enum DesktopPackageType {
     AirInstaller("installer (*.air)", ".air"),

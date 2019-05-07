@@ -89,7 +89,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
         final String rlmName = StringUtil.notNullize(finalName, StringUtil.getShortName(mainClass));
         // indeed, rlmName.toLowerCase() is specific to flexmojos 4
         final String outputFileName = finalName != null ? finalName + ".swf"
-                                                        : myMavenProject.getFinalName() + "-" + StringUtil.toLowerCase(rlmName) + ".swf";
+                                                        : myMavenProject.getFinalName() + "-" + rlmName.toLowerCase() + ".swf";
         final String outputFolderPath = FileUtil.toSystemIndependentName(myMavenProject.getBuildDirectory() +
                                                                          (destinationPath == null ? "" : ("/" + destinationPath)));
         final String configFilePath = getCompilerConfigFilePath(rlmName);
@@ -102,7 +102,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
           final String mainClass = FileUtil.getNameWithoutExtension(mainClassRelativePath.replace('/', '.'));
           final String rlmName = StringUtil.getShortName(mainClass);
           // indeed, rlmName.toLowerCase() is specific to flexmojos 4
-          final String outputFileName = myMavenProject.getFinalName() + "-" + StringUtil.toLowerCase(rlmName) + ".swf";
+          final String outputFileName = myMavenProject.getFinalName() + "-" + rlmName.toLowerCase() + ".swf";
           final String outputFolderPath = FileUtil.toSystemIndependentName(myMavenProject.getBuildDirectory());
           final String configFilePath = getCompilerConfigFilePath(rlmName);
           result.add(new RLMInfo(rlmName, mainClass, mainClassRelativePath, outputFileName, outputFolderPath, configFilePath));

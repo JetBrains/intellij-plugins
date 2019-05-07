@@ -50,41 +50,36 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
       if (methodExpression instanceof JSReferenceExpression) {
         JSExpression qualifier = ((JSReferenceExpression)methodExpression).getQualifier();
         if (qualifier != null) {
-          qualifiedExpressionType = getQualifiedExpressionType(qualifier);
+          qualifiedExpressionType = JSResolveUtil.getQualifiedExpressionJSType(qualifier, qualifier.getContainingFile());
         }
       }
 
       if (qualifiedExpressionType != null) {
         if ("push".equals(name) || "unshift".equals(name) || "splice".equals(name)) {
           if (qualifiedExpressionType instanceof JSGenericTypeImpl) {
-            setResult(ContainerUtil.getFirstItem(((JSGenericTypeImpl)qualifiedExpressionType).getArguments()));
+            myResult = ContainerUtil.getFirstItem(((JSGenericTypeImpl)qualifiedExpressionType).getArguments());
           }
         }
         else if ("concat".equals(name)) {
-          setResult(qualifiedExpressionType);
+          myResult = qualifiedExpressionType;
         }
       }
     }
     else {
-      setResult(createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myParent));
+      myResult = createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myParent);
     }
-  }
-
-  @Override
-  protected JSType getQualifiedExpressionType(JSExpression qualifier) {
-    return ActionScriptResolveUtil.getQualifiedExpressionJSType(qualifier, qualifier.getContainingFile());
   }
 
   @Override
   protected void evaluateIndexedAccessType(JSIndexedPropertyAccessExpression node) {
     if (isASDictionaryAccess(node)) {
-      setResult(createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myGrandParent));
+      myResult = createNamedType(JSCommonTypeNames.OBJECT_CLASS_NAME, myGrandParent);
     }
     else {
       final JSTypeSource typeSource = JSTypeSourceFactory.createTypeSource(myGrandParent, true);
-      setResult(new JSCompositeTypeImpl(typeSource,
-                                         JSNamedTypeFactory.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSContext.INSTANCE),
-                                        JSNamedTypeFactory.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSContext.INSTANCE)));
+      myResult = new JSCompositeTypeImpl(typeSource,
+                                         JSNamedType.createType(JSCommonTypeNames.INT_TYPE_NAME, typeSource, JSContext.INSTANCE),
+                                         JSNamedType.createType(JSCommonTypeNames.UINT_TYPE_NAME, typeSource, JSContext.INSTANCE));
     }
   }
 
@@ -107,7 +102,7 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
         findRestParameterExpectedType(param);
       }
       else {
-        setResult(param.getSimpleType());
+        myResult = param.getSimpleType();
       }
     }
   }
@@ -115,9 +110,9 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
   @Override
   public void visitJSArrayLiteralExpression(JSArrayLiteralExpression node) {
     if (myGrandParent.getParent() instanceof JSNewExpression) {
-      JSType type = getQualifiedExpressionType((JSExpression)myGrandParent.getParent());
+      JSType type = JSResolveUtil.getQualifiedExpressionJSType((JSExpression)myGrandParent.getParent(), myGrandParent.getContainingFile());
       if (type instanceof JSGenericTypeImpl) {
-        setResult(ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments()));
+        myResult = ContainerUtil.getFirstItem(((JSGenericTypeImpl)type).getArguments());
       }
     }
   }

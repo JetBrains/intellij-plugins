@@ -8,7 +8,6 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
@@ -16,6 +15,7 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -174,7 +174,7 @@ public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigura
     if (rootForFile == null) return false;
 
     String packageName = VfsUtilCore.getRelativePath(file, rootForFile, '.');
-    if (packageName == null || !FlexUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
+    if (packageName == null || !JSUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
 
     params.setPackageName(packageName);
     params.setScope(FlexUnitRunnerParameters.Scope.Package);

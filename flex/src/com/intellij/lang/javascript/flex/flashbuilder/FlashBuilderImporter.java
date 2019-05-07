@@ -32,7 +32,6 @@ import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packaging.artifacts.ModifiableArtifactModel;
@@ -286,7 +285,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
 
   private static void extractNestedFxpAndAppendProjects(final File dir, final List<String> dotProjectFiles) throws IOException {
     final FilenameFilter filter = (dir1, name) -> {
-      final String lowercased = StringUtil.toLowerCase(name);
+      final String lowercased = name.toLowerCase();
       return lowercased.endsWith(DOT_FXP) || lowercased.endsWith(DOT_FXPL);
     };
 

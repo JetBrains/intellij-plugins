@@ -196,7 +196,7 @@ public class FlexModuleWizardForm {
           throw new ConfigurationException(FlexBundle.message("sample.app.name.empty"));
         }
 
-        final String extension = StringUtil.toLowerCase(FileUtilRt.getExtension(fileName));
+        final String extension = FileUtilRt.getExtension(fileName).toLowerCase();
         if (!"mxml".equals(extension) && !"as".equals(extension)) {
           throw new ConfigurationException(FlexBundle.message("sample.app.incorrect.extension"));
         }

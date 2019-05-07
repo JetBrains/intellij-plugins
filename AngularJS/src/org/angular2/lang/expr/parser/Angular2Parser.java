@@ -80,7 +80,7 @@ public class Angular2Parser extends JavaScriptParser<Angular2Parser.Angular2Expr
                                 IElementType statementType,
                                 boolean isAction,
                                 boolean isSimpleBinding,
-                                Consumer<? super Angular2StatementParser> parseAction) {
+                                Consumer<Angular2StatementParser> parseAction) {
     final PsiBuilder.Marker rootMarker = builder.mark();
     final PsiBuilder.Marker statementMarker = builder.mark();
     parseAction.consume(new Angular2Parser(builder, isAction, isSimpleBinding, false).getStatementParser());

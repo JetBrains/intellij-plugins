@@ -256,7 +256,7 @@ public class Angular2EntitiesProvider {
                                                                                  @NotNull String name,
                                                                                  @NotNull Class<T> entityClass,
                                                                                  @NotNull StubIndexKey<String, T> key,
-                                                                                 @NotNull Processor<? super T> processor) {
+                                                                                 @NotNull Processor<T> processor) {
     StubIndex.getInstance().processElements(key, name, project, GlobalSearchScope.allScope(project), entityClass, el -> {
       if (el.isValid()) {
         return processor.process(el);
@@ -281,13 +281,13 @@ public class Angular2EntitiesProvider {
   private static class EntityGetter<T extends Angular2Entity> {
 
     private final Class<T> myEntityClass;
-    private final Condition<? super JSImplicitElement> myImplicitElementTester;
-    private final BiFunction<? super ES6Decorator, ? super JSImplicitElement, ? extends T> myEntityConstructor;
+    private final Condition<JSImplicitElement> myImplicitElementTester;
+    private final BiFunction<ES6Decorator, JSImplicitElement, T> myEntityConstructor;
     private final String[] myDecoratorNames;
 
     private EntityGetter(@NotNull Class<T> aClass,
-                         @NotNull Condition<? super JSImplicitElement> tester,
-                         @NotNull BiFunction<? super ES6Decorator, ? super JSImplicitElement, ? extends T> constructor,
+                         @NotNull Condition<JSImplicitElement> tester,
+                         @NotNull BiFunction<ES6Decorator, JSImplicitElement, T> constructor,
                          @NotNull String... names) {
       myEntityClass = aClass;
       myImplicitElementTester = tester;

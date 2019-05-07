@@ -16,7 +16,7 @@ class VueOptimizeImportTest : JSOptimizeImportTestBase() {
 
 
   fun testVueSimpleOptimize() {
-    TypeScriptFormatterTest.setTempSettings(project, Consumer { settings ->
+    TypeScriptFormatterTest.setTempSettings(JavaScriptFormatterTestBase.getProject(), Consumer { settings ->
       settings.FORCE_QUOTE_STYlE = true
       settings.USE_DOUBLE_QUOTES = true
     })

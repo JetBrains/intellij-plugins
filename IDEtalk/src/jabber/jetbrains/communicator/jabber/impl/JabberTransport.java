@@ -3,7 +3,6 @@
  */
 package jetbrains.communicator.jabber.impl;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.*;
@@ -39,7 +38,7 @@ import java.util.*;
 import java.util.concurrent.Future;
 
 import static jetbrains.communicator.core.users.UserEvent.Updated.*;
-import static jetbrains.communicator.util.CommunicatorStrings.getMsg;
+import static jetbrains.communicator.util.StringUtil.getMsg;
 
 /**
  * @author Kir
@@ -372,7 +371,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   private void updateIsIDEtalkClient(String jabberId, User user) {
-    if (StringUtil.toLowerCase(getResource(jabberId)).startsWith(StringUtil.toLowerCase(JabberFacade.IDETALK_RESOURCE))) {
+    if (getResource(jabberId).toLowerCase().startsWith(JabberFacade.IDETALK_RESOURCE.toLowerCase())) {
       myIDEtalkUsers.add(user.getName());
     } else {
       myIDEtalkUsers.remove(user.getName());

@@ -49,7 +49,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   @NonNls public static final String EVENT_ATTR_PREFIX = "on";
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
-                                                              @NotNull Function<? super XmlTag, XmlAttributeDescriptor[]> attrDescrProvider) {
+                                                              @NotNull Function<XmlTag, XmlAttributeDescriptor[]> attrDescrProvider) {
     if (attrName == null || xmlTag == null || DumbService.isDumb(xmlTag.getProject())) {
       return null;
     }
@@ -150,7 +150,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       };
       fillNamesAndProperties(inputs, candidate.getInputs(), p -> p);
-      if (!isTemplateTag && candidate.isStructuralDirective()) {
+      if (!isTemplateTag && candidate.isTemplate()) {
         List<SimpleSelectorWithPsi> selectors = candidate.getSelector().getSimpleSelectorsWithPsi();
         for (SimpleSelectorWithPsi selector : selectors) {
           List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selector.getAttributes();
@@ -171,7 +171,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
           }
         }
       }
-      if (isTemplateTag || candidate.isRegularDirective()) {
+      else {
         fillNamesAndProperties(outputs, candidate.getOutputs(), p -> p);
         fillNamesAndProperties(inOuts, candidate.getInOuts(), p -> p.first);
         for (SimpleSelectorWithPsi selector : candidate.getSelector().getSimpleSelectorsWithPsi()) {
@@ -212,8 +212,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   private static <T> void fillNamesAndProperties(@NotNull Map<String, Angular2DirectiveProperty> map,
-                                                 @NotNull Collection<? extends T> propertiesCollection,
-                                                 @NotNull Function<? super T, ? extends Angular2DirectiveProperty> propertyExtractor) {
+                                                 @NotNull Collection<T> propertiesCollection,
+                                                 @NotNull Function<T, Angular2DirectiveProperty> propertyExtractor) {
     map.clear();
     for (T item : propertiesCollection) {
       Angular2DirectiveProperty property = propertyExtractor.apply(item);

@@ -247,7 +247,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     if (MxmlJSClass.MXML_URI6.equals(namespace)) return "mx";
     if ("*".equals(namespace)) return "local";
 
-    namespace = FileUtil.toSystemIndependentName(StringUtil.toLowerCase(namespace));
+    namespace = FileUtil.toSystemIndependentName(namespace.toLowerCase());
     String prefix = namespace;
 
     if (namespace.endsWith(".*") && namespace.length() > 2) {

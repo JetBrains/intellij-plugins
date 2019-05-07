@@ -543,7 +543,7 @@ public class FlashBuilderModuleImporter {
             return CONTINUE;
           }
           else {
-            final String ext = StringUtil.toLowerCase(StringUtil.notNullize(file.getExtension()));
+            final String ext = StringUtil.notNullize(file.getExtension()).toLowerCase();
 
             if ("mxml".equals(ext) || "fxg".equals(ext)) {
               nonTestClassesFound.set(true);
@@ -589,7 +589,7 @@ public class FlashBuilderModuleImporter {
 
       final String libraryPath = getAbsolutePathWithLinksHandled(fbProject, libraryPathOrig);
 
-      if (StringUtil.toLowerCase(libraryPath).endsWith(".swc") || StringUtil.toLowerCase(libraryPath).endsWith(".ane")) {
+      if (libraryPath.toLowerCase().endsWith(".swc") || libraryPath.toLowerCase().endsWith(".ane")) {
         libraryModifiableModel.addRoot(VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, libraryPath) + JarFileSystem.JAR_SEPARATOR,
                                        OrderRootType.CLASSES);
       }

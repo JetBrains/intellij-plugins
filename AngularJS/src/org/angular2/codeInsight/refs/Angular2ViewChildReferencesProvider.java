@@ -77,7 +77,7 @@ public class Angular2ViewChildReferencesProvider extends PsiReferenceProvider {
       return result.toArray();
     }
 
-    private void processVariables(BiPredicate<? super String, ? super PsiElement> processor) {
+    private void processVariables(BiPredicate<String, PsiElement> processor) {
       final PsiFile template = getTemplate();
       if (template != null) {
         if (template.getLanguage().is(Angular2HtmlLanguage.INSTANCE)) {

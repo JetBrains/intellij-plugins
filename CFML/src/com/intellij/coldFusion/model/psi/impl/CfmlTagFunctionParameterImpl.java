@@ -6,7 +6,6 @@ import com.intellij.coldFusion.model.psi.CfmlParameter;
 import com.intellij.coldFusion.model.psi.CfmlPsiUtil;
 import com.intellij.coldFusion.model.psi.CfmlVariable;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.ResolveState;
@@ -49,7 +48,7 @@ public class CfmlTagFunctionParameterImpl extends CfmlTagImpl implements CfmlPar
     if (requiredAttr == null) {
       return false;
     }
-    requiredAttr = StringUtil.toLowerCase(requiredAttr);
+    requiredAttr = requiredAttr.toLowerCase();
     return "yes".equals(requiredAttr) || "true".equals(requiredAttr);
   }
 

@@ -84,7 +84,7 @@ public class BCUtils {
   }
 
   public static boolean isRuntimeStyleSheetBC(final FlexBuildConfiguration bc) {
-    return bc.isTempBCForCompilation() && StringUtil.toLowerCase(bc.getMainClass()).endsWith(".css");
+    return bc.isTempBCForCompilation() && bc.getMainClass().toLowerCase().endsWith(".css");
   }
 
   public static boolean canHaveResourceFiles(final BuildConfigurationNature nature) {

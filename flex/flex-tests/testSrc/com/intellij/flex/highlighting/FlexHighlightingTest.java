@@ -217,7 +217,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithCss() {
+  public void testFlexWithCss() throws Exception {
     //enableInspectionTool(new FlexCssStrayBraceInspection());
     registerCommonCssInspections();
     enableInspectionTool(new CssUnknownTargetInspection());
@@ -227,7 +227,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithCss2() {
+  public void testFlexWithCss2() throws Exception {
     enableInspectionTool(new CssUnusedSymbolInspection());
     defaultTest();
   }
@@ -242,7 +242,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithCss4() {
+  public void testFlexWithCss4() throws Exception {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     myAfterCommitRunnable =
       () -> FlexTestUtils
@@ -251,14 +251,14 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithCss5() {
+  public void testFlexWithCss5() throws Exception {
     enableInspectionTool(new CssUnusedSymbolInspection());
     defaultTest();
     doTestFor(true, getTestName(false) + ".css");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithCss6() {
+  public void testFlexWithCss6() throws Exception {
     registerCommonCssInspections();
     myAfterCommitRunnable =
       () -> FlexTestUtils
@@ -267,18 +267,18 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithCss7() {
+  public void testFlexWithCss7() throws Exception {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     enableInspectionTool(new CssInvalidHtmlTagReferenceInspection());
     doTestFor(true, getTestName(false) + ".css");
   }
 
-  public void testFlexCssShouldNotComplainAboutUnitlessLength() {
+  public void testFlexCssShouldNotComplainAboutUnitlessLength() throws Exception {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     doTestFor(true, getTestName(false) + ".css");
   }
 
-  public void testCssDialectMappings() {
+  public void testCssDialectMappings() throws Exception {
     enableInspectionTool(new CssInvalidPropertyValueInspection());
     enableInspectionTool(new CssUnknownPropertyInspection());
     try {
@@ -360,7 +360,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithCssIdSelectorAfterClassSelector() {
+  public void testFlexWithCssIdSelectorAfterClassSelector() throws Exception {
     enableInspectionTool(new CssUnusedSymbolInspection());
     defaultTest();
   }
@@ -405,14 +405,14 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }*/
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testHtmlCssFile1() {
+  public void testHtmlCssFile1() throws Exception {
     registerCommonCssInspections();
 
     doTestFor(true, getTestName(false) + ".css");
   }
 
   @JSTestOptions({JSTestOption.WithCssSupportLoader, JSTestOption.WithFlexFacet})
-  public void testHtmlCssFile2() {
+  public void testHtmlCssFile2() throws Exception {
     registerCommonCssInspections();
 
     doTestFor(true, getTestName(false) + ".css", "HtmlFileReferringToCss.html", "MxmlFileReferringToCss.mxml");
@@ -434,22 +434,22 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCallbackSignatureMismatch() {
+  public void testCallbackSignatureMismatch() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCallbackSignatureMismatch2() {
+  public void testCallbackSignatureMismatch2() throws Exception {
     doTestFor(true, getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testCircularDependency() {
+  public void testCircularDependency() throws Exception {
     defaultTest();
   }
 
   @NeedsJavaModule
-  public void testFlexWithLocalCss() {
+  public void testFlexWithLocalCss() throws Exception {
     defaultTest();
     final List<PsiReference> cssRefs = collectCssRefs();
 
@@ -467,31 +467,31 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testItemRendererAsAttribute() {
+  public void testItemRendererAsAttribute() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_other.mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk})
-  public void testFlexWithMockFlex2009() {
+  public void testFlexWithMockFlex2009() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", "FlexWithMockFlex_2.as");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk})
-  public void testSkinFile2009() {
+  public void testSkinFile2009() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testSkinFile2009_2() {
+  public void testSkinFile2009_2() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk})
-  public void testEnhancedStatesSyntax2009() {
+  public void testEnhancedStatesSyntax2009() throws Exception {
     final String name = getTestName(false);
     final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
     final Map<String, String> options = Collections.singletonMap("compiler.namespaces.namespace", "http://MyNamespace\t" + manifest);
@@ -502,20 +502,20 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk})
-  public void testFlexWithMockFlex2009_2() {
+  public void testFlexWithMockFlex2009_2() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_2.mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testFlexWithModelTag() {
+  public void testFlexWithModelTag() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testCheckUniquenessInPackage() {
+  public void testCheckUniquenessInPackage() throws Exception {
     String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + ".as");
     doTestFor(true, testName + ".as", testName + ".mxml");
@@ -523,13 +523,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet, JSTestOption.WithLineMarkers})
-  public void testFlexWithMockFlexWithLineMarkers() {
+  public void testFlexWithMockFlexWithLineMarkers() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithMockFlex2() {
+  public void testFlexWithMockFlex2() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, null, highlightInfos -> {
       myFile.accept(new XmlRecursiveElementVisitor() {
@@ -556,7 +556,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithMockFlex3() {
+  public void testFlexWithMockFlex3() throws Exception {
     defaultTest();
   }
 
@@ -571,7 +571,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testInclude() {
+  public void testInclude() throws Exception {
     final String testName = getTestName(false);
 
     doTestFor(true, null, () -> {
@@ -585,7 +585,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testInheritingFromAnotherMxmlComponent() {
+  public void testInheritingFromAnotherMxmlComponent() throws Exception {
     final String testName = getTestName(false);
 
     doTestFor(true, getDefaultProjectRoot(testName), (Runnable)null, testName + File.separatorChar + testName + ".mxml",
@@ -603,48 +603,48 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testNonImplementedInterface2() {
+  public void testNonImplementedInterface2() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_2.as");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testRegress() {
+  public void testRegress() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_2.as");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testDefaultProperty() {
+  public void testDefaultProperty() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testDefaultPropertyMxml() {
+  public void testDefaultPropertyMxml() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_1.mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testUsingClassFactory() {
+  public void testUsingClassFactory() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testStateReferences() {
+  public void testStateReferences() throws Exception {
     enableInspectionTool(new BadExpressionStatementJSInspection());
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testNoImportWhenComponentReferenced() {
+  public void testNoImportWhenComponentReferenced() throws Exception {
     defaultTest();
   }
 
@@ -667,46 +667,46 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testFlexWithMockFlex3AsSdk() {
+  public void testFlexWithMockFlex3AsSdk() throws Exception {
     final String testName = "FlexWithMockFlex3";
     doTestFor(true, testName + ".mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithMockFlex4() {
+  public void testFlexWithMockFlex4() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testFlexWithMockFlex4_2() {
+  public void testFlexWithMockFlex4_2() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithoutSourceRoot})
-  public void testNoSourceRoot() {
+  public void testNoSourceRoot() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testFlex2() {
+  public void testFlex2() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithGumboSdk})
-  public void testInheritedPercentage() {
+  public void testInheritedPercentage() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
-  public void testDuplicatedIdsInMxml() {
+  public void testDuplicatedIdsInMxml() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testSchemaProblem() {
+  public void testSchemaProblem() throws Exception {
     String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_2.as", testName + "_3.mxml", testName + "_4.mxml");
   }
@@ -721,29 +721,29 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
-  public void testReferencingClass() {
+  public void testReferencingClass() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testConstructorNotAllowedInMxml() {
+  public void testConstructorNotAllowedInMxml() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testNativeConstructorAllowedInMxml() {
+  public void testNativeConstructorAllowedInMxml() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet/*, WithoutSourceRoot*/})
-  public void testEmbedWithAbsLocation() {
+  public void testEmbedWithAbsLocation() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet/*, WithoutSourceRoot*/})
-  public void testReferencingClassWithNonEmptyPackage() {
+  public void testReferencingClassWithNonEmptyPackage() throws Exception {
     final String testName = getTestName(false);
     final String packageName = "aaa";
 
@@ -754,7 +754,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testReferencingComponentWithNonEmptyPackage() {
+  public void testReferencingComponentWithNonEmptyPackage() throws Exception {
     final String testName = getTestName(false);
     final String packageName = "aaa";
 
@@ -766,47 +766,47 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     return new File(getTestDataPath() + getBasePath() + File.separatorChar + testName);
   }
 
-  public void testRefsInEmbed() {
+  public void testRefsInEmbed() throws Exception {
     doTestFor(true, getTestName(false) + ".as");
     enableInspectionTool(new CssUnknownTargetInspection());
     doTestFor(true, getTestName(false) + ".css");
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testPathsInMxml() {
+  public void testPathsInMxml() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testRegExpInAttribute() {
+  public void testRegExpInAttribute() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
-  public void testEnumeratedValues() {
+  public void testEnumeratedValues() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testDefaultPropertyWithArrayType() {
+  public void testDefaultPropertyWithArrayType() throws Exception {
     String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_2.as", testName + "_3.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testClassesInType() {
+  public void testClassesInType() throws Exception {
     doTestFor(true, getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithLoadingAndSavingCaches})
-  public void testAsSpecific() {
+  public void testAsSpecific() throws Exception {
     disableInspectionTool(JSUnusedLocalSymbolsInspection.SHORT_NAME);
     final String testName = getTestName(false);
     doTestFor(true, testName + ".as", testName + "_2.as");
   }
 
   @JSTestOptions({JSTestOption.WithLoadingAndSavingCaches})
-  public void testUsingSwcStubs() {
+  public void testUsingSwcStubs() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".as", testName + ".swc");
     checkNavigatableSymbols("layoutObject");
@@ -865,19 +865,19 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testUsingImportFromScriptInAttribute() {
+  public void testUsingImportFromScriptInAttribute() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_2.as", testName + "_2.mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testReferencingMxmlFromActionScript() {
+  public void testReferencingMxmlFromActionScript() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".as", "MxmlInTopLevelPackage.mxml");
   }
 
   @JSTestOptions({JSTestOption.WithLoadingAndSavingCaches, JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
-  public void testUsingSwcStubs2() {
+  public void testUsingSwcStubs2() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + ".swc");
     checkNavigatableSymbols("getQualifiedClassName");
@@ -885,7 +885,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithLoadingAndSavingCaches, JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader, JSTestOption.WithUnusedImports})
-  public void testUsingSwcStubs3() {
+  public void testUsingSwcStubs3() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".as", testName + ".swc");
   }
@@ -964,13 +964,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testRemoteObject() {
+  public void testRemoteObject() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions(
     {JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexFacet})
-  public void testDuplicates() {
+  public void testDuplicates() throws Exception {
     defaultTest();
   }
 
@@ -1000,7 +1000,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testreferencingLowercasedComponent() {
+  public void testreferencingLowercasedComponent() throws Exception {
     defaultTest();
   }
 
@@ -1012,7 +1012,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testHighlightStaticInstanceMembers() {
+  public void testHighlightStaticInstanceMembers() throws Exception {
     defaultTest();
   }
 
@@ -1091,7 +1091,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithFlexSdk})
-  public void testCompilerConfigHighlighting() {
+  public void testCompilerConfigHighlighting() throws Exception {
     enableInspectionTool(new CheckXmlFileWithXercesValidatorInspection());
     doTestFor(true, getTestName(false) + ".xml");
     doTestFor(true, getTestName(false) + "_2.xml");
@@ -1102,24 +1102,24 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithFlexSdk})
-  public void testReferencesInCompilerConfig() {
+  public void testReferencesInCompilerConfig() throws Exception {
     doTestFor(true, getTestName(false) + ".xml");
     doTestFor(true, getTestName(false) + "_2.xml");
   }
 
   @JSTestOptions(
     {JSTestOption.WithFlexSdk, JSTestOption.WithFlexLib})
-  public void testUsingUrlForOtherLibrary() {
+  public void testUsingUrlForOtherLibrary() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testStatesProblem() {
+  public void testStatesProblem() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testProblemWithInstanceVarFromStaticMethod() {
+  public void testProblemWithInstanceVarFromStaticMethod() throws Exception {
     defaultTest();
   }
 
@@ -1134,13 +1134,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @NeedsJavaModule
-  public void testUsingUrlForOtherLibrary2() {
+  public void testUsingUrlForOtherLibrary2() throws Exception {
     defaultTest();
     doTestFor(true, getTestName(false) + "_2.mxml");
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testObjectCanHaveAnyAttr() {
+  public void testObjectCanHaveAnyAttr() throws Exception {
     defaultTest();
   }
 
@@ -1150,29 +1150,29 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testSomeFeedbackFromAdobe() {
+  public void testSomeFeedbackFromAdobe() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk, JSTestOption.WithFlexFacet})
-  public void testSomeFeedbackFromAdobe_2() {
+  public void testSomeFeedbackFromAdobe_2() throws Exception {
     String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_2.as");
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testBindingDestinationCanHaveThisModifier() {
+  public void testBindingDestinationCanHaveThisModifier() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testSomeFeedbackFromAdobe2() {
+  public void testSomeFeedbackFromAdobe2() throws Exception {
     String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", StringUtil.decapitalize(testName) + "_2.mxml");
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testResourceReferences() {
+  public void testResourceReferences() throws Exception {
     Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".mxml", "mybundle.properties", "mybundle3.properties");
     findAndInvokeIntentionAction(infoCollection, PropertiesBundle.message("create.property.quickfix.text"), myEditor, myFile);
 
@@ -1181,12 +1181,12 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions(JSTestOption.WithFlexSdk)
-  public void testResourceReferences2() {
+  public void testResourceReferences2() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", "mybundle.properties", "mybundle3.properties");
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
-  public void testResourceReferencesWithPackages() {
+  public void testResourceReferencesWithPackages() throws Exception {
     String testName = getTestName(false);
     doTestFor(true, getDefaultProjectRoot(testName), (Runnable)null,
               testName + "/" + testName + ".mxml",
@@ -1194,7 +1194,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader})
-  public void testResolveWithInclude() {
+  public void testResolveWithInclude() throws Exception {
     String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_2.as");
   }
@@ -1211,7 +1211,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverridingMarkersXmlBacked() {
+  public void testOverridingMarkersXmlBacked() throws Exception {
     doTestFor(true, getTestName(false) + "_B.mxml", getTestName(false) + "_A.mxml", getTestName(false) + "_C.mxml",
               getTestName(false) + "_D.as", getTestName(false) + "_MyInterface.as");
     int offset = myEditor.getCaretModel().getOffset();
@@ -1234,7 +1234,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverridingMarkersXmlBacked2() {
+  public void testOverridingMarkersXmlBacked2() throws Exception {
     doTestFor(true, getTestName(false) + "_MyInterface.as", getTestName(false) + "_A.mxml", getTestName(false) + "_B.mxml");
     int offset = myEditor.getCaretModel().getOffset();
     PsiElement source = myFile.findElementAt(offset);
@@ -1262,12 +1262,12 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   //}
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithUnusedImports})
-  public void testFqnUsingStar() {
+  public void testFqnUsingStar() throws Exception {
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_2.as", getTestName(false) + "_3.as");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testNamespacesAndManifestFiles() {
+  public void testNamespacesAndManifestFiles() throws Exception {
     final String name = getTestName(false);
 
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
@@ -1279,7 +1279,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testNamespacesAndManifestsFromCustomConfigFile() {
+  public void testNamespacesAndManifestsFromCustomConfigFile() throws Exception {
     final String testName = getTestName(false);
 
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
@@ -1291,12 +1291,12 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testManifestClassHighlighting() {
+  public void testManifestClassHighlighting() throws Exception {
     doTestFor(true, getTestName(false) + ".xml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testNamespacesFromSdkSwcs() {
+  public void testNamespacesFromSdkSwcs() throws Exception {
     final String name = getTestName(false);
 
     final SdkModificator sdkModificator = FlexTestUtils.getFlexSdkModificator(getModule());
@@ -1309,13 +1309,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   @JSTestOptions(
     {JSTestOption.WithFlexSdk, JSTestOption.WithJsSupportLoader, JSTestOption.WithUnusedImports})
-  public void testPredefinedFunReference() {
+  public void testPredefinedFunReference() throws Exception {
     enableInspectionTool(new JSUnusedLocalSymbolsInspection());
     doTestFor(true, getTestName(false) + ".mxml", "getFoo.swc");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverridingMarkersInlineComponents() {
+  public void testOverridingMarkersInlineComponents() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
 
     int offset = myEditor.getCaretModel().getOffset();
@@ -1330,27 +1330,27 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testInlineComponentsClassName() {
+  public void testInlineComponentsClassName() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testInlineComponentsOuterFieldAccess() {
+  public void testInlineComponentsOuterFieldAccess() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testResolveTypeToComponent() {
+  public void testResolveTypeToComponent() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithJsSupportLoader, JSTestOption.WithFlexSdk})
-  public void testInheritanceCheck() {
+  public void testInheritanceCheck() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testAssets() {
+  public void testAssets() throws Throwable {
     final String testName = getTestName(false);
     final String fileRelPath = "pack/" + testName + ".mxml";
 
@@ -1390,7 +1390,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxScriptAndStyleSource() {
+  public void testMxScriptAndStyleSource() throws Throwable {
     final String testName = getTestName(false);
     final String fileRelPath = "pack/" + testName + ".mxml";
 
@@ -1404,37 +1404,37 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({})
-  public void testExtendMultipleClasses() {
+  public void testExtendMultipleClasses() throws Throwable {
     doTestFor(true, getTestName(false) + ".as");
   }
 
   @JSTestOptions({})
-  public void testExtendFinalClass() {
+  public void testExtendFinalClass() throws Throwable {
     doTestFor(true, getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testClassAndPackageNestedInMxml() {
+  public void testClassAndPackageNestedInMxml() throws Throwable {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverriddenMarkersInMxml1() {
+  public void testOverriddenMarkersInMxml1() throws Throwable {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testOverriddenMarkersInMxml2() {
+  public void testOverriddenMarkersInMxml2() throws Throwable {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testHttpService() {
+  public void testHttpService() throws Throwable {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testNamespace() {
+  public void testNamespace() throws Throwable {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
@@ -1472,7 +1472,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testIgnoreClassesFromOnlyLibSources() {
+  public void testIgnoreClassesFromOnlyLibSources() throws Exception {
     final String testName = getTestName(false);
 
     myAfterCommitRunnable = () -> FlexTestUtils
@@ -1483,7 +1483,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testIgnoreClassesFromOnlySdkSources() {
+  public void testIgnoreClassesFromOnlySdkSources() throws Exception {
     final String testName = getTestName(false);
 
     final VirtualFile srcFile =
@@ -1496,13 +1496,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, testName + "/" + testName + ".mxml");
   }
 
-  public void testComponentsFromLibsResolvedWhenSdkNotSet() {
+  public void testComponentsFromLibsResolvedWhenSdkNotSet() throws Exception {
     FlexTestUtils.addFlexLibrary(false, myModule, "lib", true, getTestDataPath() + getBasePath(), getTestName(false) + ".swc", null, null);
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk, JSTestOption.WithLineMarkers})
-  public void testImplicitImplementMarker() {
+  public void testImplicitImplementMarker() throws Exception {
     doTestFor(true, getTestName(false) + "Interface.as", getTestName(false) + "Base.mxml", getTestName(false) + ".mxml");
   }
 
@@ -1525,7 +1525,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFlex4Namespaces() {
+  public void testFlex4Namespaces() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_other.as");
   }
 
@@ -1535,7 +1535,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testConditionalCompilationDefinitions() {
+  public void testConditionalCompilationDefinitions() throws Exception {
     final String testName = getTestName(false);
     FlexTestUtils.modifyBuildConfiguration(myModule, bc -> {
       bc.getCompilerOptions()
@@ -1573,17 +1573,17 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testPredefinedTagsInsideRootTagWithDefaultProperty() {
+  public void testPredefinedTagsInsideRootTagWithDefaultProperty() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testPredefinedTagsInsideNotRootTagWithDefaultProperty() {
+  public void testPredefinedTagsInsideNotRootTagWithDefaultProperty() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testXmlRelatedTags() {
+  public void testXmlRelatedTags() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
@@ -1592,22 +1592,22 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testStaticSettersCanNotBeAttributes() {
+  public void testStaticSettersCanNotBeAttributes() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_other.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxComponent() {
+  public void testFxComponent() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testNoResolveToJsVarOrFun() {
+  public void testNoResolveToJsVarOrFun() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + ".js");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxPrivate() {
+  public void testFxPrivate() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
 
     final JSClassResolver resolver =
@@ -1619,28 +1619,28 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testModelTag() {
+  public void testModelTag() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testInheritDefaultProperty() {
+  public void testInheritDefaultProperty() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_other.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxLibraryAndFxDefinition() {
+  public void testFxLibraryAndFxDefinition() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testSameShortDifferentFullClassNames() {
+  public void testSameShortDifferentFullClassNames() throws Exception {
     // example taken from IDEA-52241
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_other.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testPackagesAsNamespaces() {
+  public void testPackagesAsNamespaces() throws Exception {
     final String testName = getTestName(false);
     myAfterCommitRunnable = () -> {
       final VirtualFile srcRoot =
@@ -1657,7 +1657,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testComponentIdInsideRepeaterResolvedToArray() {
+  public void testComponentIdInsideRepeaterResolvedToArray() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml");
 
@@ -1672,7 +1672,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public final void testUserNamespacesWithoutScheme() {
+  public final void testUserNamespacesWithoutScheme() throws Exception {
     final String name = getTestName(false);
 
     final String manifest = getTestDataPath() + "/" + getBasePath() + "/" + name + "_manifest.xml";
@@ -1683,33 +1683,33 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testFlex3AllowsNonVisualComponentsOnlyUnderRootTag() {
+  public final void testFlex3AllowsNonVisualComponentsOnlyUnderRootTag() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_other1.mxml", testName + "_other2.mxml", testName + "_other3.as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testFlex4AllowsNonVisualComponentsOnlyUnderDeclarationsTag() {
+  public final void testFlex4AllowsNonVisualComponentsOnlyUnderDeclarationsTag() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testImplicitImport() {
+  public void testImplicitImport() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk, JSTestOption.WithUnusedImports})
-  public void testFlex3ImplicitImport() {
+  public void testFlex3ImplicitImport() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk, JSTestOption.WithUnusedImports})
-  public void testFlex4ImplicitImport() {
+  public void testFlex4ImplicitImport() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public final void testDoNotForgetSdkComponents() {
+  public final void testDoNotForgetSdkComponents() throws Exception {
     final String testName = getTestName(false);
     myAfterCommitRunnable = () -> FlexTestUtils
       .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", testName + ".swc", null, null);
@@ -1717,29 +1717,29 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testPropertiesSpecifiedByMxmlIdAttributes() {
+  public void testPropertiesSpecifiedByMxmlIdAttributes() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_other.mxml", testName + "_otherSuper.mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxg() {
+  public void testFxg() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_other.fxg");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testWebAndHttpServiceRequestTagContent() {
+  public void testWebAndHttpServiceRequestTagContent() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testFxReparent() {
+  public void testFxReparent() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testStaticBlock() {
+  public void testStaticBlock() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
@@ -1759,13 +1759,13 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testMonkeyPatching() {
+  public void testMonkeyPatching() throws Exception {
     myAfterCommitRunnable = () -> FlexTestUtils
       .addLibrary(myModule, "library", getTestDataPath() + getBasePath() + "/", getTestName(false) + ".swc", null, null);
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
-  public void testNotResolveTestClasses() {
+  public void testNotResolveTestClasses() throws Exception {
     final String testName = getTestName(false);
 
     myAfterCommitRunnable = new Runnable() {
@@ -1789,18 +1789,18 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testNoReferenceToAnyContentTags() {
+  public void testNoReferenceToAnyContentTags() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testUnusedNamespaces() {
+  public void testUnusedNamespaces() throws Exception {
     enableInspectionTool(new XmlUnusedNamespaceInspection());
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testMxmlRootTagLeadsToFinalClass() {
+  public void testMxmlRootTagLeadsToFinalClass() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
@@ -1884,7 +1884,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testResolveToClassWithBiggestTimestamp() {
+  public void testResolveToClassWithBiggestTimestamp() throws Exception {
     final String testName = getTestName(false);
     myAfterCommitRunnable = () -> FlexTestUtils
       .addLibrary(myModule, "lib_1", getTestDataPath() + getBasePath() + "/", testName + "_lib_1.swc", testName + "_lib_1_src.zip",
@@ -1898,7 +1898,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testResolveToClassWithBiggestTimestamp2() {
+  public void testResolveToClassWithBiggestTimestamp2() throws Exception {
     // older lib (lib2) contains SomeClass not implementing anything
     // newer lib (lib1) contains SomeClass implementing SomeInterface
     // must resolve to newer SomeClass
@@ -1925,7 +1925,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }*/
 
   @JSTestOptions({JSTestOption.WithoutWarnings, JSTestOption.WithFlexSdk})
-  public void testSqlInjection1() {
+  public void testSqlInjection1() throws Exception {
     doTestFor(false, getTestName(false) + ".as");
   }
 
@@ -1961,7 +1961,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testLanguageTagsInInlineRenderer() {
+  public void testLanguageTagsInInlineRenderer() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
@@ -1981,18 +1981,18 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testReferenceInlineComponentId() {
+  public void testReferenceInlineComponentId() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxmlConstructor() {
+  public void testMxmlConstructor() throws Exception {
     enableInspectionTool(new JSUnusedGlobalSymbolsInspection());
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testIdAndPredefinedAttributes() {
+  public void testIdAndPredefinedAttributes() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_other.as");
   }
 
@@ -2002,7 +2002,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testImportForNeighbourClass() {
+  public void testImportForNeighbourClass() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_2.as");
   }
 
@@ -2044,7 +2044,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet})
-  public void testMxmlAttrPreferResolveToEvent() {
+  public void testMxmlAttrPreferResolveToEvent() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_2.as");
   }
@@ -2096,19 +2096,19 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public final void testMobileApplicationChildren() {
+  public final void testMobileApplicationChildren() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
-  public final void testInternalPropertiesInMxml() {
+  public final void testInternalPropertiesInMxml() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, getDefaultProjectRoot(testName), (Runnable)null, testName + "/pack/" + testName + ".mxml",
               testName + "/InRootPackage.mxml", testName + "/Child.as", testName + "/pack/ParentInPack.as", testName + "/pack/InPack.mxml");
   }
 
   @JSTestOptions(JSTestOption.WithFlexFacet)
-  public void testRequireImportInParamList() {
+  public void testRequireImportInParamList() throws Exception {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
@@ -2119,7 +2119,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testHostComponentImplicitField() {
+  public void testHostComponentImplicitField() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_Skin.mxml");
   }
@@ -2218,18 +2218,18 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testSpacesInGenericVector() {
+  public void testSpacesInGenericVector() throws Exception {
     doTestFor(true, getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testStyleValues() {
+  public void testStyleValues() throws Exception {
     final String testName = getTestName(false);
     doTestFor(true, testName + ".mxml", testName + "_other.as");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testOutOfSourceRoot() {
+  public void testOutOfSourceRoot() throws Exception {
     myAfterCommitRunnable = () -> {
       final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
       final ContentEntry contentEntry = model.getContentEntries()[0];
@@ -2263,7 +2263,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
       VfsUtilCore.loadText(f)));
   }
 
-  public void testBadResolveOfSuperClass() {
+  public void testBadResolveOfSuperClass() throws Exception {
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
 
     WriteAction.run(() -> FlexTestUtils.modifyConfigs(myProject, editor -> {
@@ -2279,7 +2279,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestFor(true, getTestName(false) + ".mxml");
   }
 
-  public void testAddLeadingSlashForEmbeddedAsset() {
+  public void testAddLeadingSlashForEmbeddedAsset() throws Exception {
     final String testName = getTestName(false);
     final Collection<HighlightInfo> infoCollection =
       doTestFor(true, new File(getTestDataPath() + BASE_PATH + "/" + testName), (Runnable)null,
@@ -2289,7 +2289,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
-  public void testUseOfTestClass() {
+  public void testUseOfTestClass() throws Exception {
     myAfterCommitRunnable = () -> ApplicationManager.getApplication().runWriteAction(() -> {
       ModifiableRootModel m = ModuleRootManager.getInstance(myModule).getModifiableModel();
       ContentEntry contentEntry = m.getContentEntries()[0];
@@ -2305,7 +2305,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions(JSTestOption.WithGumboSdk)
-  public void testReportAccessorProblems() {
+  public void testReportAccessorProblems() throws Exception {
     defaultTest();
   }
 
@@ -2314,7 +2314,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
     doTestIntention(getTestName(false), "mxml", "Create namespace declaration");
   }
 
-  public void testFontFaceProperties() {
+  public void testFontFaceProperties() throws Throwable {
     final Sdk sdk = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, getTestRootDisposable());
     WriteAction.run(() -> FlexTestUtils.modifyBuildConfiguration(myModule, bc -> FlexTestUtils.setSdk(bc, sdk)));
 
@@ -2364,46 +2364,46 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testTypeOfMethodNamedCall() {
+  public void testTypeOfMethodNamedCall() throws Exception {
     doTestFor(true, getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testStateGroups() {
+  public void testStateGroups() throws Exception {
     defaultTest();
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testStarlingEvent() {
+  public void testStarlingEvent() throws Exception {
     doTestFor(true, getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testImplicitCoercion() {
+  public void testImplicitCoercion() throws Exception {
     doTestFor(true, getTestName(false) + ".as");
   }
 
-  public void testNewObjectClassFunction() {
+  public void testNewObjectClassFunction() throws Exception {
     doTestFor(true, getTestName(false) + ".as");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testDoNotResolveNotImportedSuperClass() {
+  public void testDoNotResolveNotImportedSuperClass() throws Exception {
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_other.as");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testCanBeLocalInMxml() {
+  public void testCanBeLocalInMxml() throws Exception {
     enableInspectionTool(new JSFieldCanBeLocalInspection());
     doTestFor(true, getTestName(false) + ".mxml", getTestName(false) + "_other.as");
   }
 
-  public void testPrivateMemberAccessibleWithinFile() {
+  public void testPrivateMemberAccessibleWithinFile() throws Exception {
     doTestFor(true, getTestName(false) + ".as", getTestName(false) + "_other.as");
   }
 
   @JSTestOptions({JSTestOption.WithGumboSdk})
-  public void testPercentProxyInOverridden() {
+  public void testPercentProxyInOverridden() throws Exception {
     defaultTest();
   }
 

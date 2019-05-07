@@ -80,7 +80,7 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
 
   private static boolean processSelectors(@NotNull String name,
                                           @NotNull List<Angular2DirectiveSelector.SimpleSelectorWithPsi> selectors,
-                                          @NotNull Processor<? super NavigationItem> processor) {
+                                          @NotNull Processor<NavigationItem> processor) {
 
     for (Angular2DirectiveSelector.SimpleSelectorWithPsi selector : selectors) {
       if (!processSelectorElement(name, selector.getElement(), processor)) {
@@ -100,7 +100,7 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
 
   private static boolean processSelectorElement(@NotNull String name,
                                                 @Nullable Angular2DirectiveSelectorPsiElement element,
-                                                @NotNull Processor<? super NavigationItem> processor) {
+                                                @NotNull Processor<NavigationItem> processor) {
     return element == null || !name.equals(element.getName()) || processor.process(element);
   }
 }

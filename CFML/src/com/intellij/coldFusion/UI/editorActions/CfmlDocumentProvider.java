@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Lera Nikolaenko
@@ -34,14 +35,14 @@ public class CfmlDocumentProvider extends DocumentationProviderEx {
   @Override
   public String generateDoc(PsiElement element, PsiElement originalElement) {
     if (element instanceof CfmlAttributeImpl && element.getParent() instanceof CfmlTag) {
-      String tagName = StringUtil.toLowerCase(((CfmlTag)element.getParent()).getTagName());
+      String tagName = ((CfmlTag)element.getParent()).getTagName().toLowerCase(Locale.ENGLISH);
       String attributeName = (element instanceof CfmlAttributeNameImpl) ?
                              "name" :
                              StringUtil.notNullize(((CfmlAttributeImpl)element).getName());
       return CfmlUtil.getAttributeDescription(tagName, attributeName, element.getProject());
     }
     else if (element instanceof CfmlTag) {
-      String name = StringUtil.toLowerCase(((CfmlTag)element).getTagName());
+      String name = ((CfmlTag)element).getTagName().toLowerCase(Locale.ENGLISH);
       if (CfmlUtil.isStandardTag(name, element.getProject())) {
         return CfmlUtil.getTagDescription(name, element.getProject());
       }

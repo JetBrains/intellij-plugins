@@ -665,7 +665,7 @@ export default {
       val presentation = LookupElementPresentation()
       item!!.renderElement(presentation)
       TestCase.assertEquals("number", presentation.typeText)
-      TestCase.assertEquals("(aaa, bbb)" + JSLightCompletionTestBase.getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
+      TestCase.assertEquals("(aaa, bbb)", presentation.tailText)
     })
   }
 

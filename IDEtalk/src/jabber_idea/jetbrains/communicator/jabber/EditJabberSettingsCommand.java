@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.jabber;
 
-import jetbrains.communicator.util.CommunicatorStrings;
+import jetbrains.communicator.util.StringUtil;
 
 /**
  * @author Kir
@@ -29,11 +29,11 @@ public class EditJabberSettingsCommand extends BaseJabberConnectionCommand {
   @Override
   public String getName() {
     if (isConnected()) {
-      return CommunicatorStrings.getMsg("EditJabberSettingsCommand.connected",
+      return StringUtil.getMsg("EditJabberSettingsCommand.connected",
           myJabberFacade.getMyAccount().getJabberId() + '/' + JabberFacade.IDETALK_RESOURCE);
     }
     else {
-      return CommunicatorStrings.getMsg("EditJabberSettingsCommand.disconnected");
+      return StringUtil.getMsg("EditJabberSettingsCommand.disconnected");
     }
   }
 

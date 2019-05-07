@@ -2,7 +2,6 @@
 package org.angular2.codeInsight;
 
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.JSLightCompletionTestBase;
 import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.inspections.JSUnusedGlobalSymbolsInspection;
 import com.intellij.lang.javascript.inspections.JSUnusedLocalSymbolsInspection;
@@ -204,11 +203,11 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
   public void testOverriddenMethods() {
     myFixture.configureByFiles("overriddenMethods.ts", "package.json");
     myFixture.completeBasic();
-    assertEquals(newArrayList("$any#*#(arg: *)" + JSLightCompletionTestBase.getLocationPresentation(null, "overriddenMethods.ts"),
-                              "bar#string#()" ,
+    assertEquals(newArrayList("$any#*#(arg: *)",
+                              "bar#string#()",
                               "bar#string#(test: boolean)",
                               "bar#string#(test: string)",
-                              "foo#string#"),
+                              "foo#string# (TodoCmp)"),
                  StreamEx.of(myFixture.getLookupElements()).map(el -> {
                    TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
                    return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();

@@ -35,10 +35,6 @@ export class MyComponent {
   private privateUsedFun() {}
   private privateUnusedFun() {}
 
-  /**
-   * My document comment
-   * @return something
-   */
   protected protectedUsedFun() {}
   protected protectedUnusedFun() {}
 

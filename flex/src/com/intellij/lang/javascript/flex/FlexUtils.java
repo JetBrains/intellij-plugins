@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.DependencyType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -51,7 +50,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.xml.NanoXmlBuilder;
 import com.intellij.util.xml.NanoXmlUtil;
 import org.jetbrains.annotations.NonNls;
@@ -538,11 +536,5 @@ public class FlexUtils {
 
   public static boolean isMxmlNs(final String ns) {
     return ArrayUtil.contains(ns, MxmlJSClass.MXML_URIS);
-  }
-
-  public static boolean packageExists(String packageName, final GlobalSearchScope scope) {
-    if (StringUtil.isEmpty(packageName)) return true;
-
-    return !FileBasedIndex.getInstance().getValues(JSPackageIndex.INDEX_ID, packageName, scope).isEmpty();
   }
 }

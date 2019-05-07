@@ -7,15 +7,11 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
@@ -163,7 +159,7 @@ public class FlashBuilderProjectFinder {
   }
 
   static boolean hasFxpExtension(final String path) {
-    final String lowercased = StringUtil.toLowerCase(path);
+    final String lowercased = path.toLowerCase();
     return lowercased.endsWith(FlashBuilderImporter.DOT_FXP) || lowercased.endsWith(FlashBuilderImporter.DOT_FXPL);
   }
 

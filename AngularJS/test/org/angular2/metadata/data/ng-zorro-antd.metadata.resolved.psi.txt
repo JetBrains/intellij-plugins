@@ -454,7 +454,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵef <metadata component>: selector=nz-tooltip; inputs=[nzOverlayClassName, nzTitle, nzOverlayStyle, nzVisible, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
     ɵeg: : <metadata call>
       #expression: @angular/animations#trigger <metadata reference>('')
-    ɵeh <metadata directive/template>: selector=[nz-tooltip]; inputs=[nz-tooltip, nzOverlayClassName, nzOverlayStyle, nzVisible, nzTitle, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
+    ɵeh <metadata directive>: selector=[nz-tooltip]; inputs=[nz-tooltip, nzOverlayClassName, nzOverlayStyle, nzVisible, nzTitle, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
     ɵei <metadata module>: imports=[ɵk]; declarations=[ɵej]; exports=[ɵej]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵej <metadata reference>('')
@@ -853,7 +853,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵig <metadata object>
       provide: @angular/forms#NG_VALUE_ACCESSOR <metadata reference>('')
       useExisting: ɵih <metadata reference>('')
-    ɵih <metadata directive/template>: selector=input[nzAutocomplete], textarea[nzAutocomplete]; inputs=[nzAutocomplete]; outputs=[]; inOuts=[]('')
+    ɵih <metadata directive>: selector=input[nzAutocomplete], textarea[nzAutocomplete]; inputs=[nzAutocomplete]; outputs=[]; inOuts=[]('')
     ɵii <metadata component>: selector=nz-auto-optgroup; inputs=[nzLabel]; outputs=[]; inOuts=[]('')
     ɵij <metadata module>: imports=[ɵk]; declarations=[ɵik]; exports=[ɵik]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
@@ -913,7 +913,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/cdk/overlay#OverlayModule <metadata reference>('')
     ɵjd <metadata component>: selector=nz-popover; inputs=[nzOverlayClassName, nzTitle, nzOverlayStyle, nzVisible, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       #ext: ɵef <metadata reference>('')
-    ɵje <metadata directive/template>: selector=[nz-popover]; inputs=[nz-tooltip, nzOverlayClassName, nzOverlayStyle, nzVisible, nzTitle, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
+    ɵje <metadata directive>: selector=[nz-popover]; inputs=[nz-tooltip, nzOverlayClassName, nzOverlayStyle, nzVisible, nzTitle, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       #ext: ɵeh <metadata reference>('')
     ɵjf <metadata module>: imports=[ɵa, ɵbb, ɵk]; declarations=[ɵjg, ɵjh]; exports=[ɵjg, ɵjh]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
@@ -930,7 +930,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵk <metadata reference>('')
     ɵjg <metadata component>: selector=nz-popconfirm; inputs=[nzTitle, nzCancelText, nzOverlayStyle, nzOkText, nzVisible, nzContent, nzPlacement, nzTrigger, nzCondition, nzOverlayClassName, nzOkType, nzMouseEnterDelay, nzMouseLeaveDelay]; outputs=[nzOnConfirm, nzOnCancel, nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       #ext: ɵef <metadata reference>('')
-    ɵjh <metadata directive/template>: selector=[nz-popconfirm]; inputs=[nz-tooltip, nzCancelText, nzOverlayStyle, nzOkText, nzVisible, nzTitle, nzContent, nzPlacement, nzTrigger, nzCondition, nzOverlayClassName, nzOkType, nzMouseEnterDelay, nzMouseLeaveDelay]; outputs=[nzOnConfirm, nzOnCancel, nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
+    ɵjh <metadata directive>: selector=[nz-popconfirm]; inputs=[nz-tooltip, nzCancelText, nzOverlayStyle, nzOkText, nzVisible, nzTitle, nzContent, nzPlacement, nzTrigger, nzCondition, nzOverlayClassName, nzOkType, nzMouseEnterDelay, nzMouseLeaveDelay]; outputs=[nzOnConfirm, nzOnCancel, nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]
       #ext: ɵeh <metadata reference>('')
     ɵji <metadata module>: imports=[ɵa, ɵbb, ɵbc, ɵk]; declarations=[toCssUnit, ɵjj]; exports=[ɵjj]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>

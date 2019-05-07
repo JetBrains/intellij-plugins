@@ -44,7 +44,7 @@ public class Angular2InaccessibleMemberAotQuickFixesTest extends Angular2MultiFi
       myFixture.configureFromTempProjectFile(fileName);
       myFixture.setCaresAboutInjection(false);
       AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
-      myFixture.launchAction(myFixture.findSingleIntention("Make public"));
+      myFixture.launchAction(myFixture.findSingleIntention("Make accessible in AOT compilation mode"));
     });
   }
 }

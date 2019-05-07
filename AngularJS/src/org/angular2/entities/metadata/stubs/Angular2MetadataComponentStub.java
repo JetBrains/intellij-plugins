@@ -26,12 +26,7 @@ public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStub
   }
 
   @Override
-  public boolean isStructuralDirective() {
+  public boolean isTemplate() {
     return false;
-  }
-
-  @Override
-  public boolean isRegularDirective() {
-    return true;
   }
 }

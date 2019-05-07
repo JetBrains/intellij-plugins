@@ -63,15 +63,13 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
       .orElseGet(() -> new Angular2MetadataClassStub(memberName, source, parent));
   }
 
-  private static final BooleanStructureElement IS_STRUCTURAL_DIRECTIVE_FLAG = new BooleanStructureElement();
-  private static final BooleanStructureElement IS_REGULAR_DIRECTIVE_FLAG = new BooleanStructureElement();
+  private static final BooleanStructureElement IS_TEMPLATE_FLAG = new BooleanStructureElement();
   private static final BooleanStructureElement HAS_INPUT_MAPPINGS = new BooleanStructureElement();
   private static final BooleanStructureElement HAS_OUTPUT_MAPPINGS = new BooleanStructureElement();
   @SuppressWarnings("StaticFieldReferencedViaSubclass")
   protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
     Angular2MetadataElementStub.FLAGS_STRUCTURE,
-    IS_STRUCTURAL_DIRECTIVE_FLAG,
-    IS_REGULAR_DIRECTIVE_FLAG,
+    IS_TEMPLATE_FLAG,
     HAS_INPUT_MAPPINGS,
     HAS_OUTPUT_MAPPINGS
   );
@@ -129,12 +127,8 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
     return Collections.unmodifiableMap(myOutputMappings);
   }
 
-  public boolean isStructuralDirective() {
-    return readFlag(IS_STRUCTURAL_DIRECTIVE_FLAG);
-  }
-
-  public boolean isRegularDirective() {
-    return readFlag(IS_REGULAR_DIRECTIVE_FLAG);
+  public boolean isTemplate() {
+    return readFlag(IS_TEMPLATE_FLAG);
   }
 
   @Override
@@ -162,10 +156,8 @@ public class Angular2MetadataClassStubBase<Psi extends Angular2MetadataClassBase
   private void readTemplateFlag(JsonObject source) {
     JsonObject members = tryCast(doIfNotNull(source.findProperty(MEMBERS), JsonProperty::getValue), JsonObject.class);
     JsonProperty constructor = members != null ? members.findProperty(CONSTRUCTOR) : null;
-    String constructorText = constructor != null ? constructor.getText() : "";
-    boolean hasTemplateRef = constructorText.contains(Angular2EntityUtils.TEMPLATE_REF);
-    writeFlag(IS_STRUCTURAL_DIRECTIVE_FLAG, hasTemplateRef || constructorText.contains(Angular2EntityUtils.VIEW_CONTAINER_REF));
-    writeFlag(IS_REGULAR_DIRECTIVE_FLAG, !hasTemplateRef);
+    writeFlag(IS_TEMPLATE_FLAG, constructor != null
+                                && constructor.getText().contains(Angular2EntityUtils.TEMPLATE_REF));
   }
 
   private void loadMember(@NotNull JsonProperty property) {

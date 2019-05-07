@@ -21,7 +21,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
 
   private final PsiElement mySelectorElement;
   private final String myText;
-  private final Function<? super Pair<String, Integer>, ? extends TextRange> myCreateRange;
+  private final Function<Pair<String, Integer>, TextRange> myCreateRange;
   private final AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>> mySimpleSelectors =
     new AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>>() {
       @NotNull
@@ -62,7 +62,7 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
 
   public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
                                        @Nullable String text,
-                                       @NotNull Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
+                                       @NotNull Function<Pair<String, Integer>, TextRange> createRange) {
     mySelectorElement = element;
     myText = text;
     myCreateRange = createRange;

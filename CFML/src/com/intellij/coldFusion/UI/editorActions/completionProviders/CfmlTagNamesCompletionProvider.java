@@ -10,7 +10,6 @@ import com.intellij.coldFusion.model.files.CfmlFileViewProvider;
 import com.intellij.coldFusion.model.psi.CfmlImport;
 import com.intellij.coldFusion.model.psi.stubs.CfmlIndex;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -51,7 +50,7 @@ class CfmlTagNamesCompletionProvider extends CompletionProvider<CompletionParame
     final VirtualFile folder = CfmlUtil.findFileByLibTag(originalFile, libtag);
     if (folder != null && folder.isDirectory()) {
       final Set<String> names = new THashSet<>(CfmlIndex.getInstance(originalFile.getProject()).getAllComponentsNames());
-      names.retainAll(ContainerUtil.map(folder.getChildren(), virtualFile -> StringUtil.toLowerCase(FileUtil.getNameWithoutExtension(virtualFile.getName()))));
+      names.retainAll(ContainerUtil.map(folder.getChildren(), virtualFile -> FileUtil.getNameWithoutExtension(virtualFile.getName()).toLowerCase()));
       for (String componentName : names) {
         result.addElement(LookupElementBuilder.create(prefix + ':' + componentName).withCaseSensitivity(false));
       }

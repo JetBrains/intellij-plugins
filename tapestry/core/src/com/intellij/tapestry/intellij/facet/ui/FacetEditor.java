@@ -3,7 +3,6 @@ package com.intellij.tapestry.intellij.facet.ui;
 import com.intellij.facet.Facet;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.openapi.ui.VerticalFlowLayout;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.intellij.facet.AddTapestrySupportUtil;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
@@ -31,7 +30,7 @@ public class FacetEditor extends FacetEditorTab {
         //_configuration.setApplicationPackage(IntellijWebDescriptorUtils.getApplicationPackage(facet.getWebFacet().getRoot()));
 
         if (_configuration.getFilterName() == null)
-            _configuration.setFilterName(StringUtil.toLowerCase(facet.getModule().getName()));
+            _configuration.setFilterName(facet.getModule().getName().toLowerCase());
 
         _filterName.setText(_configuration.getFilterName());
         _applicationPackage.setText(_configuration.getApplicationPackage());

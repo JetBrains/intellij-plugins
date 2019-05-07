@@ -69,7 +69,10 @@ public class PrettierConfigurable implements SearchableConfigurable {
   public void reset() {
     PrettierConfiguration configuration = PrettierConfiguration.getInstance(myProject);
     myNodeInterpreterField.setInterpreterRef(configuration.getInterpreterRef());
-    myPackageField.setSelected(configuration.getPackage());
+    NodePackage nodePackage = configuration.getPackage();
+    if (nodePackage != null) {
+      myPackageField.setSelected(nodePackage);
+    }
   }
 
   @Override

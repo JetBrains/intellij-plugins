@@ -57,7 +57,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     super.setUp();
     myDoCompare = true;
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
   }
 
@@ -100,7 +100,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
                              JSExtractSuperMode mode,
                              String[] members,
                              String[] conflicts) {
-    JSClass sourceClass = JSTestUtils.findClassByQName(from, GlobalSearchScope.moduleScope(getModule()));
+    JSClass sourceClass = JSTestUtils.findClassByQName(from, GlobalSearchScope.moduleScope(myModule));
     final List<JSMemberInfo> memberInfos = FlexPullUpTest.getMemberInfos(members, sourceClass, false);
     JSMemberInfo.sortByOffset(memberInfos);
     JSMemberInfo[] infosArray = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.alwaysTrue());
@@ -269,7 +269,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
       @Override
       public void performAction(final VirtualFile rootDir, final VirtualFile rootAfter) {
         FlexTestUtils.modifyConfigs(myFixture.getProject(), editor -> {
-          ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(getModule())[0];
+          ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
           bc1.setName("1");
           FlexTestUtils.setSdk(bc1, sdk);
         });
@@ -281,19 +281,19 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     });
   }
 
-  public void testActionAvailability1() {
+  public void testActionAvailability1() throws Exception {
     checkActions(getTestName(false) + ".as");
   }
 
-  public void testActionAvailability2() {
+  public void testActionAvailability2() throws Exception {
     checkActions(getTestName(false) + ".mxml");
   }
 
-  public void testActionAvailability3() {
+  public void testActionAvailability3() throws Exception {
     checkActions(getTestName(false) + ".xml");
   }
 
-  private void checkActions(String filename) {
+  private void checkActions(String filename) throws Exception {
     myFixture.configureByFile(getTestRoot() + filename);
     LinkedHashMap<Integer, String> markers = JSTestUtils.extractPositionMarkers(myFixture.getProject(), myFixture.getEditor().getDocument());
     int pos = 0;
