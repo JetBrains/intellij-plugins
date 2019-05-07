@@ -1,0 +1,15 @@
+{{ <warning descr="Property is inaccessible in AOT compilation mode.">privateUsed</warning> }}
+{{ <warning descr="Property is inaccessible in AOT compilation mode.">protectedUsed</warning> }}
+{{ publicUsed }}
+
+<div (click)="<warning descr="Property is inaccessible in AOT compilation mode.">privateUsedSet</warning> = 12"></div>
+<div (click)="<warning descr="Property is inaccessible in AOT compilation mode.">protectedUsedSet</warning> = 12"></div>
+<div (click)="publicUsedSet = 12"></div>
+
+{{ <warning descr="Property is inaccessible in AOT compilation mode.">privateUsedGet</warning> }}
+{{ <warning descr="Property is inaccessible in AOT compilation mode.">protectedUsedGet</warning> }}
+{{ publicUsedGet }}
+
+{{ <warning descr="Method is inaccessible in AOT compilation mode.">privateUsedFun</warning>() }}
+{{ <warning descr="Method is inaccessible in AOT compilation mode.">protectedUsedFun</warning>() }}
+{{ publicUsedFun() }}

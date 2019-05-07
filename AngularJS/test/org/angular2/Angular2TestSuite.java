@@ -64,6 +64,8 @@ import org.junit.runners.Suite;
   Angular2SuppressionsTest.class,
   Angular2NgModuleImportQuickFixesTest.class,
   AngularChangeSignatureTest.class,
+  Angular2InaccessibleMemberAotQuickFixesTest.class,
+  Angular2InaccessibleMemberAotInspectionTest.class,
   DirectiveRenameTest.class,
   MoveTest.class,
   RenameTest.class,
