@@ -28,9 +28,7 @@ class DartContributedReference implements PsiPolyVariantReference {
                                   @NotNull final DartServerData.DartNavigationRegion navigationRegion) {
     myElement = element;
     myNavigationRegion = navigationRegion;
-    final int startOffset =
-      InjectedLanguageManager.getInstance(element.getProject()).injectedToHost(element, element.getTextRange().getStartOffset());
-    myRefRange = TextRange.from(navigationRegion.getOffset() - startOffset, navigationRegion.getLength());
+    myRefRange = TextRange.from(navigationRegion.getOffset(), navigationRegion.getLength());
     myRefText = element.getText().substring(myRefRange.getStartOffset(), myRefRange.getEndOffset());
   }
 
