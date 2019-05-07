@@ -57,7 +57,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private JPanel myEditorPanel;
   private JPanel myCssTitledSeparator;
   private ComboBox myPreviewProvider;
-  private ComboBox<SplitFileEditor.SplitEditorLayout> myDefaultSplitLayout;
+  private ComboBox myDefaultSplitLayout;
   private JBCheckBox myUseGrayscaleRenderingForJBCheckBox;
   private JPanel myPreviewTitledSeparator;
   private JBCheckBox myAutoScrollCheckBox;
@@ -68,6 +68,7 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
   private JBRadioButton myHorizontalLayout;
   private JBLabel myVerticalSplitLabel;
   private JBCheckBox myDisableInjections;
+  private JBCheckBox myHideErrorsCheckbox;
 
   private static final Color SUCCESS_COLOR = new JBColor(0x008000, 0x6A8759);
 
@@ -393,5 +394,13 @@ public class MarkdownSettingsForm implements MarkdownCssSettings.Holder, Markdow
 
   public boolean isDisableInjections() {
     return myDisableInjections.isSelected();
+  }
+
+  public void setHideErrors(boolean hideErrors) {
+    myHideErrorsCheckbox.setSelected(hideErrors);
+  }
+
+  public boolean isHideErrors() {
+    return myHideErrorsCheckbox.isSelected();
   }
 }
