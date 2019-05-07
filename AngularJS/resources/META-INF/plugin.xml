@@ -138,6 +138,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidEntryComponentInspection"
                      displayName="Invalid entry component"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection"
+                     displayName="Inaccessible component member in AOT mode"
+                     groupName="Angular" enabledByDefault="false" level="WARNING"/>
     <directoryProjectGenerator implementation="org.angular2.cli.AngularCliProjectGenerator"/>
     <projectTemplatesFactory implementation="org.angularjs.AngularJSTemplateFactory"/>
     <directoryProjectConfigurator implementation="org.angular2.cli.AngularJSProjectConfigurator"
