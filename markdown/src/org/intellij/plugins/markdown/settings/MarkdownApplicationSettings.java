@@ -90,6 +90,13 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
     return myState.myDisableInjections;
   }
 
+  public void setHideErrors(boolean hideErrors) {
+    myState.myHideErrors = hideErrors;
+  }
+
+  public boolean isHideErrors() {
+    return myState.myHideErrors;
+  }
 
   public static class State {
     @Property(surroundWithTag = false)
@@ -102,6 +109,9 @@ public class MarkdownApplicationSettings implements PersistentStateComponent<Mar
 
     @Attribute("DisableInjections")
     private boolean myDisableInjections = false;
+
+    @Attribute("HideErrors")
+    private boolean myHideErrors = false;
   }
 
   public interface SettingsChangedListener {
