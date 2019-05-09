@@ -1,14 +1,10 @@
 package org.jetbrains.plugins.cucumber.psi;
 
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
 * @author yole, Roman.Chernyatchik
@@ -16,47 +12,48 @@ import java.util.Set;
 public class GherkinKeywordList {
   // maps custom language keyword to base (English) keyword
   private final Map<String, String> myKeyword2BaseNameTable = new THashMap<>();
-  private final Set<String> myKeywordsWithNoSpaceAfter = new THashSet<>();
+  private final Set<String> mySpaceAfterKeywords = new THashSet<>();
   private final GherkinKeywordTable myKeywordsTable = new GherkinKeywordTable();
 
   public GherkinKeywordList() {
   }
 
   public GherkinKeywordList(HashMap<Object, Object> hashMap) {
-    Boolean forceSpaceAfterKeyword = null;
-
     for (Map.Entry e : hashMap.entrySet()) {
       String key = e.getKey().toString();
-      String value = e.getValue().toString();
+      if (!key.equals("name") && !key.equals("native") && !key.equals("encoding")) {
+        List values = (List)e.getValue();
+        String[] translatedKeywords = (String[])values.toArray(new String[0]);
 
-      if (key.equals("space_after_keyword")) {
-        forceSpaceAfterKeyword = Boolean.valueOf(value);
-      }
-      else if (!key.equals("name") && !key.equals("native") && !key.equals("encoding")) {
-        final String[] keywords = value.split("\\|");
-        final String baseKeyword = StringUtil.toTitleCase(key.replace("_", " "));
-        final IElementType type = getTokenTypeByBaseKeyword(baseKeyword);
+        String keyword = capitalizeAndFixSpace(key);
+        IElementType type = getTokenTypeByBaseKeyword(keyword);
 
-        for (String keyword : keywords) {
-          if (keyword.endsWith("<")) {
-            keyword = keyword.substring(0, keyword.length()-1);
-            myKeywordsWithNoSpaceAfter.add(keyword);
+        for (String translatedKeyword : translatedKeywords) {
+          if (translatedKeyword.endsWith(" ")) {
+            translatedKeyword = translatedKeyword.substring(0, translatedKeyword.length() - 1);
+            mySpaceAfterKeywords.add(translatedKeyword);
           }
-          myKeyword2BaseNameTable.put(keyword, baseKeyword);
-          myKeywordsTable.put(type, keyword);
-        }
-      }
-      if (forceSpaceAfterKeyword != null) {
-        if (forceSpaceAfterKeyword.booleanValue()) {
-          myKeywordsWithNoSpaceAfter.clear();
-        }
-        else {
-          myKeywordsWithNoSpaceAfter.addAll(myKeyword2BaseNameTable.keySet());
+          myKeyword2BaseNameTable.put(translatedKeyword, keyword);
+          myKeywordsTable.put(type, translatedKeyword);
         }
       }
     }
   }
 
+  private static String capitalizeAndFixSpace(String s) {
+    StringBuilder result = new StringBuilder();
+    for (int i = 0; i < s.length(); i++) {
+      char c = s.charAt(i);
+      if (i == 0) {
+        c = Character.toUpperCase(c);
+      }
+      if (Character.isUpperCase(c) && i > 0) {
+        result.append(' ');
+      }
+      result.append(c);
+    }
+    return result.toString();
+  }
 
   public Collection<String> getAllKeywords() {
     return myKeyword2BaseNameTable.keySet();
@@ -67,7 +64,7 @@ public class GherkinKeywordList {
   }
 
   public boolean isSpaceAfterKeyword(String keyword) {
-    return !myKeywordsWithNoSpaceAfter.contains(keyword);
+    return mySpaceAfterKeywords.contains(keyword);
   }
 
   public IElementType getTokenType(String keyword) {

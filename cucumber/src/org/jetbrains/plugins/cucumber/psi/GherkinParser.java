@@ -4,10 +4,17 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static org.jetbrains.plugins.cucumber.psi.GherkinElementTypes.RULE;
+import static org.jetbrains.plugins.cucumber.psi.GherkinTokenTypes.*;
+
 public class GherkinParser implements PsiParser {
+  private static TokenSet SCENARIO_END_TOKENS =
+    TokenSet.create(BACKGROUND_KEYWORD, SCENARIO_KEYWORD, SCENARIO_OUTLINE_KEYWORD, RULE_KEYWORD, FEATURE_KEYWORD);
+
   @Override
   @NotNull
   public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
@@ -45,9 +52,9 @@ public class GherkinParser implements PsiParser {
         }
       }
 
-      if (tokenType == GherkinTokenTypes.SCENARIO_KEYWORD ||
-          tokenType == GherkinTokenTypes.BACKGROUND_KEYWORD ||
-          tokenType == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD ||
+      if (GherkinTokenTypes.SCENARIOS_KEYWORDS.contains(tokenType) ||
+          tokenType == RULE_KEYWORD ||
+          tokenType == BACKGROUND_KEYWORD ||
           tokenType == GherkinTokenTypes.TAG) {
         if (descMarker != null) {
           descMarker.done(GherkinElementTypes.FEATURE_HEADER);
@@ -83,7 +90,25 @@ public class GherkinParser implements PsiParser {
   }
 
   private static void parseFeatureElements(PsiBuilder builder) {
+    PsiBuilder.Marker ruleMarker = null;
     while (builder.getTokenType() != GherkinTokenTypes.FEATURE_KEYWORD && !builder.eof()) {
+      if (builder.getTokenType() == RULE_KEYWORD) {
+        if (ruleMarker != null) {
+          ruleMarker.done(RULE);
+        }
+        ruleMarker = builder.mark();
+        builder.advanceLexer();
+        if (builder.getTokenType() == GherkinTokenTypes.COLON) {
+          builder.advanceLexer();
+        } else {
+          break;
+        }
+
+        while (builder.getTokenType() == GherkinTokenTypes.TEXT) {
+          builder.advanceLexer();
+        }
+      }
+
       final PsiBuilder.Marker marker = builder.mark();
       // tags
       parseTags(builder);
@@ -94,6 +119,9 @@ public class GherkinParser implements PsiParser {
       builder.advanceLexer();
       parseScenario(builder);
       marker.done(outline ? GherkinElementTypes.SCENARIO_OUTLINE : GherkinElementTypes.SCENARIO);
+    }
+    if (ruleMarker != null) {
+      ruleMarker.done(RULE);
     }
   }
 
@@ -132,11 +160,7 @@ public class GherkinParser implements PsiParser {
       i++;
     }
     final IElementType tokenType = builder.lookAhead(i);
-    return tokenType == null ||
-           tokenType == GherkinTokenTypes.BACKGROUND_KEYWORD ||
-           tokenType == GherkinTokenTypes.SCENARIO_KEYWORD ||
-           tokenType == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD ||
-           tokenType == GherkinTokenTypes.FEATURE_KEYWORD;
+    return tokenType == null || SCENARIO_END_TOKENS.contains(tokenType);
   }
 
   private static boolean parseStepParameter(PsiBuilder builder) {

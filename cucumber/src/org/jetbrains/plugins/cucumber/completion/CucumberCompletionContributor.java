@@ -121,8 +121,13 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
     final PsiElement prevElement = getPreviousElement(originalPosition);
     if (prevElement != null && prevElement.getNode().getElementType() == GherkinTokenTypes.SCENARIO_KEYWORD) {
-      String scenarioKeyword = (String)table.getScenarioKeywords().toArray()[0];
-      result = result.withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(scenarioKeyword + " " + result.getPrefixMatcher().getPrefix()));
+      for (String scenarioKeyword : table.getScenarioKeywords()) {
+        if (prevElement.getText().startsWith(scenarioKeyword)) {
+          result = result
+            .withPrefixMatcher(result.getPrefixMatcher().cloneWithPrefix(scenarioKeyword + " " + result.getPrefixMatcher().getPrefix()));
+          break;
+        }
+      }
 
       boolean haveColon = false;
       final String elementText = originalPosition.getText();
