@@ -7,7 +7,6 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -162,10 +161,10 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
   }
 
   private static class IgnoreWarningFix extends IntentionAndQuickFixAction {
-    @NotNull private final Set<String> myIgnoredPubspecPaths;
+    @NotNull private final Set<? super String> myIgnoredPubspecPaths;
     @NotNull private final String myPubspecPath;
 
-    IgnoreWarningFix(@NotNull final Set<String> ignoredPubspecPaths, @NotNull final String pubspecPath) {
+    IgnoreWarningFix(@NotNull final Set<? super String> ignoredPubspecPaths, @NotNull final String pubspecPath) {
       myIgnoredPubspecPaths = ignoredPubspecPaths;
       myPubspecPath = pubspecPath;
     }

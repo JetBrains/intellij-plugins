@@ -236,11 +236,11 @@ public class FlexTestUtils {
     });
   }
 
-  public static void modifyBuildConfiguration(final Module module, final Consumer<ModifiableFlexBuildConfiguration> modifier) {
+  public static void modifyBuildConfiguration(final Module module, final Consumer<? super ModifiableFlexBuildConfiguration> modifier) {
     modifyConfigs(module.getProject(), editor -> modifier.consume(editor.getConfigurations(module)[0]));
   }
 
-  public static void modifyConfigs(Project project, final Consumer<FlexProjectConfigurationEditor> modifier) {
+  public static void modifyConfigs(Project project, final Consumer<? super FlexProjectConfigurationEditor> modifier) {
     Module[] modules = ModuleManager.getInstance(project).getModules();
     final FlexProjectConfigurationEditor editor = createConfigEditor(modules);
     try {

@@ -49,7 +49,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   @NonNls public static final String EVENT_ATTR_PREFIX = "on";
 
   public static XmlAttributeDescriptor getAttributeDescriptor(@Nullable final String attrName, @Nullable XmlTag xmlTag,
-                                                              @NotNull Function<XmlTag, XmlAttributeDescriptor[]> attrDescrProvider) {
+                                                              @NotNull Function<? super XmlTag, XmlAttributeDescriptor[]> attrDescrProvider) {
     if (attrName == null || xmlTag == null || DumbService.isDumb(xmlTag.getProject())) {
       return null;
     }
@@ -212,8 +212,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
   }
 
   private static <T> void fillNamesAndProperties(@NotNull Map<String, Angular2DirectiveProperty> map,
-                                                 @NotNull Collection<T> propertiesCollection,
-                                                 @NotNull Function<T, Angular2DirectiveProperty> propertyExtractor) {
+                                                 @NotNull Collection<? extends T> propertiesCollection,
+                                                 @NotNull Function<? super T, ? extends Angular2DirectiveProperty> propertyExtractor) {
     map.clear();
     for (T item : propertiesCollection) {
       Angular2DirectiveProperty property = propertyExtractor.apply(item);
