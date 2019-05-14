@@ -27,6 +27,7 @@ import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.psi.impl.CfmlNamedAttributeImpl;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementResolveResult;
 import com.intellij.psi.PsiWhiteSpace;
@@ -139,7 +140,7 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
     String functionName = getFunctionName();
     if (CfmlUtil.isPredefinedFunction(functionName, getProject())) {
       CfmlFunctionDescription cfmlFunctionDescription =
-        CfmlLangInfo.getInstance(getProject()).getFunctionParameters().get(functionName.toLowerCase());
+        CfmlLangInfo.getInstance(getProject()).getFunctionParameters().get(StringUtil.toLowerCase(functionName));
       for (CfmlFunctionDescription.CfmlParameterDescription param : cfmlFunctionDescription.getParameters()) {
         result.add(TailTypeDecorator.withTail(
           LookupElementBuilder.create(param.getName()).withCaseSensitivity(false),

@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
@@ -32,7 +33,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
 
@@ -108,7 +112,7 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
       return getWrappedDescriptorFromNamespace(xmlTag);
     }
     String tagName = XmlUtil.findLocalNameByQualifiedName(xmlTag.getName());
-    if (NG_SPECIAL_TAGS.contains(tagName.toLowerCase(Locale.ENGLISH))) {
+    if (NG_SPECIAL_TAGS.contains(StringUtil.toLowerCase(tagName))) {
       return new Angular2TagDescriptor(xmlTag, tagName, Collections.singleton(createDirective(xmlTag, tagName)),
                                        !NG_CONTENT.equals(tagName));
     }

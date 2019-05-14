@@ -3,6 +3,7 @@ package com.intellij.coldFusion.model.psi.stubs;
 
 import com.intellij.coldFusion.model.psi.CfmlComponent;
 import com.intellij.lang.Language;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -60,17 +61,17 @@ public abstract class CfmlComponentElementType extends CfmlStubElementType<CfmlC
     String shortName = stub.getName();
     if (shortName != null) {
       if (stub.isInterface()) {
-        sink.occurrence(CfmlInterfaceIndex.KEY, shortName.toLowerCase());
+        sink.occurrence(CfmlInterfaceIndex.KEY, StringUtil.toLowerCase(shortName));
       }
       else {
-        sink.occurrence(CfmlComponentIndex.KEY, shortName.toLowerCase());
+        sink.occurrence(CfmlComponentIndex.KEY, StringUtil.toLowerCase(shortName));
       }
     }
     if (stub.getSuperclass() != null) {
-      sink.occurrence(CfmlInheritanceIndex.KEY, stub.getSuperclass().toLowerCase());
+      sink.occurrence(CfmlInheritanceIndex.KEY, StringUtil.toLowerCase(stub.getSuperclass()));
     }
     for (String superName : stub.getInterfaces()) {
-      sink.occurrence(CfmlInheritanceIndex.KEY, superName.toLowerCase());
+      sink.occurrence(CfmlInheritanceIndex.KEY, StringUtil.toLowerCase(superName));
     }
   }
 }

@@ -9,6 +9,7 @@ import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.parameterInfo.*;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
@@ -125,7 +126,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
       }
     }
     if (element instanceof CfmlReferenceExpression) {
-      String functionName = element.getText().toLowerCase();
+      String functionName = StringUtil.toLowerCase(element.getText());
       if (ArrayUtil.find(CfmlLangInfo.getInstance(element.getProject()).getPredefinedFunctionsLowCase(), functionName) != -1) {
         context.setItemsToShow(new Object[]{CfmlLangInfo.getInstance(element.getProject()).getFunctionParameters().get(functionName)});
         context.showHint(element, element.getTextRange().getStartOffset(), this);

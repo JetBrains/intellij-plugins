@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
-import java.util.Locale;
 
 public class DartConsoleFolding extends ConsoleFolding {
 
@@ -145,7 +144,7 @@ public class DartConsoleFolding extends ConsoleFolding {
     // pub run test main_test.dart -n "group1 test21|group1 test22"
     int index = line.indexOf(TEST_RUNNER_MARKER);
     index += TEST_RUNNER_MARKER.length();
-    index = line.toLowerCase(Locale.US).indexOf(".dart", index);
+    index = StringUtil.toLowerCase(line).indexOf(".dart", index);
     if (index < 0) return line;
 
     int tailIndex = index + (line.substring(index + ".dart".length()).startsWith("\"") ? ".dart\"".length() : ".dart".length());

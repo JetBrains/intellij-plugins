@@ -481,7 +481,7 @@ public class FlashBuilderProjectLoadUtil {
   public static String getClassName(final @NotNull String path) {
     final String fqn = path.replace('/', '.').trim();
     final int lastDotIndex = fqn.lastIndexOf('.');
-    final String lowercased = fqn.toLowerCase();
+    final String lowercased = StringUtil.toLowerCase(fqn);
     return (lastDotIndex >= 0 && (lowercased.endsWith(".mxml") || lowercased.endsWith(".as"))) ? fqn.substring(0, lastDotIndex) : fqn;
   }
 

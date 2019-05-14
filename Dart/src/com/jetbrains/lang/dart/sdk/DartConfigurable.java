@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBCheckBox;
@@ -41,7 +42,10 @@ import javax.swing.event.TreeWillExpandListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.ExpandVetoException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Enumeration;
 
 public class DartConfigurable implements SearchableConfigurable, NoScroll {
 
@@ -178,7 +182,7 @@ public class DartConfigurable implements SearchableConfigurable, NoScroll {
                                 : DartBundle.message("enable.dart.support.for.following.projects"));
 
     final Module[] modules = ModuleManager.getInstance(myProject).getModules();
-    Arrays.sort(modules, Comparator.comparing(module -> module.getName().toLowerCase(Locale.US)));
+    Arrays.sort(modules, Comparator.comparing(module -> StringUtil.toLowerCase(module.getName())));
 
     final CheckedTreeNode rootNode = new CheckedTreeNode(myProject);
     ((DefaultTreeModel)myModulesCheckboxTreeTable.getTree().getModel()).setRoot(rootNode);

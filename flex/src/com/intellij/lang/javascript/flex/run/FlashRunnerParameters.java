@@ -45,7 +45,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
 
 public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
 
@@ -546,7 +549,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       if (myOverriddenOutputFileName.isEmpty()) {
         throw new RuntimeConfigurationError(FlexBundle.message("output.file.name.not.specified"));
       }
-      if (!myOverriddenOutputFileName.toLowerCase(Locale.US).endsWith(".swf")) {
+      if (!StringUtil.toLowerCase(myOverriddenOutputFileName).endsWith(".swf")) {
         throw new RuntimeConfigurationError(FlexBundle.message("output.file.must.have.swf.extension"));
       }
     }

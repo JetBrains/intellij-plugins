@@ -152,7 +152,7 @@ public class CfmlUtil {
   }
 
   public static boolean isUserDefined(String tagName) {
-    return tagName != null && (tagName.toLowerCase().startsWith("cf_") || tagName.contains(":"));
+    return tagName != null && (StringUtil.toLowerCase(tagName).startsWith("cf_") || tagName.contains(":"));
   }
 
   public static boolean isSingleCfmlTag(String tagName, Project project) {
@@ -210,7 +210,7 @@ public class CfmlUtil {
       return false;
     }
 
-    final String name = tokenText.toLowerCase();
+    final String name = StringUtil.toLowerCase(tokenText);
     boolean isKeyword = Arrays
       .stream(CfmlKeywords.values())
       .anyMatch(cfmlKeyword -> cfmlKeyword.getKeyword().equals(name));
@@ -227,7 +227,7 @@ public class CfmlUtil {
   }
 
   public static boolean isPredefinedFunction(String functionName, Project project) {
-    return ArrayUtil.find(getCfmlLangInfo(project).getPredefinedFunctionsInLowCase(), functionName.toLowerCase()) !=
+    return ArrayUtil.find(getCfmlLangInfo(project).getPredefinedFunctionsInLowCase(), StringUtil.toLowerCase(functionName)) !=
            -1;
   }
 
@@ -247,8 +247,7 @@ public class CfmlUtil {
     String tagNameWithoutCf = tagName.startsWith("cf") ? tagName.substring(2) : tagName;
     return
       getCfmlLangInfo(project).getPredefinedVariables().keySet()
-        .contains(tagNameWithoutCf.toLowerCase() + "." + predefVarText
-          .toLowerCase());
+        .contains(StringUtil.toLowerCase(tagNameWithoutCf) + "." + StringUtil.toLowerCase(predefVarText));
   }
 
   private static final String[] EMPTY_STRING_ARRAY = ArrayUtil.EMPTY_STRING_ARRAY;

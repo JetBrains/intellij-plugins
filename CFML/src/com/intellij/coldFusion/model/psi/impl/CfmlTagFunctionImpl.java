@@ -5,6 +5,7 @@ import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiType;
 import com.intellij.ui.RowIcon;
@@ -48,7 +49,7 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
     if (access == null) {
       return METHOD_ICON;
     }
-    access = access.toLowerCase();
+    access = StringUtil.toLowerCase(access);
     RowIcon baseIcon = new RowIcon(2);
     baseIcon.setIcon(METHOD_ICON, 0);
     if ("private".equals(access)) {

@@ -1008,7 +1008,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     for (int i = 0; i < ourModifiersList.size(); ++i) {
       final ASTNode[] modifiers = node.getChildren(ourModifiersList.get(i));
       if (modifiers.length < 2) continue;
-      String s = modifiers[0].getElementType().toString().toLowerCase(Locale.ENGLISH);
+      String s = StringUtil.toLowerCase(modifiers[0].getElementType().toString());
       final String type = s.substring(s.indexOf(':') + 1, s.indexOf('_'));
       for (ASTNode a : modifiers) {
         final Annotation errorAnnotation = JSAnnotatorProblemReporter.createErrorAnnotation(a.getPsi(),

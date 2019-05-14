@@ -250,7 +250,7 @@ public class PrettierUtil {
     if (string == null) {
       return null;
     }
-    return StringUtil.parseEnum(string.toUpperCase(Locale.US), null, LineSeparator.class);
+    return StringUtil.parseEnum(StringUtil.toUpperCase(string), null, LineSeparator.class);
   }
 
   @Nullable

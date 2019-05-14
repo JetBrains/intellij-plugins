@@ -5,11 +5,15 @@ import com.intellij.lang.Language;
 import com.intellij.lexer.EmbeddedTokenTypesProvider;
 import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public enum LanguageGuesser {
   INSTANCE;
@@ -42,7 +46,7 @@ public enum LanguageGuesser {
           continue;
         }
 
-        result.put(language.getID().toLowerCase(Locale.US), language);
+        result.put(StringUtil.toLowerCase(language.getID()), language);
       }
 
       final Language javascriptLanguage = result.get("javascript");
@@ -77,7 +81,7 @@ public enum LanguageGuesser {
       }
     }
 
-    final Language languageFromMap = langIdToLanguage.getValue().get(languageName.toLowerCase(Locale.US));
+    final Language languageFromMap = langIdToLanguage.getValue().get(StringUtil.toLowerCase(languageName));
     if (languageFromMap != null) {
       return languageFromMap;
     }
