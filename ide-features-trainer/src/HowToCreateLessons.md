@@ -32,5 +32,5 @@ _Module xml_ has a list of lessons with a relative path to them:
 </module>
 ```
 
-So lessons for _Refactorings_ module are located in `res/data/modules/EditorBasics/01.Rename.xml`. 
+So lessons for _Refactorings_ module are located in `res/data/modules/java/Refactorings/01.Rename.xml`. 
 
