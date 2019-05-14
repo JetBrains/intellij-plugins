@@ -8,7 +8,7 @@ func main() {
 	fmt.Println("hello world")
 }]]></CopyText>
     </MouseBlock>
-    <MoveCaret position="3:1"/>
+    <MoveCaret position="6:5"/>
     <Try action="CommentByLineComment" trigger="CommentByLineComment">Comment out any line with <action>CommentByLineComment</action></Try>
     <Try action="CommentByLineComment" trigger="CommentByLineComment">Uncomment the commented line with the same shortcut, <action>CommentByLineComment</action></Try>
     <Try action="CommentByLineComment" triggers="EditorDownWithSelection;CommentByLineComment">Select several lines with <action>EditorDownWithSelection</action> and comment them with <action>CommentByLineComment</action></Try>
