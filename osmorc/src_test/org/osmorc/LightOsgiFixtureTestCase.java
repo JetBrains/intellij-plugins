@@ -53,7 +53,7 @@ public abstract class LightOsgiFixtureTestCase extends LightCodeInsightFixtureTe
   protected void setUp() throws Exception {
     super.setUp();
 
-    myFacet = OsmorcFacet.getInstance(myModule);
+    myFacet = OsmorcFacet.getInstance(getModule());
     assertNotNull(myFacet);
 
     myConfiguration = myFacet.getConfiguration();

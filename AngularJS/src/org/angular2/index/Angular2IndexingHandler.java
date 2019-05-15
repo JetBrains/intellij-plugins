@@ -191,7 +191,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static void addDirective(@NotNull TypeScriptClass directiveClass,
-                                   @NotNull Consumer<JSImplicitElement> processor,
+                                   @NotNull Consumer<? super JSImplicitElement> processor,
                                    @NonNls @Nullable String selector) {
     final Set<String> indexNames;
     if (selector == null) {
@@ -240,7 +240,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
 
   private static void addComponentExternalFilesRefs(@NotNull ES6Decorator decorator,
                                                     @NotNull String namePrefix,
-                                                    @NotNull Consumer<JSImplicitElement> processor,
+                                                    @NotNull Consumer<? super JSImplicitElement> processor,
                                                     @NotNull List<String> fileUrls) {
     for (String fileUrl : fileUrls) {
       int lastSlash = fileUrl.lastIndexOf('/');
@@ -258,7 +258,7 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
   }
 
   private static void addPipe(@NotNull TypeScriptClass pipeClass,
-                              @NotNull Consumer<JSImplicitElement> processor,
+                              @NotNull Consumer<? super JSImplicitElement> processor,
                               @NonNls @Nullable String pipe) {
     if (pipe == null) {
       pipe = Angular2Bundle.message("angular.description.unnamed");

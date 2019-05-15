@@ -73,7 +73,7 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
     return Collections.emptyList();
   }
 
-  private static boolean isConfigured(Collection<VirtualFile> files, Project project) {
+  private static boolean isConfigured(Collection<? extends VirtualFile> files, Project project) {
     if (project == null) return false;
 
     for (VirtualFile file : files) {
@@ -96,9 +96,9 @@ public class AngularJSFrameworkDetector extends FrameworkDetector {
   }
 
   private class AngularCLIFrameworkDescription extends DetectedFrameworkDescription {
-    private final Collection<VirtualFile> myNewFiles;
+    private final Collection<? extends VirtualFile> myNewFiles;
 
-    AngularCLIFrameworkDescription(Collection<VirtualFile> newFiles) {
+    AngularCLIFrameworkDescription(Collection<? extends VirtualFile> newFiles) {
       myNewFiles = newFiles;
     }
 

@@ -46,7 +46,10 @@ public class Util {
     WebModuleFixtureBuilder webBuilder = fixtureBuilder.addModule(WebModuleFixtureBuilder.class);
     webBuilder.addContentRoot(new File("").getAbsoluteFile() + "/src/test/webModule");
     webBuilder.addSourceRoot("src");
-    webBuilder.addJdk(System.getProperty("jdk.home"));
+    String jdkPath = System.getProperty("jdk.home");
+    if (jdkPath != null) {
+      webBuilder.addJdk(jdkPath);
+    }
     webBuilder.addWebRoot(new File("").getAbsoluteFile() + "/src/test/webModule/resources", "/");
     webBuilder.addWebRoot(new File("").getAbsoluteFile() + "/src/test/webModule/WEB-INF", "/WEB-INF");
 

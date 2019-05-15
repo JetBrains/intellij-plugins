@@ -22,7 +22,7 @@ public class FlexInlineVariableTest extends JSInlineVarOrFunctionTestBase {
   protected void setUp() throws Exception {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "as_refactoring/inlineVariable/");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   private void ecmaTest() {

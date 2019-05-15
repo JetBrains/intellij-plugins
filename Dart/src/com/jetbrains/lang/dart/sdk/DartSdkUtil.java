@@ -132,7 +132,7 @@ public class DartSdkUtil {
 
   private static void addKnownPathsToCombo(@NotNull final JComboBox combo,
                                            @NotNull final String propertyKey,
-                                           @NotNull final BooleanFunction<String> pathChecker) {
+                                           @NotNull final BooleanFunction<? super String> pathChecker) {
     final SmartList<String> validPathsForUI = new SmartList<>();
 
     final String currentPath = getItemFromCombo(combo);

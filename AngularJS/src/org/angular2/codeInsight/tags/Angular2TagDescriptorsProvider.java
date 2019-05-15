@@ -67,12 +67,12 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     });
   }
 
-  private static void addLookupItem(@NotNull Language language, @NotNull List<LookupElement> elements, @NotNull String name) {
+  private static void addLookupItem(@NotNull Language language, @NotNull List<? super LookupElement> elements, @NotNull String name) {
     addLookupItem(language, elements, name, name, null, null);
   }
 
   private static void addLookupItem(@NotNull Language language,
-                                    @NotNull List<LookupElement> elements,
+                                    @NotNull List<? super LookupElement> elements,
                                     @NotNull Object component,
                                     @NotNull String name,
                                     @Nullable List<Angular2Directive> directives,

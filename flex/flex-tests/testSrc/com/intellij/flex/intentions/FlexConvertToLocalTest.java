@@ -15,7 +15,7 @@ public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     myFixture.enableInspections(new JSFieldCanBeLocalInspection());
   }
 

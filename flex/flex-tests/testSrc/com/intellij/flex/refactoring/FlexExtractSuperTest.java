@@ -57,7 +57,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     super.setUp();
     myDoCompare = true;
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     JSTestUtils.disableFileHeadersInTemplates(getProject());
   }
 
@@ -100,7 +100,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
                              JSExtractSuperMode mode,
                              String[] members,
                              String[] conflicts) {
-    JSClass sourceClass = JSTestUtils.findClassByQName(from, GlobalSearchScope.moduleScope(myModule));
+    JSClass sourceClass = JSTestUtils.findClassByQName(from, GlobalSearchScope.moduleScope(getModule()));
     final List<JSMemberInfo> memberInfos = FlexPullUpTest.getMemberInfos(members, sourceClass, false);
     JSMemberInfo.sortByOffset(memberInfos);
     JSMemberInfo[] infosArray = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.alwaysTrue());
@@ -269,7 +269,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
       @Override
       public void performAction(final VirtualFile rootDir, final VirtualFile rootAfter) {
         FlexTestUtils.modifyConfigs(myFixture.getProject(), editor -> {
-          ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+          ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(getModule())[0];
           bc1.setName("1");
           FlexTestUtils.setSdk(bc1, sdk);
         });

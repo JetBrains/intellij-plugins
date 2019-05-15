@@ -63,7 +63,7 @@ public class CfmlCommenterTest extends CfmlCodeInsightFixtureTestCase {
     private void doTest(final String actionId) {
         myFixture.configureByFile(Util.getInputDataFileName(getTestName(true)));
         MultiCaretCodeInsightAction action = (MultiCaretCodeInsightAction) ActionManager.getInstance().getAction(actionId);
-        action.actionPerformedImpl(myModule.getProject(), myFixture.getEditor());
+        action.actionPerformedImpl(getModule().getProject(), myFixture.getEditor());
         myFixture.checkResultByFile(Util.getExpectedDataFileName(getTestName(true)));
     }
 

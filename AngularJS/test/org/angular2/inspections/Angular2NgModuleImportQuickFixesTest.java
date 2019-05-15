@@ -309,9 +309,9 @@ public class Angular2NgModuleImportQuickFixesTest extends Angular2MultiFileFixtu
 
   private void initNodeModules() {
     VirtualFile nodeModules = getNodeModules();
-    PsiTestUtil.addSourceContentToRoots(myModule, nodeModules);
+    PsiTestUtil.addSourceContentToRoots(getModule(), nodeModules);
     Disposer.register(myFixture.getTestRootDisposable(),
-                      () -> PsiTestUtil.removeContentEntry(myModule, nodeModules));
+                      () -> PsiTestUtil.removeContentEntry(getModule(), nodeModules));
   }
 
   @NotNull
