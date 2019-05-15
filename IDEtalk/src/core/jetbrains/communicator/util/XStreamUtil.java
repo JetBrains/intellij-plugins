@@ -13,16 +13,16 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author Kir Maximov
  */
-public class XMLUtil {
+public class XStreamUtil {
   @NonNls
-  private static final Logger LOG = Logger.getLogger(XMLUtil.class);
+  private static final Logger LOG = Logger.getLogger(XStreamUtil.class);
 
-  private XMLUtil() {
+  private XStreamUtil() {
   }
 
   public static XStream createXStream() {
     final XStream xStream = new XStream();
-    xStream.setClassLoader(XMLUtil.class.getClassLoader());
+    xStream.setClassLoader(XStreamUtil.class.getClassLoader());
     return xStream;
   }
 

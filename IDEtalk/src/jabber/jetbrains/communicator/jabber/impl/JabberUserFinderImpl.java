@@ -9,7 +9,7 @@ import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.jabber.JabberUserFinder;
 import jetbrains.communicator.util.StringUtil;
-import jetbrains.communicator.util.XMLUtil;
+import jetbrains.communicator.util.XStreamUtil;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -88,14 +88,14 @@ public class JabberUserFinderImpl implements JabberUserFinder {
 
   private boolean neverAsked(String jabberUserId, String currentProjectId) {
     XStream xStream = new XStream();
-    Set<String> keys = (Set<String>) XMLUtil.fromXml(xStream, myIdeFacade.getCacheDir(), "registryQuestions.xml", false);
+    Set<String> keys = (Set<String>) XStreamUtil.fromXml(xStream, myIdeFacade.getCacheDir(), "registryQuestions.xml", false);
     if (keys == null) {
       keys = new HashSet<>();
     }
     String key = jabberUserId + "_" + currentProjectId;
     boolean result = !keys.contains(key);
     keys.add(key);
-    XMLUtil.toXml(xStream, myIdeFacade.getCacheDir(), "registryQuestions.xml", keys);
+    XStreamUtil.toXml(xStream, myIdeFacade.getCacheDir(), "registryQuestions.xml", keys);
     return result;
   }
 
