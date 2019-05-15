@@ -11,6 +11,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -38,6 +39,8 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     if (!isOnTheFly) return null;
 
     if (!(psiFile instanceof DartFile)) return null;
+
+    if (Registry.is("dart.projects.without.pubspec")) return null;
 
     if (DartPubActionBase.isInProgress()) return null;
 
