@@ -25,7 +25,7 @@ import jetbrains.communicator.jabber.AccountInfo;
 import jetbrains.communicator.jabber.ConnectionListener;
 import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.VCardInfo;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.WaitFor;
 import jetbrains.communicator.util.XStreamUtil;
 import org.apache.log4j.Logger;
@@ -168,14 +168,14 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
         connection.getAccountManager().createAccount(user, password.replaceAll("&", "&amp;"));
       }
 
-      if (!connection.isConnected()) return StringUtil.getMsg("unable.to.connect.to", server, port);
+      if (!connection.isConnected()) return CommunicatorStrings.getMsg("unable.to.connect.to", server, port);
       connection.login(user, password, IDETALK_RESOURCE);
 
       saveAccountData(server, port, username, password, forceOldSSL);
 
       if (rosterIsNotAvailable(connection)) {
         connection.close();
-        return StringUtil.getMsg("no.roster.try.again");
+        return CommunicatorStrings.getMsg("no.roster.try.again");
       }
 
       myConnection = connection;
@@ -322,8 +322,8 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
           }
           roster.createEntry(id, JabberTransport.getSimpleId(id), new String[]{group});
         } catch (XMPPException e) {
-          myIdeFacade.showMessage(StringUtil.getMsg("jabber.error.while.adding.user.title", id)
-              ,StringUtil.getMsg("jabber.error.while.adding.user.text", id, getMessage(e))
+          myIdeFacade.showMessage(CommunicatorStrings.getMsg("jabber.error.while.adding.user.title", id)
+              , CommunicatorStrings.getMsg("jabber.error.while.adding.user.text", id, getMessage(e))
           );
           LOG.info(getMessage(e), e);
         }

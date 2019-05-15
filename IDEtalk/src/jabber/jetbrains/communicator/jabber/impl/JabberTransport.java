@@ -39,7 +39,7 @@ import java.util.*;
 import java.util.concurrent.Future;
 
 import static jetbrains.communicator.core.users.UserEvent.Updated.*;
-import static jetbrains.communicator.util.StringUtil.getMsg;
+import static jetbrains.communicator.util.CommunicatorStrings.getMsg;
 
 /**
  * @author Kir

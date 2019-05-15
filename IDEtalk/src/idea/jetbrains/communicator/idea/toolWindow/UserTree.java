@@ -16,7 +16,7 @@ import jetbrains.communicator.idea.IDEAFacade;
 import jetbrains.communicator.idea.IdeaLocalMessage;
 import jetbrains.communicator.idea.actions.BaseAction;
 import jetbrains.communicator.util.KirTree;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.TreeUtils;
 import jetbrains.communicator.util.UIUtil;
 import org.picocontainer.MutablePicoContainer;
@@ -117,7 +117,7 @@ public class UserTree extends KirTree {
         User user = (User) userObject;
         StringBuilder result = new StringBuilder();
         if (!user.getName().equals(user.getDisplayName())) {
-          result.append(StringUtil.getMsg("user.tooltip", user.getName())).append("\n");
+          result.append(CommunicatorStrings.getMsg("user.tooltip", user.getName())).append("\n");
         }
 
         Message[] pendingMessages = myLocalMessageDispatcher.getPendingMessages(user);

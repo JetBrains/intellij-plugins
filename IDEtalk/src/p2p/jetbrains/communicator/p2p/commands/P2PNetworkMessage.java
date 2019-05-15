@@ -21,7 +21,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.p2p.NetworkUtil;
 import jetbrains.communicator.p2p.P2PTransport;
 import jetbrains.communicator.p2p.XmlRpcTargetImpl;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +52,7 @@ public class P2PNetworkMessage implements Message {
     
     XmlRpcTargetImpl target = new XmlRpcTargetImpl(port, P2PTransport.getInstance().getAddress(user));
     List<String> parameters = new ArrayList<>();
-    parameters.add(StringUtil.toXMLSafeString(StringUtil.getMyUsername()));
+    parameters.add(CommunicatorStrings.toXMLSafeString(CommunicatorStrings.getMyUsername()));
     parameters.addAll(myCommandParameters);
     setResponse(NetworkUtil.sendMessage(target, myCommandId, myCommand, ArrayUtil.toObjectArray(parameters)));
     return null != myResponse;

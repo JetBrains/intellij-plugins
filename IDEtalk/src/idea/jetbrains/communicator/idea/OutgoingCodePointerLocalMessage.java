@@ -9,7 +9,7 @@ import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.SendCodePointerEvent;
 import jetbrains.communicator.idea.codePointer.IncomingCodePointerMessage;
 import jetbrains.communicator.idea.messagesWindow.OwnConsoleMessage;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 /**
  * @author Kir
@@ -29,7 +29,7 @@ public class OutgoingCodePointerLocalMessage extends BaseOutgoingLocalMessage {
 
   @Override
   public ConsoleMessage createConsoleMessage(User user) {
-    return new OwnConsoleMessage(user, StringUtil.getMsg("code.pointer"), getWhen()) {
+    return new OwnConsoleMessage(user, CommunicatorStrings.getMsg("code.pointer"), getWhen()) {
       @Override
       public void printMessage(Project project, ConsoleView console) {
         final IDEAFacade ideFacade =

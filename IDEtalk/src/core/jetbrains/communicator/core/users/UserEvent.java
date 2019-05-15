@@ -18,7 +18,7 @@ package jetbrains.communicator.core.users;
 
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkEvent;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -42,7 +42,7 @@ public abstract class UserEvent implements IDEtalkEvent {
   }
 
   public String toString() {
-    return StringUtil.toString(getClass(), myUser);
+    return CommunicatorStrings.toString(getClass(), myUser);
   }
 
   public static class Added extends UserEvent {
@@ -103,7 +103,7 @@ public abstract class UserEvent implements IDEtalkEvent {
     }
 
     public String toString() {
-      return StringUtil.toString(getClass(), new Object[]{
+      return CommunicatorStrings.toString(getClass(), new Object[]{
         getUser(), myPropertyName, myOldValue, myNewValue
       });
     }

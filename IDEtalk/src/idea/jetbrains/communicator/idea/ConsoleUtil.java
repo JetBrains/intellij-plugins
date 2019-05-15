@@ -22,7 +22,7 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import jetbrains.communicator.core.users.User;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -94,7 +94,7 @@ public class ConsoleUtil {
   }
 
   public static String getHeader(String title, User user, Date when) {
-    return StringUtil.getMsg("console.header", formatDate(when), user.getDisplayName());
+    return CommunicatorStrings.getMsg("console.header", formatDate(when), user.getDisplayName());
   }
 
   public static String formatDate(Date when) {

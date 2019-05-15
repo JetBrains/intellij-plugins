@@ -19,7 +19,7 @@ import jetbrains.communicator.AbstractTransportTestCase;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.users.User;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -51,7 +51,7 @@ public class P2PTransport_SelfOnline_Test extends AbstractTransportTestCase {
 
   @Override
   protected User createSelf() throws UnknownHostException {
-    return myTransport.createUser(StringUtil.getMyUsername(), new OnlineUserInfo(InetAddress.getLocalHost(), myTransport.getPort()));
+    return myTransport.createUser(CommunicatorStrings.getMyUsername(), new OnlineUserInfo(InetAddress.getLocalHost(), myTransport.getPort()));
   }
 
   @Override

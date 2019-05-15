@@ -19,7 +19,7 @@ import com.intellij.util.ArrayUtil;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.transport.TransportEvent;
 import jetbrains.communicator.core.users.*;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.picocontainer.Disposable;
@@ -244,7 +244,7 @@ public class UserModelImpl implements UserModel, Disposable {
   @Override
   public String renameGroup(final String oldGroup, String newGroup) {
     final User[] users = getUsers(oldGroup);
-    final String newName = StringUtil.fixGroup(newGroup);
+    final String newName = CommunicatorStrings.fixGroup(newGroup);
 
     myBroadcaster.doChange(new GroupEvent.Updated(oldGroup, newName), () -> {
       synchronized (myUsersGroupsLock) {

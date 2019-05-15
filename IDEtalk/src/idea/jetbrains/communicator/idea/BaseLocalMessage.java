@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import jetbrains.communicator.core.dispatcher.LocalMessage;
 import jetbrains.communicator.core.users.User;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.UIUtil;
 import jetbrains.communicator.util.icons.EmptyIcon;
 
@@ -39,7 +39,7 @@ public abstract class BaseLocalMessage implements LocalMessage {
 
   @Override
   public boolean containsString(String searchString) {
-    return StringUtil.containedIn(myComment, searchString);
+    return CommunicatorStrings.containedIn(myComment, searchString);
   }
 
   protected abstract Icon getIcon();

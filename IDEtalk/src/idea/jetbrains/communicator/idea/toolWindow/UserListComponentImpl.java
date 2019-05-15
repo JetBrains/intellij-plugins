@@ -377,7 +377,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
 
     private boolean problem(final String resourceCode) {
       EdtExecutorService.getScheduledExecutorInstance().schedule(() -> Callout.showText(myTree, myTree.getEditingPath(), Callout.SOUTH_WEST,
-                                                                                    StringUtil.getMsg(resourceCode)), (long)100, TimeUnit.MILLISECONDS);
+                                                                                        CommunicatorStrings.getMsg(resourceCode)), (long)100, TimeUnit.MILLISECONDS);
       return false;
     }
 

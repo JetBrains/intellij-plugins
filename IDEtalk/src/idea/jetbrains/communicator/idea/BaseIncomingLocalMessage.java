@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.components.labels.BoldLabel;
 import jetbrains.communicator.core.users.User;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.icons.CompositeIcon;
 
 import javax.swing.*;
@@ -34,7 +34,7 @@ public abstract class BaseIncomingLocalMessage extends BaseLocalMessage implemen
   @Override
   public JComponent getPopupComponent(User user, Project project) {
     JPanel panel = new JPanel(new BorderLayout());
-    panel.add(new BoldLabel(StringUtil.getMsg("0.from.1", getTitle(), user.getDisplayName())), BorderLayout.NORTH);
+    panel.add(new BoldLabel(CommunicatorStrings.getMsg("0.from.1", getTitle(), user.getDisplayName())), BorderLayout.NORTH);
     ComponentConsoleView componentConsoleView = new ComponentConsoleView(user, project);
     outputMessage(componentConsoleView);
     panel.add(componentConsoleView.getComponent());

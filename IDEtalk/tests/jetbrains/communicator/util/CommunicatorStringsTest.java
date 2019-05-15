@@ -20,12 +20,12 @@ import junit.framework.TestCase;
 /**
  * @author kir
  */
-public class StringUtilTest extends TestCase {
+public class CommunicatorStringsTest extends TestCase {
   public static final int BUFLENGTH = 100000;
 
   public void testTwoDirection() {
     assertEquals("Expect valid >< conversion",
-                 "\u0416a\u0416c\u0416", StringUtil.fromXMLSafeString(StringUtil.toXMLSafeString("\u0416a\u0416c\u0416")));
+                 "\u0416a\u0416c\u0416", CommunicatorStrings.fromXMLSafeString(CommunicatorStrings.toXMLSafeString("\u0416a\u0416c\u0416")));
   }
 
   public void testBigConversion() {
@@ -40,9 +40,9 @@ public class StringUtilTest extends TestCase {
     String s = sb.toString();
 
     watchDog.watchAndReset("fill buffer");
-    String converted = StringUtil.toXMLSafeString(s);
+    String converted = CommunicatorStrings.toXMLSafeString(s);
     watchDog.watch("before backconversion");
-    String back = StringUtil.fromXMLSafeString(converted);
+    String back = CommunicatorStrings.fromXMLSafeString(converted);
     watchDog.watchAndReset("backconverted");
 
     assertEquals("Sanity check", s, back);
@@ -50,12 +50,11 @@ public class StringUtilTest extends TestCase {
 
   public void testGetMsg() {
     assertEquals("Should get resource from ResourceBundle",
-        "some result", StringUtil.getMsg("test.line"));
+                 "some result", CommunicatorStrings.getMsg("test.line"));
   }
 
   public void testGetMsg2() {
-    String msg = StringUtil.getMsg("ViewFilesCommand.fail", "userName", "");
+    String msg = CommunicatorStrings.getMsg("ViewFilesCommand.fail", "userName", "");
     assertEquals(msg, -1, msg.indexOf('{'));
-    System.out.println(msg);
   }
 }

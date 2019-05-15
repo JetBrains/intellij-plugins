@@ -27,7 +27,7 @@ import jetbrains.communicator.ide.NullProgressIndicator;
 import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.p2p.commands.AddOnlineUserP2PCommand;
 import jetbrains.communicator.p2p.commands.SendXmlMessageP2PCommand;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.UIUtil;
 import jetbrains.communicator.util.WaitFor;
 import org.apache.log4j.Logger;
@@ -271,7 +271,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   @Override
   public boolean isSelf(User user) {
     InetAddress address = getAddress(user);
-    return StringUtil.getMyUsername().equals(user.getName()) && NetworkUtil.isOwnAddress(address);
+    return CommunicatorStrings.getMyUsername().equals(user.getName()) && NetworkUtil.isOwnAddress(address);
   }
 
   @Override

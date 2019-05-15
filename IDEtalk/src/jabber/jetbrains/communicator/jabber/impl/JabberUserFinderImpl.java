@@ -8,7 +8,7 @@ import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.jabber.JabberUserFinder;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.XStreamUtil;
 import org.apache.log4j.Logger;
 
@@ -49,7 +49,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
     List<User> users = new ArrayList<>();
     if (currentProjectId != null) {
       try {
-        progressIndicator.setText(StringUtil.getMsg("jabber.findUsers.text"));
+        progressIndicator.setText(CommunicatorStrings.getMsg("jabber.findUsers.text"));
         URL url = new URL(myRegistryUrl + "?id=" + currentProjectId);
         InputStream inputStream = url.openStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -78,8 +78,8 @@ public class JabberUserFinderImpl implements JabberUserFinder {
     final String currentProjectId = myIdeFacade.getCurrentProjectId();
     if (currentProjectId != null) {
       if (neverAsked(jabberUserId, currentProjectId) &&
-          myIdeFacade.askQuestion(StringUtil.getMsg("register.in.public.registry"),
-          StringUtil.getMsg("register.in.public.registry.question", jabberUserId)
+          myIdeFacade.askQuestion(CommunicatorStrings.getMsg("register.in.public.registry"),
+                                  CommunicatorStrings.getMsg("register.in.public.registry.question", jabberUserId)
       )) {
         doRegister(jabberUserId, currentProjectId);
       }

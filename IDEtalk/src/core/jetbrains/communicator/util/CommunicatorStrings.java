@@ -36,8 +36,8 @@ import java.util.regex.Pattern;
 /**
  * @author Kir Maximov
  */
-public class StringUtil {
-  private static final Logger LOG = Logger.getLogger(StringUtil.class);
+public class CommunicatorStrings {
+  private static final Logger LOG = Logger.getLogger(CommunicatorStrings.class);
 
   @NonNls
   private static final Pattern SPECIAL_CHAR = Pattern.compile("&#(\\d+);");
@@ -46,7 +46,7 @@ public class StringUtil {
   public static final String FAILED_TITLE = getMsg("operation_failed.title");
   private static String ourUsername;
 
-  private StringUtil() {
+  private CommunicatorStrings() {
   }
 
   public static String getShortName(Class<?> aClass) {
