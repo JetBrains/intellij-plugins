@@ -205,10 +205,10 @@ public class ContextTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("overriddenMethods.ts", "package.json");
     myFixture.completeBasic();
     assertEquals(newArrayList("$any#*#(arg: *)" + JSLightCompletionTestBase.getLocationPresentation(null, "overriddenMethods.ts"),
-                              "bar#string#()" + JSLightCompletionTestBase.getLocationPresentation("TodoCmp", "overriddenMethods.ts"),
-                              "bar#string#(test: boolean)" + JSLightCompletionTestBase.getLocationPresentation("TodoCmp", "overriddenMethods.ts"),
-                              "bar#string#(test: string)" + JSLightCompletionTestBase.getLocationPresentation("TodoCmp", "overriddenMethods.ts"),
-                              "foo#string# (TodoCmp)"),
+                              "bar#string#()" ,
+                              "bar#string#(test: boolean)",
+                              "bar#string#(test: string)",
+                              "foo#string#"),
                  StreamEx.of(myFixture.getLookupElements()).map(el -> {
                    TestLookupElementPresentation presentation = TestLookupElementPresentation.renderReal(el);
                    return presentation.getItemText() + "#" + presentation.getTypeText() + "#" + presentation.getTailText();
