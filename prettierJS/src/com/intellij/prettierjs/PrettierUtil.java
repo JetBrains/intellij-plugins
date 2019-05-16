@@ -3,6 +3,8 @@ package com.intellij.prettierjs;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.json.psi.JsonFile;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
@@ -30,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.*;
+import java.io.StringReader;
 import java.util.*;
 
 public class PrettierUtil {
@@ -199,7 +202,13 @@ public class PrettierUtil {
         return parseConfigFromMap(packageJsonSectionMap);
       }
       if (file instanceof JsonFile) {
-        return parseConfigFromMap(OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class));
+        String text = file.getText();
+        try (JsonReader reader = new JsonReader(new StringReader(text))) {
+          if (reader.peek() == JsonToken.STRING) {
+            return null; 
+          }
+          return parseConfigFromMap(OUR_GSON_SERIALIZER.fromJson(reader, Map.class));
+        }
       }
       if (JSLinterConfigLangSubstitutor.YamlLanguageHolder.INSTANCE.equals(file.getLanguage())) {
         return parseConfigFromMap(new Yaml().load(file.getText()));
