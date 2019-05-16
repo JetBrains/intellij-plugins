@@ -48,6 +48,16 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
     return getCachedValue(() -> create(findCssFiles(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator()));
   }
 
+  @Override
+  public boolean isStructuralDirective() {
+    return false;
+  }
+
+  @Override
+  public boolean isRegularDirective() {
+    return true;
+  }
+
   @Nullable
   private JSProperty getDecoratorProperty(@NotNull String name) {
     return getProperty(getDecorator(), name);

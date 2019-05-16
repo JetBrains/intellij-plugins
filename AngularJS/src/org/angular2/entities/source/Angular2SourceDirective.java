@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -35,7 +36,9 @@ import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.containers.ContainerUtil.exists;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
+import static org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
 
@@ -77,9 +80,14 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   }
 
   @Override
-  public boolean isTemplate() {
-    return getCachedValue(() -> CachedValueProvider.Result.create(
-      isTemplate(getTypeScriptClass()), getClassModificationDependencies()));
+  public boolean isStructuralDirective() {
+    Pair<Boolean, Boolean> matches = getConstructorParamsMatch();
+    return matches.first || matches.second;
+  }
+
+  @Override
+  public boolean isRegularDirective() {
+    return !getConstructorParamsMatch().first;
   }
 
   @NotNull
@@ -238,21 +246,34 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     return null;
   }
 
-  private static boolean isTemplate(@NotNull TypeScriptClass clazz) {
-    return !JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
-      if (aClass instanceof TypeScriptClass
-          && Stream.of(((TypeScriptClass)aClass).getConstructors())
-            .map(JSFunction::getParameterList)
-            .filter(Objects::nonNull)
-            .map(JSParameterList::getParameters)
-            .flatMap(Stream::of)
-            .map(JSParameterListElement::getJSType)
-            .filter(Objects::nonNull)
-            .map(type -> type.getTypeText())
-            .anyMatch(t -> t.contains(TEMPLATE_REF))) {
-        return false;
+  @NotNull
+  private Pair<Boolean, Boolean> getConstructorParamsMatch() {
+    return getCachedValue(() -> CachedValueProvider.Result.create(
+      getConstructorParamsMatchNoCache(getTypeScriptClass()), getClassModificationDependencies()));
+  }
+
+  @NotNull
+  private static Pair<Boolean, Boolean> getConstructorParamsMatchNoCache(@NotNull TypeScriptClass clazz) {
+    Ref<Pair<Boolean, Boolean>> result = new Ref<>(pair(false, false));
+    JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
+      if (aClass instanceof TypeScriptClass) {
+        List<String> types = StreamEx.of(((TypeScriptClass)aClass).getConstructors())
+          .map(JSFunction::getParameterList)
+          .nonNull()
+          .flatArray(JSParameterList::getParameters)
+          .map(JSParameterListElement::getJSType)
+          .nonNull()
+          .map(type -> type.getTypeText())
+          .toList();
+        boolean templateRef = exists(types, t -> t.contains(TEMPLATE_REF));
+        boolean viewContainerRef = exists(types, t -> t.contains(VIEW_CONTAINER_REF));
+        if (templateRef || viewContainerRef) {
+          result.set(pair(templateRef, viewContainerRef));
+          return false;
+        }
       }
       return true;
     });
+    return result.get();
   }
 }

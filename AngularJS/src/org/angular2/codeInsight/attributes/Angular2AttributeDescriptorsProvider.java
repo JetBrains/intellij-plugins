@@ -150,7 +150,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
         }
       };
       fillNamesAndProperties(inputs, candidate.getInputs(), p -> p);
-      if (!isTemplateTag && candidate.isTemplate()) {
+      if (!isTemplateTag && candidate.isStructuralDirective()) {
         List<SimpleSelectorWithPsi> selectors = candidate.getSelector().getSimpleSelectorsWithPsi();
         for (SimpleSelectorWithPsi selector : selectors) {
           List<Angular2DirectiveSelectorPsiElement> attributeCandidates = selector.getAttributes();
@@ -171,7 +171,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
           }
         }
       }
-      else {
+      if (isTemplateTag || candidate.isRegularDirective()) {
         fillNamesAndProperties(outputs, candidate.getOutputs(), p -> p);
         fillNamesAndProperties(inOuts, candidate.getInOuts(), p -> p.first);
         for (SimpleSelectorWithPsi selector : candidate.getSelector().getSimpleSelectorsWithPsi()) {

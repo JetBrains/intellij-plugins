@@ -132,7 +132,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   public static List<Angular2AttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive,
                                                                           @NotNull XmlTag tag) {
-    if (directive.isTemplate() && !isTemplateTag(tag.getName())) {
+    if (!directive.isRegularDirective() && !isTemplateTag(tag.getName())) {
       return emptyList();
     }
     return new DirectiveAttributesProvider(tag, directive).get();
