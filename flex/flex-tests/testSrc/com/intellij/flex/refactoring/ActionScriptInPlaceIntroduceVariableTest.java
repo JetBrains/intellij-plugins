@@ -26,11 +26,11 @@ public class ActionScriptInPlaceIntroduceVariableTest extends JSInplaceIntroduce
     FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
-  public void testInplaceBasicAS() throws Exception {
+  public void testInplaceBasicAS() {
     doTest(getTestName(false), ".as");
   }
 
-  public void testInplaceSecondOccurrence() throws Exception {
+  public void testInplaceSecondOccurrence() {
     doTest(getTestName(false), ".as");
   }
 
