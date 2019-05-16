@@ -4,6 +4,7 @@ package org.angular2.entities.metadata.psi;
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.psi.PsiElement;
+import org.angular2.codeInsight.Angular2LibrariesHacks;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,8 @@ public class Angular2MetadataDirectiveProperty implements Angular2DirectivePrope
   @Nullable
   @Override
   public JSType getType() {
-    return signature != null ? signature.getJSType() : null;
+    return signature != null ? Angular2LibrariesHacks.hackQueryListTypeInNgForOf(signature.getJSType(), this)
+                             : null;
   }
 
   @Override

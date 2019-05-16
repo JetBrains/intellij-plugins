@@ -41,8 +41,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
 
   public void testTemplateBindings() {
     myFixture.copyDirectoryToProject("node_modules", "./node_modules");
-    myFixture.configureByFiles("template.html", "template.ts", "ng_for_of.ts",
-                               "ng_if.ts", "package.json");
+    myFixture.configureByFiles("template.html", "template.ts", "package.json");
     myFixture.checkHighlighting();
   }
 
@@ -54,7 +53,7 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
   public void testNgForOfAnyType() {
     myFixture.copyDirectoryToProject("node_modules", "./node_modules");
     AngularTestUtil.configureWithMetadataFiles(myFixture, "common");
-    myFixture.configureByFiles("ngForOfAnyType.ts", "ng_for_of.ts", "async_pipe.d.ts", "package.json");
+    myFixture.configureByFiles("ngForOfAnyType.ts", "package.json");
     myFixture.checkHighlighting();
   }
 
@@ -68,4 +67,9 @@ public class Angular2ExpressionTypesInspectionTest extends Angular2CodeInsightFi
     myFixture.checkHighlighting();
   }
 
+  public void testQueryList() {
+    myFixture.copyDirectoryToProject("node_modules", "./node_modules");
+    myFixture.configureByFiles("query-list-test.ts", "package.json");
+    myFixture.checkHighlighting();
+  }
 }

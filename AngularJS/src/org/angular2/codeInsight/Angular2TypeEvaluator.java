@@ -153,7 +153,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   @Override
   protected boolean processFunction(@NotNull JSFunction function) {
     return Angular2LibrariesHacks.hackSlicePipeType(this, this.myContext, function)
-      || super.processFunction(function);
+           || super.processFunction(function);
   }
 
   @Override
@@ -352,7 +352,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
           JSTypeComparingContextService.getProcessingContextWithCache(clazz);
         directive.getInputs().forEach(property -> {
           JSExpression inputExpression = inputsMap.get(property.getName());
-          if (inputExpression != null && property.getType() != null) {
+          JSType propertyType;
+          if (inputExpression != null && (propertyType = property.getType()) != null) {
             JSLazyExpressionType inputType = new JSLazyExpressionType(inputExpression, true);
             if (isAnyType(getApparentType(inputType.getOriginalType()))) {
               // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.
@@ -360,7 +361,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
               // checking to be less strict here. Additionally, if `any` type is passed to e.g. async pipe it's going to be resolved
               // with `null`, so we need to check for `null` and `undefined` as well
               JSAnyType anyType = JSAnyType.get(inputType.getSource());
-              expandAndOptimizeTypeRecursive(property.getType()).accept(new JSRecursiveTypeVisitor(true) {
+              expandAndOptimizeTypeRecursive(propertyType).accept(new JSRecursiveTypeVisitor(true) {
                 @Override
                 public void visitJSType(@NotNull JSType type) {
                   if (type instanceof JSGenericParameterType) {
@@ -372,8 +373,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
             }
             else {
               JSGenericTypesEvaluatorBase.matchGenericTypes(new JSGenericMappings(genericArguments), processingContext,
-                                                            inputType, property.getType());
-              JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(property.getType()), null, null);
+                                                            inputType, propertyType);
+              JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(propertyType), null, null);
             }
           }
         });

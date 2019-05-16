@@ -1,9 +1,9 @@
-<div *ngFor="let item of <warning descr="Type number is not assignable to type NgIterable<T>">myNumber</warning>"></div>
+<div *ngFor="let item of <warning descr="Type number is not assignable to type NgIterable<T> | QueryList<T>">myNumber</warning>"></div>
 
-<div *ngFor="let item of myArray; trackBy: <warning descr="Type (items: string) => string is not assignable to type TrackByFunction<S>">myBadFunction</warning>"></div>
-<ng-template ngFor [ngForOf]="myArray" [ngForTrackBy]="<warning descr="Type (items: string) => string is not assignable to type TrackByFunction<S>">myBadFunction</warning>" let-item></ng-template>
+<div *ngFor="let item of myArray; trackBy: <warning descr="Type (items: string) => string is not assignable to type TrackByFunction<string>">myBadFunction</warning>"></div>
+<ng-template ngFor [ngForOf]="myArray" [ngForTrackBy]="<warning descr="Type (items: string) => string is not assignable to type TrackByFunction<string>">myBadFunction</warning>" let-item></ng-template>
 
-<div *ngFor="let item of myList; trackBy: myAnotherFunction"></div>
+<div *ngFor="let item of <warning descr="Type Array<string> is not assignable to type NgIterable<string & number> | QueryList<string & number>">myList</warning>; trackBy: myAnotherFunction"></div>
 
 <div *ngFor="let item of myArray; trackBy: myOkFunction"></div>
 <ng-template ngFor [ngForOf]="myArray" [ngForTrackBy]="myOkFunction" let-item></ng-template>
