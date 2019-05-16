@@ -147,7 +147,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
       if (localName.equals("scope")) {
         int aType = CfmlTypesInfo.getTypeByString(attr.getValue("type"));
         String aName = attr.getValue("value");
-        myPredefinedVariables.put(aName.toLowerCase(), aType);
+        myPredefinedVariables.put(StringUtil.toLowerCase(aName), aType);
       }
     }
     else if (myState == SCOPE_STATE) {
@@ -169,7 +169,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     else if (localName.equals("function") && myCurrentFunction != null) {
       String functioName = myCurrentFunction.getName();
       myFunctionUpperCased.add(functioName);
-      myFunctions.put(functioName.toLowerCase(), myCurrentFunction);
+      myFunctions.put(StringUtil.toLowerCase(functioName), myCurrentFunction);
       myCurrentFunction = null;
     }
     else if (localName.equals("parameter") && myCurrentTag != null && myCurrentAttribute != null) {
@@ -179,7 +179,7 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     else if (localName.equals("scopevar")) {
       if (!StringUtil.isEmpty(myCurrentScope)) {
         if (myCurrentScope.charAt(myCurrentScope.length() - 1) != '.') {
-          myPredefinedVariables.put(myCurrentScope.toLowerCase(), CfmlTypesInfo.ANY_TYPE);
+          myPredefinedVariables.put(StringUtil.toLowerCase(myCurrentScope), CfmlTypesInfo.ANY_TYPE);
         }
         else {
           myCurrentScope = myCurrentScope.substring(0, myCurrentScope.length() - 1);

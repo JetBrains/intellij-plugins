@@ -16,6 +16,7 @@ import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.WindowManager;
@@ -35,7 +36,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Set;
 
 class SafeOpener {
   private static final Logger LOG = Logger.getInstance(SafeOpener.class);
@@ -179,7 +183,7 @@ class SafeOpener {
   }
 
   private static boolean isHttpScheme(@Nullable String scheme) {
-    return scheme != null && SCHEMES.contains(scheme.toLowerCase(Locale.US));
+    return scheme != null && SCHEMES.contains(StringUtil.toLowerCase(scheme));
   }
 
   private static boolean isLocalHost(@Nullable String hostName) {
@@ -194,7 +198,7 @@ class SafeOpener {
       return false;
     }
     final int i = path.lastIndexOf('.');
-    return i != -1 && SAFE_LOCAL_EXTENSIONS.contains(path.substring(i + 1).toLowerCase(Locale.US));
+    return i != -1 && SAFE_LOCAL_EXTENSIONS.contains(StringUtil.toLowerCase(path.substring(i + 1)));
   }
 
   private static class InaccessibleURLOpenedException extends IllegalArgumentException {

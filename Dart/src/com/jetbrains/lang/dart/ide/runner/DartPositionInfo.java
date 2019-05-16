@@ -4,10 +4,9 @@ import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
 
 public class DartPositionInfo {
 
@@ -106,7 +105,7 @@ public class DartPositionInfo {
       return null;
     }
 
-    final String lowercased = text.toLowerCase(Locale.US);
+    final String lowercased = StringUtil.toLowerCase(text);
     int dotDartIndex = pathStartIndex;
     int pathEndIndex;
 

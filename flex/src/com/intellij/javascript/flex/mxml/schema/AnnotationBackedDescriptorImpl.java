@@ -637,7 +637,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
   @Nullable
   private static String checkColorAlias(final String s) {
-    if (!ArrayUtil.contains(s.toLowerCase(), COLOR_ALIASES)) {
+    if (!ArrayUtil.contains(StringUtil.toLowerCase(s), COLOR_ALIASES)) {
       return FlexBundle.message("unknown.color.error", s);
     }
     return null;
@@ -999,7 +999,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       i++;
     }
     i = i <= 1 ? 1 : i == s.length() ? i : i - 1;
-    return s.substring(0, i).toLowerCase() + s.substring(i);
+    return StringUtil.toLowerCase(s.substring(0, i)) + s.substring(i);
   }
 
   private static Set<String> getNamedElementsVisibleAt(@NotNull final PsiElement context) {

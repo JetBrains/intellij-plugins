@@ -8,6 +8,7 @@ import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.info.CfmlLangInfo;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
@@ -61,7 +62,7 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
         return;
       }
     }
-    String key = ref.getText().toLowerCase();
+    String key = StringUtil.toLowerCase(ref.getText());
     if (myDictionary.containsKey(key)) {
       Condition<PsiElement> psiElementCondition = myDictionary.get(key);
       if (psiElementCondition.value(element)) {
@@ -75,7 +76,7 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
     }
 
     if (CfmlLangInfo.getInstance(element.getProject()).getPredefinedVariables()
-      .containsKey(mostDescentReferenceParent.getText().toLowerCase())) {
+      .containsKey(StringUtil.toLowerCase(mostDescentReferenceParent.getText()))) {
       return;
     }
     if (ref instanceof CfmlReferenceExpression && CfmlUtil.isPredefinedTagVariables((CfmlReferenceExpression)ref, element.getProject())) {

@@ -85,7 +85,6 @@
 
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
     <problemFileHighlightFilter implementation="com.intellij.struts2.Struts2ProblemFileHighlightFilter"/>
-    <elementDescriptionProvider implementation="com.intellij.struts2.structure.StrutsTreeDescriptionProvider"/>
 
     <localInspection language="XML" groupPath="Struts" shortName="Struts2ModelInspection" applyToDialects="false"
                      bundle="resources.Struts2Bundle" key="inspections.struts2.model.display.name"

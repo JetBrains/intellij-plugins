@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeUtils;
 import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import one.util.streamex.StreamEx;
@@ -67,7 +68,7 @@ public final class Angular2TemplateScopesResolver {
       notNull(Angular2IndexingHandler.findComponentClass(context), context), true);
     return Optional
       .ofNullable(JSTypeUtils.createType(HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME, typeSource))
-      .map(tagNameMap -> tagNameMap.asRecordType().findPropertySignature(tagName.toLowerCase()))
+      .map(tagNameMap -> tagNameMap.asRecordType().findPropertySignature(StringUtil.toLowerCase(tagName)))
       .map(JSRecordType.PropertySignature::getJSType)
       .orElseGet(() -> JSTypeUtils.createType(HTML_ELEMENT_CLASS_NAME, typeSource));
   }

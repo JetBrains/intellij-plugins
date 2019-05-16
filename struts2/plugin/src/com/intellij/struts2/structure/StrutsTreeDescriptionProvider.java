@@ -15,8 +15,6 @@
 
 package com.intellij.struts2.structure;
 
-import com.intellij.psi.ElementDescriptionLocation;
-import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.struts2.dom.params.Param;
 import com.intellij.struts2.dom.struts.action.Result;
@@ -33,15 +31,9 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsTreeDescriptionProvider implements ElementDescriptionProvider {
+public class StrutsTreeDescriptionProvider {
 
-  @Override
-  public String getElementDescription(@NotNull final PsiElement psiElement,
-                                      @NotNull final ElementDescriptionLocation elementDescriptionLocation) {
-    if (elementDescriptionLocation != StrutsTreeDescriptionLocation.INSTANCE) {
-      return null;
-    }
-
+  public static String getElementDescription(@NotNull final PsiElement psiElement) {
     final DomElement domElement = DomUtil.getDomElement(psiElement);
     if (domElement == null) {
       return null;

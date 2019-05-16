@@ -116,7 +116,7 @@ public class FlexCommonUtils {
   }
 
   public static boolean isRuntimeStyleSheetBC(final JpsFlexBuildConfiguration bc) {
-    return bc.isTempBCForCompilation() && bc.getMainClass().toLowerCase().endsWith(".css");
+    return bc.isTempBCForCompilation() && StringUtil.toLowerCase(bc.getMainClass()).endsWith(".css");
   }
 
   public static boolean isRLMTemporaryBC(final JpsFlexBuildConfiguration bc) {
@@ -454,7 +454,7 @@ public class FlexCommonUtils {
     if (lastSlashIndex <= 0 || lastSlashIndex == swcPath.length() - 1) {
       LOG.error("Unexpected Flex SDK root: " + swcPath);
     }
-    final String swcName = swcPath.substring(lastSlashIndex + 1).toLowerCase();
+    final String swcName = StringUtil.toLowerCase(swcPath.substring(lastSlashIndex + 1));
     final String folderPath = swcPath.substring(0, lastSlashIndex);
 
     if (folderPath.endsWith("/frameworks/libs")) {
@@ -1181,7 +1181,7 @@ public class FlexCommonUtils {
   public static String fixSizeReportOption(final String additionalOptions, final String postfix) {
     final List<String> values = getOptionValues(additionalOptions, "size-report");
     final StringBuilder result = new StringBuilder(removeOptions(additionalOptions, "size-report"));
-    if (values.size() == 1 && values.get(0).toLowerCase().endsWith(".xml")) {
+    if (values.size() == 1 && StringUtil.toLowerCase(values.get(0)).endsWith(".xml")) {
       final String path = values.get(0);
       result.append(" -size-report=");
       if (path.contains(" ")) {
@@ -1229,7 +1229,7 @@ public class FlexCommonUtils {
   public static void deleteTempFlexConfigFiles(final String projectName) {
     if (KEEP_TEMP_FILES) return;
 
-    final String hash1 = Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
+    final String hash1 = StringUtil.toUpperCase(Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()));
     final File dir = new File(getTempFlexConfigsDirPath());
 
     if (!dir.isDirectory()) return;

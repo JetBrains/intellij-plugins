@@ -1,6 +1,7 @@
 package com.intellij.tapestry.core;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.impl.java.stubs.index.JavaMethodNameIndex;
@@ -191,7 +192,7 @@ public class TapestryProject {
    */
   @Nullable
   public Page findPage(String pageName) {
-    return (Page)ourNameToPageMap.get(myModule).get(pageName.toLowerCase());
+    return (Page)ourNameToPageMap.get(myModule).get(StringUtil.toLowerCase(pageName));
   }
 
   @NotNull
@@ -203,7 +204,7 @@ public class TapestryProject {
   private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourNameToPageMap", false, true, false) {
     @Override
     protected String computeKey(PresentationLibraryElement element) {
-      return element.getName().toLowerCase();
+      return StringUtil.toLowerCase(element.getName());
     }
   };
 
@@ -234,7 +235,7 @@ public class TapestryProject {
    */
   @Nullable
   public Component findComponent(@NotNull String componentName) {
-    return (Component)ourNameToComponentMap.get(myModule).get(componentName.toLowerCase());
+    return (Component)ourNameToComponentMap.get(myModule).get(StringUtil.toLowerCase(componentName));
   }
 
   /**
@@ -245,7 +246,7 @@ public class TapestryProject {
    */
   @Nullable
   public Mixin findMixin(String mixinName) {
-    return (Mixin)ourNameToMixinMap.get(myModule).get(mixinName.toLowerCase());
+    return (Mixin)ourNameToMixinMap.get(myModule).get(StringUtil.toLowerCase(mixinName));
   }
 
   @NotNull
@@ -292,14 +293,14 @@ public class TapestryProject {
   private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourNameToComponentMap", true, false, false) {
     @Override
     protected String computeKey(PresentationLibraryElement element) {
-      return element.getName().toLowerCase();
+      return StringUtil.toLowerCase(element.getName());
     }
   };
 
   private static final ElementsCachedMap ourNameToMixinMap = new ElementsCachedMap("ourNameToMixinMap", false, false, true) {
     @Override
     protected String computeKey(PresentationLibraryElement element) {
-      return element.getName().toLowerCase();
+      return StringUtil.toLowerCase(element.getName());
     }
   };
 

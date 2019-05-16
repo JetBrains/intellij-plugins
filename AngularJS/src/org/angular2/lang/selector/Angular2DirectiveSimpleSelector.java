@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -168,7 +167,7 @@ public class Angular2DirectiveSimpleSelector {
         continue;
       }
       cssSelector.addAttribute(info.name, attr.getValue());
-      if (attr.getName().toLowerCase().equals("class") && attr.getValue() != null) {
+      if (StringUtil.toLowerCase(attr.getName()).equals("class") && attr.getValue() != null) {
         StringUtil.split(attr.getValue(), " ")
           .forEach(clsName -> cssSelector.addClassName(clsName));
       }
@@ -232,11 +231,11 @@ public class Angular2DirectiveSimpleSelector {
 
   public void addAttribute(@NotNull String name, @Nullable String value) {
     attrs.add(name);
-    attrs.add(value != null ? value.toLowerCase(Locale.ENGLISH) : "");
+    attrs.add(value != null ? StringUtil.toLowerCase(value) : "");
   }
 
   public void addClassName(@NotNull String name) {
-    classNames.add(name.toLowerCase(Locale.ENGLISH));
+    classNames.add(StringUtil.toLowerCase(name));
   }
 
   @NotNull

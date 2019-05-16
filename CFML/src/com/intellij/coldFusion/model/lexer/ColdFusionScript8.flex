@@ -1,6 +1,7 @@
 package com.intellij.coldFusion.model.lexer;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
@@ -12,42 +13,42 @@ import com.intellij.util.ArrayUtil;
 %%
 
 %{
-  CfscriptLexerConfiguration myCurrentConfiguration = new CfscriptLexerConfiguration();
-    private Project myProject;
+  Project myProject;
+  final CfscriptLexerConfiguration myCurrentConfiguration = new CfscriptLexerConfiguration();
 
-    public class CfscriptLexerConfiguration {
-        public int mySharpCounter = 0;
-        public int myCommentCounter = 0;
-        public Stack<Integer> myReturnStack = new Stack<>();
+  public class CfscriptLexerConfiguration {
+      public int mySharpCounter = 0;
+      public int myCommentCounter = 0;
+      public Stack<Integer> myReturnStack = new Stack<>();
 
-        public CfscriptLexerConfiguration() {}
+      public CfscriptLexerConfiguration() {}
 
-        public CfscriptLexerConfiguration(int sharpCounter, int commentCounter,
-                                          Stack<Integer> returnStack) {
-            mySharpCounter = sharpCounter;
-            myCommentCounter = commentCounter;
-            myReturnStack = returnStack;
-        }
+      public CfscriptLexerConfiguration(int sharpCounter, int commentCounter,
+                                        Stack<Integer> returnStack) {
+          mySharpCounter = sharpCounter;
+          myCommentCounter = commentCounter;
+          myReturnStack = returnStack;
+      }
 
-        public void reset() {
-            mySharpCounter = 0;
-            myCommentCounter = 0;
-            myReturnStack.clear();
-        }
-    }
+      public void reset() {
+          mySharpCounter = 0;
+          myCommentCounter = 0;
+          myReturnStack.clear();
+      }
+  }
 
-    public _CfscriptLexer8(Project project) {
-      this((java.io.Reader)null);
-      myProject = project;
-    }
-    private IElementType startComment(int stateToReturnTo) {
-      myCurrentConfiguration.myCommentCounter = 0;
-      myCurrentConfiguration.myReturnStack.push(stateToReturnTo);
-      myCurrentConfiguration.myCommentCounter++;
-      yybegin(COMMENT);
-      return CfmlTokenTypes.COMMENT;
-    }
-  %}
+  public _CfscriptLexer8(Project project) {
+    this((java.io.Reader)null);
+    myProject = project;
+  }
+  private IElementType startComment(int stateToReturnTo) {
+    myCurrentConfiguration.myCommentCounter = 0;
+    myCurrentConfiguration.myReturnStack.push(stateToReturnTo);
+    myCurrentConfiguration.myCommentCounter++;
+    yybegin(COMMENT);
+    return CfmlTokenTypes.COMMENT;
+  }
+%}
 
 %class _CfscriptLexer8
 %implements FlexLexer
@@ -182,7 +183,7 @@ VARIABLE_TYPE_DECL = (("/*"){WHITE_SPACE_CHAR}"@cfmlvariable"~("*/"))|(("//"){WH
 /* strings */
 /*<YYINITIAL> {IDENTIFIER}/("(")  { return CfscriptTokenTypes.FUNCTION; }*/
 <YYINITIAL> {IDENTIFIER} / (".")  {
-    if (ArrayUtil.find(CfmlUtil.getVariableScopes(myProject), yytext().toString().toLowerCase()) != -1) {
+    if (ArrayUtil.find(CfmlUtil.getVariableScopes(myProject), StringUtil.toLowerCase(yytext().toString())) != -1) {
         return CfscriptTokenTypes.SCOPE_KEYWORD;
     } else {
         return CfscriptTokenTypes.IDENTIFIER;
