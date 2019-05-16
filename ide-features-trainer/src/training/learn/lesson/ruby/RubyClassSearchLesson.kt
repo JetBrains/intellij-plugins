@@ -1,6 +1,8 @@
 package training.learn.lesson.ruby
 
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.testGuiFramework.framework.GuiTestUtil
+import com.intellij.testGuiFramework.util.Key
 import com.intellij.ui.components.fields.ExtendableTextField
 import training.commands.kotlin.TaskContext
 import training.learn.interfaces.Module
@@ -36,6 +38,10 @@ class RubyClassSearchLesson(module: Module) : KLesson("Class Search", module, "r
             "Choose it and then press <strong>Enter</strong> to navigate.")
         stateCheck {
           FileEditorManager.getInstance(project).selectedEditor?.file?.name.equals("date_and_time_behavior.rb")
+        }
+        test {
+          GuiTestUtil.shortcut(Key.DOWN)
+          GuiTestUtil.shortcut(Key.ENTER)
         }
       }
     }
