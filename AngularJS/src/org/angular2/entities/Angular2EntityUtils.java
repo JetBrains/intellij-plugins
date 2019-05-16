@@ -169,6 +169,8 @@ public class Angular2EntityUtils {
         .append(directive.getInputs().toString())
         .append("; outputs=")
         .append(directive.getOutputs().toString())
+        .append("; attributes=")
+        .append(directive.getAttributes())
         .append("; inOuts=")
         .append(directive.getInOuts().toString());
       return result.toString();
@@ -178,6 +180,9 @@ public class Angular2EntityUtils {
     }
     else if (element instanceof Angular2DirectiveProperty) {
       return ((Angular2DirectiveProperty)element).getName();
+    }
+    else if (element instanceof Angular2DirectiveAttribute) {
+      return ((Angular2DirectiveAttribute)element).getName();
     }
     else if (element instanceof Angular2Module) {
       Angular2Module module = (Angular2Module)element;

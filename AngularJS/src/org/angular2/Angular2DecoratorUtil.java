@@ -32,6 +32,7 @@ public class Angular2DecoratorUtil {
   @NonNls public static final String MODULE_DEC = "NgModule";
   @NonNls public static final String INPUT_DEC = "Input";
   @NonNls public static final String OUTPUT_DEC = "Output";
+  @NonNls public static final String ATTRIBUTE_DEC = "Attribute";
   @NonNls public static final String VIEW_CHILD_DEC = "ViewChild";
 
   @NonNls public static final String NAME_PROP = "name";

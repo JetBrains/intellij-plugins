@@ -35,10 +35,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.Angular2TypeEvaluator;
 import org.angular2.codeInsight.tags.Angular2XmlElementSourcesResolver;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2DirectiveProperty;
-import org.angular2.entities.Angular2DirectiveSelector;
-import org.angular2.entities.Angular2Element;
+import org.angular2.entities.*;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
 import org.angular2.lang.html.parser.Angular2AttributeNameParser;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
@@ -324,11 +321,20 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
           .flatCollection(inout -> newArrayList(inout.first.getNavigableElement(), inout.second.getNavigableElement()))
           .toList();
       case REGULAR:
-        return StreamEx.of(directive.getInputs())
-          .filter(input -> myInfo.name.equals(input.getName())
-                           && isOneTimeBindingProperty(input))
-          .map(Angular2Element::getNavigableElement)
-          .toList();
+        final StreamEx<PsiElement> inputsPsiElements =
+          StreamEx.of(directive.getInputs())
+            .filter(property -> {
+              final boolean isOneTimeBinding = isOneTimeBindingProperty(property);
+              return myInfo.name.equals(property.getName()) && isOneTimeBinding;
+            })
+            .map(Angular2Element::getNavigableElement);
+
+        final StreamEx<PsiElement> attributesPsiElements =
+          StreamEx.of(directive.getAttributes())
+            .filter(a -> myInfo.name.equals(a.getName()))
+            .map(Angular2Element::getNavigableElement);
+
+        return inputsPsiElements.append(attributesPsiElements).toList();
       default:
         return emptyList();
     }
@@ -540,6 +546,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       collectDirectiveDescriptors(myDirective.getInputs(), this::createBinding);
       collectDirectiveDescriptors(myDirective.getOutputs(), this::createEventHandler);
       collectDirectiveDescriptors(myDirective.getInputs(), this::createOneTimeBinding);
+      collectDirectiveDescriptors(myDirective.getAttributes(), this::createAttributeBinding);
       return myResult;
     }
 
@@ -575,6 +582,17 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                                singletonList(myDirective),
                                                false)
              : null;
+    }
+
+    @NotNull
+    private Angular2AttributeDescriptor createAttributeBinding(@NotNull Angular2DirectiveAttribute info) {
+      return new Angular2AttributeDescriptor(
+        myTag,
+        info.getName(),
+        AttributePriority.HIGH,
+        singletonList(myDirective),
+        false
+      );
     }
 
     @NotNull

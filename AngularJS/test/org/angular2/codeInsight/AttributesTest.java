@@ -26,10 +26,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2DirectiveProperty;
-import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
-import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.*;
 import org.angular2.inspections.Angular2TemplateInspectionsProvider;
 import org.angular2.inspections.AngularUndefinedBindingInspection;
 import org.angular2.lang.html.psi.Angular2HtmlReferenceVariable;
@@ -186,6 +183,8 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                  component.getInputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
     assertEquals(Collections.singleton("complete"),
                  component.getOutputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
+    assertEquals(newHashSet("testAttrOne", "testAttrTwo"),
+          component.getAttributes().stream().map(Angular2DirectiveAttribute::getName).collect(Collectors.toSet()));
   }
 
   public void testBindingCompletionViaBase2TypeScript() {
