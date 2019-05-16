@@ -27,6 +27,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.angular2.Angular2CodeInsightFixtureTestCase;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveCtorParameter;
 import org.angular2.entities.Angular2DirectiveProperty;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
@@ -186,6 +187,8 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                  component.getInputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
     assertEquals(Collections.singleton("complete"),
                  component.getOutputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
+    assertEquals(newHashSet("testAttrOne", "testAttrTwo"),
+          component.getAttributes().stream().map(Angular2DirectiveCtorParameter::getName).collect(Collectors.toSet()));
   }
 
   public void testBindingCompletionViaBase2TypeScript() {

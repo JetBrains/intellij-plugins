@@ -10,6 +10,11 @@ export class TodoCmp {
     id: string;
     complete_ = new EventEmitter(); // TypeScript supports initializing fields
 
+    constructor(
+        @Attribute('testAttrOne') attrOne: FloatPlaceholderType,
+        @Attribute('testAttrTwo') private attrTwo: string
+    ) {}
+
     onCompletedButton() {
         this.complete_.emit("completed"); // this fires an event
     }

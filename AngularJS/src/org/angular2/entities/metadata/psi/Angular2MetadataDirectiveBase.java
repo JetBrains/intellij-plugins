@@ -73,6 +73,12 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   }
 
   @NotNull
+  @Override
+  public Collection<? extends Angular2DirectiveCtorParameter> getAttributes() {
+    return Collections.emptyList();
+  }
+
+  @NotNull
   private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getCachedProperties() {
     return getCachedValueWithClassDependencies(this::getProperties);
   }
