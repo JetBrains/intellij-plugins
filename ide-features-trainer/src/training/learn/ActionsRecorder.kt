@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import training.check.Check
+import java.awt.KeyboardFocusManager
 import java.awt.event.KeyEvent
 import java.util.concurrent.CompletableFuture
 
@@ -198,6 +199,10 @@ class ActionsRecorder(private val project: Project,
         check()
       }
     })
+
+    KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener("focusOwner") {
+      check()
+    }
 
     return future
   }
