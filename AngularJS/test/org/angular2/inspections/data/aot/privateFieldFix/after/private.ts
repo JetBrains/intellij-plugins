@@ -5,8 +5,8 @@ import {Component} from "@angular/core"
   templateUrl: "./private.html"
 })
 export class MyComponent {
-  /** @internal */
-  privateUsed: string;
+    /** @internal */
+    privateUsed: string;
   private privateUnused: string;
 
   protected protectedUsed: string;

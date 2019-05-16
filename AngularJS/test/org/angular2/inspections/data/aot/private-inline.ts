@@ -3,55 +3,55 @@ import {Component} from "@angular/core"
 
 @Component({
   template: `
-    {{ <warning descr="Property is inaccessible in AOT compilation mode.">privateUsed</warning> }}
-    {{ <warning descr="Property is inaccessible in AOT compilation mode.">protectedUsed</warning> }}
+    {{ <warning descr="Private field privateUsed can't be resolved when using AOT compiler.">privateUsed</warning> }}
+    {{ <warning descr="Protected field protectedUsed can't be resolved when using AOT compiler.">protectedUsed</warning> }}
     {{ publicUsed }}
 
-    <div (click)="<warning descr="Property is inaccessible in AOT compilation mode.">privateUsedSet</warning> = 12"></div>
-    <div (click)="<warning descr="Property is inaccessible in AOT compilation mode.">protectedUsedSet</warning> = 12"></div>
+    <div (click)="<warning descr="Private property privateUsedSet can't be resolved when using AOT compiler.">privateUsedSet</warning> = 12"></div>
+    <div (click)="<warning descr="Protected property protectedUsedSet can't be resolved when using AOT compiler.">protectedUsedSet</warning> = 12"></div>
     <div (click)="publicUsedSet = 12"></div>
 
-    {{ <warning descr="Property is inaccessible in AOT compilation mode.">privateUsedGet</warning> }}
-    {{ <warning descr="Property is inaccessible in AOT compilation mode.">protectedUsedGet</warning> }}
+    {{ <warning descr="Private property privateUsedGet can't be resolved when using AOT compiler.">privateUsedGet</warning> }}
+    {{ <warning descr="Protected property protectedUsedGet can't be resolved when using AOT compiler.">protectedUsedGet</warning> }}
     {{ publicUsedGet }}
 
-    {{ <warning descr="Method is inaccessible in AOT compilation mode.">privateUsedFun</warning>() }}
-    {{ <warning descr="Method is inaccessible in AOT compilation mode.">protectedUsedFun</warning>() }}
+    {{ <warning descr="Private method privateUsedFun can't be resolved when using AOT compiler.">privateUsedFun</warning>() }}
+    {{ <warning descr="Protected method protectedUsedFun can't be resolved when using AOT compiler.">protectedUsedFun</warning>() }}
     {{ publicUsedFun() }}
   `
 })
 export class MyComponent {
-  private <warning descr="Property is inaccessible from component's template in AOT compilation mode">privateUsed</warning>: string;
+  private <warning descr="Private field privateUsed can't be resolved from component's template when using AOT compiler">privateUsed</warning>: string;
   private privateUnused: string;
 
-  protected <warning descr="Property is inaccessible from component's template in AOT compilation mode">protectedUsed</warning>: string;
+  protected <warning descr="Protected field protectedUsed can't be resolved from component's template when using AOT compiler">protectedUsed</warning>: string;
   protected protectedUnused: string;
 
   publicUsed: string;
   publicUnused: string;
 
-  private set <warning descr="Property is inaccessible from component's template in AOT compilation mode">privateUsedSet</warning>(value) {}
+  private set <warning descr="Private property privateUsedSet can't be resolved from component's template when using AOT compiler">privateUsedSet</warning>(value) {}
   private set privateUnusedSet(value) {}
 
-  protected set <warning descr="Property is inaccessible from component's template in AOT compilation mode">protectedUsedSet</warning>(value) {}
+  protected set <warning descr="Protected property protectedUsedSet can't be resolved from component's template when using AOT compiler">protectedUsedSet</warning>(value) {}
   protected set protectedUnusedSet(value) {}
 
   public set publicUsedSet(value) {}
   public set publicUnusedSet(value) {}
 
-  private get <warning descr="Property is inaccessible from component's template in AOT compilation mode">privateUsedGet</warning>() {}
+  private get <warning descr="Private property privateUsedGet can't be resolved from component's template when using AOT compiler">privateUsedGet</warning>() {}
   private get privateUnusedGet() {}
 
-  protected get <warning descr="Property is inaccessible from component's template in AOT compilation mode">protectedUsedGet</warning>() {}
+  protected get <warning descr="Protected property protectedUsedGet can't be resolved from component's template when using AOT compiler">protectedUsedGet</warning>() {}
   protected get protectedUnusedGet() {}
 
   public get publicUsedGet() {}
   public get publicUnusedGet() {}
 
-  private <warning descr="Method is inaccessible from component's template in AOT compilation mode">privateUsedFun</warning>() {}
+  private <warning descr="Private method privateUsedFun can't be resolved from component's template when using AOT compiler">privateUsedFun</warning>() {}
   private privateUnusedFun() {}
 
-  protected <warning descr="Method is inaccessible from component's template in AOT compilation mode">protectedUsedFun</warning>() {}
+  protected <warning descr="Protected method protectedUsedFun can't be resolved from component's template when using AOT compiler">protectedUsedFun</warning>() {}
   protected protectedUnusedFun() {}
 
   public publicUsedFun() {}
