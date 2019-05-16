@@ -23,11 +23,11 @@ export class MyComponent {
   public set publicUsedSet(value) {}
   public set publicUnusedSet(value) {}
 
-  /** @internal */
-  get privateUsedGet() {
-  }
-
-    private get privateUnusedGet() {}
+    /** My method
+     * @internal
+     */
+  get privateUsedGet() {}
+  private get privateUnusedGet() {}
 
   protected get protectedUsedGet() {}
   protected get protectedUnusedGet() {}
