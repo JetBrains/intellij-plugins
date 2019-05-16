@@ -1,7 +1,11 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.psi;
 
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSRecordType;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Pair;
@@ -16,9 +20,11 @@ import org.angular2.entities.*;
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase;
 import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStubBase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
@@ -70,6 +76,12 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   @Override
   public Collection<? extends Angular2DirectiveProperty> getOutputs() {
     return getCachedProperties().second;
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
+    return getCachedClassBasedValue(this::buildAttributes);
   }
 
   @NotNull
@@ -138,5 +150,38 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
       }
     }, cacheDependencies);
     return Result.create(result, cacheDependencies);
+  }
+
+  @NotNull
+  private Collection<? extends Angular2DirectiveAttribute> buildAttributes(@Nullable final TypeScriptClass tsClass) {
+    final Map<String, Integer> attributes = getStub().getAttributes();
+
+    if (attributes.isEmpty() || tsClass == null) {
+      return Collections.emptyList();
+    }
+
+    final TypeScriptFunction[] constructors = tsClass.getConstructors();
+    return constructors.length == 1
+           ? processCtorParameters(constructors[0], attributes)
+           : Arrays.stream(constructors)
+             .filter(TypeScriptFunction::isOverloadImplementation)
+             .findFirst()
+             .map(ctor -> processCtorParameters(ctor, attributes))
+             .orElse(Collections.emptyList());
+  }
+
+  @NotNull
+  private static Collection<Angular2DirectiveAttribute> processCtorParameters(
+    @NotNull final JSFunction ctor,
+    @NotNull final Map<String, Integer> attributes) {
+    final JSParameter[] parameters = ctor.getParameterVariables();
+    return attributes.entrySet()
+      .stream()
+      .map(e -> {
+        final String bindingName = e.getKey();
+        final JSParameter parameter = parameters[e.getValue()];
+        return new Angular2MetadataDirectiveAttribute(parameter, bindingName);
+      })
+      .collect(Collectors.toList());
   }
 }

@@ -38,6 +38,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   @NonNls protected static final String SYMBOL_CALL = "call";
   @NonNls protected static final String SYMBOL_CLASS = "class";
 
+  @NonNls protected static final String PARAMETER_DECORATORS = "parameterDecorators";
   @NonNls protected static final String DECORATORS = "decorators";
   @NonNls protected static final String EXPRESSION = "expression";
   @NonNls protected static final String ARGUMENTS = "arguments";
@@ -156,6 +157,10 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
     DataInputOutputUtilRt.writeMap(stream, map, stream::writeName, stream::writeName);
   }
 
+  protected static void writeIntegerMap(@NotNull final Map<String, Integer> map, @NotNull final StubOutputStream stream) throws IOException {
+    DataInputOutputUtilRt.writeMap(stream, map, stream::writeName, stream::writeVarInt);
+  }
+
   @NotNull
   protected static Map<String, String> readStringMap(@NotNull StubInputStream stream) throws IOException {
     return DataInputOutputUtilRt.readMap(stream, stream::readNameString, stream::readNameString);
@@ -168,6 +173,11 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   @NotNull
   protected static List<String> readStringList(@NotNull StubInputStream stream) throws IOException {
     return DataInputOutputUtilRt.readSeq(stream, stream::readNameString);
+  }
+
+  @NotNull
+  protected static Map<String, Integer> readIntegerMap(@NotNull final StubInputStream stream) throws IOException {
+    return DataInputOutputUtilRt.readMap(stream, stream::readNameString, stream::readVarInt);
   }
 
   @NotNull
