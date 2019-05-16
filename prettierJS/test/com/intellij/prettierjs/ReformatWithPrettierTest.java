@@ -23,11 +23,6 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
   }
 
   @Override
-  protected String getRootDirName() {
-    return "Prettier";
-  }
-
-  @Override
   protected void setUp() throws Exception {
     super.setUp();
     myFixture.setTestDataPath(PrettierJSTestUtil.getTestDataPath() + "reformat");
