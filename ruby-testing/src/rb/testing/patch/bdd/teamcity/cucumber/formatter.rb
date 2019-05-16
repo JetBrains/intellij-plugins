@@ -59,6 +59,11 @@ module Teamcity
       end
       true
     end
+    
+    def self.is_4_or_newer
+     same_or_newer?('4.0.0.rc.1')
+    end
+
 
     # old formatter api, cucumber < 0.3.103
     # new formatter api, cucumber >= 0.3.103
@@ -66,7 +71,9 @@ module Teamcity
     USE_OLD_API =  !same_or_newer?('1.2.0') && (defined? ::Cucumber::Ast::TreeWalker).nil?
     CUCUMBER_VERSION = ::Cucumber::VERSION.split('.')[0].to_i
 
-    if USE_OLD_API
+    if is_4_or_newer
+      require File.expand_path(File.dirname(__FILE__) + '/cucumber_4_formatter')
+    elsif USE_OLD_API
       require File.expand_path(File.dirname(__FILE__) + '/old_formatter')
     else
       require File.expand_path(File.dirname(__FILE__) + '/formatter_03103')
