@@ -17,6 +17,7 @@ export class MyComponent {
   private set privateUsedSet(value) {}
   private set privateUnusedSet(value) {}
 
+  // Something
   protected set protectedUsedSet(value) {}
   protected set protectedUnusedSet(value) {}
 
