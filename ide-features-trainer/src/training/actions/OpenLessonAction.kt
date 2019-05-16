@@ -238,6 +238,10 @@ class OpenLessonAction : AnAction() {
 
   private fun openLearnProjectFromWelcomeScreen(projectToClose: Project?) {
     val project = initLearnProject(projectToClose)!!
+    if (project.isOpen) {
+      showModules(project)
+      return
+    }
     StartupManager.getInstance(project).registerPostStartupActivity {
       hideOtherViews(project)
       showModules(project)
