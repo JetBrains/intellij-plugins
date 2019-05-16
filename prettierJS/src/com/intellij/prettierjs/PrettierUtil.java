@@ -36,7 +36,7 @@ public class PrettierUtil {
 
   public static final Icon ICON = null;
   public static final String PACKAGE_NAME = "prettier";
-  public static final List<String> CONFIG_FILE_EXTENSIONS = Arrays.asList(".yaml", ".yml", ".json", ".js");
+  public static final List<String> CONFIG_FILE_EXTENSIONS = ContainerUtil.immutableList(".yaml", ".yml", ".json", ".js");
   public static final String RC_FILE_NAME = ".prettierrc";
   private static final String IGNORE_FILE_NAME = ".prettierignore";
   public static final String JS_CONFIG_FILE_NAME = "prettier.config.js";
@@ -51,7 +51,7 @@ public class PrettierUtil {
   public static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
     ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
 
-  public static final SemVer MIN_VERSION = new SemVer("1.8.0", 1, 8, 0);
+  public static final SemVer MIN_VERSION = new SemVer("1.13.0", 1, 13, 0);
   private static final Logger LOG = Logger.getInstance(PrettierUtil.class);
   public static final String BRACKET_SPACING = "bracketSpacing";
   public static final String PRINT_WIDTH = "printWidth";
@@ -199,7 +199,7 @@ public class PrettierUtil {
         return parseConfigFromMap(packageJsonSectionMap);
       }
       if (file instanceof JsonFile) {
-        return parseConfigFromMap(OUR_GSON_SERIALIZER.<Map<String,Object>>fromJson(file.getText(), Map.class));
+        return parseConfigFromMap(OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class));
       }
       if (JSLinterConfigLangSubstitutor.YamlLanguageHolder.INSTANCE.equals(file.getLanguage())) {
         return parseConfigFromMap(new Yaml().load(file.getText()));

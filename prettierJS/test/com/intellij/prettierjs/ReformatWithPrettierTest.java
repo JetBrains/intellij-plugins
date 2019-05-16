@@ -89,6 +89,14 @@ public class ReformatWithPrettierTest extends JSExternalToolIntegrationTest {
     assertEquals(LineSeparator.CRLF, StringUtil.detectSeparators(VfsUtilCore.loadText(getFile().getVirtualFile())));
   }
 
+  public void testNotSupportedFile() {
+    assertError(s -> s.contains("unsupported type"), () -> doReformatFile("test", "txt"));
+  }
+
+  public void testFileDetectedByShebangLine() {
+    doReformatFile("test", "");
+  }
+
   private void doReformatFile(final String extension) {
     doReformatFile("toReformat", extension);
   }
