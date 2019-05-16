@@ -145,6 +145,10 @@ public final class DartQuickFix implements IntentionAction, Comparable<Intention
     return true;
   }
 
+  SourceChange getSourceChange() {
+    return mySourceChange;
+  }
+
   void setSourceChange(@Nullable final SourceChange sourceChange) {
     mySourceChange = sourceChange;
   }
