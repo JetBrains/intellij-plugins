@@ -15,29 +15,25 @@ var PrettierPlugin = /** @class */ (function () {
             }
         }
         catch (e) {
-            response = { error: e.message + " " + e.stack };
+            var msg = e instanceof String ? e : (e.stack && e.stack.length > 0 ? e.stack : e.message || e);
+            response = { error: "" + msg };
         }
         response.request_seq = r.seq;
         writer.write(JSON.stringify(response));
     };
     PrettierPlugin.prototype.handleReformatCommand = function (args) {
         var prettierApi = this.requirePrettierApi(args.prettierPath);
-        try {
-            var options = { ignorePath: args.ignoreFilePath, withNodeModules: true };
-            if (prettierApi.getFileInfo) {
-                var fileInfo = prettierApi.getFileInfo.sync(args.path, options);
-                if (fileInfo.ignored) {
-                    return { ignored: true };
-                }
-                if (fileInfo.inferredParser == null) {
-                    return { unsupported: true };
-                }
+        var options = { ignorePath: args.ignoreFilePath, withNodeModules: true };
+        if (prettierApi.getFileInfo) {
+            var fileInfo = prettierApi.getFileInfo.sync(args.path, options);
+            if (fileInfo.ignored) {
+                return { ignored: true };
             }
-            return performFormat(prettierApi, args);
+            if (fileInfo.inferredParser == null) {
+                return { unsupported: true };
+            }
         }
-        catch (e) {
-            return { error: args.path + ": " + (e.stack && e.stack.length > 0 ? e.stack : e.message) };
-        }
+        return performFormat(prettierApi, args);
     };
     PrettierPlugin.prototype.requirePrettierApi = function (path) {
         if (this._prettierApi != null && this._prettierApi.path == path) {

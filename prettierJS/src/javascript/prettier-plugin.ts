@@ -36,7 +36,8 @@ export class PrettierPlugin implements LanguagePlugin {
             }
         }
         catch (e) {
-            response = {error: `${e.message} ${e.stack}`};
+            let msg = e instanceof String ? e : (e.stack && e.stack.length > 0 ? e.stack : e.message || e)
+            response = {error: `${msg}`};
         }
         response.request_seq = r.seq
         writer.write(JSON.stringify(response))
@@ -45,25 +46,20 @@ export class PrettierPlugin implements LanguagePlugin {
     private handleReformatCommand(args: FormatArguments): FormatResponse {
         let prettierApi = this.requirePrettierApi(args.prettierPath);
 
-        try {
-            let options = {ignorePath: args.ignoreFilePath, withNodeModules: true};
-            if (prettierApi.getFileInfo) {
-                let fileInfo = prettierApi.getFileInfo.sync(args.path, options)
-                if (fileInfo.ignored) {
-                    return {ignored: true}
-                }
-                if (fileInfo.inferredParser == null) {
-                    return {unsupported: true}
-                }
+        let options = {ignorePath: args.ignoreFilePath, withNodeModules: true};
+        if (prettierApi.getFileInfo) {
+            let fileInfo = prettierApi.getFileInfo.sync(args.path, options)
+            if (fileInfo.ignored) {
+                return {ignored: true}
             }
-            return performFormat(prettierApi, args)
+            if (fileInfo.inferredParser == null) {
+                return {unsupported: true}
+            }
         }
-        catch (e) {
-            return {error: `${args.path}: ${e.stack && e.stack.length > 0 ? e.stack : e.message}`};
-        }
+        return performFormat(prettierApi, args)
     }
 
-  private requirePrettierApi(path: string): PrettierApi {
+    private requirePrettierApi(path: string): PrettierApi {
         if (this._prettierApi != null && this._prettierApi.path == path) {
             return this._prettierApi;
         }
