@@ -196,10 +196,10 @@ public class PrettierUtil {
         if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
           return null;
         }
-        Map<String, Object> packageJsonMap = OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class);
+        Object prettierProperty = ObjectUtils.coalesce(OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class),
+                                                       Collections.emptyMap()).get(PACKAGE_NAME);
         //noinspection unchecked
-        Map<String, Object> packageJsonSectionMap = packageJsonMap != null ? (Map<String, Object>)packageJsonMap.get(PACKAGE_NAME) : null;
-        return parseConfigFromMap(packageJsonSectionMap);
+        return prettierProperty instanceof Map ? parseConfigFromMap(((Map)prettierProperty)) : null;
       }
       if (file instanceof JsonFile) {
         String text = file.getText();
