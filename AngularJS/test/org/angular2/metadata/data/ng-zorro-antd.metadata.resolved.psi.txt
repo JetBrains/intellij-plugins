@@ -246,15 +246,15 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵk <metadata reference>('')
     ɵca <metadata directive>: selector=[nz-menu]; inputs=[nzTheme, nzInDropDown, nzSelectable, nzInlineCollapsed, nzInlineIndent, nzMode]; outputs=[nzClick]; inOuts=[]('')
     ɵcb <metadata directive>: selector=[nz-menu-item]; inputs=[nzDisabled, nzSelected]; outputs=[]; inOuts=[]('')
-    ɵcc <metadata component>: selector=[nz-submenu]; inputs=[nzDisabled, nzOpen]; outputs=[nzOpenChange]; inOuts=[<nzOpen,nzOpenChange>]('')
-    ɵcd <metadata component>: selector=nz-dropdown; inputs=[nzDisabled, nzVisible, nzPlacement, nzClickHide, hasFilterButton, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
+    ɵcc <metadata component>: selector=[nz-submenu]; ngContentSelectors=[[title]]; inputs=[nzDisabled, nzOpen]; outputs=[nzOpenChange]; inOuts=[<nzOpen,nzOpenChange>]('')
+    ɵcd <metadata component>: selector=nz-dropdown; ngContentSelectors=[[nz-dropdown], [nz-menu], .ant-table-filter-dropdown-btns]; inputs=[nzDisabled, nzVisible, nzPlacement, nzClickHide, hasFilterButton, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
     ɵce: : <metadata call>
       #expression: @angular/animations#trigger <metadata reference>('')
     ɵcf <metadata directive>: selector=[nz-dropdown]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵcg <metadata component>: selector=nz-dropdown-button; inputs=[nzType, nzDisabled, nzVisible, nzPlacement, nzClickHide, nzSize, hasFilterButton, nzTrigger]; outputs=[nzVisibleChange, nzClick]; inOuts=[<nzVisible,nzVisibleChange>]
+    ɵcg <metadata component>: selector=nz-dropdown-button; ngContentSelectors=[[nz-menu]]; inputs=[nzType, nzDisabled, nzVisible, nzPlacement, nzClickHide, nzSize, hasFilterButton, nzTrigger]; outputs=[nzVisibleChange, nzClick]; inOuts=[<nzVisible,nzVisibleChange>]
       #ext: ɵcd <metadata reference>('')
     ɵch <metadata directive>: selector=[nz-menu-divider]; inputs=[]; outputs=[]; inOuts=[]('')
-    ɵci <metadata component>: selector=[nz-menu-group]; inputs=[]; outputs=[]; inOuts=[]('')
+    ɵci <metadata component>: selector=[nz-menu-group]; ngContentSelectors=[[title]]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵcj <metadata module>: imports=[ɵk]; declarations=[ɵck, ɵcm, ɵcn]; exports=[ɵck, ɵcm, ɵcn]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵck <metadata reference>('')
@@ -793,7 +793,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵhp <metadata directive>: selector=[nz-form]; inputs=[nzLayout]; outputs=[]; inOuts=[]('')
     ɵhq <metadata component>: selector=nz-form-item; inputs=[nzFlex, nzType, nzJustify, nzAlign, nzGutter]; outputs=[]; inOuts=[]
       #ext: ɵbt <metadata reference>('')
-    NzFormControlComponent <metadata component>: selector=nz-form-control; inputs=[nzPull, nzSpan, nzXXl, nzValidateStatus, nzOrder, nzOffset, nzMd, nzXl, nzPush, nzXs, nzLg, nzSm, nzHasFeedback]; outputs=[]; inOuts=[]
+    NzFormControlComponent <metadata component>: selector=nz-form-control; ngContentSelectors=[nz-form-explain]; inputs=[nzPull, nzSpan, nzXXl, nzValidateStatus, nzOrder, nzOffset, nzMd, nzXl, nzPush, nzXs, nzLg, nzSm, nzHasFeedback]; outputs=[]; inOuts=[]
       #ext: ɵbv <metadata reference>('')
     ɵhs <metadata component>: selector=nz-form-explain; inputs=[]; outputs=[]; inOuts=[]('')
     ɵht <metadata component>: selector=nz-form-text; inputs=[]; outputs=[]; inOuts=[]('')
@@ -854,7 +854,7 @@ MetadataFile:ng-zorro-antd.metadata.json
       provide: @angular/forms#NG_VALUE_ACCESSOR <metadata reference>('')
       useExisting: ɵih <metadata reference>('')
     ɵih <metadata directive/template>: selector=input[nzAutocomplete], textarea[nzAutocomplete]; inputs=[nzAutocomplete]; outputs=[]; inOuts=[]('')
-    ɵii <metadata component>: selector=nz-auto-optgroup; inputs=[nzLabel]; outputs=[]; inOuts=[]('')
+    ɵii <metadata component>: selector=nz-auto-optgroup; ngContentSelectors=[nz-auto-option]; inputs=[nzLabel]; outputs=[]; inOuts=[]('')
     ɵij <metadata module>: imports=[ɵk]; declarations=[ɵik]; exports=[ɵik]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>
         ɵik <metadata reference>('')

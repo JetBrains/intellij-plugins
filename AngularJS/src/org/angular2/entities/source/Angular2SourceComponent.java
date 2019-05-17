@@ -20,10 +20,12 @@ import com.intellij.util.AstLoadingFilter;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2DirectiveSelector;
 import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
@@ -46,6 +48,12 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
   @Override
   public List<PsiFile> getCssFiles() {
     return getCachedValue(() -> create(findCssFiles(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator()));
+  }
+
+  @NotNull
+  @Override
+  public List<Angular2DirectiveSelector> getNgContentSelectors() {
+    return Collections.emptyList();
   }
 
   @Override
