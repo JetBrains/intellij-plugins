@@ -261,6 +261,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "v-container",
       "v-layout",
       //functional components
+      "v-autocomplete",
       "v-bottom-sheet-transition",
       "v-breadcrumbs-divider",
       "v-carousel-reverse-transition",
@@ -273,6 +274,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "v-menu",
       "v-menu-transition",
       "v-row-expand-transition",
+      "v-select",
       "v-scale-transition",
       "v-scroll-x-reverse-transition",
       "v-scroll-x-transition",
@@ -289,6 +291,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "v-table-overflow",
       "v-tabs",
       "v-tabs-items",
+      "v-text-field",
       "v-card-actions",
       "v-card-text",
       "v-list-tile-action",
