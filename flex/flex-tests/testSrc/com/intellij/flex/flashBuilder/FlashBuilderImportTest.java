@@ -6,7 +6,6 @@ import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.util.FlexTestUtils;
 import com.intellij.ide.highlighter.ModuleFileType;
-import com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.flashbuilder.*;
@@ -31,8 +30,7 @@ import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.testFramework.IdeaTestCase;
+import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.util.TimeoutUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
@@ -44,10 +42,7 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.zip.ZipOutputStream;
 
-import static com.intellij.openapi.vfs.VfsUtilCore.convertFromUrl;
-import static com.intellij.openapi.vfs.VfsUtilCore.urlToPath;
-
-public class FlashBuilderImportTest extends IdeaTestCase {
+public class FlashBuilderImportTest extends PlatformTestCase {
 
   private static final String FB_PROJECT_DIR_NAME = "flash_builder_importer_test";
 

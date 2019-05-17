@@ -3,11 +3,20 @@ package com.intellij.prettierjs;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.intellij.application.options.CodeStyle;
 import com.intellij.javascript.nodejs.PackageJsonData;
 import com.intellij.json.psi.JsonFile;
+import com.intellij.lang.Language;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.JavascriptLanguage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
+import com.intellij.lang.javascript.formatter.JSCodeStyleUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigFileUtil;
 import com.intellij.lang.javascript.linter.JSLinterConfigLangSubstitutor;
+import com.intellij.lang.typescript.formatter.TypeScriptCodeStyleSettings;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -17,6 +26,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
@@ -30,13 +41,15 @@ import org.jetbrains.annotations.Nullable;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.*;
 
 public class PrettierUtil {
 
   public static final Icon ICON = null;
   public static final String PACKAGE_NAME = "prettier";
-  public static final List<String> CONFIG_FILE_EXTENSIONS = Arrays.asList(".yaml", ".yml", ".json", ".js");
+  public static final List<String> CONFIG_FILE_EXTENSIONS = ContainerUtil.immutableList(".yaml", ".yml", ".json", ".js", ".toml");
   public static final String RC_FILE_NAME = ".prettierrc";
   private static final String IGNORE_FILE_NAME = ".prettierignore";
   public static final String JS_CONFIG_FILE_NAME = "prettier.config.js";
@@ -51,7 +64,7 @@ public class PrettierUtil {
   public static final List<String> CONFIG_FILE_NAMES_WITH_PACKAGE_JSON =
     ContainerUtil.append(CONFIG_FILE_NAMES, PackageJsonUtil.FILE_NAME);
 
-  public static final SemVer MIN_VERSION = new SemVer("1.8.0", 1, 8, 0);
+  public static final SemVer MIN_VERSION = new SemVer("1.13.0", 1, 13, 0);
   private static final Logger LOG = Logger.getInstance(PrettierUtil.class);
   public static final String BRACKET_SPACING = "bracketSpacing";
   public static final String PRINT_WIDTH = "printWidth";
@@ -193,13 +206,13 @@ public class PrettierUtil {
         if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
           return null;
         }
-        Map<String, Object> packageJsonMap = OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class);
+        Object prettierProperty = ObjectUtils.coalesce(OUR_GSON_SERIALIZER.<Map<String, Object>>fromJson(file.getText(), Map.class),
+                                                       Collections.emptyMap()).get(PACKAGE_NAME);
         //noinspection unchecked
-        Map<String, Object> packageJsonSectionMap = packageJsonMap != null ? (Map<String, Object>)packageJsonMap.get(PACKAGE_NAME) : null;
-        return parseConfigFromMap(packageJsonSectionMap);
+        return prettierProperty instanceof Map ? parseConfigFromMap(((Map)prettierProperty)) : null;
       }
       if (file instanceof JsonFile) {
-        return parseConfigFromMap(OUR_GSON_SERIALIZER.<Map<String,Object>>fromJson(file.getText(), Map.class));
+        return parseConfigFromJsonText(file.getText());
       }
       if (JSLinterConfigLangSubstitutor.YamlLanguageHolder.INSTANCE.equals(file.getLanguage())) {
         return parseConfigFromMap(new Yaml().load(file.getText()));
@@ -209,6 +222,20 @@ public class PrettierUtil {
       LOG.info(String.format("Could not read config data from file [%s]", file.getVirtualFile().getPath()), e);
     }
     return null;
+  }
+
+  @Nullable
+  public static Config parseConfigFromJsonText(String text) {
+    try (JsonReader reader = new JsonReader(new StringReader(text))) {
+      if (reader.peek() == JsonToken.STRING) {
+        return null; 
+      }
+      return parseConfigFromMap(OUR_GSON_SERIALIZER.fromJson(reader, Map.class));
+    }
+    catch (IOException e) {
+      LOG.info("Could not parse config from text", e);
+      return null;
+    }
   }
 
   @NotNull
@@ -299,6 +326,82 @@ public class PrettierUtil {
       this.trailingComma = ObjectUtils.coalesce(trailingComma, TrailingCommaOption.none);
       this.useTabs = ObjectUtils.coalesce(useTabs, false);
       this.lineSeparator = lineSeparator;
+    }
+
+    public void install(@NotNull Project project) {
+      JSCodeStyleUtil.updateProjectCodeStyle(project, newSettings -> {
+        newSettings.LINE_SEPARATOR = this.lineSeparator;
+        installJSDialectSettings(newSettings, JavascriptLanguage.INSTANCE, JSCodeStyleSettings.class);
+        installJSDialectSettings(newSettings, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptCodeStyleSettings.class);
+      });
+    }
+
+    public boolean isInstalled(@NotNull Project project) {
+      CodeStyleSettings settings = CodeStyle.getSettings(project);
+      return isInstalledForDialect(settings, JavascriptLanguage.INSTANCE, JSCodeStyleSettings.class)
+             && isInstalledForDialect(settings, JavaScriptSupportLoader.TYPESCRIPT, TypeScriptCodeStyleSettings.class)
+             && StringUtil.equals(settings.LINE_SEPARATOR, this.lineSeparator);
+    }
+
+    private boolean isInstalledForDialect(CodeStyleSettings settings,
+                                          Language language,
+                                          Class<? extends JSCodeStyleSettings> settingsClass) {
+      CommonCodeStyleSettings commonSettings = settings.getCommonSettings(language);
+      JSCodeStyleSettings customSettings = settings.getCustomSettings(settingsClass);
+      CommonCodeStyleSettings.IndentOptions indentOptions = commonSettings.getIndentOptions();
+      if (indentOptions == null) {
+        return false;
+      }
+      List<Integer> softMargins = settings.getSoftMargins(language);
+      return indentOptions.INDENT_SIZE == this.tabWidth &&
+             indentOptions.CONTINUATION_INDENT_SIZE == this.tabWidth &&
+             indentOptions.USE_TAB_CHARACTER == this.useTabs &&
+             customSettings.USE_DOUBLE_QUOTES == (!this.singleQuote) &&
+             softMargins.size() == 1 && softMargins.get(0) == this.printWidth &&
+             customSettings.FORCE_QUOTE_STYlE &&
+             customSettings.USE_SEMICOLON_AFTER_STATEMENT == this.semi &&
+             customSettings.FORCE_SEMICOLON_STYLE &&
+             customSettings.SPACES_WITHIN_OBJECT_LITERAL_BRACES == this.bracketSpacing &&
+             customSettings.SPACES_WITHIN_OBJECT_TYPE_BRACES == this.bracketSpacing &&
+             customSettings.SPACES_WITHIN_IMPORTS == this.bracketSpacing &&
+             customSettings.ENFORCE_TRAILING_COMMA == convertTrailingCommaOption(this.trailingComma);
+    }
+
+    private void installJSDialectSettings(@NotNull CodeStyleSettings settings,
+                                          @NotNull Language language,
+                                          @NotNull Class<? extends JSCodeStyleSettings> settingsClass) {
+      CommonCodeStyleSettings commonSettings = settings.getCommonSettings(language);
+      JSCodeStyleSettings customSettings = settings.getCustomSettings(settingsClass);
+      CommonCodeStyleSettings.IndentOptions indentOptions = commonSettings.getIndentOptions();
+      if (indentOptions != null) {
+        indentOptions.INDENT_SIZE = this.tabWidth;
+        indentOptions.CONTINUATION_INDENT_SIZE = this.tabWidth;
+        indentOptions.TAB_SIZE = this.tabWidth;
+        indentOptions.USE_TAB_CHARACTER = this.useTabs;
+      }
+      customSettings.USE_DOUBLE_QUOTES = !this.singleQuote;
+      customSettings.FORCE_QUOTE_STYlE = true;
+      customSettings.USE_SEMICOLON_AFTER_STATEMENT = this.semi;
+      customSettings.FORCE_SEMICOLON_STYLE = true;
+      customSettings.SPACES_WITHIN_OBJECT_LITERAL_BRACES = this.bracketSpacing;
+      customSettings.SPACES_WITHIN_OBJECT_TYPE_BRACES = this.bracketSpacing;
+      customSettings.SPACES_WITHIN_IMPORTS = this.bracketSpacing;
+      customSettings.ENFORCE_TRAILING_COMMA = convertTrailingCommaOption(this.trailingComma);
+
+      customSettings.SPACE_BEFORE_FUNCTION_LEFT_PARENTH = false;
+      settings.setSoftMargins(language, Collections.singletonList(this.printWidth));
+    }
+
+    @NotNull
+    private static JSCodeStyleSettings.TrailingCommaOption convertTrailingCommaOption(@NotNull PrettierUtil.TrailingCommaOption option) {
+      switch (option) {
+        case none:
+          return JSCodeStyleSettings.TrailingCommaOption.Remove;
+        case all:
+        case es5:
+          return JSCodeStyleSettings.TrailingCommaOption.WhenMultiline;
+      }
+      return JSCodeStyleSettings.TrailingCommaOption.Remove;
     }
 
     @Override

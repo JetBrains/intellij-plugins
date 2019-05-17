@@ -83,7 +83,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
     return FlexModuleType.getInstance();
   }
 
-  private void doTest(@Nullable final ThrowableRunnable<Exception> runnable, String... files) throws Exception {
+  private void doTest(@Nullable final ThrowableRunnable<Exception> runnable, String... files) {
     Runnable r = runnable != null ? () -> {
       try {
         runnable.run();
@@ -120,12 +120,12 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithLineMarkers, JSTestOption.WithJsSupportLoader})
-  public void testOverridingMarkersIncludes1() throws Exception {
+  public void testOverridingMarkersIncludes1() {
     doTest(null, getTestName(false) + ".as", getTestName(false) + "_2.as", getTestName(false) + "_3.as", getTestName(false) + "_4.as");
   }
 
   @JSTestOptions({JSTestOption.WithLineMarkers})
-  public void testCreateVariable() throws Exception {
+  public void testCreateVariable() {
     doTest(() -> {
       final IntentionAction action =
         LightQuickFixTestCase
@@ -136,7 +136,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   // yole: I don't know why we care whether a user-initiated operation such as "override methods" expands stubs or not
-  public void _testNoParseOnMethodOverride() throws Exception {
+  public void _testNoParseOnMethodOverride() {
     doTest(() -> {
       PlatformTestUtil.invokeNamedAction("OverrideMethods");
       checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");
@@ -144,7 +144,7 @@ public class ActionScriptStubsTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   // kostya: I don't know why we care whether a user-initiated operation such as "delegate methods" expands stubs or not
-  public void _testNoParseOnMethodDelegate() throws Exception {
+  public void _testNoParseOnMethodDelegate() {
     doTest(() -> {
       PlatformTestUtil.invokeNamedAction("DelegateMethods");
       checkResultByFile(getBasePath() + "/" + getTestName(false) + "_after.as");

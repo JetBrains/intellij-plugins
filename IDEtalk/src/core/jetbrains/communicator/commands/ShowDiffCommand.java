@@ -20,7 +20,7 @@ import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import javax.swing.*;
 
@@ -67,8 +67,8 @@ public class ShowDiffCommand implements FileCommand, NamedUserCommand {
   @Override
   public String getName() {
     if (myVFile != null && myUser != null) {
-      return StringUtil.getMsg("show.diff.for.file.with.user", myUser.getDisplayName());
+      return CommunicatorStrings.getMsg("show.diff.for.file.with.user", myUser.getDisplayName());
     }
-    return StringUtil.getMsg("show.diff.with.user");
+    return CommunicatorStrings.getMsg("show.diff.with.user");
   }
 }

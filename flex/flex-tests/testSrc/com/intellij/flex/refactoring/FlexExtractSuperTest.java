@@ -281,19 +281,19 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
     });
   }
 
-  public void testActionAvailability1() throws Exception {
+  public void testActionAvailability1() {
     checkActions(getTestName(false) + ".as");
   }
 
-  public void testActionAvailability2() throws Exception {
+  public void testActionAvailability2() {
     checkActions(getTestName(false) + ".mxml");
   }
 
-  public void testActionAvailability3() throws Exception {
+  public void testActionAvailability3() {
     checkActions(getTestName(false) + ".xml");
   }
 
-  private void checkActions(String filename) throws Exception {
+  private void checkActions(String filename) {
     myFixture.configureByFile(getTestRoot() + filename);
     LinkedHashMap<Integer, String> markers = JSTestUtils.extractPositionMarkers(myFixture.getProject(), myFixture.getEditor().getDocument());
     int pos = 0;

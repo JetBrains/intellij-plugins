@@ -29,7 +29,12 @@ public class Angular2MetadataComponent extends Angular2MetadataDirectiveBase<Ang
   }
 
   @Override
-  public boolean isTemplate() {
+  public boolean isStructuralDirective() {
     return false;
+  }
+
+  @Override
+  public boolean isRegularDirective() {
+    return true;
   }
 }

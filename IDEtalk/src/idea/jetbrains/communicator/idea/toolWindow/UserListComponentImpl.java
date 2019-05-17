@@ -68,7 +68,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
   private int myRefreshCounter;
   private final Timer myTimer4Renderer;
   private final IDEtalkAdapter myExpandTreeNodeListener;
-  private final XStream myXStream = XMLUtil.createXStream();
+  private final XStream myXStream = XStreamUtil.createXStream();
 
   public UserListComponentImpl(UserModel userModel,
                                IDEFacade facade, final LocalMessageDispatcher localMessageDispatcher) {
@@ -217,11 +217,11 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
 
   public void saveState() {
     TreeState treeState = new TreeState(myTree);
-    XMLUtil.toXml(myXStream, myIDEFacade.getCacheDir(), TREE_STATE_FILE, treeState);
+    XStreamUtil.toXml(myXStream, myIDEFacade.getCacheDir(), TREE_STATE_FILE, treeState);
   }
 
   private void readState() {
-    TreeState treeState = (TreeState) XMLUtil.fromXml(myXStream, myIDEFacade.getCacheDir(), TREE_STATE_FILE, false);
+    TreeState treeState = (TreeState) XStreamUtil.fromXml(myXStream, myIDEFacade.getCacheDir(), TREE_STATE_FILE, false);
     if (treeState != null) {
       treeState.restore(myTree);
     }
@@ -377,7 +377,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
 
     private boolean problem(final String resourceCode) {
       EdtExecutorService.getScheduledExecutorInstance().schedule(() -> Callout.showText(myTree, myTree.getEditingPath(), Callout.SOUTH_WEST,
-                                                                                    StringUtil.getMsg(resourceCode)), (long)100, TimeUnit.MILLISECONDS);
+                                                                                        CommunicatorStrings.getMsg(resourceCode)), (long)100, TimeUnit.MILLISECONDS);
       return false;
     }
 

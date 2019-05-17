@@ -7,7 +7,7 @@ import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
 import jetbrains.communicator.ide.ProgressIndicator;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.WaitFor;
 import org.apache.log4j.Logger;
 
@@ -284,7 +284,8 @@ public class UserMonitorThread extends Thread {
 
   private void setIndicatorText(ProgressIndicator progressIndicator) {
     int size = myAvailableUsers.size();
-    progressIndicator.setText(StringUtil.getMsg("p2p.finder.progressText", String.valueOf(size), StringUtil.getText("user", size)));
+    progressIndicator.setText(
+      CommunicatorStrings.getMsg("p2p.finder.progressText", String.valueOf(size), CommunicatorStrings.getText("user", size)));
   }
 
   boolean _isAlive() {

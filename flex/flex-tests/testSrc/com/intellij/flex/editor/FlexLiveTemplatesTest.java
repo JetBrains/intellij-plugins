@@ -93,22 +93,22 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     };
   }
 
-  public void testFlexIter() throws Exception {
+  public void testFlexIter() {
     myFixture.setCaresAboutInjection(false);
     final String[] expectedLookupVariants = {"arguments", "paramObj", "localArr", "someGetter", "privateStaticVec", "publicString"};
     doTest("iter", "mxml", createLookupSelectingSegmentHandler(getProject(), 0, "privateStaticVec", expectedLookupVariants));
   }
 
-  public void testFlexItin() throws Exception {
+  public void testFlexItin() {
     doTest("itin", "as");
   }
 
-  public void testFlexItar() throws Exception {
+  public void testFlexItar() {
     final String[] expectedLookupVariants = {"object", "arguments"};
     doTest("itar", "as", createLookupSelectingSegmentHandler(getProject(), 1, "object", expectedLookupVariants));
   }
 
-  public void testArrayVarNotDuplicatesIndexVarName() throws Exception {
+  public void testArrayVarNotDuplicatesIndexVarName() {
     myFixture.setCaresAboutInjection(false);
     doTest("itar", "mxml", segmentIndex -> {
       if (segmentIndex == 2) {
@@ -117,7 +117,7 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     });
   }
 
-  public void testFlexRitar() throws Exception {
+  public void testFlexRitar() {
     doTest("ritar", "as", segmentIndex -> {
       if (segmentIndex == 2) {
         myFixture.type("ISomething");
@@ -126,34 +126,34 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testPickVectorTypeInFlexIter() throws Exception {
+  public void testPickVectorTypeInFlexIter() {
     doTest("iter", "as", createLookupSelectingSegmentHandler(getProject(), 0, "bar"));
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testPickVectorTypeInMxmlIter() throws Exception {
+  public void testPickVectorTypeInMxmlIter() {
     myFixture.setCaresAboutInjection(false);
     setUpJdk();
     doTest("iter", "mxml", createLookupSelectingSegmentHandler(getProject(), 0, "vec"));
   }
 
-  public void testPublicVar() throws Exception {
+  public void testPublicVar() {
     doTest("pv", "as");
   }
 
-  public void testPrivateVar() throws Exception {
+  public void testPrivateVar() {
     doTest("prv", "as");
   }
 
-  public void testPublicStaticVar() throws Exception {
+  public void testPublicStaticVar() {
     doTest("psv", "as");
   }
 
-  public void testPrivateStaticVar() throws Exception {
+  public void testPrivateStaticVar() {
     doTest("prsv", "as");
   }
 
-  public void testPublicFunctionWithTypingInMxml() throws Exception {
+  public void testPublicFunctionWithTypingInMxml() {
     doTest("pf", "mxml", segmentIndex -> {
       final CaretModel caretModel = myFixture.getEditor().getCaretModel();
 
@@ -175,16 +175,16 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testPrivateFunction() throws Exception {
+  public void testPrivateFunction() {
     doTest("prf", "as");
   }
 
   @JSTestOptions({JSTestOption.WithFlexSdk})
-  public void testPublicStaticFunction() throws Exception {
+  public void testPublicStaticFunction() {
     doTest("psf", "as");
   }
 
-  public void testPrivateStaticFunctionWithTyping() throws Exception {
+  public void testPrivateStaticFunctionWithTyping() {
     doTest("prsf", "as", segmentIndex -> {
       switch (segmentIndex) {
         case 0:
@@ -200,19 +200,19 @@ public class FlexLiveTemplatesTest extends JSLiveTemplatesTestBase {
     });
   }
 
-  public void testPublicConst() throws Exception {
+  public void testPublicConst() {
     doTest("pc", "as");
   }
 
-  public void testPrivateConst() throws Exception {
+  public void testPrivateConst() {
     doTest("prc", "as");
   }
 
-  public void testPublicStaticConst() throws Exception {
+  public void testPublicStaticConst() {
     doTest("psc", "as");
   }
 
-  public void testPrivateStaticConst() throws Exception {
+  public void testPrivateStaticConst() {
     doTest("prsc", "as");
   }
 }

@@ -19,7 +19,7 @@ import jetbrains.communicator.core.commands.UserCommand;
 import jetbrains.communicator.core.dispatcher.LocalMessageDispatcher;
 import jetbrains.communicator.ide.CanceledException;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.UIUtil;
 
 /**
@@ -37,10 +37,10 @@ public class ClearHistoryCommand implements UserCommand {
   @Override
   public void execute() {
     if (myIdeFacade.askQuestion(
-        StringUtil.getMsg("ClearHistoryCommand.title"),
-        StringUtil.getMsg("ClearHistoryCommand.text"))) {
+      CommunicatorStrings.getMsg("ClearHistoryCommand.title"),
+      CommunicatorStrings.getMsg("ClearHistoryCommand.text"))) {
       try {
-        UIUtil.run(myIdeFacade, StringUtil.getMsg("ClearHistoryCommand.title"), () -> myMessageDispatcher.clearHistory());
+        UIUtil.run(myIdeFacade, CommunicatorStrings.getMsg("ClearHistoryCommand.title"), () -> myMessageDispatcher.clearHistory());
       } catch (CanceledException e) {
         // ignore
       }

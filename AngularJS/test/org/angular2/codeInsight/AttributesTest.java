@@ -462,7 +462,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     configureWithMetadataFiles(myFixture, "common");
     myFixture.configureByFiles("templates_completion2.html");
     myFixture.completeBasic();
-    assertEquals(asList("*ngPluralCase", "*ngSwitchCase", "[ngClass]", "[ngComponentOutlet]", "ngComponentOutlet"),
+    assertEquals(asList("*ngComponentOutlet", "*ngPluralCase", "*ngSwitchCase", "[ngClass]", "[ngComponentOutlet]", "ngComponentOutlet"),
                  sorted(myFixture.getLookupElementStrings()));
   }
 
@@ -657,7 +657,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
   @NotNull
   private static List<PsiElement> multiResolve(@NotNull PsiPolyVariantReference ref) {
     return mapNotNull(ref.multiResolve(false),
-                                    result -> result.isValidResult() ? result.getElement() : null);
+                      result -> result.isValidResult() ? result.getElement() : null);
   }
 
   public void testExportAs() {
@@ -1002,5 +1002,11 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                            .collect(Collectors.toList()),
                          sorted(entry.getValue()));
     }
+  }
+
+  public void testNgTemplateOutletCompletion() {
+    myFixture.configureByFiles("ng-template-outlet-test.html", "ng_template_outlet.ts", "ng_if.ts", "package.json");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), asList("*ngIf", "*ngTemplateOutlet"));
   }
 }

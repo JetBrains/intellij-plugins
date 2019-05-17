@@ -12,14 +12,11 @@ import com.intellij.execution.process.ProcessOutput;
 import com.intellij.javascript.nodejs.interpreter.NodeInterpreterUtil;
 import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
-import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.DialectOptionHolder;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
 import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.JsqtProcessOutputViewer;
 import com.intellij.lang.javascript.modules.InstallNodeLocalDependenciesAction;
-import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -115,7 +112,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
 
     NodePackage nodePackage = configuration.getPackage();
-    if (nodePackage == null || nodePackage.isEmptyPath()) {
+    if (nodePackage.isEmptyPath()) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
                 () -> editSettings(project));
       return;
@@ -159,13 +156,8 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
                       ? new TextRange(editor.getSelectionModel().getSelectionStart(), editor.getSelectionModel().getSelectionEnd()) : null;
     ensureConfigsSaved(Collections.singletonList(vFile), project);
     PrettierLanguageService service = PrettierLanguageService.getInstance(file.getProject());
-    ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable = () -> ReadAction.compute(() -> {
-      if (!isAcceptableFile(file, nodePackage)) {
-        myErrorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
-        return null;
-      }
-      return performRequestForFile(project, nodePackage, service, file, range);
-    });
+    ThrowableComputable<PrettierLanguageService.FormatResult, RuntimeException> computable =
+      () -> ReadAction.compute(() -> performRequestForFile(project, nodePackage, service, file, range));
     PrettierLanguageService.FormatResult result = ProgressManager
       .getInstance()
       .runProcessWithProgressSynchronously(computable, PrettierBundle.message("progress.title"), true, project);
@@ -176,6 +168,9 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     if (!StringUtil.isEmpty(result.error)) {
       myErrorHandler.showErrorWithDetails(project, editor,
                                           PrettierBundle.message("error.while.reformatting.message"), result.error);
+    }
+    else if (result.unsupported) {
+      myErrorHandler.showError(project, editor, PrettierBundle.message("not.supported.file", file.getName()), null);
     }
     else if (result.ignored) {
       showHintLater(editor, "Prettier: " + PrettierBundle.message("file.was.ignored", file.getName()), false, null);
@@ -246,19 +241,16 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
 
       while (fileIterator.hasNext()) {
         PsiFile currentFile = fileIterator.next();
-        if (!isAcceptableFile(currentFile, nodePackage)) {
-          if (reportSkippedFiles) {
-            PrettierLanguageService.FormatResult errorResult = PrettierLanguageService.FormatResult
-              .error(PrettierBundle.message("not.supported.file", currentFile.getName()));
-            reformattedResults.put(currentFile,errorResult);
-          }
-          continue;
-        }
         indicator.setText("Processing " + currentFile.getName());
         PrettierLanguageService.FormatResult result = performRequestForFile(project, nodePackage, service, currentFile, null);
         // timed out. show notification?
         if (result == null) {
           continue;
+        }
+        if (result.unsupported && reportSkippedFiles) {
+          PrettierLanguageService.FormatResult errorResult = PrettierLanguageService.FormatResult
+            .error(PrettierBundle.message("not.supported.file", currentFile.getName()));
+          reformattedResults.put(currentFile,errorResult); 
         }
         if (result.ignored) {
           PrettierLanguageService.FormatResult errorResult =
@@ -362,21 +354,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     new PrettierConfigurable(project).showEditDialog();
   }
 
-  private static boolean isAcceptableFile(@Nullable PsiFile file, @NotNull NodePackage nodePackage) {
-    if (file == null || (!file.isPhysical())) {
-      return false;
-    }
-    return isDetectedAcceptableFile(file.getVirtualFile(), file.getProject(), nodePackage) || isDefaultAcceptableFile(file);
-  }
-
-  private static boolean isDefaultAcceptableFile(@Nullable PsiFile file) {
-    if (file instanceof JSFile) {
-      DialectOptionHolder optionHolder = DialectDetector.dialectOfElement(file);
-      return optionHolder == null || (!optionHolder.isCoffeeScript && !optionHolder.isECMA4);
-    }
-    return false;
-  }
-
   /**
    * @returns true if line separator was updated
    */
@@ -392,28 +369,6 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
     return false;
   }
-
-  private static boolean isDetectedAcceptableFile(@Nullable VirtualFile virtualFile,
-                                                  @NotNull Project project,
-                                                  @NotNull NodePackage nodePackage) {
-    if (virtualFile == null) {
-      return false;
-    }
-    PrettierLanguageServiceImpl languageService = PrettierLanguageService.getInstance(project);
-    PrettierLanguageService.SupportedFilesInfo supportedFiles = JSLanguageServiceUtil.awaitFuture(languageService.getSupportedFiles(nodePackage));
-    if (supportedFiles != null) {
-
-      String nameWithoutExtension = virtualFile.getNameWithoutExtension();
-      if (StringUtil.isEmpty(nameWithoutExtension)) {
-        nameWithoutExtension = virtualFile.getName();
-      }
-      return supportedFiles.fileNames.contains(nameWithoutExtension)
-             || supportedFiles.extensions.contains(virtualFile.getExtension());
-    }
-    return false;
-  }
-
-
 
   public interface ErrorHandler {
     ErrorHandler DEFAULT = new DefaultErrorHandler();

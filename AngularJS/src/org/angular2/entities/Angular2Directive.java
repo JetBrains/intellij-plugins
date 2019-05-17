@@ -23,7 +23,9 @@ public interface Angular2Directive extends Angular2Declaration {
   @NotNull
   Collection<? extends Angular2DirectiveProperty> getOutputs();
 
-  boolean isTemplate();
+  boolean isStructuralDirective();
+
+  boolean isRegularDirective();
 
   default boolean isComponent() {
     return this instanceof Angular2Component;
