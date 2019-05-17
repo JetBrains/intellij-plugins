@@ -25,6 +25,7 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.lang.Angular2LangUtil;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,6 +69,15 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
         addLookupItem(language, elements, el, name, list, scope);
       }
     });
+
+    Angular2CodeInsightUtils.getAvailableNgContentSelectorsStream(xmlTag, scope)
+      .map(SimpleSelectorWithPsi::getElement)
+      .nonNull()
+      .forEach(element -> {
+        if (names.add(element.getName())) {
+          addLookupItem(language, elements, element, element.getName(), null, null);
+        }
+      });
   }
 
   private static void addLookupItem(@NotNull Language language, @NotNull List<LookupElement> elements, @NotNull String name) {
@@ -118,12 +129,21 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     }
 
     Angular2ApplicableDirectivesProvider provider = new Angular2ApplicableDirectivesProvider(xmlTag, true);
-    if (provider.getCandidates().isEmpty()) {
-      return null;
+    Collection<?> sources = provider.getMatched();
+    boolean implied = false;
+    if (sources.isEmpty()) {
+      sources = Angular2CodeInsightUtils.getAvailableNgContentSelectorsStream(xmlTag, new Angular2DeclarationsScope(xmlTag))
+        .map(SimpleSelectorWithPsi::getElement)
+        .nonNull()
+        .filter(el -> StringUtil.toLowerCase(el.getName()).equals(tagName))
+        .toList();
+      implied = !sources.isEmpty();
     }
-    return new Angular2TagDescriptor(xmlTag,
-                                     provider.getMatched().isEmpty() ? provider.getCandidates()
-                                                                     : provider.getMatched());
+    if (sources.isEmpty()) {
+      sources = provider.getCandidates();
+    }
+    return !sources.isEmpty() ? new Angular2TagDescriptor(xmlTag, implied, sources)
+                              : null;
   }
 
   private static XmlElementDescriptor getWrappedDescriptorFromNamespace(@NotNull XmlTag xmlTag) {

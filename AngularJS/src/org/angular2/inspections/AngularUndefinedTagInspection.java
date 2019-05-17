@@ -21,14 +21,14 @@ import java.util.List;
 
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.IN_SCOPE;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.NOT_REACHABLE;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_SPECIAL_TAGS;
 
 public class AngularUndefinedTagInspection extends AngularHtmlLikeTemplateLocalInspectionTool {
 
   @Override
   protected void visitXmlTag(@NotNull ProblemsHolder holder, @NotNull XmlTag tag) {
     XmlElementDescriptor descriptor = tag.getDescriptor();
-    if (!(descriptor instanceof Angular2TagDescriptor) || NG_SPECIAL_TAGS.contains(descriptor.getName())) {
+    if (!(descriptor instanceof Angular2TagDescriptor)
+        || ((Angular2TagDescriptor)descriptor).isImplied()) {
       return;
     }
     Angular2DeclarationsScope scope = new Angular2DeclarationsScope(tag);

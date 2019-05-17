@@ -26,13 +26,16 @@ import static org.angular2.codeInsight.tags.Angular2StandardTagDescriptor.mergeW
 public class Angular2TagDescriptor implements XmlElementDescriptor {
   private final String myName;
   private final Angular2XmlElementSourcesResolver myResolver;
+  private final boolean myImplied;
 
   public Angular2TagDescriptor(@NotNull XmlTag tag) {
-    this(tag, Collections.singleton(createDirective(tag)));
+    this(tag, true, Collections.singleton(createDirective(tag)));
   }
 
   public Angular2TagDescriptor(@NotNull XmlTag tag,
+                               boolean implied,
                                @NotNull Collection<?> sources) {
+    myImplied = implied;
     myResolver = new Angular2XmlElementSourcesResolver(tag, sources);
     myName = tag.getLocalName();
   }
@@ -130,6 +133,10 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
 
   public boolean allowContributions() {
     return true;
+  }
+
+  public boolean isImplied() {
+    return myImplied;
   }
 
   @NotNull

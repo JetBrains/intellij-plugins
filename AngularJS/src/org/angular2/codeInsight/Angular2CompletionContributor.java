@@ -275,7 +275,8 @@ public class Angular2CompletionContributor extends CompletionContributor {
             Angular2AttributesProvider.ANGULAR_ATTRIBUTES_PROVIDER_EP.getExtensionList();
 
           List<Angular2AttributeDescriptor> descriptors = new ArrayList<>();
-          MyCompletionResultsConsumer consumer = new MyCompletionResultsConsumer(result, descriptors);
+          Angular2DeclarationsScope moduleScope = new Angular2DeclarationsScope(tag);
+          MyCompletionResultsConsumer consumer = new MyCompletionResultsConsumer(result, descriptors, moduleScope);
 
           providers.forEach(provider -> provider.contributeCompletionResults(
             consumer, tag, result.getPrefixMatcher().getPrefix()));
@@ -283,7 +284,6 @@ public class Angular2CompletionContributor extends CompletionContributor {
           final PsiFile file = tag.getContainingFile();
           final XmlExtension extension = XmlExtension.getExtension(file);
 
-          Angular2DeclarationsScope moduleScope = new Angular2DeclarationsScope(tag);
           final XmlAttribute[] attributes = tag.getAttributes();
           Set<String> providedAttributes = StreamEx.of(attributes)
             .map(attr -> attr.getDescriptor())
@@ -330,12 +330,22 @@ public class Angular2CompletionContributor extends CompletionContributor {
 
     private final CompletionResultSet myResult;
     private final List<Angular2AttributeDescriptor> myDescriptors;
+    @NotNull private final Angular2DeclarationsScope myScope;
     private final Set<String> myPrefixes = new HashSet<>();
     private final List<Runnable> myAbbreviations = new ArrayList<>();
 
-    private MyCompletionResultsConsumer(CompletionResultSet result, List<Angular2AttributeDescriptor> descriptors) {
+    private MyCompletionResultsConsumer(@NotNull CompletionResultSet result,
+                                        @NotNull List<Angular2AttributeDescriptor> descriptors,
+                                        @NotNull Angular2DeclarationsScope scope) {
       myResult = result;
       myDescriptors = descriptors;
+      myScope = scope;
+    }
+
+    @Override
+    @NotNull
+    public Angular2DeclarationsScope getScope() {
+      return myScope;
     }
 
     public void flushChanges() {
