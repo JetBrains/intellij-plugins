@@ -15,9 +15,7 @@ import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,11 +86,11 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
 
   @NotNull
   @Override
-  protected Pair<Collection<String>, Runnable> importConfig(@NotNull PsiFile configPsi, @NotNull TsLintConfigWrapper configWrapper) {
+  protected ImportResult importConfig(@NotNull PsiFile configPsi, @NotNull TsLintConfigWrapper configWrapper) {
     Project project = configPsi.getProject();
     Collection<TsLintSimpleRule<?>> rules = configWrapper.getRulesToApply(project);
     if (rules.isEmpty()) {
-      return Pair.create(ContainerUtil.emptyList(), null);
+      return ImportResult.alreadyImported();
     }
     configWrapper.applyRules(project, rules);
     List<String> appliedRuleCodes = rules.stream()
@@ -100,6 +98,6 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
       //in the current implementation, a single TSLint rule code will be duplicated if it changes several IDE settings
       .distinct()
       .collect(Collectors.toList());
-    return Pair.create(appliedRuleCodes, null);
+    return ImportResult.success(appliedRuleCodes);
   }
 }
