@@ -6,10 +6,10 @@ import com.intellij.codeInsight.completion.XmlTagInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.Language;
-import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.html.HtmlTag;
 import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider;
@@ -32,15 +32,15 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvider, XmlTagNameProvider {
 
   @NonNls public static final String NG_CONTAINER = "ng-container";
   @NonNls public static final String NG_CONTENT = "ng-content";
   @NonNls public static final String NG_TEMPLATE = "ng-template";
-
-  @NonNls public static final String ATTR_SELECT = "select";
 
   public static final Set<String> NG_SPECIAL_TAGS = ContainerUtil.newHashSet(NG_CONTAINER, NG_CONTENT, NG_TEMPLATE);
 
@@ -109,20 +109,21 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     if (XmlUtil.isTagDefinedByNamespace(xmlTag)) {
       return getWrappedDescriptorFromNamespace(xmlTag);
     }
-    String tagName = XmlUtil.findLocalNameByQualifiedName(xmlTag.getName());
-    if (NG_SPECIAL_TAGS.contains(tagName.toLowerCase(Locale.ENGLISH))) {
-      return new Angular2TagDescriptor(xmlTag, tagName, Collections.singleton(createDirective(xmlTag, tagName)),
-                                       !NG_CONTENT.equals(tagName));
+    String tagName = StringUtil.toLowerCase(xmlTag.getLocalName());
+    if (NG_CONTENT.equals(tagName)) {
+      return new Angular2NgContentDescriptor(xmlTag);
+    }
+    if (NG_SPECIAL_TAGS.contains(tagName)) {
+      return new Angular2TagDescriptor(xmlTag);
     }
 
     Angular2ApplicableDirectivesProvider provider = new Angular2ApplicableDirectivesProvider(xmlTag, true);
     if (provider.getCandidates().isEmpty()) {
       return null;
     }
-    return new Angular2TagDescriptor(xmlTag, tagName,
+    return new Angular2TagDescriptor(xmlTag,
                                      provider.getMatched().isEmpty() ? provider.getCandidates()
-                                                                     : provider.getMatched(),
-                                     true);
+                                                                     : provider.getMatched());
   }
 
   private static XmlElementDescriptor getWrappedDescriptorFromNamespace(@NotNull XmlTag xmlTag) {
@@ -137,11 +138,5 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
     return elementDescriptor instanceof HtmlElementDescriptorImpl
            ? new Angular2StandardTagDescriptor((HtmlElementDescriptorImpl)elementDescriptor)
            : null;
-  }
-
-  @NotNull
-  private static JSImplicitElementImpl createDirective(@NotNull XmlTag xmlTag, @NotNull String name) {
-    //noinspection HardCodedStringLiteral
-    return new JSImplicitElementImpl.Builder(name, xmlTag).setTypeString("E;;;").toImplicitElement();
   }
 }

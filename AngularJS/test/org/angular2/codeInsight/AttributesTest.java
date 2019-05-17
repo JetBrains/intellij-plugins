@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.containers.ContainerUtil.*;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.angularjs.AngularTestUtil.configureWithMetadataFiles;
 import static org.angularjs.AngularTestUtil.renderLookupItems;
 
@@ -979,7 +980,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                            "     * change it.\n" +
                            "     */\n" +
                            "    id: string", "id: /*c1*/ string")),
-      pair("[attr.id]=", Collections.singletonList("id")),
+      pair("[attr.id]=", singletonList("id")),
       pair("bar=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
       pair("[bar]=", asList("bar: /*c1*/ number", "bar: /*c2*/ number")),
       pair("boo=", asList("boo: /*c1*/ number", "boo: /*c2*/ string")),
@@ -1008,5 +1009,18 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("ng-template-outlet-test.html", "ng_template_outlet.ts", "ng_if.ts", "package.json");
     myFixture.completeBasic();
     assertContainsElements(myFixture.getLookupElementStrings(), asList("*ngIf", "*ngTemplateOutlet"));
+  }
+
+  public void testNgContentCompletion() {
+    myFixture.configureByFiles("ng-content-completion.html", "package.json");
+    myFixture.completeBasic();
+    assertEquals(singletonList("select"), myFixture.getLookupElementStrings());
+  }
+
+  public void testNgContentInspection() {
+    myFixture.enableInspections(HtmlUnknownAttributeInspection.class,
+                                AngularUndefinedBindingInspection.class);
+    myFixture.configureByFiles("ng-content-inspection.html", "package.json");
+    myFixture.checkHighlighting();
   }
 }

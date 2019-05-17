@@ -122,7 +122,7 @@ public class TagsTest extends Angular2CodeInsightFixtureTestCase {
     PsiElement resolve = ref.resolve();
     assertNotNull(resolve);
     assertEquals("ngContent.after.html", resolve.getContainingFile().getName());
-    assertEquals("<ng-content></ng-content>", AngularTestUtil.getDirectiveDefinitionText(resolve));
+    assertEquals("<ng-content", AngularTestUtil.getDirectiveDefinitionText(resolve));
   }
 
   public void testNoNormalizedResolve20() {
