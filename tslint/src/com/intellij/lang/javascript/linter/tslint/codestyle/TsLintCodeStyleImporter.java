@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWr
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintSimpleRule;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -56,15 +55,14 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
   }
 
   @Override
-  protected boolean isDirectlyImportable(@NotNull PsiFile configPsi) {
-    TsLintConfigWrapper wrapper = parseConfigFromFile(configPsi);
-    return wrapper != null && !wrapper.hasExtends();
+  protected boolean isDirectlyImportable(@NotNull PsiFile configPsi, @Nullable TsLintConfigWrapper parsedConfig) {
+    return parsedConfig != null && !parsedConfig.hasExtends();
   }
 
   @Nullable
   @Override
   protected TsLintConfigWrapper parseConfigFromFile(@NotNull PsiFile configPsi) {
-    return ReadAction.compute(() -> TsLintConfigWrapper.Companion.getConfigForFile(configPsi));
+    return TsLintConfigWrapper.Companion.getConfigForFile(configPsi);
   }
 
   @Nullable

@@ -112,7 +112,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     }
 
     NodePackage nodePackage = configuration.getPackage();
-    if (nodePackage == null || nodePackage.isEmptyPath()) {
+    if (nodePackage.isEmptyPath()) {
       myErrorHandler.showError(project, editor, PrettierBundle.message("error.no.valid.package"),
                 () -> editSettings(project));
       return;
