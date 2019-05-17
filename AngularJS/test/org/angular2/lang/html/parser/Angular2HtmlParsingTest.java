@@ -323,4 +323,9 @@ public class Angular2HtmlParsingTest extends HtmlParsingTest {
                "</style>\n" +
                "<div></div>");
   }
+
+  public void testNgContentSelect() throws Exception {
+    doTestHtml("<div><ng-content select='foo,bar'></ng-content></div>");
+  }
+
 }

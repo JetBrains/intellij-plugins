@@ -30,7 +30,7 @@ public class Angular2ApplicableDirectivesProvider {
   }
 
   public Angular2ApplicableDirectivesProvider(@NotNull XmlTag xmlTag, boolean onlyMatchingTagName) {
-    this(xmlTag.getProject(), xmlTag.getName(), onlyMatchingTagName,
+    this(xmlTag.getProject(), xmlTag.getLocalName(), onlyMatchingTagName,
          Angular2DirectiveSimpleSelector.createElementCssSelector(xmlTag));
   }
 

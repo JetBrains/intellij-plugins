@@ -1,0 +1,27 @@
+HtmlFile:test.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:div
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')
+      HtmlTag:ng-content
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('ng-content')
+        PsiWhiteSpace(' ')
+        PsiElement(XML_ATTRIBUTE)
+          XmlToken:XML_NAME('select')
+          XmlToken:XML_EQ('=')
+          PsiElement(XML_ATTRIBUTE_VALUE)
+            XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER(''')
+            Angular2HtmlNgContentSelector (foo,bar)
+              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('foo,bar')
+            XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER(''')
+        XmlToken:XML_TAG_END('>')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('ng-content')
+        XmlToken:XML_TAG_END('>')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('div')
+      XmlToken:XML_TAG_END('>')

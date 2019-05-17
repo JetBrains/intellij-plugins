@@ -80,7 +80,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
         .map(TypeScriptClass::getJSType)
         .findFirst()
         .orElseGet(() -> hasExport ? null
-                                   : isTemplateTag(tag.getName())
+                                   : isTemplateTag(tag)
                                      ? getTemplateRefType(getComponentClass())
                                      : getHtmlElementClassType(this, tag.getName()));
     }

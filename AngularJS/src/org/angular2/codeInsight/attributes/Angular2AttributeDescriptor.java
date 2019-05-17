@@ -102,9 +102,9 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                                     @NotNull String attributeName,
                                                     @NotNull List<PsiElement> elements) {
     if (getCustomNgAttrs().contains(attributeName)) {
-      return new Angular2AttributeDescriptor(tag, attributeName, false, elements, true);
+      return new Angular2AttributeDescriptor(tag, attributeName, elements, true);
     }
-    Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attributeName, true);
+    Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(attributeName, tag);
 
     if (elements.isEmpty() && info.type == REGULAR) {
       return null;
@@ -132,7 +132,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   public static List<Angular2AttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive,
                                                                           @NotNull XmlTag tag) {
-    if (!directive.isRegularDirective() && !isTemplateTag(tag.getName())) {
+    if (!directive.isRegularDirective() && !isTemplateTag(tag)) {
       return emptyList();
     }
     return new DirectiveAttributesProvider(tag, directive).get();
@@ -151,20 +151,18 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   // Angular2EventHandlerDescriptor and AngularBindingDescriptor, which are deprecated
   protected Angular2AttributeDescriptor(@Nullable XmlTag xmlTag, //Nullable for compatibility with NativeScript
                                         @NotNull String attributeName,
-                                        boolean isInTemplateTag,
                                         @NotNull Collection<?> sources,
                                         boolean implied) {
-    this(xmlTag, attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag),
+    this(xmlTag, attributeName, Angular2AttributeNameParser.parse(attributeName, xmlTag),
          AttributePriority.NORMAL, sources, implied);
   }
 
-  protected Angular2AttributeDescriptor(@Nullable XmlTag tag, //Nullable for compatibility with NativeScript
+  protected Angular2AttributeDescriptor(@Nullable XmlTag xmlTag, //Nullable for compatibility with NativeScript
                                         @NotNull String attributeName,
-                                        boolean isInTemplateTag,
                                         @NotNull AttributePriority priority,
                                         @NotNull Collection<?> sources,
                                         boolean implied) {
-    this(tag, attributeName, Angular2AttributeNameParser.parse(attributeName, isInTemplateTag),
+    this(xmlTag, attributeName, Angular2AttributeNameParser.parse(attributeName, xmlTag),
          priority, sources, implied);
   }
 
@@ -211,7 +209,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       assert other.getName().equals(myAttributeName);
       Set<Object> elements = new HashSet<>(myResolver.getSources());
       elements.addAll(other.getDeclarations());
-      return new Angular2AttributeDescriptor(myResolver.getScope(), myAttributeName, false, elements, true);
+      return new Angular2AttributeDescriptor(myResolver.getScope(), myAttributeName, elements, true);
     }
   }
 
@@ -550,14 +548,16 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     private Angular2AttributeDescriptor createBinding(@NotNull Angular2DirectiveProperty info) {
       return new Angular2AttributeDescriptor(myTag,
                                              PROPERTY_BINDING.buildName(info.getName()),
-                                             false, AttributePriority.HIGH,
+                                             AttributePriority.HIGH,
                                              singletonList(myDirective),
                                              false);
     }
 
     @NotNull
     private Angular2AttributeDescriptor createBananaBoxBinding(@NotNull Pair<Angular2DirectiveProperty, Angular2DirectiveProperty> info) {
-      return new Angular2AttributeDescriptor(myTag, BANANA_BOX_BINDING.buildName(info.first.getName()), false, AttributePriority.HIGH,
+      return new Angular2AttributeDescriptor(myTag,
+                                             BANANA_BOX_BINDING.buildName(info.first.getName()),
+                                             AttributePriority.HIGH,
                                              singletonList(myDirective),
                                              false);
     }
@@ -565,7 +565,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     @Nullable
     private Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
       return isOneTimeBindingProperty(info)
-             ? new Angular2AttributeDescriptor(myTag, info.getName(), false, AttributePriority.HIGH,
+             ? new Angular2AttributeDescriptor(myTag, info.getName(), AttributePriority.HIGH,
                                                singletonList(myDirective),
                                                false)
              : null;
@@ -573,7 +573,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
     @NotNull
     private Angular2EventHandlerDescriptor createEventHandler(@NotNull Angular2DirectiveProperty info) {
-      return new Angular2EventHandlerDescriptor(myTag, EVENT.buildName(info.getName()), false, AttributePriority.HIGH,
+      return new Angular2EventHandlerDescriptor(myTag, EVENT.buildName(info.getName()), AttributePriority.HIGH,
                                                 singletonList(myDirective),
                                                 false);
     }
