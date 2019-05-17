@@ -4,10 +4,15 @@ package org.angular2.lang.html.psi.impl;
 import com.intellij.extapi.psi.StubBasedPsiElementBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.StubBasedPsiElement;
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.util.ArrayUtil;
 import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.entities.Angular2DirectiveSelectorImpl;
+import org.angular2.lang.html.psi.Angular2HtmlElementVisitor;
 import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorStub;
 import org.jetbrains.annotations.NotNull;
@@ -42,5 +47,26 @@ public class Angular2HtmlNgContentSelectorImpl extends StubBasedPsiElementBase<A
   @Override
   public String toString() {
     return "Angular2HtmlNgContentSelector (" + getSelector() + ")";
+  }
+
+  @Override
+  public PsiReference getReference() {
+    return ArrayUtil.getFirstElement(getReferences());
+  }
+
+  @Override
+  @NotNull
+  public PsiReference[] getReferences() {
+    return ReferenceProvidersRegistry.getReferencesFromProviders(this);
+  }
+
+  @Override
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof Angular2HtmlElementVisitor) {
+      ((Angular2HtmlElementVisitor)visitor).visitNgContentSelector(this);
+    }
+    else {
+      super.accept(visitor);
+    }
   }
 }

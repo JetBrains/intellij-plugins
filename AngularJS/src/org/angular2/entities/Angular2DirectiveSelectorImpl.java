@@ -134,16 +134,19 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       }
     }
 
+    @Nullable
     @Override
     public Angular2DirectiveSelectorPsiElement getElement() {
       return myElement;
     }
 
+    @NotNull
     @Override
     public List<Angular2DirectiveSelectorPsiElement> getAttributes() {
       return myAttributes;
     }
 
+    @NotNull
     @Override
     public List<SimpleSelectorWithPsi> getNotSelectors() {
       return myNotSelectors;

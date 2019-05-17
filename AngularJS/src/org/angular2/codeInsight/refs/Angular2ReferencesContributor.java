@@ -11,6 +11,7 @@ import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.angular2.lang.Angular2LangUtil;
+import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +32,11 @@ public class Angular2ReferencesContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(VIEW_CHILD_PATTERN, new Angular2ViewChildReferencesProvider());
     registrar.registerReferenceProvider(PIPE_NAME_PATTERN, new Angular2PipeNameReferencesProvider());
     registrar.registerReferenceProvider(SELECTOR_PATTERN, new Angular2SelectorReferencesProvider());
+    registrar.registerReferenceProvider(NG_CONTENT_SELECTOR_PATTERN, new Angular2SelectorReferencesProvider());
   }
 
+  private static final PsiElementPattern.Capture<Angular2HtmlNgContentSelector> NG_CONTENT_SELECTOR_PATTERN =
+    PlatformPatterns.psiElement(Angular2HtmlNgContentSelector.class);
   private static final PsiElementPattern.Capture<JSLiteralExpression> SELECTOR_PATTERN =
     ng2LiteralInDecoratorProperty(SELECTOR_PROP, COMPONENT_DEC, DIRECTIVE_DEC);
   private static final PsiElementPattern.Capture<JSLiteralExpression> PIPE_NAME_PATTERN =
