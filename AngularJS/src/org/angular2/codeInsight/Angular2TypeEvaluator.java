@@ -242,7 +242,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     private BindingsTypeResolver(@NotNull XmlTag tag) {
       this(tag, new Angular2ApplicableDirectivesProvider(tag), t ->
         StreamEx.of(t.getAttributes())
-          .mapToEntry(attr -> Angular2AttributeNameParser.parse(attr.getName(), false),
+          .mapToEntry(attr -> Angular2AttributeNameParser.parse(attr.getName(), attr.getParent()),
                       Function.identity())
           .filterKeys(Angular2TypeEvaluator::isPropertyBindingAttribute)
           .mapValues(attribute -> doIfNotNull(Angular2Binding.get(attribute),

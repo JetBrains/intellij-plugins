@@ -12,19 +12,17 @@ public class Angular2EventHandlerDescriptor extends Angular2AttributeDescriptor 
 
   public Angular2EventHandlerDescriptor(@NotNull XmlTag tag,
                                         @NotNull String attributeName,
-                                        boolean isInTemplateTag,
                                         @NotNull List<?> sources,
                                         boolean implied) {
-    super(tag, attributeName, isInTemplateTag, sources, implied);
+    super(tag, attributeName, sources, implied);
   }
 
   public Angular2EventHandlerDescriptor(@Nullable XmlTag tag,
                                         @NotNull String attributeName,
-                                        boolean isInTemplateTag,
                                         @NotNull AttributePriority priority,
                                         @NotNull List<?> sources,
                                         boolean implied) {
-    super(tag, attributeName, isInTemplateTag, priority, sources, implied);
+    super(tag, attributeName, priority, sources, implied);
   }
 
   public Angular2EventHandlerDescriptor(@Nullable XmlTag tag,

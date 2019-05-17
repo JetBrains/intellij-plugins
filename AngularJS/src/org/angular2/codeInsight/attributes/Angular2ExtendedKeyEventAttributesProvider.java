@@ -177,7 +177,6 @@ public class Angular2ExtendedKeyEventAttributesProvider implements Angular2Attri
                                                  boolean canonical) {
       super(xmlTag,
             Objects.requireNonNull(EVENT.buildName(notNullize(baseName) + keyName, canonical)),
-            false,
             priority,
             originalDescriptor == null ? Collections.emptySet() : originalDescriptor.getDeclarations(),
             true);

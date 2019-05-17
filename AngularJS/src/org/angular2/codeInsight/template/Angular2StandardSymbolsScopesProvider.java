@@ -43,7 +43,8 @@ public class Angular2StandardSymbolsScopesProvider extends Angular2TemplateScope
         attribute = attribute.getParent();
       }
       if (attribute instanceof XmlAttribute) {
-        Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(((XmlAttribute)attribute).getName(), true);
+        Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(
+          ((XmlAttribute)attribute).getName(), ((XmlAttribute)attribute).getParent());
         if (info.type == Angular2AttributeType.EVENT) {
           result.add(new Angular2EventScope(((XmlAttribute)attribute)));
         }

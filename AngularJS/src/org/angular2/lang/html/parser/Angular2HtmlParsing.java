@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.expr.parser.Angular2EmbeddedExprTokenType.*;
 import static org.angular2.lang.html.parser.Angular2HtmlElementTypes.*;
 
@@ -151,9 +150,9 @@ public class Angular2HtmlParsing extends HtmlParsing {
   protected void parseAttribute() {
     assert token() == XML_NAME;
     PsiBuilder.Marker att = mark();
+    String tagName = XmlUtil.findLocalNameByQualifiedName(peekTagName());
     final AttributeInfo attributeInfo = Angular2AttributeNameParser.parse(
-      Objects.requireNonNull(getBuilder().getTokenText()),
-      isTemplateTag(XmlUtil.findLocalNameByQualifiedName(peekTagName())));
+      Objects.requireNonNull(getBuilder().getTokenText()), tagName);
 
     if (attributeInfo.error != null) {
       PsiBuilder.Marker attrName = mark();
@@ -173,7 +172,7 @@ public class Angular2HtmlParsing extends HtmlParsing {
       advance();
       attributeElementType = parseAttributeValue(attributeElementType, attributeInfo.name);
     }
-    att.done(attributeElementType);
+    att.done(attributeElementType != NG_CONTENT_SELECTOR ? attributeElementType : XML_ATTRIBUTE);
   }
 
   private IElementType parseAttributeValue(@NotNull IElementType attributeElementType, @NotNull String name) {
@@ -208,7 +207,12 @@ public class Angular2HtmlParsing extends HtmlParsing {
         }
       }
       if (contentStart != null) {
-        contentStart.collapse(contentType);
+        if (contentType == NG_CONTENT_SELECTOR) {
+          contentStart.done(contentType);
+        }
+        else {
+          contentStart.collapse(contentType);
+        }
       }
       if (token() == XmlTokenType.XML_ATTRIBUTE_VALUE_END_DELIMITER) {
         advance();
@@ -243,6 +247,9 @@ public class Angular2HtmlParsing extends HtmlParsing {
     }
     if (type == TEMPLATE_BINDINGS) {
       return createTemplateBindings(name);
+    }
+    if (type == NG_CONTENT_SELECTOR) {
+      return NG_CONTENT_SELECTOR;
     }
     if (type == REFERENCE || type == VARIABLE || type == XML_ATTRIBUTE) {
       return null;

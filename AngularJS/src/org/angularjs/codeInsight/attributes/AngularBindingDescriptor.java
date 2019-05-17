@@ -15,6 +15,6 @@ import java.util.Collections;
 public class AngularBindingDescriptor extends Angular2AttributeDescriptor {
   public AngularBindingDescriptor(@NotNull PsiElement element,
                                   @NotNull String attributeName) {
-    super(null, attributeName, false, AttributePriority.NORMAL, Collections.singletonList(element), true);
+    super(null, attributeName, AttributePriority.NORMAL, Collections.singletonList(element), true);
   }
 }
