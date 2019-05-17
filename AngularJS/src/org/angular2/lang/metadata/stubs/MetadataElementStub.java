@@ -18,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -167,6 +169,23 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
       String key = stream.readNameString();
       String value = stream.readNameString();
       result.put(key, value);
+    }
+    return result;
+  }
+
+  protected static void writeStringList(@NotNull List<String> list, @NotNull StubOutputStream stream) throws IOException {
+    stream.writeVarInt(list.size());
+    for (String item : list) {
+      stream.writeName(item);
+    }
+  }
+
+  @NotNull
+  protected static List<String> readStringList(@NotNull StubInputStream stream) throws IOException {
+    int size = stream.readVarInt();
+    List<String> result = new ArrayList<>(size);
+    for (int i = 0; i < size; i++) {
+      result.add(stream.readNameString());
     }
     return result;
   }

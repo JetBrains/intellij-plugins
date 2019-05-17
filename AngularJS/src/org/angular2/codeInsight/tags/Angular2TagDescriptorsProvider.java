@@ -40,6 +40,8 @@ public class Angular2TagDescriptorsProvider implements XmlElementDescriptorProvi
   @NonNls public static final String NG_CONTENT = "ng-content";
   @NonNls public static final String NG_TEMPLATE = "ng-template";
 
+  @NonNls public static final String ATTR_SELECT = "select";
+
   public static final Set<String> NG_SPECIAL_TAGS = ContainerUtil.newHashSet(NG_CONTAINER, NG_CONTENT, NG_TEMPLATE);
 
   @Override

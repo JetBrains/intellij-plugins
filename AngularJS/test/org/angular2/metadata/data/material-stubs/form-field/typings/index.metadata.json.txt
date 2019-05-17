@@ -24,7 +24,7 @@ MetadataFile:index.metadata.json
     MatFormFieldBase <metadata class>('')
     _MatFormFieldMixinBase: : <metadata call>
       #expression: @angular/material/core#mixinColor <metadata reference>('')
-    MatFormField <metadata component>: selector=mat-form-field; exportAs=matFormField; inputs=[hintLabel, appearance, color, hideRequiredMarker, floatLabel]; outputs=[]; inOuts=[]
+    MatFormField <metadata component>: selector=mat-form-field; ngContentSelectors=[[matPrefix], mat-placeholder, mat-label, [matSuffix], mat-error, mat-hint:not([align='end']), mat-hint[align='end']]; exportAs=matFormField; inputs=[hintLabel, appearance, color, hideRequiredMarker, floatLabel]; outputs=[]; inOuts=[]
       #ext: _MatFormFieldMixinBase <metadata reference>('')
     MatFormFieldControl <metadata class>('')
     getMatFormFieldPlaceholderConflictError <metadata function>
