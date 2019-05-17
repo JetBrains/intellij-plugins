@@ -214,11 +214,17 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
       }
     }
     // process subfolders
-    for (PsiDirectory subDir : dir.getSubdirectories()) {
-      result.addAll(gatherStepDefinitionsFilesFromDirectory(subDir, writableOnly));
+    if (processSubfolders()) {
+      for (PsiDirectory subDir : dir.getSubdirectories()) {
+        result.addAll(gatherStepDefinitionsFilesFromDirectory(subDir, writableOnly));
+      }
     }
 
     return result;
+  }
+
+  protected boolean processSubfolders() {
+    return true;
   }
 
   public static void collectDependencies(Module module, Set<? super Module> modules) {
