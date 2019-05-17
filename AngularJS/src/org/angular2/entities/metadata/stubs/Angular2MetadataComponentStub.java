@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.ATTR_SELECT;
+import static org.angular2.codeInsight.tags.Angular2NgContentDescriptor.ATTR_SELECT;
 import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
 import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 

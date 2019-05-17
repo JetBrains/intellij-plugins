@@ -4,6 +4,7 @@ package org.angular2.lang.html.parser;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
+import org.angular2.codeInsight.tags.Angular2NgContentDescriptor;
 import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.AnimationPhase;
 import org.angular2.lang.html.psi.Angular2HtmlEvent.EventType;
@@ -15,7 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.*;
+import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
+import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_TEMPLATE;
 import static org.angular2.codeInsight.template.Angular2TemplateElementsScopeProvider.isTemplateTag;
 import static org.angular2.lang.html.psi.PropertyBindingType.*;
 
@@ -84,7 +86,7 @@ public class Angular2AttributeNameParser {
     else if (name.startsWith("@")) {
       return new PropertyBindingInfo(name.substring(1), false, false, ANIMATION);
     }
-    else if (name.equals(ATTR_SELECT) && tagName.equals(NG_CONTENT)) {
+    else if (name.equals(Angular2NgContentDescriptor.ATTR_SELECT) && tagName.equals(NG_CONTENT)) {
       return new AttributeInfo(name, false, Angular2AttributeType.NG_CONTENT_SELECTOR);
     }
     return new AttributeInfo(name, false, Angular2AttributeType.REGULAR);

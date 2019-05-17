@@ -42,6 +42,7 @@ import org.angular2.Angular2DecoratorUtil;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.*;
 import org.angular2.codeInsight.attributes.Angular2AttributesProvider.CompletionResultsConsumer;
+import org.angular2.codeInsight.tags.Angular2TagDescriptor;
 import org.angular2.codeInsight.template.Angular2StandardSymbolsScopesProvider;
 import org.angular2.codeInsight.template.Angular2TemplateScopesResolver;
 import org.angular2.css.Angular2CssAttributeNameCompletionProvider;
@@ -266,7 +267,9 @@ public class Angular2CompletionContributor extends CompletionContributor {
         final XmlAttribute attribute = ((XmlAttributeReference)reference).getElement();
         final XmlTag tag = attribute.getParent();
         final XmlElementDescriptor parentDescriptor = tag.getDescriptor();
-        if (parentDescriptor != null) {
+        if (parentDescriptor != null
+            && (!(parentDescriptor instanceof Angular2TagDescriptor)
+                || ((Angular2TagDescriptor)parentDescriptor).allowContributions())) {
           List<Angular2AttributesProvider> providers =
             Angular2AttributesProvider.ANGULAR_ATTRIBUTES_PROVIDER_EP.getExtensionList();
 

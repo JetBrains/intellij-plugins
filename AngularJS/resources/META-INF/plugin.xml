@@ -121,9 +121,6 @@
     <localInspection implementationClass="org.angular2.inspections.AngularIncorrectTemplateDefinitionInspection"
                      displayName="Incorrect component template definition"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
-    <localInspection implementationClass="org.angular2.inspections.AngularInvalidSelectorInspection"
-                     displayName="Missing or invalid selector"
-                     groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
     <localInspection implementationClass="org.angular2.inspections.AngularMissingOrInvalidDeclarationInModuleInspection"
                      displayName="Missing or invalid component, directive or pipe declaration in a module"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
@@ -139,6 +136,9 @@
     <localInspection implementationClass="org.angular2.inspections.AngularInvalidEntryComponentInspection"
                      displayName="Invalid entry component"
                      groupName="Angular" enabledByDefault="true" level="ERROR" language="TypeScript"/>
+    <localInspection implementationClass="org.angular2.inspections.AngularInvalidSelectorInspection"
+                     displayName="Missing or invalid selector"
+                     groupName="Angular" enabledByDefault="true" level="ERROR"/>
     <localInspection implementationClass="org.angular2.inspections.AngularInaccessibleComponentMemberInAotModeInspection"
                      displayName="Inaccessible component member in AOT mode"
                      groupName="Angular" enabledByDefault="false" level="WARNING"/>
