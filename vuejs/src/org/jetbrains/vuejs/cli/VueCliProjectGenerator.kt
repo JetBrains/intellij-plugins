@@ -1,149 +1,112 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.cli
 
-import com.intellij.ide.util.projectWizard.*
-import com.intellij.lang.javascript.boilerplate.NpmPackageGeneratorPeerExtensible
+import com.intellij.execution.filters.Filter
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessHandler
+import com.intellij.javascript.CreateRunConfigurationUtil
+import com.intellij.javascript.nodejs.packages.NodePackageUtil
+import com.intellij.javascript.nodejs.util.NodePackage
 import com.intellij.lang.javascript.boilerplate.NpmPackageProjectGenerator
-import com.intellij.openapi.module.Module
+import com.intellij.lang.javascript.boilerplate.NpxPackageDescriptor
+import com.intellij.lang.javascript.buildTools.webpack.WebPackConfigManager
+import com.intellij.lang.javascript.buildTools.webpack.WebPackConfiguration
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.ComboBox
-import com.intellij.openapi.ui.LabeledComponent
-import com.intellij.openapi.ui.ValidationInfo
+import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.wm.impl.welcomeScreen.AbstractActionWithPanel
-import com.intellij.platform.DirectoryProjectGenerator
-import com.intellij.platform.HideableProjectGenerator
-import com.intellij.platform.WebProjectGenerator
-import com.intellij.ui.ColoredListCellRenderer
-import com.intellij.ui.SimpleTextAttributes
-import com.intellij.util.ui.UIUtil
+import com.intellij.util.PathUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.VueBundle
-import java.awt.BorderLayout
-import java.awt.event.InputMethodEvent
-import java.awt.event.InputMethodListener
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
-import java.util.*
+import java.io.File
+import java.io.IOException
+import java.nio.charset.StandardCharsets
 import javax.swing.Icon
-import javax.swing.JComponent
-import javax.swing.JList
-import javax.swing.JPanel
 
-class VueCliProjectGenerator : WebProjectTemplate<NpmPackageProjectGenerator.Settings>(),
-                               CustomStepProjectGenerator<NpmPackageProjectGenerator.Settings>,
-                               HideableProjectGenerator {
+class VueCliProjectGenerator : NpmPackageProjectGenerator() {
+  private val LOG = Logger.getInstance(VueCliProjectGenerator::class.java)
 
-  override fun isHidden(): Boolean = false
+  private val PACKAGE_NAME = "@vue/cli"
+  private val VUE_EXECUTABLE = "vue"
+  private val CREATE_COMMAND = "create"
 
-  override fun createStep(projectGenerator: DirectoryProjectGenerator<NpmPackageProjectGenerator.Settings>?,
-                          callback: AbstractNewProjectStep.AbstractCallback<NpmPackageProjectGenerator.Settings>?): AbstractActionWithPanel {
-    return VueCliProjectSettingsStep(projectGenerator, callback)
+  override fun getName(): String {
+    return VueBundle.message("vue.project.generator.name")
   }
 
-  override fun createModuleBuilder(): ModuleBuilder {
-    return VueCreateProjectModuleBuilder(this)
+  override fun getDescription(): String {
+    return VueBundle.message("vue.project.generator.description")
   }
 
-  @Suppress("DEPRECATION")
-  override fun createPeer(): GeneratorPeer<NpmPackageProjectGenerator.Settings> {
-    return VueCliGeneratorSettingsPeer()
+  override fun getIcon(): Icon {
+    return VuejsIcons.Vue
   }
 
-  override fun generateProject(project: Project, baseDir: VirtualFile, settings: NpmPackageProjectGenerator.Settings, module: Module) {
+  override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry) {}
+
+  override fun generatorArgs(project: Project, baseDir: VirtualFile): Array<String> {
+    return arrayOf(CREATE_COMMAND, ".")
   }
 
-  override fun getName(): String = "Vue.js"
-  override fun getDescription(): String = VueBundle.message("vue.project.generator.description")
-  override fun getIcon(): Icon = VuejsIcons.Vue!!
-}
-
-class VueCliGeneratorSettingsPeer : NpmPackageGeneratorPeerExtensible(Arrays.asList("vue-cli", "@vue/cli"),
-                                                                      "vue-cli or @vue/cli", { null }) {
-  companion object {
-    internal val TEMPLATE_KEY = Key.create<String>("create.vue.app.project.template")
-    private val TEMPLATES = mapOf(
-      Pair("browserify", "A full-featured Browserify + vueify setup with hot-reload, linting & unit testing"),
-      Pair("browserify-simple", "A simple Browserify + vueify setup for quick prototyping"),
-      Pair("pwa", "PWA template for vue-cli based on the webpack template"),
-      Pair("simple", "The simplest possible Vue setup in a single HTML file"),
-      Pair("webpack", "A full-featured Webpack + vue-loader setup with hot reload, linting, testing & css extraction"),
-      Pair("webpack-simple", "A simple Webpack + vue-loader setup for quick prototyping")
-    )
+  override fun filters(project: Project, baseDir: VirtualFile): Array<Filter> {
+    return Filter.EMPTY_ARRAY
   }
 
-  var template: ComboBox<*>? = null
+  override fun executable(pkg: NodePackage): String {
+    return pkg.systemDependentPath + File.separator + "bin" + File.separator + "vue.js"
+  }
 
-  override fun createPanel(): JPanel {
-    val panel = super.createPanel()
-    template = ComboBox(TEMPLATES.keys.toTypedArray())
-    template!!.selectedItem = "webpack"
-    template!!.isEditable = true
-    template!!.renderer = object : ColoredListCellRenderer<Any?>() {
-      override fun customizeCellRenderer(list: JList<out Any?>, value: Any?, index: Int, selected: Boolean, hasFocus: Boolean) {
-        if (value is String) {
-          append(value)
-          val comment = TEMPLATES[value] ?: return
-          append(" ")
-          append(comment, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+  override fun packageName(): String {
+    return PACKAGE_NAME
+  }
+
+  override fun presentablePackageName(): String {
+    return VueBundle.message("vue.project.generator.presentable.package.name")
+  }
+
+  override fun getNpxCommands(): List<NpxPackageDescriptor.NpxCommand> {
+    return listOf(NpxPackageDescriptor.NpxCommand(PACKAGE_NAME, VUE_EXECUTABLE))
+  }
+
+  override fun validateProjectPath(path: String): String? {
+    val error = NodePackageUtil.validateNpmPackageName(PathUtil.getFileName(path))
+    return error ?: super.validateProjectPath(path)
+  }
+
+  override fun onProcessHandlerCreated(processHandler: ProcessHandler) {
+    processHandler.addProcessListener(object : ProcessAdapter() {
+      override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+        // https://github.com/vuejs/vue-cli/blob/dev/packages/%40vue/cli/lib/create.js#L43
+        if (event.text.contains("Generate project in current directory?")) {
+          event.processHandler.removeProcessListener(this)
+          val processInput = event.processHandler.processInput
+          if (processInput != null) {
+            try {
+              processInput.write("yes\n".toByteArray(StandardCharsets.UTF_8))
+              processInput.flush()
+            }
+            catch (e: IOException) {
+              LOG.warn("Failed to write 'yes' to the Vue CLI console.", e)
+            }
+          }
         }
       }
-    }
-    val component = LabeledComponent.create(template!!, "Project template")
-    component.labelLocation = BorderLayout.WEST
-    component.anchor = panel.getComponent(0) as JComponent
-    panel.add(component)
-
-    myPackageField.addSelectionListener {
-      UIUtil.setEnabled(component, isOldPackage(), true)
-    }
-    UIUtil.setEnabled(component, isOldPackage(), true)
-    return panel
-  }
-
-  private fun isOldPackage() = !myPackageField.selected.name.contains("@vue")
-
-  @Suppress("OverridingDeprecatedMember", "DEPRECATION")
-  override fun addSettingsStateListener(listener: WebProjectGenerator.SettingsStateListener) {
-    super.addSettingsStateListener(listener)
-    template!!.editor.editorComponent.addKeyListener(object : KeyAdapter() {
-      override fun keyReleased(e: KeyEvent?) {
-        listener.stateChanged(validate() == null)
-      }
     })
-    template!!.editor.editorComponent.addInputMethodListener(object : InputMethodListener {
-      override fun caretPositionChanged(event: InputMethodEvent?) {
-      }
-
-      override fun inputMethodTextChanged(event: InputMethodEvent?) {
-        listener.stateChanged(validate() == null)
-      }
-    })
-    template!!.addItemListener { listener.stateChanged(validate() == null) }
   }
 
-  override fun validate(): ValidationInfo? {
-    val validate = super.validate()
-    if (validate == null && isOldPackage()) {
-      if (template!!.editor.item.toString().isBlank()) {
-        return ValidationInfo("Please enter project template", template!!)
-      }
+  override fun onGettingSmartAfterProjectGeneration(project: Project, baseDir: VirtualFile) {
+    super.onGettingSmartAfterProjectGeneration(project, baseDir)
+    CreateRunConfigurationUtil.debugConfiguration(project, 8080)
+    CreateRunConfigurationUtil.npmConfiguration(project, "serve")
+    setupWebpackConfigFile(project, baseDir)
+  }
+
+  private fun setupWebpackConfigFile(project: Project, baseDir: VirtualFile) {
+    val configPath = baseDir.path + "/node_modules/@vue/cli-service/webpack.config.js"
+    if (File(configPath).isFile) {
+      WebPackConfigManager.instance(project).loadState(WebPackConfiguration(configPath))
     }
-    return validate
-  }
-
-  override fun buildUI(settingsStep: SettingsStep) {
-    super.buildUI(settingsStep)
-    settingsStep.addSettingsField("Project template", template!!)
-  }
-
-  override fun getSettings(): NpmPackageProjectGenerator.Settings {
-    val settings = super.getSettings()
-    val text = template!!.selectedItem as? String
-    if (text != null) {
-      settings.putUserData<String>(TEMPLATE_KEY, text)
-    }
-    return settings
   }
 }

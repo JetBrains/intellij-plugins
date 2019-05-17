@@ -6,7 +6,7 @@ import com.intellij.openapi.module.WebModuleBuilder
 import com.intellij.platform.ProjectTemplate
 import com.intellij.platform.ProjectTemplatesFactory
 
-class VueTemplateFactory : ProjectTemplatesFactory() {
+class VueProjectTemplateFactory : ProjectTemplatesFactory() {
   override fun getGroups(): Array<String> = arrayOf(WebModuleBuilder.GROUP_NAME)
 
   override fun createTemplates(group: String?, context: WizardContext): Array<ProjectTemplate> {

@@ -62,8 +62,9 @@ Vue components defined using separate .html, .js, and .css files are not support
     <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex" />
     <stubIndex implementation="org.jetbrains.vuejs.index.VueStoreIndex" />
     <stubElementTypeHolder class="org.jetbrains.vuejs.language.VueElementTypes" />
-    <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>
-    <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueTemplateFactory"/>
+
+    <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
+    <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/> <!-- works in IntelliJ IDEA -->
 
     <localInspection language="Vue" groupName="Vue" displayName="Data Function" shortName="VueDataFunction"
                      enabledByDefault="true" level="WARNING"
