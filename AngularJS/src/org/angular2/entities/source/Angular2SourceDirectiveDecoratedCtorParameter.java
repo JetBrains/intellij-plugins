@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 import org.angular2.entities.Angular2DirectiveCtorParameter;
+import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,5 +60,10 @@ public class Angular2SourceDirectiveDecoratedCtorParameter implements Angular2Di
     return Objects.isNull(attributeList) ?
           Collections.emptyList() :
           Collections.unmodifiableCollection(Arrays.asList(attributeList.getDecorators()));
+  }
+
+  @Override
+  public String toString() {
+    return Angular2EntityUtils.toString(this);
   }
 }
