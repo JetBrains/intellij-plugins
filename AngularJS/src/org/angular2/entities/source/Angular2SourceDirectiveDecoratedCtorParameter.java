@@ -19,45 +19,45 @@ import com.intellij.psi.PsiElement;
  * Represents a class decorated constructor parameter.
  */
 public class Angular2SourceDirectiveDecoratedCtorParameter implements Angular2DirectiveCtorParameter {
-	private final String myName;
-	private final JSParameter myParameter;
+  private final String myName;
+  private final JSParameter myParameter;
 
-	Angular2SourceDirectiveDecoratedCtorParameter(
-				@NotNull final String bindingName,
-				@NotNull final JSParameter parameter) {
-		myName = bindingName;
-		myParameter = parameter;
-	}
+  Angular2SourceDirectiveDecoratedCtorParameter(
+        @NotNull final String bindingName,
+        @NotNull final JSParameter parameter) {
+    myName = bindingName;
+    myParameter = parameter;
+  }
 
-	@NotNull
-	@Override
-	public String getName() {
-		return myName;
-	}
+  @NotNull
+  @Override
+  public String getName() {
+    return myName;
+  }
 
-	@Nullable
-	@Override
-	public JSType getType() {
-		return myParameter.getJSType();
-	}
+  @Nullable
+  @Override
+  public JSType getType() {
+    return myParameter.getJSType();
+  }
 
-	@NotNull
-	@Override
-	public PsiElement getSourceElement() {
-		return myParameter.getDeclarationElement();
-	}
+  @NotNull
+  @Override
+  public PsiElement getSourceElement() {
+    return myParameter.getDeclarationElement();
+  }
 
-	@NotNull
-	@Override
-	public PsiElement getNavigableElement() {
-		return myParameter.getNavigationElement();
-	}
+  @NotNull
+  @Override
+  public PsiElement getNavigableElement() {
+    return myParameter.getNavigationElement();
+  }
 
-	@NotNull
-	public Collection<ES6Decorator> getDecorators() {
-		final JSAttributeList attributeList = myParameter.getAttributeList();
-		return Objects.isNull(attributeList) ?
-					Collections.emptyList() :
-					Collections.unmodifiableCollection(Arrays.asList(attributeList.getDecorators()));
-	}
+  @NotNull
+  public Collection<ES6Decorator> getDecorators() {
+    final JSAttributeList attributeList = myParameter.getAttributeList();
+    return Objects.isNull(attributeList) ?
+          Collections.emptyList() :
+          Collections.unmodifiableCollection(Arrays.asList(attributeList.getDecorators()));
+  }
 }

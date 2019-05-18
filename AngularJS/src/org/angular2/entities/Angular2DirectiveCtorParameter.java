@@ -10,9 +10,9 @@ import com.intellij.lang.javascript.psi.JSType;
  * This kind of element is always one-time binding, so there is no need to check.
  */
 public interface Angular2DirectiveCtorParameter extends Angular2Element {
-	@NotNull
-	String getName();
+  @NotNull
+  String getName();
 
-	@Nullable
-	JSType getType();
+  @Nullable
+  JSType getType();
 }
