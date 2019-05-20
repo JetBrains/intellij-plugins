@@ -1,0 +1,26 @@
+<xml type="Scenario" name="Inline" id="GopherCon.Inline" lang="go">
+    <MouseBlock>
+        <CopyText><![CDATA[package main
+
+import (
+	"fmt"
+)
+
+type subject struct {
+	id   int
+	name string
+}
+
+func main() {
+	subj := subject{name: "world"}
+	greeting := "hello %s"
+	fmt.Printf(greeting, subj.name)
+}
+]]></CopyText>
+<CaretBlock>
+    <MoveCaret position="14:5" />
+    <Try triggers="Inline">In opposite to the <strong>Extract Variable</strong> refactoring, <strong>Inline</strong> helps to remove a redundant variable. Press <action>Inline</action> to inline the <code>greeting</code> variable into its single usage.</Try>
+    <Win/>
+</CaretBlock>
+</MouseBlock>
+</xml>

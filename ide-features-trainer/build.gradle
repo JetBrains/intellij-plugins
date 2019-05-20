@@ -44,7 +44,8 @@ intellij {
             'Pythonid:2019.2.192.5728.12',
             'org.jetbrains.plugins.ruby:2019.2.20190710',
             'com.intellij.testGuiFramework:0.9.44.1@nightly',
-            'java'
+            'java',
+            'org.jetbrains.plugins.go:192.5728.12.238'
     ]
     if (System.getProperty("idea.gui.test.alternativeIdePath") != null) {
         alternativeIdePath System.getProperty("idea.gui.test.alternativeIdePath")

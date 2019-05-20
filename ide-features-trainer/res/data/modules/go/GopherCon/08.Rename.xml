@@ -1,0 +1,22 @@
+<xml type="Scenario" name="Rename" id="GopherCon.Rename" lang="go">
+        <CopyText><![CDATA[package main
+
+import (
+	"fmt"
+)
+
+type subject struct {
+	id  int
+	str string
+}
+
+func main() {
+	subj := subject{str: "world"}
+	fmt.Printf("hello %s", subj.str)
+}
+]]></CopyText>
+    <MoveCaret position="13:21"/>
+    <Try trigger="RenameElement">You can rename anything by placing the caret on a symbol and using the Rename refactoring. Place the caret on the <code>str</code> field anywhere in the code, and then press <action>RenameElement</action>.</Try>
+    <Try trigger="NextTemplateVariable">Enter a new name for this field. For example, type <code>name</code>, and then save the result by pressing <action>EditorEnter</action>.</Try>
+    <Win/>
+</xml>

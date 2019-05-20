@@ -1,0 +1,16 @@
+<xml type="Scenario" name="go fmt" id="GopherCon.GoFmt" lang="go">
+        <CopyText><![CDATA[package main
+import (
+	"fmt"
+)
+type subject struct{
+id   int
+name string
+}
+func main(){
+subj:=subject{name:"world"}
+fmt.Printf("hello %s",subj.name)
+}]]></CopyText>
+    <Try triggers="GoFmtFileAction">If you prefer <code>go fmt</code> you can use it as well by pressing <action>GoFmtFileAction</action>. Try it now.</Try>
+    <Win/>
+</xml>
