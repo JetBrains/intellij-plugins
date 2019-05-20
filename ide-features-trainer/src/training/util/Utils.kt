@@ -135,11 +135,11 @@ fun createBalloon(text: String, delay: Long): Balloon =
         .createBalloon()
 
 
-  val featureTrainerVersion: String by lazy {
-    val featureTrainerPluginId = PluginManagerCore.getPluginByClassName(CourseManager::class.java.name)
-    PluginManager.getPlugin(featureTrainerPluginId)?.version ?: "UNKNOWN"
-  }
+val featureTrainerVersion: String by lazy {
+  val featureTrainerPluginId = PluginManagerCore.getPluginByClassName(CourseManager::class.java.name)
+  PluginManager.getPlugin(featureTrainerPluginId)?.version ?: "UNKNOWN"
+}
 
-  val isFeatureTrainerSnapshot: Boolean by lazy {
-    featureTrainerVersion.contains("SNAPSHOT")
-  }
+val isFeatureTrainerSnapshot: Boolean by lazy {
+  featureTrainerVersion.contains("SNAPSHOT")
+}
