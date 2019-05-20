@@ -61,7 +61,7 @@ module Teamcity
     end
     
     def self.is_4_or_newer
-     same_or_newer?('4.0.0.rc.1')
+     same_or_newer?('4.0.0.a')
     end
 
 

@@ -9,9 +9,9 @@ require File.expand_path(File.dirname(__FILE__) + '/common')
 module Teamcity
   module Cucumber
     class Formatter
-      EXAMPLES_NODE = "Examples"
-      RULE_NODE_PREFIX = "Rule: "
-      FEATURE_NODE_PREFIX = "Feature: "
+      EXAMPLES_NODE = 'Examples'
+      RULE_NODE_PREFIX = 'Rule: '
+      FEATURE_NODE_PREFIX = 'Feature: '
 
       include ::Teamcity::Cucumber::FormatterCommons
       include ::Cucumber::Formatter::Io
@@ -46,34 +46,32 @@ module Teamcity
         rule = get_rule(event.test_case)
         if @current_rule != rule
           close_rule
-          open_rule(rule) unless rule.nil?
+          open_rule(rule) if rule
         end
 
         feature_file = event.test_case.location.file
-        if @current_feature_file.nil? or feature_file != @current_feature_file
+        if @current_feature_file.nil? || feature_file != @current_feature_file
           close_feature
           open_feature(feature_file)
         end
 
         location = event.test_case.location
-        if location.lines.max > location.lines.min
+        if @current_scenario_outline.nil? && location.lines.max > location.lines.min
           #It's Scenario Outline
-          if @current_scenario_outline.nil?
-            @current_scenario_outline = event.test_case
+          @current_scenario_outline = event.test_case
 
-            scenario_outline_location = location.file + ':' + location.lines.min.to_s
-            log_suite_started(@current_scenario_outline.name, file_colon_line=scenario_outline_location)
-            log_suite_started(EXAMPLES_NODE)
-          end
+          scenario_outline_location = "#{location.file}:#{location.lines.min}"
+          log_suite_started(@current_scenario_outline.name, file_colon_line=scenario_outline_location)
+          log_suite_started(EXAMPLES_NODE)
         end
 
-        file_colon_line = location.file + ":" + location.lines.max.to_s
+        file_colon_line = "#{location.file}:#{location.lines.max}"
         log_suite_started(event.test_case.name, file_colon_line=file_colon_line)
       end
 
       def on_test_step_started(event)
         location = event.test_step.location
-        file_colon_line = location.file + ":" + location.lines.max.to_s
+        file_colon_line = "#{location.file}:#{location.lines.max}"
         log_test_opened(event.test_step.text, file_colon_line=file_colon_line)
       end
 
@@ -86,7 +84,6 @@ module Teamcity
         end
 
         duration_ms = event.result.duration.nanoseconds / 1000
-        exception = nil
         if event.result.kind_of?(::Cucumber::Core::Test::Result::Skipped)
           result = :skipped
         elsif event.result.kind_of?(::Cucumber::Core::Test::Result::Pending)
@@ -122,9 +119,7 @@ module Teamcity
 
       private
       def is_current_scenario_outline(test_case)
-        if @current_scenario_outline.nil? or @current_scenario_outline.location.file != test_case.location.file
-          false
-        else
+        if !@current_scenario_outline.nil? && @current_scenario_outline.location.file == test_case.location.file
           @current_scenario_outline.location.lines.min == test_case.location.lines.min
         end
       end
@@ -140,25 +135,11 @@ module Teamcity
       def get_rule(test_case)
         gherkin_document = @ast_lookup.gherkin_document(test_case.location.file)
         feature = gherkin_document[:feature]
-        i = 0
-        loop do
-          if i >= feature[:children].length
-            break;
-          end
-          child = feature[:children][i]
-
-          element = child[:rule]
-          element = child[:scenario] if element.nil?
-          element = child[:background] if element.nil?
-
-          if element[:location][:line] > test_case.location.lines.min
-            break;
-          end
-
-          i += 1
-        end
-
-        feature[:children][i - 1][:rule]
+        
+        feature[:children].take_while do |child|
+          element = child[:rule] || child[:scenario] || child[:background]
+          element[:location][:line] <= test_case.location.lines.min
+        end.first[:rule]
       end
 
       def close_rule
