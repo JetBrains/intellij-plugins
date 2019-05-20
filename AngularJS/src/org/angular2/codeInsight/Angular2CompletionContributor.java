@@ -176,7 +176,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
         Angular2TemplateScopesResolver.resolve(parameters.getPosition(), resolveResult -> {
           final JSPsiElementBase element = ObjectUtils.tryCast(resolveResult.getElement(), JSPsiElementBase.class);
           if (element == null) {
-            return;
+            return true;
           }
           final String name = element.getName();
           if (name != null && !NG_LIFECYCLE_HOOKS.contains(name)
@@ -185,6 +185,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
               element, name, calcPriority(element), false,
               false));
           }
+          return true;
         });
         result.stopHere();
       }
