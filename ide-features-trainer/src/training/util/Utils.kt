@@ -140,6 +140,7 @@ val featureTrainerMode: TrainingMode
     @Suppress("InvalidBundleOrProperty")
     when (Registry.stringValue("ide.features.trainer.mode")) {
       "public-demo" -> TrainingMode.DEMO
+      "development" -> TrainingMode.DEVELOPMENT
       "" -> TrainingMode.NORMAL
       else -> TrainingMode.NORMAL
     }

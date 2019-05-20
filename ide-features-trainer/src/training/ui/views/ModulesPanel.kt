@@ -8,14 +8,17 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.containers.BidirectionalMap
 import com.intellij.util.ui.UIUtil
+import training.commands.kotlin.TaskContext
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Module
 import training.learn.lesson.LessonStateManager
 import training.ui.LearnIcons
+import training.ui.LearnToolWindow
 import training.ui.UISettings
 import training.ui.UiManager
 import training.util.DataLoader
+import training.util.TrainingMode
 import training.util.createBalloon
 import training.util.featureTrainerMode
 import java.awt.*
@@ -31,7 +34,7 @@ import javax.swing.text.StyleConstants
 /**
  * Created by karashevich on 26/06/15.
  */
-class ModulesPanel : JPanel() {
+class ModulesPanel(val learnToolWindow: LearnToolWindow) : JPanel() {
 
     private var lessonPanel: JPanel? = null
 
@@ -92,6 +95,10 @@ class ModulesPanel : JPanel() {
 
         if (featureTrainerMode.doesShowResetButton) {
             addResetButton()
+        }
+
+        if (featureTrainerMode == TrainingMode.DEVELOPMENT) {
+            addDevelopmentTools()
         }
 
         for (module in modules) {
@@ -164,6 +171,34 @@ class ModulesPanel : JPanel() {
             lessonPanel!!.add(Box.createVerticalStrut(UISettings.instance.moduleGap))
         }
         lessonPanel!!.add(Box.createVerticalGlue())
+    }
+
+    private fun addDevelopmentTools() {
+        lessonPanel!!.add(JCheckBox().apply {
+            addItemListener { e -> TaskContext.inTestMode = e.stateChange == 1 }
+            isFocusable = true
+            isVisible = true
+            isSelected = true
+            isEnabled = true
+            isOpaque = false
+            model.isSelected = false
+            text = "Run in test mode"
+        })
+
+      lessonPanel!!.add(JButton().apply {
+        action = object : AbstractAction() {
+          override fun actionPerformed(actionEvent: ActionEvent) {
+            learnToolWindow.changeLanguage()
+          }
+        }
+        margin = Insets(0, 0, 0, 0)
+        isFocusable = true
+        isVisible = true
+        isSelected = true
+        isEnabled = true
+        isOpaque = false
+        text = "Change language"
+      })
     }
 
     private fun addResetButton() {
