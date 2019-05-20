@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.language
 
 import com.intellij.application.options.CodeStyle
-import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.JavascriptLanguage
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.vfs.VfsUtil
@@ -1065,40 +1064,38 @@ ${'$'}duration = 1.4s
 
   private fun doExtractTest(existing: String, modified: String, newText: String?, numTags: Int = 1,
                             newCompName: String = "NewComponent") {
-    JSTestUtils.testES6<Exception>(project) {
-      val currentSettings = CodeStyle.getSettings(myFixture.project).getCommonSettings(JavascriptLanguage.INSTANCE)
-      val before = currentSettings.BLANK_LINES_BEFORE_IMPORTS
-      val after = currentSettings.BLANK_LINES_AFTER_IMPORTS
+    val currentSettings = CodeStyle.getSettings(myFixture.project).getCommonSettings(JavascriptLanguage.INSTANCE)
+    val before = currentSettings.BLANK_LINES_BEFORE_IMPORTS
+    val after = currentSettings.BLANK_LINES_AFTER_IMPORTS
 
-      try {
-        currentSettings.BLANK_LINES_BEFORE_IMPORTS = 0
-        currentSettings.BLANK_LINES_AFTER_IMPORTS = 0
+    try {
+      currentSettings.BLANK_LINES_BEFORE_IMPORTS = 0
+      currentSettings.BLANK_LINES_AFTER_IMPORTS = 0
 
-        myFixture.configureByText(getTestName(false) + ".vue", existing)
+      myFixture.configureByText(getTestName(false) + ".vue", existing)
 
-        val element = myFixture.file.findElementAt(myFixture.editor.caretModel.currentCaret.offset)
-        TestCase.assertNotNull(element)
-        val context = VueExtractComponentIntention.getContext(myFixture.editor, element!!)
-        TestCase.assertNotNull(context)
-        TestCase.assertEquals(numTags, context!!.size)
+      val element = myFixture.file.findElementAt(myFixture.editor.caretModel.currentCaret.offset)
+      TestCase.assertNotNull(element)
+      val context = VueExtractComponentIntention.getContext(myFixture.editor, element!!)
+      TestCase.assertNotNull(context)
+      TestCase.assertEquals(numTags, context!!.size)
 
-        VueExtractComponentRefactoring(myFixture.project, context,
-                                       myFixture.editor).perform(newCompName)
+      VueExtractComponentRefactoring(myFixture.project, context,
+                                     myFixture.editor).perform(newCompName)
 
-        myFixture.checkResult(modified)
+      myFixture.checkResult(modified)
 
-        if (newText != null) {
-          FileDocumentManager.getInstance().saveAllDocuments()
-          val created = myFixture.file.parent!!.findFile("NewComponent.vue")
-          TestCase.assertNotNull(created)
-          myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
-          myFixture.checkResult(newText)
-        }
+      if (newText != null) {
+        FileDocumentManager.getInstance().saveAllDocuments()
+        val created = myFixture.file.parent!!.findFile("NewComponent.vue")
+        TestCase.assertNotNull(created)
+        myFixture.configureByText("NewComponent2.vue", VfsUtil.loadText(created!!.viewProvider.virtualFile))
+        myFixture.checkResult(newText)
       }
-      finally {
-        currentSettings.BLANK_LINES_BEFORE_IMPORTS = before
-        currentSettings.BLANK_LINES_AFTER_IMPORTS = after
-      }
+    }
+    finally {
+      currentSettings.BLANK_LINES_BEFORE_IMPORTS = before
+      currentSettings.BLANK_LINES_AFTER_IMPORTS = after
     }
   }
 }

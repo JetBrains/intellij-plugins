@@ -556,16 +556,14 @@ export default {
 </script>
 """)
     noAutoComplete(Runnable {
-      JSTestUtils.testES6<Exception>(project) {
-        myFixture.completeBasic()
-        UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
-                                              "first-mixin-prop", "second-mixin-prop", "hi2dden",
-                                              "interesting-prop")
-        UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
-                                           "FirstMixinProp", "firstMixinProp",
-                                           "SecondMixinProp", "secondMixinProp", "Hi2dden",
-                                           "InterestingProp", "interestingProp")
-      }
+      myFixture.completeBasic()
+      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
+                                            "first-mixin-prop", "second-mixin-prop", "hi2dden",
+                                            "interesting-prop")
+      UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
+                                         "FirstMixinProp", "firstMixinProp",
+                                         "SecondMixinProp", "secondMixinProp", "Hi2dden",
+                                         "InterestingProp", "interestingProp")
     })
   }
 
@@ -596,15 +594,13 @@ export default {
 </script>
 """)
     noAutoComplete(Runnable {
-      JSTestUtils.testES6<Exception>(project) {
         myFixture.completeBasic()
         UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!, "hi2dden", "interesting-prop")
         UsefulTestCase.assertDoesntContain(myFixture.lookupElementStrings!!,
                                            "Hi2dden", "interestingProp", "InterestingProp",
                                            "FirstMixinProp", "firstMixinProp", "first-mixin-prop",
                                            "SecondMixinProp", "secondMixinProp", "second-mixin-prop")
-      }
-    })
+      })
   }
 
   fun testNoCompletionInVueAttributes() {
@@ -947,7 +943,6 @@ $script""")
   }
 
   fun testClassComponentCompletion() {
-    JSTestUtils.testES6<Exception>(myFixture.project) {
       createTwoClassComponents(myFixture)
       myFixture.configureByText("ClassComponentCompletion.vue",
                                 """
@@ -958,22 +953,19 @@ $script""")
       myFixture.completeBasic()
       UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
                                             listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
-    }
   }
 
   fun testClassComponentCompletionTs() {
-    JSTestUtils.testES6<Exception>(myFixture.project) {
-      createTwoClassComponents(myFixture, true)
-      myFixture.configureByText("ClassComponentCompletionTs.vue",
-                                """
+    createTwoClassComponents(myFixture, true)
+    myFixture.configureByText("ClassComponentCompletionTs.vue",
+                              """
 <template>
   <<caret>
 </template>
 """)
-      myFixture.completeBasic()
-      UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
-                                            listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
-    }
+    myFixture.completeBasic()
+    UsefulTestCase.assertContainsElements(myFixture.lookupElementStrings!!,
+                                          listOf("ShortComponent", "LongVue", "short-component", "long-vue"))
   }
 
   fun testComponentInsertion() {
@@ -1082,25 +1074,22 @@ $script""")
 </script>
 """)
     )
-    JSTestUtils.testES6<Exception>(myFixture.project) {
-      myFixture.configureByText("package.json", """{
+    myFixture.configureByText("package.json", """{
           dependencies: {
             "vue-class-component" : "latest"
           }
         }""")
-      createTwoClassComponents(myFixture, true)
-      data.forEach {
-        println("*")
-        myFixture.configureByText("ComponentInsertion.vue", it.first)
-        myFixture.completeBasic()
-        myFixture.checkResult(it.second)
-      }
+    createTwoClassComponents(myFixture, true)
+    data.forEach {
+      println("*")
+      myFixture.configureByText("ComponentInsertion.vue", it.first)
+      myFixture.completeBasic()
+      myFixture.checkResult(it.second)
     }
   }
 
   fun testTypescriptVForItemCompletion() {
-    JSTestUtils.testES6<Exception>(myFixture.project) {
-      myFixture.configureByText("TypescriptVForItemCompletion.vue", """
+    myFixture.configureByText("TypescriptVForItemCompletion.vue", """
 <template>
     <ul>
         <li v-for="item in goodTypes">{{item.<caret>}}</li>
@@ -1126,39 +1115,34 @@ $script""")
     }
 </script>
 """)
-      myFixture.completeBasic()
+    myFixture.completeBasic()
 
-      JSLightCompletionTestBase.checkJSStringCompletion(myFixture.lookupElements!!, true)
-    }
+    JSLightCompletionTestBase.checkJSStringCompletion(myFixture.lookupElements!!, true)
   }
 
   fun testLocalComponentsExtendsCompletion() {
-    JSTestUtils.testES6<Exception>(myFixture.project) {
-      createLocalComponentsExtendsData(myFixture, false)
-      myFixture.completeBasic()
-      assertContainsElements(myFixture.lookupElementStrings!!, "prop-from-a")
-    }
+    createLocalComponentsExtendsData(myFixture, false)
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, "prop-from-a")
   }
 
   fun testCompletionWithRecursiveMixins() {
-    JSTestUtils.testES6<Exception>(myFixture.project) {
-      defineRecursiveMixedMixins(myFixture)
-      myFixture.configureByText("CompletionWithRecursiveMixins.vue", """
+    defineRecursiveMixedMixins(myFixture)
+    myFixture.configureByText("CompletionWithRecursiveMixins.vue", """
         <template>
           <<caret>
         </template>
       """)
-      myFixture.completeBasic()
-      assertContainsElements(myFixture.lookupElementStrings!!, listOf("hidden-component", "HiddenComponent",
-                                                                      "OneMoreComponent", "one-more-component"))
-      myFixture.configureByText("CompletionWithRecursiveMixins2.vue", """
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, listOf("hidden-component", "HiddenComponent",
+                                                                    "OneMoreComponent", "one-more-component"))
+    myFixture.configureByText("CompletionWithRecursiveMixins2.vue", """
         <template>
           <HiddenComponent <caret>/>
         </template>
       """)
-      myFixture.completeBasic()
-      assertContainsElements(myFixture.lookupElementStrings!!, listOf("from-d", "from-hidden"))
-    }
+    myFixture.completeBasic()
+    assertContainsElements(myFixture.lookupElementStrings!!, listOf("from-d", "from-hidden"))
   }
 
   fun testNoImportInsertedForRecursivelyLocalComponent() {
