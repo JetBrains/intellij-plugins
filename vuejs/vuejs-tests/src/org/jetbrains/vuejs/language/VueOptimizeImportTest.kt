@@ -3,7 +3,6 @@ package org.jetbrains.vuejs.language
 import com.intellij.codeInsight.actions.OptimizeImportsAction
 import com.intellij.ide.DataManager
 import com.intellij.lang.javascript.JSTestUtils
-import com.intellij.lang.javascript.JavaScriptFormatterTestBase
 import com.intellij.lang.javascript.refactoring.JSOptimizeImportTestBase
 import com.intellij.lang.javascript.typescript.TypeScriptFormatterTest
 import com.intellij.openapi.application.PathManager

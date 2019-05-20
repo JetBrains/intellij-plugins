@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.service;
 
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.service.JSLanguageService;
 import com.intellij.lang.javascript.service.JSLanguageServiceBase;
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider;
@@ -64,10 +63,10 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
   public void testSimpleCompletion() throws Exception {
-    JSTestUtils.testES6(getProject(), () -> checkBaseStringQualifiedCompletionWithTemplates(() -> {
+    checkBaseStringQualifiedCompletionWithTemplates(() -> {
       doTestWithCopyDirectory();
       return myFixture.complete(CompletionType.BASIC);
-    }));
+    });
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
