@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.Balloon
 import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.ui.UIUtil
 import training.learn.CourseManager
 import java.awt.Point
@@ -133,6 +134,15 @@ fun createBalloon(text: String, delay: Long): Balloon =
         .setAnimationCycle(0)
         .setFadeoutTime(delay)
         .createBalloon()
+
+val featureTrainerMode: TrainingMode
+  get() =
+    @Suppress("InvalidBundleOrProperty")
+    when (Registry.stringValue("ide.features.trainer.mode")) {
+      "public-demo" -> TrainingMode.DEMO
+      "" -> TrainingMode.NORMAL
+      else -> TrainingMode.NORMAL
+    }
 
 
 val featureTrainerVersion: String by lazy {
