@@ -2,6 +2,7 @@ package training.commands.kotlin
 
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.wm.IdeFocusManager
@@ -97,6 +98,7 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
 
   fun test(action: TaskTestContext.() -> Unit) {
     testActions.add(Runnable {
+      DumbService.getInstance(project).waitForSmartMode()
       TaskTestContext(this).action()
     })
   }
