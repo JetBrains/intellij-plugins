@@ -1093,17 +1093,14 @@ import BComponent from 'b-component'
   }
 
   fun testEndTagNotForbidden() {
-    testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.project, ThrowableRunnable<Exception> {
-
-      myFixture.enableInspections(HtmlExtraClosingTagInspection::class.java)
-      myFixture.addFileToProject("input.vue", "<script>export default {name: 'Input'}</script>")
-      myFixture.configureByText("foo.vue", """<template> <Input> </Input> </template>
+    myFixture.enableInspections(HtmlExtraClosingTagInspection::class.java)
+    myFixture.addFileToProject("input.vue", "<script>export default {name: 'Input'}</script>")
+    myFixture.configureByText("foo.vue", """<template> <Input> </Input> </template>
       <script>
         import Input from 'input'
         export default { components: {Input}}
       </script>""")
-      myFixture.checkHighlighting()
-    })
+    myFixture.checkHighlighting()
   }
 
   fun testColonInEventName() {
