@@ -3,7 +3,6 @@ package training.ui.views
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.guessCurrentProject
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.JBColor
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.labels.LinkLabel
@@ -18,6 +17,7 @@ import training.ui.UISettings
 import training.ui.UiManager
 import training.util.DataLoader
 import training.util.createBalloon
+import training.util.featureTrainerMode
 import java.awt.*
 import java.awt.event.ActionEvent
 import java.awt.event.MouseEvent
@@ -90,8 +90,7 @@ class ModulesPanel : JPanel() {
             module2linklabel!!.clear()
         }
 
-        @Suppress("InvalidBundleOrProperty")
-        if ("public-demo" == Registry.stringValue("ide.features.trainer.mode")) {
+        if (featureTrainerMode.doesShowResetButton) {
             addResetButton()
         }
 
