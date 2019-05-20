@@ -1,12 +1,18 @@
 package training
 
+import com.intellij.testGuiFramework.fixtures.ComponentFixture
+import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
 import com.intellij.testGuiFramework.fixtures.RadioButtonFixture
 import com.intellij.testGuiFramework.framework.Timeouts
-import com.intellij.testGuiFramework.impl.*
+import com.intellij.testGuiFramework.impl.GuiTestCase
+import com.intellij.testGuiFramework.impl.actionLink
+import com.intellij.testGuiFramework.impl.findComponentWithTimeout
+import com.intellij.testGuiFramework.impl.linkLabel
 import org.fest.swing.fixture.ContainerFixture
 import org.fest.swing.timing.Timeout
 import org.junit.Test
 import training.commands.kotlin.TaskContext
+import training.lang.LangManager
 import training.learn.CourseManager
 import training.learn.interfaces.Lesson
 import training.learn.lesson.LessonListener
@@ -27,22 +33,29 @@ class RubyLessonsGuiTestCase : GuiTestCase() {
     val courseManager = CourseManager.instance
     openLearnProject()
     ideFrame {
-      waitForBackgroundTasksToFinish()
-      toolwindow(id = "Learn") {
-        content {
-          for (module in courseManager.modules) {
-            if (module.lessons.isEmpty()) continue
-            linkLabel(module.name).click()
-            for (lesson in module.lessons) {
-              val doneOrTimeout = lessonCompleteFuture(lesson)
-              TaskContext.inTestMode = true
-              linkLabel(lesson.name).click()
-              assertTrue(doneOrTimeout.get(), "lesson " + lesson.name + " should be passed")
-              System.err.println("Passed " + lesson.name)
-            }
-            linkLabel("All Topics").click()
-          }
+
+      for (module in courseManager.modules) {
+        if (module.lessons.isEmpty()) continue
+        linkAtLearnPanel { linkLabel(module.name).click() }
+        for (lesson in module.lessons) {
+          val doneOrTimeout = lessonCompleteFuture(lesson)
+          TaskContext.inTestMode = true
+          linkAtLearnPanel { linkLabel(lesson.name).click() }
+          assertTrue(doneOrTimeout.get(), "lesson " + lesson.name + " should be passed")
+          System.err.println("Passed " + lesson.name)
+          TaskContext.inTestMode = false
         }
+        linkAtLearnPanel { linkLabel("All Topics").click() }
+      }
+    }
+  }
+
+  private fun IdeFrameFixture.linkAtLearnPanel(link: () -> ComponentFixture<*, *>) {
+    //Thread.sleep(200)
+    waitForBackgroundTasksToFinish()
+    toolwindow(id = "Learn") {
+      content {
+        link()
       }
     }
   }
@@ -82,11 +95,8 @@ class RubyLessonsGuiTestCase : GuiTestCase() {
   private fun openLearnProject() {
     CourseManager.instance.showGotMessage = false
     welcomeFrame {
+      LangManager.getInstance().loadState(LangManager.State("ruby"))
       actionLink("Learn IntelliJ IDEA").click()
-      dialog {
-        radioButtonContainingText("Ruby").select()
-        button("Start Learning").click()
-      }
     }
   }
 
