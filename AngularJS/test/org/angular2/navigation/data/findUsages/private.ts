@@ -7,9 +7,14 @@ import {Component} from "@angular/core"
 export class MyComponent {
   private foo: string;
 
+  constructor(private fooBar: boolean) {
+
+  }
+
   private bar() {
     this.foo = "";
     this.bar();
+    this.fooBar = false;
   }
 
 }

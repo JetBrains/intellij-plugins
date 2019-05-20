@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 
 public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
 
-
   @Override
   protected String getTestDataPath() {
     return AngularTestUtil.getBaseTestDataPath(getClass()) + "/findUsages";
@@ -20,16 +19,24 @@ public class FindUsagesTest extends Angular2CodeInsightFixtureTestCase {
     myFixture.configureByFiles("private.ts", "private.html", "package.json");
     checkUsages("f<caret>oo",
                 "foo <private.html:(3,6)>",
-                "foo <private.html:(57,60)>",
-                "this.foo <private.ts:(303,311)>");
+                "foo <private.html:(69,72)>",
+                "this.foo <private.ts:(350,358)>");
   }
 
   public void testPrivateComponentMethod() {
     myFixture.configureByFiles("private.ts", "private.html", "package.json");
     checkUsages("b<caret>ar",
                 "bar() <private.html:(13,16)>",
-                "bar() <private.html:(37,40)>",
-                "this.bar() <private.ts:(322,330)>");
+                "bar() <private.html:(49,52)>",
+                "this.bar() <private.ts:(369,377)>");
+  }
+
+  public void testPrivateConstructorField() {
+    myFixture.configureByFiles("private.ts", "private.html", "package.json");
+    checkUsages("fooB<caret>ar",
+                "foo + fooBar <private.html:(120,126)>",
+                "fooBar <private.html:(25,31)>",
+                "this.fooBar <private.ts:(385,396)>");
   }
 
   private void checkUsages(@NotNull String signature, @NotNull String... usages) {
