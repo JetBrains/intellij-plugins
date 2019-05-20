@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.impl.JSPropertyImpl;
 import com.intellij.lang.javascript.psi.stubs.ES6DecoratorStub;
@@ -118,8 +117,8 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
 
   @NotNull
   @Override
-  public Collection<? extends Angular2DirectiveCtorParameter> getAttributes() {
-    return getCachedCtorParameters().attributes;
+  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
+    return getCachedAttributeParameters();
   }
 
   @NotNull
@@ -131,10 +130,10 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   }
 
   @NotNull
-  private Angular2CtorBoundParameters getCachedCtorParameters() {
+  private Collection<Angular2DirectiveAttribute> getCachedAttributeParameters() {
     return getCachedValue(
           () -> Result.create(
-                getCtorParameters(),
+                getAttributeParameters(),
                 getClassModificationDependencies()
           )
     );
@@ -170,48 +169,50 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   }
 
   @NotNull
-  private Angular2CtorBoundParameters getCtorParameters() {
+  private Collection<Angular2DirectiveAttribute> getAttributeParameters() {
     // The @Attribute decorated parameters can be found (and are valid) only
-    // in the class constructor, thus we have to get hold of it and process each parameter
-    final JSFunction ctor = getTypeScriptClass().getConstructor();
-    return Objects.isNull(ctor)
-          ? Angular2CtorBoundParameters.empty()
-          : processCtorParameters(ctor);
+    // in the class constructor, thus we have to get hold of it and process each parameter.
+    final TypeScriptFunction[] constructors = getTypeScriptClass().getConstructors();
+
+    if (constructors.length == 1) {
+      return processCtorParameters(constructors[0]);
+    }
+
+    // Being the TypeScript class has multiple constructor declarations,
+    // we have to find the only allowed implementation
+    return Arrays.stream(constructors)
+                 .filter(TypeScriptFunction::isOverloadImplementation)
+                 .findFirst()
+                 .map(this::processCtorParameters)
+                 .orElse(Collections.emptyList());
   }
 
   /**
-   * Analyze the class constructor's parameters to find
-   * {@code @Attribute} bound ones.
+   * Analyze the class constructor's parameters to find {@code @Attribute} bound ones.
    *
    * @param ctor
    * 			The class constructor
    */
   @NotNull
-  private Angular2CtorBoundParameters processCtorParameters(final JSFunction ctor) {
-    final Map<String, Angular2DirectiveCtorParameter> attributes = new LinkedHashMap<>(8);
+  private Collection<Angular2DirectiveAttribute> processCtorParameters(final JSFunction ctor) {
+    final Map<String, Angular2DirectiveAttribute> attributes = new LinkedHashMap<>(8);
 
     for (final JSParameter ctorParam : ctor.getParameterVariables()) {
-      final JSAttributeList attributeList = ctorParam.getAttributeList();
-
-      if (Objects.isNull(attributeList)) {
-        continue;
-      }
-
-      final String paramName = ctorParam.getName();
-      final Optional<String> bindingName =
-            Arrays.stream(attributeList.getDecorators())
-                  .filter(d -> Angular2DecoratorUtil.ATTRIBUTE_DEC.equals(d.getDecoratorName()))
-                  .findFirst()
-                  .map(Angular2SourceDirective::getStringParamValue)
-                  .map(n -> StringUtil.notNullize(n, paramName));
-
-      if (bindingName.isPresent()) {
-        final String key = bindingName.get();
-        attributes.putIfAbsent(key, new Angular2SourceDirectiveDecoratedCtorParameter(key, ctorParam));
-      }
+      StreamEx.ofNullable(ctorParam.getAttributeList())
+              .flatArray(attributeList -> attributeList.getDecorators())
+              .filter(dec -> Angular2DecoratorUtil.ATTRIBUTE_DEC.equals(dec.getDecoratorName()))
+              .findFirst()
+              .map(Angular2SourceDirective::getStringParamValue)
+              .map(aliasName -> StringUtil.notNullize(aliasName, ctorParam.getName()))
+              .ifPresent(bindingName ->
+                    attributes.putIfAbsent(
+                          bindingName,
+                          new Angular2SourceDirectiveAttribute(bindingName, ctorParam)
+                    )
+              );
     }
 
-    return Angular2CtorBoundParameters.of(attributes.values());
+    return attributes.values();
   }
 
   @NotNull

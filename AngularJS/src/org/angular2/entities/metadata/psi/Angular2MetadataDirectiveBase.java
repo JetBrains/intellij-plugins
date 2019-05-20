@@ -74,7 +74,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
 
   @NotNull
   @Override
-  public Collection<? extends Angular2DirectiveCtorParameter> getAttributes() {
+  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
     return Collections.emptyList();
   }
 

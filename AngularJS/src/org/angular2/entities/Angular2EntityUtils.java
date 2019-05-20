@@ -181,8 +181,8 @@ public class Angular2EntityUtils {
     else if (element instanceof Angular2DirectiveProperty) {
       return ((Angular2DirectiveProperty)element).getName();
     }
-    else if (element instanceof Angular2DirectiveCtorParameter) {
-      return ((Angular2DirectiveCtorParameter) element).getName();
+    else if (element instanceof Angular2DirectiveAttribute) {
+      return ((Angular2DirectiveAttribute) element).getName();
     }
     else if (element instanceof Angular2Module) {
       Angular2Module module = (Angular2Module)element;

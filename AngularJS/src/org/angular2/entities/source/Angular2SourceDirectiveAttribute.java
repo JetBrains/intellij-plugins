@@ -1,29 +1,22 @@
 package org.angular2.entities.source;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-
-import org.angular2.entities.Angular2DirectiveCtorParameter;
+import org.angular2.entities.Angular2DirectiveAttribute;
 import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSType;
-import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.psi.PsiElement;
 
 /**
- * Represents a class decorated constructor parameter.
+ * Represents a class constructor {@code @Attribute} decorated parameter.
  */
-public class Angular2SourceDirectiveDecoratedCtorParameter implements Angular2DirectiveCtorParameter {
+public class Angular2SourceDirectiveAttribute implements Angular2DirectiveAttribute {
   private final String myName;
   private final JSParameter myParameter;
 
-  Angular2SourceDirectiveDecoratedCtorParameter(
+  Angular2SourceDirectiveAttribute(
         @NotNull final String bindingName,
         @NotNull final JSParameter parameter) {
     myName = bindingName;
@@ -52,14 +45,6 @@ public class Angular2SourceDirectiveDecoratedCtorParameter implements Angular2Di
   @Override
   public PsiElement getNavigableElement() {
     return myParameter.getNavigationElement();
-  }
-
-  @NotNull
-  public Collection<ES6Decorator> getDecorators() {
-    final JSAttributeList attributeList = myParameter.getAttributeList();
-    return Objects.isNull(attributeList) ?
-          Collections.emptyList() :
-          Collections.unmodifiableCollection(Arrays.asList(attributeList.getDecorators()));
   }
 
   @Override
