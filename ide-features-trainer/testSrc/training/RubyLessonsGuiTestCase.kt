@@ -2,23 +2,16 @@ package training
 
 import com.intellij.testGuiFramework.fixtures.ComponentFixture
 import com.intellij.testGuiFramework.fixtures.IdeFrameFixture
-import com.intellij.testGuiFramework.fixtures.RadioButtonFixture
-import com.intellij.testGuiFramework.framework.Timeouts
 import com.intellij.testGuiFramework.impl.GuiTestCase
 import com.intellij.testGuiFramework.impl.actionLink
-import com.intellij.testGuiFramework.impl.findComponentWithTimeout
 import com.intellij.testGuiFramework.impl.linkLabel
-import org.fest.swing.fixture.ContainerFixture
-import org.fest.swing.timing.Timeout
 import org.junit.Test
 import training.commands.kotlin.TaskContext
 import training.lang.LangManager
 import training.learn.CourseManager
 import training.learn.interfaces.Lesson
 import training.learn.lesson.LessonListener
-import java.awt.Container
 import java.util.concurrent.CompletableFuture
-import javax.swing.JRadioButton
 import kotlin.concurrent.thread
 import kotlin.test.assertTrue
 
@@ -98,13 +91,5 @@ class RubyLessonsGuiTestCase : GuiTestCase() {
       LangManager.getInstance().loadState(LangManager.State("ruby"))
       actionLink("Learn IntelliJ IDEA").click()
     }
-  }
-
-  private fun <C : Container> ContainerFixture<C>.radioButtonContainingText(
-      labelText: String,
-      ignoreCase: Boolean = false,
-      timeout: Timeout = Timeouts.defaultTimeout): RadioButtonFixture {
-    val radioButton: JRadioButton = findComponentWithTimeout(timeout) { it.isShowing && it.isVisible && it.text.contains(labelText, ignoreCase) }
-    return RadioButtonFixture(robot(), radioButton)
   }
 }
