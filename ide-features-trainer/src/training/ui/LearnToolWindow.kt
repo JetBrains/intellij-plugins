@@ -42,9 +42,16 @@ class LearnToolWindow : SimpleToolWindowPanel, DataProvider, Disposable {
     setContent(scrollPane!!)
   }
 
+  fun changeLanguage() {
+    reinitViewsInternal()
+    val myLanguageChoosePanel = LanguageChoosePanel()
+    scrollPane = JBScrollPane(myLanguageChoosePanel)
+    setContent(scrollPane!!)
+  }
+
   private fun reinitViewsInternal() {
     myLearnPanel = LearnPanel()
-    modulesPanel = ModulesPanel()
+    modulesPanel = ModulesPanel(this)
     UiManager.modulesPanelPerProject[myProject!!] = modulesPanel!!
     UiManager.learnPanelPerProject[myProject!!] = myLearnPanel!!
   }

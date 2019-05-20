@@ -6,6 +6,9 @@ enum class TrainingMode {
   },
   DEMO {
     override val doesShowResetButton = true
+  },
+  DEVELOPMENT {
+    override val doesShowResetButton = true
   };
 
   abstract val doesShowResetButton: Boolean
