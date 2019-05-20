@@ -77,7 +77,6 @@ class OpenLessonAction : AnAction() {
       val langSupport = LangManager.getInstance().getLangSupport() ?: throw Exception("Language for learning plugin is not defined")
       if (lesson.isOpen) throw LessonIsOpenedException(lesson.name + " is opened")
 
-      val scratchFileName = "Learning"
       val vf: VirtualFile?
       var learnProject = CourseManager.instance.learnProject
       LOG.debug("${projectWhereToStartLesson.name}: trying to get cached LearnProject ${learnProject != null}")
@@ -88,7 +87,7 @@ class OpenLessonAction : AnAction() {
       if (lesson.module.moduleType == ModuleType.SCRATCH) {
         LOG.debug("${projectWhereToStartLesson.name}: scratch based lesson")
         CourseManager.instance.checkEnvironment(projectWhereToStartLesson)
-        vf = getScratchFile(projectWhereToStartLesson, lesson, scratchFileName)
+        vf = getScratchFile(projectWhereToStartLesson, lesson, langSupport.filename)
       } else { //if this file should be opened in LearnProject
         //0. learnProject == null but this project is LearnProject then just getFileInLearnProject
         if ((learnProject == null || learnProject.isDisposed) && projectWhereToStartLesson.name == langSupport.defaultProjectName) {

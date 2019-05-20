@@ -13,6 +13,9 @@ interface LangSupport {
 
     val primaryLanguage: String
     val defaultProjectName: String
+    val filename: String
+        get() = "Learning"
+
     companion object {
         val EP_NAME = "training.TrainingLangExtension"
     }
