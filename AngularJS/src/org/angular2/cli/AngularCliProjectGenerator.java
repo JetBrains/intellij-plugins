@@ -44,10 +44,6 @@ import java.util.regex.Pattern;
 
 import static com.intellij.util.containers.ContainerUtil.exists;
 
-/**
- * @author Dennis.Ushakov
- */
-@SuppressWarnings("MethodDoesntCallSuperMethod")
 public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
   @NonNls public static final String PACKAGE_NAME = "@angular/cli";
@@ -102,8 +98,8 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
       result.add(tokenizer.nextToken());
     }
 
-    if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0)) {
-      if (!exists(result, param -> param.startsWith("--defaults"))) {
+    if (isPackageGreaterOrEqual(settings.myPackage, 7, 0, 0) && ngSettings.myUseDefaults) {
+      if (!exists(result, param -> param.equals("--defaults") || param.startsWith("--defaults="))) {
         result.add("--defaults");
       }
     }
@@ -210,6 +206,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     private TextAccessor myContentRoot;
 
     private SchematicOptionsTextField myOptionsTextField;
+    private JCheckBox myUseDefaults;
 
     @Override
     protected JPanel createPanel() {
@@ -221,6 +218,10 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
       component.setAnchor((JComponent)panel.getComponent(0));
       component.setLabelLocation(BorderLayout.WEST);
       panel.add(component);
+
+      myUseDefaults = new JCheckBox(Angular2Bundle.message("angular.action.new-project.label-defaults"), true);
+      myUseDefaults.setEnabled(true);
+      panel.add(myUseDefaults);
 
       myOptionsTextField = new SchematicOptionsTextField(ProjectManager.getInstance().getDefaultProject(),
                                                          Collections.emptyList());
@@ -254,7 +255,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
           }
         };
       }
-      GistManager.getInstance().invalidateData();
+      settingsStep.addSettingsComponent(myUseDefaults);
       settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand(
         Angular2Bundle.message("angular.action.new-project.label-additional-parameters")), myOptionsTextField);
       getPackageField().addSelectionListener(this::nodePackageChanged);
@@ -264,7 +265,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     @NotNull
     @Override
     public Settings getSettings() {
-      return new AngularCLIProjectSettings(super.getSettings(), myOptionsTextField.getText());
+      return new AngularCLIProjectSettings(super.getSettings(), myUseDefaults.getModel().isSelected(), myOptionsTextField.getText());
     }
 
     @Nullable
@@ -300,7 +301,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
                 .filter(s -> "ng-new".equals(s.getName()))
                 .findFirst()
                 .map(schematic -> {
-                  List<Option> list = ContainerUtil.newArrayList(schematic.getOptions());
+                  List<Option> list = new ArrayList<>(schematic.getOptions());
                   list.add(createOption("verbose", "Boolean", false, "Adds more details to output logging."));
                   list.add(createOption("collection", "String", null, "Schematics collection to use"));
                   list.sort(Comparator.comparing(Option::getName));
@@ -330,10 +331,13 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
 
     @NotNull
     public final String myOptions;
+    public final boolean myUseDefaults;
 
     AngularCLIProjectSettings(@NotNull Settings settings,
+                              boolean useDefaults,
                               @NotNull String options) {
       super(settings.myInterpreterRef, settings.myPackage);
+      myUseDefaults = useDefaults;
       myOptions = options;
     }
   }
