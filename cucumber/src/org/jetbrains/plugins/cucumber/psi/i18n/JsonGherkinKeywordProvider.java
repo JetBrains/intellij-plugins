@@ -49,14 +49,14 @@ public class JsonGherkinKeywordProvider implements GherkinKeywordProvider {
   }
 
   public JsonGherkinKeywordProvider(final InputStream inputStream) {
-    Map<String, HashMap<Object, Object>> fromJson;
+    Map<String, Map<String, Object>> fromJson;
     try {
       final Reader in = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
       try {
-        fromJson = new Gson().fromJson(in, new TypeToken<HashMap<String, HashMap<Object, Object>>>() {}.getType());
+        fromJson = new Gson().fromJson(in, new TypeToken<Map<String, HashMap<String, Object>>>() {}.getType());
 
-        for (Map.Entry<String, HashMap<Object, Object>> entry : fromJson.entrySet()) {
-          HashMap<Object, Object> translation = entry.getValue();
+        for (Map.Entry<String, Map<String, Object>> entry : fromJson.entrySet()) {
+          Map<String, Object> translation = entry.getValue();
           final GherkinKeywordList keywordList = new GherkinKeywordList(translation);
           myLanguageKeywords.put(entry.getKey(), keywordList);
           for (String keyword : keywordList.getAllKeywords()) {

@@ -14,6 +14,7 @@ public class GherkinRuleImpl extends GherkinPsiElementBase implements GherkinRul
     super(node);
   }
 
+  @NotNull
   @Override
   public String toString() {
     return "GherkinRule:" + getRuleName();
@@ -41,7 +42,7 @@ public class GherkinRuleImpl extends GherkinPsiElementBase implements GherkinRul
   }
 
   @Override
-  protected void acceptGherkin(GherkinElementVisitor gherkinElementVisitor) {
+  protected void acceptGherkin(@NotNull GherkinElementVisitor gherkinElementVisitor) {
     gherkinElementVisitor.visitRule(this);
   }
 }
