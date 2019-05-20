@@ -5,6 +5,7 @@ import com.intellij.execution.filters.Filter
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessHandler
+import com.intellij.ide.util.projectWizard.SettingsStep
 import com.intellij.javascript.CreateRunConfigurationUtil
 import com.intellij.javascript.nodejs.packages.NodePackageUtil
 import com.intellij.javascript.nodejs.util.NodePackage
@@ -17,6 +18,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.PathUtil
 import icons.VuejsIcons
 import org.jetbrains.vuejs.VueBundle
@@ -27,6 +29,9 @@ import javax.swing.Icon
 
 class VueCliProjectGenerator : NpmPackageProjectGenerator() {
   private val LOG = Logger.getInstance(VueCliProjectGenerator::class.java)
+
+  private val DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED = true
+  private val DEFAULT_PROJECT_SETUP_KEY = Key.create<Boolean>("vue.project.generator.default.setup")
 
   private val PACKAGE_NAME = "@vue/cli"
   private val VUE_EXECUTABLE = "vue"
@@ -44,14 +49,37 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
     return VuejsIcons.Vue
   }
 
+  override fun createPeer(): GeneratorPeer<Settings> {
+    return object : NpmPackageGeneratorPeer() {
+      val defaultSetupCheckbox = JBCheckBox(VueBundle.message("vue.project.generator.use.default.project.setup"),
+                                            DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED)
+
+      override fun buildUI(settingsStep: SettingsStep) {
+        super.buildUI(settingsStep)
+        settingsStep.addSettingsComponent(defaultSetupCheckbox)
+      }
+
+      override fun getSettings(): Settings {
+        val settings = super.getSettings()
+        settings.putUserData(DEFAULT_PROJECT_SETUP_KEY, defaultSetupCheckbox.isSelected)
+        return settings
+      }
+    }
+  }
+
   override fun customizeModule(baseDir: VirtualFile, entry: ContentEntry) {}
 
+  override fun generatorArgs(project: Project?, dir: VirtualFile?, settings: Settings?): Array<String> {
+    val default = settings?.getUserData(DEFAULT_PROJECT_SETUP_KEY) ?: DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED
+    return if (default) arrayOf(CREATE_COMMAND, "--default", ".") else arrayOf(CREATE_COMMAND, ".")
+  }
+
   override fun generatorArgs(project: Project, baseDir: VirtualFile): Array<String> {
-    return arrayOf(CREATE_COMMAND, ".")
+    return emptyArray()
   }
 
   override fun filters(project: Project, baseDir: VirtualFile): Array<Filter> {
-    return Filter.EMPTY_ARRAY
+    return emptyArray()
   }
 
   override fun executable(pkg: NodePackage): String {
