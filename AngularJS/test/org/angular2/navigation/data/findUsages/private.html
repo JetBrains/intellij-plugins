@@ -1,4 +1,9 @@
 {{ foo }}
 {{ bar() }}
-
+{{ fooBar }}
 <div (click)="bar()" [accessKey]="foo"></div>
+<ng-template>
+  <div #foo>
+    {{foo + fooBar}}
+  </div>
+</ng-template>

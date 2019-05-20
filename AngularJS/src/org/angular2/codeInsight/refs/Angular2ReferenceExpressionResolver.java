@@ -84,7 +84,9 @@ public class Angular2ReferenceExpressionResolver extends TypeScriptReferenceExpr
       if (element != null
           && myReferencedName.equals(element.getName())) {
         remapSetterGetterIfNeeded(results, resolveResult, access);
+        return false;
       }
+      return true;
     });
     return results.toArray(ResolveResult.EMPTY_ARRAY);
   }

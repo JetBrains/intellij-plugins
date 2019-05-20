@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
+import com.intellij.util.Processor;
 import one.util.streamex.StreamEx;
 import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.lang.expr.Angular2Language;
@@ -19,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import static com.intellij.util.ObjectUtils.notNull;
 
@@ -28,7 +28,7 @@ public final class Angular2TemplateScopesResolver {
   @NonNls private static final String HTML_ELEMENT_CLASS_NAME = "HTMLElement";
   @NonNls private static final String HTML_ELEMENT_TAG_NAME_MAP_CLASS_NAME = "HTMLElementTagNameMap";
 
-  public static void resolve(final @NotNull PsiElement element, @NotNull final Consumer<? super ResolveResult> consumer) {
+  public static void resolve(final @NotNull PsiElement element, @NotNull final Processor<? super ResolveResult> processor) {
     PsiElement original = CompletionUtil.getOriginalOrSelf(element);
     if (!checkLanguage(original)) {
       return;
@@ -48,7 +48,7 @@ public final class Angular2TemplateScopesResolver {
 
     StreamEx.of(Angular2TemplateScopesProvider.EP_NAME.getExtensionList())
       .flatCollection(provider -> provider.getScopes(element, hostElement))
-      .forEach(s -> s.resolveAllScopesInHierarchy(consumer));
+      .findFirst(s -> s.resolveAllScopesInHierarchy(processor));
   }
 
   private static boolean checkLanguage(@NotNull PsiElement element) {

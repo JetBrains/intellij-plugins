@@ -13,6 +13,8 @@
 // limitations under the License.
 package org.angularjs.findUsages;
 
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
@@ -33,6 +35,8 @@ import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   protected AngularJSReferenceSearcher() {
@@ -60,7 +64,12 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
         }
       }
     }
-    else if (element instanceof TypeScriptField || element instanceof TypeScriptFunction) {
+    else if (element instanceof TypeScriptField
+             || element instanceof TypeScriptFunction
+             || (element instanceof JSParameter
+                 && Optional.ofNullable(PsiTreeUtil.getContextOfType(element, TypeScriptFunction.class))
+                   .map(JSFunction::isConstructor)
+                   .orElse(false))) {
       String name = ((JSAttributeListOwner)element).getName();
       if (name != null && ((JSQualifiedNamedElement)element).getAccessType() == JSAttributeList.AccessType.PRIVATE) {
         Angular2Component component = Angular2EntitiesProvider.getComponent(PsiTreeUtil.getContextOfType(element, TypeScriptClass.class));

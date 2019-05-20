@@ -1,7 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.template;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.ResolveResult;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,12 +46,19 @@ public abstract class Angular2TemplateScope {
   /**
    * This method is called on every provided scope and allows for providing resolve results from enclosing scopes.
    */
-  public final void resolveAllScopesInHierarchy(@NotNull Consumer<? super ResolveResult> consumer) {
+  public final boolean resolveAllScopesInHierarchy(@NotNull Processor<? super ResolveResult> processor) {
     Angular2TemplateScope scope = this;
-    while (scope != null) {
+    Ref<Boolean> found = new Ref<>(false);
+    Consumer<? super ResolveResult> consumer = resolveResult -> {
+      if (!processor.process(resolveResult)) {
+        found.set(true);
+      }
+    };
+    while (scope != null && found.get() != Boolean.TRUE) {
       scope.resolve(consumer);
       scope = scope.getParent();
     }
+    return found.get() == Boolean.TRUE;
   }
 
   public abstract void resolve(@NotNull Consumer<? super ResolveResult> consumer);
