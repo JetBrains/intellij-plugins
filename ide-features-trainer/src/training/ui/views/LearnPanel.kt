@@ -270,13 +270,11 @@ class LearnPanel : JPanel() {
             button!!.text = LearnBundle.message("learn.ui.button.next.lesson")
         }
         button!!.isSelected = true
-        rootPane.defaultButton = button
+        rootPane?.defaultButton = button
     }
 
     fun setButtonSkipActionAndText(runnable: Runnable?, text: String?, visible: Boolean) {
-
-        if (rootPane != null)
-            rootPane.defaultButton = null
+        rootPane?.defaultButton = null
         val buttonAction = object : AbstractAction() {
             override fun actionPerformed(actionEvent: ActionEvent) {
                 runnable?.run()
