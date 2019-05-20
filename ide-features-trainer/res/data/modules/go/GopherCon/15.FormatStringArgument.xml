@@ -1,0 +1,24 @@
+<xml type="Scenario" name="Format String Argument" id="GopherCon.FormatStringArgument" lang="go">
+    <MouseBlock><CopyText><![CDATA[package main
+
+import (
+	"fmt"
+)
+
+type subject struct {
+	id   int
+	name string
+}
+
+func main() {
+	subj := subject{1, "world"}
+	fmt.Printf("hello %s #", subj.name)
+}
+]]></CopyText>
+</MouseBlock>
+    <MoveCaret position="14:27" />
+    <Try trigger="ShowIntentionActions"><ide/> makes it easy to manipulate with string format arguments. First, press <action>ShowIntentionActions</action> to reveal a list of intention actions.</Try>
+    <Try check="training.check.go.GoCheckStringFormatArguments">Select <strong>Add format string argument</strong>, type <code>subj.id</code>, and hit <action>EditorEnter</action>.</Try>
+    <Try trigger="RunClass">To ensure that the code works properly place a caret anywhere inside <code>main</code> and press <action>RunClass</action>.</Try>
+    <Win/>
+</xml>

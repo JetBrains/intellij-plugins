@@ -11,7 +11,7 @@
         <module name="modules/python/EditorBasics.xml"/>
     </language>
     <language lang="go">
-        <module name="modules/go/EditorBasics.xml"/>
+        <module name="modules/go/GopherCon.xml"/>
     </language>
     <language lang="swift">
         <module name="modules/swift/Editor.xml"/>

@@ -1,0 +1,21 @@
+<xml type="Scenario" name="Extract Function/Method" id="GopherCon.ExtractFunction/Method" lang="go">
+        <CopyText><![CDATA[package main
+
+import (
+	"fmt"
+)
+
+type subject struct {
+	id   int
+	name string
+}
+
+func main() {
+	subj := subject{name: "world"}
+	fmt.Printf("hello %s", subj.name)
+}
+]]></CopyText>
+    <MoveCaret position="14:38" />
+    <Try trigger="ExtractMethod">Extract Function/Method allows you to encapsulate a code into a new function or method with customizable parameters and return type. Let's extract some lines of code into a new method. Press <action>ExtractMethod</action>.</Try>
+    <Win/>
+</xml>
