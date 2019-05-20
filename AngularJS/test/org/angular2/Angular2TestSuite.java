@@ -52,6 +52,7 @@ import org.junit.runners.Suite;
   InspectionsTest.class,
   IntentionsTest.class,
   NgForTest.class,
+  NgContentSelectorsTest.class,
   PipesTest.class,
   ScopesTest.class,
   TagsTest.class,
