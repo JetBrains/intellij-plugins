@@ -125,7 +125,7 @@ module Teamcity
       end
 
       def close_scenario_outline
-        unless @current_scenario_outline.nil?
+        if @current_scenario_outline
           log_suite_finished(EXAMPLES_NODE)
           log_suite_finished(@current_scenario_outline.name)
           @current_scenario_outline = nil
@@ -136,14 +136,14 @@ module Teamcity
         gherkin_document = @ast_lookup.gherkin_document(test_case.location.file)
         feature = gherkin_document[:feature]
         
-        feature[:children].take_while do |child|
+        feature[:children].take_while { |child|
           element = child[:rule] || child[:scenario] || child[:background]
           element[:location][:line] <= test_case.location.lines.min
-        end.first[:rule]
+        }.first[:rule]
       end
 
       def close_rule
-        unless @current_rule.nil?
+        if @current_rule
           log_suite_finished(RULE_NODE_PREFIX + @current_rule[:name])
           @current_rule = nil
         end
@@ -165,7 +165,7 @@ module Teamcity
       end
 
       def close_feature
-        log_suite_finished(current_feature_display_name) unless @current_feature_file.nil?
+        log_suite_finished(current_feature_display_name) if @current_feature_file
       end
 
       def open_feature(feature_file)
