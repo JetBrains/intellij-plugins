@@ -100,7 +100,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           final String name = clazz.getName();
           if (name != null) {
             LookupElement lookupItem = JSLookupUtilImpl
-              .createPrioritizedLookupItem(clazz, name, JSLookupPriority.MATCHED_TYPE_PRIORITY, false, true);
+              .createPrioritizedLookupItem(clazz, name, JSLookupPriority.MATCHED_TYPE_PRIORITY);
 
             variants.add(lookupItem);
           }
@@ -132,9 +132,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
             clazz,
             ImportUtils.importAndShortenReference(typeText, parent, false, true).first + "()",
-            JSLookupPriority.SMART_PRIORITY,
-            true,
-            true
+            JSLookupPriority.SMART_PRIORITY
           ));
         }
 
@@ -143,9 +141,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
           variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
             createType(JSCommonTypeNames.ARRAY_CLASS_NAME, JSTypeSourceFactory.createTypeSource(parent), JSContext.INSTANCE).resolveClass(),
             "<" + ImportUtils.importAndShortenReference(signature.genericType, parent, false, true).first + ">" + "[]",
-            JSLookupPriority.SMART_PRIORITY,
-            true,
-            true
+            JSLookupPriority.SMART_PRIORITY
           ));
         }
       }
@@ -183,9 +179,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
             variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
               JSDialectSpecificHandlersFactory.forElement(location).getClassResolver().findClassByQName(qName, location),
               ImportUtils.importAndShortenReference(qName, parent, false, true).first,
-              JSLookupPriority.SMART_PRIORITY,
-              true,
-              true
+              JSLookupPriority.SMART_PRIORITY
             ));
           }
         }
@@ -230,7 +224,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       if (ActionScriptResolveUtil.hasExcludeClassMetadata(result)) continue;
       if (!JSResolveUtil.isAccessibleFromCurrentActionScriptPackage(result, packageName, place)) continue;
       if (!processedCandidateNames.add(result.getQualifiedName())) continue;
-      variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(result, result.getName(), JSLookupPriority.SMART_PRIORITY, false, true));
+      variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(result, result.getName(), JSLookupPriority.SMART_PRIORITY));
     }
   }
 
@@ -345,7 +339,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
         JSCompletionContributor.getInstance().isDoingSmartCodeCompleteAction()
       ) {
       variants.add(JSLookupUtilImpl.createPrioritizedLookupItem(
-        null, "this", JSLookupPriority.SMART_PRIORITY, true, true
+        null, "this", JSLookupPriority.SMART_PRIORITY
       ));
     }
     if (parent instanceof JSArgumentList) {
@@ -408,7 +402,6 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
               ((JSClass)parent).getName() + "." + name,
               JSLookupPriority.SMART_PRIORITY,
               false,
-              true,
               null,
               false,
               name

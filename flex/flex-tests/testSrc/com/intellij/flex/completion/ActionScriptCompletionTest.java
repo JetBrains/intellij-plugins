@@ -112,25 +112,25 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertNotNull(elements);
     assertEquals("____", elements[0].getLookupString());
 
-    assertTrue(getBoldStatus(elements[0]));
-    assertFalse(getBoldStatus(elements[1]));
+    assertTrue(isStrictMatched(elements[0]));
+    assertTrue(isStrictMatched(elements[1]));
 
     elements = doTest("_2");
     assertNotNull(elements);
     assertEquals("____", elements[0].getLookupString());
-    assertTrue(getBoldStatus(elements[0]));
-    assertFalse(getBoldStatus(elements[1]));
+    assertTrue(isStrictMatched(elements[0]));
+    assertTrue(isStrictMatched(elements[1]));
 
     elements = doTest("_3");
     assertNotNull(elements);
     assertEquals("____", elements[4].getLookupString());
-    assertTrue(getBoldStatus(elements[4]));
+    assertTrue(isStrictMatched(elements[4]));
     assertEquals("lVar", elements[0].getLookupString());
-    assertTrue(getBoldStatus(elements[0]));
+    assertTrue(isStrictMatched(elements[0]));
     assertEquals("param", elements[1].getLookupString());
-    assertTrue(getBoldStatus(elements[1]));
+    assertTrue(isStrictMatched(elements[1]));
 
-    assertFalse(getBoldStatus(elements[5]));
+    assertTrue(isStrictMatched(elements[5]));
     assertEquals("Bar", elements[5].getLookupString());
   }
 
@@ -147,14 +147,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public final void testKeywordsInContext() {
     final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
     assertEquals("extends", lookupElements[0].getLookupString());
-    assertTrue(getBoldStatus(lookupElements[0]));
+    assertTrue(isStrictMatched(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
   }
 
   public final void testKeywordsInContext2() {
     final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
     assertEquals("public", lookupElements[0].getLookupString());
-    assertTrue(getBoldStatus(lookupElements[0]));
+    assertTrue(isStrictMatched(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
   }
 

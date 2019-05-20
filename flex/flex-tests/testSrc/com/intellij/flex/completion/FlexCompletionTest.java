@@ -1337,7 +1337,7 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
     });
     final LookupElement[] elements = doTest("", "as");
     assertStartsWith(elements, "concat", "every", "filter");
-    assertTrue(getBoldStatus(elements[0]));
+    assertTrue(isStrictMatched(elements[0]));
   }
 
   public void testCompletionPerformance() {
