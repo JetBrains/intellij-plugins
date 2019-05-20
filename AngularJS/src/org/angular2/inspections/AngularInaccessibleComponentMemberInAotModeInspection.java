@@ -24,6 +24,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.hash.HashSet;
 import org.angular2.entities.Angular2Component;
@@ -138,11 +139,15 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
   private static void retainReferenced(@NotNull PsiFile template, @NotNull Set<? extends PsiElement> candidates) {
     LocalSearchScope fileScope = new LocalSearchScope(template);
     Iterator<? extends PsiElement> iterator = candidates.iterator();
-    while (iterator.hasNext()) {
-      if (ReferencesSearch.search(iterator.next(), fileScope, true).findFirst() == null) {
-        iterator.remove();
+    AstLoadingFilter.forceAllowTreeLoading(
+      template, () -> {
+        while (iterator.hasNext()) {
+          if (ReferencesSearch.search(iterator.next(), fileScope, true).findFirst() == null) {
+            iterator.remove();
+          }
+        }
       }
-    }
+    );
   }
 
   private static class AngularMakeAccessibleQuickFix extends TypeScriptPublicModifierIntention implements LocalQuickFix {
@@ -188,8 +193,11 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
         ).navigate(true);
       }
       SmartPsiElementPointer<PsiElement> memberPointer = SmartPointerManager.createPointer(member);
-      super.invoke(project, editor, member instanceof TypeScriptFunction ? member.getFirstChild() : member);
+      super.invoke(project, editor, member instanceof TypeScriptFunction
+                                    || member instanceof JSParameter ? member.getFirstChild()
+                                                                     : member);
       Optional.ofNullable(memberPointer.getElement())
+        .filter(m -> !(m instanceof JSParameter))
         .ifPresent(m -> WriteAction.run(() -> {
           PsiComment comment = JSDocumentationUtils.findDocComment(member);
           if (comment instanceof JSDocComment) {
