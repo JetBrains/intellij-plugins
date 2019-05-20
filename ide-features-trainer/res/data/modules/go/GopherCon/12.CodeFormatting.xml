@@ -1,0 +1,18 @@
+<xml type="Scenario" name="Code Formatting" id="GopherCon.CodeFormatting" lang="go">
+        <CopyText><![CDATA[package main
+import (
+	"fmt"
+)
+type subject struct{
+id   int
+name string
+}
+func main(){
+subj:=subject{name:"world"}
+fmt.Printf("hello %s",subj.name)
+}]]></CopyText>
+    <SetSelection start-position="10:1" end-position="11:33" />
+    <Try triggers="ReformatCode"><ide/> can help you with code formatting. Hit <action>ReformatCode</action> to reformat the selected code block.</Try>
+    <Try triggers="ReformatCode">To reformat the whole source file, use <action>ReformatCode</action> when no lines are selected.</Try>
+    <Win/>
+</xml>

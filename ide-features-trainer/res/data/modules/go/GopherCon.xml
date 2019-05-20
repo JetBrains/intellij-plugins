@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="GopherCon" lessonsPath="GopherCon/" version="0.1" id="gophercon" fileType="SCRATCH"  description="Welcome to the crash course prepared specifically for the conference.">
+  <lesson-kt sample="00.Actions.go.sample" implementationClass="training.learn.lesson.general.GotoActionLesson" lang="go"/>
+  <lesson-kt sample="01.Select.go.sample" implementationClass="training.learn.lesson.general.SelectLesson" lang="go"/>
+  <lesson filename="02.Comment.xml" lang="go"/>
+  <lesson-kt implementationClass="training.learn.lesson.go.completion.GoBasicCompletionLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.go.completion.GoSmartTypeCompletionLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.go.completion.GoMethodLikeFunctionCompletionLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.go.completion.GoPostfixCompletionLesson"/>
+  <lesson-kt implementationClass="training.learn.lesson.go.completion.GoCompletionWithTabLesson"/>
+  <lesson filename="08.Rename.xml" lang="go"/>
+  <lesson filename="09.ExtractVariable.xml" lang="go"/>
+  <lesson filename="10.Inline.xml" lang="go"/>
+  <lesson filename="11.ExtractMethod.xml" lang="go"/>
+  <lesson filename="12.CodeFormatting.xml" lang="go"/>
+  <lesson filename="13.GoFmt.xml" lang="go"/>
+  <lesson filename="14.ImplementMissingMethods.xml" lang="go"/>
+  <lesson filename="15.FormatStringArgument.xml" lang="go"/>
+</module>
