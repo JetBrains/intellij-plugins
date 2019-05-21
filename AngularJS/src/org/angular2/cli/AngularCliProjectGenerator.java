@@ -220,12 +220,10 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
       panel.add(component);
 
       myUseDefaults = new JCheckBox(Angular2Bundle.message("angular.action.new-project.label-defaults"), true);
-      myUseDefaults.setEnabled(true);
       panel.add(myUseDefaults);
 
       myOptionsTextField = new SchematicOptionsTextField(ProjectManager.getInstance().getDefaultProject(),
                                                          Collections.emptyList());
-      myOptionsTextField.setEnabled(true);
       myOptionsTextField.setVariants(Collections.singletonList(new Option("test")));
 
       component = LabeledComponent.create(
@@ -265,7 +263,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     @NotNull
     @Override
     public Settings getSettings() {
-      return new AngularCLIProjectSettings(super.getSettings(), myUseDefaults.getModel().isSelected(), myOptionsTextField.getText());
+      return new AngularCLIProjectSettings(super.getSettings(), myUseDefaults.isSelected(), myOptionsTextField.getText());
     }
 
     @Nullable
