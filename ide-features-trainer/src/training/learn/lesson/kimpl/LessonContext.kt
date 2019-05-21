@@ -12,35 +12,60 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.LogicalPosition
 import com.intellij.openapi.editor.ex.EditorGutterComponentEx
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.DocumentUtil
+import org.jetbrains.annotations.CalledInBackground
 import training.commands.kotlin.TaskContext
 import training.learn.ActionsRecorder
+import training.learn.exceptons.LessonScriptStopped
 import training.learn.lesson.LessonManager
-import kotlin.concurrent.thread
+import java.util.concurrent.CompletableFuture
 
 class LessonContext(val lesson: KLesson, val editor: Editor, val project: Project) {
-  val recorder = ActionsRecorder(project, editor.document)
+  private var stopMe = false
+  private var currentStep : CompletableFuture<Boolean>? = null
 
-  init {
-    LessonManager.instance.registerActionsRecorder(recorder)
+  fun stopLesson() {
+    synchronized(this) {
+      stopMe = true
+      currentStep?.complete(false)
+    }
   }
 
   /**
    * Start a new task in a lesson context
    */
+  @CalledInBackground // This code should be called from IdeFeaturesTrainer thread
   fun task(taskContent: TaskContext.() -> Unit) {
-    recorder.removeListeners()
-    val taskContext = TaskContext(lesson, editor, project, recorder)
-    taskContext.apply(taskContent)
+    checkForStop()
+    lateinit var recorder : ActionsRecorder
+    lateinit var taskContext : TaskContext
+    ApplicationManager.getApplication().invokeAndWait {
+      recorder = ActionsRecorder(project, editor.document)
+      taskContext = TaskContext(lesson, editor, project, recorder)
+      taskContext.apply(taskContent)
+    }
 
     if (TaskContext.inTestMode) {
-      thread(name = "TestLearningPlugin") {
+      LessonManager.instance.testActionsExecutor.execute {
         taskContext.testActions.forEach { it.run() }
       }
     }
 
-    taskContext.steps.all { it.get() }
+    try {
+      taskContext.steps.all {
+        currentStep = it
+        checkForStop()
+        it.get()
+      }
+      checkForStop()
+    }
+    finally {
+      ApplicationManager.getApplication().invokeAndWait {
+        Disposer.dispose(recorder)
+      }
+    }
     LessonManager.instance.passExercise()
   }
 
@@ -124,6 +149,14 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
       runnable()
     } else {
       app.invokeLater({ runnable() }, ModalityState.defaultModalityState())
+    }
+  }
+
+  private fun checkForStop() {
+    synchronized(this) {
+      if (stopMe) {
+        throw LessonScriptStopped()
+      }
     }
   }
 
