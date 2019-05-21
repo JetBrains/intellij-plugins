@@ -46,7 +46,6 @@ import java.awt.FontFormatException
 import java.io.IOException
 import java.lang.reflect.Modifier
 import java.util.concurrent.ExecutionException
-import kotlin.concurrent.thread
 
 /**
  * @author Sergey Karashevich
@@ -187,14 +186,7 @@ class OpenLessonAction : AnAction() {
       LOG.debug("${projectWhereToStartLesson.name}: 4. Process lesson")
       when (lesson) {
         is XmlLesson -> LessonProcessor.process(projectWhereToStartLesson, lesson, textEditor.editor)
-        is KLesson -> {
-          LessonManager.instance.initLesson(textEditor.editor, lesson)
-          thread(name = "IdeFeaturesTrainer") {
-            lesson.lessonContent(LessonContext(lesson, textEditor.editor, projectWhereToStartLesson))
-            lesson.pass()
-            LessonManager.instance.passLesson(projectWhereToStartLesson, lesson)
-          }
-        }
+        is KLesson -> processDslLesson(lesson, textEditor, projectWhereToStartLesson)
       }
 
     } catch (noSdkException: NoSdkException) {
@@ -209,6 +201,23 @@ class OpenLessonAction : AnAction() {
       e.printStackTrace()
     }
 
+  }
+
+  private fun processDslLesson(lesson: KLesson, textEditor: TextEditor, projectWhereToStartLesson: Project) {
+    val lessonContext = LessonContext(lesson, textEditor.editor, projectWhereToStartLesson)
+    LessonManager.instance.initDslLesson(textEditor.editor, lesson, lessonContext)
+    LessonManager.instance.dslExecutor.submit {
+      try {
+        lesson.lessonContent(lessonContext)
+        lesson.pass()
+        LessonManager.instance.passLesson(projectWhereToStartLesson, lesson)
+        LOG.debug("Lesson $lesson has been passed")
+      }
+      catch (e: LessonScriptStopped) {
+        LOG.debug("Script fo lesson $lesson has been stopped")
+        // do nothing here
+      }
+    }
   }
 
   private fun hideOtherViews(project: Project) {

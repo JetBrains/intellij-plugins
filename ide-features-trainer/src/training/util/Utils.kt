@@ -1,5 +1,6 @@
 package training.util
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.intellij.ide.DataManager
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
@@ -16,6 +17,8 @@ import training.learn.CourseManager
 import java.awt.Point
 import java.io.File
 import java.io.FileFilter
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 abstract class UrlProvider {
   abstract val statsServerPostUrl: String
@@ -101,6 +104,9 @@ open class UniqueFilesProvider(private val baseName: String, private val rootDir
   }
 
 }
+
+fun createNamedSingleThreadExecutor(name: String): ExecutorService =
+    Executors.newSingleThreadExecutor(ThreadFactoryBuilder().setNameFormat(name).build())
 
 fun isPropertyExists(name: String) = System.getProperty(name) != null
 
