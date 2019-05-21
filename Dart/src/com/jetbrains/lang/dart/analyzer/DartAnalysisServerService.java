@@ -102,7 +102,7 @@ public class DartAnalysisServerService implements Disposable {
   private static final long EDIT_ORGANIZE_DIRECTIVES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(300);
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-  private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(100);
+  private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(10);
   private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(300);
   private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(300);
   private static final long IMPORTED_ELEMENTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
