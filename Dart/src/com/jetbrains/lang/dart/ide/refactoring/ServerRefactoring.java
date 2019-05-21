@@ -25,6 +25,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.ide.refactoring.moveFile.MoveFileRefactoring;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatus;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatusEntry;
 import com.jetbrains.lang.dart.ide.refactoring.status.RefactoringStatusSeverity;
@@ -158,46 +159,55 @@ public abstract class ServerRefactoring {
     serverErrorStatus = null;
     final CountDownLatch latch = new CountDownLatch(1);
     RefactoringOptions options = getOptions();
+    GetRefactoringConsumer getRefactoringConsumer = new GetRefactoringConsumer() {
+      @Override
+      public void computedRefactorings(List<RefactoringProblem> initialProblems,
+                                       List<RefactoringProblem> optionsProblems,
+                                       List<RefactoringProblem> finalProblems,
+                                       RefactoringFeedback feedback,
+                                       SourceChange _change,
+                                       List<String> _potentialEdits) {
+        if (feedback != null) {
+          setFeedback(feedback);
+        }
+        initialStatus = toRefactoringStatus(initialProblems);
+        optionsStatus = toRefactoringStatus(optionsProblems);
+        finalStatus = toRefactoringStatus(finalProblems);
+        change = _change;
+        potentialEdits.clear();
+        if (_potentialEdits != null) {
+          potentialEdits.addAll(_potentialEdits);
+        }
+        latch.countDown();
+        requestDone(id);
+      }
+
+      @Override
+      public void onError(RequestError requestError) {
+        String message = "Server error: " + requestError.getMessage();
+        serverErrorStatus = RefactoringStatus.createFatalErrorStatus(message);
+        latch.countDown();
+        requestDone(id);
+      }
+
+      private void requestDone(final int id) {
+        synchronized (pendingRequestIds) {
+          pendingRequestIds.remove(id);
+          notifyListener();
+        }
+      }
+    };
+
     DartAnalysisServerService.getInstance(myProject).updateFilesContent();
-    final boolean success = DartAnalysisServerService.getInstance(myProject)
-      .edit_getRefactoring(kind, file, offset, length, validateOnly, options, new GetRefactoringConsumer() {
-        @Override
-        public void computedRefactorings(List<RefactoringProblem> initialProblems,
-                                         List<RefactoringProblem> optionsProblems,
-                                         List<RefactoringProblem> finalProblems,
-                                         RefactoringFeedback feedback,
-                                         SourceChange _change,
-                                         List<String> _potentialEdits) {
-          if (feedback != null) {
-            setFeedback(feedback);
-          }
-          initialStatus = toRefactoringStatus(initialProblems);
-          optionsStatus = toRefactoringStatus(optionsProblems);
-          finalStatus = toRefactoringStatus(finalProblems);
-          change = _change;
-          potentialEdits.clear();
-          if (_potentialEdits != null) {
-            potentialEdits.addAll(_potentialEdits);
-          }
-          latch.countDown();
-          requestDone(id);
-        }
+    DartAnalysisServerService dass = DartAnalysisServerService.getInstance(myProject);
 
-        @Override
-        public void onError(RequestError requestError) {
-          String message = "Server error: " + requestError.getMessage();
-          serverErrorStatus = RefactoringStatus.createFatalErrorStatus(message);
-          latch.countDown();
-          requestDone(id);
-        }
+    final boolean success;
 
-        private void requestDone(final int id) {
-          synchronized (pendingRequestIds) {
-            pendingRequestIds.remove(id);
-            notifyListener();
-          }
-        }
-      });
+    if(this instanceof MoveFileRefactoring) {
+      success = dass.edit_getMoveFileRefactoring(kind, ((MoveFileRefactoring)this).getOldFilePath(), validateOnly, options, getRefactoringConsumer);
+    } else {
+      success = dass.edit_getRefactoring(kind, file, offset, length, validateOnly, options, getRefactoringConsumer);
+    }
     if (!success) return;
     // wait for completion
     if (indicator != null) {

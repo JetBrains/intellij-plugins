@@ -94,6 +94,8 @@ public class DartAnalysisServerService implements Disposable {
 
   public static final String MIN_SDK_VERSION = "1.12";
 
+  private static final String MIN_MOVE_FILE_SDK_VERSION = "2.3.1";
+
   private static final long UPDATE_FILES_TIMEOUT = 300;
 
   private static final long CHECK_CANCELLED_PERIOD = 10;
@@ -456,6 +458,10 @@ public class DartAnalysisServerService implements Disposable {
 
   public static boolean isDartSdkVersionSufficient(@NotNull final DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
+  }
+
+  public static boolean isDartSdkVersionForMoveFileRefactoring(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_MOVE_FILE_SDK_VERSION) >= 0;
   }
 
   public void addCompletions(@NotNull final VirtualFile file,
@@ -1598,6 +1604,18 @@ public class DartAnalysisServerService implements Disposable {
     final int offset = getOriginalOffset(file, _offset);
     final int length = getOriginalOffset(file, _offset + _length) - offset;
     server.edit_getRefactoring(kind, filePath, offset, length, validateOnly, options, consumer);
+    return true;
+  }
+
+  public boolean edit_getMoveFileRefactoring(String kind,
+                                             String filePath,
+                                             boolean validateOnly,
+                                             RefactoringOptions options,
+                                             GetRefactoringConsumer consumer) {
+    final AnalysisServer server = myServer;
+    if (server == null) return false;
+
+    server.edit_getRefactoring(kind, filePath, 0, 0, validateOnly, options, consumer);
     return true;
   }
 
