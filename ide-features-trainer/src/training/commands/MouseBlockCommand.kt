@@ -9,7 +9,7 @@ class MouseBlockCommand : Command(Command.CommandType.MOUSEBLOCK) {
 
   override fun execute(executionList: ExecutionList) {
     //Block mouse and perform next
-    LessonManager.getInstance(executionList.lesson)?.blockMouse(executionList.editor)
+    LessonManager.instance.blockMouse(executionList.editor)
     executionList.elements.poll()
     startNextCommand(executionList)
 

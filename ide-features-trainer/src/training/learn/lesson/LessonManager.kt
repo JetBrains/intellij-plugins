@@ -28,7 +28,6 @@ class LessonManager {
   private var myCurrentLesson: Lesson? = null
 
   constructor(lesson: Lesson, editor: Editor) {
-    myCurrentLesson = lesson
     mouseBlocked = false
     if (myLearnActions == null) myLearnActions = ArrayList<LearnActions>()
     lastEditor = editor
@@ -36,25 +35,19 @@ class LessonManager {
   }
 
   constructor() {
-    myCurrentLesson = null
     mouseBlocked = false
     if (myLearnActions == null) myLearnActions = ArrayList<LearnActions>()
     lastEditor = null
     mouseListenerHolder = null
   }
 
-  private fun setCurrentLesson(lesson: Lesson) {
-    myCurrentLesson = lesson
-  }
-
   @Throws(Exception::class)
-  internal fun initLesson(editor: Editor) {
+  internal fun initLesson(editor: Editor, cLesson : Lesson) {
     clearAllListeners()
    //remove mouse blocks and action recorders from last editor
     lastEditor = editor //rearrange last editor
-    val cLesson = myCurrentLesson ?: throw Exception("Current lesson is null")
     UiManager.setLessonNameOnLearnPanels(cLesson.name)
-    val module = cLesson.module ?: throw Exception("Unable to find module for lesson: " + myCurrentLesson!!)
+    val module = cLesson.module
     val moduleName = module.name
     UiManager.setModuleNameOnLearnPanels(moduleName)
     UiManager.initLessonOnLearnPanels(cLesson)
@@ -120,11 +113,10 @@ class LessonManager {
     UiManager.setPreviousMessagePassedOnLearnPanels()
   }
 
-  fun passLesson(project: Project, editor: Editor) {
+  fun passLesson(project: Project, cLesson: Lesson) {
     UiManager.setLessonPassedOnLearnPanels()
-    val cLesson = myCurrentLesson ?: throw Exception("Current lesson is not defined (is null)")
-    if (cLesson.module != null && cLesson.module!!.hasNotPassedLesson()) {
-      val notPassedLesson = cLesson.module!!.giveNotPassedLesson()
+    if (cLesson.module.hasNotPassedLesson()) {
+      val notPassedLesson = cLesson.module.giveNotPassedLesson()
       UiManager.setButtonNextActionOnLearnPanels(Runnable {
         try {
           CourseManager.instance.openLesson(project, notPassedLesson)
@@ -276,12 +268,5 @@ class LessonManager {
 
     val instance: LessonManager
       get() = ServiceManager.getService(LessonManager::class.java)
-
-    fun getInstance(lesson: Lesson): LessonManager {
-      val lessonManager = instance
-      lessonManager.setCurrentLesson(lesson)
-      return lessonManager
-    }
   }
-
 }

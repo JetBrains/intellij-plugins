@@ -27,7 +27,7 @@ object LessonProcessor {
     val myQueueOfElements = LessonProcessor.createQueueOfCommands(lesson.scenario.root)
 
     //Initialize lesson in the editor
-    LessonManager.getInstance(lesson).initLesson(editor)
+    LessonManager.instance.initLesson(editor, lesson)
 
     //Prepare environment before execution
     with(LessonProcessor) {
