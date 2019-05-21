@@ -14,18 +14,30 @@ import training.learn.ActionsRecorder
 import training.learn.CourseManager
 import training.learn.LearnBundle
 import training.learn.interfaces.Lesson
+import training.learn.lesson.kimpl.LessonContext
 import training.ui.Message
 import training.ui.UiManager
 import training.util.createBalloon
+import training.util.createNamedSingleThreadExecutor
 import training.util.editorPointForBalloon
 import java.util.*
+import java.util.concurrent.ExecutorService
+
 
 /**
  * Created by karashevich on 18/03/16.
  */
 class LessonManager {
+  private var currentLessonContext: LessonContext? = null
 
-  private var myCurrentLesson: Lesson? = null
+  val dslExecutor: ExecutorService by lazy {
+    createNamedSingleThreadExecutor("IdeFeaturesTrainer")
+  }
+
+
+  val testActionsExecutor: ExecutorService by lazy {
+    createNamedSingleThreadExecutor("TestLearningPlugin")
+  }
 
   constructor(lesson: Lesson, editor: Editor) {
     mouseBlocked = false
@@ -41,8 +53,15 @@ class LessonManager {
     mouseListenerHolder = null
   }
 
+  internal fun initDslLesson(editor: Editor, cLesson : Lesson, lessonContext: LessonContext) {
+    initLesson(editor, cLesson)
+    currentLessonContext = lessonContext
+  }
+
   @Throws(Exception::class)
   internal fun initLesson(editor: Editor, cLesson : Lesson) {
+    currentLessonContext?.stopLesson()
+
     clearAllListeners()
    //remove mouse blocks and action recorders from last editor
     lastEditor = editor //rearrange last editor
