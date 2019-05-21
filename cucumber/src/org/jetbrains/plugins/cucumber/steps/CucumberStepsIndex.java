@@ -6,9 +6,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -165,25 +163,6 @@ public class CucumberStepsIndex {
     return loadStepsFor(featureFile, module);
   }
 
-  @NotNull
-  public List<PsiFile> gatherStepDefinitionsFilesFromDirectory(@NotNull final PsiDirectory dir, final boolean writableOnly) {
-    final List<PsiFile> result = new ArrayList<>();
-
-    // find step definitions in current folder
-    for (PsiFile file : dir.getFiles()) {
-      final VirtualFile virtualFile = file.getVirtualFile();
-      boolean isStepFile = writableOnly ? isWritableStepLikeFile(file, file.getParent()) : isStepLikeFile(file, file.getParent());
-      if (isStepFile && virtualFile != null) {
-        result.add(file);
-      }
-    }
-    // process subfolders
-    for (PsiDirectory subDir : dir.getSubdirectories()) {
-      result.addAll(gatherStepDefinitionsFilesFromDirectory(subDir, writableOnly));
-    }
-
-    return result;
-  }
 
   private List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
     ArrayList<AbstractStepDefinition> result = new ArrayList<>();
@@ -229,25 +208,5 @@ public class CucumberStepsIndex {
 
   public int getExtensionCount() {
     return myExtensionMap.size();
-  }
-
-  private boolean isStepLikeFile(PsiElement child, PsiElement parent) {
-    if (child instanceof PsiFile) {
-      final PsiFile file = (PsiFile)child;
-      CucumberJvmExtensionPoint ep = myExtensionMap.get(new BDDFrameworkType(file.getFileType()));
-      return ep != null && ep.isStepLikeFile(file, parent);
-    }
-
-    return false;
-  }
-
-  private boolean isWritableStepLikeFile(PsiElement child, PsiElement parent) {
-    if (child instanceof PsiFile) {
-      final PsiFile file = (PsiFile)child;
-      CucumberJvmExtensionPoint ep = myExtensionMap.get(new BDDFrameworkType(file.getFileType()));
-      return ep != null && ep.isWritableStepLikeFile(file, parent);
-    }
-
-    return false;
   }
 }
