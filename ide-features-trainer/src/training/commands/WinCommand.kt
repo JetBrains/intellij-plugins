@@ -15,6 +15,6 @@ class WinCommand : Command(Command.CommandType.WIN) {
     val project = executionList.project
     val lesson = executionList.lesson
     lesson.pass()
-    LessonManager.getInstance(lesson).passLesson(project, executionList.editor)
+    LessonManager.instance.passLesson(project, lesson)
   }
 }

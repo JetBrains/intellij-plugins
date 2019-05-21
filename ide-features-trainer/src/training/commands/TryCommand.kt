@@ -27,10 +27,10 @@ class TryCommand : Command(Command.CommandType.TRY) {
     var checkFuture: CompletableFuture<Boolean>? = null
     var triggerFuture: CompletableFuture<Boolean>? = null
 
-    LessonManager.getInstance(lesson).addMessages(Message.convert(element))
+    LessonManager.instance.addMessages(Message.convert(element))
 
     val recorder = ActionsRecorder(editor.project!!, editor.document)
-    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
+    LessonManager.instance.registerActionsRecorder(recorder)
 
     if (element.getAttribute("check") != null) {
       val checkClassString = element.getAttribute("check")!!.value
@@ -59,7 +59,7 @@ class TryCommand : Command(Command.CommandType.TRY) {
     thread(name = "IdeFeaturesTrainer Result") {
       checkFuture?.get()
       triggerFuture?.get()
-      LessonManager.getInstance(lesson).passExercise()
+      LessonManager.instance.passExercise()
       ApplicationManager.getApplication().invokeLater { startNextCommand(executionList) }
     }
   }

@@ -15,7 +15,7 @@ class TextCommand : Command(Command.CommandType.TEXT) {
     val element = executionList.elements.poll()
     val lesson = executionList.lesson
 
-    LessonManager.getInstance(lesson).addMessages(Message.convert(element))
+    LessonManager.instance.addMessages(Message.convert(element))
 
     startNextCommand(executionList)
 

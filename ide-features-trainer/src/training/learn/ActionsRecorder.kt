@@ -113,7 +113,7 @@ class ActionsRecorder(private val project: Project,
   }
 
   override fun dispose() {
-    removeListeners(document)
+    removeListeners()
     disposed = true
     Disposer.dispose(this)
   }
@@ -262,7 +262,7 @@ class ActionsRecorder(private val project: Project,
   }
 
 
-  fun removeListeners(document: Document) {
+  fun removeListeners() {
     if (documentListeners.isNotEmpty()) documentListeners.forEach { document.removeDocumentListener(it) }
     if (eventDispatchers.isNotEmpty()) eventDispatchers.forEach { IdeEventQueue.getInstance().removeDispatcher(it) }
     actionListeners.clear()

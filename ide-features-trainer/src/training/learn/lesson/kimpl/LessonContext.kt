@@ -23,14 +23,14 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
   val recorder = ActionsRecorder(project, editor.document)
 
   init {
-    LessonManager.getInstance(lesson).registerActionsRecorder(recorder)
+    LessonManager.instance.registerActionsRecorder(recorder)
   }
 
   /**
    * Start a new task in a lesson context
    */
   fun task(taskContent: TaskContext.() -> Unit) {
-    recorder.removeListeners(editor.document)
+    recorder.removeListeners()
     val taskContext = TaskContext(lesson, editor, project, recorder)
     taskContext.apply(taskContent)
 
@@ -41,7 +41,7 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
     }
 
     taskContext.steps.all { it.get() }
-    LessonManager.getInstance(lesson).passExercise()
+    LessonManager.instance.passExercise()
   }
 
   /** Describe a simple task: just one action required */
