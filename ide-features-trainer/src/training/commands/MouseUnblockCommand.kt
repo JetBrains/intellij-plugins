@@ -10,7 +10,7 @@ class MouseUnblockCommand : Command(Command.CommandType.MOUSEUNBLOCK) {
 
   override fun execute(executionList: ExecutionList) {
     executionList.elements.poll()
-    LessonManager.getInstance(executionList.lesson).unblockMouse(executionList.editor)
+    LessonManager.instance.unblockMouse(executionList.editor)
     startNextCommand(executionList)
   }
 }

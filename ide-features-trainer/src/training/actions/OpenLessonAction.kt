@@ -188,11 +188,11 @@ class OpenLessonAction : AnAction() {
       when (lesson) {
         is XmlLesson -> LessonProcessor.process(projectWhereToStartLesson, lesson, textEditor.editor)
         is KLesson -> {
-          LessonManager.getInstance(lesson).initLesson(textEditor.editor)
+          LessonManager.instance.initLesson(textEditor.editor, lesson)
           thread(name = "IdeFeaturesTrainer") {
             lesson.lessonContent(LessonContext(lesson, textEditor.editor, projectWhereToStartLesson))
             lesson.pass()
-            LessonManager.getInstance(lesson).passLesson(projectWhereToStartLesson, textEditor.editor)
+            LessonManager.instance.passLesson(projectWhereToStartLesson, lesson)
           }
         }
       }

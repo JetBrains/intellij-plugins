@@ -10,7 +10,7 @@ class CaretBlockCommand : Command(Command.CommandType.CARETBLOCK) {
   override fun execute(executionList: ExecutionList) {
     executionList.elements.poll()
     //Block caret and perform next command
-    LessonManager.getInstance(executionList.lesson).blockCaret(executionList.editor)
+    LessonManager.instance.blockCaret(executionList.editor)
     startNextCommand(executionList)
   }
 }
