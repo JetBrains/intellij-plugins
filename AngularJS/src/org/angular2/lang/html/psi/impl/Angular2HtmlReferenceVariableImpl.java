@@ -163,7 +163,7 @@ public class Angular2HtmlReferenceVariableImpl extends JSVariableImpl<JSVariable
   }
 
   @Override
-  protected boolean useTypesFromJSDoc() {
+  public boolean useTypesFromJSDoc() {
     return false;
   }
 
