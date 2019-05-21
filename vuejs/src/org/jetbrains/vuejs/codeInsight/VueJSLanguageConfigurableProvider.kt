@@ -31,7 +31,7 @@ class VueJSLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvid
   }
 
   override fun createDestructuringElement(destruct: String, parent: PsiElement): JSDestructuringElement? {
-    if (!(parent.language is VueJSLanguage)) return null
+    if (parent.language !is VueJSLanguage) return null
     val file = PsiFileFactory.getInstance(parent.project).createFileFromText("q.vue", VueFileType.INSTANCE,
                                                                              "<li v-for=\"$destruct in schedules\">")
     return SyntaxTraverser.psiTraverser(file).filter(JSDestructuringElement::class.java).first()

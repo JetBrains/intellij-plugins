@@ -49,6 +49,10 @@ class VueRenameTest : LightPlatformCodeInsightFixtureTestCase() {
     doTest("newName")
   }
 
+  fun testDestructuringInVFor() {
+    doTest("newName")
+  }
+
   fun testComponentNameFromDeclaration() {
     val testFile1 = getTestName(true) + "1.vue"
     val testFile2 = getTestName(true) + "2.vue"
