@@ -45,6 +45,11 @@ class VueJSLanguage : JSLanguageDialect("VueJS", DialectOptionHolder.ECMA_6, Jav
         buildTokenElement(VueElementTypes.V_FOR_VARIABLE)
         statement.done(JSStubElementTypes.VAR_STATEMENT)
       }
+      else if (myFunctionParser.willParseDestructuringAssignment()) {
+        val statement = builder.mark()
+        myExpressionParser.parseDestructuringElement(VueElementTypes.V_FOR_VARIABLE, false, false)
+        statement.done(JSStubElementTypes.VAR_STATEMENT)
+      }
       else {
         builder.error("identifier(s) expected")
         builder.advanceLexer()
