@@ -7,7 +7,8 @@
 //multiline component
 @Component({
     selector: 'todo-cmp',
-    template: `<div  >
+    template: `
+    <div  >
               <span >Hello, world</span  >
 </div    >`
 })
