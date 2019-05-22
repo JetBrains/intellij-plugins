@@ -5,12 +5,16 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.css.CssRulesetList;
+import com.intellij.psi.css.CssStylesheet;
 import com.intellij.psi.css.CssTermList;
+import com.intellij.psi.css.StylesheetFile;
+import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.css.reference.CssReference;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -22,6 +26,8 @@ import org.intellij.plugins.postcss.lexer.PostCssTokenTypes;
 import org.intellij.plugins.postcss.psi.PostCssSimpleVariableDeclaration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement> implements CssReference {
   private static final ResolveCache.AbstractResolver<PostCssSimpleVariableReference, PostCssSimpleVariableDeclaration> RESOLVER =
@@ -114,12 +120,31 @@ public class PostCssSimpleVariableReference extends PsiReferenceBase<PsiElement>
     CssRulesetList rulesetList = PsiTreeUtil.getParentOfType(context, CssRulesetList.class);
     if (rulesetList == null) return;
 
+    if (!processSimpleVarsInRulesetList(rulesetList, processor)) return;
+
+    PsiFile contextFile = context.getContainingFile();
+    Set<VirtualFile> otherFiles = CssUtil.getImportedFiles(context.getContainingFile(), context, true);
+    for (VirtualFile otherFile : otherFiles) {
+      PsiFile otherPsiFile = contextFile.getManager().findFile(otherFile);
+      if (otherPsiFile instanceof StylesheetFile && !otherFile.equals(contextFile)) {
+        CssStylesheet otherStylesheet = ((StylesheetFile)otherPsiFile).getStylesheet();
+        CssRulesetList otherRulesetList = otherStylesheet == null ? null : otherStylesheet.getRulesetList();
+        if (otherRulesetList != null) {
+          if (!processSimpleVarsInRulesetList(otherRulesetList, processor)) return;
+        }
+      }
+    }
+  }
+
+  private static boolean processSimpleVarsInRulesetList(@NotNull CssRulesetList rulesetList,
+                                                        @NotNull Processor<PostCssSimpleVariableDeclaration> processor) {
     PsiElement child = rulesetList.getLastChild();
     while (child != null) {
       if (child instanceof PostCssSimpleVariableDeclaration) {
-        if (!processor.process((PostCssSimpleVariableDeclaration)child)) return;
+        if (!processor.process((PostCssSimpleVariableDeclaration)child)) return false;
       }
       child = child.getPrevSibling();
     }
+    return true;
   }
 }

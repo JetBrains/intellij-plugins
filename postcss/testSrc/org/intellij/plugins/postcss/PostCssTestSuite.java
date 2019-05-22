@@ -2,10 +2,7 @@ package org.intellij.plugins.postcss;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.intellij.plugins.postcss.completion.PostCssCustomMediaCompletionTest;
-import org.intellij.plugins.postcss.completion.PostCssCustomPropertiesSetCompletionTest;
-import org.intellij.plugins.postcss.completion.PostCssCustomSelectorCompletionTest;
-import org.intellij.plugins.postcss.completion.PostCssNestCompletionTest;
+import org.intellij.plugins.postcss.completion.*;
 import org.intellij.plugins.postcss.editor.PostCssCommenterTest;
 import org.intellij.plugins.postcss.editor.PostCssCopyrightTest;
 import org.intellij.plugins.postcss.editor.breadcrumbs.PostCssBreadcrumbsTest;
@@ -81,9 +78,11 @@ public class PostCssTestSuite {
     public static Test suite() {
       TestSuite suite = new TestSuite("Completion PostCSS");
       suite.addTestSuite(PostCssNestCompletionTest.class);
+      suite.addTestSuite(PostCssNestingCompletionTest.class);
       suite.addTestSuite(PostCssCustomSelectorCompletionTest.class);
       suite.addTestSuite(PostCssCustomMediaCompletionTest.class);
       suite.addTestSuite(PostCssCustomPropertiesSetCompletionTest.class);
+      suite.addTestSuite(PostCssOtherCompletionTest.class);
       return suite;
     }
   }
