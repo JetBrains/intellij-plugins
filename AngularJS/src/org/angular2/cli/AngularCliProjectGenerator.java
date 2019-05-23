@@ -13,7 +13,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.StandardFileSystems;
@@ -211,26 +210,19 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
     @Override
     protected JPanel createPanel() {
       final JPanel panel = super.createPanel();
-      @NonNls ComboBox<String> schematicsCollectionCombo = new ComboBox<>(new String[]{"default", "@ngrx/schematics"});
+
+      myOptionsTextField = new SchematicOptionsTextField(ProjectManager.getInstance().getDefaultProject(),
+                                                         Collections.emptyList());
+      myOptionsTextField.setVariants(Collections.singletonList(new Option("test")));
 
       LabeledComponent component = LabeledComponent.create(
-        schematicsCollectionCombo, Angular2Bundle.message("angular.action.new-project.label-schematics-collection"));
+        myOptionsTextField, Angular2Bundle.message("angular.action.new-project.label-additional-parameters"));
       component.setAnchor((JComponent)panel.getComponent(0));
       component.setLabelLocation(BorderLayout.WEST);
       panel.add(component);
 
       myUseDefaults = new JCheckBox(Angular2Bundle.message("angular.action.new-project.label-defaults"), true);
       panel.add(myUseDefaults);
-
-      myOptionsTextField = new SchematicOptionsTextField(ProjectManager.getInstance().getDefaultProject(),
-                                                         Collections.emptyList());
-      myOptionsTextField.setVariants(Collections.singletonList(new Option("test")));
-
-      component = LabeledComponent.create(
-        myOptionsTextField, Angular2Bundle.message("angular.action.new-project.label-additional-parameters"));
-      component.setAnchor((JComponent)panel.getComponent(0));
-      component.setLabelLocation(BorderLayout.WEST);
-      panel.add(component);
 
       return panel;
     }
@@ -253,9 +245,9 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
           }
         };
       }
-      settingsStep.addSettingsComponent(myUseDefaults);
       settingsStep.addSettingsField(UIUtil.replaceMnemonicAmpersand(
         Angular2Bundle.message("angular.action.new-project.label-additional-parameters")), myOptionsTextField);
+      settingsStep.addSettingsComponent(myUseDefaults);
       getPackageField().addSelectionListener(this::nodePackageChanged);
       nodePackageChanged(getPackageField().getSelected());
     }
