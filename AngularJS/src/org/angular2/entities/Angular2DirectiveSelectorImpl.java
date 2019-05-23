@@ -2,6 +2,7 @@
 package org.angular2.entities;
 
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
+import com.intellij.openapi.util.NotNullFactory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -19,7 +20,7 @@ import java.util.function.Function;
 
 public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector {
 
-  private final PsiElement mySelectorElement;
+  private final NotNullFactory<PsiElement> mySelectorElement;
   private final String myText;
   private final Function<? super Pair<String, Integer>, ? extends TextRange> myCreateRange;
   private final AtomicNotNullLazyValue<List<Angular2DirectiveSimpleSelector>> mySimpleSelectors =
@@ -60,10 +61,18 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       }
     };
 
-  public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
+  public Angular2DirectiveSelectorImpl(@NotNull NotNullFactory<PsiElement> element,
                                        @Nullable String text,
                                        @NotNull Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
     mySelectorElement = element;
+    myText = text;
+    myCreateRange = createRange;
+  }
+
+  public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
+                                       @Nullable String text,
+                                       @NotNull Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
+    mySelectorElement = () -> element;
     myText = text;
     myCreateRange = createRange;
   }
