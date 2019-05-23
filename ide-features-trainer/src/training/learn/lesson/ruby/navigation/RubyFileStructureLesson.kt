@@ -1,4 +1,4 @@
-package training.learn.lesson.ruby
+package training.learn.lesson.ruby.navigation
 
 import com.intellij.ide.dnd.aware.DnDAwareTree
 import com.intellij.openapi.diagnostic.Logger

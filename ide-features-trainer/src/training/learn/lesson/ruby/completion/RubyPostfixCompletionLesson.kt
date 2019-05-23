@@ -1,4 +1,4 @@
-package training.learn.lesson.ruby
+package training.learn.lesson.ruby.completion
 
 import com.intellij.testGuiFramework.framework.GuiTestUtil.shortcut
 import com.intellij.testGuiFramework.framework.GuiTestUtil.typeText

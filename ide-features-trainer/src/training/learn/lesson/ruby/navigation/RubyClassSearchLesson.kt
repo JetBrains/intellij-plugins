@@ -1,4 +1,4 @@
-package training.learn.lesson.ruby
+package training.learn.lesson.ruby.navigation
 
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.testGuiFramework.framework.GuiTestUtil
