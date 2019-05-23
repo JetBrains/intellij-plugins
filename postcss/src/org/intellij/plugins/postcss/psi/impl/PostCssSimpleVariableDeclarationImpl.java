@@ -8,8 +8,6 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.css.CssTermList;
 import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.impl.source.tree.CompositePsiElement;
-import com.intellij.psi.search.LocalSearchScope;
-import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.plugins.postcss.PostCssElementTypes;
@@ -45,12 +43,6 @@ public class PostCssSimpleVariableDeclarationImpl extends CompositePsiElement im
   @Override
   public int getLineNumber() {
     return CssUtil.getLineNumber(this);
-  }
-
-  @NotNull
-  @Override
-  public SearchScope getUseScope() {
-    return new LocalSearchScope(getContainingFile());
   }
 
   @NotNull
