@@ -11,7 +11,6 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryTable;
@@ -204,7 +203,7 @@ public class DartFileListener implements VirtualFileListener {
     final Library library =
       existingLibrary != null ? existingLibrary
                               : WriteAction.compute(() -> {
-                                final LibraryTableBase.ModifiableModel libTableModel =
+                                final LibraryTable.ModifiableModel libTableModel =
                                   LibraryTablesRegistrar.getInstance().getLibraryTable(project).getModifiableModel();
                                 final Library lib = libTableModel
                                   .createLibrary(DartPackagesLibraryType.DART_PACKAGES_LIBRARY_NAME, DartPackagesLibraryType.LIBRARY_KIND);
