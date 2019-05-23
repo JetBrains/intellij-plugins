@@ -391,28 +391,16 @@ class OpenLessonAction : AnAction() {
     if (!ApplicationManager.getApplication().isUnitTestMode && projectToClose != null)
       if (!NewLearnProjectUtil.showDialogOpenLearnProject(projectToClose))
         return null //if user abort to open lesson in a new Project
-    if (CourseManager.instance.learnProjectPath != null) {
-      try {
-        myLearnProject = ProjectManager.getInstance().loadAndOpenProject(CourseManager.instance.learnProjectPath!!)
-      } catch (e: Exception) {
-        e.printStackTrace()
-      }
-
-    } else {
-      try {
-        myLearnProject = NewLearnProjectUtil.createLearnProject(projectToClose, langSupport)
-      } catch (e: IOException) {
-        e.printStackTrace()
-      }
-
+    try {
+      myLearnProject = NewLearnProjectUtil.createLearnProject(projectToClose, langSupport)
+    } catch (e: IOException) {
+      e.printStackTrace()
     }
     langSupport.applyToProjectAfterConfigure().invoke(myLearnProject!!)
 
     CourseManager.instance.learnProject = myLearnProject
 
     assert(CourseManager.instance.learnProject != null)
-
-    CourseManager.instance.learnProjectPath = CourseManager.instance.learnProject!!.basePath
 
     return myLearnProject
 
