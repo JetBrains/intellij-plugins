@@ -1,4 +1,4 @@
-package training.learn.lesson.ruby
+package training.learn.lesson.ruby.completion
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project

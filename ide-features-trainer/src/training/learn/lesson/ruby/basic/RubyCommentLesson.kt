@@ -1,4 +1,4 @@
-package training.learn.lesson.ruby
+package training.learn.lesson.ruby.basic
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.plugins.ruby.ruby.lang.lexer.RubyTokenTypes

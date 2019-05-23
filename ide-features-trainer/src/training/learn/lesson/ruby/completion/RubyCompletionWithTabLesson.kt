@@ -1,4 +1,4 @@
-package training.learn.lesson.ruby
+package training.learn.lesson.ruby.completion
 
 import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
