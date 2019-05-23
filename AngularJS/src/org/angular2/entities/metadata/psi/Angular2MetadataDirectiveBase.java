@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.ObjectUtils.notNull;
 import static org.angular2.Angular2DecoratorUtil.INPUTS_PROP;
 import static org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP;
 
@@ -30,7 +31,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   extends Angular2MetadataDeclaration<Stub>
   implements Angular2Directive {
 
-  private final AtomicNotNullLazyValue<List<String>> exportAsList = new AtomicNotNullLazyValue<List<String>>() {
+  private final AtomicNotNullLazyValue<List<String>> myExportAsList = new AtomicNotNullLazyValue<List<String>>() {
     @NotNull
     @Override
     protected List<String> compute() {
@@ -40,6 +41,11 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
              : StringUtil.split(exportAsString, ",");
     }
   };
+  private final AtomicNotNullLazyValue<Angular2DirectiveSelector> mySelector = AtomicNotNullLazyValue.createValue(
+    () -> new Angular2DirectiveSelectorImpl(() -> notNull(getTypeScriptClass(), this),
+                                            getStub().getSelector(),
+                                            a -> new TextRange(0, 0))
+  );
 
   public Angular2MetadataDirectiveBase(@NotNull Stub element) {
     super(element);
@@ -48,16 +54,13 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   @NotNull
   @Override
   public Angular2DirectiveSelector getSelector() {
-    return getCachedClassBasedValue(
-      cls -> new Angular2DirectiveSelectorImpl(cls != null ? cls : this,
-                                               getStub().getSelector(),
-                                               a -> new TextRange(0, 0)));
+    return mySelector.getValue();
   }
 
   @NotNull
   @Override
   public List<String> getExportAsList() {
-    return exportAsList.getValue();
+    return myExportAsList.getValue();
   }
 
   @NotNull
