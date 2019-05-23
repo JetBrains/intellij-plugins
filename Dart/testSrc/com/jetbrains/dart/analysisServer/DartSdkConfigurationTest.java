@@ -2,7 +2,7 @@
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
 import com.jetbrains.lang.dart.sdk.DartSdk;
@@ -47,7 +47,7 @@ public class DartSdkConfigurationTest extends CodeInsightFixtureTestCase {
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
     assertNotNull(sdk);
     final String[] actualRoots =
-      ProjectLibraryTable.getInstance(getProject()).getLibraries()[0].getRootProvider().getUrls(OrderRootType.CLASSES);
+      LibraryTablesRegistrar.getInstance().getLibraryTable(getProject()).getLibraries()[0].getRootProvider().getUrls(OrderRootType.CLASSES);
     checkSdkRoots(sdk.getHomePath(), actualRoots);
   }
 

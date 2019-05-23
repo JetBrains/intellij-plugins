@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -55,7 +54,7 @@ public class DartSdkLibUtil {
   @NotNull
   @VisibleForTesting
   public static Disposable configureDartSdkAndReturnUndoingDisposable(@NotNull final Project project, @NotNull final String sdkHomePath) {
-    final LibraryTable libraryTable = ProjectLibraryTable.getInstance(project);
+    final LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
     final Library library = libraryTable.getLibraryByName(DartSdk.DART_SDK_LIB_NAME);
     if (library == null) {
       final LibraryTable.ModifiableModel model = libraryTable.getModifiableModel();
