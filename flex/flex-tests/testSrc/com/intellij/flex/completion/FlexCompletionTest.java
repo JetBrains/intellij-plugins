@@ -99,12 +99,13 @@ public class FlexCompletionTest extends BaseJSCompletionTestCase {
   }
 
   @Override
-  protected void complete() {
+  protected LookupElement[] complete() {
     if (myCompletionPerformer != null) {
       myCompletionPerformer.run();
     }
+    
+    return myFixture.getLookupElements();
   }
-
 
   private Runnable createMultiCompletionPerformerWithVariantsCheck() {
     return createMultiCompletionPerformerWithVariantsCheck(true);

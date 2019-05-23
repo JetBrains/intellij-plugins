@@ -18,7 +18,8 @@ import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.lang.javascript.JSLightCompletionTestBase
+import com.intellij.lang.javascript.BaseJSCompletionTestCase.checkJSStringCompletion
+import com.intellij.lang.javascript.BaseJSCompletionTestCase.getLocationPresentation
 import com.intellij.lang.javascript.JSTestUtils
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.settings.JSApplicationSettings
@@ -661,7 +662,7 @@ export default {
       val presentation = LookupElementPresentation()
       item!!.renderElement(presentation)
       TestCase.assertEquals("number", presentation.typeText)
-      TestCase.assertEquals("(aaa, bbb)" + JSLightCompletionTestBase.getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
+      TestCase.assertEquals("(aaa, bbb)" + getLocationPresentation("default.methods", "PrettyLookup.vue"), presentation.tailText)
     })
   }
 
@@ -1117,7 +1118,7 @@ $script""")
 """)
     myFixture.completeBasic()
 
-    JSLightCompletionTestBase.checkJSStringCompletion(myFixture.lookupElements!!, true)
+    checkJSStringCompletion(myFixture.lookupElements!!, true)
   }
 
   fun testLocalComponentsExtendsCompletion() {
