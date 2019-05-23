@@ -3,6 +3,7 @@ package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
@@ -51,6 +52,7 @@ public abstract class Angular2MetadataClassBase<Stub extends Angular2MetadataCla
 
   protected Pair<TypeScriptClass, Collection<Object>> getClassAndDependencies() {
     return CachedValuesManager.getCachedValue(this, () -> {
+      ProgressManager.checkCanceled();
       String className = getStub().getClassName();
       Angular2MetadataNodeModule nodeModule = getNodeModule();
       Pair<PsiFile, TypeScriptClass> fileAndClass = className != null && nodeModule != null
