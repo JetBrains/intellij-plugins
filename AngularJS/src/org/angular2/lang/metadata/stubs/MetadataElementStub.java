@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,6 +40,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   @NonNls protected static final String SYMBOL_CALL = "call";
   @NonNls protected static final String SYMBOL_CLASS = "class";
 
+  @NonNls protected static final String PARAMETER_DECORATORS = "parameterDecorators";
   @NonNls protected static final String DECORATORS = "decorators";
   @NonNls protected static final String EXPRESSION = "expression";
   @NonNls protected static final String ARGUMENTS = "arguments";
@@ -161,6 +163,17 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
     }
   }
 
+  protected static void writeIntegerMap(
+        @NotNull final Map<String, Integer> map,
+        @NotNull final StubOutputStream stream) throws IOException {
+    stream.writeVarInt(map.size());
+
+    for (final Entry<String, Integer> e : map.entrySet()) {
+      stream.writeName(e.getKey());
+      stream.writeVarInt(e.getValue());
+    }
+  }
+
   @NotNull
   protected static Map<String, String> readStringMap(@NotNull StubInputStream stream) throws IOException {
     Map<String, String> result = new HashMap<>();
@@ -187,6 +200,18 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
     for (int i = 0; i < size; i++) {
       result.add(stream.readNameString());
     }
+    return result;
+  }
+
+  @NotNull
+  protected static Map<String, Integer> readIntegerMap(@NotNull final StubInputStream stream) throws IOException {
+    final Map<String, Integer> result = new HashMap<>(8);
+    final int size = stream.readVarInt();
+
+    for (int i = 0; i < size; i++) {
+      result.put(stream.readNameString(), stream.readVarInt());
+    }
+
     return result;
   }
 

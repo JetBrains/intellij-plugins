@@ -587,7 +587,6 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       return new Angular2AttributeDescriptor(
             myTag,
             info.getName(),
-            false,
             AttributePriority.HIGH,
             singletonList(myDirective),
             false
