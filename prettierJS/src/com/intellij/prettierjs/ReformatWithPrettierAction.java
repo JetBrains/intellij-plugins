@@ -14,7 +14,6 @@ import com.intellij.javascript.nodejs.npm.NpmManager;
 import com.intellij.javascript.nodejs.util.NodePackage;
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil;
 import com.intellij.lang.javascript.linter.JSLinterGuesser;
-import com.intellij.lang.javascript.linter.JSLinterUtil;
 import com.intellij.lang.javascript.linter.JsqtProcessOutputViewer;
 import com.intellij.lang.javascript.modules.InstallNodeLocalDependenciesAction;
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil;
@@ -299,7 +298,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
     ApplicationManager.getApplication().assertReadAccessAllowed();
     VirtualFile currentVFile = currentFile.getVirtualFile();
     String filePath = currentVFile.getPath();
-    String text = JSLinterUtil.convertLineSeparatorsToFileOriginal(project, currentFile.getText(), currentVFile).toString();
+    String text = JSLanguageServiceUtil.convertLineSeparatorsToFileOriginal(project, currentFile.getText(), currentVFile).toString();
     VirtualFile ignoreVFile = PrettierUtil.findIgnoreFile(currentVFile, project);
     String ignoreFilePath = ignoreVFile != null ? ignoreVFile.getPath() : null;
     return JSLanguageServiceUtil.awaitFuture(service.format(filePath, ignoreFilePath, text, nodePackage, range));
