@@ -25,7 +25,6 @@ import kotlin.collections.HashMap
 class CourseManager internal constructor() {
 
   var learnProject: Project? = null
-  var learnProjectPath: String? = null
   var mapModuleVirtualFile = HashMap<Module, VirtualFile>()
 
   private var allModules: MutableList<Module> = ArrayList()

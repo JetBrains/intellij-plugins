@@ -21,7 +21,7 @@ import java.lang.Boolean.TRUE
  */
 object NewLearnProjectUtil {
 
-  fun createLearnProject(projectToClose: Project?, langSupport: LangSupport): Project? {
+  fun createLearnProject(projectToClose: Project?, langSupport: LangSupport): Project {
     val unitTestMode = ApplicationManager.getApplication().isUnitTestMode
     val projectManager = ProjectManagerEx.getInstanceEx()
 
@@ -32,7 +32,7 @@ object NewLearnProjectUtil {
 //    FileUtil.ensureExists(ideaDir)
 
     val newProject: Project =
-        langSupport.createProject(langSupport.defaultProjectName, projectToClose) ?: return projectToClose
+        langSupport.createProject(langSupport.defaultProjectName, projectToClose) ?: error("Could not create project for " + langSupport.primaryLanguage)
 
     try {
       val sdkForProject = langSupport.getSdkForProject(newProject)
