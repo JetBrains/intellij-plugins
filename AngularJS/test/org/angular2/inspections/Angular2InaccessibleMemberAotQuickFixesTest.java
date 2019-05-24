@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections;
 
+import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.util.containers.ContainerUtil;
 import org.angular2.Angular2MultiFileFixtureTestCase;
 import org.angularjs.AngularTestUtil;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +50,10 @@ public class Angular2InaccessibleMemberAotQuickFixesTest extends Angular2MultiFi
       myFixture.configureFromTempProjectFile(fileName);
       myFixture.setCaresAboutInjection(false);
       AngularTestUtil.moveToOffsetBySignature(signature, myFixture);
-      myFixture.launchAction(myFixture.findSingleIntention("Make public"));
+      IntentionAction intentionAction = ContainerUtil.find(myFixture.filterAvailableIntentions("Make 'public'"),
+                                                           intention -> intention.toString().contains("AngularMakePublicQuickFix"));
+      assert intentionAction != null;
+      myFixture.launchAction(intentionAction);
     });
   }
 }

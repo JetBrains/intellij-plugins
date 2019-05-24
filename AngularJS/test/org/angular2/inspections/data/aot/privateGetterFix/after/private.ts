@@ -23,9 +23,7 @@ export class MyComponent {
   public set publicUsedSet(value) {}
   public set publicUnusedSet(value) {}
 
-    /** My method
-     * @internal
-     */
+  /** My method */
   get privateUsedGet() {}
   private get privateUnusedGet() {}
 
