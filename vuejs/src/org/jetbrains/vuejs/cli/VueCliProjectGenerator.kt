@@ -26,6 +26,7 @@ import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import javax.swing.Icon
+import javax.swing.JPanel
 
 class VueCliProjectGenerator : NpmPackageProjectGenerator() {
   private val LOG = Logger.getInstance(VueCliProjectGenerator::class.java)
@@ -50,9 +51,14 @@ class VueCliProjectGenerator : NpmPackageProjectGenerator() {
   }
 
   override fun createPeer(): GeneratorPeer<Settings> {
+    val defaultSetupCheckbox = JBCheckBox(VueBundle.message("vue.project.generator.use.default.project.setup"),
+                                          DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED)
     return object : NpmPackageGeneratorPeer() {
-      val defaultSetupCheckbox = JBCheckBox(VueBundle.message("vue.project.generator.use.default.project.setup"),
-                                            DEFAULT_PROJECT_SETUP_INITIALLY_SELECTED)
+      override fun createPanel(): JPanel {
+        val panel = super.createPanel()
+        panel.add(defaultSetupCheckbox)
+        return panel
+      }
 
       override fun buildUI(settingsStep: SettingsStep) {
         super.buildUI(settingsStep)
