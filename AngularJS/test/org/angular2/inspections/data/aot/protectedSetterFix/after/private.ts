@@ -18,8 +18,7 @@ export class MyComponent {
   private set privateUnusedSet(value) {}
 
   // Something
-    /** @internal */
-    set protectedUsedSet(value) {}
+  set protectedUsedSet(value) {}
   protected set protectedUnusedSet(value) {}
 
   public set publicUsedSet(value) {}

@@ -5,7 +5,6 @@ import com.intellij.codeInspection.*;
 import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.DialectDetector;
-import com.intellij.lang.javascript.documentation.JSDocumentationUtils;
 import com.intellij.lang.javascript.intentions.TypeScriptPublicModifierIntention;
 import com.intellij.lang.javascript.presentable.JSNamedElementPresenter;
 import com.intellij.lang.javascript.psi.*;
@@ -13,11 +12,7 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
-import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
-import com.intellij.lang.javascript.psi.jsdoc.JSDocComment;
-import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -35,11 +30,9 @@ import org.angular2.lang.expr.Angular2Language;
 import org.angular2.lang.expr.psi.Angular2ElementVisitor;
 import org.angular2.lang.html.Angular2HtmlLanguage;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
@@ -71,7 +64,8 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
                 notNull(node.getReferenceNameElement(), node),
                 capitalize(Angular2Bundle.message("angular.inspection.template.aot.inaccessible.symbol",
                                                   getAccessModifier((JSElement)resolved), getKind(resolved), getName(resolved))),
-                new AngularMakeAccessibleQuickFix());
+
+                new AngularMakePublicQuickFix());
             }
           }
         }
@@ -98,7 +92,7 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
                                                                : null, member),
               capitalize(Angular2Bundle.message("angular.inspection.component.aot.inaccessible.member",
                                                 getAccessModifier(member), getKind(member), getName(member))),
-              new AngularMakeAccessibleQuickFix());
+              new AngularMakePublicQuickFix());
           }
         }
       };
@@ -150,29 +144,13 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
     );
   }
 
-  private static class AngularMakeAccessibleQuickFix extends TypeScriptPublicModifierIntention implements LocalQuickFix {
-
-    @NonNls private static final String INTERNAL_TAG = "internal";
-    @NonNls private static final String INTERNAL_COMMENT = "/** @" + INTERNAL_TAG + " */";
+  private static class AngularMakePublicQuickFix extends TypeScriptPublicModifierIntention implements LocalQuickFix {
 
     @Nls(capitalization = Nls.Capitalization.Sentence)
     @NotNull
     @Override
     public String getName() {
-      return Angular2Bundle.message("angular.quickfix.component.aot.make.accessible");
-    }
-
-    @Nls
-    @NotNull
-    @Override
-    public String getFamilyName() {
-      return getName();
-    }
-
-    @NotNull
-    @Override
-    public String getText() {
-      return getName();
+      return getText();
     }
 
     @Override
@@ -192,24 +170,9 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
           member.getTextRange().getStartOffset() + 1
         ).navigate(true);
       }
-      SmartPsiElementPointer<PsiElement> memberPointer = SmartPointerManager.createPointer(member);
       super.invoke(project, editor, member instanceof TypeScriptFunction
                                     || member instanceof JSParameter ? member.getFirstChild()
                                                                      : member);
-      Optional.ofNullable(memberPointer.getElement())
-        .filter(m -> !(m instanceof JSParameter))
-        .ifPresent(m -> WriteAction.run(() -> {
-          PsiComment comment = JSDocumentationUtils.findDocComment(member);
-          if (comment instanceof JSDocComment) {
-            JSDocumentationUtils.createOrUpdateTagsInDocComment(member, Collections.singletonList(INTERNAL_TAG), null, null);
-          }
-          else {
-            comment = JSChangeUtil.createCommentFromText(INTERNAL_COMMENT, m);
-            PsiElement added = JSChangeUtil.doDoAddBeforePure(m.getParent(), comment, m);
-            JSChangeUtil.addWs(m.getParent().getNode(), m.getNode(), "\n");
-            FormatFixer.create(added, FormatFixer.Mode.Reformat).fixFormat();
-          }
-        }));
     }
 
     @Nullable
@@ -233,6 +196,12 @@ public class AngularInaccessibleComponentMemberInAotModeInspection extends Local
     @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
       invoke(project, null, descriptor.getPsiElement());
+    }
+
+    @NotNull
+    @Override
+    public Priority getPriority() {
+      return Priority.HIGH;
     }
   }
 }
