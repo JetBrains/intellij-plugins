@@ -93,6 +93,7 @@ import java.util.concurrent.TimeUnit;
 public class DartAnalysisServerService implements Disposable {
 
   public static final String MIN_SDK_VERSION = "1.12";
+  private static final String MIN_MOVE_FILE_SDK_VERSION = "2.3.2";
 
   private static final long UPDATE_FILES_TIMEOUT = 300;
 
@@ -456,6 +457,10 @@ public class DartAnalysisServerService implements Disposable {
 
   public static boolean isDartSdkVersionSufficient(@NotNull final DartSdk sdk) {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
+  }
+
+  public static boolean isDartSdkVersionForMoveFileRefactoring(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_MOVE_FILE_SDK_VERSION) >= 0;
   }
 
   public void addCompletions(@NotNull final VirtualFile file,
