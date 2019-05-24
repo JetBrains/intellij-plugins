@@ -2,6 +2,7 @@ package training.learn
 
 import org.jdom.Element
 import org.jdom.JDOMException
+import org.jetbrains.rpc.LOG
 import training.learn.exceptons.BadLessonException
 import training.learn.exceptons.BadModuleException
 import training.learn.interfaces.Lesson
@@ -80,20 +81,21 @@ class XmlModule(override val name: String,
   }
 
   private fun initLessons(modulePath: String) {
-    if (root.getAttribute(MODULE_LESSONS_PATH_ATTR) != null) {
+    val lessonPathAttribute = root.getAttribute(MODULE_LESSONS_PATH_ATTR)
 
-      //retrieve list of xml files inside lessonsPath directory
-      val lessonsPath = modulePath + root.getAttribute(MODULE_LESSONS_PATH_ATTR).value
+    //retrieve list of xml files inside lessonsPath directory
+    val lessonsPath = if (lessonPathAttribute != null) modulePath + lessonPathAttribute.value
+    else null
 
-      for (lessonElement in root.children) {
-        if (!isFeatureTrainerSnapshot && lessonElement.getAttributeValue(MODULE_LESSON_UNFINISHED_ATTR) == "true") {
-          continue // do not show unfinished lessons in release
-        }
-        when (lessonElement.name) {
-          MODULE_XML_LESSON_ELEMENT -> addXmlLesson(lessonElement, lessonsPath)
-          MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath)
-          else -> throw BadModuleException("XmlModule file is corrupted or cannot be read properly")
-        }
+    for (lessonElement in root.children) {
+      if (!isFeatureTrainerSnapshot && lessonElement.getAttributeValue(MODULE_LESSON_UNFINISHED_ATTR) == "true") {
+        continue // do not show unfinished lessons in release
+      }
+      when (lessonElement.name) {
+        MODULE_XML_LESSON_ELEMENT -> lessonsPath?.let {addXmlLesson(lessonElement, it) }
+            ?: LOG.error("Need to specify $MODULE_LESSONS_PATH_ATTR in module attributes")
+        MODULE_KT_LESSON_ELEMENT -> addKtLesson(lessonElement, lessonsPath)
+        else -> LOG.error("Unknown element ${lessonElement.name} in  XmlModule file")
       }
     }
   }
@@ -107,19 +109,23 @@ class XmlModule(override val name: String,
       lessons.add(lesson)
     } catch (e: JDOMException) {
       //XmlLesson file is corrupted
-      throw BadLessonException("Probably lesson file is corrupted: $lessonPath JDOMException:$e")
+      LOG.error(BadLessonException("Probably lesson file is corrupted: $lessonPath JDOMException:$e"))
     } catch (e: IOException) {
       //XmlLesson file cannot be read
-      throw BadLessonException("Probably lesson file cannot be read: " + lessonPath)
+      LOG.error(BadLessonException("Probably lesson file cannot be read: " + lessonPath))
     }
   }
 
-  private fun addKtLesson(lessonElement: Element, lessonsPath: String) {
+  private fun addKtLesson(lessonElement: Element, lessonsPath: String?) {
     val lessonImplementation = lessonElement.getAttributeValue(MODULE_LESSON_IMPLEMENTATION_ATTR)
     val lessonSampleName = lessonElement.getAttributeValue(MODULE_LESSON_SAMPLE_ATTR)
 
     val lesson : Any
     if (lessonSampleName != null) {
+      if (lessonsPath == null) {
+        LOG.error("Lesson $lessonImplementation requires sample $lessonSampleName but lessons path des not specified")
+        return
+      }
       val lessonLanguage = lessonElement.getAttributeValue(MODULE_LESSON_LANGUAGE_ATTR)
       val lessonConstructor = Class.forName(lessonImplementation).
           getDeclaredConstructor(Module::class.java, String::class.java, LessonSample::class.java)
@@ -133,8 +139,10 @@ class XmlModule(override val name: String,
           getDeclaredConstructor(Module::class.java)
       lesson = lessonConstructor.newInstance(this)
     }
-    if (lesson !is KLesson)
-      throw BadLessonException("Field " + MODULE_LESSON_IMPLEMENTATION_ATTR + " should specify reference to existed class")
+    if (lesson !is KLesson) {
+      LOG.error("Class $lessonImplementation specified in $MODULE_LESSON_IMPLEMENTATION_ATTR attribute should refer to existed Kotlin class")
+      return
+    }
     lessons.add(lesson)
   }
 
