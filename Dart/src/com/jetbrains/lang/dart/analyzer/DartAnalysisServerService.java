@@ -103,8 +103,8 @@ public class DartAnalysisServerService implements Disposable {
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(800);
-  private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(800);
+  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long IMPORTED_ELEMENTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
@@ -378,6 +378,42 @@ public class DartAnalysisServerService implements Disposable {
 
   private static int ensureNotZero(int i) {
     return i == 0 ? Integer.MAX_VALUE : i;
+  }
+
+  private long fixesTimeout = GET_FIXES_TIMEOUT;
+
+  /**
+   * Gets the timeout in milliseconds for getting fixes with alt+enter.
+   */
+  @SuppressWarnings("unused") // Third-party access
+  public long getFixesTimeout() {
+    return fixesTimeout;
+  }
+
+  /**
+   * Sets the timeout in milliseconds for getting fixes with alt+enter.
+   */
+  @SuppressWarnings("unused") // Third-party access
+  public void setFixesTimeout(long timeout) {
+    fixesTimeout = timeout;
+  }
+
+  private long assistsTimeout = GET_ASSISTS_TIMEOUT;
+
+  /**
+   * Gets the timeout in milliseconds for getting assists with alt+enter.
+   */
+  @SuppressWarnings("unused") // Third-party access
+  public long getAssistsTimeout() {
+    return assistsTimeout;
+  }
+
+  /**
+   * Sets the timeout in milliseconds for getting assists with alt+enter.
+   */
+  @SuppressWarnings("unused") // Third-party access
+  public void setAssistsTimeout(long timeout) {
+    assistsTimeout = timeout;
   }
 
   private void startShowingServerProgress() {
