@@ -6,7 +6,6 @@ import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
@@ -42,9 +41,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
     }
   };
   private final AtomicNotNullLazyValue<Angular2DirectiveSelector> mySelector = AtomicNotNullLazyValue.createValue(
-    () -> new Angular2DirectiveSelectorImpl(() -> notNull(getTypeScriptClass(), this),
-                                            getStub().getSelector(),
-                                            a -> new TextRange(0, 0))
+    () -> new Angular2DirectiveSelectorImpl(() -> notNull(getTypeScriptClass(), this), getStub().getSelector(), null)
   );
 
   public Angular2MetadataDirectiveBase(@NotNull Stub element) {
