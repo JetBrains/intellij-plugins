@@ -1187,7 +1187,7 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_ASSISTS_TIMEOUT);
+    awaitForLatchCheckingCanceled(server, latch, getAssistsTimeout());
     return results;
   }
 
@@ -1317,7 +1317,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   /**
-   * If server responds in less than {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
+   * If server responds in less than {@code getFixesTimeout()} then this method can be considered synchronous: when exiting this method
    * {@code consumer} is already notified. Otherwise this method is async.
    */
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
@@ -1344,7 +1344,7 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_FIXES_TIMEOUT);
+    awaitForLatchCheckingCanceled(server, latch, getFixesTimeout());
   }
 
   public void search_findElementReferences(@NotNull final VirtualFile file,
