@@ -61,20 +61,18 @@ public class Angular2DirectiveSelectorImpl implements Angular2DirectiveSelector 
       }
     };
 
-  public Angular2DirectiveSelectorImpl(@NotNull NotNullFactory<PsiElement> element,
-                                       @Nullable String text,
-                                       @NotNull Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
-    mySelectorElement = element;
-    myText = text;
-    myCreateRange = createRange;
-  }
-
   public Angular2DirectiveSelectorImpl(@NotNull PsiElement element,
                                        @Nullable String text,
-                                       @NotNull Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
-    mySelectorElement = () -> element;
+                                       @Nullable Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
+    this(() -> element, text, createRange);
+  }
+
+  public Angular2DirectiveSelectorImpl(@NotNull NotNullFactory<PsiElement> element,
+                                       @Nullable String text,
+                                       @Nullable Function<? super Pair<String, Integer>, ? extends TextRange> createRange) {
+    mySelectorElement = element;
     myText = text;
-    myCreateRange = createRange;
+    myCreateRange = createRange != null ? createRange : a -> TextRange.EMPTY_RANGE;
   }
 
   @NotNull

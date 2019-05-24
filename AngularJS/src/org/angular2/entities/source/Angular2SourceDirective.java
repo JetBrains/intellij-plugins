@@ -74,7 +74,7 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         value = AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(),
                                                        () -> Angular2DecoratorUtil.getExpressionStringValue(property.getValue()));
       }
-      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), value, a -> new TextRange(0, 0)),
+      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), value, null),
                                                getDecorator());
     });
   }

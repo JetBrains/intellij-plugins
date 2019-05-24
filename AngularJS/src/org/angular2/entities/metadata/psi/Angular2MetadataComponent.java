@@ -2,7 +2,6 @@
 package org.angular2.entities.metadata.psi;
 
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import org.angular2.entities.Angular2Component;
@@ -23,9 +22,7 @@ public class Angular2MetadataComponent extends Angular2MetadataDirectiveBase<Ang
 
   private final AtomicNotNullLazyValue<List<Angular2DirectiveSelector>> myNgContentSelectors = AtomicNotNullLazyValue.createValue(
     () -> map(getStub().getNgContentSelectors(), selector ->
-      new Angular2DirectiveSelectorImpl(() -> notNull(getTypeScriptClass(), this),
-                                        selector,
-                                        a -> new TextRange(0, 0)))
+      new Angular2DirectiveSelectorImpl(() -> notNull(getTypeScriptClass(), this), selector, null))
   );
 
   public Angular2MetadataComponent(@NotNull Angular2MetadataComponentStub element) {
