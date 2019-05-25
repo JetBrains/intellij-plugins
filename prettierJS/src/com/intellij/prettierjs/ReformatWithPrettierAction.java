@@ -80,8 +80,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
       return;
     }
     NodePackage nodePackage = PrettierConfiguration.getInstance(project).getPackage();
-    e.getPresentation().setEnabledAndVisible(nodePackage != null && !nodePackage.isEmptyPath()
-                                             && isAcceptableFileContext(e));
+    e.getPresentation().setEnabledAndVisible(!nodePackage.isEmptyPath() && isAcceptableFileContext(e));
   }
 
   private static boolean isAcceptableFileContext(@NotNull AnActionEvent e) {
@@ -337,7 +336,7 @@ public class ReformatWithPrettierAction extends AnAction implements DumbAware {
   }
 
   private static void installPackage(@NotNull Project project) {
-    final VirtualFile packageJson = project.getBaseDir().findChild(PackageJsonUtil.FILE_NAME);
+    final VirtualFile packageJson = PackageJsonUtil.findChildPackageJsonFile(project.getBaseDir());
     if (packageJson != null) {
       InstallNodeLocalDependenciesAction.runAndShowConsole(project, packageJson);
     }
