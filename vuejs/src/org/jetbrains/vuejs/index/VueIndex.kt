@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -74,14 +73,11 @@ fun hasVue(project: Project): Boolean {
 
   return CachedValuesManager.getManager(project).getCachedValue(project) {
     var hasVue = false
-    var packageJson: VirtualFile? = null
-    if (project.baseDir != null) {
-      packageJson = project.baseDir.findChild(PackageJsonUtil.FILE_NAME)
-      if (packageJson != null) {
-        val packageJsonData = PackageJsonData.getOrCreate(packageJson)
-        if (packageJsonData.isDependencyOfAnyType(VUE)) {
-          hasVue = true
-        }
+    val packageJson = PackageJsonUtil.findChildPackageJsonFile(project.baseDir)
+    if (packageJson != null) {
+      val packageJsonData = PackageJsonData.getOrCreate(packageJson)
+      if (packageJsonData.isDependencyOfAnyType(VUE)) {
+        hasVue = true
       }
     }
 
