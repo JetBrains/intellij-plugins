@@ -90,7 +90,7 @@ public class PrettierUtil {
   }
 
   public static boolean isConfigFileOrPackageJson(@Nullable VirtualFile virtualFile) {
-    return virtualFile != null && (PackageJsonUtil.FILE_NAME.equals(virtualFile.getName()) || isConfigFile(virtualFile));
+    return PackageJsonUtil.isPackageJsonFile(virtualFile) || isConfigFile(virtualFile);
   }
 
   @Contract("null -> false")
@@ -201,7 +201,7 @@ public class PrettierUtil {
   @Nullable
   private static Config parseConfigInternal(@NotNull VirtualFile virtualFile, @NotNull PsiFile file) {
     try {
-      if (PackageJsonUtil.FILE_NAME.equals(file.getName())) {
+      if (PackageJsonUtil.isPackageJsonFile(file)) {
         PackageJsonData packageJsonData = PackageJsonUtil.getOrCreateData(virtualFile);
         if (!packageJsonData.isDependencyOfAnyType(PACKAGE_NAME)) {
           return null;
