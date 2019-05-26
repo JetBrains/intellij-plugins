@@ -6,43 +6,42 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.lang.javascript.psi.JSParameter;
-import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.psi.PsiElement;
 
 public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttribute {
-  private final String bindingName;
-  private final JSParameter parameter;
+  private final String myBindingName;
+  private final JSParameter myParameter;
 
   Angular2MetadataDirectiveAttribute(
         @NotNull final String bindingName,
         @NotNull final JSParameter parameter) {
-    this.bindingName = bindingName;
-    this.parameter = parameter;
+    myBindingName = bindingName;
+    myParameter = parameter;
   }
 
   @NotNull
   @Override
   public String getName() {
-    return bindingName;
+    return myBindingName;
   }
 
   @Nullable
   @Override
   public JSType getType() {
-    return parameter.getJSType();
+    return myParameter.getJSType();
   }
 
   @NotNull
   @Override
   public PsiElement getSourceElement() {
-    return parameter.getDeclarationElement();
+    return myParameter.getDeclarationElement();
   }
 
   @NotNull
   @Override
   public PsiElement getNavigableElement() {
-    return parameter.getNavigationElement();
+    return myParameter.getNavigationElement();
   }
 
   @Override
