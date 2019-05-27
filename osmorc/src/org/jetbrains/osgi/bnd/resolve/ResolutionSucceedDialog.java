@@ -100,9 +100,6 @@ class ResolutionSucceedDialog extends DialogWrapper {
     }
 
     @Override
-    public void valueForPathChanged(TreePath path, Object newValue) { }
-
-    @Override
     public int getIndexOfChild(Object parent, Object child) {
       if (child instanceof DefaultMutableTreeNode) {
         Object object = ((DefaultMutableTreeNode)child).getUserObject();
