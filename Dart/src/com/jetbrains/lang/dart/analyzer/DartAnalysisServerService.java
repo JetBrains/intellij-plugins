@@ -104,8 +104,10 @@ public class DartAnalysisServerService implements Disposable {
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
-  private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_ASSISTS_TIMEOUT_EDT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
+  private static final long GET_FIXES_TIMEOUT_EDT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
   private static final long IMPORTED_ELEMENTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
@@ -1156,7 +1158,8 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_ASSISTS_TIMEOUT);
+    long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_ASSISTS_TIMEOUT_EDT : GET_ASSISTS_TIMEOUT;
+    awaitForLatchCheckingCanceled(server, latch, timeout);
     return results;
   }
 
@@ -1286,7 +1289,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   /**
-   * If server responds in less than {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
+   * If server responds in less than {@code GET_FIXES_TIMEOUT_EDT} / {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
    * {@code consumer} is already notified. Otherwise this method is async.
    */
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
@@ -1313,7 +1316,8 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_FIXES_TIMEOUT);
+    long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_FIXES_TIMEOUT_EDT : GET_FIXES_TIMEOUT;
+    awaitForLatchCheckingCanceled(server, latch, timeout);
   }
 
   public void search_findElementReferences(@NotNull final VirtualFile file,
