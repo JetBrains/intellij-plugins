@@ -828,7 +828,7 @@ public class FlexCommonUtils {
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
-    final String d32 = getD32IfNeed(customJavaHomeSet, javaHome);
+    final String d32 = getD32IfNeeded(customJavaHomeSet, javaHome);
 
     final List<String> result = new ArrayList<>();
 
@@ -863,7 +863,7 @@ public class FlexCommonUtils {
     return result;
   }
 
-  public static String getD32IfNeed(boolean customJavaHomeSet, String javaHome) {
+  public static String getD32IfNeeded(boolean customJavaHomeSet, String javaHome) {
     return (!customJavaHomeSet && SystemInfo.isMac && is64BitJava6(javaHome)) ? "-d32" : null;
   }
 
