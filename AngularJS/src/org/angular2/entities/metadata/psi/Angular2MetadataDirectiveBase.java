@@ -79,7 +79,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   @NotNull
   @Override
   public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
-    return getCachedValueWithClassDependencies(this::getAttributes);
+    return getCachedClassBasedValue(this::buildAttributes);
   }
 
   @NotNull
@@ -106,57 +106,24 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
                          mappings.getDependencyItems());
   }
 
-  /**
-   * Returns {@link Angular2DirectiveAttribute}s with their caching dependencies.
-   *
-   * @param tsClass
-   *       The TypeScript class from which to build the metadata objects
-   */
   @NotNull
-  private Result<Collection<Angular2DirectiveAttribute>> getAttributes(@NotNull final TypeScriptClass tsClass) {
-    return Result.create(buildAttributes(tsClass), tsClass, this);
-  }
-
-  /**
-   * Constructs {@link Angular2DirectiveAttribute} from stubs.
-   *
-   * @param tsClass
-   *       The TypeScript class from which to build metadata objects, if needed
-   */
-  @NotNull
-  private Collection<Angular2DirectiveAttribute> buildAttributes(@NotNull final TypeScriptClass tsClass) {
+  private Collection<? extends Angular2DirectiveAttribute> buildAttributes(@Nullable final TypeScriptClass tsClass) {
     final Map<String, Integer> attributes = getStub().getAttributes();
 
     if (attributes.isEmpty()) {
-      // There is no @Attribute declared for this class
       return Collections.emptyList();
     }
 
-    // The @Attribute decorated parameters can be found (and are valid) only
-    // in the class constructor, thus we have to get hold of it and process
-    // each parameter.
     final TypeScriptFunction[] constructors = tsClass.getConstructors();
-
-    // We need to check if only one constructor is defined, with no overloads
-    if (constructors.length == 1) {
-      return processCtorParameters(constructors[0], attributes);
-    }
-
-    // At this point we know the constructor has overloads, thus we have
-    // to find the only implementation
-    return Arrays.stream(constructors)
-                 .filter(TypeScriptFunction::isOverloadImplementation)
-                 .findFirst()
-                 .map(ctor -> processCtorParameters(ctor, attributes))
-                 .orElse(Collections.emptyList());
+    return constructors.length == 1
+          ? processCtorParameters(constructors[0], attributes)
+          : Arrays.stream(constructors)
+                  .filter(TypeScriptFunction::isOverloadImplementation)
+                  .findFirst()
+                  .map(ctor -> processCtorParameters(ctor, attributes))
+                  .orElse(Collections.emptyList());
   }
 
-  /**
-   * Analyze the class constructor's parameters to find {@code @Attribute} bound ones.
-   *
-   * @param ctor
-   *       The class constructor
-   */
   @NotNull
   private Collection<Angular2DirectiveAttribute> processCtorParameters(
         @NotNull final JSFunction ctor,
@@ -164,10 +131,11 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
     final JSParameter[] parameters = ctor.getParameterVariables();
     return attributes.entrySet()
                      .stream()
-                     .map(e -> new Angular2MetadataDirectiveAttribute(
-                           e.getKey(),
-                           parameters[e.getValue()]
-                     ))
+                     .map(e -> {
+                       final String bindingName = e.getKey();
+                       final JSParameter parameter = parameters[e.getValue()];
+                       return new Angular2MetadataDirectiveAttribute(parameter, bindingName);
+                     })
                      .collect(Collectors.toList());
   }
 

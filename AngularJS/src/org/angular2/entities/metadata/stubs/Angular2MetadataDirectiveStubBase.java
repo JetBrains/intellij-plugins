@@ -133,22 +133,13 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     return FLAGS_STRUCTURE;
   }
 
-  /**
-   * Given a JSON metadata document describing the Angular Directive, finds the {@code @Attribute}
-   * annotated constructor's parameters and creates a map to link the {@code @Attribute} alias
-   * to its parameter index.
-   *
-   * @param source
-   *       The JSON metadata document
-   */
   @NotNull
   private Map<String, Integer> loadAttributesMapping(@NotNull final JsonObject source) {
     return StreamEx.ofNullable(getPropertyValue(source.findProperty(MEMBERS), JsonObject.class))
                    .map(toPropertyValue(CONSTRUCTOR, JsonArray.class))
                    .nonNull()
-                   .map(JsonArray::getValueList)
-                   .flatMap(StreamEx::of)
-                   .map(toCast(JsonObject.class))
+                   .flatCollection(JsonArray::getValueList)
+                   .select(JsonObject.class)
                    .map(toPropertyValue(PARAMETER_DECORATORS, JsonArray.class))
                    .nonNull()
                    .findFirst()
@@ -168,23 +159,17 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
     };
 
     return EntryStream.of(paramDecorators.getValueList())
-                      .mapValues(toCast(JsonArray.class))
-                      .nonNullValues()
-                      .mapValues(JsonArray::getValueList)
-                      .flatMapValues(StreamEx::of)
-                      .mapValues(toCast(JsonObject.class))
+                      .selectValues(JsonArray.class)
+                      .flatMapValues(a -> a.getValueList().stream())
+                      .selectValues(JsonObject.class)
                       .filterValues(isAttributeDecorator)
                       .mapValues(toPropertyValue(ARGUMENTS, JsonArray.class))
                       .nonNullValues()
                       .mapValues(o -> o.getValueList().get(0))
-                      .mapValues(toCast(JsonStringLiteral.class))
-                      .nonNullValues()
+                      .selectValues(JsonStringLiteral.class)
                       .mapValues(JsonStringLiteral::getValue)
-                      .collect(toMap(
-                            Entry::getValue,
-                            Entry::getKey,
-                            (i, __) -> i
-                      ));
+                      .filterValues(s -> !s.trim().isEmpty())
+                      .collect(toMap(Entry::getValue, Entry::getKey, (i, __) -> i));
   }
 
   private void loadAdditionalBindingMappings(@NotNull Map<String, String> mappings,
@@ -209,9 +194,5 @@ public abstract class Angular2MetadataDirectiveStubBase<Psi extends Angular2Meta
         @NotNull final String property,
         @NotNull final Class<T> clazz) {
     return o -> getPropertyValue(o.findProperty(property), clazz);
-  }
-
-  private static <T extends JsonValue> Function<Object, T> toCast(@NotNull final Class<T> clazz) {
-    return o -> tryCast(o, clazz);
   }
 }

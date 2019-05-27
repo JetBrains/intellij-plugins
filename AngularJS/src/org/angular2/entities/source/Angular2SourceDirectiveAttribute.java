@@ -13,14 +13,14 @@ import com.intellij.psi.PsiElement;
  * Represents a class constructor {@code @Attribute} decorated parameter.
  */
 public class Angular2SourceDirectiveAttribute implements Angular2DirectiveAttribute {
-  private final String myName;
   private final JSParameter myParameter;
+  private final String myName;
 
   Angular2SourceDirectiveAttribute(
-        @NotNull final String bindingName,
-        @NotNull final JSParameter parameter) {
-    myName = bindingName;
+        @NotNull final JSParameter parameter,
+        @NotNull final String bindingName) {
     myParameter = parameter;
+    myName = bindingName;
   }
 
   @NotNull

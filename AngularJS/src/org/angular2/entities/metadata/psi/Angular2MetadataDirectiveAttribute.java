@@ -10,14 +10,14 @@ import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.psi.PsiElement;
 
 public class Angular2MetadataDirectiveAttribute implements Angular2DirectiveAttribute {
-  private final String myBindingName;
   private final JSParameter myParameter;
+  private final String myBindingName;
 
   Angular2MetadataDirectiveAttribute(
-        @NotNull final String bindingName,
-        @NotNull final JSParameter parameter) {
-    myBindingName = bindingName;
+        @NotNull final JSParameter parameter,
+        @NotNull final String bindingName) {
     myParameter = parameter;
+    myBindingName = bindingName;
   }
 
   @NotNull

@@ -118,7 +118,12 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   @NotNull
   @Override
   public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
-    return getCachedAttributeParameters();
+    return getCachedValue(
+          () -> Result.create(
+                getAttributeParameters(),
+                getClassModificationDependencies()
+          )
+    );
   }
 
   @NotNull
@@ -126,16 +131,6 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     return getCachedValue(
       () -> CachedValueProvider.Result.create(getProperties(),
                                               getClassModificationDependencies())
-    );
-  }
-
-  @NotNull
-  private Collection<Angular2DirectiveAttribute> getCachedAttributeParameters() {
-    return getCachedValue(
-          () -> Result.create(
-                getAttributeParameters(),
-                getClassModificationDependencies()
-          )
     );
   }
 
@@ -169,50 +164,30 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   }
 
   @NotNull
-  private Collection<Angular2DirectiveAttribute> getAttributeParameters() {
-    // The @Attribute decorated parameters can be found (and are valid) only
-    // in the class constructor, thus we have to get hold of it and process each parameter.
+  private Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
     final TypeScriptFunction[] constructors = getTypeScriptClass().getConstructors();
-
-    if (constructors.length == 1) {
-      return processCtorParameters(constructors[0]);
-    }
-
-    // Being the TypeScript class has multiple constructor declarations,
-    // we have to find the only allowed implementation
-    return Arrays.stream(constructors)
-                 .filter(TypeScriptFunction::isOverloadImplementation)
-                 .findFirst()
-                 .map(this::processCtorParameters)
-                 .orElse(Collections.emptyList());
+    return constructors.length == 1
+          ? processCtorParameters(constructors[0])
+          : Arrays.stream(constructors)
+                  .filter(TypeScriptFunction::isOverloadImplementation)
+                  .findFirst()
+                  .map(this::processCtorParameters)
+                  .orElse(Collections.emptyList());
   }
 
-  /**
-   * Analyze the class constructor's parameters to find {@code @Attribute} bound ones.
-   *
-   * @param ctor
-   * 			The class constructor
-   */
   @NotNull
-  private Collection<Angular2DirectiveAttribute> processCtorParameters(final JSFunction ctor) {
-    final Map<String, Angular2DirectiveAttribute> attributes = new LinkedHashMap<>(8);
-
-    for (final JSParameter ctorParam : ctor.getParameterVariables()) {
-      StreamEx.ofNullable(ctorParam.getAttributeList())
-              .flatArray(attributeList -> attributeList.getDecorators())
-              .filter(dec -> Angular2DecoratorUtil.ATTRIBUTE_DEC.equals(dec.getDecoratorName()))
-              .findFirst()
-              .map(Angular2SourceDirective::getStringParamValue)
-              .map(aliasName -> StringUtil.notNullize(aliasName, ctorParam.getName()))
-              .ifPresent(bindingName ->
-                    attributes.putIfAbsent(
-                          bindingName,
-                          new Angular2SourceDirectiveAttribute(bindingName, ctorParam)
-                    )
-              );
-    }
-
-    return attributes.values();
+  private Collection<? extends Angular2DirectiveAttribute> processCtorParameters(@NotNull final JSFunction ctor) {
+    return StreamEx.of(ctor.getParameterVariables())
+                   .mapToEntry(JSParameter::getAttributeList)
+                   .nonNullValues()
+                   .flatMapValues(a -> Arrays.stream(a.getDecorators()))
+                   .filterValues(d -> Angular2DecoratorUtil.ATTRIBUTE_DEC.equals(d.getDecoratorName()))
+                   .mapValues(Angular2SourceDirective::getStringParamValue)
+                   .filterValues(v -> v != null && !v.trim().isEmpty())
+                   .distinctValues()
+                   .mapToValue(Angular2SourceDirectiveAttribute::new)
+                   .values()
+                   .toList();
   }
 
   @NotNull
