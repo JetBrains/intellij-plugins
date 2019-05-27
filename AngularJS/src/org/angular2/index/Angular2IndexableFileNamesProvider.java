@@ -12,7 +12,7 @@ import static org.angular2.entities.metadata.Angular2MetadataFileType.METADATA_S
 public final class Angular2IndexableFileNamesProvider extends NodeModulesIndexableFileNamesProvider {
   @NotNull
   @Override
-  protected List<String> getIndexableExtensions(@NotNull Dependencies kind) {
+  protected List<String> getIndexableExtensions(@NotNull DependencyKind kind) {
     return Collections.singletonList(METADATA_SUFFIX);
   }
 }
