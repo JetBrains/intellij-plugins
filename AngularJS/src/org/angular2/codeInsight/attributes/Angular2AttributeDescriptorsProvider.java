@@ -154,6 +154,7 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
     Map<String, Angular2DirectiveProperty> inputs = new HashMap<>();
     Map<String, Angular2DirectiveProperty> outputs = new HashMap<>();
     Map<String, Angular2DirectiveProperty> inOuts = new HashMap<>();
+    Set<String> attributes = new HashSet<>();
     for (Angular2Directive candidate : applicableDirectives.getCandidates()) {
       Consumer<String> addAttribute = (attrName) -> {
         if (!knownAttributes.contains(attrName)) {
@@ -185,6 +186,8 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
       if (isTemplateTag || candidate.isRegularDirective()) {
         fillNamesAndProperties(outputs, candidate.getOutputs(), p -> p);
         fillNamesAndProperties(inOuts, candidate.getInOuts(), p -> p.first);
+        attributes.clear();
+        candidate.getAttributes().forEach(attr -> attributes.add(attr.getName()));
         for (SimpleSelectorWithPsi selector : candidate.getSelector().getSimpleSelectorsWithPsi()) {
           for (Angular2DirectiveSelectorPsiElement attr : selector.getAttributes()) {
             String attrName = attr.getName();
@@ -201,6 +204,10 @@ public class Angular2AttributeDescriptorsProvider implements XmlAttributeDescrip
                   && Angular2AttributeDescriptor.isOneTimeBindingProperty(property)) {
                 addAttribute.accept(attrName);
               }
+            }
+            if (attributes.contains(attrName)) {
+              addAttribute.accept(attrName);
+              added = true;
             }
             if (outputs.get(attrName) != null) {
               addAttribute.accept(EVENT.buildName(attrName));
