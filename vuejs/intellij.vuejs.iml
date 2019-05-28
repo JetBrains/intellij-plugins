@@ -32,5 +32,6 @@
     <orderEntry type="module" module-name="intellij.css" />
     <orderEntry type="module" module-name="intellij.platform.builtInServer.impl" />
     <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="library" name="jackson" level="project" />
   </component>
 </module>
