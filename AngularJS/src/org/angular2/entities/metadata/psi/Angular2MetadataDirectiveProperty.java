@@ -3,6 +3,7 @@ package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.JSRecordType;
 import com.intellij.lang.javascript.psi.JSType;
+import com.intellij.openapi.util.NotNullComputable;
 import com.intellij.psi.PsiElement;
 import org.angular2.codeInsight.Angular2LibrariesHacks;
 import org.angular2.entities.Angular2DirectiveProperty;
@@ -18,14 +19,14 @@ import static com.intellij.util.ObjectUtils.doIfNotNull;
 public class Angular2MetadataDirectiveProperty implements Angular2DirectiveProperty {
 
   private final Supplier<JSRecordType.PropertySignature> mySignatureSupplier;
-  private final PsiElement mySource;
+  private final NotNullComputable<? extends PsiElement> mySourceSupplier;
   private final String myName;
 
   Angular2MetadataDirectiveProperty(@NotNull Supplier<JSRecordType.PropertySignature> signatureSupplier,
-                                    @NotNull PsiElement source,
+                                    @NotNull NotNullComputable<? extends PsiElement> sourceSupplier,
                                     @NotNull String name) {
     this.mySignatureSupplier = signatureSupplier;
-    this.mySource = source;
+    this.mySourceSupplier = sourceSupplier;
     this.myName = name;
   }
 
@@ -52,7 +53,7 @@ public class Angular2MetadataDirectiveProperty implements Angular2DirectivePrope
   public PsiElement getSourceElement() {
     return Optional.ofNullable(mySignatureSupplier.get())
       .map(sig -> sig.getMemberSource().getSingleElement())
-      .orElse(mySource);
+      .orElse(mySourceSupplier.compute());
   }
 
   @Override
