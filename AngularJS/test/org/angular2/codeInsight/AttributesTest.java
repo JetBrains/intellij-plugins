@@ -184,7 +184,7 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
     assertEquals(Collections.singleton("complete"),
                  component.getOutputs().stream().map(Angular2DirectiveProperty::getName).collect(Collectors.toSet()));
     assertEquals(newHashSet("testAttrOne", "testAttrTwo"),
-          component.getAttributes().stream().map(Angular2DirectiveAttribute::getName).collect(Collectors.toSet()));
+                 component.getAttributes().stream().map(Angular2DirectiveAttribute::getName).collect(Collectors.toSet()));
   }
 
   public void testBindingCompletionViaBase2TypeScript() {
@@ -1021,5 +1021,16 @@ public class AttributesTest extends Angular2CodeInsightFixtureTestCase {
                                 AngularUndefinedBindingInspection.class);
     myFixture.configureByFiles("ng-content-inspection.html", "package.json");
     myFixture.checkHighlighting();
+  }
+
+  public void testDirectiveAttributesCompletion() {
+    myFixture.configureByFiles("directive_attrs_completion.ts", "package.json");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "foo");
+    assertDoesntContain(myFixture.getLookupElementStrings(), "bar", "[bar]", "[foo]", "test", "[test]");
+    myFixture.type("foo=\" ");
+    myFixture.completeBasic();
+    assertContainsElements(myFixture.getLookupElementStrings(), "bar", "test", "[test]");
+    assertDoesntContain(myFixture.getLookupElementStrings(), "[bar]", "foo", "[foo]");
   }
 }
