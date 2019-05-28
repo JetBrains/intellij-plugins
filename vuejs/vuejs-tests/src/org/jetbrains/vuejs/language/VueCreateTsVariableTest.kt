@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
+import com.intellij.lang.javascript.JSBundle
 import com.intellij.lang.javascript.inspections.JSUnresolvedVariableInspection
 import com.intellij.lang.typescript.inspections.TypeScriptUnresolvedVariableInspection
 import com.intellij.openapi.application.PathManager
@@ -29,7 +30,7 @@ class VueCreateTsVariableTest : LightPlatformCodeInsightFixtureTestCase() {
 
   fun testCreateVariableWorksInVueTs() {
     myFixture.configureByFile("before.vue")
-    myFixture.launchAction(myFixture.findSingleIntention("Create Field 'name2'"))
+    myFixture.launchAction(myFixture.findSingleIntention(JSBundle.message("javascript.create.field.intention.name", "name2")))
     myFixture.checkResultByFile("after.vue")
   }
 }
