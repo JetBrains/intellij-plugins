@@ -13,6 +13,7 @@
 // limitations under the License.
 package org.jetbrains.vuejs.language
 
+import com.intellij.lang.javascript.JSBundle
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
@@ -33,6 +34,14 @@ class VueIntentionsTest : LightPlatformCodeInsightFixtureTestCase() {
 
   fun testFlipConditional() {
     doIntentionTest(JSIntentionBundle.message("conditional.flip-conditional.display-name"))
+  }
+
+  fun testPropagateToDestructuring() {
+    doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.propagate"))
+  }
+
+  fun testDepropagateFromDestructuring() {
+    doIntentionTest(JSBundle.message("refactoring.destructuring.vars.intention.depropagate"))
   }
 
   private fun doIntentionTest(name: String) {
