@@ -119,7 +119,7 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
   private List<Angular2DirectiveProperty> collectProperties(@NotNull Map<String, String> mappings) {
     List<Angular2DirectiveProperty> result = new ArrayList<>();
     mappings.forEach((String fieldName, String bindingName) -> result.add(new Angular2MetadataDirectiveProperty(
-      () -> getPropertySignature(fieldName), getSourceElement(), bindingName)));
+      () -> getPropertySignature(fieldName), this::getSourceElement, bindingName)));
     return Collections.unmodifiableList(result);
   }
 
