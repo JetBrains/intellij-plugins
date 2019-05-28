@@ -10,41 +10,49 @@ import org.angular2.entities.Angular2EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+
 public class Angular2MetadataDirectiveProperty implements Angular2DirectiveProperty {
 
-  private final JSRecordType.PropertySignature signature;
-  private final PsiElement source;
-  private final String name;
+  private final Supplier<JSRecordType.PropertySignature> mySignatureSupplier;
+  private final PsiElement mySource;
+  private final String myName;
 
-  Angular2MetadataDirectiveProperty(@Nullable JSRecordType.PropertySignature signature, @NotNull PsiElement source,
+  Angular2MetadataDirectiveProperty(@NotNull Supplier<JSRecordType.PropertySignature> signatureSupplier,
+                                    @NotNull PsiElement source,
                                     @NotNull String name) {
-    this.signature = signature;
-    this.source = source;
-    this.name = name;
+    this.mySignatureSupplier = signatureSupplier;
+    this.mySource = source;
+    this.myName = name;
   }
 
   @NotNull
   @Override
   public String getName() {
-    return name;
+    return myName;
   }
 
   @Nullable
   @Override
   public JSType getType() {
-    return signature != null ? Angular2LibrariesHacks.hackQueryListTypeInNgForOf(signature.getJSType(), this)
-                             : null;
+    return doIfNotNull(mySignatureSupplier.get(),
+                       signature -> Angular2LibrariesHacks.hackQueryListTypeInNgForOf(signature.getJSType(), this));
   }
 
   @Override
   public boolean isVirtual() {
-    return signature == null;
+    return mySignatureSupplier.get() == null;
   }
 
   @NotNull
   @Override
   public PsiElement getSourceElement() {
-    return source;
+    return Optional.ofNullable(mySignatureSupplier.get())
+      .map(sig -> sig.getMemberSource().getSingleElement())
+      .orElse(mySource);
   }
 
   @Override

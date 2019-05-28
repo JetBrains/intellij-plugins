@@ -9,10 +9,7 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameterListElement;
 import com.intellij.lang.javascript.psi.JSType;
 import com.intellij.lang.javascript.psi.JSTypeUtils;
-import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSStringLiteralTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSTypeContext;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
+import com.intellij.lang.javascript.psi.types.*;
 import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType;
@@ -55,6 +52,7 @@ import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.intellij.lang.javascript.psi.types.JSTypeSourceFactory.createTypeSource;
 import static com.intellij.openapi.util.Pair.pair;
@@ -131,11 +129,12 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @NotNull
   public static List<Angular2AttributeDescriptor> getDirectiveDescriptors(@NotNull Angular2Directive directive,
-                                                                          @NotNull XmlTag tag) {
+                                                                          @NotNull XmlTag tag,
+                                                                          @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
     if (!directive.isRegularDirective() && !isTemplateTag(tag)) {
       return emptyList();
     }
-    return new DirectiveAttributesProvider(tag, directive).get();
+    return new DirectiveAttributesProvider(tag, directive, shouldIncludeOneTimeBinding).get();
   }
 
   @NotNull
@@ -472,10 +471,12 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     Map<Angular2DirectiveProperty, Boolean> cache = CachedValuesManager.getCachedValue(property.getSourceElement(), () ->
       CachedValueProvider.Result.create(new ConcurrentHashMap<>(), PsiModificationTracker.MODIFICATION_COUNT));
     return cache.computeIfAbsent(property, prop ->
-      expandStringLiteralTypes(prop.getType()).isDirectlyAssignableType(STRING_TYPE, null)) == Boolean.TRUE;
+      expandStringLiteralTypes(prop.getType())
+        .isDirectlyAssignableType(STRING_TYPE, JSTypeComparingContextService.getProcessingContextWithCache(
+          property.getSourceElement()))) == Boolean.TRUE;
   }
 
-  @Contract("null->null") //NON-NLS
+  @Contract("null -> null") //NON-NLS
   private static JSType expandStringLiteralTypes(@Nullable JSType type) {
     if (type == null) return null;
     type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
@@ -521,12 +522,16 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   private static class DirectiveAttributesProvider {
     private final Angular2Directive myDirective;
+    private final Predicate<String> myShouldIncludeOneTimeBinding;
     private final XmlTag myTag;
     private List<Angular2AttributeDescriptor> myResult;
 
-    DirectiveAttributesProvider(@NotNull XmlTag tag, @NotNull Angular2Directive directive) {
+    DirectiveAttributesProvider(@NotNull XmlTag tag,
+                                @NotNull Angular2Directive directive,
+                                @NotNull Predicate<String> shouldIncludeOneTimeBinding) {
       myTag = tag;
       myDirective = directive;
+      myShouldIncludeOneTimeBinding = shouldIncludeOneTimeBinding;
     }
 
     public List<Angular2AttributeDescriptor> get() {
@@ -564,7 +569,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
     @Nullable
     private Angular2AttributeDescriptor createOneTimeBinding(@NotNull Angular2DirectiveProperty info) {
-      return isOneTimeBindingProperty(info)
+      return myShouldIncludeOneTimeBinding.test(info.getName())
+             && isOneTimeBindingProperty(info)
              ? new Angular2AttributeDescriptor(myTag, info.getName(), AttributePriority.HIGH,
                                                singletonList(myDirective),
                                                false)
