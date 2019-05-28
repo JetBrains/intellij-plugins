@@ -169,10 +169,14 @@ public class Angular2EntityUtils {
         .append(directive.getInputs().toString())
         .append("; outputs=")
         .append(directive.getOutputs().toString())
-        .append("; attributes=")
-        .append(directive.getAttributes())
         .append("; inOuts=")
         .append(directive.getInOuts().toString());
+
+      if (!directive.getAttributes().isEmpty()) {
+        result.append("; attributes=")
+          .append(directive.getAttributes());
+      }
+
       return result.toString();
     }
     else if (element instanceof Angular2Pipe) {
