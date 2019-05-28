@@ -2,7 +2,6 @@
 package org.angular2.entities.metadata.psi;
 
 import com.intellij.lang.javascript.psi.JSRecordType;
-import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.openapi.util.Pair;
@@ -10,18 +9,19 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider.Result;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.containers.ContainerUtil;
 import org.angular2.codeInsight.Angular2LibrariesHacks;
 import org.angular2.entities.*;
 import org.angular2.entities.metadata.stubs.Angular2MetadataClassStubBase;
 import org.angular2.entities.metadata.stubs.Angular2MetadataDirectiveStubBase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.BiConsumer;
 
 import static com.intellij.openapi.util.Pair.pair;
+import static com.intellij.util.ObjectUtils.doIfNotNull;
 import static com.intellij.util.ObjectUtils.notNull;
 import static org.angular2.Angular2DecoratorUtil.INPUTS_PROP;
 import static org.angular2.Angular2DecoratorUtil.OUTPUTS_PROP;
@@ -74,26 +74,20 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
 
   @NotNull
   private Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>> getCachedProperties() {
-    return getCachedValueWithClassDependencies(this::getProperties);
+    return CachedValuesManager.getCachedValue(this, this::getProperties);
   }
 
-  private Result<Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>>> getProperties(
-    @Nullable TypeScriptClass cls) {
-
-    List<Angular2DirectiveProperty> inputs = new ArrayList<>();
-    List<Angular2DirectiveProperty> outputs = new ArrayList<>();
-
-    JSRecordType classType = cls != null
-                             ? TypeScriptTypeParser.buildTypeFromClass(cls, false)
-                             : null;
-
+  private Result<Pair<Collection<? extends Angular2DirectiveProperty>, Collection<? extends Angular2DirectiveProperty>>> getProperties() {
     Result<Pair<Map<String, String>, Map<String, String>>> mappings = getAllMappings();
-    collectProperties(mappings.getValue().first, classType, inputs);
-    collectProperties(mappings.getValue().second, classType, outputs);
-
-    return Result.create(pair(Collections.unmodifiableCollection(inputs),
-                              Collections.unmodifiableCollection(outputs)),
+    List<Angular2DirectiveProperty> inputs = collectProperties(mappings.getValue().first);
+    List<Angular2DirectiveProperty> outputs = collectProperties(mappings.getValue().second);
+    return Result.create(pair(inputs, outputs),
                          mappings.getDependencyItems());
+  }
+
+  private JSRecordType.PropertySignature getPropertySignature(String fieldName) {
+    return doIfNotNull(getTypeScriptClass(), cls -> TypeScriptTypeParser.buildTypeFromClass(cls, false)
+      .findPropertySignature(fieldName));
   }
 
   private Result<Pair<Map<String, String>, Map<String, String>>> getAllMappings() {
@@ -122,21 +116,11 @@ public abstract class Angular2MetadataDirectiveBase<Stub extends Angular2Metadat
     return Result.create(pair(inputs, outputs), cacheDependencies);
   }
 
-  private void collectProperties(Map<String, String> mappings, JSRecordType classType, List<? super Angular2DirectiveProperty> result) {
-    mappings.forEach((String k, String v) -> result.add(createProperty(k, v, classType)));
-  }
-
-  private Angular2DirectiveProperty createProperty(@NotNull String fieldName,
-                                                   @NotNull String bindingName,
-                                                   @Nullable JSRecordType classType) {
-    if (classType != null) {
-      JSRecordType.PropertySignature sig = classType.findPropertySignature(fieldName);
-      if (sig != null) {
-        PsiElement source = sig.getMemberSource().getSingleElement();
-        return new Angular2MetadataDirectiveProperty(sig, source != null ? source : getSourceElement(), bindingName);
-      }
-    }
-    return new Angular2MetadataDirectiveProperty(null, getSourceElement(), bindingName);
+  private List<Angular2DirectiveProperty> collectProperties(@NotNull Map<String, String> mappings) {
+    List<Angular2DirectiveProperty> result = new ArrayList<>();
+    mappings.forEach((String fieldName, String bindingName) -> result.add(new Angular2MetadataDirectiveProperty(
+      () -> getPropertySignature(fieldName), getSourceElement(), bindingName)));
+    return Collections.unmodifiableList(result);
   }
 
   @NotNull

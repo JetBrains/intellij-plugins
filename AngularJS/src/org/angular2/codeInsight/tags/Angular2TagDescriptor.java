@@ -12,7 +12,6 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
 import org.angular2.entities.Angular2Directive;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -79,8 +78,8 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
-    return mergeWithAngularDescriptorIfPossible(Angular2AttributeDescriptorsProvider.getAttributeDescriptor(
-      attributeName, context, this::getAttributesDescriptors), attributeName, context);
+    return mergeWithAngularDescriptorIfPossible(HtmlNSDescriptorImpl.getCommonAttributeDescriptor(attributeName, context),
+                                                attributeName, context);
   }
 
   @Nullable
