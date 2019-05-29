@@ -657,7 +657,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
 
   private void doImplementsTest(final String testName) throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(false, testName + ".mxml", "I" + getTestName(false) + ".as");
-    findAndInvokeIntentionAction(infoCollection, "Implement Methods", myEditor, myFile);
+    findAndInvokeIntentionAction(infoCollection, JSBundle.message("javascript.fix.implement.methods"), myEditor, myFile);
     checkResultByFile(BASE_PATH + "/" + testName + "_after.mxml");
     JSTestUtils.initJSIndexes(getProject());
 
@@ -1520,7 +1520,7 @@ public class FlexHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
   }
 
   public void testImplementMethodsAmbiguous() throws Exception {
-    doHighlightingWithInvokeFixAndCheckResult("Implement Methods", "as", getTestName(false) + ".as", getTestName(false) + "_2.as",
+    doHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.implement.methods"), "as", getTestName(false) + ".as", getTestName(false) + "_2.as",
                                               getTestName(false) + "_3.as");
   }
 

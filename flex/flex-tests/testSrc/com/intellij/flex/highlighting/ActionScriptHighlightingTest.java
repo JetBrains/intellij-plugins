@@ -1565,7 +1565,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
 
   public void testNonImplementedInterface() throws Exception {
     final Collection<HighlightInfo> infoCollection = doTestFor(false);
-    findAndInvokeIntentionAction(infoCollection, "Implement Methods", myEditor, myFile);
+    findAndInvokeIntentionAction(infoCollection, JSBundle.message("javascript.fix.implement.methods"), myEditor, myFile);
     checkResultByFile(BASE_PATH + getTestName(false) + "_after.js2");
     JSTestUtils.initJSIndexes(getProject());
 
