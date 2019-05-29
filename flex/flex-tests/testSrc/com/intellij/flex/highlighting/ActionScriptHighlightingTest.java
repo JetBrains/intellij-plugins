@@ -138,19 +138,19 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   }
 
   public void testCreateParameter() throws Exception {
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create parameter");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testCreateParameter_2() throws Exception {
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create parameter");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testCreateParameter_3() throws Exception {
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create parameter");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testCreateParameter2() throws Exception {
-    doSimpleHighlightingWithInvokeFixAndCheckResult("Create parameter");
+    doSimpleHighlightingWithInvokeFixAndCheckResult(JSBundle.message("javascript.fix.create.parameter", "yyy"));
   }
 
   public void testReferencingPrivatesAndIncludeMembers() {
