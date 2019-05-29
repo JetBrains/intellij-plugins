@@ -385,7 +385,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
               .withIcon(AngularJSIcons.Angular2)
               .withInsertHandler((@NotNull InsertionContext context, @NotNull LookupElement item) -> {
                 if (suffix != null) {
-                  new Angular2AttributeInsertHandler(false, false, suffix)
+                  new Angular2AttributeInsertHandler(false, () -> false, suffix)
                     .handleInsert(context, item);
                 }
                 context.setLaterRunnable(() -> CodeCompletionHandlerBase.createHandler(CompletionType.BASIC)
