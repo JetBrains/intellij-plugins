@@ -56,11 +56,6 @@ public class DartDocumentationProvider implements DocumentationProvider {
   }
 
   @Override
-  public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
-    return null;
-  }
-
-  @Override
   public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
     return object instanceof DartLookupObject ? ((DartLookupObject)object).findPsiElement() : null;
   }
