@@ -231,8 +231,7 @@ public class AngularCliAddDependencyAction extends DumbAwareAction {
     }
     try {
       List<CompletionModuleInfo> modules = new ArrayList<>();
-      NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli,
-                                               false, interpreter);
+      NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null);
       if (modules.isEmpty() || modules.get(0).getVirtualFile() == null) {
         throw new ExecutionException("Angular CLI package is not installed.");
       }
