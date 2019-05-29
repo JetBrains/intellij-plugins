@@ -83,7 +83,7 @@ public class Angular2CssAttributeNameCompletionProvider extends CompletionProvid
           Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(
             parameters.getPosition().getText());
           element = PrioritizedLookupElement.withPriority(
-            builder.withInsertHandler(new Angular2AttributeInsertHandler(true, true, info.isCanonical ? "" : "]")),
+            builder.withInsertHandler(new Angular2AttributeInsertHandler(true, () -> true, info.isCanonical ? "" : "]")),
             ((PrioritizedLookupElement)element).getPriority());
         }
       }

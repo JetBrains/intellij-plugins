@@ -35,7 +35,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
                                boolean implied,
                                @NotNull Collection<?> sources) {
     myImplied = implied;
-    myResolver = new Angular2XmlElementSourcesResolver(tag, sources);
+    myResolver = new Angular2XmlElementSourcesResolver(tag, sources, x -> Collections.emptyList(), this::getSelectors);
     myName = tag.getLocalName();
   }
 
@@ -107,7 +107,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
 
   @Override
   public PsiElement getDeclaration() {
-    return ContainerUtil.getFirstItem(myResolver.getDeclarations(x -> Collections.emptyList(), this::getSelectors));
+    return ContainerUtil.getFirstItem(myResolver.getDeclarations());
   }
 
   private Collection<? extends PsiElement> getSelectors(Angular2Directive directive) {

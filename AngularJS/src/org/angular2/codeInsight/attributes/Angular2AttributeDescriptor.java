@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.psi.types.guard.TypeScriptTypeRelations;
 import com.intellij.lang.javascript.psi.types.primitives.JSBooleanType;
 import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveType;
 import com.intellij.lang.javascript.psi.types.primitives.JSStringType;
+import com.intellij.openapi.util.AtomicNullableLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -142,6 +143,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   private final Angular2AttributeNameParser.AttributeInfo myInfo;
   private final boolean myImplied;
+  private final AtomicNullableLazyValue<JSType> myJSType = AtomicNullableLazyValue.createValue(this::buildJSType);
 
   // Note: xmlTag is nullable only because of compatibility with NativeScript with classes
   // Angular2EventHandlerDescriptor and AngularBindingDescriptor, which are deprecated
@@ -177,7 +179,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
                                         @NotNull Collection<?> sources,
                                         boolean implied) {
     myAttributeName = attributeName;
-    myResolver = new Angular2XmlElementSourcesResolver(tag, sources);
+    myResolver = new Angular2XmlElementSourcesResolver(tag, sources, this::getProperties, this::getSelectors);
     myInfo = info;
     myPriority = priority;
     myImplied = implied;
@@ -259,8 +261,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @Override
   @NotNull
   public String[] getEnumeratedValues() {
-    JSType type = getJSType();
-    if (type != null && myInfo.type == REGULAR) {
+    JSType type;
+    if (myInfo.type == REGULAR && (type = getJSType()) != null) {
       List<String> values = new ArrayList<>();
       type = TypeScriptTypeRelations.expandAndOptimizeTypeRecursive(type);
       if (type instanceof JSBooleanType) {
@@ -293,7 +295,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   @NotNull
   @Override
   public Collection<PsiElement> getDeclarations() {
-    return myResolver.getDeclarations(this::getProperties, this::getSelectors);
+    return myResolver.getDeclarations();
   }
 
   private Collection<? extends PsiElement> getSelectors(@NotNull Angular2Directive directive) {
@@ -323,10 +325,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       case REGULAR:
         final StreamEx<PsiElement> inputsPsiElements =
           StreamEx.of(directive.getInputs())
-            .filter(property -> {
-              final boolean isOneTimeBinding = isOneTimeBindingProperty(property);
-              return myInfo.name.equals(property.getName()) && isOneTimeBinding;
-            })
+            .filter(property -> myInfo.name.equals(property.getName()) && isOneTimeBindingProperty(property))
             .map(Angular2Element::getNavigableElement);
 
         final StreamEx<PsiElement> attributesPsiElements =
@@ -395,7 +394,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
       .withCaseSensitivity(myInfo.type != REGULAR || !myImplied)
       .withIcon(getIcon())
       .withBoldness(proximity == IN_SCOPE && myPriority == AttributePriority.HIGH)
-      .withInsertHandler(new Angular2AttributeInsertHandler(shouldInsertHandlerRemoveLeftover(), shouldCompleteValue(), null));
+      .withInsertHandler(new Angular2AttributeInsertHandler(shouldInsertHandlerRemoveLeftover(), this::shouldCompleteValue, null));
     if (info.lookupStrings != null) {
       element = element.withLookupStrings(map(info.lookupStrings, str -> StringUtil.trimStart(str, hide.first)));
     }
@@ -428,9 +427,9 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   }
 
   private boolean shouldCompleteValue() {
-    JSType type = getJSType();
+    JSType type;
     return myInfo.type != REGULAR
-           || (type != null && !(type instanceof JSBooleanType));
+           || ((type = getJSType()) != null && !(type instanceof JSBooleanType));
   }
 
   @NotNull
@@ -446,6 +445,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
 
   @Nullable
   public JSType getJSType() {
+    return myJSType.getValue();
+  }
+
+  private JSType buildJSType() {
     Collection<PsiElement> declarations = getDeclarations();
     List<JSType> types = mapNotNull(declarations, element -> {
       if (element instanceof JSFunction) {
@@ -472,12 +475,13 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   public static boolean isOneTimeBindingProperty(@NotNull Angular2DirectiveProperty property) {
     if (ONE_TIME_BINDING_EXCLUDES.contains(property.getName())) return false;
     if (property.isVirtual()) return true;
-    if (property.getType() == null) return false;
+    JSType type = property.getType();
+    if (type == null) return false;
 
     Map<Angular2DirectiveProperty, Boolean> cache = CachedValuesManager.getCachedValue(property.getSourceElement(), () ->
       CachedValueProvider.Result.create(new ConcurrentHashMap<>(), PsiModificationTracker.MODIFICATION_COUNT));
     return cache.computeIfAbsent(property, prop ->
-      expandStringLiteralTypes(prop.getType())
+      expandStringLiteralTypes(type)
         .isDirectlyAssignableType(STRING_TYPE, JSTypeComparingContextService.getProcessingContextWithCache(
           property.getSourceElement()))) == Boolean.TRUE;
   }
