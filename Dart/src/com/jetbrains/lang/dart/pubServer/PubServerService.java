@@ -198,6 +198,13 @@ final class PubServerService extends NetService {
     final DartSdk dartSdk = DartSdk.getDartSdk(project);
     if (dartSdk == null) return null;
 
+    if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject()))) {
+      if (!DartWebdev.INSTANCE.getActivated()) {
+        ApplicationManager.getApplication()
+          .invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
+      }
+    }
+
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(firstServedDir.getParent().getPath());
     commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(dartSdk)));
     commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue());
@@ -224,13 +231,7 @@ final class PubServerService extends NetService {
                                   final int port,
                                   @NotNull final OSProcessHandler processHandler,
                                   @NotNull final Consumer<String> errorOutputConsumer) {
-
     if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject()))) {
-      if (!DartWebdev.INSTANCE.getActivated()) {
-        ApplicationManager.getApplication()
-          .invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
-      }
-
       synchronized (myServerReadyLock) {
         try {
           // wait for the Webdev server to start before redirecting, so that Chrome doesn't show error.
@@ -239,6 +240,11 @@ final class PubServerService extends NetService {
         }
         catch (InterruptedException e) {/**/}
       }
+    }
+
+    if (processHandler.isProcessTerminated()) {
+      promise.cancel();
+      return;
     }
 
     InetSocketAddress firstPubServerAddress = NetKt.loopbackSocketAddress(port);
@@ -376,6 +382,13 @@ final class PubServerService extends NetService {
     PubServeOutputListener(@NotNull Project project, @NotNull Object serverReadyLock) {
       myProject = project;
       myServerReadyLock = serverReadyLock;
+    }
+
+    @Override
+    public void processTerminated(@NotNull ProcessEvent event) {
+      synchronized (myServerReadyLock) {
+        myServerReadyLock.notifyAll();
+      }
     }
 
     @Override
