@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ProjectTopics;
@@ -18,7 +19,7 @@ import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.CustomStatusBarWidget;
 import com.intellij.openapi.wm.StatusBar;
@@ -114,7 +115,7 @@ public class ActiveBuildConfigurationWidget {
         }
       });
 
-      myEnabledLabel.setFont(SystemInfo.isMac ? UIUtil.getLabelFont().deriveFont(11.0f) : UIUtil.getLabelFont());
+      myEnabledLabel.setFont(SystemInfoRt.isMac ? UIUtil.getLabelFont().deriveFont(11.0f) : UIUtil.getLabelFont());
       myEnabledLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
       myDisabledLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -241,7 +242,7 @@ public class ActiveBuildConfigurationWidget {
     }
 
     public static String getAnchor() {
-      return "after " + (SystemInfo.isMac ? "Encoding" : "InsertOverwrite");
+      return "after " + (SystemInfoRt.isMac ? "Encoding" : "InsertOverwrite");
     }
   }
 }

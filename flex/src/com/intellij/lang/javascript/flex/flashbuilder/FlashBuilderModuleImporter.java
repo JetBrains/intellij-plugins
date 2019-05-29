@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -28,7 +29,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -52,7 +53,7 @@ public class FlashBuilderModuleImporter {
 
   private static final String SDK_THEMES_DIR_MACRO = "${SDK_THEMES_DIR}";
   private static final String EXTERNAL_THEME_DIR_MACRO = "${EXTERNAL_THEME_DIR}";
-  private static final String EXTERNAL_THEME_DIR_REL_PATH = SystemInfo.isWindows
+  private static final String EXTERNAL_THEME_DIR_REL_PATH = SystemInfoRt.isWindows
                                                             ? "/AppData/Roaming/Adobe/Flash Builder/Themes"
                                                             : "/Library/Application Support/Adobe/Flash Builder/Themes";
 
@@ -648,7 +649,7 @@ public class FlashBuilderModuleImporter {
       }
     }
 
-    final boolean absolute = FileUtil.isAbsolute(path) && (SystemInfo.isWindows || new File(path).exists());
+    final boolean absolute = FileUtil.isAbsolute(path) && (SystemInfoRt.isWindows || new File(path).exists());
     return absolute ? path : project.getProjectRootPath() + (slashIndex == 0 ? "" : "/") + path;
   }
 

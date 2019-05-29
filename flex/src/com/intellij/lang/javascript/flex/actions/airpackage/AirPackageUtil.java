@@ -17,7 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
@@ -38,8 +38,8 @@ public class AirPackageUtil {
 
   public static final String TEMP_KEYSTORE_PASSWORD = "keystore_password";
 
-  static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
-  private static final String IDB_RELATIVE_PATH = "/lib/aot/bin/iOSBin/idb" + (SystemInfo.isWindows ? ".exe" : "");
+  static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfoRt.isWindows ? ".exe" : "");
+  private static final String IDB_RELATIVE_PATH = "/lib/aot/bin/iOSBin/idb" + (SystemInfoRt.isWindows ? ".exe" : "");
 
   private static final String PREFERRED_IOS_DEVICE_ID_PROPERTY = "flex.preferred.ios.device.id";
   private static final String PREFERRED_ANDROID_DEVICE_ID_PROPERTY = "flex.preferred.android.device.id";

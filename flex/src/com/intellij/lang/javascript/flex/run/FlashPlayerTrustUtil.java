@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.flex.model.bc.LinkageType;
@@ -8,6 +9,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowId;
@@ -25,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.intellij.openapi.util.SystemInfo.*;
+import static com.intellij.openapi.util.SystemInfo.isWinVistaOrNewer;
 
 public class FlashPlayerTrustUtil {
 
@@ -179,8 +181,8 @@ public class FlashPlayerTrustUtil {
   @Nullable
   private static File getFlashPlayerTrustDir(final Project project, final boolean isDebug, final boolean runTrusted) {
     final String flashPlayerTrustDirRelPath =
-      isWindows ? (isWinVistaOrNewer ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH : WINDOWS_XP_TRUST_DIR_REL_PATH) :
-      isMac ? MAC_TRUST_DIR_REL_PATH :
+      SystemInfoRt.isWindows ? (isWinVistaOrNewer ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH : WINDOWS_XP_TRUST_DIR_REL_PATH) :
+      SystemInfoRt.isMac ? MAC_TRUST_DIR_REL_PATH :
       UNIX_TRUST_DIR_REL_PATH;
     final File flashPlayerTrustDir = new File(SystemProperties.getUserHome() + flashPlayerTrustDirRelPath);
 

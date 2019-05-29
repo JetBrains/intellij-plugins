@@ -1,9 +1,10 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.util.JDOMUtil;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -117,14 +118,14 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
     if (StringUtil.isNotEmpty(myAdlPath) && StringUtil.isNotEmpty(myAirRuntimePath)) {
       return;
     }
-    final String exeType = SystemInfo.isWindows ? "exe" : "uexe";
+    final String exeType = SystemInfoRt.isWindows ? "exe" : "uexe";
     final String adlPath = FileUtil.toSystemIndependentName(
       MessageFormat.format(ADL_ARTIFACT_PATTERN, repositoryRootPath, version, exeType));
     final VirtualFile adlFile = LocalFileSystem.getInstance().findFileByPath(adlPath);
     if (adlFile != null && !adlFile.isDirectory()) {
       myAdlPath = adlPath;
 
-      final String classifier = SystemInfo.isWindows ? "win" : "mac";
+      final String classifier = SystemInfoRt.isWindows ? "win" : "mac";
       final String zipType = "zip";
       myAirRuntimePath = FileUtil
         .toSystemIndependentName(MessageFormat.format(AIR_RUNTIME_ARTIFACT_PATTERN, repositoryRootPath, version, classifier, zipType));

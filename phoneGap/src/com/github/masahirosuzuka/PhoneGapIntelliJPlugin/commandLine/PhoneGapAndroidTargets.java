@@ -1,8 +1,9 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine;
 
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
@@ -33,11 +34,11 @@ public class PhoneGapAndroidTargets extends PhoneGapTargets {
 
   @NotNull
   public static String getAndroidName() {
-    return SystemInfo.isWindows ? "android" + ".bat" : "android";
+    return SystemInfoRt.isWindows ? "android" + ".bat" : "android";
   }
 
   private static String getAdbName() {
-    return SystemInfo.isWindows ? "adb" + ".exe" : "adb";
+    return SystemInfoRt.isWindows ? "adb" + ".exe" : "adb";
   }
 
 

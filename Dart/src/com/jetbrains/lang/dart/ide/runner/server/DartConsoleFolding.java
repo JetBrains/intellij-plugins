@@ -1,10 +1,10 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ConsoleFolding;
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
@@ -18,8 +18,9 @@ import java.util.List;
 
 public class DartConsoleFolding extends ConsoleFolding {
 
-  private static final String DART_MARKER = SystemInfo.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
-  private static final String TEST_RUNNER_MARKER = SystemInfo.isWindows ? "\\bin\\pub.bat run test -r json " : "/bin/pub run test -r json ";
+  private static final String DART_MARKER = SystemInfoRt.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
+  private static final String TEST_RUNNER_MARKER = SystemInfoRt.isWindows
+                                                   ? "\\bin\\pub.bat run test -r json " : "/bin/pub run test -r json ";
   private static final int MIN_FRAME_DISPLAY_COUNT = 8;
 
   private int myFrameCount = 0;

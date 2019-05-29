@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.documentation;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
@@ -23,7 +24,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -161,7 +165,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
             return root + href;
           }
 
-          if (root.startsWith("file://") && SystemInfo.isWindows) {
+          if (root.startsWith("file://") && SystemInfoRt.isWindows) {
             root = "file:///" + root.substring("file://".length());
           }
           return doAnnihilate(ourHtmlFileSuffix.matcher(root).replaceAll("/") + href);

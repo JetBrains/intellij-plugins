@@ -1,8 +1,9 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -225,6 +226,6 @@ public class DartPositionInfo {
     int index = 0;
     while (index < text.length() && text.charAt(index) == '/') index++;
 
-    return SystemInfo.isWindows ? index : index - 1;
+    return SystemInfoRt.isWindows ? index : index - 1;
   }
 }

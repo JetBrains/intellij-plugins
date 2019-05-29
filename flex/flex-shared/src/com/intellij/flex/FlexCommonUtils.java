@@ -824,7 +824,7 @@ public class FlexCommonUtils {
         }
       }
     }
-    final String javaExecutable = FileUtil.toSystemDependentName((javaHome + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
+    final String javaExecutable = FileUtil.toSystemDependentName((javaHome + "/bin/java" + (SystemInfoRt.isWindows ? ".exe" : "")));
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
@@ -864,7 +864,7 @@ public class FlexCommonUtils {
   }
 
   public static String getD32IfNeeded(boolean customJavaHomeSet, String javaHome) {
-    return (!customJavaHomeSet && SystemInfo.isMac && is64BitJava6(javaHome)) ? "-d32" : null;
+    return (!customJavaHomeSet && SystemInfoRt.isMac && is64BitJava6(javaHome)) ? "-d32" : null;
   }
 
   @Nullable
@@ -929,7 +929,7 @@ public class FlexCommonUtils {
       final Ref<String> versionRef = Ref.create();
 
       final String javaExecutable =
-        FileUtil.toSystemDependentName((SystemProperties.getJavaHome() + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
+        FileUtil.toSystemDependentName((SystemProperties.getJavaHome() + "/bin/java" + (SystemInfoRt.isWindows ? ".exe" : "")));
 
       String[] cmdarray = {javaExecutable, "-jar", adtFile.getPath(), "-version"};
       final Process process = Runtime.getRuntime().exec(cmdarray);

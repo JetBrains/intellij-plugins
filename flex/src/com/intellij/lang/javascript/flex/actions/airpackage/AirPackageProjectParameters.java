@@ -1,8 +1,9 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -16,15 +17,15 @@ import org.jetbrains.annotations.NotNull;
 )
 public class AirPackageProjectParameters implements PersistentStateComponent<AirPackageProjectParameters> {
   private static final String NATIVE_INSTALLER_EXTENSION =
-    SystemInfo.isWindows ? ".exe"
-                         : SystemInfo.isMac ? ".dmg"
-                                            : StringUtil.toLowerCase(SystemInfo.OS_NAME).contains("ubuntu") ? ".deb"
-                                                                                                            : ".rpm";
+    SystemInfoRt.isWindows ? ".exe"
+                           : SystemInfoRt.isMac ? ".dmg"
+                                              : StringUtil.toLowerCase(SystemInfoRt.OS_NAME).contains("ubuntu") ? ".deb"
+                                                                                                                : ".rpm";
 
   public enum DesktopPackageType {
     AirInstaller("installer (*.air)", ".air"),
     NativeInstaller("native installer (*" + NATIVE_INSTALLER_EXTENSION + ")", NATIVE_INSTALLER_EXTENSION),
-    CaptiveRuntimeBundle("captive runtime bundle" + (SystemInfo.isMac ? " (*.app)" : ""), SystemInfo.isMac ? ".app" : ""),
+    CaptiveRuntimeBundle("captive runtime bundle" + (SystemInfoRt.isMac ? " (*.app)" : ""), SystemInfoRt.isMac ? ".app" : ""),
     Airi("unsigned package (*.airi)", ".airi");
 
     DesktopPackageType(final String presentableName, final String extension) {

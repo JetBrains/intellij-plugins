@@ -1,10 +1,10 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin.runner;
 
 
 import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -25,7 +25,7 @@ public class RippleInfo {
       return ripplePath;
     }
     String name = "ripple";
-    File file = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? name + ".cmd" : name);
+    File file = PathEnvironmentVariableUtil.findInPath(SystemInfoRt.isWindows ? name + ".cmd" : name);
 
     if (file != null) {
       path = file.getAbsolutePath();

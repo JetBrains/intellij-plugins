@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -11,7 +12,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -208,7 +209,7 @@ public class FlashBuilderSdkFinder {
              && new File(dir, SDKS_FOLDER).isDirectory();
     };
 
-    final String programsPath = SystemInfo.isMac ? "/Applications" : SystemInfo.isWindows ? System.getenv("ProgramFiles") : null;
+    final String programsPath = SystemInfoRt.isMac ? "/Applications" : SystemInfoRt.isWindows ? System.getenv("ProgramFiles") : null;
     final File programsDir = programsPath == null ? null : new File(programsPath);
 
     if (programsDir != null && programsDir.isDirectory()) {
@@ -220,7 +221,7 @@ public class FlashBuilderSdkFinder {
       }
     }
 
-    if (SystemInfo.isWindows) {
+    if (SystemInfoRt.isWindows) {
       final String programs64Path = System.getenv("ProgramW6432");
       final File programs64Dir = programs64Path == null ? null : new File(programs64Path);
 

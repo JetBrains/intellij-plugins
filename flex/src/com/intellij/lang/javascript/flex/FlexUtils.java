@@ -33,7 +33,7 @@ import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -140,7 +140,7 @@ public class FlexUtils {
     if (file == null) {
       file = dir.createChildData(FlexUtils.class, fileName);
     }
-    else if (SystemInfo.isWindows) {
+    else if (SystemInfoRt.isWindows) {
       file.rename(FlexUtils.class, fileName); // ensure the right case
     }
     file.setBinaryContent(fileContent);
@@ -152,7 +152,7 @@ public class FlexUtils {
     if (data == null) {
       data = dir.createChildData(FlexUtils.class, fileName);
     }
-    else if (SystemInfo.isWindows) {
+    else if (SystemInfoRt.isWindows) {
       data.rename(FlexUtils.class, fileName); // ensure the right case
     }
     VfsUtil.saveText(data, fileContent);

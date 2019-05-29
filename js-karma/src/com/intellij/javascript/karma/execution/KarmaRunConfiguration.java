@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Executor;
@@ -17,7 +17,7 @@ import com.intellij.javascript.testFramework.util.JsTestFqn;
 import com.intellij.javascript.testing.JsTestRunConfigurationProducer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -106,7 +106,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   private boolean shouldPreferKarmaPackage(@NotNull NodePackage pkg) {
-    if (!SystemInfo.isWindows || !pkg.nameMatches(KarmaUtil.ANGULAR_CLI__PACKAGE_NAME)) {
+    if (!SystemInfoRt.isWindows || !pkg.nameMatches(KarmaUtil.ANGULAR_CLI__PACKAGE_NAME)) {
       return false;
     }
     SemVer version = pkg.getVersion();
