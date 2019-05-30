@@ -14,7 +14,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +63,7 @@ public class FlashPlayerTrustUtil {
       }
     }
 
-    updateTrustedStatus(module.getProject(), isTrusted, isDebug, ArrayUtil.toStringArray(paths));
+    updateTrustedStatus(module.getProject(), isTrusted, isDebug, ArrayUtilRt.toStringArray(paths));
   }
 
   public static void updateTrustedStatus(final Project project,
@@ -143,7 +143,7 @@ public class FlashPlayerTrustUtil {
       }
     }
 
-    return ArrayUtil.toStringArray(result);
+    return ArrayUtilRt.toStringArray(result);
   }
 
   @Nullable

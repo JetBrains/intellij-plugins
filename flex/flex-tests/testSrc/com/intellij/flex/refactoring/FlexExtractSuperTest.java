@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
 import com.intellij.flex.editor.FlexProjectDescriptor;
@@ -31,7 +32,7 @@ import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.util.DocCommentPolicy;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.TestActionEvent;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
@@ -276,7 +277,7 @@ public class FlexExtractSuperTest extends LightPlatformMultiFileFixtureTestCase 
 
         FlexExtractSuperTest.this.performAction(false, "skins.MyNewSkin1", "skins.IMySkin", DocCommentPolicy.COPY,
                                                 JSExtractSuperMode.ExtractSuperTurnRefs, new String[]{"updateDisplayList"},
-                                                ArrayUtil.EMPTY_STRING_ARRAY);
+                                                ArrayUtilRt.EMPTY_STRING_ARRAY);
       }
     });
   }

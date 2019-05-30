@@ -9,7 +9,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -285,7 +285,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @Override
   public String[] getProjects(User user) {
-    return ArrayUtil.toStringArray(getNotNullOnlineInfo(user).getProjects());
+    return ArrayUtilRt.toStringArray(getNotNullOnlineInfo(user).getProjects());
   }
 
   @NotNull

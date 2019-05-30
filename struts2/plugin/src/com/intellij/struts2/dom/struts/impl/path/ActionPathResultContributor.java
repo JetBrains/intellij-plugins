@@ -31,6 +31,7 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -153,7 +154,7 @@ public class ActionPathResultContributor extends StrutsResultContributor {
     public Object[] getVariants() {
       final List<String> extensions = getActionExtensions();
       if (extensions.isEmpty()) {
-        return ArrayUtil.EMPTY_OBJECT_ARRAY;
+        return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
       }
 
       final String firstExtension = extensions.get(0);

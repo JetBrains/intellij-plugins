@@ -53,7 +53,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.JBColor;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
@@ -424,7 +424,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   public String[] getSimpleSelectors(@NotNull PsiElement context) {
     Module module = findModuleForPsiElement(context);
     if (module == null) {
-      return ArrayUtil.EMPTY_STRING_ARRAY;
+      return ArrayUtilRt.EMPTY_STRING_ARRAY;
     }
     CodeContext codeContext = CodeContext.getContext(JavaScriptSupportLoader.MXML_URI, module);
     XmlElementDescriptor[] descriptors = codeContext.getDescriptorsWithAllowedDeclaration();

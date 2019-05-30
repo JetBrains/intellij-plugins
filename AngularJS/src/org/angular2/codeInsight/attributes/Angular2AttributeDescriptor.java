@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.attributes;
 
 import com.intellij.codeInsight.completion.PrefixMatcher;
@@ -25,7 +25,7 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
@@ -275,10 +275,10 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
         return true;
       }, type);
       if (!values.isEmpty()) {
-        return ArrayUtil.toStringArray(values);
+        return ArrayUtilRt.toStringArray(values);
       }
     }
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   @Override

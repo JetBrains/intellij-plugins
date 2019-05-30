@@ -4,7 +4,7 @@ package com.jetbrains.dart.analysisServer;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.sdk.DartSdkLibUtil;
 import com.jetbrains.lang.dart.util.DartTestUtils;
@@ -54,14 +54,14 @@ public class DartSdkConfigurationTest extends CodeInsightFixtureTestCase {
   public void testSdkRootsFromLibrariesFile() {
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
     assertNotNull(sdk);
-    final String[] actualRoots = ArrayUtil.toStringArray(DartSdkLibUtil.getRootUrlsFromLibrariesFile(getProject(), sdk.getHomePath()));
+    final String[] actualRoots = ArrayUtilRt.toStringArray(DartSdkLibUtil.getRootUrlsFromLibrariesFile(getProject(), sdk.getHomePath()));
     checkSdkRoots(sdk.getHomePath(), actualRoots);
   }
 
   public void testSdkRootsUsingBlacklist() {
     final DartSdk sdk = DartSdk.getDartSdk(getProject());
     assertNotNull(sdk);
-    final String[] actualRoots = ArrayUtil.toStringArray(DartSdkLibUtil.getRootUrlsFailover(sdk.getHomePath()));
+    final String[] actualRoots = ArrayUtilRt.toStringArray(DartSdkLibUtil.getRootUrlsFailover(sdk.getHomePath()));
     checkSdkRoots(sdk.getHomePath(), actualRoots);
   }
 }

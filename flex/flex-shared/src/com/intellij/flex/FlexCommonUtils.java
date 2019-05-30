@@ -18,10 +18,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.PairConsumer;
-import com.intellij.util.PathUtilRt;
-import com.intellij.util.SystemProperties;
+import com.intellij.util.*;
 import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -366,7 +363,7 @@ public class FlexCommonUtils {
       return playerFolder.list((dir, name) -> new File(playerFolder, name + "/playerglobal.swc").isFile());
     }
 
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   /**

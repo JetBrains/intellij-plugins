@@ -3,7 +3,7 @@ package org.osmorc.frameworkintegration.impl;
 
 import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +80,7 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
 
     outer:
     for (File dir : flattenDirPatterns(basePath, bundleDirs)) {
-      File[] files = ObjectUtils.notNull(dir.listFiles(), ArrayUtil.EMPTY_FILE_ARRAY);
+      File[] files = ObjectUtils.notNull(dir.listFiles(), ArrayUtilRt.EMPTY_FILE_ARRAY);
       for (File file : files) {
         FrameworkBundleType bundleType = detectType(file, sysNamePattern, sysControlClass, shellNamePattern, shellControlClass);
         if (bundleType == type) {

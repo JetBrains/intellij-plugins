@@ -24,7 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -146,7 +146,7 @@ public class BCUtils {
         });
 
         final Object selectedItem = targetPlayerCombo.getSelectedItem();
-        final String[] availablePlayersArray = ArrayUtil.toStringArray(availablePlayers);
+        final String[] availablePlayersArray = ArrayUtilRt.toStringArray(availablePlayers);
         targetPlayerCombo.setModel(new DefaultComboBoxModel(availablePlayersArray));
         //noinspection SuspiciousMethodCalls
         if (selectedItem != null && availablePlayers.contains(selectedItem)) {
@@ -158,7 +158,7 @@ public class BCUtils {
       }
     }
     else {
-      targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtil.EMPTY_STRING_ARRAY));
+      targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtilRt.EMPTY_STRING_ARRAY));
     }
   }
 

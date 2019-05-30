@@ -19,6 +19,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
@@ -118,7 +119,7 @@ public class DartSdkLibUtil {
     final SortedSet<String> roots = getRootUrls(project, sdkHomePath);
     if (roots.isEmpty()) return ()->{}; // corrupted SDK
 
-    if (Comparing.haveEqualElements(ArrayUtil.toStringArray(roots), library.getRootProvider().getUrls(OrderRootType.CLASSES))) {
+    if (Comparing.haveEqualElements(ArrayUtilRt.toStringArray(roots), library.getRootProvider().getUrls(OrderRootType.CLASSES))) {
       return ()->{}; // already ok
     }
 

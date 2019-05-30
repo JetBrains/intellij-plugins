@@ -19,7 +19,7 @@ import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.TextAccessor;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
@@ -79,7 +79,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
   @Override
   @NotNull
   protected String[] generatorArgs(@NotNull Project project, @NotNull VirtualFile baseDir) {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   @SuppressWarnings("HardCodedStringLiteral")
@@ -101,7 +101,7 @@ public class AngularCliProjectGenerator extends NpmPackageProjectGenerator {
       }
     }
 
-    return ArrayUtil.toStringArray(result);
+    return ArrayUtilRt.toStringArray(result);
   }
 
   @SuppressWarnings("SameParameterValue")

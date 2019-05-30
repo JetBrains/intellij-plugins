@@ -25,7 +25,7 @@ import com.intellij.tapestry.core.resource.IResourceFinder;
 import com.intellij.tapestry.core.util.LocalizationUtils;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -198,7 +198,7 @@ public class TapestryProject {
   @NotNull
   public String[] getAvailablePageNames() {
     final Set<String> names = ourNameToPageMap.get(myModule).keySet();
-    return ArrayUtil.toStringArray(names);
+    return ArrayUtilRt.toStringArray(names);
   }
 
   private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourNameToPageMap", false, true, false) {
@@ -287,7 +287,7 @@ public class TapestryProject {
   @NotNull
   public String[] getAvailableComponentNames() {
     final Set<String> names = ourNameToComponentMap.get(myModule).keySet();
-    return ArrayUtil.toStringArray(names);
+    return ArrayUtilRt.toStringArray(names);
   }
 
   private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourNameToComponentMap", true, false, false) {
