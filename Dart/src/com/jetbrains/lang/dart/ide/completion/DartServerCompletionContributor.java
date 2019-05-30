@@ -543,13 +543,13 @@ public class DartServerCompletionContributor extends CompletionContributor {
   private static CompletionSuggestion createCompletionSuggestionFromAvailableSuggestion(@NotNull AvailableSuggestion suggestion,
                                                                                         int suggestionSetRelevance,
                                                                                         @NotNull Map<String, IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags) {
-    int relevance = suggestionSetRelevance;
+    int relevanceBoost = 0;
     List<String> relevanceTags = suggestion.getRelevanceTags();
     if (relevanceTags != null) {
       for (String tag : relevanceTags) {
         IncludedSuggestionRelevanceTag relevanceTag = includedSuggestionRelevanceTags.get(tag);
         if (relevanceTag != null) {
-          relevance += includedSuggestionRelevanceTags.get(tag).getRelevanceBoost();
+          relevanceBoost = Math.max(relevanceBoost, relevanceTag.getRelevanceBoost());
         }
       }
     }
@@ -557,7 +557,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
     Element element = suggestion.getElement();
     return new CompletionSuggestion(
       "UNKNOWN", // we don't have info about CompletionSuggestionKind
-      relevance,
+      suggestionSetRelevance + relevanceBoost,
       suggestion.getLabel(),
       null,
       0,
