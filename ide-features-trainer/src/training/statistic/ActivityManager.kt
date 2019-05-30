@@ -4,8 +4,9 @@ import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import training.util.trainerPluginConfigName
 
-@State(name = "ActivityManager", storages = arrayOf(Storage(value = "ide-features-trainer.xml")))
+@State(name = "ActivityManager", storages = arrayOf(Storage(value = trainerPluginConfigName)))
 class ActivityManager: PersistentStateComponent<ActivityManager> {
 
   var lastActivityTime: Long? = null
