@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.index;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
@@ -21,12 +21,11 @@ import com.intellij.lang.javascript.psi.stubs.JSImplicitElementStructure;
 import com.intellij.lang.javascript.psi.stubs.impl.JSElementIndexingDataImpl;
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.css.StylesheetFile;
 import com.intellij.psi.impl.source.resolve.FileContextUtil;
 import com.intellij.psi.stubs.IndexSink;
@@ -247,8 +246,8 @@ public class Angular2IndexingHandler extends FrameworkIndexingHandler {
       String name = fileUrl.substring(lastSlash + 1);
       //don't index if file name matches TS file name and is in the same directory
       if ((lastSlash <= 0 || (lastSlash == 1 && fileUrl.charAt(0) == '.'))
-          && FileUtil.getNameWithoutExtension(name)
-            .equals(FileUtil.getNameWithoutExtension(decorator.getContainingFile().getOriginalFile().getName()))) {
+          && FileUtilRt.getNameWithoutExtension(name)
+            .equals(FileUtilRt.getNameWithoutExtension(decorator.getContainingFile().getOriginalFile().getName()))) {
         continue;
       }
       JSImplicitElementImpl.Builder elementBuilder = new JSImplicitElementImpl.Builder(namePrefix + name, decorator)

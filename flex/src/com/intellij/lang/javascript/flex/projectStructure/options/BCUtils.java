@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -15,7 +16,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -51,7 +52,7 @@ public class BCUtils {
   }
 
   public static String getWrapperFileName(final FlexBuildConfiguration bc) {
-    return FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + ".html";
+    return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + ".html";
   }
 
   public static String getGeneratedAirDescriptorName(final FlexBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
@@ -59,7 +60,7 @@ public class BCUtils {
                           ? "-descriptor.xml"
                           : packagingOptions instanceof AndroidPackagingOptions ? "-android-descriptor.xml"
                                                                                 : "-ios-descriptor.xml";
-    return FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + suffix;
+    return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + suffix;
   }
 
   @Nullable

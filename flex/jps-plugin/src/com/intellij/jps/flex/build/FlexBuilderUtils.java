@@ -144,7 +144,7 @@ public class FlexBuilderUtils {
         }
 
         final String mainClass = StringUtil.notNullize(info.getMainClass(bc.getModule()), bc.getMainClass());
-        final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(outputFileName), targetPlayer,
+        final String fixedText = replaceMacros(wrapperText, FileUtilRt.getNameWithoutExtension(outputFileName), targetPlayer,
                                                FlexCommonUtils.getPathToMainClassFile(mainClass, bc.getModule()));
         final String wrapperFileName = FlexCommonUtils.getWrapperFileName(bc);
         try {

@@ -37,6 +37,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -214,7 +215,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
     }
 
     if (info.getOutputFileName() == null && info.getOutputFolderPath() == null) {
-      if (FileUtil.getNameWithoutExtension(bc.getOutputFileName()).isEmpty()) {
+      if (FileUtilRt.getNameWithoutExtension(bc.getOutputFileName()).isEmpty()) {
         errorConsumer.consume(FlashProjectStructureProblem
                                 .createGeneralOptionProblem(ProjectStructureProblemType.Severity.ERROR, bc.getName(), FlexBundle.message("output.file.name.not.set"),
                                                             FlexBCConfigurable.Location.OutputFileName));

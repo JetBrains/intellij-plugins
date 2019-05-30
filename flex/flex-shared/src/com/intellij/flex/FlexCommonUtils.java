@@ -889,7 +889,7 @@ public class FlexCommonUtils {
   }
 
   public static String getWrapperFileName(final JpsFlexBuildConfiguration bc) {
-    return FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + ".html";
+    return FileUtilRt.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + ".html";
   }
 
 
@@ -898,7 +898,7 @@ public class FlexCommonUtils {
                           ? "-descriptor.xml"
                           : packagingOptions instanceof JpsAndroidPackagingOptions ? "-android-descriptor.xml"
                                                                                    : "-ios-descriptor.xml";
-    return FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + suffix;
+    return FileUtilRt.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + suffix;
   }
 
   public static String replace(final String text, final Map<String, String> replacementMap) {

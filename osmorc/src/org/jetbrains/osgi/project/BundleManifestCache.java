@@ -10,7 +10,7 @@ import com.intellij.openapi.roots.JdkOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
 import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.InvalidVirtualFileAccessException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
@@ -194,7 +194,7 @@ public class BundleManifestCache {
         VirtualFile file = propertiesFile.getVirtualFile();
         if (file != null) {
           if (!BndProjectImporter.BND_FILE.equals(file.getName())) {
-            map.put(Constants.BUNDLE_SYMBOLICNAME, FileUtil.getNameWithoutExtension(file.getName()));
+            map.put(Constants.BUNDLE_SYMBOLICNAME, FileUtilRt.getNameWithoutExtension(file.getName()));
           }
           else if (file.getParent() != null) {
             map.put(Constants.BUNDLE_SYMBOLICNAME, file.getParent().getName());

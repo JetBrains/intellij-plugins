@@ -1,8 +1,9 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -60,12 +61,12 @@ public class InfoFromConfigFile {
     if (outputTagValue.isEmpty()) return "unknown";
 
     final VirtualFile file = VfsUtil.findRelativeFile(outputTagValue, baseDir);
-    if (file == null) return FileUtil.getNameWithoutExtension(PathUtil.getFileName(outputTagValue));
+    if (file == null) return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(outputTagValue));
 
     final VirtualFile sourceRoot = ProjectRootManager.getInstance(module.getProject()).getFileIndex().getSourceRootForFile(file);
     if (sourceRoot == null) return file.getNameWithoutExtension();
 
     final String relativePath = VfsUtilCore.getRelativePath(file, sourceRoot, '/');
-    return relativePath == null ? file.getNameWithoutExtension() : FileUtil.getNameWithoutExtension(relativePath).replace("/", ".");
+    return relativePath == null ? file.getNameWithoutExtension() : FileUtilRt.getNameWithoutExtension(relativePath).replace("/", ".");
   }
 }

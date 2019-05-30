@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -11,7 +12,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.navigation.PsiElementNavigationItem;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -128,7 +129,7 @@ public class FlexXmlBackedSymbolContributor implements ChooseByNameContributorEx
     public String getLocationString() {
       PsiFile file = myElement.getContainingFile();
       String packageName = JSResolveUtil.getExpectedPackageNameFromFile(file.getVirtualFile(), myElement.getProject());
-      return StringUtil.getQualifiedName(packageName, FileUtil.getNameWithoutExtension(file.getName())) +
+      return StringUtil.getQualifiedName(packageName, FileUtilRt.getNameWithoutExtension(file.getName())) +
              "(" + file.getName() + ")";
     }
 
