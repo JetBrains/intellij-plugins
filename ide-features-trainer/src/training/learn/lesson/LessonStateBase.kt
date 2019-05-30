@@ -21,9 +21,10 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import training.learn.interfaces.Lesson
 import training.migration.MigrationManager
+import training.util.trainerPluginConfigName
 import java.util.*
 
-@State(name = "LessonStateBase", storages = arrayOf(Storage(value = "ide-features-trainer.xml")))
+@State(name = "LessonStateBase", storages = arrayOf(Storage(value = trainerPluginConfigName)))
 class LessonStateBase : PersistentStateComponent<LessonStateBase> {
 
   override fun getState(): LessonStateBase = this

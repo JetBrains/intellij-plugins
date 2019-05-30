@@ -151,6 +151,7 @@ val featureTrainerMode: TrainingMode
       else -> TrainingMode.NORMAL
     }
 
+const val trainerPluginConfigName : String = "ide-features-trainer.xml"
 
 val featureTrainerVersion: String by lazy {
   val featureTrainerPluginId = PluginManagerCore.getPluginByClassName(CourseManager::class.java.name)
