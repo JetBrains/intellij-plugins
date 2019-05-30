@@ -9,8 +9,9 @@ import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
 import com.intellij.util.xmlb.annotations.Transient
 import training.learn.interfaces.Lesson
+import training.util.trainerPluginConfigName
 
-@State(name = "StatisticBase", storages = arrayOf(Storage(value = "ide-features-trainer.xml")))
+@State(name = "StatisticBase", storages = arrayOf(Storage(value = trainerPluginConfigName)))
 class StatisticBase : PersistentStateComponent<StatisticBase> {
 
   override fun getState(): StatisticBase = this

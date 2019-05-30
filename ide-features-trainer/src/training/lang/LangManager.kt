@@ -8,12 +8,13 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.extensions.ExtensionPointName
 import training.ui.LearnToolWindowFactory
 import training.util.findLanguageByID
+import training.util.trainerPluginConfigName
 
 /**
  * @author Sergey Karashevich
  */
 
-@State(name = "LangManager", storages = [Storage(value = "ide-features-trainer.xml")])
+@State(name = "LangManager", storages = [Storage(value = trainerPluginConfigName)])
 class LangManager : PersistentStateComponent<LangManager.State> {
 
   var supportedLanguagesExtensions: List<LanguageExtensionPoint<LangSupport>> = ExtensionPointName<LanguageExtensionPoint<LangSupport>>(LangSupport.EP_NAME).extensions.toList()
