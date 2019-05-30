@@ -3,6 +3,8 @@ package training.components
 import com.intellij.ide.ui.UISettings
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.notification.Notification
+import com.intellij.notification.NotificationDisplayType
+import com.intellij.notification.NotificationGroup
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -44,11 +46,35 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
     registerLearnToolWindow(myProject)
     UiManager.updateToolWindow(myProject)
 
+    //do not show popups in test mode
+    if (ApplicationManager.getApplication().isUnitTestMode) return
+    if (!CourseManager.instance.showGotMessage) return
+
+
     //show where learn tool window locates only on the first start
     if (!PropertiesComponent.getInstance().isTrueValue(SHOW_TOOLWINDOW_INFO)) {
-      StartupManager.getInstance(myProject).registerPostStartupActivity { pluginFirstStart() }
+      StartupManager.getInstance(myProject).registerPostStartupActivity {
+        showGotMessage(
+            LearnBundle.message("learn.tool.window.quick.access.title"),
+            LearnBundle.message("learn.tool.window.quick.access.message", toolWindowAnchor)) {
+          PropertiesComponent.getInstance().setValue(SHOW_TOOLWINDOW_INFO, true)
+        }
+      }
+      return
     }
 
+    val languageName = LangManager.getInstance().state.languageName  ?: return
+    val oldLessonsMap = LangManager.getInstance().state.languageToLessonsNumberMap
+    val thisLessonsMap = LangManager.getInstance().getLanguageToLessonsNumberMap()
+    val oldNum = oldLessonsMap[languageName] ?: return
+    val thisNum = thisLessonsMap[languageName] ?: return
+    val newNum = thisNum - oldNum
+    if (newNum <= 0) return
+    StartupManager.getInstance(myProject).registerPostStartupActivity {
+      notify(LearnBundle.message("learn.tool.window.updated.title"),
+          LearnBundle.message("learn.tool.window.updated.message", newNum))
+      LangManager.getInstance().state.languageToLessonsNumberMap = thisLessonsMap
+    }
   }
 
   override fun projectClosed() {
@@ -118,27 +144,27 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
     }, 30000)
   }
 
-  private fun pluginFirstStart() {
-
-    //do not show popups in test mode
-    if (ApplicationManager.getApplication().isUnitTestMode) return
+  private fun showGotMessage(tittle: String, message: String, gotMessageClicked: () -> Unit) {
 
     ApplicationManager.getApplication().invokeLater {
-      val learnStripeButton = learnStripeButton
-      if (learnStripeButton != null) {
-
-        PropertiesComponent.getInstance().setValue(SHOW_TOOLWINDOW_INFO, true.toString())
-        val alarm = Alarm()
-        alarm.addRequest({
-          pointToLearnStripeButton(learnStripeButton)
-          Disposer.dispose(alarm)
-        }, 5000)
-      }
+      val alarm = Alarm()
+      alarm.addRequest({
+        pointToLearnStripeButton(tittle, message, gotMessageClicked)
+        Disposer.dispose(alarm)
+      }, 5000)
     }
   }
 
-  private fun pointToLearnStripeButton(learnStripeButton: StripeButton) {
+  private val toolWindowAnchor: ToolWindowAnchor
+    get() = LangManager.getInstance().getLangSupport()?.getToolWindowAnchor() ?: ToolWindowAnchor.LEFT
 
+  private fun pointToLearnStripeButton(title: String, message: String, gotMessageClicked: () -> Unit) {
+    val learnStripeButton = learnStripeButton ?: return
+    if (!learnStripeButton.isVisible) {
+      notify(title, message)
+      gotMessageClicked()
+      return
+    }
     val toolStripesAreHiddenDefault = UISettings.instance.hideToolStripes
 
     fun showToolStripes() {
@@ -153,16 +179,27 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
 
     showToolStripes()
 
-    val toolWindowAnchor = LangManager.getInstance().getLangSupport()?.getToolWindowAnchor() ?: ToolWindowAnchor.LEFT
-
-    if (!CourseManager.instance.showGotMessage) return
-    GotItMessage.createMessage(LearnBundle.message("learn.tool.window.quick.access.title"),
-        LearnBundle.message("learn.tool.window.quick.access.message", toolWindowAnchor))
-        .setCallback { if (toolStripesAreHiddenDefault) hideToolStripes() }
+    GotItMessage.createMessage(title, message)
+        .setCallback { gotMessageClicked(); if (toolStripesAreHiddenDefault) hideToolStripes() }
         .show(RelativePoint(learnStripeButton,
             Point(learnStripeButton.bounds.width, learnStripeButton.bounds.height / 2)),
             getBalloonPosition(toolWindowAnchor))
   }
+
+  private fun notify(title: String, message: String) {
+    val notification = NOTIFICATION_GROUP.createNotification(
+        LearnBundle.message("learn.plugin.name"), title, message, NotificationType.INFORMATION)
+        .setIcon(LearnIcons.chevronToolWindowIcon)
+
+    notification.addAction(object : AnAction(LearnBundle.message("learn.tool.window.open.action.message")) {
+          override fun actionPerformed(e: AnActionEvent) {
+            ToolWindowManager.getInstance(myProject).getToolWindow(LearnToolWindowFactory.LEARN_TOOL_WINDOW)?.show(null)
+            notification.hideBalloon()
+          }
+        })
+    notification.notify(myProject)
+  }
+
   private fun getBalloonPosition(toolWindowAnchor: ToolWindowAnchor): Balloon.Position {
     return when (toolWindowAnchor) {
       ToolWindowAnchor.LEFT -> Balloon.Position.atRight
@@ -185,6 +222,12 @@ class LearnProjectComponent private constructor(private val myProject: Project) 
   companion object {
     private val LOG = Logger.getInstance(LearnProjectComponent::class.java.name)
     private val SHOW_TOOLWINDOW_INFO = "learn.toolwindow.button.info.shown"
+
+    private val NOTIFICATION_GROUP : NotificationGroup by lazy {
+      NotificationGroup(LearnBundle.message("learn.plugin.name"),
+          NotificationDisplayType.STICKY_BALLOON,
+          false)
+    }
   }
 
 }
