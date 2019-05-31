@@ -36,7 +36,8 @@ public class DartDeclarationRangeHandler implements DeclarationRangeHandler<Dart
   /**
    * @return The first line of {@param element}'s {@link TextRange}, or the entire {@link TextRange} if it contains no new lines.
    */
-  private TextRange getFirstLine(PsiElement element) {
+  @NotNull
+  private static TextRange getFirstLine(@NotNull PsiElement element) {
     final int offset = element.getTextOffset();
     final int firstLineLength = element.getText().indexOf('\n');
     if (firstLineLength == -1) {
