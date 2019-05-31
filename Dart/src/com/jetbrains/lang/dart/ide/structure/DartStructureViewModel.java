@@ -64,6 +64,7 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
   @Override
   @Nullable
   public Object getCurrentEditorElement() {
+    // Note: this should return an object of type PsiElement to be compatible with the Context Info (alt+q) action.
     if (getEditor() == null) return null;
 
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getPsiFile().getProject());
@@ -71,9 +72,7 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
     if (outline == null) return null;
 
     final int offset = getEditor().getCaretModel().getOffset();
-    final Outline result = findDeepestOutlineForOffset(offset, outline);
     return getPsiFile().getOriginalElement().findElementAt(offset);
-    //return DartStructureViewElement.getValue(result);
   }
 
   /**

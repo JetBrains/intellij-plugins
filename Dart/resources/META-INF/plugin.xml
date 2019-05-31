@@ -132,7 +132,7 @@
 
     <treeStructureProvider implementation="com.jetbrains.lang.dart.projectView.DartTreeStructureProvider"/>
     <declarationRangeHandler
-        key="com.intellij.psi.PsiElement"
+        key="com.jetbrains.lang.dart.psi.DartPsiCompositeElement"
         implementationClass="com.jetbrains.lang.dart.projectView.DartDeclarationRangeHandler"/>
     <projectViewNestingRulesProvider implementation="com.jetbrains.lang.dart.projectView.DartNestingRulesProvider"/>
     <iconProvider implementation="com.jetbrains.lang.dart.projectView.DartIconProvider" order="first" id="DartIconProvider"/>
