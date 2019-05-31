@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+  // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.completion;
 
 import com.intellij.codeInsight.TailType;
@@ -10,7 +10,7 @@ import com.intellij.codeInsight.lookup.TailTypeDecorator;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
 /**
@@ -92,7 +93,13 @@ public class CucumberCompletionContributor extends CompletionContributor {
           if (coveringElement instanceof PsiFileSystemItem) {
             addFeatureKeywords(result, gherkinKeywordTable);
           } else if (coveringElement instanceof GherkinFeature) {
-            addScenarioKeywords(result, psiFile, position);
+            if (gherkin6Enabled) { 
+              addRuleKeyword(result, gherkinKeywordTable);
+            }
+            addScenarioKeywords(result, psiFile, position, gherkinKeywordTable);
+          }
+          else if (coveringElement instanceof GherkinRule) {
+            addScenarioKeywords(result, psiFile, position, gherkinKeywordTable);
           }
         }
       }

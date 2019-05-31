@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.steps;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -208,5 +209,17 @@ public class CucumberStepsIndex {
 
   public int getExtensionCount() {
     return myExtensionMap.size();
+  }
+  
+  public boolean isGherkin6Supported(@NotNull Module module) {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      return true;
+    }
+    for (CucumberJvmExtensionPoint ep : myExtensionMap.values()) {
+      if (ep.isGherkin6Supported(module)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
