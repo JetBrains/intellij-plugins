@@ -17,6 +17,8 @@ import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This adapter class provides default implementations for the methods described by the
@@ -41,7 +43,8 @@ public class AnalysisServerListenerAdapter implements AnalysisServerListener {
                                  List<IncludedSuggestionSet> includedSuggestionSets,
                                  List<String> includedElementKinds,
                                  List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
-                                 boolean isLast) {
+                                 boolean isLast,
+                                 String libraryFile) {
   }
 
   @Override
@@ -107,5 +110,9 @@ public class AnalysisServerListenerAdapter implements AnalysisServerListener {
 
   @Override
   public void serverStatus(AnalysisStatus analysisStatus, PubStatus pubStatus) {
+  }
+
+  @Override
+  public void computedExistingImports(String file, Map<String, Set<String>> uriToNames) {
   }
 }

@@ -51,9 +51,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
@@ -141,16 +139,29 @@ public class DartServerCompletionContributor extends CompletionContributor {
                  }
 
                  updatedResultSet.addElement(lookupElement);
-               }, (includedSet, includedKinds, includedRelevanceTags) -> {
+               }, (includedSet, includedKinds, includedRelevanceTags, libraryFile) -> {
                  final AvailableSuggestionSet suggestionSet = das.getAvailableSuggestionSet(includedSet.getId());
                  if (suggestionSet == null) {
                    return;
                  }
 
+                 final Map<String, Set<String>> uriToNames = das.getExistingImports(libraryFile);
                  for (AvailableSuggestion suggestion : suggestionSet.getItems()) {
                    final String kind = suggestion.getElement().getKind();
                    if (!includedKinds.contains(kind)) {
                      continue;
+                   }
+
+                   Set<String> declaringLibraries = new HashSet<>();
+                   for (String libraryUri : uriToNames.keySet()) {
+                     if (uriToNames.get(libraryUri).contains(suggestion.getLabel())) {
+                       declaringLibraries.add(libraryUri);
+                     }
+                   }
+
+                   if (!declaringLibraries.isEmpty() && !declaringLibraries.contains(suggestionSet.getUri())) {
+                     // If some library exports this label but the current suggestion set does not, we should filter.
+                     return;
                    }
 
                    CompletionSuggestion completionSuggestion =

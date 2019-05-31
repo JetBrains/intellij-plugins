@@ -204,6 +204,11 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     @Override
+    public void computedExistingImports(@NotNull String file, @NotNull Map<String, Set<String>> uriToNames) {
+      myServerData.computedExistingImports(file, uriToNames);
+    }
+
+    @Override
     public void computedErrors(@NotNull final String filePathSD, @NotNull final List<AnalysisError> errors) {
       final String fileName = PathUtil.getFileName(filePathSD);
 
@@ -296,10 +301,11 @@ public class DartAnalysisServerService implements Disposable {
                                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
                                    @NotNull final List<String> includedElementKinds,
                                    @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
-                                   final boolean isLast) {
+                                   final boolean isLast,
+                                   String libraryFile) {
       synchronized (myCompletionInfos) {
         myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, includedSuggestionSets,
-                                                 includedElementKinds, includedSuggestionRelevanceTags, isLast));
+                                                 includedElementKinds, includedSuggestionRelevanceTags, isLast, libraryFile));
         myCompletionInfos.notifyAll();
       }
     }
@@ -490,7 +496,7 @@ public class DartAnalysisServerService implements Disposable {
             includedRelevanceTags.put(includedRelevanceTag.getTag(), includedRelevanceTag);
           }
           for (final IncludedSuggestionSet includedSet : completionInfo.myIncludedSuggestionSets) {
-            libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds, includedRelevanceTags);
+            libraryRefConsumer.consumeLibraryRef(includedSet, includedKinds, includedRelevanceTags, completionInfo.myLibraryFile);
           }
           return;
         }
@@ -805,6 +811,11 @@ public class DartAnalysisServerService implements Disposable {
   @Nullable
   public AvailableSuggestionSet getAvailableSuggestionSet(int id) {
     return myServerData.getAvailableSuggestionSet(id);
+  }
+
+  @Nullable
+  public Map<String, Set<String>> getExistingImports(String file) {
+    return myServerData.getExistingImports(file);
   }
 
   @NotNull
@@ -2241,7 +2252,8 @@ public class DartAnalysisServerService implements Disposable {
   public interface CompletionLibraryRefConsumer {
     void consumeLibraryRef(@NotNull IncludedSuggestionSet includedSet,
                            @NotNull Set<String> includedKinds,
-                           @NotNull Map<String, IncludedSuggestionRelevanceTag> includedRelevanceTags);
+                           @NotNull Map<String, IncludedSuggestionRelevanceTag> includedRelevanceTags,
+                           String libraryFile);
   }
 
   private static class CompletionInfo {
@@ -2259,6 +2271,7 @@ public class DartAnalysisServerService implements Disposable {
     @NotNull private final List<String> myIncludedElementKinds;
     @NotNull private final List<IncludedSuggestionRelevanceTag> myIncludedSuggestionRelevanceTags;
     private final boolean isLast;
+    private final String myLibraryFile;
 
     CompletionInfo(@NotNull final String completionId,
                    int replacementOffset,
@@ -2267,7 +2280,8 @@ public class DartAnalysisServerService implements Disposable {
                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
                    @NotNull final List<String> includedElementKinds,
                    @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
-                   boolean isLast) {
+                   boolean isLast,
+                   String libraryFile) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
       this.myOriginalReplacementLength = originalReplacementLength;
@@ -2276,6 +2290,7 @@ public class DartAnalysisServerService implements Disposable {
       this.myIncludedElementKinds = includedElementKinds;
       this.myIncludedSuggestionRelevanceTags = includedSuggestionRelevanceTags;
       this.isLast = isLast;
+      this.myLibraryFile = libraryFile;
     }
   }
 

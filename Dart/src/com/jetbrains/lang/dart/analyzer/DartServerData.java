@@ -42,6 +42,7 @@ public class DartServerData {
   private final Map<String, List<DartRegion>> myImplementedMemberData = Collections.synchronizedMap(new THashMap<>());
   private final Map<String, Outline> myOutlineData = Collections.synchronizedMap(new THashMap<>());
   private final Map<Integer, AvailableSuggestionSet> myAvailableSuggestionSetMap = Collections.synchronizedMap(new THashMap<>());
+  private final Map<String, Map<String, Set<String>>> myExistingImports = Collections.synchronizedMap(new THashMap<>());
 
   private final Set<String> myFilePathsWithUnsentChanges = Sets.newConcurrentHashSet();
 
@@ -139,6 +140,15 @@ public class DartServerData {
     for (AvailableSuggestionSet suggestionSet : changed) {
       myAvailableSuggestionSetMap.put(suggestionSet.getId(), suggestionSet);
     }
+  }
+
+  void computedExistingImports(@NotNull String file, @NotNull Map<String, Set<String>> uriToNames) {
+    if (uriToNames.isEmpty()) {
+      myExistingImports.remove(file);
+      return;
+    }
+
+    myExistingImports.put(file, uriToNames);
   }
 
   @NotNull
@@ -280,6 +290,9 @@ public class DartServerData {
   AvailableSuggestionSet getAvailableSuggestionSet(int id) {
     return myAvailableSuggestionSetMap.get(id);
   }
+
+  @Nullable
+  Map<String, Set<String>> getExistingImports(String file) { return myExistingImports.get(file); }
 
   private void forceFileAnnotation(@Nullable final VirtualFile file, final boolean clearCache) {
     if (file != null) {

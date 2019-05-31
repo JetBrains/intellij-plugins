@@ -19,6 +19,8 @@ import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The interface {@code AnalysisServerListener} defines the behavior of objects that listen for
@@ -54,6 +56,7 @@ public interface AnalysisServerListener {
    * @param completions       the completion suggestions being reported
    * @param isLast            {@code true} if this is the last set of results that will be returned for the
    *                          indicated completion
+   * @param libraryFile       The library file that contains the file where completion was requested.
    */
   public void computedCompletion(String completionId,
                                  int replacementOffset,
@@ -62,7 +65,8 @@ public interface AnalysisServerListener {
                                  List<IncludedSuggestionSet> includedSuggestionSets,
                                  List<String> includedElementKinds,
                                  List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
-                                 boolean isLast);
+                                 boolean isLast,
+                                 String libraryFile);
 
   /**
    * Reports the errors associated with a given file.
@@ -209,4 +213,12 @@ public interface AnalysisServerListener {
    *                       status
    */
   public void serverStatus(AnalysisStatus analysisStatus, PubStatus pubStatus);
+
+  /**
+   * Reports existing imports in a library.
+   *
+   * @param file       the absolute, normalized path of the importing file.
+   * @param uriToNames a map from imported library uri onto the names declared by the imported library.
+   */
+  void computedExistingImports(String file, Map<String, Set<String>> uriToNames);
 }

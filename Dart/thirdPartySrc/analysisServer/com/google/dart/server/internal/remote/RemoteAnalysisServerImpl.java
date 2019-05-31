@@ -76,6 +76,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
 
   // Code Completion domain
   private static final String COMPLETION_AVAILABLE_SUGGESTIONS = "completion.availableSuggestions";
+  private static final String COMPLETION_EXISTING_IMPORTS = "completion.existingImports";
   private static final String COMPLETION_NOTIFICATION_RESULTS = "completion.results";
 
   // Search domain
@@ -668,6 +669,10 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     else if (event.equals(COMPLETION_AVAILABLE_SUGGESTIONS)) {
       // completion.results
       new NotificationCompletionAvailableSuggestionsProcessor(listener).process(response);
+    }
+    else if (event.equals(COMPLETION_EXISTING_IMPORTS)) {
+      // completion.existingImports
+      new NotificationCompletionExistingImportsProcessor(listener).process(response);
     }
     else if (event.equals(COMPLETION_NOTIFICATION_RESULTS)) {
       // completion.results

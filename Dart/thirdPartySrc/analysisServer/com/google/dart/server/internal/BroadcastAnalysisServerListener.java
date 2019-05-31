@@ -20,6 +20,8 @@ import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The class {@code BroadcastAnalysisServerListener} implements {@link AnalysisServerListener} that
@@ -68,7 +70,8 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
                                  List<IncludedSuggestionSet> includedSuggestionSets,
                                  List<String> includedElementKinds,
                                  List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
-                                 boolean isLast) {
+                                 boolean isLast,
+                                 String libraryFile) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.computedCompletion(
         completionId,
@@ -78,7 +81,8 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
         includedSuggestionSets,
         includedElementKinds,
         includedSuggestionRelevanceTags,
-        isLast);
+        isLast,
+        libraryFile);
     }
   }
 
@@ -204,6 +208,13 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
   public void serverStatus(AnalysisStatus analysisStatus, PubStatus pubStatus) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.serverStatus(analysisStatus, pubStatus);
+    }
+  }
+
+  @Override
+  public void computedExistingImports(String file, Map<String, Set<String>> uriToNames) {
+    for (AnalysisServerListener listener : getListeners()) {
+      listener.computedExistingImports(file, uriToNames);
     }
   }
 
