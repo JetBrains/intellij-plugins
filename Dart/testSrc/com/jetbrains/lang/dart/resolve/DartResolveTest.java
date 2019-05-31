@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -8,7 +8,6 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartStartupActivity;
@@ -99,39 +98,6 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
                            inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inTest, inExample},
                          new VirtualFile[]{inContent, inProject2Web, inProject3Web/*, inExcluded,*/},
                          false);
-
-      doTestUseScope(new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2},
-                     new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inContent, inProject2Web, inProject2Lib, inProject3Web,
-                       inProject3Lib, inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inTest, inExample},
-                     VirtualFile.EMPTY_ARRAY) /*inExcluded*/;
-      doTestUseScope(new VirtualFile[]{inContent},
-                     new VirtualFile[]{inContent},
-                     new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Web, inProject2Lib, inProject3Web,
-                       inProject3Lib, inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inTest, inExample});
-      doTestUseScope(new VirtualFile[]{/*inPackages,*/ inLib},
-                     new VirtualFile[]{inContent, inProject1Root, inLib, /*inPackages,*/ inWeb, inWebSub, inTest, inExample},
-                     new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject2Web, inProject2Lib, inProject3Web,
-                       inProject3Lib});
-      doTestUseScope(new VirtualFile[]{inProject1Root, inWeb, inWebSub, inTest, inExample},
-                     new VirtualFile[]{inContent, inProject1Root, inLib, inWeb, inWebSub, inTest, inExample},
-                     new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, /*inPackages,*/ inProject2Web, inProject2Lib, inProject3Web,
-                       inProject3Lib});
-      doTestUseScope(new VirtualFile[]{inProject2Lib},
-                     new VirtualFile[]{inContent, /*inPackages,*/ inProject1Root, inLib, inWeb, inWebSub, inTest, inExample, inProject2Web,
-                       inProject2Lib},
-                     new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, inProject3Web, inProject3Lib});
-      doTestUseScope(new VirtualFile[]{inProject2Web},
-                     new VirtualFile[]{inProject2Web, inProject2Lib, inContent},
-                     new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, /*inPackages,*/ inProject1Root, inLib, inWeb, inWebSub,
-                       inTest, inExample, inProject3Web, inProject3Lib});
-      doTestUseScope(new VirtualFile[]{inProject3Lib},
-                     new VirtualFile[]{inContent, /*inPackages,*/ inProject1Root, inLib, inWeb, inWebSub, inTest, inExample, inProject2Web,
-                       inProject2Lib, inProject3Web, inProject3Lib},
-                     new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2});
-      doTestUseScope(new VirtualFile[]{inProject3Web},
-                     new VirtualFile[]{inContent, inProject3Web, inProject3Lib},
-                     new VirtualFile[]{inSdk1, inSdk2, inIdeLib1, inIdeLib2, /*inPackages,*/ inProject1Root, inLib, inWeb, inWebSub, inTest,
-                       inExample, inProject2Web, inProject2Lib});
     }
     finally {
       DartTestUtils.resetModuleRoots(getModule());
@@ -163,7 +129,7 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
     final GlobalSearchScope scope = DartResolveScopeProvider.getDartScope(getProject(), contextFile, strictScope);
 
     if (scope == null) {
-      assertTrue("Null scope not expected for " + contextFile.getPath(), expectedInScope == null);
+      assertNull("Null scope not expected for " + contextFile.getPath(), expectedInScope);
       return;
     }
 
@@ -178,25 +144,6 @@ public class DartResolveTest extends DartCodeInsightFixtureTestCase {
 
     for (VirtualFile file : expectedOutsideScope) {
       assertFalse("Expected to be out of scope: " + file.getPath(), scope.contains(file));
-    }
-  }
-
-  private void doTestUseScope(final VirtualFile[] contextFiles,
-                              final VirtualFile[] expectedInScope,
-                              final VirtualFile[] expectedOutsideScope) {
-    for (VirtualFile file : contextFiles) {
-      final PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(file);
-      assertNotNull(psiFile);
-
-      final GlobalSearchScope scope = (GlobalSearchScope)psiFile.getUseScope();
-
-      for (VirtualFile file1 : expectedInScope) {
-        assertTrue("Expected to be in scope: " + file1.getPath(), scope.contains(file1));
-      }
-
-      for (VirtualFile file1 : expectedOutsideScope) {
-        assertFalse("Expected to be out of scope: " + file1.getPath(), scope.contains(file1));
-      }
     }
   }
 
