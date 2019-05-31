@@ -70,8 +70,10 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
     final Outline outline = service.getOutline(getPsiFile().getVirtualFile());
     if (outline == null) return null;
 
-    final Outline result = findDeepestOutlineForOffset(getEditor().getCaretModel().getOffset(), outline);
-    return DartStructureViewElement.getValue(result);
+    final int offset = getEditor().getCaretModel().getOffset();
+    final Outline result = findDeepestOutlineForOffset(offset, outline);
+    return getPsiFile().getOriginalElement().findElementAt(offset);
+    //return DartStructureViewElement.getValue(result);
   }
 
   /**
