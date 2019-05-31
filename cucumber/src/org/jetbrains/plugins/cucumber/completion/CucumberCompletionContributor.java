@@ -23,6 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
@@ -77,13 +78,19 @@ public class CucumberCompletionContributor extends CompletionContributor {
                                     @NotNull CompletionResultSet result) {
         final PsiFile psiFile = parameters.getOriginalFile();
         if (psiFile instanceof GherkinFile) {
+          Module module = findModuleForPsiElement(psiFile);
+          boolean gherkin6Enabled = module != null && CucumberStepsIndex.getInstance(psiFile.getProject()).isGherkin6Supported(module);
+          GherkinKeywordProvider keywordProvider = JsonGherkinKeywordProvider.getKeywordProvider(gherkin6Enabled);
+          final String language = GherkinUtil.getFeatureLanguage((GherkinFile)psiFile);
+          GherkinKeywordTable gherkinKeywordTable = keywordProvider.getKeywordsTable(language);
+
           final PsiElement position = parameters.getPosition();
 
           // if element isn't under feature declaration - suggest feature in autocompletion
           // but don't suggest scenario keywords inside steps
           final PsiElement coveringElement = PsiTreeUtil.getParentOfType(position, GherkinStep.class, GherkinFeature.class, PsiFileSystemItem.class);
           if (coveringElement instanceof PsiFileSystemItem) {
-            addFeatureKeywords(result, psiFile);
+            addFeatureKeywords(result, gherkinKeywordTable);
           } else if (coveringElement instanceof GherkinFeature) {
             addScenarioKeywords(result, psiFile, position);
           }
@@ -110,9 +117,13 @@ public class CucumberCompletionContributor extends CompletionContributor {
     });
   }
 
-  private static void addScenarioKeywords(CompletionResultSet result, PsiFile originalFile, PsiElement originalPosition) {
-    final Project project = originalFile.getProject();
-    final GherkinKeywordTable table = GherkinKeywordTable.getKeywordsTable(originalFile, project);
+  private static void addRuleKeyword(@NotNull CompletionResultSet result,
+                                     @NotNull GherkinKeywordTable gherkinKeywordTable) {
+    addKeywordsToResult(gherkinKeywordTable.getRuleKeywords(), result, true);
+  }
+  
+  private static void addScenarioKeywords(@NotNull CompletionResultSet result, @NotNull PsiFile originalFile, 
+                                          @NotNull PsiElement originalPosition, @NotNull GherkinKeywordTable table) {
     final List<String> keywords = new ArrayList<>();
 
     if (!haveBackground(originalFile)) {
@@ -157,11 +168,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
     return prevElement;
   }
 
-  private static void addFeatureKeywords(CompletionResultSet result, PsiFile originalFile) {
-    final Project project = originalFile.getProject();
-    final GherkinKeywordTable table = GherkinKeywordTable.getKeywordsTable(originalFile, project);
-
-    final Collection<String> keywords = table.getFeaturesSectionKeywords();
+  private static void addFeatureKeywords(@NotNull CompletionResultSet result, @NotNull GherkinKeywordTable gherkinKeywordTable) {
+    final Collection<String> keywords = gherkinKeywordTable.getFeaturesSectionKeywords();
     // add to result
     addKeywordsToResult(keywords, result, true);
   }

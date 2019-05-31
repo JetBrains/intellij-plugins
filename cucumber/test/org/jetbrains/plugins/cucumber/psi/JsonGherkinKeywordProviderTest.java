@@ -10,7 +10,7 @@ import java.io.InputStream;
 
 public class JsonGherkinKeywordProviderTest extends AbstractGherkinKeywordProviderTest {
   @Override
-  protected GherkinKeywordProvider buildKeywordProvider() throws IOException {
+  protected GherkinKeywordProvider buildKeywordProvider() {
     ClassLoader classLoader = JsonGherkinKeywordProvider.class.getClassLoader();
     InputStream inputStream = classLoader.getResourceAsStream("i18n.json");
     return new JsonGherkinKeywordProvider(inputStream);

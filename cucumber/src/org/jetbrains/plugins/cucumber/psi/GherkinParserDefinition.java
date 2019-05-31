@@ -27,7 +27,7 @@ public class GherkinParserDefinition implements ParserDefinition {
   @Override
   @NotNull
   public Lexer createLexer(Project project) {
-    return new GherkinLexer(JsonGherkinKeywordProvider.getKeywordProvider());
+    return new GherkinLexer(JsonGherkinKeywordProvider.getKeywordProvider(true));
   }
 
   @Override
