@@ -55,6 +55,9 @@ public class OsmorcModuleExtensionProperties {
   @Attribute("extractMetaInfOsgiInfToTargetClasses")
   public boolean myExtractMetaInfOsgIInfToTargetClasses = true;
 
+  @Attribute("extractMetaInfOsgiInfToTargetClasses")
+  public boolean myExtractMetaInfOsgIInfToTargetClasses = true;
+
   @Attribute("ignoreFilePattern")
   public String myIgnoreFilePattern;
 
