@@ -1,0 +1,80 @@
+=======================================================
+ Quick Instructions for new developers of Osmorc
+=======================================================
+
+1. Get the latest IDEA EAP
+   - Download it from the EAP page https://www.jetbrains.com/idea/nextversion/ and install <idea-eap-folder>
+   - remove osmorc.jar and osmorc-jps-plugin.jar from the <idea-epa-folder>/Contents/plugins/osmorc
+
+2. Launch IDEA EAP 
+   - Create New Project -> IntelliJ Platform Plugin
+   	- delete folder META-INF and src in the generated project
+   - Project SDK -> New IntellIj Platform SDK
+	   - Select <idea-eap-folder> and Finish
+   - Projectstructure -> Project Settings
+	   - Libraries: add Java libs
+		 + bndlib -> <idea-eap-folder>/Contents/plugins/osmorc/lib/biz*.jar
+		 + bundelor-all -> <idea-eap-folder>/Contents/plugins/osmorc/lib/bundlor-all.jar
+		 + osgi -> <idea-eap-folder>/Contents/plugins/osmorc/lib/org.osgi*.jar
+		 + maven -> <idea-eap-folder>/Contents/plugins/maven/lib/maven-jps-plugin.jar, maven-server-api.jar, 	maven.jar
+		 to compile the tests you need:
+		  checkout IntelliJ IDEA Community Edition
+		    - git clone --depth 1 https://github.com/JetBrains/intellij-community.git idea-community
+		    - Build IntelliJ IDEA Community Edition described in https://github.com/JetBrains/intellij-community
+		  + test-jps -> <idea-community>/out/test/intellij.platform.jps.build
+		  + assertj -> .m2/repository/org/assertj/assertj-core/3.*/assertj-core-3.*.jar
+		  + hamcrest -> .m2/repository/org/hamcrest/hamcrest-all/1.*/hamcrest-all-1.*.jar
+   - Modules:
+   + Import Module -> osmorc, in import dialog deselect osmorc-jps-plugin/src
+      Mark as:
+   		Sources -> src
+		Resources -> resources
+		Tests -> src_test
+	  Dependencies:
+	  	osmorc-jps-plugin Compile, add this as module dependency
+		bndlib Compile
+		maven Compile
+		osgi Compile
+		test-jps Test
+
+     + Import Module -> osmorc/osmorc-jps-plugin
+      Mark as: 
+   		Sources -> src 
+		Tests -> test
+	  Dependencies:
+	 	bndlib Compile
+		bundelor-all Compile
+		maven Compile
+		osgi Compile
+		assertj Test
+		hamcrest Test
+	+ configure Osmorc Plugin Module
+		- goto modul settings -> Plugin Deployment
+		- enter the path of <project_folder>/osmorc/resources
+		- add Dependencies
+			- Modul dependency to osmorc and osmorc-jps-plugin
+
+
+3. Ready to run.
+   - make sure Osmorc Plugin Project has module dependencies to osmorc and osmorc-jps-plugin
+   - Try building
+   - Add a new run configuration of type "plugin"
+   - add VM options: -Xmx512m -XX:MaxPermSize=256m so you can test bigger projects
+   - Start that configuration (might take some time to fire up)
+
+4. Build Plugin
+	Project Settings/Artifact
+	+ osmorc-jps-plugin
+	 Name: osmorc-jps-plugin
+		Available Elements
+			'osmorc-jps-plugin' compile output
+	+ osmorc
+	 Name: osmorc
+	 	Available Elements
+			'osmorc' compile output
+
+5. Before committing
+   - Run the unit tests using the "All in Osmorc" run configuration.
+
+
+   

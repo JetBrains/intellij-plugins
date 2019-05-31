@@ -91,6 +91,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   private JRadioButton myPlaceInThisPathRadioButton;
   private TextFieldWithBrowseButton myJarOutputPathChooser;
   private JPanel myAdditionalJarContentsPanel;
+  private JCheckBox myExtractMetaInfOSGIInfoToTargetClassesCheckBox;
 
   private final FacetEditorContext myEditorContext;
   private final FacetValidatorsManager myValidatorsManager;
@@ -337,6 +338,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     }
     configuration.setIgnoreFilePattern(myIgnoreFilePatternTextField.getText());
     configuration.setAlwaysRebuildBundleJAR(myAlwaysRebuildBundleJARCheckBox.isSelected());
+    configuration.setExtractMetaInfOsgIInfToTargetClasses(myExtractMetaInfOSGIInfoToTargetClassesCheckBox.isSelected());
     configuration.setAdditionalJARContents(myAdditionalJARContentsTableModel.getAdditionalContents());
     myModified = false;
   }
@@ -361,6 +363,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     myAdditionalJARContentsTableModel.replaceContent(configuration.getAdditionalJARContents());
     myIgnoreFilePatternTextField.setText(configuration.getIgnoreFilePattern());
     myAlwaysRebuildBundleJARCheckBox.setSelected(configuration.isAlwaysRebuildBundleJAR());
+    myExtractMetaInfOSGIInfoToTargetClassesCheckBox.setSelected(configuration.isExtractMetaInfOsgIInfToTargetClasses());
 
     updateGui();
     myModified = false;
