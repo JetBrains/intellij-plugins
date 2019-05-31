@@ -72,9 +72,9 @@ public class DartDocUtil {
                                    @Nullable final String containingClassDescription,
                                    @Nullable final String staticType,
                                    final boolean compactPresentation) {
-    final boolean hasContainingLibraryName = !StringUtil.isEmpty(containingLibraryName);
-    final boolean hasContainingClassDescription = !StringUtil.isEmpty(containingClassDescription);
-    final boolean hasStaticType = !StringUtil.isEmpty(staticType);
+    final boolean hasContainingLibraryName = StringUtil.isNotEmpty(containingLibraryName);
+    final boolean hasContainingClassDescription = StringUtil.isNotEmpty(containingClassDescription);
+    final boolean hasStaticType = StringUtil.isNotEmpty(staticType);
     // generate
     final StringBuilder builder = new StringBuilder();
     builder.append("<code>");

@@ -93,13 +93,13 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   public static String getPresentableText(@NotNull final Outline outline) {
     final Element element = outline.getElement();
     final StringBuilder b = new StringBuilder(element.getName());
-    if (!StringUtil.isEmpty(element.getTypeParameters())) {
+    if (StringUtil.isNotEmpty(element.getTypeParameters())) {
       b.append(element.getTypeParameters());
     }
-    if (!StringUtil.isEmpty(element.getParameters())) {
+    if (StringUtil.isNotEmpty(element.getParameters())) {
       b.append(element.getParameters());
     }
-    if (!StringUtil.isEmpty(element.getReturnType())) {
+    if (StringUtil.isNotEmpty(element.getReturnType())) {
       b.append(" ").append(DartPresentableUtil.RIGHT_ARROW).append(" ").append(element.getReturnType());
     }
     return b.toString();
