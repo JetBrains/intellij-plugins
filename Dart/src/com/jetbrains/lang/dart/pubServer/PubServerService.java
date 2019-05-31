@@ -232,7 +232,7 @@ final class PubServerService extends NetService {
         try {
           // wait for the Webdev server to start before redirecting, so that Chrome doesn't show error.
           //noinspection WaitNotInLoop
-          myServerReadyLock.wait(20000);
+          myServerReadyLock.wait(10000);
         }
         catch (InterruptedException e) {/**/}
       }
@@ -380,7 +380,8 @@ final class PubServerService extends NetService {
       final String text = event.getText().toLowerCase(Locale.US);
 
       // Serving `web` on http://localhost:53322
-      if (text.startsWith("serving ")) {
+      // or [INFO] Serving `web` on http://localhost:53322
+      if (text.contains("serving ")) {
         synchronized (myServerReadyLock) {
           myServerReadyLock.notifyAll();
         }
