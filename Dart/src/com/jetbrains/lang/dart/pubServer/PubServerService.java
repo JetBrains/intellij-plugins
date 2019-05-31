@@ -236,7 +236,7 @@ final class PubServerService extends NetService {
         try {
           // wait for the Webdev server to start before redirecting, so that Chrome doesn't show error.
           //noinspection WaitNotInLoop
-          myServerReadyLock.wait(10000);
+          myServerReadyLock.wait(15000);
         }
         catch (InterruptedException e) {/**/}
       }
