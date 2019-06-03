@@ -188,4 +188,8 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   public void testNotYetImportedClass() {
     doTest("Process");
   }
+
+  public void testExistingImports() {
+    doTest("Process");
+  }
 }
