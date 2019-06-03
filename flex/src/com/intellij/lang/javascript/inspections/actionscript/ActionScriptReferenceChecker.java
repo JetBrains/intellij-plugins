@@ -185,7 +185,7 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
     }
     if (!(isNewExpression)) {
       //foo() -> AS methods are callable without this -> method
-      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(methodExpression.getReferenceName(), true, false));
+      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(methodExpression.getReferenceName(), true, false, false));
     }
 
     super.addCreateFromUsageFixesForCall(methodExpression, isNewExpression, resolveResults, quickFixes);
