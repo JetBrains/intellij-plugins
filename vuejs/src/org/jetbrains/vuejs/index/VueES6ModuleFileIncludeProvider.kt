@@ -10,9 +10,8 @@ import com.intellij.psi.impl.include.FileIncludeInfo
 import com.intellij.psi.impl.include.FileIncludeProvider
 import com.intellij.util.Consumer
 import com.intellij.util.indexing.FileContent
-import org.jetbrains.vuejs.VueFileType
-import org.jetbrains.vuejs.VueLanguage
-import org.jetbrains.vuejs.codeInsight.findModule
+import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.lang.html.VueLanguage
 
 /**
  * ES6FileIncludeProvider doesn't work for vue files but we need these files in index for building ts imports graph

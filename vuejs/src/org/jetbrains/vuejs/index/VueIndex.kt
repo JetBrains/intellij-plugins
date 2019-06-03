@@ -23,9 +23,9 @@ import com.intellij.psi.stubs.StubIndexKey
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.Processor
-import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.VueIndexBase.Companion.createJSKey
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 const val VUE: String = "vue"
 const val VUETIFY: String = "vuetify"

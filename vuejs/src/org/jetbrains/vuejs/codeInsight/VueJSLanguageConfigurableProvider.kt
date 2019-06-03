@@ -12,8 +12,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.SyntaxTraverser
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
-import org.jetbrains.vuejs.VueFileType
-import org.jetbrains.vuejs.language.VueJSLanguage
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueJSLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvider() {
   override fun isNeedToBeTerminated(element: PsiElement): Boolean = false

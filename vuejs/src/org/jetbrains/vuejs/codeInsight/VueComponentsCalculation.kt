@@ -7,11 +7,11 @@ import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.putValue
-import org.jetbrains.vuejs.VueFileType
 import org.jetbrains.vuejs.index.GLOBAL_BINDING_MARK
 import org.jetbrains.vuejs.index.VueComponentsIndex
 import org.jetbrains.vuejs.index.getForAllKeys
 import org.jetbrains.vuejs.index.getVueIndexData
+import org.jetbrains.vuejs.lang.html.VueFileType
 import java.util.*
 
 class VueComponentsCalculation {
