@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.codeInsight.template.Expression;
@@ -31,7 +32,7 @@ import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
@@ -284,7 +285,7 @@ public class ActionScriptGenerateEventHandler extends BaseJSGenerateHandler {
       }
 
       // no suitable context -> ask for event class and create handler without usage
-      final Module module = ModuleUtil.findModuleForPsiElement(psiFile);
+      final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
       if (module != null && !ApplicationManager.getApplication().isUnitTestMode()) {
         final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
         final JSClassChooserDialog dialog =

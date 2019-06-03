@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.daemon.IdeValidationHost;
@@ -36,7 +37,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -919,10 +920,10 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       final VirtualFile file = containingFile.getVirtualFile();
 
       if (file != null) {
-        final VirtualFile relativeFile = VfsUtil.findRelativeFile(iconPath, file.getParent());
+        final VirtualFile relativeFile = VfsUtilCore.findRelativeFile(iconPath, file.getParent());
         if (relativeFile != null) {
           try {
-            return new ImageIcon(new URL(VfsUtil.fixIDEAUrl(relativeFile.getUrl())));
+            return new ImageIcon(new URL(VfsUtilCore.fixIDEAUrl(relativeFile.getUrl())));
           }
           catch (MalformedURLException ignored) {}
         }

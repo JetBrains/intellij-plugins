@@ -12,7 +12,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.ModuleListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
@@ -31,6 +31,7 @@ import com.intellij.ui.HintHint;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -115,7 +116,7 @@ public class ActiveBuildConfigurationWidget {
         }
       });
 
-      myEnabledLabel.setFont(SystemInfoRt.isMac ? UIUtil.getLabelFont().deriveFont(11.0f) : UIUtil.getLabelFont());
+      myEnabledLabel.setFont(SystemInfoRt.isMac ? StartupUiUtil.getLabelFont().deriveFont(11.0f) : StartupUiUtil.getLabelFont());
       myEnabledLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
       myDisabledLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -234,7 +235,7 @@ public class ActiveBuildConfigurationWidget {
         return null;
       }
 
-      final Module module = ModuleUtil.findModuleForFile(selectedFile, getProject());
+      final Module module = ModuleUtilCore.findModuleForFile(selectedFile, getProject());
       if (module == null || FlexModuleType.getInstance() != ModuleType.get(module)) {
         return null;
       }

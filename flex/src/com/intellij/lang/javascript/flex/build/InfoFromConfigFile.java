@@ -4,7 +4,6 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtilRt;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
@@ -60,7 +59,7 @@ public class InfoFromConfigFile {
   private static String getClassForOutputTagValue(final Module module, final String outputTagValue, final VirtualFile baseDir) {
     if (outputTagValue.isEmpty()) return "unknown";
 
-    final VirtualFile file = VfsUtil.findRelativeFile(outputTagValue, baseDir);
+    final VirtualFile file = VfsUtilCore.findRelativeFile(outputTagValue, baseDir);
     if (file == null) return FileUtilRt.getNameWithoutExtension(PathUtil.getFileName(outputTagValue));
 
     final VirtualFile sourceRoot = ProjectRootManager.getInstance(module.getProject()).getFileIndex().getSourceRootForFile(file);

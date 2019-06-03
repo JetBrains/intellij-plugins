@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi.stubs;
 
 import com.intellij.coldFusion.model.psi.CfmlComponent;
@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
 import com.intellij.psi.stubs.StubIndexKey;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.indexing.FileBasedIndex;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -131,7 +131,7 @@ public abstract class CfmlIndex implements Disposable {
   }
 
   public static void rebuildFileIndex(PsiElement element, StubIndexKey k) {
-    VirtualFile faultyContainer = PsiUtilBase.getVirtualFile(element);
+    VirtualFile faultyContainer = PsiUtilCore.getVirtualFile(element);
     LOG.warn("Wrong element " + element.getText() + " from " + faultyContainer + " in index: " + k);
     if (faultyContainer != null && faultyContainer.isValid()) {
       FileBasedIndex.getInstance().requestReindex(faultyContainer);

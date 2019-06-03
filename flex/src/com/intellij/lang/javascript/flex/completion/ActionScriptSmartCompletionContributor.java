@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.completion;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -37,7 +38,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -235,7 +236,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
     JSClass clazzToProcess = null;
 
     if (qualifier != null) {
-      qualifier = PsiUtilBase.getOriginalElement(qualifier, qualifier.getClass());
+      qualifier = PsiUtilCore.getOriginalElement(qualifier, qualifier.getClass());
       clazzToProcess = qualifier != null ? ActionScriptResolveUtil.findClassOfQualifier(qualifier, qualifier.getContainingFile()) : null;
     }
 
