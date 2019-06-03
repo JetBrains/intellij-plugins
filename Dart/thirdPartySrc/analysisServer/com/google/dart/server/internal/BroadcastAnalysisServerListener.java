@@ -212,9 +212,9 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
   }
 
   @Override
-  public void computedExistingImports(String file, Map<String, Set<String>> uriToNames) {
+  public void computedExistingImports(String file, Map<String, Map<String, Set<String>>> existingImports) {
     for (AnalysisServerListener listener : getListeners()) {
-      listener.computedExistingImports(file, uriToNames);
+      listener.computedExistingImports(file, existingImports);
     }
   }
 

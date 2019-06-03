@@ -19,34 +19,41 @@ public class NotificationCompletionExistingImportsProcessor extends Notification
   public void process(JsonObject response) throws Exception {
     JsonObject paramsObject = response.get("params").getAsJsonObject();
     String file = paramsObject.get("file").getAsString();
-    JsonObject existingImports = paramsObject.get("imports").getAsJsonObject();  // ExistingImports
-    Map<String, Set<String>> uriToNames = buildUriNamesMap(existingImports);
-    getListener().computedExistingImports(file, uriToNames);
+    Map<String, Map<String, Set<String>>> existingImports = buildUriNamesMap(paramsObject.get("imports").getAsJsonObject());
+    getListener().computedExistingImports(file, existingImports);
   }
 
-  private Map<String, Set<String>> buildUriNamesMap(JsonObject existingImports) {
+  private Map<String, Map<String, Set<String>>> buildUriNamesMap(JsonObject existingImports) {
     JsonObject elements = existingImports.get("elements").getAsJsonObject();  // ImportedElementSet
     List<String> strings = new ArrayList<>();
     elements.getAsJsonArray("strings").forEach(item -> strings.add(item.getAsString()));
-    List<Integer> uris = new ArrayList<>();
-    elements.getAsJsonArray("uris").forEach(item -> uris.add(item.getAsInt()));
-    List<Integer> names = new ArrayList<>();
-    elements.getAsJsonArray("names").forEach(item -> names.add(item.getAsInt()));
-    Map<String, Set<String>> uriToNames = new HashMap<>();
+    List<String> uris = new ArrayList<>();
+    elements.getAsJsonArray("uris").forEach(item -> uris.add(strings.get(item.getAsInt())));
+    List<String> names = new ArrayList<>();
+    elements.getAsJsonArray("names").forEach(item -> names.add(strings.get(item.getAsInt())));
+    // Loop through all of the import statements, building a map from imported library
+    // onto a map from libraries exported from it onto declared names.
+    Map<String, Map<String, Set<String>>> result = new HashMap<>();
     existingImports.get("imports").getAsJsonArray().forEach(item -> {
       JsonObject existingImport = item.getAsJsonObject();  // ExistingImport
+      String importedLibraryUri = uris.get(existingImport.get("uri").getAsInt());
+      Map<String, Set<String>> importedLibrary = new HashMap<>();
+      result.put(importedLibraryUri, importedLibrary);
+      // These "elements" are exports from the imported library.
       existingImport.get("elements").getAsJsonArray().forEach(element -> {
         int index = element.getAsInt();
-        String uri = strings.get(uris.get(index));
-        if (!uriToNames.containsKey(uri)) {
-          uriToNames.put(uri, new HashSet<>());
+        String declaredLibraryUri = uris.get(index);
+        String declaredName = names.get(index);
+        Set<String> declaredNames = importedLibrary.get(declaredLibraryUri);
+        if (declaredNames == null) {
+          declaredNames = new HashSet<>();
+          importedLibrary.put(declaredLibraryUri, declaredNames);
         }
 
-        String name = strings.get(names.get(index));
-        uriToNames.get(uri).add(name);
+        declaredNames.add(declaredName);
       });
     });
 
-    return uriToNames;
+    return result;
   }
 }

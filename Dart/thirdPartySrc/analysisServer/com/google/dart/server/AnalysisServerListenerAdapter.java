@@ -113,6 +113,6 @@ public class AnalysisServerListenerAdapter implements AnalysisServerListener {
   }
 
   @Override
-  public void computedExistingImports(String file, Map<String, Set<String>> uriToNames) {
+  public void computedExistingImports(String file, Map<String, Map<String, Set<String>>> existingImports) {
   }
 }

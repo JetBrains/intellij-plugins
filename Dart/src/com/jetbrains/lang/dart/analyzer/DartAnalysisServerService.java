@@ -204,8 +204,8 @@ public class DartAnalysisServerService implements Disposable {
     }
 
     @Override
-    public void computedExistingImports(@NotNull String file, @NotNull Map<String, Set<String>> uriToNames) {
-      myServerData.computedExistingImports(file, uriToNames);
+    public void computedExistingImports(@NotNull String file, @NotNull Map<String, Map<String, Set<String>>> existingImports) {
+      myServerData.computedExistingImports(file, existingImports);
     }
 
     @Override
@@ -814,7 +814,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   @Nullable
-  public Map<String, Set<String>> getExistingImports(String file) {
+  public Map<String, Map<String, Set<String>>> getExistingImports(String file) {
     return myServerData.getExistingImports(file);
   }
 

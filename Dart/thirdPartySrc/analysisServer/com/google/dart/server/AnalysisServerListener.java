@@ -216,9 +216,7 @@ public interface AnalysisServerListener {
 
   /**
    * Reports existing imports in a library.
-   *
-   * @param file       the absolute, normalized path of the importing file.
-   * @param uriToNames a map from imported library uri onto the names declared by the imported library.
-   */
-  void computedExistingImports(String file, Map<String, Set<String>> uriToNames);
+   *  @param file       the absolute, normalized path of the importing file.
+   * @param existingImports a map from imported library uri onto the names declared by the imported library.*/
+  void computedExistingImports(String file, Map<String, Map<String, Set<String>>> existingImports);
 }

@@ -145,21 +145,25 @@ public class DartServerCompletionContributor extends CompletionContributor {
                    return;
                  }
 
-                 final Map<String, Set<String>> uriToNames = das.getExistingImports(libraryFile);
+                 final Map<String, Map<String, Set<String>>> existingImports = das.getExistingImports(libraryFile);
                  for (AvailableSuggestion suggestion : suggestionSet.getItems()) {
                    final String kind = suggestion.getElement().getKind();
                    if (!includedKinds.contains(kind)) {
                      continue;
                    }
 
-                   Set<String> declaringLibraries = new HashSet<>();
-                   for (String libraryUri : uriToNames.keySet()) {
-                     if (uriToNames.get(libraryUri).contains(suggestion.getLabel())) {
-                       declaringLibraries.add(libraryUri);
+                   Set<String> importedLibraries = new HashSet<>();
+                   for (Map.Entry<String, Map<String, Set<String>>> entry : existingImports.entrySet()) {
+                     String importedLibraryUri = entry.getKey();
+                     Map<String, Set<String>> importedLibrary = entry.getValue();
+                     // Checks whether any of the libraries exported by this import declares the same name as this suggestion.
+                     if (importedLibrary.entrySet().stream().anyMatch(
+                         importEntry -> doesImportSuggestion(importEntry, suggestionSet.getUri(), suggestion.getLabel()))) {
+                       importedLibraries.add(importedLibraryUri);
                      }
                    }
 
-                   if (!declaringLibraries.isEmpty() && !declaringLibraries.contains(suggestionSet.getUri())) {
+                   if (!importedLibraries.isEmpty() && !importedLibraries.contains(suggestionSet.getUri())) {
                      // If some library exports this label but the current suggestion set does not, we should filter.
                      return;
                    }
@@ -175,6 +179,11 @@ public class DartServerCompletionContributor extends CompletionContributor {
                });
              }
            });
+  }
+
+  // Checks whether the uri and name of a completion suggestion match those of an existing import.
+  private boolean doesImportSuggestion(Map.Entry<String, Set<String>> importedElements, String uri, String label) {
+    return importedElements.getKey().equals(uri) && importedElements.getValue().contains(label);
   }
 
   private static boolean isRightAfterBadIdentifier(@NotNull CharSequence text, int offset) {
