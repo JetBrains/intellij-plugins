@@ -1,0 +1,30 @@
+@mixin evo-modal-header {
+    margin-bottom: 40px;
+    color: #333F48;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 38px;
+}
+
+@mixin evo-modal-semi-header {
+    margin-bottom: 20px;
+    color: #212121;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 32px;
+}
+
+@mixin evo-modal-text {
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 26px;
+}
+
+@mixin evo-modal-icon {
+    margin-bottom: 40px;
+    color: #546E7A;
+
+    &:before {
+        font-size: 64px;
+    }
+}

@@ -41,6 +41,6 @@ public class MetadataJsonStubBuilder implements BinaryFileStubBuilder {
 
   @Override
   public int getStubVersion() {
-    return 19;
+    return 20;
   }
 }

@@ -248,7 +248,7 @@ MetadataFile:ng-zorro-antd.metadata.json
     ɵcb <metadata directive>: selector=[nz-menu-item]; inputs=[nzDisabled, nzSelected]; outputs=[]; inOuts=[]('')
     ɵcc <metadata component>: selector=[nz-submenu]; ngContentSelectors=[[title]]; inputs=[nzDisabled, nzOpen]; outputs=[nzOpenChange]; inOuts=[<nzOpen,nzOpenChange>]('')
     ɵcd <metadata component>: selector=nz-dropdown; ngContentSelectors=[[nz-dropdown], [nz-menu], .ant-table-filter-dropdown-btns]; inputs=[nzDisabled, nzVisible, nzPlacement, nzClickHide, hasFilterButton, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
-    ɵce: : <metadata call>
+    ɵce: <metadata call>
       #expression: @angular/animations#trigger <metadata reference>('')
     ɵcf <metadata directive>: selector=[nz-dropdown]; inputs=[]; outputs=[]; inOuts=[]('')
     ɵcg <metadata component>: selector=nz-dropdown-button; ngContentSelectors=[[nz-menu]]; inputs=[nzType, nzDisabled, nzVisible, nzPlacement, nzClickHide, nzSize, hasFilterButton, nzTrigger]; outputs=[nzVisibleChange, nzClick]; inOuts=[<nzVisible,nzVisibleChange>]
@@ -452,7 +452,7 @@ MetadataFile:ng-zorro-antd.metadata.json
         @angular/common#CommonModule <metadata reference>('')
         @angular/cdk/overlay#OverlayModule <metadata reference>('')
     ɵef <metadata component>: selector=nz-tooltip; inputs=[nzOverlayClassName, nzTitle, nzOverlayStyle, nzVisible, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
-    ɵeg: : <metadata call>
+    ɵeg: <metadata call>
       #expression: @angular/animations#trigger <metadata reference>('')
     ɵeh <metadata directive/template>: selector=[nz-tooltip]; inputs=[nz-tooltip, nzOverlayClassName, nzOverlayStyle, nzVisible, nzTitle, nzContent, nzPlacement, nzMouseEnterDelay, nzMouseLeaveDelay, nzTrigger]; outputs=[nzVisibleChange]; inOuts=[<nzVisible,nzVisibleChange>]('')
     ɵei <metadata module>: imports=[ɵk]; declarations=[ɵej]; exports=[ɵej]; scopeFullyResolved=false; exportsFullyResolved=true
@@ -996,9 +996,9 @@ MetadataFile:ng-zorro-antd.metadata.json
         ɵju <metadata reference>('')
         ɵk <metadata reference>('')
     ɵjz <metadata component>: selector=nz-tree-select; inputs=[nzMultiple, nzDisabled, nzShowExpand, nzShowSearch, nzOpen, nzCheckable, nzDefaultExpandedKeys, nzPlaceHolder, nzAllowClear, nzShowLine, nzDisplayWith, nzDefaultExpandAll, nzDropdownMatchSelectWidth, nzDropdownStyle, nzAsyncData, nzSize, nzNodes]; outputs=[nzCleared, nzTreeCheckBoxChange, nzRemoved, nzExpandChange, nzOpenChange, nzTreeClick]; inOuts=[<nzOpen,nzOpenChange>]('')
-    ɵka: : <metadata call>
+    ɵka: <metadata call>
       #expression: @angular/animations#trigger <metadata reference>('')
-    ɵkb: : <metadata call>
+    ɵkb: <metadata call>
       #expression: @angular/animations#trigger <metadata reference>('')
     ɵkc <metadata module>: imports=[]; declarations=[ɵkd]; exports=[ɵkd]; scopeFullyResolved=false; exportsFullyResolved=true
       ___dec.declarations <metadata array>

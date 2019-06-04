@@ -126,6 +126,13 @@ public class ModulesTest extends Angular2CodeInsightFixtureTestCase {
                      "check.txt");
   }
 
+  public void testEvoUiKit() {
+    doResolutionTest("evo-ui-kit",
+                     "module.ts",
+                     "export class Main<caret>Module {",
+                     "check.txt");
+  }
+
   public void testCommonNgClassModules() {
     doDeclarationModulesCheckText("common",
                                   "directives/ng_class.ts",

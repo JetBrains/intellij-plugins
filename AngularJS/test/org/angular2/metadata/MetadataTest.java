@@ -94,6 +94,11 @@ public class MetadataTest extends Angular2CodeInsightFixtureTestCase {
     testMetadataStubBuilding("test-ng-attr.metadata.json");
   }
 
+  public void testSpreadOperatorMetadataStubBuilding() {
+    myFixture.configureByFiles("spread-operator/evo-ui-kit.d.ts", "package.json");
+    testMetadataStubBuilding("spread-operator/evo-ui-kit.metadata.json");
+  }
+
   public void testJsonFileType() {
     PsiFile file = myFixture.configureByFile("package.json");
     assert file != null;

@@ -37,6 +37,7 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
   @NonNls protected static final String SYMBOL_METHOD = "method";
   @NonNls protected static final String SYMBOL_CALL = "call";
   @NonNls protected static final String SYMBOL_CLASS = "class";
+  @NonNls protected static final String SYMBOL_SPREAD = "spread";
 
   @NonNls protected static final String PARAMETER_DECORATORS = "parameterDecorators";
   @NonNls protected static final String DECORATORS = "decorators";
@@ -157,7 +158,8 @@ public abstract class MetadataElementStub<Psi extends MetadataElement> extends S
     DataInputOutputUtilRt.writeMap(stream, map, stream::writeName, stream::writeName);
   }
 
-  protected static void writeIntegerMap(@NotNull final Map<String, Integer> map, @NotNull final StubOutputStream stream) throws IOException {
+  protected static void writeIntegerMap(@NotNull final Map<String, Integer> map, @NotNull final StubOutputStream stream)
+    throws IOException {
     DataInputOutputUtilRt.writeMap(stream, map, stream::writeName, stream::writeVarInt);
   }
 
