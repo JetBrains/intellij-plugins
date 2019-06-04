@@ -615,7 +615,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       return AllIcons.Nodes.Method;
     }
     else if (elementKind.equals(ElementKind.FUNCTION)) {
-      return AllIcons.Nodes.Function;
+      return AllIcons.Nodes.Lambda;
     }
     else if (elementKind.equals(ElementKind.FUNCTION_TYPE_ALIAS)) {
       return AllIcons.Nodes.Annotationtype;

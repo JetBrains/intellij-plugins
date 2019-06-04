@@ -31,7 +31,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(Field, FinalMark);
   private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(Field, StaticMark);
   private static final LayeredIcon STATIC_METHOD_ICON = new LayeredIcon(Method, StaticMark);
-  private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = new LayeredIcon(Function, StaticMark);
+  private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = new LayeredIcon(Lambda, StaticMark);
   private static final LayeredIcon TOP_LEVEL_VAR_ICON = new LayeredIcon(Variable, StaticMark);
   private static final LayeredIcon CONSTRUCTOR_INVOCATION_ICON = new LayeredIcon(Class, TabPin);
   private static final LayeredIcon FUNCTION_INVOCATION_ICON = new LayeredIcon(Method, TabPin);
@@ -136,7 +136,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
         if (element.isTopLevelOrStatic()) return STATIC_FIELD_ICON;
         return Field;
       case ElementKind.FUNCTION:
-        return element.isTopLevelOrStatic() ? TOP_LEVEL_FUNCTION_ICON : Function;
+        return element.isTopLevelOrStatic() ? TOP_LEVEL_FUNCTION_ICON : Lambda;
       case ElementKind.FUNCTION_INVOCATION:
         return FUNCTION_INVOCATION_ICON;
       case ElementKind.FUNCTION_TYPE_ALIAS:

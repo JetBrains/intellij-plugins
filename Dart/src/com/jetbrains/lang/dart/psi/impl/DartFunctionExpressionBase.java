@@ -15,7 +15,7 @@ import javax.swing.*;
 
 abstract public class DartFunctionExpressionBase extends DartExpressionImpl {
 
-  private static final RowIcon ICON = new RowIcon(AllIcons.Nodes.Function, PlatformIcons.PRIVATE_ICON);
+  private static final RowIcon ICON = new RowIcon(AllIcons.Nodes.Lambda, PlatformIcons.PRIVATE_ICON);
 
   public DartFunctionExpressionBase(ASTNode node) {
     super(node);
