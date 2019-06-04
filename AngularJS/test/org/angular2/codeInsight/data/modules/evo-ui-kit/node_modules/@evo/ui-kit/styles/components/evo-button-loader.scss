@@ -1,0 +1,51 @@
+$animation-speed: 1000ms;
+$dot-size: 10px;
+
+@keyframes fx {
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@mixin animation($delay: 0ms) {
+    animation: fx $animation-speed ease infinite $delay;
+}
+
+.evo-button-loader {
+    position: relative;
+
+    &__text {
+        visibility: hidden;
+    }
+
+    &__dots {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -5px;
+        margin-left: -30px;
+    }
+
+    &__dot {
+        float: left;
+        width: $dot-size;
+        height: $dot-size;
+        margin: 0 5px;
+        background: #fff;
+        border-radius: 50%;
+        transform: scale(0);
+        @include animation();
+
+        &:nth-child(2) {
+            @include animation($animation-speed * 0.3);
+        }
+
+        &:nth-child(3) {
+            @include animation($animation-speed * 0.6);
+        }
+    }
+}
