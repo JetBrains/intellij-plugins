@@ -156,9 +156,9 @@ public class DartServerCompletionContributor extends CompletionContributor {
                    for (Map.Entry<String, Map<String, Set<String>>> entry : existingImports.entrySet()) {
                      String importedLibraryUri = entry.getKey();
                      Map<String, Set<String>> importedLibrary = entry.getValue();
-                     // Checks whether any of the libraries exported by this import declares the same name as this suggestion.
-                     if (importedLibrary.entrySet().stream().anyMatch(
-                         importEntry -> doesImportSuggestion(importEntry, suggestionSet.getUri(), suggestion.getLabel()))) {
+                     // TODO: Use individual suggestion uris instead of suggestion set uri.
+                     Set<String> names = importedLibrary.get(suggestionSet.getUri());
+                     if (names != null && names.contains(suggestion.getLabel())) {
                        importedLibraries.add(importedLibraryUri);
                      }
                    }
@@ -179,11 +179,6 @@ public class DartServerCompletionContributor extends CompletionContributor {
                });
              }
            });
-  }
-
-  // Checks whether the uri and name of a completion suggestion match those of an existing import.
-  private boolean doesImportSuggestion(Map.Entry<String, Set<String>> importedElements, String uri, String label) {
-    return importedElements.getKey().equals(uri) && importedElements.getValue().contains(label);
   }
 
   private static boolean isRightAfterBadIdentifier(@NotNull CharSequence text, int offset) {
