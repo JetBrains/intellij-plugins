@@ -47,10 +47,9 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
     public CssPropertyBlock createPropertyBlock(ASTNode _node,
                                                 Indent indent,
                                                 CssFormattingExtension extension,
-                                                int nameLength,
                                                 @Nullable Alignment alignment,
                                                 Alignment childAlignment) {
-      return new PostCssPropertyBlock(_node, indent, extension, nameLength, alignment, childAlignment);
+      return new PostCssPropertyBlock(_node, indent, extension, alignment, childAlignment);
     }
   }
 
@@ -96,10 +95,9 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
     private PostCssPropertyBlock(ASTNode _node,
                                  Indent indent,
                                  CssFormattingExtension extension,
-                                 int nameLength,
                                  Alignment alignment,
                                  @Nullable Alignment childAlignment) {
-      super(_node, indent, extension, nameLength, alignment, childAlignment);
+      super(_node, indent, extension, alignment, childAlignment);
     }
 
     @Nullable
