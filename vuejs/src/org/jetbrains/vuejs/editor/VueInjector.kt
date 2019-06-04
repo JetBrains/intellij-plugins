@@ -31,6 +31,7 @@ import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.codeInsight.es6Unquote
 import org.jetbrains.vuejs.codeInsight.getStringLiteralsFromInitializerArray
 import org.jetbrains.vuejs.index.VueOptionsIndex
+import org.jetbrains.vuejs.index.isVueContext
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
@@ -79,8 +80,7 @@ class VueInjector : MultiHostInjector {
   }
 
   override fun getLanguagesToInject(registrar: MultiHostRegistrar, context: PsiElement) {
-    val project = context.project
-    if (!org.jetbrains.vuejs.index.hasVue(project)) return
+    if (!isVueContext(context)) return
 
     val fileType = context.containingFile?.originalFile?.virtualFile?.fileType
     if (fileType != HtmlFileType.INSTANCE && fileType != VueFileType.INSTANCE) return

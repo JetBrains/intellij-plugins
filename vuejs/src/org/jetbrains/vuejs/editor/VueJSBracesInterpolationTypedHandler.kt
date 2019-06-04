@@ -13,6 +13,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.xml.XmlElement
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.NullableFunction
+import org.jetbrains.vuejs.index.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 
 private val myBracesCompleter: JSInjectionBracesUtil.InterpolationBracesCompleter =
@@ -22,7 +23,7 @@ class VueJSBracesInterpolationTypedHandler : TypedHandlerDelegate() {
   override fun beforeCharTyped(c: Char, project: Project, editor: Editor, file: PsiFile, fileType: FileType): Result {
     if (fileType != VueFileType.INSTANCE
         && fileType != HtmlFileType.INSTANCE
-        || !org.jetbrains.vuejs.index.hasVue(project)) return Result.CONTINUE
+        || !isVueContext(file)) return Result.CONTINUE
     return myBracesCompleter.beforeCharTyped(c, project, editor, file)
   }
 }

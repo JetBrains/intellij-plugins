@@ -56,7 +56,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   }
 
   override fun getAttributeDescriptors(context: XmlTag?): Array<out XmlAttributeDescriptor> {
-    if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project)) return emptyArray()
+    if (context == null || !org.jetbrains.vuejs.index.isVueContext(context)) return emptyArray()
     val result = mutableListOf<XmlAttributeDescriptor>()
     result.addAll(getDefaultVueAttributes())
 
@@ -78,7 +78,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
   }
 
   override fun getAttributeDescriptor(attributeName: String?, context: XmlTag?): XmlAttributeDescriptor? {
-    if (context == null || !org.jetbrains.vuejs.index.hasVue(context.project) || attributeName == null) return null
+    if (context == null || !org.jetbrains.vuejs.index.isVueContext(context) || attributeName == null) return null
     if (isTopLevelTemplateTag(context) && attributeName == FUNCTIONAL_ATTR ||
         isTopLevelStyleTag(context) && attributeName in arrayOf(SCOPED_ATTR, SRC_ATTR, MODULE_ATTR)) {
       return VueAttributeDescriptor(attributeName)

@@ -5,6 +5,6 @@ interface VueComponent : VueNamedEntity {
 
   val applications: List<VueApp>
 
-  val global: VueGlobal
+  val global: VueGlobal?
 
 }

@@ -23,7 +23,7 @@ import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider
 import org.jetbrains.vuejs.codeInsight.VueComponents
 import org.jetbrains.vuejs.codeInsight.completion.vuetify.VuetifyIcons
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
-import org.jetbrains.vuejs.index.hasVue
+import org.jetbrains.vuejs.index.isVueContext
 
 class VueTagCompletionContributor : CompletionContributor() {
   init {
@@ -95,7 +95,7 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
   }
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-    if (!hasVue(parameters.position.project)) return
+    if (!isVueContext(parameters.position)) return
     val attr = parameters.position.parent as? XmlAttribute ?: return
     val attrName = attr.name
     if (attrName.startsWith("v-on:") || attrName.startsWith("@")) {
@@ -221,7 +221,7 @@ private class VueEventAttrCompletionProvider : CompletionProvider<CompletionPara
 private class VueEventAttrDataCompletionProvider : CompletionProvider<CompletionParameters>() {
 
   override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
-    if (!hasVue(parameters.position.project)) return
+    if (!isVueContext(parameters.position)) return
     if (parameters.position.parent.parent is HtmlTagImpl && (parameters.position.parent.parent as HtmlTagImpl).name.contains("v-icon")) {
       VuetifyIcons.materialAndFontAwesome.forEach {
         result.addElement(LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue))

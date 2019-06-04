@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.codeInsight
+package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.buildTools.npm.PackageJsonUtil
 import com.intellij.lang.javascript.library.JSLibraryUtil
@@ -15,6 +15,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.index.*
 
 class VueComponentsCache {
@@ -22,26 +23,26 @@ class VueComponentsCache {
     private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY, BOOTSTRAP_VUE, SHARDS_VUE)
 
     // returns module: (component: (navigation-element, isGlobal))
-    fun getAllComponentsGroupedByModules(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean):
-      Map<String, Map<String, Pair<PsiElement, Boolean>>> {
-      val result: MutableMap<String, Map<String, Pair<PsiElement, Boolean>>> = mutableMapOf()
-      result[""] = getOnlyProjectComponents(project).map
-
-      getLibraryPackageJsons(project).forEach {
-        val moduleComponents = getModuleComponents(it, project)
-        if (moduleComponents != null) {
-          val name = PackageJsonUtil.getOrCreateData(it).name ?: it.parent.name
-          result[name] = moduleComponents.map
-        }
-      }
-
-      if (onlyGlobal || filter != null) {
-        return result.map { entry ->
-          Pair(entry.key, entry.value.filter { (!onlyGlobal || it.value.second) && (filter == null || filter.invoke(it.key)) })
-        }.toMap()
-      }
-      return result
-    }
+    //fun getAllComponentsGroupedByModules(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean):
+    //  Map<String, Map<String, Pair<PsiElement, Boolean>>> {
+    //  val result: MutableMap<String, Map<String, Pair<PsiElement, Boolean>>> = mutableMapOf()
+    //  result[""] = getOnlyProjectComponents(project).map
+    //
+    //  getLibraryPackageJsons(project).forEach {
+    //    val moduleComponents = getModuleComponents(it, project)
+    //    if (moduleComponents != null) {
+    //      val name = PackageJsonUtil.getOrCreateData(it).name ?: it.parent.name
+    //      result[name] = moduleComponents.map
+    //    }
+    //  }
+    //
+    //  if (onlyGlobal || filter != null) {
+    //    return result.map { entry ->
+    //      Pair(entry.key, entry.value.filter { (!onlyGlobal || it.value.second) && (filter == null || filter.invoke(it.key)) })
+    //    }.toMap()
+    //  }
+    //  return result
+    //}
 
     fun isGlobalLibraryComponent(component: JSImplicitElement): Boolean {
       val nameText = getVueIndexData(component).originalName

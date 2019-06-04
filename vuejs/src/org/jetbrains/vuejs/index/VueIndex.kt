@@ -68,6 +68,10 @@ fun resolve(name: String, scope: GlobalSearchScope, key: StubIndexKey<String, JS
   return if (result.isEmpty()) null else result
 }
 
+fun isVueContext(element: PsiElement): Boolean {
+  return hasVue(element.project)
+}
+
 fun hasVue(project: Project): Boolean {
   if (DumbService.isDumb(project)) return false
 

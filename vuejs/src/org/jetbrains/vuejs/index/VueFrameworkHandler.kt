@@ -379,7 +379,7 @@ class VueFrameworkHandler : FrameworkIndexingHandler() {
   override fun addTypeFromResolveResult(evaluator: JSTypeEvaluator,
                                         context: JSEvaluateContext,
                                         result: PsiElement): Boolean {
-    if (!hasVue(result.project)) return false
+    if (!isVueContext(result)) return false
     if (result is JSVariable && result.language is VueJSLanguage) {
       val vFor = result.parent as? VueVForExpression ?: result.parent.parent as? VueVForExpression
       val vForRef = vFor?.getReferenceExpression()
