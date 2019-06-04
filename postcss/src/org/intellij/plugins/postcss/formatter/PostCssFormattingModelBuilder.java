@@ -34,30 +34,29 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
     }
 
     @Override
-    public CssRootBlock createRootBlock(ASTNode _node, int maxPropertyLength, CssFormattingExtension extension) {
-      return new PostCssRootBlock(_node, maxPropertyLength, extension);
+    public CssRootBlock createRootBlock(ASTNode _node, CssFormattingExtension extension) {
+      return new PostCssRootBlock(_node, extension);
     }
 
     @Override
-    public CssSelectorBlock createSelectorBlock(ASTNode node, int maxPropertyLength, CssFormattingExtension extension) {
-      return new PostCssSelectorBlock(node, maxPropertyLength, extension);
+    public CssSelectorBlock createSelectorBlock(ASTNode node, CssFormattingExtension extension) {
+      return new PostCssSelectorBlock(node, extension);
     }
 
     @Override
     public CssPropertyBlock createPropertyBlock(ASTNode _node,
                                                 Indent indent,
-                                                int maxPropertyLength,
                                                 CssFormattingExtension extension,
                                                 int nameLength,
                                                 @Nullable Alignment alignment,
                                                 Alignment childAlignment) {
-      return new PostCssPropertyBlock(_node, indent, maxPropertyLength, extension, nameLength, alignment, childAlignment);
+      return new PostCssPropertyBlock(_node, indent, extension, nameLength, alignment, childAlignment);
     }
   }
 
   private static class PostCssRootBlock extends CssRootBlock {
-    private PostCssRootBlock(ASTNode _node, int maxPropertyLength, CssFormattingExtension extension) {
-      super(_node, maxPropertyLength, extension);
+    private PostCssRootBlock(ASTNode _node, CssFormattingExtension extension) {
+      super(_node, extension);
     }
 
     @Nullable
@@ -77,8 +76,8 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
   }
 
   private static class PostCssSelectorBlock extends CssSelectorBlock {
-    private PostCssSelectorBlock(ASTNode node, int maxPropertyLength, CssFormattingExtension extension) {
-      super(node, Indent.getNoneIndent(), maxPropertyLength, extension);
+    private PostCssSelectorBlock(ASTNode node, CssFormattingExtension extension) {
+      super(node, Indent.getNoneIndent(), extension);
     }
 
     @Nullable
@@ -96,12 +95,11 @@ public class PostCssFormattingModelBuilder extends CssFormattingModelBuilder {
   private static class PostCssPropertyBlock extends CssPropertyBlock {
     private PostCssPropertyBlock(ASTNode _node,
                                  Indent indent,
-                                 int maxPropertyLength,
                                  CssFormattingExtension extension,
                                  int nameLength,
                                  Alignment alignment,
                                  @Nullable Alignment childAlignment) {
-      super(_node, indent, maxPropertyLength, extension, nameLength, alignment, childAlignment);
+      super(_node, indent, extension, nameLength, alignment, childAlignment);
     }
 
     @Nullable
