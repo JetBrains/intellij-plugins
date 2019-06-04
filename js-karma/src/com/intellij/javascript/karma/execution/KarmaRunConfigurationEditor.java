@@ -23,6 +23,7 @@ import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.ui.components.fields.ExpandableTextField;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.*;
 import com.intellij.webcore.ui.PathShortener;
@@ -109,7 +110,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   @NotNull
   private JPanel createScopeKindRadioButtonPanel() {
-    JPanel testKindPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, JBUI.scale(40), 0));
+    JPanel testKindPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, JBUIScale.scale(40), 0));
     testKindPanel.setBorder(JBUI.Borders.emptyLeft(10));
     ButtonGroup buttonGroup = new ButtonGroup();
     for (KarmaScopeKind scopeKind : KarmaScopeKind.values()) {
