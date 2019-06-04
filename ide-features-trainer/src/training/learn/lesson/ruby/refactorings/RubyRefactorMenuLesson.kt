@@ -1,4 +1,4 @@
-package training.learn.lesson.ruby
+package training.learn.lesson.ruby.refactorings
 
 import com.intellij.openapi.project.Project
 import com.intellij.testGuiFramework.impl.button

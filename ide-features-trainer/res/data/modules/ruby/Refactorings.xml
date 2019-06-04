@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module name="Refactorings" version="0.3" id="ruby.refactoring" fileType="PROJECT" description="Rename, extract variable and method and other refactorings">
-    <lesson-kt implementationClass="training.learn.lesson.ruby.RubyRefactorMenuLesson"/>
+    <lesson-kt implementationClass="training.learn.lesson.ruby.refactorings.RubyRefactorMenuLesson"/>
 </module>
