@@ -168,8 +168,6 @@
     <lang.smartEnterProcessor language="Dart"
                               implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerStatementCompletionProcessor"/>
 
-    <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
-
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
     <annotator language="HTML" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
     <annotator language="XML" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
