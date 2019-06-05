@@ -354,8 +354,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
           JSExpression inputExpression = inputsMap.get(property.getName());
           JSType propertyType;
           if (inputExpression != null && (propertyType = property.getType()) != null) {
-            JSLazyExpressionType inputType = new JSLazyExpressionType(inputExpression, true);
-            if (isAnyType(getApparentType(inputType.getOriginalType()))) {
+            JSLazyParameterType inputType = new JSLazyParameterType(inputExpression, true);
+            if (isAnyType(getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType)))) {
               // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.
               // This is not correct according to TypeScript inferring rules for generics, but it's better for Angular type
               // checking to be less strict here. Additionally, if `any` type is passed to e.g. async pipe it's going to be resolved

@@ -15,7 +15,7 @@ import com.intellij.lang.javascript.psi.ecma6.JSTypeDeclaration;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.types.JSFunctionTypeImpl;
-import com.intellij.lang.javascript.psi.types.JSLazyExpressionType;
+import com.intellij.lang.javascript.psi.types.JSLazyParameterType;
 import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -203,7 +203,7 @@ public class Angular2CompletionContributor extends CompletionContributor {
     private static JSType calcActualType(Angular2PipeReferenceExpression ref) {
       Angular2PipeExpression pipeCall = (Angular2PipeExpression)ref.getParent();
       return doIfNotNull(ArrayUtil.getFirstElement(pipeCall.getArguments()),
-                         expression -> new JSLazyExpressionType(expression, true));
+                         expression -> new JSLazyParameterType(expression, true));
     }
 
     @SuppressWarnings("HardCodedStringLiteral")
