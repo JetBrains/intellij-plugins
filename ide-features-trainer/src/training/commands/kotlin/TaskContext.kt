@@ -15,6 +15,7 @@ import training.learn.lesson.kimpl.KLesson
 import training.ui.Message
 import java.awt.Component
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Future
 
 class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
                   private val recorder: ActionsRecorder) {
@@ -65,6 +66,25 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
     val future = recorder.futureCheck { checkState() }
     steps.add(future)
     return future
+  }
+
+  /**
+   * Check that IDE state is fit
+   * @return A feature with value associated with fit state
+   */
+  fun <T : Any> stateRequired(requiredState: () -> T?): Future<T> {
+    val result = CompletableFuture<T>()
+    val future = recorder.futureCheck {
+      val state = requiredState()
+      if (state != null) {
+        result.complete(state)
+        true
+      } else {
+        false
+      }
+    }
+    steps.add(future)
+    return result
   }
 
   val focusOwner: Component?
