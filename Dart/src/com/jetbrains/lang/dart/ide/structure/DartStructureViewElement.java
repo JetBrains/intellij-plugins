@@ -7,11 +7,13 @@ import com.intellij.ide.util.PsiNavigationSupport;
 import com.intellij.ide.util.treeView.NodeDescriptorProvidingKey;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
+import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import org.dartlang.analysis.server.protocol.Element;
 import org.dartlang.analysis.server.protocol.ElementKind;
@@ -20,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+
+import java.util.Objects;
 
 import static com.intellij.icons.AllIcons.Nodes.*;
 import static com.intellij.icons.AllIcons.Nodes.Class;
@@ -41,13 +45,20 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   @NotNull private final PsiFile myPsiFile;
   @NotNull private final Outline myOutline;
 
-  @NotNull private final String myValue;
+  @NotNull private final PsiElement myValue;
   @NotNull private final String myPresentableText;
 
   public DartStructureViewElement(@NotNull final PsiFile psiFile, @NotNull final Outline outline) {
     myPsiFile = psiFile;
     myOutline = outline;
-    myValue = getValue(outline);
+    PsiElement value = Objects.requireNonNull(psiFile.getViewProvider().findElementAt(outline.getOffset())).getNavigationElement();
+    while (value.getChildren().length == 0
+           && value.getParent().getTextRange().getStartOffset() == value.getTextRange().getStartOffset()
+           && value != value.getParent()
+           && !(value.getParent() instanceof DartFile)) {
+      value = value.getParent();
+    }
+    myValue = value;
     myPresentableText = getPresentableText(outline);
   }
 
@@ -70,7 +81,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(myPsiFile.getProject());
     final int offset = service.getConvertedOffset(myPsiFile.getVirtualFile(), myOutline.getElement().getLocation().getOffset());
     PsiNavigationSupport.getInstance().createNavigatable(myPsiFile.getProject(), myPsiFile.getVirtualFile(), offset)
-                        .navigate(requestFocus);
+      .navigate(requestFocus);
   }
 
   @Override
@@ -172,8 +183,13 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
 
   @Override
   @NotNull
-  public String getValue() {
+  public Object getValue() {
     return myValue;
+  }
+
+  @NotNull
+  public String getStringValue() {
+    return getValue(myOutline);
   }
 
   @NotNull
@@ -190,11 +206,11 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
 
   @Override
   public boolean equals(Object obj) {
-    return obj instanceof DartStructureViewElement && ((DartStructureViewElement)obj).getValue().equals(getValue());
+    return obj instanceof DartStructureViewElement && ((DartStructureViewElement)obj).getStringValue().equals(getStringValue());
   }
 
   @Override
   public int hashCode() {
-    return getValue().hashCode();
+    return getStringValue().hashCode();
   }
 }
