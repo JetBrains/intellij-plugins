@@ -874,7 +874,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    */
   public void sendRequestToServer(String id, JsonObject request) {
     sendRequestToServer(id, request, new LocalConsumer(request));
-    notifyRequestListeners(request);
   }
 
   /**
@@ -885,6 +884,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    * @param consumer the {@link Consumer} to process a response
    */
   public void sendRequestToServer(String id, JsonObject request, Consumer consumer) {
+    notifyRequestListeners(request);
     synchronized (consumerMapLock) {
       consumerMap.put(id, consumer);
     }
