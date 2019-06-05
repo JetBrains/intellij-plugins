@@ -47,9 +47,6 @@ class RubyRefactorMenuLesson(module: Module) : KLesson("Refactoring Menu", modul
           with(TaskTestContext.guiTestCase) {
             dialog(it) {
               button("Refactor").click()
-              dialog("Problems Detected") {
-                button("Continue").click()
-              }
             }
           }
         }
