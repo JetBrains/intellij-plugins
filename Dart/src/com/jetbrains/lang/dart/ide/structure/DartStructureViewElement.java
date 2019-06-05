@@ -45,21 +45,41 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   @NotNull private final PsiFile myPsiFile;
   @NotNull private final Outline myOutline;
 
+  /**
+   * It is possible for multiple {@link PsiElement}s to be present at {@link myOutline}'s offset.
+   * To make sure that we pick the most valuable one for {@link myValue}, we want to find the most local parent of the element.
+   *
+   * For example, we may have a field like this:
+   *
+   * void main(List<String> args) {
+   *
+   * }
+   *
+   * At the offset for the beginning of 'void', we could have a {@link com.jetbrains.lang.dart.psi.DartReturnType},
+   * or we could have a {@link com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBody}, which corresponds to the function
+   * and all its children. This is a parent of the ReturnType, and it has the same starting offset.
+   *
+   * To have a useful PsiElement value for the structure view, we want to pick the
+   * {@link com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBody} because it has children. This allows us to refer up to this parent
+   * from all of the leaves of the element.
+   */
   @NotNull private final PsiElement myValue;
   @NotNull private final String myPresentableText;
 
   public DartStructureViewElement(@NotNull final PsiFile psiFile, @NotNull final Outline outline) {
     myPsiFile = psiFile;
     myOutline = outline;
+    myPresentableText = getPresentableText(outline);
+    // Determine the most appropriate PsiElement that shares the same offset in myOutline.
+    // As the documentation of myValue explains, we want an element that has children and is at the same offset.
     PsiElement value = Objects.requireNonNull(psiFile.getViewProvider().findElementAt(outline.getOffset())).getNavigationElement();
     while (value.getChildren().length == 0
            && value.getParent().getTextRange().getStartOffset() == value.getTextRange().getStartOffset()
-           && value != value.getParent()
+           // Terminate the loop at the file level.
            && !(value.getParent() instanceof DartFile)) {
       value = value.getParent();
     }
     myValue = value;
-    myPresentableText = getPresentableText(outline);
   }
 
   @NotNull
@@ -187,6 +207,9 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
     return myValue;
   }
 
+  /**
+   * The string representation of both this element and the parent element from {@link myOutline}.
+   */
   @NotNull
   public String getStringValue() {
     return getValue(myOutline);

@@ -67,8 +67,6 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
   public Object getCurrentEditorElement() {
     // Note: this should return an object of type PsiElement to be compatible with the Context Info (alt+q) action.
     if (getEditor() == null) return null;
-    //final int offset = getEditor().getCaretModel().getOffset();
-    //return getPsiFile().getViewProvider().findElementAt(offset);
 
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(getPsiFile().getProject());
     final Outline outline = service.getOutline(getPsiFile().getVirtualFile());
@@ -76,7 +74,6 @@ class DartStructureViewModel extends TextEditorBasedStructureViewModel implement
 
     final Outline result = findDeepestOutlineForOffset(getEditor().getCaretModel().getOffset(), outline);
     return getPsiFile().getViewProvider().findElementAt(result.getOffset());
-    //return DartStructureViewElement.getValue(result);
   }
 
   /**
