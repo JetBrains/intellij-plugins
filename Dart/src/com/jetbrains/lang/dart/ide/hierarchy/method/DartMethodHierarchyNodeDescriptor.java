@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.hierarchy.method;
 
 import com.intellij.icons.AllIcons;
@@ -10,7 +11,6 @@ import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.ui.RowIcon;
 import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,7 +82,7 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
         newIcon = getBaseMarkerIcon(newIcon);
       }
       if (myStateIcon != null) {
-        newIcon = new RowIcon(myStateIcon, newIcon);
+        newIcon = new com.intellij.ui.RowIcon(myStateIcon, newIcon);
       }
 
       setIcon(newIcon);

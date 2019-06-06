@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.codeInsight;
 
 import com.intellij.flex.util.FlexTestUtils;
@@ -16,7 +17,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.RowIcon;
+import com.intellij.ui.icons.RowIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +57,7 @@ public class FlexStructureViewTest extends JSAbstractStructureViewTest {
       }
     };
   }
-  
+
 
   @Override
   protected String getBasePath() {
