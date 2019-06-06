@@ -42,6 +42,7 @@ import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
 import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueEntitiesContainer
 import org.jetbrains.vuejs.model.VueModelManager
 import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.VueComponentsCache
@@ -221,7 +222,10 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     val global = VueModelManager.getGlobal(tag)
     val globalComponents: EntryStream<String, Triple<VueComponent, Boolean, Double>> =
       if (global != null)
-        EntryStream.of(global.components).mapValues { Triple(it, true, GLOBAL_PRIORITY) }
+        StreamEx.of(global.plugins as List<VueEntitiesContainer>)
+          .append(global)
+          .flatMapToEntry { it.components }
+          .mapValues { Triple(it, true, GLOBAL_PRIORITY) }
       else
         EntryStream.empty()
 

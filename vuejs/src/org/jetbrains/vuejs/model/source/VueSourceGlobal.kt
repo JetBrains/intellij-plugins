@@ -9,6 +9,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import one.util.streamex.EntryStream
 import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry
 
 class VueSourceGlobal(private val module: Module) : VueGlobal {
 
@@ -16,7 +17,6 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
   override val filters: Map<String, VueFilter> = emptyMap()
 
   override val apps: List<VueApp> = emptyList()
-  override val plugins: List<VuePlugin> = emptyList()
   override val mixins: List<VueMixin> = emptyList()
 
 
@@ -34,6 +34,12 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
         CachedValueProvider.Result.create(result, PsiModificationTracker.MODIFICATION_COUNT)
       }
     }
+
+  override val plugins: List<VuePlugin>
+    get() {
+      return VueWebTypesRegistry.getInstance().getVuePlugins(module)
+    }
+
 
   fun findComponent(templateElement: PsiElement): VueComponent? {
     return null

@@ -5,7 +5,7 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.json.WebTypes
 import java.util.*
 
-class VueWebTypesPlugin(webTypes: WebTypes) : VuePlugin {
+class VueWebTypesPlugin(webTypes: WebTypes, override val nodeModule: String?) : VuePlugin {
   override val components: Map<String, VueComponent>
 
   override val directives: Map<String, VueDirective>
@@ -18,11 +18,11 @@ class VueWebTypesPlugin(webTypes: WebTypes) : VuePlugin {
   init {
     assert(webTypes.framework == WebTypes.Framework.VUE)
     components = webTypes.contributions
-                    ?.html
-                    ?.tags
-                    ?.filter { it.name != null }
-                    ?.associateBy({ it.name!! }, { VueWebTypesComponent(it) })
-                  ?: Collections.emptyMap()
+                   ?.html
+                   ?.tags
+                   ?.filter { it.name != null }
+                   ?.associateBy({ it.name!! }, { VueWebTypesComponent(it) })
+                 ?: Collections.emptyMap()
   }
 
 }

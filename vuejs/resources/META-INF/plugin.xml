@@ -36,7 +36,9 @@ Vue components defined using separate .html, .js, and .css files are not support
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
+
   <extensions defaultExtensionNs="com.intellij">
+    <applicationService serviceImplementation="org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry"/>
     <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
     <css.inclusionContext implementation="org.jetbrains.vuejs.css.VueCssInclusionContext"/>
     <fileTypeFactory implementation="org.jetbrains.vuejs.lang.html.VueFileTypeFactory"/>
@@ -64,7 +66,8 @@ Vue components defined using separate .html, .js, and .css files are not support
     <stubIndex implementation="org.jetbrains.vuejs.index.VueStoreIndex"/>
     <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.VueElementTypes"/>
 
-    <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
+    <directoryProjectGenerator
+        implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
     <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/> <!-- works in IntelliJ IDEA -->
 
     <localInspection language="Vue" groupName="Vue" displayName="Data Function" shortName="VueDataFunction"
