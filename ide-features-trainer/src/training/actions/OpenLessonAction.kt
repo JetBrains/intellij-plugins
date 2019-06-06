@@ -206,7 +206,7 @@ class OpenLessonAction : AnAction() {
   private fun processDslLesson(lesson: KLesson, textEditor: TextEditor, projectWhereToStartLesson: Project) {
     val lessonContext = LessonContext(lesson, textEditor.editor, projectWhereToStartLesson)
     LessonManager.instance.initDslLesson(textEditor.editor, lesson, lessonContext)
-    LessonManager.instance.dslExecutor.submit {
+    LessonManager.instance.dslExecutor.execute {
       try {
         lesson.lessonContent(lessonContext)
         lesson.pass()

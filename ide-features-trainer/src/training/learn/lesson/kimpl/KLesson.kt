@@ -12,7 +12,7 @@ abstract class KLesson(final override val name  : String,
 
   abstract val lessonContent: LessonContext.() -> Unit
   final override val id: String = name
-  override var passed = LessonStateManager.getStateFromBase(id) == LessonState.PASSED
-  override var isOpen = false
+  @Volatile override var passed = LessonStateManager.getStateFromBase(id) == LessonState.PASSED
+  @Volatile override var isOpen = false
   override val lessonListeners: MutableList<LessonListener> = mutableListOf()
 }
