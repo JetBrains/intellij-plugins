@@ -8,6 +8,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.icons.RowIcon;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
@@ -61,7 +62,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
     icon = doOverlays(icon);
 
     if (Registry.is("ide.completion.show.visibility.icon")) {
-      RowIcon baseIcon = new com.intellij.ui.RowIcon(2);
+      RowIcon baseIcon = IconManager.getInstance().createRowIcon(2);
       baseIcon.setIcon(icon, 0);
       Icon visibility = isPublic() ? PlatformIcons.PUBLIC_ICON : PlatformIcons.PRIVATE_ICON;
       baseIcon.setIcon(visibility, 1);

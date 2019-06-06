@@ -11,6 +11,7 @@ import com.intellij.openapi.roots.ui.util.CompositeAppearance;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.IconManager;
 import com.jetbrains.lang.dart.psi.DartClass;
 import org.jetbrains.annotations.NotNull;
 
@@ -82,7 +83,7 @@ public class DartMethodHierarchyNodeDescriptor extends HierarchyNodeDescriptor {
         newIcon = getBaseMarkerIcon(newIcon);
       }
       if (myStateIcon != null) {
-        newIcon = new com.intellij.ui.RowIcon(myStateIcon, newIcon);
+        newIcon = IconManager.getInstance().createRowIcon(myStateIcon, newIcon);
       }
 
       setIcon(newIcon);

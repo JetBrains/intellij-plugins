@@ -31,6 +31,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
@@ -410,10 +411,10 @@ public class DartServerCompletionContributor extends CompletionContributor {
       Icon icon = getBaseImage(element);
       if (icon != null) {
         if (suggestion.getKind().equals(CompletionSuggestionKind.OVERRIDE)) {
-          icon = new com.intellij.ui.RowIcon(icon, AllIcons.Gutter.OverridingMethod);
+          icon = IconManager.getInstance().createRowIcon(icon, AllIcons.Gutter.OverridingMethod);
         }
         else {
-          icon = new com.intellij.ui.RowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON);
+          icon = IconManager.getInstance().createRowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON);
           icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
           icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
         }

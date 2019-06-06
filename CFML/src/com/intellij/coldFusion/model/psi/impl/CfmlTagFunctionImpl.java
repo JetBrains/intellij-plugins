@@ -9,6 +9,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiType;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.icons.RowIcon;
 import com.intellij.util.PlatformIcons;
 import icons.CFMLIcons;
@@ -52,7 +53,7 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
     }
     access = StringUtil.toLowerCase(access);
     if (Registry.is("ide.completion.show.visibility.icon")) {
-      RowIcon baseIcon = new com.intellij.ui.RowIcon(2);
+      RowIcon baseIcon = IconManager.getInstance().createRowIcon(2);
       baseIcon.setIcon(METHOD_ICON, 0);
       if ("private".equals(access)) {
         baseIcon.setIcon(PRIVATE_ICON, 1);
