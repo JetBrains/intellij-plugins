@@ -9,11 +9,8 @@ import org.junit.Test
 import training.commands.kotlin.TaskContext
 import training.lang.LangManager
 import training.learn.CourseManager
-import training.learn.interfaces.Lesson
-import training.learn.lesson.LessonListener
-import java.util.concurrent.CompletableFuture
-import kotlin.concurrent.thread
-import kotlin.test.assertTrue
+import training.learn.lesson.LessonManager
+import training.util.BlockingExecutor
 
 
 /**
@@ -21,20 +18,25 @@ import kotlin.test.assertTrue
  *  gradle -Dtest.single=SelectLessonTest clean test -Didea.gui.test.alternativeIdePath="<path_to_installed_IDE>"
  */
 class RubyLessonsGuiTestCase : GuiTestCase() {
+  private val testActionsExecutor = BlockingExecutor()
+
   @Test
   fun rubyNavigationLessonTest() {
+    LessonManager.externalTestActionsExecutor = testActionsExecutor
+
     val courseManager = CourseManager.instance
     openLearnProject()
     ideFrame {
-
       for (module in courseManager.modules) {
         if (module.lessons.isEmpty()) continue
         linkAtLearnPanel { linkLabel(module.name).click() }
         for (lesson in module.lessons) {
-          val doneOrTimeout = lessonCompleteFuture(lesson)
           TaskContext.inTestMode = true
           linkAtLearnPanel { linkLabel(lesson.name).click() }
-          assertTrue(doneOrTimeout.get(), "lesson " + lesson.name + " should be passed")
+          testActionsExecutor.run()
+          if (!lesson.passed) {
+            throw IllegalStateException("Can't pass lesson " + lesson.name)
+          }
           System.err.println("Passed " + lesson.name)
           TaskContext.inTestMode = false
         }
@@ -51,38 +53,6 @@ class RubyLessonsGuiTestCase : GuiTestCase() {
         link()
       }
     }
-  }
-
-  private fun lessonCompleteFuture(lesson: Lesson): CompletableFuture<Boolean> {
-    val doneOrTimeout = CompletableFuture<Boolean>()
-    val timeoutThread = thread(name = "GUI lesson test timeout") {
-      try {
-        Thread.sleep(10000)
-        doneOrTimeout.complete(false)
-      }
-      catch (e: InterruptedException) {
-        // ignore it
-      }
-   }
-    lesson.addLessonListener(object : LessonListener {
-      override fun lessonStarted(lesson: Lesson) {
-        //do nothing
-      }
-
-      override fun lessonPassed(lesson: Lesson) {
-        doneOrTimeout.complete(true)
-        timeoutThread.interrupt()
-      }
-
-      override fun lessonClosed(lesson: Lesson) {
-        //do nothing
-      }
-
-      override fun lessonNext(lesson: Lesson) {
-        //do nothing
-      }
-    })
-    return doneOrTimeout
   }
 
   private fun openLearnProject() {

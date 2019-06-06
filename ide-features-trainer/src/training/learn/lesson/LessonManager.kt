@@ -21,7 +21,7 @@ import training.util.createBalloon
 import training.util.createNamedSingleThreadExecutor
 import training.util.editorPointForBalloon
 import java.util.*
-import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executor
 
 
 /**
@@ -30,13 +30,13 @@ import java.util.concurrent.ExecutorService
 class LessonManager {
   private var currentLessonContext: LessonContext? = null
 
-  val dslExecutor: ExecutorService by lazy {
+  val dslExecutor: Executor by lazy {
     createNamedSingleThreadExecutor("IdeFeaturesTrainer")
   }
 
 
-  val testActionsExecutor: ExecutorService by lazy {
-    createNamedSingleThreadExecutor("TestLearningPlugin")
+  val testActionsExecutor: Executor by lazy {
+    externalTestActionsExecutor ?: createNamedSingleThreadExecutor("TestLearningPlugin")
   }
 
   constructor(lesson: Lesson, editor: Editor) {
@@ -278,6 +278,8 @@ class LessonManager {
   }
 
   companion object {
+    @Volatile
+    var externalTestActionsExecutor: Executor? = null
 
     private var myLearnActions: ArrayList<LearnActions>? = null
     private var mouseBlocked = false
