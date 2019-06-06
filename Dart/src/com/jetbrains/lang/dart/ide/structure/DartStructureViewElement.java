@@ -62,8 +62,10 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
    * To have a useful PsiElement value for the structure view, we want to pick the
    * {@link com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBody} because it has children. This allows us to refer up to this parent
    * from all of the leaves of the element.
+   *
+   * May be null in the case contents of a file have been deleted.
    */
-  @NotNull private final PsiElement myValue;
+  @Nullable private final PsiElement myValue;
   @NotNull private final String myPresentableText;
 
   public DartStructureViewElement(@NotNull final PsiFile psiFile, @NotNull final Outline outline) {
@@ -72,12 +74,15 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
     myPresentableText = getPresentableText(outline);
     // Determine the most appropriate PsiElement that shares the same offset in myOutline.
     // As the documentation of myValue explains, we want an element that has children and is at the same offset.
-    PsiElement value = Objects.requireNonNull(psiFile.getViewProvider().findElementAt(outline.getOffset())).getNavigationElement();
-    while (value.getChildren().length == 0
-           && value.getParent().getTextRange().getStartOffset() == value.getTextRange().getStartOffset()
-           // Terminate the loop at the file level.
-           && !(value.getParent() instanceof DartFile)) {
-      value = value.getParent();
+    PsiElement value = psiFile.getViewProvider().findElementAt(outline.getOffset());
+    // If the element at the offset has been deleted, we may not find anything.
+    if (value != null) {
+      while (value.getChildren().length == 0
+             && value.getParent().getTextRange().getStartOffset() == value.getTextRange().getStartOffset()
+             // Terminate the loop at the file level.
+             && !(value.getParent() instanceof DartFile)) {
+        value = value.getParent();
+      }
     }
     myValue = value;
   }
@@ -204,7 +209,8 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   @Override
   @NotNull
   public Object getValue() {
-    return myValue;
+    // Fall back to getStringValue in the case of a null PsiElement.
+    return myValue != null ? myValue : getStringValue();
   }
 
   /**
