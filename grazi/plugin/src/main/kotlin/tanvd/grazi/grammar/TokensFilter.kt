@@ -8,7 +8,7 @@ import tanvd.grazi.utils.toPointer
 /**
  * Helper to set up masks to ignore inline elements in sequences of tokens.
  * Just use [populate] to add neighbours of inline elements to mask and then
- * use filter to filter out all typos, which may occurred because of inline elements.
+ * use [filter] to filter out all typos, which may occur because of inline elements.
  */
 class TokensFilter(private val ignoreSpellcheck: Boolean = false) {
     private val leftNeighbour = HashSet<SmartPsiElementPointer<PsiElement>>()
