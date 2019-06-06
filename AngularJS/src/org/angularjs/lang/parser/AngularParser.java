@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 public class AngularParser implements PsiParser {
   @NotNull
   @Override
-  public ASTNode parse(IElementType root, PsiBuilder builder) {
+  public ASTNode parse(@NotNull IElementType root, @NotNull PsiBuilder builder) {
     new AngularJSParser(builder).parseAngular(root);
     return builder.getTreeBuilt();
   }

@@ -83,18 +83,8 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     return create(tag, attributeName, singletonList(element));
   }
 
-  /**
-   * @deprecated Kept for compatibility with NativeScript
-   * To be removed in 2019.2
-   */
   @Nullable
-  @Deprecated
-  public static Angular2AttributeDescriptor create(@NotNull String attributeName, @NotNull PsiElement element) {
-    return create(null, attributeName, singletonList(element));
-  }
-
-  @Nullable
-  private static Angular2AttributeDescriptor create(@Nullable XmlTag tag,
+  private static Angular2AttributeDescriptor create(@NotNull XmlTag tag,
                                                     @NotNull String attributeName,
                                                     @NotNull List<PsiElement> elements) {
     if (getCustomNgAttrs().contains(attributeName)) {
@@ -145,9 +135,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
   private final boolean myImplied;
   private final AtomicNullableLazyValue<JSType> myJSType = AtomicNullableLazyValue.createValue(this::buildJSType);
 
-  // Note: xmlTag is nullable only because of compatibility with NativeScript with classes
-  // Angular2EventHandlerDescriptor and AngularBindingDescriptor, which are deprecated
-  protected Angular2AttributeDescriptor(@Nullable XmlTag xmlTag, //Nullable for compatibility with NativeScript
+  protected Angular2AttributeDescriptor(@NotNull XmlTag xmlTag,
                                         @NotNull String attributeName,
                                         @NotNull Collection<?> sources,
                                         boolean implied) {
@@ -155,7 +143,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
          AttributePriority.NORMAL, sources, implied);
   }
 
-  protected Angular2AttributeDescriptor(@Nullable XmlTag xmlTag, //Nullable for compatibility with NativeScript
+  protected Angular2AttributeDescriptor(@NotNull XmlTag xmlTag,
                                         @NotNull String attributeName,
                                         @NotNull AttributePriority priority,
                                         @NotNull Collection<?> sources,
@@ -164,7 +152,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
          priority, sources, implied);
   }
 
-  protected Angular2AttributeDescriptor(@Nullable XmlTag xmlTag, //Nullable for compatibility with NativeScript
+  protected Angular2AttributeDescriptor(@NotNull XmlTag xmlTag,
                                         @NotNull String attributeName,
                                         @NotNull Angular2AttributeNameParser.AttributeInfo info,
                                         @NotNull Collection<?> sources,
@@ -172,7 +160,7 @@ public class Angular2AttributeDescriptor extends BasicXmlAttributeDescriptor imp
     this(xmlTag, attributeName, info, AttributePriority.NORMAL, sources, implied);
   }
 
-  protected Angular2AttributeDescriptor(@Nullable XmlTag tag, //Nullable for compatibility with NativeScript
+  protected Angular2AttributeDescriptor(@NotNull XmlTag tag,
                                         @NotNull String attributeName,
                                         @NotNull Angular2AttributeNameParser.AttributeInfo info,
                                         @NotNull AttributePriority priority,

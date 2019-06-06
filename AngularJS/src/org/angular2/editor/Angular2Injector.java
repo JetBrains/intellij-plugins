@@ -137,7 +137,8 @@ public class Angular2Injector implements MultiHostInjector {
     return parent instanceof JSProperty
            && propertyName.equals(((JSProperty)parent).getName())
            && injectIntoDecoratorExpr(registrar, context, parent,
-                                      decoratorName -> Angular2DecoratorUtil.isDirective(decoratorName) || "View".equals(decoratorName),
+                                      decoratorName -> Angular2DecoratorUtil.isDirective(decoratorName)
+                                                       || Angular2DecoratorUtil.VIEW_DEC.equals(decoratorName),
                                       language, fileExtension);
   }
 
