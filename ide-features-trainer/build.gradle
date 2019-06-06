@@ -38,7 +38,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 intellij {
-    version 'IU-191.7141-EAP-CANDIDATE-SNAPSHOT'
+    version 'IU-191.7479-EAP-CANDIDATE-SNAPSHOT'
 
     plugins = [
             'Pythonid:2019.1.191.6183.20',
