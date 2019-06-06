@@ -25,6 +25,9 @@ import java.util.List;
 public class DartDocUtil {
 
   public static final String SINGLE_LINE_DOC_COMMENT = "///";
+  private static final String NBSP = "&nbsp;";
+  private static final String GREATER_THAN = "&gt;";
+  private static final String LESS_THAN = "&lt;";
 
   public static String generateDoc(final PsiElement element) {
     if (!(element instanceof DartComponent) && !(element.getParent() instanceof DartComponent)) {
@@ -64,6 +67,46 @@ public class DartDocUtil {
     return generateDoc(signatureHtml, true, docText, containingLibraryName, containingClassDescription, null, false);
   }
 
+  private static String formatSignature(@NotNull final String signature,
+                                        final int offsetToOpenParen) {
+    // If this signature doesn't have a '(', return
+    if (offsetToOpenParen <= 0) {
+      return signature;
+    }
+
+    // If this signature doesn't have at least 2 parameters, return
+    String[] strings = signature.split(", ");
+    if (strings.length == 1) {
+      return signature;
+    }
+    boolean isInsideGeneric = false;
+    StringBuilder stringBuilder = new StringBuilder();
+    //boolean isFirstLine = true;
+    for (int i = 0; i < strings.length; i++) {
+      String strSeg = strings[i];
+
+      boolean oddNumberOfGenericDelimeters =
+        (StringUtil.getOccurrenceCount(strSeg, LESS_THAN) + StringUtil.getOccurrenceCount(strSeg, GREATER_THAN)) % 2 != 0;
+      if (oddNumberOfGenericDelimeters) {
+        isInsideGeneric = !isInsideGeneric;
+      }
+      if (isInsideGeneric) {
+        stringBuilder.append(strSeg);
+        if (i + 1 != strings.length) {
+          stringBuilder.append(", ");
+        }
+        continue;
+      }
+
+      stringBuilder.append(strSeg);
+      if (i + 1 != strings.length) {
+        stringBuilder.append(",<br>");
+        stringBuilder.append(StringUtil.repeat(NBSP, offsetToOpenParen + 1));
+      }
+    }
+    return stringBuilder.toString();
+  }
+
   @NotNull
   public static String generateDoc(@Nullable final String signature,
                                    final boolean signatureIsHtml,
@@ -89,7 +132,8 @@ public class DartDocUtil {
         builder.append(signature);
       }
       else {
-        builder.append(StringUtil.escapeXmlEntities(signature));
+        builder.append(
+          formatSignature(StringUtil.escapeXmlEntities(signature), signature.indexOf('(')));
       }
       builder.append("<br>");
     }
