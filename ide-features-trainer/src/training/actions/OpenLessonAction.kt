@@ -209,9 +209,11 @@ class OpenLessonAction : AnAction() {
     LessonManager.instance.dslExecutor.execute {
       try {
         lesson.lessonContent(lessonContext)
-        lesson.pass()
-        LessonManager.instance.passLesson(projectWhereToStartLesson, lesson)
-        LOG.debug("Lesson $lesson has been passed")
+        ApplicationManager.getApplication().invokeLater {
+          lesson.pass()
+          LessonManager.instance.passLesson(projectWhereToStartLesson, lesson)
+          LOG.debug("Lesson $lesson has been passed")
+        }
       }
       catch (e: LessonScriptStopped) {
         LOG.debug("Script fo lesson $lesson has been stopped")
