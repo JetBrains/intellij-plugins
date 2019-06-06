@@ -21,7 +21,7 @@ class RubyLessonsGuiTestCase : GuiTestCase() {
   private val testActionsExecutor = BlockingExecutor()
 
   @Test
-  fun rubyNavigationLessonTest() {
+  fun runAllRubyLessons() {
     LessonManager.externalTestActionsExecutor = testActionsExecutor
 
     val courseManager = CourseManager.instance
