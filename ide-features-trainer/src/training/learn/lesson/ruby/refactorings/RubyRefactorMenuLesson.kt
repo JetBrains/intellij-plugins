@@ -22,7 +22,7 @@ class RubyRefactorMenuLesson(module: Module) : KLesson("Refactoring Menu", modul
       end
 
       def <caret>meow
-        "default meow"
+        'default meow'
       end
     end
 
@@ -34,11 +34,11 @@ class RubyRefactorMenuLesson(module: Module) : KLesson("Refactoring Menu", modul
     get() = {
       prepareSample(sample)
       actionTask("Refactorings.QuickListPopupAction") {
-        "RubyMine support a lot of refactorings. Press ${action(it)} to see the list of them."
+        "RubyMine supports a variety of refactorings. Press ${action(it)} to see a partial list of them."
       }
       task("Push Members Down") {
-        text("Same rare refactorings have no shortcut but you could choose it here. " +
-            "Choose <strong>$it...</strong> now and complete refactoring with <code>meow()</code> checked.")
+        text("Some refactorings are seldom used and have no shortcut, but you can find them here. " +
+            "Choose <strong>$it...</strong> now and complete the refactoring on <code>meow()</code>.")
         trigger("MemberPushDown") { checkMethodMoved(project) }
         test {
           ideFrame {
