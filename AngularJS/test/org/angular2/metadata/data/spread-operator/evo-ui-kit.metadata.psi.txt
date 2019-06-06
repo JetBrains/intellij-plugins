@@ -10,7 +10,7 @@ MetadataFile:evo-ui-kit.metadata.json
       promoCode: promoCode <metadata string>('')
     EvoModalService <metadata class>('')
     EvoUiClassDirective <metadata directive>: selector=[evoUiClass]; inputs=[evoUiClass]; outputs=[]; inOuts=[]
-      #ext: @angular/common#NgClass <metadata reference>('')
+      #ext: @no-res-angular/common#NgClass <metadata reference>('')
     EvoAlertComponent <metadata component>: selector=evo-alert; inputs=[size, closable, iconSrc, icon, type, version]; outputs=[close]; inOuts=[]('')
     EvoButtonComponent <metadata component>: selector=evo-button, button[evo-button]; inputs=[disabled, color, size, loading]; outputs=[]; inOuts=[]('')
     EvoButtonStyles <metadata object>
@@ -84,7 +84,7 @@ MetadataFile:evo-ui-kit.metadata.json
         useFactory: ɵd <metadata reference>('')
         deps <metadata array>
           ɵb <metadata reference>('')
-          @angular/core#PLATFORM_ID <metadata reference>('')
+          @no-res-angular/core#PLATFORM_ID <metadata reference>('')
     EvoToastService <metadata class>('')
     components <metadata array>
       EvoAlertComponent <metadata reference>('')
@@ -141,11 +141,11 @@ MetadataFile:evo-ui-kit.metadata.json
           #expression: directives <metadata reference>('')
         ɵl <metadata reference>('')
       ___dec.imports <metadata array>
-        @angular/common#CommonModule <metadata reference>('')
-        @angular/forms#FormsModule <metadata reference>('')
+        @no-res-angular/common#CommonModule <metadata reference>('')
+        @no-res-angular/forms#FormsModule <metadata reference>('')
         angular-imask#IMaskModule <metadata reference>('')
         ngx-page-scroll#NgxPageScrollModule <metadata reference>('')
-        @angular/forms#ReactiveFormsModule <metadata reference>('')
+        @no-res-angular/forms#ReactiveFormsModule <metadata reference>('')
         ɵl <metadata reference>('')
     FormHelper <metadata class>('')
     EvoControlStateManager <metadata class>('')
@@ -169,11 +169,11 @@ MetadataFile:evo-ui-kit.metadata.json
       ___dec.exports <metadata array>
         ɵm <metadata reference>('')
         ɵn <metadata reference>('')
-        @angular/forms#FormsModule <metadata reference>('')
+        @no-res-angular/forms#FormsModule <metadata reference>('')
       ___dec.imports <metadata array>
-        @angular/common#CommonModule <metadata reference>('')
-        @angular/forms#FormsModule <metadata reference>('')
-        @angular/forms#ReactiveFormsModule <metadata reference>('')
+        @no-res-angular/common#CommonModule <metadata reference>('')
+        @no-res-angular/forms#FormsModule <metadata reference>('')
+        @no-res-angular/forms#ReactiveFormsModule <metadata reference>('')
     ɵm <metadata component>: selector=evo-date-picker; inputs=[settings, style, label, constraints]; outputs=[onDateSelect, onOpen]; inOuts=[]('')
     ɵn <metadata component>: selector=evo-date-picker-range; inputs=[value, style, state, errorsMessages]; outputs=[]; inOuts=[]
       #ext: EvoBaseControl <metadata reference>('')
