@@ -13,25 +13,8 @@ fun Project.gitBranch(): String {
 val Project.channel: String
     get() {
         val branch = gitBranch()
-        return when {
-            branch.startsWith("stable") -> {
-                "stable"
-            }
-            branch.startsWith("dev") -> {
-                "dev"
-            }
-            branch.startsWith("master") -> {
-                "nightly"
-            }
-            else -> {
-                "feature"
-            }
+        if (branch.startsWith("master")) {
+            return "stable"
         }
+        return branch
     }
-
-inline fun <reified Value> jbProperties() = System.getProperties()
-        .filterKeys { it.toString().startsWith("idea") || it.toString().startsWith("jb") }
-        .filterKeys { it.toString() !in setOf("idea.paths.selector", "jb.vmOptionsFile", "idea.version", "idea.home.path") }
-        .mapKeys { it.key as String }.mapValues { it.value as Value }.toMutableMap()
-
-fun execArguments() = System.getProperty("exec.args", "").split(",")
