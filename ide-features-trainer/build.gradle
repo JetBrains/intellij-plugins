@@ -1,3 +1,5 @@
+import org.gradle.process.internal.ExecException
+
 plugins {
     id 'org.jetbrains.intellij' version '0.4.5'
     id 'org.jetbrains.kotlin.jvm' version '1.2.61'
@@ -15,12 +17,17 @@ dependencies {
 }
 
 def getGitHash = { ->
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-list', '--count', 'HEAD'
-        standardOutput = stdout
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', '--count', 'HEAD'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
     }
-    return stdout.toString().trim()
+    catch( ExecException ignored) {
+        return 'unknown'
+    }
 }
 
 group 'org.sk'
