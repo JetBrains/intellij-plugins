@@ -43,8 +43,8 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
 
   @NotNull
   @Override
-  public ExpectedTypeEvaluator newExpectedTypeEvaluator(PsiElement parent,
-                                                        JSExpectedTypeKind expectedTypeKind) {
+  protected ExpectedTypeEvaluator newExpectedTypeEvaluator(PsiElement parent,
+                                                           @NotNull JSExpectedTypeKind expectedTypeKind) {
     return new ActionScriptExpectedTypeEvaluator(parent, expectedTypeKind);
   }
 
