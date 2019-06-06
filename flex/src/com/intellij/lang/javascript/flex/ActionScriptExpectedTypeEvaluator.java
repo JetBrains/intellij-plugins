@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
-  public ActionScriptExpectedTypeEvaluator(JSExpression parent, JSExpectedTypeKind expectedTypeKind) {
+  public ActionScriptExpectedTypeEvaluator(PsiElement parent, JSExpectedTypeKind expectedTypeKind) {
     super(parent, expectedTypeKind);
   }
 
@@ -100,7 +100,8 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
 
   @Override
   public void visitJSArgumentList(@NotNull JSArgumentList node) {
-    JSParameterItem param = JSResolveUtil.findParameterForUsedArgument(myParent, node);
+    if (!(myParent instanceof JSExpression)) return;
+    JSParameterItem param = JSResolveUtil.findParameterForUsedArgument((JSExpression)myParent, node);
 
     if (param != null) {
       if (param.isRest()) {
