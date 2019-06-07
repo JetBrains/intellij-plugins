@@ -80,7 +80,7 @@ public class NotificationCompletionResultsProcessor extends NotificationProcesso
     int replacementOffset = paramsObject.get("replacementOffset").getAsInt();
     int replacementLength = paramsObject.get("replacementLength").getAsInt();
     boolean isLast = paramsObject.get("isLast").getAsBoolean();
-    String libraryFile = paramsObject.get("libraryFile").getAsString();
+    String libraryFile = paramsObject.get("libraryFile") != null ? paramsObject.get("libraryFile").getAsString() : null;
     // compute outline and notify listener
     getListener().computedCompletion(
         completionId,
