@@ -190,6 +190,13 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   }
 
   public void testExistingImports() {
-    doTest("Process");
+    String directory = getTestDirectoryName();
+    myFixture.configureByFiles(
+      getTestName(false) + ".dart",
+      getTestName(false).replace("ExistingImports", "ExistingImportLibrary") + ".dart");
+    myFixture.doHighlighting();
+    myFixture.complete(CompletionType.BASIC);
+    selectLookup("Process", Lookup.NORMAL_SELECT_CHAR);
+    myFixture.checkResultByFile(getTestName(false) + ".after.dart");
   }
 }
