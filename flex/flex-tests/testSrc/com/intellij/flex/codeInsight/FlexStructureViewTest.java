@@ -30,6 +30,10 @@ import static com.intellij.flex.util.FlexTestUtils.getPathToMockFlex;
 import static com.intellij.lang.javascript.StructureViewTestUtil.getIcon;
 
 public class FlexStructureViewTest extends JSAbstractStructureViewTest {
+  @Override
+  protected boolean isIconRequired() {
+    return true;
+  }
 
   private static final String BASE_PATH = "/as_fileStructure/";
   private static final int OBJECT_METHODS_COUNT = 11;

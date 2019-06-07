@@ -80,6 +80,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTestCase {
+  @Override
+  protected boolean isIconRequired() {
+    return true;
+  }
+
   @NonNls private static final String BASE_PATH = "/js2_highlighting/";
 
   private Runnable myAfterCommitRunnable = null;
@@ -1201,7 +1206,7 @@ public class ActionScriptHighlightingTest extends ActionScriptDaemonAnalyzerTest
   public void testCreateClassOrInterfaceAction11() throws Exception {
     doCreateClassOrInterfaceTestWithCheck("Abc", false);
   }
-  
+
   @JSTestOptions(JSTestOption.WithFlexSdk)
   public void testCreateClassOrInterfaceAction12() throws Exception {
     doCreateClassOrInterfaceTestWithCheck("Foo", true);
