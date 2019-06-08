@@ -99,11 +99,11 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testConstructor() {
-    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.constructor"));
+    shouldFail("Can not inline constructor");
   }
 
   public void testConstructor2() {
-    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.constructor"));
+    shouldFail("Can not inline constructor");
   }
 
   private void shouldFail(String reason) {
@@ -111,7 +111,7 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   }
 
   public void testMethodInHierarchy() {
-    String reason = JSBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method");
+    String reason = "Can not inline method that participates in hierarchy";
     doTestFailure(getTestName(false) + 1, "js2", reason);
     doTestFailure(getTestName(false) + 2, "js2", reason);
     doTestFailure(getTestName(false) + 3, "js2", reason);
@@ -120,18 +120,18 @@ public class FlexInlineFunctionTest extends JSInlineVarOrFunctionTestBase {
   @JSTestOptions({JSTestOption.WithFlexFacet})
   public void testMethodInHierarchyMxml() {
     doTestFailure(new String[]{getTestName(false) + ".mxml", getTestName(false) + ".js2"}, 
-                  JSBundle.message("javascript.refactoring.cannot.inline.overrided.or.overridden.method"));
+                  "Can not inline method that participates in hierarchy");
   }
 
   public void testInterfaceMethod() {
-    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.interface.method"));
+    shouldFail("Can not inline interface method");
   }
 
   public void testMethodFromExternalLibrary() {
     FlexTestUtils.addLibrary(getModule(), "library", getTestDataPath(), "ExternalLib.swc", "ExternalLib.zip", null);
     Disposer.register(myFixture.getTestRootDisposable(), () -> FlexTestUtils.removeLibrary(getModule(), "library"));
 
-    shouldFail(JSBundle.message("javascript.refactoring.cannot.inline.function.defined.in.library"));
+    shouldFail("Can not inline function defined in external library");
   }
 
   public void testNonCallUsage() {

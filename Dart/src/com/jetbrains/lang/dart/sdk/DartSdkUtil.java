@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.ComboboxWithBrowseButton;
@@ -72,7 +72,7 @@ public class DartSdkUtil {
                                          final @NotNull JBLabel versionLabel) {
     dartSdkPathComponent.getComboBox().setEditable(true);
     addKnownPathsToCombo(dartSdkPathComponent.getComboBox(), DART_SDK_KNOWN_PATHS, DartSdkUtil::isDartSdkHome);
-    if (SystemInfo.isMac && getItemFromCombo(dartSdkPathComponent.getComboBox()).isEmpty()) {
+    if (SystemInfoRt.isMac && getItemFromCombo(dartSdkPathComponent.getComboBox()).isEmpty()) {
       // no need to check folder presence here; even if it doesn't exist - that's the best we can suggest
       dartSdkPathComponent.getComboBox().getEditor().setItem("/usr/local/opt/dart/libexec");
     }
@@ -195,7 +195,7 @@ public class DartSdkUtil {
   }
 
   public static String getDartExePath(final @NotNull DartSdk sdk) {
-    return sdk.getHomePath() + (SystemInfo.isWindows ? "/bin/dart.exe" : "/bin/dart");
+    return sdk.getHomePath() + (SystemInfoRt.isWindows ? "/bin/dart.exe" : "/bin/dart");
   }
 
   public static String getPubPath(final @NotNull DartSdk sdk) {
@@ -203,6 +203,6 @@ public class DartSdkUtil {
   }
 
   public static String getPubPath(final @NotNull String sdkRoot) {
-    return sdkRoot + (SystemInfo.isWindows ? "/bin/pub.bat" : "/bin/pub");
+    return sdkRoot + (SystemInfoRt.isWindows ? "/bin/pub.bat" : "/bin/pub");
   }
 }

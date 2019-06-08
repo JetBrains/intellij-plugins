@@ -4,7 +4,7 @@ package com.jetbrains.lang.dart.util;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -86,7 +86,7 @@ public class DotPackagesFileUtil {
   private static String getAbsolutePackageRootPath(@NotNull final VirtualFile baseDir, @NotNull final String uri) {
     if (uri.startsWith("file:/")) {
       final String pathAfterSlashes = StringUtil.trimEnd(StringUtil.trimLeading(StringUtil.trimStart(uri, "file:/"), '/'), "/");
-      if (SystemInfo.isWindows && !ApplicationManager.getApplication().isUnitTestMode()) {
+      if (SystemInfoRt.isWindows && !ApplicationManager.getApplication().isUnitTestMode()) {
         if (pathAfterSlashes.length() > 2 && Character.isLetter(pathAfterSlashes.charAt(0)) && ':' == pathAfterSlashes.charAt(1)) {
           return pathAfterSlashes;
         }

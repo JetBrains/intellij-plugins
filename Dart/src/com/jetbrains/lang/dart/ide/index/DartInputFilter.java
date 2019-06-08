@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.index;
 
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,7 +13,7 @@ public class DartInputFilter extends DefaultFileTypeSpecificInputFilter {
   @Override
   public boolean acceptInput(@NotNull VirtualFile file) {
     boolean accepts = super.acceptInput(file);
-    if (accepts && FileTypeRegistry.getInstance().isFileOfType(file, StdFileTypes.HTML)) {
+    if (accepts && file.getFileType() == StdFileTypes.HTML) {
       accepts = !(file.getFileSystem() instanceof JarFileSystem);
     }
     return accepts;

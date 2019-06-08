@@ -8,8 +8,6 @@ import com.intellij.find.findUsages.JavaFindUsagesHelper;
 import com.intellij.find.findUsages.JavaMethodFindUsagesOptions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.Ref;
@@ -17,14 +15,12 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ClassUtil;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.Query;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
@@ -33,7 +29,6 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotatio
 import org.jetbrains.plugins.cucumber.psi.*;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,7 +36,6 @@ import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
 import static org.jetbrains.plugins.cucumber.CucumberUtil.STANDARD_PARAMETER_TYPES;
 import static org.jetbrains.plugins.cucumber.MapParameterTypeManager.DEFAULT;
-import static org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationProducer.HOOK_ANNOTATION_NAMES;
 
 public class CucumberJavaUtil {
   public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_0 = "cucumber.annotation.";
@@ -267,7 +261,6 @@ public class CucumberJavaUtil {
 
   public static String getPackageOfStep(GherkinStep step) {
     for (PsiReference ref : step.getReferences()) {
-      ProgressManager.checkCanceled();
       PsiElement refElement = ref.resolve();
       if (refElement instanceof PsiMethod || refElement instanceof PsiMethodCallExpression) {
         PsiClassOwner file = (PsiClassOwner)refElement.getContainingFile();
@@ -280,7 +273,7 @@ public class CucumberJavaUtil {
     return null;
   }
 
-  public static boolean addGlue(String glue, Set<String> glues) {
+  public static void addGlue(String glue, Set<String> glues) {
     boolean covered = false;
     final Set<String> toRemove = new HashSet<>();
     for (String existedGlue : glues) {
@@ -299,9 +292,7 @@ public class CucumberJavaUtil {
 
     if (!covered) {
       glues.add(glue);
-      return true;
     }
-    return false;
   }
 
   public static MapParameterTypeManager getAllParameterTypes(@NotNull Module module) {
@@ -377,51 +368,5 @@ public class CucumberJavaUtil {
   public static boolean isCucumberExpressionsAvailable(@NotNull PsiElement context) {
     PsiLocation<PsiElement> location = new PsiLocation<>(context);
     return LocationUtil.isJarAttached(location, PsiDirectory.EMPTY_ARRAY, CUCUMBER_EXPRESSIONS_CLASS_MARKER);
-  }
-
-  /**
-   * Check every step and send glue (package name) of its definition to consumer
-   */
-  public static void calculateGlueFromGherkinFile(@NotNull GherkinFile gherkinFile, @NotNull Consumer<String> consumer) {
-    gherkinFile.accept(new GherkinRecursiveElementVisitor() {
-      @Override
-      public void visitStep(GherkinStep step) {
-        String glue = getPackageOfStep(step);
-        if (glue != null) {
-          consumer.accept(glue);
-        }
-      }
-    });
-  }
-
-  /**
-   * Search for all Cucumber Hooks and sends their glue (package names) to consumer
-   */
-  public static void calculateGlueFromHooks(@NotNull PsiElement element, @NotNull Consumer<String> consumer) {
-    Module module = ModuleUtilCore.findModuleForPsiElement(element);
-    if (module == null) {
-      return;
-    }
-
-    JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(element.getProject());
-    GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
-
-    for (String fullyQualifiedAnnotationName : HOOK_ANNOTATION_NAMES) {
-      ProgressManager.checkCanceled();
-      PsiClass psiClass = javaPsiFacade.findClass(fullyQualifiedAnnotationName, dependenciesScope);
-
-      if (psiClass != null) {
-        Query<PsiMethod> psiMethods = AnnotatedElementsSearch
-          .searchPsiMethods(psiClass, GlobalSearchScope.allScope(element.getProject()));
-        Collection<PsiMethod> methods = psiMethods.findAll();
-        methods.forEach(it -> {
-          PsiClassOwner file = (PsiClassOwner)it.getContainingFile();
-          String packageName = file.getPackageName();
-          if (StringUtil.isNotEmpty(packageName)) {
-            consumer.accept(packageName);
-          }
-        });
-      }
-    }
   }
 }

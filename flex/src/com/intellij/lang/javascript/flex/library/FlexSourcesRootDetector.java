@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.detection.FlexProjectStructureDetector;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.ui.RootDetector;
@@ -55,7 +54,7 @@ class FlexSourcesRootDetector extends RootDetector {
         progressIndicator.setText2(file.getPresentableUrl());
 
         if (!file.isDirectory()) {
-          if (FileTypeRegistry.getInstance().isFileOfType(file, ActionScriptFileType.INSTANCE)) {
+          if (file.getFileType() == ActionScriptFileType.INSTANCE) {
 
             Pair<VirtualFile, String> root =
               CommonSourceRootDetectionUtil.VIRTUAL_FILE

@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.psi.stubs.impl.JSFileCachedData;
 import com.intellij.lang.javascript.psi.stubs.impl.JSFileStubImpl;
 import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.stubs.BinaryFileStubBuilder;
@@ -27,7 +26,7 @@ public class SwfFileStubBuilder implements BinaryFileStubBuilder {
 
   @Override
   public boolean acceptsFile(@NotNull final VirtualFile file) {
-    return FileTypeRegistry.getInstance().isFileOfType(file, FlexApplicationComponent.SWF_FILE_TYPE) &&
+    return file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE &&
            file.getPath().endsWith(JarFileSystem.JAR_SEPARATOR + file.getName());
   }
 

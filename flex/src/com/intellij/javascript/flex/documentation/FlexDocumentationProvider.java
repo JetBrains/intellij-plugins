@@ -26,7 +26,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -165,7 +165,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
             return root + href;
           }
 
-          if (root.startsWith("file://") && SystemInfo.isWindows) {
+          if (root.startsWith("file://") && SystemInfoRt.isWindows) {
             root = "file:///" + root.substring("file://".length());
           }
           return doAnnihilate(ourHtmlFileSuffix.matcher(root).replaceAll("/") + href);

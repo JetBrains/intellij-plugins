@@ -26,7 +26,6 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -303,7 +302,7 @@ public class CodeContext {
   }
 
   private static void handleFileDependency(Module module, Map<String, CodeContext> contextsOfModule, VirtualFile file) {
-    if (FileTypeRegistry.getInstance().isFileOfType(file, ArchiveFileType.INSTANCE) &&
+    if (file.getFileType() == ArchiveFileType.INSTANCE &&
         ("swc".equalsIgnoreCase(file.getExtension()) ||
          "ane".equalsIgnoreCase(file.getExtension()) ||
          "jar".equalsIgnoreCase(file.getExtension()))) {

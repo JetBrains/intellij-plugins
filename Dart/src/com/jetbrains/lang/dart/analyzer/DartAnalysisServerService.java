@@ -32,7 +32,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.fileEditor.impl.FileOffsetsManager;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -481,7 +480,8 @@ public class DartAnalysisServerService implements Disposable {
 
           for (final CompletionSuggestion completion : completionInfo.myCompletions) {
             final int convertedReplacementOffset = getConvertedOffset(file, completionInfo.myOriginalReplacementOffset);
-            consumer.consumeCompletionSuggestion(convertedReplacementOffset, completionInfo.myReplacementLength, completion);
+            final int convertedReplacementLength = getConvertedOffset(file, completionInfo.myOriginalReplacementLength);
+            consumer.consumeCompletionSuggestion(convertedReplacementOffset, convertedReplacementLength, completion);
           }
 
           final Set<String> includedKinds = Sets.newHashSet(completionInfo.myIncludedElementKinds);
@@ -714,7 +714,7 @@ public class DartAnalysisServerService implements Disposable {
     myProject.getMessageBus().connect().subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
       public void fileOpened(@NotNull final FileEditorManager source, @NotNull final VirtualFile file) {
-        if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE)) {
+        if (PubspecYamlUtil.PUBSPEC_YAML.equals(file.getName()) || file.getFileType() == DartFileType.INSTANCE) {
           DartSdkUpdateChecker.mayBeCheckForSdkUpdate(source.getProject());
         }
 
@@ -896,7 +896,7 @@ public class DartAnalysisServerService implements Disposable {
   @Contract("null->false")
   public static boolean isLocalAnalyzableFile(@Nullable final VirtualFile file) {
     if (file != null && file.isInLocalFileSystem()) {
-      return FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE) ||
+      return file.getFileType() == DartFileType.INSTANCE ||
              HtmlUtil.isHtmlFile(file) ||
              file.getName().equals(PubspecYamlUtil.PUBSPEC_YAML) ||
              file.getName().equals("analysis_options.yaml") ||
@@ -2250,7 +2250,10 @@ public class DartAnalysisServerService implements Disposable {
      * must be converted before any usage
      */
     private final int myOriginalReplacementOffset;
-    private final int myReplacementLength;
+    /**
+     * must be converted before any usage
+     */
+    private final int myOriginalReplacementLength;
     @NotNull private final List<CompletionSuggestion> myCompletions;
     @NotNull private final List<IncludedSuggestionSet> myIncludedSuggestionSets;
     @NotNull private final List<String> myIncludedElementKinds;
@@ -2259,7 +2262,7 @@ public class DartAnalysisServerService implements Disposable {
 
     CompletionInfo(@NotNull final String completionId,
                    int replacementOffset,
-                   int replacementLength,
+                   int originalReplacementLength,
                    @NotNull final List<CompletionSuggestion> completions,
                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
                    @NotNull final List<String> includedElementKinds,
@@ -2267,7 +2270,7 @@ public class DartAnalysisServerService implements Disposable {
                    boolean isLast) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
-      this.myReplacementLength = replacementLength;
+      this.myOriginalReplacementLength = originalReplacementLength;
       this.myCompletions = completions;
       this.myIncludedSuggestionSets = includedSuggestionSets;
       this.myIncludedElementKinds = includedElementKinds;

@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.ide.runner;
 
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
@@ -226,6 +226,6 @@ public class DartPositionInfo {
     int index = 0;
     while (index < text.length() && text.charAt(index) == '/') index++;
 
-    return SystemInfo.isWindows ? index : index - 1;
+    return SystemInfoRt.isWindows ? index : index - 1;
   }
 }

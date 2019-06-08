@@ -48,7 +48,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -481,7 +481,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private static final Set<String> ourAlreadyMadeExecutable = new THashSet<>();
 
   private static synchronized void ensureExecutable(String path) {
-    if (!SystemInfo.isWindows && !ourAlreadyMadeExecutable.contains(path)) {
+    if (!SystemInfoRt.isWindows && !ourAlreadyMadeExecutable.contains(path)) {
       try {
         ourAlreadyMadeExecutable.add(path);
         Runtime.getRuntime().exec(new String[]{"chmod", "+x", path});

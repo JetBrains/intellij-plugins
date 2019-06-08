@@ -112,7 +112,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     }
 
     final int socketPolicyPort;
-    if (SystemInfo.isWindows && ServerConnectionBase.tryPort(SwfPolicyFileConnection.DEFAULT_PORT)) {
+    if (SystemInfoRt.isWindows && ServerConnectionBase.tryPort(SwfPolicyFileConnection.DEFAULT_PORT)) {
       socketPolicyPort = SwfPolicyFileConnection.DEFAULT_PORT;
     }
     else {

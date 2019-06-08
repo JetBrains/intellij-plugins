@@ -36,38 +36,34 @@ Vue components defined using separate .html, .js, and .css files are not support
   <depends>com.intellij.modules.platform</depends>
   <depends optional="true" config-file="js-debugger.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="vue-copyright.xml">com.intellij.copyright</depends>
-
   <extensions defaultExtensionNs="com.intellij">
-    <applicationService serviceImplementation="org.jetbrains.vuejs.model.webtypes.registry.VueWebTypesRegistry"/>
-    <css.embeddedCssProvider implementation="org.jetbrains.vuejs.css.VueEmbeddedCssProvider"/>
-    <css.inclusionContext implementation="org.jetbrains.vuejs.css.VueCssInclusionContext"/>
-    <fileTypeFactory implementation="org.jetbrains.vuejs.lang.html.VueFileTypeFactory"/>
-    <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.lang.html.parser.VueParserDefinition"/>
-    <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.lang.expr.VueJSParserDefinition"/>
-    <typedHandler implementation="org.jetbrains.vuejs.editor.VueJSBracesInterpolationTypedHandler"/>
+    <css.embeddedCssProvider implementation="org.jetbrains.vuejs.codeInsight.VueEmbeddedCssProvider"/>
+    <css.inclusionContext implementation="org.jetbrains.vuejs.codeInsight.VueCssInclusionContext"/>
+    <fileTypeFactory implementation="org.jetbrains.vuejs.VueFileTypeFactory" />
+    <lang.parserDefinition language="Vue" implementationClass="org.jetbrains.vuejs.language.VueParserDefinition" />
+    <lang.parserDefinition language="VueJS" implementationClass="org.jetbrains.vuejs.language.VueJSParserDefinition" />
+    <typedHandler implementation="org.jetbrains.vuejs.language.VueJSBracesInterpolationTypedHandler"/>
     <lang.braceMatcher language="VueJS" implementationClass="com.intellij.lang.javascript.highlighting.JSBraceMatcher"/>
-    <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.refs.VueJSReferenceContributor"/>
-    <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.refs.VueReferenceContributor"/>
+    <psi.referenceContributor language="JavaScript" implementation="org.jetbrains.vuejs.codeInsight.VueJSReferenceContributor"/>
+    <psi.referenceContributor language="Vue" implementation="org.jetbrains.vuejs.codeInsight.VueReferenceContributor"/>
 
-    <lang.syntaxHighlighterFactory language="Vue"
-                                   implementationClass="org.jetbrains.vuejs.lang.html.highlighting.VueSyntaxHighlighterFactory"/>
-    <xml.attributeDescriptorsProvider implementation="org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider"/>
+    <lang.syntaxHighlighterFactory language="Vue" implementationClass="org.jetbrains.vuejs.language.VueSyntaxHighlighterFactory" />
+    <xml.attributeDescriptorsProvider implementation="org.jetbrains.vuejs.codeInsight.VueAttributesProvider" />
     <xml.xmlExtension implementation="org.jetbrains.vuejs.codeInsight.VueXmlExtension"/>
-    <xml.tagNameProvider implementation="org.jetbrains.vuejs.codeInsight.tags.VueTagProvider"/>
-    <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.tags.VueTagProvider"/>
-    <gotoDeclarationHandler implementation="org.jetbrains.vuejs.editor.VueGotoDeclarationHandler"/>
+    <xml.tagNameProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
+    <xml.elementDescriptorProvider implementation="org.jetbrains.vuejs.codeInsight.VueTagProvider" />
+    <gotoDeclarationHandler implementation="org.jetbrains.vuejs.codeInsight.VueGotoDeclarationHandler"/>
 
-    <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex"/>
-    <stubIndex implementation="org.jetbrains.vuejs.index.VueOptionsIndex"/>
-    <stubIndex implementation="org.jetbrains.vuejs.index.VueMixinBindingIndex"/>
-    <stubIndex implementation="org.jetbrains.vuejs.index.VueExtendsBindingIndex"/>
-    <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalDirectivesIndex"/>
-    <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex"/>
-    <stubIndex implementation="org.jetbrains.vuejs.index.VueStoreIndex"/>
-    <stubElementTypeHolder class="org.jetbrains.vuejs.lang.expr.VueElementTypes"/>
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueComponentsIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueOptionsIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueMixinBindingIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueExtendsBindingIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueGlobalDirectivesIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueLocalDirectivesIndex" />
+    <stubIndex implementation="org.jetbrains.vuejs.index.VueStoreIndex" />
+    <stubElementTypeHolder class="org.jetbrains.vuejs.language.VueElementTypes" />
 
-    <directoryProjectGenerator
-        implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
+    <directoryProjectGenerator implementation="org.jetbrains.vuejs.cli.VueCliProjectGenerator"/>  <!-- works in WebStorm and other SmallIDEs -->
     <projectTemplatesFactory implementation="org.jetbrains.vuejs.cli.VueProjectTemplateFactory"/> <!-- works in IntelliJ IDEA -->
 
     <localInspection language="Vue" groupName="Vue" displayName="Data Function" shortName="VueDataFunction"
@@ -81,7 +77,7 @@ Vue components defined using separate .html, .js, and .css files are not support
       <category>VueJS</category>
     </intentionAction>
 
-    <multiHostInjector implementation="org.jetbrains.vuejs.editor.VueInjector" id="vue"/>
+    <multiHostInjector implementation="org.jetbrains.vuejs.language.VueInjector" id="vue"/>
 
     <internalFileTemplate name="Vue Single File Component"/>
     <createFromTemplateHandler implementation="org.jetbrains.vuejs.VueCreateFromTemplateHandler"/>
@@ -98,12 +94,11 @@ Vue components defined using separate .html, .js, and .css files are not support
     <defaultLiveTemplatesProvider implementation="org.jetbrains.vuejs.liveTemplate.VueTemplatesProvider"/>
     <renamePsiElementProcessor implementation="org.jetbrains.vuejs.refactoring.VueJSComponentRenameProcessor"/>
     <referencesSearch implementation="org.jetbrains.vuejs.findUsages.VueJSReferenceSearcher"/>
-    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.attributes.VueTagCompletionContributor"/>
-    <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler"/>
+    <completion.contributor language="HTML" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueTagCompletionContributor"/>
+    <typedHandler implementation="org.jetbrains.vuejs.codeInsight.completion.VueAutoPopupHandler" />
     <include.provider implementation="org.jetbrains.vuejs.index.VueES6ModuleFileIncludeProvider"/>
 
-    <highlightingPassFactory
-        implementation="org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptServiceHighlightingPassFactoryRegistrar"/>
+    <highlightingPassFactory implementation="org.jetbrains.vuejs.typescript.service.VueTypeScriptServiceHighlightingPassFactoryRegistrar"/>
   </extensions>
   <actions>
     <action class="org.jetbrains.vuejs.CreateVueSingleFileComponentAction" id="CreateVueSingleFileComp">
@@ -115,19 +110,18 @@ Vue components defined using separate .html, .js, and .css files are not support
   </actions>
 
   <extensions defaultExtensionNs="JavaScript">
-    <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider"/>
-    <indexedFileTypeProvider implementation="org.jetbrains.vuejs.lang.html.VueIndexedFileTypeProvider"/>
-    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.index.VueFrameworkHandler" version="1"/>
-    <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.inspections.VueInspectionFilter"/>
+    <elementScopeProvider implementation="org.jetbrains.vuejs.VueElementResolveScopeProvider" />
+    <indexedFileTypeProvider implementation="org.jetbrains.vuejs.VueIndexedFileTypeProvider"/>
+    <frameworkIndexingHandler implementation="org.jetbrains.vuejs.codeInsight.VueFrameworkHandler" version="1"/>
+    <intentionAndInspectionFilter language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueInspectionFilter"/>
     <inheritedLanguagesConfigurableProvider language="VueJS"
                                             implementationClass="org.jetbrains.vuejs.codeInsight.VueJSLanguageConfigurableProvider"/>
     <dialectSpecificHandlersFactory language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.VueJSSpecificHandlersFactory"/>
     <frameworkSpecificHandlersFactory language="JavaScript"
                                       implementationClass="org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory"/>
-    <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.inspections.VueAnalysisHandlersFactory" language="VueJS"/>
-    <smartCompletionContributor language="VueJS"
-                                implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueInsideTemplateCompletionContributor"/>
-    <tsImportResolver implementation="org.jetbrains.vuejs.lang.typescript.VueTypeScriptImportsResolverProvider" order="first"/>
-    <LanguageServiceProvider order="first" implementation="org.jetbrains.vuejs.lang.typescript.service.VueLanguageServiceProvider"/>
+    <analysisHandlersFactory implementationClass="org.jetbrains.vuejs.codeInsight.VueAnalysisHandlersFactory" language="VueJS"/>
+    <smartCompletionContributor language="VueJS" implementationClass="org.jetbrains.vuejs.codeInsight.completion.VueInsideTemplateCompletionContributor"/>
+    <tsImportResolver implementation="org.jetbrains.vuejs.typescript.VueTypeScriptImportsResolverProvider" order="first"/>
+    <LanguageServiceProvider order="first" implementation="org.jetbrains.vuejs.typescript.service.VueLanguageServiceProvider"/>
   </extensions>
 </idea-plugin>

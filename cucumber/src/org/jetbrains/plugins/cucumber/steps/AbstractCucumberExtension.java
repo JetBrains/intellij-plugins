@@ -4,10 +4,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
@@ -30,9 +26,7 @@ public abstract class AbstractCucumberExtension implements CucumberJvmExtensionP
       return Collections.emptyList();
     }
 
-    PsiFile stepContainingFile = element.getContainingFile();
-    List<AbstractStepDefinition> stepDefinitions = CachedValuesManager.getCachedValue(stepContainingFile, () ->
-      CachedValueProvider.Result.create(loadStepsFor(stepContainingFile, module), PsiModificationTracker.MODIFICATION_COUNT));
+    final List<AbstractStepDefinition> stepDefinitions = loadStepsFor(element.getContainingFile(), module);
     final List<PsiElement> result = new ArrayList<>();
 
     for (final AbstractStepDefinition stepDefinition : stepDefinitions) {

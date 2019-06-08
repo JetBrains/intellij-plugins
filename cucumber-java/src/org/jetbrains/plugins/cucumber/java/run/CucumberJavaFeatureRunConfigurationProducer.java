@@ -2,24 +2,38 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
 import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 
+import java.util.Set;
+
+/**
+ * @author Andrey.Vokin
+ */
 public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
-  @Nullable
   @Override
-  protected CucumberGlueProvider getGlueProvider(@NotNull final PsiElement element) {
+  protected NullableComputable<String> getStepsGlue(@NotNull final PsiElement element) {
     final PsiFile file = element.getContainingFile();
     if (file instanceof GherkinFile) {
-      return new CucumberJavaFeatureGlueProvider(element);
+      return () -> {
+        final Set<String> glues = getHookGlue(element);
+        for (CucumberJvmExtensionPoint extension : CucumberJvmExtensionPoint.EP_NAME.getExtensionList()) {
+          glues.addAll(extension.getGlues((GherkinFile)file, glues));
+        }
+
+        return StringUtil.join(glues, " ");
+      };
     }
 
     return null;

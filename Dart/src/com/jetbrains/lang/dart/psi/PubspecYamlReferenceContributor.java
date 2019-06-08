@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.psi;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -84,7 +84,7 @@ public class PubspecYamlReferenceContributor extends PsiReferenceContributor {
         @Override
         public boolean isAbsolutePathReference() {
           final String path = getPathString();
-          return SystemInfo.isWindows
+          return SystemInfoRt.isWindows
                  ? path.length() >= 3 && Character.isLetter(path.charAt(0)) && ':' == path.charAt(1) && '/' == path.charAt(2)
                  : path.startsWith("/");
         }

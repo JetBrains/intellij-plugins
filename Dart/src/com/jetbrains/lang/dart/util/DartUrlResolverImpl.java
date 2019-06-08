@@ -12,7 +12,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.LibraryProperties;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -137,7 +137,7 @@ public class DartUrlResolverImpl extends DartUrlResolver {
 
     if (url.startsWith(FILE_PREFIX)) {
       final String path = StringUtil.trimLeading(url.substring(FILE_PREFIX.length()), '/');
-      return LocalFileSystem.getInstance().findFileByPath(SystemInfo.isWindows ? path : ("/" + path));
+      return LocalFileSystem.getInstance().findFileByPath(SystemInfoRt.isWindows ? path : ("/" + path));
     }
 
     if (ApplicationManager.getApplication().isUnitTestMode() && url.startsWith(TEMP_PREFIX)) {

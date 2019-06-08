@@ -22,7 +22,6 @@ import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -98,7 +97,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                if (file == null) return;
 
-               if (FileTypeRegistry.getInstance().isFileOfType(file, HtmlFileType.INSTANCE) &&
+               if (file.getFileType() == HtmlFileType.INSTANCE &&
                    PubspecYamlUtil.findPubspecYamlFile(project, file) == null &&
                    !Registry.is("dart.projects.without.pubspec", false)) {
                  return;

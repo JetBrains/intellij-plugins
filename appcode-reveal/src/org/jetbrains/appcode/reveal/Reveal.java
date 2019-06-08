@@ -1,21 +1,14 @@
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.mac.foundation.NSWorkspace;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.cidr.AppleScript;
-import com.jetbrains.cidr.OCPathManager;
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.plist.Plist;
@@ -60,42 +53,23 @@ public class Reveal {
     if (sdk == null) return null;
 
     ApplePlatform platform = sdk.getPlatform();
-    File result;
+    String libraryPath = "/Contents/SharedSupport/";
 
-    if (isCompatibleWithReveal23OrHigher(bundle)) {
-      String libraryPath = "Reveal/RevealServer/";
-      if (platform.isIOS()) {
-        libraryPath += "iOS/";
-      }
-      else if (platform.isTv()) {
-        libraryPath += "tvOS/";
-      }
-      libraryPath += "RevealServer.framework/RevealServer";
-
-      result = OCPathManager.getUserApplicationSupportSubFile(libraryPath);
+    if (platform.isIOS()) {
+      libraryPath += "iOS-Libraries/";
+    } else if (platform.isTv()) {
+      libraryPath += "tvOS-Libraries/";
     }
-    else {
-      String libraryPath = "/Contents/SharedSupport/";
 
-      if (platform.isIOS()) {
-        libraryPath += "iOS-Libraries/";
-      }
-      else if (platform.isTv()) {
-        libraryPath += "tvOS-Libraries/";
-      }
-
-      if (isCompatibleWithRevealTwoOrHigher(bundle)) {
-        libraryPath += "RevealServer.framework/RevealServer";
-      }
-      else if (platform.isTv()) {
-        libraryPath += "libReveal-tvOS.dylib";
-      }
-      else {
-        libraryPath += "libReveal.dylib";
-      }
-      result = new File(bundle, libraryPath);
+    if (isCompatibleWithRevealTwoOrHigher(bundle)) {
+      libraryPath += "RevealServer.framework/RevealServer";
+    } else if (platform.isTv()) {
+      libraryPath += "libReveal-tvOS.dylib";
+    } else {
+      libraryPath += "libReveal.dylib";
     }
     
+    File result = new File(bundle, libraryPath);
     return result.exists() ? result : null;
   }
 
@@ -112,11 +86,6 @@ public class Reveal {
   public static boolean isCompatibleWithRevealTwoOrHigher(@NotNull File bundle) {
     Version version = getRevealVersion(bundle);
     return version != null && version.isOrGreaterThan(8378);
-  }
-
-  public static boolean isCompatibleWithReveal23OrHigher(@NotNull File bundle) {
-    Version version = getRevealVersion(bundle);
-    return version != null && version.isOrGreaterThan(12724);
   }
 
   @Nullable
@@ -158,16 +127,10 @@ public class Reveal {
                                                      bundleID);
       ContainerUtil.addIfNotNull(args, deviceName);
 
-      CapturingProcessHandler handler = new CapturingProcessHandler(new GeneralCommandLine(args));
-      handler.addProcessListener(new ProcessAdapter() {
-        @Override
-        public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
-          if (outputType == ProcessOutputTypes.STDERR) {
-            LOG.warn(event.getText());
-          }
-        }
-      });
-      handler.startNotify();
+      ProcessBuilder pb = new ProcessBuilder(args);
+
+      Process p = pb.start();
+      p.waitFor();
     }
     catch (Exception e) {
       throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);

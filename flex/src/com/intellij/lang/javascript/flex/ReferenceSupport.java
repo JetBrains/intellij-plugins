@@ -6,7 +6,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -115,7 +115,7 @@ public class ReferenceSupport {
 
   private static RelativeToWhat relativeToWhat(final String path, final PsiElement psiElement, final LookupOptions lookupOptions) {
     if (lookupOptions.ABSOLUTE && (ALLOW_ABSOLUTE_REFERENCES_IN_TESTS || !ApplicationManager.getApplication().isUnitTestMode())) {
-      if (SystemInfo.isWindows) {
+      if (SystemInfoRt.isWindows) {
         if (path.length() > 2 && path.charAt(1) == ':' && Character.isLetter(path.charAt(0))) {
           return RelativeToWhat.Absolute;
         }

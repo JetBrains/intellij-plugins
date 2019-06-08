@@ -8,7 +8,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -78,8 +78,8 @@ public class DartPubBuildDialog extends DialogWrapper {
                                                   @Override
                                                   public String getText(JTextField component) {
                                                     final String path = component.getText();
-                                                    if (SystemInfo.isWindows && FileUtil.isWindowsAbsolutePath(path) ||
-                                                        !SystemInfo.isWindows && FileUtil.isUnixAbsolutePath(path)) {
+                                                    if (SystemInfoRt.isWindows && FileUtil.isWindowsAbsolutePath(path) ||
+                                                        !SystemInfoRt.isWindows && FileUtil.isUnixAbsolutePath(path)) {
                                                       return path;
                                                     }
 

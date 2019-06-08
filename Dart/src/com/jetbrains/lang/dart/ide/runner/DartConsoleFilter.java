@@ -5,7 +5,7 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -57,7 +57,7 @@ public class DartConsoleFilter implements Filter {
     switch (info.type) {
       case FILE:
         String path = URLUtil.unescapePercentSequences(info.path);
-        if (SystemInfo.isWindows) {
+        if (SystemInfoRt.isWindows) {
           path = StringUtil.trimLeading(path, '/');
         }
         file = LocalFileSystem.getInstance().findFileByPath(path);

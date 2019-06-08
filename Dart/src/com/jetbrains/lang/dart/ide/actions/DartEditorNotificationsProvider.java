@@ -9,7 +9,6 @@ import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -64,7 +63,7 @@ public class DartEditorNotificationsProvider extends EditorNotifications.Provide
       }
     }
 
-    if (isPubspecFile || FileTypeRegistry.getInstance().isFileOfType(vFile, DartFileType.INSTANCE)) {
+    if (isPubspecFile || vFile.getFileType() == DartFileType.INSTANCE) {
       final DartSdk sdk = DartSdk.getDartSdk(project);
 
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);

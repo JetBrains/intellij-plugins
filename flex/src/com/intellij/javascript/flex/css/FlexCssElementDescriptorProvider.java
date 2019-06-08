@@ -24,7 +24,6 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.ActionScriptClassImpl;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -678,7 +677,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     final VirtualFile vFile = file.getOriginalFile().getVirtualFile();
-    if (vFile == null || !(FileTypeRegistry.getInstance().isFileOfType(vFile, CssFileType.INSTANCE))) {
+    if (vFile == null || !(vFile.getFileType() == CssFileType.INSTANCE)) {
       return null;
     }
 

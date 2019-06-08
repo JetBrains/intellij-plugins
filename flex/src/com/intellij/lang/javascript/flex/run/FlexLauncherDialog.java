@@ -10,7 +10,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -87,11 +87,11 @@ public class FlexLauncherDialog extends DialogWrapper {
                                new FileChooserDescriptor(true, true, false, false, false, false) {
                                  @Override
                                  public boolean isFileSelectable(final VirtualFile file) {
-                                   return SystemInfo.isMac && file.isDirectory() && "app".equalsIgnoreCase(file.getExtension())
+                                   return SystemInfoRt.isMac && file.isDirectory() && "app".equalsIgnoreCase(file.getExtension())
                                           || !file.isDirectory();
                                  }
                                });
-    myNewPlayerInstanceCheckBox.setVisible(SystemInfo.isMac);
+    myNewPlayerInstanceCheckBox.setVisible(SystemInfoRt.isMac);
   }
 
   private void updateControls() {

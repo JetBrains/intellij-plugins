@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner;
 
-import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.Trinity;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class DartConsoleFilterTest extends TestCase {
     final DartPositionInfo info = DartPositionInfo.parsePositionInfo(text);
     assertNotNull(info);
     assertEquals(type, info.type);
-    final boolean trimSlash = type == Type.FILE && SystemInfo.isWindows && pathOnUnix.startsWith("/");
+    final boolean trimSlash = type == Type.FILE && SystemInfoRt.isWindows && pathOnUnix.startsWith("/");
     assertEquals(trimSlash ? pathOnUnix.substring(1) : pathOnUnix, info.path);
     assertEquals(highlightedText, text.substring(info.highlightingStartIndex, info.highlightingEndIndex));
     assertEquals(line, info.line);

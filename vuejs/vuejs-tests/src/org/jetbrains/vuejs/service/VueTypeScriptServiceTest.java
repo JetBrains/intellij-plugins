@@ -11,12 +11,12 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService;
+import org.jetbrains.vuejs.typescript.service.VueTypeScriptService;
 import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static org.jetbrains.vuejs.lang.VueTestUtilKt.vueRelativeTestDataPath;
+import static org.jetbrains.vuejs.language.VueTestUtilKt.vueRelativeTestDataPath;
 
 @RunWith(TypeScriptServiceTestRunner.class)
 public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
