@@ -8,7 +8,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootModificationTracker;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -139,7 +139,7 @@ public class PhoneGapUtil {
 
   @Nullable
   private static String getPath(@NotNull String name) {
-    File path = PathEnvironmentVariableUtil.findInPath(SystemInfoRt.isWindows ? name + ".cmd" : name);
+    File path = PathEnvironmentVariableUtil.findInPath(SystemInfo.isWindows ? name + ".cmd" : name);
     return (path != null && path.exists()) ? path.getAbsolutePath() : null;
   }
 

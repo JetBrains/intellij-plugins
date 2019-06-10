@@ -24,7 +24,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -150,7 +150,7 @@ public class PhoneGapProjectTemplateGenerator extends WebProjectTemplate<PhoneGa
     runConfiguration.setExecutable(settings.executable);
     runConfiguration.setWorkDir(project.getBasePath());
     runConfiguration.setPlatform(
-      SystemInfoRt.isMac ? PhoneGapRunConfigurationEditor.PLATFORM_IOS : PhoneGapRunConfigurationEditor.PLATFORM_ANDROID);
+      SystemInfo.isMac ? PhoneGapRunConfigurationEditor.PLATFORM_IOS : PhoneGapRunConfigurationEditor.PLATFORM_ANDROID);
     runConfiguration.setCommand(PhoneGapCommandLine.COMMAND_EMULATE);
     runManager.addConfiguration(configuration);
     runManager.setSelectedConfiguration(configuration);

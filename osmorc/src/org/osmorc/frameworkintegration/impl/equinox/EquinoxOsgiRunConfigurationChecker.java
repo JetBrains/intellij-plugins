@@ -25,7 +25,7 @@
 package org.osmorc.frameworkintegration.impl.equinox;
 
 import com.intellij.execution.configurations.RuntimeConfigurationWarning;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.DefaultOsgiRunConfigurationChecker;
@@ -49,7 +49,7 @@ public class EquinoxOsgiRunConfigurationChecker extends DefaultOsgiRunConfigurat
     String product = EquinoxRunProperties.getEquinoxProduct(properties);
     String application = EquinoxRunProperties.getEquinoxApplication(properties);
     if (!StringUtil.isEmptyOrSpaces(product) || !StringUtil.isEmptyOrSpaces(application)) {
-      if (SystemInfoRt.isMac && !runConfiguration.getVmParameters().contains("-XstartOnFirstThread")) {
+      if (SystemInfo.isMac && !runConfiguration.getVmParameters().contains("-XstartOnFirstThread")) {
         throw new RuntimeConfigurationWarning(OsmorcBundle.message("run.configuration.equinox.jvm"));
       }
 

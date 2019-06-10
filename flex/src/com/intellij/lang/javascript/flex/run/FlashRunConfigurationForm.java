@@ -27,7 +27,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -240,7 +240,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private void initMobileControls() {
     initEmulatorRelatedControls();
 
-    if (!SystemInfoRt.isMac) {
+    if (!SystemInfo.isMac) {
       myOnIOSSimulatorRadioButton.setEnabled(false);
       myOnIOSSimulatorRadioButton.setText(FlexBundle.message("ios.simulator.on.mac.only.button.text"));
       myIOSSimulatorSdkTextWithBrowse.setVisible(false);
@@ -396,7 +396,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myIOSSimulatorDeviceLabel.setEnabled(myOnIOSSimulatorRadioButton.isSelected());
       myIOSSimulatorDeviceTextField.setEnabled(myOnIOSSimulatorRadioButton.isSelected());
 
-      if (myIOSSimulatorSdkTextWithBrowse.isEnabled() && myIOSSimulatorSdkTextWithBrowse.getText().isEmpty() && SystemInfoRt.isMac) {
+      if (myIOSSimulatorSdkTextWithBrowse.isEnabled() && myIOSSimulatorSdkTextWithBrowse.getText().isEmpty() && SystemInfo.isMac) {
         final String latestSelected = PropertiesComponent.getInstance().getValue(LATEST_SELECTED_IOS_SIMULATOR_SDK_PATH_KEY);
         myIOSSimulatorSdkTextWithBrowse
           .setText(FileUtil.toSystemDependentName(StringUtil.notNullize(latestSelected, guessIosSimulatorSdkPath())));
@@ -501,7 +501,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myBCOutputRadioButton.setSelected(!params.isLaunchUrl());
     myUrlOrFileRadioButton.setSelected(params.isLaunchUrl());
     final String url = params.getUrl();
-    final boolean windowsLocalFile = SystemInfoRt.isWindows && url.length() >= 2 && Character.isLetter(url.charAt(0)) && ':' == url.charAt(1);
+    final boolean windowsLocalFile = SystemInfo.isWindows && url.length() >= 2 && Character.isLetter(url.charAt(0)) && ':' == url.charAt(1);
     myUrlOrFileTextWithBrowse.setText(windowsLocalFile ? FileUtil.toSystemDependentName(url) : url);
 
     myRunTrustedCheckBox.setSelected(params.isRunTrusted());
@@ -580,7 +580,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     params.setLaunchUrl(myUrlOrFileRadioButton.isSelected());
     final String url = myUrlOrFileTextWithBrowse.getText().trim();
-    final boolean windowsLocalFile = SystemInfoRt.isWindows && url.length() >= 2 && Character.isLetter(url.charAt(0)) && ':' == url.charAt(1);
+    final boolean windowsLocalFile = SystemInfo.isWindows && url.length() >= 2 && Character.isLetter(url.charAt(0)) && ':' == url.charAt(1);
     params.setUrl(windowsLocalFile ? FileUtil.toSystemIndependentName(url) : url);
 
     params.setLauncherParameters(myLauncherParameters);
@@ -619,7 +619,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     }
 
     final FlexBuildConfiguration bc = myBCCombo.getBC();
-    if (SystemInfoRt.isMac && bc != null && bc.getTargetPlatform() == TargetPlatform.Mobile && myOnIOSSimulatorRadioButton.isSelected()) {
+    if (SystemInfo.isMac && bc != null && bc.getTargetPlatform() == TargetPlatform.Mobile && myOnIOSSimulatorRadioButton.isSelected()) {
       final String path = FileUtil.toSystemIndependentName(myIOSSimulatorSdkTextWithBrowse.getText().trim());
       if (!path.isEmpty()) {
         PropertiesComponent.getInstance().setValue(LATEST_SELECTED_IOS_SIMULATOR_SDK_PATH_KEY, path);

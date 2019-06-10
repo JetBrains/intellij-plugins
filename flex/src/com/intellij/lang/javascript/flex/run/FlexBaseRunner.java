@@ -59,7 +59,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfoRt;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -171,7 +171,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           showBCCompilationSkippedWarning(module, bc);
         }
 
-        if (isDebug && SystemInfoRt.isMac && bc.getTargetPlatform() == TargetPlatform.Web) {
+        if (isDebug && SystemInfo.isMac && bc.getTargetPlatform() == TargetPlatform.Web) {
           checkDebuggerFromSdk4(env.getProject(), runProfile, params, bc);
         }
 
@@ -304,7 +304,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       case Player:
         try {
-          if (SystemInfoRt.isMac) {
+          if (SystemInfo.isMac) {
             if (launcherParams.isNewPlayerInstance()) {
               Runtime.getRuntime().exec(new String[]{ExecUtil.getOpenCommandPath(), "-n", "-a", launcherParams.getPlayerPath(), urlOrPath});
             }
