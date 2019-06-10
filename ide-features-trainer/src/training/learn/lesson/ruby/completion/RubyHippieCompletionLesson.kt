@@ -4,7 +4,6 @@ import training.lang.RubyLangSupport
 import training.learn.interfaces.Module
 import training.learn.lesson.kimpl.KLesson
 import training.learn.lesson.kimpl.LessonContext
-import training.learn.lesson.kimpl.START_TAG
 import training.learn.lesson.kimpl.parseLessonSample
 
 class RubyHippieCompletionLesson(module: Module) : KLesson("Hippie Completion", module, "ruby") {
@@ -42,7 +41,7 @@ end
     }
 
   private fun calculateResult(insert: String) =
-      StringBuffer(sample.text).insert(sample.getInfo(START_TAG).startOffset, insert).toString()
+      StringBuffer(sample.text).insert(sample.startOffset, insert).toString()
 
   override val existedFile = RubyLangSupport.sandboxFile
 }
