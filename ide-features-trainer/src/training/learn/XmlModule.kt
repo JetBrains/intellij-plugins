@@ -1,8 +1,8 @@
 package training.learn
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jdom.Element
 import org.jdom.JDOMException
-import org.jetbrains.rpc.LOG
 import training.learn.exceptons.BadLessonException
 import training.learn.exceptons.BadModuleException
 import training.learn.interfaces.Lesson
@@ -191,6 +191,8 @@ class XmlModule(override val name: String,
       }
       return null
     }
+
+    private val LOG = Logger.getInstance(XmlModule::class.java)
   }
 
   class XRoot(private val root: Element) {
