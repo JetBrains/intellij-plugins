@@ -162,6 +162,11 @@ class LessonContext(val lesson: KLesson, val editor: Editor, val project: Projec
 
   fun prepareSample(sample: LessonSample) {
     setDocumentCode(sample.text)
-    caret(sample.getInfo(START_TAG).startOffset)
+    if (sample.selection != null) {
+      runInEdt {
+        editor.selectionModel.setSelection(sample.selection.first, sample.selection.second)
+      }
+    }
+    caret(sample.startOffset)
   }
 }
