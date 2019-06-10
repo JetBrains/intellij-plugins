@@ -9,7 +9,10 @@ import org.jetbrains.vuejs.lang.html._VueLanguage
 @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
 open class VueFileType : _VueFileType() {
   companion object {
-    val INSTANCE: VueFileType = org.jetbrains.vuejs.lang.html.VueFileType.INSTANCE
+    val INSTANCE: VueFileType
+      get() {
+        return org.jetbrains.vuejs.lang.html.VueFileType.INSTANCE
+      }
   }
 }
 
@@ -17,6 +20,9 @@ open class VueFileType : _VueFileType() {
 @ApiStatus.ScheduledForRemoval(inVersion = "2019.3")
 open class VueLanguage : _VueLanguage() {
   companion object {
-    val INSTANCE: VueLanguage = org.jetbrains.vuejs.lang.html.VueLanguage.INSTANCE
+    val INSTANCE: VueLanguage
+      get() {
+        return org.jetbrains.vuejs.lang.html.VueLanguage.INSTANCE
+      }
   }
 }
