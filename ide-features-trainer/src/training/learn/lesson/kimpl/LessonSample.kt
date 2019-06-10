@@ -1,26 +1,30 @@
 package training.learn.lesson.kimpl
 
 
-class LessonSample(val text: String, private val infos: Map<String, SampleInfo>) {
-  fun getInfo(tag: String): SampleInfo = infos[tag]!!
+data class LessonSample(val text: String,
+                        val startOffset: Int = 0,
+                        val selection: Pair<Int, Int>? = null)
+
+// Current implementation can be generalized much better
+fun parseLessonSample(text: String): LessonSample {
+  return trySelectionSample(text)
+      ?: tryCaretSample(text)
+      ?: LessonSample(text)
 }
 
-fun parseLessonSample(text: String): LessonSample {
-  var cleanText = text
-  // Here could be more general parsing
-  val infos = HashMap<String, SampleInfo>()
+fun trySelectionSample(text: String): LessonSample? {
+  val startSelection = text.indexOf("<select>")
+  if (startSelection == -1) return null
+  val withoutSelect = text.replace("<select>", "")
+  val endSelection = withoutSelect.indexOf("</select>")
 
-  val startTag = "<caret>"
-  var startIdx = text.indexOf(startTag)
+  return LessonSample(withoutSelect.replace("</select>", ""),
+      startOffset = endSelection, selection = Pair(startSelection ,endSelection))
+}
 
-  if (startIdx < 0 ) {
-    startIdx = 0
-  }
-  else {
-    cleanText = cleanText.replace(startTag, "")
-  }
+fun tryCaretSample(text: String): LessonSample? {
+  val startIdx = text.indexOf("<caret>")
+  if (startIdx < 0) return null
 
-  infos[START_TAG] = SampleInfo(START_TAG, startIdx)
-
-  return LessonSample(cleanText, infos)
+  return LessonSample(text.replace("<caret>", ""), startOffset = startIdx)
 }
