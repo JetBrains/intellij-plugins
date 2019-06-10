@@ -33,22 +33,22 @@ class VueModelManager {
     }
 
     fun getComponent(declaration: PsiElement): VueComponent? {
-      var implicitElement: JSImplicitElement? = null
-      if (declaration is JSImplicitElement
-          && declaration.userString == VueComponentsIndex.JS_KEY) {
-        implicitElement = declaration
-      }
-      else if (declaration is JSImplicitElementProvider) {
-        implicitElement = declaration.indexingData?.implicitElements?.find { it.userString == VueComponentsIndex.JS_KEY }
-      }
-      if (implicitElement == null) {
-        return null
-      }
-      val data = getVueIndexData(implicitElement)
-      val context: PsiElement = implicitElement.context ?: return VueSourceComponent(implicitElement, data)
+      val implicitElement: JSImplicitElement? = getComponentImplicitElement(declaration)
+      val data = implicitElement?.let { getVueIndexData(it) }
+      val context: PsiElement = implicitElement?.context ?: declaration
+
       return CachedValuesManager.getCachedValue(context) {
         CachedValueProvider.Result.create(VueSourceComponent(context, data), context)
       }
+    }
+
+    fun getComponentImplicitElement(declaration: PsiElement): JSImplicitElement? {
+      return if (declaration is JSImplicitElement && declaration.userString == VueComponentsIndex.JS_KEY)
+        declaration
+      else
+        (declaration as? JSImplicitElementProvider)?.indexingData?.implicitElements?.find {
+          it.userString == VueComponentsIndex.JS_KEY
+        }
     }
 
   }

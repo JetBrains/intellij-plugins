@@ -50,10 +50,10 @@ import org.jetbrains.vuejs.model.source.VueComponentsCalculation
 import java.util.function.BinaryOperator
 import java.util.stream.Stream
 
-private val LOCAL_PRIORITY = 100.0
-private val APP_PRIORITY = 90.0
-private val GLOBAL_PRIORITY = 80.0
-private val UNREGISTERED_PRIORITY = 50.0
+private const val LOCAL_PRIORITY = 100.0
+private const val APP_PRIORITY = 90.0
+private const val GLOBAL_PRIORITY = 80.0
+private const val UNREGISTERED_PRIORITY = 50.0
 
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
@@ -203,7 +203,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     if (component is VueRegularComponent) {
       localComponents = EntryStream.of(component.components)
         .append(component.defaultName, component)
-        .mapValues { Triple(it, true, LOCAL_PRIORITY) }
+        .mapValues { Triple(it, it.source?.containingFile?.fileType != VueFileType.INSTANCE, LOCAL_PRIORITY) }
 
       appComponents = StreamEx.of(component.applications)
         .map { it.components }
@@ -220,12 +220,19 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     }
 
     val global = VueModelManager.getGlobal(tag)
-    val globalComponents: EntryStream<String, Triple<VueComponent, Boolean, Double>> =
+    val pluginComponents: EntryStream<String, Triple<VueComponent, Boolean, Double>> =
       if (global != null)
         StreamEx.of(global.plugins as List<VueEntitiesContainer>)
-          .append(global)
           .flatMapToEntry { it.components }
-          .mapValues { Triple(it, true, GLOBAL_PRIORITY) }
+          .mapValues { Triple(it, false, GLOBAL_PRIORITY) }
+      else
+        EntryStream.empty()
+
+    val globalComponents: EntryStream<String, Triple<VueComponent, Boolean, Double>> =
+      if (global != null)
+        StreamEx.of(global)
+          .flatMapToEntry { it.components }
+          .mapValues { Triple(it, it.source?.containingFile?.fileType != VueFileType.INSTANCE, GLOBAL_PRIORITY) }
       else
         EntryStream.empty()
 
@@ -238,53 +245,36 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     localComponents
       .append(appComponents)
       .append(globalComponents)
+      .append(pluginComponents)
       .append(allComponents)
+      .filterValues { contributedComponents.add(it.first) || it.second }
       .flatMapKeys(nameMapper)
       .distinctKeys()
       .forEachOrdered { entry ->
-        if (contributedComponents.add(entry.value.first) || entry.value.second) {
-          elements.add(createVueLookup(entry.value.first.source, entry.key, entry.value.second, scriptLanguage, entry.value.third))
-        }
+        elements.add(createVueLookup(entry.value.first.source, entry.key, entry.value.second, scriptLanguage, entry.value.third))
       }
 
-    //val namePrefix = tag.name.substringBefore(CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED, tag.name)
-    //val variants = nameVariantsWithPossiblyGlobalMark(namePrefix)
-    //val allComponents = VueComponentsCache.getAllComponentsGroupedByModules(tag.project,
-    //                                                                        { key -> variants.any { key.contains(it, true) } }, false)
-    //for (entry in allComponents) {
-    //  entry.value
-    //    //.filter { !files.contains(it.value.first.containingFile) }
-    //    .forEach {
-    //      val value = it.value
-    //      //    addLookupVariants(elements, tag, scriptLanguage, value.first, it.key, value.second, entry.key)
-    //    }
-    //}
-    //elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
-    //  LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
-    //})
-    //if (!hasVuetify(allComponents)) return
-    //elements.addAll(VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.map {
-    //  LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText(VUETIFY, true)
-    //})
+    elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
+      LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
+    })
   }
 
-  private fun hasVuetify(allComponents: Map<String, Map<String, Pair<PsiElement, Boolean>>>): Boolean {
-    return allComponents.filter { it.key == VUETIFY }.isNotEmpty()
-  }
-
-  private fun createVueLookup(element: PsiElement,
+  private fun createVueLookup(element: PsiElement?,
                               name: String,
                               shouldNotBeImported: Boolean,
                               scriptLanguage: String?,
                               priority: Double): LookupElement {
-    var builder = LookupElementBuilder.create(element, name).withIcon(VuejsIcons.Vue)
+    var builder = (if (element != null) LookupElementBuilder.create(element, name) else LookupElementBuilder.create(name))
+      .withIcon(VuejsIcons.Vue)
     if (priority == LOCAL_PRIORITY) {
       builder = builder.bold()
     }
     if (!shouldNotBeImported) {
       val settings = JSApplicationSettings.getInstance()
-      if (scriptLanguage != null && "ts" == scriptLanguage ||
-          DialectDetector.isTypeScript(element) && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile)) {
+      if (element != null
+          && ((scriptLanguage != null && "ts" == scriptLanguage)
+              || (DialectDetector.isTypeScript(element)
+                  && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile)))) {
         if (settings.hasTSImportCompletionEffective(element.project)) {
           builder = builder.withInsertHandler(VueInsertHandler.INSTANCE)
         }

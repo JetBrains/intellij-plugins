@@ -21,7 +21,6 @@ import com.intellij.lang.javascript.psi.JSProperty
 import com.intellij.lang.javascript.psi.ecma6.ES6Decorator
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.lang.javascript.psi.impl.JSPsiElementFactory
-import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.refactoring.FormatFixer
 import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.editor.Editor
@@ -38,6 +37,7 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.hasVueClassComponentLibrary
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.model.VueModelManager
 
 class VueInsertHandler : XmlTagInsertHandler() {
   companion object {
@@ -66,10 +66,10 @@ class VueInsertHandler : XmlTagInsertHandler() {
     if (shouldHandleXmlInsert(context)) {
       super.handleInsert(context, item)
     }
-    val jsImplicitElement = item.`object` as JSImplicitElement
+    val jsImplicitElement = VueModelManager.getComponentImplicitElement(item.`object` as PsiElement) ?: return
     val importedFile = jsImplicitElement.containingFile
     if (importedFile == context.file) return
-    val nodeModule = NodeModuleSearchUtil.findDependencyRoot((item.`object` as PsiElement).containingFile.virtualFile)
+    val nodeModule = NodeModuleSearchUtil.findDependencyRoot(jsImplicitElement.containingFile.virtualFile)
     if (isSkippedModule(nodeModule)) return
 
     context.commitDocument()

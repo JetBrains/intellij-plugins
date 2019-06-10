@@ -20,7 +20,7 @@ import org.jetbrains.vuejs.index.*
 
 class VueComponentsCache {
   companion object {
-    private val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY, BOOTSTRAP_VUE, SHARDS_VUE)
+    internal val PACKAGES_WITH_GLOBAL_COMPONENTS = arrayOf(VUETIFY, BOOTSTRAP_VUE, SHARDS_VUE)
 
     // returns module: (component: (navigation-element, isGlobal))
     //fun getAllComponentsGroupedByModules(project: Project, filter: ((String) -> Boolean)?, onlyGlobal: Boolean):

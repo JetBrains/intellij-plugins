@@ -5,8 +5,8 @@ import com.intellij.psi.PsiElement
 
 interface VueNamedEntity {
 
-  val source: PsiElement
+  val source: PsiElement?
 
-  val defaultName: String
+  val defaultName: String?
 
 }

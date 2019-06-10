@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.model.webtypes
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.FakePsiElement
 import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.json.Tag
 import java.util.*
@@ -40,12 +39,7 @@ class VueWebTypesComponent(tag: Tag) : VueRegularComponent {
     get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
   override val defaultName: String = tag.name!!
 
-  override val source: PsiElement
-    get() = object : FakePsiElement() {
-      override fun getParent(): PsiElement? {
-        return null
-      }
-    }
+  override val source: PsiElement? = null
 
   private val sourceFile: String? = tag.sourceFile
 

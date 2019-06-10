@@ -19,14 +19,14 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
   override val apps: List<VueApp> = emptyList()
   override val mixins: List<VueMixin> = emptyList()
 
-
   override val components: Map<String, VueComponent>
     get() {
-      return CachedValuesManager.getManager(module.project).getCachedValue(module) {
+      val localModule = module
+      return CachedValuesManager.getManager(module.project).getCachedValue(localModule) {
         val result: MutableMap<String, VueComponent> = mutableMapOf()
 
         EntryStream.of(VueComponentsCalculation.calculateScopeComponents(
-          GlobalSearchScope.moduleWithDependenciesScope(module), false).map)
+          GlobalSearchScope.moduleWithDependenciesScope(localModule), false).map)
           .mapValues { VueModelManager.getComponent(it.first) }
           .nonNullValues()
           .into(result)

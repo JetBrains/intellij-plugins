@@ -838,7 +838,14 @@ $script""")
 <template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toList()
+    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toMutableList()
+    vuetifyComponents.removeAll(listOf("v-breadcrumbs-divider", "VBreadcrumbsDivider",
+                                       "v-autocomplete", "VAutocomplete",
+                                       "v-scroll-x-transition", "VScrollXTransition",
+                                       "v-scroll-y-transition", "VScrollYTransition",
+                                       "v-scroll-x-reverse-transition", "VScrollXReverseTransition",
+                                       "v-scroll-y-reverse-transition", "VScrollYReverseTransition",
+                                       "v-tab-item", "VTabItem"))
     assertContainsElements(myFixture.lookupElementStrings!!, listOf("v-list", "v-list-group", "v-list-tile", "v-list-tile-action"))
     assertContainsElements(myFixture.lookupElementStrings!!, vuetifyComponents)
   }
@@ -863,7 +870,8 @@ $script""")
 <template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toList()
+    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toMutableList()
+    vuetifyComponents.removeAll(listOf("v-breadcrumbs-divider", "VBreadcrumbsDivider"))
     assertContainsElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents, listOf("v-btn")))
   }
 
@@ -1082,7 +1090,6 @@ $script""")
         }""")
     createTwoClassComponents(myFixture, true)
     data.forEach {
-      println("*")
       myFixture.configureByText("ComponentInsertion.vue", it.first)
       myFixture.completeBasic()
       myFixture.checkResult(it.second)

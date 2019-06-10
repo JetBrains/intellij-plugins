@@ -5,14 +5,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.index.VueIndexData
 import org.jetbrains.vuejs.model.*
 
-class VueSourceComponent(element: PsiElement, data: VueIndexData) : VueRegularComponent {
+class VueSourceComponent(element: PsiElement, data: VueIndexData?) : VueRegularComponent {
 
   override val global: VueGlobal?
     get() {
       return VueModelManager.getGlobal(source)
     }
   override val source: PsiElement = element
-  override val defaultName: String = data.originalName
+  override val defaultName: String? = data?.originalName
 
   override val applications: List<VueApp> = emptyList()
   override val data: List<VueDataProperty> = emptyList()
