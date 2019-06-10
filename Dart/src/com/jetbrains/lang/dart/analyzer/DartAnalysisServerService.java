@@ -480,8 +480,7 @@ public class DartAnalysisServerService implements Disposable {
 
           for (final CompletionSuggestion completion : completionInfo.myCompletions) {
             final int convertedReplacementOffset = getConvertedOffset(file, completionInfo.myOriginalReplacementOffset);
-            final int convertedReplacementLength = getConvertedOffset(file, completionInfo.myOriginalReplacementLength);
-            consumer.consumeCompletionSuggestion(convertedReplacementOffset, convertedReplacementLength, completion);
+            consumer.consumeCompletionSuggestion(convertedReplacementOffset, completionInfo.myReplacementLength, completion);
           }
 
           final Set<String> includedKinds = Sets.newHashSet(completionInfo.myIncludedElementKinds);
@@ -2250,10 +2249,7 @@ public class DartAnalysisServerService implements Disposable {
      * must be converted before any usage
      */
     private final int myOriginalReplacementOffset;
-    /**
-     * must be converted before any usage
-     */
-    private final int myOriginalReplacementLength;
+    private final int myReplacementLength;
     @NotNull private final List<CompletionSuggestion> myCompletions;
     @NotNull private final List<IncludedSuggestionSet> myIncludedSuggestionSets;
     @NotNull private final List<String> myIncludedElementKinds;
@@ -2262,7 +2258,7 @@ public class DartAnalysisServerService implements Disposable {
 
     CompletionInfo(@NotNull final String completionId,
                    int replacementOffset,
-                   int originalReplacementLength,
+                   int replacementLength,
                    @NotNull final List<CompletionSuggestion> completions,
                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
                    @NotNull final List<String> includedElementKinds,
@@ -2270,7 +2266,7 @@ public class DartAnalysisServerService implements Disposable {
                    boolean isLast) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
-      this.myOriginalReplacementLength = originalReplacementLength;
+      this.myReplacementLength = replacementLength;
       this.myCompletions = completions;
       this.myIncludedSuggestionSets = includedSuggestionSets;
       this.myIncludedElementKinds = includedElementKinds;
