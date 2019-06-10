@@ -44,8 +44,7 @@ class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
       prepareSample(sample)
       lateinit var replace : Future<String>
       task("RenameElement") {
-        text("You can rename anything by placing the caret on a symbol and using the Rename refactoring. " +
-            "Press ${action(it)} to rename attribute accessor <code>teams</code> to for example <code>teams_number</code>.")
+        text("Press ${action(it)} to rename the attribute accessor <code>teams</code> (e.g., to <code>teams_number</code>).")
         replace = stateRequired {
           (focusOwner as? Tree)?.model?.root?.toString()?.let { root: String ->
             replacePreviewPattern.matcher(root).takeIf { m -> m.find() }?.group(1)
@@ -63,8 +62,8 @@ class RubyRenameLesson(module: Module) : KLesson("Rename", module, "ruby") {
       }
       val result = template.replace("<name>", replace.get()).replace("<caret>", "")
       task("Do Refactor") {
-        text("To be sure about refactoring results RubyMine will show you a preview view." +
-            "Click <strong>$it</strong> to complete refactoring.")
+        text("In order to be confident about the refactoring, RubyMine lets you preview it before confirming." +
+            "Click <strong>$it</strong> to complete the refactoring.")
         stateCheck { editor.document.text == result }
         test {
           ideFrame {
