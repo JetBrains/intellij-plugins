@@ -7,7 +7,6 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -25,7 +24,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
   };
 
   private final SortedListModel<JSFunction> myListModel = new SortedListModel<>(METHOD_NAME_COMPARATOR);
-  private final JList myList = new JBList(myListModel);
+  private final JList<JSFunction> myList = new JBList<>(myListModel);
   private final JPanel myWholePanel = new JPanel(new BorderLayout());
 
   public FlexMethodChooserDialog(final JSClass clazz,
@@ -35,18 +34,7 @@ public class FlexMethodChooserDialog extends DialogWrapper {
     super(parent, false);
     createList(clazz.getFunctions(), filter);
     myWholePanel.add(ScrollPaneFactory.createScrollPane(myList));
-    myList.setCellRenderer(new ColoredListCellRenderer() {
-      @Override
-      protected void customizeCellRenderer(@NotNull final JList list,
-                                           final Object value,
-                                           final int index,
-                                           final boolean selected,
-                                           final boolean hasFocus) {
-        final JSFunction method = (JSFunction)value;
-        //noinspection ConstantConditions
-        append(method.getName());
-      }
-    });
+    myList.setCellRenderer(SimpleListCellRenderer.create("", JSFunction::getName));
 
     myList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     new DoubleClickListener() {

@@ -20,7 +20,7 @@ import jetbrains.communicator.core.dispatcher.LocalMessage;
 import jetbrains.communicator.core.dispatcher.LocalMessageDispatcher;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +41,9 @@ public class SearchHistoryCommand implements UserCommand {
   @Override
   public void execute() {
     String searchString = myIdeFacade.getMessage(
-        StringUtil.getMsg("SearchHistoryCommand.enter.query.string"),
-        StringUtil.getMsg("SearchHistoryCommand.search.history", myUser.getDisplayName()),
-        StringUtil.getMsg("search"));
+      CommunicatorStrings.getMsg("SearchHistoryCommand.enter.query.string"),
+      CommunicatorStrings.getMsg("SearchHistoryCommand.search.history", myUser.getDisplayName()),
+      CommunicatorStrings.getMsg("search"));
 
     if (searchString != null) {
       LocalMessage[] localMessages = myMessageDispatcher.getHistory(myUser, null);
@@ -55,8 +55,8 @@ public class SearchHistoryCommand implements UserCommand {
       }
 
       if (result.size() == 0) {
-        myIdeFacade.showMessage(StringUtil.getMsg("SearchHistoryCommand.search.history", myUser.getDisplayName()),
-            StringUtil.getMsg("SearchHistoryCommand.no.results"));
+        myIdeFacade.showMessage(CommunicatorStrings.getMsg("SearchHistoryCommand.search.history", myUser.getDisplayName()),
+                                CommunicatorStrings.getMsg("SearchHistoryCommand.no.results"));
       }
       else {
         myIdeFacade.showSearchHistoryResults(result, myUser);

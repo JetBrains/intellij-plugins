@@ -53,7 +53,7 @@ public class GherkinScenarioToScenarioOutlineInspection extends GherkinInspectio
     @Override
     public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
       GherkinScenario scenario = (GherkinScenario)descriptor.getPsiElement();
-      String language = GherkinKeywordTable.getFeatureLanguage(scenario.getContainingFile());
+      String language = GherkinUtil.getFeatureLanguage((GherkinFile)scenario.getContainingFile());
 
       GherkinKeywordTable keywordsTable = JsonGherkinKeywordProvider.getKeywordProvider().getKeywordsTable(language);
       Collection<String> scenarioKeywords = keywordsTable.getScenarioKeywords();

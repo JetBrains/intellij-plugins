@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.codestyle;
 
 import com.intellij.execution.ExecutionException;
@@ -24,15 +12,13 @@ import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintConfigWr
 import com.intellij.lang.javascript.linter.tslint.codestyle.rules.TsLintSimpleRule;
 import com.intellij.lang.javascript.linter.tslint.config.TsLintConfiguration;
 import com.intellij.lang.javascript.linter.tslint.ui.TsLintConfigurable;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,15 +55,14 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
   }
 
   @Override
-  protected boolean isDirectlyImportable(@NotNull PsiFile configPsi) {
-    TsLintConfigWrapper wrapper = parseConfigFromFile(configPsi);
-    return wrapper != null && !wrapper.hasExtends();
+  protected boolean isDirectlyImportable(@NotNull PsiFile configPsi, @Nullable TsLintConfigWrapper parsedConfig) {
+    return parsedConfig != null && !parsedConfig.hasExtends();
   }
 
   @Nullable
   @Override
   protected TsLintConfigWrapper parseConfigFromFile(@NotNull PsiFile configPsi) {
-    return ReadAction.compute(() -> TsLintConfigWrapper.Companion.getConfigForFile(configPsi));
+    return TsLintConfigWrapper.Companion.getConfigForFile(configPsi);
   }
 
   @Nullable
@@ -88,9 +73,8 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
 
     String configFilePath = configPsi.getVirtualFile().getPath();
     List<String> parameters =
-      ContainerUtil.list(getPluginDirectory(TsLintImportCodeStyleAction.class, "js/convert-tslint-config.js").getAbsolutePath(),
-                         linterPackage.getSystemDependentPath(),
-                         configFilePath);
+      Arrays.asList(getPluginDirectory(TsLintImportCodeStyleAction.class, "js/convert-tslint-config.js").getAbsolutePath(),
+                    linterPackage.getSystemDependentPath(), configFilePath);
     String text = runToolWithArguments(configPsi, interpreter, parameters);
     if (LOG.isTraceEnabled()) {
       LOG.trace(String.format("TSLint: computed effective config for file %s:\n%s", configFilePath, text));
@@ -100,18 +84,18 @@ public class TsLintCodeStyleImporter extends JSLinterCodeStyleImporter<TsLintCon
 
   @NotNull
   @Override
-  protected Pair<Collection<String>, Runnable> importConfig(@NotNull PsiFile configPsi, @NotNull TsLintConfigWrapper configWrapper) {
+  protected ImportResult importConfig(@NotNull PsiFile configPsi, @NotNull TsLintConfigWrapper configWrapper) {
     Project project = configPsi.getProject();
     Collection<TsLintSimpleRule<?>> rules = configWrapper.getRulesToApply(project);
     if (rules.isEmpty()) {
-      return Pair.create(ContainerUtil.emptyList(), null);
+      return ImportResult.alreadyImported();
     }
     configWrapper.applyRules(project, rules);
     List<String> appliedRuleCodes = rules.stream()
       .map(TsLintSimpleRule::getOptionId)
-      //in the current implementation, a single TSLint rule code will be duplicated if it changes several IDE settings 
+      //in the current implementation, a single TSLint rule code will be duplicated if it changes several IDE settings
       .distinct()
       .collect(Collectors.toList());
-    return Pair.create(appliedRuleCodes, null);
+    return ImportResult.success(appliedRuleCodes);
   }
 }

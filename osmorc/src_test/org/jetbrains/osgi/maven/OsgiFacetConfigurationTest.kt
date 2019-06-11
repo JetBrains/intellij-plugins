@@ -28,7 +28,7 @@ class OsgiFacetConfigurationTest : LightCodeInsightFixtureTestCase() {
 
   override fun setUp() {
     super.setUp()
-    config = OsmorcFacet(myModule).configuration
+    config = OsmorcFacet(module).configuration
   }
 
   fun testResourceSerialization() {

@@ -31,7 +31,7 @@ import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.OwnMessageEvent;
 import jetbrains.communicator.p2p.BecomeAvailableXmlMessage;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.picocontainer.Disposable;
@@ -65,11 +65,11 @@ public abstract class BaseTestCase extends LightTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    StringUtil.setMyUsername("user_" + getName());
+    CommunicatorStrings.setMyUsername("user_" + getName());
     disposeOnTearDown(new Disposable(){
       @Override
       public void dispose() {
-        StringUtil.setMyUsername(null);
+        CommunicatorStrings.setMyUsername(null);
       }
     });
 

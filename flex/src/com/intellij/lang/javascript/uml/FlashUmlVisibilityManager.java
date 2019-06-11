@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 
@@ -21,7 +22,7 @@ public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
   static {
     for (JSAttributeList.AccessType accessType : JSVisibilityUtil.ACCESS_TYPES) {
       predefinedLevels
-        .add(new VisibilityLevel(accessType.name(), JSBundle.message("javascript.uml.visibility." + accessType.name().toLowerCase())));
+        .add(new VisibilityLevel(accessType.name(), JSBundle.message("javascript.uml.visibility." + StringUtil.toLowerCase(accessType.name()))));
     }
   }
 

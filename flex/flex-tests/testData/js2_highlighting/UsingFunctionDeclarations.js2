@@ -2,7 +2,7 @@ var ff:Function = function result():Boolean { return false; };
 var bb:Boolean = ff();
 function <warning descr="Unused inner function foo">foo</warning>(x:Function) {
     var x2:String = x();
-    if (true) x2, foo(x(new Main()));
+    if (<warning descr="If statement can be simplified">true</warning>) x2, foo(x(new Main()));
 }
 
 class Main {
@@ -17,5 +17,5 @@ class Main {
 }
 
 function trace(... rest):void {
-    if (true) trace(rest);
+    if (<warning descr="If statement can be simplified">true</warning>) trace(rest);
 }

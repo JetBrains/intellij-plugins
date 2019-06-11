@@ -1,13 +1,16 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.model.psi.impl;
 
 import com.intellij.coldFusion.UI.CfmlLookUpItemUtil;
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiType;
-import com.intellij.ui.RowIcon;
+import com.intellij.ui.IconManager;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.util.PlatformIcons;
 import icons.CFMLIcons;
 import org.jetbrains.annotations.NotNull;
@@ -48,24 +51,28 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
     if (access == null) {
       return METHOD_ICON;
     }
-    access = access.toLowerCase();
-    RowIcon baseIcon = new RowIcon(2);
-    baseIcon.setIcon(METHOD_ICON, 0);
-    if ("private".equals(access)) {
-      baseIcon.setIcon(PRIVATE_ICON, 1);
+    access = StringUtil.toLowerCase(access);
+    if (Registry.is("ide.completion.show.visibility.icon")) {
+      RowIcon baseIcon = IconManager.getInstance().createRowIcon(2);
+      baseIcon.setIcon(METHOD_ICON, 0);
+      if ("private".equals(access)) {
+        baseIcon.setIcon(PRIVATE_ICON, 1);
+      }
+      else if ("package".equals(access)) {
+        baseIcon.setIcon(PACKAGE_LOCAL_ICON, 1);
+      }
+      else if ("public".equals(access)) {
+        baseIcon.setIcon(PUBLIC_ICON, 1);
+      }
+      else if ("remote".equals(access)) {
+        baseIcon.setIcon(CFMLIcons.Remote_access, 1);
+      }
+      return baseIcon;
     }
-    else if ("package".equals(access)) {
-      baseIcon.setIcon(PACKAGE_LOCAL_ICON, 1);
-    }
-    else if ("public".equals(access)) {
-      baseIcon.setIcon(PUBLIC_ICON, 1);
-    }
-    else if ("remote".equals(access)) {
-      baseIcon.setIcon(CFMLIcons.Remote_access, 1);
-    }
-    return baseIcon;
+    else return METHOD_ICON;
   }
 
+  @NotNull
   @Override
   public String getTagName() {
     return TAG_NAME;

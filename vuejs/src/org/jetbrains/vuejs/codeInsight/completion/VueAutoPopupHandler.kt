@@ -8,7 +8,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.html.HtmlTag
-import org.jetbrains.vuejs.VueLanguage
+import org.jetbrains.vuejs.lang.html.VueLanguage
 
 class VueAutoPopupHandler : TypedHandlerDelegate() {
   override fun checkAutoPopup(charTyped: Char, project: Project, editor: Editor, file: PsiFile): Result {

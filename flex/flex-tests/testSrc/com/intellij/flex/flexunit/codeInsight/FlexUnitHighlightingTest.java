@@ -168,14 +168,14 @@ public class FlexUnitHighlightingTest extends ActionScriptDaemonAnalyzerTestCase
     doHighlightingWithInvokeFixAndCheckResult("Make 'foo' return 'void'", "as", getTestName(false) + ".as");
   }
 
-  private void checkNoFixFor(String methodName) throws Exception {
+  private void checkNoFixFor(String methodName) {
     final Collection<HighlightInfo> infoCollection = doTestFor(true, getTestName(false) + ".as");
     IntentionAction action = findIntentionAction(infoCollection, "Make method '" + methodName + "' return 'void'", myEditor, myFile);
     assertNull(action);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithFlexUnit4})
-  public void testNonVoidMethod4() throws Exception {
+  public void testNonVoidMethod4() {
     checkNoFixFor("foo");
   }
 

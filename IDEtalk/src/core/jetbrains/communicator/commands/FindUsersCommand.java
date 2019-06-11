@@ -12,7 +12,7 @@ import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.CanceledException;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.ProgressIndicator;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class FindUsersCommand implements NamedUserCommand {
 
   @Override
   public String getName() {
-    return StringUtil.getMsg("FindUsersCommand.name");
+    return CommunicatorStrings.getMsg("FindUsersCommand.name");
   }
 
   @Override
@@ -55,7 +55,7 @@ public class FindUsersCommand implements NamedUserCommand {
     final List<User>[] finalUsers = new List[1];
 
     try {
-      myIdeFacade.runLongProcess(StringUtil.getMsg("FindUsersCommand.dialog.title"), new IDEFacade.Process() {
+      myIdeFacade.runLongProcess(CommunicatorStrings.getMsg("FindUsersCommand.dialog.title"), new IDEFacade.Process() {
         @Override
         public void run(ProgressIndicator indicator) {
           List<User> result = new ArrayList<>();
@@ -100,8 +100,8 @@ public class FindUsersCommand implements NamedUserCommand {
   }
 
   private void showNoUsersFoundMessage() {
-    myIdeFacade.showMessage(StringUtil.getMsg("FindUsersCommand.notFound.title"),
-        StringUtil.getMsg("FindUsersCommand.notFound.text"));
+    myIdeFacade.showMessage(CommunicatorStrings.getMsg("FindUsersCommand.notFound.title"),
+                            CommunicatorStrings.getMsg("FindUsersCommand.notFound.text"));
   }
 
   public static class UsersInfo {

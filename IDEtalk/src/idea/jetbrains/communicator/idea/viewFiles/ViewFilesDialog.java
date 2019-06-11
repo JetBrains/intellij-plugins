@@ -21,7 +21,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.idea.IdeaDialog;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -49,14 +49,14 @@ public class ViewFilesDialog extends IdeaDialog {
   }
 
   public void refreshData(User user, ProjectsData data) {
-    setTitle(StringUtil.getMsg("open.files.for.0", user.getDisplayName()));
+    setTitle(CommunicatorStrings.getMsg("open.files.for.0", user.getDisplayName()));
     myPanel.refreshData(user, data);
   }
 
   @Override
   @NotNull
   protected Action[] createActions() {
-    setOKButtonText(StringUtil.getMsg("close"));
+    setOKButtonText(CommunicatorStrings.getMsg("close"));
     return new Action[] {getOKAction()};
   }
 

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.index.JavaScriptIndex;
@@ -56,7 +57,7 @@ public class ActionScriptLibraryProvider extends JSPredefinedLibraryProvider {
 
   @NotNull
   public static Set<VirtualFile> getActionScriptPredefinedLibraryFiles() {
-    Set<VirtualFile> files = ContainerUtil.newHashSet(ourActionScriptLibraries.length);
+    Set<VirtualFile> files = new HashSet<>(ourActionScriptLibraries.length);
     for (String fileName : ourActionScriptLibraries) {
       ContainerUtil.addIfNotNull(files, getPredefinedLibFile(fileName));
     }

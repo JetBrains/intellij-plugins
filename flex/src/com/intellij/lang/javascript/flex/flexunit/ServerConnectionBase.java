@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.ExecutionException;
@@ -11,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
 
 public abstract class ServerConnectionBase {
 
@@ -119,7 +121,7 @@ public abstract class ServerConnectionBase {
         setStatus(ConnectionStatus.CONNECTED);
         LOG.debug("connected");
 
-        myWriter = new OutputStreamWriter(socket.getOutputStream());
+        myWriter = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8);
         run(socket.getInputStream());
       }
       finally {

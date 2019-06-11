@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
+import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import java.util.*
 
 class VueComponentDetailsProvider {

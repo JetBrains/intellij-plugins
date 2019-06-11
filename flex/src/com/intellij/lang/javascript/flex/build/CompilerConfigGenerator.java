@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
@@ -65,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class CompilerConfigGenerator {
@@ -115,7 +104,7 @@ public class CompilerConfigGenerator {
     }
 
     final String name =
-      getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), BCUtils.getBCSpecifier(bc));
+      getConfigFileName(module, bc.getName(), StringUtil.toLowerCase(PlatformUtils.getPlatformPrefix()), BCUtils.getBCSpecifier(bc));
     return getOrCreateConfigFile(name, text);
   }
 
@@ -316,7 +305,7 @@ public class CompilerConfigGenerator {
 
     for (final String swcUrl : mySdk.getRootProvider().getUrls(OrderRootType.CLASSES)) {
       final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
-      if (!swcPath.toLowerCase().endsWith(".swc")) {
+      if (!StringUtil.toLowerCase(swcPath).endsWith(".swc")) {
         Logger.getInstance(CompilerConfigGenerator.class.getName()).warn("Unexpected URL in Flex SDK classes: " + swcUrl);
         continue;
       }
@@ -376,7 +365,7 @@ public class CompilerConfigGenerator {
 
     if (myBC.getNature().isLib()) {
       final String theme = getValueAndSource(CompilerOptionInfo.getOptionInfo("compiler.theme")).first;
-      if (theme != null && theme.toLowerCase().endsWith(".swc")) {
+      if (theme != null && StringUtil.toLowerCase(theme).endsWith(".swc")) {
         addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, theme);
       }
     }
@@ -473,7 +462,7 @@ public class CompilerConfigGenerator {
           // including libraries like "playerglobal-3.5.0.12683-9.swc" may lead to error at runtime like "VerifyError Error #1079: Native methods are not allowed in loaded code."
           // so here we just skip including such libraries in config file.
           // Compilation should be ok because base flexmojos config file contains correct reference to its copy in target/classes/libraries/playerglobal.swc
-          final String libFileName = libFile.getName().toLowerCase();
+          final String libFileName = StringUtil.toLowerCase(libFile.getName());
           if (libFileName.startsWith("airglobal") && !libFileName.equals("airglobal.swc") ||
               libFileName.startsWith("playerglobal") && !libFileName.equals("playerglobal.swc")) {
             continue;
@@ -796,7 +785,7 @@ public class CompilerConfigGenerator {
       FlexCommonUtils.getTempFlexConfigsDirPath() + "/" + fileName);
 
     if (existingConfigFile != null && existingConfigFile.isValid() &&
-        Arrays.equals(text.getBytes(), existingConfigFile.contentsToByteArray())) {
+        Arrays.equals(text.getBytes(StandardCharsets.UTF_8), existingConfigFile.contentsToByteArray())) {
       return existingConfigFile;
     }
 
@@ -843,13 +832,13 @@ public class CompilerConfigGenerator {
 
   private static String getConfigFileName(final Module module, final @Nullable String bcName,
                                           final String prefix, final @Nullable String postfix) {
-    final String hash1 = Integer.toHexString((SystemProperties.getUserName() + module.getProject().getName()).hashCode()).toUpperCase();
-    final String hash2 = Integer.toHexString((module.getName() + StringUtil.notNullize(bcName)).hashCode()).toUpperCase();
+    final String hash1 = StringUtil.toUpperCase(Integer.toHexString((SystemProperties.getUserName() + module.getProject().getName()).hashCode()));
+    final String hash2 = StringUtil.toUpperCase(Integer.toHexString((module.getName() + StringUtil.notNullize(bcName)).hashCode()));
     return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + postfix.replace(' ', '-') + ".xml"));
   }
 
   private static String getLinkReportFilePath(final Module module, final String bcName) {
-    final String fileName = getConfigFileName(module, bcName, PlatformUtils.getPlatformPrefix().toLowerCase(), "link-report");
+    final String fileName = getConfigFileName(module, bcName, StringUtil.toLowerCase(PlatformUtils.getPlatformPrefix()), "link-report");
     return FlexCommonUtils.getTempFlexConfigsDirPath() + "/" + fileName;
   }
 

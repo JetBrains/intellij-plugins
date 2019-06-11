@@ -82,7 +82,7 @@ public class Angular2CssReferencesContributor extends PsiReferenceContributor {
           if (context instanceof Angular2HtmlPropertyBinding
               || (context instanceof XmlAttribute
                   && !context.getLanguage().is(Angular2Language.INSTANCE))) {
-            info = Angular2AttributeNameParser.parse(((XmlAttribute)context).getName(), false);
+            info = Angular2AttributeNameParser.parse(((XmlAttribute)context).getName(), ((XmlAttribute)context).getParent());
             return (info instanceof Angular2AttributeNameParser.PropertyBindingInfo
                     && ((Angular2AttributeNameParser.PropertyBindingInfo)info).bindingType == PropertyBindingType.CLASS);
           }

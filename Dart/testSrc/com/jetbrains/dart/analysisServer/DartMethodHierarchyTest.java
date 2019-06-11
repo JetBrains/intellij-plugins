@@ -2,17 +2,17 @@
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserManager;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.indexing.FindSymbolParameters;
+import com.jetbrains.lang.dart.ide.DartClassContributor;
 import com.jetbrains.lang.dart.ide.hierarchy.method.DartMethodHierarchyTreeStructure;
-import com.jetbrains.lang.dart.ide.index.DartClassIndex;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-
-import java.util.List;
 
 import static com.jetbrains.dart.analysisServer.DartCallHierarchyTest.findReference;
 
@@ -27,11 +27,10 @@ public class DartMethodHierarchyTest extends DartHierarchyTestBase {
                                      final boolean shouldHide,
                                      final String... fileNames) throws Exception {
     doHierarchyTest(() -> {
-      final Project project = getProject();
-      final List<DartComponentName> dartComponentNames =
-        DartClassIndex.getItemsByName(className, project, GlobalSearchScope.projectScope(project));
-      for (DartComponentName name : dartComponentNames) {
-        DartClass dartClass = PsiTreeUtil.getParentOfType(name, DartClass.class);
+      Project project = getProject();
+      Ref<HierarchyTreeStructure> result = Ref.create();
+      new DartClassContributor().processElementsWithName(className, item -> {
+        DartClass dartClass = PsiTreeUtil.getParentOfType((PsiElement)item, DartClass.class);
         if (dartClass != null && className.equals(dartClass.getName())) {
           PsiElement member = dartClass.findMemberByName(methodName);
           if (member == null) {
@@ -45,10 +44,12 @@ public class DartMethodHierarchyTest extends DartHierarchyTestBase {
             assert state != null;
             state.HIDE_CLASSES_WHERE_METHOD_NOT_IMPLEMENTED = true;
           }
-          return new DartMethodHierarchyTreeStructure(project, (DartComponent)member);
+          result.set(new DartMethodHierarchyTreeStructure(project, (DartComponent)member));
+          return false;
         }
-      }
-      return null;
+        return true;
+      }, FindSymbolParameters.wrap("", GlobalSearchScope.projectScope(project)));
+      return result.get();
     }, fileNames);
   }
 

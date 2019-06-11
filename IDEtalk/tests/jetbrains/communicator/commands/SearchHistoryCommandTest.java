@@ -23,7 +23,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.mock.MockMessage;
 import jetbrains.communicator.mock.MockTransport;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jmock.Mock;
 
 import java.util.ArrayList;
@@ -78,8 +78,8 @@ public class SearchHistoryCommandTest extends LightTestCase {
     myDispatcherMock.expects(once()).method("getHistory").with(eq(myUser), eq(null)).will(returnValue(new LocalMessage[0]));
 
     myIdeMock.expects(once()).method("showMessage").with(
-        eq(StringUtil.getMsg("SearchHistoryCommand.search.history", myUser.getDisplayName())),
-        eq(StringUtil.getMsg("SearchHistoryCommand.no.results"))
+        eq(CommunicatorStrings.getMsg("SearchHistoryCommand.search.history", myUser.getDisplayName())),
+        eq(CommunicatorStrings.getMsg("SearchHistoryCommand.no.results"))
         );
 
     myCommand.execute();
@@ -104,9 +104,9 @@ public class SearchHistoryCommandTest extends LightTestCase {
 
   private void query(String s) {
     myIdeMock.expects(once()).method("getMessage").with(
-        eq(StringUtil.getMsg("SearchHistoryCommand.enter.query.string")),
-        eq(StringUtil.getMsg("SearchHistoryCommand.search.history", myUser.getDisplayName())),
-        eq(StringUtil.getMsg("search"))
+        eq(CommunicatorStrings.getMsg("SearchHistoryCommand.enter.query.string")),
+        eq(CommunicatorStrings.getMsg("SearchHistoryCommand.search.history", myUser.getDisplayName())),
+        eq(CommunicatorStrings.getMsg("search"))
     ).will(returnValue(s));
   }
 

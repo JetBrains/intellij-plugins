@@ -38,3 +38,5 @@ export class PropBoth {
 export class Dir {
 
 }
+
+@Component({selector: "foo"})

@@ -47,18 +47,16 @@ import java.util.Set;
  *
  * @author <a href="mailto:robert@beeger.net">Robert F. Beeger</a>
  */
-public class AdditionalJARContentsWatcherManager {
+public final class AdditionalJARContentsWatcherManager {
   public static AdditionalJARContentsWatcherManager getInstance(@NotNull Module module) {
     return ModuleServiceManager.getService(module, AdditionalJARContentsWatcherManager.class);
   }
 
-  private final LocalFileSystem myFileSystem;
   private final Module myModule;
   private final List<VirtualFile> myAdditionalBundleJARContents;
   private final List<LocalFileSystem.WatchRequest> myWatchRequests;
 
-  public AdditionalJARContentsWatcherManager(LocalFileSystem fileSystem, Module module) {
-    myFileSystem = fileSystem;
+  public AdditionalJARContentsWatcherManager(@NotNull Module module) {
     myModule = module;
     myAdditionalBundleJARContents = new ArrayList<>();
     myWatchRequests = new ArrayList<>();
@@ -67,13 +65,14 @@ public class AdditionalJARContentsWatcherManager {
 
   public void updateWatcherSetup() {
     OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(myModule);
+    LocalFileSystem fileSystem = LocalFileSystem.getInstance();
     if (osmorcFacet != null) {
       List<VirtualFile> newAdditionalJARContents = new ArrayList<>();
 
       OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
       List<Pair<String, String>> jarContents = osmorcFacetConfiguration.getAdditionalJARContents();
       for (Pair<String, String> jarContent : jarContents) {
-        VirtualFile file = myFileSystem.findFileByPath(jarContent.getFirst());
+        VirtualFile file = fileSystem.findFileByPath(jarContent.getFirst());
         if (file != null) {
           newAdditionalJARContents.add(file);
         }
@@ -102,7 +101,7 @@ public class AdditionalJARContentsWatcherManager {
         }
       }
 
-      Set<LocalFileSystem.WatchRequest> requests = myFileSystem.replaceWatchedRoots(toRemove, toAdd, null);
+      Set<LocalFileSystem.WatchRequest> requests = fileSystem.replaceWatchedRoots(toRemove, toAdd, null);
       myWatchRequests.addAll(requests);
     }
     else {
@@ -111,7 +110,7 @@ public class AdditionalJARContentsWatcherManager {
   }
 
   public void cleanup() {
-    myFileSystem.removeWatchedRoots(myWatchRequests);
+    LocalFileSystem.getInstance().removeWatchedRoots(myWatchRequests);
     myWatchRequests.clear();
     myAdditionalBundleJARContents.clear();
   }

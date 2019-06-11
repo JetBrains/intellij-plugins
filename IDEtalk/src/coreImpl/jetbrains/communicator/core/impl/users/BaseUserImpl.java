@@ -19,7 +19,7 @@ import jetbrains.communicator.core.EventBroadcaster;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserEvent;
 import jetbrains.communicator.core.users.UserModel;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 /**
  * @author Kir
@@ -39,7 +39,7 @@ public abstract class BaseUserImpl implements User {
 
     myName = name;
     myDisplayName = name;
-    myGroup = StringUtil.fixGroup(group);
+    myGroup = CommunicatorStrings.fixGroup(group);
   }
 
   @Override
@@ -72,7 +72,7 @@ public abstract class BaseUserImpl implements User {
 
   @Override
   public void setGroup(final String group, UserModel userModel) {
-    final String fixedGroup = StringUtil.fixGroup(group);
+    final String fixedGroup = CommunicatorStrings.fixGroup(group);
 
     if (userModel != null) {
       User inModel = userModel.findUser(getName(), getTransportCode());
@@ -120,7 +120,7 @@ public abstract class BaseUserImpl implements User {
   }
 
   public String toString() {
-    return '[' + StringUtil.getShortName(getClass()) + ' ' + myName + ' ' + myGroup + ']';
+    return '[' + CommunicatorStrings.getShortName(getClass()) + ' ' + myName + ' ' + myGroup + ']';
   }
 
   public boolean equals(Object o) {

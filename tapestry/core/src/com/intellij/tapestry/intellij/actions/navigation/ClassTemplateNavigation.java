@@ -1,9 +1,6 @@
 package com.intellij.tapestry.intellij.actions.navigation;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -42,7 +39,7 @@ public class ClassTemplateNavigation extends AnAction {
 
     Module module;
     try {
-      module = (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
+      module = (Module)event.getDataContext().getData(LangDataKeys.MODULE.getName());
     }
     catch (Throwable ex) {
       presentation.setEnabledAndVisible(false);
@@ -70,10 +67,10 @@ public class ClassTemplateNavigation extends AnAction {
    */
   @Override
   public void actionPerformed(@NotNull AnActionEvent event) {
-    Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());
+    Project project = (Project)event.getDataContext().getData(CommonDataKeys.PROJECT.getName());
 
     PsiFile psiFile = getEventPsiFile(event);
-    Module module = (Module)event.getDataContext().getData(DataKeys.MODULE.getName());
+    Module module = (Module)event.getDataContext().getData(LangDataKeys.MODULE.getName());
     if (psiFile == null || module == null) return;
     String presentationText = event.getPresentation().getText();
     VirtualFile navigationTarget = findNavigationTarget(psiFile, module, presentationText);
@@ -120,7 +117,7 @@ public class ClassTemplateNavigation extends AnAction {
    */
   @Nullable
   public static PsiFile getEventPsiFile(AnActionEvent event) {
-    final Project project = (Project)event.getDataContext().getData(DataKeys.PROJECT.getName());
+    final Project project = (Project)event.getDataContext().getData(CommonDataKeys.PROJECT.getName());
     if (project == null) return null;
 
     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);

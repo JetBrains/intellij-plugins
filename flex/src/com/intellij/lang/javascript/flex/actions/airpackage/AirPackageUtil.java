@@ -20,7 +20,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -700,7 +700,7 @@ public class AirPackageUtil {
       }
 
       final int choice = Messages.showChooseDialog(project, "Select iOS device", "iOS Device", null,
-                                                   ArrayUtil.toStringArray(presentableNames), preferredPresentableName);
+                                                   ArrayUtilRt.toStringArray(presentableNames), preferredPresentableName);
       if (choice == -1) return false;
 
       final DeviceInfo selectedDevice = devices.get(choice);
@@ -749,7 +749,7 @@ public class AirPackageUtil {
       }
 
       final int choice = Messages.showChooseDialog(project, "Select Android device", "Android Device", null,
-                                                   ArrayUtil.toStringArray(presentableNames), preferredPresentableName);
+                                                   ArrayUtilRt.toStringArray(presentableNames), preferredPresentableName);
       if (choice == -1) return false;
 
       final DeviceInfo selectedDevice = devices.get(choice);

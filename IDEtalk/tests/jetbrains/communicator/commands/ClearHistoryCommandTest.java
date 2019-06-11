@@ -19,7 +19,7 @@ import jetbrains.communicator.LightTestCase;
 import jetbrains.communicator.core.dispatcher.LocalMessageDispatcher;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.NullProgressIndicator;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jmock.Mock;
 import org.jmock.core.Invocation;
 import org.jmock.core.stub.CustomStub;
@@ -56,8 +56,8 @@ public class ClearHistoryCommandTest extends LightTestCase {
 
   public void testClearHistory() {
     myIdeMock.expects(once()).method("askQuestion").with(
-        eq(StringUtil.getMsg("ClearHistoryCommand.title")),
-        eq(StringUtil.getMsg("ClearHistoryCommand.text"))
+        eq(CommunicatorStrings.getMsg("ClearHistoryCommand.title")),
+        eq(CommunicatorStrings.getMsg("ClearHistoryCommand.text"))
     ).will(returnValue(true));
     myIdeMock.expects(once()).method("runLongProcess").will(new CustomStub("runner") {
       @Override
