@@ -4,7 +4,7 @@ import tanvd.grazi.Versions
 import tanvd.grazi.channel
 
 group = "tanvd.grazi"
-version = "2019.2-1.$channel"
+version = "2019.2-2.$channel"
 
 
 plugins {
@@ -23,6 +23,8 @@ intellij {
     pluginName = "Grazi"
     version = "IC-LATEST-EAP-SNAPSHOT"
     downloadSources = true
+
+    updateSinceUntilBuild = false
 
     setPlugins(
             "org.intellij.plugins.markdown:192.4488.21",

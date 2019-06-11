@@ -53,6 +53,7 @@
     ]]>
     </change-notes>
 
+    <idea-version since-build="192"/>
 
     <depends optional="true" config-file="markdown.xml">org.intellij.plugins.markdown</depends>
     <depends optional="true" config-file="kotlin.xml">org.jetbrains.kotlin</depends>
