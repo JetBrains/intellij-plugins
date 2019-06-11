@@ -31,7 +31,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.PlatformIcons;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
@@ -40,6 +39,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -216,6 +216,6 @@ public class LibraryBundlingEditorComponent {
       }
     }
 
-    settings.setLibraryBundlificationRules(ContainerUtil.newArrayList(myRulesModel.getItems()));
+    settings.setLibraryBundlificationRules(new ArrayList<>(myRulesModel.getItems()));
   }
 }

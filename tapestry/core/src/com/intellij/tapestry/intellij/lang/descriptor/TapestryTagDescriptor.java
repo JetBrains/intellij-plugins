@@ -1,5 +1,6 @@
 package com.intellij.tapestry.intellij.lang.descriptor;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.model.Library;
@@ -42,7 +43,7 @@ public class TapestryTagDescriptor extends BasicTapestryTagDescriptor {
   @Override
   public String getDefaultName() {
     Library library = myComponent.getLibrary();
-    String name = myComponent.getName().toLowerCase().replace('/', '.');
+    String name = StringUtil.toLowerCase(myComponent.getName()).replace('/', '.');
     if (library != null && library.getShortName() != null) {
       name = library.getShortName() + '.' + name;
     }

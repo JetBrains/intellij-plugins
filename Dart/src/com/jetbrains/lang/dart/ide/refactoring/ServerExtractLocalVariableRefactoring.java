@@ -1,12 +1,12 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.refactoring;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtilRt;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
-
-import static com.intellij.util.ArrayUtil.toStringArray;
 
 /**
  * LTK wrapper around Analysis Server 'Extract Local Variable' refactoring.
@@ -35,7 +35,7 @@ public class ServerExtractLocalVariableRefactoring extends ServerRefactoring {
 
   @NotNull
   public String[] getNames() {
-    return toStringArray(feedback.getNames());
+    return ArrayUtilRt.toStringArray(feedback.getNames());
   }
 
   @NotNull

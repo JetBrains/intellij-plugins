@@ -1,20 +1,7 @@
-/*
- * Copyright 2000-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -31,6 +18,7 @@ import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.psi.DartImportStatement;
 import com.jetbrains.lang.dart.psi.DartUriElement;
 import com.jetbrains.lang.dart.resolve.DartResolver;
+import com.jetbrains.lang.dart.sdk.DartSdk;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartUrlResolver;
 import org.jetbrains.annotations.NotNull;
@@ -102,15 +90,19 @@ public class DartFileReference implements PsiPolyVariantReference {
     if (element instanceof PsiFile) {
       final VirtualFile contextFile = DartResolveUtil.getRealVirtualFile(myUriElement.getContainingFile());
       final VirtualFile targetFile = DartResolveUtil.getRealVirtualFile(((PsiFile)element));
-      if (contextFile != null && targetFile != null) {
-        final String newUri = DartUrlResolver.getInstance(myUriElement.getProject(), contextFile).getDartUrlForFile(targetFile);
-        if (newUri.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
-          return updateUri(newUri);
-        }
-        else if (newUri.startsWith(DartUrlResolver.FILE_PREFIX)) {
-          final String relativePath = FileUtil.getRelativePath(contextFile.getParent().getPath(), targetFile.getPath(), '/');
-          if (relativePath != null) {
-            return updateUri(relativePath);
+      final Project project = myUriElement.getProject();
+      final DartSdk dartSdk = DartSdk.getDartSdk(project);
+      if (dartSdk != null && !DartAnalysisServerService.isDartSdkVersionForMoveFileRefactoring(dartSdk)) {
+        if (contextFile != null && targetFile != null) {
+          final String newUri = DartUrlResolver.getInstance(myUriElement.getProject(), contextFile).getDartUrlForFile(targetFile);
+          if (newUri.startsWith(DartUrlResolver.PACKAGE_PREFIX)) {
+            return updateUri(newUri);
+          }
+          else if (newUri.startsWith(DartUrlResolver.FILE_PREFIX)) {
+            final String relativePath = FileUtil.getRelativePath(contextFile.getParent().getPath(), targetFile.getPath(), '/');
+            if (relativePath != null) {
+              return updateUri(relativePath);
+            }
           }
         }
       }

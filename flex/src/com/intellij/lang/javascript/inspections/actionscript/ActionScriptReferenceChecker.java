@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceListMember;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
+import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.types.JSAnyType;
@@ -184,7 +185,7 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
     }
     if (!(isNewExpression)) {
       //foo() -> AS methods are callable without this -> method
-      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(methodExpression.getReferenceName(), true, false));
+      quickFixes.add(JSFixFactory.getInstance().createJSFunctionIntentionAction(methodExpression.getReferenceName(), true, false, false));
     }
 
     super.addCreateFromUsageFixesForCall(methodExpression, isNewExpression, resolveResults, quickFixes);
@@ -238,7 +239,7 @@ public class ActionScriptReferenceChecker extends TypedJSReferenceChecker {
         return ProblemHighlightType.LIKE_UNKNOWN_SYMBOL;
       }
 
-      JSClass jsClass = JSResolveUtil.findClassOfQualifier(qualifier, containingFile);
+      JSClass jsClass = ActionScriptResolveUtil.findClassOfQualifier(qualifier, containingFile);
       if (jsClass == null) {
         return ProblemHighlightType.ERROR;
       }

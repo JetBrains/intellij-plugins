@@ -14,20 +14,27 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.FakePsiElement;
+import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.AstLoadingFilter;
+import com.intellij.util.SmartList;
 import one.util.streamex.StreamEx;
 import org.angular2.Angular2InjectionUtils;
 import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2DirectiveSelector;
+import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
+import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor;
 import org.angularjs.codeInsight.refs.AngularJSTemplateReferencesProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.psi.util.CachedValueProvider.Result.create;
 import static org.angular2.Angular2DecoratorUtil.*;
+import static org.angular2.lang.html.parser.Angular2HtmlStubElementTypes.NG_CONTENT_SELECTOR;
 
 public class Angular2SourceComponent extends Angular2SourceDirective implements Angular2Component {
 
@@ -46,6 +53,45 @@ public class Angular2SourceComponent extends Angular2SourceDirective implements 
   @Override
   public List<PsiFile> getCssFiles() {
     return getCachedValue(() -> create(findCssFiles(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator()));
+  }
+
+  @NotNull
+  @Override
+  public List<Angular2DirectiveSelector> getNgContentSelectors() {
+    return getCachedValue(() -> {
+      PsiFile template = getTemplateFile();
+      if (template instanceof PsiFileImpl) {
+        List<Angular2DirectiveSelector> result = new SmartList<>();
+        StubElement<?> root = ((PsiFileImpl)template).getGreenStub();
+        if (root != null) {
+          for (StubElement el : root.getChildrenStubs()) {
+            if (el.getStubType() == NG_CONTENT_SELECTOR) {
+              result.add(((Angular2HtmlNgContentSelector)el.getPsi()).getSelector());
+            }
+          }
+        }
+        else {
+          template.accept(new Angular2HtmlRecursiveElementWalkingVisitor() {
+            @Override
+            public void visitNgContentSelector(Angular2HtmlNgContentSelector ngContentSelector) {
+              result.add(ngContentSelector.getSelector());
+            }
+          });
+        }
+        return create(result, template, VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator());
+      }
+      return create(Collections.emptyList(), VirtualFileManager.VFS_STRUCTURE_MODIFICATIONS, getDecorator());
+    });
+  }
+
+  @Override
+  public boolean isStructuralDirective() {
+    return false;
+  }
+
+  @Override
+  public boolean isRegularDirective() {
+    return true;
   }
 
   @Nullable

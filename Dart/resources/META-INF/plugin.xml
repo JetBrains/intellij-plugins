@@ -32,6 +32,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <moveFileHandler implementation="com.jetbrains.lang.dart.ide.refactoring.moveFile.DartServerMoveDartFileHandler"/>
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
     <lang.syntaxHighlighterFactory language="Dart" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterFactory"/>
     <highlightErrorFilter implementation="com.jetbrains.lang.dart.highlight.DartHighlightingErrorFilter"/>
@@ -166,8 +167,6 @@
     <lookup.charFilter implementation="com.jetbrains.lang.dart.ide.completion.DartCharFilter"/>
     <lang.smartEnterProcessor language="Dart"
                               implementationClass="com.jetbrains.lang.dart.ide.completion.DartServerStatementCompletionProcessor"/>
-
-    <resolveScopeProvider implementation="com.jetbrains.lang.dart.resolve.DartResolveScopeProvider"/>
 
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>
     <annotator language="HTML" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartAnnotator"/>

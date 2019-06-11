@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.execution;
 
 
@@ -44,7 +45,7 @@ public final class TsLintOutputJsonParser {
     else {
       final JsonArray array = root.getAsJsonArray();
       final int size = array.size();
-      ArrayList<TsLinterError> errors = ContainerUtil.newArrayList();
+      ArrayList<TsLinterError> errors = new ArrayList<>();
       for (int i = 0; i < size; i++) {
         final JsonElement element = array.get(i);
         if (!element.isJsonObject()) {
@@ -60,7 +61,7 @@ public final class TsLintOutputJsonParser {
   }
 
   private List<TsLinterError> processError(JsonObject object) {
-    List<TsLinterError> result = ContainerUtil.newArrayList();
+    List<TsLinterError> result = new ArrayList<>();
     final JsonElement name = object.get("name");
     if (name == null) {
       logError("no name for error object");

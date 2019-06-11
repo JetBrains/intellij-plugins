@@ -1,4 +1,4 @@
-// "Create Method '_bbb'" "true"
+// "Create method '_bbb'" "true"
 
 class C {
   static function foo() {

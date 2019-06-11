@@ -1,6 +1,7 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
@@ -34,7 +35,7 @@ public class FlashPlayerVersionForm {
 
 
   public void setPlayerVersion(String playerVersion) {
-    final String[] strings = playerVersion == null ? ArrayUtil.EMPTY_STRING_ARRAY : playerVersion.split("[.]");
+    final String[] strings = playerVersion == null ? ArrayUtilRt.EMPTY_STRING_ARRAY : playerVersion.split("[.]");
     myPlayerVersionMajorTextField.setText(strings.length > 0 ? strings[0] : "");
     myPlayerVersionMinorTextField.setText(strings.length > 1 ? strings[1] : "");
     myPlayerVersionRevisionTextField.setText(strings.length > 2 ? strings[2] : "");

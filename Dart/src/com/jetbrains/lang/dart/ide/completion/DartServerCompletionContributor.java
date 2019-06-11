@@ -31,8 +31,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.ui.IconManager;
 import com.intellij.ui.LayeredIcon;
-import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
@@ -402,20 +402,19 @@ public class DartServerCompletionContributor extends CompletionContributor {
       }
 
       // If this is a class or similar global symbol, try to show which package it's coming from.
-      if (displayUri != null &&
-          element.getTypeParameters() == null &&
-          element.getParameters() == null) {
-        lookup = lookup.appendTailText(" (" + displayUri + ")", true);
+      if (!StringUtils.isEmpty(displayUri)) {
+        String packageInfo = "(" + displayUri + ")";
+        lookup = lookup.withTypeText(StringUtils.isEmpty(returnType) ? packageInfo : returnType + " " + packageInfo, true);
       }
 
       // icon
       Icon icon = getBaseImage(element);
       if (icon != null) {
         if (suggestion.getKind().equals(CompletionSuggestionKind.OVERRIDE)) {
-          icon = new RowIcon(icon, AllIcons.Gutter.OverridingMethod);
+          icon = IconManager.getInstance().createRowIcon(icon, AllIcons.Gutter.OverridingMethod);
         }
         else {
-          icon = new RowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON);
+          icon = IconManager.getInstance().createRowIcon(icon, element.isPrivate() ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON);
           icon = applyOverlay(icon, element.isFinal(), AllIcons.Nodes.FinalMark);
           icon = applyOverlay(icon, element.isConst(), AllIcons.Nodes.FinalMark);
         }
@@ -544,13 +543,13 @@ public class DartServerCompletionContributor extends CompletionContributor {
   private static CompletionSuggestion createCompletionSuggestionFromAvailableSuggestion(@NotNull AvailableSuggestion suggestion,
                                                                                         int suggestionSetRelevance,
                                                                                         @NotNull Map<String, IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags) {
-    int relevance = suggestionSetRelevance;
+    int relevanceBoost = 0;
     List<String> relevanceTags = suggestion.getRelevanceTags();
     if (relevanceTags != null) {
       for (String tag : relevanceTags) {
         IncludedSuggestionRelevanceTag relevanceTag = includedSuggestionRelevanceTags.get(tag);
         if (relevanceTag != null) {
-          relevance += includedSuggestionRelevanceTags.get(tag).getRelevanceBoost();
+          relevanceBoost = Math.max(relevanceBoost, relevanceTag.getRelevanceBoost());
         }
       }
     }
@@ -558,7 +557,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
     Element element = suggestion.getElement();
     return new CompletionSuggestion(
       "UNKNOWN", // we don't have info about CompletionSuggestionKind
-      relevance,
+      suggestionSetRelevance + relevanceBoost,
       suggestion.getLabel(),
       null,
       0,
@@ -616,7 +615,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
       return AllIcons.Nodes.Method;
     }
     else if (elementKind.equals(ElementKind.FUNCTION)) {
-      return AllIcons.Nodes.Function;
+      return AllIcons.Nodes.Lambda;
     }
     else if (elementKind.equals(ElementKind.FUNCTION_TYPE_ALIAS)) {
       return AllIcons.Nodes.Annotationtype;

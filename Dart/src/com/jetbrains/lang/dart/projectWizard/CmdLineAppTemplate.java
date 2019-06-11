@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
@@ -11,7 +12,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
 
 class CmdLineAppTemplate extends DartProjectTemplate {
   CmdLineAppTemplate() {
@@ -31,7 +31,7 @@ class CmdLineAppTemplate extends DartProjectTemplate {
                                   "dev_dependencies:\n" +
                                   "#  unittest: any\n").getBytes(Charset.forName("UTF-8")));
     final VirtualFile binDir = VfsUtil.createDirectoryIfMissing(baseDir, "bin");
-    final VirtualFile mainFile = binDir.createChildData(this, module.getName().toLowerCase(Locale.US) + ".dart");
+    final VirtualFile mainFile = binDir.createChildData(this, StringUtil.toLowerCase(module.getName()) + ".dart");
     mainFile.setBinaryContent(("void main() {\n" +
                                "  print('Hello, World!');\n" +
                                "}\n").getBytes(Charset.forName("UTF-8")));

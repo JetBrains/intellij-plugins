@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.ui.ArtifactEditorContext;
 import com.intellij.packaging.ui.PackagingSourceItem;
@@ -58,7 +59,7 @@ public class FlashPackagingSourceItemsProvider extends PackagingSourceItemsProvi
     assert configEditor != null; // because Project Structure is open
 
     for (FlexBuildConfiguration bc : configEditor.getConfigurations(module)) {
-      final String outputFilePath = bc.getActualOutputFilePath().toLowerCase();
+      final String outputFilePath = StringUtil.toLowerCase(bc.getActualOutputFilePath());
       if (!outputFilePath.endsWith(".swf") && !outputFilePath.endsWith(".swc")) {
         continue; // BC is not configured properly yet
       }

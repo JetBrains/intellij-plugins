@@ -15,7 +15,7 @@
       <node text="button1:Button"/>
     </node>
     <node text="mx:Script">
-      <node text="foo()"/>
+      <node text="foo():*"/>
     </node>
   </node>
 </node>

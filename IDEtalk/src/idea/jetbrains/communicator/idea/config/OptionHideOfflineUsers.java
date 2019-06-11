@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import jetbrains.communicator.OptionFlag;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.SettingsChanged;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,8 +19,8 @@ public class OptionHideOfflineUsers extends OptionExpandToolWindow1 {
   @Override
   public void update(@NotNull final AnActionEvent e) {
     super.update(e);
-    e.getPresentation().setText(StringUtil.getMsg("hide.offline.users"));
-    e.getPresentation().setDescription(StringUtil.getMsg("hide.offline.users.description"));
+    e.getPresentation().setText(CommunicatorStrings.getMsg("hide.offline.users"));
+    e.getPresentation().setDescription(CommunicatorStrings.getMsg("hide.offline.users.description"));
   }
 
   @Override

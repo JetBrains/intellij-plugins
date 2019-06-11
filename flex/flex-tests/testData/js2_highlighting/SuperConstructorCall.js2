@@ -37,7 +37,7 @@ class SubClass2 extends SuperClass {
 }
 class AnotherClass extends SuperClass {
     function AnotherClass() {
-        if (true) {
+        if (<warning descr="If statement can be simplified">true</warning>) {
         }
         super("")
     }

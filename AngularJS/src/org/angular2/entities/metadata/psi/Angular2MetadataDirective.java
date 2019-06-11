@@ -14,15 +14,29 @@ public class Angular2MetadataDirective extends Angular2MetadataDirectiveBase<Ang
   }
 
   @Override
-  public boolean isTemplate() {
+  public boolean isStructuralDirective() {
     Angular2MetadataClassBase cur = this;
     Set<Angular2MetadataClassBase> visited = new HashSet<>();
     while (cur != null && visited.add(cur)) {
-      if (((Angular2MetadataClassStubBase)cur.getStub()).isTemplate()) {
+      if (((Angular2MetadataClassStubBase)cur.getStub()).isStructuralDirective()) {
         return true;
       }
       cur = cur.getExtendedClass();
     }
     return false;
+  }
+
+  @Override
+  public boolean isRegularDirective() {
+    Angular2MetadataClassBase cur = this;
+    Set<Angular2MetadataClassBase> visited = new HashSet<>();
+    while (cur != null && visited.add(cur)) {
+      if (((Angular2MetadataClassStubBase)cur.getStub()).isStructuralDirective()
+          && !((Angular2MetadataClassStubBase)cur.getStub()).isRegularDirective()) {
+        return false;
+      }
+      cur = cur.getExtendedClass();
+    }
+    return true;
   }
 }

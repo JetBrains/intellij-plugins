@@ -1,6 +1,8 @@
 package com.intellij.javascript.flex.refactoring.moveClass;
 
+import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.MxmlLanguage;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSVarStatement;
@@ -23,6 +25,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandlerDelegate;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -64,7 +67,7 @@ public class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
   }
 
   @Override
-  public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer) {
+  public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer, @Nullable PsiReference reference) {
     if (elements.length == 0) {
       return false;
     }
@@ -79,14 +82,14 @@ public class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
         return false;
       }
       else {
-        return targetContainer == null || super.canMove(elements, targetContainer);
+        return targetContainer == null || super.canMove(elements, targetContainer, reference);
       }
     }
 
     for (PsiElement element : elements) {
       if (adjustForMove(element) == null) return false;
     }
-    return targetContainer == null || super.canMove(elements, targetContainer);
+    return targetContainer == null || super.canMove(elements, targetContainer, reference);
   }
 
   @Nullable
@@ -125,5 +128,10 @@ public class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
       return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
     }
     return null;
+  }
+
+  @Override
+  public boolean supportsLanguage(@NotNull Language language) {
+    return language == JavaScriptSupportLoader.ECMA_SCRIPT_L4 || language == MxmlLanguage.INSTANCE;
   }
 }

@@ -1,4 +1,4 @@
-<!-- "Create Method 'foo'" "true" -->
+<!-- "Create method 'foo'" "true" -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" initialize="fo<caret>o('111')">
 <mx:Script>
   var aaa;

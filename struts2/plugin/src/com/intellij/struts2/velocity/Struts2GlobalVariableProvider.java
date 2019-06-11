@@ -21,7 +21,6 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.CommonClassNames;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.velocity.VtlGlobalVariableProvider;
 import com.intellij.velocity.psi.VtlLightVariable;
 import com.intellij.velocity.psi.VtlVariable;
@@ -29,6 +28,7 @@ import com.intellij.velocity.psi.files.VtlFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +52,7 @@ public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
       return Collections.emptySet();
     }
 
-    final List<VtlVariable> result = ContainerUtil.newArrayList();
+    final List<VtlVariable> result = new ArrayList<>();
     result.add(new MyVtlVariable("response", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));
     result.add(new MyVtlVariable("res", file, WebCommonClassNames.HTTP_SERVLET_RESPONSE));
     result.add(new MyVtlVariable("request", file, WebCommonClassNames.HTTP_SERVLET_REQUEST));

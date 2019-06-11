@@ -78,9 +78,9 @@ public class Angular2EmbeddedExprTokenType extends Angular2EmbeddedContentTokenT
     SIMPLE_BINDING(Angular2Parser::parseSimpleBinding),
     TEMPLATE_BINDINGS(null);
 
-    private final BiConsumer<PsiBuilder, IElementType> myParseMethod;
+    private final BiConsumer<? super PsiBuilder, ? super IElementType> myParseMethod;
 
-    ExpressionType(BiConsumer<PsiBuilder, IElementType> parseMethod) {
+    ExpressionType(BiConsumer<? super PsiBuilder, ? super IElementType> parseMethod) {
       myParseMethod = parseMethod;
     }
 

@@ -1,12 +1,18 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.inspections.quickfixes;
 
+import com.intellij.codeInsight.hint.QuestionAction;
+import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.modules.ES6ImportAction;
+import com.intellij.lang.javascript.ecmascript6.ES6QualifiedNamedElementRenderer;
+import com.intellij.lang.javascript.psi.JSElement;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
@@ -17,10 +23,9 @@ import org.angular2.codeInsight.Angular2DeclarationsScope;
 import org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity;
 import org.angular2.codeInsight.attributes.Angular2ApplicableDirectivesProvider;
 import org.angular2.codeInsight.attributes.Angular2AttributeDescriptor;
-import org.angular2.entities.Angular2Declaration;
-import org.angular2.entities.Angular2Directive;
-import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.entities.*;
 import org.angular2.inspections.actions.Angular2ActionFactory;
+import org.angular2.lang.Angular2Bundle;
 import org.angular2.lang.expr.psi.Angular2PipeReferenceExpression;
 import org.angular2.lang.expr.psi.Angular2TemplateBinding;
 import org.angular2.lang.expr.psi.Angular2TemplateBindings;
@@ -29,43 +34,40 @@ import org.angular2.lang.html.parser.Angular2AttributeNameParser.AttributeInfo;
 import org.angular2.lang.html.parser.Angular2AttributeType;
 import org.angular2.lang.html.psi.Angular2HtmlEvent;
 import org.angular2.lang.html.psi.PropertyBindingType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static com.intellij.util.ObjectUtils.notNull;
-import static com.intellij.util.ObjectUtils.tryCast;
-import static com.intellij.util.containers.ContainerUtil.exists;
-import static com.intellij.util.containers.ContainerUtil.getFirstItem;
-import static java.util.Objects.requireNonNull;
+import static com.intellij.util.ObjectUtils.*;
+import static com.intellij.util.containers.ContainerUtil.*;
 import static org.angular2.codeInsight.Angular2DeclarationsScope.DeclarationProximity.*;
 
 public class Angular2FixesFactory {
 
-  public static void ensureDeclarationResolved(@NotNull PsiElement element, @NotNull Editor editor, boolean codeCompletion) {
-    ES6ImportAction action;
-    MultiMap<DeclarationProximity, Angular2Declaration> candidates = getCandidatesForResolution(element, codeCompletion);
+  @TestOnly
+  @NonNls public static final Key<String> DECLARATION_TO_CHOOSE = Key.create("declaration.to.choose");
+
+  public static void ensureDeclarationResolvedAfterCodeCompletion(@NotNull PsiElement element, @NotNull Editor editor) {
+    MultiMap<DeclarationProximity, Angular2Declaration> candidates = getCandidatesForResolution(element, true);
     if (!candidates.get(EXPORTED_BY_PUBLIC_MODULE).isEmpty()) {
-      action = Angular2ActionFactory.createNgModuleImportAction(editor, element, codeCompletion);
+      Angular2ActionFactory.createNgModuleImportAction(editor, element, true).execute();
     }
-    else if (candidates.get(NOT_DECLARED_IN_ANY_MODULE).size() == 1) {
-      action = Angular2ActionFactory.createAddNgModuleDeclarationAction(
-        editor, element, requireNonNull(getFirstItem(candidates.get(NOT_DECLARED_IN_ANY_MODULE))));
+    else if (!candidates.get(NOT_DECLARED_IN_ANY_MODULE).isEmpty()) {
+      selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.declare.select.declarable",
+                                                  getCommonNameForDeclarations(candidates.get(NOT_EXPORTED_BY_MODULE))),
+                   candidates.get(NOT_DECLARED_IN_ANY_MODULE), candidate ->
+                     Angular2ActionFactory.createAddNgModuleDeclarationAction(editor, element, candidate, true));
     }
-    else if (candidates.get(NOT_EXPORTED_BY_MODULE).size() == 1) {
-      action = Angular2ActionFactory.createExportNgModuleDeclarationAction(
-        editor, element, requireNonNull(getFirstItem(candidates.get(NOT_EXPORTED_BY_MODULE))),
-        codeCompletion);
-    }
-    else {
-      return;
-    }
-    if (action != null) {
-      action.execute();
+    else if (!candidates.get(NOT_EXPORTED_BY_MODULE).isEmpty()) {
+      selectAndRun(editor, Angular2Bundle.message("angular.quickfix.ngmodule.export.select.declarable",
+                                                  getCommonNameForDeclarations(candidates.get(NOT_EXPORTED_BY_MODULE))),
+                   candidates.get(NOT_EXPORTED_BY_MODULE), candidate ->
+                     Angular2ActionFactory.createExportNgModuleDeclarationAction(editor, element, candidate, true));
     }
   }
 
@@ -197,5 +199,77 @@ public class Angular2FixesFactory {
       .map(d -> tryCast(d, Angular2AttributeDescriptor.class))
       .map(Angular2AttributeDescriptor::getSourceDirectives)
       .orElse(Collections.emptyList());
+  }
+
+  private static String getCommonNameForDeclarations(@NotNull Collection<Angular2Declaration> declarations) {
+    if (getFirstItem(declarations) instanceof Angular2Pipe) {
+      return Angular2Bundle.message("angular.entity.pipe");
+    }
+    boolean hasDirective = false;
+    boolean hasComponent = false;
+    for (Angular2Declaration declaration: declarations) {
+      if (declaration instanceof Angular2Component) {
+        hasComponent = true;
+      } else {
+        hasDirective = true;
+      }
+    }
+    return hasComponent == hasDirective ? Angular2Bundle.message("angular.entity.component.or.directive")
+                                        : hasComponent ? Angular2Bundle.message("angular.entity.component")
+                                                       : Angular2Bundle.message("angular.entity.directive");
+  }
+
+  private static void selectAndRun(@NotNull Editor editor,
+                                   @NotNull String title,
+                                   @NotNull Collection<Angular2Declaration> declarations,
+                                   @NotNull Function<Angular2Declaration, QuestionAction> actionFactory) {
+    if (declarations.isEmpty()) {
+      return;
+    }
+
+    if (declarations.size() == 1) {
+      doIfNotNull(actionFactory.apply(getFirstItem(declarations)), QuestionAction::execute);
+      return;
+    }
+
+    ApplicationManager.getApplication().assertIsDispatchThread();
+    Map<JSElement, Angular2Declaration> elementMap = StreamEx.of(declarations)
+      .mapToEntry(Angular2Declaration::getTypeScriptClass, Function.identity())
+      .selectKeys(JSElement.class)
+      .toMap();
+
+    PsiElementProcessor<JSElement> processor = new PsiElementProcessor<JSElement>() {
+      @Override
+      public boolean execute(@NotNull final JSElement element) {
+        Optional.ofNullable(elementMap.get(element))
+          .map(actionFactory)
+          .ifPresent(QuestionAction::execute);
+        return false;
+      }
+    };
+
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      //noinspection TestOnlyProblems
+      processor.execute(
+        Optional.ofNullable(editor.getUserData(DECLARATION_TO_CHOOSE))
+          .map(name -> find(declarations, declaration -> declaration.getName().equals(name)))
+          .map(Angular2Entity::getTypeScriptClass)
+          .orElseThrow(
+            () -> new AssertionError("Declaration name must be specified in test mode. Available names: " +
+                                     StreamEx.of(declarations)
+                                       .filter(decl -> decl.getTypeScriptClass() != null)
+                                       .map(Angular2Declaration::getName)
+                                       .joining(",")
+            ))
+      );
+      return;
+    }
+    if (editor.isDisposed()) return;
+
+    NavigationUtil.getPsiElementPopup(elementMap.keySet().toArray(JSElement.EMPTY_ARRAY),
+                                      new ES6QualifiedNamedElementRenderer<>(),
+                                      title,
+                                      processor)
+      .showInBestPositionFor(editor);
   }
 }

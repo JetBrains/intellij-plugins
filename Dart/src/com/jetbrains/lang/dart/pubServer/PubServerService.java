@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.Consumer;
@@ -61,7 +62,10 @@ import javax.swing.event.HyperlinkEvent;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
-import java.util.*;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 final class PubServerService extends NetService {
@@ -194,6 +198,13 @@ final class PubServerService extends NetService {
     final DartSdk dartSdk = DartSdk.getDartSdk(project);
     if (dartSdk == null) return null;
 
+    if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject()))) {
+      if (!DartWebdev.INSTANCE.getActivated()) {
+        ApplicationManager.getApplication()
+          .invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
+      }
+    }
+
     final GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(firstServedDir.getParent().getPath());
     commandLine.setExePath(FileUtil.toSystemDependentName(DartSdkUtil.getPubPath(dartSdk)));
     commandLine.withEnvironment(DartPubActionBase.PUB_ENV_VAR_NAME, DartPubActionBase.getPubEnvValue());
@@ -220,21 +231,20 @@ final class PubServerService extends NetService {
                                   final int port,
                                   @NotNull final OSProcessHandler processHandler,
                                   @NotNull final Consumer<String> errorOutputConsumer) {
-
     if (DartWebdev.INSTANCE.useWebdev(DartSdk.getDartSdk(getProject()))) {
-      if (!DartWebdev.INSTANCE.getActivated()) {
-        ApplicationManager.getApplication()
-          .invokeAndWait(() -> DartWebdev.INSTANCE.ensureWebdevActivated(getProject()), ModalityState.any());
-      }
-
       synchronized (myServerReadyLock) {
         try {
           // wait for the Webdev server to start before redirecting, so that Chrome doesn't show error.
           //noinspection WaitNotInLoop
-          myServerReadyLock.wait(20000);
+          myServerReadyLock.wait(15000);
         }
         catch (InterruptedException e) {/**/}
       }
+    }
+
+    if (processHandler.isProcessTerminated()) {
+      promise.cancel();
+      return;
     }
 
     InetSocketAddress firstPubServerAddress = NetKt.loopbackSocketAddress(port);
@@ -375,11 +385,19 @@ final class PubServerService extends NetService {
     }
 
     @Override
+    public void processTerminated(@NotNull ProcessEvent event) {
+      synchronized (myServerReadyLock) {
+        myServerReadyLock.notifyAll();
+      }
+    }
+
+    @Override
     public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
-      final String text = event.getText().toLowerCase(Locale.US);
+      final String text = StringUtil.toLowerCase(event.getText());
 
       // Serving `web` on http://localhost:53322
-      if (text.startsWith("serving ")) {
+      // or [INFO] Serving `web` on http://localhost:53322
+      if (text.contains("serving ")) {
         synchronized (myServerReadyLock) {
           myServerReadyLock.notifyAll();
         }

@@ -28,7 +28,7 @@ class ActionScriptRearrangerTest extends AbstractRearrangerTest {
 
     ApplicationManager.application.runWriteAction(new Runnable() {
       void run() {
-        def model = ModuleRootManager.getInstance(myModule).getModifiableModel()
+        def model = ModuleRootManager.getInstance(module).getModifiableModel()
         model.setSdk(sdk)
         model.commit()
       }

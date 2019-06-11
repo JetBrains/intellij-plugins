@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -20,11 +20,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.scale.JBUIScale;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.ui.JBUI;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.assists.AssistUtils;
@@ -45,7 +45,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class DartProblemsViewPanel extends SimpleToolWindowPanel implements DataProvider, CopyProvider {
@@ -118,7 +117,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
     table.setShowVerticalLines(false);
     table.setShowHorizontalLines(false);
     table.setStriped(true);
-    table.setRowHeight(table.getRowHeight() + JBUI.scale(4));
+    table.setRowHeight(table.getRowHeight() + JBUIScale.scale(4));
 
     JTableHeader tableHeader = table.getTableHeader();
     tableHeader.setPreferredSize(new Dimension(0, table.getRowHeight()));
@@ -318,7 +317,7 @@ public class DartProblemsViewPanel extends SimpleToolWindowPanel implements Data
   @Override
   public void performCopy(@NotNull DataContext dataContext) {
     final List<DartProblem> selectedObjects = myTable.getSelectedObjects();
-    final String s = StringUtil.join(selectedObjects, problem -> problem.getSeverity().toLowerCase(Locale.US) +
+    final String s = StringUtil.join(selectedObjects, problem -> StringUtil.toLowerCase(problem.getSeverity()) +
                                                                  ": " +
                                                                  problem.getErrorMessage() +
                                                                  " (" +
