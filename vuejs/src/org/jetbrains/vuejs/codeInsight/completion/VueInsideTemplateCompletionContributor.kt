@@ -5,7 +5,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.lang.javascript.completion.JSLookupPriority
 import com.intellij.lang.javascript.completion.JSSmartCompletionContributor
 import com.intellij.lang.javascript.psi.JSReferenceExpression
-import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider
+import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
 
 class VueInsideTemplateCompletionContributor : JSSmartCompletionContributor() {
   override fun getSmartCompletionVariants(location: JSReferenceExpression): List<LookupElement>? {
