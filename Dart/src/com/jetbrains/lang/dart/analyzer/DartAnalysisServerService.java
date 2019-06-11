@@ -93,6 +93,7 @@ import java.util.concurrent.TimeUnit;
 public class DartAnalysisServerService implements Disposable {
 
   public static final String MIN_SDK_VERSION = "1.12";
+  private static final String MIN_MOVE_FILE_SDK_VERSION = "2.3.2";
 
   private static final long UPDATE_FILES_TIMEOUT = 300;
 
@@ -103,8 +104,10 @@ public class DartAnalysisServerService implements Disposable {
   private static final long EDIT_SORT_MEMBERS_TIMEOUT = TimeUnit.SECONDS.toMillis(3);
   private static final long GET_HOVER_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
   private static final long GET_NAVIGATION_TIMEOUT = TimeUnit.SECONDS.toMillis(1);
-  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
-  private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_ASSISTS_TIMEOUT_EDT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_ASSISTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
+  private static final long GET_FIXES_TIMEOUT_EDT = TimeUnit.MILLISECONDS.toMillis(100);
+  private static final long GET_FIXES_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
   private static final long IMPORTED_ELEMENTS_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_COMPLETION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(100);
   private static final long POSTFIX_INITIALIZATION_TIMEOUT = TimeUnit.MILLISECONDS.toMillis(1000);
@@ -458,6 +461,10 @@ public class DartAnalysisServerService implements Disposable {
     return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_SDK_VERSION) >= 0;
   }
 
+  public static boolean isDartSdkVersionForMoveFileRefactoring(@NotNull final DartSdk sdk) {
+    return StringUtil.compareVersionNumbers(sdk.getVersion(), MIN_MOVE_FILE_SDK_VERSION) >= 0;
+  }
+
   public void addCompletions(@NotNull final VirtualFile file,
                              @NotNull final String completionId,
                              @NotNull final CompletionSuggestionConsumer consumer,
@@ -473,8 +480,7 @@ public class DartAnalysisServerService implements Disposable {
 
           for (final CompletionSuggestion completion : completionInfo.myCompletions) {
             final int convertedReplacementOffset = getConvertedOffset(file, completionInfo.myOriginalReplacementOffset);
-            final int convertedReplacementLength = getConvertedOffset(file, completionInfo.myOriginalReplacementLength);
-            consumer.consumeCompletionSuggestion(convertedReplacementOffset, convertedReplacementLength, completion);
+            consumer.consumeCompletionSuggestion(convertedReplacementOffset, completionInfo.myReplacementLength, completion);
           }
 
           final Set<String> includedKinds = Sets.newHashSet(completionInfo.myIncludedElementKinds);
@@ -1151,7 +1157,8 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_ASSISTS_TIMEOUT);
+    long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_ASSISTS_TIMEOUT_EDT : GET_ASSISTS_TIMEOUT;
+    awaitForLatchCheckingCanceled(server, latch, timeout);
     return results;
   }
 
@@ -1281,7 +1288,7 @@ public class DartAnalysisServerService implements Disposable {
   }
 
   /**
-   * If server responds in less than {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
+   * If server responds in less than {@code GET_FIXES_TIMEOUT_EDT} / {@code GET_FIXES_TIMEOUT} then this method can be considered synchronous: when exiting this method
    * {@code consumer} is already notified. Otherwise this method is async.
    */
   public void askForFixesAndWaitABitIfReceivedQuickly(@NotNull final VirtualFile file,
@@ -1308,7 +1315,8 @@ public class DartAnalysisServerService implements Disposable {
       }
     });
 
-    awaitForLatchCheckingCanceled(server, latch, GET_FIXES_TIMEOUT);
+    long timeout = ApplicationManager.getApplication().isDispatchThread() ? GET_FIXES_TIMEOUT_EDT : GET_FIXES_TIMEOUT;
+    awaitForLatchCheckingCanceled(server, latch, timeout);
   }
 
   public void search_findElementReferences(@NotNull final VirtualFile file,
@@ -2241,10 +2249,7 @@ public class DartAnalysisServerService implements Disposable {
      * must be converted before any usage
      */
     private final int myOriginalReplacementOffset;
-    /**
-     * must be converted before any usage
-     */
-    private final int myOriginalReplacementLength;
+    private final int myReplacementLength;
     @NotNull private final List<CompletionSuggestion> myCompletions;
     @NotNull private final List<IncludedSuggestionSet> myIncludedSuggestionSets;
     @NotNull private final List<String> myIncludedElementKinds;
@@ -2253,7 +2258,7 @@ public class DartAnalysisServerService implements Disposable {
 
     CompletionInfo(@NotNull final String completionId,
                    int replacementOffset,
-                   int originalReplacementLength,
+                   int replacementLength,
                    @NotNull final List<CompletionSuggestion> completions,
                    @NotNull final List<IncludedSuggestionSet> includedSuggestionSets,
                    @NotNull final List<String> includedElementKinds,
@@ -2261,7 +2266,7 @@ public class DartAnalysisServerService implements Disposable {
                    boolean isLast) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
-      this.myOriginalReplacementLength = originalReplacementLength;
+      this.myReplacementLength = replacementLength;
       this.myCompletions = completions;
       this.myIncludedSuggestionSets = includedSuggestionSets;
       this.myIncludedElementKinds = includedElementKinds;

@@ -851,7 +851,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     synchronized (requestListenerList) {
       List<RequestListener> listeners = ImmutableList.copyOf(requestListenerList);
       for (RequestListener listener : listeners) {
-        listener.onRequest(request);
+        listener.onRequest(request.toString());
       }
     }
   }
@@ -860,7 +860,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
     synchronized (responseListenerList) {
       List<ResponseListener> listeners = ImmutableList.copyOf(responseListenerList);
       for (ResponseListener listener : listeners) {
-        listener.onResponse(response);
+        listener.onResponse(response.toString());
       }
     }
   }
@@ -874,7 +874,6 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    */
   public void sendRequestToServer(String id, JsonObject request) {
     sendRequestToServer(id, request, new LocalConsumer(request));
-    notifyRequestListeners(request);
   }
 
   /**
@@ -885,6 +884,7 @@ public class RemoteAnalysisServerImpl implements AnalysisServer {
    * @param consumer the {@link Consumer} to process a response
    */
   public void sendRequestToServer(String id, JsonObject request, Consumer consumer) {
+    notifyRequestListeners(request);
     synchronized (consumerMapLock) {
       consumerMap.put(id, consumer);
     }

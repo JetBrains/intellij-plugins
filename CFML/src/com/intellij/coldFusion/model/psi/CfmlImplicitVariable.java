@@ -3,6 +3,7 @@ package com.intellij.coldFusion.model.psi;
 
 import com.intellij.coldFusion.model.CfmlScopesInfo;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -84,7 +85,7 @@ public class CfmlImplicitVariable extends RenameableFakePsiElement implements Cf
       return null;
     }
     try {
-      if (myType.toLowerCase().equals("javaloader")) {
+      if (StringUtil.toLowerCase(myType).equals("javaloader")) {
         return new CfmlJavaLoaderClassType(myComment, getProject());
       }
       return CfmlPsiUtil.getTypeByName(myType, getProject());

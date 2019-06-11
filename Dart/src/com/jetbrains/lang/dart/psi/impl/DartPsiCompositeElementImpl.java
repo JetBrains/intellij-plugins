@@ -1,20 +1,17 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.resolve.DartUseScope;
 import com.jetbrains.lang.dart.util.DartControlFlowUtil;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,13 +37,8 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
   @NotNull
   @Override
   public SearchScope getUseScope() {
-    final VirtualFile file = DartResolveUtil.getRealVirtualFile(getContainingFile());
-
-    if (file == null || !ProjectRootManager.getInstance(getProject()).getFileIndex().isInContent(file)) {
-      return super.getUseScope();
-    }
-
-    return new DartUseScope(getProject(), file);
+    // too large scope doesn't affect performance (usages are searched via Analysis Server) but helps to solve corner cases
+    return GlobalSearchScope.allScope(getProject());
   }
 
   @Override

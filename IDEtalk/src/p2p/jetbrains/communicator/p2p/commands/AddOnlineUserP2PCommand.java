@@ -20,7 +20,7 @@ import jetbrains.communicator.p2p.NetworkUtil;
 import jetbrains.communicator.p2p.P2PCommand;
 import jetbrains.communicator.p2p.UserMonitorThread;
 import jetbrains.communicator.p2p.XmlRpcTargetImpl;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
@@ -45,7 +45,7 @@ public class AddOnlineUserP2PCommand implements P2PCommand {
   }
 
   public boolean addOnlineUser(String remoteAddress, String remoteUsername, int remotePort, Vector<String> projects, Vector userPresence) {
-    myUserMonitorThread.addOnlineUser(remoteAddress, StringUtil.fromXMLSafeString(remoteUsername),
+    myUserMonitorThread.addOnlineUser(remoteAddress, CommunicatorStrings.fromXMLSafeString(remoteUsername),
                                       remotePort, projects, UserPresence.fromVector(userPresence));
     return true;
   }
@@ -54,7 +54,7 @@ public class AddOnlineUserP2PCommand implements P2PCommand {
     XmlRpcTargetImpl target = new XmlRpcTargetImpl(port, remoteAddress);
     NetworkUtil.sendMessage(target, ID, "addOnlineUser",
                             selfAddress.getHostAddress(),
-                            StringUtil.toXMLSafeString(StringUtil.getMyUsername()),
+                            CommunicatorStrings.toXMLSafeString(CommunicatorStrings.getMyUsername()),
                             myPort,
                             new Vector<>(projects),
                             presence.toVector()

@@ -2,11 +2,9 @@ package org.intellij.plugins.postcss;
 
 import com.intellij.navigation.ChooseByNameContributorEx;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.IdFilter;
@@ -47,17 +45,5 @@ public class PostCssGotoSymbolContributor implements ChooseByNameContributorEx {
       StubIndex.getInstance().processElements(PostCssCustomMediaIndex.KEY, name, parameters.getProject(),
                                               parameters.getSearchScope(), PostCssCustomMedia.class, processor);
     }
-  }
-
-  @NotNull
-  @Override
-  public String[] getNames(Project project, boolean includeNonProjectItems) {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
-  }
-
-  @NotNull
-  @Override
-  public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
-    return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY;
   }
 }

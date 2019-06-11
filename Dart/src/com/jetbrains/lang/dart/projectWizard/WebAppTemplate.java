@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
 
 class WebAppTemplate extends DartProjectTemplate {
   WebAppTemplate() {
@@ -25,7 +24,7 @@ class WebAppTemplate extends DartProjectTemplate {
                                                  @NotNull final Module module,
                                                  @NotNull final VirtualFile baseDir) throws IOException {
     final String projectTitle = StringUtil.toTitleCase(module.getName());
-    final String lowercaseName = module.getName().toLowerCase(Locale.US);
+    final String lowercaseName = StringUtil.toLowerCase(module.getName());
 
     final VirtualFile pubspecFile = baseDir.createChildData(this, PubspecYamlUtil.PUBSPEC_YAML);
     pubspecFile.setBinaryContent(("name: " + module.getName() + "\n" +

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.openapi.module.Module;
@@ -7,7 +8,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -102,7 +102,7 @@ public class JSFlexFileReference extends FileReference {
   // the difference from VfsUtil.getPath() is that if srcFile is a directory then one more "../" may be needed
   @Nullable
   private static String getRelativePath(@NotNull VirtualFile src, @NotNull VirtualFile dst, final char separatorChar) {
-    final VirtualFile commonAncestor = VfsUtil.getCommonAncestor(src, dst);
+    final VirtualFile commonAncestor = VfsUtilCore.getCommonAncestor(src, dst);
     if (commonAncestor != null) {
       StringBuilder buffer = new StringBuilder();
       if (!Comparing.equal(src, commonAncestor)) {

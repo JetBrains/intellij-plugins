@@ -4,8 +4,8 @@ package com.jetbrains.lang.dart.sdk;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -54,7 +54,7 @@ public class DartSdk {
 
     if (cachedValue == null) {
       cachedValue = CachedValuesManager.getManager(project).createCachedValue(() -> {
-        final DartSdk sdk = findDartSdkAmongLibraries(ProjectLibraryTable.getInstance(project).getLibraries());
+        final DartSdk sdk = findDartSdkAmongLibraries(LibraryTablesRegistrar.getInstance().getLibraryTable(project).getLibraries());
         if (sdk == null) {
           return new CachedValueProvider.Result<>(null, ProjectRootManager.getInstance(project));
         }

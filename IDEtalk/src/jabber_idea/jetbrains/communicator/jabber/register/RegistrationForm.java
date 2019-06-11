@@ -7,7 +7,7 @@ import jetbrains.communicator.ide.CanceledException;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.jabber.AccountInfo;
 import jetbrains.communicator.jabber.JabberFacade;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.TextAcceptor;
 import jetbrains.communicator.util.UIUtil;
 import org.apache.log4j.Logger;
@@ -175,9 +175,9 @@ public class RegistrationForm {
     myFacade.getMyAccount().setLoginAllowed(true);
 
     try {
-      UIUtil.run(myIdeFacade, StringUtil.getMsg("jabber.connecting"), () -> doLogin(result));
+      UIUtil.run(myIdeFacade, CommunicatorStrings.getMsg("jabber.connecting"), () -> doLogin(result));
     } catch (CanceledException e) {
-      result[0] = StringUtil.getMsg("connection.cancelled");
+      result[0] = CommunicatorStrings.getMsg("connection.cancelled");
     }
 
     if (result[0] == null) {
@@ -214,19 +214,19 @@ public class RegistrationForm {
 
   private static void addErrorPrefixIfNeeded(String[] result) {
     if (result[0] != null) {
-      result[0] = StringUtil.getMsg("error.0", result[0]);
+      result[0] = CommunicatorStrings.getMsg("error.0", result[0]);
     }
   }
 
   private String checkPassword() {
     if (!Arrays.equals(myPassword.getPassword(), myPasswordAgain.getPassword())) {
-      return StringUtil.getMsg("jabber.password.mismatch");
+      return CommunicatorStrings.getMsg("jabber.password.mismatch");
     }
     if (myPassword.getPassword().length < 8) {
-      return StringUtil.getMsg("jabber.password.short");
+      return CommunicatorStrings.getMsg("jabber.password.short");
     }
     if (new String(myPassword.getPassword()).equals(getUsername())) {
-      return StringUtil.getMsg("jabber.password.username");
+      return CommunicatorStrings.getMsg("jabber.password.username");
     }
     return null;
   }

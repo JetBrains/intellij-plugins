@@ -1,4 +1,4 @@
-// "Create Constant Field 'CONST'" "true"
+// "Create constant field 'CONST'" "true"
 public class A3 {
     private const CONST<caret>:int = ;
     function A3() {

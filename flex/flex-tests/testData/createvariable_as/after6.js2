@@ -1,4 +1,4 @@
-// "Create Get Property 'selectionManager'" "true"
+// "Create 'get' property 'selectionManager'" "true"
 class A {
   public function getSelectionManager():ISelectionManager {
     var foo:int = selectionManager;

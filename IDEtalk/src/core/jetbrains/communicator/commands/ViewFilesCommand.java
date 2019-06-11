@@ -21,7 +21,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.UserListComponent;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 /**
  * @author Kir
@@ -48,8 +48,8 @@ public class ViewFilesCommand implements UserCommand {
     assert user != null;
     ProjectsData projectsData = user.getProjectsData(myFacade);
     if (projectsData.isEmpty()) {
-      myFacade.showMessage(StringUtil.getMsg("ViewFilesCommand.no.information"),
-          StringUtil.getMsg("ViewFilesCommand.no.information.for.user", user.getDisplayName())
+      myFacade.showMessage(CommunicatorStrings.getMsg("ViewFilesCommand.no.information"),
+                           CommunicatorStrings.getMsg("ViewFilesCommand.no.information.for.user", user.getDisplayName())
       );
     }
     else {

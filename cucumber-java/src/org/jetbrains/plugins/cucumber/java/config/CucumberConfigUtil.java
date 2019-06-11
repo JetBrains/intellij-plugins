@@ -4,6 +4,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -54,7 +55,7 @@ public class CucumberConfigUtil {
         final Library library = ((LibraryOrderEntry)orderEntry).getLibrary();
 
         //libraryName is null for simple jar entries
-        if ((libraryName == null || libraryName.toLowerCase().contains("cucumber")) && library != null) {
+        if ((libraryName == null || StringUtil.toLowerCase(libraryName).contains("cucumber")) && library != null) {
           final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);
           for (VirtualFile file : files) {
             final String version = getVersionByFile(file);

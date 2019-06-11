@@ -17,7 +17,7 @@ package jetbrains.communicator.p2p.commands;
 
 import jetbrains.communicator.core.transport.XmlMessage;
 import jetbrains.communicator.core.users.User;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.JDOMException;
@@ -35,7 +35,7 @@ class P2PNetworkXmlMessage extends P2PNetworkMessage {
 
   P2PNetworkXmlMessage(String str, XmlMessage message) {
     super(SendXmlMessageP2PCommand.ID, "incomingMessage", new String[]{
-        StringUtil.toXMLSafeString(str),
+        CommunicatorStrings.toXMLSafeString(str),
     });
     myMessage = message;
   }

@@ -33,7 +33,7 @@ public abstract class FlexCompletionInTextFieldBase extends BaseJSCompletionInTe
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @Override

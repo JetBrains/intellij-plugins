@@ -26,7 +26,7 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
 
   private void excludeFolder(final String relPath) {
     ApplicationManager.getApplication().runWriteAction(() -> {
-      final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+      final ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
       try {
         final ContentEntry[] contentEntries = model.getContentEntries();
         contentEntries[0].addExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
@@ -42,7 +42,7 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
 
   private void unexcludeFolder(final String relPath) {
     ApplicationManager.getApplication().runWriteAction(() -> {
-      final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+      final ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
       try {
         final ContentEntry[] contentEntries = model.getContentEntries();
         contentEntries[0].removeExcludeFolder(contentEntries[0].getUrl() + "/" + relPath);
@@ -130,7 +130,7 @@ public class DartHighlightingTest extends DartCodeInsightFixtureTestCase {
   public void testPathPackageReferenceInspection() {
     myFixture.enableInspections(new DartPathPackageReferenceInspection());
     myFixture.copyDirectoryToProject(getTestName(false), "");
-    myFixture.openFileInEditor(ModuleRootManager.getInstance(myModule).getContentRoots()[0].findChild("pubspec.yaml"));
+    myFixture.openFileInEditor(ModuleRootManager.getInstance(getModule()).getContentRoots()[0].findChild("pubspec.yaml"));
 
     excludeFolder("other_project");
     try {

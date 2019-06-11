@@ -63,7 +63,6 @@ public class Angular2EntitiesRenameTest extends ReSharperParameterizedTestCase {
   public void setUp() throws Exception {
     super.setUp();
     AngularTestUtil.enableAstLoadingFilter(this);
-    AngularTestUtil.testES6(myFixture);
   }
 
   @Override

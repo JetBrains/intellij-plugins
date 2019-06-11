@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.codeInsight.tags;
 
+import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl;
 import com.intellij.psi.impl.source.xml.XmlDescriptorUtil;
@@ -11,7 +12,6 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlElementsGroup;
 import com.intellij.xml.XmlNSDescriptor;
-import org.angular2.codeInsight.attributes.Angular2AttributeDescriptorsProvider;
 import org.angular2.entities.Angular2Directive;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +25,18 @@ import static org.angular2.codeInsight.tags.Angular2StandardTagDescriptor.mergeW
 public class Angular2TagDescriptor implements XmlElementDescriptor {
   private final String myName;
   private final Angular2XmlElementSourcesResolver myResolver;
-  private final boolean myHasAttributes;
+  private final boolean myImplied;
+
+  public Angular2TagDescriptor(@NotNull XmlTag tag) {
+    this(tag, true, Collections.singleton(createDirective(tag)));
+  }
 
   public Angular2TagDescriptor(@NotNull XmlTag tag,
-                               @NotNull String name,
-                               @NotNull Collection<?> sources,
-                               boolean hasAttributes) {
-    myResolver = new Angular2XmlElementSourcesResolver(tag, sources);
-    myName = name;
-    myHasAttributes = hasAttributes;
+                               boolean implied,
+                               @NotNull Collection<?> sources) {
+    myImplied = implied;
+    myResolver = new Angular2XmlElementSourcesResolver(tag, sources, x -> Collections.emptyList(), this::getSelectors);
+    myName = tag.getLocalName();
   }
 
   @NotNull
@@ -63,8 +66,7 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   @Override
   @NotNull
   public XmlAttributeDescriptor[] getAttributesDescriptors(@Nullable XmlTag context) {
-    return myHasAttributes ? HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context)
-                           : XmlAttributeDescriptor.EMPTY;
+    return HtmlNSDescriptorImpl.getCommonAttributeDescriptors(context);
   }
 
   @Nullable
@@ -76,8 +78,8 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
   @Nullable
   @Override
   public XmlAttributeDescriptor getAttributeDescriptor(@NonNls final String attributeName, @Nullable XmlTag context) {
-    return mergeWithAngularDescriptorIfPossible(Angular2AttributeDescriptorsProvider.getAttributeDescriptor(
-      attributeName, context, this::getAttributesDescriptors), attributeName, context);
+    return mergeWithAngularDescriptorIfPossible(HtmlNSDescriptorImpl.getCommonAttributeDescriptor(attributeName, context),
+                                                attributeName, context);
   }
 
   @Nullable
@@ -103,10 +105,9 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
     return null;
   }
 
-  @NotNull
   @Override
   public PsiElement getDeclaration() {
-    return ContainerUtil.getFirstItem(myResolver.getDeclarations(x -> Collections.emptyList(), this::getSelectors));
+    return ContainerUtil.getFirstItem(myResolver.getDeclarations());
   }
 
   private Collection<? extends PsiElement> getSelectors(Angular2Directive directive) {
@@ -127,5 +128,21 @@ public class Angular2TagDescriptor implements XmlElementDescriptor {
 
   @Override
   public void init(PsiElement element) {
+  }
+
+  public boolean allowContributions() {
+    return true;
+  }
+
+  public boolean isImplied() {
+    return myImplied;
+  }
+
+  @NotNull
+  private static JSImplicitElementImpl createDirective(@NotNull XmlTag xmlTag) {
+    //noinspection HardCodedStringLiteral
+    return new JSImplicitElementImpl.Builder(xmlTag.getLocalName(), xmlTag)
+      .setTypeString("E;;;")
+      .toImplicitElement();
   }
 }

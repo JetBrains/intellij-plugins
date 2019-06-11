@@ -20,6 +20,7 @@ import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.metadata.psi.Angular2MetadataModule;
+import org.angular2.index.Angular2IndexingHandler;
 import org.angular2.inspections.quickfixes.Angular2FixesFactory;
 import org.angular2.inspections.quickfixes.Angular2FixesPsiUtil;
 import org.angular2.lang.Angular2Bundle;
@@ -34,16 +35,13 @@ import static org.angular2.Angular2DecoratorUtil.IMPORTS_PROP;
 
 public class NgModuleImportAction extends Angular2NgModuleSelectAction {
 
-  private final boolean myCodeCompletion;
-
   NgModuleImportAction(@Nullable Editor editor, @NotNull PsiElement element, @NotNull String actionName, boolean codeCompletion) {
-    super(editor, element, "NgModule", DEFAULT_FILTER, actionName);
-    myCodeCompletion = codeCompletion;
+    super(editor, element, "NgModule", DEFAULT_FILTER, actionName, codeCompletion); //NON-NLS
   }
 
   @Override
   protected String getModuleSelectionPopupTitle() {
-    return Angular2Bundle.message("angular.quickfix.ngmodule.import.select");
+    return Angular2Bundle.message("angular.quickfix.ngmodule.import.select.module");
   }
 
   @Override
@@ -91,6 +89,10 @@ public class NgModuleImportAction extends Angular2NgModuleSelectAction {
                                              @NotNull Map<PsiElement, JSModuleNameInfo> renderedTexts) {
     if (!file.isValid() || project.isDisposed() || !project.isOpen()) {
       return ContainerUtil.emptyList();
+    }
+    TypeScriptClass component = Angular2IndexingHandler.findComponentClass(file);
+    if (component != null) {
+      file = component.getContainingFile();
     }
     candidates = removeMergedElements(candidates, elementsFromLibraries);
     candidates = fillExternalModuleNamesAndFilterByBlacklist(renderedTexts, candidates, file);

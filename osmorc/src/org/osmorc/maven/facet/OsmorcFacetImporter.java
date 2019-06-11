@@ -24,14 +24,13 @@
  */
 package org.osmorc.maven.facet;
 
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.importing.FacetImporter;
-import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider;
 import org.jetbrains.idea.maven.importing.MavenRootModelAdapter;
 import org.jetbrains.idea.maven.model.MavenId;
 import org.jetbrains.idea.maven.model.MavenPlugin;
@@ -45,9 +44,7 @@ import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The OsmorcFacetImporter reads Maven metadata and import OSGi-specific settings as an Osmorc facet.
@@ -93,7 +90,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     // Check if there are any overrides set up in the maven plugin settings
     conf.setBundleSymbolicName(computeSymbolicName(mavenProject)); // IDEA-63243
 
-    Map<String, String> props = ContainerUtil.newLinkedHashMap();  // to preserve the order of elements
+    Map<String, String> props = new LinkedHashMap<>();  // to preserve the order of elements
     Map<String, String> modelMap = mavenProject.getModelMap();
 
     String description = modelMap.get("description");
@@ -247,7 +244,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     Element versionsNode = MavenJDOMUtil.findChildByPath(plugin.getGoalConfiguration("cleanVersions"), "versions");
     if (versionsNode == null) return null;
 
-    Map<String, String> versions = ContainerUtil.newHashMap();
+    Map<String, String> versions = new HashMap<>();
     for (Element child : versionsNode.getChildren()) {
       String name = child.getName();
       String value = child.getValue();

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.lang.ASTNode;
@@ -9,6 +10,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -61,7 +63,7 @@ public class MxmlTagNameReference extends TagNameReference {
       final SchemaPrefix schemaPrefix = schemaPrefixReference == null ? null : schemaPrefixReference.resolve();
 
       final String oldPrefix = tag.getNamespacePrefix();
-      final String newLocalName = FileUtil.getNameWithoutExtension(((PsiFile)element).getName());
+      final String newLocalName = FileUtilRt.getNameWithoutExtension(((PsiFile)element).getName());
       tag.setName(StringUtil.isEmpty(newPrefix) ? newLocalName : (newPrefix + ":" + newLocalName));
 
       fixSubTagsPrefixes(tag, oldPrefix, newPrefix);

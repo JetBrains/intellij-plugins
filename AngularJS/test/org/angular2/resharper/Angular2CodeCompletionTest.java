@@ -71,9 +71,9 @@ public class Angular2CodeCompletionTest extends Angular2ReSharperCompletionTestB
     if (getName().startsWith("external")) {
       WriteAction.runAndWait(() -> {
         VirtualFile nodeModules = getNodeModules();
-        PsiTestUtil.addContentRoot(myModule, nodeModules);
+        PsiTestUtil.addContentRoot(getModule(), nodeModules);
         Disposer.register(myFixture.getTestRootDisposable(),
-                          () -> PsiTestUtil.removeContentEntry(myModule, nodeModules));
+                          () -> PsiTestUtil.removeContentEntry(getModule(), nodeModules));
       });
     }
     myFixture.copyFileToProject("../../package.json", "package.json");

@@ -12,8 +12,8 @@ import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
 import com.intellij.xml.util.HtmlUtil
-import org.jetbrains.vuejs.VueFileType
-import org.jetbrains.vuejs.index.hasVue
+import org.jetbrains.vuejs.index.isVueContext
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", EverywhereContextType::class.java) {
   override fun isInContext(file: PsiFile, offset: Int): Boolean {
@@ -30,7 +30,7 @@ class VueBaseLiveTemplateContextType : TemplateContextType("Vue", "Vue", Everywh
       val element = file.findElementAt(offset) ?: return false
 
       if (VueFileType.INSTANCE != file.fileType) {
-        return hasVue(file.project) && notVueFileType != null && notVueFileType.invoke(element)
+        return isVueContext(file) && notVueFileType != null && notVueFileType.invoke(element)
       }
 
       val parentTag = PsiTreeUtil.getParentOfType(element, XmlTag::class.java) ?: return false

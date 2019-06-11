@@ -145,7 +145,7 @@ public class RevealRunConfigurationExtension extends AppCodeRunConfigurationExte
                                       @NotNull BuildConfiguration buildConfiguration,
                                       @NotNull ExecutionConsole console,
                                       @NotNull ProcessHandler processHandler,
-                                      @NotNull List<AnAction> actions) throws ExecutionException {
+                                      @NotNull List<? super AnAction> actions) throws ExecutionException {
     super.createAdditionalActions(configuration, product, environment, buildConfiguration, console, processHandler, actions);
 
     actions.add(new RefreshRevealAction(configuration,

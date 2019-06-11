@@ -31,7 +31,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.idea.BaseLocalMessage;
 import jetbrains.communicator.idea.ConsoleUtil;
 import jetbrains.communicator.idea.IdeaDialog;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.TimeUtil;
 import jetbrains.communicator.util.UIUtil;
 import org.jetbrains.annotations.NonNls;
@@ -56,7 +56,7 @@ public class ShowHistoryDialog extends IdeaDialog {
     super(project, true);
     setModal(false);
 
-    setTitle(StringUtil.getMsg("SearchHistoryCommand.search.results.for", user.getDisplayName()));
+    setTitle(CommunicatorStrings.getMsg("SearchHistoryCommand.search.results.for", user.getDisplayName()));
     setHorizontalStretch(3);
     setVerticalStretch(2);
 

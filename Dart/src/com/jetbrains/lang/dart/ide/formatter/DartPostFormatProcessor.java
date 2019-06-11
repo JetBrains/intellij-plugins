@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.formatter;
 
 import com.intellij.openapi.editor.Document;
@@ -23,7 +23,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 
-public class DartPostFormatProcessor implements PostFormatProcessor {
+final class DartPostFormatProcessor implements PostFormatProcessor {
+  @NotNull
   @Override
   public PsiElement processElement(@NotNull final PsiElement source, @NotNull final CodeStyleSettings settings) {
     return source;

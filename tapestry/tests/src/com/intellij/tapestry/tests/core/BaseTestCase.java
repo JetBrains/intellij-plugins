@@ -40,7 +40,10 @@ public class BaseTestCase {
             JavaModuleFixtureBuilder javaBuilder = fixtureBuilder.addModule(JavaModuleFixtureBuilder.class);
             javaBuilder.addContentRoot(new File("").getAbsoluteFile() + "/src/test/javaModule");
             javaBuilder.addSourceRoot("src");
-            javaBuilder.addJdk(System.getProperty("jdk.home"));
+            String sdkPath = System.getProperty("jdk.home");
+            if (sdkPath != null) {
+                javaBuilder.addJdk(sdkPath);
+            }
             javaBuilder.addLibrary("library1");
             javaBuilder.addLibraryJars("library1", "", new File("").getAbsoluteFile() + "/src/test/javaModule/lib/dep1.jar");
 

@@ -4,7 +4,7 @@ class com.Header
 {
   function Header(num:Number) {
     var <warning>ct<caret>rl</warning> = Referencer.getController(num);
-    if (true) Header(ctrl)
+    if (<warning descr="If statement can be simplified">true</warning>) Header(ctrl)
     var z:Referencer2;
     Header2(1);
     this.Header2(1);

@@ -26,7 +26,7 @@ import jetbrains.communicator.mock.MockIDEFacade;
 import jetbrains.communicator.mock.MockTransport;
 import jetbrains.communicator.mock.MockUser;
 import jetbrains.communicator.p2p.commands.AddOnlineUserP2PCommand;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.WaitFor;
 import org.picocontainer.MutablePicoContainer;
 
@@ -85,7 +85,7 @@ public class P2PTransportTest extends BaseTestCase {
       Pico.getInstance().unregisterComponentByInstance(myTransport);
     }
 
-    StringUtil.setMyUsername(null);
+    CommunicatorStrings.setMyUsername(null);
     super.tearDown();
   }
 
@@ -94,7 +94,7 @@ public class P2PTransportTest extends BaseTestCase {
     assertTrue("At least self should be found", users.length >= 1);
     User self = null;
     for (User user : users) {
-      if (user.getName().equals(StringUtil.getMyUsername())) {
+      if (user.getName().equals(CommunicatorStrings.getMyUsername())) {
         self = user;
         break;
       }
@@ -111,7 +111,7 @@ public class P2PTransportTest extends BaseTestCase {
     registerResponseProviders(myUserModel, myIdeFacade);
 
     // Add self to contact list
-    User self = myUserModel.createUser(StringUtil.getMyUsername(), myTransport.getName());
+    User self = myUserModel.createUser(CommunicatorStrings.getMyUsername(), myTransport.getName());
     myUserModel.addUser(self);
 
     // Wait for next cycle of user finding
@@ -155,7 +155,7 @@ public class P2PTransportTest extends BaseTestCase {
   }
 
   private User createSelf() throws UnknownHostException {
-    return myTransport.createUser(StringUtil.getMyUsername(), new OnlineUserInfo(InetAddress.getLocalHost(), myTransport.getPort()));
+    return myTransport.createUser(CommunicatorStrings.getMyUsername(), new OnlineUserInfo(InetAddress.getLocalHost(), myTransport.getPort()));
   }
 
   public void testInitialize_ExistsInOtherGroup() throws Throwable {
