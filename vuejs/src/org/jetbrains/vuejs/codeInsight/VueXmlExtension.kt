@@ -15,6 +15,7 @@ import com.intellij.xml.HtmlXmlExtension
 import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
 
 class VueXmlExtension : HtmlXmlExtension() {
   override fun isAvailable(file: PsiFile?): Boolean = file?.language is VueLanguage
