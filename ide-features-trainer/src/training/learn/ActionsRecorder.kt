@@ -118,6 +118,19 @@ class ActionsRecorder(private val project: Project,
     Disposer.dispose(this)
   }
 
+  fun futureActionOnStart(actionId: String, check: () -> Boolean): CompletableFuture<Boolean> {
+    val future: CompletableFuture<Boolean> = CompletableFuture()
+    val actionListener = object : AnActionListener {
+      override fun beforeActionPerformed(action: AnAction, dataContext: DataContext, event: AnActionEvent) {
+        if (getActionId(action) == actionId && check()) {
+          future.complete(true)
+        }
+      }
+    }
+    actionListeners.add(actionListener)
+    return future
+  }
+
   fun futureActionAndCheckAround(actionId: String, check: Check): CompletableFuture<Boolean> {
     val future: CompletableFuture<Boolean> = CompletableFuture()
     val actionListener = object : AnActionListener {
