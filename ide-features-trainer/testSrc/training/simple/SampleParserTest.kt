@@ -22,7 +22,6 @@ class SampleParserTest : UsefulTestCase() {
     assertSame(10, sample.startOffset)
   }
 
-
   fun testSelectTag() {
     val sample = parseLessonSample("""
       hello <select>world
@@ -33,10 +32,8 @@ class SampleParserTest : UsefulTestCase() {
       next line
     """.trimIndent(), sample.text)
     assertNotNull(sample.selection)
-    assertSame(25, sample.startOffset)
+    assertSame(17, sample.startOffset)
     assertSame(6, sample.selection?.first ?: -1)
     assertSame(17, sample.selection?.second ?: -1)
   }
-
-
 }
