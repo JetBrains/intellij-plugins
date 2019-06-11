@@ -37,6 +37,11 @@ class TaskContext(val lesson: KLesson, val editor: Editor, val project: Project,
     steps.add(recorder.futureAction(actionId))
   }
 
+  /** Trigger on actions start. Needs if you want to split long actions into several tasks. */
+  fun triggerStart(actionId: String, checkState: () -> Boolean = {true}) {
+    steps.add(recorder.futureActionOnStart(actionId, checkState))
+  }
+
   fun triggers(vararg actionIds: String) {
     steps.add(recorder.futureListActions(actionIds.toList()))
   }
