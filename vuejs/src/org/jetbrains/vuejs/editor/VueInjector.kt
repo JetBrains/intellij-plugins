@@ -25,7 +25,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.util.NullableFunction
 import org.jetbrains.vuejs.codeInsight.EMPTY_FILTER
-import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.codeInsight.es6Unquote
@@ -35,6 +34,7 @@ import org.jetbrains.vuejs.index.isVueContext
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.html.VueFileType
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
 import java.util.*
 
 class VueInjector : MultiHostInjector {

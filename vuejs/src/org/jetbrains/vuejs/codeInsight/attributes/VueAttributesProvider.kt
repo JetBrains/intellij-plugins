@@ -14,12 +14,12 @@ import com.intellij.xml.XmlAttributeDescriptorsProvider
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor
 import icons.VuejsIcons
 import org.jetbrains.annotations.ApiStatus
-import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider
-import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.attributeAllowsNoValue
-import org.jetbrains.vuejs.codeInsight.VueDirectivesProvider
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider.Companion.isBinding
 import org.jetbrains.vuejs.codeInsight.findScriptWithExport
 import org.jetbrains.vuejs.lang.html.VueLanguage
+import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
+import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.attributeAllowsNoValue
+import org.jetbrains.vuejs.model.source.VueDirectivesProvider
 import javax.swing.Icon
 
 class VueAttributesProvider : XmlAttributeDescriptorsProvider {
@@ -101,6 +101,7 @@ class VueAttributesProvider : XmlAttributeDescriptorsProvider {
                                                             tag.containingFile?.language == VueLanguage.INSTANCE
 }
 
+@Suppress("DEPRECATION")
 open class VueAttributeDescriptor(name: String,
                                   element: PsiElement? = null,
                                   isDirective: Boolean = false,
