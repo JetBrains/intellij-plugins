@@ -20,7 +20,7 @@ import jetbrains.communicator.core.transport.XmlResponseProvider;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jdom.Element;
 
 /**
@@ -46,8 +46,8 @@ public abstract class FileAccessProvider extends XmlResponseProvider {
     if (requestingUser == null) return false;
 
     if (!requestingUser.canAccessMyFiles()) {
-      boolean allow = myIdeFacade.askQuestion(StringUtil.getMsg("FileAccessProvider.title"),
-          StringUtil.getMsg("FileAccessProvider.message", requestingUser.getDisplayName()));
+      boolean allow = myIdeFacade.askQuestion(CommunicatorStrings.getMsg("FileAccessProvider.title"),
+                                              CommunicatorStrings.getMsg("FileAccessProvider.message", requestingUser.getDisplayName()));
       if (allow) {
         requestingUser.setCanAccessMyFiles(true, myUserModel);
       }

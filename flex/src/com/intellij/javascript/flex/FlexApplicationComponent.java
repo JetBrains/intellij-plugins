@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -26,9 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 // In fact it is not an application component any more.
-public class FlexApplicationComponent extends FileTypeFactory implements MetaDataContributor, StandardResourceProvider {
-  private static final Icon ICON = AllIcons.FileTypes.JavaClass;
-
+public final class FlexApplicationComponent extends FileTypeFactory implements MetaDataContributor, StandardResourceProvider {
   public static final FileType SWF_FILE_TYPE = new FileType() {
     @Override
     @NotNull
@@ -50,7 +48,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements MetaDat
 
     @Override
     public Icon getIcon() {
-      return ICON;
+      return AllIcons.FileTypes.JavaClass;
     }
 
     @Override

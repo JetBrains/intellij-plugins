@@ -1,12 +1,15 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.ui.RowIcon;
+import com.intellij.ui.IconManager;
+import com.intellij.ui.icons.RowIcon;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -58,12 +61,17 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
     icon = doOverlays(icon);
 
-    RowIcon baseIcon = new RowIcon(2);
-    baseIcon.setIcon(icon, 0);
-    Icon visibility = isPublic() ? PlatformIcons.PUBLIC_ICON : PlatformIcons.PRIVATE_ICON;
-    baseIcon.setIcon(visibility, 1);
+    if (Registry.is("ide.completion.show.visibility.icon")) {
+      RowIcon baseIcon = IconManager.getInstance().createRowIcon(2);
+      baseIcon.setIcon(icon, 0);
+      Icon visibility = isPublic() ? PlatformIcons.PUBLIC_ICON : PlatformIcons.PRIVATE_ICON;
+      baseIcon.setIcon(visibility, 1);
 
-    return baseIcon;
+      return baseIcon;
+    }
+    else {
+      return icon;
+    }
   }
 
   private Icon doOverlays(Icon icon) {

@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.view;
 
 import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -77,7 +78,7 @@ public class ViewTransferHandler extends TransferHandler {
             FileType typeFileInEditor = fileInEditor.getFileType();
 
             if (fileInEditor instanceof PsiClassOwner && _data instanceof ExternalizableToClass) {
-                IJavaClassType dropClass = new IntellijJavaClassType((Module) _tapestryProjectViewPane.getData(DataKeys.MODULE.getName()),
+                IJavaClassType dropClass = new IntellijJavaClassType((Module) _tapestryProjectViewPane.getData(LangDataKeys.MODULE.getName()),
                         IdeaUtils.findPublicClass(fileInEditor).getContainingFile());
 
                 try {

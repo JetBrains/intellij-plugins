@@ -33,7 +33,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
@@ -42,10 +41,7 @@ import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
@@ -113,7 +109,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
       if (shellBundles.isEmpty()) {
         throw new CantRunException("Console requested but no shell bundles can be found - please check the installation");
       }
-      List<SelectedBundle> allBundles = ContainerUtil.newArrayList(shellBundles);
+      List<SelectedBundle> allBundles = new ArrayList<>(shellBundles);
       allBundles.addAll(myBundles);
       myBundles = allBundles;
     }

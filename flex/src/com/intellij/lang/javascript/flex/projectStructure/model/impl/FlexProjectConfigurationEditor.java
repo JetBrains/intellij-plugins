@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -30,10 +31,7 @@ import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryEditingUtil;
 import com.intellij.openapi.util.Pair;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Consumer;
-import com.intellij.util.EventDispatcher;
-import com.intellij.util.Function;
+import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -441,7 +439,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         sdk = FlexSdkUtils.findFlexOrFlexmojosSdk(sdkNames.iterator().next());
       }
       else {
-        sdk = new FlexCompositeSdk(ArrayUtil.toStringArray(sdkNames));
+        sdk = new FlexCompositeSdk(ArrayUtilRt.toStringArray(sdkNames));
       }
       modifiableModel.setSdk(sdk);
 

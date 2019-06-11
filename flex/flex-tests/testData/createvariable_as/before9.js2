@@ -1,4 +1,4 @@
-// "Create Constant Field '_selectionManager'" "true"
+// "Create constant field '_selectionManager'" "true"
 class A {
   public function getSelectionManager():ISelectionManager {
     return _selection<caret>Manager;

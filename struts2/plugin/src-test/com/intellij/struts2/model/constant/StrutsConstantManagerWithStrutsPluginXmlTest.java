@@ -57,7 +57,7 @@ public class StrutsConstantManagerWithStrutsPluginXmlTest extends StrutsConstant
 
     final PsiClass springObjectFactoryClass =
       myFixture.getJavaFacade().findClass(StrutsConstants.SPRING_OBJECT_FACTORY_CLASS,
-                                          GlobalSearchScope.moduleWithLibrariesScope(myModule));
+                                          GlobalSearchScope.moduleWithLibrariesScope(getModule()));
     assertNotNull(springObjectFactoryClass);
 
     final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);

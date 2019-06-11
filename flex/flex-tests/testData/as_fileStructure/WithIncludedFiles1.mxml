@@ -46,7 +46,7 @@
     </node>
     <node text="mx:Script">
       <node text="p:String"/>
-      <node text="bar()"/>
+      <node text="bar():*"/>
     </node>
     <node text="mx:Style">
       <node text=".inFile"/>

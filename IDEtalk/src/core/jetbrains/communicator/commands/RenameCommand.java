@@ -19,7 +19,7 @@ package jetbrains.communicator.commands;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.ide.UserListComponent;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import javax.swing.*;
 
@@ -54,6 +54,6 @@ public class RenameCommand extends EnabledWhenFocusedCommand implements NamedUse
     if (nodes.length == 1) {
       msgCode = nodes[0] instanceof User ? "RenameCommand.rename.user" : "RenameCommand.rename.group";
     }
-    return StringUtil.getMsg(msgCode);
+    return CommunicatorStrings.getMsg(msgCode);
   }
 }

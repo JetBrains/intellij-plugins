@@ -37,6 +37,7 @@ import org.jetbrains.osgi.jps.model.LibraryBundlificationRule;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ import java.util.List;
  */
 @State(name = "Osmorc", storages = @Storage("osmorc.xml"))
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
-  private List<FrameworkInstanceDefinition> myInstances = ContainerUtil.newArrayList();
+  private List<FrameworkInstanceDefinition> myInstances = new ArrayList<>();
   private List<FrameworkInstanceDefinition> myActiveInstances = null;
   private List<LibraryBundlificationRule> myRules = ContainerUtil.newArrayList(new LibraryBundlificationRule());
 

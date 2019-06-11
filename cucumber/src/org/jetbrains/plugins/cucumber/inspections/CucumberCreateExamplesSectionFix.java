@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.*;
+import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinExamplesBlockImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
 
@@ -33,10 +34,10 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
   public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinScenarioOutlineImpl outline = (GherkinScenarioOutlineImpl) descriptor.getPsiElement();
 
-    final PsiFile featureFile = outline.getContainingFile();
+    final GherkinFile featureFile = (GherkinFile)outline.getContainingFile();
 
-    final String language = GherkinKeywordTable.getFeatureLanguage(featureFile);
-    final GherkinKeywordTable keywordsTable = GherkinKeywordTable.getKeywordsTable(featureFile, project);
+    final String language = GherkinUtil.getFeatureLanguage(featureFile);
+    final GherkinKeywordTable keywordsTable = JsonGherkinKeywordProvider.getKeywordProvider(featureFile).getKeywordsTable(language);
 
     final StringBuilder buff = new StringBuilder();
     buff.append(keywordsTable.getScenarioOutlineKeyword()).append(": boo\n");

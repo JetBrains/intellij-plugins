@@ -16,7 +16,7 @@
 
 package jetbrains.communicator.core.vfs;
 
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -167,7 +167,7 @@ public class VFile implements Comparable, Cloneable {
     vector.add(getSourcePath() == null ? "" : getSourcePath());
     vector.add(getFQName() == null ? "" : getFQName());
     if (getContents() != null) {
-      vector.add(StringUtil.toXMLSafeString(getContents()));
+      vector.add(CommunicatorStrings.toXMLSafeString(getContents()));
     }
     return vector;
   }
@@ -179,7 +179,7 @@ public class VFile implements Comparable, Cloneable {
     result.setSourcePath(getNullableItem(v, 4));
     result.setFQName(getNullableItem(v, 5));
     if (v.size() > 6) {
-      result.setContents(StringUtil.fromXMLSafeString(v.get(6).toString()));
+      result.setContents(CommunicatorStrings.fromXMLSafeString(v.get(6).toString()));
     }
     return result;
   }
@@ -194,7 +194,7 @@ public class VFile implements Comparable, Cloneable {
 
     root.setAttribute(HAS_CONTENTS_ATTR, myContents == null ? "false" : "true");
     if (myContents != null) {
-      root.setText(StringUtil.toXMLSafeString(getContents()));
+      root.setText(CommunicatorStrings.toXMLSafeString(getContents()));
     }
   }
 
@@ -209,17 +209,17 @@ public class VFile implements Comparable, Cloneable {
     file.setProjectName(root.getAttributeValue(PROJECT_NAME_ATTR));
     file.setSourcePath(root.getAttributeValue(SOURCE_PATH_ATTR));
     if ("true".equals(root.getAttributeValue(HAS_CONTENTS_ATTR))) {
-      file.setContents(StringUtil.fromXMLSafeString(root.getText()));
+      file.setContents(CommunicatorStrings.fromXMLSafeString(root.getText()));
     }
     return file;
   }
 
   public boolean containsSearchString(String searchString) {
     return
-        StringUtil.containedIn(getContentPath(), searchString) ||
-            StringUtil.containedIn(getSourcePath(), searchString) ||
-            StringUtil.containedIn(getFullPath(), searchString) ||
-            StringUtil.containedIn(getFQName(), searchString);
+      CommunicatorStrings.containedIn(getContentPath(), searchString) ||
+      CommunicatorStrings.containedIn(getSourcePath(), searchString) ||
+      CommunicatorStrings.containedIn(getFullPath(), searchString) ||
+      CommunicatorStrings.containedIn(getFQName(), searchString);
   }
 
   private static String getNullableItem(List v, int index) {

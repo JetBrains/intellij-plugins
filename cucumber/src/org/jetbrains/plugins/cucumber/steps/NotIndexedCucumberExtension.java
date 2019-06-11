@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.steps;
 
 import com.intellij.ProjectTopics;
@@ -14,7 +15,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
@@ -111,7 +111,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   public Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
     final Set<PsiDirectory> stepDefRoots = findStepDefsRoots(featureFile);
 
-    final Set<PsiFile> stepDefs = ContainerUtil.newHashSet();
+    final Set<PsiFile> stepDefs = new HashSet<>();
     for (PsiDirectory root : stepDefRoots) {
       stepDefs.addAll(gatherStepDefinitionsFilesFromDirectory(root, true));
     }
@@ -292,39 +292,6 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     synchronized (dataObject.myStepDefinitions) {
       return new ArrayList<>(dataObject.myStepDefinitions);
     }
-  }
-
-  protected static void addStepDefsRootIfNecessary(final VirtualFile root,
-                                                @NotNull final List<? super PsiDirectory> newStepDefinitionsRoots,
-                                                @NotNull final Set<String> processedStepDirectories,
-                                                @NotNull final Project project) {
-    if (root == null || !root.isValid()) {
-      return;
-    }
-    final String path = root.getPath();
-    if (processedStepDirectories.contains(path)) {
-      return;
-    }
-
-    final PsiDirectory rootPathDir = PsiManager.getInstance(project).findDirectory(root);
-    if (rootPathDir != null && rootPathDir.isValid()) {
-      if (!newStepDefinitionsRoots.contains(rootPathDir)) {
-        newStepDefinitionsRoots.add(rootPathDir);
-      }
-    }
-  }
-
-  @Nullable
-  protected static VirtualFile findContentRoot(final Module module, final VirtualFile file) {
-    if (file == null || module == null) return null;
-
-    final VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
-    for (VirtualFile root : contentRoots) {
-      if (VfsUtilCore.isAncestor(root, file, false)) {
-        return root;
-      }
-    }
-    return null;
   }
 
   protected abstract void loadStepDefinitionRootsFromLibraries(Module module, List<PsiDirectory> roots, Set<String> directories);

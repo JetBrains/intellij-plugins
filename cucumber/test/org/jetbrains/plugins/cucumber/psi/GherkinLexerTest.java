@@ -134,6 +134,32 @@ public class GherkinLexerTest extends TestCase {
     doTest("|\u3000\n", "PIPE:0-1", "WHITE_SPACE:1-3");
   }
 
+  public void testRules() {
+    doTest(
+      "Feature: a sample rule\n" +
+      "  Background:\n" +
+      "    Given a sample project\n" +
+      "\n" +
+      "  Rule: the first rule in the project\n" +
+      "\n" +
+      "    Example: the first example in the Rule\n" +
+      "      Given step one\n" +
+      "      And step two\n" +
+      "\n" +
+      "    Example: the second example in the Rule\n" +
+      "      Given step three\n" +
+      "      And step four",
+
+      "FEATURE_KEYWORD:0-7", "COLON:7-8", "WHITE_SPACE:8-9", "TEXT:9-22", "WHITE_SPACE:22-25", "BACKGROUND_KEYWORD:25-35", "COLON:35-36",
+      "WHITE_SPACE:36-41", "STEP_KEYWORD:41-46", "WHITE_SPACE:46-47", "TEXT:47-63", "WHITE_SPACE:63-67", "RULE_KEYWORD:67-71",
+      "COLON:71-72", "WHITE_SPACE:72-73", "TEXT:73-102", "WHITE_SPACE:102-108", "SCENARIO_KEYWORD:108-115", "COLON:115-116",
+      "WHITE_SPACE:116-117", "TEXT:117-146", "WHITE_SPACE:146-153", "STEP_KEYWORD:153-158", "WHITE_SPACE:158-159", "TEXT:159-167",
+      "WHITE_SPACE:167-174", "STEP_KEYWORD:174-177", "WHITE_SPACE:177-178", "TEXT:178-186", "WHITE_SPACE:186-192",
+      "SCENARIO_KEYWORD:192-199", "COLON:199-200", "WHITE_SPACE:200-201", "TEXT:201-231", "WHITE_SPACE:231-238", "STEP_KEYWORD:238-243",
+      "WHITE_SPACE:243-244", "TEXT:244-254", "WHITE_SPACE:254-261", "STEP_KEYWORD:261-264", "WHITE_SPACE:264-265", "TEXT:265-274"
+    );
+  }
+
   private static void doTest(String text, String... expectedTokens) {
     Lexer lexer = new GherkinLexer(new MockGherkinKeywordProvider());
     lexer.start(text);

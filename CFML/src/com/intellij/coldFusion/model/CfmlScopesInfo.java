@@ -17,6 +17,7 @@ package com.intellij.coldFusion.model;
 
 import com.intellij.coldFusion.model.psi.impl.CfmlFunctionParameterImpl;
 import com.intellij.coldFusion.model.psi.impl.CfmlTagFunctionParameterImpl;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +71,7 @@ public class CfmlScopesInfo {
     if (s == null) {
       return DEFAULT_SCOPE;
     }
-    final int find = ArrayUtil.find(ourTypeNames, s.toLowerCase());
+    final int find = ArrayUtil.find(ourTypeNames, StringUtil.toLowerCase(s));
     if (find != -1) {
       return find;
     }

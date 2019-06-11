@@ -7,6 +7,7 @@ import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.coldFusion.model.psi.CfmlAttribute;
 import com.intellij.coldFusion.model.psi.CfmlCompositeElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +36,7 @@ public class CfmlAttributeImpl extends CfmlCompositeElement implements CfmlAttri
       id = findChildByType(CfscriptTokenTypes.IDENTIFIER);
     }
     if (id != null) {
-      return id.getText().toLowerCase();
+      return StringUtil.toLowerCase(id.getText());
     }
     return "";
   }

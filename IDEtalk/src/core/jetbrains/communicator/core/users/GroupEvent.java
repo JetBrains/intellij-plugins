@@ -18,7 +18,7 @@ package jetbrains.communicator.core.users;
 
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkEvent;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 /**
  * @author Kir Maximov
@@ -40,7 +40,7 @@ public abstract class GroupEvent implements IDEtalkEvent {
   }
 
   public String toString() {
-    return StringUtil.toString(getClass(), myGroup);
+    return CommunicatorStrings.toString(getClass(), myGroup);
   }
 
   public static class Added extends GroupEvent {

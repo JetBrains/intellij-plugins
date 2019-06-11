@@ -1,4 +1,4 @@
-// "Create Method 'foo'" "true"
+// "Create method 'foo'" "true"
 
 public function name():void {
     fo<caret>o();

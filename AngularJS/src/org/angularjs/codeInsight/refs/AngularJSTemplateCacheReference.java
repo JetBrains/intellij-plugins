@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.codeInsight.refs;
 
 import com.intellij.lang.javascript.psi.JSLiteralExpression;
@@ -9,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.angularjs.index.AngularIndexUtil;
 import org.angularjs.index.AngularTemplateCacheIndex;
@@ -30,7 +31,7 @@ public class AngularJSTemplateCacheReference extends AngularJSReferenceBase<JSLi
   @Override
   public Object[] getVariants() {
     final Collection<String> keys = AngularIndexUtil.getAllKeys(AngularTemplateCacheIndex.TEMPLATE_CACHE_INDEX, getElement().getProject());
-    return ArrayUtil.toStringArray(keys);
+    return ArrayUtilRt.toStringArray(keys);
   }
 
   @Override

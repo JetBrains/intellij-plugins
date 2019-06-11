@@ -47,7 +47,7 @@ class AnnotatorTestUtils {
    * @param expectedValues      Expected names.
    */
   static void checkGutterTargets(@NotNull final GutterMark renderer,
-                                 @NotNull final Function<PsiElement, String> resultValueFunction,
+                                 @NotNull final Function<? super PsiElement, String> resultValueFunction,
                                  final String... expectedValues) {
     final LineMarkerInfo lineMarkerInfo = ((LineMarkerInfo.LineMarkerGutterIconRenderer) renderer).getLineMarkerInfo();
     final NavigationGutterIconRenderer navigationHandler = (NavigationGutterIconRenderer) lineMarkerInfo.getNavigationHandler();

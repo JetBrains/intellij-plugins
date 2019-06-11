@@ -15,7 +15,7 @@
   </description>
   <category>HTML/JavaScript Development</category>
   <depends>com.intellij.modules.lang</depends>
-  <depends optional="true">JavaScript</depends>
+  <depends optional="true" config-file="javascript-ex.xml">JavaScript</depends>
   <vendor url="https://github.com/dmarcotte">dmarcotte, JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -57,13 +57,6 @@
                      implementationClass="com.dmarcotte.handlebars.inspections.HbEmptyBlockInspection"/>
     <highlightErrorFilter implementation="com.dmarcotte.handlebars.inspections.HbErrorFilter"/>
     <fileIndentOptionsProvider implementation="com.dmarcotte.handlebars.format.HbFileIndentOptionsProvider"/>
-  </extensions>
-    
-  <extensions defaultExtensionNs="JavaScript">
-    <lang.templates instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"
-                    id="editor.preferences.handlebarsOptions"
-                    key="hb.pages.options.title"
-                    bundle="messages.HbBundle"/>
   </extensions>
 
 </idea-plugin>

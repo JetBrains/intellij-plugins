@@ -28,6 +28,6 @@ public class UsingSwcStubs3 {
 
 class Base {
     public static function staticMethodName():void {
-        trace("Base.staticMethodName");
+        trace(Base.staticMethodName);
     }
 }

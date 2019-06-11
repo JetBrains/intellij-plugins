@@ -9,6 +9,7 @@ import com.intellij.psi.stubs.StubInputStream;
 import org.angular2.entities.metadata.Angular2MetadataElementTypes;
 import org.angular2.entities.metadata.psi.Angular2MetadataCall;
 import org.angular2.entities.metadata.psi.Angular2MetadataElement;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +21,7 @@ import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public class Angular2MetadataCallStub extends Angular2MetadataElementStub<Angular2MetadataCall> {
 
-  private static final String CALL_RESULT = "#expression";
+  @NonNls private static final String CALL_RESULT = "#expression";
 
   public static Angular2MetadataCallStub createCallStub(@Nullable String memberName,
                                                         @NotNull JsonValue source,

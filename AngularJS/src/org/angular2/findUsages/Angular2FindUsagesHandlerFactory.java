@@ -3,10 +3,20 @@ package org.angular2.findUsages;
 
 import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesHandlerFactory;
+import com.intellij.find.findUsages.FindUsagesHelper;
+import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.usageView.UsageInfo;
+import com.intellij.util.Processor;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
+
+import static com.intellij.psi.search.GlobalSearchScopeUtil.toGlobalSearchScope;
 
 public class Angular2FindUsagesHandlerFactory extends FindUsagesHandlerFactory {
   @Override
@@ -30,8 +40,17 @@ public class Angular2FindUsagesHandlerFactory extends FindUsagesHandlerFactory {
     }
 
     @Override
-    protected boolean isSearchForTextOccurrencesAvailable(@NotNull PsiElement psiElement, boolean isSingleFile) {
-      return true;
+    public boolean processElementUsages(@NotNull PsiElement element,
+                                        @NotNull Processor<UsageInfo> processor,
+                                        @NotNull FindUsagesOptions options) {
+      if (options.isUsages) {
+        Collection<String> stringToSearch = ReadAction.compute(() -> getStringsToSearch(element));
+        GlobalSearchScope globalSearchScope = ReadAction.compute(() -> toGlobalSearchScope(options.searchScope, element.getProject()));
+        boolean success = stringToSearch == null || FindUsagesHelper
+          .processUsagesInText(element, stringToSearch, true, globalSearchScope, processor);
+        if (!success) return false;
+      }
+      return super.processElementUsages(element, processor, options);
     }
   }
 }

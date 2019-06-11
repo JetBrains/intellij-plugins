@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.lang.javascript.psi.JSField;
@@ -32,7 +33,7 @@ public class MxmlResolveUtil {
       return CachedValuesManager.getManager(xmlFile.getProject()).createCachedValue(() -> {
         SmartList<JSField> vars = new SmartList<>();
         doComputeVars(vars, xmlFile);
-        return new CachedValueProvider.Result<List<JSField>>(vars, xmlFile);
+        return new CachedValueProvider.Result<>(vars, xmlFile);
       }, false);
     }
 

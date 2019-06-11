@@ -21,7 +21,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserAction;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.UserListComponent;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 /**
  * @author Kir
@@ -88,12 +88,12 @@ public class ToggleFileAccessCommand extends EnabledWhenFocusedCommand {
     Object[] nodes = myUserListComponent.getSelectedNodes();
 
     if (nodes.length == 0) {
-      return StringUtil.getMsg("ToggleFileAccess.text.single");
+      return CommunicatorStrings.getMsg("ToggleFileAccess.text.single");
     }
 
     return nodes.length > 1 || !(nodes[0] instanceof User) ?
-        StringUtil.getMsg("ToggleFileAccess.text.multiple") :
-        StringUtil.getMsg("ToggleFileAccess.text.single");
+           CommunicatorStrings.getMsg("ToggleFileAccess.text.multiple") :
+           CommunicatorStrings.getMsg("ToggleFileAccess.text.single");
   }
 
   private boolean doForSelected(UserAction action) {

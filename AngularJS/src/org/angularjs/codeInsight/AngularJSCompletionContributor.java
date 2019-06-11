@@ -39,7 +39,7 @@ public class AngularJSCompletionContributor extends CompletionContributor {
       AngularJSProcessor.process(parameters.getPosition(), element -> {
         final String name = element.getName();
         if (name != null) {
-          result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(element, name, NG_VARIABLE_PRIORITY, false, false));
+          result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(element, name, NG_VARIABLE_PRIORITY));
         }
       });
     }
@@ -63,7 +63,7 @@ public class AngularJSCompletionContributor extends CompletionContributor {
 
   static void addResults(final CompletionResultSet result, CompletionParameters parameters, final Collection<String> keys) {
     for (String controller : keys) {
-      result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, controller, NG_VARIABLE_PRIORITY, false, false));
+      result.consume(JSLookupUtilImpl.createPrioritizedLookupItem(null, controller, NG_VARIABLE_PRIORITY));
     }
     result.runRemainingContributors(parameters, result1 -> {
       final String string = result1.getLookupElement().getLookupString();

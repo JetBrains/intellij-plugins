@@ -26,7 +26,7 @@ import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.idea.BaseToolWindow;
 import jetbrains.communicator.idea.ConsoleMessage;
 import jetbrains.communicator.idea.IDEtalkMessagesWindow;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.UIUtil;
 import jetbrains.communicator.util.icons.EmptyIcon;
 import jetbrains.communicator.util.icons.IconSizeWrapper;
@@ -272,7 +272,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     if (oldSelected != null && oldSelected != tab.getContent()) {
       int index = myContentManager.getIndexOfContent(tab.getContent());
       myTabsWrapper.setForegroundAt(index, NEW_MESSAGE_AVAILABLE_COLOR);
-      myTabsWrapper.setToolTipTextAt(index, StringUtil.getMsg("new.messages.are.available"));
+      myTabsWrapper.setToolTipTextAt(index, CommunicatorStrings.getMsg("new.messages.are.available"));
       myContentManager.setSelectedContent(tab.getContent());
     }
 

@@ -1,16 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.psi.PsiFile;
@@ -29,11 +17,12 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
   }
 
   public void testAbstractClassSig() {
-    doTest("<code>abstract class Foo extends Bar<br></code>", "abstract class <caret>Foo extends Bar { }\nclass Bar { }");
+    doTest("<code><b>test.dart</b><br>abstract class Foo extends Bar<br><br></code>",
+           "abstract class <caret>Foo extends Bar { }\nclass Bar { }");
   }
 
   public void testClassMultilineDoc1() {
-    doTest("<code>class A<br></code>\n" +
+    doTest("<code><b>test.dart</b><br>class A<br><br></code>\n" +
            "<p>doc1\n" +
            "doc2\n" +
            " doc3</p>\n" +
@@ -43,170 +32,161 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
            "<pre><code>    code\n" +
            "</code></pre>",
 
-           "/** 1 */\n"     +
-           "/**\n"          +
+           "/** 1 */\n" +
+           "/**\n" +
            " *      doc1\n" +
-           " * doc2\n"      +
-           " *  doc3\n"     +
-           " *\n"           +
-           " *    doc4\n"   +
-           " * \n"          +
-           " *     code\n"  +
-           " */\n"          +
-           "// non-doc\n"   +
+           " * doc2\n" +
+           " *  doc3\n" +
+           " *\n" +
+           " *    doc4\n" +
+           " * \n" +
+           " *     code\n" +
+           " */\n" +
+           "// non-doc\n" +
            "class <caret>A{}");
   }
 
   public void testClassMultilineDoc2() {
-    doTest("<code>abstract class A<br></code>\n<p>doc1\n" +
-           "doc2\n"                                                           +
-           " doc3\n"                                                          +
-           "doc4\n"                                                           +
-           "doc5\n"                                                           +
+    doTest("<code><b>test.dart</b><br>abstract class A<br><br></code>\n<p>doc1\n" +
+           "doc2\n" +
+           " doc3\n" +
+           "doc4\n" +
+           "doc5\n" +
            " doc6</p>",
 
-           "@deprecated\n"  +
-           "/**\n"          +
-           "*doc1\n"        +
-           "* doc2\n"       +
-           "*  doc3\n"      +
-           "     *doc4\n"   +
-           "     * doc5\n"  +
+           "@deprecated\n" +
+           "/**\n" +
+           "*doc1\n" +
+           "* doc2\n" +
+           "*  doc3\n" +
+           "     *doc4\n" +
+           "     * doc5\n" +
            "     *  doc6\n" +
-           " */\n"          +
+           " */\n" +
            "abstract class <caret>A{}");
   }
 
   public void testClassSingleLineDocs1() {
-    doTest("<code>class A<br></code>\n<p>doc1\n" +
+    doTest("<code><b>test.dart</b><br>class A<br><br></code>\n<p>doc1\n" +
            "doc2</p>",
 
-           "// not doc \n"    +
-           "///   doc1  \n"   +
+           "// not doc \n" +
+           "///   doc1  \n" +
            " /* not doc */\n" +
            "   /// doc2   \n" +
-           " // not doc \n"   +
+           " // not doc \n" +
            "class <caret>A{}");
   }
 
   public void testClassSingleLineDocs2() {
-    doTest("<code>class A<br></code>\n<p>doc1\n" +
+    doTest("<code><b>test.dart</b><br>class A<br><br></code>\n<p>doc1\n" +
            "doc2</p>",
 
-           "@deprecated"      +
-           "// not doc \n"    +
-           "///   doc1  \n"   +
+           "@deprecated" +
+           "// not doc \n" +
+           "///   doc1  \n" +
            " /* not doc */\n" +
            "   /// doc2   \n" +
-           " // not doc \n"   +
+           " // not doc \n" +
            "class <caret>A{}");
   }
 
   public void testConstructorSig() {
-    doTest("<code>Z() → Z<br><br><b>Containing class:</b> Z<br></code>", "class Z { <caret>Z(); }");
+    doTest("<code><b>test.dart</b><br>Z Z()<br><br><b>Containing class:</b> Z<br><br></code>", "class Z { <caret>Z(); }");
   }
 
   public void testEnumSig() {
-    doTest("<code>enum Foo<br></code>", "enum <caret>Foo { BAR }");
+    doTest("<code><b>test.dart</b><br>enum Foo<br><br></code>", "enum <caret>Foo { BAR }");
   }
 
   public void testFieldSig1() {
-    doTest("<code>int y<br><br><b>Containing class:</b> Z<br><br><b>Static type:</b> int<br></code>",
+    doTest("<code><b>test.dart</b><br>int y<br><br><b>Containing class:</b> Z<br><br><b>Type:</b> int<br><br></code>",
            "class Z { int <caret>y = 42; }");
   }
 
   public void testFieldSig2() {
-    doTest("<code>int y<br><br><b>Containing class:</b> Z<br><br><b>Static type:</b> int<br></code>",
+    doTest("<code><b>test.dart</b><br>int y<br><br><b>Containing class:</b> Z<br><br><b>Type:</b> int<br><br></code>",
            "class Z { int <caret>y; }");
   }
 
   public void testFunctionDoc1() {
-    doTest("<code>foo(int x) → void<br></code>\n<p>A function on [x]s.</p>",
+    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>A function on [x]s.</p>",
            "/// A function on [x]s.\nvoid <caret>foo(int x) { }");
   }
 
   public void testFunctionDoc2() {
-    doTest("<code>foo(int x) → void<br></code>\n<p>Good for:</p>\n" +
+    doTest("<code><b>test.dart</b><br>void foo(int x)<br><br></code>\n<p>Good for:</p>\n" +
            "\n" +
            "<ul>\n" +
            "<li>this</li>\n" +
            "<li>that</li>\n" +
            "</ul>", "/** Good for:\n\n" +
-                      " * * this\n" +
-                      " * * that\n" +
-                      "*/\n" +
-                      "\nvoid <caret>foo(int x) { }");
+                    " * * this\n" +
+                    " * * that\n" +
+                    "*/\n" +
+                    "\nvoid <caret>foo(int x) { }");
   }
 
-  //public void testMetaClassSig2() throws Exception {
-  //  doTest("<code>class <b>A</b><br><br><b>Containing library:</b> test.dart<br></code>",
-  //         "@Meta(\'foo\') class <caret>A {};\n" +
-  //         "class Meta {\n" +
-  //         "  final String name;\n" +
-  //         "  const Meta([this.name]);\n" +
-  //         "}");
-  //}
-
   public void testFunctionSig1() {
-    doTest("<code>calc(int x) → int<br></code>", "int <caret>calc(int x) => x + 42;");
+    doTest("<code><b>test.dart</b><br>int calc(int x)<br><br></code>", "int <caret>calc(int x) => x + 42;");
   }
 
   public void testFunctionSig10() {
-    doTest("<code>x({bool b}) → void<br></code>", "void <caret>x({bool b}){};");
+    doTest("<code><b>test.dart</b><br>void x({bool b})<br><br></code>", "void <caret>x({bool b}){};");
   }
 
   public void testFunctionSig2() {
-    doTest("<code>foo([int x = 3]) → dynamic<br></code>", "<caret>foo([int x = 3]) { print(x); }");
+    doTest("<code><b>test.dart</b><br>dynamic foo([int x = 3])<br><br></code>", "<caret>foo([int x = 3]) { print(x); }");
   }
 
   public void testFunctionSig3() {
-    doTest("<code>foo([int x = 3]) → void<br></code>", "void <caret>foo([int x = 3]) { print(x); }");
+    doTest("<code><b>test.dart</b><br>void foo([int x = 3])<br><br></code>", "void <caret>foo([int x = 3]) { print(x); }");
   }
 
   public void testFunctionSig4() {
-    doTest("<code>foo(int x, {int y, int z}) → void<br></code>", "void <caret>foo(int x, {int y, int z}) { }");
+    doTest("<code><b>test.dart</b><br>void foo(int x, {int y, int z})<br><br></code>", "void <caret>foo(int x, {int y, int z}) { }");
   }
 
   public void testFunctionSig5() {
-    doTest("<code>x(List&lt;dynamic&gt; e) → dynamic<br></code>", "E <caret>x(List<E> e) { }");
+    doTest("<code><b>test.dart</b><br>dynamic x(List&lt;dynamic&gt; e)<br><br></code>", "E <caret>x(List<E> e) { }");
   }
 
   public void testFunctionSig6() {
-    doTest("<code>calc(() → int x) → int<br></code>", "int <caret>calc(int x()) => null;");
+    doTest("<code><b>test.dart</b><br>int calc(int Function() x)<br><br></code>", "int <caret>calc(int x()) => null;");
   }
 
   public void testFunctionSig7() {
-    doTest("<code>foo(Map&lt;int, String&gt; p) → Map&lt;String, int&gt;<br></code>",
+    doTest("<code><b>test.dart</b><br>Map&lt;String, int&gt; foo(Map&lt;int, String&gt; p)<br><br></code>",
            "Map<String, int> <caret>foo(Map<int, String> p) => null;");
   }
 
   public void testFunctionSig8() {
-    doTest("<code>x() → dynamic<br></code>", "<caret>x() => null;");
+    doTest("<code><b>test.dart</b><br>dynamic x()<br><br></code>", "<caret>x() => null;");
   }
 
   public void testFunctionSig9() {
-    doTest("<code>x({bool b: true}) → dynamic<br></code>", "<caret>x({bool b: true}){};");
+    doTest("<code><b>test.dart</b><br>dynamic x({bool b = true})<br><br></code>", "<caret>x({bool b: true}){};");
   }
 
   public void testGetterSig() {
-    doTest("<code>get x → int<br><br><b>Containing class:</b> Z<br></code>", "class Z { int get <caret>x => 0; }");
+    doTest("<code><b>test.dart</b><br>int get x<br><br><b>Containing class:</b> Z<br><br></code>", "class Z { int get <caret>x => 0; }");
   }
 
   public void testImplementsSig1() {
-    doTest("<code>abstract class Foo implements Bar<br></code>",
+    doTest("<code><b>test.dart</b><br>abstract class Foo implements Bar<br><br></code>",
            "abstract class <caret>Foo implements Bar<T> { }\nclass Bar { }");
   }
 
   public void testLibraryClassDoc() {
-    doTest("<code>class A<br><br><b>Containing library:</b> c.b.a<br></code>", "library c.b.a;\nclass <caret>A {}");
+    doTest("<code><b>test.dart</b><br>class A<br><br></code>", "library c.b.a;\nclass <caret>A {}");
   }
 
   public void testMetaClassSig1() {
-    doTest("<code>class A<br></code>", " @deprecated class <caret>A {}");
+    doTest("<code><b>test.dart</b><br>class A<br><br></code>", " @deprecated class <caret>A {}");
   }
 
   public void testMethodMultilineDoc() {
-    doTest("<code>foo() → dynamic<br><br><b>Containing class:</b> A<br></code>\n" +
+    doTest("<code><b>test.dart</b><br>dynamic foo()<br><br><b>Containing class:</b> A<br><br></code>\n" +
            "<p>doc1\n" +
            "doc2\n" +
            " doc3</p>\n" +
@@ -216,111 +196,109 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
            "<pre><code>    code\n" +
            "</code></pre>",
 
-           "class A{\n"       +
-           "/** 1 */\n"       +
-           "/**\n"            +
-           " *      doc1\n"   +
-           " * doc2\n"        +
-           " *  doc3\n"       +
-           " *\n"             +
-           " *    doc4\n"     +
-           " * \n"            +
-           " *     code\n"    +
-           " */\n"            +
-           "// non-doc\n"     +
+           "class A{\n" +
+           "/** 1 */\n" +
+           "/**\n" +
+           " *      doc1\n" +
+           " * doc2\n" +
+           " *  doc3\n" +
+           " *\n" +
+           " *    doc4\n" +
+           " * \n" +
+           " *     code\n" +
+           " */\n" +
+           "// non-doc\n" +
            "<caret>foo(){}\n" +
            "}");
   }
 
   public void testMethodSig1() {
-    doTest("<code>y() → int<br><br><b>Containing class:</b> Z<br></code>", "class Z { int <caret>y() => 42; }");
+    doTest("<code><b>test.dart</b><br>int y()<br><br><b>Containing class:</b> Z<br><br></code>", "class Z { int <caret>y() => 42; }");
   }
 
   public void testMethodSingleLineDocs() {
-    doTest("<code>foo() → dynamic<br><br><b>Containing class:</b> A<br></code>\n<p>doc1\n" +
+    doTest("<code><b>test.dart</b><br>dynamic foo()<br><br><b>Containing class:</b> A<br><br></code>\n<p>doc1\n" +
            "doc2</p>", "class A{\n" +
-                         "// not doc \n" +
-                         "///   doc1  \n" +
-                         " /* not doc */\n" +
-                         "   /// doc2   \n" +
-                         " // not doc \n" +
-                         "<caret>foo(){}\n" +
-                         "}");
+                       "// not doc \n" +
+                       "///   doc1  \n" +
+                       " /* not doc */\n" +
+                       "   /// doc2   \n" +
+                       " // not doc \n" +
+                       "<caret>foo(){}\n" +
+                       "}");
   }
 
   public void testMixinSig1() {
-    doTest("<code>class Foo2 extends Bar1 with Baz1, Baz2<br></code>",
+    doTest("<code><b>test.dart</b><br>class Foo2 extends Bar1 with Baz1, Baz2<br><br></code>",
            "class Bar1 {} class Baz1{} class Baz2 {} class <caret>Foo2 = Bar1<E> with Baz1<K>, Baz2");
   }
 
   public void testMixinSig2() {
-    doTest("<code>class X extends Y with Z<br></code>", "class Y {} class Z {} class <caret>X extends Y with Z { }");
+    doTest("<code><b>test.dart</b><br>class X extends Y with Z<br><br></code>",
+           "class Y {} class Z {} class <caret>X extends Y with Z { }");
   }
 
   public void testNamedConstructorSig() {
-    doTest("<code>Z.z() → Z<br><br><b>Containing class:</b> Z<br></code>", "class Z { <caret>Z.z(); }");
+    doTest("<code><b>test.dart</b><br>Z Z.z()<br><br><b>Containing class:</b> Z<br><br></code>", "class Z { <caret>Z.z(); }");
   }
 
   public void testParamClassSig() {
-    doTest("<code>class Foo&lt;T&gt;<br></code>", "class <caret>Foo<T>{ }");
+    doTest("<code><b>test.dart</b><br>class Foo&lt;T&gt;<br><br></code>", "class <caret>Foo<T>{ }");
   }
 
   public void testParamClassSig2() {
-    doTest("<code>class Foo&lt;T, Z&gt;<br></code>", "class <caret>Foo<T,Z>{ }");
+    doTest("<code><b>test.dart</b><br>class Foo&lt;T, Z&gt;<br><br></code>", "class <caret>Foo<T,Z>{ }");
   }
 
   public void testParamClassSig3() {
-    doTest("<code>class Foo implements Bar<br></code>", "class <caret>Foo implements Bar { }<br/>class Bar { }");
+    doTest("<code><b>test.dart</b><br>class Foo implements Bar<br><br></code>", "class <caret>Foo implements Bar { }<br/>class Bar { }");
   }
 
   public void testParamClassSig4() {
-    doTest("<code>class Foo implements Bar, Baz<br></code>",
+    doTest("<code><b>test.dart</b><br>class Foo implements Bar, Baz<br><br></code>",
            "class <caret>Foo implements Bar, Baz { }<br/>class Bar { }<br/>class Baz { }");
   }
 
   public void testParamClassSig5() {
-    doTest("<code>class Foo&lt;A, B&gt; extends Bar&lt;A, B&gt;<br></code>",
+    doTest("<code><b>test.dart</b><br>class Foo&lt;A, B&gt; extends Bar&lt;A, B&gt;<br><br></code>",
            "class <caret>Foo<A,B> extends Bar<A,B> { }<br/>class Bar<A,B> { }");
   }
 
   public void testParamClassSig6() {
-    doTest("<code>List&lt;String&gt; ids<br><br><b>Static type:</b> List&lt;String&gt;<br></code>",
+    doTest("<code>List&lt;String&gt; ids<br><br><b>Type:</b> List&lt;String&gt;<br><br></code>",
            "class A { foo() { List<String> <caret>ids; }}");
   }
 
   public void testParamClassSig7() {
     doTest(
-      "<code>List&lt;Map&lt;String, int&gt;&gt; ids<br><br><b>Static type:</b> List&lt;Map&lt;String, int&gt;&gt;<br></code>",
+      "<code>List&lt;Map&lt;String, int&gt;&gt; ids<br><br><b>Type:</b> List&lt;Map&lt;String, int&gt;&gt;<br><br></code>",
       "class A { foo() { List<Map<String, int>> <caret>ids; }}");
   }
 
   public void testParamClassSig8() {
     doTest("<code>List&lt;List&lt;Map&lt;String, List&lt;Object&gt;&gt;&gt;&gt; list<br><br>" +
-           "<b>Static type:</b> List&lt;List&lt;Map&lt;String, List&lt;Object&gt;&gt;&gt;&gt;<br></code>",
+           "<b>Type:</b> List&lt;List&lt;Map&lt;String, List&lt;Object&gt;&gt;&gt;&gt;<br><br></code>",
            "class A { foo() { List<List<Map<String, List<Object>>>> <caret>list; }}");
   }
 
   public void testSetterSig() {
-    doTest("<code>set x(int x) → void<br><br><b>Containing class:</b> Z<br></code>",
-           "class Z { void set <caret>x(int x) { } }");
+    doTest(
+      "<code><b>test.dart</b><br>void set x(int x)<br><br><b>Containing class:</b> Z<br><br></code>",
+      "class Z { void set <caret>x(int x) { } }");
   }
 
   public void testTopLevelVarDoc1() {
-    doTest("<code>String x<br><br><b>Containing library:</b> a.b.c<br><br>" +
-           "<b>Static type:</b> String<br></code>\n<p>docs1\n" +
-           "docs2</p>", "library a.b.c;\n" +
-                          "/// docs1\n" +
-                          "/// docs2\n" +
-                          "@deprecated var <caret>x = 'foo';");
+    doTest("<code><b>test.dart</b><br>String x<br><br><b>Type:</b> String<br><br></code>\n<p>docs1\ndocs2</p>",
+           "library a.b.c;\n" + "/// docs1\n" + "/// docs2\n" + "@deprecated var <caret>x = 'foo';");
   }
 
   public void testTopLevelVarDoc2() {
-    doTest("<code>int x<br><br><b>Containing library:</b> a.b.c<br><br><b>Static type:</b> int<br></code>",
+    doTest("<code><b>test.dart</b><br>int x<br><br><b>Type:</b> int<br><br></code>",
            "library a.b.c;\nint <caret>x = 3;\n");
   }
 
   public void testTypedefSig() {
-    doTest("<code>typedef F = int Function(int x)<br></code>", "typedef int <caret>F(int x);");
+    doTest("<code><b>test.dart</b><br>typedef F = int Function(int x)<br><br></code>", "typedef int <caret>F(int x);");
   }
 
   private void doTest(String expectedDoc, String fileContents) {
@@ -328,25 +306,10 @@ public class DartServerDocUtilTest extends CodeInsightFixtureTestCase {
     assertTrue(caretOffset != -1);
     final String realContents = fileContents.substring(0, caretOffset) + fileContents.substring(caretOffset + "<caret>".length());
     final PsiFile psiFile = myFixture.configureByText("test.dart", realContents);
-    //System.out.println(psiFile.getText());
     myFixture.doHighlighting(); // warm up
-    //final DartComponent dartComponent = PsiTreeUtil.getParentOfType(psiFile.findElementAt(caretOffset), DartComponent.class);
-    //assertNotNull("target element not found at offset " + caretOffset, dartComponent);
     final HoverInformation hover = DartDocumentationProvider.getSingleHover(psiFile, caretOffset);
     assertNotNull(hover);
-    //System.out.println(hover);
     final String doc = DartDocumentationProvider.generateDocServer(hover);
     assertEquals(expectedDoc, doc);
-    //for (int i = 0; i < 10; i++) {
-    //  final HoverInformation hover = DartDocumentationProvider.getSingleHover(psiFile, caretOffset);
-    //  System.out.println(hover);
-    //  if (hover != null) {
-    //    final String doc = DartDocumentationProvider.generateDocServer(hover);
-    //    assertEquals(expectedDoc, doc);
-    //    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    //    break;
-    //  }
-    //  Uninterruptibles.sleepUninterruptibly(100, TimeUnit.MILLISECONDS);
-    //}
   }
 }

@@ -8,7 +8,7 @@
   <depends optional="true" config-file="javascript-plugin.xml">JavaScript</depends>
 
   <description><![CDATA[
-        <h4>PhoneGap/Cordova integration for InteliJ Platform.</h4>
+        <h4>PhoneGap/Cordova integration for IntelliJ Platform.</h4>
         <br><b>Note:</b> The plugin is a part of WebStorm IDE and you don't need install it manually for WebStorm<br><br>
 
         <p>* PhoneGap/Cordova Project wizard</p>

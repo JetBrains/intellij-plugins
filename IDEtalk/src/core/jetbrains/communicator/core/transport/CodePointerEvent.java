@@ -18,7 +18,7 @@ package jetbrains.communicator.core.transport;
 import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.vfs.CodePointer;
 import jetbrains.communicator.core.vfs.VFile;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 /**
  * @author kir
@@ -54,7 +54,7 @@ public class CodePointerEvent extends TransportEvent {
   }
 
   public String toString() {
-    return StringUtil.toString(getClass(), new Object[]{
+    return CommunicatorStrings.toString(getClass(), new Object[]{
       myComment, myCodePointer,
       getRemoteUser(),
       getTransport()
