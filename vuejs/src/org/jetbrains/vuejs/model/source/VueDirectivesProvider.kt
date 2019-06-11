@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.codeInsight
+package org.jetbrains.vuejs.model.source
 
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.lang.javascript.psi.JSProperty
@@ -9,6 +9,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
+import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.getContainingXmlFile
 import org.jetbrains.vuejs.index.*
 
 class VueDirectivesProvider {
