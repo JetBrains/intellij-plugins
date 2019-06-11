@@ -21,7 +21,7 @@ repositories {
 
 intellij {
     pluginName = "Grazi"
-    version = "IC-LATEST-EAP-SNAPSHOT"
+    version = "IC-192.4488-EAP-CANDIDATE-SNAPSHOT"
     downloadSources = true
 
     updateSinceUntilBuild = false
