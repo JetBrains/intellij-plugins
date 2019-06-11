@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.mock;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.diff.Diff;
 import jetbrains.communicator.commands.FindUsersCommand;
@@ -15,7 +16,6 @@ import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.ide.PooledThreadExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -171,7 +171,7 @@ public class MockIDEFacade implements IDEFacade {
 
   @Override
   public Future<?> runOnPooledThread(Runnable toRun) {
-    return PooledThreadExecutor.INSTANCE.submit(toRun);
+    return ApplicationManager.getApplication().executeOnPooledThread(toRun);
   }
 
   public void setDataDir(File dataDir) {
