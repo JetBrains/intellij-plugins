@@ -31,13 +31,13 @@ import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.vuejs.codeInsight.VueComponents
-import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.getElementComponentDecorator
 import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.findScriptTag
 import org.jetbrains.vuejs.index.hasVueClassComponentLibrary
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.source.VueComponents
+import org.jetbrains.vuejs.model.source.VueComponents.Companion.getElementComponentDecorator
 
 class VueInsertHandler : XmlTagInsertHandler() {
   companion object {
