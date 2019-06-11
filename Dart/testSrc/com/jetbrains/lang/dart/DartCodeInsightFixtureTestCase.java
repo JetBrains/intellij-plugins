@@ -17,18 +17,18 @@ abstract public class DartCodeInsightFixtureTestCase extends LightPlatformCodeIn
   @Override
   protected void setUp() throws Exception {
     super.setUp();
-    DartTestUtils.configureDartSdk(myModule, myFixture.getProjectDisposable(), false);
+    DartTestUtils.configureDartSdk(getModule(), myFixture.getProjectDisposable(), false);
   }
 
   @Override
   protected void tearDown() throws Exception {
     try {
-      VirtualFile root = ModuleRootManager.getInstance(myModule).getContentRoots()[0];
+      VirtualFile root = ModuleRootManager.getInstance(getModule()).getContentRoots()[0];
       VirtualFile pubspec = root.findChild("pubspec.yaml");
       if (pubspec != null) {
         WriteAction.run(() -> pubspec.delete(this));
         List<String> toUnexclude = Arrays.asList(root.getUrl() + "/build", root.getUrl() + "/.pub", root.getUrl() + "/.dart_tool");
-        ModuleRootModificationUtil.updateExcludedFolders(myModule, root, toUnexclude, Collections.emptyList());
+        ModuleRootModificationUtil.updateExcludedFolders(getModule(), root, toUnexclude, Collections.emptyList());
       }
     }
     catch (Throwable e) {

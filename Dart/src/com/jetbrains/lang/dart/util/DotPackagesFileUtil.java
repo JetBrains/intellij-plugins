@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.application.ApplicationManager;
@@ -7,12 +8,12 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.io.URLUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class DotPackagesFileUtil {
           final String encodedUri = line.substring(colonIndex + 1).trim();
           // need to protect '+' chars because URLDecoder.decode replaces '+' with space
           final String encodedUriWithoutPluses = StringUtil.replace(encodedUri, "+", "%2B");
-          final String uri = URLDecoder.decode(encodedUriWithoutPluses, "UTF-8");
+          final String uri = URLUtil.decode(encodedUriWithoutPluses);
           final String packageUri = getAbsolutePackageRootPath(dotPackagesFile.getParent(), uri);
           if (!packageName.isEmpty() && packageUri != null) {
             result.put(packageName, packageUri);

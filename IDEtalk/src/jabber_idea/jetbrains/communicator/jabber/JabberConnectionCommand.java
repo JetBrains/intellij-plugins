@@ -16,7 +16,7 @@
 package jetbrains.communicator.jabber;
 
 import com.intellij.openapi.ui.Messages;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 /**
  * @author Kir
@@ -29,20 +29,20 @@ public class JabberConnectionCommand extends BaseJabberConnectionCommand {
   @Override
   public String getName() {
     if (isConnected()) {
-      return StringUtil.getMsg("JabberConnectionCommand.connected",
+      return CommunicatorStrings.getMsg("JabberConnectionCommand.connected",
           myJabberFacade.getMyAccount().getJabberId()
           + '/' + JabberFacade.IDETALK_RESOURCE);
     }
     else {
-      return StringUtil.getMsg("JabberConnectionCommand.disconnected");
+      return CommunicatorStrings.getMsg("JabberConnectionCommand.disconnected");
     }
   }
 
   @Override
   public void execute() {
     if (isConnected()) {
-      if (Messages.YES == Messages.showYesNoDialog(StringUtil.getMsg("disconnect.from.jabber.account"),
-          StringUtil.getMsg("disconnect.confirmation"), Messages.getQuestionIcon())) {
+      if (Messages.YES == Messages.showYesNoDialog(CommunicatorStrings.getMsg("disconnect.from.jabber.account"),
+                                                   CommunicatorStrings.getMsg("disconnect.confirmation"), Messages.getQuestionIcon())) {
         myJabberFacade.disconnect();
         myJabberFacade.getMyAccount().setLoginAllowed(false);
         myJabberFacade.saveSettings();

@@ -140,7 +140,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     if (fileName.isEmpty()) {
       return new ValidationInfo("Descriptor file name not set", myDescriptorFileNameTextField);
     }
-    if (!fileName.toLowerCase().endsWith(".xml")) {
+    if (!StringUtil.toLowerCase(fileName).endsWith(".xml")) {
       return new ValidationInfo("Descriptor file name must have xml extension", myDescriptorFileNameTextField);
     }
 

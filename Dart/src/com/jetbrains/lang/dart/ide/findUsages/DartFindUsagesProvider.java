@@ -9,8 +9,6 @@ import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.DartLibraryNameElement;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
-
 public class DartFindUsagesProvider implements FindUsagesProvider {
   @Override
   public WordsScanner getWordsScanner() {
@@ -34,7 +32,7 @@ public class DartFindUsagesProvider implements FindUsagesProvider {
       return "library";
     }
     final DartComponentType type = DartComponentType.typeOf(element.getParent());
-    return type == null ? "reference" : type.toString().toLowerCase(Locale.US);
+    return type == null ? "reference" : StringUtil.toLowerCase(type.toString());
   }
 
   @Override

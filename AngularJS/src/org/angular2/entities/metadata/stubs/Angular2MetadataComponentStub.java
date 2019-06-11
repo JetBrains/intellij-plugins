@@ -2,43 +2,108 @@
 package org.angular2.entities.metadata.stubs;
 
 import com.intellij.json.psi.JsonObject;
+import com.intellij.lang.javascript.index.flags.BooleanStructureElement;
+import com.intellij.lang.javascript.index.flags.FlagsStructure;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
+import com.intellij.psi.stubs.StubOutputStream;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.util.SmartList;
 import org.angular2.entities.metadata.Angular2MetadataElementTypes;
 import org.angular2.entities.metadata.psi.Angular2MetadataComponent;
+import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.angular2.lang.html.psi.Angular2HtmlRecursiveElementWalkingVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import static org.angular2.Angular2DecoratorUtil.TEMPLATE_PROP;
+import static org.angular2.codeInsight.tags.Angular2NgContentDescriptor.ATTR_SELECT;
+import static org.angular2.codeInsight.tags.Angular2TagDescriptorsProvider.NG_CONTENT;
+import static org.angular2.lang.metadata.MetadataUtils.readStringPropertyValue;
 
 public class Angular2MetadataComponentStub extends Angular2MetadataDirectiveStubBase<Angular2MetadataComponent> {
 
-  @Nullable
-  public static Angular2MetadataComponentStub createComponentStub(@Nullable String memberName,
-                                                                  @Nullable StubElement parent,
-                                                                  @NotNull JsonObject classSource,
-                                                                  @NotNull JsonObject decoratorSource) {
-    JsonObject decoratorArg = getDecoratorInitializer(decoratorSource, JsonObject.class);
-    if (decoratorArg != null) {
-      return new Angular2MetadataComponentStub(memberName, parent, classSource, decoratorArg);
-    }
-    return null;
-  }
+  private static final BooleanStructureElement HAS_NG_CONTENT_SELECTORS = new BooleanStructureElement();
+
+  protected static final FlagsStructure FLAGS_STRUCTURE = new FlagsStructure(
+    Angular2MetadataDirectiveStubBase.FLAGS_STRUCTURE,
+    HAS_NG_CONTENT_SELECTORS
+  );
+
+  private final List<String> myNgContentSelectors;
 
   public Angular2MetadataComponentStub(@Nullable String memberName,
                                        @Nullable StubElement parent,
                                        @NotNull JsonObject source,
-                                       @NotNull JsonObject initializer) {
-    super(memberName, parent, source, initializer, Angular2MetadataElementTypes.COMPONENT);
+                                       @NotNull JsonObject decoratorSource) {
+    super(memberName, parent, source, decoratorSource, Angular2MetadataElementTypes.COMPONENT);
+    JsonObject initializer = getDecoratorInitializer(decoratorSource, JsonObject.class);
+    String template;
+    if (initializer == null
+        || (template = readStringPropertyValue(initializer.findProperty(TEMPLATE_PROP))) == null
+        || !template.contains("<" + NG_CONTENT)) {
+      myNgContentSelectors = Collections.emptyList();
+      return;
+    }
+    PsiFile file = PsiFileFactory.getInstance(source.getProject())
+      .createFileFromText(Angular2HtmlLanguage.INSTANCE, template);
+    myNgContentSelectors = new SmartList<>();
+    if (file != null) {
+      file.accept(new Angular2HtmlRecursiveElementWalkingVisitor() {
+        @Override
+        public void visitXmlAttribute(XmlAttribute attribute) {
+          if (attribute.getName().equals(ATTR_SELECT)
+              && attribute.getParent().getName().equals(NG_CONTENT)) {
+            String value = attribute.getValue();
+            if (!StringUtil.isEmptyOrSpaces(value)) {
+              myNgContentSelectors.add(value);
+            }
+          }
+        }
+      });
+    }
   }
 
   public Angular2MetadataComponentStub(@NotNull StubInputStream stream,
                                        @Nullable StubElement parent) throws IOException {
     super(stream, parent, Angular2MetadataElementTypes.COMPONENT);
+    myNgContentSelectors = readFlag(HAS_NG_CONTENT_SELECTORS) ? readStringList(stream)
+                                                              : Collections.emptyList();
   }
 
   @Override
-  public boolean isTemplate() {
+  public boolean isStructuralDirective() {
     return false;
+  }
+
+  @Override
+  public boolean isRegularDirective() {
+    return true;
+  }
+
+  @NotNull
+  public List<String> getNgContentSelectors() {
+    return myNgContentSelectors;
+  }
+
+  @Override
+  public void serialize(@NotNull StubOutputStream stream) throws IOException {
+    writeFlag(HAS_NG_CONTENT_SELECTORS, !myNgContentSelectors.isEmpty());
+    super.serialize(stream);
+    if (!myNgContentSelectors.isEmpty()) {
+      writeStringList(myNgContentSelectors, stream);
+    }
+  }
+
+  @Override
+  protected FlagsStructure getFlagsStructure() {
+    return FLAGS_STRUCTURE;
   }
 }

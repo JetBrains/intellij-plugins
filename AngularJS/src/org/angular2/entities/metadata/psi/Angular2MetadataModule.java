@@ -1,13 +1,15 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angular2.entities.metadata.psi;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.util.CachedValueProvider.Result;
 import org.angular2.entities.Angular2Declaration;
 import org.angular2.entities.Angular2Entity;
 import org.angular2.entities.Angular2Module;
 import org.angular2.entities.Angular2ModuleResolver;
+import org.angular2.entities.Angular2ModuleResolver.ResolvedEntitiesList;
 import org.angular2.entities.metadata.stubs.Angular2MetadataModuleStub;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,15 +72,16 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
            || !getStub().getMemberName().startsWith("ɵ");
   }
 
-  private static <T extends Angular2Entity> Pair<Set<T>, Boolean> collectSymbols(@NotNull Angular2MetadataModule source,
-                                                                                 @NotNull String propertyName,
-                                                                                 @NotNull Class<T> entityClass) {
+  private static <T extends Angular2Entity> Result<ResolvedEntitiesList<T>> collectSymbols(@NotNull Angular2MetadataModule source,
+                                                                                           @NotNull String propertyName,
+                                                                                           @NotNull Class<T> entityClass) {
     StubElement propertyStub = source.getStub().getDecoratorFieldValueStub(propertyName);
     if (propertyStub == null) {
-      return Pair.pair(Collections.emptySet(), true);
+      return ResolvedEntitiesList.createResult(Collections.emptySet(), true, source);
     }
     Ref<Boolean> allResolved = new Ref<>(true);
     Set<T> result = new HashSet<>();
+    Set<PsiElement> cacheDependencies = new HashSet<>();
     collectReferencedElements(propertyStub.getPsi(), element -> {
       if (element != null
           && entityClass.isAssignableFrom(element.getClass())) {
@@ -87,7 +90,7 @@ public class Angular2MetadataModule extends Angular2MetadataEntity<Angular2Metad
       else {
         allResolved.set(false);
       }
-    });
-    return Pair.pair(result, allResolved.get());
+    }, cacheDependencies);
+    return ResolvedEntitiesList.createResult(result, allResolved.get(), cacheDependencies);
   }
 }

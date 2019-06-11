@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.structure;
 
 import com.intellij.icons.AllIcons;
@@ -31,7 +31,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(Field, FinalMark);
   private static final LayeredIcon STATIC_FIELD_ICON = new LayeredIcon(Field, StaticMark);
   private static final LayeredIcon STATIC_METHOD_ICON = new LayeredIcon(Method, StaticMark);
-  private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = new LayeredIcon(Function, StaticMark);
+  private static final LayeredIcon TOP_LEVEL_FUNCTION_ICON = new LayeredIcon(Lambda, StaticMark);
   private static final LayeredIcon TOP_LEVEL_VAR_ICON = new LayeredIcon(Variable, StaticMark);
   private static final LayeredIcon CONSTRUCTOR_INVOCATION_ICON = new LayeredIcon(Class, TabPin);
   private static final LayeredIcon FUNCTION_INVOCATION_ICON = new LayeredIcon(Method, TabPin);
@@ -93,13 +93,13 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
   public static String getPresentableText(@NotNull final Outline outline) {
     final Element element = outline.getElement();
     final StringBuilder b = new StringBuilder(element.getName());
-    if (!StringUtil.isEmpty(element.getTypeParameters())) {
+    if (StringUtil.isNotEmpty(element.getTypeParameters())) {
       b.append(element.getTypeParameters());
     }
-    if (!StringUtil.isEmpty(element.getParameters())) {
+    if (StringUtil.isNotEmpty(element.getParameters())) {
       b.append(element.getParameters());
     }
-    if (!StringUtil.isEmpty(element.getReturnType())) {
+    if (StringUtil.isNotEmpty(element.getReturnType())) {
       b.append(" ").append(DartPresentableUtil.RIGHT_ARROW).append(" ").append(element.getReturnType());
     }
     return b.toString();
@@ -136,7 +136,7 @@ public class DartStructureViewElement implements StructureViewTreeElement, ItemP
         if (element.isTopLevelOrStatic()) return STATIC_FIELD_ICON;
         return Field;
       case ElementKind.FUNCTION:
-        return element.isTopLevelOrStatic() ? TOP_LEVEL_FUNCTION_ICON : Function;
+        return element.isTopLevelOrStatic() ? TOP_LEVEL_FUNCTION_ICON : Lambda;
       case ElementKind.FUNCTION_INVOCATION:
         return FUNCTION_INVOCATION_ICON;
       case ElementKind.FUNCTION_TYPE_ALIAS:

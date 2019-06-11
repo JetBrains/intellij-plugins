@@ -27,7 +27,6 @@ package org.osmorc.frameworkintegration.impl.equinox;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.VersionComparatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
@@ -35,6 +34,7 @@ import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +53,7 @@ public class EquinoxRunner extends AbstractFrameworkRunner {
 
     // bundles and start levels
 
-    List<String> bundles = ContainerUtil.newArrayList();
+    List<String> bundles = new ArrayList<>();
 
     for (SelectedBundle bundle : myBundles) {
       String bundlePath = bundle.getBundlePath();

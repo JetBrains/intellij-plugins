@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.github.masahirosuzuka.PhoneGapIntelliJPlugin;
 
 import com.github.masahirosuzuka.PhoneGapIntelliJPlugin.commandLine.PhoneGapCommandLine;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -69,7 +71,7 @@ public class PhoneGapUtil {
 
   @NotNull
   public static List<String> getDefaultExecutablePaths() {
-    List<String> paths = ContainerUtil.newArrayList();
+    List<String> paths = new ArrayList<>();
     ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_PHONEGAP));
     ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_IONIC));
     ContainerUtil.addIfNotNull(paths, getPath(PhoneGapCommandLine.PLATFORM_CORDOVA));
@@ -78,7 +80,7 @@ public class PhoneGapUtil {
 
   @NotNull
   public static List<String> getDefaultWorkingDirectory(@Nullable Project project) {
-    List<String> paths = ContainerUtil.newArrayList();
+    List<String> paths = new ArrayList<>();
     if (project == null) return paths;
     VirtualFile baseDir = project.getBaseDir();
     if (baseDir == null) return paths;

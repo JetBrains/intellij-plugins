@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.process.*;
@@ -7,10 +8,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Consumer;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -29,7 +30,7 @@ public class KarmaProcessOutputManager {
   private boolean myArchiveTextsTruncated = false;
   private final List<ArchivedOutputListener> myOutputListeners = new CopyOnWriteArrayList<>();
   private final List<StreamEventListener> myStdOutStreamEventListeners = new CopyOnWriteArrayList<>();
-  private final List<Pair<String, Key>> myStdOutCurrentLineChunks = ContainerUtil.newArrayList();
+  private final List<Pair<String, Key>> myStdOutCurrentLineChunks = new ArrayList<>();
   private final Consumer<? super String> myStdOutLineConsumer;
 
   public KarmaProcessOutputManager(@NotNull ProcessHandler processHandler, @NotNull Consumer<? super String> stdOutLineConsumer) {

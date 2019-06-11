@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
 import gnu.trove.THashMap;
 import org.jdom.Element;
@@ -35,7 +36,7 @@ public class RslUtil {
 
   public static List<String> getRslUrls(final String sdkHome, final String swcPath) {
     final Map<String, List<String>> swcPathToRslUrlMap = getSwcPathToRslUrlsMap(sdkHome);
-    final List<String> rslUrls = swcPathToRslUrlMap.get(SystemInfo.isFileSystemCaseSensitive ? swcPath : swcPath.toLowerCase());
+    final List<String> rslUrls = swcPathToRslUrlMap.get(SystemInfo.isFileSystemCaseSensitive ? swcPath : StringUtil.toLowerCase(swcPath));
     return rslUrls == null ? Collections.emptyList() : rslUrls;
   }
 
@@ -69,7 +70,7 @@ public class RslUtil {
               rslUrls.add(rslUrl);
             }
             final String swcPath = PathUtilRt.getParentPath(configFilePath) + "/" + swcPathElement.getTextNormalize();
-            swcPathToRslMap.put(SystemInfo.isFileSystemCaseSensitive ? swcPath : swcPath.toLowerCase(), rslUrls);
+            swcPathToRslMap.put(SystemInfo.isFileSystemCaseSensitive ? swcPath : StringUtil.toLowerCase(swcPath), rslUrls);
           }
         }
       }

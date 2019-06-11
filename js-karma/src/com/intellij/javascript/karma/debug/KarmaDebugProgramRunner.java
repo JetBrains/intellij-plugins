@@ -158,8 +158,12 @@ public class KarmaDebugProgramRunner extends AsyncProgramRunner {
                                                                                    @NotNull Url url) {
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null && karmaConfig.getRemoteDebuggingPort() > 0) {
-      // open connection later on browser ready to workaround WEB-33076
-      return new BrowserChromeDebugProcess(session, fileFinder, new WipRemoteVmConnection(), executionResult);
+      // Passing an url without parameters (e.g. http://localhost:9876) is enough to find a page url with parameters,
+      // e.g. http://localhost:9876/?id=98544599. Thanks to `Urls.equals(url, pageUrl, ..., ignoreParameters=true)` in
+      // com.jetbrains.debugger.wip.WipRemoteVmConnection.
+      //
+      // Opening connection is postponed until browsers are ready (WEB-33076).
+      return new BrowserChromeDebugProcess(session, fileFinder, new WipRemoteVmConnection(url, null), executionResult);
     }
     JavaScriptDebugEngine debugEngine = debuggableWebBrowser.getDebugEngine();
     WebBrowser browser = debuggableWebBrowser.getWebBrowser();

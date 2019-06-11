@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.flex.refactoring;
 
 import com.intellij.flex.util.FlexTestUtils;
@@ -31,6 +32,7 @@ import com.intellij.refactoring.classMembers.MemberInfoBase;
 import com.intellij.refactoring.util.DocCommentPolicy;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,7 +74,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
     doTest(new PerformAction() {
       @Override
       public void performAction(VirtualFile rootDir, VirtualFile rootAfter) {
-        FlexPullUpTest.this.performAction(from, to, docCommentPolicy, ArrayUtil.EMPTY_STRING_ARRAY, toPullUp);
+        FlexPullUpTest.this.performAction(from, to, docCommentPolicy, ArrayUtilRt.EMPTY_STRING_ARRAY, toPullUp);
       }
     }, false);
   }
@@ -107,7 +109,7 @@ public class FlexPullUpTest extends MultiFileTestCase {
 
     final JSMemberInfo[] infosArray = JSMemberInfo.getSelected(memberInfos, sourceClass, Conditions.alwaysTrue());
     MultiMap<PsiElement, String> conflicts =
-      JSPullUpConflictsUtil.checkConflicts(infosArray, sourceClass, targetClass, 
+      JSPullUpConflictsUtil.checkConflicts(infosArray, sourceClass, targetClass,
                                            JSInterfaceContainmentVerifier.create(memberInfos),
                                            JSVisibilityUtil.DEFAULT_OPTIONS);
 

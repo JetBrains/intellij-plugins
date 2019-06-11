@@ -1,14 +1,13 @@
 package com.jetbrains.lang.dart.psi;
 
 import com.intellij.codeInsight.highlighting.HighlightUsagesDescriptionLocation;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.ElementDescriptionLocation;
 import com.intellij.psi.ElementDescriptionProvider;
 import com.intellij.psi.PsiElement;
 import com.jetbrains.lang.dart.DartComponentType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Locale;
 
 public class DartElementDescriptionProvider implements ElementDescriptionProvider {
   @Nullable
@@ -22,7 +21,7 @@ public class DartElementDescriptionProvider implements ElementDescriptionProvide
       final String name = ((DartNamedElement)element).getName();
       final DartComponentType type = DartComponentType.typeOf(element);
       if (type != null) {
-        final String typeText = type.toString().toLowerCase(Locale.US);
+        final String typeText = StringUtil.toLowerCase(type.toString());
         return name != null ? typeText + " " + name : typeText;
       }
     }

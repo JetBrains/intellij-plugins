@@ -13,6 +13,7 @@ import com.intellij.coldFusion.UI.editorActions.completionProviders.CfmlMethodIn
 import com.intellij.coldFusion.model.info.CfmlFunctionDescription;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.coldFusion.model.psi.impl.CfmlNamedAttributeImpl;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
@@ -89,7 +90,7 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
       tailText = ".";
     }
 
-    if (prefix != null && prefix.length() != 0 && !name.toLowerCase().startsWith(prefix.toLowerCase())) {
+    if (prefix != null && prefix.length() != 0 && !StringUtil.toLowerCase(name).startsWith(StringUtil.toLowerCase(prefix))) {
       name = prefix + "." + name;
     }
 

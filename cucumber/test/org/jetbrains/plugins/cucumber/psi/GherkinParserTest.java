@@ -106,6 +106,10 @@ public class GherkinParserTest extends ParsingTestCase {
   public void testTag_before_examples() {
     doTest(true);
   }
+
+  public void testRule() {
+    doTest(true);
+  }
 }
 
 

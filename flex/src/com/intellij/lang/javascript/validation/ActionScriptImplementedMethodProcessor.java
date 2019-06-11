@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.validation;
 
-import com.intellij.lang.javascript.completion.JSCompletionContributor;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -51,7 +50,7 @@ public abstract class ActionScriptImplementedMethodProcessor extends JSCollectMe
   }
 
   @Override
-  protected void processMembers(@NotNull List<PsiElement> results) {
+  protected void processMembers(@NotNull List<? extends PsiElement> results) {
     JSFunctionCollector functionsCollector = null;
 
     for (PsiElement _function : results) {

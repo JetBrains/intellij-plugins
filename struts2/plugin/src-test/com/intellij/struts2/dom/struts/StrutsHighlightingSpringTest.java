@@ -16,7 +16,6 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.facet.FacetManager;
-import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.spring.facet.SpringFacet;
@@ -57,7 +56,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
 
   @Override
   protected void performTearDown() {
-    final SpringFacet springFacet = SpringFacet.getInstance(myModule);
+    final SpringFacet springFacet = SpringFacet.getInstance(getModule());
     if (springFacet != null) {
       springFacet.removeFileSets();
     }
@@ -131,13 +130,13 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
 
   @NotNull
   protected SpringFacet createSpringFacet() {
-    final SpringFacet springFacet = SpringFacet.getInstance(myModule);
+    final SpringFacet springFacet = SpringFacet.getInstance(getModule());
     if (springFacet != null) {
       return springFacet;
     }
 
     return WriteCommandAction.writeCommandAction(myFixture.getProject()).compute(() -> {
-      final SpringFacet facet = FacetManager.getInstance(myModule)
+      final SpringFacet facet = FacetManager.getInstance(getModule())
                                             .addFacet(SpringFacet.getSpringFacetType(), "spring", null);
       return facet;
     });

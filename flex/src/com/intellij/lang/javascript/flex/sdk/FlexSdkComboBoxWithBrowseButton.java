@@ -316,27 +316,29 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
 
     @Override
-    public void addListener(final Listener listener) {
+    public void addListener(@NotNull final Listener listener) {
       myOriginal.addListener(listener);
     }
 
     @Override
-    public void removeListener(final Listener listener) {
+    public void removeListener(@NotNull final Listener listener) {
       myOriginal.removeListener(listener);
     }
 
+    @NotNull
     @Override
     public Listener getMulticaster() {
       return myOriginal.getMulticaster();
     }
 
+    @NotNull
     @Override
     public Sdk[] getSdks() {
       return myOriginal.getSdks();
     }
 
     @Override
-    public Sdk findSdk(final String sdkName) {
+    public Sdk findSdk(@NotNull final String sdkName) {
       return myOriginal.findSdk(sdkName);
     }
 
@@ -345,6 +347,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       // ignore
     }
 
+    @NotNull
     @Override
     public HashMap<Sdk, Sdk> getProjectSdks() {
       return myOriginal.getProjectSdks();
@@ -356,30 +359,30 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
 
     @Override
-    public void removeSdk(final Sdk editableObject) {
+    public void removeSdk(@NotNull final Sdk editableObject) {
       myOriginal.removeSdk(editableObject);
     }
 
     @Override
     public void createAddActions(@NotNull final DefaultActionGroup group,
                                  @NotNull final JComponent parent,
-                                 @NotNull final Consumer<Sdk> updateTree,
-                                 @Nullable final Condition<SdkTypeId> filter) {
+                                 @NotNull final Consumer<? super Sdk> updateTree,
+                                 @Nullable final Condition<? super SdkTypeId> filter) {
       myOriginal.createAddActions(group, parent, updateTree, filter);
     }
 
     @Override
-    public void doAdd(@NotNull JComponent parent, @NotNull final SdkType type, @NotNull final Consumer<Sdk> updateTree) {
+    public void doAdd(@NotNull JComponent parent, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> updateTree) {
       myOriginal.doAdd(parent, type, updateTree);
     }
 
     @Override
-    public void addSdk(final Sdk sdk) {
+    public void addSdk(@NotNull final Sdk sdk) {
       myOriginal.addSdk(sdk);
     }
 
     @Override
-    public void doAdd(final Sdk newSdk, @Nullable final Consumer<Sdk> updateTree) {
+    public void doAdd(@NotNull final Sdk newSdk, @Nullable final Consumer<? super Sdk> updateTree) {
       myOriginal.doAdd(newSdk, updateTree);
     }
 

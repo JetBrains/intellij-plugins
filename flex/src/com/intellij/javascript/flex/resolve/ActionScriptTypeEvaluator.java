@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.impl.JSOffsetBasedImplicitElement;
 import com.intellij.lang.javascript.psi.resolve.*;
@@ -15,8 +14,6 @@ import com.intellij.lang.javascript.psi.types.primitives.JSPrimitiveArrayType;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.ResolveState;
-import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
@@ -41,24 +38,14 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
   @Override
   protected boolean addTypeFromDialectSpecificElements(PsiElement resolveResult) {
     if (resolveResult instanceof JSPackageWrapper) {
-      JSReferenceExpression expression = myContext.getProcessedExpression();
-      if (myTypeProcessor instanceof PsiScopeProcessor && expression != null) {
-        if (myTypeProcessor instanceof ResolveProcessor) ((ResolveProcessor)myTypeProcessor).prefixResolved();
-        resolveResult.processDeclarations((PsiScopeProcessor)myTypeProcessor, ResolveState.initial(), expression, expression);
-      }
-      else {
-        String name = ((JSQualifiedNamedElement)resolveResult).getQualifiedName();
-        if (name != null) {
-          addType(name, resolveResult);
-        }
-      }
+      myTypeProcessor.processResolvedElement(resolveResult, myContext);
       return true;
     }
     return false;
   }
 
   @Override
-  protected void evaluateNewExpressionTypes(JSNewExpression newExpression, @NotNull JSEvaluateContext.JSEvaluationPlace place) {
+  protected void evaluateNewExpressionTypes(JSNewExpression newExpression) {
     JSExpression methodExpr = newExpression.getMethodExpression();
     if (methodExpr != null) {
       if (methodExpr instanceof JSArrayLiteralExpression) {

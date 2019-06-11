@@ -25,7 +25,7 @@ import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.CanceledException;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.UIUtil;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
@@ -43,8 +43,8 @@ public class Helper {
     final ProjectsData[] result = new ProjectsData[]{ProjectsData.NULL};
     if (user.isOnline()) {
       try {
-        UIUtil.run(ideFacade, StringUtil.getMsg("ViewFilesCommand.title", user.getDisplayName()),
-            new Runnable() {
+        UIUtil.run(ideFacade, CommunicatorStrings.getMsg("ViewFilesCommand.title", user.getDisplayName()),
+                   new Runnable() {
               @Override
               public void run() {
                 final Semaphore semaphore = new Semaphore(1);
@@ -74,8 +74,8 @@ public class Helper {
   public static void fillVFileContent(final Transport transport, final User user, final VFile vFile, IDEFacade ideFacade) {
     if (user.isOnline()) {
       try {
-        UIUtil.run(ideFacade, StringUtil.getMsg("GetVFileContents.title"),
-            new Runnable() {
+        UIUtil.run(ideFacade, CommunicatorStrings.getMsg("GetVFileContents.title"),
+                   new Runnable() {
               @Override
               public void run() {
 
@@ -108,9 +108,9 @@ public class Helper {
           secondParamForFailMessage += " from " + address;
         }
 
-        ideFacade.showMessage(StringUtil.FAILED_TITLE,
-            StringUtil.getMsg("GetVFileContents.fail", vFile.getDisplayName(),
-                secondParamForFailMessage));
+        ideFacade.showMessage(CommunicatorStrings.FAILED_TITLE,
+                              CommunicatorStrings.getMsg("GetVFileContents.fail", vFile.getDisplayName(),
+                                                         secondParamForFailMessage));
       }
     }
   }

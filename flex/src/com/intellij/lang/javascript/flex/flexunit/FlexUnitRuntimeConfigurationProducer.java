@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.actions.ConfigurationContext;
@@ -8,6 +8,7 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
@@ -15,7 +16,6 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -40,9 +40,9 @@ public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigura
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(final FlexUnitRunConfiguration configuration,
-                                                  final ConfigurationContext context,
-                                                  final Ref<PsiElement> sourceElement) {
+  protected boolean setupConfigurationFromContext(@NotNull final FlexUnitRunConfiguration configuration,
+                                                  @NotNull final ConfigurationContext context,
+                                                  @NotNull final Ref<PsiElement> sourceElement) {
     final Module module = context.getModule();
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
 
@@ -56,7 +56,8 @@ public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigura
   }
 
   @Override
-  public boolean isConfigurationFromContext(final FlexUnitRunConfiguration configuration, final ConfigurationContext context) {
+  public boolean isConfigurationFromContext(@NotNull final FlexUnitRunConfiguration configuration,
+                                            @NotNull final ConfigurationContext context) {
     final Module module = context.getModule();
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
 
@@ -173,7 +174,7 @@ public final class FlexUnitRuntimeConfigurationProducer extends LazyRunConfigura
     if (rootForFile == null) return false;
 
     String packageName = VfsUtilCore.getRelativePath(file, rootForFile, '.');
-    if (packageName == null || !JSUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
+    if (packageName == null || !FlexUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
 
     params.setPackageName(packageName);
     params.setScope(FlexUnitRunnerParameters.Scope.Package);

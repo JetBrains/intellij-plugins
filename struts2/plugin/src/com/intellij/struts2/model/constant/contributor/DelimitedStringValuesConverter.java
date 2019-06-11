@@ -16,7 +16,7 @@
 package com.intellij.struts2.model.constant.contributor;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.GenericDomValue;
 import com.intellij.util.xml.converters.DelimitedListConverter;
@@ -48,7 +48,7 @@ class DelimitedStringValuesConverter extends DelimitedListConverter<String> {
   @Override
   protected Object[] getReferenceVariants(final ConvertContext convertContext,
                                           final GenericDomValue<? extends List<String>> listGenericDomValue) {
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }
 
   @Override

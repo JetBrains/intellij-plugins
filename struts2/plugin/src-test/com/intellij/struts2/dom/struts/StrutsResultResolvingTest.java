@@ -51,7 +51,7 @@ public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
 
   @Override
   protected void performSetUp() {
-    final WebFacet webFacet = ContainerUtil.getFirstItem(WebFacet.getInstances(myModule));
+    final WebFacet webFacet = ContainerUtil.getFirstItem(WebFacet.getInstances(getModule()));
     assert webFacet != null;
 
     myFixture.copyDirectoryToProject("jsp", "jsp");

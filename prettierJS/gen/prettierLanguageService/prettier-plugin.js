@@ -10,41 +10,30 @@ var PrettierPlugin = /** @class */ (function () {
             if (r.command == "reformat") {
                 response = this.handleReformatCommand(r.arguments);
             }
-            else if (r.command == "getSupportedFiles") {
-                response = this.getSupportedFiles(r.arguments.prettierPath);
-            }
             else {
                 response = { error: "Unknown command: " + r.command };
             }
         }
         catch (e) {
-            response = { error: e.message + " " + e.stack };
+            var msg = e instanceof String ? e : (e.stack && e.stack.length > 0 ? e.stack : e.message || e);
+            response = { error: "" + msg };
         }
         response.request_seq = r.seq;
         writer.write(JSON.stringify(response));
     };
     PrettierPlugin.prototype.handleReformatCommand = function (args) {
         var prettierApi = this.requirePrettierApi(args.prettierPath);
-        try {
-            var options = { ignorePath: args.ignoreFilePath, withNodeModules: true };
-            if (prettierApi.getFileInfo && prettierApi.getFileInfo.sync(args.path, options).ignored) {
+        var options = { ignorePath: args.ignoreFilePath, withNodeModules: true };
+        if (prettierApi.getFileInfo) {
+            var fileInfo = prettierApi.getFileInfo.sync(args.path, options);
+            if (fileInfo.ignored) {
                 return { ignored: true };
             }
-            return performFormat(prettierApi, args);
+            if (fileInfo.inferredParser == null) {
+                return { unsupported: true };
+            }
         }
-        catch (e) {
-            return { error: args.path + ": " + (e.stack && e.stack.length > 0 ? e.stack : e.message) };
-        }
-    };
-    PrettierPlugin.prototype.getSupportedFiles = function (path) {
-        var prettierApi = this.requirePrettierApi(path);
-        var info = prettierApi.getSupportInfo();
-        var extensions = flatten(info.languages.map(function (l) { return l.extensions; })).map(function (e) { return withoutPrefix(e, "."); });
-        var fileNames = flatten(info.languages.map(function (l) { return l.filenames != null ? l.filenames : []; }));
-        return {
-            fileNames: fileNames,
-            extensions: extensions
-        };
+        return performFormat(prettierApi, args);
     };
     PrettierPlugin.prototype.requirePrettierApi = function (path) {
         if (this._prettierApi != null && this._prettierApi.path == path) {
@@ -57,16 +46,6 @@ var PrettierPlugin = /** @class */ (function () {
     return PrettierPlugin;
 }());
 exports.PrettierPlugin = PrettierPlugin;
-function withoutPrefix(e, prefix) {
-    if (e == null || e.length == 0) {
-        return e;
-    }
-    var index = e.indexOf(prefix);
-    return index == 0 ? e.substr(prefix.length) : e;
-}
-function flatten(arr) {
-    return arr.reduce(function (previousValue, currentValue) { return previousValue.concat(currentValue); });
-}
 function performFormat(api, args) {
     if (args.flushConfigCache) {
         api.clearConfigCache();

@@ -1,27 +1,14 @@
-/*
- * Copyright 2000-2006 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.p2p.commands;
 
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import jetbrains.communicator.core.dispatcher.Message;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.p2p.NetworkUtil;
 import jetbrains.communicator.p2p.P2PTransport;
 import jetbrains.communicator.p2p.XmlRpcTargetImpl;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,10 +36,10 @@ public class P2PNetworkMessage implements Message {
     if (port < 0) {
       return false;
     }
-    
+
     XmlRpcTargetImpl target = new XmlRpcTargetImpl(port, P2PTransport.getInstance().getAddress(user));
     List<String> parameters = new ArrayList<>();
-    parameters.add(StringUtil.toXMLSafeString(StringUtil.getMyUsername()));
+    parameters.add(CommunicatorStrings.toXMLSafeString(CommunicatorStrings.getMyUsername()));
     parameters.addAll(myCommandParameters);
     setResponse(NetworkUtil.sendMessage(target, myCommandId, myCommand, ArrayUtil.toObjectArray(parameters)));
     return null != myResponse;
@@ -75,7 +62,7 @@ public class P2PNetworkMessage implements Message {
   }
 
   public String[] getParameters() {
-    return ArrayUtil.toStringArray(myCommandParameters);
+    return ArrayUtilRt.toStringArray(myCommandParameters);
   }
 
   public boolean equals(Object o) {
