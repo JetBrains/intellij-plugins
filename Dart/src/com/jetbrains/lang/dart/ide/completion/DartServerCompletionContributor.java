@@ -166,7 +166,7 @@ public class DartServerCompletionContributor extends CompletionContributor {
 
                    if (!importedLibraries.isEmpty() && !importedLibraries.contains(suggestionSet.getUri())) {
                      // If some library exports this label but the current suggestion set does not, we should filter.
-                     return;
+                     continue;
                    }
 
                    CompletionSuggestion completionSuggestion =

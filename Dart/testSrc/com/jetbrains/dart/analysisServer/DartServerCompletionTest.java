@@ -18,6 +18,8 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
   @Override
   public void setUp() throws Exception {
@@ -196,7 +198,14 @@ public class DartServerCompletionTest extends CodeInsightFixtureTestCase {
       getTestName(false).replace("ExistingImports", "ExistingImportLibrary") + ".dart");
     myFixture.doHighlighting();
     myFixture.complete(CompletionType.BASIC);
-    selectLookup("Process", Lookup.NORMAL_SELECT_CHAR);
+    final LookupEx activeLookup = LookupManager.getActiveLookup(getEditor());
+    assertNotNull(activeLookup);
+    final List<LookupElement> matches = ContainerUtil.findAll(
+      activeLookup.getItems(), element -> element.getLookupString().equals("Process"));
+    // Since we've already imported ExistingImportLibrary.dart which re-exports Process, we should only have one suggestion for it.
+    assertEquals(matches.size(), 1);
+    activeLookup.setCurrentItem(matches.get(0));
+    myFixture.finishLookup(Lookup.NORMAL_SELECT_CHAR);
     myFixture.checkResultByFile(getTestName(false) + ".after.dart");
   }
 }
