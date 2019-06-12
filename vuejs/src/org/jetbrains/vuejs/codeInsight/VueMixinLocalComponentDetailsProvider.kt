@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.vuejs.model.source
+package org.jetbrains.vuejs.codeInsight
 
 import com.intellij.codeInsight.completion.CompletionUtil
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
@@ -8,12 +8,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.vueMixinDescriptorFinder
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.index.LOCAL
 import org.jetbrains.vuejs.index.MIXINS
 import org.jetbrains.vuejs.index.VueMixinBindingIndex
 import org.jetbrains.vuejs.index.resolve
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.vueMixinDescriptorFinder
 
 class VueMixinLocalComponentDetailsProvider : VueAdvancedComponentDetailsProvider {
   override fun getIndexedData(descriptor: JSObjectLiteralExpression?, project: Project): Collection<JSImplicitElement> {
