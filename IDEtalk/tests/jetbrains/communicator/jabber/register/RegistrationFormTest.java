@@ -17,7 +17,7 @@ package jetbrains.communicator.jabber.register;
 
 import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.mock.MockIDEFacade;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.TextAcceptor;
 
 import javax.swing.*;
@@ -51,8 +51,8 @@ public class RegistrationFormTest extends BaseTestCase {
   public void testInit() {
 
 
-    assertEquals("Bad Default username", StringUtil.getMyUsername(), myFacade.getMyAccount().getUsername());
-    assertEquals("Bad Default username", StringUtil.getMyUsername(), myForm.getUsername());
+    assertEquals("Bad Default username", CommunicatorStrings.getMyUsername(), myFacade.getMyAccount().getUsername());
+    assertEquals("Bad Default username", CommunicatorStrings.getMyUsername(), myForm.getUsername());
     assertEquals("Bad Default server", "jabber.org", myFacade.getMyAccount().getServer());
     assertEquals("Bad Default server", "jabber.org", myForm.getServer());
     assertEquals("Bad Default port", 5222, myFacade.getMyAccount().getPort());
@@ -209,14 +209,14 @@ public class RegistrationFormTest extends BaseTestCase {
     _testPassword();
 
     assertEquals("No Jabber calls expected", "", myFacade.getLog());
-    assertEquals("Error expected", StringUtil.getMsg("jabber.password.mismatch"), myErrorText);
+    assertEquals("Error expected", CommunicatorStrings.getMsg("jabber.password.mismatch"), myErrorText);
 
     myForm.setPasswordAgain("Pwd");
     myForm.setPassword("Pwd");
     _testPassword();
 
     assertEquals("No Jabber calls expected", "", myFacade.getLog());
-    assertEquals("Error expected", StringUtil.getMsg("jabber.password.short"), myErrorText);
+    assertEquals("Error expected", CommunicatorStrings.getMsg("jabber.password.short"), myErrorText);
 
     myForm.setPasswordAgain("username");
     myForm.setPassword("username");
@@ -224,7 +224,7 @@ public class RegistrationFormTest extends BaseTestCase {
     _testPassword();
 
     assertEquals("No Jabber calls expected", "", myFacade.getLog());
-    assertEquals("Error expected", StringUtil.getMsg("jabber.password.username"), myErrorText);
+    assertEquals("Error expected", CommunicatorStrings.getMsg("jabber.password.username"), myErrorText);
   }
 
   private void _testPassword() {

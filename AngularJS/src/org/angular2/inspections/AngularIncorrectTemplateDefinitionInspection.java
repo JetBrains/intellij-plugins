@@ -10,7 +10,8 @@ import com.intellij.lang.javascript.psi.ecma6.ES6Decorator;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.containers.ContainerUtil;
-import org.angular2.entities.Angular2EntityUtils;
+import org.angular2.entities.Angular2Component;
+import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.inspections.quickfixes.AddJSPropertyQuickFix;
 import org.angular2.inspections.quickfixes.RemoveJSProperty;
 import org.angular2.lang.Angular2Bundle;
@@ -37,11 +38,16 @@ public class AngularIncorrectTemplateDefinitionInspection extends LocalInspectio
           JSProperty templateUrl = initializer.findProperty(TEMPLATE_URL_PROP);
           JSProperty template = initializer.findProperty(TEMPLATE_PROP);
           if (template == null && templateUrl == null) {
-            holder.registerProblem(initializer,
-                                   Angular2Bundle.message("angular.inspection.decorator.missing-template",
-                                                          Angular2EntityUtils.getEntityClassName(decorator)),
-                                   new AddJSPropertyQuickFix(initializer, TEMPLATE_PROP, "\n\n", 1, true),
-                                   new AddJSPropertyQuickFix(initializer, TEMPLATE_URL_PROP, "./", 2, false));
+            Angular2Component component = Angular2EntitiesProvider.getComponent(decorator);
+            if (component != null
+                && component.getTypeScriptClass() != null
+                && component.getTypeScriptClass().getName() != null) {
+              holder.registerProblem(initializer,
+                                     Angular2Bundle.message("angular.inspection.decorator.missing-template",
+                                                            component.getTypeScriptClass().getName()),
+                                     new AddJSPropertyQuickFix(initializer, TEMPLATE_PROP, "\n\n", 1, true),
+                                     new AddJSPropertyQuickFix(initializer, TEMPLATE_URL_PROP, "./", 2, false));
+            }
           }
           else if (template != null && templateUrl != null) {
             ContainerUtil.packNullables(template.getNameIdentifier(), templateUrl.getNameIdentifier())

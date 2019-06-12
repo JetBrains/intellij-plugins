@@ -9,6 +9,10 @@ import org.intellij.plugins.postcss.PostCssFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class PostCssCompletionTest extends PostCssFixtureTestCase {
+  protected void doTestCompletionVariants(String... items) {
+    myFixture.testCompletionVariants(getTestName(true) + ".pcss", items);
+  }
+
   protected void doTestPreferred(String... items) {
     myFixture.configureByFile(getTestName(true) + ".pcss");
     myFixture.completeBasic();

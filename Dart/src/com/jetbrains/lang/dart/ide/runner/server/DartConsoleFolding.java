@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ConsoleFolding;
@@ -15,12 +15,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
-import java.util.Locale;
 
 public class DartConsoleFolding extends ConsoleFolding {
 
   private static final String DART_MARKER = SystemInfo.isWindows ? "\\bin\\dart.exe " : "/bin/dart ";
-  private static final String TEST_RUNNER_MARKER = SystemInfo.isWindows ? "\\bin\\pub.bat run test -r json " : "/bin/pub run test -r json ";
+  private static final String TEST_RUNNER_MARKER = SystemInfo.isWindows
+                                                   ? "\\bin\\pub.bat run test -r json " : "/bin/pub run test -r json ";
   private static final int MIN_FRAME_DISPLAY_COUNT = 8;
 
   private int myFrameCount = 0;
@@ -145,7 +145,7 @@ public class DartConsoleFolding extends ConsoleFolding {
     // pub run test main_test.dart -n "group1 test21|group1 test22"
     int index = line.indexOf(TEST_RUNNER_MARKER);
     index += TEST_RUNNER_MARKER.length();
-    index = line.toLowerCase(Locale.US).indexOf(".dart", index);
+    index = StringUtil.toLowerCase(line).indexOf(".dart", index);
     if (index < 0) return line;
 
     int tailIndex = index + (line.substring(index + ".dart".length()).startsWith("\"") ? ".dart\"".length() : ".dart".length());

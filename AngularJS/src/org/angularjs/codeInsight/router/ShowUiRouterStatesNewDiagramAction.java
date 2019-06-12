@@ -77,8 +77,8 @@ public class ShowUiRouterStatesNewDiagramAction extends ShowDiagram {
     else filterGraphBuilders(project, graphBuilders, consumer);
   }
 
-  private static void filterGraphBuilders(Project project, List<Pair<String, AngularUiRouterGraphBuilder>> builders,
-                                                                                     Consumer<AngularUiRouterGraphBuilder> consumer) {
+  private static void filterGraphBuilders(Project project, List<? extends Pair<String, AngularUiRouterGraphBuilder>> builders,
+                                          Consumer<? super AngularUiRouterGraphBuilder> consumer) {
     final JBList list = new JBList();
     final List<Object> data = new ArrayList<>();
     for (Pair<String, AngularUiRouterGraphBuilder> builder : builders) {

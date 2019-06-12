@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.osmorc.facet;
 
 import com.intellij.facet.impl.ui.FacetEditorsFactoryImpl;
@@ -15,7 +16,7 @@ import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import icons.OsmorcIdeaIcons;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
@@ -80,7 +81,7 @@ public class OsgiCoreLibraryType extends DownloadableLibraryType {
   @Override
   protected String[] getDetectionClassNames() {
     Logger.getInstance(getClass()).error(new AssertionError("shouldn't be called"));
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return ArrayUtilRt.EMPTY_STRING_ARRAY;
   }
 
   public static boolean isOsgiCoreLibrary(@NotNull Library library) {

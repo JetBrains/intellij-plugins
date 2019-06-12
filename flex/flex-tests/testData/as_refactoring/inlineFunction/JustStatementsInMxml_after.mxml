@@ -5,8 +5,8 @@
   <mx:Script>
 <![CDATA[
       private function bar() {
-          var x = 1 + 2;
-          alert(x);
+          var x1 = 1 + 2;
+          alert(x1);
           var x = 1 + 3;
           alert(x);
       }

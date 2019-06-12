@@ -1,23 +1,9 @@
-/*
- * Copyright 2000-2006 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.messager.Callout;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.concurrency.EdtExecutorService;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.EventVisitor;
@@ -68,7 +54,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
   private int myRefreshCounter;
   private final Timer myTimer4Renderer;
   private final IDEtalkAdapter myExpandTreeNodeListener;
-  private final XStream myXStream = XMLUtil.createXStream();
+  private final XStream myXStream = XStreamUtil.createXStream();
 
   public UserListComponentImpl(UserModel userModel,
                                IDEFacade facade, final LocalMessageDispatcher localMessageDispatcher) {
@@ -184,10 +170,10 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
 
   @Override
   public Object[] getSelectedNodes() {
-    if (myTree.isEditing()) return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    if (myTree.isEditing()) return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
 
     final TreePath[] selectionPaths = myTree.getSelectionPaths();
-    if (selectionPaths == null) return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    if (selectionPaths == null) return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
 
     List<Object> result = new ArrayList<>();
     for (TreePath selectionPath : selectionPaths) {
@@ -217,11 +203,11 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
 
   public void saveState() {
     TreeState treeState = new TreeState(myTree);
-    XMLUtil.toXml(myXStream, myIDEFacade.getCacheDir(), TREE_STATE_FILE, treeState);
+    XStreamUtil.toXml(myXStream, myIDEFacade.getCacheDir(), TREE_STATE_FILE, treeState);
   }
 
   private void readState() {
-    TreeState treeState = (TreeState) XMLUtil.fromXml(myXStream, myIDEFacade.getCacheDir(), TREE_STATE_FILE, false);
+    TreeState treeState = (TreeState) XStreamUtil.fromXml(myXStream, myIDEFacade.getCacheDir(), TREE_STATE_FILE, false);
     if (treeState != null) {
       treeState.restore(myTree);
     }
@@ -377,7 +363,7 @@ public class UserListComponentImpl implements UserListComponent, Disposable {
 
     private boolean problem(final String resourceCode) {
       EdtExecutorService.getScheduledExecutorInstance().schedule(() -> Callout.showText(myTree, myTree.getEditingPath(), Callout.SOUTH_WEST,
-                                                                                    StringUtil.getMsg(resourceCode)), (long)100, TimeUnit.MILLISECONDS);
+                                                                                        CommunicatorStrings.getMsg(resourceCode)), (long)100, TimeUnit.MILLISECONDS);
       return false;
     }
 

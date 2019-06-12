@@ -22,6 +22,7 @@
 
   <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.platform</depends>
+  <depends optional="true">com.intellij.modules.java</depends>
 
   <extensions defaultExtensionNs="org.jetbrains">
     <customPortServerManager implementation="jetbrains.communicator.p2p.P2PTransport$P2PCustomPortServerManager"/>

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramVfsResolver;
@@ -14,7 +15,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -72,7 +73,7 @@ public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
   private static String combineWithModuleName(@NotNull final PsiElement element, @Nullable final String qName) {
     if (qName == null) return null;
     if (ApplicationManager.getApplication().isUnitTestMode()) return qName;
-    Module module = ModuleUtil.findModuleForPsiElement(element);
+    Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (module != null) {
       return module.getName() + SEPARATOR + qName;
     }

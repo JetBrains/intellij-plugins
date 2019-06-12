@@ -36,7 +36,6 @@ import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
@@ -71,7 +70,7 @@ public class FrameworkDefinitionsEditorComponent {
   public FrameworkDefinitionsEditorComponent() {
     myModel = new DefaultListModel<>();
     myBus = ApplicationManager.getApplication().getMessageBus();
-    myModified = ContainerUtil.newArrayList();
+    myModified = new ArrayList<>();
 
     myFrameworkInstances = new JBList(myModel);
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));

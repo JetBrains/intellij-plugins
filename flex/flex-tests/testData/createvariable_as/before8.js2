@@ -1,4 +1,4 @@
-// "Create Field 'selectionManager'" "false"
+// "Create field 'selectionManager'" "false"
 interface IA {}
 class A {
   public function getSelectionManager():ISelectionManager {

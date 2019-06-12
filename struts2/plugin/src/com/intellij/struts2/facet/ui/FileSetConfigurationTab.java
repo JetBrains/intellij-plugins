@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 The authors
+ * Copyright 2019 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -207,7 +207,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         })
         .addExtraAction(AnActionButton.fromAction(actionManager.createExpandAllAction(myTreeExpander, myTree)))
         .addExtraAction(AnActionButton.fromAction(actionManager.createCollapseAllAction(myTreeExpander, myTree)))
-        .addExtraAction(new AnActionButton("Open Struts 2 plugin documentation…", AllIcons.Actions.Help) {
+        .addExtraAction(new AnActionButton("Open Struts 2 Plugin Documentation", AllIcons.Actions.Help) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             BrowserUtil.browse("https://confluence.jetbrains.com/pages/viewpage.action?pageId=35367");

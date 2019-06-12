@@ -8,7 +8,7 @@ import icons.IdeTalkCoreIcons;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import javax.swing.*;
 
@@ -32,7 +32,7 @@ public class CreateGroupCommand implements NamedUserCommand {
   @Override
   public void execute() {
     String groupName = myIdeFacade.getMessageLine(
-        StringUtil.getMsg("CreateGroupCommand.input"), StringUtil.getMsg("CreateGroupCommand.input.title"));
+      CommunicatorStrings.getMsg("CreateGroupCommand.input"), CommunicatorStrings.getMsg("CreateGroupCommand.input.title"));
     myUserModel.addGroup(groupName);
   }
 
@@ -43,6 +43,6 @@ public class CreateGroupCommand implements NamedUserCommand {
 
   @Override
   public String getName() {
-    return StringUtil.getMsg("CreateGroupCommand.text");
+    return CommunicatorStrings.getMsg("CreateGroupCommand.text");
   }
 }

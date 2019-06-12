@@ -5,10 +5,7 @@ import com.intellij.tapestry.core.java.IJavaClassType;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JavaClassTypeCoercionValidator implements Command {
 
@@ -19,7 +16,7 @@ public class JavaClassTypeCoercionValidator implements Command {
     private static final Map<String, List<String>> CLASS_COERCION_MAP = new HashMap<>();
 
     static {
-        CLASS_COERCION_MAP.put(CommonClassNames.JAVA_LANG_STRING, Arrays.asList(
+        CLASS_COERCION_MAP.put(CommonClassNames.JAVA_LANG_STRING, Collections.singletonList(
           CommonClassNames.JAVA_LANG_OBJECT));
 
         CLASS_COERCION_MAP.put("java.lang.Double", Arrays.asList(
@@ -28,12 +25,12 @@ public class JavaClassTypeCoercionValidator implements Command {
                 "java.lang.Long",
                 "java.lang.Float"));
 
-        CLASS_COERCION_MAP.put("java.math.BigDecimal", Arrays.asList(
-                CommonClassNames.JAVA_LANG_STRING
+        CLASS_COERCION_MAP.put("java.math.BigDecimal", Collections.singletonList(
+          CommonClassNames.JAVA_LANG_STRING
         ));
 
-        CLASS_COERCION_MAP.put("java.math.BigInteger", Arrays.asList(
-                CommonClassNames.JAVA_LANG_STRING
+        CLASS_COERCION_MAP.put("java.math.BigInteger", Collections.singletonList(
+          CommonClassNames.JAVA_LANG_STRING
         ));
 
         CLASS_COERCION_MAP.put("java.lang.Long", Arrays.asList(
@@ -42,39 +39,39 @@ public class JavaClassTypeCoercionValidator implements Command {
                 "org.apache.tapestry5.ioc.util.TimeInterval"
         ));
 
-        CLASS_COERCION_MAP.put("java.lang.Byte", Arrays.asList(
-                "java.lang.Long"
+        CLASS_COERCION_MAP.put("java.lang.Byte", Collections.singletonList(
+          "java.lang.Long"
         ));
 
-        CLASS_COERCION_MAP.put("java.lang.Short", Arrays.asList(
-                "java.lang.Long"
+        CLASS_COERCION_MAP.put("java.lang.Short", Collections.singletonList(
+          "java.lang.Long"
         ));
 
-        CLASS_COERCION_MAP.put("java.lang.Integer", Arrays.asList(
-                "java.lang.Long"
+        CLASS_COERCION_MAP.put("java.lang.Integer", Collections.singletonList(
+          "java.lang.Long"
         ));
 
-        CLASS_COERCION_MAP.put("java.lang.Float", Arrays.asList(
-                "java.lang.Double"
+        CLASS_COERCION_MAP.put("java.lang.Float", Collections.singletonList(
+          "java.lang.Double"
         ));
 
-        CLASS_COERCION_MAP.put("java.lang.Boolean", Arrays.asList(
+        CLASS_COERCION_MAP.put("java.lang.Boolean", Collections.singletonList(
           CommonClassNames.JAVA_LANG_OBJECT
         ));
 
-        CLASS_COERCION_MAP.put(CommonClassNames.JAVA_UTIL_LIST, Arrays.asList(
+        CLASS_COERCION_MAP.put(CommonClassNames.JAVA_UTIL_LIST, Collections.singletonList(
           CommonClassNames.JAVA_LANG_OBJECT
         ));
 
-        CLASS_COERCION_MAP.put("org.apache.tapestry5.grid.GridDataSource", Arrays.asList(
+        CLASS_COERCION_MAP.put("org.apache.tapestry5.grid.GridDataSource", Collections.singletonList(
           CommonClassNames.JAVA_UTIL_LIST
         ));
 
-        CLASS_COERCION_MAP.put("org.apache.tapestry5.ioc.util.TimeInterval", Arrays.asList(
+        CLASS_COERCION_MAP.put("org.apache.tapestry5.ioc.util.TimeInterval", Collections.singletonList(
           CommonClassNames.JAVA_LANG_STRING
         ));
 
-        CLASS_COERCION_MAP.put("java.text.DateFormat", Arrays.asList(
+        CLASS_COERCION_MAP.put("java.text.DateFormat", Collections.singletonList(
           CommonClassNames.JAVA_LANG_STRING
         ));
     }

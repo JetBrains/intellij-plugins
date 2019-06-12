@@ -94,7 +94,7 @@ public class AngularJSProcessor {
 
   private static void processComponentInitializer(@NotNull final XmlFile file,
                                                   @NotNull JSObjectLiteralExpression componentInitializer,
-                                                  @NotNull Collection<JSPsiElementBase> result) {
+                                                  @NotNull Collection<? super JSPsiElementBase> result) {
     result.add(new AngularJSLocalImplicitElement(file, componentInitializer));
   }
 
@@ -167,7 +167,7 @@ public class AngularJSProcessor {
   }
 
   private static void contributeBindingProperties(@Nullable JSProperty bindingsProperty,
-                                                  @NotNull Consumer<JSRecordType.PropertySignature> processor) {
+                                                  @NotNull Consumer<? super JSRecordType.PropertySignature> processor) {
     if (bindingsProperty != null && (bindingsProperty.getValue() instanceof JSObjectLiteralExpression)) {
       JSObjectLiteralExpression bindings = (JSObjectLiteralExpression)bindingsProperty.getValue();
       for (JSProperty binding : bindings.getProperties()) {
@@ -179,7 +179,7 @@ public class AngularJSProcessor {
   }
 
   private static void contributeControllerProperties(@Nullable JSProperty controllerProperty,
-                                                     @NotNull Consumer<JSRecordType.PropertySignature> processor) {
+                                                     @NotNull Consumer<? super JSRecordType.PropertySignature> processor) {
     if (controllerProperty != null && controllerProperty.getValue() != null) {
       PsiElement controller = controllerProperty.getValue();
       if (controller instanceof JSLiteralExpression && ((JSLiteralExpression)controller).isQuotedLiteral()) {
@@ -242,7 +242,7 @@ public class AngularJSProcessor {
     return result.get();
   }
 
-  private static void processDocument(XmlDocument document, final Collection<JSPsiElementBase> result) {
+  private static void processDocument(XmlDocument document, final Collection<? super JSPsiElementBase> result) {
     if (document == null) return;
     final AngularInjectedFilesVisitor visitor = new AngularInjectedFilesVisitor(result);
 
@@ -315,9 +315,9 @@ public class AngularJSProcessor {
   }
 
   private static class AngularInjectedFilesVisitor extends JSResolveUtil.JSInjectedFilesVisitor {
-    private final Collection<JSPsiElementBase> myResult;
+    private final Collection<? super JSPsiElementBase> myResult;
 
-    AngularInjectedFilesVisitor(Collection<JSPsiElementBase> result) {
+    AngularInjectedFilesVisitor(Collection<? super JSPsiElementBase> result) {
       myResult = result;
     }
 

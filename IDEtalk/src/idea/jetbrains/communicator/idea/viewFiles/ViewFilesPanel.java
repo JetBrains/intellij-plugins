@@ -19,7 +19,7 @@ import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.idea.IDEAFacade;
 import jetbrains.communicator.util.KirTree;
 import jetbrains.communicator.util.KirTreeNode;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.TreeUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +38,7 @@ import java.util.List;
  * @author Kir
  */
 class ViewFilesPanel extends JPanel implements DataProvider {
-  static final String NON_PROJECT_NODE = StringUtil.getMsg("non.project.files");
+  static final String NON_PROJECT_NODE = CommunicatorStrings.getMsg("non.project.files");
 
   private final FileTypeManager myFileTypeManager;
   private final IDEFacade myIdeFacade;
@@ -123,7 +123,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
   }
 
   private void addRefreshAction(DefaultActionGroup actionGroup) {
-    actionGroup.add(new AnAction(StringUtil.getMsg("refresh.file.list"), "", AllIcons.Actions.Refresh) {
+    actionGroup.add(new AnAction(CommunicatorStrings.getMsg("refresh.file.list"), "", AllIcons.Actions.Refresh) {
       @Override
       public void actionPerformed(@NotNull AnActionEvent e) {
         refreshData(myUser, myUser.getProjectsData(myIdeFacade));
@@ -133,9 +133,9 @@ class ViewFilesPanel extends JPanel implements DataProvider {
 
   private void addToggleReadOnlyAction(DefaultActionGroup actionGroup) {
     actionGroup.add(new ToggleAction(
-        StringUtil.getMsg("idea.show_read_only.text"),
-        StringUtil.getMsg("idea.show_read_only.description"),
-        AllIcons.Ide.Readonly
+      CommunicatorStrings.getMsg("idea.show_read_only.text"),
+      CommunicatorStrings.getMsg("idea.show_read_only.description"),
+      AllIcons.Ide.Readonly
         ) {
       @Override
       public boolean isSelected(@NotNull AnActionEvent e) {

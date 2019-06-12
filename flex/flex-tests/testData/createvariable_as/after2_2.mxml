@@ -1,4 +1,4 @@
-<!-- "Create Set Property 'aaa'" "true" -->
+<!-- "Create 'set' property 'aaa'" "true" -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
 <mx:Script><![CDATA[
 aaa = 1

@@ -2,7 +2,6 @@
 package org.jetbrains.vuejs.service;
 
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.lang.javascript.JSTestUtils;
 import com.intellij.lang.javascript.service.JSLanguageService;
 import com.intellij.lang.javascript.service.JSLanguageServiceBase;
 import com.intellij.lang.javascript.service.JSLanguageServiceProvider;
@@ -12,12 +11,12 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.vuejs.typescript.service.VueTypeScriptService;
+import org.jetbrains.vuejs.lang.typescript.service.VueTypeScriptService;
 import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static org.jetbrains.vuejs.language.VueTestUtilKt.vueRelativeTestDataPath;
+import static org.jetbrains.vuejs.lang.VueTestUtilKt.vueRelativeTestDataPath;
 
 @RunWith(TypeScriptServiceTestRunner.class)
 public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
@@ -64,10 +63,10 @@ public class VueTypeScriptServiceTest extends TypeScriptServiceTestBase {
 
   @TypeScriptVersion(TypeScriptVersions.TS28)
   public void testSimpleCompletion() throws Exception {
-    JSTestUtils.testES6(getProject(), () -> checkBaseStringQualifiedCompletionWithTemplates(() -> {
+    checkBaseStringQualifiedCompletionWithTemplates(() -> {
       doTestWithCopyDirectory();
       return myFixture.complete(CompletionType.BASIC);
-    }));
+    });
   }
 
   @TypeScriptVersion(TypeScriptVersions.TS28)

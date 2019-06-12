@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.javascript.flex.refactoring.extractSuper;
 
 import com.intellij.javascript.flex.refactoring.RenameMoveUtils;
@@ -35,7 +36,6 @@ import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.UserDataHolderBase;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -107,7 +107,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       return UsageInfo.EMPTY_ARRAY; // user doesn't want to update usages
     }
 
-    final Collection<JSReferenceExpression> candidates = Collections.synchronizedCollection(new ArrayList<JSReferenceExpression>());
+    final Collection<JSReferenceExpression> candidates = Collections.synchronizedCollection(new ArrayList<>());
     ReferencesSearch.search(mySourceClass, mySourceClass.getUseScope()).forEach(psiReference -> {
       PsiElement element = psiReference.getElement();
       if (!(element instanceof JSReferenceExpression)) {
@@ -129,7 +129,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       util = new JSConvertReferencesToSuperUtil(myMembersToMove, myMembersAfterMove, myMode, mySourceClass, myTargetClass);
 
     final Map<PsiElement, JSConvertReferencesToSuperUtil.Status> variablesResults = new HashMap<>();
-    final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<UsageInfo>());
+    final Collection<UsageInfo> result = Collections.synchronizedCollection(new ArrayList<>());
     for (JSReferenceExpression candidate : candidates) {
       if (util.canTurnReferenceToSuper(candidate, variablesResults) ^ myMode == JSExtractSuperMode.RenameImplementation) {
         result.add(new UsageInfo((PsiElement)candidate));
@@ -451,7 +451,7 @@ public class FlexExtractSuperProcessor extends BaseRefactoringProcessor {
       Document document;
       if (mySourceClass instanceof XmlBackedJSClassImpl) {
         VirtualFile vFile = sourceFile.getVirtualFile();
-        vFile.rename(this, FileUtil.getNameWithoutExtension(vFile.getName()) +
+        vFile.rename(this, FileUtilRt.getNameWithoutExtension(vFile.getName()) +
                            "." + JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION);
         document = FileDocumentManager.getInstance().getDocument(vFile);
       }

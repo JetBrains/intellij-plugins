@@ -1,16 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.osgi.bnd.run;
 
 import aQute.bnd.build.ProjectLauncher;
@@ -39,11 +27,11 @@ import com.intellij.openapi.util.io.FileAttributes;
 import com.intellij.openapi.util.io.FileSystemUtil;
 import com.intellij.task.ProjectTaskContext;
 import com.intellij.task.ProjectTaskResult;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
@@ -53,7 +41,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
   private static final Logger LOG = Logger.getInstance(BndLaunchState.class);
   private static final Pair<Long, Long> MISSING_BUNDLE = pair(0L, 0L);
 
-  private static final Map<String, NotificationGroup> ourNotificationGroups = ContainerUtil.newHashMap();
+  private static final Map<String, NotificationGroup> ourNotificationGroups = new HashMap<>();
 
   private final BndRunConfigurationBase.Launch myConfiguration;
   private final Project myProject;
@@ -99,7 +87,7 @@ public class BndLaunchState extends JavaCommandLineState implements CompilationS
       throw new CantRunException(message("bnd.run.configuration.cannot.run", runFile, BndLaunchUtil.message(t)));
     }
 
-    myBundleStamps = ContainerUtil.newHashMap();
+    myBundleStamps = new HashMap<>();
     bundlesChanged();
   }
 

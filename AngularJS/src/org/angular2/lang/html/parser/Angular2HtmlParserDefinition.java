@@ -11,16 +11,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.html.HtmlFileImpl;
 import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.IStubFileElementType;
 import org.angular2.lang.Angular2EmbeddedContentTokenType;
-import org.angular2.lang.html.Angular2HtmlLanguage;
+import org.angular2.lang.html.Angular2HtmlFileElementType;
 import org.angular2.lang.html.XmlASTWrapperPsiElement;
 import org.angular2.lang.html.lexer.Angular2HtmlLexer;
+import org.angular2.lang.html.stub.Angular2HtmlNgContentSelectorElementType;
 import org.jetbrains.annotations.NotNull;
 
 public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
-
-  static final IFileElementType HTML_FILE = new IStubFileElementType(Angular2HtmlLanguage.INSTANCE);
 
   @NotNull
   @Override
@@ -36,12 +34,12 @@ public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
 
   @Override
   public IFileElementType getFileNodeType() {
-    return HTML_FILE;
+    return Angular2HtmlFileElementType.INSTANCE;
   }
 
   @Override
   public PsiFile createFile(FileViewProvider viewProvider) {
-    return new HtmlFileImpl(viewProvider, HTML_FILE);
+    return new HtmlFileImpl(viewProvider, Angular2HtmlFileElementType.INSTANCE);
   }
 
   @NotNull
@@ -49,6 +47,9 @@ public class Angular2HtmlParserDefinition extends HTMLParserDefinition {
   public PsiElement createElement(ASTNode node) {
     if (node.getElementType() instanceof Angular2EmbeddedContentTokenType) {
       return new XmlASTWrapperPsiElement(node);
+    }
+    if (node.getElementType() instanceof Angular2HtmlNgContentSelectorElementType) {
+      return ((Angular2HtmlNgContentSelectorElementType)node.getElementType()).createPsi(node);
     }
     return super.createElement(node);
   }

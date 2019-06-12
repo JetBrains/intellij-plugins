@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.errorTreeView;
 
 import com.intellij.icons.AllIcons;
@@ -34,7 +34,7 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       final DartProblem problem = (DartProblem)value;
       setText(problem.getErrorMessage().replaceAll("(\n)+", " "));
 
-      setToolTipText(generateToolTipText(problem.getErrorMessage(), problem.getCorrectionMessage()));
+      setToolTipText(DartProblem.generateTooltipText(problem.getErrorMessage(), problem.getCorrectionMessage(), problem.getUrl()));
 
       final String severity = problem.getSeverity();
       setIcon(AnalysisErrorSeverity.ERROR.equals(severity)
@@ -46,13 +46,6 @@ class DartProblemsTableModel extends ListTableModel<DartProblem> {
       return label;
     }
   };
-
-  @NotNull
-  private static String generateToolTipText(@Nullable final String message, @Nullable final String correction) {
-    String messageSanitized = StringUtil.notNullize(message).replaceAll("\\\\n", "\n");
-    String correctionSanitized = StringUtil.notNullize(correction).replaceAll("\\\\n", "\n");
-    return correctionSanitized.isEmpty() ? messageSanitized : messageSanitized + "\n\n" + correctionSanitized;
-  }
 
   private static final TableCellRenderer LOCATION_RENDERER = new DefaultTableCellRenderer() {
     @Override

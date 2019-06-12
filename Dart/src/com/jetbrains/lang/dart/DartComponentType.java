@@ -18,7 +18,7 @@ public enum DartComponentType {
                                                                               : getIcon();
     }
   },
-  FUNCTION(AllIcons.Nodes.Function) {
+  FUNCTION(AllIcons.Nodes.Lambda) {
     @Override
     public Icon getIcon(@NotNull DartComponent component) {
       if (component.isGetter()) {
