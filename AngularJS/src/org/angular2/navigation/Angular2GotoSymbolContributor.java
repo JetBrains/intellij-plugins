@@ -6,10 +6,8 @@ import com.intellij.lang.javascript.psi.stubs.JSElementIndexingData;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.navigation.ChooseByNameContributorEx;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StubIndex;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.indexing.FindSymbolParameters;
 import com.intellij.util.indexing.IdFilter;
@@ -28,17 +26,6 @@ import java.util.stream.Stream;
 import static org.angular2.entities.Angular2EntitiesProvider.getDirective;
 
 public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx {
-  @NotNull
-  @Override
-  public String[] getNames(Project project, boolean includeNonProjectItems) {
-    return ArrayUtil.EMPTY_STRING_ARRAY;
-  }
-
-  @NotNull
-  @Override
-  public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
-    return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY;
-  }
 
   @Override
   public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
@@ -93,7 +80,7 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
 
   private static boolean processSelectors(@NotNull String name,
                                           @NotNull List<Angular2DirectiveSelector.SimpleSelectorWithPsi> selectors,
-                                          @NotNull Processor<NavigationItem> processor) {
+                                          @NotNull Processor<? super NavigationItem> processor) {
 
     for (Angular2DirectiveSelector.SimpleSelectorWithPsi selector : selectors) {
       if (!processSelectorElement(name, selector.getElement(), processor)) {
@@ -113,7 +100,7 @@ public class Angular2GotoSymbolContributor implements ChooseByNameContributorEx 
 
   private static boolean processSelectorElement(@NotNull String name,
                                                 @Nullable Angular2DirectiveSelectorPsiElement element,
-                                                @NotNull Processor<NavigationItem> processor) {
+                                                @NotNull Processor<? super NavigationItem> processor) {
     return element == null || !name.equals(element.getName()) || processor.process(element);
   }
 }

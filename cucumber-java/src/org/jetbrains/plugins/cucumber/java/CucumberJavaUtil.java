@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.codeInsight.AnnotationUtil;
@@ -20,7 +21,6 @@ import com.intellij.psi.util.ClassUtil;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.CommonProcessors;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.MapParameterTypeManager;
@@ -275,7 +275,7 @@ public class CucumberJavaUtil {
 
   public static void addGlue(String glue, Set<String> glues) {
     boolean covered = false;
-    final Set<String> toRemove = ContainerUtil.newHashSet();
+    final Set<String> toRemove = new HashSet<>();
     for (String existedGlue : glues) {
       if (glue.startsWith(existedGlue + ".")) {
         covered = true;

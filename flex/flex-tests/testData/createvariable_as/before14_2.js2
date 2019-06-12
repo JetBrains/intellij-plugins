@@ -1,4 +1,4 @@
-// "Create Field 'aaa'" "true"
+// "Create field 'aaa'" "true"
 class A___2 {
   function A___2() {
     aa<caret>a--;

@@ -93,7 +93,7 @@ public class DartExceptionBreakpointType
       final JPanel panel = new JPanel(new BorderLayout());
       panel.add(myBreakOnUncaughtExceptions, BorderLayout.NORTH);
       panel.add(myBreakOnAllExceptions, BorderLayout.SOUTH);
-      panel.setBorder(IdeBorderFactory.createTitledBorder("Breaking policy", true));
+      panel.setBorder(IdeBorderFactory.createTitledBorder("Breaking policy"));
 
       return panel;
     }

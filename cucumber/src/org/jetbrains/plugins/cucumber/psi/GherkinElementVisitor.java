@@ -3,12 +3,13 @@ package org.jetbrains.plugins.cucumber.psi;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.impl.*;
 
-/**
- * @author yole
- */
 public abstract class GherkinElementVisitor extends PsiElementVisitor {
   public void visitFeature(GherkinFeature feature) {
     visitElement(feature);
+  }
+
+  public void visitRule(GherkinRule rule) {
+    visitElement(rule);
   }
 
   public void visitFeatureHeader(GherkinFeatureHeaderImpl header) {
@@ -24,7 +25,6 @@ public abstract class GherkinElementVisitor extends PsiElementVisitor {
   }
 
   public void visitExamplesBlock(GherkinExamplesBlockImpl block) {
-
     visitElement(block);
   }
 
@@ -56,7 +56,7 @@ public abstract class GherkinElementVisitor extends PsiElementVisitor {
     visitElement(cell);
   }
 
-   public void visitPystring(final GherkinPystring phstring) {
+  public void visitPystring(final GherkinPystring phstring) {
     visitElement(phstring);
   }
 }

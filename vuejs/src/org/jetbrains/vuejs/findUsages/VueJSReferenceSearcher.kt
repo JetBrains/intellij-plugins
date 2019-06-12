@@ -10,8 +10,8 @@ import com.intellij.psi.search.SearchRequestCollector
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.PairProcessor
 import com.intellij.util.Processor
-import org.jetbrains.vuejs.codeInsight.findModule
 import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.refactoring.VueRefactoringUtils
 
 class VueJSReferenceSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>(true) {

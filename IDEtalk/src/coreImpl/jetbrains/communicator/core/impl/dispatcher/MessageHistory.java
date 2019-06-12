@@ -22,7 +22,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.util.TimeUtil;
-import jetbrains.communicator.util.XMLUtil;
+import jetbrains.communicator.util.XStreamUtil;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +61,7 @@ class MessageHistory {
 
     getHistoryDir().mkdir();
 
-    myXStream = XMLUtil.createXStream();
+    myXStream = XStreamUtil.createXStream();
     setupXStream();
 
     loadHistorySince(new Date());
@@ -157,7 +157,7 @@ class MessageHistory {
       try {
         Date date = DATE_FORMAT.parse(historyFile);
         if (!date.before(since) && !myHistory.hasHistorySince(date)) {
-          DayHistory dayHistory = (DayHistory)XMLUtil.fromXml(myXStream, myFacade.getCacheDir(), getFileNameForDate(date), false);
+          DayHistory dayHistory = (DayHistory)XStreamUtil.fromXml(myXStream, myFacade.getCacheDir(), getFileNameForDate(date), false);
           if (dayHistory != null) {
             dayHistory.copyTo(myHistory);
           }
@@ -196,7 +196,7 @@ class MessageHistory {
     for (Date date : map.keySet()) {
       DayHistory dayHistory = map.get(date);
       try {
-        XMLUtil.toXml(myXStream, myFacade.getCacheDir(), getFileNameForDate(date), dayHistory);
+        XStreamUtil.toXml(myXStream, myFacade.getCacheDir(), getFileNameForDate(date), dayHistory);
       } catch (RuntimeException e) {
         LOG.error("Unable to save dayHistory for " + date + ": " + dayHistory, e);
       }

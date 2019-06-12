@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupportProvider<TapestryFacet> {
 
@@ -36,7 +35,7 @@ public class TapestryFrameworkSupportProvider extends FacetBasedFrameworkSupport
 
   protected static void setupConfiguration(TapestryFacetConfiguration conf, Module module, final TapestryVersion version) {
     conf.setVersion(version);
-    if(StringUtil.isEmpty(conf.getFilterName())) conf.setFilterName(module.getName().toLowerCase(Locale.US));
+    if(StringUtil.isEmpty(conf.getFilterName())) conf.setFilterName(StringUtil.toLowerCase(module.getName()));
     if(StringUtil.isEmpty(conf.getApplicationPackage())) conf.setApplicationPackage("com.app");
   }
 

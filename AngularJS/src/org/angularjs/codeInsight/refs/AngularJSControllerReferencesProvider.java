@@ -57,8 +57,8 @@ public class AngularJSControllerReferencesProvider extends PsiReferenceProvider 
       int i = 0;
       for (String controller : controllers) {
         final LookupElement item = JSLookupUtilImpl.createPrioritizedLookupItem(null, controller,
-                                                                                JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY,
-                                                                                false, false);
+                                                                                JSLookupPriority.LOCAL_SCOPE_MAX_PRIORITY
+        );
         result[i] = item;
         i++;
       }

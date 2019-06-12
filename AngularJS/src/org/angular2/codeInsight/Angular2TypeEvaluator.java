@@ -151,6 +151,12 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
   }
 
   @Override
+  protected boolean processFunction(@NotNull JSFunction function) {
+    return Angular2LibrariesHacks.hackSlicePipeType(this, this.myContext, function)
+           || super.processFunction(function);
+  }
+
+  @Override
   protected void processThisQualifierInExecutionScope(@NotNull JSThisExpression thisQualifier, PsiElement thisScope) {
     if (thisScope instanceof Angular2EmbeddedExpression) {
       TypeScriptClass componentClass = Angular2IndexingHandler.findComponentClass(thisQualifier);
@@ -236,7 +242,7 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
     private BindingsTypeResolver(@NotNull XmlTag tag) {
       this(tag, new Angular2ApplicableDirectivesProvider(tag), t ->
         StreamEx.of(t.getAttributes())
-          .mapToEntry(attr -> Angular2AttributeNameParser.parse(attr.getName(), false),
+          .mapToEntry(attr -> Angular2AttributeNameParser.parse(attr.getName(), attr.getParent()),
                       Function.identity())
           .filterKeys(Angular2TypeEvaluator::isPropertyBindingAttribute)
           .mapValues(attribute -> doIfNotNull(Angular2Binding.get(attribute),
@@ -346,15 +352,16 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
           JSTypeComparingContextService.getProcessingContextWithCache(clazz);
         directive.getInputs().forEach(property -> {
           JSExpression inputExpression = inputsMap.get(property.getName());
-          if (inputExpression != null && property.getType() != null) {
-            JSLazyExpressionType inputType = new JSLazyExpressionType(inputExpression, true);
-            if (isAnyType(getApparentType(inputType.getOriginalType()))) {
+          JSType propertyType;
+          if (inputExpression != null && (propertyType = property.getType()) != null) {
+            JSPsiBasedTypeOfType inputType = new JSPsiBasedTypeOfType(inputExpression, true);
+            if (isAnyType(getApparentType(JSTypeWithIncompleteSubstitution.substituteCompletely(inputType)))) {
               // This workaround is needed, because many users expect to have ngForOf working with variable of type `any`.
               // This is not correct according to TypeScript inferring rules for generics, but it's better for Angular type
               // checking to be less strict here. Additionally, if `any` type is passed to e.g. async pipe it's going to be resolved
               // with `null`, so we need to check for `null` and `undefined` as well
               JSAnyType anyType = JSAnyType.get(inputType.getSource());
-              expandAndOptimizeTypeRecursive(property.getType()).accept(new JSRecursiveTypeVisitor(true) {
+              expandAndOptimizeTypeRecursive(propertyType).accept(new JSRecursiveTypeVisitor(true) {
                 @Override
                 public void visitJSType(@NotNull JSType type) {
                   if (type instanceof JSGenericParameterType) {
@@ -366,8 +373,8 @@ public class Angular2TypeEvaluator extends TypeScriptTypeEvaluator {
             }
             else {
               JSGenericTypesEvaluatorBase.matchGenericTypes(new JSGenericMappings(genericArguments), processingContext,
-                                                            inputType, property.getType());
-              JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(property.getType()), null, null);
+                                                            inputType, propertyType);
+              JSGenericTypesEvaluatorBase.widenInferredTypes(genericArguments, Collections.singletonList(propertyType), null, null);
             }
           }
         });

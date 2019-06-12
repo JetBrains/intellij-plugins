@@ -800,7 +800,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
     return conn;
   }
 
-  private class MockUserFinder implements JabberUserFinder {
+  private static class MockUserFinder implements JabberUserFinder {
     private String myLog = "";
 
     @Override

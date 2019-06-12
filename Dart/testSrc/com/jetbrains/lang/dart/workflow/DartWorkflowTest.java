@@ -16,7 +16,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
   @Override
   protected void tearDown() throws Exception {
     try {
-      DartTestUtils.resetModuleRoots(myModule);
+      DartTestUtils.resetModuleRoots(getModule());
     }
     catch (Throwable e) {
       addSuppressedException(e);
@@ -27,7 +27,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testPackagesFolderExclusion() {
-    final String rootUrl = ModuleRootManager.getInstance(myModule).getContentEntries()[0].getUrl();
+    final String rootUrl = ModuleRootManager.getInstance(getModule()).getContentEntries()[0].getUrl();
 
     myFixture.addFileToProject("dir1/pubspec.yaml", "name: project1");
     myFixture.addFileToProject("dir1/lib/foo.txt", "");
@@ -66,7 +66,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
     myFixture.addFileToProject("dir2/example/web/sub/foo.dart", "");
 
     ApplicationManager.getApplication().runWriteAction(() -> {
-      final ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+      final ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
       final ContentEntry contentEntry = model.getContentEntries()[0];
       contentEntry.clearExcludeFolders();
       contentEntry.addExcludeFolder(rootUrl + "/dir1/someFolder");
@@ -82,9 +82,9 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
       model.commit();
     });
 
-    DartStartupActivity.excludeBuildAndPackagesFolders(myModule, pubspec2);
+    DartStartupActivity.excludeBuildAndPackagesFolders(getModule(), pubspec2);
 
-    assertSameElements(ModuleRootManager.getInstance(myModule).getContentEntries()[0].getExcludeFolderUrls(),
+    assertSameElements(ModuleRootManager.getInstance(getModule()).getContentEntries()[0].getExcludeFolderUrls(),
                        rootUrl + "/dir1/someFolder",
                        rootUrl + "/dir1/packages/project1",
                        rootUrl + "/dir1/web/packages",
@@ -95,9 +95,9 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
                        rootUrl + "/dir2/example/packages/oldProject3Name"
     );
 
-    DartStartupActivity.excludeBuildAndPackagesFolders(myModule, pubspec3);
+    DartStartupActivity.excludeBuildAndPackagesFolders(getModule(), pubspec3);
 
-    assertSameElements(ModuleRootManager.getInstance(myModule).getContentEntries()[0].getExcludeFolderUrls(),
+    assertSameElements(ModuleRootManager.getInstance(getModule()).getContentEntries()[0].getExcludeFolderUrls(),
                        rootUrl + "/dir1/someFolder",
                        rootUrl + "/dir1/packages/project1",
                        rootUrl + "/dir1/web/packages",
@@ -111,7 +111,7 @@ public class DartWorkflowTest extends DartCodeInsightFixtureTestCase {
   }
 
   public void testDartUrlResolver() {
-    final String rootPath = ModuleRootManager.getInstance(myModule).getContentRoots()[0].getPath();
+    final String rootPath = ModuleRootManager.getInstance(getModule()).getContentRoots()[0].getPath();
     final String rootUrl = "file:///" + StringUtil.trimLeading(rootPath, '/');
 
     myFixture.addFileToProject("pubspec.yaml", "name: RootProject");

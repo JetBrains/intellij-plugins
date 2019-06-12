@@ -1,7 +1,9 @@
 {
   "name": "prettier-idea",
   "version": "0.0.1",
-  "dependencies": {
-    "@types/prettier": "^1.15.1"
+  "devDependencies": {
+    "prettier": "^1.15.1",
+    "@types/prettier": "^1.15.1",
+    "@types/node": "^8.9.5"
   }
 }

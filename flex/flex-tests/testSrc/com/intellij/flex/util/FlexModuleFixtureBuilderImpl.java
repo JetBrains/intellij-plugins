@@ -6,6 +6,7 @@ import com.intellij.testFramework.fixtures.ModuleFixture;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.testFramework.fixtures.impl.ModuleFixtureBuilderImpl;
 import com.intellij.testFramework.fixtures.impl.ModuleFixtureImpl;
+import org.jetbrains.annotations.NotNull;
 
 public class FlexModuleFixtureBuilderImpl extends ModuleFixtureBuilderImpl<ModuleFixture> implements FlexModuleFixtureBuilder {
 
@@ -13,6 +14,7 @@ public class FlexModuleFixtureBuilderImpl extends ModuleFixtureBuilderImpl<Modul
     super(new FlexModuleType(), fixtureBuilder);
   }
 
+  @NotNull
   @Override
   protected ModuleFixture instantiateFixture() {
     return new ModuleFixtureImpl(this);

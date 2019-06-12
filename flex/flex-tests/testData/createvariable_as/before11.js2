@@ -1,4 +1,4 @@
-// "Create Field 'anyvalue'" "true"
+// "Create field 'anyvalue'" "true"
 package yyy {
 import xxx.B;
 

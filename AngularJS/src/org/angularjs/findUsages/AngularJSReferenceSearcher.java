@@ -13,16 +13,30 @@
 // limitations under the License.
 package org.angularjs.findUsages;
 
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSParameter;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptClass;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptField;
+import com.intellij.lang.javascript.psi.ecma6.TypeScriptFunction;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement;
 import com.intellij.openapi.application.QueryExecutorBase;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import org.angular2.entities.Angular2Component;
 import org.angular2.entities.Angular2EntitiesProvider;
 import org.angular2.entities.Angular2Pipe;
 import org.angularjs.codeInsight.DirectiveUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
   protected AngularJSReferenceSearcher() {
@@ -47,6 +61,21 @@ public class AngularJSReferenceSearcher extends QueryExecutorBase<PsiReference, 
         if (queryParameters.getEffectiveSearchScope().contains(el.getContainingFile().getViewProvider().getVirtualFile())) {
           queryParameters.getOptimizer().searchWord(pipe.getName(), queryParameters.getEffectiveSearchScope(),
                                                     true, el);
+        }
+      }
+    }
+    else if (element instanceof TypeScriptField
+             || element instanceof TypeScriptFunction
+             || (element instanceof JSParameter
+                 && Optional.ofNullable(PsiTreeUtil.getContextOfType(element, TypeScriptFunction.class))
+                   .map(JSFunction::isConstructor)
+                   .orElse(false))) {
+      String name = ((JSAttributeListOwner)element).getName();
+      if (name != null && ((JSQualifiedNamedElement)element).getAccessType() == JSAttributeList.AccessType.PRIVATE) {
+        Angular2Component component = Angular2EntitiesProvider.getComponent(PsiTreeUtil.getContextOfType(element, TypeScriptClass.class));
+        PsiFile template;
+        if (component != null && (template = component.getTemplateFile()) != null) {
+          queryParameters.getOptimizer().searchWord(name, GlobalSearchScope.fileScope(template), false, element);
         }
       }
     }

@@ -1,4 +1,4 @@
-// "Create Field 'aaa'" "true"
+// "Create field 'aaa'" "true"
 class B {
     internal var aaa<caret>:;
 }

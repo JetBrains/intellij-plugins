@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.inspections;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -7,11 +8,11 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -39,6 +40,8 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
     if (!isOnTheFly) return null;
 
     if (!(psiFile instanceof DartFile)) return null;
+
+    if (Registry.is("dart.projects.without.pubspec", false)) return null;
 
     if (DartPubActionBase.isInProgress()) return null;
 
@@ -162,10 +165,10 @@ public class DartOutdatedDependenciesInspection extends LocalInspectionTool {
   }
 
   private static class IgnoreWarningFix extends IntentionAndQuickFixAction {
-    @NotNull private final Set<String> myIgnoredPubspecPaths;
+    @NotNull private final Set<? super String> myIgnoredPubspecPaths;
     @NotNull private final String myPubspecPath;
 
-    IgnoreWarningFix(@NotNull final Set<String> ignoredPubspecPaths, @NotNull final String pubspecPath) {
+    IgnoreWarningFix(@NotNull final Set<? super String> ignoredPubspecPaths, @NotNull final String pubspecPath) {
       myIgnoredPubspecPaths = ignoredPubspecPaths;
       myPubspecPath = pubspecPath;
     }

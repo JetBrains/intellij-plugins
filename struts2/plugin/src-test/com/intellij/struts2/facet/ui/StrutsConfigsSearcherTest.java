@@ -39,13 +39,13 @@ public class StrutsConfigsSearcherTest extends BasicLightHighlightingTestCase {
   public void testSearch() {
     myFixture.copyFileToProject("struts.xml");
 
-    final StrutsConfigsSearcher configsSearcher = new StrutsConfigsSearcher(myModule);
+    final StrutsConfigsSearcher configsSearcher = new StrutsConfigsSearcher(getModule());
     configsSearcher.search();
 
     final MultiMap<Module, PsiFile> map = configsSearcher.getFilesByModules();
     assertEquals(1, map.size());
-    assertEquals(1, map.get(myModule).size()); // /src/struts.xml
-    assertEquals("struts.xml", map.get(myModule).iterator().next().getName());
+    assertEquals(1, map.get(getModule()).size()); // /src/struts.xml
+    assertEquals("struts.xml", map.get(getModule()).iterator().next().getName());
 
     final MultiMap<VirtualFile, PsiFile> configsInJars = configsSearcher.getJars();
     assertEquals(1, configsInJars.size()); // default-xxx.xml in struts2-core.jar

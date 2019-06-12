@@ -44,7 +44,7 @@ import java.util.jar.Manifest;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thomä</a>
  */
 public class CachingBundleInfoProvider {
-  private static final Map<String, Pair<Long, Manifest>> ourCache = new WeakHashMap<String, Pair<Long, Manifest>>();
+  private static final Map<String, Pair<Long, Manifest>> ourCache = new WeakHashMap<>();
 
   /**
    * True for .jar files or exploded directories with Bundle-SymbolicName in their manifests.

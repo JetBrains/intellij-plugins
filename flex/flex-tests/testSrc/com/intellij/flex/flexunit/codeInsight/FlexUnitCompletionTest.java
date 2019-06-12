@@ -32,7 +32,7 @@ public class FlexUnitCompletionTest extends BaseJSCompletionTestCase implements 
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   @JSTestOptions(value = {WithFlexSdk}, selectLookupItem = 0)

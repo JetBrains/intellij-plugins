@@ -48,7 +48,7 @@ Build and Test locally
 
  * "gradlew assemble" to build plugin in build/distributions
  * "gradlew test" to run tests
- * "gradlew runIdea" to run IntelliJ IDEA with CloudFormation plugin
+ * "gradlew runIde" to run IntelliJ IDEA with CloudFormation plugin
 
 Make a release
 --------------

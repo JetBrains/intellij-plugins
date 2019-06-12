@@ -79,7 +79,7 @@ public class FlexFindUsagesTest extends JSAbstractFindUsagesTest {
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testFindPrivateVarInMxml() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     PsiReference[] references = findElementAtCaret("21.mxml");
     assertEquals("Mxml component private variable", 3, references.length);
   }

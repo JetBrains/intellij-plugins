@@ -224,7 +224,7 @@ class AngularCliGenerateAction : DumbAwareAction() {
     val interpreter = NodeJsInterpreterManager.getInstance(project).interpreter ?: return
 
     val modules: MutableList<CompletionModuleInfo> = mutableListOf()
-    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, false, interpreter)
+    NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null)
 
     val module = modules.firstOrNull() ?: return
 

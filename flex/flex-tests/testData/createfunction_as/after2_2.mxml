@@ -1,4 +1,4 @@
-<!-- "Create Method 'foo22'" "true" -->
+<!-- "Create method 'foo22'" "true" -->
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" initialize="foo22('111')">
  <mx:Script><![CDATA[
     import mx.core.Application;

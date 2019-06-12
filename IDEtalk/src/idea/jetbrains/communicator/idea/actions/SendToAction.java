@@ -9,7 +9,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.CodePointer;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.idea.VFSUtil;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 
@@ -23,7 +23,7 @@ public class SendToAction extends BaseEditorPopup {
 
   @Override
   protected String getActionDescription(User user, VirtualFile file) {
-    return StringUtil.getMsg("code_pointer.description", user.getDisplayName());
+    return CommunicatorStrings.getMsg("code_pointer.description", user.getDisplayName());
   }
 
   @Override

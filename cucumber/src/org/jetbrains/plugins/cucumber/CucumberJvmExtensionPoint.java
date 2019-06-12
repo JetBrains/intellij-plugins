@@ -77,4 +77,8 @@ public interface CucumberJvmExtensionPoint {
   Object getDataObject(@NotNull Project project);
 
   Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile file);
+  
+  default boolean isGherkin6Supported(@NotNull Module module) {
+    return false;
+  }
 }

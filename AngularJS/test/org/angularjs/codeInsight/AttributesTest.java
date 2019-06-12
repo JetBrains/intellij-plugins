@@ -4,12 +4,9 @@ import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.codeInsight.daemon.impl.analysis.XmlUnboundNsPrefixInspection;
 import com.intellij.codeInspection.htmlInspections.HtmlUnknownAttributeInspection;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
-import com.intellij.lang.javascript.JSTestUtils;
-import com.intellij.lang.javascript.dialects.JSLanguageLevel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
-import com.intellij.util.ThrowableRunnable;
 import org.angularjs.AngularTestUtil;
 
 public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
@@ -98,9 +95,8 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     myFixture.testCompletion("custom.html", "custom.no.completion.after.html", "custom.js");
   }
 
-  public void testCustomAttributesTemplateCompletion() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, myFixture.getProject(),
-                                        (ThrowableRunnable<Exception>)() -> myFixture.testCompletion("custom.html", "custom.after.html", "custom_template.js", "angular.js"));
+  public void testCustomAttributesTemplateCompletion() {
+    myFixture.testCompletion("custom.html", "custom.after.html", "custom_template.js", "angular.js");
   }
 
   public void testCustomAttributesCompletion15() {
@@ -292,12 +288,10 @@ public class AttributesTest extends LightPlatformCodeInsightFixtureTestCase {
     }
   }
 
-  public void testSrcInjection() throws Exception {
-    JSTestUtils.testWithinLanguageLevel(JSLanguageLevel.ES6, getProject(), (ThrowableRunnable<Exception>)() -> {
-      myFixture.configureByFiles("srcInjection.html", "angular.js");
-      myFixture.enableInspections(HtmlUnknownTargetInspection.class);
-      myFixture.checkHighlighting();
-    });
+  public void testSrcInjection() {
+    myFixture.configureByFiles("srcInjection.html", "angular.js");
+    myFixture.enableInspections(HtmlUnknownTargetInspection.class);
+    myFixture.checkHighlighting();
   }
 
   public void testComponent15AttributesCompletion() {
