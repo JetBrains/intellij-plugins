@@ -1,4 +1,4 @@
-// "Create Method 'foo2'" "true"
+// "Create method 'foo2'" "true"
 class Sub7 {
 /**
 * Some Foo doc

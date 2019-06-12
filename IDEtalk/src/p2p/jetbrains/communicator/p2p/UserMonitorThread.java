@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2006 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package jetbrains.communicator.p2p;
 
 import com.intellij.util.Time;
@@ -21,7 +7,7 @@ import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
 import jetbrains.communicator.ide.ProgressIndicator;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.WaitFor;
 import org.apache.log4j.Logger;
 
@@ -50,7 +36,7 @@ public class UserMonitorThread extends Thread {
   private final long myWaitUserResponsesTimeout;
   private final long myScansTimeout;
 
-  private final Set<User> myAvailableUsers = Collections.synchronizedSet(new THashSet<User>());
+  private final Set<User> myAvailableUsers = Collections.synchronizedSet(new THashSet<>());
 
   private Thread myThread;
   private long myStartFindingAt;
@@ -298,7 +284,8 @@ public class UserMonitorThread extends Thread {
 
   private void setIndicatorText(ProgressIndicator progressIndicator) {
     int size = myAvailableUsers.size();
-    progressIndicator.setText(StringUtil.getMsg("p2p.finder.progressText", String.valueOf(size), StringUtil.getText("user", size)));
+    progressIndicator.setText(
+      CommunicatorStrings.getMsg("p2p.finder.progressText", String.valueOf(size), CommunicatorStrings.getText("user", size)));
   }
 
   boolean _isAlive() {

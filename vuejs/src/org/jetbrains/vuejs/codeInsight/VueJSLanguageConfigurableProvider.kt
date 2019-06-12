@@ -5,10 +5,15 @@ import com.intellij.lang.ASTFactory
 import com.intellij.lang.ASTNode
 import com.intellij.lang.javascript.JSTokenTypes
 import com.intellij.lang.javascript.psi.JSInheritedLanguagesConfigurableProvider
+import com.intellij.lang.javascript.psi.JSInitializerOwner
 import com.intellij.lang.javascript.psi.JSParenthesizedExpression
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.SyntaxTraverser
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueJSLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvider() {
   override fun isNeedToBeTerminated(element: PsiElement): Boolean = false
@@ -23,5 +28,12 @@ class VueJSLanguageConfigurableProvider : JSInheritedLanguagesConfigurableProvid
     val node = ASTFactory.leaf(JSTokenTypes.IDENTIFIER, text)
     CodeEditUtil.setNodeGenerated(node, true)
     return node
+  }
+
+  override fun createParameterOrVariableItem(destruct: String, parent: PsiElement): PsiElement? {
+    if (parent.language !is VueJSLanguage) return null
+    val file = PsiFileFactory.getInstance(parent.project).createFileFromText("q.vue", VueFileType.INSTANCE,
+                                                                             "<li v-for=\"$destruct in schedules\">")
+    return SyntaxTraverser.psiTraverser(file).filter(JSInitializerOwner::class.java).first()
   }
 }

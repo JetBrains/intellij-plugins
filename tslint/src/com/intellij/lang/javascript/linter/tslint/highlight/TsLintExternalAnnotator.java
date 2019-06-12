@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.linter.tslint.highlight;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -214,21 +215,21 @@ public final class TsLintExternalAnnotator extends JSLinterWithInspectionExterna
     final Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
     long documentModificationStamp = document != null ? document.getModificationStamp() : -1;
     IntentionAction fixAllFileIntention = new TsLintFileFixAction().asIntentionAction();
-    
+
     JSLinterStandardFixes fixes = new JSLinterStandardFixes();
     fixes.setErrorToIntentionConverter(errorBase -> {
       if (!(errorBase instanceof TsLinterError)) {
         return ContainerUtil.emptyList();
       }
       TsLinterError tslintError = (TsLinterError)errorBase;
-      ArrayList<IntentionAction> result = ContainerUtil.newArrayList();
+      ArrayList<IntentionAction> result = new ArrayList<>();
       if (tslintError.hasFix()) {
         if (document != null && isOnTheFly()) {
           result.add(new TsLintErrorFixAction(file, tslintError, documentModificationStamp));
         }
         result.add(fixAllFileIntention);
       }
-      else {
+      else if (!holder.isBatchMode()){
         ContainerUtil.addIfNotNull(result, TsLintSuppressionUtil.INSTANCE.getHighPrioritySuppressForLineAction(tslintError, documentModificationStamp));
       }
       return result;

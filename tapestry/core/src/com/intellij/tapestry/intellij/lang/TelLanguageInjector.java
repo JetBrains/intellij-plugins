@@ -14,7 +14,7 @@ import com.intellij.tapestry.lang.TelLanguage;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class TelLanguageInjector implements MultiHostInjector {
@@ -48,7 +48,7 @@ public class TelLanguageInjector implements MultiHostInjector {
       if (descriptor instanceof TapestryAttributeDescriptor) {
         TapestryAttributeDescriptor tapestryAttributeDescriptor = (TapestryAttributeDescriptor)descriptor;
         String prefix = tapestryAttributeDescriptor.getDefaultPrefix();
-        
+
         if (prefix != null && !"prop".equals(prefix)) {
           return;
         }
@@ -67,6 +67,6 @@ public class TelLanguageInjector implements MultiHostInjector {
   @NotNull
   @Override
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
-    return Arrays.asList(XmlAttributeValue.class);
+    return Collections.singletonList(XmlAttributeValue.class);
   }
 }

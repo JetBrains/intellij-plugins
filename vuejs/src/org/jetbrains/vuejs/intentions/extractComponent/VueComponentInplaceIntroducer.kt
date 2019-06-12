@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.intentions.extractComponent
 import com.intellij.lang.javascript.psi.JSEmbeddedContent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.application.ex.ApplicationManagerEx
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.command.impl.FinishMarkAction
 import com.intellij.openapi.command.impl.StartMarkAction
@@ -30,7 +29,7 @@ import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.ui.popup.list.ListPopupImpl
 import com.intellij.ui.popup.mock.MockConfirmation
 import org.jetbrains.vuejs.VueBundle
-import org.jetbrains.vuejs.codeInsight.VueInsertHandler.Companion.reformatElement
+import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler.Companion.reformatElement
 import java.util.*
 
 class VueComponentInplaceIntroducer(elementToRename: XmlTag,
@@ -209,8 +208,8 @@ class VueComponentInplaceIntroducer(elementToRename: XmlTag,
     }
     step.defaultOptionIndex = 0
 
-    val app = ApplicationManagerEx.getApplicationEx()
-    val listPopup: ListPopup = if (app == null || !app.isUnitTestMode) ListPopupImpl(step) else MockConfirmation(step, yesText)
+    val listPopup: ListPopup = if (!ApplicationManager.getApplication().isUnitTestMode) ListPopupImpl(step)
+    else MockConfirmation(step, yesText)
     listPopup.showInBestPositionFor(myEditor)
   }
 

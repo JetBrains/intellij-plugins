@@ -98,7 +98,7 @@ public class Angular2HtmlFilterLexer extends BaseFilterLexer {
         scanWordsInToken(UsageSearchContext.IN_STRINGS, false, false);
       }
       else if (ALL_ATTRIBUTES.contains(tokenType)) {
-        Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(myDelegate.getTokenText(), true);
+        Angular2AttributeNameParser.AttributeInfo info = Angular2AttributeNameParser.parse(myDelegate.getTokenText());
         if (info.type != Angular2AttributeType.REGULAR) {
           addOccurrenceInToken(UsageSearchContext.IN_CODE, getTokenText().lastIndexOf(info.name), info.name.length());
         }

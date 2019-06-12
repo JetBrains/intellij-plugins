@@ -16,6 +16,7 @@ public interface GherkinElementTypes {
   IElementType STEP = new GherkinElementType("step");
   IElementType STEP_PARAMETER = new GherkinElementType("step parameter");
   IElementType SCENARIO_OUTLINE = new GherkinElementType("scenario outline");
+  IElementType RULE = new GherkinElementType("rule");
   IElementType EXAMPLES_BLOCK = new GherkinElementType("examples block");
   IElementType TABLE = new GherkinElementType("table");
   IElementType TABLE_HEADER_ROW = new GherkinElementType("table header row");

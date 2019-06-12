@@ -1,68 +1,28 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.ide.runner;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.util.containers.ContainerUtil;
+import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.analyzer.DartAnalysisServerService;
 import com.jetbrains.lang.dart.analyzer.DartServerData;
 import com.jetbrains.lang.dart.ide.errorTreeView.DartProblemsView;
-import com.jetbrains.lang.dart.resolve.DartResolveScopeProvider;
+import com.jetbrains.lang.dart.util.PubspecYamlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
 import java.util.List;
 
 public class DartExecutionHelper {
-
-  private DartExecutionHelper() {
-  }
-
-  @SuppressWarnings("unused")
-  public static boolean hasIssues(@NotNull final Project project, @NotNull VirtualFile launchFile) {
-    return !getIssues(project, launchFile).isEmpty();
-  }
-
-  @NotNull
-  public static List<DartServerData.DartError> getIssues(@NotNull final Project project, @NotNull VirtualFile launchFile) {
-    return getIssues(project, launchFile, true);
-  }
-
-  @NotNull
-  public static List<DartServerData.DartError> getIssues(@NotNull final Project project,
-                                                         @NotNull VirtualFile launchFile,
-                                                         boolean onlyErrors) {
-    GlobalSearchScope scope = DartResolveScopeProvider.getDartScope(project, launchFile, true);
-    if (scope == null) {
-      return Collections.emptyList();
-    }
-
-    // Collect errors.
-    final DartAnalysisServerService analysisServerService = DartAnalysisServerService.getInstance(project);
-    List<DartServerData.DartError> errors = analysisServerService.getErrors(scope);
-    if (onlyErrors) {
-      errors = ContainerUtil.filter(errors, DartServerData.DartError::isError);
-    }
-
-    return errors;
-  }
+  private DartExecutionHelper() {}
 
   public static void displayIssues(@NotNull final Project project,
                                    @NotNull VirtualFile launchFile,
@@ -70,10 +30,12 @@ public class DartExecutionHelper {
                                    @Nullable Icon icon) {
     clearIssueNotifications(project);
 
-    List<DartServerData.DartError> errors = getIssues(project, launchFile);
-    if (errors.isEmpty()) {
-      return;
-    }
+    GlobalSearchScope scope = getScopeOfFilesThatMayAffectExecution(project, launchFile);
+    if (scope == null) return;
+
+    DartAnalysisServerService das = DartAnalysisServerService.getInstance(project);
+    List<DartServerData.DartError> errors = ContainerUtil.filter(das.getErrors(scope), DartServerData.DartError::isError);
+    if (errors.isEmpty()) return;
 
     // Show a notification on the dart analysis tool window.
     final DartProblemsView problemsView = DartProblemsView.getInstance(project);
@@ -83,5 +45,51 @@ public class DartExecutionHelper {
   public static void clearIssueNotifications(@NotNull final Project project) {
     final DartProblemsView problemsView = DartProblemsView.getInstance(project);
     problemsView.clearNotifications();
+  }
+
+  @Nullable
+  @VisibleForTesting
+  public static GlobalSearchScope getScopeOfFilesThatMayAffectExecution(@NotNull Project project, @NotNull VirtualFile file) {
+    if (file.getFileType() != DartFileType.INSTANCE) return null;
+
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+    if (!fileIndex.isInContent(file)) return null;
+
+    final Module module = fileIndex.getModuleForFile(file);
+    if (module == null) return null;
+
+    VirtualFile contextSubdir = null;
+    VirtualFile dir = file.getParent();
+
+    while (dir != null && fileIndex.isInContent(dir)) {
+      final VirtualFile pubspecFile = dir.findChild(PubspecYamlUtil.PUBSPEC_YAML);
+      if (pubspecFile != null) {
+        return getScopeForContextSubdir(module, pubspecFile, contextSubdir);
+      }
+      contextSubdir = dir;
+      dir = dir.getParent();
+    }
+
+    // no pubspec.yaml => return module content scope
+    return module.getModuleContentScope();
+  }
+
+  @NotNull
+  private static GlobalSearchScope getScopeForContextSubdir(@NotNull Module module,
+                                                            @NotNull VirtualFile pubspecFile,
+                                                            @Nullable VirtualFile contextSubdir) {
+    final Project project = module.getProject();
+    final VirtualFile dartRoot = pubspecFile.getParent();
+
+    if (contextSubdir == null) {
+      return GlobalSearchScopesCore.directoryScope(project, dartRoot, true);
+    }
+
+    GlobalSearchScope subdirScope = GlobalSearchScopesCore.directoryScope(project, contextSubdir, true);
+    VirtualFile libDir = dartRoot.findChild("lib");
+    if (libDir == null || libDir.equals(contextSubdir)) {
+      return subdirScope;
+    }
+    return subdirScope.union(GlobalSearchScopesCore.directoryScope(project, libDir, true));
   }
 }

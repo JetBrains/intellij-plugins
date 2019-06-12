@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.css;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.impl.util.table.CssColorValue;
 import com.intellij.xml.util.ColorMap;
@@ -50,13 +51,13 @@ public class FlexCssColorValue extends CssColorValue {
           return isInteger(text.substring(2));
         }
         else if (containsOnlyLetters(text)) {
-          return ColorMap.isStandardColor(text.toLowerCase());
+          return ColorMap.isStandardColor(StringUtil.toLowerCase(text));
         }
       }
       return false;
     }
     if (containsOnlyLetters(text)) {
-      return ColorMap.isStandardColor(text.toLowerCase());
+      return ColorMap.isStandardColor(StringUtil.toLowerCase(text));
     }
     return true;
   }

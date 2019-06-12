@@ -22,6 +22,8 @@ public interface Angular2MetadataElementTypes {
     new Angular2MetadataElementType<>("FUNCTION", Angular2MetadataFunctionStub::new, Angular2MetadataFunction::new);
   MetadataElementType<Angular2MetadataCallStub> CALL =
     new Angular2MetadataElementType<>("CALL", Angular2MetadataCallStub::new, Angular2MetadataCall::new);
+  MetadataElementType<Angular2MetadataSpreadStub> SPREAD =
+    new Angular2MetadataElementType<>("SPREAD", Angular2MetadataSpreadStub::new, Angular2MetadataSpread::new);
 
   MetadataElementType<Angular2MetadataClassStub> CLASS =
     new Angular2MetadataElementType<>("CLASS", Angular2MetadataClassStub::new, Angular2MetadataClass::new);

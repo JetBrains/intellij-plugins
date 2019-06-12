@@ -1,6 +1,6 @@
 package icons;
 
-import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.IconManager;
 
 import javax.swing.*;
 
@@ -10,7 +10,7 @@ import javax.swing.*;
  */
 public final class TapestryIcons {
   private static Icon load(String path) {
-    return IconLoader.getIcon(path, TapestryIcons.class);
+    return IconManager.getInstance().getIcon(path, TapestryIcons.class);
   }
 
   /** 16x16 */ public static final Icon Arrow_left = load("/com/intellij/tapestry/core/icons/arrow_left.png");

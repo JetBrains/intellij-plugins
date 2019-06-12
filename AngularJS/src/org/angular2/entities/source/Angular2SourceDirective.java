@@ -15,11 +15,13 @@ import com.intellij.lang.javascript.psi.types.TypeScriptTypeParser;
 import com.intellij.lang.javascript.psi.util.JSClassUtils;
 import com.intellij.lang.javascript.psi.util.JSStubBasedPsiTreeUtil;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValueProvider.Result;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.ObjectUtils;
 import one.util.streamex.StreamEx;
@@ -35,7 +37,9 @@ import java.util.stream.Stream;
 
 import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.util.ObjectUtils.doIfNotNull;
+import static com.intellij.util.containers.ContainerUtil.exists;
 import static org.angular2.entities.Angular2EntityUtils.TEMPLATE_REF;
+import static org.angular2.entities.Angular2EntityUtils.VIEW_CONTAINER_REF;
 
 public class Angular2SourceDirective extends Angular2SourceDeclaration implements Angular2Directive {
 
@@ -71,15 +75,20 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
         value = AstLoadingFilter.forceAllowTreeLoading(property.getContainingFile(),
                                                        () -> Angular2DecoratorUtil.getExpressionStringValue(property.getValue()));
       }
-      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), value, a -> new TextRange(0, 0)),
+      return CachedValueProvider.Result.create(new Angular2DirectiveSelectorImpl(getDecorator(), value, null),
                                                getDecorator());
     });
   }
 
   @Override
-  public boolean isTemplate() {
-    return getCachedValue(() -> CachedValueProvider.Result.create(
-      isTemplate(getTypeScriptClass()), getClassModificationDependencies()));
+  public boolean isStructuralDirective() {
+    Pair<Boolean, Boolean> matches = getConstructorParamsMatch();
+    return matches.first || matches.second;
+  }
+
+  @Override
+  public boolean isRegularDirective() {
+    return !getConstructorParamsMatch().first;
   }
 
   @NotNull
@@ -104,6 +113,15 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
   @Override
   public Collection<? extends Angular2DirectiveProperty> getOutputs() {
     return getCachedProperties().second;
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends Angular2DirectiveAttribute> getAttributes() {
+    return getCachedValue(
+      () -> Result.create(getAttributeParameters(),
+                          getClassModificationDependencies())
+    );
   }
 
   @NotNull
@@ -209,6 +227,33 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     }
   }
 
+  @NotNull
+  private Collection<? extends Angular2DirectiveAttribute> getAttributeParameters() {
+    final TypeScriptFunction[] constructors = getTypeScriptClass().getConstructors();
+    return constructors.length == 1
+           ? processCtorParameters(constructors[0])
+           : Arrays.stream(constructors)
+             .filter(TypeScriptFunction::isOverloadImplementation)
+             .findFirst()
+             .map(Angular2SourceDirective::processCtorParameters)
+             .orElse(Collections.emptyList());
+  }
+
+  @NotNull
+  private static Collection<? extends Angular2DirectiveAttribute> processCtorParameters(@NotNull final JSFunction ctor) {
+    return StreamEx.of(ctor.getParameterVariables())
+      .mapToEntry(JSParameter::getAttributeList)
+      .nonNullValues()
+      .flatMapValues(a -> Arrays.stream(a.getDecorators()))
+      .filterValues(d -> Angular2DecoratorUtil.ATTRIBUTE_DEC.equals(d.getDecoratorName()))
+      .mapValues(Angular2SourceDirective::getStringParamValue)
+      .filterValues(v -> v != null && !v.trim().isEmpty())
+      .distinctValues()
+      .mapToValue(Angular2SourceDirectiveAttribute::new)
+      .values()
+      .toList();
+  }
+
   @Nullable
   private static String getStringParamValue(@Nullable ES6Decorator decorator) {
     if (decorator == null) {
@@ -238,21 +283,34 @@ public class Angular2SourceDirective extends Angular2SourceDeclaration implement
     return null;
   }
 
-  private static boolean isTemplate(@NotNull TypeScriptClass clazz) {
-    return !JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
-      if (aClass instanceof TypeScriptClass
-          && Stream.of(((TypeScriptClass)aClass).getConstructors())
-            .map(JSFunction::getParameterList)
-            .filter(Objects::nonNull)
-            .map(JSParameterList::getParameters)
-            .flatMap(Stream::of)
-            .map(JSParameterListElement::getJSType)
-            .filter(Objects::nonNull)
-            .map(type -> type.getTypeText())
-            .anyMatch(t -> t.contains(TEMPLATE_REF))) {
-        return false;
+  @NotNull
+  private Pair<Boolean, Boolean> getConstructorParamsMatch() {
+    return getCachedValue(() -> CachedValueProvider.Result.create(
+      getConstructorParamsMatchNoCache(getTypeScriptClass()), getClassModificationDependencies()));
+  }
+
+  @NotNull
+  private static Pair<Boolean, Boolean> getConstructorParamsMatchNoCache(@NotNull TypeScriptClass clazz) {
+    Ref<Pair<Boolean, Boolean>> result = new Ref<>(pair(false, false));
+    JSClassUtils.processClassesInHierarchy(clazz, false, (aClass, typeSubstitutor, fromImplements) -> {
+      if (aClass instanceof TypeScriptClass) {
+        List<String> types = StreamEx.of(((TypeScriptClass)aClass).getConstructors())
+          .map(JSFunction::getParameterList)
+          .nonNull()
+          .flatArray(JSParameterList::getParameters)
+          .map(JSParameterListElement::getJSType)
+          .nonNull()
+          .map(type -> type.getTypeText())
+          .toList();
+        boolean templateRef = exists(types, t -> t.contains(TEMPLATE_REF));
+        boolean viewContainerRef = exists(types, t -> t.contains(VIEW_CONTAINER_REF));
+        if (templateRef || viewContainerRef) {
+          result.set(pair(templateRef, viewContainerRef));
+          return false;
+        }
       }
       return true;
     });
+    return result.get();
   }
 }

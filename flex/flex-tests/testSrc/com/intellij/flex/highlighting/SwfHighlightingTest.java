@@ -19,7 +19,7 @@ public class SwfHighlightingTest extends LightPlatformCodeInsightFixtureTestCase
 
   public void testLineMarkersInSwf() {
     final String testName = getTestName(false);
-    FlexTestUtils.addLibrary(myModule, "flex lib", getTestDataPath() + getBasePath(), testName + ".swc", null, null);
+    FlexTestUtils.addLibrary(getModule(), "flex lib", getTestDataPath() + getBasePath(), testName + ".swc", null, null);
     try {
       VirtualFile swcFile = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getBasePath() + "/" + testName + ".swc");
       VirtualFile swfFile = JarFileSystem.getInstance().getJarRootForLocalFile(swcFile).findChild("library.swf");
@@ -27,7 +27,7 @@ public class SwfHighlightingTest extends LightPlatformCodeInsightFixtureTestCase
       JSDaemonAnalyzerLightTestCase.checkHighlightByFile(myFixture, getTestDataPath() + getBasePath() + "/" + getTestName(false) + ".as");
     }
     finally {
-      FlexTestUtils.removeLibrary(myModule, "flex lib");
+      FlexTestUtils.removeLibrary(getModule(), "flex lib");
     }
   }
 

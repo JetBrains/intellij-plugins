@@ -29,6 +29,7 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureCo
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureDaemonAnalyzer;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.PathUtil;
@@ -222,7 +223,7 @@ public class FlexBCConfigurator {
 
   private static void fixOutputFileExtension(final ModifiableFlexBuildConfiguration bc) {
     final String outputFileName = bc.getOutputFileName();
-    final String lowercase = outputFileName.toLowerCase();
+    final String lowercase = StringUtil.toLowerCase(outputFileName);
     final String extension = bc.getOutputType() == OutputType.Library ? ".swc" : ".swf";
     if (lowercase.endsWith(".swf") || lowercase.endsWith(".swc")) {
       bc.setOutputFileName(outputFileName.substring(0, outputFileName.length() - ".sw_".length()) + extension);

@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.angularjs.index;
 
 import com.intellij.lang.ASTNode;
@@ -124,7 +125,7 @@ public class AngularJSIndexingHandler extends FrameworkIndexingHandler {
     allInterestingMethods.addAll(INDEXERS.keySet());
     allInterestingMethods.add(START_SYMBOL);
     allInterestingMethods.add(END_SYMBOL);
-    ALL_INTERESTING_METHODS = ArrayUtil.toStringArray(allInterestingMethods);
+    ALL_INTERESTING_METHODS = ArrayUtilRt.toStringArray(allInterestingMethods);
 
     INDEXES = new BidirectionalMap<>();
     INDEXES.put("aci", AngularControllerIndex.KEY);

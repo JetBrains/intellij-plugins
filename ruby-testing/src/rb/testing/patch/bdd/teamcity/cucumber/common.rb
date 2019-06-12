@@ -20,13 +20,15 @@ require 'teamcity/utils/service_message_factory'
 require 'teamcity/utils/runner_utils'
 require 'teamcity/utils/url_formatter'
 
-if Teamcity::Cucumber.same_or_newer?('2.0.0.0')
-  require 'cucumber/core/ast/empty_multiline_argument'
-end
+unless Teamcity::Cucumber.is_4_or_newer
+  if Teamcity::Cucumber.same_or_newer?('2.0.0.0')
+    require 'cucumber/core/ast/empty_multiline_argument'
+  end
 
-if Teamcity::Cucumber.same_or_newer?('3.0.0.pre.1')
-  require 'cucumber/formatter/duration_extractor'
-  require 'cucumber/formatter/console_counts'
+  if Teamcity::Cucumber.same_or_newer?('3.0.0.pre.1')
+    require 'cucumber/formatter/duration_extractor'
+    require 'cucumber/formatter/console_counts'
+  end
 end
 
 module Teamcity
@@ -610,19 +612,19 @@ module Teamcity
 
       # prints snippets for undefined steps
       def print_undef_step_snippet(step_name, step_exception, step_multiline_arg, step_keyword)
-        step_def_name = if step_exception.nil?
-                          step_name.index(step_keyword) == 0 ? (step_name[step_keyword.length..-1]).lstrip : step_name
-                        else
-                          step_exception.respond_to?(:step_name) ? step_exception.step_name : step_name
-                        end
-
-        snippet = create_snippet_text(step_def_name, step_keyword, step_multiline_arg)
+        snippet = create_snippet_text(step_name, step_exception, step_keyword, step_multiline_arg)
 
         text = " \nYou can implement step definitions for undefined steps with these snippets:\n\n#{snippet}"
         puts text
       end
 
-      def create_snippet_text(step_def_name, step_keyword, step_multiline_arg)
+      def create_snippet_text(step_name, step_exception, step_keyword, step_multiline_arg)
+        step_def_name = if step_exception.nil?
+                          step_name.index(step_keyword) == 0 ? (step_name[step_keyword.length..-1]).lstrip : step_name
+                        else
+                          step_exception.respond_to?(:step_name) ? step_exception.step_name : step_name
+                        end
+        
         if ::Teamcity::Cucumber::CUCUMBER_VERSION >= 2
           step_multiline_arg ||= ::Cucumber::Core::Ast::EmptyMultilineArgument.new
           @step_mother.snippet_text(step_keyword || '', step_def_name, step_multiline_arg)

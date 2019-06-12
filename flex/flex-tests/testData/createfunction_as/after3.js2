@@ -1,4 +1,4 @@
-// "Create Method '_bbb2'" "true"
+// "Create method '_bbb2'" "true"
 interface D2 {
     function _bbb2(s:String, s2:String):void;<caret>
 }

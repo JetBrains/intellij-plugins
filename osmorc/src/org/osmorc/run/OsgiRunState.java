@@ -40,7 +40,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.util.Ref;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.osgi.jps.build.CachingBundleInfoProvider;
 import org.jetbrains.osgi.jps.build.OsgiBuildException;
@@ -165,7 +164,7 @@ public class OsgiRunState extends JavaCommandLineState {
               }
             }
 
-            List<SelectedBundle> sortedBundles = ContainerUtil.newArrayList(selectedBundles);
+            List<SelectedBundle> sortedBundles = new ArrayList<>(selectedBundles);
             Collections.sort(sortedBundles, START_LEVEL_COMPARATOR);
             result.set(sortedBundles);
           }

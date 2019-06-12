@@ -1,0 +1,15 @@
+.menu_link {
+    background: 1px $blue -$column;
+    width: $column;
+    height: <error>column</error>;
+}
+
+menu {
+    width: calc(4 * $column);
+    height: <error>calc(4 * column)</error>;
+}
+
+$prefix{ }
+<warning descr="Selector matches unknown element prefix">prefix</warning>{ }
+
+a $prefix b <warning descr="Selector matches unknown element c">c</warning>{ }

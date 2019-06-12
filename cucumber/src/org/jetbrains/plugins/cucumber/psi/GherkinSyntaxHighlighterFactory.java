@@ -14,6 +14,6 @@ public class GherkinSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
   @Override
   @NotNull
   public SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
-    return new GherkinSyntaxHighlighter(JsonGherkinKeywordProvider.getKeywordProvider());
+    return new GherkinSyntaxHighlighter(JsonGherkinKeywordProvider.getKeywordProvider(true));
   }
 }

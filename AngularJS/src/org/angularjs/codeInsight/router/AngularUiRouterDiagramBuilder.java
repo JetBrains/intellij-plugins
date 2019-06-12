@@ -216,7 +216,7 @@ public class AngularUiRouterDiagramBuilder {
       return true;
     }
 
-    public void addAll(final Collection<T> collection) {
+    public void addAll(final Collection<? extends T> collection) {
       for (T t : collection) {
         add(t);
       }
@@ -274,7 +274,7 @@ public class AngularUiRouterDiagramBuilder {
     return processed;
   }
 
-  private void moduleDependenciesStep(String mainModule, NonCyclicQueue<VirtualFile> filesQueue, NonCyclicQueue<String> modulesQueue) {
+  private void moduleDependenciesStep(String mainModule, NonCyclicQueue<? super VirtualFile> filesQueue, NonCyclicQueue<? super String> modulesQueue) {
     addContainingFile(filesQueue, mainModule);
     if (!StringUtil.isEmptyOrSpaces(mainModule)) {
       final JSImplicitElement element = AngularIndexUtil.resolve(myProject, AngularModuleIndex.KEY, mainModule);
@@ -292,7 +292,7 @@ public class AngularUiRouterDiagramBuilder {
     }
   }
 
-  private void addContainingFile(@NotNull final NonCyclicQueue<VirtualFile> filesQueue, @NotNull final String module) {
+  private void addContainingFile(@NotNull final NonCyclicQueue<? super VirtualFile> filesQueue, @NotNull final String module) {
     final CommonProcessors.CollectProcessor<JSImplicitElement> collectProcessor = new CommonProcessors.CollectProcessor<>();
 
     AngularIndexUtil.multiResolve(myProject, AngularModuleIndex.KEY, module, collectProcessor);
@@ -311,13 +311,13 @@ public class AngularUiRouterDiagramBuilder {
     }
   }
 
-  private void filesDependenciesStep(VirtualFile file, NonCyclicQueue<VirtualFile> filesQueue) {
+  private void filesDependenciesStep(VirtualFile file, NonCyclicQueue<? super VirtualFile> filesQueue) {
     final VirtualFile[] includedFiles = FileIncludeManager.getManager(myProject).getIncludedFiles(file, true, true);
     //take all included, since there can be also html includes (??? exclude css & like)
     filesQueue.addAll(Arrays.asList(includedFiles));
   }
 
-  private String findPossibleRelativeUrl(@NotNull final List<VirtualFile> roots, @NotNull final VirtualFile file) {
+  private String findPossibleRelativeUrl(@NotNull final List<? extends VirtualFile> roots, @NotNull final VirtualFile file) {
     VirtualFile contentRoot = null;
     for (VirtualFile root : roots) {
       if (root.equals(VfsUtilCore.getCommonAncestor(root, file))) {
