@@ -131,6 +131,8 @@
     <library.type implementation="com.jetbrains.lang.dart.sdk.DartPackagesLibraryType"/>
 
     <treeStructureProvider implementation="com.jetbrains.lang.dart.projectView.DartTreeStructureProvider"/>
+    <declarationRangeHandler key="com.jetbrains.lang.dart.psi.DartPsiCompositeElement"
+                             implementationClass="com.jetbrains.lang.dart.contextInfo.DartDeclarationRangeHandler"/>
     <projectViewNestingRulesProvider implementation="com.jetbrains.lang.dart.projectView.DartNestingRulesProvider"/>
     <iconProvider implementation="com.jetbrains.lang.dart.projectView.DartIconProvider" order="first" id="DartIconProvider"/>
     <projectViewNodeDecorator implementation="com.jetbrains.lang.dart.projectView.DartNodeDecorator"/>
