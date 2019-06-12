@@ -23,7 +23,7 @@ import jetbrains.communicator.idea.ConsoleMessage;
 import jetbrains.communicator.idea.ConsoleUtil;
 import jetbrains.communicator.idea.config.IdeaFlags;
 import jetbrains.communicator.util.HardWrapUtil;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.TimeUtil;
 import jetbrains.communicator.util.UIUtil;
 import org.jetbrains.annotations.NonNls;
@@ -140,7 +140,7 @@ public class MessagesTab implements Disposable {
     else {
       myInput.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK), SEND);
 
-      mySend.setToolTipText(StringUtil.getMsg("use.ctrl.enter.to.send.message"));
+      mySend.setToolTipText(CommunicatorStrings.getMsg("use.ctrl.enter.to.send.message"));
     }
   }
 

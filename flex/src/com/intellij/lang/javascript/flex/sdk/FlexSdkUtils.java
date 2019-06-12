@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.flex.FlexCommonUtils;
@@ -361,7 +362,7 @@ public class FlexSdkUtils {
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
-    final String d32 = FlexCommonUtils.getD32IfNeed(customJavaHomeSet, javaHome);
+    final String d32 = FlexCommonUtils.getD32IfNeeded(customJavaHomeSet, javaHome);
 
     final List<String> result = new ArrayList<>();
 

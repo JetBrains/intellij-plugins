@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.ruby.motion;
 
 import com.intellij.execution.RunManager;
@@ -10,7 +10,7 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Key;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.ruby.RBundle;
 import org.jetbrains.plugins.ruby.motion.bridgesupport.Framework;
@@ -32,7 +32,7 @@ public class RubyMotionUtilExt {
                                                                               final RunManager runManager) {
     final RunnerAndConfigurationSettings settings =
       RakeRunConfigurationType.getInstance().getRakeFactory().createConfigurationSettings(module, taskFullName,
-                                                                                          ArrayUtil.EMPTY_STRING_ARRAY,
+                                                                                          ArrayUtilRt.EMPTY_STRING_ARRAY,
                                                                                           Collections.emptyMap());
     runManager.addConfiguration(settings);
     return settings;

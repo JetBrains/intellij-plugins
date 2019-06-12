@@ -22,7 +22,7 @@ public class Angular2CssClassInAttributeReferenceProvider extends PsiReferencePr
       return PsiReference.EMPTY_ARRAY;
     }
     String attributeName = ((XmlAttribute)element).getName();
-    AttributeInfo info = parse(attributeName, false);
+    AttributeInfo info = parse(attributeName, ((XmlAttribute)element).getParent());
     if (!(info instanceof PropertyBindingInfo)
         || !(((PropertyBindingInfo)info).bindingType == PropertyBindingType.CLASS)) {
       return PsiReference.EMPTY_ARRAY;

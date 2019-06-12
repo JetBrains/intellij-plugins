@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import jetbrains.communicator.commands.ShowDiffCommand;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.idea.actions.BaseAction;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -25,8 +25,8 @@ abstract class DiffAction extends BaseAction<ShowDiffCommand> {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    e.getPresentation().setText(StringUtil.getMsg("diff.action.text"));
-    e.getPresentation().setDescription(StringUtil.getMsg("diff.action.description"));
+    e.getPresentation().setText(CommunicatorStrings.getMsg("diff.action.text"));
+    e.getPresentation().setDescription(CommunicatorStrings.getMsg("diff.action.description"));
     e.getPresentation().setIcon(AllIcons.Actions.Diff);
 
     ShowDiffCommand showDiffCommand = getCommand(e);

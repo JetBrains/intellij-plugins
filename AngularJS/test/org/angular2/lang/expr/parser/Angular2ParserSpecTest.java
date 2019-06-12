@@ -18,6 +18,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecma6.TypeScriptNotNullExpression;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
@@ -35,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static com.intellij.testFramework.LightPlatformTestCase.getProject;
 import static com.intellij.util.containers.ContainerUtil.newArrayList;
 import static com.intellij.util.containers.ContainerUtil.newHashMap;
 import static com.mscharhag.oleaster.matcher.Matchers.expect;
@@ -613,7 +613,7 @@ public class Angular2ParserSpecTest {
 
   private static ASTNode parse(String text, String extension) {
     return ReadAction.compute(() -> {
-      return PsiFileFactory.getInstance(getProject())
+      return PsiFileFactory.getInstance(ProjectManager.getInstance().getDefaultProject())
         .createFileFromText("test." + extension, Angular2Language.INSTANCE, text)
         .getNode();
     });

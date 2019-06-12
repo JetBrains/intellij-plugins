@@ -16,8 +16,6 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Locale;
-
 public class DartProblemGroup implements SuppressableProblemGroup {
   private static final SuppressIntentionAction[] NO_ACTIONS = {};
 
@@ -60,7 +58,7 @@ public class DartProblemGroup implements SuppressableProblemGroup {
       myErrorCode = errorCode;
       myErrorSeverity = errorSeverity;
       myEolComment = eolComment;
-      String severityText = errorSeverity.equals(AnalysisErrorSeverity.INFO) ? "warning" : errorSeverity.toLowerCase(Locale.US);
+      String severityText = errorSeverity.equals(AnalysisErrorSeverity.INFO) ? "warning" : StringUtil.toLowerCase(errorSeverity);
       if (topLevelAction) {
         // Suppress 'unused_local' warning
         setText("Suppress '" + errorCode + "' " + severityText);

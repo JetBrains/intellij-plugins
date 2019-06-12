@@ -1,10 +1,10 @@
 import * as prettier from "prettier";
 
-declare var require: any;
 type PrettierApi = typeof prettier & { path: string }
 
 interface FormatResponse {
     ignored?: boolean,
+    unsupported?: boolean,
     error?: string,
     formatted?: string
 }
@@ -19,15 +19,6 @@ type FormatArguments = {
     flushConfigCache: boolean
 }
 
-type SupportedFilesArguments = {
-    prettierPath: string,
-}
-
-interface SupportedFilesResponse {
-    fileNames: string[],
-    extensions: string[]
-}
-
 export class PrettierPlugin implements LanguagePlugin {
     private _prettierApi?: PrettierApi;
 
@@ -39,15 +30,13 @@ export class PrettierPlugin implements LanguagePlugin {
             if (r.command == "reformat") {
                 response = this.handleReformatCommand((<FormatArguments>r.arguments));
             }
-            else if (r.command == "getSupportedFiles") {
-                response = this.getSupportedFiles((<SupportedFilesArguments>r.arguments).prettierPath);
-            }
             else {
                 response = {error: "Unknown command: " + r.command};
             }
         }
         catch (e) {
-            response = {error: `${e.message} ${e.stack}`};
+            let msg = e instanceof String ? e : (e.stack && e.stack.length > 0 ? e.stack : e.message || e)
+            response = {error: `${msg}`};
         }
         response.request_seq = r.seq
         writer.write(JSON.stringify(response))
@@ -56,27 +45,17 @@ export class PrettierPlugin implements LanguagePlugin {
     private handleReformatCommand(args: FormatArguments): FormatResponse {
         let prettierApi = this.requirePrettierApi(args.prettierPath);
 
-        try {
-            let options = {ignorePath: args.ignoreFilePath, withNodeModules: true};
-            if (prettierApi.getFileInfo && prettierApi.getFileInfo.sync(args.path, options).ignored) {
+        let options = {ignorePath: args.ignoreFilePath, withNodeModules: true};
+        if (prettierApi.getFileInfo) {
+            let fileInfo = prettierApi.getFileInfo.sync(args.path, options)
+            if (fileInfo.ignored) {
                 return {ignored: true}
             }
-            return performFormat(prettierApi, args)
+            if (fileInfo.inferredParser == null) {
+                return {unsupported: true}
+            }
         }
-        catch (e) {
-            return {error: `${args.path}: ${e.stack && e.stack.length > 0 ? e.stack : e.message}`};
-        }
-    }
-
-    getSupportedFiles(path: string): SupportedFilesResponse {
-        let prettierApi = this.requirePrettierApi(path)
-        let info = prettierApi.getSupportInfo();
-        let extensions = flatten(info.languages.map(l => l.extensions)).map(e => withoutPrefix(e, "."));
-        let fileNames = flatten(info.languages.map(l => l.filenames != null ? l.filenames : []));
-        return {
-            fileNames: fileNames,
-            extensions: extensions
-        }
+        return performFormat(prettierApi, args)
     }
 
     private requirePrettierApi(path: string): PrettierApi {
@@ -87,18 +66,6 @@ export class PrettierPlugin implements LanguagePlugin {
         prettier.path = path;
         return prettier;
     }
-}
-
-function withoutPrefix(e: string, prefix: string): string {
-    if (e == null || e.length == 0) {
-        return e;
-    }
-    let index = e.indexOf(prefix);
-    return index == 0 ? e.substr(prefix.length) : e;
-}
-
-function flatten<T>(arr: T[][]): T[] {
-    return arr.reduce((previousValue, currentValue) => previousValue.concat(currentValue))
 }
 
 function performFormat(api: PrettierApi, args: FormatArguments): { formatted: string} {

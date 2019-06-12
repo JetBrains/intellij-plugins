@@ -58,8 +58,8 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   protected void tearDown() throws Exception {
     try {
       FlexTestUtils.modifyConfigs(getProject(), editor -> {
-        if (ModuleType.get(myModule) == FlexModuleType.getInstance()) {
-          for (ModifiableFlexBuildConfiguration bc : editor.getConfigurations(myModule)) {
+        if (ModuleType.get(getModule()) == FlexModuleType.getInstance()) {
+          for (ModifiableFlexBuildConfiguration bc : editor.getConfigurations(getModule())) {
             bc.getDependencies().setSdkEntry(null);
           }
         }
@@ -89,7 +89,7 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
 
   protected void setUpJdk() {
     if (!needsJavaModule()) {
-      FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+      FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     }
   }
 
@@ -112,25 +112,25 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     assertNotNull(elements);
     assertEquals("____", elements[0].getLookupString());
 
-    assertTrue(getBoldStatus(elements[0]));
-    assertFalse(getBoldStatus(elements[1]));
+    assertTrue(isStrictMatched(elements[0]));
+    assertTrue(isStrictMatched(elements[1]));
 
     elements = doTest("_2");
     assertNotNull(elements);
     assertEquals("____", elements[0].getLookupString());
-    assertTrue(getBoldStatus(elements[0]));
-    assertFalse(getBoldStatus(elements[1]));
+    assertTrue(isStrictMatched(elements[0]));
+    assertTrue(isStrictMatched(elements[1]));
 
     elements = doTest("_3");
     assertNotNull(elements);
     assertEquals("____", elements[4].getLookupString());
-    assertTrue(getBoldStatus(elements[4]));
+    assertTrue(isStrictMatched(elements[4]));
     assertEquals("lVar", elements[0].getLookupString());
-    assertTrue(getBoldStatus(elements[0]));
+    assertTrue(isStrictMatched(elements[0]));
     assertEquals("param", elements[1].getLookupString());
-    assertTrue(getBoldStatus(elements[1]));
+    assertTrue(isStrictMatched(elements[1]));
 
-    assertFalse(getBoldStatus(elements[5]));
+    assertTrue(isStrictMatched(elements[5]));
     assertEquals("Bar", elements[5].getLookupString());
   }
 
@@ -147,14 +147,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
   public final void testKeywordsInContext() {
     final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
     assertEquals("extends", lookupElements[0].getLookupString());
-    assertTrue(getBoldStatus(lookupElements[0]));
+    assertTrue(isStrictMatched(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
   }
 
   public final void testKeywordsInContext2() {
     final LookupElement[] lookupElements = doTestForFiles(getTestName(false) + ".js2", getTestName(false) + "_2.js2");
     assertEquals("public", lookupElements[0].getLookupString());
-    assertTrue(getBoldStatus(lookupElements[0]));
+    assertTrue(isStrictMatched(lookupElements[0]));
     assertTrue("Test expected to have other options for completion", lookupElements.length > 1);
   }
 
@@ -1212,14 +1212,14 @@ public class ActionScriptCompletionTest extends BaseJSCompletionTestCase {
     final Sdk sdk45 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.5"), null, true, myFixture.getTestRootDisposable());
     final Sdk sdk46 = FlexTestUtils.createSdk(FlexTestUtils.getPathToCompleteFlexSdk("4.6"), null, false, myFixture.getTestRootDisposable());
     FlexTestUtils.modifyConfigs(getProject(), editor -> {
-      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(myModule)[0];
+      ModifiableFlexBuildConfiguration bc1 = editor.getConfigurations(getModule())[0];
       bc1.setName("1");
       FlexTestUtils.setSdk(bc1, sdk45);
-      ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(myModule);
+      ModifiableFlexBuildConfiguration bc2 = editor.createConfiguration(getModule());
       bc2.setName("2");
       FlexTestUtils.setSdk(bc2, sdk46);
     });
-    final FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(myModule);
+    final FlexBuildConfigurationManager m = FlexBuildConfigurationManager.getInstance(getModule());
 
     class TestZZ implements ThrowableRunnable<Exception> {
       private final String myBcName;

@@ -1,4 +1,4 @@
-// "Create Method 'bar'" "true"
+// "Create method 'bar'" "true"
 class C {
   static function foo() {
     var x:int = bar()

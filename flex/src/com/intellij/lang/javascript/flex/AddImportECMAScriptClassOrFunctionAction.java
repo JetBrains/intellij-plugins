@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInsight.hint.HintManager;
@@ -22,13 +23,13 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopes;
+import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.util.SmartList;
 import gnu.trove.THashSet;
@@ -167,13 +168,13 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
   }
 
   public static Collection<JSQualifiedNamedElement> getCandidates(final Editor editor, final PsiFile file, final String name) {
-    final Module module = ModuleUtil.findModuleForPsiElement(file);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(file);
     if (module != null) {
       GlobalSearchScope searchScope;
       VirtualFile virtualFile = file.getVirtualFile();
       if (virtualFile instanceof VirtualFileWindow) virtualFile = ((VirtualFileWindow)virtualFile).getDelegate();
 
-      if (GlobalSearchScopes.projectProductionScope(file.getProject()).contains(virtualFile)) { // skip tests suggestions
+      if (GlobalSearchScopesCore.projectProductionScope(file.getProject()).contains(virtualFile)) { // skip tests suggestions
         searchScope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false);
       } else {
         searchScope = JSResolveUtil.getResolveScope(file);
@@ -187,6 +188,8 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
 
   @Override
   public boolean fixSilently(@NotNull Editor editor) {
+    if (!ActionScriptAutoImportOptionsProvider.isAddUnambiguousImportsOnTheFly()) return false;
+
     Collection<JSQualifiedNamedElement> candidates = getCandidates(editor, myReference.getElement().getContainingFile());
     if (candidates.size() == 1) {
       JSQualifiedNamedElement element = candidates.iterator().next();

@@ -27,9 +27,16 @@ import com.intellij.psi.css.inspections.RemoveUnusedSymbolIntentionAction
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
-import org.jetbrains.vuejs.VueFileType
-import org.jetbrains.vuejs.codeInsight.*
-import org.jetbrains.vuejs.language.VueJSLanguage
+import org.jetbrains.vuejs.codeInsight.detectLanguage
+import org.jetbrains.vuejs.codeInsight.fromAsset
+import org.jetbrains.vuejs.codeInsight.refs.VueTagNameReference
+import org.jetbrains.vuejs.codeInsight.tags.VueInsertHandler
+import org.jetbrains.vuejs.codeInsight.toAsset
+import org.jetbrains.vuejs.index.VueFileVisitor
+import org.jetbrains.vuejs.index.findModule
+import org.jetbrains.vuejs.index.findScriptTag
+import org.jetbrains.vuejs.lang.expr.VueJSLanguage
+import org.jetbrains.vuejs.lang.html.VueFileType
 
 class VueExtractComponentDataBuilder(private val list: List<XmlTag>) {
   private val containingFile = list[0].containingFile

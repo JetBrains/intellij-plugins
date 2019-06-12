@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.coldFusion.UI.editorActions;
 
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -9,9 +9,11 @@ import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.psi.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.parameterInfo.*;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +45,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
       }
       return ArrayUtil.toObjectArray(methods);
     }
-    return ArrayUtil.EMPTY_OBJECT_ARRAY;
+    return ArrayUtilRt.EMPTY_OBJECT_ARRAY;
   }
 
   private static boolean isEmbraced(@Nullable PsiElement element, int offset) {
@@ -125,7 +127,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
       }
     }
     if (element instanceof CfmlReferenceExpression) {
-      String functionName = element.getText().toLowerCase();
+      String functionName = StringUtil.toLowerCase(element.getText());
       if (ArrayUtil.find(CfmlLangInfo.getInstance(element.getProject()).getPredefinedFunctionsLowCase(), functionName) != -1) {
         context.setItemsToShow(new Object[]{CfmlLangInfo.getInstance(element.getProject()).getFunctionParameters().get(functionName)});
         context.showHint(element, element.getTextRange().getStartOffset(), this);

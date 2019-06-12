@@ -15,7 +15,7 @@ public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
   protected void setUp() throws Exception {
     super.setUp();
     FlexTestUtils.allowFlexVfsRootsFor(myFixture.getTestRootDisposable(), "");
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
     myFixture.enableInspections(new JSFieldCanBeLocalInspection());
   }
 
@@ -31,27 +31,27 @@ public class FlexConvertToLocalTest extends BaseJSIntentionTestCase {
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testConvertToLocal_() throws Exception {
+  public void testConvertToLocal_() {
     doCompositeNameBeforeAfterTest("as", false);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testConvertToLocal_1() throws Exception {
+  public void testConvertToLocal_1() {
     doCompositeNameBeforeAfterTest("as", false);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testConvertToLocal_2() throws Exception {
+  public void testConvertToLocal_2() {
     doCompositeNameBeforeAfterTest("mxml", false);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testConvertToLocal_3() throws Exception {
+  public void testConvertToLocal_3() {
     doCompositeNameBeforeAfterTest("as", false);
   }
 
   @JSTestOptions({JSTestOption.WithFlexFacet, JSTestOption.WithGumboSdk})
-  public void testConvertToLocal_4() throws Exception {
+  public void testConvertToLocal_4() {
     doCompositeNameBeforeAfterTest("as", false);
   }
 }

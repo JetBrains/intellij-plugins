@@ -4,7 +4,7 @@ package jetbrains.communicator.idea.config;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,7 +14,7 @@ public class EditIDEtalkOptions extends AnAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    e.getPresentation().setText(StringUtil.getMsg("more.options"));
+    e.getPresentation().setText(CommunicatorStrings.getMsg("more.options"));
   }
 
   @Override

@@ -2,17 +2,23 @@
 package com.jetbrains.dart.analysisServer;
 
 import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx;
+import com.intellij.ide.hierarchy.HierarchyTreeStructure;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.indexing.FindSymbolParameters;
+import com.jetbrains.lang.dart.ide.DartClassContributor;
+import com.jetbrains.lang.dart.ide.DartSymbolContributor;
 import com.jetbrains.lang.dart.ide.hierarchy.call.DartCallHierarchyTreeStructure;
 import com.jetbrains.lang.dart.ide.hierarchy.call.DartCalleeTreeStructure;
 import com.jetbrains.lang.dart.ide.hierarchy.call.DartCallerTreeStructure;
-import com.jetbrains.lang.dart.ide.index.DartClassIndex;
-import com.jetbrains.lang.dart.ide.index.DartSymbolIndex;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartFunctionDeclarationWithBodyOrNative;
+import com.jetbrains.lang.dart.psi.DartRecursiveVisitor;
+import com.jetbrains.lang.dart.psi.DartReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -31,12 +37,11 @@ public class DartCallHierarchyTest extends DartHierarchyTestBase {
                                    final boolean caller,
                                    final String... fileNames) throws Exception {
     doHierarchyTest(() -> {
-      final Project project = getProject();
+      Project project = getProject();
+      Ref<HierarchyTreeStructure> result = Ref.create();
       if (className != null) {
-        final List<DartComponentName> dartComponentNames =
-          DartClassIndex.getItemsByName(className, project, GlobalSearchScope.projectScope(project));
-        for (DartComponentName name : dartComponentNames) {
-          DartClass dartClass = PsiTreeUtil.getParentOfType(name, DartClass.class);
+        new DartClassContributor().processElementsWithName(className, item -> {
+          DartClass dartClass = PsiTreeUtil.getParentOfType((PsiElement)item, DartClass.class);
           if (dartClass != null && className.equals(dartClass.getName())) {
             PsiElement member = dartClass.findMemberByName(methodName);
             if (member == null) {
@@ -46,33 +51,35 @@ public class DartCallHierarchyTest extends DartHierarchyTestBase {
               fail("Method not found");
             }
             if (caller) {
-              return new DartCallerTreeStructure(project, member, HierarchyBrowserBaseEx.SCOPE_PROJECT);
+              result.set(new DartCallerTreeStructure(project, member, HierarchyBrowserBaseEx.SCOPE_PROJECT));
             }
             else {
-              return new DartCalleeTreeStructure(project, member, HierarchyBrowserBaseEx.SCOPE_PROJECT);
+              result.set(new DartCalleeTreeStructure(project, member, HierarchyBrowserBaseEx.SCOPE_PROJECT));
             }
+            return false;
           }
-        }
+          return true;
+        }, FindSymbolParameters.wrap("", GlobalSearchScope.projectScope(project)));
       }
       else {
-        final List<DartComponentName> dartComponentNames =
-          DartSymbolIndex.getItemsByName(methodName, project, GlobalSearchScope.projectScope(project));
-        for (DartComponentName name : dartComponentNames) {
-          PsiElement parent = PsiTreeUtil.getParentOfType(name, DartFunctionDeclarationWithBodyOrNative.class);
+        new DartSymbolContributor().processElementsWithName(methodName, item -> {
+          PsiElement parent = PsiTreeUtil.getParentOfType((PsiElement)item, DartFunctionDeclarationWithBodyOrNative.class);
           if (parent != null) {
             if (caller) {
-              return new DartCallerTreeStructure(project, parent, HierarchyBrowserBaseEx.SCOPE_PROJECT);
+              result.set(new DartCallerTreeStructure(project, parent, HierarchyBrowserBaseEx.SCOPE_PROJECT));
             }
             else {
-              return new DartCalleeTreeStructure(project, parent, HierarchyBrowserBaseEx.SCOPE_PROJECT);
+              result.set(new DartCalleeTreeStructure(project, parent, HierarchyBrowserBaseEx.SCOPE_PROJECT));
             }
+            return false;
           }
           else {
             fail("Function not found");
           }
-        }
+          return true;
+        }, FindSymbolParameters.wrap("", GlobalSearchScope.projectScope(project)));
       }
-      return null;
+      return result.get();
     }, fileNames);
   }
 

@@ -53,10 +53,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
 
@@ -160,7 +157,7 @@ public class BundleSelector extends DialogWrapper {
     TreePath[] paths = myBundleTree.getSelectionPaths();
     if (paths == null) return ContainerUtil.emptyList();
 
-    List<SelectedBundle> bundles = ContainerUtil.newArrayListWithCapacity(paths.length);
+    List<SelectedBundle> bundles = new ArrayList<>(paths.length);
     for (TreePath path : paths) {
       Object last = path.getLastPathComponent();
       if (last instanceof DefaultMutableTreeNode) {

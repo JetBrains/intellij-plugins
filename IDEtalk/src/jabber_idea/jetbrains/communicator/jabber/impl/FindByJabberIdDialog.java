@@ -17,11 +17,10 @@ package jetbrains.communicator.jabber.impl;
 
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.idea.IdeaDialog;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.UIUtil;
 
 import javax.swing.*;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -38,9 +37,9 @@ public class FindByJabberIdDialog extends IdeaDialog {
     super(false);
     setModal(true);
 
-    setTitle(StringUtil.getMsg("jabber.findByIdCommandName.dialogTitle"));
-    myWelcomeText.setText(StringUtil.getMsg("jabber.findByIdCommandName.dialogText"));
-    setOKButtonText(StringUtil.getMsg("add"));
+    setTitle(CommunicatorStrings.getMsg("jabber.findByIdCommandName.dialogTitle"));
+    myWelcomeText.setText(CommunicatorStrings.getMsg("jabber.findByIdCommandName.dialogText"));
+    setOKButtonText(CommunicatorStrings.getMsg("add"));
 
     UIUtil.setMnemonic(myWelcomeText, myJabberIDs, 'E');
     UIUtil.setMnemonic(myGroupLabel, myGroup, 'S');

@@ -22,7 +22,7 @@ import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.CodePointer;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.IDEFacade;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import javax.swing.*;
 
@@ -50,8 +50,9 @@ public class SendCodePointerCommand implements FileCommand, NamedUserCommand {
   @Override
   public void execute() {
     assert isEnabled();
-    final String message = myIdeFacade.getMessage(StringUtil.getMsg("code_pointer.message.input"),
-               StringUtil.getMsg("code_pointer.message.input.title"), StringUtil.getMsg("send"));
+    final String message = myIdeFacade.getMessage(CommunicatorStrings.getMsg("code_pointer.message.input"),
+                                                  CommunicatorStrings.getMsg("code_pointer.message.input.title"), CommunicatorStrings
+                                                    .getMsg("send"));
     if (message != null) {
       myIdeFacade.fillFileContents(myVFile);
       myUser.sendCodeIntervalPointer(myVFile, myCodePointer, message, myEventBroadcaster);
@@ -80,8 +81,8 @@ public class SendCodePointerCommand implements FileCommand, NamedUserCommand {
   @Override
   public String getName() {
     if (myVFile != null && myUser != null) {
-      return StringUtil.getMsg("send.code.pointer.to", myUser.getDisplayName());
+      return CommunicatorStrings.getMsg("send.code.pointer.to", myUser.getDisplayName());
     }
-    return StringUtil.getMsg("send.code.pointer");
+    return CommunicatorStrings.getMsg("send.code.pointer");
   }
 }

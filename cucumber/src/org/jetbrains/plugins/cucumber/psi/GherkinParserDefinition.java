@@ -27,7 +27,7 @@ public class GherkinParserDefinition implements ParserDefinition {
   @Override
   @NotNull
   public Lexer createLexer(Project project) {
-    return new GherkinLexer(JsonGherkinKeywordProvider.getKeywordProvider());
+    return new GherkinLexer(JsonGherkinKeywordProvider.getKeywordProvider(true));
   }
 
   @Override
@@ -66,6 +66,7 @@ public class GherkinParserDefinition implements ParserDefinition {
     if (node.getElementType() == GherkinElementTypes.SCENARIO) return new GherkinScenarioImpl(node);
     if (node.getElementType() == GherkinElementTypes.STEP) return new GherkinStepImpl(node);
     if (node.getElementType() == GherkinElementTypes.SCENARIO_OUTLINE) return new GherkinScenarioOutlineImpl(node);
+    if (node.getElementType() == GherkinElementTypes.RULE) return new GherkinRuleImpl(node);
     if (node.getElementType() == GherkinElementTypes.EXAMPLES_BLOCK) return new GherkinExamplesBlockImpl(node);
     if (node.getElementType() == GherkinElementTypes.TABLE) return new GherkinTableImpl(node);
     if (node.getElementType() == GherkinElementTypes.TABLE_ROW) return new GherkinTableRowImpl(node);

@@ -7,9 +7,7 @@ import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 public interface PrettierLanguageService {
   @Nullable
@@ -23,36 +21,27 @@ public interface PrettierLanguageService {
     return ((PrettierLanguageServiceImpl)ServiceManager.getService(project, PrettierLanguageService.class));
   }
 
-  class SupportedFilesInfo {
-    @NotNull
-    public final List<String> fileNames;
-    @NotNull
-    public final List<String> extensions;
-
-    public SupportedFilesInfo(@NotNull List<String> fileNames, @NotNull List<String> extensions) {
-      this.fileNames = fileNames;
-      this.extensions = extensions;
-    }
-  }
-
   class FormatResult {
-    public static final FormatResult IGNORED = new FormatResult(null, null, true);
+    public static final FormatResult IGNORED = new FormatResult(null, null, true, false);
+    public static final FormatResult UNSUPPORTED = new FormatResult(null, null, false, true);
     public final String result;
     public final String error;
     public final boolean ignored;
+    public final boolean unsupported;
 
-    private FormatResult(String result, String error, boolean ignored) {
+    private FormatResult(String result, String error, boolean ignored, boolean unsupported) {
       this.result = result;
       this.error = error;
       this.ignored = ignored;
+      this.unsupported = unsupported;
     }
 
     public static FormatResult error(String error) {
-      return new FormatResult(null, error, false);
+      return new FormatResult(null, error, false, false);
     }
 
     public static FormatResult formatted(String result) {
-      return new FormatResult(result, null, false);
+      return new FormatResult(result, null, false, false);
     }
   }
 }

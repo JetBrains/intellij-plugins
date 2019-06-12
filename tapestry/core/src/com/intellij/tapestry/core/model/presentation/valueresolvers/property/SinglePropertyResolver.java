@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.model.presentation.valueresolvers.property;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaMethod;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.AbstractValueResolver;
@@ -25,7 +26,7 @@ public class SinglePropertyResolver extends AbstractValueResolver {
             Map<String, Object> properties = ClassUtils.getClassProperties(((ValueResolverContext) context).getContextClass());
 
             for (Map.Entry<String, Object> property : properties.entrySet()) {
-                if (property.getKey().toLowerCase().equals(cleanValue.toLowerCase())) {
+                if (StringUtil.toLowerCase(property.getKey()).equals(StringUtil.toLowerCase(cleanValue))) {
 
                     if (property.getValue() instanceof IJavaMethod)
                         ((ValueResolverContext) context).setResultType(((IJavaMethod) property.getValue()).getReturnType());

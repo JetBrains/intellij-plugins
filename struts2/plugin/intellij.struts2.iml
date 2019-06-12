@@ -20,8 +20,6 @@
     <orderEntry type="module" module-name="intellij.javaee.web.impl" />
     <orderEntry type="module" module-name="intellij.platform.graph" />
     <orderEntry type="module" module-name="intellij.javascript.impl" />
-    <orderEntry type="module" module-name="intellij.struts" />
-    <orderEntry type="module" module-name="intellij.struts.impl" />
     <orderEntry type="module" module-name="intellij.properties" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
     <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />

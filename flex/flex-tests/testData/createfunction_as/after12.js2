@@ -1,4 +1,4 @@
-// "Create Method 'anymethod'" "true"
+// "Create method 'anymethod'" "true"
 package yyy {
 import xxx.B;
 import xxx.B2;

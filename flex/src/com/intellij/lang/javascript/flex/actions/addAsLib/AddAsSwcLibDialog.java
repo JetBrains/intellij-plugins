@@ -22,11 +22,10 @@ import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
@@ -44,8 +43,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class AddAsSwcLibDialog extends DialogWrapper {
   private final Project myProject;
@@ -131,9 +130,9 @@ public class AddAsSwcLibDialog extends DialogWrapper {
       moduleToModifiableModelMap.put(moduleAndBC.first, ModuleRootManager.getInstance(moduleAndBC.first).getModifiableModel());
     }
 
-    final LibraryTable.ModifiableModel projectLibsModel = ProjectLibraryTable.getInstance(myProject).getModifiableModel();
+    final LibraryTable.ModifiableModel projectLibsModel = LibraryTablesRegistrar.getInstance().getLibraryTable(myProject).getModifiableModel();
 
-    final LibraryTable.ModifiableModel globalLibsModel = ApplicationLibraryTable.getApplicationTable().getModifiableModel();
+    final LibraryTable.ModifiableModel globalLibsModel = LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel();
 
     final FlexProjectConfigurationEditor flexConfigEditor =
       FlexProjectConfigurationEditor.createEditor(myProject, moduleToModifiableModelMap, projectLibsModel, globalLibsModel);

@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.DependencyType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -50,6 +51,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.xml.NanoXmlBuilder;
 import com.intellij.util.xml.NanoXmlUtil;
 import org.jetbrains.annotations.NonNls;
@@ -65,6 +67,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -99,7 +102,7 @@ public class FlexUtils {
                               final String sampleFileName,
                               final TargetPlatform platform,
                               final boolean isFlex4) throws IOException {
-    final String sampleClassName = FileUtil.getNameWithoutExtension(sampleFileName);
+    final String sampleClassName = FileUtilRt.getNameWithoutExtension(sampleFileName);
     final String extension = FileUtilRt.getExtension(sampleFileName);
     final String sampleTechnology = platform == TargetPlatform.Mobile ? "AIRMobile" : platform == TargetPlatform.Desktop ? "AIR" : "Flex";
 
@@ -116,7 +119,8 @@ public class FlexUtils {
     final String helloWorldTemplate = "HelloWorld_" + sampleTechnology + suffix + "." + extension + ".ft";
     final InputStream stream = FlexUtils.class.getResourceAsStream(helloWorldTemplate);
     assert stream != null : helloWorldTemplate;
-    final String sampleFileContent = FileUtil.loadTextAndClose(new InputStreamReader(stream)).replace("${class.name}", sampleClassName);
+    final String sampleFileContent = FileUtil.loadTextAndClose(new InputStreamReader(stream,
+                                                                                     StandardCharsets.UTF_8)).replace("${class.name}", sampleClassName);
     final VirtualFile sampleApplicationFile = addFileWithContent(sampleFileName, sampleFileContent, sourceRoot);
     if (sampleApplicationFile != null) {
       final Runnable runnable = () -> FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);
@@ -534,5 +538,11 @@ public class FlexUtils {
 
   public static boolean isMxmlNs(final String ns) {
     return ArrayUtil.contains(ns, MxmlJSClass.MXML_URIS);
+  }
+
+  public static boolean packageExists(String packageName, final GlobalSearchScope scope) {
+    if (StringUtil.isEmpty(packageName)) return true;
+
+    return !FileBasedIndex.getInstance().getValues(JSPackageIndex.INDEX_ID, packageName, scope).isEmpty();
   }
 }

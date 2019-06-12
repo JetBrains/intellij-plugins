@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.ide.browsers.BrowserFamily;
@@ -19,8 +20,8 @@ public class LauncherParameters implements Cloneable {
   private @NotNull LauncherType myLauncherType = LauncherType.OSDefault;
 
   private @NotNull String myPlayerPath = SystemInfo.isMac ? "/Applications/Flash Player Debugger.app"
-                                                          : SystemInfo.isWindows ? "FlashPlayerDebugger.exe"
-                                                                                 : "/usr/bin/flashplayerdebugger";
+                                                            : SystemInfo.isWindows ? "FlashPlayerDebugger.exe"
+                                                                                     : "/usr/bin/flashplayerdebugger";
   private boolean myNewPlayerInstance = false;
 
   @NotNull

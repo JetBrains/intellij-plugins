@@ -37,7 +37,7 @@ class ActionScriptGenerateToStringHandler extends BaseJSGenerateHandler {
         final boolean[] needOverride = new boolean[1];
         JSInheritanceUtil.processOverrides((JSClass)jsClass, new JSOverrideHandler() {
           @Override
-          public boolean process(@NotNull List<JSPsiElementBase> elements, final PsiElement scope, final String className) {
+          public boolean process(@NotNull List<? extends JSPsiElementBase> elements, final PsiElement scope, final String className) {
             needOverride[0] = !"Object".equals(className);
             return false;
           }

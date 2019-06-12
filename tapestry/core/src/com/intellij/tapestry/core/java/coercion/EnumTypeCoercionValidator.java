@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.java.coercion;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -16,7 +17,8 @@ public class EnumTypeCoercionValidator implements Command {
             return false;
 
         for (String fieldName : ((IJavaClassType) ((CoercionContext) context).getTargetType()).getFields(true).keySet()) {
-            if (((CoercionContext) context).getSourceValue() != null && fieldName.toLowerCase().equals(((CoercionContext) context).getSourceValue().toLowerCase())) {
+            if (((CoercionContext) context).getSourceValue() != null && StringUtil.toLowerCase(fieldName)
+              .equals(StringUtil.toLowerCase(((CoercionContext) context).getSourceValue()))) {
                 ((CoercionContext) context).setResult(true);
 
                 return true;
