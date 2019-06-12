@@ -26,12 +26,11 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttributeValue
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.onlyLocal
 import org.jetbrains.vuejs.index.VueOptionsIndex
 import org.jetbrains.vuejs.index.findModule
 import org.jetbrains.vuejs.index.resolve
 import org.jetbrains.vuejs.lang.expr.VueVForExpression
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.onlyLocal
 
 class VueJSSpecificHandlersFactory : JavaScriptSpecificHandlersFactory() {
   override fun createReferenceExpressionResolver(referenceExpression: JSReferenceExpressionImpl?,

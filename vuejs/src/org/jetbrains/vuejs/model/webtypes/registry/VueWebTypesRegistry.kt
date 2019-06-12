@@ -118,7 +118,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     packageJson.webTypes?.let {
       packageJsonFile.parent?.findFileByRelativePath(it)
     }?.inputStream?.let {
-      return VueWebTypesPlugin(ObjectMapper().readValue(it, WebTypes::class.java))
+      return VueWebTypesPlugin(ObjectMapper().readValue(it, WebTypes::class.java), null)
     }
 
     val versions = state.availableVersions["@web-types/" + packageJson.name!!]
@@ -157,7 +157,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
     synchronized(myStateLock) {
       myStateVersion++
     }
-    return VueWebTypesPlugin(webTypesJson)
+    return VueWebTypesPlugin(webTypesJson, null)
   }
 
   private fun <T> processState(processor: (State, ModificationTracker) -> T): T {
@@ -237,7 +237,7 @@ class VueWebTypesRegistry : PersistentStateComponent<Element> {
 
       for (versions in root.getChildren(PACKAGE_ELEMENT)) {
         val name = versions.getAttributeValue(NAME_ATTR) ?: continue
-        val map = availableVersions.computeIfAbsent(name) { TreeMap(Comparator.reverseOrder<SemVer>()) }
+        val map = availableVersions.computeIfAbsent(name, { TreeMap(Comparator.reverseOrder<SemVer>()) })
         for (version in versions.getChildren(VERSION_ELEMENT)) {
           val ver = version.getAttributeValue(VALUE_ATTR)?.let { SemVer.parseFromText(it) } ?: continue
           val url = version.getAttributeValue(URL_ATTR) ?: continue

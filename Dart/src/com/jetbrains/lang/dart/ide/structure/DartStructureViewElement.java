@@ -3,15 +3,11 @@ package com.jetbrains.lang.dart.ide.structure;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewTreeElement;
-import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
 import com.intellij.ide.util.PsiNavigationSupport;
-import com.intellij.openapi.util.TextRange;
+import com.intellij.ide.util.treeView.NodeDescriptorProvidingKey;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -24,14 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.Collections;
 
+import static com.intellij.icons.AllIcons.Nodes.*;
 import static com.intellij.icons.AllIcons.Nodes.Class;
 import static com.intellij.icons.AllIcons.Nodes.Enum;
-import static com.intellij.icons.AllIcons.Nodes.*;
 
-class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
+public class DartStructureViewElement implements StructureViewTreeElement, ItemPresentation, NodeDescriptorProvidingKey {
 
   private static final LayeredIcon STATIC_FINAL_FIELD_ICON = new LayeredIcon(Field, StaticMark, FinalMark);
   private static final LayeredIcon FINAL_FIELD_ICON = new LayeredIcon(Field, FinalMark);
@@ -41,31 +35,52 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
   private static final LayeredIcon TOP_LEVEL_VAR_ICON = new LayeredIcon(Variable, StaticMark);
   private static final LayeredIcon CONSTRUCTOR_INVOCATION_ICON = new LayeredIcon(Class, TabPin);
   private static final LayeredIcon FUNCTION_INVOCATION_ICON = new LayeredIcon(Method, TabPin);
+
   private static final LayeredIcon TOP_LEVEL_CONST_ICON = new LayeredIcon(Variable, StaticMark, FinalMark);
 
   @NotNull private final PsiFile myPsiFile;
   @NotNull private final Outline myOutline;
+
+  @NotNull private final String myValue;
   @NotNull private final String myPresentableText;
 
-  DartStructureViewElement(@NotNull final PsiFile psiFile, @NotNull final Outline outline) {
-    super(findBestPsiElementForOutline(psiFile, outline));
+  public DartStructureViewElement(@NotNull final PsiFile psiFile, @NotNull final Outline outline) {
     myPsiFile = psiFile;
     myOutline = outline;
+    myValue = getValue(outline);
     myPresentableText = getPresentableText(outline);
   }
 
   @NotNull
   @Override
-  public Collection<StructureViewTreeElement> getChildrenBase() {
-    if (myOutline.getChildren().isEmpty()) return Collections.emptyList();
-    return ContainerUtil.map2List(myOutline.getChildren(), outline -> new DartStructureViewElement(myPsiFile, outline));
+  public ItemPresentation getPresentation() {
+    return this;
+  }
+
+  @NotNull
+  @Override
+  public StructureViewTreeElement[] getChildren() {
+    if (myOutline.getChildren().isEmpty()) return EMPTY_ARRAY;
+    return ContainerUtil.map2Array(myOutline.getChildren(), DartStructureViewElement.class,
+                                   outline -> new DartStructureViewElement(myPsiFile, outline));
   }
 
   @Override
   public void navigate(boolean requestFocus) {
     final DartAnalysisServerService service = DartAnalysisServerService.getInstance(myPsiFile.getProject());
     final int offset = service.getConvertedOffset(myPsiFile.getVirtualFile(), myOutline.getElement().getLocation().getOffset());
-    PsiNavigationSupport.getInstance().createNavigatable(myPsiFile.getProject(), myPsiFile.getVirtualFile(), offset).navigate(requestFocus);
+    PsiNavigationSupport.getInstance().createNavigatable(myPsiFile.getProject(), myPsiFile.getVirtualFile(), offset)
+                        .navigate(requestFocus);
+  }
+
+  @Override
+  public boolean canNavigate() {
+    return true;
+  }
+
+  @Override
+  public boolean canNavigateToSource() {
+    return true;
   }
 
   @NotNull
@@ -75,7 +90,7 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
   }
 
   @NotNull
-  private static String getPresentableText(@NotNull final Outline outline) {
+  public static String getPresentableText(@NotNull final Outline outline) {
     final Element element = outline.getElement();
     final StringBuilder b = new StringBuilder(element.getName());
     if (StringUtil.isNotEmpty(element.getTypeParameters())) {
@@ -88,6 +103,12 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
       b.append(" ").append(DartPresentableUtil.RIGHT_ARROW).append(" ").append(element.getReturnType());
     }
     return b.toString();
+  }
+
+  @Nullable
+  @Override
+  public String getLocationString() {
+    return null;
   }
 
   @Nullable
@@ -149,27 +170,31 @@ class DartStructureViewElement extends PsiTreeElementBase<PsiElement> {
     }
   }
 
-  @Nullable
-  static PsiElement findBestPsiElementForOutline(@NotNull PsiFile psiFile, @NotNull Outline outline) {
-    DartAnalysisServerService das = DartAnalysisServerService.getInstance(psiFile.getProject());
-    int startOffset = das.getConvertedOffset(psiFile.getVirtualFile(), outline.getCodeOffset());
-    int endOffset = das.getConvertedOffset(psiFile.getVirtualFile(), outline.getCodeOffset() + outline.getCodeLength());
-    TextRange outlineRange = TextRange.create(startOffset, endOffset);
+  @Override
+  @NotNull
+  public String getValue() {
+    return myValue;
+  }
 
-    PsiElement element = psiFile.findElementAt(startOffset);
-    while ((element instanceof PsiComment || element instanceof PsiWhiteSpace) && element.getTextRange().getEndOffset() < endOffset) {
-      PsiElement next = element.getNextSibling();
-      if (next != null) {
-        element = PsiTreeUtil.getDeepestFirst(next);
-      }
-    }
+  @NotNull
+  public static String getValue(@NotNull final Outline outline) {
+    final Outline parent = outline.getParent();
+    return (parent != null ? getValue(parent) + parent.getChildren().indexOf(outline) : "") + getPresentableText(outline);
+  }
 
-    if (element != null) {
-      while (!(element instanceof PsiFile) && element.getParent() != null && outlineRange.contains(element.getParent().getTextRange())) {
-        element = element.getParent();
-      }
-    }
+  @NotNull
+  @Override
+  public Object getKey() {
+    return getPresentableText();
+  }
 
-    return element;
+  @Override
+  public boolean equals(Object obj) {
+    return obj instanceof DartStructureViewElement && ((DartStructureViewElement)obj).getValue().equals(getValue());
+  }
+
+  @Override
+  public int hashCode() {
+    return getValue().hashCode();
   }
 }

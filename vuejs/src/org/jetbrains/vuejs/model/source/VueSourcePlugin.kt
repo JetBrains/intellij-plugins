@@ -4,7 +4,6 @@ package org.jetbrains.vuejs.model.source
 import com.intellij.javascript.nodejs.library.NodeModulesDirectoryManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.psi.util.CachedValueProvider
@@ -12,10 +11,8 @@ import com.intellij.psi.util.CachedValuesManager
 import one.util.streamex.EntryStream
 import org.jetbrains.vuejs.model.*
 
-class VueSourcePlugin private constructor(override val components: Map<String, VueComponent>,
-                                          override val source: PsiElement) : VuePlugin {
-  override val parents: List<VueEntitiesContainer> = emptyList()
-
+class VueSourcePlugin private constructor(override val components: Map<String, VueComponent>) : VuePlugin {
+  override val nodeModule: String? = null
   override val directives: Map<String, VueDirective> = emptyMap()
   override val filters: Map<String, VueFilter> = emptyMap()
   override val mixins: List<VueMixin> = emptyList()
@@ -35,7 +32,7 @@ class VueSourcePlugin private constructor(override val components: Map<String, V
             .nonNullValues()
             .into(result)
 
-          CachedValueProvider.Result(if (result.isEmpty()) null else VueSourcePlugin(result, psiDirectory),
+          CachedValueProvider.Result(if (result.isEmpty()) null else VueSourcePlugin(result),
                                      NodeModulesDirectoryManager.getInstance(psiDirectory.project)
                                        .nodeModulesDirChangeTracker)
         }
