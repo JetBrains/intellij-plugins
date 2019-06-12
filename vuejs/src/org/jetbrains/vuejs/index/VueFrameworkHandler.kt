@@ -36,6 +36,8 @@ import com.intellij.psi.xml.XmlDocument
 import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.xml.util.HtmlUtil
+import org.jetbrains.vuejs.codeInsight.VueComponents
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isComponentDecorator
 import org.jetbrains.vuejs.codeInsight.VueFrameworkInsideScriptSpecificHandlersFactory
 import org.jetbrains.vuejs.codeInsight.completion.vuex.VueStoreUtils
 import org.jetbrains.vuejs.codeInsight.getTextIfLiteral
@@ -43,8 +45,6 @@ import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.lang.expr.VueJSLanguage
 import org.jetbrains.vuejs.lang.expr.VueVForExpression
 import org.jetbrains.vuejs.lang.html.VueFileType
-import org.jetbrains.vuejs.model.source.VueComponents
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.isComponentDecorator
 
 class VueFrameworkHandler : FrameworkIndexingHandler() {
   // 1 here we are just mapping the constants, no lifecycle needed
