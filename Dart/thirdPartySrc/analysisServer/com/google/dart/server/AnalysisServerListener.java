@@ -17,6 +17,7 @@ import com.google.dart.server.generated.AnalysisServer;
 import com.google.dart.server.internal.remote.utilities.ResponseUtilities;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public interface AnalysisServerListener {
                                  List<String> includedElementKinds,
                                  List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                                  boolean isLast,
-                                 String libraryFile);
+                                 @Nullable String libraryFile);
 
   /**
    * Reports the errors associated with a given file.

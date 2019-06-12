@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.dart.server.AnalysisServerListener;
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class BroadcastAnalysisServerListener implements AnalysisServerListener {
                                  List<String> includedElementKinds,
                                  List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                                  boolean isLast,
-                                 String libraryFile) {
+                                 @Nullable String libraryFile) {
     for (AnalysisServerListener listener : getListeners()) {
       listener.computedCompletion(
         completionId,

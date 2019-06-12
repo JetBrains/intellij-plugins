@@ -153,12 +153,14 @@ public class DartServerCompletionContributor extends CompletionContributor {
                    }
 
                    Set<String> importedLibraries = new HashSet<>();
-                   for (Map.Entry<String, Map<String, Set<String>>> entry : existingImports.entrySet()) {
-                     String importedLibraryUri = entry.getKey();
-                     Map<String, Set<String>> importedLibrary = entry.getValue();
-                     Set<String> names = importedLibrary.get(suggestion.getDeclaringLibraryUri());
-                     if (names != null && names.contains(suggestion.getLabel())) {
-                       importedLibraries.add(importedLibraryUri);
+                   if (existingImports != null) {
+                     for (Map.Entry<String, Map<String, Set<String>>> entry : existingImports.entrySet()) {
+                       String importedLibraryUri = entry.getKey();
+                       Map<String, Set<String>> importedLibrary = entry.getValue();
+                       Set<String> names = importedLibrary.get(suggestion.getDeclaringLibraryUri());
+                       if (names != null && names.contains(suggestion.getLabel())) {
+                         importedLibraries.add(importedLibraryUri);
+                       }
                      }
                    }
 

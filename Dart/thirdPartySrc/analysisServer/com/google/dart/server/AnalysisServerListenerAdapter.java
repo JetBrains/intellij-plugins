@@ -15,6 +15,7 @@ package com.google.dart.server;
 
 import org.dartlang.analysis.server.protocol.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class AnalysisServerListenerAdapter implements AnalysisServerListener {
                                  List<String> includedElementKinds,
                                  List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                                  boolean isLast,
-                                 String libraryFile) {
+                                 @Nullable String libraryFile) {
   }
 
   @Override

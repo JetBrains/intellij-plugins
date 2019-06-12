@@ -302,7 +302,7 @@ public class DartAnalysisServerService implements Disposable {
                                    @NotNull final List<String> includedElementKinds,
                                    @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                                    final boolean isLast,
-                                   String libraryFile) {
+                                   @Nullable String libraryFile) {
       synchronized (myCompletionInfos) {
         myCompletionInfos.add(new CompletionInfo(completionId, replacementOffset, replacementLength, completions, includedSuggestionSets,
                                                  includedElementKinds, includedSuggestionRelevanceTags, isLast, libraryFile));
@@ -2253,7 +2253,7 @@ public class DartAnalysisServerService implements Disposable {
     void consumeLibraryRef(@NotNull IncludedSuggestionSet includedSet,
                            @NotNull Set<String> includedKinds,
                            @NotNull Map<String, IncludedSuggestionRelevanceTag> includedRelevanceTags,
-                           String libraryFile);
+                           @Nullable String libraryFile);
   }
 
   private static class CompletionInfo {
@@ -2271,7 +2271,7 @@ public class DartAnalysisServerService implements Disposable {
     @NotNull private final List<String> myIncludedElementKinds;
     @NotNull private final List<IncludedSuggestionRelevanceTag> myIncludedSuggestionRelevanceTags;
     private final boolean isLast;
-    private final String myLibraryFile;
+    @Nullable private final String myLibraryFile;
 
     CompletionInfo(@NotNull final String completionId,
                    int replacementOffset,
@@ -2281,7 +2281,7 @@ public class DartAnalysisServerService implements Disposable {
                    @NotNull final List<String> includedElementKinds,
                    @NotNull final List<IncludedSuggestionRelevanceTag> includedSuggestionRelevanceTags,
                    boolean isLast,
-                   String libraryFile) {
+                   @Nullable String libraryFile) {
       this.myCompletionId = completionId;
       this.myOriginalReplacementOffset = replacementOffset;
       this.myOriginalReplacementLength = originalReplacementLength;
