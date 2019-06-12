@@ -36,7 +36,7 @@ public class NotificationCompletionExistingImportsProcessor extends Notification
     Map<String, Map<String, Set<String>>> result = new HashMap<>();
     existingImports.get("imports").getAsJsonArray().forEach(item -> {
       JsonObject existingImport = item.getAsJsonObject();  // ExistingImport
-      String importedLibraryUri = uris.get(existingImport.get("uri").getAsInt());
+      String importedLibraryUri = strings.get(existingImport.get("uri").getAsInt());
       Map<String, Set<String>> importedLibrary = new HashMap<>();
       result.put(importedLibraryUri, importedLibrary);
       // These "elements" are exports from the imported library.
