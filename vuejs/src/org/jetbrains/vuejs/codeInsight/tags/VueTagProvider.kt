@@ -29,27 +29,29 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import icons.VuejsIcons
+import one.util.streamex.EntryStream
+import one.util.streamex.StreamEx
+import org.jetbrains.vuejs.codeInsight.*
+import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider.Companion.getBoundName
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.getExportedDescriptor
+import org.jetbrains.vuejs.codeInsight.VueComponents.Companion.isNotInLibrary
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider
 import org.jetbrains.vuejs.codeInsight.attributes.findProperty
-import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
-import org.jetbrains.vuejs.codeInsight.fromAsset
-import org.jetbrains.vuejs.codeInsight.toAsset
 import org.jetbrains.vuejs.index.*
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.model.*
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.getBoundName
-import org.jetbrains.vuejs.model.source.VueComponents
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getExportedDescriptor
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.isNotInLibrary
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueEntitiesContainer
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueRegularComponent
 import org.jetbrains.vuejs.model.source.VueComponentsCache
 import org.jetbrains.vuejs.model.source.VueComponentsCalculation
+import java.util.function.BinaryOperator
+import java.util.stream.Stream
 
 private const val LOCAL_PRIORITY = 100.0
 private const val APP_PRIORITY = 90.0
-private const val PLUGIN_PRIORITY = 90.0
 private const val GLOBAL_PRIORITY = 80.0
 private const val UNREGISTERED_PRIORITY = 50.0
 
@@ -188,51 +190,73 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
     val scriptLanguage = detectVueScriptLanguage(tag.containingFile)
 
-    val nameMapper: (String) -> List<String> = if (VueFileType.INSTANCE == tag.containingFile.fileType)
-      { name -> listOf(toAsset(name).capitalize(), fromAsset(name)) }
+    val nameMapper: (String) -> Stream<String> = if (VueFileType.INSTANCE == tag.containingFile.fileType)
+      { name -> StreamEx.of(toAsset(name).capitalize(), fromAsset(name)) }
     else
-      { name -> listOf(fromAsset(name)) }
-
-    val providedNames = mutableSetOf<String>()
-    val visitor = object : VueModelVisitor {
-      override fun visitComponent(name: String, component: VueComponent, proximity: VueModelVisitor.Proximity) {
-        nameMapper(name).forEach {
-          if (providedNames.add(it))
-            elements.add(createVueLookup(component.source, it,
-                                         proximity != VueModelVisitor.Proximity.OUT_OF_SCOPE,
-                                         scriptLanguage,
-                                         priorityOf(proximity)))
-        }
-      }
-
-      override fun visitMixin(mixin: VueMixin, proximity: VueModelVisitor.Proximity) {
-      }
-
-      override fun visitFilter(name: String, filter: VueFilter, proximity: VueModelVisitor.Proximity) {}
-
-      override fun visitDirective(name: String, directive: VueDirective, proximity: VueModelVisitor.Proximity) {}
-    }
+      { name -> Stream.of(fromAsset(name)) }
 
     val component = VueModelManager.findComponent(tag)
-    if (component?.defaultName != null)
-      visitor.visitComponent(component.defaultName!!, component, VueModelVisitor.Proximity.LOCAL)
 
-    val container = component ?: VueModelManager.getGlobal(tag)
-    container?.visitScope(visitor, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+    val localComponents: EntryStream<String, Triple<VueComponent, Boolean, Double>>
+    val appComponents: EntryStream<String, Triple<VueComponent, Boolean, Double>>
+
+    if (component is VueRegularComponent) {
+      localComponents = EntryStream.of(component.components)
+        .append(component.defaultName, component)
+        .mapValues { Triple(it, it.source?.containingFile?.fileType != VueFileType.INSTANCE, LOCAL_PRIORITY) }
+
+      appComponents = StreamEx.of(component.applications)
+        .map { it.components }
+        .reduce(BinaryOperator { a, b -> a.filter { it.value == b[it.key] } })
+        .map { c ->
+          EntryStream.of(c)
+            .mapValues { Triple(it, true, APP_PRIORITY) }
+        }
+        .orElseGet { EntryStream.empty<String, Triple<VueComponent, Boolean, Double>>() }
+    }
+    else {
+      localComponents = EntryStream.empty()
+      appComponents = EntryStream.empty()
+    }
+
+    val global = VueModelManager.getGlobal(tag)
+    val pluginComponents: EntryStream<String, Triple<VueComponent, Boolean, Double>> =
+      if (global != null)
+        StreamEx.of(global.plugins as List<VueEntitiesContainer>)
+          .flatMapToEntry { it.components }
+          .mapValues { Triple(it, false, GLOBAL_PRIORITY) }
+      else
+        EntryStream.empty()
+
+    val globalComponents: EntryStream<String, Triple<VueComponent, Boolean, Double>> =
+      if (global != null)
+        StreamEx.of(global)
+          .flatMapToEntry { it.components }
+          .mapValues { Triple(it, it.source?.containingFile?.fileType != VueFileType.INSTANCE, GLOBAL_PRIORITY) }
+      else
+        EntryStream.empty()
+
+    val allComponents: EntryStream<String, Triple<VueComponent, Boolean, Double>> =
+      EntryStream.of(VueModelManager.getAllComponents(tag))
+        .mapValues { Triple(it, false, UNREGISTERED_PRIORITY) }
+
+    val contributedComponents: MutableSet<VueComponent> = mutableSetOf()
+
+    localComponents
+      .append(appComponents)
+      .append(globalComponents)
+      .append(pluginComponents)
+      .append(allComponents)
+      .filterValues { contributedComponents.add(it.first) || it.second }
+      .flatMapKeys(nameMapper)
+      .distinctKeys()
+      .forEachOrdered { entry ->
+        elements.add(createVueLookup(entry.value.first.source, entry.key, entry.value.second, scriptLanguage, entry.value.third))
+      }
 
     elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
       LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
     })
-  }
-
-  private fun priorityOf(proximity: VueModelVisitor.Proximity): Double {
-    return when (proximity) {
-      VueModelVisitor.Proximity.OUT_OF_SCOPE -> UNREGISTERED_PRIORITY
-      VueModelVisitor.Proximity.GLOBAL -> GLOBAL_PRIORITY
-      VueModelVisitor.Proximity.APP -> APP_PRIORITY
-      VueModelVisitor.Proximity.PLUGIN -> PLUGIN_PRIORITY
-      VueModelVisitor.Proximity.LOCAL -> LOCAL_PRIORITY
-    }
   }
 
   private fun createVueLookup(element: PsiElement?,

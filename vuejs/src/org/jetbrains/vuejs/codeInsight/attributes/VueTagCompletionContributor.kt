@@ -19,11 +19,11 @@ import com.intellij.util.ProcessingContext
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import icons.VuejsIcons
+import org.jetbrains.vuejs.codeInsight.VueComponentDetailsProvider
+import org.jetbrains.vuejs.codeInsight.VueComponents
 import org.jetbrains.vuejs.codeInsight.completion.vuetify.VuetifyIcons
 import org.jetbrains.vuejs.codeInsight.tags.VueElementDescriptor
 import org.jetbrains.vuejs.index.isVueContext
-import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
-import org.jetbrains.vuejs.model.source.VueComponents
 
 class VueTagCompletionContributor : CompletionContributor() {
   init {

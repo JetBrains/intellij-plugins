@@ -6,15 +6,7 @@ import org.jetbrains.vuejs.model.*
 import org.jetbrains.vuejs.model.webtypes.json.Tag
 import java.util.*
 
-class VueWebTypesComponent(tag: Tag, private val parent: VueWebTypesPlugin) : VueRegularComponent {
-
-  override val source: PsiElement? = null
-  override val global: VueGlobal?
-    get() {
-      return parent.global
-    }
-  override val parents: List<VueEntitiesContainer> = listOf(parent)
-
+class VueWebTypesComponent(tag: Tag) : VueRegularComponent {
   override val data: List<VueDataProperty>
     get() = Collections.emptyList()
   override val computed: List<VueComputedProperty>
@@ -41,7 +33,13 @@ class VueWebTypesComponent(tag: Tag, private val parent: VueWebTypesPlugin) : Vu
     get() = Collections.emptyMap()
   override val mixins: List<VueMixin>
     get() = Collections.emptyList()
+  override val applications: List<VueApp>
+    get() = Collections.emptyList()
+  override val global: VueGlobal
+    get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
   override val defaultName: String = tag.name!!
+
+  override val source: PsiElement? = null
 
   private val sourceFile: String? = tag.sourceFile
 

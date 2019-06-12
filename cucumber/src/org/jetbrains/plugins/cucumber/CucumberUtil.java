@@ -13,14 +13,15 @@
 // limitations under the License.
 package org.jetbrains.plugins.cucumber;
 
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.search.*;
-import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.search.PsiSearchHelper;
+import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.search.TextOccurenceProcessor;
+import com.intellij.psi.search.UsageSearchContext;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -123,27 +124,12 @@ public class CucumberUtil {
       return true;
     }
 
-    final SearchScope searchScope = ReadAction.compute(() -> CucumberStepSearchUtil.restrictScopeToGherkinFiles(effectiveSearchScope));
+    final SearchScope searchScope = CucumberStepSearchUtil.restrictScopeToGherkinFiles(() -> effectiveSearchScope);
 
 
     final short context = (short)(UsageSearchContext.IN_STRINGS | UsageSearchContext.IN_CODE);
     final PsiSearchHelper instance = PsiSearchHelper.getInstance(stepDefinitionElement.getProject());
     return instance.processElementsWithWord(processor, searchScope, word, context, true);
-  }
-
-  public static void findPossibleGherkinElementUsages(@NotNull final PsiElement stepDefinitionElement,
-                                                      @NotNull final String regexp,
-                                                      @NotNull final ReferencesSearch.SearchParameters params,
-                                                      @NotNull final RequestResultProcessor processor) {
-    final String word = getTheBiggestWordToSearchByIndex(regexp);
-    if (StringUtil.isEmptyOrSpaces(word)) {
-      return;
-    }
-
-    final SearchScope searchScope = CucumberStepSearchUtil.restrictScopeToGherkinFiles(params.getEffectiveSearchScope());
-    final short searchContext = (short)(UsageSearchContext.IN_STRINGS | UsageSearchContext.IN_CODE);
-
-    params.getOptimizer().searchWord(word, searchScope, searchContext, true, stepDefinitionElement, processor);
   }
 
   public static String getTheBiggestWordToSearchByIndex(@NotNull String regexp) {
