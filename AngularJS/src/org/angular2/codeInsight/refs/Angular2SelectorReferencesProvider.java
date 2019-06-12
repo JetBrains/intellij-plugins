@@ -17,27 +17,37 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptorEx;
 import com.intellij.xml.util.XmlUtil;
-import org.angular2.entities.Angular2Directive;
+import org.angular2.entities.Angular2DirectiveSelector;
 import org.angular2.entities.Angular2DirectiveSelector.SimpleSelectorWithPsi;
 import org.angular2.entities.Angular2DirectiveSelectorPsiElement;
 import org.angular2.entities.Angular2EntitiesProvider;
+import org.angular2.lang.html.psi.Angular2HtmlNgContentSelector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
 
+import static com.intellij.util.ObjectUtils.doIfNotNull;
+
 public class Angular2SelectorReferencesProvider extends PsiReferenceProvider {
 
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-    Angular2Directive directive = Angular2EntitiesProvider.getDirective(PsiTreeUtil.getParentOfType(element, ES6Decorator.class));
-    if (directive == null) {
+    Angular2DirectiveSelector directiveSelector;
+    if (element instanceof Angular2HtmlNgContentSelector) {
+      directiveSelector = ((Angular2HtmlNgContentSelector)element).getSelector();
+    }
+    else {
+      directiveSelector = doIfNotNull(Angular2EntitiesProvider.getDirective(PsiTreeUtil.getParentOfType(element, ES6Decorator.class)),
+                                      dir -> dir.getSelector());
+    }
+    if (directiveSelector == null) {
       return PsiReference.EMPTY_ARRAY;
     }
     List<PsiReference> result = new SmartList<>();
-    for (SimpleSelectorWithPsi selector : directive.getSelector().getSimpleSelectorsWithPsi()) {
+    for (SimpleSelectorWithPsi selector : directiveSelector.getSimpleSelectorsWithPsi()) {
       String elementName = null;
       if (selector.getElement() != null && selector.getElement().getParent() == element) {
         result.add(new HtmlElementReference(selector.getElement()));

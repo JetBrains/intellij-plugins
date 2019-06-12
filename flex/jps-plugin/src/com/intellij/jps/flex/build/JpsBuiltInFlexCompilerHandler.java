@@ -110,7 +110,7 @@ public class JpsBuiltInFlexCompilerHandler {
   }
 
   private void readInputStreamUntilConnected(final Process process, final CompileContext context, final String compilerName) {
-    SharedThreadPool.getInstance().executeOnPooledThread(() -> {
+    SharedThreadPool.getInstance().execute(() -> {
       final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(process.getInputStream());
 
       try {
@@ -142,7 +142,7 @@ public class JpsBuiltInFlexCompilerHandler {
   }
 
   private void scheduleInputReading() {
-    SharedThreadPool.getInstance().executeOnPooledThread(() -> {
+    SharedThreadPool.getInstance().execute(() -> {
       final StringBuilder buffer = new StringBuilder();
       while (true) {
         final DataInputStream dataInputStream = myDataInputStream;

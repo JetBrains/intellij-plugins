@@ -20,7 +20,6 @@ import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.psi.ElementDescriptionUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.SmartList;
@@ -110,8 +109,6 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
   public String getLocationString() {
     final XmlElement xmlElement = getElement().getXmlElement();
     assert xmlElement != null : getElement();
-    return ElementDescriptionUtil.getElementDescription(xmlElement,
-                                                        StrutsTreeDescriptionLocation.INSTANCE);
+    return StrutsTreeDescriptionProvider.getElementDescription(xmlElement);
   }
-
 }

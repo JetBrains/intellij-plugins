@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.lang.javascript.flex.debug;
 
 import com.intellij.openapi.actionSystem.AnAction;
@@ -5,7 +6,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
@@ -24,7 +24,7 @@ public class SendCommandToDebuggerAction extends AnAction {
     Project project = e.getData(CommonDataKeys.PROJECT);
     if (project == null) return;
 
-    final boolean internal = ApplicationManagerEx.getApplicationEx().isInternal();
+    final boolean internal = ApplicationManager.getApplication().isInternal();
     e.getPresentation().setVisible(internal);
     e.getPresentation().setEnabled(internal && XDebuggerManager.getInstance(project).getCurrentSession() != null);
   }

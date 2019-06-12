@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.core.users;
 
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 
 import java.util.List;
 import java.util.Vector;
@@ -46,12 +46,12 @@ public final class UserPresence {
   public String getDisplayText() {
     switch(myPresenceMode) {
       case UNAVAILABLE: return "";
-      case AVAILABLE: return StringUtil.getMsg("user.presence.online");
-      case DND: return StringUtil.getMsg("user.presence.dnd");
+      case AVAILABLE: return CommunicatorStrings.getMsg("user.presence.online");
+      case DND: return CommunicatorStrings.getMsg("user.presence.dnd");
       case AWAY:
-        return StringUtil.getMsg("user.presence.away");
+        return CommunicatorStrings.getMsg("user.presence.away");
       case EXTENDED_AWAY:
-        return StringUtil.getMsg("user.presence.extended_away");
+        return CommunicatorStrings.getMsg("user.presence.extended_away");
     }
     return "";
   }

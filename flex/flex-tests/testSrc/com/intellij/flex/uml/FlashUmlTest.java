@@ -38,7 +38,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.SkipInHeadlessEnvironment;
 import com.intellij.uml.UmlGraphBuilderFactory;
 import com.intellij.uml.core.actions.ShowDiagramBase;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jdom.transform.JDOMResult;
@@ -91,7 +91,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
   }
 
   private void doTest(String file) throws Exception {
-    doTest(new String[]{file}, ArrayUtil.EMPTY_STRING_ARRAY, () -> GlobalSearchScope.allScope(myProject), null, null);
+    doTest(new String[]{file}, ArrayUtilRt.EMPTY_STRING_ARRAY, () -> GlobalSearchScope.allScope(myProject), null, null);
   }
 
 
@@ -319,7 +319,7 @@ public class FlashUmlTest extends CodeInsightTestCase {
     String[] files = {getTestName(false) + "/com/test/MyButton.mxml"};
 
     DiagramBuilder builder = doTestImpl(projectRoot, files,
-                                        ArrayUtil.EMPTY_STRING_ARRAY,
+                                        ArrayUtilRt.EMPTY_STRING_ARRAY,
                                         moduleScopeProvider(), EnumSet.allOf(FlashUmlDependenciesSettingsOption.class),
                                         null);
     String originQName = "com.test.MyButton";

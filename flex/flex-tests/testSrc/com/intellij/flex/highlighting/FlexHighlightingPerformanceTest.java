@@ -7,7 +7,7 @@ import com.intellij.lang.javascript.JSTestOptions;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.testFramework.PlatformTestUtil;
-import com.jetbrains.performancePlugin.utils.ProfilingUtil;
+import com.jetbrains.performancePlugin.profilers.YourKitProfilerHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerTestCase {
@@ -35,14 +35,14 @@ public class FlexHighlightingPerformanceTest extends ActionScriptDaemonAnalyzerT
   @JSTestOptions({JSTestOption.WithLoadingAndSavingCaches, JSTestOption.WithFlexFacet, JSTestOption.WithJsSupportLoader})
   public void testPerformance() {
     final boolean doProfiling = false;
-    if (doProfiling) ProfilingUtil.startCPUProfiling();
+    if (doProfiling) YourKitProfilerHandler.startCPUProfiling();
     try {
       PlatformTestUtil.startPerformanceTest("Mxml highlighting", 27_000,
                                             () -> doTestFor(true, getTestName(false) + ".mxml", "UsingSwcStubs2.swc"))
         .usesAllCPUCores().assertTiming();
     }
     finally {
-      if (doProfiling) ProfilingUtil.captureCPUSnapshot();
+      if (doProfiling) YourKitProfilerHandler.captureCPUSnapshot();
     }
   }
 

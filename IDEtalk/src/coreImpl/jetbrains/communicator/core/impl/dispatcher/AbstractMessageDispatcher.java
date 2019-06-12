@@ -25,7 +25,7 @@ import jetbrains.communicator.core.dispatcher.MessageDispatcher;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserEvent;
-import jetbrains.communicator.util.XMLUtil;
+import jetbrains.communicator.util.XStreamUtil;
 import org.apache.log4j.Logger;
 import org.picocontainer.Disposable;
 
@@ -184,7 +184,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
 
   protected final void load() {
     synchronized (myUser2MessagesLock) {
-      Object pendingEventsStorable = XMLUtil.fromXml(getXStream(), getFileName(), false);
+      Object pendingEventsStorable = XStreamUtil.fromXml(getXStream(), getFileName(), false);
       if (pendingEventsStorable instanceof MessagesStorable) {
         loadFromStorableMessages((MessagesStorable) pendingEventsStorable);
       }
@@ -213,7 +213,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
 
     LOG.debug("Save start");
     synchronized(myUser2MessagesLock) {
-      XMLUtil.toXml(getXStream(), getFileName(), createStorableMessages());
+      XStreamUtil.toXml(getXStream(), getFileName(), createStorableMessages());
     }
     LOG.debug("Save finish");
   }
@@ -225,7 +225,7 @@ public abstract class AbstractMessageDispatcher implements MessageDispatcher, Di
   @SuppressWarnings({"HardCodedStringLiteral"})
   private XStream getXStream() {
     if (myXStream == null) {
-      myXStream = XMLUtil.createXStream();
+      myXStream = XStreamUtil.createXStream();
       myXStream.alias("user", UserImpl.class);
       myXStream.alias("pendingEvents", MessagesStorable.class);
     }

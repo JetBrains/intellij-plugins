@@ -103,7 +103,6 @@ public class Angular2BoundHtmlAttributesProvider implements Angular2AttributesPr
       super(xmlTag,
             notNull(PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName(), canonical),
                     () -> PROPERTY_BINDING.buildName(BASE_PREFIX + originalDescriptor.getName())),
-            false,
             originalDescriptor.getDeclarations(),
             true);
     }

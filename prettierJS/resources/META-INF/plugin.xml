@@ -41,6 +41,7 @@ Please report any issues in the <a href="https://youtrack.jetbrains.com/issues/W
         provider="com.intellij.prettierjs.PrettierConfigurable$Provider"/>
 
     <fileTypeFactory implementation="com.intellij.prettierjs.config.PrettierConfigFileTypeFactory"/>
+    <lang.substitutor language="JSON" implementationClass="com.intellij.prettierjs.config.PrettierConfigLanguageSubstitutor"/>
     <iconProvider implementation="com.intellij.prettierjs.config.PrettierConfigIconProvider"/>
     <editorNotificationProvider implementation="com.intellij.prettierjs.PrettierCodeStyleEditorNotificationProvider"/>
     <directoryProjectConfigurator implementation="com.intellij.prettierjs.PrettierCompatibleCodeStyleInstaller"/>

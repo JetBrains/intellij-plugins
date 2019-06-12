@@ -44,7 +44,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
   }
 
   protected void setUpJdk() {
-    FlexTestUtils.setupFlexSdk(myModule, getTestName(false), getClass(), myFixture.getTestRootDisposable());
+    FlexTestUtils.setupFlexSdk(getModule(), getTestName(false), getClass(), myFixture.getTestRootDisposable());
   }
 
   private void doJSTypeHierarchyTest(final String hierarchyType, final String classFqn) throws Exception {
@@ -55,7 +55,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
     doHierarchyTest(() -> {
       final JSClass jsClass =
         (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-          .findClassByQName(classFqn, GlobalSearchScope.moduleScope(myModule));
+          .findClassByQName(classFqn, GlobalSearchScope.moduleScope(getModule()));
       assert jsClass != null;
       if (TypeHierarchyBrowserBase.TYPE_HIERARCHY_TYPE.equals(hierarchyType)) {
         return new JSTypeHierarchyTreeStructure(getProject(), jsClass);
@@ -81,7 +81,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
     doHierarchyTest(() -> {
       final JSClass jsClass =
         (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-          .findClassByQName(classFqn, GlobalSearchScope.moduleScope(myModule));
+          .findClassByQName(classFqn, GlobalSearchScope.moduleScope(getModule()));
       assert jsClass != null;
       final JSFunction jsFunction = jsClass.findFunctionByName(methodName);
       assert jsFunction != null;
@@ -99,7 +99,7 @@ public class FlexHierarchyTest extends JSHierarchyTestBase {
     doHierarchyTest(() -> {
       final JSClass jsClass =
         (JSClass)JSDialectSpecificHandlersFactory.forLanguage(JavaScriptSupportLoader.ECMA_SCRIPT_L4).getClassResolver()
-          .findClassByQName(classFqn, GlobalSearchScope.moduleScope(myModule));
+          .findClassByQName(classFqn, GlobalSearchScope.moduleScope(getModule()));
       assert jsClass != null;
       final JSFunction jsFunction = jsClass.findFunctionByName(methodName);
       assert jsFunction != null;

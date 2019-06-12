@@ -105,6 +105,11 @@ public class Angular2TemplateInspectionsTest extends Angular2CodeInsightFixtureT
            "tags-with-module.html", "component.ts", "tags-module.ts");
   }
 
+  public void testNgContentSelector() {
+    doTest(AngularInvalidSelectorInspection.class,
+           "ng-content-selector.html");
+  }
+
   private void doTest(@NotNull Class<? extends LocalInspectionTool> inspection,
                       String... files) {
     doTest(1, null, null, inspection, files);

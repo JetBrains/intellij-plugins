@@ -50,14 +50,14 @@ public class AngularRouterStateLoader {
   }
 
   private static void findPossibleReferences(@NotNull final JSCallExpression callExpression,
-                                             @NotNull final Processor<JSObjectLiteralExpression> processor) {
+                                             @NotNull final Processor<? super JSObjectLiteralExpression> processor) {
     final JSExpression[] arguments = callExpression.getArguments();
     if (arguments.length == 1 && arguments[0] instanceof JSReferenceExpression) {
       processReference(processor, arguments[0]);
     }
   }
 
-  private static void processReference(@NotNull Processor<JSObjectLiteralExpression> processor, JSExpression argument) {
+  private static void processReference(@NotNull Processor<? super JSObjectLiteralExpression> processor, JSExpression argument) {
     final JSReferenceExpression reference = (JSReferenceExpression)argument;
     final PsiElement resolved = reference.resolve();
     if (resolved instanceof JSVariable) {

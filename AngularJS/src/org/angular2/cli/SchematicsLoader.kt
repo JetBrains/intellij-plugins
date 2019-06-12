@@ -6,7 +6,6 @@ import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.javascript.nodejs.CompletionModuleInfo
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil
 import com.intellij.javascript.nodejs.interpreter.NodeCommandLineConfigurator
-import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreter
 import com.intellij.javascript.nodejs.interpreter.NodeJsInterpreterManager
 import com.intellij.lang.javascript.service.JSLanguageServiceUtil
 import com.intellij.openapi.diagnostic.Attachment
@@ -45,7 +44,7 @@ fun doLoad(project: Project, cli: VirtualFile, includeHidden: Boolean, logErrors
   }
 
   if (parse.isEmpty()) {
-    val blueprintHelpOutput = loadBlueprintHelpOutput(configurator, interpreter, cli)
+    val blueprintHelpOutput = loadBlueprintHelpOutput(configurator, cli)
     if (blueprintHelpOutput.isNotEmpty()) {
       try {
         parse = BlueprintParser().parse(blueprintHelpOutput)
@@ -75,10 +74,9 @@ private fun loadSchematicsInfoJson(configurator: NodeCommandLineConfigurator,
   return grabCommandOutput(commandLine, cli.path)
 }
 
-private fun loadBlueprintHelpOutput(configurator: NodeCommandLineConfigurator,
-                                    node: NodeJsInterpreter, cli: VirtualFile): String {
+private fun loadBlueprintHelpOutput(configurator: NodeCommandLineConfigurator, cli: VirtualFile): String {
   val modules: MutableList<CompletionModuleInfo> = mutableListOf()
-  NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, false, node)
+  NodeModuleSearchUtil.findModulesWithName(modules, AngularCliProjectGenerator.PACKAGE_NAME, cli, null)
 
   val module = modules.firstOrNull() ?: return ""
   val moduleExe = "${module.virtualFile!!.path}${File.separator}bin${File.separator}ng"

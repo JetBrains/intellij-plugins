@@ -4,7 +4,6 @@ package org.angular2.cli;
 import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -21,11 +20,10 @@ public class AngularJSProjectConfigurator implements DirectoryProjectConfigurato
 
   @Override
   public void configureProject(@NotNull Project project, @NotNull VirtualFile baseDir, @NotNull Ref<Module> moduleRef) {
-    final ModuleManager moduleManager = ModuleManager.getInstance(project);
-    final Module[] modules = moduleManager.getModules();
-    if (modules.length == 1) {
+    Module module = moduleRef.get();
+    if (module != null) {
       final VirtualFile cliJson = AngularCliUtil.findCliJson(baseDir);
-      final ModifiableRootModel model = ModuleRootManager.getInstance(modules[0]).getModifiableModel();
+      final ModifiableRootModel model = ModuleRootManager.getInstance(module).getModifiableModel();
       final ContentEntry entry = MarkRootActionBase.findContentEntry(model, baseDir);
       if (entry != null && cliJson != null) {
         excludeDefault(baseDir, entry);

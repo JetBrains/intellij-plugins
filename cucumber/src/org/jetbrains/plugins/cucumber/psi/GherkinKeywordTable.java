@@ -1,12 +1,8 @@
 package org.jetbrains.plugins.cucumber.psi;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.psi.i18n.JsonGherkinKeywordProvider;
-import org.jetbrains.plugins.cucumber.psi.impl.GherkinFileImpl;
 
 import java.util.*;
 
@@ -67,6 +63,12 @@ public class GherkinKeywordTable {
 
     return keywords;
   }
+  
+  @NotNull
+  public Collection<String> getRuleKeywords() {
+    Collection<String> result = getKeywords(GherkinTokenTypes.RULE_KEYWORD);
+    return result == null ? Collections.emptyList() : result;
+  }
 
   public String getScenarioOutlineKeyword() {
     return getScenarioOutlineKeywords().iterator().next();
@@ -105,22 +107,6 @@ public class GherkinKeywordTable {
     final Collection<String> keywords = getKeywords(GherkinTokenTypes.FEATURE_KEYWORD);
     assert keywords != null;
     return keywords;
-  }
-
-  @NotNull
-  public static GherkinKeywordTable getKeywordsTable(PsiFile originalFile, Project project) {
-    final GherkinKeywordProvider provider = JsonGherkinKeywordProvider.getKeywordProvider();
-
-    // find language comment
-    final String language = getFeatureLanguage(originalFile);
-    return provider.getKeywordsTable(language);
-  }
-
-  @NotNull
-  public static String getFeatureLanguage(PsiFile originalFile) {
-    return  originalFile instanceof GherkinFile
-            ? ((GherkinFile)originalFile).getLocaleLanguage()
-            : GherkinFileImpl.getDefaultLocale();
   }
 
   public Collection<IElementType> getTypes() {

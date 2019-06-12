@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.flutter;
 
 import com.intellij.ide.plugins.PluginManager;
@@ -17,6 +18,7 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class FlutterUtil {
@@ -62,7 +64,7 @@ public class FlutterUtil {
     //   flutter:
 
     try {
-      final String contents = new String(pubspec.contentsToByteArray(true /* cache contents */));
+      final String contents = new String(pubspec.contentsToByteArray(true /* cache contents */), StandardCharsets.UTF_8);
       final Map<String, Object> yaml = loadPubspecInfo(contents);
       if (yaml == null) {
         return false;

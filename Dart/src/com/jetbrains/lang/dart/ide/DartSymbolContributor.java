@@ -1,31 +1,36 @@
 package com.jetbrains.lang.dart.ide;
 
-import com.intellij.navigation.ChooseByNameContributor;
+import com.intellij.navigation.ChooseByNameContributorEx;
 import com.intellij.navigation.NavigationItem;
-import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.SyntaxTraverser;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.jetbrains.lang.dart.ide.index.DartSymbolIndex;
-import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.intellij.util.Processor;
+import com.intellij.util.containers.JBIterable;
+import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.FindSymbolParameters;
+import com.intellij.util.indexing.IdFilter;
+import com.jetbrains.lang.dart.psi.DartComponent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import static com.jetbrains.lang.dart.ide.index.DartSymbolIndex.DART_SYMBOL_INDEX;
 
-public class DartSymbolContributor implements ChooseByNameContributor {
-  @NotNull
+public class DartSymbolContributor implements ChooseByNameContributorEx {
   @Override
-  public String[] getNames(@NotNull final Project project, final boolean includeNonProjectItems) {
-    final GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
-    return DartSymbolIndex.getAllSymbols(scope);
+  public void processNames(@NotNull Processor<String> processor, @NotNull GlobalSearchScope scope, @Nullable IdFilter filter) {
+    FileBasedIndex.getInstance().processAllKeys(DART_SYMBOL_INDEX, processor, scope, null);
   }
 
-  @NotNull
   @Override
-  public NavigationItem[] getItemsByName(@NotNull final String name,
-                                         @NotNull final String pattern,
-                                         @NotNull final Project project,
-                                         final boolean includeNonProjectItems) {
-    final GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
-    final Collection<DartComponentName> result = DartSymbolIndex.getItemsByName(name, project, scope);
-    return result.toArray(NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY);
+  public void processElementsWithName(@NotNull String name,
+                                      @NotNull Processor<NavigationItem> processor,
+                                      @NotNull FindSymbolParameters parameters) {
+    DartClassContributor.doProcessElements(DART_SYMBOL_INDEX, DartSymbolContributor::getComponents,
+                                           name, processor, parameters);
+  }
+
+  private static JBIterable<DartComponent> getComponents(PsiElement context) {
+    return SyntaxTraverser.psiTraverser(context).traverse().filter(DartComponent.class);
   }
 }

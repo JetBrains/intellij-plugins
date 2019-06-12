@@ -7,7 +7,7 @@ public class UnusedGlobalSymbols
 
   public function usedFoo() {
       bar2();
-      if (true) new XXX().test_zzz();
+      if (<warning descr="If statement can be simplified">true</warning>) new XXX().test_zzz();
   }
 }
 }

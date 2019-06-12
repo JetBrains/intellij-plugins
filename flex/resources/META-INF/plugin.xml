@@ -20,6 +20,8 @@
   <depends optional="true" config-file="flex-copyright.xml">com.intellij.copyright</depends>
 
   <extensions defaultExtensionNs="com.intellij">
+    <highlightingPassFactory implementation="com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory"/>
+
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider"/>
     <compileServer.plugin classpath="flex-jps-plugin.jar;flex-shared.jar"/>
@@ -286,9 +288,6 @@
     <component>
       <implementation-class>com.intellij.javascript.flex.mxml.schema.CodeContextHolder</implementation-class>
     </component>
-    <component>
-      <implementation-class>com.intellij.lang.javascript.flex.ActionScriptUnusedImportsPassFactory</implementation-class>
-    </component>
   </project-components>
 
   <actions>
@@ -345,7 +344,7 @@
     <action id="AddAsSwcLib" class="com.intellij.lang.javascript.flex.actions.addAsLib.AddAsSwcLibAction" text="Add as SWC Library...">
       <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" relative-to-action="MarkRootGroup" anchor="after"/>
     </action>
-  
+
     <!--
     <action id="CompileCSSToSWF" text="Compile CSS to SWF..." popup="true"
             description="Compile CSS file fo SWF to be used as a runtime style sheet for a Flash application"

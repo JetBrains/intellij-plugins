@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.jetbrains.lang.dart.sdk;
 
 import com.intellij.ide.util.PropertiesComponent;
@@ -13,7 +13,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
-import com.intellij.util.ArrayUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.BooleanFunction;
 import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.DartBundle;
@@ -132,7 +132,7 @@ public class DartSdkUtil {
 
   private static void addKnownPathsToCombo(@NotNull final JComboBox combo,
                                            @NotNull final String propertyKey,
-                                           @NotNull final BooleanFunction<String> pathChecker) {
+                                           @NotNull final BooleanFunction<? super String> pathChecker) {
     final SmartList<String> validPathsForUI = new SmartList<>();
 
     final String currentPath = getItemFromCombo(combo);
@@ -150,7 +150,7 @@ public class DartSdkUtil {
       }
     }
 
-    combo.setModel(new DefaultComboBoxModel<>(ArrayUtil.toStringArray(validPathsForUI)));
+    combo.setModel(new DefaultComboBoxModel<>(ArrayUtilRt.toStringArray(validPathsForUI)));
   }
 
   public static void updateKnownSdkPaths(@NotNull final Project project, @NotNull final String newSdkPath) {
@@ -178,7 +178,7 @@ public class DartSdkUtil {
       PropertiesComponent.getInstance().unsetValue(propertyKey);
     }
     else {
-      PropertiesComponent.getInstance().setValues(propertyKey, ArrayUtil.toStringArray(knownPaths));
+      PropertiesComponent.getInstance().setValues(propertyKey, ArrayUtilRt.toStringArray(knownPaths));
     }
   }
 

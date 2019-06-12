@@ -8,7 +8,7 @@ import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.idea.VFSUtil;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NonNls;
 
@@ -22,7 +22,7 @@ public class ShowRemoteDiffAction extends BaseEditorPopup {
 
   @Override
   protected String getActionDescription(User user, VirtualFile file) {
-    return StringUtil.getMsg("show.diff.description", file.getPresentableName(), user.getDisplayName());
+    return CommunicatorStrings.getMsg("show.diff.description", file.getPresentableName(), user.getDisplayName());
   }
 
   @Override

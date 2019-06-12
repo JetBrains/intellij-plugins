@@ -1,4 +1,4 @@
-// "Create Set Property 'selectionManager'" "true"
+// "Create 'set' property 'selectionManager'" "true"
 class A {
   public function getSelectionManager():ISelectionManager {
     selectionManager = null;

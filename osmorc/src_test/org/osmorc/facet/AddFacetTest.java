@@ -42,7 +42,7 @@ import java.io.IOException;
 public class AddFacetTest extends JavaCodeInsightFixtureTestCase {
   public void testAddFacetAfterCreatingManifest() throws IOException {
     WriteAction.runAndWait(() -> {
-      VirtualFile[] roots = ModuleRootManager.getInstance(myModule).getContentRoots();
+      VirtualFile[] roots = ModuleRootManager.getInstance(getModule()).getContentRoots();
       VirtualFile metaInf = roots[0].createChildDirectory(this, "META-INF");
       VirtualFile manifest = metaInf.createChildData(this, "MANIFEST.MF");
       VfsUtil.saveText(manifest, "Manifest-Version: 1.0\n" +
@@ -54,8 +54,8 @@ public class AddFacetTest extends JavaCodeInsightFixtureTestCase {
     });
 
     WriteAction.runAndWait(() -> {
-      ModifiableFacetModel model = FacetManager.getInstance(myModule).createModifiableModel();
-      OsmorcFacet facet = new OsmorcFacet(myModule);
+      ModifiableFacetModel model = FacetManager.getInstance(getModule()).createModifiableModel();
+      OsmorcFacet facet = new OsmorcFacet(getModule());
       facet.getConfiguration().setManifestGenerationMode(ManifestGenerationMode.Manually);
       model.addFacet(facet);
       model.commit();

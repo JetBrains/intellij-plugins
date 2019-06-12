@@ -1,0 +1,11 @@
+@mixin column-large {
+    max-width: 400px;
+}
+
+@mixin column-medium {
+    max-width: 300px;
+}
+
+@mixin column-extra-small {
+    max-width: 160px;
+}

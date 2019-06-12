@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.model.presentation;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaField;
@@ -92,7 +93,7 @@ public class InjectedElement implements Comparable {
 
       if (_element instanceof Component && getParameters() != null && getParameters().containsKey("id")) return getParameters().get("id");
 
-      if (!(_tag.getLocalName().toUpperCase().equals(_element.getName().toUpperCase()))) return getElement().getName();
+      if (!(StringUtil.toUpperCase(_tag.getLocalName()).equals(StringUtil.toUpperCase(_element.getName())))) return getElement().getName();
 
       return _tag.getLocalName();
     }

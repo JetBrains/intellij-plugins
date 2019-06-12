@@ -28,7 +28,7 @@ import jetbrains.communicator.ide.StatusToolbar;
 import jetbrains.communicator.jabber.impl.FindByJabberIdDialog;
 import jetbrains.communicator.jabber.register.RegistrationDialog;
 import jetbrains.communicator.jabber.register.RegistrationForm;
-import jetbrains.communicator.util.StringUtil;
+import jetbrains.communicator.util.CommunicatorStrings;
 import jetbrains.communicator.util.UIUtil;
 import org.jivesoftware.smack.packet.Presence;
 import org.picocontainer.MutablePicoContainer;
@@ -136,15 +136,15 @@ public class JabberIdeaUI implements JabberUI {
   public boolean shouldAcceptSubscriptionRequest(Presence requestFrom) {
     VCardInfo fromInfo = myFacade.getVCard(requestFrom.getFrom());
 
-    return myIdeFacade.askQuestion(StringUtil.getMsg("jabber.subscribe.title"),
-        StringUtil.getMsg("jabber.subscribe.text", requestFrom.getFrom(), buildUserInfo(fromInfo)));
+    return myIdeFacade.askQuestion(CommunicatorStrings.getMsg("jabber.subscribe.title"),
+                                   CommunicatorStrings.getMsg("jabber.subscribe.text", requestFrom.getFrom(), buildUserInfo(fromInfo)));
   }
 
   private String buildUserInfo(VCardInfo fromInfo) {
     StringBuilder sb = new StringBuilder();
-    sb.append(StringUtil.getMsg("nickname.info")).append(fromInfo.getNickName()).append('\n');
-    sb.append(StringUtil.getMsg("first.name.info")).append(fromInfo.getFirstname()).append('\n');
-    sb.append(StringUtil.getMsg("last.name.info")).append(fromInfo.getLastname());
+    sb.append(CommunicatorStrings.getMsg("nickname.info")).append(fromInfo.getNickName()).append('\n');
+    sb.append(CommunicatorStrings.getMsg("first.name.info")).append(fromInfo.getFirstname()).append('\n');
+    sb.append(CommunicatorStrings.getMsg("last.name.info")).append(fromInfo.getLastname());
     return sb.toString();
   }
 
