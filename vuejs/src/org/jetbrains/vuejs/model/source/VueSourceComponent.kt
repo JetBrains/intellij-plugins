@@ -1,33 +1,26 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.vuejs.model.source
 
+import com.intellij.lang.javascript.psi.JSLiteralExpression
+import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
 import com.intellij.psi.PsiElement
 import org.jetbrains.vuejs.index.VueIndexData
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueRegularComponent
 
-class VueSourceComponent(element: PsiElement, data: VueIndexData?) : VueRegularComponent {
+class VueSourceComponent(sourceElement: PsiElement,
+                         component: PsiElement,
+                         private val indexData: VueIndexData?)
+  : VueSourceContainer(sourceElement, component), VueRegularComponent {
 
-  override val global: VueGlobal?
+  override val defaultName: String?
     get() {
-      return VueModelManager.getGlobal(source)
+      return indexData?.originalName
+             ?: ((declaration as? JSObjectLiteralExpression)
+               ?.findProperty("name")
+               ?.value as? JSLiteralExpression)
+               ?.let {
+                 if (it.isQuotedLiteral) it.stringValue else null
+               }
     }
-  override val source: PsiElement = element
-  override val defaultName: String? = data?.originalName
-
-  override val applications: List<VueApp> = emptyList()
-  override val data: List<VueDataProperty> = emptyList()
-  override val computed: List<VueComputedProperty> = emptyList()
-  override val methods: List<VueMethod> = emptyList()
-  override val props: List<VueInputProperty> = emptyList()
-  override val emits: List<VueEmitCall> = emptyList()
-  override val slots: List<VueSlot> = emptyList()
-  override val template: PsiElement? = null
-  override val element: String? = null
-  override val extends: Any? = null
-  override val components: Map<String, VueComponent> = emptyMap()
-  override val directives: Map<String, VueDirective> = emptyMap()
-  override val filters: Map<String, VueFilter> = emptyMap()
-  override val mixins: List<VueMixin> = emptyList()
-
 
 }
