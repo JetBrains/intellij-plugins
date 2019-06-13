@@ -9,6 +9,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.mac.foundation.NSWorkspace;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.cidr.AppleScript;
+import com.jetbrains.cidr.OCPathManager;
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform;
 import com.jetbrains.cidr.xcode.frameworks.AppleSdk;
 import com.jetbrains.cidr.xcode.plist.Plist;
@@ -53,23 +54,42 @@ public class Reveal {
     if (sdk == null) return null;
 
     ApplePlatform platform = sdk.getPlatform();
-    String libraryPath = "/Contents/SharedSupport/";
+    File result;
 
-    if (platform.isIOS()) {
-      libraryPath += "iOS-Libraries/";
-    } else if (platform.isTv()) {
-      libraryPath += "tvOS-Libraries/";
-    }
-
-    if (isCompatibleWithRevealTwoOrHigher(bundle)) {
+    if (isCompatibleWithReveal23OrHigher(bundle)) {
+      String libraryPath = "Reveal/RevealServer/";
+      if (platform.isIOS()) {
+        libraryPath += "iOS/";
+      }
+      else if (platform.isTv()) {
+        libraryPath += "tvOS/";
+      }
       libraryPath += "RevealServer.framework/RevealServer";
-    } else if (platform.isTv()) {
-      libraryPath += "libReveal-tvOS.dylib";
-    } else {
-      libraryPath += "libReveal.dylib";
+
+      result = OCPathManager.getUserApplicationSupportSubFile(libraryPath);
+    }
+    else {
+      String libraryPath = "/Contents/SharedSupport/";
+
+      if (platform.isIOS()) {
+        libraryPath += "iOS-Libraries/";
+      }
+      else if (platform.isTv()) {
+        libraryPath += "tvOS-Libraries/";
+      }
+
+      if (isCompatibleWithRevealTwoOrHigher(bundle)) {
+        libraryPath += "RevealServer.framework/RevealServer";
+      }
+      else if (platform.isTv()) {
+        libraryPath += "libReveal-tvOS.dylib";
+      }
+      else {
+        libraryPath += "libReveal.dylib";
+      }
+      result = new File(bundle, libraryPath);
     }
     
-    File result = new File(bundle, libraryPath);
     return result.exists() ? result : null;
   }
 
@@ -86,6 +106,11 @@ public class Reveal {
   public static boolean isCompatibleWithRevealTwoOrHigher(@NotNull File bundle) {
     Version version = getRevealVersion(bundle);
     return version != null && version.isOrGreaterThan(8378);
+  }
+
+  public static boolean isCompatibleWithReveal23OrHigher(@NotNull File bundle) {
+    Version version = getRevealVersion(bundle);
+    return version != null && version.isOrGreaterThan(12724);
   }
 
   @Nullable
