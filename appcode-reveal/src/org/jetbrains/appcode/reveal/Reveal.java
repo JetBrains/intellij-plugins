@@ -1,9 +1,15 @@
 package org.jetbrains.appcode.reveal;
 
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.process.CapturingProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.util.ExecUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Version;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.mac.foundation.NSWorkspace;
@@ -152,10 +158,16 @@ public class Reveal {
                                                      bundleID);
       ContainerUtil.addIfNotNull(args, deviceName);
 
-      ProcessBuilder pb = new ProcessBuilder(args);
-
-      Process p = pb.start();
-      p.waitFor();
+      CapturingProcessHandler handler = new CapturingProcessHandler(new GeneralCommandLine(args));
+      handler.addProcessListener(new ProcessAdapter() {
+        @Override
+        public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
+          if (outputType == ProcessOutputTypes.STDERR) {
+            LOG.warn(event.getText());
+          }
+        }
+      });
+      handler.startNotify();
     }
     catch (Exception e) {
       throw new ExecutionException("Cannot refresh Reveal: " + e.getMessage(), e);
