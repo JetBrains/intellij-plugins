@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.projectWizard;
 
 import com.intellij.ide.highlighter.HtmlFileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -58,10 +59,10 @@ class StagehandTemplate extends DartProjectTemplate {
     ContainerUtil.addIfNotNull(files, mainFile);
 
     if (!myTemplate.myEntrypoint.isEmpty() && mainFile != null) {
-      if (myTemplate.myEntrypoint.startsWith("bin/") && mainFile.getFileType() == DartFileType.INSTANCE) {
+      if (myTemplate.myEntrypoint.startsWith("bin/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, DartFileType.INSTANCE)) {
         createCmdLineRunConfiguration(module, mainFile);
       }
-      if (myTemplate.myEntrypoint.startsWith("web/") && mainFile.getFileType() == HtmlFileType.INSTANCE) {
+      if (myTemplate.myEntrypoint.startsWith("web/") && FileTypeRegistry.getInstance().isFileOfType(mainFile, HtmlFileType.INSTANCE)) {
         createWebRunConfiguration(module, mainFile);
       }
     }

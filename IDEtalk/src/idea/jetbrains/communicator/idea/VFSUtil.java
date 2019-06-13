@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -233,7 +234,7 @@ public class VFSUtil {
   }
 
   public static boolean isArchive(VirtualFile sourceRoot) {
-    return sourceRoot.getFileType() == getArchiveFileType();
+    return FileTypeRegistry.getInstance().isFileOfType(sourceRoot, getArchiveFileType());
   }
 
   private static FileType getArchiveFileType() {

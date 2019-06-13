@@ -2,6 +2,7 @@
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.openapi.fileEditor.impl.NonProjectFileWritingAccessExtension;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -18,6 +19,6 @@ public class DartWritingAccessProvider implements NonProjectFileWritingAccessExt
 
   @Override
   public boolean isNotWritable(@NotNull VirtualFile file) {
-    return file.getFileType() == DartFileType.INSTANCE && ProjectRootManager.getInstance(myProject).getFileIndex().isExcluded(file);
+    return FileTypeRegistry.getInstance().isFileOfType(file, DartFileType.INSTANCE) && ProjectRootManager.getInstance(myProject).getFileIndex().isExcluded(file);
   }
 }

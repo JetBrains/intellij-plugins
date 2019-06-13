@@ -16,6 +16,7 @@ package com.intellij.lang.javascript.flex.debug;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebuggerUtil;
@@ -37,7 +38,7 @@ public class FlexBreakpointType extends XLineBreakpointTypeBase {
 
   @Override
   public boolean canPutAt(@NotNull final VirtualFile file, final int line, @NotNull Project project) {
-    if(file.getFileType() == ActionScriptFileType.INSTANCE ||
+    if(FileTypeRegistry.getInstance().isFileOfType(file, ActionScriptFileType.INSTANCE) ||
        JavaScriptSupportLoader.isFlexMxmFile(file)
       ) {
       return true;

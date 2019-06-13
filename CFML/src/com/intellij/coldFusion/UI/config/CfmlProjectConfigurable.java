@@ -5,6 +5,7 @@ import com.intellij.coldFusion.CfmlBundle;
 import com.intellij.coldFusion.model.files.CfmlFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -93,7 +94,7 @@ public class CfmlProjectConfigurable implements SearchableConfigurable, Configur
         final VirtualFile baseDir = project.getBaseDir();
         if (baseDir != null) {
           FileBasedIndex.getInstance().iterateIndexableFiles(file -> {
-            if (CfmlFileType.INSTANCE == file.getFileType()) {
+            if (FileTypeRegistry.getInstance().isFileOfType(file, CfmlFileType.INSTANCE)) {
               cfmlFiles.add(file);
             }
             return true;
