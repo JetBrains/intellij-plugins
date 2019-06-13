@@ -14,27 +14,9 @@ interface VueScopeElement {
       return source?.let { VueModelManager.getGlobal(it) }
     }
 
-  fun visitScope(visitor: VueModelVisitor, minimumProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.GLOBAL) {
+  fun visitScope(visitor: VueModelVisitor, minimumProximity: VueModelVisitor.Proximity = VueModelVisitor.Proximity.GLOBAL): Boolean {
     val visited = mutableSetOf<Pair<String, VueScopeElement>>()
     val containersQueue = mutableListOf<Pair<VueEntitiesContainer, VueModelVisitor.Proximity>>()
-
-    val visitContainer = { container: VueEntitiesContainer, proximity: VueModelVisitor.Proximity, containerVisitor: VueModelVisitor ->
-      container.components.forEach { (name, component) ->
-        if (visited.add(Pair(name, component))) containerVisitor.visitComponent(name, component, proximity)
-      }
-      container.directives.forEach { (name, directive) ->
-        if (visited.add(Pair(name, directive))) containerVisitor.visitDirective(name, directive, proximity)
-      }
-      container.filters.forEach { (name, filter) ->
-        if (visited.add(Pair(name, filter))) containerVisitor.visitFilter(name, filter, proximity)
-      }
-      container.mixins.forEach { mixin ->
-        if (visited.add(Pair("", mixin))) {
-          containersQueue.add(Pair(mixin, proximity))
-          containerVisitor.visitMixin(mixin, proximity)
-        }
-      }
-    }
 
     if (minimumProximity <= VueModelVisitor.Proximity.GLOBAL) {
       global?.let {
@@ -58,14 +40,49 @@ interface VueScopeElement {
     if (this is VueEntitiesContainer
         && (this is VueMixin || this is VueComponent)) {
       containersQueue.add(Pair(this, VueModelVisitor.Proximity.LOCAL))
+      if ((this is VueMixin
+           && visited.add(Pair("", this))
+           && !visitor.visitMixin(this, VueModelVisitor.Proximity.LOCAL))
+          || (this is VueComponent
+              && this.defaultName != null
+              && visited.add(Pair(this.defaultName!!, this))
+              && !visitor.visitComponent(this.defaultName!!, this, VueModelVisitor.Proximity.LOCAL))) {
+        return false
+      }
     }
 
     containersQueue.sortBy { it.second }
 
     while (containersQueue.isNotEmpty()) {
-      val (first, second) = containersQueue.removeAt(containersQueue.size - 1)
-      visitContainer(first, second, visitor)
+      val (container, proximity) = containersQueue.removeAt(containersQueue.size - 1)
+      container.components.forEach { (name, component) ->
+        if (visited.add(Pair(name, component))
+            && !visitor.visitComponent(name, component, proximity)) {
+          return false
+        }
+      }
+      container.directives.forEach { (name, directive) ->
+        if (visited.add(Pair(name, directive))
+            && !visitor.visitDirective(name, directive, proximity)) {
+          return false
+        }
+      }
+      container.filters.forEach { (name, filter) ->
+        if (visited.add(Pair(name, filter))
+            && !visitor.visitFilter(name, filter, proximity)) {
+          return false
+        }
+      }
+      container.mixins.forEach { mixin ->
+        if (visited.add(Pair("", mixin))) {
+          if (!visitor.visitMixin(mixin, proximity)) {
+            return false
+          }
+          containersQueue.add(Pair(mixin, proximity))
+        }
+      }
     }
+    return true
   }
 
 }

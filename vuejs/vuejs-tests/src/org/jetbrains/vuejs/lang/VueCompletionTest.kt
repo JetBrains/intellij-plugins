@@ -32,7 +32,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import com.intellij.util.containers.ContainerUtil
 import junit.framework.TestCase
-import org.jetbrains.vuejs.codeInsight.tags.VueTagProvider
+import org.jetbrains.vuejs.codeInsight.toAsset
 
 class VueCompletionTest : LightPlatformCodeInsightFixtureTestCase() {
   override fun getTestDataPath(): String = PathManager.getHomePath() + "/contrib/vuejs/vuejs-tests/testData/types/"
@@ -838,7 +838,7 @@ $script""")
 <template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toMutableList()
+    val vuetifyComponents = VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toMutableList()
     vuetifyComponents.removeAll(listOf("v-breadcrumbs-divider", "VBreadcrumbsDivider",
                                        "v-autocomplete", "VAutocomplete",
                                        "v-scroll-x-transition", "VScrollXTransition",
@@ -858,7 +858,7 @@ $script""")
 <template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toList()
+    val vuetifyComponents = VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toList()
     assertContainsElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents, listOf("v-alert")))
   }
 
@@ -870,7 +870,7 @@ $script""")
 <template><<caret></template>
 """)
     myFixture.completeBasic()
-    val vuetifyComponents = VueTagProvider.VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toMutableList()
+    val vuetifyComponents = VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE.toMutableList()
     vuetifyComponents.removeAll(listOf("v-breadcrumbs-divider", "VBreadcrumbsDivider"))
     assertContainsElements(myFixture.lookupElementStrings!!, ContainerUtil.concat(vuetifyComponents, listOf("v-btn")))
   }
@@ -1491,3 +1491,56 @@ fun createPackageJsonWithVueDependency(fixture: CodeInsightTestFixture,
   }
   """)
 }
+private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
+  //grid components
+  "v-flex",
+  "v-spacer",
+  "v-container",
+  "v-layout",
+  //functional components
+  "v-autocomplete",
+  "v-bottom-sheet-transition",
+  "v-breadcrumbs-divider",
+  "v-carousel-reverse-transition",
+  "v-carousel-transition",
+  "v-dialog-bottom-transition",
+  "v-dialog-transition",
+  "v-expand-transition",
+  "v-fab-transition",
+  "v-fade-transition",
+  "v-menu",
+  "v-menu-transition",
+  "v-row-expand-transition",
+  "v-select",
+  "v-scale-transition",
+  "v-scroll-x-reverse-transition",
+  "v-scroll-x-transition",
+  "v-scroll-y-reverse-transition",
+  "v-scroll-y-transition",
+  "v-slide-x-reverse-transition",
+  "v-slide-x-transition",
+  "v-slide-y-reverse-transition",
+  "v-slide-y-transition",
+  "v-stepper-items",
+  "v-tab-item",
+  "v-tab-reverse-transition",
+  "v-tab-transition",
+  "v-table-overflow",
+  "v-tabs",
+  "v-tabs-items",
+  "v-text-field",
+  "v-card-actions",
+  "v-card-text",
+  "v-list-tile-action",
+  "v-list-tile-action-text",
+  "v-list-tile-content",
+  "v-list-tile-sub-title",
+  "v-list-tile-title",
+  "v-stepper-header",
+  "v-toolbar-items",
+  "v-toolbar-title"
+)
+private val VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE: MutableIterable<String> = ContainerUtil.concat(VUETIFY_UNRESOLVED_COMPONENTS,
+                                                                                                   VUETIFY_UNRESOLVED_COMPONENTS.map {
+                                                                                                     toAsset(it).capitalize()
+                                                                                                   })

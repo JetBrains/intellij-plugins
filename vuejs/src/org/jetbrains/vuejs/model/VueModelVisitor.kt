@@ -3,13 +3,21 @@ package org.jetbrains.vuejs.model
 
 interface VueModelVisitor {
 
-  fun visitComponent(name: String, component: VueComponent, proximity: Proximity)
+  fun visitComponent(name: String, component: VueComponent, proximity: Proximity): Boolean {
+    return true
+  }
 
-  fun visitMixin(mixin: VueMixin, proximity: Proximity)
+  fun visitMixin(mixin: VueMixin, proximity: Proximity): Boolean {
+    return true
+  }
 
-  fun visitFilter(name: String, filter: VueFilter, proximity: Proximity)
+  fun visitFilter(name: String, filter: VueFilter, proximity: Proximity): Boolean {
+    return true
+  }
 
-  fun visitDirective(name: String, directive: VueDirective, proximity: Proximity)
+  fun visitDirective(name: String, directive: VueDirective, proximity: Proximity): Boolean {
+    return true
+  }
 
   enum class Proximity {
     OUT_OF_SCOPE,

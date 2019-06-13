@@ -49,8 +49,10 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
   fun getComponents(global: Boolean): Map<String, VueComponent> {
     val localModule = module
     return CachedValuesManager.getManager(localModule.project).getCachedValue(localModule) {
-      val moduleComponents = VueComponentsCalculation.calculateScopeComponents(
-        GlobalSearchScope.moduleWithDependenciesScope(localModule), false).map
+      val componentsData = VueComponentsCalculation.calculateScopeComponents(
+        GlobalSearchScope.moduleWithDependenciesScope(localModule), false)
+
+      val moduleComponents = componentsData.map
 
       val localComponents: MutableMap<String, VueComponent> = mutableMapOf()
       EntryStream.of(moduleComponents)
@@ -65,6 +67,11 @@ class VueSourceGlobal(private val module: Module) : VueGlobal {
         .mapValues { VueModelManager.getComponent(it.first) }
         .nonNullValues()
         .into(globalComponents)
+
+      componentsData.libCompResolveMap.forEach { (alias, target) ->
+        localComponents[target]?.let { localComponents.putIfAbsent(alias, it) }
+        globalComponents[target]?.let { globalComponents.putIfAbsent(alias, it) }
+      }
 
       CachedValueProvider.Result.create(
         mapOf(Pair(true, globalComponents),

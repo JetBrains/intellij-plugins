@@ -4,15 +4,8 @@ package org.jetbrains.vuejs.codeInsight.tags
 import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.lang.ecmascript6.psi.ES6ExportDefaultAssignment
-import com.intellij.lang.ecmascript6.psi.JSClassExpression
-import com.intellij.lang.ecmascript6.psi.JSExportAssignment
-import com.intellij.lang.ecmascript6.resolve.ES6PsiUtil
 import com.intellij.lang.javascript.DialectDetector
 import com.intellij.lang.javascript.library.JSLibraryUtil
-import com.intellij.lang.javascript.psi.JSLiteralExpression
-import com.intellij.lang.javascript.psi.JSObjectLiteralExpression
-import com.intellij.lang.javascript.psi.ecma6.impl.JSLocalImplicitElementImpl
 import com.intellij.lang.javascript.psi.stubs.JSImplicitElement
 import com.intellij.lang.javascript.psi.stubs.impl.JSImplicitElementImpl
 import com.intellij.lang.javascript.settings.JSApplicationSettings
@@ -22,30 +15,26 @@ import com.intellij.psi.impl.source.html.dtd.HtmlElementDescriptorImpl
 import com.intellij.psi.impl.source.html.dtd.HtmlNSDescriptorImpl
 import com.intellij.psi.impl.source.xml.XmlDescriptorUtil
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.xml.*
 import com.intellij.xml.XmlElementDescriptor.CONTENT_TYPE_ANY
 import icons.VuejsIcons
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributeDescriptor
 import org.jetbrains.vuejs.codeInsight.attributes.VueAttributesProvider
-import org.jetbrains.vuejs.codeInsight.attributes.findProperty
 import org.jetbrains.vuejs.codeInsight.detectVueScriptLanguage
 import org.jetbrains.vuejs.codeInsight.fromAsset
 import org.jetbrains.vuejs.codeInsight.toAsset
-import org.jetbrains.vuejs.index.*
+import org.jetbrains.vuejs.index.isVueContext
 import org.jetbrains.vuejs.lang.html.VueFileType
 import org.jetbrains.vuejs.lang.html.VueLanguage
-import org.jetbrains.vuejs.model.*
+import org.jetbrains.vuejs.model.VueComponent
+import org.jetbrains.vuejs.model.VueModelManager
+import org.jetbrains.vuejs.model.VueModelVisitor
 import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider
 import org.jetbrains.vuejs.model.source.VueComponentDetailsProvider.Companion.getBoundName
 import org.jetbrains.vuejs.model.source.VueComponents
-import org.jetbrains.vuejs.model.source.VueComponents.Companion.getExportedDescriptor
 import org.jetbrains.vuejs.model.source.VueComponents.Companion.isNotInLibrary
-import org.jetbrains.vuejs.model.source.VueComponentsCache
-import org.jetbrains.vuejs.model.source.VueComponentsCalculation
 
 private const val LOCAL_PRIORITY = 100.0
 private const val APP_PRIORITY = 90.0
@@ -56,130 +45,37 @@ private const val UNREGISTERED_PRIORITY = 50.0
 class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
   override fun getDescriptor(tag: XmlTag?): XmlElementDescriptor? {
     if (tag != null && tag.containingFile.language == VueLanguage.INSTANCE && isVueContext(tag)) {
-      val name = tag.name
+      val tagName = fromAsset(tag.name)
 
-      val localComponents = findLocalComponents(name, tag)
-      if (localComponents.isNotEmpty()) return multiDefinitionDescriptor(localComponents)
+      var closest: VueModelVisitor.Proximity? = null
+      val components = mutableListOf<VueComponent>()
+      (VueModelManager.findComponent(tag) ?: VueModelManager.getGlobal(tag))
+        ?.visitScope(object : VueModelVisitor {
+          override fun visitComponent(name: String, component: VueComponent, proximity: VueModelVisitor.Proximity): Boolean {
+            if (closest != null && closest!! > proximity) {
+              return false
+            }
+            if (fromAsset(name) == tagName) {
+              closest = proximity
+              components.add(component)
+            }
+            return true
+          }
+        }, VueModelVisitor.Proximity.GLOBAL)
 
-      val normalized = fromAsset(name)
-      val globalComponents = findGlobalComponents(normalized, tag)
-      if (!globalComponents.isEmpty()) return multiDefinitionDescriptor(globalComponents)
+      if (components.isNotEmpty()) return multiDefinitionDescriptor(components.map {
+        if (it.source != null) {
+          VueModelManager.getComponentImplicitElement(it.source!!) ?: JSImplicitElementImpl(tag.name, it.source)
+        } else {
+          JSImplicitElementImpl(tag.name, tag)
+        }
+      })
 
-      // keep this last in case in future we would be able to normally resolve into these components
-      if (VUE_FRAMEWORK_COMPONENTS.contains(normalized) || VUETIFY_UNRESOLVED_COMPONENTS.contains(normalized)) {
-        return VueElementDescriptor(JSImplicitElementImpl(normalized, tag))
+      if (VUE_FRAMEWORK_COMPONENTS.contains(tagName)) {
+        return VueElementDescriptor(JSImplicitElementImpl(tagName, tag))
       }
     }
     return null
-  }
-
-  private fun findLocalComponents(name: String, contextElement: PsiElement): List<JSImplicitElement> {
-    val localComponents = mutableListOf<JSImplicitElement>()
-    val decapitalized = name.decapitalize()
-    processLocalComponents(contextElement) { foundName, element ->
-      if (foundName == decapitalized || foundName == toAsset(decapitalized) || foundName == toAsset(decapitalized).capitalize()) {
-        localComponents.add(element)
-      }
-      return@processLocalComponents true
-    }
-    return localComponents
-  }
-
-  private fun findGlobalComponents(normalized: String, tag: XmlTag): Collection<JSImplicitElement> {
-    val resolvedVariants = resolve(normalized, GlobalSearchScope.allScope(tag.project), VueComponentsIndex.KEY)
-    if (resolvedVariants != null) {
-      return if (VUE_FRAMEWORK_COMPONENTS.contains(normalized)) resolvedVariants
-      else {
-        // if global component was defined with literal name, that's the "source of true"
-        val globalExact = resolvedVariants.filter { isGlobalExact(it) }
-        if (globalExact.isNotEmpty()) globalExact
-        else {
-          // prefer library definitions of components for resolve
-          // i.e. prefer the place where the name is defined, not the place where it is registered with Vue.component
-          val libDef = resolvedVariants.filter { VueComponentsCache.isGlobalLibraryComponent(it) }
-          if (libDef.isEmpty()) resolvedVariants.filter { isGlobal(it) }
-          else libDef
-        }
-      }
-    }
-    val globalAliased = VueComponentsCache.findGlobalLibraryComponent(tag.project, normalized) ?: return emptyList()
-
-    return setOf(
-      globalAliased.second as? JSImplicitElement ?: JSLocalImplicitElementImpl(globalAliased.first, null, globalAliased.second, null))
-  }
-
-  private fun nameVariantsWithPossiblyGlobalMark(name: String): MutableSet<String> {
-    val variants = mutableSetOf(name, toAsset(name), toAsset(name).capitalize())
-    variants.addAll(variants.map { it + GLOBAL_BINDING_MARK })
-    return variants
-  }
-
-  private fun processLocalComponents(contextElement: PsiElement, processor: (String?, JSImplicitElement) -> Boolean) {
-    val content = findModule(contextElement)
-    val defaultExport = if (content == null) null else ES6PsiUtil.findDefaultExport(content) as? JSExportAssignment
-    val component = if (defaultExport == null) null else getExportedDescriptor(defaultExport)?.obj
-
-    if (component != null) {
-      // recursive usage case
-      val nameProperty = component.findProperty("name")
-      val nameValue = nameProperty?.value as? JSLiteralExpression
-      if (nameValue != null && nameValue.isQuotedLiteral) {
-        val name = nameValue.stringValue
-        if (name != null) {
-          if (!processor.invoke(name, JSImplicitElementImpl(name, nameProperty))) return
-        }
-      }
-    }
-
-    VueComponentDetailsProvider.INSTANCE.processLocalComponents(component, contextElement.project) { name, element ->
-      if (name != null) {
-        val literalOrElement = VueComponents.meaningfulExpression(element) ?: element
-        processComponentMeaningfulElement(name, literalOrElement, processor, element)
-      }
-      else true
-    }
-  }
-
-  private fun processComponentMeaningfulElement(localName: String, meaningfulElement: PsiElement,
-                                                processor: (String?, JSImplicitElement) -> Boolean,
-                                                sourceElement: PsiElement?): Boolean {
-    var obj = VueComponentsCalculation.getObjectLiteralFromResolve(listOf(meaningfulElement))
-    var clazz: JSClassExpression<*>? = null
-    if (obj == null) {
-      val compDefaultExport = meaningfulElement.parent as? ES6ExportDefaultAssignment
-      if (compDefaultExport != null) {
-        val descriptor = getExportedDescriptor(compDefaultExport)
-        obj = descriptor?.obj
-        clazz = descriptor?.clazz
-      }
-    }
-
-    return processComponentDescriptorVariants(obj, clazz, processor, localName, sourceElement)
-  }
-
-  private fun processComponentDescriptorVariants(obj: JSObjectLiteralExpression?,
-                                                 clazz: JSClassExpression<*>?,
-                                                 processor: (String?, JSImplicitElement) -> Boolean,
-                                                 localName: String,
-                                                 sourceElement: PsiElement?): Boolean {
-    if (obj != null) {
-      val elements = findProperty(obj, "name")?.indexingData?.implicitElements?.filter { it.userString == VueComponentsIndex.JS_KEY }
-      if (elements != null && elements.isNotEmpty()) {
-        if (elements.any { !processor.invoke(localName, it) }) return false
-        return true
-      }
-      val first = obj.firstProperty
-      if (first != null) {
-        if (!processor.invoke(localName, JSImplicitElementImpl(localName, first))) return false
-        return true
-      }
-    }
-    else if (clazz != null) {
-      if (!processor.invoke(localName, JSImplicitElementImpl(localName, clazz))) return false
-      return true
-    }
-    if (!processor.invoke(localName, JSImplicitElementImpl(localName, sourceElement))) return false
-    return true
   }
 
   override fun addTagNameVariants(elements: MutableList<LookupElement>?, tag: XmlTag, namespacePrefix: String?) {
@@ -195,7 +91,7 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
     val providedNames = mutableSetOf<String>()
     val visitor = object : VueModelVisitor {
-      override fun visitComponent(name: String, component: VueComponent, proximity: VueModelVisitor.Proximity) {
+      override fun visitComponent(name: String, component: VueComponent, proximity: VueModelVisitor.Proximity): Boolean {
         nameMapper(name).forEach {
           if (providedNames.add(it))
             elements.add(createVueLookup(component.source, it,
@@ -203,22 +99,12 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
                                          scriptLanguage,
                                          priorityOf(proximity)))
         }
+        return true
       }
-
-      override fun visitMixin(mixin: VueMixin, proximity: VueModelVisitor.Proximity) {
-      }
-
-      override fun visitFilter(name: String, filter: VueFilter, proximity: VueModelVisitor.Proximity) {}
-
-      override fun visitDirective(name: String, directive: VueDirective, proximity: VueModelVisitor.Proximity) {}
     }
 
-    val component = VueModelManager.findComponent(tag)
-    if (component?.defaultName != null)
-      visitor.visitComponent(component.defaultName!!, component, VueModelVisitor.Proximity.LOCAL)
-
-    val container = component ?: VueModelManager.getGlobal(tag)
-    container?.visitScope(visitor, VueModelVisitor.Proximity.OUT_OF_SCOPE)
+    (VueModelManager.findComponent(tag) ?: VueModelManager.getGlobal(tag))
+      ?.visitScope(visitor, VueModelVisitor.Proximity.OUT_OF_SCOPE)
 
     elements.addAll(VUE_FRAMEWORK_COMPONENTS.map {
       LookupElementBuilder.create(it).withIcon(VuejsIcons.Vue).withTypeText("vue", true)
@@ -272,59 +158,6 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
       "transition",
       "transition-group"
     )
-    private val VUETIFY_UNRESOLVED_COMPONENTS = setOf(
-      //grid components
-      "v-flex",
-      "v-spacer",
-      "v-container",
-      "v-layout",
-      //functional components
-      "v-autocomplete",
-      "v-bottom-sheet-transition",
-      "v-breadcrumbs-divider",
-      "v-carousel-reverse-transition",
-      "v-carousel-transition",
-      "v-dialog-bottom-transition",
-      "v-dialog-transition",
-      "v-expand-transition",
-      "v-fab-transition",
-      "v-fade-transition",
-      "v-menu",
-      "v-menu-transition",
-      "v-row-expand-transition",
-      "v-select",
-      "v-scale-transition",
-      "v-scroll-x-reverse-transition",
-      "v-scroll-x-transition",
-      "v-scroll-y-reverse-transition",
-      "v-scroll-y-transition",
-      "v-slide-x-reverse-transition",
-      "v-slide-x-transition",
-      "v-slide-y-reverse-transition",
-      "v-slide-y-transition",
-      "v-stepper-items",
-      "v-tab-item",
-      "v-tab-reverse-transition",
-      "v-tab-transition",
-      "v-table-overflow",
-      "v-tabs",
-      "v-tabs-items",
-      "v-text-field",
-      "v-card-actions",
-      "v-card-text",
-      "v-list-tile-action",
-      "v-list-tile-action-text",
-      "v-list-tile-content",
-      "v-list-tile-sub-title",
-      "v-list-tile-title",
-      "v-stepper-header",
-      "v-toolbar-items",
-      "v-toolbar-title"
-    )
-    val VUETIFY_UNRESOLVED_COMPONENTS_WITH_PASCAL_CASE: MutableIterable<String> = ContainerUtil.concat(VUETIFY_UNRESOLVED_COMPONENTS,
-                                                                                                       VUETIFY_UNRESOLVED_COMPONENTS.map {
-                                                                                                         toAsset(it).capitalize()
-                                                                                                       })
   }
 }
 
