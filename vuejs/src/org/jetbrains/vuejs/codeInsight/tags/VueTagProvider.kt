@@ -131,12 +131,11 @@ class VueTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
     if (priority == LOCAL_PRIORITY) {
       builder = builder.bold()
     }
-    if (!shouldNotBeImported) {
+    if (!shouldNotBeImported && element != null) {
       val settings = JSApplicationSettings.getInstance()
-      if (element != null
-          && ((scriptLanguage != null && "ts" == scriptLanguage)
-              || (DialectDetector.isTypeScript(element)
-                  && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile)))) {
+      if ((scriptLanguage != null && "ts" == scriptLanguage)
+          || (DialectDetector.isTypeScript(element)
+              && !JSLibraryUtil.isProbableLibraryFile(element.containingFile.viewProvider.virtualFile))) {
         if (settings.hasTSImportCompletionEffective(element.project)) {
           builder = builder.withInsertHandler(VueInsertHandler.INSTANCE)
         }
