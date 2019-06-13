@@ -18,6 +18,7 @@ package com.intellij.struts2.dom.struts.impl.path;
 import com.intellij.javaee.web.WebRoot;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -68,7 +69,7 @@ public class FileReferenceSetHelper {
           }
 
           final VirtualFile virtualFile = psiFileSystemItem.getVirtualFile();
-          return virtualFile != null && virtualFile.getFileType().equals(allowedFileType);
+          return virtualFile != null && FileTypeRegistry.getInstance().isFileOfType(virtualFile, allowedFileType);
         };
       }
     };
