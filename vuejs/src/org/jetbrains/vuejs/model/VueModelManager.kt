@@ -41,9 +41,7 @@ class VueModelManager {
     }
 
     fun getComponent(declaration: PsiElement): VueComponent? {
-      val implicitElement: JSImplicitElement? = getComponentImplicitElement(declaration)
-      val data = implicitElement?.let { getVueIndexData(it) }
-      val context: PsiElement = implicitElement?.context ?: declaration
+      val context: PsiElement = getComponentImplicitElement(declaration)?.context ?: declaration
 
       return CachedValuesManager.getCachedValue(context) {
         val component = findModule(context)
@@ -51,6 +49,7 @@ class VueModelManager {
                           ?.let { defaultExport -> VueComponents.getExportedDescriptor(defaultExport) }
                           ?.obj
                         ?: context
+        val data = getComponentImplicitElement(context)?.let { getVueIndexData(it) }
         CachedValueProvider.Result.create(VueSourceComponent(context, component, data), context, component)
       }
     }

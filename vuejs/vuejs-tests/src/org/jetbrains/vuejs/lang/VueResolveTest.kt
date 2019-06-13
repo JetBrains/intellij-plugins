@@ -917,7 +917,7 @@ Vue.component(alias, WiseComp)
     val target = reference!!.resolve()
     TestCase.assertNotNull(target)
     TestCase.assertEquals(fileName, target!!.containingFile.name)
-    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+    TestCase.assertTrue(target.parent is JSProperty)
     TestCase.assertEquals(compName, (target as JSImplicitElement).name)
   }
 
@@ -1435,7 +1435,9 @@ const props = {seeMe: {}}
     }
   }
 
-  fun testResolveVuetifyComponent() {
+  // Resolve into web-types libraries not supported for now.
+  @Suppress("TestFunctionName", "unused")
+  fun _testResolveVuetifyComponent() {
     createPackageJsonWithVueDependency(myFixture, "\"vuetify\": \"0.17.2\"")
     myFixture.copyDirectoryToProject("../libs/vuetify/vuetify_017/node_modules", "./node_modules")
     val testData = arrayOf(
@@ -1534,7 +1536,7 @@ Object.keys(obj).forEach(key => {
     val target = reference!!.resolve()
     TestCase.assertNotNull(target)
     TestCase.assertEquals("lib-comp-for-alias.es6", target!!.containingFile.name)
-    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+    TestCase.assertTrue(target.parent is JSProperty)
   }
 
   fun testResolveObjectWithSpreadComponent() {
@@ -1589,7 +1591,7 @@ Object.keys(other).forEach(key => {
     val target = reference!!.resolve()
     TestCase.assertNotNull(target)
     TestCase.assertEquals("lib-spread.es6", target!!.containingFile.name)
-    TestCase.assertTrue(target.parent is JSObjectLiteralExpression)
+    TestCase.assertTrue(target.parent is JSProperty)
   }
 
   fun testResolveObjectWithSpreadLiteralComponent() {
